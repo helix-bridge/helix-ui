@@ -1,0 +1,4 @@
+cypress/plugins/
+cypress/pages/
+cypress/extensions/
+plugins/
