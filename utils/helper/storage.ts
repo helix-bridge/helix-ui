@@ -2,7 +2,7 @@ import { pickBy, uniq } from 'lodash';
 import store from 'store';
 import { ChainConfig, Network, StorageInfo } from '../../model';
 
-export const STORAGE_KEY = 'wormhole';
+export const STORAGE_KEY = 'helix';
 
 export function updateStorage(data: Partial<StorageInfo>): void {
   const origin = store.get(STORAGE_KEY);

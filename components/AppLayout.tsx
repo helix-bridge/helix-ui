@@ -51,7 +51,7 @@ function AppLayout({ children }: PropsWithChildren<{}>) {
             {t('Launch App')}
           </Button>
 
-          <div className="justify-end items-center md:pl-8 hidden">
+          <div className="justify-end items-center md:pl-8">
             <ThemeSwitch defaultTheme={THEME.DARK} onThemeChange={setTheme} mode="btn" />
           </div>
         </div>
