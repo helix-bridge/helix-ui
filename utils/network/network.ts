@@ -23,7 +23,7 @@ import {
 import { getUnit } from '../helper/balance';
 import { getCustomNetworkConfig } from '../helper/storage';
 import { entrance } from '../connection/entrance';
-import { AIRDROP_GRAPH, NETWORK_GRAPH } from './graph';
+import { NETWORK_GRAPH } from './graph';
 
 export const NETWORK_CONFIGURATIONS = SYSTEM_NETWORK_CONFIGURATIONS.map((item) => {
   const customConfigs = getCustomNetworkConfig();
@@ -145,13 +145,6 @@ const isInNodeList = (source: Map<Departure, Arrival[]>) => (net1: ChainConfig |
   return !!vertices.find((item) => item.network === net2.name && item.mode === getNetworkMode(net2));
 };
 
-const isInCrossList = isInNodeList(NETWORK_GRAPH);
-const isInAirportList = isInNodeList(AIRDROP_GRAPH);
-
-export const isReachable = (net: ChainConfig | null, type: CrossType = 'cross-chain') =>
-  type === 'cross-chain' ? curry(isInCrossList)(net) : curry(isInAirportList)(net); // relation: net1 -> net2 ---- Find the relation by net1
-export const isTraceable = (net: ChainConfig | null, type: CrossType = 'cross-chain') =>
-  type === 'cross-chain' ? curryRight(isInCrossList)(net) : curryRight(isInAirportList)(net); // relation: net1 -> net2 ---- Find the relation by net2
 export const isChainConfigEqualTo = curry(isChainConfigEqual);
 export const isPolkadotNetwork = isSpecifyNetworkType('polkadot');
 export const isEthereumNetwork = isSpecifyNetworkType('ethereum');

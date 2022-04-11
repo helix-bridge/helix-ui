@@ -6,7 +6,7 @@ import { PropsWithChildren, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Path } from '../config/constant';
 import { THEME } from '../config/theme';
-import { readStorage } from '../utils/helper/storage';
+import { readStorage } from '../utils';
 import { Navigator } from './widget/Navigator';
 import { ThemeSwitch } from './widget/ThemeSwitch';
 

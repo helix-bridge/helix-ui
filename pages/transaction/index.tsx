@@ -3,6 +3,7 @@ import { Affix, Button, Input, Spin } from 'antd';
 import { formatDistanceToNow, getUnixTime } from 'date-fns';
 import { useQuery } from 'graphql-hooks';
 import { last } from 'lodash';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -266,5 +267,11 @@ function Page() {
     </div>
   );
 }
+
+export const getStaticProps = async ({ locale }: { locale: string }) => ({
+  props: {
+    ...(await serverSideTranslations(locale, ['common'])),
+  },
+});
 
 export default Page;

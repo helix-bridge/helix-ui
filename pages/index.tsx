@@ -2,8 +2,12 @@ import { Spin } from 'antd';
 import BN from 'bn.js';
 import { format, subMilliseconds } from 'date-fns';
 import { last, omit, orderBy } from 'lodash';
-import { useMemo } from 'react';
 import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useMemo } from 'react';
+import { BarChart, Statistic } from '../components/dashboard/BarChart';
+import { Chain, ChainProps } from '../components/dashboard/Chain';
+import { Statistics } from '../components/dashboard/Statistics';
 import { DATE_FORMAT } from '../config/constant';
 import {
   crabConfig,
@@ -16,10 +20,6 @@ import {
 import { TIMEPAST, useDailyStatistic } from '../hooks';
 import { ChainConfig, DailyStatistic } from '../model';
 import { fromWei, prettyNumber } from '../utils';
-import { BarChart, Statistic } from '../components/dashboard/BarChart';
-import { Chain, ChainProps } from '../components/dashboard/Chain';
-import { Statistics } from '../components/dashboard/Statistics';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 interface StatisticTotal {
   volume: BN;

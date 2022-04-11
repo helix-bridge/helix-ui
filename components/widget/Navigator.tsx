@@ -10,7 +10,7 @@ import { AntdIconProps } from '@ant-design/icons/lib/components/AntdIcon';
 
 const isDev = true;
 
-export interface Nav {
+interface Nav {
   label: string;
   path: Path | string;
   extra?: boolean;
@@ -19,7 +19,7 @@ export interface Nav {
   className?: string;
 }
 
-export interface NavigatorProps {
+interface NavigatorProps {
   theme?: THEME;
   toggle?: () => void;
 }
@@ -31,7 +31,7 @@ const navigators: Nav[] = [
   { label: 'Docs', path: 'https://docs.darwinia.network/tutorials/wiki-tut-wormhole', extra: true },
 ];
 
-export function NavLink({ nav, theme }: { nav: Nav; theme: THEME }) {
+function NavLink({ nav, theme }: { nav: Nav; theme: THEME }) {
   const { t } = useTranslation();
   const router = useRouter();
   const textCls = useMemo(() => (theme === 'dark' ? '' : 'text-pangolin-main'), [theme]);
@@ -61,7 +61,7 @@ export function NavLink({ nav, theme }: { nav: Nav; theme: THEME }) {
   );
 }
 
-export function RouteLink({ path, label }: Nav) {
+function RouteLink({ path, label }: Nav) {
   const { t } = useTranslation();
 
   return path.includes('http') ? (
@@ -73,7 +73,7 @@ export function RouteLink({ path, label }: Nav) {
   );
 }
 
-export const getActiveNav = (path: string) => {
+const getActiveNav = (path: string) => {
   return navigators
     .filter((item) => path === item.path)
     .map((item) => navigators.find((nav) => nav.path.startsWith(item.path)))

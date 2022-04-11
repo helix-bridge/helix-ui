@@ -3,7 +3,7 @@ import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChainConfig } from '../../model';
 
-export interface ChainStatisticOverview {
+interface ChainStatisticOverview {
   chain: ChainConfig;
   total: string;
 }

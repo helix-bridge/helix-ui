@@ -2,7 +2,7 @@ import { isEqual } from 'lodash';
 import { BRIDGES } from '../../config/bridge';
 import { Arrival, Bridge, BridgeConfig, ContractConfig, Departure } from '../../model';
 
-const isPro = process.env.REACT_APP_HOST_TYPE !== 'dev';
+const isPro = process.env.NODE_ENV === 'production';
 
 export const NETWORK_GRAPH = new Map(
   BRIDGES.reduce((acc: [Departure, Arrival[]][], bridge: Bridge<BridgeConfig<ContractConfig>>) => {
@@ -25,8 +25,3 @@ export const NETWORK_GRAPH = new Map(
     return acc;
   }, [])
 );
-
-export const AIRDROP_GRAPH = new Map<Departure, Arrival[]>([
-  [{ network: 'ethereum', mode: 'native' }, [{ network: 'crab', mode: 'native' }]],
-  [{ network: 'tron', mode: 'native' }, [{ network: 'crab', mode: 'native' }]],
-]);

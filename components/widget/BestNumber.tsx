@@ -8,7 +8,7 @@ import { entrance, isEthereumNetwork, isPolkadotNetwork, prettyNumber, waitUntil
 
 const duration = 6000;
 
-export interface BestNumberProps {
+interface BestNumberProps {
   onChange?: (num: string) => void;
   config: ChainConfig;
   color?: string;
