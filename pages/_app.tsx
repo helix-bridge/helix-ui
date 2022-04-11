@@ -25,7 +25,7 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
 
     const script = document.createElement('script');
 
-    script.addEventListener('load', (event) => {
+    script.addEventListener('load', () => {
       const theme = readStorage().theme;
 
       window.less

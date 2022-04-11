@@ -1,4 +1,4 @@
-import { ContractConfig, BridgeConfig, Api, ApiKeys } from "../bridge/bridge";
+import { ContractConfig, BridgeConfig, Api, ApiKeys } from '../bridge/bridge';
 
 /**
  * ethereum <-> crab dvm

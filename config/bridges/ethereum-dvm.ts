@@ -1,6 +1,6 @@
-import { Bridge, EthereumDVMBridgeConfig } from "../../model";
-import { EVOLUTION_DOMAIN } from "../api";
-import { ethereumConfig, crabConfig, ropstenConfig, pangolinConfig } from "../network";
+import { Bridge, EthereumDVMBridgeConfig } from '../../model';
+import { EVOLUTION_DOMAIN } from '../api';
+import { ethereumConfig, crabConfig, ropstenConfig, pangolinConfig } from '../network';
 
 const ethereumCrabDVMConfig: EthereumDVMBridgeConfig = {
   api: { dapp: 'https://api.darwinia.network', evolution: EVOLUTION_DOMAIN.product },

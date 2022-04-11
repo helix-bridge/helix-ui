@@ -1,12 +1,11 @@
 import { ApiPromise } from '@polkadot/api';
-import { chain as lodashChain, curry, curryRight, has, isEqual, isNull, omit, once, pick, upperFirst } from 'lodash';
+import { chain as lodashChain, curry, has, isEqual, isNull, omit, once, pick, upperFirst } from 'lodash';
 import Web3 from 'web3';
 import { NETWORK_SIMPLE, SYSTEM_NETWORK_CONFIGURATIONS, tronConfig } from '../../config/network';
 import {
   Arrival,
   ChainConfig,
   Connection,
-  CrossType,
   Departure,
   DVMChainConfig,
   EthereumChainConfig,
@@ -20,9 +19,9 @@ import {
   PolkadotConnection,
   Vertices,
 } from '../../model';
+import { entrance } from '../connection/entrance';
 import { getUnit } from '../helper/balance';
 import { getCustomNetworkConfig } from '../helper/storage';
-import { entrance } from '../connection/entrance';
 import { NETWORK_GRAPH } from './graph';
 
 export const NETWORK_CONFIGURATIONS = SYSTEM_NETWORK_CONFIGURATIONS.map((item) => {
@@ -133,16 +132,6 @@ const getArrivals = (source: Map<Departure, Arrival[]>, departure: ChainConfig) 
   const target = [...source].find(([item]) => item.network === departure.name && item.mode === mode);
 
   return target ? target[1] : [];
-};
-
-const isInNodeList = (source: Map<Departure, Arrival[]>) => (net1: ChainConfig | null, net2: ChainConfig | null) => {
-  if (!net1 || !net2) {
-    return true;
-  }
-
-  const vertices = getArrivals(source, net1);
-
-  return !!vertices.find((item) => item.network === net2.name && item.mode === getNetworkMode(net2));
 };
 
 export const isChainConfigEqualTo = curry(isChainConfigEqual);

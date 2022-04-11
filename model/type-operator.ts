@@ -17,11 +17,9 @@ type ShiftUnion<T> = T extends unknown[] ? Shift<T> : never;
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type DeepRequired<T, P extends string[]> = T extends object
   ? Omit<T, Extract<keyof T, P[0]>> &
-      Required<
-        {
-          [K in Extract<keyof T, P[0]>]: NonNullable<DeepRequired<T[K], ShiftUnion<P>>>;
-        }
-      >
+      Required<{
+        [K in Extract<keyof T, P[0]>]: NonNullable<DeepRequired<T[K], ShiftUnion<P>>>;
+      }>
   : T;
 
 export type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;

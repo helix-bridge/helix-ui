@@ -13,7 +13,7 @@ import { ThemeSwitch } from './widget/ThemeSwitch';
 const { Header, Content } = Layout;
 
 // eslint-disable-next-line complexity
-function AppLayout({ children }: PropsWithChildren<{}>) {
+function AppLayout({ children }: PropsWithChildren<unknown>) {
   const { t } = useTranslation('common');
   const [theme, setTheme] = useState<THEME>(readStorage().theme ?? THEME.DARK);
   const [collapsed, setCollapsed] = useState(true);

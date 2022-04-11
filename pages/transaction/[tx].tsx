@@ -148,7 +148,7 @@ export function Page({ tx, data }: { tx: string; data: Substrate2SubstrateRecord
     });
 
     return [departure, arrival] as [Departure, Arrival];
-  }, []);
+  }, [router.query]);
 
   const bridge = getBridge(direction);
   const id = tx || (router.query.id as string);
@@ -167,7 +167,8 @@ export function Page({ tx, data }: { tx: string; data: Substrate2SubstrateRecord
         ...sDVM2sFields,
       ]);
       const [dep, arr] = direction;
-      const data = {
+
+      const s2sRecord = {
         ...result,
         id,
         bridge: 'helix',
@@ -177,7 +178,7 @@ export function Page({ tx, data }: { tx: string; data: Substrate2SubstrateRecord
         toChainMode: arr.mode,
       } as Substrate2SubstrateRecord;
 
-      setRecord(data);
+      setRecord(s2sRecord);
     });
 
     return () => sub$$?.unsubscribe();
@@ -207,7 +208,7 @@ export function Page({ tx, data }: { tx: string; data: Substrate2SubstrateRecord
                 backgroundColor: '#012342',
               }}
             >
-              <Image src={`/image/bridges/${bridge.category}.png`} width={40} height={10}  className="w-10 md:w-20" />
+              <Image src={`/image/bridges/${bridge.category}.png`} width={40} height={10} className="w-10 md:w-20" />
             </div>
             <Image src={bridge.arrival.facade.logo} width={40} height={40} className="w-5 md:w-10" />
           </div>

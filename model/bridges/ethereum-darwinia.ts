@@ -1,4 +1,4 @@
-import { Api, ApiKeys, BridgeConfig, ContractConfig, LockEventsStorage } from "../bridge";
+import { Api, ApiKeys, BridgeConfig, ContractConfig, LockEventsStorage } from '../bridge';
 
 interface EthereumDarwiniaContractConfig extends ContractConfig {
   ring: string; // e2d ring balance address

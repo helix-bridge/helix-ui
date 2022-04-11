@@ -1,14 +1,14 @@
 import { Dropdown, Menu, Typography } from 'antd';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { THEME } from '../../config/theme';
-import { Path } from '../../config/constant';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { DownOutlined } from '@ant-design/icons';
 import { AntdIconProps } from '@ant-design/icons/lib/components/AntdIcon';
+import { Path } from '../../config/constant';
+import { THEME } from '../../config/theme';
 
-const isDev = true;
+const isDev = process.env.NODE_ENV === 'development';
 
 interface Nav {
   label: string;
@@ -83,7 +83,8 @@ const getActiveNav = (path: string) => {
 export function Navigator({ toggle, theme = THEME.DARK }: NavigatorProps) {
   const { t } = useTranslation();
   const { pathname } = useRouter();
-  const navs = useMemo(() => navigators.filter((item) => isDev || (!isDev && !item.hide)), [isDev]);
+
+  const navItems = useMemo(() => navigators.filter((item) => isDev || (!isDev && !item.hide)), []);
 
   const selectedNavMenu = useMemo<string[]>(() => {
     const nav = getActiveNav(pathname);
@@ -94,7 +95,7 @@ export function Navigator({ toggle, theme = THEME.DARK }: NavigatorProps) {
   return (
     <>
       <div className="hidden lg:flex items-center gap-8">
-        {navs.map((nav, index) =>
+        {navItems.map((nav, index) =>
           Array.isArray(nav) ? (
             <Dropdown
               key={index}

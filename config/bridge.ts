@@ -1,9 +1,9 @@
 import { omit } from 'lodash';
+import { Bridge, BridgeConfig } from '../model';
 import { ethereumDarwinia, ropstenPangolin } from './bridges/ethereum-darwinia';
 import { ethereumCrabDVM, ropstenPangolinDVM } from './bridges/ethereum-dvm';
 import { crabCrabDVM, pangolinPangolinDVM } from './bridges/substrate-dvm';
 import { darwiniaCrabDVM, pangoroPangolinDVM } from './bridges/substrate-substrateDVM';
-import { Bridge, BridgeConfig } from '../model';
 import { crabConfig, ethereumConfig, tronConfig } from './network';
 
 export const BRIDGES = [

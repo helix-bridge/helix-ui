@@ -1,6 +1,6 @@
-import { Bridge, SubstrateSubstrateDVMBridgeConfig } from "../../model";
-import { EVOLUTION_DOMAIN } from "../api";
-import { darwiniaConfig, crabConfig, pangoroConfig, pangolinConfig } from "../network";
+import { Bridge, SubstrateSubstrateDVMBridgeConfig } from '../../model';
+import { EVOLUTION_DOMAIN } from '../api';
+import { darwiniaConfig, crabConfig, pangoroConfig, pangolinConfig } from '../network';
 
 const darwiniaCrabDVMConfig: SubstrateSubstrateDVMBridgeConfig = {
   api: {

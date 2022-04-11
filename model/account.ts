@@ -1,9 +1,17 @@
-import type ExtType from '@polkadot/extension-inject/types';
 import BN from 'bn.js';
 import { Token } from './token';
 import { WithOptional } from './type-operator';
 
-export type InjectedAccountWithMeta = ExtType.InjectedAccountWithMeta;
+type KeypairType = 'ed25519' | 'sr25519' | 'ecdsa' | 'ethereum';
+interface InjectedAccountWithMeta {
+  address: string;
+  meta: {
+    genesisHash?: string | null;
+    name?: string;
+    source: string;
+  };
+  type?: KeypairType;
+}
 
 export type IAccountMeta = WithOptional<InjectedAccountWithMeta, 'meta'>;
 
