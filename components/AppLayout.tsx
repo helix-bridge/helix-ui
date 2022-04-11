@@ -22,11 +22,18 @@ function AppLayout({ children }: PropsWithChildren<{}>) {
   return (
     <Layout className="min-h-screen overflow-scroll">
       <Header
-        className="fixed left-0 right-0 top-0 z-40 flex items-center justify-between sm:px-8 px-4 border-b"
+        className="fixed left-0 right-0 top-0 z-40 flex items-center justify-between sm:px-16 px-4 border-b"
         style={{ marginTop: -1, borderColor: '#113b5d' }}
       >
         <Tooltip title={t('Wormhole is in beta. Please use at your own risk level')}>
-          <Image src="/image/bridges/helix.png" alt="helix" width={90} height={24} onClick={() => router.push(Path.root)} className="cursor-pointer" />
+          <Image
+            src="/image/bridges/helix.png"
+            alt="helix"
+            width={90}
+            height={24}
+            onClick={() => router.push(Path.root)}
+            className="cursor-pointer"
+          />
         </Tooltip>
 
         <Drawer
@@ -47,11 +54,18 @@ function AppLayout({ children }: PropsWithChildren<{}>) {
         <div className="hidden lg:flex lg:justify-end items-center lg:flex-1 ml-2 md:ml-8 lg:ml-12">
           <Navigator theme={theme} />
 
-          <Button type="primary" size="large" className="ml-8">
+          <Button
+            onClick={() => {
+              window.open('https://wormhole.darwinia.network', '_blank');
+            }}
+            type="primary"
+            size="large"
+            className="ml-8"
+          >
             {t('Launch App')}
           </Button>
 
-          <div className="justify-end items-center md:pl-8">
+          <div className="justify-end items-center md:pl-8 hidden">
             <ThemeSwitch defaultTheme={THEME.DARK} onThemeChange={setTheme} mode="btn" />
           </div>
         </div>

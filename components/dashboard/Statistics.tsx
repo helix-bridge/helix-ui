@@ -33,12 +33,12 @@ export function Statistics({ children, startTime, total, title, rank }: PropsWit
 
         <div className="flex flex-col gap-2 items-center justify-center mt-4 mb-2 md:mt-10 md:mb-6">
           <h2 className="text-4xl">{total}</h2>
-          <span className="text-gray-400">{t<string>('Total {{title}}', { title })}</span>
+          <span className="text-gray-400">{t('Total {{title}}', { title })}</span>
         </div>
 
         <div className="flex flex-col gap-2 md:gap-4">
           <div className="flex justify-between">
-            <span className="uppercase">{t<string>('top {{count}} destination', { count: rank.length })}</span>
+            <span className="uppercase">{t('top {{count}} destination', { count: rank.length })}</span>
             <span className="uppercase">{title}</span>
           </div>
 
