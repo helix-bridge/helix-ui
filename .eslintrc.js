@@ -77,6 +77,7 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'warn',
     // react
     'react/display-name': 'off',
+    'react/prop-types': 'off',
     // eslint common rules
     'arrow-parens': ['error', 'always'],
     'comma-dangle': [

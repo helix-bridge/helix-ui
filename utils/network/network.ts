@@ -16,10 +16,12 @@ import {
   NetworkMode,
   NoNullFields,
   PolkadotChain,
+  PolkadotChainConfig,
   PolkadotConnection,
   Vertices,
 } from '../../model';
 import { entrance } from '../connection/entrance';
+import { convertToSS58 } from '../helper/address';
 import { getUnit } from '../helper/balance';
 import { getCustomNetworkConfig } from '../helper/storage';
 import { NETWORK_GRAPH } from './graph';
@@ -340,4 +342,14 @@ export async function getPolkadotChainProperties(api: ApiPromise): Promise<Polka
     },
     { ss58Format, tokens: [] } as PolkadotChain
   );
+}
+
+export function revertAccount(account: string, network: Network, mode: NetworkMode): string {
+  if (isPolkadotNetwork(network) && mode !== 'dvm') {
+    const config = getChainConfigByName(network) as PolkadotChainConfig;
+
+    return convertToSS58(account, config.ss58Prefix);
+  }
+
+  return account;
 }

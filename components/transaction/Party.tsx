@@ -1,7 +1,6 @@
-import { useMemo } from 'react';
+import { Network, NetworkMode } from '../../model';
+import { revertAccount } from '../../utils';
 import { EllipsisMiddle } from '../widget/EllipsisMiddle';
-import { Network, NetworkMode, PolkadotChainConfig } from '../../model';
-import { convertToSS58, getChainConfigByName, isPolkadotNetwork } from '../../utils';
 
 interface PartyProps {
   account: string;
@@ -13,15 +12,7 @@ interface PartyProps {
 }
 
 export function Party({ chain, account, mode, copyable = false, showName = true, className = '' }: PartyProps) {
-  const address = useMemo(() => {
-    if (isPolkadotNetwork(chain) && mode !== 'dvm') {
-      const config = getChainConfigByName(chain) as PolkadotChainConfig;
-
-      return convertToSS58(account, config.ss58Prefix);
-    }
-
-    return account;
-  }, [account, chain, mode]);
+  const address = revertAccount(account, chain, mode);
 
   return (
     <div className={`flex flex-col max-w-xs ${className}`}>

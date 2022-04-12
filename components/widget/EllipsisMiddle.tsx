@@ -54,6 +54,15 @@ export function EllipsisMiddle({
         txtToEllipse.textContent = (txtToEllipse as HTMLElement).getAttribute('data-original');
       }
 
+      const copyDiv = (txtToEllipse as HTMLElement).querySelector('.ant-typography-copy') as HTMLDivElement;
+
+      if (copyDiv) {
+        (txtToEllipse as HTMLSpanElement).style.display = 'flex';
+        (txtToEllipse as HTMLSpanElement).style.alignItems = 'center';
+        copyDiv.style.display = 'flex';
+        copyDiv.style.color = 'inherit';
+      }
+
       const nodeWidth = node.offsetWidth;
       const parentWidth = (parent as HTMLElement).offsetWidth;
       let containerWidth = Math.min(nodeWidth, parentWidth);
@@ -92,7 +101,7 @@ export function EllipsisMiddle({
       }}
       className={`${className}`}
     >
-      <Typography.Text copyable={copyable} style={{ color: 'inherit' }} className="ellipseMe whitespace-nowrap">
+      <Typography.Text copyable={copyable} className="ellipseMe whitespace-nowrap">
         {children}
       </Typography.Text>
     </div>
