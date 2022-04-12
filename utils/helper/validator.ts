@@ -9,7 +9,6 @@ import { isPolkadotNetwork, NETWORK_CONFIGURATIONS } from '../network/network';
 import { canConvertToEth, convertToEth, convertToSS58, dvmAddressToAccountId } from './address';
 import { toWei } from './balance';
 
-// eslint-disable-next-line complexity
 export const isValidAddress = (address: string, network: Network | NetworkCategory): boolean => {
   if (network === 'ethereum') {
     const isDvm = Web3.utils.isAddress(address);
@@ -25,7 +24,6 @@ export const isValidAddress = (address: string, network: Network | NetworkCatego
   return false;
 };
 
-// eslint-disable-next-line complexity
 export const isValidAddressStrict = (address: string, network: Network | NetworkCategory): boolean => {
   if (network === 'ethereum') {
     return Web3.utils.isAddress(address);

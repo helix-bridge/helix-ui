@@ -13,6 +13,7 @@ export function BarChart({ data, name }: BarChartProps) {
   const charRef = useRef(null);
   const mainColor = '#816eeb';
   const barColor = '#151e33';
+
   const options = {
     chart: {
       alignTicks: false,

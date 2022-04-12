@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512px" height="512px" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Head</title>
+    <g id="Head" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect fill="transparent" x="0" y="0" width="512" height="512"></rect>
+        <path d="M95,348 L175.5,301.5 L175.501,301.499 L256,255 L256,162 L175.5,208.5 L95,255 L95,348 Z M256,348 L336.5,301.5 L336.501,301.499 L417,255 L417,162 L336.5,208.5 L256,255 L256,348 Z" id="形状结合备份-4" fill="#93DAFC"></path>
+        <path d="M256,348 L175.5,301.5 L175.499,301.499 L95,255 L95,162 L175.5,208.5 L256,255 L256,348 Z M417,348 L336.5,301.5 L336.499,301.499 L256,255 L256,162 L336.5,208.5 L417,255 L417,348 Z" id="形状结合备份-5" fill="#00B2FF"></path>
+    </g>
+</svg>

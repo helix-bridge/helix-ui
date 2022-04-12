@@ -1,13 +1,14 @@
+import '@fontsource/ibm-plex-sans';
+import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { ClientContext, GraphQLClient } from 'graphql-hooks';
 import { appWithTranslation } from 'next-i18next';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { FunctionComponent, useEffect } from 'react';
 import AppLayout from '../components/AppLayout';
-import '../theme/antd/index.less';
-import '../styles/index.scss';
-import '@fontsource/ibm-plex-sans';
 import { NETWORK_DARK_THEME, SKIN_THEME } from '../config/theme';
+import '../styles/index.scss';
+import '../theme/antd/index.less';
 import { readStorage } from '../utils';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -58,7 +59,11 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
       </Head>
       <ClientContext.Provider value={client}>
         <AppLayout>
-          <Component {...pageProps} />
+          {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+          {/* @ts-ignore */}
+          <ErrorBoundary>
+            <Component {...pageProps} />
+          </ErrorBoundary>
         </AppLayout>
       </ClientContext.Provider>
     </>
