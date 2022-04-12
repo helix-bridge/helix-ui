@@ -1,7 +1,7 @@
-import Image from 'next/image';
 import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChainConfig } from '../../model';
+import { Logo } from '../widget/Logo';
 
 interface ChainStatisticOverview {
   chain: ChainConfig;
@@ -45,7 +45,7 @@ export function Statistics({ children, startTime, total, title, rank }: PropsWit
           {rank.map(({ chain, total: iTotal }) => (
             <div key={chain.name} className="flex justify-between">
               <div className="flex items-center gap-2">
-                <Image src={chain.facade.logo} width={24} height={24} />
+                <Logo chain={chain} width={24} height={24} />
                 <span className="capitalize">{chain.name}</span>
               </div>
 

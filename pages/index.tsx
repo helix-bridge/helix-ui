@@ -29,10 +29,10 @@ interface StatisticTotal {
 const chains: ChainProps[] = [
   { config: ethereumConfig },
   { config: darwiniaConfig },
-  { config: crabConfig, logoKey: 'logoAssist' },
+  { config: crabConfig, logoKey: 'logoSmart' },
   { config: ropstenConfig },
   { config: omit(pangolinConfig, 'dvm'), logoKey: 'logoAssist2' },
-  { config: pangolinConfig, logoKey: 'logoAssist' },
+  { config: pangolinConfig, logoKey: 'logoSmart' },
   { config: pangoroConfig },
 ];
 

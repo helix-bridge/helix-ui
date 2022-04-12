@@ -5,7 +5,7 @@ export interface Facade {
   logo: string;
   logoMinor: string;
   logoWithText: string;
-  logoAssist?: string;
+  logoSmart?: string;
   logoAssist2?: string;
 }
 

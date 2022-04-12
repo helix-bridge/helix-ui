@@ -15,6 +15,7 @@ import { from as rxFrom } from 'rxjs';
 import { Party } from '../../components/transaction/Party';
 import { CrossChainState } from '../../components/widget/CrossChainStatus';
 import { EllipsisMiddle } from '../../components/widget/EllipsisMiddle';
+import { Logo } from '../../components/widget/Logo';
 import { CrossChainStatus } from '../../config/constant';
 import {
   Arrival,
@@ -200,7 +201,7 @@ export function Page({ tx, data }: { tx: string; data: Substrate2SubstrateRecord
 
         <div>
           <div className="flex items-center gap-4 p-3 bg-antDark" style={{ borderRadius: 40 }}>
-            <Image src={bridge.departure.facade.logo} width={40} height={40} className="w-5 md:w-10" />
+            <Logo chain={bridge.departure} width={40} height={40} className="w-5 md:w-10" />
             <div
               className="self-stretch flex items-center px-4 md:px-8"
               style={{
@@ -210,7 +211,7 @@ export function Page({ tx, data }: { tx: string; data: Substrate2SubstrateRecord
             >
               <Image src={`/image/bridges/${bridge.category}.png`} width={40} height={10} className="w-10 md:w-20" />
             </div>
-            <Image src={bridge.arrival.facade.logo} width={40} height={40} className="w-5 md:w-10" />
+            <Logo chain={bridge.arrival} width={40} height={40} className="w-5 md:w-10" />
           </div>
 
           <div className="flex justify-between text-xs capitalize mt-1">
@@ -309,7 +310,7 @@ export function Page({ tx, data }: { tx: string; data: Substrate2SubstrateRecord
                   token: { logo: '/image/ring.svg', name: 'RING' },
                 },
                 {
-                  logo: bridge.arrival.facade.logoAssist,
+                  logo: bridge.arrival.facade.logoSmart,
                   from: '0x1234567891234569999',
                   to: record.recipient,
                   token: { logo: '/image/ring.svg', name: 'xRING' },
