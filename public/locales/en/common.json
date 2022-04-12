@@ -33,7 +33,7 @@
   "Transaction Fee": "Transaction Fee",
   "Unique character string (TxID) assigned to every verified transaction on the Target Chain.": "Unique character string (TxID) assigned to every verified transaction on the Target Chain.",
   "Value": "Value",
-  "Wormhole is in beta. Please use at your own risk level": "Wormhole is in beta. Please use at your own risk level",
+  "Helix is in beta. Please use at your own risk level": "Helix is in beta. Please use at your own risk level",
   "chains": "chains",
   "supported blockchains": "supported blockchains",
   "top {{count}} destination": "top {{count}} destination",
