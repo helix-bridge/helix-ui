@@ -264,21 +264,22 @@ const Page: NextPage<{
         <h3 className="uppercase text-xs md:text-lg">{t('transaction detail')}</h3>
 
         <div>
-          <div className="flex items-center gap-4 p-3 bg-antDark" style={{ borderRadius: 40 }}>
+          <div className="grid grid-cols-5 gap-4 p-3 bg-antDark" style={{ borderRadius: 40 }}>
             <Logo chain={departure} width={40} height={40} className="w-5 md:w-10" />
             <div
-              className="self-stretch flex items-center px-4 md:px-8"
+              className="flex items-center justify-center col-span-3 px-4 md:px-8 transform -translate-y-3"
               style={{
                 clipPath: 'polygon(85% 0%, 100% 50%, 85% 100%, 0% 100%, 15% 50%, 0% 0%)',
                 backgroundColor: '#012342',
+                height: 'calc(100% + 24px)',
               }}
             >
-              <Image src={`/image/bridges/${bridge.category}.png`} width={40} height={10} className="w-10 md:w-20" />
+              <Image src={`/image/bridges/${bridge.category}.png`} width={77} height={21} className="w-10 md:w-20" />
             </div>
             <Logo chain={arrival} width={40} height={40} className="w-5 md:w-10" />
           </div>
 
-          <div className="flex justify-between text-xs capitalize mt-1">
+          <div className="flex justify-between text-xs capitalize mt-1 px-3">
             <div style={{ width: 40 }}>{departure.name}</div>
             <div style={{ width: 40 }}>{arrival.name}</div>
           </div>
