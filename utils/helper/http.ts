@@ -7,13 +7,6 @@ export interface RecordsQueryRequest {
   params: Record<string, string | number | boolean | undefined | null>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface RecordsQueryResponse<T = any> {
-  code: number;
-  detail: string;
-  data?: T;
-}
-
 export function rxGet<T>({ url, params }: RecordsQueryRequest): Observable<T | null> {
   const queryStr = Object.entries(params || {})
     .filter(([_, value]) => !isNull(value) && !isUndefined(value))
@@ -23,8 +16,8 @@ export function rxGet<T>({ url, params }: RecordsQueryRequest): Observable<T | n
       return acc !== '' ? `${acc}&${pair}` : pair;
     }, '');
 
-  return ajax<RecordsQueryResponse<T>>({
+  return ajax<T>({
     url: url + (queryStr ? `?${queryStr}` : ''),
     method: 'GET',
-  }).pipe(map((res) => res.response.data || null));
+  }).pipe(map((res) => res.response || null));
 }

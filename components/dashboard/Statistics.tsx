@@ -1,6 +1,7 @@
 import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChainConfig } from '../../model';
+import { prettyNumber } from '../../utils';
 import { Logo } from '../widget/Logo';
 
 interface ChainStatisticOverview {
@@ -13,10 +14,16 @@ interface StatisticsProps {
   startTime: string;
   total: string | number;
   rank: ChainStatisticOverview[];
+  currency?: string;
 }
 
-export function Statistics({ children, startTime, total, title, rank }: PropsWithChildren<StatisticsProps>) {
+enum Currency {
+  usd = '$',
+}
+
+export function Statistics({ children, startTime, total, title, rank, currency }: PropsWithChildren<StatisticsProps>) {
   const { t } = useTranslation('common');
+  const currencyIcon = currency && Currency['usd'];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 mt-4 lg:mt-6">
@@ -32,8 +39,14 @@ export function Statistics({ children, startTime, total, title, rank }: PropsWit
         </div>
 
         <div className="flex flex-col gap-2 items-center justify-center mt-4 mb-2 md:mt-10 md:mb-6">
-          <h2 className="text-4xl">{total}</h2>
-          <span className="text-gray-400">{t('Total {{title}}', { title })}</span>
+          <h2 className="text-4xl">
+            {currencyIcon}
+            {prettyNumber(total)}
+          </h2>
+          <span className="text-gray-400">
+            {t('Total {{title}}', { title })}
+            {currency && <span className="uppercase ml-1">({currency})</span>}
+          </span>
         </div>
 
         <div className="flex flex-col gap-2 md:gap-4">
@@ -49,7 +62,10 @@ export function Statistics({ children, startTime, total, title, rank }: PropsWit
                 <span className="capitalize">{chain.name}</span>
               </div>
 
-              <span className="uppercase">{iTotal}</span>
+              <span className="uppercase">
+                {currencyIcon}
+                {prettyNumber(iTotal)}
+              </span>
             </div>
           ))}
         </div>

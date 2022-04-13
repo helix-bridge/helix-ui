@@ -2,8 +2,9 @@ import { Unit, unitMap, Units } from 'web3-utils';
 import BN from 'bn.js';
 import { isNull, isNumber, isString, isUndefined } from 'lodash';
 import Web3 from 'web3';
+import Bignumber from 'bignumber.js';
 
-export type WeiValue = string | BN | number | null | undefined;
+export type WeiValue = string | BN | number | null | undefined | Bignumber;
 export interface PrettyNumberOptions {
   decimal?: number;
   ignoreZeroDecimal?: boolean;
@@ -28,7 +29,7 @@ export function getPrecisionByUnit(unit: Unit): number {
 
 // eslint-disable-next-line complexity
 const toStr = (value: WeiValue): string => {
-  if (BN.isBN(value)) {
+  if (BN.isBN(value) || Bignumber.isBigNumber(value)) {
     return value.toString();
   } else if (isString(value)) {
     return value.replace(/,/g, '');
@@ -47,14 +48,14 @@ const isDecimal = (value: number | string) => {
 
 // eslint-disable-next-line complexity
 export function prettyNumber(
-  value: string | number | BN | null | undefined,
+  value: WeiValue,
   { decimal, ignoreZeroDecimal }: PrettyNumberOptions = { decimal: 3, ignoreZeroDecimal: false }
 ): string {
   if (value === null || typeof value === 'undefined') {
     return '-';
   }
 
-  if (typeof value === 'number' || BN.isBN(value)) {
+  if (typeof value === 'number' || BN.isBN(value) || Bignumber.isBigNumber(value)) {
     value = value.toString();
   }
 

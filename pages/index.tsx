@@ -1,10 +1,10 @@
 import { Spin } from 'antd';
-import BN from 'bn.js';
-import { format, subMilliseconds } from 'date-fns';
+import Bignumber from 'bignumber.js';
+import { format, secondsToMilliseconds, subMilliseconds } from 'date-fns';
 import { last, omit, orderBy } from 'lodash';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { BarChart, Statistic } from '../components/dashboard/BarChart';
 import { Chain, ChainProps } from '../components/dashboard/Chain';
 import { Statistics } from '../components/dashboard/Statistics';
@@ -19,12 +19,15 @@ import {
 } from '../config/network';
 import { TIMEPAST, useDailyStatistic } from '../hooks';
 import { ChainConfig, DailyStatistic } from '../model';
-import { fromWei, prettyNumber } from '../utils';
+import { fromWei, prettyNumber, rxGet } from '../utils';
 
 interface StatisticTotal {
-  volume: BN;
-  transactions: BN;
+  volume: Bignumber;
+  transactions: Bignumber;
 }
+
+// @see response of: https://api.coingecko.com/api/v3/coins/list
+type CoinIds = 'darwinia-crab-network' | 'darwinia-network-native-token';
 
 const chains: ChainProps[] = [
   { config: ethereumConfig },
@@ -36,22 +39,14 @@ const chains: ChainProps[] = [
   { config: pangoroConfig },
 ];
 
-function toMillionSeconds(value: string | number) {
-  const thousand = 1000;
-
-  return +value * thousand;
-}
-
 function Page() {
   const { t } = useTranslation('common');
-
   const { data: dailyStatistic, loading } = useDailyStatistic();
-
   const { data: crabStatistic } = useDailyStatistic('crab');
-
   const { data: darwiniaStatistic } = useDailyStatistic('darwinia');
+  const [prices, setPrices] = useState({ crab: { usd: 1 }, darwinia: { usd: 1 } });
 
-  const { volume, transactions, volumeTotal, transactionsTotal } = useMemo(() => {
+  const { volume, transactions, transactionsTotal } = useMemo(() => {
     if (!dailyStatistic) {
       return { volume: [], transactions: [], volumeTotal: 0, transactionsTotal: 0 };
     }
@@ -60,17 +55,21 @@ function Page() {
 
     return {
       volume: dailyStatistics
-        .map(({ id, dailyVolume }) => [toMillionSeconds(id), +fromWei({ value: dailyVolume, unit: 'gwei' })])
+        .map(({ id, dailyVolume }) => [secondsToMilliseconds(+id), +fromWei({ value: dailyVolume, unit: 'gwei' })])
         .reverse() as Statistic[],
+      // FIXME: this value need to multiply price: token_0 volume * token_0 price + ... + token_n volume * token_n price
       volumeTotal: fromWei(
-        { value: dailyStatistics.reduce((acc, cur) => acc.add(new BN(cur.dailyVolume)), new BN(0)), unit: 'gwei' },
+        {
+          value: dailyStatistics.reduce((acc, cur) => acc.plus(new Bignumber(cur.dailyVolume)), new Bignumber(0)),
+          unit: 'gwei',
+        },
         prettyNumber
       ),
       transactions: dailyStatistics
-        .map(({ id, dailyCount }) => [toMillionSeconds(id), dailyCount])
+        .map(({ id, dailyCount }) => [secondsToMilliseconds(+id), dailyCount])
         .reverse() as Statistic[],
       transactionsTotal: prettyNumber(
-        dailyStatistics.reduce((acc, cur) => acc.add(new BN(cur.dailyCount)), new BN(0)),
+        dailyStatistics.reduce((acc, cur) => acc.plus(new Bignumber(cur.dailyCount)), new Bignumber(0)),
         { decimal: 0 }
       ),
     };
@@ -78,28 +77,33 @@ function Page() {
 
   const startTime = useMemo(() => {
     const date = !dailyStatistic?.dailyStatistics?.length
-      ? subMilliseconds(new Date(), toMillionSeconds(TIMEPAST)).getTime()
-      : toMillionSeconds(last(dailyStatistic!.dailyStatistics)!.id);
+      ? subMilliseconds(new Date(), secondsToMilliseconds(TIMEPAST)).getTime()
+      : secondsToMilliseconds(+last(dailyStatistic!.dailyStatistics)!.id);
 
     return format(date, DATE_FORMAT) + ' (+UTC)';
   }, [dailyStatistic]);
 
   const { volumeRank, transactionsRank } = useMemo(() => {
-    const calcTotal = (key: keyof DailyStatistic) => (acc: BN, cur: DailyStatistic) => acc.add(new BN(cur[key]));
+    const calcTotal = (key: keyof DailyStatistic) => (acc: Bignumber, cur: DailyStatistic) =>
+      acc.plus(new Bignumber(cur[key]));
+
     const calcVolumeTotal = calcTotal('dailyVolume');
     const calcTransactionsTotal = calcTotal('dailyCount');
 
-    const calcChainTotal: (data: DailyStatistic[]) => StatisticTotal = (data) => ({
-      volume: data.reduce(calcVolumeTotal, new BN(0)),
-      transactions: data.reduce(calcTransactionsTotal, new BN(0)),
+    const calcChainTotal: (data: DailyStatistic[], price: number) => StatisticTotal = (data, price) => ({
+      volume: data.reduce(calcVolumeTotal, new Bignumber(0)).multipliedBy(new Bignumber(price)),
+      transactions: data.reduce(calcTransactionsTotal, new Bignumber(0)),
     });
 
     const rankSource = [
-      { chain: crabConfig, statistic: calcChainTotal(crabStatistic?.dailyStatistics || []) },
-      { chain: darwiniaConfig, statistic: calcChainTotal(darwiniaStatistic?.dailyStatistics || []) },
+      { chain: crabConfig, statistic: calcChainTotal(crabStatistic?.dailyStatistics || [], prices.crab.usd) },
+      {
+        chain: darwiniaConfig,
+        statistic: calcChainTotal(darwiniaStatistic?.dailyStatistics || [], prices.darwinia.usd),
+      },
     ];
 
-    const calcRank: (key: keyof StatisticTotal) => { chain: ChainConfig; total: BN }[] = (
+    const calcRank: (key: keyof StatisticTotal) => { chain: ChainConfig; total: Bignumber }[] = (
       key: keyof StatisticTotal
     ) => {
       const source = rankSource.map(({ chain, statistic }) => ({ chain, total: statistic[key] }));
@@ -110,21 +114,50 @@ function Page() {
     return {
       volumeRank: calcRank('volume').map(({ chain, total }) => ({
         chain,
-        total: fromWei({ value: total, unit: 'gwei' }),
+        total: fromWei({ value: total.toString().split('.')[0], unit: 'gwei' }),
       })),
       transactionsRank: calcRank('transactions').map(({ chain, total }) => ({ chain, total: total.toString() })),
     };
-  }, [crabStatistic, darwiniaStatistic]);
+  }, [crabStatistic?.dailyStatistics, darwiniaStatistic?.dailyStatistics, prices.crab.usd, prices.darwinia.usd]);
+
+  useEffect(() => {
+    const sub$$ = rxGet<{ [key in CoinIds]: { usd: number } }>({
+      url: 'https://api.coingecko.com/api/v3/simple/price',
+      params: { ids: 'darwinia-crab-network,darwinia-network-native-token', vs_currencies: 'usd' },
+    }).subscribe((res) => {
+      if (res) {
+        const { 'darwinia-crab-network': crab, 'darwinia-network-native-token': darwinia } = res;
+
+        setPrices({ crab, darwinia });
+      }
+    });
+
+    return () => sub$$.unsubscribe();
+  }, []);
 
   return (
     <div>
-      <Statistics title={t('volumes')} startTime={startTime} total={volumeTotal} rank={volumeRank}>
-        {loading ? <Spin size="large" className="block relative top-1/3" /> : <BarChart data={volume} name="volume" />}
+      <Statistics
+        title={t('volumes')}
+        startTime={startTime}
+        total={volumeRank.reduce((acc, cur) => acc.plus(cur.total), new Bignumber(0)).toString()}
+        rank={volumeRank}
+        currency="usd"
+      >
+        {loading ? (
+          <div className="block relative top-1/3 text-center">
+            <Spin />
+          </div>
+        ) : (
+          <BarChart data={volume} name="volume" />
+        )}
       </Statistics>
 
       <Statistics title="transactions" startTime={startTime} total={transactionsTotal} rank={transactionsRank}>
         {loading ? (
-          <Spin size="large" className="block relative top-1/3" />
+          <div className="block relative top-1/3 text-center">
+            <Spin />
+          </div>
         ) : (
           <BarChart data={transactions} name="transactions" />
         )}
