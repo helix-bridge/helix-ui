@@ -11,16 +11,16 @@ export interface ChainProps {
 
 export function Chain({ config, logoKey }: ChainProps) {
   return (
-    <div className="flex items-center px-6 py-8 gap-6 bg-antDark">
+    <div className="flex items-center px-6 py-8 gap-6 bg-gray-200 dark:bg-antDark">
       <Image src={config.facade[logoKey ?? 'logo'] as string} width={70} height={70} />
 
       <div className="flex flex-col gap-2">
         <h6 className="capitalize">{getDisplayName(config)}</h6>
         <BestNumber config={config} color={'#1fe733'} />
-        <div className="flex gap-2 text-lg">
-          <GlobalOutlined />
-          <GithubOutlined />
-          <TwitterCircleFilled />
+        <div className="flex gap-2 text-lg text-gray-400 cursor-pointer">
+          <GlobalOutlined className="hover:text-gray-600 dark:hover:text-gray-200 transition-colors duration-200" />
+          <GithubOutlined className="hover:text-gray-600 dark:hover:text-gray-200 transition-colors duration-200" />
+          <TwitterCircleFilled className="hover:text-gray-600 dark:hover:text-gray-200 transition-colors duration-200" />
         </div>
       </div>
     </div>

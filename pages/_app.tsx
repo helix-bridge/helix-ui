@@ -6,7 +6,8 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { FunctionComponent, useEffect } from 'react';
 import AppLayout from '../components/AppLayout';
-import { NETWORK_DARK_THEME, SKIN_THEME } from '../config/theme';
+import { toggleTheme } from '../components/widget/ThemeSwitch';
+import { THEME } from '../config/theme';
 import '../styles/index.scss';
 import '../theme/antd/index.less';
 import { readStorage } from '../utils';
@@ -29,15 +30,7 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
     script.addEventListener('load', () => {
       const theme = readStorage().theme;
 
-      window.less
-        .modifyVars({
-          ...SKIN_THEME[theme ?? 'dark'],
-          ...SKIN_THEME.vars,
-          ...NETWORK_DARK_THEME['pangolin'],
-        })
-        .catch((error: unknown) => {
-          console.error('🚀 ~ modify css variable failed: ', error);
-        });
+      toggleTheme(theme ?? THEME.DARK);
     });
 
     script.src = 'https://cdn.bootcdn.net/ajax/libs/less.js/2.7.2/less.min.js';

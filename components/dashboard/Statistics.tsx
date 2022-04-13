@@ -27,12 +27,12 @@ export function Statistics({ children, startTime, total, title, rank, currency }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 mt-4 lg:mt-6">
-      <div className="lg:col-span-8 flex-1 p-4 bg-antDark">
+      <div className="lg:col-span-8 flex-1 p-4 bg-gray-200 dark:bg-antDark">
         <span className="uppercase">{title}</span>
         {children}
       </div>
 
-      <div className="lg:col-span-4 bg-antDark px-5 py-6">
+      <div className="lg:col-span-4 bg-gray-200 dark:bg-antDark px-5 py-6">
         <div className="flex justify-between items-center">
           <h3 className="uppercase">{title}</h3>
           <span className="text-gray-400">{startTime}</span>

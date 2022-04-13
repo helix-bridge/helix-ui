@@ -2,28 +2,27 @@ import { CopyrightOutlined, GithubOutlined, MailOutlined, TwitterOutlined } from
 import { Divider, Layout } from 'antd';
 import { getYear } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { NETWORK_LIGHT_THEME, THEME } from '../../config/theme';
+import { THEME } from '../../config/theme';
 import { LanguageProps } from './Language';
 import { ThemeSwitch, ThemeSwitchProps } from './ThemeSwitch';
 
 type FooterProps = LanguageProps & { className?: string } & ThemeSwitchProps;
 
-export function Footer({ network, theme, onThemeChange, className = '' }: FooterProps) {
+export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
   const { t } = useTranslation();
   // const color = theme === THEME.LIGHT ? '#0d101d' : undefined;
 
   return (
     <Layout.Footer
-      className={`flex items-center justify-between sm:px-16 px-4 text-gray-400 z-10 py-4 ${className}`}
+      className={`flex items-center justify-between sm:px-16 px-4 z-10 py-4 ${className}`}
       style={{
-        background:
-          theme === THEME.LIGHT ? NETWORK_LIGHT_THEME[network ?? 'pangolin']['@layout-header-background'] : '#020822',
+        background: theme === THEME.LIGHT ? '#ccc' : '#020822',
       }}
     >
       <div className="md:flex md:gap-4 md:flex-wrap dark:text-gray-400">
         <span className="flex items-center justify-center">
           <CopyrightOutlined />
-          <span className="ml-1">{t('{{year}} Darwinia', { year: getYear(new Date()) })}</span>
+          <span className="ml-1 text-gray-400">{t('{{year}} Darwinia', { year: getYear(new Date()) })}</span>
         </span>
       </div>
 
@@ -55,7 +54,10 @@ export function Footer({ network, theme, onThemeChange, className = '' }: Footer
           <MailOutlined />
         </a>
 
-        <Divider type="vertical" style={{ margin: 0 }} />
+        <Divider
+          type="vertical"
+          style={{ margin: 0, borderColor: 'rgba(255, 255, 255, .3)', height: '0.5em', marginTop: '0.25em' }}
+        />
 
         <ThemeSwitch
           defaultTheme={THEME.DARK}

@@ -1,6 +1,8 @@
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts/highstock';
 import { useRef } from 'react';
+import { THEME } from '../../config/theme';
+import { readStorage } from '../../utils';
 
 export type Statistic = [number, number];
 
@@ -11,8 +13,9 @@ interface BarChartProps {
 
 export function BarChart({ data, name }: BarChartProps) {
   const charRef = useRef(null);
+  const isDark = readStorage().theme === THEME.DARK;
   const mainColor = '#816eeb';
-  const barColor = '#151e33';
+  const barColor = isDark ? '#151e33' : 'rgb(229,231,235)';
 
   const options = {
     chart: {
@@ -53,7 +56,7 @@ export function BarChart({ data, name }: BarChartProps) {
         width: 0,
       },
       buttonTheme: {
-        fill: '#000',
+        fill: isDark ? '#000' : '#ccc',
         stroke: '#ffffff26',
         'stroke-width': 1,
         style: {
@@ -107,7 +110,6 @@ export function BarChart({ data, name }: BarChartProps) {
     credits: {
       enabled: false,
     },
-    /* eslint-enable no-magic-numbers */
   };
 
   return (

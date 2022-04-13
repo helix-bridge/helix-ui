@@ -264,13 +264,15 @@ const Page: NextPage<{
         <h3 className="uppercase text-xs md:text-lg">{t('transaction detail')}</h3>
 
         <div>
-          <div className="grid grid-cols-5 gap-4 p-3 bg-antDark" style={{ borderRadius: 40 }}>
+          <div
+            className="grid grid-cols-5 gap-4 p-3 bg-gray-200 dark:bg-antDark bg-opacity-25"
+            style={{ borderRadius: 40 }}
+          >
             <Logo chain={departure} width={40} height={40} className="w-5 md:w-10" />
             <div
-              className="flex items-center justify-center col-span-3 px-4 md:px-8 transform -translate-y-3"
+              className="flex items-center justify-center col-span-3 px-4 md:px-8 transform -translate-y-3 bg-gray-300 dark:bg-gray-900"
               style={{
                 clipPath: 'polygon(85% 0%, 100% 50%, 85% 100%, 0% 100%, 15% 50%, 0% 0%)',
-                backgroundColor: '#012342',
                 height: 'calc(100% + 24px)',
               }}
             >
@@ -286,7 +288,7 @@ const Page: NextPage<{
         </div>
       </div>
 
-      <div className="px-8 py-3 mt-6 bg-antDark">
+      <div className="px-8 py-3 mt-6 bg-gray-200 dark:bg-antDark">
         <Description title={t('Source Tx Hash')} tip={t('Address (external or contract) receiving the transaction.')}>
           {departureRecord && (
             <SubscanLink

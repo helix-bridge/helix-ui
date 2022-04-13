@@ -56,8 +56,8 @@ interface ViewBoardProps {
 
 function ViewBoard({ title, count }: ViewBoardProps) {
   return (
-    <div className="flex justify-between items-center lg:flex-col lg:gap-4 bg-antDark w-full px-4 lg:px-0 py-2 lg:py-4 text-center">
-      <span className="text-gray-400 uppercase">{title}</span>
+    <div className="flex justify-between items-center lg:flex-col lg:gap-4 bg-gray-200 dark:bg-antDark w-full px-4 lg:px-0 py-2 lg:py-4 text-center text-gray-800 dark:text-gray-400">
+      <span className="uppercase">{title}</span>
       <span className="text-xl lg:text-4xl">{count}</span>
     </div>
   );
@@ -224,12 +224,12 @@ function Page() {
                   const record = source[row.index];
                   const isLoaderRow = row.index > source.length - 1;
                   // eslint-disable-next-line no-magic-numbers
-                  const bg = row.index % 2 === 0 ? 'bg-antDark' : '';
+                  const bg = row.index % 2 === 0 ? 'bg-gray-200 dark:bg-antDark' : '';
 
                   return (
                     <div
                       className={`grid grid-cols-12 items-center py-2 px-4 cursor-pointer transition-all duration-300 
-                      hover:bg-gray-800 ${bg}`}
+                      hover:bg-gray-400 dark:hover:bg-gray-800 ${bg}`}
                       style={{
                         position: 'absolute',
                         top: 0,
