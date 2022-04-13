@@ -7,8 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { Path } from '../config/constant';
 import { THEME } from '../config/theme';
 import { readStorage } from '../utils';
+import { Footer } from './widget/Footer';
 import { Navigator } from './widget/Navigator';
-import { ThemeSwitch } from './widget/ThemeSwitch';
 
 const { Header, Content } = Layout;
 
@@ -63,14 +63,12 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
           >
             {t('Launch App')}
           </Button>
-
-          <div className="justify-end items-center md:pl-8 hidden">
-            <ThemeSwitch defaultTheme={THEME.DARK} onThemeChange={setTheme} mode="btn" />
-          </div>
         </div>
       </Header>
 
       <Content className="sm:px-16 sm:pt-4 px-4 py-1 my-24 sm:my-20">{children}</Content>
+
+      <Footer onThemeChange={setTheme} />
     </Layout>
   );
 }

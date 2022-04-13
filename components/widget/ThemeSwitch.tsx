@@ -23,11 +23,11 @@ const toggleTheme = (theme: THEME, network: Network = 'pangolin') => {
   }
 };
 
-interface ThemeSwitchProps extends SwitchProps {
+export interface ThemeSwitchProps extends SwitchProps {
   network?: Network;
   defaultTheme?: THEME;
   onThemeChange?: (theme: THEME) => void;
-  mode?: 'switcher' | 'btn';
+  mode?: 'switcher' | 'btn' | 'icon';
 }
 
 export function ThemeSwitch({
@@ -60,16 +60,22 @@ export function ThemeSwitch({
     }
   }, [network, theme]);
 
-  return mode === 'switcher' ? (
-    <Switch
-      checkedChildren="🌜"
-      unCheckedChildren="️🌞"
-      {...others}
-      checked={theme === THEME.DARK}
-      onChange={toggle}
-      className={className + ' flex items-center'}
-    />
-  ) : (
-    <Button type="link" icon={<Icon />} className={className + ' flex items-center'} onClick={toggle}></Button>
-  );
+  if (mode === 'switcher') {
+    return (
+      <Switch
+        checkedChildren="🌜"
+        unCheckedChildren="️🌞"
+        {...others}
+        checked={theme === THEME.DARK}
+        onChange={toggle}
+        className={className + ' flex items-center'}
+      />
+    );
+  }
+
+  if (mode === 'btn') {
+    <Button type="link" icon={<Icon />} className={className + ' flex items-center'} onClick={toggle}></Button>;
+  }
+
+  return <Icon className={className} onClick={toggle} />;
 }
