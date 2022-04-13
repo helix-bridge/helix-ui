@@ -4,7 +4,7 @@ import { formatDistanceToNow, getUnixTime } from 'date-fns';
 import { useQuery } from 'graphql-hooks';
 import { last } from 'lodash';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useVirtual } from 'react-virtual';
@@ -69,21 +69,8 @@ function Record({ record }: { record: Substrate2SubstrateRecord }) {
 
   return (
     <>
-      <span className="justify-self-start whitespace-nowrap">
-        <Link
-          href={{
-            pathname: Path.transaction + '/' + record.id,
-            query: new URLSearchParams({
-              from: record.fromChain,
-              to: record.toChain,
-              fromMode: record.fromChainMode,
-              toMode: record.toChainMode,
-            }).toString(),
-            // state: record,
-          }}
-        >
-          {formatDistanceToNow(new Date(record.startTime), { includeSeconds: true, addSuffix: true })}
-        </Link>
+      <span className="justify-self-start">
+        {formatDistanceToNow(new Date(record.startTime), { includeSeconds: true, addSuffix: true })}
       </span>
       <Party
         chain={record.fromChain}
@@ -112,6 +99,7 @@ function Page() {
   const { t } = useTranslation('common');
   const [isValidSender, setIsValidSender] = useState(true);
   const startTime = useMemo(() => getUnixTime(new Date()), []);
+  const router = useRouter();
   const { data: dailyStatistic } = useDailyStatistic();
   const { total: accountTotal } = useAccountStatistic();
 
@@ -185,6 +173,7 @@ function Page() {
 
                 if (!value) {
                   setIsValidSender(true);
+                  setSource([]);
                   refetch({ variables: { first: PAGE_SIZE, startTime: getUnixTime(new Date()) } });
                   return;
                 }
@@ -192,6 +181,7 @@ function Page() {
                 try {
                   const address = isValidAddress(value, 'ethereum') ? value : convertToDvm(value);
 
+                  setSource([]);
                   refetch({ variables: { first: PAGE_SIZE, startTime: getUnixTime(new Date()), sender: address } });
                   setIsValidSender(true);
                 } catch {
@@ -205,6 +195,7 @@ function Page() {
             <Button
               type="link"
               onClick={() => {
+                setSource([]);
                 refetch({ variables: { first: PAGE_SIZE, startTime: getUnixTime(new Date()) } });
               }}
               disabled={loading}
@@ -232,11 +223,13 @@ function Page() {
                 {rowVirtualizer.virtualItems.map((row) => {
                   const record = source[row.index];
                   const isLoaderRow = row.index > source.length - 1;
+                  // eslint-disable-next-line no-magic-numbers
+                  const bg = row.index % 2 === 0 ? 'bg-antDark' : '';
 
                   return (
                     <div
-                      // eslint-disable-next-line no-magic-numbers
-                      className={`grid grid-cols-12 items-center py-2 px-4 ${row.index % 2 === 0 ? 'bg-antDark' : ''}`}
+                      className={`grid grid-cols-12 items-center py-2 px-4 cursor-pointer transition-all duration-300 
+                      hover:bg-gray-800 ${bg}`}
                       style={{
                         position: 'absolute',
                         top: 0,
@@ -246,6 +239,17 @@ function Page() {
                         transform: `translateY(${row.start}px)`,
                       }}
                       key={row.key}
+                      onClick={() => {
+                        router.push({
+                          pathname: Path.transaction + '/' + record.id,
+                          query: new URLSearchParams({
+                            from: record.fromChain,
+                            to: record.toChain,
+                            fromMode: record.fromChainMode,
+                            toMode: record.toChainMode,
+                          }).toString(),
+                        });
+                      }}
                     >
                       {isLoaderRow ? (
                         data.s2sRecords.length ? (

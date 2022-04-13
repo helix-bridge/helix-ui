@@ -15,6 +15,7 @@ import { EMPTY, from as fromRx, map, of, switchMap } from 'rxjs';
 import { CrossChainState } from '../../components/widget/CrossChainStatus';
 import { EllipsisMiddle } from '../../components/widget/EllipsisMiddle';
 import { Logo } from '../../components/widget/Logo';
+import { SubscanLink } from '../../components/widget/SubscanLink';
 import { CrossChainStatus, MIDDLE_DURATION } from '../../config/constant';
 import { useIsMounted } from '../../hooks';
 import {
@@ -286,7 +287,15 @@ const Page: NextPage<{
 
       <div className="px-8 py-3 mt-6 bg-antDark">
         <Description title={t('Source Tx Hash')} tip={t('Address (external or contract) receiving the transaction.')}>
-          {departureRecord && <EllipsisMiddle copyable>{departureRecord.requestTxHash}</EllipsisMiddle>}
+          {departureRecord && (
+            <SubscanLink
+              network={departure.name}
+              txHash={departureRecord.requestTxHash}
+              className="hover:opacity-80 transition-opacity duration-200"
+            >
+              <EllipsisMiddle copyable>{departureRecord.requestTxHash}</EllipsisMiddle>
+            </SubscanLink>
+          )}
         </Description>
 
         <Description
@@ -294,7 +303,13 @@ const Page: NextPage<{
           tip={t('Unique character string (TxID) assigned to every verified transaction on the Target Chain.')}
         >
           {arrivalRecord ? (
-            <EllipsisMiddle copyable>{arrivalRecord.requestTxHash}</EllipsisMiddle>
+            <SubscanLink
+              network={arrival.name}
+              txHash={arrivalRecord.requestTxHash}
+              className="hover:opacity-80 transition-opacity duration-200"
+            >
+              <EllipsisMiddle copyable>{arrivalRecord.requestTxHash}</EllipsisMiddle>
+            </SubscanLink>
           ) : (
             <Progress percent={50} className="max-w-xs" />
           )}
