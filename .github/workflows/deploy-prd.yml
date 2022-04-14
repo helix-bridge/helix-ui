@@ -28,7 +28,8 @@ jobs:
           preview_output: true
           prod_mode: true
           project_name: helix-ui
-          dist_path: .next
+          script_run: false
+          dist_path: .
 
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
@@ -40,3 +41,4 @@ jobs:
           SLACK_TITLE: Preview
           SLACK_USERNAME: Vercel
           SLACK_WEBHOOK: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+
