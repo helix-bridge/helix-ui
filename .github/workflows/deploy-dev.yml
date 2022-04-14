@@ -26,7 +26,7 @@ jobs:
           preview_output: true
           alias_domain: helix-ui-dev
           project_name: helix-ui
-          dist_path: .next
+          dist_path: .
 
       - uses: marocchino/sticky-pull-request-comment@v2
         with:
