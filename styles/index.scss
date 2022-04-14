@@ -6,6 +6,15 @@ body {
   font-family: 'IBM Plex Sans', sans-serif;
 }
 
+// icon font class, symbol usage
+.icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+
 .confirm-modal.ant-modal {
   max-width: calc(100vw - 32px);
 

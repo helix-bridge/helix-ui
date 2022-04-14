@@ -1,4 +1,4 @@
-import { ClockCircleFilled, ClockCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { Breadcrumb, Divider, Progress, Tooltip } from 'antd';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
 import camelcaseKeys from 'camelcase-keys';
@@ -270,7 +270,7 @@ const Page: NextPage<{
           >
             <Logo chain={departure} width={40} height={40} className="w-5 md:w-10" />
             <div
-              className="flex items-center justify-center col-span-3 px-4 md:px-8 transform -translate-y-3 bg-gray-300 dark:bg-gray-900"
+              className="flex items-center justify-center col-span-3 px-4 md:px-8 transform -translate-y-3 bg-gray-300 bg-opacity-20 dark:bg-blue-900 dark:bg-opacity-25"
               style={{
                 clipPath: 'polygon(85% 0%, 100% 50%, 85% 100%, 0% 100%, 15% 50%, 0% 0%)',
                 height: 'calc(100% + 24px)',
@@ -332,13 +332,18 @@ const Page: NextPage<{
           {departureRecord && (
             <div className="flex items-center gap-2">
               <ClockCircleOutlined />
+
               <span>
                 {formatDistanceToNow(new Date(departureRecord.startTime), { includeSeconds: true, addSuffix: true })}
               </span>
+
               <span className="hidden md:inline-block">({formatRFC7231(new Date(departureRecord.startTime))})</span>
+
               <Divider type="vertical" orientation="center" />
 
-              <ClockCircleFilled className="text-gray-400" />
+              <svg className="icon text-gray-400 text-base" aria-hidden="true">
+                <use xlinkHref="#dwa-clock"></use>
+              </svg>
 
               <span className="text-gray-400">
                 {t('Confirmed within {{des}}', {

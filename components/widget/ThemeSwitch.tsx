@@ -1,9 +1,9 @@
-import { AlertFilled, BulbFilled } from '@ant-design/icons';
 import { Button, Switch, SwitchProps } from 'antd';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { NETWORK_DARK_THEME, NETWORK_LIGHT_THEME, SKIN_THEME, THEME } from '../../config/theme';
 import { Network } from '../../model';
 import { readStorage, updateStorage } from '../../utils/helper/storage';
+import { Icon } from './Icon';
 
 export const toggleTheme = (theme: THEME, network: Network = 'pangolin') => {
   const networkTheme = theme === THEME.DARK ? NETWORK_DARK_THEME : NETWORK_LIGHT_THEME;
@@ -48,7 +48,7 @@ export function ThemeSwitch({
       onThemeChange(current);
     }
   }, [onThemeChange, theme]);
-  const Icon = useMemo(() => (theme === THEME.DARK ? BulbFilled : AlertFilled), [theme]);
+  const iconName = useMemo(() => (theme === THEME.DARK ? '#dwa-sun' : '#dwa-moon'), [theme]);
 
   useEffect(() => {
     toggleTheme(theme, network);
@@ -74,8 +74,13 @@ export function ThemeSwitch({
   }
 
   if (mode === 'btn') {
-    <Button type="link" icon={<Icon />} className={className + ' flex items-center'} onClick={toggle}></Button>;
+    <Button
+      type="link"
+      icon={<Icon name={iconName} />}
+      className={className + ' flex items-center'}
+      onClick={toggle}
+    ></Button>;
   }
 
-  return <Icon className={className} onClick={toggle} />;
+  return <Icon className={className} name={iconName} onClick={toggle} />;
 }

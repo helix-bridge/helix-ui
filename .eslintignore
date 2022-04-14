@@ -12,3 +12,4 @@ cypress/
 **/__tests__/
 **/plugins/**/*.js
 .eslintrc.js
+public/
