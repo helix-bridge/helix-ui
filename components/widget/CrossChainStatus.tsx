@@ -9,7 +9,7 @@ export function CrossChainState({ value }: { value: number }) {
   return (
     <div
       style={{ backgroundColor: CrossChainStatusColor[value] }}
-      className="flex items-center gap-1 px-2 rounded-xs max-w-max min-w-min h-6 text-gray-200 dark:text-gray-800"
+      className="flex items-center gap-1 px-2 rounded-xs max-w-max min-w-min h-6 text-gray-200"
     >
       <Icon />
       <span>{CrossChainStatus[value]}</span>

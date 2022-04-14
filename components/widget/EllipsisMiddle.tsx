@@ -27,6 +27,7 @@ interface EllipsisMiddleProps {
   percent?: number;
   width?: number;
   copyable?: boolean;
+  isGrow?: boolean;
 }
 
 export function EllipsisMiddle({
@@ -34,6 +35,7 @@ export function EllipsisMiddle({
   className,
   width,
   copyable = false,
+  isGrow = false,
 }: PropsWithChildren<EllipsisMiddleProps>) {
   const ref = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line complexity
@@ -65,7 +67,7 @@ export function EllipsisMiddle({
 
       const nodeWidth = node.offsetWidth;
       const parentWidth = (parent as HTMLElement).offsetWidth;
-      let containerWidth = Math.min(nodeWidth, parentWidth);
+      let containerWidth = isGrow ? Math.max(nodeWidth, parentWidth) : Math.min(nodeWidth, parentWidth);
 
       if (containerWidth === 0) {
         containerWidth = Math.max(nodeWidth, parentWidth);

@@ -178,6 +178,7 @@ const Page: NextPage<{
     () => fromWei({ value: departureRecord?.amount ?? 0, unit: 'gwei' }, prettyNumber),
     [departureRecord?.amount]
   );
+  const fromToken = useMemo(() => (isIssuing ? 'RING' : 'xRING'), [isIssuing]);
 
   /**
    * origin sender -> target recipient -> target sender -> origin recipient
@@ -192,7 +193,7 @@ const Page: NextPage<{
         chain: departure,
         from: revertAccount(departureRecord.sender, query.from, query.fromMode),
         to: revertAccount(arrivalRecord.recipient, query.from, query.fromMode),
-        token: { logo: '/image/ring.svg', name: isIssuing ? 'RING' : 'xRING' },
+        token: { logo: '/image/ring.svg', name: fromToken },
       },
       {
         chain: arrival,
@@ -206,6 +207,7 @@ const Page: NextPage<{
     arrivalRecord,
     departure,
     departureRecord,
+    fromToken,
     isIssuing,
     query.from,
     query.fromMode,
@@ -405,11 +407,11 @@ const Page: NextPage<{
           title={t('Value')}
           tip={t('The amount to be transferred to the recipient with the cross-chain transaction.')}
         >
-          {amount}
+          {amount} {fromToken}
         </Description>
 
         <Description title={t('Transaction Fee')} tip={'Amount paid for processing the cross-chain transaction.'}>
-          {fromWei({ value: departureRecord?.fee || arrivalRecord?.fee })}
+          {fromWei({ value: departureRecord?.fee || arrivalRecord?.fee })} {fromToken}
         </Description>
 
         <Divider />

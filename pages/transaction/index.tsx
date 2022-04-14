@@ -1,6 +1,6 @@
 import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Affix, Button, Input, Spin } from 'antd';
-import { formatDistanceToNow, getUnixTime } from 'date-fns';
+import { Affix, Button, Input, Spin, Tooltip } from 'antd';
+import { formatDistance, getUnixTime } from 'date-fns';
 import { useQuery } from 'graphql-hooks';
 import { last } from 'lodash';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -9,8 +9,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useVirtual } from 'react-virtual';
 import { distinctUntilChanged, filter, Subject } from 'rxjs';
-import { Party } from '../../components/transaction/Party';
 import { CrossChainState } from '../../components/widget/CrossChainStatus';
+import { EllipsisMiddle } from '../../components/widget/EllipsisMiddle';
 import { Path } from '../../config/constant';
 import { useAccountStatistic, useDailyStatistic } from '../../hooks';
 import { Network, Substrate2SubstrateRecord } from '../../model';
@@ -21,6 +21,7 @@ import {
   getSupportedChains,
   isValidAddress,
   prettyNumber,
+  revertAccount,
 } from '../../utils';
 
 const S2S_RECORDS = `
@@ -64,30 +65,44 @@ function ViewBoard({ title, count }: ViewBoardProps) {
 }
 
 function Record({ record }: { record: Substrate2SubstrateRecord }) {
-  const { fromChainMode, fromChain } = record;
+  const { fromChainMode, fromChain, sender, recipient, toChain, toChainMode } = record;
   const config = getChainConfigByName(fromChain as Network);
+  const now = new Date().toISOString().split('.')[0];
+  const fromAccount = revertAccount(sender, fromChain, fromChainMode);
+  const toAccount = revertAccount(recipient, toChain, toChainMode);
+  const amount = fromWei({ value: record.amount, unit: 'gwei' }, prettyNumber);
 
   return (
     <>
-      <span className="justify-self-start">
-        {formatDistanceToNow(new Date(record.startTime), { includeSeconds: true, addSuffix: true })}
+      <span className="justify-self-start ellipse-two-lines">
+        {formatDistance(new Date(record.startTime), new Date(now), {
+          includeSeconds: true,
+          addSuffix: true,
+        })}
       </span>
-      <Party
-        chain={record.fromChain}
-        account={record.sender}
-        mode={record.fromChainMode}
-        className="col-span-3 overflow-hidden"
-      />
-      <Party
-        chain={record.toChain}
-        account={record.recipient}
-        mode={record.toChainMode}
-        className="col-span-3 overflow-hidden"
-      />
+
+      <div className="flex flex-col col-span-3 overflow-hidden pl-4 pr-2">
+        <Tooltip title={fromAccount}>
+          <span className="capitalize">{fromChain}</span>
+        </Tooltip>
+        <EllipsisMiddle isGrow>{fromAccount}</EllipsisMiddle>
+      </div>
+
+      <div className="flex flex-col col-span-3 overflow-hidden pl-2 pr-4">
+        <Tooltip title={toAccount}>
+          <span className="capitalize">{toChain}</span>
+        </Tooltip>
+        <EllipsisMiddle isGrow>{toAccount}</EllipsisMiddle>
+      </div>
+
       <span>{`${fromChainMode === 'dvm' ? 'x' : ''}${config?.isTest ? 'O' : ''}RING`}</span>
-      <span>{fromWei({ value: record.amount, unit: 'gwei' }, prettyNumber)}</span>
-      <span>NAN</span>
-      <span>{record.bridge}</span>
+
+      <Tooltip title={amount}>
+        <span className="justify-self-center max-w-full truncate">{amount}</span>
+      </Tooltip>
+
+      <span className="justify-self-center">NAN</span>
+      <span className="justify-self-center">{record.bridge}</span>
       <CrossChainState value={record.result} />
     </>
   );
@@ -206,18 +221,23 @@ function Page() {
             </Button>
           </div>
 
-          <div className="mt-4 lg:mt-6 grid grid-cols-12 border-b border-gray-500 items-center py-2 px-4">
-            <span>{t('Time')}</span>
-            <span className="col-span-3 overflow-hidden">{t('From')}</span>
-            <span className="col-span-3 overflow-hidden">{t('To')}</span>
+          <div className="mt-4 lg:mt-6 grid grid-cols-12 border-b border-gray-500 items-center p-4 bg-gray-200 dark:bg-antDark">
+            <span className="mr-5">{t('Time')}</span>
+            <span className="col-span-3 overflow-hidden pl-4 pr-2">{t('From')}</span>
+            <span className="col-span-3 overflow-hidden pl-2 pr-4">{t('To')}</span>
             <span>{t('Asset')}</span>
-            <span>{t('Amount')}</span>
-            <span>{t('Fee')}</span>
-            <span>{t('Bridge')}</span>
+            <span className="justify-self-center">{t('Amount')}</span>
+            <span className="justify-self-center">{t('Fee')}</span>
+            <span className="justify-self-center">{t('Bridge')}</span>
             <span>{t('Status')}</span>
           </div>
 
-          <div style={{ height: 'calc(100vh - 40px - 64px - 78px)' }} ref={virtualBoxRef} className="overflow-auto">
+          <div
+            // header: 64px search box: 40px table header + margin: 78px footer 54px
+            style={{ height: 'calc(100vh - 40px - 64px - 78px - 54px)' }}
+            ref={virtualBoxRef}
+            className="overflow-auto"
+          >
             {data && (
               <div style={{ height: rowVirtualizer.totalSize, width: '100%', position: 'relative' }}>
                 {rowVirtualizer.virtualItems.map((row) => {
