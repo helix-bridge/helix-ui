@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { EMPTY, from as fromRx, map, of, switchMap } from 'rxjs';
 import { CrossChainState } from '../../components/widget/CrossChainStatus';
 import { EllipsisMiddle } from '../../components/widget/EllipsisMiddle';
+import { Icon } from '../../components/widget/Icon';
 import { Logo } from '../../components/widget/Logo';
 import { SubscanLink } from '../../components/widget/SubscanLink';
 import { CrossChainStatus, MIDDLE_DURATION } from '../../config/constant';
@@ -331,7 +332,7 @@ const Page: NextPage<{
         >
           {departureRecord && (
             <div className="flex items-center gap-2">
-              <ClockCircleOutlined />
+              {arrivalRecord?.result ? <ClockCircleOutlined /> : <Icon name="#dwa-reload" />}
 
               <span>
                 {formatDistanceToNow(new Date(departureRecord.startTime), { includeSeconds: true, addSuffix: true })}
@@ -341,9 +342,7 @@ const Page: NextPage<{
 
               <Divider type="vertical" orientation="center" />
 
-              <svg className="icon text-gray-400 text-base" aria-hidden="true">
-                <use xlinkHref="#dwa-clock"></use>
-              </svg>
+              <Icon name="#dwa-clock-fill" className="text-gray-400 text-base" />
 
               <span className="text-gray-400">
                 {t('Confirmed within {{des}}', {
