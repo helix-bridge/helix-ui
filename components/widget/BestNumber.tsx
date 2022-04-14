@@ -1,7 +1,8 @@
 import { BlockNumber } from '@polkadot/types/interfaces/runtime';
 import { Spin, Tooltip } from 'antd';
 import { memo, useEffect, useMemo, useState } from 'react';
-import { from, startWith, Subscription, switchMap, switchMapTo, takeWhile, timer } from 'rxjs';
+import { from, mergeMap, retry, startWith, Subscription, switchMap, takeWhile, timer } from 'rxjs';
+import { MIDDLE_DURATION } from '../../config/constant';
 import { useIsMounted } from '../../hooks';
 import { ChainConfig } from '../../model';
 import { entrance, isEthereumNetwork, isPolkadotNetwork, prettyNumber, waitUntilConnected } from '../../utils';
@@ -17,6 +18,7 @@ interface BestNumberProps {
 function Component({ config, color = '', onChange = (num) => void num }: BestNumberProps) {
   const isMounted = useIsMounted();
   const [bestNumber, setBestNumber] = useState<string | null>(null);
+
   const observer = useMemo(
     () => ({
       next(num: BlockNumber | number | null) {
@@ -24,6 +26,12 @@ function Component({ config, color = '', onChange = (num) => void num }: BestNum
           onChange(num.toString());
           setBestNumber(num.toString());
         }
+      },
+      error(error: unknown) {
+        console.error(error);
+      },
+      complete() {
+        console.log('best number observer completed');
       },
     }),
     [onChange]
@@ -37,7 +45,7 @@ function Component({ config, color = '', onChange = (num) => void num }: BestNum
 
       sub$$ = from(waitUntilConnected(api))
         .pipe(
-          switchMapTo(timer(0, duration)),
+          mergeMap(() => timer(0, duration)),
           takeWhile(() => isMounted && api.isConnected),
           switchMap(() => from(api.derive.chain.bestNumber())),
           startWith(null)
@@ -52,6 +60,7 @@ function Component({ config, color = '', onChange = (num) => void num }: BestNum
         .pipe(
           takeWhile(() => isMounted),
           switchMap(() => from(web3.eth.getBlockNumber())),
+          retry({ count: 10, delay: MIDDLE_DURATION }),
           startWith(null)
         )
         .subscribe(observer);
