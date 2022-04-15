@@ -179,9 +179,11 @@ export function isSameNetConfig(config1: ChainConfig | null, config2: ChainConfi
   );
 }
 
-export function getChainConfigByName(name: Network | null | undefined): ChainConfig | null {
+export function getChainConfigByName(name: Network | null | undefined, mode?: NetworkMode): ChainConfig | null {
   if (name) {
-    return NETWORK_CONFIGURATIONS.find((item) => item.name === name) ?? null;
+    const config = NETWORK_CONFIGURATIONS.find((item) => item.name === name) ?? null;
+
+    return mode === 'native' ? omit(config, 'dvm') : config;
   }
 
   console.warn('🚀 Can not find target network config by name: ', name);
@@ -246,7 +248,11 @@ export async function isNetworkMatch(expectNetworkId: number): Promise<boolean> 
   return expectNetworkId === networkId;
 }
 
-export function getDisplayName(config: ChainConfig): string {
+export function getDisplayName(config: ChainConfig | null): string {
+  if (!config) {
+    return 'unknown';
+  }
+
   const mode = getNetworkMode(config);
   const name = upperFirst(config.name);
 

@@ -11,7 +11,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { EMPTY, from as fromRx, map, of, switchMap } from 'rxjs';
+import { from as fromRx, map, of, switchMap } from 'rxjs';
 import { CrossChainState } from '../../components/widget/CrossChainStatus';
 import { EllipsisMiddle } from '../../components/widget/EllipsisMiddle';
 import { Icon } from '../../components/widget/Icon';
@@ -22,12 +22,17 @@ import { useIsMounted } from '../../hooks';
 import {
   Arrival,
   Departure,
+  LockedRecord,
   NetworkQueryParams,
   Substrate2SubstrateDVMRecord,
   Substrate2SubstrateRecord,
   SubstrateDVM2SubstrateRecord,
+  UnlockedRecord,
+  Vertices,
 } from '../../model';
 import { fromWei, getBridge, pollWhile, prettyNumber, revertAccount, verticesToChainConfig } from '../../utils';
+
+type FinalActionRecord = Pick<UnlockedRecord, 'txHash' | 'id' | 'recipient' | 'amount'>;
 
 /**
  * subgraph
@@ -51,15 +56,27 @@ const S2S_REDEEM_RECORD_QUERY = gql`
   }
 `;
 
+const LOCKED_RECORD_QUERY = gql`
+  query lockRecordEntity($id: String!) {
+    lockRecordEntity(id: $id) {
+      id
+      recipient
+      transaction
+      amount
+      mapping_token
+    }
+  }
+`;
+
 /**
  * subql
  */
 const S2S_ISSUING_RECORD_QUERY = gql`
   query s2sEvent($id: String!) {
     s2sEvent(id: $id) {
+      id
       amount
       endTimestamp
-      id
       nonce
       recipient
       requestTxHash
@@ -69,6 +86,20 @@ const S2S_ISSUING_RECORD_QUERY = gql`
       startTimestamp
       token
       fee
+    }
+  }
+`;
+
+const S2S_UNLOCKED_RECORD_QUERY = gql`
+  query s2sUnlocked($id: String!) {
+    s2sUnlocked(id: $id) {
+      id
+      recipient
+      token
+      amount
+      timestamp
+      txHash
+      block
     }
   }
 `;
@@ -84,6 +115,11 @@ const sDVM2sFields: [keyof SubstrateDVM2SubstrateRecord, keyof Substrate2Substra
   ['start_timestamp', 'startTime'],
   ['request_transaction', 'requestTxHash'],
   ['response_transaction', 'responseTxHash'],
+];
+
+const finalRecordFields: [keyof LockedRecord, keyof UnlockedRecord][] = [
+  ['mapping_token', 'token'],
+  ['transaction', 'txHash'],
 ];
 
 const unifyRecordField: (
@@ -109,8 +145,10 @@ const unifyRecordField: (
   const reg = /^\d+$/;
   const bits = 13;
 
-  record.startTime = reg.test(record.startTime) ? +record.startTime.padEnd(bits, '0') : record.startTime;
-  record.endTime = reg.test(record.endTime) ? +record.endTime.padEnd(bits, '0') : record.endTime;
+  if (has(record, 'startTime')) {
+    record.startTime = reg.test(record.startTime) ? +record.startTime.padEnd(bits, '0') : record.startTime;
+    record.endTime = reg.test(record.endTime) ? +record.endTime.padEnd(bits, '0') : record.endTime;
+  }
 
   return record;
 };
@@ -140,8 +178,9 @@ const Page: NextPage<{
   id: string;
   issuingRecord: Substrate2SubstrateRecord | null;
   redeemRecord: Substrate2SubstrateRecord | null;
+  lockOrUnlockRecord: FinalActionRecord | null;
   // eslint-disable-next-line complexity
-}> = ({ id, issuingRecord, redeemRecord }) => {
+}> = ({ id, issuingRecord, redeemRecord, lockOrUnlockRecord }) => {
   const { t } = useTranslation('common');
   const router = useRouter();
   const query = router.query as unknown as NetworkQueryParams;
@@ -168,12 +207,12 @@ const Page: NextPage<{
   const bridge = getBridge(direction);
   const isIssuing = bridge.isIssuing(...direction);
 
-  const [departureRecord, arrRecord] = useMemo(
+  const [departureRecord, arrivalRecord] = useMemo(
     () => (isIssuing ? [issuingRecord, redeemRecord] : [redeemRecord, issuingRecord]),
     [isIssuing, issuingRecord, redeemRecord]
   );
 
-  const [arrivalRecord, setArrivalRecord] = useState<Substrate2SubstrateRecord | null>(arrRecord);
+  const [finalRecord, setFinalRecord] = useState<FinalActionRecord | null>(lockOrUnlockRecord);
 
   const amount = useMemo(
     () => fromWei({ value: departureRecord?.amount ?? 0, unit: 'gwei' }, prettyNumber),
@@ -217,36 +256,30 @@ const Page: NextPage<{
   ]);
 
   useEffect(() => {
-    const iKey = dataKey(S2S_ISSUING_RECORD_QUERY);
-    const rKey = dataKey(S2S_ISSUING_RECORD_QUERY);
     const apiConfig = bridge.config.api || {};
 
-    if (departureRecord && arrivalRecord) {
+    if (finalRecord) {
       return;
     }
 
     const sub$$ = of(null)
       .pipe(
         switchMap(() => {
-          if (!departureRecord) {
-            return fromRx(request(apiConfig.subql + bridge.departure.name, S2S_ISSUING_RECORD_QUERY, { id })).pipe(
-              map((res) => unifyRecordField(res[iKey], s2sDVMFields))
-            );
-          }
+          const unlockObs = fromRx(
+            request(apiConfig.subql + bridge.departure.name, S2S_UNLOCKED_RECORD_QUERY, { id })
+          ).pipe(map((res) => res[dataKey(S2S_UNLOCKED_RECORD_QUERY)]));
 
-          if (!arrivalRecord) {
-            return fromRx(request(apiConfig.subGraph, S2S_REDEEM_RECORD_QUERY, { id })).pipe(
-              map((res) => unifyRecordField(res[rKey], sDVM2sFields))
-            );
-          }
+          const lockObs = fromRx(request(apiConfig.subGraph, LOCKED_RECORD_QUERY, { id })).pipe(
+            map((res) => unifyRecordField(res[dataKey(LOCKED_RECORD_QUERY)], finalRecordFields))
+          );
 
-          return EMPTY;
+          return isIssuing ? lockObs : unlockObs;
         }),
         pollWhile(MIDDLE_DURATION, () => isMounted)
       )
       .subscribe((result) => {
         if (result) {
-          setArrivalRecord({ ...result, id } as Substrate2SubstrateRecord);
+          setFinalRecord(result);
         }
       });
 
@@ -293,7 +326,10 @@ const Page: NextPage<{
       </div>
 
       <div className="px-8 py-3 mt-6 bg-gray-200 dark:bg-antDark">
-        <Description title={t('Source Tx Hash')} tip={t('Address (external or contract) receiving the transaction.')}>
+        <Description
+          title={t('Source Tx Hash')}
+          tip={t('Unique character string (TxID) assigned to every verified transaction on the Source Chain.')}
+        >
           {departureRecord && (
             <SubscanLink
               network={departure.name}
@@ -309,13 +345,13 @@ const Page: NextPage<{
           title={t('Target Tx Hash')}
           tip={t('Unique character string (TxID) assigned to every verified transaction on the Target Chain.')}
         >
-          {arrivalRecord ? (
+          {finalRecord ? (
             <SubscanLink
               network={arrival.name}
-              txHash={arrivalRecord.requestTxHash}
+              txHash={finalRecord?.txHash}
               className="hover:opacity-80 transition-opacity duration-200"
             >
-              <EllipsisMiddle copyable>{arrivalRecord.requestTxHash}</EllipsisMiddle>
+              <EllipsisMiddle copyable>{finalRecord.txHash}</EllipsisMiddle>
             </SubscanLink>
           ) : (
             <Progress percent={50} className="max-w-xs" />
@@ -447,23 +483,41 @@ export async function getServerSideProps(
   const { id } = context.params!;
   const { from, fromMode, to, toMode } = context.query as unknown as NetworkQueryParams;
 
-  const bridge = getBridge([
+  const vertices: [Vertices, Vertices] = [
     { network: from, mode: fromMode },
     { network: to, mode: toMode },
-  ]);
+  ];
+
+  const bridge = getBridge(vertices);
+  const isIssuing = bridge.isIssuing(...vertices);
 
   const apiConfig = bridge.config.api || {};
-  const iKey = dataKey(S2S_ISSUING_RECORD_QUERY);
-  const rKey = dataKey(S2S_REDEEM_RECORD_QUERY);
-  const issuingRes = await request(apiConfig.subql + bridge.departure.name, S2S_ISSUING_RECORD_QUERY, { id });
-  const redeemRes = await request(apiConfig.subGraph, S2S_REDEEM_RECORD_QUERY, { id });
+  const issuing = request(apiConfig.subql + bridge.departure.name, S2S_ISSUING_RECORD_QUERY, { id });
+
+  const unlocked = request(apiConfig.subql + bridge.departure.name, S2S_UNLOCKED_RECORD_QUERY, { id }).then(
+    (res) => res && res[dataKey(S2S_UNLOCKED_RECORD_QUERY)]
+  );
+
+  const redeem = request(apiConfig.subGraph, S2S_REDEEM_RECORD_QUERY, { id });
+
+  const locked = request(apiConfig.subGraph, LOCKED_RECORD_QUERY, { id }).then(
+    (res) => res && res[dataKey(LOCKED_RECORD_QUERY)]
+  );
+
+  const [issuingRes, redeemRes, lockOrUnlockRecord] = await Promise.all([
+    issuing,
+    redeem,
+    isIssuing ? locked : unlocked,
+  ]);
 
   return {
     props: {
       ...translations,
       id,
-      issuingRecord: unifyRecordField(issuingRes[iKey], s2sDVMFields),
-      redeemRecord: unifyRecordField(redeemRes[rKey], sDVM2sFields),
+      issuingRecord: unifyRecordField(issuingRes[dataKey(S2S_ISSUING_RECORD_QUERY)], s2sDVMFields),
+      redeemRecord: unifyRecordField(redeemRes[dataKey(S2S_REDEEM_RECORD_QUERY)], sDVM2sFields),
+      lockOrUnlockRecord: unifyRecordField(lockOrUnlockRecord, finalRecordFields),
+      // lockOrUnlockRecord,
     },
   };
 }
