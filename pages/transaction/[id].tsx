@@ -223,37 +223,82 @@ const Page: NextPage<{
   /**
    * origin sender -> target recipient -> target sender -> origin recipient
    */
+  // eslint-disable-next-line complexity
   const transfers = useMemo(() => {
-    if (!departureRecord || !arrivalRecord) {
+    if (!departureRecord || departureRecord?.result === CrossChainStatus.pending) {
       return [];
     }
 
-    return [
-      {
-        chain: departure,
-        from: revertAccount(departureRecord.sender, query.from, query.fromMode),
-        to: revertAccount(arrivalRecord.recipient, query.from, query.fromMode),
-        token: { logo: '/image/ring.svg', name: fromToken },
-      },
-      {
-        chain: arrival,
-        from: revertAccount(arrivalRecord.sender, query.to, query.toMode),
-        to: revertAccount(departureRecord.recipient, query.to, query.toMode),
-        token: { logo: '/image/ring.svg', name: isIssuing ? 'xRING' : 'RING' },
-      },
-    ];
-  }, [
-    arrival,
-    arrivalRecord,
-    departure,
-    departureRecord,
-    fromToken,
-    isIssuing,
-    query.from,
-    query.fromMode,
-    query.to,
-    query.toMode,
-  ]);
+    const issuingTransfer =
+      departureRecord.result === CrossChainStatus.success
+        ? [
+            {
+              chain: departure,
+              from: revertAccount(departureRecord.sender, query.from, query.fromMode),
+              to: '2qeMxq616BhswXHiiHp7H4VgaVv2S8xwkzWkoyoxcTA8v1YA',
+              token: { logo: '/image/ring.svg', name: fromToken },
+            },
+            {
+              chain: arrival,
+              from: '0x0000000000000000000000000000000000000000',
+              to: revertAccount(departureRecord.recipient, query.to, query.toMode),
+              token: { logo: '/image/ring.svg', name: isIssuing ? 'xRING' : 'RING' },
+            },
+          ]
+        : [
+            {
+              chain: departure,
+              from: revertAccount(departureRecord.sender, query.from, query.fromMode),
+              to: '2qeMxq616BhswXHiiHp7H4VgaVv2S8xwkzWkoyoxcTA8v1YA',
+              token: { logo: '/image/ring.svg', name: fromToken },
+            },
+            {
+              chain: departure,
+              from: '2qeMxq616BhswXHiiHp7H4VgaVv2S8xwkzWkoyoxcTA8v1YA',
+              to: revertAccount(departureRecord.sender, query.from, query.fromMode),
+              token: { logo: '/image/ring.svg', name: fromToken },
+            },
+          ];
+
+    const redeemTransfer =
+      departureRecord.result === CrossChainStatus.success
+        ? [
+            {
+              chain: departure,
+              from: revertAccount(departureRecord.sender, query.from, query.fromMode),
+              to: '0x3CC8913088F79831c8335f0307f4FC92d79C1ac7',
+              token: { logo: '/image/ring.svg', name: fromToken },
+            },
+            {
+              chain: arrival,
+              from: '2qeMxq616BhswXHiiHp7H4VgaVv2S8xwkzWkoyoxcTA8v1YA',
+              to: revertAccount(departureRecord.recipient, query.to, query.toMode),
+              token: { logo: '/image/ring.svg', name: isIssuing ? 'xRING' : 'RING' },
+            },
+            {
+              chain: departure,
+              from: '0x3CC8913088F79831c8335f0307f4FC92d79C1ac7',
+              to: '0x0000000000000000000000000000000000000000',
+              token: { logo: '/image/ring.svg', name: fromToken },
+            },
+          ]
+        : [
+            {
+              chain: departure,
+              from: revertAccount(departureRecord.sender, query.from, query.fromMode),
+              to: '0x3CC8913088F79831c8335f0307f4FC92d79C1ac7',
+              token: { logo: '/image/ring.svg', name: fromToken },
+            },
+            {
+              chain: departure,
+              to: revertAccount(departureRecord.sender, query.from, query.fromMode),
+              from: '0x3CC8913088F79831c8335f0307f4FC92d79C1ac7',
+              token: { logo: '/image/ring.svg', name: fromToken },
+            },
+          ];
+
+    return isIssuing ? issuingTransfer : redeemTransfer;
+  }, [arrival, departure, departureRecord, fromToken, isIssuing, query.from, query.fromMode, query.to, query.toMode]);
 
   useEffect(() => {
     const apiConfig = bridge.config.api || {};
@@ -352,6 +397,14 @@ const Page: NextPage<{
               className="hover:opacity-80 transition-opacity duration-200"
             >
               <EllipsisMiddle copyable>{finalRecord.txHash}</EllipsisMiddle>
+            </SubscanLink>
+          ) : departureRecord?.result === CrossChainStatus.reverted ? (
+            <SubscanLink
+              network={departure.name}
+              txHash={departureRecord?.responseTxHash}
+              className="hover:opacity-80 transition-opacity duration-200"
+            >
+              <EllipsisMiddle copyable>{departureRecord.responseTxHash}</EllipsisMiddle>
             </SubscanLink>
           ) : (
             <Progress percent={50} className="max-w-xs" />
