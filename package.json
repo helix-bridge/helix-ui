@@ -19,6 +19,7 @@
     "@fontsource/ibm-plex-sans": "^4.5.7",
     "@metamask/jazzicon": "^2.0.0",
     "@polkadot/api": "^7.15.1",
+    "@tanem/react-nprogress": "^5.0.0",
     "antd": "4.16.1",
     "bignumber.js": "^9.0.2",
     "bn.js": "^5.2.0",

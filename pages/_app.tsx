@@ -4,8 +4,10 @@ import { ClientContext, GraphQLClient } from 'graphql-hooks';
 import { appWithTranslation } from 'next-i18next';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-import { FunctionComponent, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { FunctionComponent, useEffect, useState } from 'react';
 import AppLayout from '../components/AppLayout';
+import GlobalLoading from '../components/widget/GlobalLoading';
 import { toggleTheme } from '../components/widget/ThemeSwitch';
 import { THEME } from '../config/theme';
 import '../styles/index.scss';
@@ -19,6 +21,41 @@ const client = new GraphQLClient({
 });
 
 function MyApp({ Component, pageProps }: AppProps & { Component: FunctionComponent }) {
+  const router = useRouter();
+
+  const [state, setState] = useState({
+    isRouteChanging: false,
+    loadingKey: 0,
+  });
+
+  useEffect(() => {
+    const handleRouteChangeStart = () => {
+      setState((prevState) => ({
+        ...prevState,
+        isRouteChanging: true,
+        // eslint-disable-next-line no-bitwise
+        loadingKey: prevState.loadingKey ^ 1,
+      }));
+    };
+
+    const handleRouteChangeEnd = () => {
+      setState((prevState) => ({
+        ...prevState,
+        isRouteChanging: false,
+      }));
+    };
+
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+    router.events.on('routeChangeComplete', handleRouteChangeEnd);
+    router.events.on('routeChangeError', handleRouteChangeEnd);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+      router.events.off('routeChangeComplete', handleRouteChangeEnd);
+      router.events.off('routeChangeError', handleRouteChangeEnd);
+    };
+  }, [router.events]);
+
   useEffect(() => {
     window.less = {
       async: true,
@@ -45,6 +82,7 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
 
   return (
     <>
+      <GlobalLoading isRouteChanging={state.isRouteChanging} key={state.loadingKey} />
       <Head>
         <meta charSet="utf-8" />
         <title>Helix</title>
