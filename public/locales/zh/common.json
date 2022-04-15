@@ -36,7 +36,7 @@
   "Helix is in beta. Please use at your own risk level": "Helix is in beta. Please use at your own risk level",
   "chains": "chains",
   "supported blockchains": "supported blockchains",
-  "top {{count}} destination": "top {{count}} destination",
+  "top {{count}} destinations": "top {{count}} destinations",
   "transaction detail": "transaction detail",
   "transactions": "transactions",
   "unique users": "unique users",

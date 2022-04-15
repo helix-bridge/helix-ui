@@ -51,7 +51,7 @@ export function Statistics({ children, startTime, total, title, rank, currency }
 
         <div className="flex flex-col gap-2 md:gap-4">
           <div className="flex justify-between">
-            <span className="uppercase">{t('top {{count}} destination', { count: rank.length })}</span>
+            <span className="uppercase">{t('top {{count}} destinations', { count: rank.length })}</span>
             <span className="uppercase">{title}</span>
           </div>
 

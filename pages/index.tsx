@@ -30,13 +30,51 @@ interface StatisticTotal {
 type CoinIds = 'darwinia-crab-network' | 'darwinia-network-native-token';
 
 const chains: ChainProps[] = [
-  { config: ethereumConfig },
-  { config: darwiniaConfig },
-  { config: crabConfig, logoKey: 'logoSmart' },
-  { config: ropstenConfig },
-  { config: omit(pangolinConfig, 'dvm'), logoKey: 'logoAssist2' },
-  { config: pangolinConfig, logoKey: 'logoSmart' },
-  { config: pangoroConfig },
+  {
+    config: ethereumConfig,
+    portal: 'https://ethereum.org/en/',
+    github: 'https://ethereum.org/en/',
+    twitter: 'https://twitter.com/ethdotorg',
+  },
+  {
+    config: darwiniaConfig,
+    portal: 'https://darwinia.network/',
+    github: 'https://github.com/darwinia-network',
+    twitter: 'https://twitter.com/DarwiniaNetwork',
+  },
+  {
+    config: crabConfig,
+    logoKey: 'logoSmart',
+    portal: 'https://crab.network/',
+    github: 'https://github.com/darwinia-network/darwinia/tree/main/runtime/crab',
+    twitter: 'https://twitter.com/DarwiniaNetwork',
+  },
+  {
+    config: ropstenConfig,
+    portal: 'https://ethereum.org/en/',
+    github: 'https://ethereum.org/en/',
+    twitter: 'https://twitter.com/ethdotorg',
+  },
+  {
+    config: omit(pangolinConfig, 'dvm'),
+    logoKey: 'logoAssist2',
+    portal: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangolin-rpc.darwinia.network#/explorer',
+    github: 'https://github.com/darwinia-network',
+    twitter: 'https://twitter.com/DarwiniaNetwork',
+  },
+  {
+    config: pangolinConfig,
+    logoKey: 'logoSmart',
+    portal: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangolin-rpc.darwinia.network#/explorer',
+    github: 'https://github.com/darwinia-network',
+    twitter: 'https://twitter.com/DarwiniaNetwork',
+  },
+  {
+    config: pangoroConfig,
+    portal: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangoro-rpc.darwinia.network#/explorer',
+    github: 'https://github.com/darwinia-network',
+    twitter: 'https://twitter.com/DarwiniaNetwork',
+  },
 ];
 
 function Page() {
