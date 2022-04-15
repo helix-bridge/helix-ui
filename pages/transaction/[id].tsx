@@ -325,7 +325,7 @@ const Page: NextPage<{
           title={t('Status')}
           tip={t('The status of the cross-chain transaction: Success, Pending, or Reverted.')}
         >
-          <CrossChainState value={arrivalRecord?.result ?? CrossChainStatus.pending} />
+          <CrossChainState value={departureRecord?.result ?? CrossChainStatus.pending} />
         </Description>
 
         <Description
@@ -333,7 +333,7 @@ const Page: NextPage<{
           tip={t('Date & time of cross-chain transaction inclusion, including length of time for confirmation.')}
         >
           {departureRecord && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 whitespace-nowrap">
               {arrivalRecord?.result ? <ClockCircleOutlined /> : <Icon name="#dwa-reload" />}
 
               <span>
@@ -346,13 +346,27 @@ const Page: NextPage<{
 
               <Icon name="#dwa-clock-fill" className="text-gray-400 text-base" />
 
-              <span className="text-gray-400">
-                {t('Confirmed within {{des}}', {
-                  des: formatDistance(new Date(departureRecord.endTime), new Date(departureRecord.startTime), {
-                    includeSeconds: true,
-                  }),
-                })}
-              </span>
+              {departureRecord.startTime && departureRecord.endTime ? (
+                <span className="text-gray-400">
+                  {t('Confirmed within {{des}}', {
+                    des: formatDistance(new Date(departureRecord.endTime), new Date(departureRecord.startTime), {
+                      includeSeconds: true,
+                    }),
+                  })}
+                </span>
+              ) : (
+                <div className="w-32">
+                  <Progress
+                    strokeColor={{
+                      from: '#108ee9',
+                      to: '#87d068',
+                    }}
+                    percent={99.9}
+                    status="active"
+                    showInfo={false}
+                  />
+                </div>
+              )}
             </div>
           )}
         </Description>
