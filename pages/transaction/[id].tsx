@@ -1,5 +1,5 @@
 import { ClockCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { Breadcrumb, Divider, Progress, Tooltip } from 'antd';
+import { Breadcrumb, Button, Divider, Progress, Tooltip } from 'antd';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
 import camelcaseKeys from 'camelcase-keys';
 import { formatDistance, formatDistanceToNow, formatRFC7231 } from 'date-fns';
@@ -30,7 +30,16 @@ import {
   UnlockedRecord,
   Vertices,
 } from '../../model';
-import { fromWei, getBridge, pollWhile, prettyNumber, revertAccount, verticesToChainConfig } from '../../utils';
+import {
+  addEthereumChain,
+  fromWei,
+  getBridge,
+  getDisplayName,
+  pollWhile,
+  prettyNumber,
+  revertAccount,
+  verticesToChainConfig,
+} from '../../utils';
 
 type FinalActionRecord = Pick<UnlockedRecord, 'txHash' | 'id' | 'recipient' | 'amount'>;
 
@@ -363,9 +372,10 @@ const Page: NextPage<{
             <Logo chain={arrival} width={40} height={40} className="w-5 md:w-10" />
           </div>
 
-          <div className="flex justify-between text-xs capitalize mt-1 px-3">
-            <div style={{ width: 40 }}>{departure.name}</div>
-            <div style={{ width: 40 }}>{arrival.name}</div>
+          <div className="flex justify-between text-xs capitalize mt-1 px-3 whitespace-nowrap">
+            {[departure, arrival].map((item) => (
+              <div key={item.name}>{getDisplayName(item)}</div>
+            ))}
           </div>
         </div>
       </div>
@@ -482,25 +492,33 @@ const Page: NextPage<{
             title={t('Token Transfer')}
             tip={t('List of tokens transferred in this cross-chain transaction.')}
           >
-            <div className="flex flex-col gap-2">
-              {transfers.map(({ chain, from, to, token }) => (
-                <div key={token.name} className="flex items-center gap-2">
-                  <Logo chain={chain} width={16} height={16} className="w-5" />
-                  <span>{t('From')}</span>
-                  <span className="w-32 text-center">
-                    <EllipsisMiddle>{from}</EllipsisMiddle>
-                  </span>
-                  <span>{t('To')}</span>
-                  <span className="w-32 text-center">
-                    <EllipsisMiddle>{to}</EllipsisMiddle>
-                  </span>
-                  <span>{t('For')}</span>
-                  <Image src={token.logo} width={16} height={16} className="w-5" />
-                  <span>
-                    {amount} {token.name}
-                  </span>
-                </div>
-              ))}
+            <div className="flex items-center gap-4">
+              <div className="flex flex-col gap-2">
+                {transfers.map(({ chain, from, to, token }) => (
+                  <div key={token.name} className="flex items-center gap-2">
+                    <Logo chain={chain} width={16} height={16} className="w-5" />
+                    <span>{t('From')}</span>
+                    <span className="w-32 text-center">
+                      <EllipsisMiddle>{from}</EllipsisMiddle>
+                    </span>
+                    <span>{t('To')}</span>
+                    <span className="w-32 text-center">
+                      <EllipsisMiddle>{to}</EllipsisMiddle>
+                    </span>
+                    <span>{t('For')}</span>
+                    <Image src={token.logo} width={16} height={16} className="w-5" />
+                    <span>
+                      {amount} {token.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {isIssuing && (
+                <Button onClick={() => addEthereumChain(arrival.name)} size="small">
+                  {t('Add To Metamask')}
+                </Button>
+              )}
             </div>
           </Description>
         )}
@@ -516,7 +534,7 @@ const Page: NextPage<{
 
         <Description title={t('Transaction Fee')} tip={'Amount paid for processing the cross-chain transaction.'}>
           {fromWei({ value: departureRecord?.fee || arrivalRecord?.fee, unit: isIssuing ? 'gwei' : 'ether' })}{' '}
-          {fromToken}
+          {isIssuing ? 'RING' : 'CRAB'}
         </Description>
 
         <Divider />

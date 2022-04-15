@@ -108,7 +108,7 @@ function Record({ record }: { record: Substrate2SubstrateRecord }) {
         {fromWei({ value: record.fee, unit: fromChainMode === 'dvm' ? 'ether' : 'gwei' })}
       </span>
 
-      <span className="justify-self-center">{record.bridge}</span>
+      <span className="justify-self-center capitalize">{record.bridge}</span>
       <CrossChainState value={record.result} />
     </>
   );

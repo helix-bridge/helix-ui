@@ -359,3 +359,19 @@ export function revertAccount(account: string, network: Network, mode: NetworkMo
 
   return account;
 }
+
+/**
+ * @description add chain in metamask
+ */
+export async function addEthereumChain(network: Network): Promise<null> {
+  // TODO check the chaiId field, store in decimal in configuration but may be required hexadecimal in metamask side.
+  const chain = findNetworkConfig(network) as EthereumChainConfig;
+  const chainId = Web3.utils.toHex(+chain.ethereumChain.chainId);
+
+  const result = await window.ethereum.request({
+    method: 'wallet_addEthereumChain',
+    params: [{ ...chain.ethereumChain, chainId }],
+  });
+
+  return result;
+}

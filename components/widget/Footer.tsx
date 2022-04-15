@@ -28,7 +28,7 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
 
       <div className="flex items-center gap-4">
         <a
-          href="https://github.com/darwinia-network/apps"
+          href="https://github.com/helix-bridge"
           target="_blank"
           rel="noreferrer"
           className="flex text-gray-400 hover:text-gray-200"
@@ -37,7 +37,7 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
         </a>
 
         <a
-          href="https://twitter.com/DarwiniaNetwork"
+          href="https://twitter.com/helixbridge"
           target="_blank"
           rel="noreferrer"
           className="flex text-gray-400 hover:text-gray-200"
@@ -57,13 +57,14 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
         <Divider
           type="vertical"
           style={{ margin: 0, borderColor: 'rgba(255, 255, 255, .3)', height: '0.5em', marginTop: '0.25em' }}
+          className="hidden"
         />
 
         <ThemeSwitch
           defaultTheme={THEME.DARK}
           onThemeChange={onThemeChange}
           mode="btn"
-          className="text-gray-400 hover:text-gray-200 cursor-pointer transition-colors duration-150"
+          className="text-gray-400 hover:text-gray-200 cursor-pointer transition-colors duration-150 hidden"
         />
       </div>
     </Layout.Footer>
