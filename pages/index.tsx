@@ -29,6 +29,7 @@ interface StatisticTotal {
 // @see response of: https://api.coingecko.com/api/v3/coins/list
 type CoinIds = 'darwinia-crab-network' | 'darwinia-network-native-token';
 
+// TODO: move links into chain config
 const chains: ChainProps[] = [
   {
     config: ethereumConfig,
