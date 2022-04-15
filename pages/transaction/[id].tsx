@@ -68,6 +68,7 @@ const S2S_ISSUING_RECORD_QUERY = gql`
       senderId
       startTimestamp
       token
+      fee
     }
   }
 `;
@@ -425,7 +426,8 @@ const Page: NextPage<{
         </Description>
 
         <Description title={t('Transaction Fee')} tip={'Amount paid for processing the cross-chain transaction.'}>
-          {fromWei({ value: departureRecord?.fee || arrivalRecord?.fee })} {fromToken}
+          {fromWei({ value: departureRecord?.fee || arrivalRecord?.fee, unit: isIssuing ? 'gwei' : 'ether' })}{' '}
+          {fromToken}
         </Description>
 
         <Divider />

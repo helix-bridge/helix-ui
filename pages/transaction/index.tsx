@@ -44,6 +44,7 @@ const S2S_RECORDS = `
       startTime
       endTime
       result
+      fee
     }
   }
 `;
@@ -101,7 +102,10 @@ function Record({ record }: { record: Substrate2SubstrateRecord }) {
         <span className="justify-self-center max-w-full truncate">{amount}</span>
       </Tooltip>
 
-      <span className="justify-self-center">NAN</span>
+      <span className="justify-self-center">
+        {fromWei({ value: record.fee, unit: fromChainMode === 'dvm' ? 'ether' : 'gwei' })}
+      </span>
+
       <span className="justify-self-center">{record.bridge}</span>
       <CrossChainState value={record.result} />
     </>
@@ -242,7 +246,7 @@ function Page() {
               <div style={{ height: rowVirtualizer.totalSize, width: '100%', position: 'relative' }}>
                 {rowVirtualizer.virtualItems.map((row) => {
                   const record = source[row.index];
-                  const isLoaderRow = row.index > source.length - 1;
+                  const isLoaderRow = row.index > source?.length - 1;
                   // eslint-disable-next-line no-magic-numbers
                   const bg = row.index % 2 === 0 ? 'bg-gray-200 dark:bg-antDark' : '';
 

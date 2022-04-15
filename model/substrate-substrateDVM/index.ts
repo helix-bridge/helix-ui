@@ -28,7 +28,7 @@ export interface Substrate2SubstrateDVMRecord {
   result: Result;
   startTimestamp: string;
   endTimestamp: string;
-  fee?: string;
+  fee: string;
 }
 
 export interface SubstrateDVM2SubstrateRecordsRes {
