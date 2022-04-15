@@ -13,11 +13,12 @@ import { CrossChainState } from '../../components/widget/CrossChainStatus';
 import { EllipsisMiddle } from '../../components/widget/EllipsisMiddle';
 import { Path } from '../../config/constant';
 import { useAccountStatistic, useDailyStatistic } from '../../hooks';
-import { Network, Substrate2SubstrateRecord } from '../../model';
+import { Substrate2SubstrateRecord } from '../../model';
 import {
   convertToDvm,
   fromWei,
   getChainConfigByName,
+  getDisplayName,
   getSupportedChains,
   isValidAddress,
   prettyNumber,
@@ -67,7 +68,8 @@ function ViewBoard({ title, count }: ViewBoardProps) {
 
 function Record({ record }: { record: Substrate2SubstrateRecord }) {
   const { fromChainMode, fromChain, sender, recipient, toChain, toChainMode } = record;
-  const config = getChainConfigByName(fromChain as Network);
+  const fromConfig = getChainConfigByName(fromChain, fromChainMode);
+  const toConfig = getChainConfigByName(toChain, toChainMode);
   const now = new Date().toISOString().split('.')[0];
   const fromAccount = revertAccount(sender, fromChain, fromChainMode);
   const toAccount = revertAccount(recipient, toChain, toChainMode);
@@ -84,19 +86,19 @@ function Record({ record }: { record: Substrate2SubstrateRecord }) {
 
       <div className="flex flex-col col-span-3 overflow-hidden pl-4 pr-2">
         <Tooltip title={fromAccount}>
-          <span className="capitalize">{fromChain}</span>
+          <span className="capitalize">{getDisplayName(fromConfig)}</span>
         </Tooltip>
         <EllipsisMiddle isGrow>{fromAccount}</EllipsisMiddle>
       </div>
 
       <div className="flex flex-col col-span-3 overflow-hidden pl-2 pr-4">
         <Tooltip title={toAccount}>
-          <span className="capitalize">{toChain}</span>
+          <span className="capitalize">{getDisplayName(toConfig)}</span>
         </Tooltip>
         <EllipsisMiddle isGrow>{toAccount}</EllipsisMiddle>
       </div>
 
-      <span>{`${fromChainMode === 'dvm' ? 'x' : ''}${config?.isTest ? 'O' : ''}RING`}</span>
+      <span>{`${fromChainMode === 'dvm' ? 'x' : ''}${fromConfig?.isTest ? 'O' : ''}RING`}</span>
 
       <Tooltip title={amount}>
         <span className="justify-self-center max-w-full truncate">{amount}</span>

@@ -16,6 +16,14 @@ export interface SubstrateDVM2SubstrateRecord {
   fee: string;
 }
 
+export interface LockedRecord {
+  id: string;
+  recipient: string;
+  transaction: string;
+  amount: string;
+  mapping_token: string;
+}
+
 export interface Substrate2SubstrateDVMRecord {
   laneId: string;
   nonce: string;
@@ -29,6 +37,16 @@ export interface Substrate2SubstrateDVMRecord {
   startTimestamp: string;
   endTimestamp: string;
   fee: string;
+}
+
+export interface UnlockedRecord {
+  id: string;
+  recipient: string;
+  token: string;
+  amount: string;
+  timestamp: string;
+  txHash: string;
+  block: string;
 }
 
 export interface SubstrateDVM2SubstrateRecordsRes {
