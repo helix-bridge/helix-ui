@@ -1,9 +1,9 @@
 import { GithubOutlined, GlobalOutlined, TwitterCircleFilled } from '@ant-design/icons';
 import Image from 'next/image';
 import { useCallback } from 'react';
-import { BestNumber } from '../../components/widget/BestNumber';
-import { ChainConfig, Facade } from '../../model';
-import { getDisplayName } from '../../utils';
+import { BestNumber } from '@helix/shared/components/widget/BestNumber';
+import { ChainConfig, Facade } from '@helix/shared/model';
+import { getDisplayName } from '@helix/shared/utils';
 
 export interface ChainProps {
   config: ChainConfig;

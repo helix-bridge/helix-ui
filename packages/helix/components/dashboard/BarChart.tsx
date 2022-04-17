@@ -1,8 +1,8 @@
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts/highstock';
 import { useRef } from 'react';
-import { THEME } from '../../config/theme';
-import { readStorage } from '../../utils';
+import { THEME } from '@helix/shared/config/theme';
+import { readStorage } from '@helix/shared/utils';
 
 export type Statistic = [number, number];
 

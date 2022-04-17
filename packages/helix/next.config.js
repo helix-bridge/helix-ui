@@ -1,22 +1,22 @@
 const { i18n } = require('./next-i18next.config');
 const withAntdLess = require('next-plugin-antd-less');
 const withPlugins = require('next-compose-plugins');
-const AntDesignThemePlugin = require('./plugins/antd-theme-plugin');
+const AntDesignThemePlugin = require('@helix/shared/plugins/antd-theme-plugin');
 const path = require('path');
-const antdVarsPath = './theme/antd/vars.less';
-const { getLessVars } = require('./plugins/antd-theme-generator');
+const antdVarsPath = '../shared/theme/antd/vars.less';
+const { getLessVars } = require('@helix/shared/plugins/antd-theme-generator');
 const themeVariables = getLessVars(path.join(__dirname, antdVarsPath));
-const defaultVars = getLessVars(path.join(__dirname, './node_modules/antd/lib/style/themes/default.less'));
+const defaultVars = getLessVars(path.join(__dirname, '../../node_modules/antd/lib/style/themes/default.less'));
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 const darkVars = {
-  ...getLessVars(path.join(__dirname, './node_modules/antd/lib/style/themes/dark.less')),
+  ...getLessVars(path.join(__dirname, '../../node_modules/antd/lib/style/themes/dark.less')),
   '@primary-color': defaultVars['@primary-color'],
   '@picker-basic-cell-active-with-range-color': 'darken(@primary-color, 20%)',
 };
 
 const lightVars = {
-  ...getLessVars(path.join(__dirname, './node_modules/antd/lib/style/themes/compact.less')),
+  ...getLessVars(path.join(__dirname, '../../node_modules/antd/lib/style/themes/compact.less')),
   '@primary-color': defaultVars['@primary-color'],
 };
 
@@ -26,7 +26,7 @@ const lightVars = {
 // fs.writeFileSync('./ant-theme-vars/theme.json', JSON.stringify(themeVariables));
 
 const themeOptions = {
-  antDir: path.join(__dirname, './node_modules/antd'),
+  antDir: path.join(__dirname, '../../node_modules/antd'),
   stylesDir: path.join(__dirname, './styles'),
   varFile: path.join(__dirname, antdVarsPath),
   themeVariables: Array.from(
@@ -48,6 +48,9 @@ const circularDependencyPlugin = new CircularDependencyPlugin({
 });
 
 module.exports = withPlugins([withAntdLess], {
+  experimental: {
+    externalDir: true,
+  },
   i18n,
   // lessVarsFilePath: './theme/antd/vars.less', // optional
   // lessVarsFilePathAppendToEndOfContent: false, // optional
@@ -71,7 +74,7 @@ module.exports = withPlugins([withAntdLess], {
   webpack(config) {
     config.plugins.push(themePlugin);
     config.plugins.push(circularDependencyPlugin);
-
+    
     return config;
   },
   

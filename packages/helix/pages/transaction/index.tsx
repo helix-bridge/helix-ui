@@ -9,11 +9,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useVirtual } from 'react-virtual';
 import { distinctUntilChanged, filter, Subject } from 'rxjs';
-import { CrossChainState } from '../../components/widget/CrossChainStatus';
-import { EllipsisMiddle } from '../../components/widget/EllipsisMiddle';
-import { Path } from '../../config/constant';
-import { useAccountStatistic, useDailyStatistic } from '../../hooks';
-import { Substrate2SubstrateRecord } from '../../model';
+import { CrossChainState } from '@helix/shared/components/widget/CrossChainStatus';
+import { EllipsisMiddle } from '@helix/shared/components/widget/EllipsisMiddle';
+import { Path } from '@helix/shared/config/constant';
+import { useAccountStatistic, useDailyStatistic } from '@helix/shared/hooks';
+import { Substrate2SubstrateRecord } from '@helix/shared/model';
 import {
   convertToDvm,
   fromWei,
@@ -23,7 +23,7 @@ import {
   isValidAddress,
   prettyNumber,
   revertAccount,
-} from '../../utils';
+} from '@helix/shared/utils';
 
 const S2S_RECORDS = `
   query s2sRecords($first: Int!, $startTime: Int!, $sender: String) {

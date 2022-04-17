@@ -1,4 +1,32 @@
 import { ClockCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { CrossChainState } from '@helix/shared/components/widget/CrossChainStatus';
+import { EllipsisMiddle } from '@helix/shared/components/widget/EllipsisMiddle';
+import { Icon } from '@helix/shared/components/widget/Icon';
+import { Logo } from '@helix/shared/components/widget/Logo';
+import { SubscanLink } from '@helix/shared/components/widget/SubscanLink';
+import { CrossChainStatus, MIDDLE_DURATION } from '@helix/shared/config/constant';
+import { useIsMounted } from '@helix/shared/hooks';
+import {
+  Arrival,
+  Departure,
+  LockedRecord,
+  NetworkQueryParams,
+  Substrate2SubstrateDVMRecord,
+  Substrate2SubstrateRecord,
+  SubstrateDVM2SubstrateRecord,
+  UnlockedRecord,
+  Vertices,
+} from '@helix/shared/model';
+import {
+  addEthereumChain,
+  fromWei,
+  getBridge,
+  getDisplayName,
+  pollWhile,
+  prettyNumber,
+  revertAccount,
+  verticesToChainConfig,
+} from '@helix/shared/utils';
 import { Breadcrumb, Button, Divider, Progress, Tooltip } from 'antd';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
 import camelcaseKeys from 'camelcase-keys';
@@ -12,34 +40,6 @@ import { useRouter } from 'next/router';
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from as fromRx, map, of, switchMap } from 'rxjs';
-import { CrossChainState } from '../../components/widget/CrossChainStatus';
-import { EllipsisMiddle } from '../../components/widget/EllipsisMiddle';
-import { Icon } from '../../components/widget/Icon';
-import { Logo } from '../../components/widget/Logo';
-import { SubscanLink } from '../../components/widget/SubscanLink';
-import { CrossChainStatus, MIDDLE_DURATION } from '../../config/constant';
-import { useIsMounted } from '../../hooks';
-import {
-  Arrival,
-  Departure,
-  LockedRecord,
-  NetworkQueryParams,
-  Substrate2SubstrateDVMRecord,
-  Substrate2SubstrateRecord,
-  SubstrateDVM2SubstrateRecord,
-  UnlockedRecord,
-  Vertices,
-} from '../../model';
-import {
-  addEthereumChain,
-  fromWei,
-  getBridge,
-  getDisplayName,
-  pollWhile,
-  prettyNumber,
-  revertAccount,
-  verticesToChainConfig,
-} from '../../utils';
 
 type FinalActionRecord = Pick<UnlockedRecord, 'txHash' | 'id' | 'recipient' | 'amount'>;
 

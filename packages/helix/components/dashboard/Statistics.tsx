@@ -1,8 +1,8 @@
 import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChainConfig } from '../../model';
-import { prettyNumber } from '../../utils';
-import { Logo } from '../widget/Logo';
+import { ChainConfig } from '@helix/shared/model';
+import { prettyNumber } from '@helix/shared/utils';
+import { Logo } from '@helix/shared/components/widget/Logo';
 
 interface ChainStatisticOverview {
   chain: ChainConfig;

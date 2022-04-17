@@ -91,6 +91,7 @@ export function EllipsisMiddle({
     }
 
     return () => window.removeEventListener('resize', listener);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

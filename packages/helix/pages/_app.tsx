@@ -6,13 +6,13 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { FunctionComponent, useEffect, useState } from 'react';
-import AppLayout from '../components/AppLayout';
-import GlobalLoading from '../components/widget/GlobalLoading';
-import { toggleTheme } from '../components/widget/ThemeSwitch';
-import { THEME } from '../config/theme';
+import GlobalLoading from '@helix/shared/components/widget/GlobalLoading';
+import { toggleTheme } from '@helix/shared/components/widget/ThemeSwitch';
+import { THEME } from '@helix/shared/config/theme';
 import '../styles/index.scss';
-import '../theme/antd/index.less';
-import { readStorage } from '../utils';
+import '@helix/shared/theme/antd/index.less';
+import { readStorage } from '@helix/shared/utils';
+import AppLayout from '../components/AppLayout';
 
 const isDev = process.env.NODE_ENV === 'development';
 
