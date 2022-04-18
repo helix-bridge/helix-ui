@@ -5,8 +5,9 @@ const ellipse = (containerWidth: number, childNode: HTMLSpanElement, txtNode: HT
   const childWidth = childNode.offsetWidth;
   const txtWidth = txtNode.offsetWidth;
   const targetWidth = childWidth > txtWidth ? childWidth : txtWidth;
+  const deviation = 5;
 
-  if (targetWidth > containerWidth) {
+  if (targetWidth > containerWidth - deviation) {
     const str = txtNode.textContent as string;
     const txtChars = str.length;
     const avgLetterSize = txtWidth / txtChars;
