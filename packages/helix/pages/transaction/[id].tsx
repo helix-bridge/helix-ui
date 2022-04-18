@@ -18,7 +18,7 @@ import {
   Vertices,
 } from '@helix/shared/model';
 import {
-  addEthereumChain,
+  gqlName,
   fromWei,
   getBridge,
   getDisplayName,
@@ -27,7 +27,7 @@ import {
   revertAccount,
   verticesToChainConfig,
 } from '@helix/shared/utils';
-import { Breadcrumb, Button, Divider, Progress, Tooltip } from 'antd';
+import { Breadcrumb, Divider, Progress, Tooltip } from 'antd';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
 import camelcaseKeys from 'camelcase-keys';
 import { formatDistance, formatDistanceToNow, formatRFC7231 } from 'date-fns';
@@ -161,12 +161,6 @@ const unifyRecordField: (
 
   return record;
 };
-
-const dataKey = (query: string) =>
-  query
-    .match(/\S\w+\(/g)
-    ?.reverse()[0]
-    .slice(0, -1) as string;
 
 function Description({ tip, title, children }: PropsWithChildren<{ tip: string; title: string }>) {
   return (
@@ -321,10 +315,10 @@ const Page: NextPage<{
         switchMap(() => {
           const unlockObs = fromRx(
             request(apiConfig.subql + bridge.departure.name, S2S_UNLOCKED_RECORD_QUERY, { id })
-          ).pipe(map((res) => res[dataKey(S2S_UNLOCKED_RECORD_QUERY)]));
+          ).pipe(map((res) => res[gqlName(S2S_UNLOCKED_RECORD_QUERY)]));
 
           const lockObs = fromRx(request(apiConfig.subGraph, LOCKED_RECORD_QUERY, { id })).pipe(
-            map((res) => unifyRecordField(res[dataKey(LOCKED_RECORD_QUERY)], finalRecordFields))
+            map((res) => unifyRecordField(res[gqlName(LOCKED_RECORD_QUERY)], finalRecordFields))
           );
 
           return isIssuing ? lockObs : unlockObs;
@@ -492,33 +486,25 @@ const Page: NextPage<{
             title={t('Token Transfer')}
             tip={t('List of tokens transferred in this cross-chain transaction.')}
           >
-            <div className="flex items-center gap-4">
-              <div className="flex flex-col gap-2">
-                {transfers.map(({ chain, from, to, token }) => (
-                  <div key={token.name} className="flex items-center gap-2">
-                    <Logo chain={chain} width={16} height={16} className="w-5" />
-                    <span>{t('From')}</span>
-                    <span className="w-32 text-center">
-                      <EllipsisMiddle>{from}</EllipsisMiddle>
-                    </span>
-                    <span>{t('To')}</span>
-                    <span className="w-32 text-center">
-                      <EllipsisMiddle>{to}</EllipsisMiddle>
-                    </span>
-                    <span>{t('For')}</span>
-                    <Image src={token.logo} width={16} height={16} className="w-5" />
-                    <span>
-                      {amount} {token.name}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              {isIssuing && (
-                <Button onClick={() => addEthereumChain(arrival.name)} size="small">
-                  {t('Add To Metamask')}
-                </Button>
-              )}
+            <div className="flex flex-col gap-2">
+              {transfers.map(({ chain, from, to, token }) => (
+                <div key={token.name} className="flex items-center gap-2">
+                  <Logo chain={chain} width={16} height={16} className="w-5" />
+                  <span>{t('From')}</span>
+                  <span className="w-32 text-center">
+                    <EllipsisMiddle>{from}</EllipsisMiddle>
+                  </span>
+                  <span>{t('To')}</span>
+                  <span className="w-32 text-center">
+                    <EllipsisMiddle>{to}</EllipsisMiddle>
+                  </span>
+                  <span>{t('For')}</span>
+                  <Image src={token.logo} width={16} height={16} className="w-5" />
+                  <span>
+                    {amount} {token.name}
+                  </span>
+                </div>
+              ))}
             </div>
           </Description>
         )}
@@ -566,13 +552,13 @@ export async function getServerSideProps(
   const issuing = request(apiConfig.subql + bridge.departure.name, S2S_ISSUING_RECORD_QUERY, { id });
 
   const unlocked = request(apiConfig.subql + bridge.departure.name, S2S_UNLOCKED_RECORD_QUERY, { id }).then(
-    (res) => res && res[dataKey(S2S_UNLOCKED_RECORD_QUERY)]
+    (res) => res && res[gqlName(S2S_UNLOCKED_RECORD_QUERY)]
   );
 
   const redeem = request(apiConfig.subGraph, S2S_REDEEM_RECORD_QUERY, { id });
 
   const locked = request(apiConfig.subGraph, LOCKED_RECORD_QUERY, { id }).then(
-    (res) => res && res[dataKey(LOCKED_RECORD_QUERY)]
+    (res) => res && res[gqlName(LOCKED_RECORD_QUERY)]
   );
 
   const [issuingRes, redeemRes, lockOrUnlockRecord] = await Promise.all([
@@ -585,10 +571,9 @@ export async function getServerSideProps(
     props: {
       ...translations,
       id,
-      issuingRecord: unifyRecordField(issuingRes[dataKey(S2S_ISSUING_RECORD_QUERY)], s2sDVMFields),
-      redeemRecord: unifyRecordField(redeemRes[dataKey(S2S_REDEEM_RECORD_QUERY)], sDVM2sFields),
+      issuingRecord: unifyRecordField(issuingRes[gqlName(S2S_ISSUING_RECORD_QUERY)], s2sDVMFields),
+      redeemRecord: unifyRecordField(redeemRes[gqlName(S2S_REDEEM_RECORD_QUERY)], sDVM2sFields),
       lockOrUnlockRecord: unifyRecordField(lockOrUnlockRecord, finalRecordFields),
-      // lockOrUnlockRecord,
     },
   };
 }

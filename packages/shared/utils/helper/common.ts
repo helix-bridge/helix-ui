@@ -28,3 +28,9 @@ export function getTimeRange(
 
   return { start, end };
 }
+
+export const gqlName = (query: string) =>
+  query
+    .match(/\S\w+\(/g)
+    ?.reverse()[0]
+    .slice(0, -1) as string;

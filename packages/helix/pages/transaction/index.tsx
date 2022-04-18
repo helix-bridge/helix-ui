@@ -20,10 +20,12 @@ import {
   getChainConfigByName,
   getDisplayName,
   getSupportedChains,
+  gqlName,
   isValidAddress,
   prettyNumber,
   revertAccount,
 } from '@helix/shared/utils';
+import request from 'graphql-request';
 
 const S2S_RECORDS = `
   query s2sRecords($first: Int!, $startTime: Int!, $sender: String) {
@@ -116,7 +118,7 @@ function Record({ record }: { record: Substrate2SubstrateRecord }) {
 
 const PAGE_SIZE = 50;
 
-function Page() {
+function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
   const { t } = useTranslation('common');
   const [isValidSender, setIsValidSender] = useState(true);
   const startTime = useMemo(() => getUnixTime(new Date()), []);
@@ -134,7 +136,7 @@ function Page() {
   });
 
   const subject = useMemo(() => new Subject<string>(), []);
-  const [source, setSource] = useState<Substrate2SubstrateRecord[]>([]);
+  const [source, setSource] = useState<Substrate2SubstrateRecord[]>(records);
   const virtualBoxRef = useRef(null);
 
   const rowVirtualizer = useVirtual({
@@ -298,10 +300,24 @@ function Page() {
   );
 }
 
-export const getStaticProps = async ({ locale }: { locale: string }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common'])),
-  },
-});
+export const getServerSideProps = async ({ locale }: { locale: string }) => {
+  const translations = await serverSideTranslations(locale ?? 'en', ['common']);
+  const startTime = getUnixTime(new Date());
+  const url =
+    process.env.NODE_ENV === 'development'
+      ? 'http://localhost:4002/graphql'
+      : 'https://wormhole-apollo.darwinia.network/';
+  const records = await request(url, S2S_RECORDS, {
+    first: PAGE_SIZE,
+    startTime,
+  }).then((res) => res && res[gqlName(S2S_RECORDS)]);
+
+  return {
+    props: {
+      ...translations,
+      records,
+    },
+  };
+};
 
 export default Page;
