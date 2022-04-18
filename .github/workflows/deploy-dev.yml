@@ -9,20 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          workdir: ./packages/helix/
 
       - uses: actions/checkout@v2
         with:
           repository: itering/actions
           path: .github/actions
           persist-credentials: false
-          workdir: ./packages/helix/
           ssh-key: "${{ secrets.ITERING_ACTIONS_DEPLOY_KEY }}"
 
       - uses: ./.github/actions/smart-vercel
-        name: Deploy to Vercel
-        id: smart-vercel
+        name: Deploy helix ui
+        id: deploy-helix-ui
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
@@ -30,7 +27,8 @@ jobs:
           alias_domain: helix-ui-dev
           project_name: helix-ui
           script_run: false
-          dist_path: ./packages/helix/
+          dist_path: .
+          workdir: ./packages/helix
 
       - uses: marocchino/sticky-pull-request-comment@v2
         with:
