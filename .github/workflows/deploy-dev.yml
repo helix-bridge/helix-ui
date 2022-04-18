@@ -18,7 +18,7 @@ jobs:
           ssh-key: "${{ secrets.ITERING_ACTIONS_DEPLOY_KEY }}"
 
       - uses: ./.github/actions/smart-vercel
-        name: Deploy to Vercel
+        name: Deploy helix ui
         id: smart-vercel
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
