@@ -52,11 +52,5 @@
     "nohoist": [
       "**/babel-loader"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run format && npm run lint",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
   }
 }
