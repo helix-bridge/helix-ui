@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { Radio, Space } from 'antd';
 import { useState } from 'react';
+import { CheckSquareFilled } from '@ant-design/icons';
 
 type TokenOnChainData = {
   tokenIcon: string;
@@ -24,10 +25,11 @@ const TokenOnChain = ({ tokenIcon, chainIcon, chainName, from }: TokenOnChainDat
   </div>
 );
 
-const SelectorItem = ({ value }: { value: number }) => {
+const SelectorItem = ({ value, theSelected }: { value: number, theSelected: number }) => {
   return (
     <Radio.Button className='w-full' style={{ height: 'fit-content' }} value={value}>
       <div className="relative flex justify-between items-center pr-3">
+        {value === theSelected && <CheckSquareFilled className="absolute -top-px left-auto -right-4"/>}
         <TokenOnChain tokenIcon="/image/ring.svg" chainIcon="/image/darwinia.png" chainName='Darwinia' from />
         <div className="relative w-56 flex justify-center">
           <div className="py-1 w-24 rounded-3xl bg-gray-700 flex justify-center items-center space-x-2 z-10">
@@ -43,7 +45,7 @@ const SelectorItem = ({ value }: { value: number }) => {
 }
 
 export function BridgeSelector() {
-  const [value, setValue] = useState<number>(0);
+  const [theSelected, setTheSelected] = useState<number>(0);
 
   return (
     <div className="dark:bg-antDark p-5 w-auto">
@@ -51,11 +53,11 @@ export function BridgeSelector() {
         className='w-full overflow-auto'
         style={{ maxHeight: '65vh' }}
         size='large'
-        defaultValue={value}
-        onChange={(e) => setValue(e.target.value)}
+        defaultValue={theSelected}
+        onChange={(e) => setTheSelected(e.target.value)}
       >
         <Space direction="vertical" className='w-full' size="middle">
-          {(new Array(10)).fill(1).map((_, index) => <SelectorItem key={index} value={index} />)}
+          {(new Array(10)).fill(1).map((_, index) => <SelectorItem key={index} value={index} theSelected={theSelected} />)}
         </Space>
       </Radio.Group>
     </div>
