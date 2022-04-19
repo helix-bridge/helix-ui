@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Radio, Space } from 'antd';
+import { useState } from 'react';
 
 type TokenOnChainData = {
   tokenIcon: string;
@@ -23,9 +24,9 @@ const TokenOnChain = ({ tokenIcon, chainIcon, chainName, from }: TokenOnChainDat
   </div>
 );
 
-const SelectorItem = () => {
+const SelectorItem = ({ value }: { value: number }) => {
   return (
-    <Radio.Button className='w-full' style={{ height: 'fit-content' }}>
+    <Radio.Button className='w-full' style={{ height: 'fit-content' }} value={value}>
       <div className="relative flex justify-between items-center pr-3">
         <TokenOnChain tokenIcon="/image/ring.svg" chainIcon="/image/darwinia.png" chainName='Darwinia' from />
         <div className="relative w-56 flex justify-center">
@@ -42,15 +43,19 @@ const SelectorItem = () => {
 }
 
 export function BridgeSelector() {
+  const [value, setValue] = useState<number>(0);
+
   return (
     <div className="dark:bg-antDark p-5 w-auto">
       <Radio.Group
         className='w-full overflow-auto'
         style={{ maxHeight: '65vh' }}
         size='large'
+        defaultValue={value}
+        onChange={(e) => setValue(e.target.value)}
       >
         <Space direction="vertical" className='w-full' size="middle">
-          {(new Array(10)).fill(1).map(() => <SelectorItem />)}
+          {(new Array(10)).fill(1).map((_, index) => <SelectorItem key={index} value={index} />)}
         </Space>
       </Radio.Group>
     </div>
