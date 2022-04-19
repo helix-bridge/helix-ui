@@ -17,7 +17,7 @@ import AppLayout from '../components/AppLayout';
 const isDev = process.env.NODE_ENV === 'development';
 
 const client = new GraphQLClient({
-  url: isDev ? 'http://localhost:4002/graphql' : 'https://wormhole-apollo.darwinia.network/',
+  url: isDev ? 'http://localhost:4002' : 'https://wormhole-apollo.darwinia.network/',
 });
 
 function MyApp({ Component, pageProps }: AppProps & { Component: FunctionComponent }) {
