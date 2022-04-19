@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Radio, Space, Alert, Result, Empty } from 'antd';
+import { Radio, Space, Result } from 'antd';
 import { useState } from 'react';
 import { CheckSquareFilled, SmileOutlined } from '@ant-design/icons';
 
