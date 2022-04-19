@@ -1,7 +1,7 @@
 import Image from 'next/image';
-import { Radio, Space } from 'antd';
+import { Radio, Space, Alert, Result, Empty } from 'antd';
 import { useState } from 'react';
-import { CheckSquareFilled } from '@ant-design/icons';
+import { CheckSquareFilled, SmileOutlined } from '@ant-design/icons';
 
 type TokenOnChainData = {
   tokenIcon: string;
@@ -48,10 +48,15 @@ export function BridgeSelector() {
   const [theSelected, setTheSelected] = useState<number>(0);
 
   return (
-    <div className="dark:bg-antDark p-5 w-auto">
-      <Radio.Group
-        className='w-full overflow-auto'
-        style={{ maxHeight: '65vh' }}
+    <div className="dark:bg-antDark p-5 overflow-auto" style={{ maxHeight: '65vh', minHeight: '20vh' }}>
+      {theSelected === 1 ? (
+        <Result
+          icon={<SmileOutlined />}
+          title="Please select the parameters for your desired transfer and enter an amount."
+        />
+      ) : (
+        <Radio.Group
+        className='w-full'
         size='large'
         defaultValue={theSelected}
         onChange={(e) => setTheSelected(e.target.value)}
@@ -60,6 +65,7 @@ export function BridgeSelector() {
           {(new Array(10)).fill(1).map((_, index) => <SelectorItem key={index} value={index} theSelected={theSelected} />)}
         </Space>
       </Radio.Group>
+      )}
     </div>
   );
 }
