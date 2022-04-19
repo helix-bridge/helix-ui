@@ -90,14 +90,18 @@ function Record({ record }: { record: Substrate2SubstrateRecord }) {
         <Tooltip title={fromAccount}>
           <span className="capitalize">{getDisplayName(fromConfig)}</span>
         </Tooltip>
-        <EllipsisMiddle isGrow>{fromAccount}</EllipsisMiddle>
+        <EllipsisMiddle deviation={5} isGrow>
+          {fromAccount}
+        </EllipsisMiddle>
       </div>
 
       <div className="flex flex-col col-span-3 overflow-hidden pl-2 pr-4">
         <Tooltip title={toAccount}>
           <span className="capitalize">{getDisplayName(toConfig)}</span>
         </Tooltip>
-        <EllipsisMiddle isGrow>{toAccount}</EllipsisMiddle>
+        <EllipsisMiddle deviation={5} isGrow>
+          {toAccount}
+        </EllipsisMiddle>
       </div>
 
       <span>{`${fromChainMode === 'dvm' ? 'x' : ''}${fromConfig?.isTest ? 'O' : ''}RING`}</span>

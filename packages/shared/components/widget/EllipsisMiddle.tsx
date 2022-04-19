@@ -1,11 +1,10 @@
 import { Typography } from 'antd';
 import { PropsWithChildren, useEffect, useRef } from 'react';
 
-const ellipse = (containerWidth: number, childNode: HTMLSpanElement, txtNode: HTMLElement) => {
+const ellipse = (containerWidth: number, childNode: HTMLSpanElement, txtNode: HTMLElement, deviation = 0) => {
   const childWidth = childNode.offsetWidth;
   const txtWidth = txtNode.offsetWidth;
   const targetWidth = childWidth > txtWidth ? childWidth : txtWidth;
-  const deviation = 5;
 
   if (targetWidth > containerWidth - deviation) {
     const str = txtNode.textContent as string;
@@ -29,6 +28,7 @@ interface EllipsisMiddleProps {
   width?: number;
   copyable?: boolean;
   isGrow?: boolean;
+  deviation?: number;
 }
 
 export function EllipsisMiddle({
@@ -37,6 +37,7 @@ export function EllipsisMiddle({
   width,
   copyable = false,
   isGrow = false,
+  deviation = 0,
 }: PropsWithChildren<EllipsisMiddleProps>) {
   const ref = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line complexity
@@ -74,7 +75,7 @@ export function EllipsisMiddle({
         containerWidth = Math.max(nodeWidth, parentWidth);
       }
 
-      ellipse(containerWidth, child as HTMLSpanElement, txtToEllipse as HTMLElement);
+      ellipse(containerWidth, child as HTMLSpanElement, txtToEllipse as HTMLElement, deviation);
     }
   };
 
