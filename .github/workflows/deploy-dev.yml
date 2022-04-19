@@ -28,6 +28,7 @@ jobs:
           project_name: helix-ui
           script_run: false
           workdir: .
+          dist_path: ./packages/helix/
 
       - uses: marocchino/sticky-pull-request-comment@v2
         with:
