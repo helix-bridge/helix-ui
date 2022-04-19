@@ -5,13 +5,15 @@
     "bootstrap": "yarn install; lerna bootstrap;",
     "start": "lerna run start --parallel",
     "start:helix": "node_modules/.bin/lerna run --scope helix --stream dev",
+    "start:apps": "node_modules/.bin/lerna run --scope apps --stream dev",
     "build:helix": "node_modules/.bin/lerna run --scope helix --stream build",
+    "build:apps": "node_modules/.bin/lerna run --scope apps --stream build",
     "run:build:helix": "lerna run start --scope helix",
+    "run:build:apps": "lerna run start --scope apps",
     "stylelint": "stylelint \"packages/**/styles/**/*.scss\" --config stylelint.config.js",
     "eslint": "eslint packages/**/*.{ts,tsx} -c .eslintrc.js --fix",
     "lint": "npm run eslint && npm run stylelint && cd packages/helix && next lint",
     "format": "prettier  packages/shared/**/**/*.{ts,tsx} packages/helix/**/**/*.{ts,tsx} --write"
-  
   },
   "devDependencies": {
     "@commitlint/cli": "^12.0.1",
