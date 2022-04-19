@@ -1,8 +1,8 @@
 import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChainConfig } from '../../model';
-import { prettyNumber } from '../../utils';
-import { Logo } from '../widget/Logo';
+import { ChainConfig } from '@helix/shared/model';
+import { getDisplayName, prettyNumber } from '@helix/shared/utils';
+import { Logo } from '@helix/shared/components/widget/Logo';
 
 interface ChainStatisticOverview {
   chain: ChainConfig;
@@ -59,7 +59,7 @@ export function Statistics({ children, startTime, total, title, rank, currency }
             <div key={chain.name} className="flex justify-between">
               <div className="flex items-center gap-2">
                 <Logo chain={chain} width={24} height={24} />
-                <span className="capitalize">{chain.name}</span>
+                <span className="capitalize">{getDisplayName(chain)}</span>
               </div>
 
               <span className="uppercase">

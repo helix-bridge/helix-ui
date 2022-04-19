@@ -1,8 +1,8 @@
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts/highstock';
 import { useRef } from 'react';
-import { THEME } from '../../config/theme';
-import { readStorage } from '../../utils';
+import { THEME } from '@helix/shared/config/theme';
+import { readStorage } from '@helix/shared/utils';
 
 export type Statistic = [number, number];
 
@@ -93,20 +93,7 @@ export function BarChart({ data, name }: BarChartProps) {
     yAxis: {
       visible: false,
     },
-    /* eslint-disable no-magic-numbers */
-    series: [
-      {
-        type: 'column',
-        name,
-        data,
-        dataGrouping: {
-          units: [
-            ['week', [1]],
-            ['month', [1, 2, 3, 4, 6]],
-          ],
-        },
-      },
-    ],
+    series: [{ type: 'column', name, data }],
     credits: {
       enabled: false,
     },

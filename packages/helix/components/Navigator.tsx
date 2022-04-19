@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { DownOutlined } from '@ant-design/icons';
 import { AntdIconProps } from '@ant-design/icons/lib/components/AntdIcon';
-import { Path } from '../../config/constant';
-import { THEME } from '../../config/theme';
+import { Path } from '@helix/shared/config/constant';
+import { THEME } from '@helix/shared/config/theme';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -28,7 +28,8 @@ const navigators: Nav[] = [
   { label: 'Dashboard', path: Path.root },
   { label: 'Explorer', path: Path.transaction },
   // { label: 'DAO', path: 'dao' },
-  { label: 'Docs', path: 'https://docs.darwinia.network/tutorials/wiki-tut-wormhole', extra: true },
+  // FIXME: cause warning: Prop `href` did not match. Server: "" Client: "/zh/transaction"
+  { label: 'Docs', path: '', extra: true },
 ];
 
 function NavLink({ nav, theme }: { nav: Nav; theme: THEME }) {

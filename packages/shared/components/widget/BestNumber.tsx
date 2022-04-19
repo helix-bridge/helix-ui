@@ -2,10 +2,10 @@ import { BlockNumber } from '@polkadot/types/interfaces/runtime';
 import { Spin, Tooltip } from 'antd';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { from, mergeMap, retry, startWith, Subscription, switchMap, takeWhile, timer } from 'rxjs';
-import { MIDDLE_DURATION } from '../../config/constant';
-import { useIsMounted } from '../../hooks';
-import { ChainConfig } from '../../model';
-import { entrance, isEthereumNetwork, isPolkadotNetwork, prettyNumber, waitUntilConnected } from '../../utils';
+import { MIDDLE_DURATION } from '@helix/shared/config/constant';
+import { useIsMounted } from '@helix/shared/hooks';
+import { ChainConfig } from '@helix/shared/model';
+import { entrance, isEthereumNetwork, isPolkadotNetwork, prettyNumber, waitUntilConnected } from '@helix/shared/utils';
 
 const duration = 6000;
 
