@@ -1,14 +1,4 @@
 import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Affix, Button, Input, Spin, Tooltip } from 'antd';
-import { formatDistance, getUnixTime } from 'date-fns';
-import { useQuery } from 'graphql-hooks';
-import { last } from 'lodash';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useVirtual } from 'react-virtual';
-import { distinctUntilChanged, filter, Subject } from 'rxjs';
 import { CrossChainState } from '@helix/shared/components/widget/CrossChainStatus';
 import { EllipsisMiddle } from '@helix/shared/components/widget/EllipsisMiddle';
 import { Path } from '@helix/shared/config/constant';
@@ -25,7 +15,17 @@ import {
   prettyNumber,
   revertAccount,
 } from '@helix/shared/utils';
+import { Affix, Button, Input, Spin, Tooltip } from 'antd';
+import { formatDistance, getUnixTime } from 'date-fns';
+import { useQuery } from 'graphql-hooks';
 import request from 'graphql-request';
+import { last, omitBy } from 'lodash';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useRouter } from 'next/router';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useVirtual } from 'react-virtual';
+import { distinctUntilChanged, filter, Subject } from 'rxjs';
 
 const S2S_RECORDS = `
   query s2sRecords($first: Int!, $startTime: Int!, $sender: String) {
@@ -90,14 +90,18 @@ function Record({ record }: { record: Substrate2SubstrateRecord }) {
         <Tooltip title={fromAccount}>
           <span className="capitalize">{getDisplayName(fromConfig)}</span>
         </Tooltip>
-        <EllipsisMiddle isGrow>{fromAccount}</EllipsisMiddle>
+        <EllipsisMiddle deviation={5} isGrow>
+          {fromAccount}
+        </EllipsisMiddle>
       </div>
 
       <div className="flex flex-col col-span-3 overflow-hidden pl-2 pr-4">
         <Tooltip title={toAccount}>
           <span className="capitalize">{getDisplayName(toConfig)}</span>
         </Tooltip>
-        <EllipsisMiddle isGrow>{toAccount}</EllipsisMiddle>
+        <EllipsisMiddle deviation={5} isGrow>
+          {toAccount}
+        </EllipsisMiddle>
       </div>
 
       <span>{`${fromChainMode === 'dvm' ? 'x' : ''}${fromConfig?.isTest ? 'O' : ''}RING`}</span>
@@ -135,8 +139,9 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
     variables: { first: PAGE_SIZE, startTime },
   });
 
-  const subject = useMemo(() => new Subject<string>(), []);
+  const subject = useMemo(() => new Subject<{ startTime: string; account: string }>(), []);
   const [source, setSource] = useState<Substrate2SubstrateRecord[]>(records);
+  const [account, setAccount] = useState<string>('');
   const virtualBoxRef = useRef(null);
 
   const rowVirtualizer = useVirtual({
@@ -147,7 +152,7 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
   });
 
   useEffect(() => {
-    if (data?.s2sRecords && data.s2sRecords.length) {
+    if (data?.s2sRecords && data.s2sRecords?.length) {
       setSource((pre) => [...pre, ...data.s2sRecords]);
     }
   }, [data]);
@@ -158,9 +163,9 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
     const courser = last(source);
 
     if (lastItem && lastItem.index && !loading && courser && lastItem.index >= source.length - 1) {
-      subject.next(courser.startTime);
+      subject.next({ startTime: courser.startTime, account });
     }
-  }, [loading, rowVirtualizer.virtualItems, source, subject]);
+  }, [account, loading, rowVirtualizer.virtualItems, source, subject]);
 
   useEffect(() => {
     const sub$$ = subject
@@ -168,8 +173,13 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
         filter((time) => !!time),
         distinctUntilChanged()
       )
-      .subscribe((time: string) => {
-        refetch({ variables: { first: PAGE_SIZE, startTime: getUnixTime(new Date(time)) } });
+      .subscribe(({ startTime: time, account: sender }) => {
+        const variables = omitBy(
+          { first: PAGE_SIZE, startTime: getUnixTime(new Date(time)), sender },
+          (value) => !value
+        );
+
+        refetch({ variables });
       });
 
     return () => sub$$.unsubscribe();
@@ -198,7 +208,6 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
                   setIsValidSender(true);
                   setSource([]);
                   refetch({ variables: { first: PAGE_SIZE, startTime: getUnixTime(new Date()) } });
-                  return;
                 }
 
                 try {
@@ -210,6 +219,8 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
                 } catch {
                   setIsValidSender(false);
                 }
+
+                setAccount(value);
               }}
               placeholder={t('Search by sender address')}
               className={`max-w-md ${isValidSender ? '' : 'border-red-400'}`}
@@ -280,7 +291,7 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
                       }}
                     >
                       {isLoaderRow ? (
-                        data.s2sRecords.length ? (
+                        data.s2sRecords?.length ? (
                           <Spin className="col-span-full" />
                         ) : (
                           <span className="col-span-full text-center">{t('Nothing more to load')}</span>
@@ -304,9 +315,7 @@ export const getServerSideProps = async ({ locale }: { locale: string }) => {
   const translations = await serverSideTranslations(locale ?? 'en', ['common']);
   const startTime = getUnixTime(new Date());
   const url =
-    process.env.NODE_ENV === 'development'
-      ? 'http://localhost:4002/graphql'
-      : 'https://wormhole-apollo.darwinia.network/';
+    process.env.NODE_ENV === 'development' ? 'http://localhost:4002' : 'https://wormhole-apollo.darwinia.network/';
   const records = await request(url, S2S_RECORDS, {
     first: PAGE_SIZE,
     startTime,

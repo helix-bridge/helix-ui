@@ -13,7 +13,7 @@ interface BarChartProps {
 
 export function BarChart({ data, name }: BarChartProps) {
   const charRef = useRef(null);
-  const isDark = readStorage().theme === THEME.DARK;
+  const isDark = !readStorage().theme || readStorage().theme === THEME.DARK;
   const mainColor = '#816eeb';
   const barColor = isDark ? '#151e33' : 'rgb(229,231,235)';
 

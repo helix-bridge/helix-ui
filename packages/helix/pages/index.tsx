@@ -34,7 +34,7 @@ const chains: ChainProps[] = [
   {
     config: ethereumConfig,
     portal: 'https://ethereum.org/en/',
-    github: 'https://ethereum.org/en/',
+    github: 'https://github.com/ethereum/ethereum-org-website',
     twitter: 'https://twitter.com/ethdotorg',
   },
   {
@@ -53,7 +53,7 @@ const chains: ChainProps[] = [
   {
     config: ropstenConfig,
     portal: 'https://ethereum.org/en/',
-    github: 'https://ethereum.org/en/',
+    github: 'https://github.com/ethereum/ropsten',
     twitter: 'https://twitter.com/ethdotorg',
   },
   {

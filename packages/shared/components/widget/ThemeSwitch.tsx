@@ -34,7 +34,7 @@ export function ThemeSwitch({
   network,
   mode = 'switcher',
   onThemeChange,
-  defaultTheme = THEME.LIGHT,
+  defaultTheme = THEME.DARK,
   className,
   ...others
 }: ThemeSwitchProps) {
