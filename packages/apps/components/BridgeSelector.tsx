@@ -1,7 +1,7 @@
 export function BridgeSelector() {
   return (
-    <div>
-      <p></p>
+    <div className="dark:bg-antDark p-5 w-auto">
+      <p>sssss</p>
     </div>
   )
 }

@@ -2,6 +2,7 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { TransferInput } from '../components/TransferInput';
 import { BridgeSelector } from '../components/BridgeSelector';
+import { Row, Col } from 'antd';
 
 function Page() {
   const { t } = useTranslation();
@@ -9,10 +10,14 @@ function Page() {
 
   return (
     <>
-      <div className="flex">
-        <TransferInput />
-        <BridgeSelector />
-      </div>
+      <Row>
+        <Col span={10}>
+          <TransferInput />
+        </Col>
+        <Col span={13} offset={1}>
+          <BridgeSelector />
+        </Col>
+      </Row>
     </>
   );
 }

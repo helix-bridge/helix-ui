@@ -2,7 +2,7 @@ import { Form, Input, Button, Checkbox } from 'antd';
 
 export function TransferInput() {
   return (
-    <div className="dark:bg-antDark p-5 w-2/5">
+    <div className="dark:bg-antDark p-5">
       <Form
         layout="vertical"
       >
