@@ -316,6 +316,7 @@ export const getServerSideProps = async ({ locale }: { locale: string }) => {
   const startTime = getUnixTime(new Date());
   const url =
     process.env.NODE_ENV === 'development' ? 'http://localhost:4002' : 'https://wormhole-apollo.darwinia.network/';
+
   const records = await request(url, S2S_RECORDS, {
     first: PAGE_SIZE,
     startTime,

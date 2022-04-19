@@ -39,7 +39,7 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
         </a>
 
         <a
-          href="https://twitter.com/helixbridge"
+          href="https://twitter.com/helixbridges"
           target="_blank"
           rel="noreferrer"
           className="flex text-gray-400 hover:text-gray-200"

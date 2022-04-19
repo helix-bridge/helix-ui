@@ -28,7 +28,7 @@ const navigators: Nav[] = [
   { label: 'Dashboard', path: Path.root },
   { label: 'Explorer', path: Path.transaction },
   // { label: 'DAO', path: 'dao' },
-  { label: 'Docs', path: 'docs', extra: true },
+  // { label: 'Docs', path: Path.docs },
 ];
 
 function NavLink({ nav, theme }: { nav: Nav; theme: THEME }) {

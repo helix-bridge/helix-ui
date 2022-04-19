@@ -18,10 +18,10 @@ import {
   Vertices,
 } from '@helix/shared/model';
 import {
-  gqlName,
   fromWei,
   getBridge,
   getDisplayName,
+  gqlName,
   pollWhile,
   prettyNumber,
   revertAccount,
@@ -30,7 +30,7 @@ import {
 import { Breadcrumb, Divider, Progress, Tooltip } from 'antd';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
 import camelcaseKeys from 'camelcase-keys';
-import { formatDistance, formatDistanceToNow, formatRFC7231 } from 'date-fns';
+import { formatDistance } from 'date-fns';
 import { gql, request } from 'graphql-request';
 import { has } from 'lodash';
 import { GetServerSidePropsContext, NextPage } from 'next';
@@ -431,10 +431,15 @@ const Page: NextPage<{
               {arrivalRecord?.result ? <ClockCircleOutlined /> : <Icon name="#dwa-reload" />}
 
               <span>
-                {formatDistanceToNow(new Date(departureRecord.startTime), { includeSeconds: true, addSuffix: true })}
+                {formatDistance(new Date(departureRecord.startTime), new Date(new Date().toISOString().split('.')[0]), {
+                  includeSeconds: true,
+                  addSuffix: true,
+                })}
               </span>
 
-              <span className="hidden md:inline-block">({formatRFC7231(new Date(departureRecord.startTime))})</span>
+              <span className="hidden md:inline-block">
+                ({new Date(departureRecord.startTime + 'Z').toLocaleString()} )
+              </span>
 
               <Divider type="vertical" orientation="center" />
 
