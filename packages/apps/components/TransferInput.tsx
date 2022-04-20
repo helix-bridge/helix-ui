@@ -12,9 +12,9 @@ const TokenSelector = ({ defaultValue }: { defaultValue: number }) => (
       <Select.Option key={index} value={index}>
         <div className={cx('flex items-center space-x-2 py-2')}>
           <Image src="/image/ring.svg" alt="..." width={40} height={40} />
-          <div className="flex flex-col space-y-0">
+          <div className="flex flex-col space-y-px">
             <strong className="font-medium text-sm">RING</strong>
-            <small className="font-light text-sm">Darwinia</small>
+            <small className="font-light text-xs opacity-60">Darwinia</small>
           </div>
         </div>
       </Select.Option>

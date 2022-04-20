@@ -18,9 +18,9 @@ const TokenOnChain = ({ tokenIcon, chainIcon, chainName, from }: TokenOnChainDat
         <Image src={chainIcon} alt="..." layout="fill" />
       </span>
     </div>
-    <div className={`flex flex-col ${from ? 'order-2 ml-6' : 'order-1 items-end'}`}>
-      <strong>33,456.3762 RING</strong>
-      <small>on {chainName}</small>
+    <div className={`flex flex-col space-y-1 ${from ? 'order-2 ml-6' : 'order-1 items-end'}`}>
+      <strong className='font-medium text-sm'>33,456.3762 RING</strong>
+      <small className='font-light text-xs opacity-70'>on {chainName}</small>
     </div>
   </div>
 );
@@ -28,7 +28,7 @@ const TokenOnChain = ({ tokenIcon, chainIcon, chainName, from }: TokenOnChainDat
 const SelectorItem = ({ value, theSelected }: { value: number; theSelected: number }) => {
   return (
     <Radio.Button className="w-full" style={{ height: 'fit-content' }} value={value}>
-      <div className="relative flex justify-between items-center pr-3">
+      <div className="relative flex justify-between items-center pr-3 py-3">
         {value === theSelected && <CheckSquareFilled className="absolute -top-px left-auto -right-4" />}
         <TokenOnChain tokenIcon="/image/ring.svg" chainIcon="/image/darwinia.png" chainName="Darwinia" from />
         <div className="relative w-56 flex justify-center">
