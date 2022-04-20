@@ -20,5 +20,10 @@ export const ethereumConfig: EthereumChainConfig = {
     etherscan: 'wss://mainnet.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
     rpc: '',
   },
+  social: {
+    portal: 'https://ethereum.org/en/',
+    github: 'https://github.com/ethereum/ethereum-org-website',
+    twitter: 'https://twitter.com/ethdotorg',
+  },
   type: ['ethereum'],
 };

@@ -8,15 +8,14 @@ import { getDisplayName } from '@helix/shared/utils';
 export interface ChainProps {
   config: ChainConfig;
   logoKey?: keyof Facade;
-  portal: string;
-  github: string;
-  twitter: string;
 }
 
-export function Chain({ config, logoKey, portal, github, twitter }: ChainProps) {
+export function Chain({ config, logoKey }: ChainProps) {
   const open = useCallback((url) => {
     window.open(url, '_blank');
   }, []);
+
+  const { portal, twitter, github } = config.social;
 
   return (
     <div className="flex items-center px-6 py-8 gap-6 bg-gray-200 dark:bg-antDark">

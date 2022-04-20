@@ -15,6 +15,11 @@ export const darwiniaConfig: PolkadotChainConfig = {
     etherscan: '',
     rpc: 'wss://rpc.darwinia.network',
   },
+  social: {
+    portal: 'https://darwinia.network/',
+    github: 'https://github.com/darwinia-network',
+    twitter: 'https://twitter.com/DarwiniaNetwork',
+  },
   ss58Prefix: 18,
   specVersion: 1180,
   type: ['polkadot', 'darwinia'],

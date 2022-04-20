@@ -24,11 +24,18 @@ interface ProviderConfig {
   etherscan: string;
 }
 
+interface Social {
+  github: string;
+  portal: string;
+  twitter: string;
+}
+
 export interface ChainConfig {
   facade: Facade;
   isTest: boolean;
   name: Network;
   provider: ProviderConfig;
+  social: Social;
   type: NetworkCategory[];
 }
 

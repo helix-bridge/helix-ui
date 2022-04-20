@@ -20,5 +20,10 @@ export const ropstenConfig: EthereumChainConfig = {
     etherscan: 'wss://ropsten.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
     rpc: '',
   },
+  social: {
+    portal: 'https://ethereum.org/en/',
+    github: 'https://github.com/ethereum/ropsten',
+    twitter: 'https://twitter.com/ethdotorg',
+  },
   type: ['ethereum'],
 };

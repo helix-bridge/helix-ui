@@ -35,6 +35,11 @@ export const pangolinConfig: DVMChainConfig = {
     etherscan: 'wss://ropsten.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
     rpc: 'wss://pangolin-rpc.darwinia.network',
   },
+  social: {
+    portal: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangolin-rpc.darwinia.network#/explorer',
+    github: 'https://github.com/darwinia-network',
+    twitter: 'https://twitter.com/DarwiniaNetwork',
+  },
   ss58Prefix: 42,
   specVersion: 28060,
   type: ['polkadot', 'darwinia'],
