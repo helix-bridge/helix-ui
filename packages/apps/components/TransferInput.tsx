@@ -1,18 +1,18 @@
-import { Form, Input, Button, Typography } from 'antd';
+import { Form, Input, Button, Typography, Select } from 'antd';
 
 export function TransferInput() {
   return (
     <div className="dark:bg-antDark p-5">
       <Form layout="vertical">
         <Form.Item label="Your send" name="send" rules={[{ required: true, message: 'Please input your username!' }]}>
-          <Input />
+          <Input size='large' />
         </Form.Item>
         <Form.Item
           label="Your receive"
           name="receive"
           rules={[{ required: true, message: 'Please input your username!' }]}
         >
-          <Input />
+          <Input size='large' />
         </Form.Item>
         <Form.Item
           label="Sender"
@@ -20,7 +20,14 @@ export function TransferInput() {
           tooltip="Select an address sending the transaction."
           rules={[{ required: true, message: 'Please input your username!' }]}
         >
-          <Input />
+          <Select defaultValue='5G1gFmXNy9rwYqryzTkyM4x5BSTB9cG4fYgqPz1SZ9VPMnat1' size="large">
+            <Select.Option value='5G1gFmXNy9rwYqryzTkyM4x5BSTB9cG4fYgqPz1SZ9VPMnat1'>
+              <Typography.Text ellipsis className="w-4/5">5G1gFmXNy9rwYqryzTkyM4x5BSTB9cG4fYgqPz1SZ9VPMnat1</Typography.Text>
+            </Select.Option>
+            <Select.Option value='5G1gFmXNy9rwYqryzTkyM4x5BSTB9cG4fYgqPz1SZ9VPMnat2'>
+              <Typography.Text ellipsis className="w-4/5">5G1gFmXNy9rwYqryzTkyM4x5BSTB9cG4fYgqPz1SZ9VPMnat2</Typography.Text>
+            </Select.Option>
+          </Select>
         </Form.Item>
         <Form.Item
           label="Receiver"
@@ -28,7 +35,7 @@ export function TransferInput() {
           tooltip="Please do not fill in the exchange account. After the transaction is confirmed, the account cannot be changed."
           rules={[{ required: true, message: 'Please input your username!' }]}
         >
-          <Input />
+          <Input size='large' />
         </Form.Item>
         <Form.Item label="Info" name="info" className="relative">
           <Input disabled className="h-20" />
@@ -44,7 +51,7 @@ export function TransferInput() {
           </div>
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
-          <Button type="primary" htmlType="submit" className='w-full'>
+          <Button type="primary" htmlType="submit" className='w-full' size='large'>
             Transfer
           </Button>
         </Form.Item>
