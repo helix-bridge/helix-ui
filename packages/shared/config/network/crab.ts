@@ -39,6 +39,10 @@ export const crabConfig: DVMChainConfig = {
     github: 'https://github.com/darwinia-network/darwinia/tree/main/runtime/crab',
     twitter: 'https://twitter.com/DarwiniaNetwork',
   },
+  tokens: [
+    { name: 'CRAB', precision: 9, bridges: ['helix'], type: 'native', logo: 'ring.svg' },
+    { name: 'xRING', precision: 9, bridges: ['helix'], type: 'mapping', logo: 'ring.svg' },
+  ],
   type: ['polkadot', 'darwinia'],
   ss58Prefix: 42,
   specVersion: 1200,

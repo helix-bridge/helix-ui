@@ -112,6 +112,10 @@ export class Bridge<C = BridgeConfig> {
     return { network: config.name, mode: has(config, 'dvm') ? 'dvm' : 'native' };
   }
 
+  private isVertices(data: Vertices | ChainConfig): boolean {
+    return Object.keys(data).length === 2 && has(data, 'network') && has(data, 'mode');
+  }
+
   setIssuingComponents(crossComp: FunctionComponent, recordComp: FunctionComponent): void {
     this.crossChain.set(this.issuing, crossComp);
     this.record.set(this.issuing, recordComp);
@@ -122,11 +126,17 @@ export class Bridge<C = BridgeConfig> {
     this.record.set(this.redeem, recordComp);
   }
 
-  isIssuing(departure: Departure, arrival: Departure): boolean {
+  isIssuing(dep: Departure | ChainConfig, arr: Departure | ChainConfig): boolean {
+    const departure = this.isVertices(dep) ? dep : this.toVertices(<ChainConfig>dep);
+    const arrival = this.isVertices(arr) ? arr : this.toVertices(<ChainConfig>arr);
+
     return isEqual(this.issuing, [departure, arrival]);
   }
 
-  isRedeem(departure: Departure, arrival: Departure): boolean {
+  isRedeem(dep: Departure | ChainConfig, arr: Departure | ChainConfig): boolean {
+    const departure = this.isVertices(dep) ? dep : this.toVertices(<ChainConfig>dep);
+    const arrival = this.isVertices(arr) ? arr : this.toVertices(<ChainConfig>arr);
+
     return isEqual(this.redeem, [departure, arrival]);
   }
 

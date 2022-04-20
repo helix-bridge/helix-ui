@@ -21,5 +21,6 @@ export const pangoroConfig: PolkadotChainConfig = {
   },
   ss58Prefix: 18,
   specVersion: 28060,
+  tokens: [{ name: 'PRING', precision: 9, bridges: ['helix'], type: 'native', logo: 'ring.svg' }],
   type: ['polkadot', 'darwinia'],
 };

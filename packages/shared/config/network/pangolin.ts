@@ -40,6 +40,10 @@ export const pangolinConfig: DVMChainConfig = {
     github: 'https://github.com/darwinia-network',
     twitter: 'https://twitter.com/DarwiniaNetwork',
   },
+  tokens: [
+    { name: 'PRING', precision: 9, bridges: ['helix'], type: 'native', logo: 'ring.svg' },
+    { name: 'xORING', precision: 9, bridges: ['helix'], type: 'mapping', logo: 'ring.svg' },
+  ],
   ss58Prefix: 42,
   specVersion: 28060,
   type: ['polkadot', 'darwinia'],

@@ -20,6 +20,7 @@ export const darwiniaConfig: PolkadotChainConfig = {
     github: 'https://github.com/darwinia-network',
     twitter: 'https://twitter.com/DarwiniaNetwork',
   },
+  tokens: [{ name: 'RING', precision: 9, bridges: ['helix'], type: 'native', logo: 'ring.svg' }],
   ss58Prefix: 18,
   specVersion: 1180,
   type: ['polkadot', 'darwinia'],

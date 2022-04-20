@@ -9,6 +9,14 @@ export interface Logo {
   type: LogoType;
 }
 
+interface Token {
+  name: string;
+  type: 'native' | 'mapping';
+  bridges: string[];
+  precision: number;
+  logo: string;
+}
+
 interface DVMConfig {
   ring: string;
   kton: string;
@@ -36,6 +44,7 @@ export interface ChainConfig {
   name: Network;
   provider: ProviderConfig;
   social: Social;
+  tokens: Token[];
   type: NetworkCategory[];
 }
 

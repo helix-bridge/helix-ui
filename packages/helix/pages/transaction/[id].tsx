@@ -7,10 +7,9 @@ import { SubscanLink } from '@helix/shared/components/widget/SubscanLink';
 import { CrossChainStatus, MIDDLE_DURATION } from '@helix/shared/config/constant';
 import { useIsMounted } from '@helix/shared/hooks';
 import {
-  Arrival,
-  Departure,
   NetworkQueryParams,
   Substrate2SubstrateRecord,
+  SubstrateSubstrateDVMBridgeConfig,
   UnlockedRecord,
   Vertices,
 } from '@helix/shared/model';
@@ -18,6 +17,7 @@ import {
   fromWei,
   getBridge,
   getDisplayName,
+  getNetworkMode,
   gqlName,
   pollWhile,
   prettyNumber,
@@ -133,31 +133,42 @@ const Page: NextPage<{
   const query = router.query as unknown as NetworkQueryParams;
   const isMounted = useIsMounted();
 
-  const direction = useMemo(() => {
-    const departure = {};
-    const arrival = {};
+  const [departure, arrival] = useMemo(() => {
+    const dep = {};
+    const arr = {};
 
     Object.entries(router.query).forEach(([key, value]) => {
       if (key.startsWith('from')) {
-        Object.assign(departure, { [/from$/.test(key) ? 'network' : 'mode']: value });
+        Object.assign(dep, { [/from$/.test(key) ? 'network' : 'mode']: value });
       }
       if (key.startsWith('to')) {
-        Object.assign(arrival, { [/to$/.test(key) ? 'network' : 'mode']: value });
+        Object.assign(arr, { [/to$/.test(key) ? 'network' : 'mode']: value });
       }
     });
 
-    return [departure, arrival] as [Departure, Arrival];
+    return [verticesToChainConfig(dep as Vertices), verticesToChainConfig(arr as Vertices)];
   }, [router.query]);
 
-  const [departure, arrival] = useMemo(() => direction.map((item) => verticesToChainConfig(item)), [direction]);
-
-  const bridge = getBridge(direction);
-  const isIssuing = bridge.isIssuing(...direction);
+  const bridge = getBridge<SubstrateSubstrateDVMBridgeConfig>([departure, arrival]);
+  const isIssuing = bridge.isIssuing(departure, arrival);
 
   const [departureRecord, arrivalRecord] = useMemo(
     () => (isIssuing ? [issuingRecord, redeemRecord] : [redeemRecord, issuingRecord]),
     [isIssuing, issuingRecord, redeemRecord]
   );
+
+  const [fromToken, toToken] = useMemo(() => {
+    const bridgeName = 'helix';
+
+    return [
+      departure.tokens.find(
+        (item) => item.bridges.includes(bridgeName) && item.type === (isIssuing ? 'native' : 'mapping')
+      )!,
+      arrival.tokens.find(
+        (item) => item.bridges.includes(bridgeName) && item.type === (isIssuing ? 'mapping' : 'native')
+      )!,
+    ];
+  }, [arrival.tokens, departure.tokens, isIssuing]);
 
   const [finalRecord, setFinalRecord] = useState<FinalActionRecord | null>(lockOrUnlockRecord);
 
@@ -165,7 +176,6 @@ const Page: NextPage<{
     () => fromWei({ value: departureRecord?.amount ?? 0, unit: 'gwei' }, prettyNumber),
     [departureRecord?.amount]
   );
-  const fromToken = useMemo(() => (isIssuing ? 'RING' : 'xRING'), [isIssuing]);
 
   // eslint-disable-next-line complexity
   const transfers = useMemo(() => {
@@ -173,34 +183,41 @@ const Page: NextPage<{
       return [];
     }
 
+    const {
+      contracts: { issuing: issuingRecipient, redeem: redeemRecipient, genesis },
+    } = bridge.config;
+
+    const depMode = getNetworkMode(departure);
+    const arrMode = getNetworkMode(arrival);
+
     const issuingTransfer =
       departureRecord.result === CrossChainStatus.success
         ? [
             {
               chain: departure,
-              from: revertAccount(departureRecord.sender, query.from, query.fromMode),
-              to: '2qeMxq616BhswXHiiHp7H4VgaVv2S8xwkzWkoyoxcTA8v1YA',
-              token: { logo: '/image/ring.svg', name: fromToken },
+              from: revertAccount(departureRecord.sender, departure.name, depMode),
+              to: issuingRecipient,
+              token: fromToken,
             },
             {
               chain: arrival,
-              from: '0x0000000000000000000000000000000000000000',
-              to: revertAccount(departureRecord.recipient, query.to, query.toMode),
-              token: { logo: '/image/ring.svg', name: isIssuing ? 'xRING' : 'RING' },
+              from: genesis,
+              to: revertAccount(departureRecord.recipient, arrival.name, arrMode),
+              token: toToken,
             },
           ]
         : [
             {
               chain: departure,
-              from: revertAccount(departureRecord.sender, query.from, query.fromMode),
-              to: '2qeMxq616BhswXHiiHp7H4VgaVv2S8xwkzWkoyoxcTA8v1YA',
-              token: { logo: '/image/ring.svg', name: fromToken },
+              from: revertAccount(departureRecord.sender, departure.name, depMode),
+              to: issuingRecipient,
+              token: fromToken,
             },
             {
               chain: departure,
-              from: '2qeMxq616BhswXHiiHp7H4VgaVv2S8xwkzWkoyoxcTA8v1YA',
-              to: revertAccount(departureRecord.sender, query.from, query.fromMode),
-              token: { logo: '/image/ring.svg', name: fromToken },
+              from: issuingRecipient,
+              to: revertAccount(departureRecord.sender, departure.name, depMode),
+              token: fromToken,
             },
           ];
 
@@ -209,40 +226,40 @@ const Page: NextPage<{
         ? [
             {
               chain: departure,
-              from: revertAccount(departureRecord.sender, query.from, query.fromMode),
-              to: '0x3CC8913088F79831c8335f0307f4FC92d79C1ac7',
-              token: { logo: '/image/ring.svg', name: fromToken },
+              from: revertAccount(departureRecord.sender, departure.name, depMode),
+              to: redeemRecipient,
+              token: fromToken,
             },
             {
               chain: arrival,
-              from: '2qeMxq616BhswXHiiHp7H4VgaVv2S8xwkzWkoyoxcTA8v1YA',
-              to: revertAccount(departureRecord.recipient, query.to, query.toMode),
-              token: { logo: '/image/ring.svg', name: isIssuing ? 'xRING' : 'RING' },
+              from: issuingRecipient,
+              to: revertAccount(departureRecord.recipient, arrival.name, arrMode),
+              token: toToken,
             },
             {
               chain: departure,
-              from: '0x3CC8913088F79831c8335f0307f4FC92d79C1ac7',
-              to: '0x0000000000000000000000000000000000000000',
-              token: { logo: '/image/ring.svg', name: fromToken },
+              from: redeemRecipient,
+              to: genesis,
+              token: fromToken,
             },
           ]
         : [
             {
               chain: departure,
-              from: revertAccount(departureRecord.sender, query.from, query.fromMode),
-              to: '0x3CC8913088F79831c8335f0307f4FC92d79C1ac7',
-              token: { logo: '/image/ring.svg', name: fromToken },
+              from: revertAccount(departureRecord.sender, departure.name, depMode),
+              to: redeemRecipient,
+              token: fromToken,
             },
             {
               chain: departure,
-              to: revertAccount(departureRecord.sender, query.from, query.fromMode),
-              from: '0x3CC8913088F79831c8335f0307f4FC92d79C1ac7',
-              token: { logo: '/image/ring.svg', name: fromToken },
+              to: revertAccount(departureRecord.sender, departure.name, depMode),
+              from: redeemRecipient,
+              token: fromToken,
             },
           ];
 
     return isIssuing ? issuingTransfer : redeemTransfer;
-  }, [arrival, departure, departureRecord, fromToken, isIssuing, query.from, query.fromMode, query.to, query.toMode]);
+  }, [arrival, bridge.config, departure, departureRecord, fromToken, isIssuing, toToken]);
 
   useEffect(() => {
     if (finalRecord) {
@@ -449,7 +466,7 @@ const Page: NextPage<{
                     <EllipsisMiddle>{to}</EllipsisMiddle>
                   </span>
                   <span>{t('For')}</span>
-                  <Image src={token.logo} width={16} height={16} className="w-5" />
+                  <Image src={`/image/${token.logo}`} width={16} height={16} className="w-5" />
                   <span>
                     {amount} {token.name}
                   </span>
@@ -465,12 +482,12 @@ const Page: NextPage<{
           title={t('Value')}
           tip={t('The amount to be transferred to the recipient with the cross-chain transaction.')}
         >
-          {amount} {fromToken}
+          {amount} {fromToken.name}
         </Description>
 
         <Description title={t('Transaction Fee')} tip={'Amount paid for processing the cross-chain transaction.'}>
           {fromWei({ value: departureRecord?.fee || arrivalRecord?.fee, unit: isIssuing ? 'gwei' : 'ether' })}{' '}
-          {isIssuing ? 'RING' : 'CRAB'}
+          {departure.tokens.find((item) => item.type === 'native')?.name}
         </Description>
 
         <Divider />
