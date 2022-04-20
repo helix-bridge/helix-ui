@@ -21,27 +21,26 @@ const TokenSelector = ({ defaultValue }: { defaultValue: number }) => (
   </Select>
 );
 
+const AmountItem = ({ label, name }: { label: string; name: string; }) => (
+  <Form.Item
+    label={label}
+    name={name}
+    rules={[{ required: true, message: 'Please input your username!' }]}
+    className="relative"
+  >
+    <Input size="large" className='h-20' />
+    <div className="absolute top-0 left-auto right-0 h-20 flex justify-center items-center px-3">
+      <TokenSelector defaultValue={1} />
+    </div>
+  </Form.Item>
+);
+
 export function TransferInput() {
   return (
     <div className="dark:bg-antDark p-5">
       <Form layout="vertical">
-        <Form.Item label="Your send" name="send" rules={[{ required: true, message: 'Please input your username!' }]}>
-          <Input size="large" className='h-20' />
-          <div className="absolute top-0 left-auto right-0 h-20 flex justify-center items-center px-3">
-            <TokenSelector defaultValue={1} />
-          </div>
-        </Form.Item>
-        <Form.Item
-          label="Your receive"
-          name="receive"
-          rules={[{ required: true, message: 'Please input your username!' }]}
-          className="relative"
-        >
-          <Input size="large" className='h-20' />
-          <div className="absolute top-0 left-auto right-0 h-20 flex justify-center items-center px-3">
-            <TokenSelector defaultValue={1} />
-          </div>
-        </Form.Item>
+        <AmountItem label="Your send" name="send" />
+        <AmountItem label="Your receive" name="receive" />
         <Form.Item
           label="Sender"
           name="sender"
