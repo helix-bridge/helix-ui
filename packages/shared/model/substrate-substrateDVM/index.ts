@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-magic-numbers
-type Result = 0 | 1 | 2; // 0 TokenLocked 1 TokenLockedConfirmed success 2 TokenLockedConfirmed fail
+export type Result = 0 | 1 | 2; // 0 TokenLocked 1 TokenLockedConfirmed success 2 TokenLockedConfirmed fail
 
 export interface SubstrateDVM2SubstrateRecord {
   lane_id: string;

@@ -9,11 +9,8 @@ import { useIsMounted } from '@helix/shared/hooks';
 import {
   Arrival,
   Departure,
-  LockedRecord,
   NetworkQueryParams,
-  Substrate2SubstrateDVMRecord,
   Substrate2SubstrateRecord,
-  SubstrateDVM2SubstrateRecord,
   UnlockedRecord,
   Vertices,
 } from '@helix/shared/model';
@@ -25,14 +22,13 @@ import {
   pollWhile,
   prettyNumber,
   revertAccount,
+  unixTimeToLocal,
   verticesToChainConfig,
 } from '@helix/shared/utils';
 import { Breadcrumb, Divider, Progress, Tooltip } from 'antd';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
-import camelcaseKeys from 'camelcase-keys';
-import { formatDistance } from 'date-fns';
+import { formatDistance, fromUnixTime } from 'date-fns';
 import { gql, request } from 'graphql-request';
-import { has } from 'lodash';
 import { GetServerSidePropsContext, NextPage } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Image from 'next/image';
@@ -40,68 +36,65 @@ import { useRouter } from 'next/router';
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from as fromRx, map, of, switchMap } from 'rxjs';
+import { endpoint } from '../../config';
 
 type FinalActionRecord = Pick<UnlockedRecord, 'txHash' | 'id' | 'recipient' | 'amount'>;
 
-/**
- * subgraph
- */
-const S2S_REDEEM_RECORD_QUERY = gql`
-  query burnRecordEntity($id: String!) {
-    burnRecordEntity(id: $id) {
+const BURN_RECORD_QUERY = gql`
+  query burnRecord($id: ID!) {
+    burnRecord(id: $id) {
       amount
-      end_timestamp
-      lane_id
-      nonce
-      recipient
-      request_transaction
-      response_transaction
-      result
-      sender
-      start_timestamp
-      token
-      fee
-    }
-  }
-`;
-
-const LOCKED_RECORD_QUERY = gql`
-  query lockRecordEntity($id: String!) {
-    lockRecordEntity(id: $id) {
-      id
-      recipient
-      transaction
-      amount
-      mapping_token
-    }
-  }
-`;
-
-/**
- * subql
- */
-const S2S_ISSUING_RECORD_QUERY = gql`
-  query s2sEvent($id: String!) {
-    s2sEvent(id: $id) {
-      id
-      amount
-      endTimestamp
+      endTime
+      laneId
       nonce
       recipient
       requestTxHash
       responseTxHash
       result
-      senderId
-      startTimestamp
+      sender
+      startTime
       token
       fee
     }
   }
 `;
 
-const S2S_UNLOCKED_RECORD_QUERY = gql`
-  query s2sUnlocked($id: String!) {
-    s2sUnlocked(id: $id) {
+const DVM_LOCK_RECORD_QUERY = gql`
+  query dvmLockRecord($id: ID!) {
+    dvmLockRecord(id: $id) {
+      id
+      laneId
+      nonce
+      recipient
+      txHash
+      amount
+      token
+    }
+  }
+`;
+
+const S2S_ISSUING_RECORD_QUERY = gql`
+  query lockRecord($id: ID!) {
+    lockRecord(id: $id) {
+      id
+      amount
+      endTime
+      nonce
+      recipient
+      requestTxHash
+      responseTxHash
+      result
+      sender
+      startTime
+      token
+      fee
+    }
+  }
+`;
+
+const SUBSTRATE_UNLOCKED_RECORD_QUERY = gql`
+  query unlockRecord($id: ID!) {
+    unlockRecord(id: $id) {
       id
       recipient
       token
@@ -112,55 +105,6 @@ const S2S_UNLOCKED_RECORD_QUERY = gql`
     }
   }
 `;
-
-const s2sDVMFields: [keyof Substrate2SubstrateDVMRecord, keyof Substrate2SubstrateRecord][] = [
-  ['senderId', 'sender'],
-  ['startTimestamp', 'startTime'],
-  ['endTimestamp', 'endTime'],
-];
-
-const sDVM2sFields: [keyof SubstrateDVM2SubstrateRecord, keyof Substrate2SubstrateRecord][] = [
-  ['end_timestamp', 'endTime'],
-  ['start_timestamp', 'startTime'],
-  ['request_transaction', 'requestTxHash'],
-  ['response_transaction', 'responseTxHash'],
-];
-
-const finalRecordFields: [keyof LockedRecord, keyof UnlockedRecord][] = [
-  ['mapping_token', 'token'],
-  ['transaction', 'txHash'],
-];
-
-const unifyRecordField: (
-  record: Record<string, unknown> | null,
-  fieldsMap: [string, string][]
-) => Record<string, string | number> | null = (data, fieldsMap) => {
-  if (!data) {
-    return null;
-  }
-
-  const renamed = fieldsMap.reduce((acc, cur) => {
-    const [oKey, nKey] = cur;
-
-    if (has(acc, oKey)) {
-      acc[nKey] = acc[oKey];
-    }
-
-    return acc;
-  }, data);
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const record = camelcaseKeys(renamed) as Record<string, any>;
-  const reg = /^\d+$/;
-  const bits = 13;
-
-  if (has(record, 'startTime')) {
-    record.startTime = reg.test(record.startTime) ? +record.startTime.padEnd(bits, '0') : record.startTime;
-    record.endTime = reg.test(record.endTime) ? +record.endTime.padEnd(bits, '0') : record.endTime;
-  }
-
-  return record;
-};
 
 function Description({ tip, title, children }: PropsWithChildren<{ tip: string; title: string }>) {
   return (
@@ -223,9 +167,6 @@ const Page: NextPage<{
   );
   const fromToken = useMemo(() => (isIssuing ? 'RING' : 'xRING'), [isIssuing]);
 
-  /**
-   * origin sender -> target recipient -> target sender -> origin recipient
-   */
   // eslint-disable-next-line complexity
   const transfers = useMemo(() => {
     if (!departureRecord || departureRecord?.result === CrossChainStatus.pending) {
@@ -304,8 +245,6 @@ const Page: NextPage<{
   }, [arrival, departure, departureRecord, fromToken, isIssuing, query.from, query.fromMode, query.to, query.toMode]);
 
   useEffect(() => {
-    const apiConfig = bridge.config.api || {};
-
     if (finalRecord) {
       return;
     }
@@ -313,12 +252,12 @@ const Page: NextPage<{
     const sub$$ = of(null)
       .pipe(
         switchMap(() => {
-          const unlockObs = fromRx(
-            request(apiConfig.subql + bridge.departure.name, S2S_UNLOCKED_RECORD_QUERY, { id })
-          ).pipe(map((res) => res[gqlName(S2S_UNLOCKED_RECORD_QUERY)]));
+          const unlockObs = fromRx(request(endpoint, SUBSTRATE_UNLOCKED_RECORD_QUERY, { id })).pipe(
+            map((res) => res[gqlName(SUBSTRATE_UNLOCKED_RECORD_QUERY)])
+          );
 
-          const lockObs = fromRx(request(apiConfig.subGraph, LOCKED_RECORD_QUERY, { id })).pipe(
-            map((res) => unifyRecordField(res[gqlName(LOCKED_RECORD_QUERY)], finalRecordFields))
+          const lockObs = fromRx(request(endpoint, DVM_LOCK_RECORD_QUERY, { id })).pipe(
+            map((res) => res[gqlName(DVM_LOCK_RECORD_QUERY)])
           );
 
           return isIssuing ? lockObs : unlockObs;
@@ -405,7 +344,7 @@ const Page: NextPage<{
           ) : departureRecord?.result === CrossChainStatus.reverted ? (
             <SubscanLink
               network={departure.name}
-              txHash={departureRecord?.responseTxHash}
+              txHash={departureRecord?.responseTxHash ?? ''}
               className="hover:opacity-80 transition-opacity duration-200"
             >
               <EllipsisMiddle copyable>{departureRecord.responseTxHash}</EllipsisMiddle>
@@ -431,15 +370,17 @@ const Page: NextPage<{
               {arrivalRecord?.result ? <ClockCircleOutlined /> : <Icon name="#dwa-reload" />}
 
               <span>
-                {formatDistance(new Date(departureRecord.startTime), new Date(new Date().toISOString().split('.')[0]), {
-                  includeSeconds: true,
-                  addSuffix: true,
-                })}
+                {formatDistance(
+                  fromUnixTime(departureRecord.startTime),
+                  new Date(new Date().toISOString().split('.')[0]),
+                  {
+                    includeSeconds: true,
+                    addSuffix: true,
+                  }
+                )}
               </span>
 
-              <span className="hidden md:inline-block">
-                ({new Date(departureRecord.startTime + 'Z').toLocaleString()} )
-              </span>
+              <span className="hidden md:inline-block">({unixTimeToLocal(departureRecord.startTime)})</span>
 
               <Divider type="vertical" orientation="center" />
 
@@ -448,9 +389,13 @@ const Page: NextPage<{
               {departureRecord.startTime && departureRecord.endTime ? (
                 <span className="text-gray-400">
                   {t('Confirmed within {{des}}', {
-                    des: formatDistance(new Date(departureRecord.endTime), new Date(departureRecord.startTime), {
-                      includeSeconds: true,
-                    }),
+                    des: formatDistance(
+                      fromUnixTime(departureRecord.endTime),
+                      fromUnixTime(departureRecord.startTime),
+                      {
+                        includeSeconds: true,
+                      }
+                    ),
                   })}
                 </span>
               ) : (
@@ -553,17 +498,16 @@ export async function getServerSideProps(
   const bridge = getBridge(vertices);
   const isIssuing = bridge.isIssuing(...vertices);
 
-  const apiConfig = bridge.config.api || {};
-  const issuing = request(apiConfig.subql + bridge.departure.name, S2S_ISSUING_RECORD_QUERY, { id });
+  const issuing = request(endpoint, S2S_ISSUING_RECORD_QUERY, { id });
 
-  const unlocked = request(apiConfig.subql + bridge.departure.name, S2S_UNLOCKED_RECORD_QUERY, { id }).then(
-    (res) => res && res[gqlName(S2S_UNLOCKED_RECORD_QUERY)]
+  const unlocked = request(endpoint, SUBSTRATE_UNLOCKED_RECORD_QUERY, { id }).then(
+    (res) => res && res[gqlName(SUBSTRATE_UNLOCKED_RECORD_QUERY)]
   );
 
-  const redeem = request(apiConfig.subGraph, S2S_REDEEM_RECORD_QUERY, { id });
+  const redeem = request(endpoint, BURN_RECORD_QUERY, { id });
 
-  const locked = request(apiConfig.subGraph, LOCKED_RECORD_QUERY, { id }).then(
-    (res) => res && res[gqlName(LOCKED_RECORD_QUERY)]
+  const locked = request(endpoint, DVM_LOCK_RECORD_QUERY, { id }).then(
+    (res) => res && res[gqlName(DVM_LOCK_RECORD_QUERY)]
   );
 
   const [issuingRes, redeemRes, lockOrUnlockRecord] = await Promise.all([
@@ -576,9 +520,9 @@ export async function getServerSideProps(
     props: {
       ...translations,
       id,
-      issuingRecord: unifyRecordField(issuingRes[gqlName(S2S_ISSUING_RECORD_QUERY)], s2sDVMFields),
-      redeemRecord: unifyRecordField(redeemRes[gqlName(S2S_REDEEM_RECORD_QUERY)], sDVM2sFields),
-      lockOrUnlockRecord: unifyRecordField(lockOrUnlockRecord, finalRecordFields),
+      issuingRecord: issuingRes[gqlName(S2S_ISSUING_RECORD_QUERY)],
+      redeemRecord: redeemRes[gqlName(BURN_RECORD_QUERY)],
+      lockOrUnlockRecord,
     },
   };
 }

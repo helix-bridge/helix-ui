@@ -1,24 +1,12 @@
 import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { CrossChainState } from '@helix/shared/components/widget/CrossChainStatus';
-import { EllipsisMiddle } from '@helix/shared/components/widget/EllipsisMiddle';
 import { Path } from '@helix/shared/config/constant';
 import { useAccountStatistic, useDailyStatistic } from '@helix/shared/hooks';
 import { Substrate2SubstrateRecord } from '@helix/shared/model';
-import {
-  convertToDvm,
-  fromWei,
-  getChainConfigByName,
-  getDisplayName,
-  getSupportedChains,
-  gqlName,
-  isValidAddress,
-  prettyNumber,
-  revertAccount,
-} from '@helix/shared/utils';
-import { Affix, Button, Input, Spin, Tooltip } from 'antd';
-import { formatDistance, getUnixTime } from 'date-fns';
+import { convertToDvm, getSupportedChains, gqlName, isValidAddress } from '@helix/shared/utils';
+import { Affix, Button, Input, Spin } from 'antd';
+import { getUnixTime } from 'date-fns';
 import { useQuery } from 'graphql-hooks';
-import request from 'graphql-request';
+import request, { gql } from 'graphql-request';
 import { last, omitBy } from 'lodash';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
@@ -26,10 +14,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useVirtual } from 'react-virtual';
 import { distinctUntilChanged, filter, Subject } from 'rxjs';
+import { Record } from '../../components/transaction/Record';
+import { ViewBoard } from '../../components/transaction/ViewBoard';
+import { endpoint } from '../../config';
 
-const S2S_RECORDS = `
+const S2S_RECORDS = gql`
   query s2sRecords($first: Int!, $startTime: Int!, $sender: String) {
-    s2sRecords(first: $first, start_timestamp: $startTime, sender: $sender) {
+    s2sRecords(first: $first, startTime: $startTime, sender: $sender) {
       id
       bridge
       fromChain
@@ -54,72 +45,6 @@ const S2S_RECORDS = `
 
 const supportedChains = getSupportedChains();
 
-interface ViewBoardProps {
-  title: string;
-  count: string | number;
-}
-
-function ViewBoard({ title, count }: ViewBoardProps) {
-  return (
-    <div className="flex justify-between items-center lg:flex-col lg:gap-4 bg-gray-200 dark:bg-antDark w-full px-4 lg:px-0 py-2 lg:py-4 text-center text-gray-800 dark:text-gray-400">
-      <span className="uppercase">{title}</span>
-      <span className="text-xl lg:text-4xl">{count}</span>
-    </div>
-  );
-}
-
-function Record({ record }: { record: Substrate2SubstrateRecord }) {
-  const { fromChainMode, fromChain, sender, recipient, toChain, toChainMode } = record;
-  const fromConfig = getChainConfigByName(fromChain, fromChainMode);
-  const toConfig = getChainConfigByName(toChain, toChainMode);
-  const now = new Date().toISOString().split('.')[0];
-  const fromAccount = revertAccount(sender, fromChain, fromChainMode);
-  const toAccount = revertAccount(recipient, toChain, toChainMode);
-  const amount = fromWei({ value: record.amount, unit: 'gwei' }, prettyNumber);
-
-  return (
-    <>
-      <span className="justify-self-start ellipse-two-lines">
-        {formatDistance(new Date(record.startTime), new Date(now), {
-          includeSeconds: true,
-          addSuffix: true,
-        })}
-      </span>
-
-      <div className="flex flex-col col-span-3 overflow-hidden pl-4 pr-2">
-        <Tooltip title={fromAccount}>
-          <span className="capitalize">{getDisplayName(fromConfig)}</span>
-        </Tooltip>
-        <EllipsisMiddle deviation={5} isGrow>
-          {fromAccount}
-        </EllipsisMiddle>
-      </div>
-
-      <div className="flex flex-col col-span-3 overflow-hidden pl-2 pr-4">
-        <Tooltip title={toAccount}>
-          <span className="capitalize">{getDisplayName(toConfig)}</span>
-        </Tooltip>
-        <EllipsisMiddle deviation={5} isGrow>
-          {toAccount}
-        </EllipsisMiddle>
-      </div>
-
-      <span>{`${fromChainMode === 'dvm' ? 'x' : ''}${fromConfig?.isTest ? 'O' : ''}RING`}</span>
-
-      <Tooltip title={amount}>
-        <span className="justify-self-center max-w-full truncate">{amount}</span>
-      </Tooltip>
-
-      <span className="justify-self-center">
-        {fromWei({ value: record.fee, unit: fromChainMode === 'dvm' ? 'ether' : 'gwei' })}
-      </span>
-
-      <span className="justify-self-center capitalize">{record.bridge}</span>
-      <CrossChainState value={record.result} />
-    </>
-  );
-}
-
 const PAGE_SIZE = 50;
 
 function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
@@ -139,7 +64,7 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
     variables: { first: PAGE_SIZE, startTime },
   });
 
-  const subject = useMemo(() => new Subject<{ startTime: string; account: string }>(), []);
+  const subject = useMemo(() => new Subject<{ startTime: number; account: string }>(), []);
   const [source, setSource] = useState<Substrate2SubstrateRecord[]>(records);
   const [account, setAccount] = useState<string>('');
   const virtualBoxRef = useRef(null);
@@ -262,7 +187,6 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
                 {rowVirtualizer.virtualItems.map((row) => {
                   const record = source[row.index];
                   const isLoaderRow = row.index > source?.length - 1;
-                  // eslint-disable-next-line no-magic-numbers
                   const bg = row.index % 2 === 0 ? 'bg-gray-200 dark:bg-antDark' : '';
 
                   return (
@@ -314,10 +238,8 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
 export const getServerSideProps = async ({ locale }: { locale: string }) => {
   const translations = await serverSideTranslations(locale ?? 'en', ['common']);
   const startTime = getUnixTime(new Date());
-  const url =
-    process.env.NODE_ENV === 'development' ? 'http://localhost:4002' : 'https://wormhole-apollo.darwinia.network/';
 
-  const records = await request(url, S2S_RECORDS, {
+  const records = await request(endpoint, S2S_RECORDS, {
     first: PAGE_SIZE,
     startTime,
   }).then((res) => res && res[gqlName(S2S_RECORDS)]);
