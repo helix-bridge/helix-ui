@@ -63,6 +63,11 @@ export function TransferInput() {
     <div className="dark:bg-antDark p-5">
       <Form layout="vertical">
         <AmountItem label="Your send" name="send" />
+        <Form.Item noStyle>
+          <div className='flex justify-center'>
+            <Image alt='...' src='/image/transfer.svg' width={40} height={40} />
+          </div>
+        </Form.Item>
         <AmountItem label="Your receive" name="receive" />
         <AddressItem label='Sender' name='sender' tooltip="Select an address sending the transaction."  />
         <AddressItem label='Receiver' name='receiver' tooltip="Please do not fill in the exchange account. After the transaction is confirmed, the account cannot be changed."  />
