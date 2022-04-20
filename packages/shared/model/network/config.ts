@@ -1,12 +1,12 @@
 import { AddEthereumChainParameter } from '../metamask';
-import { EthereumTypeNetwork, Network, NetworkCategory, PolkadotTypeNetwork } from './network';
+import { EthereumTypeNetwork, Network, NetworkCategory, NetworkMode, PolkadotTypeNetwork } from './network';
 
-export interface Facade {
-  logo: string;
-  logoMinor: string;
-  logoWithText: string;
-  logoSmart?: string;
-  logoAssist2?: string;
+export type LogoType = 'main' | 'minor' | 'assist';
+
+export interface Logo {
+  name: string;
+  mode: NetworkMode;
+  type: LogoType;
 }
 
 interface DVMConfig {
@@ -31,8 +31,8 @@ interface Social {
 }
 
 export interface ChainConfig {
-  facade: Facade;
   isTest: boolean;
+  logos: Logo[];
   name: Network;
   provider: ProviderConfig;
   social: Social;

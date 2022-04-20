@@ -1,15 +1,14 @@
 import { PolkadotChainConfig } from '../../model';
 
 export const pangoroConfig: PolkadotChainConfig = {
-  facade: {
-    logo: '/image/pangoro.png',
-    logoMinor: '/image/pangoro.png',
-    logoWithText: '',
-  },
   endpoints: {
     mmr: '',
   },
   isTest: true,
+  logos: [
+    { name: 'pangoro.png', type: 'main', mode: 'native' },
+    { name: 'pangoro.png', type: 'minor', mode: 'native' },
+  ],
   name: 'pangoro',
   provider: {
     etherscan: '',

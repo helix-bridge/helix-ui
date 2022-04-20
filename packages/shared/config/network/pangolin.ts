@@ -22,14 +22,14 @@ export const pangolinConfig: DVMChainConfig = {
   endpoints: {
     mmr: 'https://api.subquery.network/sq/darwinia-network/pangolin-mmr',
   },
-  facade: {
-    logo: '/image/pangolin.png',
-    logoMinor: '/image/pangolin.svg',
-    logoWithText: '/image/pangolin-logo.svg',
-    logoSmart: '/image/pangolin-smart.png',
-    logoAssist2: '/image/pangolin-2.png',
-  },
   isTest: true,
+  logos: [
+    { name: 'pangolin.png', type: 'main', mode: 'native' },
+    { name: 'pangolin.svg', type: 'minor', mode: 'native' },
+    { name: 'pangolin-logo.svg', type: 'assist', mode: 'native' },
+    { name: 'pangolin-smart.png', type: 'main', mode: 'dvm' },
+    { name: 'pangolin-2.png', type: 'minor', mode: 'dvm' },
+  ],
   name: 'pangolin',
   provider: {
     etherscan: 'wss://ropsten.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',

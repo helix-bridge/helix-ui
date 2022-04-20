@@ -9,12 +9,11 @@ export const ethereumConfig: EthereumChainConfig = {
     },
     rpcUrls: [],
   },
-  facade: {
-    logo: '/image/eth-logo.svg',
-    logoMinor: '/image/ethereum.svg',
-    logoWithText: '',
-  },
   isTest: false,
+  logos: [
+    { name: 'eth-logo.svg', type: 'main', mode: 'native' },
+    { name: 'ethereum.svg', type: 'minor', mode: 'native' },
+  ],
   name: 'ethereum',
   provider: {
     etherscan: 'wss://mainnet.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',

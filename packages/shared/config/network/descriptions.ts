@@ -26,10 +26,7 @@ export const DESCRIPTIONS: {
   // { path: ['contracts', 'redeemDeposit'], editable: true, comment: '', type: 'string' },
   // { path: ['contracts', 'proof'], editable: true, comment: '', type: 'string' },
 
-  { path: ['facade'], editable: true, comment: 'Appearance of the application' },
-  { path: ['facade', 'logo'], editable: true, comment: '', type: 'string' },
-  { path: ['facade', 'logoMinor'], editable: true, comment: '', type: 'string' },
-  { path: ['facade', 'logoWithText'], editable: true, comment: '', type: 'string' },
+  { path: ['logos'], editable: true, comment: 'Chain logos', type: 'array' },
 
   {
     path: ['isTest'],

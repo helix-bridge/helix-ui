@@ -30,30 +30,13 @@ interface StatisticTotal {
 type CoinIds = 'darwinia-crab-network' | 'darwinia-network-native-token';
 
 const chains: ChainProps[] = [
-  {
-    config: ethereumConfig,
-  },
-  {
-    config: darwiniaConfig,
-  },
-  {
-    config: crabConfig,
-    logoKey: 'logoSmart',
-  },
-  {
-    config: ropstenConfig,
-  },
-  {
-    config: omit(pangolinConfig, 'dvm'),
-    logoKey: 'logoAssist2',
-  },
-  {
-    config: pangolinConfig,
-    logoKey: 'logoSmart',
-  },
-  {
-    config: pangoroConfig,
-  },
+  ethereumConfig,
+  darwiniaConfig,
+  crabConfig,
+  ropstenConfig,
+  omit(pangolinConfig, 'dvm'),
+  pangolinConfig,
+  pangoroConfig,
 ];
 
 function Page() {
@@ -131,9 +114,12 @@ function Page() {
     return {
       volumeRank: calcRank('volume').map(({ chain, total }) => ({
         chain,
-        total: fromWei({ value: total.toString().split('.')[0], unit: 'gwei' }),
+        total: prettyNumber(fromWei({ value: total.toString().split('.')[0], unit: 'gwei' })),
       })),
-      transactionsRank: calcRank('transactions').map(({ chain, total }) => ({ chain, total: total.toString() })),
+      transactionsRank: calcRank('transactions').map(({ chain, total }) => ({
+        chain,
+        total: prettyNumber(total.toString(), { decimal: 0 }),
+      })),
     };
   }, [crabStatistic?.dailyStatistics, darwiniaStatistic?.dailyStatistics, prices.crab.usd, prices.darwinia.usd]);
 
@@ -157,7 +143,9 @@ function Page() {
       <Statistics
         title={t('volumes')}
         startTime={startTime}
-        total={volumeRank.reduce((acc, cur) => acc.plus(cur.total), new Bignumber(0)).toString()}
+        total={prettyNumber(
+          volumeRank.reduce((acc, cur) => acc.plus(cur.total.replace(',', '')), new Bignumber(0)).toString()
+        )}
         rank={volumeRank}
         currency="usd"
       >

@@ -1,13 +1,13 @@
 import { PolkadotChainConfig } from '../../model';
 
 export const darwiniaConfig: PolkadotChainConfig = {
-  facade: {
-    logo: '/image/darwinia.png',
-    logoMinor: '/image/darwinia.svg',
-    logoWithText: '/image/darwinia-logo.svg',
-  },
   isTest: false,
   name: 'darwinia',
+  logos: [
+    { name: 'darwinia.png', type: 'main', mode: 'native' },
+    { name: 'darwinia.svg', type: 'minor', mode: 'native' },
+    { name: 'darwinia-logo.svg', type: 'assist', mode: 'native' },
+  ],
   endpoints: {
     mmr: 'https://api.subquery.network/sq/darwinia-network/darwinia-mmr',
   },

@@ -22,13 +22,13 @@ export const crabConfig: DVMChainConfig = {
   endpoints: {
     mmr: '',
   },
-  facade: {
-    logo: '/image/crab.png',
-    logoMinor: '/image/crab.svg',
-    logoWithText: '/image/crab-logo.svg',
-    logoSmart: '/image/crab-smart.png',
-  },
   isTest: false,
+  logos: [
+    { name: 'crab.png', type: 'main', mode: 'native' },
+    { name: 'crab.svg', type: 'minor', mode: 'native' },
+    { name: 'crab-logo.svg', type: 'assist', mode: 'native' },
+    { name: 'crab-smart.png', type: 'main', mode: 'dvm' },
+  ],
   name: 'crab',
   provider: {
     etherscan: '',
