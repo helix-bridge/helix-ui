@@ -99,7 +99,7 @@ export function TransferInput() {
       <BaseModal
         visible={visibleDisclaimer}
         title={<span>Disclaimer</span>}
-        footer={<Button className='mb-8' onClick={() => setVisibleDisclaimer(false)}>Agree and Continue</Button>}
+        footer={<Button type='primary' className='mb-8' onClick={() => setVisibleDisclaimer(false)}>Agree and Continue</Button>}
         onCancel={() => setVisibleDisclaimer(false)}
       >
         <div className='flex flex-col px-3'>
