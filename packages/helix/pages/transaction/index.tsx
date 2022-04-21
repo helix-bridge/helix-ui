@@ -7,7 +7,7 @@ import { Affix, Button, Input, Spin } from 'antd';
 import { getUnixTime } from 'date-fns';
 import { useQuery } from 'graphql-hooks';
 import request, { gql } from 'graphql-request';
-import { last, omitBy } from 'lodash';
+import { isEqual, last, omitBy } from 'lodash';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -19,8 +19,8 @@ import { ViewBoard } from '../../components/transaction/ViewBoard';
 import { endpoint } from '../../config';
 
 const S2S_RECORDS = gql`
-  query s2sRecords($first: Int!, $startTime: Int!, $sender: String) {
-    s2sRecords(first: $first, startTime: $startTime, sender: $sender) {
+  query s2sRecords($first: Int!, $startTime: Int!, $sender: String, $recipient: String) {
+    s2sRecords(first: $first, startTime: $startTime, sender: $sender, recipient: $recipient) {
       id
       bridge
       fromChain
@@ -96,11 +96,11 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
     const sub$$ = subject
       .pipe(
         filter((time) => !!time),
-        distinctUntilChanged()
+        distinctUntilChanged((pre, cur) => isEqual(pre, cur))
       )
-      .subscribe(({ startTime: time, account: sender }) => {
+      .subscribe(({ startTime: time, account: searchValue }) => {
         const variables = omitBy(
-          { first: PAGE_SIZE, startTime: getUnixTime(new Date(time)), sender },
+          { first: PAGE_SIZE, startTime: getUnixTime(new Date(time)), sender: searchValue, recipient: searchValue },
           (value) => !value
         );
 
@@ -139,7 +139,14 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
                   const address = isValidAddress(value, 'ethereum') ? value : convertToDvm(value);
 
                   setSource([]);
-                  refetch({ variables: { first: PAGE_SIZE, startTime: getUnixTime(new Date()), sender: address } });
+                  refetch({
+                    variables: {
+                      first: PAGE_SIZE,
+                      startTime: getUnixTime(new Date()),
+                      sender: address,
+                      recipient: address,
+                    },
+                  });
                   setIsValidSender(true);
                 } catch {
                   setIsValidSender(false);
