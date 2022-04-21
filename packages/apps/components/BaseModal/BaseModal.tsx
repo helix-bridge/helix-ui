@@ -6,14 +6,11 @@ import Image from 'next/image';
 
 const cx = classNames.bind(styles);
 
-const Component = ({
-  children,
-  ...others
-}:  PropsWithChildren<ModalProps>) => (
+const Component = ({ children, ...others }: PropsWithChildren<ModalProps>) => (
   <Modal
-    { ...others }
+    {...others}
     className={cx('main')}
-    closeIcon={<Image alt='...' src='/image/modal-close.svg' width={16} height={16} />}
+    closeIcon={<Image alt="..." src="/image/modal-close.svg" width={16} height={16} />}
   >
     {children}
   </Modal>
