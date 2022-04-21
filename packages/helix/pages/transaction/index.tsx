@@ -147,7 +147,7 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
 
                 setAccount(value);
               }}
-              placeholder={t('Search by sender address')}
+              placeholder={t('Search by address')}
               className={`max-w-md ${isValidSender ? '' : 'border-red-400'}`}
             />
 

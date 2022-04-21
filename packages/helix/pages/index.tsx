@@ -57,14 +57,6 @@ function Page() {
       volume: dailyStatistics
         .map(({ id, dailyVolume }) => [secondsToMilliseconds(+id), +fromWei({ value: dailyVolume, unit: 'gwei' })])
         .reverse() as Statistic[],
-      // FIXME: this value need to multiply price: token_0 volume * token_0 price + ... + token_n volume * token_n price
-      volumeTotal: fromWei(
-        {
-          value: dailyStatistics.reduce((acc, cur) => acc.plus(new Bignumber(cur.dailyVolume)), new Bignumber(0)),
-          unit: 'gwei',
-        },
-        prettyNumber
-      ),
       transactions: dailyStatistics
         .map(({ id, dailyCount }) => [secondsToMilliseconds(+id), dailyCount])
         .reverse() as Statistic[],
@@ -83,7 +75,7 @@ function Page() {
     return format(date, DATE_FORMAT) + ' (+UTC)';
   }, [dailyStatistic]);
 
-  const { volumeRank, transactionsRank } = useMemo(() => {
+  const { volumeRank, transactionsRank, volumeTotal } = useMemo(() => {
     const calcTotal = (key: keyof DailyStatistic) => (acc: Bignumber, cur: DailyStatistic) =>
       acc.plus(new Bignumber(cur[key]));
 
@@ -105,17 +97,26 @@ function Page() {
 
     const calcRank: (key: keyof StatisticTotal) => { chain: ChainConfig; total: Bignumber }[] = (
       key: keyof StatisticTotal
-    ) => {
-      const source = rankSource.map(({ chain, statistic }) => ({ chain, total: statistic[key] }));
+    ) =>
+      orderBy(
+        rankSource.map(({ chain, statistic }) => ({ chain, total: statistic[key] })),
+        (item) => item.total.toNumber(),
+        'desc'
+      );
 
-      return orderBy(source, (item) => item.total.toNumber(), 'desc');
-    };
+    const volumes = calcRank('volume');
+
+    const vTotal = volumes.reduce(
+      (acc, cur) => acc.plus(fromWei({ value: cur.total, unit: 'gwei' })),
+      new Bignumber(0)
+    );
 
     return {
-      volumeRank: calcRank('volume').map(({ chain, total }) => ({
+      volumeRank: volumes.map(({ chain, total }) => ({
         chain,
-        total: prettyNumber(fromWei({ value: total.toString().split('.')[0], unit: 'gwei' })),
+        total: fromWei({ value: total.toString().split('.')[0], unit: 'gwei' }, prettyNumber),
       })),
+      volumeTotal: prettyNumber(vTotal),
       transactionsRank: calcRank('transactions').map(({ chain, total }) => ({
         chain,
         total: prettyNumber(total.toString(), { decimal: 0 }),
@@ -140,15 +141,7 @@ function Page() {
 
   return (
     <div>
-      <Statistics
-        title={t('volumes')}
-        startTime={startTime}
-        total={prettyNumber(
-          volumeRank.reduce((acc, cur) => acc.plus(cur.total.replace(',', '')), new Bignumber(0)).toString()
-        )}
-        rank={volumeRank}
-        currency="usd"
-      >
+      <Statistics title={t('volumes')} startTime={startTime} total={volumeTotal} rank={volumeRank} currency="usd">
         {loading ? (
           <div className="block relative top-1/3 text-center">
             <Spin />
