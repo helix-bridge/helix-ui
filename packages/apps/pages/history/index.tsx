@@ -4,7 +4,7 @@ import { SearchOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import { useState } from 'react';
-import { BaseModal } from '../../components/BaseModal/BaseModal';
+import { ClaimConfirmModal } from '../../components/ClaimConfirmModal';
 
 const NoData = () => (
   <div className='dark:bg-antDark mt-3 flex justify-center items-center' style={{ minHeight: '70vh' }}>
@@ -67,19 +67,7 @@ function Page() {
         )}
       </div>
 
-      <BaseModal
-        title='Claim'
-        visible={visibleClaimConfirm}
-        footer={<Button size='large' type='primary' onClick={() => setVisibleClaimConfirm(false)} className='w-full mb-4 mx-2'>Continue to claim</Button>}
-        onCancel={() => setVisibleClaimConfirm(false)}
-      >
-        <div>
-          <Typography.Paragraph className='text-center'>You need to confirm one more transaction to get your funds in your Etherum address. In case of any issue, please reach out to <Typography.Link target='_bank' rel='noopener noreferrer' href='mailto:hello@helixbridge.app'>hello@helixbridge.app</Typography.Link> </Typography.Paragraph>
-          <div className='flex justify-center items-center p-8 bg-gray-900 border border-gray-800 space-x-2'>
-            <Typography.Text>Estimated Gas Fee:</Typography.Text><Typography.Text strong>0.12 ETH</Typography.Text>
-          </div>
-        </div>
-      </BaseModal>
+      <ClaimConfirmModal visible={visibleClaimConfirm} onOk={() => setVisibleClaimConfirm(false)} onCancel={() => setVisibleClaimConfirm(false)} />
     </>
   );
 }
