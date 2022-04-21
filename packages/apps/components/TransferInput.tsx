@@ -1,30 +1,12 @@
 import { Form, Input, Button, Typography, Select } from 'antd';
 import { LabelTooltipType } from 'antd/lib/form/FormItemLabel';
 import Image from 'next/image';
-import styles from './TransferInput.module.scss';
-import classNames from 'classnames/bind';
 import { DisclaimerModal } from './DisclaimerModal';
+import { SelectTokenModal } from './SelectTokenModal';
 import { useState } from 'react';
+import { DownOutlined } from '@ant-design/icons';
 
-const cx = classNames.bind(styles);
-
-const TokenSelector = ({ defaultValue }: { defaultValue: number }) => (
-  <Select defaultValue={defaultValue} className={cx('token-select')}>
-    {new Array(8).fill(1).map((_, index) => (
-      <Select.Option key={index} value={index}>
-        <div className={cx('flex items-center space-x-2 py-2')}>
-          <Image src="/image/ring.svg" alt="..." width={40} height={40} />
-          <div className="flex flex-col space-y-px">
-            <strong className="font-medium text-sm">RING</strong>
-            <small className="font-light text-xs opacity-60">Darwinia</small>
-          </div>
-        </div>
-      </Select.Option>
-    ))}
-  </Select>
-);
-
-const AmountItem = ({ label, name }: { label: string; name: string; }) => (
+const AmountItem = ({ label, name, onClick }: { label: string; name: string; onClick: () => void }) => (
   <Form.Item
     label={label}
     name={name}
@@ -33,7 +15,14 @@ const AmountItem = ({ label, name }: { label: string; name: string; }) => (
   >
     <Input size="large" className='h-20' />
     <div className="absolute top-0 left-auto right-0 h-20 flex justify-center items-center px-3">
-      <TokenSelector defaultValue={1} />
+      <Button style={{ height: 'auto' }} className='flex items-center space-x-2 py-2 bg-gray-800 border-none' onClick={onClick}>
+          <Image src="/image/ring.svg" alt="..." width={40} height={40} />
+          <div className="flex flex-col items-start space-y-px">
+            <strong className="font-medium text-sm">RING</strong>
+            <small className="font-light text-xs opacity-60">Darwinia</small>
+          </div>
+          <DownOutlined />
+      </Button>
     </div>
   </Form.Item>
 );
@@ -62,17 +51,19 @@ const AddressItem = ({ label, name, tooltip }: { label: string, name: string, to
 
 export function TransferInput() {
   const [visibleDisclaimer, setVisibleDisclaimer] = useState<boolean>(true);
+  const [visibleSelectToken, setVisibleSelectToken] = useState<boolean>(false);
+
   return (
     <>
       <div className="dark:bg-antDark p-5">
         <Form layout="vertical">
-          <AmountItem label="Your send" name="send" />
+          <AmountItem label="Your send" name="send" onClick={() => setVisibleSelectToken(true)} />
           <Form.Item noStyle>
             <div className='flex justify-center'>
               <Image alt='...' src='/image/transfer.svg' width={40} height={40} />
             </div>
           </Form.Item>
-          <AmountItem label="Your receive" name="receive" />
+          <AmountItem label="Your receive" name="receive" onClick={() => setVisibleSelectToken(true)} />
           <AddressItem label='Sender' name='sender' tooltip="Select an address sending the transaction."  />
           <AddressItem label='Receiver' name='receiver' tooltip="Please do not fill in the exchange account. After the transaction is confirmed, the account cannot be changed."  />
           <Form.Item label="Info" name="info" className="relative">
@@ -96,6 +87,7 @@ export function TransferInput() {
         </Form>
       </div>
       <DisclaimerModal visible={visibleDisclaimer} onOk={() => setVisibleDisclaimer(false)} onCancel={() => setVisibleDisclaimer(false)} />
+      <SelectTokenModal visible={visibleSelectToken} onCancel={() => setVisibleSelectToken(false)} onSelect={console.log} />
     </>
   );
 }
