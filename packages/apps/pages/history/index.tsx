@@ -85,7 +85,7 @@ function Page() {
       <BaseModal
         title='Claim'
         visible={visibleClaimConfirm}
-        footer={<Button size='large' onClick={() => setVisibleClaimConfirm(false)} className='w-full mb-4 mx-2'>Continue to claim</Button>}
+        footer={<Button size='large' type='primary' onClick={() => setVisibleClaimConfirm(false)} className='w-full mb-4 mx-2'>Continue to claim</Button>}
         onCancel={() => setVisibleClaimConfirm(false)}
       >
         <div>
