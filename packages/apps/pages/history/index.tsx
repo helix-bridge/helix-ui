@@ -45,11 +45,11 @@ function Page() {
   return (
     <div>
       <div className='flex items-center justify-between'>
-        <Radio.Group size='large'>
-          <Radio.Button className='rounded-sm'>All</Radio.Button>
-          <Radio.Button className='rounded-sm'>Pending</Radio.Button>
-          <Radio.Button className='rounded-sm'>Successed</Radio.Button>
-          <Radio.Button className='rounded-sm'>Reverted</Radio.Button>
+        <Radio.Group size='large' value={1}>
+          <Radio.Button value={1}>All</Radio.Button>
+          <Radio.Button value={2}>Pending</Radio.Button>
+          <Radio.Button value={3}>Successed</Radio.Button>
+          <Radio.Button value={4}>Reverted</Radio.Button>
         </Radio.Group>
         <Input placeholder='Search by Address'  size='large' className='w-2/6' suffix={<SearchOutlined />} />
       </div>
