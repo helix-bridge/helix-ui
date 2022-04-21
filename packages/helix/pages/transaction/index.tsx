@@ -53,7 +53,7 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
   const startTime = useMemo(() => getUnixTime(new Date()), []);
   const router = useRouter();
   const { data: dailyStatistic } = useDailyStatistic();
-  const { total: accountTotal } = useAccountStatistic();
+  const { total: accountTotal } = useAccountStatistic(endpoint);
 
   const transactionsTotal = useMemo(
     () => (dailyStatistic?.dailyStatistics || []).reduce((acc, cur) => acc + cur.dailyCount, 0) ?? '-',

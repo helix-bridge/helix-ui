@@ -1,5 +1,3 @@
-import { BridgeConfig, ContractConfig, Api, ApiKeys } from '../bridge/bridge';
+import { BridgeConfig, ContractConfig } from '../bridge/bridge';
 
-export type SubstrateDVMBridgeConfig = Required<
-  Omit<BridgeConfig<ContractConfig, Pick<Api<ApiKeys>, 'subql'>>, 'contracts'>
->;
+export type SubstrateDVMBridgeConfig = Required<Omit<BridgeConfig<ContractConfig>, 'contracts' | 'api'>>;

@@ -2,11 +2,7 @@ import { omit } from 'lodash';
 import { Bridge, SubstrateDVMBridgeConfig } from '../../model';
 import { crabConfig, pangolinConfig } from '../network';
 
-const crabCrabDVMConfig: SubstrateDVMBridgeConfig = {
-  api: {
-    subql: 'https://api.subquery.network/sq/darwinia-network/wormhole-',
-  },
-};
+const crabCrabDVMConfig: SubstrateDVMBridgeConfig = {};
 
 /**
  * smart app: crab
@@ -18,11 +14,7 @@ export const crabCrabDVM = new Bridge<SubstrateDVMBridgeConfig>(
   { category: 'helix', activeAssistantConnection: true, stable: false }
 );
 
-const pangolinPangolinDVMConfig: SubstrateDVMBridgeConfig = {
-  api: {
-    subql: 'https://api.subquery.network/sq/darwinia-network/wormhole-',
-  },
-};
+const pangolinPangolinDVMConfig: SubstrateDVMBridgeConfig = {};
 
 /**
  * smart app: testnet

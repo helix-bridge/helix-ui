@@ -28,7 +28,7 @@ export type BridgeDirection = [Departure, Arrival];
  * evolution: deposit records
  * subscan: airdrop records in crab
  */
-export type ApiKeys = 'subql' | 'subqlMMr' | 'evolution' | 'dapp' | 'subscan' | 'subGraph';
+export type ApiKeys = 'mmr' | 'evolution' | 'dapp' | 'subscan';
 
 export type Api<T extends ApiKeys> = { [key in T]: string };
 

@@ -104,17 +104,18 @@ function Page() {
         'desc'
       );
 
-    const volumes = calcRank('volume');
+    const volumes = calcRank('volume').map(({ chain, total }) => ({
+      chain,
+      // Great than the actual total because of fromWei does not support float number;
+      total: fromWei({ value: Math.ceil(total.toNumber()), unit: 'gwei' }),
+    }));
 
-    const vTotal = volumes.reduce(
-      (acc, cur) => acc.plus(fromWei({ value: cur.total, unit: 'gwei' })),
-      new Bignumber(0)
-    );
+    const vTotal = volumes.reduce((acc, cur) => acc.plus(cur.total), new Bignumber(0));
 
     return {
       volumeRank: volumes.map(({ chain, total }) => ({
         chain,
-        total: fromWei({ value: total.toString().split('.')[0], unit: 'gwei' }, prettyNumber),
+        total: prettyNumber(total),
       })),
       volumeTotal: prettyNumber(vTotal),
       transactionsRank: calcRank('transactions').map(({ chain, total }) => ({

@@ -15,6 +15,8 @@ import { readStorage } from '@helix/shared/utils';
 import AppLayout from '../components/AppLayout';
 import { endpoint } from '../config';
 
+console.log('🚀 ~ file: _app.tsx ~ line 17 ~ endpoint', endpoint);
+
 const client = new GraphQLClient({
   url: endpoint,
 });

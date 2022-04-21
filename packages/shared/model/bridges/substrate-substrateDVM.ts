@@ -7,5 +7,5 @@ interface SubstrateSubstrateDVMContractConfig {
 }
 
 export type SubstrateSubstrateDVMBridgeConfig = Required<
-  BridgeConfig<SubstrateSubstrateDVMContractConfig, Omit<Api<ApiKeys>, 'subscan' | 'subqlMMr'>>
+  BridgeConfig<SubstrateSubstrateDVMContractConfig, Omit<Api<ApiKeys>, 'subscan' | 'mmr'>>
 >;
