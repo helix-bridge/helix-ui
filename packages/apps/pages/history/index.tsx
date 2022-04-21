@@ -4,6 +4,7 @@ import { SearchOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import { useState } from 'react';
+import { BaseModal } from '../../components/BaseModal';
 
 const NoData = () => (
   <div className='dark:bg-antDark mt-3 flex justify-center items-center' style={{ minHeight: '70vh' }}>
@@ -11,7 +12,7 @@ const NoData = () => (
   </div>
 );
 
-const HistoryItem = () => (
+const HistoryItem = ({ onClaim }: { onClaim: () => void }) => (
   <List.Item className='flex items-center justify-between bg-gray-900 p-3 mb-2 border border-gray-800'>
     <div className='flex space-x-2'>
       <Tag icon={<CheckCircleOutlined />} color='success' className='flex items-center justify-center'>Successed</Tag>
@@ -20,7 +21,7 @@ const HistoryItem = () => (
         <Typography.Text>From CSC to Darwinia</Typography.Text>
       </div>
       <div className='flex items-center justify-center pl-5'>
-        <Button>Claim</Button>
+        <Button onClick={onClaim}>Claim</Button>
       </div>
     </div>
     <div className='flex items-center space-x-4'>
@@ -41,28 +42,45 @@ const HistoryItem = () => (
 
 function Page() {
   const [noData, setNoData] = useState<boolean>(false);
+  const [visibleClaimConfirm, setVisibleClaimConfirm] = useState<boolean>(false);
 
   return (
-    <div>
-      <div className='flex items-center justify-between'>
-        <Radio.Group size='large' defaultValue={1} onChange={() => setNoData((prev) => !prev)}>
-          <Radio.Button value={1}>All</Radio.Button>
-          <Radio.Button value={2}>Pending</Radio.Button>
-          <Radio.Button value={3}>Successed</Radio.Button>
-          <Radio.Button value={4}>Reverted</Radio.Button>
-        </Radio.Group>
-        <Input placeholder='Search by Address'  size='large' className='w-2/6' suffix={<SearchOutlined />} />
-      </div>
-      {noData ? (<NoData />) : (
-        <div className='dark:bg-antDark px-6 py-5 mt-4 overflow-auto' style={{ height: '70vh' }}>
-          <List
-            split={false}
-            dataSource={(new Array(20)).fill(1)}
-            renderItem={() => <HistoryItem />}
-          />
+    <>
+      <div>
+        <div className='flex items-center justify-between'>
+          <Radio.Group size='large' defaultValue={1} onChange={() => setNoData((prev) => !prev)}>
+            <Radio.Button value={1}>All</Radio.Button>
+            <Radio.Button value={2}>Pending</Radio.Button>
+            <Radio.Button value={3}>Successed</Radio.Button>
+            <Radio.Button value={4}>Reverted</Radio.Button>
+          </Radio.Group>
+          <Input placeholder='Search by Address'  size='large' className='w-2/6' suffix={<SearchOutlined />} />
         </div>
-      )}
-    </div>
+        {noData ? (<NoData />) : (
+          <div className='dark:bg-antDark px-6 py-5 mt-4 overflow-auto' style={{ height: '70vh' }}>
+            <List
+              split={false}
+              dataSource={(new Array(20)).fill(1)}
+              renderItem={() => <HistoryItem onClaim={() => setVisibleClaimConfirm(true)} />}
+            />
+          </div>
+        )}
+      </div>
+
+      <BaseModal
+        title='Claim'
+        visible={visibleClaimConfirm}
+        footer={<Button size='large' onClick={() => setVisibleClaimConfirm(false)} className='w-full mb-4 mx-2'>Continue to claim</Button>}
+        onCancel={() => setVisibleClaimConfirm(false)}
+      >
+        <div>
+          <Typography.Paragraph className='text-center'>You need to confirm one more transaction to get your funds in your Etherum address. In case of any issue, please reach out to <Typography.Link target='_bank' rel='noopener noreferrer' href='mailto:hello@helixbridge.app'>hello@helixbridge.app</Typography.Link> </Typography.Paragraph>
+          <div className='flex justify-center items-center p-8 bg-gray-900 border border-gray-800 space-x-2'>
+            <Typography.Text>Estimated Gas Fee:</Typography.Text><Typography.Text strong>0.12 ETH</Typography.Text>
+          </div>
+        </div>
+      </BaseModal>
+    </>
   );
 }
 
