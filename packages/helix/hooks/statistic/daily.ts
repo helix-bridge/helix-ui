@@ -1,5 +1,5 @@
+import { Network, DailyStatistic } from '@helix/shared/model';
 import { useQuery } from 'graphql-hooks';
-import { DailyStatistic, Network } from '../../model';
 
 const STATISTICS_QUERY = `
   query dailyStatistics($timepast: Int!, $chain: String) {

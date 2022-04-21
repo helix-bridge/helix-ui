@@ -1,6 +1,5 @@
 import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
 import { Path } from '@helix/shared/config/constant';
-import { useAccountStatistic, useDailyStatistic } from '@helix/shared/hooks';
 import { Substrate2SubstrateRecord } from '@helix/shared/model';
 import { convertToDvm, getSupportedChains, gqlName, isValidAddress } from '@helix/shared/utils';
 import { Affix, Button, Input, Spin } from 'antd';
@@ -17,6 +16,7 @@ import { distinctUntilChanged, filter, Subject } from 'rxjs';
 import { Record } from '../../components/transaction/Record';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
 import { endpoint } from '../../config';
+import { useAccountStatistic, useDailyStatistic } from '../../hooks';
 
 const S2S_RECORDS = gql`
   query s2sRecords($first: Int!, $startTime: Int!, $sender: String, $recipient: String) {
