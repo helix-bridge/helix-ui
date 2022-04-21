@@ -5,6 +5,7 @@ import { SearchOutlined,
 import Image from 'next/image';
 import { useState } from 'react';
 import { BaseModal } from '../../components/BaseModal';
+import Link from 'next/link';
 
 const NoData = () => (
   <div className='dark:bg-antDark mt-3 flex justify-center items-center' style={{ minHeight: '70vh' }}>
@@ -43,6 +44,7 @@ const HistoryItem = ({ onClaim }: { onClaim: () => void }) => (
 function Page() {
   const [noData, setNoData] = useState<boolean>(false);
   const [visibleClaimConfirm, setVisibleClaimConfirm] = useState<boolean>(false);
+  const [visibleTransferDone, setVisibleTransferDone] = useState<boolean>(true);
 
   return (
     <>
@@ -66,6 +68,19 @@ function Page() {
           </div>
         )}
       </div>
+
+      <BaseModal
+        title='Transfer'
+        visible={visibleTransferDone}
+        footer={<Button className='w-full' type='primary' size='large' onClick={() => setVisibleTransferDone(false)}>Done</Button>}
+        onCancel={() => setVisibleTransferDone(false)}
+      >
+        <div className='flex flex-col items-center px-9 py-20 space-y-6'>
+          <Image alt='...' src='/image/transfer-done.svg' width={133} height={110} />
+          <Typography.Paragraph>Transfer Submitted</Typography.Paragraph>
+          <Typography.Text className='text-center'>The transaction has been sent, please check the transfer progress in the <Link href='/history'>history</Link>.</Typography.Text>
+        </div>
+      </BaseModal>
 
       <BaseModal
         title='Claim'
