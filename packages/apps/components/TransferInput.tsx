@@ -3,7 +3,7 @@ import { LabelTooltipType } from 'antd/lib/form/FormItemLabel';
 import Image from 'next/image';
 import styles from './TransferInput.module.scss';
 import classNames from 'classnames/bind';
-import { BaseModal } from './BaseModal';
+import { BaseModal } from './BaseModal/BaseModal';
 import { useState } from 'react';
 
 const cx = classNames.bind(styles);

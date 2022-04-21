@@ -4,7 +4,7 @@ import { SearchOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import { useState } from 'react';
-import { BaseModal } from '../../components/BaseModal';
+import { BaseModal } from '../../components/BaseModal/BaseModal';
 import Link from 'next/link';
 
 const NoData = () => (
