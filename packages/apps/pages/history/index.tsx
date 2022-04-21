@@ -11,7 +11,7 @@ const NoData = () => (
   </div>
 );
 
-const HistoryItem = ({ onClick }: { onClick: () => void }) => (
+const HistoryItem = () => (
   <List.Item className='flex items-center justify-between bg-gray-900 p-3 mb-2 border border-gray-800'>
     <div className='flex space-x-2'>
       <Tag icon={<CheckCircleOutlined />} color='success' className='flex items-center justify-center'>Successed</Tag>
@@ -20,7 +20,7 @@ const HistoryItem = ({ onClick }: { onClick: () => void }) => (
         <Typography.Text>From CSC to Darwinia</Typography.Text>
       </div>
       <div className='flex items-center justify-center pl-5'>
-        <Button onClick={onClick}>Claim</Button>
+        <Button>Claim</Button>
       </div>
     </div>
     <div className='flex items-center space-x-4'>
@@ -45,7 +45,7 @@ function Page() {
   return (
     <div>
       <div className='flex items-center justify-between'>
-        <Radio.Group size='large' value={1}>
+        <Radio.Group size='large' defaultValue={1} onChange={() => setNoData((prev) => !prev)}>
           <Radio.Button value={1}>All</Radio.Button>
           <Radio.Button value={2}>Pending</Radio.Button>
           <Radio.Button value={3}>Successed</Radio.Button>
@@ -58,7 +58,7 @@ function Page() {
           <List
             split={false}
             dataSource={(new Array(20)).fill(1)}
-            renderItem={() => <HistoryItem onClick={() => setNoData((prev) => !prev)} />}
+            renderItem={() => <HistoryItem />}
           />
         </div>
       )}
