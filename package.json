@@ -1,5 +1,5 @@
 {
-  "name": "root",
+  "name": "helix-ui",
   "private": true,
   "scripts": {
     "bootstrap": "yarn install; lerna bootstrap;",
