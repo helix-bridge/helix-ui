@@ -14,12 +14,12 @@ import {
   pangoroConfig,
   ropstenConfig,
 } from '@helix/shared/config/network';
-import { TIMEPAST, useDailyStatistic } from '@helix/shared/hooks';
 import { ChainConfig, DailyStatistic } from '@helix/shared/model';
 import { fromWei, prettyNumber, rxGet } from '@helix/shared/utils';
 import { Statistics } from '../components/dashboard/Statistics';
 import { Chain, ChainProps } from '../components/dashboard/Chain';
 import { BarChart, Statistic } from '../components/dashboard/BarChart';
+import { TIMEPAST, useDailyStatistic } from '../hooks';
 
 interface StatisticTotal {
   volume: Bignumber;
