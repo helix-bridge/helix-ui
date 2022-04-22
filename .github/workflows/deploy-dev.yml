@@ -17,6 +17,10 @@ jobs:
           persist-credentials: false
           ssh-key: "${{ secrets.ITERING_ACTIONS_DEPLOY_KEY }}"
 
+      - name: lint
+        with:
+          run: yarn lint
+
       - uses: ./.github/actions/smart-vercel
         name: Deploy helix ui
         id: smart-vercel
