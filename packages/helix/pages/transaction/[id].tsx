@@ -7,13 +7,9 @@ import { SubscanLink } from '@helix/shared/components/widget/SubscanLink';
 import { CrossChainStatus, MIDDLE_DURATION } from '@helix/shared/config/constant';
 import { useIsMounted } from '@helix/shared/hooks';
 import {
-  Arrival,
-  Departure,
-  LockedRecord,
   NetworkQueryParams,
-  Substrate2SubstrateDVMRecord,
   Substrate2SubstrateRecord,
-  SubstrateDVM2SubstrateRecord,
+  SubstrateSubstrateDVMBridgeConfig,
   UnlockedRecord,
   Vertices,
 } from '@helix/shared/model';
@@ -21,18 +17,18 @@ import {
   fromWei,
   getBridge,
   getDisplayName,
+  getNetworkMode,
   gqlName,
   pollWhile,
   prettyNumber,
   revertAccount,
+  unixTimeToLocal,
   verticesToChainConfig,
 } from '@helix/shared/utils';
 import { Breadcrumb, Divider, Progress, Tooltip } from 'antd';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
-import camelcaseKeys from 'camelcase-keys';
-import { formatDistance } from 'date-fns';
+import { formatDistance, fromUnixTime } from 'date-fns';
 import { gql, request } from 'graphql-request';
-import { has } from 'lodash';
 import { GetServerSidePropsContext, NextPage } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Image from 'next/image';
@@ -40,68 +36,65 @@ import { useRouter } from 'next/router';
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from as fromRx, map, of, switchMap } from 'rxjs';
+import { endpoint } from '../../config';
 
 type FinalActionRecord = Pick<UnlockedRecord, 'txHash' | 'id' | 'recipient' | 'amount'>;
 
-/**
- * subgraph
- */
-const S2S_REDEEM_RECORD_QUERY = gql`
-  query burnRecordEntity($id: String!) {
-    burnRecordEntity(id: $id) {
+const BURN_RECORD_QUERY = gql`
+  query burnRecord($id: ID!) {
+    burnRecord(id: $id) {
       amount
-      end_timestamp
-      lane_id
-      nonce
-      recipient
-      request_transaction
-      response_transaction
-      result
-      sender
-      start_timestamp
-      token
-      fee
-    }
-  }
-`;
-
-const LOCKED_RECORD_QUERY = gql`
-  query lockRecordEntity($id: String!) {
-    lockRecordEntity(id: $id) {
-      id
-      recipient
-      transaction
-      amount
-      mapping_token
-    }
-  }
-`;
-
-/**
- * subql
- */
-const S2S_ISSUING_RECORD_QUERY = gql`
-  query s2sEvent($id: String!) {
-    s2sEvent(id: $id) {
-      id
-      amount
-      endTimestamp
+      endTime
+      laneId
       nonce
       recipient
       requestTxHash
       responseTxHash
       result
-      senderId
-      startTimestamp
+      sender
+      startTime
       token
       fee
     }
   }
 `;
 
-const S2S_UNLOCKED_RECORD_QUERY = gql`
-  query s2sUnlocked($id: String!) {
-    s2sUnlocked(id: $id) {
+const DVM_LOCK_RECORD_QUERY = gql`
+  query dvmLockRecord($id: ID!) {
+    dvmLockRecord(id: $id) {
+      id
+      laneId
+      nonce
+      recipient
+      txHash
+      amount
+      token
+    }
+  }
+`;
+
+const S2S_ISSUING_RECORD_QUERY = gql`
+  query lockRecord($id: ID!) {
+    lockRecord(id: $id) {
+      id
+      amount
+      endTime
+      nonce
+      recipient
+      requestTxHash
+      responseTxHash
+      result
+      sender
+      startTime
+      token
+      fee
+    }
+  }
+`;
+
+const SUBSTRATE_UNLOCKED_RECORD_QUERY = gql`
+  query unlockRecord($id: ID!) {
+    unlockRecord(id: $id) {
       id
       recipient
       token
@@ -112,55 +105,6 @@ const S2S_UNLOCKED_RECORD_QUERY = gql`
     }
   }
 `;
-
-const s2sDVMFields: [keyof Substrate2SubstrateDVMRecord, keyof Substrate2SubstrateRecord][] = [
-  ['senderId', 'sender'],
-  ['startTimestamp', 'startTime'],
-  ['endTimestamp', 'endTime'],
-];
-
-const sDVM2sFields: [keyof SubstrateDVM2SubstrateRecord, keyof Substrate2SubstrateRecord][] = [
-  ['end_timestamp', 'endTime'],
-  ['start_timestamp', 'startTime'],
-  ['request_transaction', 'requestTxHash'],
-  ['response_transaction', 'responseTxHash'],
-];
-
-const finalRecordFields: [keyof LockedRecord, keyof UnlockedRecord][] = [
-  ['mapping_token', 'token'],
-  ['transaction', 'txHash'],
-];
-
-const unifyRecordField: (
-  record: Record<string, unknown> | null,
-  fieldsMap: [string, string][]
-) => Record<string, string | number> | null = (data, fieldsMap) => {
-  if (!data) {
-    return null;
-  }
-
-  const renamed = fieldsMap.reduce((acc, cur) => {
-    const [oKey, nKey] = cur;
-
-    if (has(acc, oKey)) {
-      acc[nKey] = acc[oKey];
-    }
-
-    return acc;
-  }, data);
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const record = camelcaseKeys(renamed) as Record<string, any>;
-  const reg = /^\d+$/;
-  const bits = 13;
-
-  if (has(record, 'startTime')) {
-    record.startTime = reg.test(record.startTime) ? +record.startTime.padEnd(bits, '0') : record.startTime;
-    record.endTime = reg.test(record.endTime) ? +record.endTime.padEnd(bits, '0') : record.endTime;
-  }
-
-  return record;
-};
 
 function Description({ tip, title, children }: PropsWithChildren<{ tip: string; title: string }>) {
   return (
@@ -189,31 +133,42 @@ const Page: NextPage<{
   const query = router.query as unknown as NetworkQueryParams;
   const isMounted = useIsMounted();
 
-  const direction = useMemo(() => {
-    const departure = {};
-    const arrival = {};
+  const [departure, arrival] = useMemo(() => {
+    const dep = {};
+    const arr = {};
 
     Object.entries(router.query).forEach(([key, value]) => {
       if (key.startsWith('from')) {
-        Object.assign(departure, { [/from$/.test(key) ? 'network' : 'mode']: value });
+        Object.assign(dep, { [/from$/.test(key) ? 'network' : 'mode']: value });
       }
       if (key.startsWith('to')) {
-        Object.assign(arrival, { [/to$/.test(key) ? 'network' : 'mode']: value });
+        Object.assign(arr, { [/to$/.test(key) ? 'network' : 'mode']: value });
       }
     });
 
-    return [departure, arrival] as [Departure, Arrival];
+    return [verticesToChainConfig(dep as Vertices), verticesToChainConfig(arr as Vertices)];
   }, [router.query]);
 
-  const [departure, arrival] = useMemo(() => direction.map((item) => verticesToChainConfig(item)), [direction]);
-
-  const bridge = getBridge(direction);
-  const isIssuing = bridge.isIssuing(...direction);
+  const bridge = getBridge<SubstrateSubstrateDVMBridgeConfig>([departure, arrival]);
+  const isIssuing = bridge.isIssuing(departure, arrival);
 
   const [departureRecord, arrivalRecord] = useMemo(
     () => (isIssuing ? [issuingRecord, redeemRecord] : [redeemRecord, issuingRecord]),
     [isIssuing, issuingRecord, redeemRecord]
   );
+
+  const [fromToken, toToken] = useMemo(() => {
+    const bridgeName = 'helix';
+
+    return [
+      departure.tokens.find(
+        (item) => item.bridges.includes(bridgeName) && item.type === (isIssuing ? 'native' : 'mapping')
+      )!,
+      arrival.tokens.find(
+        (item) => item.bridges.includes(bridgeName) && item.type === (isIssuing ? 'mapping' : 'native')
+      )!,
+    ];
+  }, [arrival.tokens, departure.tokens, isIssuing]);
 
   const [finalRecord, setFinalRecord] = useState<FinalActionRecord | null>(lockOrUnlockRecord);
 
@@ -221,45 +176,48 @@ const Page: NextPage<{
     () => fromWei({ value: departureRecord?.amount ?? 0, unit: 'gwei' }, prettyNumber),
     [departureRecord?.amount]
   );
-  const fromToken = useMemo(() => (isIssuing ? 'RING' : 'xRING'), [isIssuing]);
 
-  /**
-   * origin sender -> target recipient -> target sender -> origin recipient
-   */
   // eslint-disable-next-line complexity
   const transfers = useMemo(() => {
     if (!departureRecord || departureRecord?.result === CrossChainStatus.pending) {
       return [];
     }
 
+    const {
+      contracts: { issuing: issuingRecipient, redeem: redeemRecipient, genesis },
+    } = bridge.config;
+
+    const depMode = getNetworkMode(departure);
+    const arrMode = getNetworkMode(arrival);
+
     const issuingTransfer =
       departureRecord.result === CrossChainStatus.success
         ? [
             {
               chain: departure,
-              from: revertAccount(departureRecord.sender, query.from, query.fromMode),
-              to: '2qeMxq616BhswXHiiHp7H4VgaVv2S8xwkzWkoyoxcTA8v1YA',
-              token: { logo: '/image/ring.svg', name: fromToken },
+              from: revertAccount(departureRecord.sender, departure.name, depMode),
+              to: issuingRecipient,
+              token: fromToken,
             },
             {
               chain: arrival,
-              from: '0x0000000000000000000000000000000000000000',
-              to: revertAccount(departureRecord.recipient, query.to, query.toMode),
-              token: { logo: '/image/ring.svg', name: isIssuing ? 'xRING' : 'RING' },
+              from: genesis,
+              to: revertAccount(departureRecord.recipient, arrival.name, arrMode),
+              token: toToken,
             },
           ]
         : [
             {
               chain: departure,
-              from: revertAccount(departureRecord.sender, query.from, query.fromMode),
-              to: '2qeMxq616BhswXHiiHp7H4VgaVv2S8xwkzWkoyoxcTA8v1YA',
-              token: { logo: '/image/ring.svg', name: fromToken },
+              from: revertAccount(departureRecord.sender, departure.name, depMode),
+              to: issuingRecipient,
+              token: fromToken,
             },
             {
               chain: departure,
-              from: '2qeMxq616BhswXHiiHp7H4VgaVv2S8xwkzWkoyoxcTA8v1YA',
-              to: revertAccount(departureRecord.sender, query.from, query.fromMode),
-              token: { logo: '/image/ring.svg', name: fromToken },
+              from: issuingRecipient,
+              to: revertAccount(departureRecord.sender, departure.name, depMode),
+              token: fromToken,
             },
           ];
 
@@ -268,44 +226,42 @@ const Page: NextPage<{
         ? [
             {
               chain: departure,
-              from: revertAccount(departureRecord.sender, query.from, query.fromMode),
-              to: '0x3CC8913088F79831c8335f0307f4FC92d79C1ac7',
-              token: { logo: '/image/ring.svg', name: fromToken },
+              from: revertAccount(departureRecord.sender, departure.name, depMode),
+              to: redeemRecipient,
+              token: fromToken,
             },
             {
               chain: arrival,
-              from: '2qeMxq616BhswXHiiHp7H4VgaVv2S8xwkzWkoyoxcTA8v1YA',
-              to: revertAccount(departureRecord.recipient, query.to, query.toMode),
-              token: { logo: '/image/ring.svg', name: isIssuing ? 'xRING' : 'RING' },
+              from: issuingRecipient,
+              to: revertAccount(departureRecord.recipient, arrival.name, arrMode),
+              token: toToken,
             },
             {
               chain: departure,
-              from: '0x3CC8913088F79831c8335f0307f4FC92d79C1ac7',
-              to: '0x0000000000000000000000000000000000000000',
-              token: { logo: '/image/ring.svg', name: fromToken },
+              from: redeemRecipient,
+              to: genesis,
+              token: fromToken,
             },
           ]
         : [
             {
               chain: departure,
-              from: revertAccount(departureRecord.sender, query.from, query.fromMode),
-              to: '0x3CC8913088F79831c8335f0307f4FC92d79C1ac7',
-              token: { logo: '/image/ring.svg', name: fromToken },
+              from: revertAccount(departureRecord.sender, departure.name, depMode),
+              to: redeemRecipient,
+              token: fromToken,
             },
             {
               chain: departure,
-              to: revertAccount(departureRecord.sender, query.from, query.fromMode),
-              from: '0x3CC8913088F79831c8335f0307f4FC92d79C1ac7',
-              token: { logo: '/image/ring.svg', name: fromToken },
+              to: revertAccount(departureRecord.sender, departure.name, depMode),
+              from: redeemRecipient,
+              token: fromToken,
             },
           ];
 
     return isIssuing ? issuingTransfer : redeemTransfer;
-  }, [arrival, departure, departureRecord, fromToken, isIssuing, query.from, query.fromMode, query.to, query.toMode]);
+  }, [arrival, bridge.config, departure, departureRecord, fromToken, isIssuing, toToken]);
 
   useEffect(() => {
-    const apiConfig = bridge.config.api || {};
-
     if (finalRecord) {
       return;
     }
@@ -313,12 +269,12 @@ const Page: NextPage<{
     const sub$$ = of(null)
       .pipe(
         switchMap(() => {
-          const unlockObs = fromRx(
-            request(apiConfig.subql + bridge.departure.name, S2S_UNLOCKED_RECORD_QUERY, { id })
-          ).pipe(map((res) => res[gqlName(S2S_UNLOCKED_RECORD_QUERY)]));
+          const unlockObs = fromRx(request(endpoint, SUBSTRATE_UNLOCKED_RECORD_QUERY, { id })).pipe(
+            map((res) => res[gqlName(SUBSTRATE_UNLOCKED_RECORD_QUERY)])
+          );
 
-          const lockObs = fromRx(request(apiConfig.subGraph, LOCKED_RECORD_QUERY, { id })).pipe(
-            map((res) => unifyRecordField(res[gqlName(LOCKED_RECORD_QUERY)], finalRecordFields))
+          const lockObs = fromRx(request(endpoint, DVM_LOCK_RECORD_QUERY, { id })).pipe(
+            map((res) => res[gqlName(DVM_LOCK_RECORD_QUERY)])
           );
 
           return isIssuing ? lockObs : unlockObs;
@@ -405,7 +361,7 @@ const Page: NextPage<{
           ) : departureRecord?.result === CrossChainStatus.reverted ? (
             <SubscanLink
               network={departure.name}
-              txHash={departureRecord?.responseTxHash}
+              txHash={departureRecord?.responseTxHash ?? ''}
               className="hover:opacity-80 transition-opacity duration-200"
             >
               <EllipsisMiddle copyable>{departureRecord.responseTxHash}</EllipsisMiddle>
@@ -431,15 +387,17 @@ const Page: NextPage<{
               {arrivalRecord?.result ? <ClockCircleOutlined /> : <Icon name="#dwa-reload" />}
 
               <span>
-                {formatDistance(new Date(departureRecord.startTime), new Date(new Date().toISOString().split('.')[0]), {
-                  includeSeconds: true,
-                  addSuffix: true,
-                })}
+                {formatDistance(
+                  fromUnixTime(departureRecord.startTime),
+                  new Date(new Date().toISOString().split('.')[0]),
+                  {
+                    includeSeconds: true,
+                    addSuffix: true,
+                  }
+                )}
               </span>
 
-              <span className="hidden md:inline-block">
-                ({new Date(departureRecord.startTime + 'Z').toLocaleString()} )
-              </span>
+              <span className="hidden md:inline-block">({unixTimeToLocal(departureRecord.startTime)})</span>
 
               <Divider type="vertical" orientation="center" />
 
@@ -448,9 +406,13 @@ const Page: NextPage<{
               {departureRecord.startTime && departureRecord.endTime ? (
                 <span className="text-gray-400">
                   {t('Confirmed within {{des}}', {
-                    des: formatDistance(new Date(departureRecord.endTime), new Date(departureRecord.startTime), {
-                      includeSeconds: true,
-                    }),
+                    des: formatDistance(
+                      fromUnixTime(departureRecord.endTime),
+                      fromUnixTime(departureRecord.startTime),
+                      {
+                        includeSeconds: true,
+                      }
+                    ),
                   })}
                 </span>
               ) : (
@@ -504,7 +466,7 @@ const Page: NextPage<{
                     <EllipsisMiddle>{to}</EllipsisMiddle>
                   </span>
                   <span>{t('For')}</span>
-                  <Image src={token.logo} width={16} height={16} className="w-5" />
+                  <Image src={`/image/${token.logo}`} width={16} height={16} className="w-5" />
                   <span>
                     {amount} {token.name}
                   </span>
@@ -520,12 +482,12 @@ const Page: NextPage<{
           title={t('Value')}
           tip={t('The amount to be transferred to the recipient with the cross-chain transaction.')}
         >
-          {amount} {fromToken}
+          {amount} {fromToken.name}
         </Description>
 
         <Description title={t('Transaction Fee')} tip={'Amount paid for processing the cross-chain transaction.'}>
           {fromWei({ value: departureRecord?.fee || arrivalRecord?.fee, unit: isIssuing ? 'gwei' : 'ether' })}{' '}
-          {isIssuing ? 'RING' : 'CRAB'}
+          {departure.tokens.find((item) => item.type === 'native')?.name}
         </Description>
 
         <Divider />
@@ -553,17 +515,16 @@ export async function getServerSideProps(
   const bridge = getBridge(vertices);
   const isIssuing = bridge.isIssuing(...vertices);
 
-  const apiConfig = bridge.config.api || {};
-  const issuing = request(apiConfig.subql + bridge.departure.name, S2S_ISSUING_RECORD_QUERY, { id });
+  const issuing = request(endpoint, S2S_ISSUING_RECORD_QUERY, { id });
 
-  const unlocked = request(apiConfig.subql + bridge.departure.name, S2S_UNLOCKED_RECORD_QUERY, { id }).then(
-    (res) => res && res[gqlName(S2S_UNLOCKED_RECORD_QUERY)]
+  const unlocked = request(endpoint, SUBSTRATE_UNLOCKED_RECORD_QUERY, { id }).then(
+    (res) => res && res[gqlName(SUBSTRATE_UNLOCKED_RECORD_QUERY)]
   );
 
-  const redeem = request(apiConfig.subGraph, S2S_REDEEM_RECORD_QUERY, { id });
+  const redeem = request(endpoint, BURN_RECORD_QUERY, { id });
 
-  const locked = request(apiConfig.subGraph, LOCKED_RECORD_QUERY, { id }).then(
-    (res) => res && res[gqlName(LOCKED_RECORD_QUERY)]
+  const locked = request(endpoint, DVM_LOCK_RECORD_QUERY, { id }).then(
+    (res) => res && res[gqlName(DVM_LOCK_RECORD_QUERY)]
   );
 
   const [issuingRes, redeemRes, lockOrUnlockRecord] = await Promise.all([
@@ -576,9 +537,9 @@ export async function getServerSideProps(
     props: {
       ...translations,
       id,
-      issuingRecord: unifyRecordField(issuingRes[gqlName(S2S_ISSUING_RECORD_QUERY)], s2sDVMFields),
-      redeemRecord: unifyRecordField(redeemRes[gqlName(S2S_REDEEM_RECORD_QUERY)], sDVM2sFields),
-      lockOrUnlockRecord: unifyRecordField(lockOrUnlockRecord, finalRecordFields),
+      issuingRecord: issuingRes[gqlName(S2S_ISSUING_RECORD_QUERY)],
+      redeemRecord: redeemRes[gqlName(BURN_RECORD_QUERY)],
+      lockOrUnlockRecord,
     },
   };
 }

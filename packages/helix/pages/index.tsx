@@ -14,12 +14,12 @@ import {
   pangoroConfig,
   ropstenConfig,
 } from '@helix/shared/config/network';
-import { TIMEPAST, useDailyStatistic } from '@helix/shared/hooks';
 import { ChainConfig, DailyStatistic } from '@helix/shared/model';
 import { fromWei, prettyNumber, rxGet } from '@helix/shared/utils';
 import { Statistics } from '../components/dashboard/Statistics';
 import { Chain, ChainProps } from '../components/dashboard/Chain';
 import { BarChart, Statistic } from '../components/dashboard/BarChart';
+import { TIMEPAST, useDailyStatistic } from '../hooks';
 
 interface StatisticTotal {
   volume: Bignumber;
@@ -29,53 +29,14 @@ interface StatisticTotal {
 // @see response of: https://api.coingecko.com/api/v3/coins/list
 type CoinIds = 'darwinia-crab-network' | 'darwinia-network-native-token';
 
-// TODO: move links into chain config
 const chains: ChainProps[] = [
-  {
-    config: ethereumConfig,
-    portal: 'https://ethereum.org/en/',
-    github: 'https://github.com/ethereum/ethereum-org-website',
-    twitter: 'https://twitter.com/ethdotorg',
-  },
-  {
-    config: darwiniaConfig,
-    portal: 'https://darwinia.network/',
-    github: 'https://github.com/darwinia-network',
-    twitter: 'https://twitter.com/DarwiniaNetwork',
-  },
-  {
-    config: crabConfig,
-    logoKey: 'logoSmart',
-    portal: 'https://crab.network/',
-    github: 'https://github.com/darwinia-network/darwinia/tree/main/runtime/crab',
-    twitter: 'https://twitter.com/DarwiniaNetwork',
-  },
-  {
-    config: ropstenConfig,
-    portal: 'https://ethereum.org/en/',
-    github: 'https://github.com/ethereum/ropsten',
-    twitter: 'https://twitter.com/ethdotorg',
-  },
-  {
-    config: omit(pangolinConfig, 'dvm'),
-    logoKey: 'logoAssist2',
-    portal: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangolin-rpc.darwinia.network#/explorer',
-    github: 'https://github.com/darwinia-network',
-    twitter: 'https://twitter.com/DarwiniaNetwork',
-  },
-  {
-    config: pangolinConfig,
-    logoKey: 'logoSmart',
-    portal: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangolin-rpc.darwinia.network#/explorer',
-    github: 'https://github.com/darwinia-network',
-    twitter: 'https://twitter.com/DarwiniaNetwork',
-  },
-  {
-    config: pangoroConfig,
-    portal: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangoro-rpc.darwinia.network#/explorer',
-    github: 'https://github.com/darwinia-network',
-    twitter: 'https://twitter.com/DarwiniaNetwork',
-  },
+  ethereumConfig,
+  darwiniaConfig,
+  crabConfig,
+  ropstenConfig,
+  omit(pangolinConfig, 'dvm'),
+  pangolinConfig,
+  pangoroConfig,
 ];
 
 function Page() {
@@ -96,14 +57,6 @@ function Page() {
       volume: dailyStatistics
         .map(({ id, dailyVolume }) => [secondsToMilliseconds(+id), +fromWei({ value: dailyVolume, unit: 'gwei' })])
         .reverse() as Statistic[],
-      // FIXME: this value need to multiply price: token_0 volume * token_0 price + ... + token_n volume * token_n price
-      volumeTotal: fromWei(
-        {
-          value: dailyStatistics.reduce((acc, cur) => acc.plus(new Bignumber(cur.dailyVolume)), new Bignumber(0)),
-          unit: 'gwei',
-        },
-        prettyNumber
-      ),
       transactions: dailyStatistics
         .map(({ id, dailyCount }) => [secondsToMilliseconds(+id), dailyCount])
         .reverse() as Statistic[],
@@ -122,7 +75,7 @@ function Page() {
     return format(date, DATE_FORMAT) + ' (+UTC)';
   }, [dailyStatistic]);
 
-  const { volumeRank, transactionsRank } = useMemo(() => {
+  const { volumeRank, transactionsRank, volumeTotal } = useMemo(() => {
     const calcTotal = (key: keyof DailyStatistic) => (acc: Bignumber, cur: DailyStatistic) =>
       acc.plus(new Bignumber(cur[key]));
 
@@ -144,18 +97,31 @@ function Page() {
 
     const calcRank: (key: keyof StatisticTotal) => { chain: ChainConfig; total: Bignumber }[] = (
       key: keyof StatisticTotal
-    ) => {
-      const source = rankSource.map(({ chain, statistic }) => ({ chain, total: statistic[key] }));
+    ) =>
+      orderBy(
+        rankSource.map(({ chain, statistic }) => ({ chain, total: statistic[key] })),
+        (item) => item.total.toNumber(),
+        'desc'
+      );
 
-      return orderBy(source, (item) => item.total.toNumber(), 'desc');
-    };
+    const volumes = calcRank('volume').map(({ chain, total }) => ({
+      chain,
+      // Great than the actual total because of fromWei does not support float number;
+      total: fromWei({ value: Math.ceil(total.toNumber()), unit: 'gwei' }),
+    }));
+
+    const vTotal = volumes.reduce((acc, cur) => acc.plus(cur.total), new Bignumber(0));
 
     return {
-      volumeRank: calcRank('volume').map(({ chain, total }) => ({
+      volumeRank: volumes.map(({ chain, total }) => ({
         chain,
-        total: fromWei({ value: total.toString().split('.')[0], unit: 'gwei' }),
+        total: prettyNumber(total),
       })),
-      transactionsRank: calcRank('transactions').map(({ chain, total }) => ({ chain, total: total.toString() })),
+      volumeTotal: prettyNumber(vTotal),
+      transactionsRank: calcRank('transactions').map(({ chain, total }) => ({
+        chain,
+        total: prettyNumber(total.toString(), { decimal: 0 }),
+      })),
     };
   }, [crabStatistic?.dailyStatistics, darwiniaStatistic?.dailyStatistics, prices.crab.usd, prices.darwinia.usd]);
 
@@ -176,13 +142,7 @@ function Page() {
 
   return (
     <div>
-      <Statistics
-        title={t('volumes')}
-        startTime={startTime}
-        total={volumeRank.reduce((acc, cur) => acc.plus(cur.total), new Bignumber(0)).toString()}
-        rank={volumeRank}
-        currency="usd"
-      >
+      <Statistics title={t('volumes')} startTime={startTime} total={volumeTotal} rank={volumeRank} currency="usd">
         {loading ? (
           <div className="block relative top-1/3 text-center">
             <Spin />
