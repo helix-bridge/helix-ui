@@ -1,7 +1,7 @@
 import Image from 'next/image';
-import { Radio, Space, Result } from 'antd';
+import { Radio, Space, Result, Typography } from 'antd';
 import { useState } from 'react';
-import { CheckSquareFilled, SmileOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import { CheckSquareFilled, SmileOutlined, ArrowRightOutlined, SyncOutlined } from '@ant-design/icons';
 
 type TokenOnChainData = {
   tokenIcon: string;
@@ -27,7 +27,7 @@ const TokenOnChain = ({ tokenIcon, chainIcon, chainName, from }: TokenOnChainDat
 
 const SelectorItem = ({ value, theSelected }: { value: number; theSelected: number }) => {
   return (
-    <Radio.Button className="w-full" style={{ height: 'fit-content' }} value={value}>
+    <Radio.Button className="w-full bg-gray-900" style={{ height: 'fit-content' }} value={value}>
       <div className="relative flex justify-between items-center pr-3 py-3">
         {value === theSelected && <CheckSquareFilled className="absolute -top-px left-auto -right-4" />}
         <TokenOnChain tokenIcon="/image/ring.svg" chainIcon="/image/darwinia.png" chainName="Darwinia" from />
@@ -50,6 +50,10 @@ export function BridgeSelector() {
 
   return (
     <div className="dark:bg-antDark p-5 overflow-auto" style={{ maxHeight: '65vh', minHeight: '20vh' }}>
+      <div className='flex items-center space-x-2 mb-2 ml-px'>
+        <SyncOutlined />
+        <Typography.Text>Latest bridge data</Typography.Text>
+      </div>
       {theSelected === 1 ? (
         <Result
           icon={<SmileOutlined />}
