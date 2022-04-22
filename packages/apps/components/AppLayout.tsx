@@ -24,18 +24,22 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
         className="fixed left-0 right-0 top-0 z-40 flex items-center justify-between sm:px-16 px-4 border-b"
         style={{ marginTop: -1, borderColor: '#113b5d' }}
       >
-        <div className='flex items-center space-x-2'>
-          <Tooltip title={t('Helix is in beta. Please use at your own risk level')}>
-            <Image
-              src="/image/bridges/helix.png"
-              alt="helix"
-              width={90}
-              height={24}
-              onClick={() => router.push(Path.root)}
-              className="cursor-pointer"
-            />
-          </Tooltip>
-          <Image alt='...' src='/image/beta.svg' width={35} height={18} />
+        <div className='flex items-center space-x-5'>
+          <div className='flex items-center space-x-2'>
+            <Tooltip title={t('Helix is in beta. Please use at your own risk level')}>
+              <Image
+                src="/image/bridges/helix.png"
+                alt="helix"
+                width={90}
+                height={24}
+                onClick={() => router.push(Path.root)}
+                className="cursor-pointer"
+              />
+            </Tooltip>
+            <Image alt='...' src='/image/beta.svg' width={35} height={18} />
+          </div>
+          <span className='transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap'>Bridge Aggregator</span>
+          <span className='transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap'>NFT Bridge</span>
         </div>
 
         <Drawer
