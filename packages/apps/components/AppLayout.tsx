@@ -1,4 +1,4 @@
-import { MenuOutlined } from '@ant-design/icons';
+import { MenuOutlined, HddOutlined } from '@ant-design/icons';
 import { Path } from '@helix/shared/config/constant';
 import { THEME } from '@helix/shared/config/theme';
 import { readStorage } from '@helix/shared/utils';
@@ -57,19 +57,10 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
           <MenuOutlined className="text-xl" />
         </div>
 
-        <div className="hidden lg:flex lg:justify-end items-center lg:flex-1 ml-2 md:ml-8 lg:ml-12">
-          <Navigator theme={theme} />
-
-          <Button
-            onClick={() => {
-              window.open('https://wormhole.darwinia.network', '_blank');
-            }}
-            type="primary"
-            size="large"
-            className="ml-8"
-          >
-            {t('Launch App')}
-          </Button>
+        <div className="flex items-center space-x-4">
+          <Button>Connect Wallet</Button>
+          <Button className='flex items-center' onClick={() => router.push('history')}><HddOutlined />History</Button>
+          <Button>•••</Button>
         </div>
       </Header>
 
