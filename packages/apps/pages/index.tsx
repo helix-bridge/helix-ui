@@ -11,10 +11,10 @@ function Page() {
   return (
     <>
       <Row>
-        <Col span={8}>
+        <Col xs={24} sm={8}>
           <TransferInput />
         </Col>
-        <Col span={15} offset={1}>
+        <Col xs={24} sm={{ span: 15, offset: 1 }}>
           <BridgeSelector />
         </Col>
       </Row>

@@ -25,11 +25,8 @@ interface NavigatorProps {
 }
 
 const navigators: Nav[] = [
-  { label: 'Dashboard', path: Path.root },
-  { label: 'Explorer', path: Path.transaction },
-  // { label: 'DAO', path: 'dao' },
-  // FIXME: cause warning: Prop `href` did not match. Server: "" Client: "/zh/transaction"
-  { label: 'Docs', path: '', extra: true },
+  { label: 'Home', path: '/' },
+  { label: 'History', path: '/history' },
 ];
 
 function NavLink({ nav, theme }: { nav: Nav; theme: THEME }) {

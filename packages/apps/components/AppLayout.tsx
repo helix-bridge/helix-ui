@@ -38,8 +38,8 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
             </Tooltip>
             <Image alt='...' src='/image/beta.svg' width={35} height={18} />
           </div>
-          <span className='transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap'>Bridge Aggregator</span>
-          <span className='transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap'>NFT Bridge</span>
+          <span className='hidden lg:inline transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap'>Bridge Aggregator</span>
+          <span className='hidden lg:inline transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap'>NFT Bridge</span>
         </div>
 
         <Drawer
@@ -57,7 +57,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
           <MenuOutlined className="text-xl" />
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="hidden lg:flex items-center space-x-4">
           <Button>Connect Wallet</Button>
           <Button className='flex items-center' onClick={() => router.push('history')}><HddOutlined />History</Button>
           <Button>•••</Button>
