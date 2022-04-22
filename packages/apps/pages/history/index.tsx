@@ -11,10 +11,10 @@ const NoData = () => (
 );
 
 const HistoryItem = ({ onClaim }: { onClaim: () => void }) => (
-  <List.Item className="flex items-center justify-between bg-gray-900 p-3 mb-2 border border-gray-800">
-    <div className="flex space-x-2">
-      <Tag icon={<CheckCircleOutlined />} color="success" className="flex items-center justify-center">
-        Successed
+  <List.Item className="flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-2 lg:space-y-0 bg-gray-900 p-2 lg:p-3 mb-2 border border-gray-800">
+    <div className="flex space-x-px lg:space-x-2">
+      <Tag icon={<CheckCircleOutlined />} color="success" className="flex items-center justify-center pr-0 lg:pr-2">
+        <span className='hidden lg:inline'>Successed</span>
       </Tag>
       <div className="flex flex-col">
         <Typography.Text>23 mins ago</Typography.Text>
@@ -24,18 +24,18 @@ const HistoryItem = ({ onClaim }: { onClaim: () => void }) => (
         <Button onClick={onClaim}>Claim</Button>
       </div>
     </div>
-    <div className="flex items-center space-x-4">
-      <Tag color="warning" className="flex items-center justify-center" style={{ height: 'fit-content' }}>
+    <div className="flex items-center">
+      <Tag color="warning" className="flex items-center justify-center order-last lg:order-first" style={{ height: 'fit-content' }}>
         Out
       </Tag>
-      <div className="flex items-center space-x-1">
+      <div className="flex items-center space-x-1 lg:mx-4">
         <Image alt="..." src="/image/ring.svg" width={40} height={40} />
         <div className="flex flex-col">
           <Typography.Text>100,000.87</Typography.Text>
           <Typography.Text>xRING</Typography.Text>
         </div>
       </div>
-      <a href="#" rel="noopener noreferrer" target="_bank">
+      <a href="#" rel="noopener noreferrer" target="_bank" className='mx-4 lg:mx-0'>
         <Image alt="..." src="/image/goto.svg" width={30} height={30} />
       </a>
     </div>
@@ -49,19 +49,19 @@ function Page() {
   return (
     <>
       <div>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col lg:flex-row space-y-3 lg:space-y-0 items-center justify-between">
           <Radio.Group size="large" defaultValue={1} onChange={() => setNoData((prev) => !prev)}>
             <Radio.Button value={1}>All</Radio.Button>
             <Radio.Button value={2}>Pending</Radio.Button>
             <Radio.Button value={3}>Successed</Radio.Button>
             <Radio.Button value={4}>Reverted</Radio.Button>
           </Radio.Group>
-          <Input placeholder="Search by Address" size="large" className="w-2/6" suffix={<SearchOutlined />} />
+          <Input placeholder="Search by Address" size="large" className="w-full lg:w-2/6" suffix={<SearchOutlined />} />
         </div>
         {noData ? (
           <NoData />
         ) : (
-          <div className="dark:bg-antDark px-6 py-5 mt-4 overflow-auto" style={{ height: '70vh' }}>
+          <div className="dark:bg-antDark px-2 py-3 lg:px-6 lg:py-5 mt-4 overflow-auto" style={{ height: '70vh' }}>
             <List
               split={false}
               dataSource={new Array(20).fill(1)}
