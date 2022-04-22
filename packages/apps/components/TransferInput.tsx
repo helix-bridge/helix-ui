@@ -1,7 +1,6 @@
 import { Form, Input, Button, Typography, Select } from 'antd';
 import { LabelTooltipType } from 'antd/lib/form/FormItemLabel';
 import Image from 'next/image';
-import { DisclaimerModal } from './DisclaimerModal';
 import { SelectTokenModal } from './SelectTokenModal';
 import { useState } from 'react';
 import { DownOutlined } from '@ant-design/icons';
@@ -50,7 +49,6 @@ const AddressItem = ({ label, name, tooltip }: { label: string, name: string, to
 );
 
 export function TransferInput() {
-  const [visibleDisclaimer, setVisibleDisclaimer] = useState<boolean>(true);
   const [visibleSelectToken, setVisibleSelectToken] = useState<boolean>(false);
 
   return (
@@ -86,7 +84,6 @@ export function TransferInput() {
           </Form.Item>
         </Form>
       </div>
-      <DisclaimerModal visible={visibleDisclaimer} onOk={() => setVisibleDisclaimer(false)} onCancel={() => setVisibleDisclaimer(false)} />
       <SelectTokenModal visible={visibleSelectToken} onCancel={() => setVisibleSelectToken(false)} onSelect={console.log} />
     </>
   );

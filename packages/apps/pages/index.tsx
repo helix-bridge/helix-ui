@@ -2,9 +2,12 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { TransferInput } from '../components/TransferInput';
 import { BridgeSelector } from '../components/BridgeSelector';
+import { DisclaimerModal } from '../components/DisclaimerModal';
 import { Row, Col } from 'antd';
+import { useState } from 'react';
 
 function Page() {
+  const [visible, setVisible] = useState(true);
   const { t } = useTranslation();
   void t;
 
@@ -19,6 +22,7 @@ function Page() {
           <BridgeSelector />
         </Col>
       </Row>
+      <DisclaimerModal visible={visible} onCancel={() => setVisible(false)} onOk={() => setVisible(false)} />
     </>
   );
 }
