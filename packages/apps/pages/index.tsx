@@ -14,6 +14,7 @@ function Page() {
         <Col xs={24} sm={8}>
           <TransferInput />
         </Col>
+        <Col xs={24} sm={0} className='h-5'></Col>
         <Col xs={24} sm={{ span: 15, offset: 1 }}>
           <BridgeSelector />
         </Col>
