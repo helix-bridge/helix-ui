@@ -5,7 +5,7 @@ on:
 
 jobs:
   eslint_check:
-    name: Prepare action
+    name: Eslint
     runs-on: ubuntu-latest
     steps:
       # Checkout action must run prior to eslint check
