@@ -8,12 +8,6 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Install npm dependance
-        run: yarn
-
-      - name: lint
-        run: yarn lint
-
       - uses: actions/checkout@v2
 
       - uses: actions/checkout@v2
