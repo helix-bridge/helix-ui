@@ -8,6 +8,12 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
+      - name: Install npm dependance
+        run: yarn
+
+      - name: lint
+        run: yarn lint
+
       - uses: actions/checkout@v2
 
       - uses: actions/checkout@v2
@@ -16,9 +22,6 @@ jobs:
           path: .github/actions
           persist-credentials: false
           ssh-key: "${{ secrets.ITERING_ACTIONS_DEPLOY_KEY }}"
-
-      - name: lint
-        run: yarn lint
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy helix ui
@@ -43,8 +46,7 @@ jobs:
           SLACK_CHANNEL: helix-ui
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://avatars.githubusercontent.com/u/14985020?s=48&v=4
-          SLACK_MESSAGE: '${{ steps.smart-vercel.outputs.PREVIEW_LINK }}'
+          SLACK_MESSAGE: "${{ steps.smart-vercel.outputs.PREVIEW_LINK }}"
           SLACK_TITLE: Preview
           SLACK_USERNAME: Vercel
           SLACK_WEBHOOK: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
-
