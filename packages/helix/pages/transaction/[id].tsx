@@ -384,7 +384,7 @@ const Page: NextPage<{
         >
           {departureRecord && (
             <div className="flex items-center gap-2 whitespace-nowrap">
-              {arrivalRecord?.result ? <ClockCircleOutlined /> : <Icon name="#dwa-reload" />}
+              {arrivalRecord?.result ? <ClockCircleOutlined /> : <Icon name="reload" />}
 
               <span>
                 {formatDistance(
@@ -401,7 +401,7 @@ const Page: NextPage<{
 
               <Divider type="vertical" orientation="center" />
 
-              <Icon name="#dwa-clock-fill" className="text-gray-400 text-base" />
+              <Icon name="clock-fill" className="text-gray-400 text-base" />
 
               {departureRecord.startTime && departureRecord.endTime ? (
                 <span className="text-gray-400">

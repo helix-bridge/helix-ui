@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
-import { chain as lodashChain, curry, has, isEqual, isNull, omit, once, pick, upperFirst } from 'lodash';
+import { chain as lodashChain, curry, curryRight, has, isEqual, isNull, omit, once, pick, upperFirst } from 'lodash';
 import Web3 from 'web3';
 import { NETWORK_SIMPLE, SYSTEM_NETWORK_CONFIGURATIONS, tronConfig } from '../../config/network';
 import {
@@ -136,10 +136,45 @@ const getArrivals = (source: Map<Departure, Arrival[]>, departure: ChainConfig) 
   return target ? target[1] : [];
 };
 
+const isInNodeList = (net1: ChainConfig | null, net2: ChainConfig | null) => {
+  if (!net1 || !net2) {
+    return true;
+  }
+
+  const vertices = getArrivals(NETWORK_GRAPH, net1);
+
+  return !!vertices.find((item) => item.network === net2.name && item.mode === getNetworkMode(net2));
+};
+
+export const isReachable = (net: ChainConfig | null) => curry(isInNodeList)(net); // relation: net1 -> net2 ---- Find the relation by net1
+export const isTraceable = (net: ChainConfig | null) => curryRight(isInNodeList)(net); // relation: net1 -> net2 ---- Find the relation by net2
 export const isChainConfigEqualTo = curry(isChainConfigEqual);
 export const isPolkadotNetwork = isSpecifyNetworkType('polkadot');
 export const isEthereumNetwork = isSpecifyNetworkType('ethereum');
 export const isTronNetwork = isSpecifyNetworkType('tron');
+
+export function isMetamaskInstalled(): boolean {
+  return typeof window.ethereum !== 'undefined' || typeof window.web3 !== 'undefined';
+}
+
+/**
+ * Unlike metamask, it does not lead the user to unlock the wallet.
+ * Tron link may not be initialized, so if it is not detected successfully, delay 2 seconds and detect again.
+ * FIXME: If the wallet status changes from unlocked to locked, the account of the last user use will still be available
+ */
+export async function isTronLinkReady(): Promise<boolean> {
+  if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+    return true;
+  }
+
+  const timeout = 2000;
+
+  return await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(window.tronWeb && window.tronWeb.defaultAddress.base58);
+    }, timeout);
+  });
+}
 
 export function getNetworkMode(config: ChainConfig): NetworkMode {
   return has(config, 'dvm') ? 'dvm' : 'native';
@@ -211,6 +246,16 @@ export function getArrival(from: ChainConfig | null | undefined, to: ChainConfig
   return getArrivals(NETWORK_GRAPH, departure).find((item) => item.network === to.name) ?? null;
 }
 
+export async function isNetworkConsistent(network: Network, id = ''): Promise<boolean> {
+  id = id && Web3.utils.isHex(id) ? parseInt(id, 16).toString() : id;
+  // id 1: eth mainnet 3: ropsten 4: rinkeby 5: goerli 42: kovan  43: pangolin 44: crab
+  const actualId: string = id ? await Promise.resolve(id) : await window.ethereum.request({ method: 'net_version' });
+  const chain = getChainConfigByName(network) as EthereumChainConfig;
+  const storedId = chain.ethereumChain.chainId;
+
+  return storedId === actualId;
+}
+
 export function isNativeMetamaskChain(network: Network): boolean {
   const ids = [
     MetamaskNativeNetworkIds.ethereum,
@@ -234,6 +279,24 @@ export function getNetworkCategory(config: ChainConfig): NetworkCategory | null 
   }
 
   return null;
+}
+
+/**
+ * @returns - current active account in metamask;
+ */
+export async function getMetamaskActiveAccount() {
+  if (typeof window.ethereum === 'undefined') {
+    return;
+  }
+
+  await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+  const accounts = await window.ethereum.request({
+    method: 'eth_accounts',
+  });
+
+  // metamask just return the active account now, so the result array contains only one account;
+  return accounts[0];
 }
 
 /**

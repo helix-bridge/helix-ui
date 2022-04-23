@@ -4,6 +4,18 @@ on:
   pull_request:
 
 jobs:
+  eslint_check:
+    name: Eslint
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout action must run prior to eslint check
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: install
+        run: yarn
+      - name: Lint
+        run: yarn lint
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -16,10 +28,6 @@ jobs:
           path: .github/actions
           persist-credentials: false
           ssh-key: "${{ secrets.ITERING_ACTIONS_DEPLOY_KEY }}"
-
-      - name: lint
-        with:
-          run: yarn lint
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy helix ui
@@ -44,8 +52,7 @@ jobs:
           SLACK_CHANNEL: helix-ui
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://avatars.githubusercontent.com/u/14985020?s=48&v=4
-          SLACK_MESSAGE: '${{ steps.smart-vercel.outputs.PREVIEW_LINK }}'
+          SLACK_MESSAGE: "${{ steps.smart-vercel.outputs.PREVIEW_LINK }}"
           SLACK_TITLE: Preview
           SLACK_USERNAME: Vercel
           SLACK_WEBHOOK: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
-

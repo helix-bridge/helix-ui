@@ -11,7 +11,6 @@
     "eslint": "eslint packages/**/*.{ts,tsx} -c .eslintrc.js --fix",
     "lint": "npm run eslint && npm run stylelint",
     "format": "prettier  packages/shared/**/**/*.{ts,tsx} packages/helix/**/**/*.{ts,tsx} --write"
-  
   },
   "devDependencies": {
     "@commitlint/cli": "^12.0.1",

@@ -1,3 +1,5 @@
 node_modules
 
 .vscode/
+
+packages/shared/model/icon/iconfont.json
