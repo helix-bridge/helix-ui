@@ -1,5 +1,4 @@
 import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Path } from '@helix/shared/config/constant';
 import { Substrate2SubstrateRecord } from '@helix/shared/model';
 import { convertToDvm, getSupportedChains, gqlName, isValidAddress } from '@helix/shared/utils';
 import { Affix, Button, Input, Spin } from 'antd';
@@ -15,7 +14,7 @@ import { useVirtual } from 'react-virtual';
 import { distinctUntilChanged, filter, Subject } from 'rxjs';
 import { Record } from '../../components/transaction/Record';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
-import { endpoint } from '../../config';
+import { endpoint, Path } from '../../config';
 import { useAccountStatistic, useDailyStatistic } from '../../hooks';
 
 const S2S_RECORDS = gql`

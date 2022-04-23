@@ -7,13 +7,16 @@ export const SHORT_DURATION = 3 * 1000;
 
 export const DATE_FORMAT = 'yyyy/MM/dd';
 
-// export const DATE_TIME_FORMAT = 'yyyy/MM/dd HH:mm:ss';
+export const DATE_TIME_FORMAT = 'yyyy/MM/dd HH:mm:ss';
 
-export enum Path {
-  root = '/',
-  register = '/register',
-  transaction = '/transaction',
-  docs = 'docs',
+export enum FORM_CONTROL {
+  amount = 'amount',
+  asset = 'asset',
+  assets = 'assets',
+  deposit = 'deposit',
+  recipient = 'recipient',
+  sender = 'sender',
+  direction = 'direction',
 }
 
 export enum RegisterStatus {
@@ -28,6 +31,7 @@ export enum CrossChainStatus {
   reverted,
 }
 
+// TODO: implement by tailwindcss ?
 export enum CrossChainStatusColor {
   '#00b3ff',
   '#00AA76',
