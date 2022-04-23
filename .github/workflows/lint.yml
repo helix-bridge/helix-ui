@@ -4,11 +4,33 @@ on:
   pull_request:
 
 jobs:
-  eslint:
+  eslint_check:
+    name: Prepare action
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: stefanoeb/eslint-action@1.0.2
+      # Checkout action must run prior to eslint check
+    - name: Checkout 
+      uses: actions/checkout@v1
+    - name: Lint
+      uses: Krizzu/eslint-check-action@v1.1.0
+      with:
+        ghToken: ${{ secrets.GITHUB_TOKEN }}
+        eslintFiles: "packages"
+        eslintConfig: ".eslintrc.js"
+        eslintExt: "ts, tsx"
+
+  prettier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
-          node-version: "14"
-          files: packages/
+          # Make sure the actual branch is checked out when running on pull requests
+          ref: ${{ github.head_ref }}
+
+      - name: Prettify code
+        uses: creyD/prettier_action@v4.2
+        with:
+          # This part is also where you can pass other options, for example:
+          prettier_options: --write **/*.{js,md}
