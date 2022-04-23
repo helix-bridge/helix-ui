@@ -10,16 +10,11 @@ jobs:
     steps:
       # Checkout action must run prior to eslint check
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: install
         run: yarn
       - name: Lint
-        uses: Krizzu/eslint-check-action@v1.1.0
-        with:
-          ghToken: ${{ secrets.GITHUB_TOKEN }}
-          eslintFiles: "packages"
-          eslintConfig: ".eslintrc.js"
-          eslintExt: "ts, tsx"
+        run: yarn lint
 
   prettier:
     runs-on: ubuntu-latest
