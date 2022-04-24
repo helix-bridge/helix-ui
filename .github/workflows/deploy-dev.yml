@@ -49,6 +49,8 @@ jobs:
           if [[ "$PACKAGE_NAME" == "helix" ]]; then
             PACKAGE_NAME=ui
           fi
+          echo "The output package name is ${PACKAGE_NAME}"
+          echo ''
           echo "::set-output name=NAME::${PACKAGE_NAME}"
 
       - uses: ./.github/actions/smart-vercel
