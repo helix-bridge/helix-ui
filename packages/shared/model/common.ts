@@ -15,3 +15,9 @@ export interface NetworkQueryParams {
   fromMode: NetworkMode;
   toMode: NetworkMode;
 }
+
+export enum DarwiniaAsset {
+  ring = 'ring',
+  kton = 'kton',
+  crab = 'crab',
+}

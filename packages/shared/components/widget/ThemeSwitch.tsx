@@ -34,7 +34,7 @@ export function ThemeSwitch({
   network,
   mode = 'switcher',
   onThemeChange,
-  defaultTheme = THEME.LIGHT,
+  defaultTheme = THEME.DARK,
   className,
   ...others
 }: ThemeSwitchProps) {
@@ -48,7 +48,7 @@ export function ThemeSwitch({
       onThemeChange(current);
     }
   }, [onThemeChange, theme]);
-  const iconName = useMemo(() => (theme === THEME.DARK ? '#dwa-sun' : '#dwa-moon'), [theme]);
+  const iconName = useMemo(() => (theme === THEME.DARK ? 'sun' : 'moon'), [theme]);
 
   useEffect(() => {
     toggleTheme(theme, network);

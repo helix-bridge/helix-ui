@@ -5,14 +5,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { DownOutlined } from '@ant-design/icons';
 import { AntdIconProps } from '@ant-design/icons/lib/components/AntdIcon';
-import { Path } from '@helix/shared/config/constant';
 import { THEME } from '@helix/shared/config/theme';
 
 const isDev = process.env.NODE_ENV === 'development';
 
 interface Nav {
   label: string;
-  path: Path | string;
+  path: string;
   extra?: boolean;
   hide?: boolean;
   Icon?: (props: AntdIconProps) => JSX.Element;

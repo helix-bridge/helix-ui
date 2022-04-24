@@ -22,19 +22,28 @@ export const pangolinConfig: DVMChainConfig = {
   endpoints: {
     mmr: 'https://api.subquery.network/sq/darwinia-network/pangolin-mmr',
   },
-  facade: {
-    logo: '/image/pangolin.png',
-    logoMinor: '/image/pangolin.svg',
-    logoWithText: '/image/pangolin-logo.svg',
-    logoSmart: '/image/pangolin-smart.png',
-    logoAssist2: '/image/pangolin-2.png',
-  },
   isTest: true,
+  logos: [
+    { name: 'pangolin.png', type: 'main', mode: 'native' },
+    { name: 'pangolin.svg', type: 'minor', mode: 'native' },
+    { name: 'pangolin-logo.svg', type: 'assist', mode: 'native' },
+    { name: 'pangolin-smart.png', type: 'main', mode: 'dvm' },
+    { name: 'pangolin-2.png', type: 'minor', mode: 'dvm' },
+  ],
   name: 'pangolin',
   provider: {
     etherscan: 'wss://ropsten.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
     rpc: 'wss://pangolin-rpc.darwinia.network',
   },
+  social: {
+    portal: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangolin-rpc.darwinia.network#/explorer',
+    github: 'https://github.com/darwinia-network',
+    twitter: 'https://twitter.com/DarwiniaNetwork',
+  },
+  tokens: [
+    { name: 'PRING', precision: 9, bridges: ['helix'], type: 'native', logo: 'ring.svg' },
+    { name: 'xORING', precision: 9, bridges: ['helix'], type: 'mapping', logo: 'ring.svg' },
+  ],
   ss58Prefix: 42,
   specVersion: 28060,
   type: ['polkadot', 'darwinia'],

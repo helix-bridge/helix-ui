@@ -1,8 +1,8 @@
 import { Modal, ModalProps } from 'antd';
 import { PropsWithChildren, memo } from 'react';
 import classNames from 'classnames/bind';
-import styles from './BaseModal.module.scss';
 import Image from 'next/image';
+import styles from './BaseModal.module.scss';
 
 const cx = classNames.bind(styles);
 

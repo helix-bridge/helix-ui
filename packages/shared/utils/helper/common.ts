@@ -1,6 +1,9 @@
 import { EMPTY } from 'rxjs';
 import { addDays, fromUnixTime } from 'date-fns';
 
+// eslint-disable-next-line no-magic-numbers
+export const timezoneOffSet = new Date().getTimezoneOffset() * 60;
+
 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
 export function empty(...args: any[]) {
   // nothing to do
@@ -34,3 +37,7 @@ export const gqlName = (query: string) =>
     .match(/\S\w+\(/g)
     ?.reverse()[0]
     .slice(0, -1) as string;
+
+export function unixTimeToLocal(time: number) {
+  return fromUnixTime(time - timezoneOffSet).toLocaleString();
+}

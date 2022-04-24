@@ -1,8 +1,8 @@
+import { Logo } from '@helix/shared/components/widget/Logo';
+import { ChainConfig } from '@helix/shared/model';
+import { getDisplayName } from '@helix/shared/utils';
 import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChainConfig } from '@helix/shared/model';
-import { getDisplayName, prettyNumber } from '@helix/shared/utils';
-import { Logo } from '@helix/shared/components/widget/Logo';
 
 interface ChainStatisticOverview {
   chain: ChainConfig;
@@ -41,7 +41,7 @@ export function Statistics({ children, startTime, total, title, rank, currency }
         <div className="flex flex-col gap-2 items-center justify-center mt-4 mb-2 md:mt-10 md:mb-6">
           <h2 className="text-4xl">
             {currencyIcon}
-            {prettyNumber(total)}
+            {total}
           </h2>
           <span className="text-gray-400">
             {t('Total {{title}}', { title })}
@@ -64,7 +64,7 @@ export function Statistics({ children, startTime, total, title, rank, currency }
 
               <span className="uppercase">
                 {currencyIcon}
-                {prettyNumber(iTotal)}
+                {iTotal}
               </span>
             </div>
           ))}

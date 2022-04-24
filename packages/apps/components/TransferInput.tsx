@@ -47,7 +47,7 @@ const AmountItem = ({ label, name }: { label: string; name: string;}) => (
   </Form.Item>
 );
 
-const AddressItem = ({ label, name, tooltip }: { label: string, name: string, tooltip: LabelTooltipType }) => (
+const AddressItem = ({ label, name, tooltip }: { label: string; name: string; tooltip: LabelTooltipType }) => (
   <Form.Item
     label={label}
     name={name}
@@ -97,13 +97,17 @@ export function TransferInput() {
         >
           <AmountItem label="Your send" name="send" />
           <Form.Item noStyle>
-            <div className='flex justify-center'>
-              <Image alt='...' src='/image/transfer.svg' width={40} height={40} />
+            <div className="flex justify-center">
+              <Image alt="..." src="/image/transfer.svg" width={40} height={40} />
             </div>
           </Form.Item>
           <AmountItem label="Your receive" name="receive" />
-          <AddressItem label='Sender' name='sender' tooltip="Select an address sending the transaction."  />
-          <AddressItem label='Receiver' name='receiver' tooltip="Please do not fill in the exchange account. After the transaction is confirmed, the account cannot be changed."  />
+          <AddressItem label="Sender" name="sender" tooltip="Select an address sending the transaction." />
+          <AddressItem
+            label="Receiver"
+            name="receiver"
+            tooltip="Please do not fill in the exchange account. After the transaction is confirmed, the account cannot be changed."
+          />
           <Form.Item label="Info" name="info" className="relative">
             <Input disabled className="h-20" />
             <div className="absolute top-0 left-0 h-20 w-full flex flex-col justify-center space-y-2 px-4">
