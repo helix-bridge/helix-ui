@@ -23,6 +23,7 @@ jobs:
       matrix:
         package:
           - apps
+          - helix
     steps:
       - uses: actions/checkout@v2
 
