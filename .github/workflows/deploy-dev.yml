@@ -71,6 +71,7 @@ jobs:
 
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
+        if: steps.changed-files.outputs.any_changed == 'true'
         env:
           SLACK_CHANNEL: helix-ui
           SLACK_COLOR: ${{ job.status }}
