@@ -1,5 +1,4 @@
 import { MenuOutlined, HddOutlined } from '@ant-design/icons';
-import { Path } from '@helix/shared/config/constant';
 import { THEME } from '@helix/shared/config/theme';
 import { readStorage } from '@helix/shared/utils';
 import { Button, Drawer, Layout, Tooltip } from 'antd';
@@ -32,7 +31,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
                 alt="helix"
                 width={90}
                 height={24}
-                onClick={() => router.push(Path.root)}
+                onClick={() => router.push('/')}
                 className="cursor-pointer"
               />
             </Tooltip>

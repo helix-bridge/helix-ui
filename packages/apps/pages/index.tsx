@@ -2,7 +2,7 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { Row, Col } from 'antd';
 import { useState } from 'react';
-import { TransferInput } from '../components/TransferInput';
+import { Transfer } from '../components/transfer/Transfer';
 import { BridgeSelector } from '../components/BridgeSelector';
 import { DisclaimerModal } from '../components/DisclaimerModal';
 
@@ -15,7 +15,7 @@ function Page() {
     <>
       <Row>
         <Col xs={24} sm={8}>
-          <TransferInput />
+          <Transfer />
         </Col>
         <Col xs={24} sm={0} className="h-5"></Col>
         <Col xs={24} sm={{ span: 15, offset: 1 }}>

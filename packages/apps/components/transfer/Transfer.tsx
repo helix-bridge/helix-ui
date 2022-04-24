@@ -1,19 +1,17 @@
-import { DownOutlined } from '@ant-design/icons';
-import { Button, Form, Input, InputNumber, Select, Typography } from 'antd';
-import { LabelTooltipType } from 'antd/lib/form/FormItemLabel';
+import { Icon } from '@helix/shared/components/widget/Icon';
+import { Button, Form, Input, InputNumber, InputNumberProps, Typography } from 'antd';
 import Image from 'next/image';
 import { useState } from 'react';
-import { SelectTokenModal } from './SelectTokenModal';
 import { TransferConfirmModal } from './TransferConfirmModal';
 import { TransferDoneModal } from './TransferDoneModal';
+import { SelectTokenModal } from './SelectTokenModal';
 
-const AmountItemContent = ({
-  value,
-  onChange,
-}: {
+type AmountItemContentProps = InputNumberProps & {
   value?: { amount: string; tokenIndex: number };
   onChange?: (value: unknown) => void;
-}) => {
+};
+
+const AmountItemContent = ({ value, onChange, disabled }: AmountItemContentProps) => {
   const [visible, setVisible] = useState(false);
   const [tokenIndex, setTokenIndex] = useState(value?.tokenIndex ?? 0);
 
@@ -28,9 +26,11 @@ const AmountItemContent = ({
       <InputNumber<string>
         value={value?.amount}
         onChange={triggerChange}
+        disabled={disabled}
         size="large"
         className="h-20 w-full flex items-center"
       />
+
       <div className="absolute top-0 left-auto right-0 h-20 flex justify-center items-center px-3">
         <Button
           style={{ height: 'auto' }}
@@ -42,9 +42,10 @@ const AmountItemContent = ({
             <strong className="font-medium text-sm">RING</strong>
             <small className="font-light text-xs opacity-60">Darwinia</small>
           </div>
-          <DownOutlined />
+          <Icon name="down" />
         </Button>
       </div>
+
       <SelectTokenModal
         visible={visible}
         onCancel={() => setVisible(false)}
@@ -57,40 +58,7 @@ const AmountItemContent = ({
   );
 };
 
-const AmountItem = ({ label, name }: { label: string; name: string }) => (
-  <Form.Item
-    label={label}
-    name={name}
-    rules={[{ required: true, message: 'Please input your username!' }]}
-    className="relative"
-  >
-    <AmountItemContent />
-  </Form.Item>
-);
-
-const AddressItem = ({ label, name, tooltip }: { label: string; name: string; tooltip: LabelTooltipType }) => (
-  <Form.Item
-    label={label}
-    name={name}
-    tooltip={tooltip}
-    rules={[{ required: true, message: 'Please input your username!' }]}
-  >
-    <Select size="large">
-      <Select.Option value="5B1gFmXNy9rwYqryzTkyM4x5BSTB9cG4fYgqPz1SZ9VPMnat1">
-        <Typography.Text ellipsis className="w-4/5">
-          5B1gFmXNy9rwYqryzTkyM4x5BSTB9cG4fYgqPz1SZ9VPMnat1
-        </Typography.Text>
-      </Select.Option>
-      <Select.Option value="5G1gFmXNy9rwYqryzTkyM4x5BSTB9cG4fYgqPz1SZ9VPMnat2">
-        <Typography.Text ellipsis className="w-4/5">
-          5G1gFmXNy9rwYqryzTkyM4x5BSTB9cG4fYgqPz1SZ9VPMnat2
-        </Typography.Text>
-      </Select.Option>
-    </Select>
-  </Form.Item>
-);
-
-export function TransferInput() {
+export function Transfer() {
   const [visibleTransferDone, setVisibleTransferDone] = useState(false);
   const [visibleTransferConfirm, setVisibleTransferConfirm] = useState(false);
 
@@ -112,24 +80,21 @@ export function TransferInput() {
           initialValues={{
             send: { amount: '123.456', tokenIndex: 1 },
             receive: { amount: '456.789', tokenIndex: 1 },
-            sender: '5B1gFmXNy9rwYqryzTkyM4x5BSTB9cG4fYgqPz1SZ9VPMnat1',
-            receiver: '5G1gFmXNy9rwYqryzTkyM4x5BSTB9cG4fYgqPz1SZ9VPMnat2',
           }}
           onFinish={handleFinish}
         >
-          <AmountItem label="Your send" name="send" />
-          <Form.Item noStyle>
-            <div className="flex justify-center">
-              <Image alt="..." src="/image/transfer.svg" width={40} height={40} />
-            </div>
+          <Form.Item label="Your send" name="send" rules={[{ required: true }]}>
+            <AmountItemContent />
           </Form.Item>
-          <AmountItem label="Your receive" name="receive" />
-          <AddressItem label="Sender" name="sender" tooltip="Select an address sending the transaction." />
-          <AddressItem
-            label="Receiver"
-            name="receiver"
-            tooltip="Please do not fill in the exchange account. After the transaction is confirmed, the account cannot be changed."
-          />
+
+          <Form.Item>
+            <Icon name="switch" className="w-10 h-10 mx-auto transform rotate-90" />
+          </Form.Item>
+
+          <Form.Item label="Your receive" name="receive">
+            <AmountItemContent disabled />
+          </Form.Item>
+
           <Form.Item label="Info" name="info" className="relative">
             <Input disabled className="h-20" />
             <div className="absolute top-0 left-0 h-20 w-full flex flex-col justify-center space-y-2 px-4">
@@ -143,6 +108,7 @@ export function TransferInput() {
               </div>
             </div>
           </Form.Item>
+
           <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
             <Button type="primary" htmlType="submit" className="w-full" size="large">
               Transfer

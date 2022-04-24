@@ -1,9 +1,16 @@
 import { Button, Typography, Alert } from 'antd';
-import { memo } from 'react';
 import Image from 'next/image';
-import { BaseModal } from './BaseModal';
+import { BaseModal } from '../BaseModal';
 
-const Component = ({ visible, onCancel, onOk }: { visible: boolean; onCancel: () => void; onOk: () => void }) => (
+export const TransferConfirmModal = ({
+  visible,
+  onCancel,
+  onOk,
+}: {
+  visible: boolean;
+  onCancel: () => void;
+  onOk: () => void;
+}) => (
   <BaseModal
     title="Transfer"
     visible={visible}
@@ -75,5 +82,3 @@ const Component = ({ visible, onCancel, onOk }: { visible: boolean; onCancel: ()
     </div>
   </BaseModal>
 );
-
-export const TransferConfirmModal = memo(Component);
