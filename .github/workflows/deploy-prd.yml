@@ -39,7 +39,6 @@ jobs:
       - uses: ./.github/actions/smart-vercel
         name: Deploy ${{ matrix.package }}
         id: smart-vercel
-        if: steps.changed-files.outputs.any_changed == 'true'
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
@@ -51,7 +50,6 @@ jobs:
 
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
-        if: steps.changed-files.outputs.any_changed == 'true'
         env:
           SLACK_CHANNEL: helix-ui
           SLACK_COLOR: ${{ job.status }}
