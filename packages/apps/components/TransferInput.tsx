@@ -1,42 +1,63 @@
-import { Form, Input, InputNumber, Button, Typography, Select } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
+import { Button, Form, Input, InputNumber, Select, Typography } from 'antd';
 import { LabelTooltipType } from 'antd/lib/form/FormItemLabel';
 import Image from 'next/image';
-import { SelectTokenModal } from './SelectTokenModal';
-import { TransferDoneModal } from './TransferDoneModal';
-import { TransferConfirmModal } from './TransferConfirmModal';
 import { useState } from 'react';
-import { DownOutlined } from '@ant-design/icons';
+import { SelectTokenModal } from './SelectTokenModal';
+import { TransferConfirmModal } from './TransferConfirmModal';
+import { TransferDoneModal } from './TransferDoneModal';
 
-const AmountItemContent = ({ value, onChange }: { value?: { amount: string; tokenIndex: number; }; onChange?: (value: unknown) => void;}) => {
+const AmountItemContent = ({
+  value,
+  onChange,
+}: {
+  value?: { amount: string; tokenIndex: number };
+  onChange?: (value: unknown) => void;
+}) => {
   const [visible, setVisible] = useState(false);
   const [tokenIndex, setTokenIndex] = useState(value?.tokenIndex ?? 0);
 
   const triggerChange = (amount: string) => {
-    onChange && onChange({ amount, tokenIndex });
+    if (onChange) {
+      onChange({ amount, tokenIndex });
+    }
   };
 
   return (
     <>
-      <InputNumber<string> value={value?.amount} onChange={triggerChange} size="large" className='h-20 w-full flex items-center' />
+      <InputNumber<string>
+        value={value?.amount}
+        onChange={triggerChange}
+        size="large"
+        className="h-20 w-full flex items-center"
+      />
       <div className="absolute top-0 left-auto right-0 h-20 flex justify-center items-center px-3">
-        <Button style={{ height: 'auto' }} className='flex items-center space-x-2 py-2 bg-gray-800 border-none' onClick={() => setVisible(true)}>
-            <Image src="/image/ring.svg" alt="..." width={40} height={40} />
-            <div className="flex flex-col items-start space-y-px">
-              <strong className="font-medium text-sm">RING</strong>
-              <small className="font-light text-xs opacity-60">Darwinia</small>
-            </div>
-            <DownOutlined />
+        <Button
+          style={{ height: 'auto' }}
+          className="flex items-center space-x-2 py-2 bg-gray-800 border-none"
+          onClick={() => setVisible(true)}
+        >
+          <Image src="/image/ring.svg" alt="..." width={40} height={40} />
+          <div className="flex flex-col items-start space-y-px">
+            <strong className="font-medium text-sm">RING</strong>
+            <small className="font-light text-xs opacity-60">Darwinia</small>
+          </div>
+          <DownOutlined />
         </Button>
       </div>
-      <SelectTokenModal visible={visible} onCancel={() => setVisible(false)} onSelect={(value) => {
-        setVisible(false);
-        setTokenIndex(value);
-      }} />
+      <SelectTokenModal
+        visible={visible}
+        onCancel={() => setVisible(false)}
+        onSelect={(val) => {
+          setVisible(false);
+          setTokenIndex(val);
+        }}
+      />
     </>
-  )
+  );
 };
 
-const AmountItem = ({ label, name }: { label: string; name: string;}) => (
+const AmountItem = ({ label, name }: { label: string; name: string }) => (
   <Form.Item
     label={label}
     name={name}
@@ -79,6 +100,7 @@ export function TransferInput() {
     setTimeout(() => {
       setVisibleTransferConfirm(false);
       setVisibleTransferDone(true);
+      // eslint-disable-next-line no-magic-numbers
     }, 1500);
   };
 
@@ -129,8 +151,16 @@ export function TransferInput() {
         </Form>
       </div>
 
-      <TransferDoneModal visible={visibleTransferDone} onOk={() => setVisibleTransferDone(false)} onCancel={() => setVisibleTransferDone(false)} />
-      <TransferConfirmModal visible={visibleTransferConfirm} onOk={() => setVisibleTransferConfirm(false)} onCancel={() => setVisibleTransferConfirm(false)} />
+      <TransferDoneModal
+        visible={visibleTransferDone}
+        onOk={() => setVisibleTransferDone(false)}
+        onCancel={() => setVisibleTransferDone(false)}
+      />
+      <TransferConfirmModal
+        visible={visibleTransferConfirm}
+        onOk={() => setVisibleTransferConfirm(false)}
+        onCancel={() => setVisibleTransferConfirm(false)}
+      />
     </>
   );
 }

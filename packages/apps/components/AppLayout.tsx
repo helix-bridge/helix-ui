@@ -24,8 +24,8 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
         className="fixed left-0 right-0 top-0 z-40 flex items-center justify-between sm:px-16 px-4 border-b"
         style={{ marginTop: -1, borderColor: '#113b5d' }}
       >
-        <div className='flex items-center space-x-5'>
-          <div className='flex items-center space-x-2'>
+        <div className="flex items-center space-x-5">
+          <div className="flex items-center space-x-2">
             <Tooltip title={t('Helix is in beta. Please use at your own risk level')}>
               <Image
                 src="/image/bridges/helix.png"
@@ -36,10 +36,14 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
                 className="cursor-pointer"
               />
             </Tooltip>
-            <Image alt='...' src='/image/beta.svg' width={35} height={18} />
+            <Image alt="..." src="/image/beta.svg" width={35} height={18} />
           </div>
-          <span className='hidden lg:inline transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap'>Bridge Aggregator</span>
-          <span className='hidden lg:inline transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap'>NFT Bridge</span>
+          <span className="hidden lg:inline transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap">
+            Bridge Aggregator
+          </span>
+          <span className="hidden lg:inline transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap">
+            NFT Bridge
+          </span>
         </div>
 
         <Drawer
@@ -59,7 +63,10 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
 
         <div className="hidden lg:flex items-center space-x-4">
           <Button>Connect Wallet</Button>
-          <Button className='flex items-center' onClick={() => router.push('history')}><HddOutlined />History</Button>
+          <Button className="flex items-center" onClick={() => router.push('history')}>
+            <HddOutlined />
+            History
+          </Button>
           <Button>•••</Button>
         </div>
       </Header>

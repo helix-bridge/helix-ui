@@ -20,7 +20,7 @@ const TokenOnChain = ({ tokenIcon, chainIcon, chainName, from }: TokenOnChainDat
     </div>
     <div className={`flex flex-col space-y-1 ${from ? 'order-2 lg:ml-6' : 'order-1 items-end'}`}>
       <strong className={`font-medium text-sm ${from ? 'text-left' : 'text-right'}`}>33,456.3762 RING</strong>
-      <small className='font-light text-xs opacity-70'>on {chainName}</small>
+      <small className="font-light text-xs opacity-70">on {chainName}</small>
     </div>
   </div>
 );
@@ -38,7 +38,9 @@ const SelectorItem = ({ value, theSelected }: { value: number; theSelected: numb
           </div>
           <Image alt="..." src="/image/bridge-to.svg" layout="fill" />
         </div>
-        <div className='absolute top-0 bottom-0 left-0 right-0 m-auto w-7 flex lg:hidden items-end justify-center pb-3 opacity-40'><ArrowRightOutlined /></div>
+        <div className="absolute top-0 bottom-0 left-0 right-0 m-auto w-7 flex lg:hidden items-end justify-center pb-3 opacity-40">
+          <ArrowRightOutlined />
+        </div>
         <TokenOnChain tokenIcon="/image/ring.svg" chainIcon="/image/ethereum.png" chainName="Ethereum" />
       </div>
     </Radio.Button>
@@ -50,7 +52,7 @@ export function BridgeSelector() {
 
   return (
     <div className="dark:bg-antDark p-5 overflow-auto" style={{ maxHeight: '65vh', minHeight: '20vh' }}>
-      <div className='flex items-center space-x-2 mb-2 ml-px'>
+      <div className="flex items-center space-x-2 mb-2 ml-px">
         <SyncOutlined />
         <Typography.Text>Latest bridge data</Typography.Text>
       </div>
