@@ -1,4 +1,4 @@
-const { i18n } = require('./next-i18next.config');
+const { xi18n } = require('./next-i18next.config');
 const withAntdLess = require('next-plugin-antd-less');
 const withPlugins = require('next-compose-plugins');
 const AntDesignThemePlugin = require('@helix/shared/plugins/antd-theme-plugin');
