@@ -6,9 +6,15 @@ on:
       - 'v*'
 
 jobs:
-  deploy:
-    name: Deploy
+
+  deploy-package:
+    name: Deploy package
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package:
+          - apps
+          - helix
     steps:
       - uses: actions/checkout@v2
 
@@ -19,15 +25,26 @@ jobs:
           persist-credentials: false
           ssh-key: "${{ secrets.ITERING_ACTIONS_DEPLOY_KEY }}"
 
+      - name: Better project name
+        id: better-name
+        run: |
+          PACKAGE_NAME="${{ matrix.package }}"
+          if [[ "$PACKAGE_NAME" == "helix" ]]; then
+            PACKAGE_NAME=ui
+          fi
+          echo "The output package name is ${PACKAGE_NAME}"
+          echo ''
+          echo "::set-output name=NAME::${PACKAGE_NAME}"
+
       - uses: ./.github/actions/smart-vercel
-        name: Deploy to Vercel
+        name: Deploy ${{ matrix.package }}
         id: smart-vercel
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
           prod_mode: true
-          project_name: helix-ui
+          project_name: "helix-${{ steps.better-name.outputs.NAME }}"
           script_run: false
           dist_path: .
 
@@ -37,8 +54,7 @@ jobs:
           SLACK_CHANNEL: helix-ui
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://avatars.githubusercontent.com/u/14985020?s=48&v=4
-          SLACK_MESSAGE: '${{ steps.smart-vercel.outputs.PREVIEW_LINK }}'
+          SLACK_MESSAGE: "${{ steps.smart-vercel.outputs.PREVIEW_LINK }}"
           SLACK_TITLE: Preview
           SLACK_USERNAME: Vercel
           SLACK_WEBHOOK: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
-
