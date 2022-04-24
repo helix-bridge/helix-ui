@@ -1,5 +1,5 @@
 {
-  "name": "root",
+  "name": "helix-ui",
   "private": true,
   "scripts": {
     "bootstrap": "yarn install; lerna bootstrap;",
@@ -12,8 +12,8 @@
     "run:build:apps": "lerna run start --scope apps",
     "stylelint": "stylelint \"packages/**/styles/**/*.scss\" --config stylelint.config.js",
     "eslint": "eslint packages/**/*.{ts,tsx} -c .eslintrc.js --fix",
-    "lint": "npm run eslint && npm run stylelint && cd packages/helix && next lint",
-    "format": "prettier  packages/shared/**/**/*.{ts,tsx} packages/helix/**/**/*.{ts,tsx} packages/apps/**/**/*.{ts,tsx} --write"
+    "lint": "npm run eslint && npm run stylelint",
+    "format": "prettier  packages/**/*.{ts,tsx} --write"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.0.1",

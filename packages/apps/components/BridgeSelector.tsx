@@ -19,8 +19,8 @@ const TokenOnChain = ({ tokenIcon, chainIcon, chainName, from }: TokenOnChainDat
       </span>
     </div>
     <div className={`flex flex-col space-y-1 ${from ? 'order-2 ml-6' : 'order-1 items-end'}`}>
-      <strong className='font-medium text-sm'>33,456.3762 RING</strong>
-      <small className='font-light text-xs opacity-70'>on {chainName}</small>
+      <strong className="font-medium text-sm">33,456.3762 RING</strong>
+      <small className="font-light text-xs opacity-70">on {chainName}</small>
     </div>
   </div>
 );

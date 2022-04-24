@@ -1,5 +1,11 @@
-import { BridgeConfig, ContractConfig, Api, ApiKeys } from '../bridge/bridge';
+import { Api, ApiKeys, BridgeConfig } from '../bridge/bridge';
+
+interface SubstrateSubstrateDVMContractConfig {
+  issuing: string; // issuing:  receiver;  redeem: sender;
+  redeem: string; // issuing: sender; redeem: recipient;
+  genesis: '0x0000000000000000000000000000000000000000';
+}
 
 export type SubstrateSubstrateDVMBridgeConfig = Required<
-  Omit<BridgeConfig<ContractConfig, Omit<Api<ApiKeys>, 'subscan' | 'subqlMMr'>>, 'contracts'>
+  BridgeConfig<SubstrateSubstrateDVMContractConfig, Omit<Api<ApiKeys>, 'subscan' | 'mmr'>>
 >;

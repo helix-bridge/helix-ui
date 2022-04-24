@@ -22,18 +22,27 @@ export const crabConfig: DVMChainConfig = {
   endpoints: {
     mmr: '',
   },
-  facade: {
-    logo: '/image/crab.png',
-    logoMinor: '/image/crab.svg',
-    logoWithText: '/image/crab-logo.svg',
-    logoSmart: '/image/crab-smart.png',
-  },
   isTest: false,
+  logos: [
+    { name: 'crab.png', type: 'main', mode: 'native' },
+    { name: 'crab.svg', type: 'minor', mode: 'native' },
+    { name: 'crab-logo.svg', type: 'assist', mode: 'native' },
+    { name: 'crab-smart.png', type: 'main', mode: 'dvm' },
+  ],
   name: 'crab',
   provider: {
     etherscan: '',
     rpc: 'wss://darwinia-crab.api.onfinality.io/public-ws',
   },
+  social: {
+    portal: 'https://crab.network/',
+    github: 'https://github.com/darwinia-network/darwinia/tree/main/runtime/crab',
+    twitter: 'https://twitter.com/DarwiniaNetwork',
+  },
+  tokens: [
+    { name: 'CRAB', precision: 9, bridges: ['helix'], type: 'native', logo: 'ring.svg' },
+    { name: 'xRING', precision: 9, bridges: ['helix'], type: 'mapping', logo: 'ring.svg' },
+  ],
   type: ['polkadot', 'darwinia'],
   ss58Prefix: 42,
   specVersion: 1200,

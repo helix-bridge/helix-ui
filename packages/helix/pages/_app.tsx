@@ -13,11 +13,10 @@ import '../styles/index.scss';
 import '@helix/shared/theme/antd/index.less';
 import { readStorage } from '@helix/shared/utils';
 import AppLayout from '../components/AppLayout';
-
-const isDev = process.env.NODE_ENV === 'development';
+import { endpoint } from '../config';
 
 const client = new GraphQLClient({
-  url: isDev ? 'http://localhost:4002/graphql' : 'https://wormhole-apollo.darwinia.network/',
+  url: endpoint,
 });
 
 function MyApp({ Component, pageProps }: AppProps & { Component: FunctionComponent }) {

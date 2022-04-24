@@ -1,8 +1,8 @@
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { Row, Col } from 'antd';
 import { TransferInput } from '../components/TransferInput';
 import { BridgeSelector } from '../components/BridgeSelector';
-import { Row, Col } from 'antd';
 
 function Page() {
   const { t } = useTranslation();
