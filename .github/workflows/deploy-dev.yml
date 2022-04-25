@@ -18,5 +18,5 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: test
-        if: contains(github.event.ref, '${{ matrix.package }}')
+        if: contains('apps', '${{ matrix.package }}')
         run: echo ${{ matrix.package }}
