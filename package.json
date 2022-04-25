@@ -4,8 +4,10 @@
   "scripts": {
     "bootstrap": "yarn install; lerna bootstrap;",
     "start": "lerna run start --parallel",
-    "start:helix": "node_modules/.bin/lerna run --scope helix --stream dev",
-    "start:apps": "node_modules/.bin/lerna run --scope apps --stream dev",
+    "start:helix": "node_modules/.bin/lerna run --scope helix --stream start",
+    "start:apps": "node_modules/.bin/lerna run --scope apps --stream start",
+    "dev:helix": "node_modules/.bin/lerna run --scope helix --stream dev",
+    "dev:apps": "node_modules/.bin/lerna run --scope apps --stream dev",
     "build:helix": "node_modules/.bin/lerna run --scope helix --stream build",
     "build:apps": "node_modules/.bin/lerna run --scope apps --stream build",
     "run:build:helix": "lerna run start --scope helix",
