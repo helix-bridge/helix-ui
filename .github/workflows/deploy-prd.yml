@@ -39,7 +39,7 @@ jobs:
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy ${{ matrix.package }}
-        if: contains(github.ref, matrix.package') || contains(github.ref, '-') == false
+        if: contains(github.ref, matrix.package) || contains(github.ref, '-') == false
         id: smart-vercel
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
