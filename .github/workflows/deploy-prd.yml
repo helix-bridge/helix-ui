@@ -10,7 +10,6 @@ jobs:
   deploy-package:
     name: Deploy package
     runs-on: ubuntu-latest
-    if: ${{ contains(github.event.ref, ${{ matrix.package }}) || contains(github.event.ref, '-') == false }}
     strategy:
       matrix:
         package:
@@ -40,6 +39,7 @@ jobs:
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy ${{ matrix.package }}
+        if: contains(github.event.ref, '${{ matrix.package }}') || contains(github.event.ref, '-') == false
         id: smart-vercel
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
@@ -52,6 +52,7 @@ jobs:
 
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
+        if: contains(github.event.ref, '${{ matrix.package }}') || contains(github.event.ref, '-') == false
         env:
           SLACK_CHANNEL: helix-ui
           SLACK_COLOR: ${{ job.status }}
