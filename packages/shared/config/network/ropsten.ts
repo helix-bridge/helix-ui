@@ -24,6 +24,6 @@ export const ropstenConfig: EthereumChainConfig = {
     github: 'https://github.com/ethereum/ropsten',
     twitter: 'https://twitter.com/ethdotorg',
   },
-  tokens: [{ name: 'ETHER', precision: 18, bridges: ['helix'], type: 'native', logo: 'ether.png' }],
+  tokens: [{ name: 'ETHER', precision: 18, bridges: ['helix'], type: 'native', logo: 'token-ethereum.svg' }],
   type: ['ethereum'],
 };

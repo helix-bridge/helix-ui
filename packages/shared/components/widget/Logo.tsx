@@ -5,12 +5,12 @@ import { getNetworkMode } from '../../utils';
 
 interface LogoProps extends Omit<ImageProps, 'src'> {
   chain?: ChainConfig | null | undefined;
-  defaultLogo?: string;
+  name?: string;
   logoType?: LogoType;
 }
 
-export function Logo({ chain, logoType = 'main', defaultLogo = '', ...rest }: LogoProps) {
-  const [logo, setLogo] = useState(defaultLogo);
+export function Logo({ chain, logoType = 'main', name = '', ...rest }: LogoProps) {
+  const [logo, setLogo] = useState(name);
 
   useEffect(() => {
     if (!chain) {

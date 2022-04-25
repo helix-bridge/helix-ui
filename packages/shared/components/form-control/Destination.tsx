@@ -92,7 +92,7 @@ function DestinationCard({
           }
         >
           <div className={`rounded-xl flex flex-col gap-4 py-2 flex-1 mr-1 md:mr-4`}>
-            <Logo chain={value} defaultLogo={defaultLogo} className="h-8 sm:h-12 md:16 ml-2 self-start" />
+            <Logo chain={value} name={defaultLogo} className="h-8 sm:h-12 md:16 ml-2 self-start" />
             <span className="capitalize mr-0 text-xs dark:text-white px-2 py-0.5 whitespace-nowrap">
               {!value ? t('Select Network') : getDisplayName(value)}
             </span>
@@ -144,7 +144,7 @@ function DestinationSelect({
           return (
             <Select.Option value={name} key={name}>
               <span className="flex items-center">
-                <Logo chain={item} defaultLogo={defaultLogo} className="h-4 sm:h-6 md:16 mr-2" />
+                <Logo chain={item} name={defaultLogo} className="h-4 sm:h-6 md:16 mr-2" />
                 <span className="flex-1 flex justify-between items-center">
                   <span className="capitalize mr-2">{name}</span>
                   {item.isTest && <Tag color="cyan">{t('Test')}</Tag>}

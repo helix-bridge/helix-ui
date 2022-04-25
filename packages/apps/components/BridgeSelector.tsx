@@ -30,18 +30,20 @@ const SelectorItem = ({ value, theSelected }: { value: number; theSelected: numb
     <Radio.Button className="w-full bg-gray-900" style={{ height: 'fit-content' }} value={value}>
       <div className="relative flex justify-between items-center pr-3 py-3">
         {value === theSelected && <CheckSquareFilled className="absolute -top-px left-auto -right-4" />}
-        <TokenOnChain tokenIcon="/image/ring.svg" chainIcon="/image/darwinia.png" chainName="Darwinia" from />
+        <TokenOnChain tokenIcon="/image/token-ring.svg" chainIcon="/image/darwinia.png" chainName="Darwinia" from />
+
         <div className="relative w-56 hidden lg:flex justify-center">
           <div className="py-1 w-24 rounded-3xl bg-gray-700 flex justify-center items-center space-x-2 z-10">
             <Image alt="..." src="/image/helix-bridge.svg" width={28} height={28} />
             <strong>Helix</strong>
           </div>
-          <Image alt="..." src="/image/bridge-to.svg" layout="fill" />
+          <Image alt="..." src="/image/bridge-to.svg" layout="fill" priority />
         </div>
+
         <div className="absolute top-0 bottom-0 left-0 right-0 m-auto w-7 flex lg:hidden items-end justify-center pb-3 opacity-40">
           <ArrowRightOutlined />
         </div>
-        <TokenOnChain tokenIcon="/image/ring.svg" chainIcon="/image/ethereum.png" chainName="Ethereum" />
+        <TokenOnChain tokenIcon="/image/token-ring.svg" chainIcon="/image/ethereum.png" chainName="Ethereum" />
       </div>
     </Radio.Button>
   );

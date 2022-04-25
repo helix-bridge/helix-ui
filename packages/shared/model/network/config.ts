@@ -9,9 +9,11 @@ export interface Logo {
   type: LogoType;
 }
 
+export type TokenMode = 'native' | 'mapping';
+
 interface Token {
   name: string;
-  type: 'native' | 'mapping';
+  type: TokenMode;
   bridges: string[];
   precision: number;
   logo: string;

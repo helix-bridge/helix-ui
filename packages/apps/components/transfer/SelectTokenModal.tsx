@@ -1,6 +1,13 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Button, Input, Tag, Typography } from 'antd';
-import Image from 'next/image';
+import { Logo } from '@helix/shared/components/widget/Logo';
+import { useLocalSearch } from '@helix/shared/hooks';
+import { Vertices } from '@helix/shared/model';
+import { CROSS_CHAIN_NETWORKS, getDisplayName, getNetworkMode } from '@helix/shared/utils';
+import { Input, Radio, Tag, Typography } from 'antd';
+import { chain as lodashChain } from 'lodash';
+import { useTranslation } from 'next-i18next';
+import { useCallback, useState } from 'react';
+import { tokenModeToChainMode, tokenSearchFactory } from '../../utils';
 import { BaseModal } from '../BaseModal';
 
 interface SelectTokenModalProps {
@@ -9,37 +16,108 @@ interface SelectTokenModalProps {
   onSelect: (value: number) => void;
 }
 
+const allTokens = lodashChain(CROSS_CHAIN_NETWORKS)
+  .map((item) => item.tokens.map((token) => ({ ...token, address: '', meta: item })))
+  .flatten()
+  .uniqWith((pre, next) => pre.name === next.name && pre.type === pre.type && pre.meta.isTest === next.meta.isTest)
+  .value();
+
+const nullStr = 'null';
+
+const colors: ({ color: string } & Vertices)[] = [
+  { network: 'crab', mode: 'native', color: '#cd201f' },
+  { network: 'crab', mode: 'dvm', color: '#B32BB6' },
+  { network: 'darwinia', mode: 'native', color: '#FF007A' },
+  { network: 'ethereum', mode: 'native', color: '#1C87ED' },
+  { network: 'ropsten', mode: 'native', color: 'blue' },
+  { network: 'pangolin', mode: 'native', color: 'purple' },
+  { network: 'pangolin', mode: 'dvm', color: 'lime' },
+  { network: 'pangoro', mode: 'native', color: 'cyan' },
+];
+
+const chainColor = ({ network, mode }: Vertices): string => {
+  const target = colors.find((item) => item.network === network && item.mode === mode);
+
+  return target?.color ?? 'processing';
+};
+
 export const SelectTokenModal = ({ visible, onSelect, onCancel }: SelectTokenModalProps) => {
+  const { t } = useTranslation();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const searchFn = useCallback(tokenSearchFactory(allTokens), [allTokens]);
+  const { data, setSearch } = useLocalSearch(searchFn);
+  const [chain, setChain] = useState<string>(nullStr);
+
   return (
     <BaseModal title="Select a token" visible={visible} footer={null} width={540} onCancel={onCancel}>
-      <Input suffix={<SearchOutlined />} size="large" placeholder="Search Symbol or Paste Contract Address" />
+      <Input
+        suffix={<SearchOutlined />}
+        size="large"
+        placeholder="Search Symbol or Paste Contract Address"
+        onChange={(event) => {
+          setSearch(event.target.value);
+        }}
+      />
 
-      <div className="mt-1">
-        {/* eslint-disable-next-line no-magic-numbers */}
-        {new Array(9).fill(1).map((_, index) => (
-          <Button key={index} className="mt-2 mr-2" size="small">
-            Chain
-          </Button>
-        ))}
-      </div>
+      <Radio.Group
+        defaultValue={chain}
+        buttonStyle="solid"
+        className="mt-1"
+        size="small"
+        onChange={(event) => {
+          setChain(event.target.value);
+        }}
+      >
+        <Radio.Button value={nullStr} className="mt-2 mr-2 capitalize rounded-none">
+          {t('All chains')}
+        </Radio.Button>
+
+        {CROSS_CHAIN_NETWORKS.map((item, index) => {
+          const name = getDisplayName(item);
+
+          return (
+            <Radio.Button key={index} value={name} className="mt-2 mr-2 capitalize rounded-none">
+              {name}
+            </Radio.Button>
+          );
+        })}
+      </Radio.Group>
 
       <div className="max-h-96 overflow-auto mt-5">
         <div className="flex flex-col space-y-2">
-          {/* eslint-disable-next-line no-magic-numbers */}
-          {new Array(9).fill(1).map((_, index) => (
-            <div
-              className="flex items-center justify-between border border-gray-800 bg-gray-900 py-3 px-2 cursor-pointer transition-all duration-300 hover:bg-gray-800"
-              key={index}
-              onClick={() => onSelect(index)}
-            >
-              <div className="flex items-center space-x-2">
-                <Image alt="..." src="/image/usdt.svg" width={36} height={36} />
-                <Typography.Text>USDT</Typography.Text>
-                <Tag color="processing">Ethereum</Tag>
+          {data
+            .filter((item) => {
+              if (chain === nullStr) {
+                return true;
+              }
+
+              const mode = getNetworkMode(item.meta);
+              const isModeEqual = mode === 'dvm' ? item.type === 'mapping' : item.type === mode;
+
+              return isModeEqual && getDisplayName(item.meta) === chain;
+            })
+            .map((item, index) => (
+              <div
+                className="flex items-center justify-between border border-gray-800 bg-gray-900 py-3 px-2 cursor-pointer transition-all duration-300 hover:bg-gray-800"
+                key={index}
+                onClick={() => onSelect(index)}
+              >
+                <div className="flex items-center space-x-2">
+                  <Logo name={item.logo} width={36} height={36} />
+
+                  <Typography.Text>{item.name}</Typography.Text>
+
+                  <Tag color={chainColor({ network: item.meta.name, mode: tokenModeToChainMode(item.type) })}>
+                    {getDisplayName(item.meta, tokenModeToChainMode(item.type))}
+                  </Tag>
+                  {item.meta.isTest && (
+                    <Tag color="green" className="uppercase">
+                      {t('test')}
+                    </Tag>
+                  )}
+                </div>
               </div>
-              <Typography.Text>3,243.4387</Typography.Text>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </BaseModal>

@@ -1,10 +1,10 @@
 import { Icon } from '@helix/shared/components/widget/Icon';
-import { Button, Form, Input, InputNumber, InputNumberProps, Typography } from 'antd';
+import { Button, Form, InputNumber, InputNumberProps, Typography } from 'antd';
 import Image from 'next/image';
 import { useState } from 'react';
+import { SelectTokenModal } from './SelectTokenModal';
 import { TransferConfirmModal } from './TransferConfirmModal';
 import { TransferDoneModal } from './TransferDoneModal';
-import { SelectTokenModal } from './SelectTokenModal';
 
 type AmountItemContentProps = InputNumberProps & {
   value?: { amount: string; tokenIndex: number };
@@ -37,7 +37,7 @@ const AmountItemContent = ({ value, onChange, disabled }: AmountItemContentProps
           className="flex items-center space-x-2 py-2 bg-gray-800 border-none"
           onClick={() => setVisible(true)}
         >
-          <Image src="/image/ring.svg" alt="..." width={40} height={40} />
+          <Image src="/image/token-ring.svg" alt="..." width={40} height={40} />
           <div className="flex flex-col items-start space-y-px">
             <strong className="font-medium text-sm">RING</strong>
             <small className="font-light text-xs opacity-60">Darwinia</small>
@@ -95,13 +95,13 @@ export function Transfer() {
             <AmountItemContent disabled />
           </Form.Item>
 
-          <Form.Item label="Info" name="info" className="relative">
-            <Input disabled className="h-20" />
-            <div className="absolute top-0 left-0 h-20 w-full flex flex-col justify-center space-y-2 px-4">
+          <Form.Item label="Info" className="relative">
+            <div className="h-20 w-full flex flex-col justify-center space-y-2 px-4 bg-gray-900">
               <div className="flex justify-between items-center">
                 <Typography.Text>Bridge Name</Typography.Text>
                 <Typography.Text>Helix Bridge</Typography.Text>
               </div>
+
               <div className="flex justify-between items-center">
                 <Typography.Text>Transaction Fee</Typography.Text>
                 <Typography.Text>50 RING</Typography.Text>

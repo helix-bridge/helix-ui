@@ -37,7 +37,7 @@ const HistoryItem = ({ onClaim }: { onClaim: () => void }) => (
         Out
       </Tag>
       <div className="flex items-center space-x-1 lg:mx-4">
-        <Image alt="..." src="/image/ring.svg" width={40} height={40} />
+        <Image alt="..." src="/image/token-ring.svg" width={40} height={40} />
         <div className="flex flex-col">
           <Typography.Text>100,000.87</Typography.Text>
           <Typography.Text>xRING</Typography.Text>

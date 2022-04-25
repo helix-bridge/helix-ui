@@ -54,10 +54,6 @@ export const CROSS_CHAIN_NETWORKS: ChainConfig[] = lodashChain([...NETWORK_GRAPH
   .sortBy((item) => item.name)
   .valueOf();
 
-export const AIRPORT_NETWORKS: ChainConfig[] = NETWORK_CONFIGURATIONS.filter((item) =>
-  ['ethereum', 'crab', 'tron'].includes(item.name)
-).map((item) => omit(item, 'dvm'));
-
 function isSpecifyNetworkType(type: NetworkCategory) {
   const findBy = (name: Network) => NETWORK_CONFIGURATIONS.find((item) => item.name === name) ?? null;
 
@@ -311,12 +307,12 @@ export async function isNetworkMatch(expectNetworkId: number): Promise<boolean> 
   return expectNetworkId === networkId;
 }
 
-export function getDisplayName(config: ChainConfig | null): string {
+export function getDisplayName(config: ChainConfig | null, networkMode?: NetworkMode): string {
   if (!config) {
     return 'unknown';
   }
 
-  const mode = getNetworkMode(config);
+  const mode = networkMode ?? getNetworkMode(config);
   const name = upperFirst(config.name);
 
   return mode === 'dvm' ? `${name}-Smart` : name;
