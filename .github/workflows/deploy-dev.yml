@@ -4,20 +4,82 @@ on:
   pull_request:
 
 jobs:
-  test-tag:
-    name: Test tag
+  eslint_check:
+    name: Eslint
     runs-on: ubuntu-latest
-    if: ${{ contains(github.event.ref, '-${{ matrix.package }}') || contains(github.event.ref, '-') == false }}
-    # if: contains(github.event.ref, '-') == false
-    # if: contains(github.event.ref, matrix.package)
+    steps:
+      # Checkout action must run prior to eslint check
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: install
+        run: yarn
+      - name: Lint
+        run: yarn lint
+
+  deploy-package:
+    name: Deploy package
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         package:
           - apps
-          - helix 
+          - helix
     steps:
       - uses: actions/checkout@v2
 
-      - name: test
-        if: contains('apps', matrix.package)
-        run: echo ${{ matrix.package }}
+      - uses: actions/checkout@v2
+        with:
+          repository: itering/actions
+          path: .github/actions
+          persist-credentials: false
+          ssh-key: "${{ secrets.ITERING_ACTIONS_DEPLOY_KEY }}"
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v18.4
+        with:
+          files: |
+            packages/shared
+            packages/${{ matrix.package }}
+
+      - name: Better project name
+        id: better-name
+        run: |
+          PACKAGE_NAME="${{ matrix.package }}"
+          if [[ "$PACKAGE_NAME" == "helix" ]]; then
+            PACKAGE_NAME=ui
+          fi
+          echo "The output package name is ${PACKAGE_NAME}"
+          echo ''
+          echo "::set-output name=NAME::${PACKAGE_NAME}"
+
+      - uses: ./.github/actions/smart-vercel
+        name: Deploy ${{ matrix.package }}
+        id: smart-vercel
+        if: steps.changed-files.outputs.any_changed == 'true'
+        with:
+          vercel_token: ${{ secrets.VERCEL_TOKEN }}
+          vercel_group: itering
+          preview_output: true
+          alias_domain: "helix-${{ steps.better-name.outputs.NAME }}-dev"
+          project_name: "helix-${{ steps.better-name.outputs.NAME }}"
+          script_run: false
+          dist_path: .
+
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: steps.changed-files.outputs.any_changed == 'true'
+        with:
+          append: true
+          message: ${{ steps.smart-vercel.outputs.PREVIEW_OUTPUT }}
+
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        if: steps.changed-files.outputs.any_changed == 'true'
+        env:
+          SLACK_CHANNEL: helix-ui
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON: https://avatars.githubusercontent.com/u/14985020?s=48&v=4
+          SLACK_MESSAGE: "${{ steps.smart-vercel.outputs.PREVIEW_LINK }}"
+          SLACK_TITLE: Preview
+          SLACK_USERNAME: Vercel
+          SLACK_WEBHOOK: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
