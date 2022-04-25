@@ -1,6 +1,6 @@
 export type PolkadotTypeNetwork = 'pangolin' | 'crab' | 'darwinia' | 'pangoro';
 
-export type EthereumTypeNetwork = 'ethereum' | 'ropsten';
+export type EthereumTypeNetwork = 'ethereum' | 'ropsten' | 'polygon' | 'heco';
 
 type TronTypeNetwork = 'tron';
 

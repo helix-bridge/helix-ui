@@ -19,6 +19,8 @@ export const NETWORK_LIGHT_THEME: NetworkThemeConfig<{ [key in keyof typeof darw
   ethereum: pangolin,
   ropsten: pangolin,
   tron: pangolin,
+  heco: pangolin,
+  polygon: pangolin,
 };
 
 export const SKIN_THEME = {
@@ -35,6 +37,8 @@ export const NETWORK_DARK_THEME: NetworkThemeConfig<{ [key in keyof typeof darwi
   ethereum: pangolinDark,
   ropsten: pangolinDark,
   tron: pangolinDark,
+  heco: pangolinDark,
+  polygon: pangolinDark,
 };
 
 export enum THEME {

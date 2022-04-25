@@ -16,9 +16,14 @@ jobs:
       - name: Lint
         run: yarn lint
 
-  deploy:
-    name: Deploy
+  deploy-package:
+    name: Deploy package
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package:
+          - apps
+          - helix
     steps:
       - uses: actions/checkout@v2
 
@@ -29,25 +34,47 @@ jobs:
           persist-credentials: false
           ssh-key: "${{ secrets.ITERING_ACTIONS_DEPLOY_KEY }}"
 
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v18.4
+        with:
+          files: |
+            packages/shared
+            packages/${{ matrix.package }}
+
+      - name: Better project name
+        id: better-name
+        run: |
+          PACKAGE_NAME="${{ matrix.package }}"
+          if [[ "$PACKAGE_NAME" == "helix" ]]; then
+            PACKAGE_NAME=ui
+          fi
+          echo "The output package name is ${PACKAGE_NAME}"
+          echo ''
+          echo "::set-output name=NAME::${PACKAGE_NAME}"
+
       - uses: ./.github/actions/smart-vercel
-        name: Deploy helix ui
+        name: Deploy ${{ matrix.package }}
         id: smart-vercel
+        if: steps.changed-files.outputs.any_changed == 'true'
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
-          alias_domain: helix-ui-dev
-          project_name: helix-ui
+          alias_domain: "helix-${{ steps.better-name.outputs.NAME }}-dev"
+          project_name: "helix-${{ steps.better-name.outputs.NAME }}"
           script_run: false
           dist_path: .
 
       - uses: marocchino/sticky-pull-request-comment@v2
+        if: steps.changed-files.outputs.any_changed == 'true'
         with:
           append: true
           message: ${{ steps.smart-vercel.outputs.PREVIEW_OUTPUT }}
 
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
+        if: steps.changed-files.outputs.any_changed == 'true'
         env:
           SLACK_CHANNEL: helix-ui
           SLACK_COLOR: ${{ job.status }}
