@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "NODE_OPTIONS='--inspect' next dev -p 4001",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 4001",
     "i18next:scanner": "i18next-scanner --config i18next-scanner.config.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
