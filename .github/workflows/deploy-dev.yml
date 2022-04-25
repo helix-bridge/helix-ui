@@ -7,6 +7,7 @@ jobs:
   test-tag:
     name: Test tag
     runs-on: ubuntu-latest
+    if: matrix.package == 'apps'
     strategy:
       matrix:
         package:
