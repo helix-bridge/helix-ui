@@ -8,7 +8,7 @@ jobs:
     name: Test tag
     runs-on: ubuntu-latest
     if: contains(github.event.ref, matrix.package)
-    # contains(github.event.ref, '-') == false
+    # if: contains(github.event.ref, '-') == false
     # if: contains(github.event.ref, matrix.package)
     strategy:
       matrix:
