@@ -7,7 +7,6 @@ jobs:
   test-tag:
     name: Test tag
     runs-on: ubuntu-latest
-    if: !contains(github.event.ref, '-')
     strategy:
       matrix:
         package:
