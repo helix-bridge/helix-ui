@@ -28,7 +28,7 @@ export function Balance({
         return integer;
       }
 
-      return decimal?.length > precision ? `${integer}.${decimal.substr(0, precision)}` : inputValue;
+      return decimal?.length > precision ? `${integer}.${decimal.slice(0, precision)}` : inputValue;
     },
     [precision]
   );

@@ -22,8 +22,24 @@ export const pangoroConfig: PolkadotChainConfig = {
   ss58Prefix: 18,
   specVersion: 28060,
   tokens: [
-    { name: 'ORING', precision: 9, bridges: ['helix'], type: 'native', logo: 'token-ring.svg' },
-    { name: 'OKTON', precision: 9, bridges: ['helix'], type: 'native', logo: 'token-kton.svg' },
+    {
+      name: 'ORING',
+      decimals: 9,
+      bridges: ['helix'],
+      type: 'native',
+      logo: 'token-ring.svg',
+      symbol: 'ORING',
+      address: '',
+    },
+    {
+      name: 'OKTON',
+      decimals: 9,
+      bridges: ['helix'],
+      type: 'native',
+      logo: 'token-kton.svg',
+      symbol: 'OKTON',
+      address: '',
+    },
   ],
   type: ['polkadot', 'darwinia'],
 };

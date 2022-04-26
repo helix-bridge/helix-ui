@@ -1,20 +1,17 @@
 import BN from 'bn.js';
-import { Units } from 'web3-utils';
 import { RegisterStatus } from '../config/constant';
 
 export interface Token<T = string> {
+  name: string;
   symbol: T;
-  decimal: keyof Units;
+  decimals: string | number;
+  address: string;
+  logo: string;
 }
 
-export interface MappingToken {
-  address: string;
+export interface MappingToken extends Token {
   source: string;
   backing: string;
-  symbol: string;
-  decimals: string | number;
-  name: string;
-  logo: string;
   status: RegisterStatus | null;
   balance: BN;
 }

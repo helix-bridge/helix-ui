@@ -21,6 +21,16 @@ export const hecoConfig: EthereumChainConfig = {
     github: 'https://github.com/stars-labs/',
     twitter: 'https://twitter.com/HECO_Chain',
   },
-  tokens: [{ name: 'RING', precision: 18, bridges: ['helix'], type: 'mapping', logo: 'token-ring.svg' }],
+  tokens: [
+    {
+      name: 'RING',
+      decimals: 18,
+      bridges: ['helix'],
+      type: 'mapping',
+      logo: 'token-ring.svg',
+      symbol: 'RING',
+      address: '',
+    },
+  ],
   type: ['ethereum'],
 };

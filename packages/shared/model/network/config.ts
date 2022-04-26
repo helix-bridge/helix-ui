@@ -1,4 +1,5 @@
 import { AddEthereumChainParameter } from '../metamask';
+import { Token } from '../token';
 import { EthereumTypeNetwork, Network, NetworkCategory, NetworkMode, PolkadotTypeNetwork } from './network';
 
 export type LogoType = 'main' | 'minor' | 'assist';
@@ -11,12 +12,9 @@ export interface Logo {
 
 export type TokenMode = 'native' | 'mapping';
 
-interface Token {
-  name: string;
+interface TokenInfo extends Token {
   type: TokenMode;
   bridges: string[];
-  precision: number;
-  logo: string;
 }
 
 interface DVMConfig {
@@ -46,7 +44,7 @@ export interface ChainConfig {
   name: Network;
   provider: ProviderConfig;
   social: Social;
-  tokens: Token[];
+  tokens: TokenInfo[];
   type: NetworkCategory[];
 }
 

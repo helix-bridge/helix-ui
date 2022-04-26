@@ -22,8 +22,8 @@ export const polygonConfig: EthereumChainConfig = {
     twitter: 'https://twitter.com/0xPolygon',
   },
   tokens: [
-    { name: 'RING', precision: 18, bridges: ['helix'], type: 'mapping', logo: '' },
-    { name: 'MATIC', precision: 18, bridges: ['helix'], type: 'native', logo: '' },
+    { name: 'RING', decimals: 18, bridges: ['helix'], type: 'mapping', logo: '', symbol: 'RING', address: '' },
+    { name: 'MATIC', decimals: 18, bridges: ['helix'], type: 'native', logo: '', symbol: 'MATIC', address: '' },
   ],
   type: ['ethereum'],
 };

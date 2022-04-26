@@ -24,6 +24,16 @@ export const ethereumConfig: EthereumChainConfig = {
     github: 'https://github.com/ethereum/ethereum-org-website',
     twitter: 'https://twitter.com/ethdotorg',
   },
-  tokens: [{ name: 'ETHER', precision: 18, bridges: ['helix'], type: 'native', logo: 'token-ethereum.svg' }],
+  tokens: [
+    {
+      name: 'ETHER',
+      decimals: 18,
+      bridges: ['helix'],
+      type: 'native',
+      logo: 'token-ethereum.svg',
+      symbol: 'ETHER',
+      address: '',
+    },
+  ],
   type: ['ethereum'],
 };

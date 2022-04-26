@@ -1,5 +1,9 @@
 node_modules
 
+# misc
+.DS_Store
+*.pem
+
 .vscode/
 
 packages/shared/model/icon/iconfont.json

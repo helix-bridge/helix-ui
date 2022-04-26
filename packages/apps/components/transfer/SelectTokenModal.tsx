@@ -2,11 +2,11 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Logo } from '@helix/shared/components/widget/Logo';
 import { useLocalSearch } from '@helix/shared/hooks';
 import { Vertices } from '@helix/shared/model';
-import { CROSS_CHAIN_NETWORKS, getDisplayName, getNetworkMode } from '@helix/shared/utils';
+import { CROSS_CHAIN_NETWORKS, getDisplayName, isDVM } from '@helix/shared/utils';
 import { Input, Radio, Tag, Typography } from 'antd';
 import { chain as lodashChain } from 'lodash';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { tokenModeToChainMode, tokenSearchFactory } from '../../utils';
 import { BaseModal } from '../BaseModal';
 
@@ -17,9 +17,9 @@ interface SelectTokenModalProps {
 }
 
 const allTokens = lodashChain(CROSS_CHAIN_NETWORKS)
+  .filter((item) => !isDVM(item))
   .map((item) => item.tokens.map((token) => ({ ...token, address: '', meta: item })))
   .flatten()
-  .uniqWith((pre, next) => pre.name === next.name && pre.type === pre.type && pre.meta.isTest === next.meta.isTest)
   .value();
 
 const nullStr = 'null';
@@ -47,6 +47,20 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel }: SelectTokenMod
   const searchFn = useCallback(tokenSearchFactory(allTokens), [allTokens]);
   const { data, setSearch } = useLocalSearch(searchFn);
   const [chain, setChain] = useState<string>(nullStr);
+
+  const tokens = useMemo(
+    () =>
+      data.filter((item) => {
+        if (chain === nullStr) {
+          return true;
+        }
+
+        const mode = tokenModeToChainMode(item.type);
+
+        return getDisplayName(item.meta, mode) === chain;
+      }),
+    [chain, data]
+  );
 
   return (
     <BaseModal title="Select a token" visible={visible} footer={null} width={540} onCancel={onCancel}>
@@ -85,39 +99,28 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel }: SelectTokenMod
 
       <div className="max-h-96 overflow-auto mt-5">
         <div className="flex flex-col space-y-2">
-          {data
-            .filter((item) => {
-              if (chain === nullStr) {
-                return true;
-              }
+          {tokens.map((item, index) => (
+            <div
+              className="flex items-center justify-between border border-gray-800 bg-gray-900 py-3 px-2 cursor-pointer transition-all duration-300 hover:bg-gray-800"
+              key={index}
+              onClick={() => onSelect(index)}
+            >
+              <div className="flex items-center space-x-2">
+                <Logo name={item.logo} width={36} height={36} />
 
-              const mode = getNetworkMode(item.meta);
-              const isModeEqual = mode === 'dvm' ? item.type === 'mapping' : item.type === mode;
+                <Typography.Text>{item.name}</Typography.Text>
 
-              return isModeEqual && getDisplayName(item.meta) === chain;
-            })
-            .map((item, index) => (
-              <div
-                className="flex items-center justify-between border border-gray-800 bg-gray-900 py-3 px-2 cursor-pointer transition-all duration-300 hover:bg-gray-800"
-                key={index}
-                onClick={() => onSelect(index)}
-              >
-                <div className="flex items-center space-x-2">
-                  <Logo name={item.logo} width={36} height={36} />
-
-                  <Typography.Text>{item.name}</Typography.Text>
-
-                  <Tag color={chainColor({ network: item.meta.name, mode: tokenModeToChainMode(item.type) })}>
-                    {getDisplayName(item.meta, tokenModeToChainMode(item.type))}
+                <Tag color={chainColor({ network: item.meta.name, mode: tokenModeToChainMode(item.type) })}>
+                  {getDisplayName(item.meta, tokenModeToChainMode(item.type))}
+                </Tag>
+                {item.meta.isTest && (
+                  <Tag color="green" className="uppercase">
+                    {t('test')}
                   </Tag>
-                  {item.meta.isTest && (
-                    <Tag color="green" className="uppercase">
-                      {t('test')}
-                    </Tag>
-                  )}
-                </div>
+                )}
               </div>
-            ))}
+            </div>
+          ))}
         </div>
       </div>
     </BaseModal>

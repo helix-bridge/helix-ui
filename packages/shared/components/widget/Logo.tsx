@@ -25,5 +25,5 @@ export function Logo({ chain, logoType = 'main', name = '', ...rest }: LogoProps
     }
   }, [chain, logoType]);
 
-  return <Image {...rest} src={`/image/${logo}`} />;
+  return <Image {...rest} src={`/image/${name || logo}`} />;
 }
