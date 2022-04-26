@@ -1,7 +1,7 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Logo } from '@helix/shared/components/widget/Logo';
 import { useLocalSearch } from '@helix/shared/hooks';
-import { Vertices } from '@helix/shared/model';
+import { ChainConfig, TokenInfo, Vertices } from '@helix/shared/model';
 import { CROSS_CHAIN_NETWORKS, getDisplayName, isDVM } from '@helix/shared/utils';
 import { Input, Radio, Tag, Typography } from 'antd';
 import { chain as lodashChain } from 'lodash';
@@ -13,12 +13,14 @@ import { BaseModal } from '../BaseModal';
 interface SelectTokenModalProps {
   visible: boolean;
   onCancel: () => void;
-  onSelect: (value: number) => void;
+  onSelect: (value: TokenInfoWithMeta) => void;
 }
 
-const allTokens = lodashChain(CROSS_CHAIN_NETWORKS)
+export type TokenInfoWithMeta = TokenInfo & { meta: ChainConfig };
+
+const allTokens: TokenInfoWithMeta[] = lodashChain(CROSS_CHAIN_NETWORKS)
   .filter((item) => !isDVM(item))
-  .map((item) => item.tokens.map((token) => ({ ...token, address: '', meta: item })))
+  .map((item) => item.tokens.map((token) => ({ ...token, address: '', meta: item }))) // meta: without dvm info; do not treat as DVMConfig
   .flatten()
   .value();
 
@@ -103,7 +105,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel }: SelectTokenMod
             <div
               className="flex items-center justify-between border border-gray-800 bg-gray-900 py-3 px-2 cursor-pointer transition-all duration-300 hover:bg-gray-800"
               key={index}
-              onClick={() => onSelect(index)}
+              onClick={() => onSelect(item)}
             >
               <div className="flex items-center space-x-2">
                 <Logo name={item.logo} width={36} height={36} />

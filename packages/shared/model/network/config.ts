@@ -12,7 +12,7 @@ export interface Logo {
 
 export type TokenMode = 'native' | 'mapping';
 
-interface TokenInfo extends Token {
+export interface TokenInfo extends Token {
   type: TokenMode;
   bridges: string[];
 }

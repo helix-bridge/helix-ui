@@ -1,23 +1,27 @@
 import { Icon } from '@helix/shared/components/widget/Icon';
+import { Logo } from '@helix/shared/components/widget/Logo';
+import { darwiniaConfig } from '@helix/shared/config/network';
+import { TokenInfo } from '@helix/shared/model';
 import { Button, Form, InputNumber, InputNumberProps, Typography } from 'antd';
-import Image from 'next/image';
 import { useState } from 'react';
-import { SelectTokenModal } from './SelectTokenModal';
+import { SelectTokenModal, TokenInfoWithMeta } from './SelectTokenModal';
 import { TransferConfirmModal } from './TransferConfirmModal';
 import { TransferDoneModal } from './TransferDoneModal';
 
 type AmountItemContentProps = InputNumberProps & {
   value?: { amount: string; tokenIndex: number };
-  onChange?: (value: unknown) => void;
+  onChange?: (value: { amount: string; token: TokenInfo }) => void;
 };
+
+const defaultToken = { ...darwiniaConfig.tokens[0], meta: darwiniaConfig };
 
 const AmountItemContent = ({ value, onChange, disabled }: AmountItemContentProps) => {
   const [visible, setVisible] = useState(false);
-  const [tokenIndex, setTokenIndex] = useState(value?.tokenIndex ?? 0);
+  const [token, setToken] = useState<TokenInfoWithMeta>(defaultToken);
 
   const triggerChange = (amount: string) => {
     if (onChange) {
-      onChange({ amount, tokenIndex });
+      onChange({ amount, token });
     }
   };
 
@@ -37,11 +41,13 @@ const AmountItemContent = ({ value, onChange, disabled }: AmountItemContentProps
           className="flex items-center space-x-2 py-2 bg-gray-800 border-none"
           onClick={() => setVisible(true)}
         >
-          <Image src="/image/token-ring.svg" alt="..." width={40} height={40} />
+          <Logo name={token.logo} width={40} height={40} />
+
           <div className="flex flex-col items-start space-y-px">
-            <strong className="font-medium text-sm">RING</strong>
-            <small className="font-light text-xs opacity-60">Darwinia</small>
+            <strong className="font-medium text-sm">{token.symbol}</strong>
+            <small className="font-light text-xs opacity-60 capitalize">{token.meta.name}</small>
           </div>
+
           <Icon name="down" />
         </Button>
       </div>
@@ -51,7 +57,7 @@ const AmountItemContent = ({ value, onChange, disabled }: AmountItemContentProps
         onCancel={() => setVisible(false)}
         onSelect={(val) => {
           setVisible(false);
-          setTokenIndex(val);
+          setToken(val);
         }}
       />
     </>
