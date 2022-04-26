@@ -4,7 +4,7 @@ import { RegisterStatus } from '../config/constant';
 export interface Token<T = string> {
   name: string;
   symbol: T;
-  decimals: string | number;
+  decimals: number;
   address: string;
   logo: string;
 }

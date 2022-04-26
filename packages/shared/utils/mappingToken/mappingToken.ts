@@ -127,6 +127,7 @@ function getMappingTokensFromDVM(
             ({
               ...info,
               ...token,
+              decimals: +token.decimals,
               balance,
               status,
               address,
@@ -151,7 +152,7 @@ function getMappingTokensFromEthereum(currentAccount: string, direction: CrossCh
   const getToken = (index: number) =>
     from(backingContract.methods.allAssets(index).call() as Promise<string>).pipe(
       switchMap((address) => {
-        const infoObs = from(getErc20Meta(address)).pipe(catchError(() => of({})));
+        const infoObs = from(getErc20Meta(address)).pipe(catchError(() => of(null)));
         const statusObs = from(getTokenRegisterStatus(address, bridge.config.contracts.redeem));
 
         const balanceObs = currentAccount
@@ -162,7 +163,8 @@ function getMappingTokensFromEthereum(currentAccount: string, direction: CrossCh
           [infoObs, statusObs, balanceObs],
           (info, status, balance) =>
             ({
-              ...info,
+              ...(info ?? {}),
+              decimals: +(info?.decimals ?? 18),
               balance,
               status,
               address,

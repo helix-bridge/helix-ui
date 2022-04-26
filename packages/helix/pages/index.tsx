@@ -55,7 +55,7 @@ function Page() {
 
     return {
       volume: dailyStatistics
-        .map(({ id, dailyVolume }) => [secondsToMilliseconds(+id), +fromWei({ value: dailyVolume, unit: 'gwei' })])
+        .map(({ id, dailyVolume }) => [secondsToMilliseconds(+id), +fromWei({ value: dailyVolume, decimals: 9 })])
         .reverse() as Statistic[],
       transactions: dailyStatistics
         .map(({ id, dailyCount }) => [secondsToMilliseconds(+id), dailyCount])
@@ -107,7 +107,7 @@ function Page() {
     const volumes = calcRank('volume').map(({ chain, total }) => ({
       chain,
       // Great than the actual total because of fromWei does not support float number;
-      total: fromWei({ value: Math.ceil(total.toNumber()), unit: 'gwei' }),
+      total: fromWei({ value: Math.ceil(total.toNumber()), decimals: 9 }),
     }));
 
     const vTotal = volumes.reduce((acc, cur) => acc.plus(cur.total), new Bignumber(0));

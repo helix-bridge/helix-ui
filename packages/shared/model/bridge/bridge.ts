@@ -5,7 +5,7 @@ import { Network, NetworkMode } from '../network/network';
 
 /* ----------------------------------------------- bridge state ------------------------------------------------ */
 
-export type BridgeStatus = 'pending' | 'available';
+export type BridgeStatus = 'pending' | 'available' | 'error';
 
 /* ----------------------------------------------- bridge vertices ------------------------------------------------ */
 

@@ -1,13 +1,13 @@
 import { AccountInfo, AccountData } from '@darwinia/types';
 import { ApiPromise } from '@polkadot/api';
 import { useCallback } from 'react';
+import { useApi } from '../../apps/hooks';
 import { AvailableBalance, DarwiniaAsset, Token } from '../model';
 import { waitUntilConnected } from '../utils';
-import { useApi } from './api';
 
 export const getToken: (tokens: Token[], target: DarwiniaAsset) => Token = (tokens, target) => {
   const result = tokens.find((token) => token.symbol.toLowerCase().includes(target.toLowerCase()));
-  const unknown: Token = { symbol: 'unknown', decimal: 'gwei' };
+  const unknown: Token = { symbol: 'unknown', decimals: 9, name: 'unknown', address: '', logo: '' };
 
   return result || unknown;
 };

@@ -12,7 +12,7 @@ export function Record({ record }: { record: Substrate2SubstrateRecord }) {
   const now = new Date().toISOString().split('.')[0];
   const fromAccount = revertAccount(sender, fromChain, fromChainMode);
   const toAccount = revertAccount(recipient, toChain, toChainMode);
-  const amount = fromWei({ value: record.amount, unit: 'gwei' }, prettyNumber);
+  const amount = fromWei({ value: record.amount, decimals: 9 }, prettyNumber);
 
   return (
     <>
@@ -48,7 +48,7 @@ export function Record({ record }: { record: Substrate2SubstrateRecord }) {
       </Tooltip>
 
       <span className="justify-self-center">
-        {fromWei({ value: record.fee, unit: fromChainMode === 'dvm' ? 'ether' : 'gwei' })}
+        {fromWei({ value: record.fee, decimals: fromChainMode === 'dvm' ? 18 : 9 })}
       </span>
 
       <span className="justify-self-center capitalize">{record.bridge}</span>

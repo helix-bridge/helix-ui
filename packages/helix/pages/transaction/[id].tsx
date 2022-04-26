@@ -173,7 +173,7 @@ const Page: NextPage<{
   const [finalRecord, setFinalRecord] = useState<FinalActionRecord | null>(lockOrUnlockRecord);
 
   const amount = useMemo(
-    () => fromWei({ value: departureRecord?.amount ?? 0, unit: 'gwei' }, prettyNumber),
+    () => fromWei({ value: departureRecord?.amount ?? 0, decimals: 9 }, prettyNumber),
     [departureRecord?.amount]
   );
 
@@ -486,7 +486,7 @@ const Page: NextPage<{
         </Description>
 
         <Description title={t('Transaction Fee')} tip={'Amount paid for processing the cross-chain transaction.'}>
-          {fromWei({ value: departureRecord?.fee || arrivalRecord?.fee, unit: isIssuing ? 'gwei' : 'ether' })}{' '}
+          {fromWei({ value: departureRecord?.fee || arrivalRecord?.fee, decimals: isIssuing ? 9 : 18 })}{' '}
           {departure.tokens.find((item) => item.type === 'native')?.name}
         </Description>
 

@@ -23,10 +23,6 @@ export function getUnit(num: number): Unit {
   }
 }
 
-export function getPrecisionByUnit(unit: Unit): number {
-  return ETH_UNITS[unit].length - 1;
-}
-
 // eslint-disable-next-line complexity
 const toStr = (value: WeiValue): string => {
   if (BN.isBN(value) || Bignumber.isBigNumber(value)) {
@@ -77,10 +73,14 @@ export function prettyNumber(
   return +result === 0 ? '0' : result;
 }
 
+const DEFAULT_DECIMALS = 18;
+
 export function fromWei(
-  { value, unit = 'ether' }: { value: WeiValue; unit?: Unit },
+  { value, decimals = DEFAULT_DECIMALS }: { value: WeiValue; decimals?: number },
   ...fns: ((value: string) => string)[]
 ): string {
+  const unit = getUnit(decimals);
+
   return [toStr, (val: string) => Web3.utils.fromWei(val || '0', unit), ...fns].reduce(
     (acc, fn) => fn(acc as string),
     value
@@ -88,9 +88,11 @@ export function fromWei(
 }
 
 export function toWei(
-  { value, unit = 'ether' }: { value: WeiValue; unit?: Unit },
+  { value, decimals = DEFAULT_DECIMALS }: { value: WeiValue; decimals?: number },
   ...fns: ((value: string) => string)[]
 ): string {
+  const unit = getUnit(decimals);
+
   return [toStr, (val: string) => Web3.utils.toWei(val || '0', unit), ...fns].reduce(
     (acc, fn) => fn(acc as string),
     value

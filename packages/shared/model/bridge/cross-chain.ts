@@ -2,6 +2,7 @@ import { FormInstance } from 'antd';
 import { Subscription } from 'rxjs';
 import { ChainConfig } from '../network';
 import { NullableFields } from '../type-operator';
+import { BridgeStatus } from './bridge';
 
 /* ---------------------------------------------------Components props--------------------------------------------------- */
 
@@ -12,6 +13,11 @@ export type CrossChainPayload<C = any, F extends ChainConfig = ChainConfig, T ex
 
 export type SubmitFn = (value: CrossChainPayload) => Subscription;
 
+export interface BridgeState {
+  status: BridgeStatus;
+  reason?: string;
+}
+
 export interface CrossChainComponentProps<
   C extends CrossChainParty,
   F extends ChainConfig = ChainConfig,
@@ -20,7 +26,7 @@ export interface CrossChainComponentProps<
   form: FormInstance<CrossChainPayload<C>>;
   direction: CrossChainDirection<F, T>;
   setSubmit: React.Dispatch<React.SetStateAction<SubmitFn>>;
-  setIsBridgeAvailable: React.Dispatch<React.SetStateAction<boolean>>;
+  setBridgeState: React.Dispatch<React.SetStateAction<BridgeState>>;
 }
 
 /* ---------------------------------------------------Bridge elements--------------------------------------------------- */

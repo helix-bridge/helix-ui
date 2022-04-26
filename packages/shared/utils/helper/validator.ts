@@ -123,7 +123,7 @@ export type Validator = ValidatorRule['validator'];
 export interface ValidateOptions {
   t: TFunction;
   compared?: string | BN | number | null;
-  token?: Token;
+  token?: Pick<Token, 'symbol' | 'decimals'>;
   asset?: string;
 }
 
@@ -148,8 +148,8 @@ const amountLessThanFeeValidatorFactory: ValidatorFactory = (options) => (_, val
     return Promise.reject();
   }
 
-  const { decimal = 'gwei' } = token || {};
-  const cur = new BN(toWei({ value: val, unit: decimal }));
+  const { decimals = 9 } = token || {};
+  const cur = new BN(toWei({ value: val, decimals }));
   let pass = true;
 
   if (isRing(asset)) {
@@ -169,7 +169,7 @@ export const amountLessThanFeeRule: ValidatorRuleFactory = (options) => {
 const insufficientBalanceValidatorFactory: ValidatorFactory = (options) => (_, val) => {
   const { compared = '0', token } = options;
   const max = new BN(compared as string);
-  const value = new BN(toWei({ value: val, unit: token?.decimal ?? 'gwei' }));
+  const value = new BN(toWei({ value: val, decimals: token?.decimals ?? 9 }));
 
   return value.gt(max) ? Promise.reject() : Promise.resolve();
 };
