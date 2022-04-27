@@ -10,12 +10,9 @@ export const hecoConfig: EthereumChainConfig = {
     rpcUrls: ['https://http-mainnet.hecochain.com'],
   },
   isTest: true,
-  logos: [{ name: 'heco.png', type: 'main', mode: 'native' }],
+  logos: [{ name: 'heco.png', type: 'main' }],
   name: 'heco',
-  provider: {
-    etherscan: 'https://http-mainnet.hecochain.com',
-    rpc: '',
-  },
+  provider: 'https://http-mainnet.hecochain.com',
   social: {
     portal: 'https://www.hecochain.com/en-us/',
     github: 'https://github.com/stars-labs/',

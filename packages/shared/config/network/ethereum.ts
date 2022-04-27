@@ -11,14 +11,11 @@ export const ethereumConfig: EthereumChainConfig = {
   },
   isTest: false,
   logos: [
-    { name: 'eth-logo.svg', type: 'main', mode: 'native' },
-    { name: 'ethereum.svg', type: 'minor', mode: 'native' },
+    { name: 'eth-logo.svg', type: 'main' },
+    { name: 'ethereum.svg', type: 'minor' },
   ],
   name: 'ethereum',
-  provider: {
-    etherscan: 'wss://mainnet.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
-    rpc: '',
-  },
+  provider: 'wss://mainnet.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
   social: {
     portal: 'https://ethereum.org/en/',
     github: 'https://github.com/ethereum/ethereum-org-website',

@@ -1,39 +1,15 @@
-import { DVMChainConfig } from '../../model';
+import { PolkadotChainConfig } from '../../model';
 
-export const crabConfig: DVMChainConfig = {
-  dvm: {
-    kton: '0xbfE9E136270cE46A2A6a8E8D54718BdAEBEbaA3D',
-    ring: '0x588abe3F7EE935137102C5e2B8042788935f4CB0',
-    smartKton: '0x159933C635570D5042723359fbD1619dFe83D3f3',
-    smartRing: '0x588abe3F7EE935137102C5e2B8042788935f4CB0',
-    smartWithdrawKton: '0x0000000000000000000000000000000000000015',
-    smartWithdrawRing: '0x0000000000000000000000000000000000000015',
-  },
-  ethereumChain: {
-    blockExplorerUrls: ['https://crab.subscan.io/'],
-    chainId: '44',
-    chainName: 'crab',
-    nativeCurrency: {
-      decimals: 18,
-      symbol: 'CRAB',
-    },
-    rpcUrls: ['https://crab-rpc.darwinia.network/'],
-  },
-  endpoints: {
-    mmr: '',
-  },
+export const crabConfig: PolkadotChainConfig = {
+  endpoints: { mmr: '' },
   isTest: false,
   logos: [
-    { name: 'crab.png', type: 'main', mode: 'native' },
-    { name: 'crab.svg', type: 'minor', mode: 'native' },
-    { name: 'crab-logo.svg', type: 'assist', mode: 'native' },
-    { name: 'crab-smart.png', type: 'main', mode: 'dvm' },
+    { name: 'crab.png', type: 'main' },
+    { name: 'crab.svg', type: 'minor' },
+    { name: 'crab-logo.svg', type: 'assist' },
   ],
   name: 'crab',
-  provider: {
-    etherscan: '',
-    rpc: 'wss://darwinia-crab.api.onfinality.io/public-ws',
-  },
+  provider: 'wss://darwinia-crab.api.onfinality.io/public-ws',
   social: {
     portal: 'https://crab.network/',
     github: 'https://github.com/darwinia-network/darwinia/tree/main/runtime/crab',
@@ -48,42 +24,6 @@ export const crabConfig: DVMChainConfig = {
       type: 'native',
       logo: 'token-ckton.svg',
       symbol: 'CKTON',
-      address: '',
-    },
-    {
-      name: 'xRING',
-      decimals: 9,
-      bridges: ['helix'],
-      type: 'mapping',
-      logo: 'token-oring.svg',
-      symbol: 'xRING',
-      address: '',
-    },
-    {
-      name: 'xKTON',
-      decimals: 9,
-      bridges: ['helix'],
-      type: 'mapping',
-      logo: 'token-okton.svg',
-      symbol: 'xKTON',
-      address: '',
-    },
-    {
-      name: 'WCRAB',
-      decimals: 9,
-      bridges: ['helix'],
-      type: 'mapping',
-      logo: 'token-wcrab.svg',
-      symbol: 'WCRAB',
-      address: '',
-    },
-    {
-      name: 'WCKTON',
-      decimals: 9,
-      bridges: ['helix'],
-      type: 'mapping',
-      logo: 'token-wckton.svg',
-      symbol: 'WCKTON',
       address: '',
     },
   ],

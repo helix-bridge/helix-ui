@@ -1,6 +1,7 @@
 import { Bridge, EthereumDVMBridgeConfig } from '../../model';
 import { EVOLUTION_DOMAIN } from '../api';
-import { ethereumConfig, crabConfig, ropstenConfig, pangolinConfig } from '../network';
+import { crabDVMConfig, ethereumConfig, ropstenConfig } from '../network';
+import { pangolinDVMConfig } from '../network/pangolin-dvm';
 
 const ethereumCrabDVMConfig: EthereumDVMBridgeConfig = {
   api: { dapp: 'https://api.darwinia.network', evolution: EVOLUTION_DOMAIN.product },
@@ -11,7 +12,7 @@ const ethereumCrabDVMConfig: EthereumDVMBridgeConfig = {
   },
 };
 
-export const ethereumCrabDVM = new Bridge(ethereumConfig, crabConfig, ethereumCrabDVMConfig, {
+export const ethereumCrabDVM = new Bridge(ethereumConfig, crabDVMConfig, ethereumCrabDVMConfig, {
   category: 'helix',
   stable: false,
   status: 'pending',
@@ -29,7 +30,7 @@ const ropstenPangolinDVMConfig: EthereumDVMBridgeConfig = {
 /**
  * ethereum <-> dvm testnet
  */
-export const ropstenPangolinDVM = new Bridge(ropstenConfig, pangolinConfig, ropstenPangolinDVMConfig, {
+export const ropstenPangolinDVM = new Bridge(ropstenConfig, pangolinDVMConfig, ropstenPangolinDVMConfig, {
   category: 'helix',
   stable: false,
 });

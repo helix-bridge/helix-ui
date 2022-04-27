@@ -6,14 +6,11 @@ export const pangoroConfig: PolkadotChainConfig = {
   },
   isTest: true,
   logos: [
-    { name: 'pangoro.png', type: 'main', mode: 'native' },
-    { name: 'pangoro.png', type: 'minor', mode: 'native' },
+    { name: 'pangoro.png', type: 'main' },
+    { name: 'pangoro.png', type: 'minor' },
   ],
   name: 'pangoro',
-  provider: {
-    etherscan: '',
-    rpc: 'wss://pangoro-rpc.darwinia.network',
-  },
+  provider: 'wss://pangoro-rpc.darwinia.network',
   social: {
     portal: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangoro-rpc.darwinia.network#/explorer',
     github: 'https://github.com/darwinia-network',
@@ -41,5 +38,5 @@ export const pangoroConfig: PolkadotChainConfig = {
       address: '',
     },
   ],
-  type: ['polkadot', 'darwinia'],
+  type: ['polkadot'],
 };

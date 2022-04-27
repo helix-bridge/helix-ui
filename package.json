@@ -15,6 +15,7 @@
     "stylelint": "stylelint \"packages/**/styles/**/*.scss\" --config stylelint.config.js",
     "eslint": "eslint packages/**/*.{ts,tsx} -c .eslintrc.js --fix",
     "lint": "npm run eslint && npm run stylelint",
+    "test:shared:watch": "cd packages/shared && yarn test:watch",
     "format": "prettier  packages/**/*.{ts,tsx} --write"
   },
   "devDependencies": {

@@ -1,7 +1,6 @@
-import { omit } from 'lodash';
+import { Bridge, EthereumDarwiniaBridgeConfig } from '../../model';
 import { EVOLUTION_DOMAIN } from '../api';
 import { darwiniaConfig, ethereumConfig, pangolinConfig, ropstenConfig } from '../network';
-import { Bridge, EthereumDarwiniaBridgeConfig } from '../../model';
 
 const ethereumDarwiniaConfig: EthereumDarwiniaBridgeConfig = {
   api: { dapp: 'https://api.darwinia.network', evolution: EVOLUTION_DOMAIN.product },
@@ -60,7 +59,7 @@ const ropstenDVMChainConfig: EthereumDarwiniaBridgeConfig = {
 /**
  * ethereum <-> darwinia testnet
  */
-export const ropstenPangolin = new Bridge(ropstenConfig, omit(pangolinConfig, 'dvm'), ropstenDVMChainConfig, {
+export const ropstenPangolin = new Bridge(ropstenConfig, pangolinConfig, ropstenDVMChainConfig, {
   category: 'helix',
   activeAssistantConnection: true,
 });

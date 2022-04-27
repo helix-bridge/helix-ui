@@ -42,9 +42,7 @@ export const DESCRIPTIONS: {
 
   { path: ['name'], editable: false, comment: '', type: 'string' },
 
-  { path: ['provider'], editable: true, comment: 'RPC providers' },
-  { path: ['provider', 'etherscan'], editable: true, comment: 'RPC provider in DVM or Ethereum', type: 'string' },
-  { path: ['provider', 'rpc'], editable: true, comment: 'RPC provider in Substrate', type: 'string' },
+  { path: ['provider'], editable: true, comment: 'RPC providers', type: 'string' },
 
   { path: ['ss58Prefix'], editable: false, comment: '', type: 'number' },
 

@@ -3,14 +3,11 @@ import { ChainConfig } from '../../model';
 export const tronConfig: ChainConfig = {
   isTest: false,
   logos: [
-    { name: 'tron.png', type: 'main', mode: 'native' },
-    { name: 'tron.png', type: 'minor', mode: 'native' },
+    { name: 'tron.png', type: 'main' },
+    { name: 'tron.png', type: 'minor' },
   ],
   name: 'tron',
-  provider: {
-    etherscan: '',
-    rpc: '',
-  },
+  provider: '',
   social: {
     portal: '',
     github: '',

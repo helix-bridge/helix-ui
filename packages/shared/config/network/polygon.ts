@@ -10,12 +10,9 @@ export const polygonConfig: EthereumChainConfig = {
     rpcUrls: ['https://polygon-rpc.com/'],
   },
   isTest: true,
-  logos: [{ name: 'polygon.svg', type: 'main', mode: 'native' }],
+  logos: [{ name: 'polygon.svg', type: 'main' }],
   name: 'polygon',
-  provider: {
-    etherscan: 'https://polygon-rpc.com/',
-    rpc: '',
-  },
+  provider: 'https://polygon-rpc.com/',
   social: {
     portal: 'https://polygon.technology/',
     github: 'https://github.com/maticnetwork/',

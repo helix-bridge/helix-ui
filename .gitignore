@@ -2,8 +2,10 @@ node_modules
 
 # misc
 .DS_Store
+/**/.DS_Store
 *.pem
 
 .vscode/
+tsconfig.tsbuildinfo
 
 packages/shared/model/icon/iconfont.json

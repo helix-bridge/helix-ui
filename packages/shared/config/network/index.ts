@@ -1,4 +1,5 @@
 export * from './crab';
+export * from './crab-dvm';
 export * from './darwinia';
 export * from './descriptions';
 export * from './ethereum';

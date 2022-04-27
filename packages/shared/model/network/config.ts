@@ -1,12 +1,11 @@
 import { AddEthereumChainParameter } from '../metamask';
 import { Token } from '../token';
-import { EthereumTypeNetwork, Network, NetworkCategory, NetworkMode, PolkadotTypeNetwork } from './network';
+import { EthereumTypeNetwork, Network, NetworkCategory, PolkadotTypeNetwork } from './network';
 
 export type LogoType = 'main' | 'minor' | 'assist';
 
 export interface Logo {
   name: string;
-  mode: NetworkMode;
   type: LogoType;
 }
 
@@ -27,11 +26,6 @@ interface DVMConfig {
   [key: string]: string;
 }
 
-interface ProviderConfig {
-  rpc: string;
-  etherscan: string;
-}
-
 interface Social {
   github: string;
   portal: string;
@@ -42,7 +36,7 @@ export interface ChainConfig {
   isTest: boolean;
   logos: Logo[];
   name: Network;
-  provider: ProviderConfig;
+  provider: string;
   social: Social;
   tokens: TokenInfo[];
   type: NetworkCategory[];
@@ -62,6 +56,8 @@ export interface PolkadotChainConfig extends ChainConfig {
   };
 }
 
-export interface DVMChainConfig extends Omit<EthereumChainConfig, 'name'>, PolkadotChainConfig {
+export interface DVMChainConfig
+  extends Omit<EthereumChainConfig, 'name'>,
+    Pick<PolkadotChainConfig, 'ss58Prefix' | 'specVersion' | 'name'> {
   dvm: DVMConfig;
 }
