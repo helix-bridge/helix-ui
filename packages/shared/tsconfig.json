@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "./",
-    "isolatedModules": false,
+    "isolatedModules": true,
     "noEmit": true,
     "allowSyntheticDefaultImports": true
   },

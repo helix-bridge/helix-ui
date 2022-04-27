@@ -6,9 +6,9 @@ import {
   SyncOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
-import { SubscanLink } from '@helix/shared/components/widget/SubscanLink';
-import { ChainConfig } from '@helix/shared/model';
-import { isEthereumNetwork, isPolkadotNetwork } from '@helix/shared/utils';
+import { SubscanLink } from 'shared/components/widget/SubscanLink';
+import { ChainConfig } from 'shared/model';
+import { isEthereumNetwork, isPolkadotNetwork } from 'shared/utils';
 import { Button, Row, Tooltip } from 'antd';
 import { last } from 'lodash';
 import React, { SetStateAction, useMemo, useState } from 'react';
@@ -87,7 +87,7 @@ export function Progress({ steps, title, icon, className = '', network }: Progre
   const finish = useMemo(() => {
     if (progressItemState !== State.pending && (txHash || blockHash) && network) {
       return (
-        <SubscanLink txHash={txHash} block={blockHash} network={network.name}>
+        <SubscanLink txHash={txHash} block={blockHash} network={network}>
           <Button size="small" className="text-xs" icon={<CheckOutlined />}>
             {t('Txhash')}
           </Button>
@@ -157,11 +157,11 @@ export function Progress({ steps, title, icon, className = '', network }: Progre
   }, [mutateState, lastState, isClaiming, t, setCanceler]);
 
   const iconColorCls = useMemo(() => {
-    if (isEthereumNetwork(network?.name)) {
+    if (isEthereumNetwork(network)) {
       return 'text-gray-700';
     }
 
-    if (isPolkadotNetwork(network?.name)) {
+    if (isPolkadotNetwork(network)) {
       return `bg-${network?.name}`;
     }
 

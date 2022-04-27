@@ -1,4 +1,4 @@
-import { ContractConfig, BridgeConfig, Api, ApiKeys, LockEventsStorage } from '@helix/shared/model';
+import { ContractConfig, BridgeConfig, Api, ApiKeys, LockEventsStorage } from 'shared/model';
 
 interface EthereumDarwiniaContractConfig extends ContractConfig {
   ring: string; // e2d ring balance address

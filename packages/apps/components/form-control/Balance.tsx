@@ -1,6 +1,6 @@
 import { Input, InputNumber, InputNumberProps } from 'antd';
 import { CSSProperties, PropsWithChildren, useCallback, useMemo } from 'react';
-import { CustomFormControlProps } from '@helix/shared/model';
+import { CustomFormControlProps } from 'shared/model';
 
 export function Balance({
   value,

@@ -1,6 +1,6 @@
-import { abi } from '@helix/shared/config/abi';
-import { ConnectionStatus, RecordComponentProps } from '@helix/shared/model';
-import { connect, entrance, getBridge } from '@helix/shared/utils';
+import { abi } from 'shared/config/abi';
+import { ConnectionStatus, RecordComponentProps } from 'shared/model';
+import { connect, entrance, getBridge } from 'shared/utils';
 import { BN_ZERO } from '@polkadot/util';
 import { message } from 'antd';
 import BN from 'bn.js';

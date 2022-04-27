@@ -1,14 +1,14 @@
 import { LockOutlined } from '@ant-design/icons';
-import { IdentAccountAddress } from '@helix/shared/components/widget/IdentAccountAddress';
-import { FORM_CONTROL } from '@helix/shared/config/constant';
+import { IdentAccountAddress } from 'shared/components/widget/IdentAccountAddress';
+import { FORM_CONTROL } from 'shared/config/constant';
 import {
   CrossChainComponentProps,
   CrossChainParty,
   CrossChainPayload,
   IAccountMeta,
   PolkadotChainConfig,
-} from '@helix/shared/model';
-import { convertToSS58, isPolkadotNetwork, isSameAddress, isValidAddressStrict, patchUrl } from '@helix/shared/utils';
+} from 'shared/model';
+import { convertToSS58, isPolkadotNetwork, isSameAddress, isValidAddressStrict, patchUrl } from 'shared/utils';
 import { AutoComplete, Form, FormInstance, Input } from 'antd';
 import { upperFirst } from 'lodash';
 import { ReactNode, useMemo } from 'react';
@@ -41,7 +41,7 @@ export function RecipientItem({
   );
 
   const { to } = direction;
-  const isPolkadot = isPolkadotNetwork(to.name);
+  const isPolkadot = isPolkadotNetwork(to);
   const type = isPolkadot ? to.name : 'ethereum';
 
   return (

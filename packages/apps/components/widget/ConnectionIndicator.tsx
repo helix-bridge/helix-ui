@@ -1,18 +1,17 @@
 import { DisconnectOutlined, LinkOutlined, SyncOutlined } from '@ant-design/icons';
-import { ChainConfig, EthereumChainConfig, EthereumConnection } from '@helix/shared/model';
-import {
-  getConfigByConnection,
-  getDisplayName,
-  isChainIdEqual,
-  isDVM,
-  isEthereumNetwork,
-  isPolkadotNetwork,
-  isSameNetConfig,
-} from '@helix/shared/utils';
 import { Button, Popover, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, Subscription } from 'rxjs';
+import { ChainConfig, EthereumChainConfig, EthereumConnection } from 'shared/model';
+import {
+  getConfigByConnection,
+  getDisplayName,
+  isChainIdEqual,
+  isEthereumNetwork,
+  isPolkadotNetwork,
+  isSameNetConfig,
+} from 'shared/utils';
 import { useApi } from '../../hooks';
 
 interface LinkIndicatorProps {
@@ -37,7 +36,7 @@ export function ConnectionIndicator({ config, showSwitch }: LinkIndicatorProps) 
       return;
     }
 
-    if ((config && isDVM(config)) || isEthereumNetwork(config?.name)) {
+    if ((config && config.mode === 'dvm') || isEthereumNetwork(config)) {
       is =
         connection.type === 'metamask' &&
         isChainIdEqual(
@@ -46,7 +45,7 @@ export function ConnectionIndicator({ config, showSwitch }: LinkIndicatorProps) 
         );
 
       setIsConsistent(is);
-    } else if (isPolkadotNetwork(config?.name)) {
+    } else if (isPolkadotNetwork(config)) {
       subscription = from(getConfigByConnection(connection)).subscribe((conf) => {
         is = connection.type === 'polkadot' && isSameNetConfig(config, conf);
         setIsConsistent(is);

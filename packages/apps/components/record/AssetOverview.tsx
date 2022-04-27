@@ -1,5 +1,5 @@
-import { DATE_FORMAT } from '@helix/shared/config/constant';
-import { fromWei, getTimeRange, prettyNumber } from '@helix/shared/utils';
+import { DATE_FORMAT } from 'shared/config/constant';
+import { fromWei, getTimeRange, prettyNumber } from 'shared/utils';
 import { Typography } from 'antd';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';

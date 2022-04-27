@@ -5,7 +5,7 @@ import { memoize } from 'lodash';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 import { abi } from '../../config/abi';
-import { entrance } from '../network';
+import { entrance } from '../connection';
 
 export interface TokenCache {
   address: string;

@@ -1,14 +1,12 @@
 import { PolkadotChainConfig } from '../../model';
 
 export const pangoroConfig: PolkadotChainConfig = {
-  endpoints: {
-    mmr: '',
-  },
   isTest: true,
   logos: [
     { name: 'pangoro.png', type: 'main' },
     { name: 'pangoro.png', type: 'minor' },
   ],
+  mode: 'native',
   name: 'pangoro',
   provider: 'wss://pangoro-rpc.darwinia.network',
   social: {
@@ -38,5 +36,5 @@ export const pangoroConfig: PolkadotChainConfig = {
       address: '',
     },
   ],
-  type: ['polkadot'],
+  category: ['polkadot'],
 };

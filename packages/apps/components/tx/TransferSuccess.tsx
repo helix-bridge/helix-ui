@@ -1,17 +1,11 @@
 import { CheckCircleFilled } from '@ant-design/icons';
-import { SubscanLink } from '@helix/shared/components/widget/SubscanLink';
-import { NETWORK_LIGHT_THEME } from '@helix/shared/config/theme';
-import {
-  CrossChainAsset,
-  MappingToken,
-  TxSuccessComponentProps,
-  CrossChainPayload,
-  Network,
-} from '@helix/shared/model';
-import { isPolkadotNetwork, getNetworkMode, convertToSS58, fromWei, isEthereumNetwork } from '@helix/shared/utils';
 import { getDisplayName } from 'next/dist/shared/lib/utils';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { SubscanLink } from 'shared/components/widget/SubscanLink';
+import { NETWORK_LIGHT_THEME } from 'shared/config/theme';
+import { CrossChainAsset, CrossChainPayload, MappingToken, Network, TxSuccessComponentProps } from 'shared/model';
+import { convertToSS58, fromWei, isEthereumNetwork, isPolkadotNetwork } from 'shared/utils';
 import { IDescription } from '../widget/IDescription';
 
 function Detail({ amount, asset }: CrossChainAsset<string | MappingToken>) {
@@ -35,7 +29,7 @@ export function TransferSuccess({
   const linkProps = { [hashType]: tx.hash };
   const sender = useMemo(
     () =>
-      isPolkadotNetwork(value.direction.from.name) && getNetworkMode(value.direction.from) !== 'dvm'
+      isPolkadotNetwork(value.direction.from) && value.direction.from.mode !== 'dvm'
         ? convertToSS58(value.sender, value.direction.from.ss58Prefix)
         : value.sender,
     [value]
@@ -83,7 +77,7 @@ export function TransferSuccess({
         {t('The transaction has been sent, please check the transfer progress in the cross-chain history.')}
       </p>
 
-      <SubscanLink {...linkProps} network={value.direction.from?.name as Network}>
+      <SubscanLink {...linkProps} network={value.direction.from}>
         {t('View in {{scan}} explorer', {
           scan: isEthereumNetwork(value.direction.from?.name) ? 'Etherscan' : 'Subscan',
         })}

@@ -1,15 +1,13 @@
 import { PolkadotChainConfig } from '../../model';
 
 export const pangolinConfig: PolkadotChainConfig = {
-  endpoints: {
-    mmr: 'https://api.subquery.network/sq/darwinia-network/pangolin-mmr',
-  },
   isTest: true,
   logos: [
     { name: 'pangolin.png', type: 'main' },
     { name: 'pangolin.svg', type: 'minor' },
     { name: 'pangolin-logo.svg', type: 'assist' },
   ],
+  mode: 'native',
   name: 'pangolin',
   provider: 'wss://pangolin-rpc.darwinia.network',
   social: {
@@ -23,5 +21,5 @@ export const pangolinConfig: PolkadotChainConfig = {
   ],
   ss58Prefix: 42,
   specVersion: 28060,
-  type: ['polkadot'],
+  category: ['polkadot'],
 };

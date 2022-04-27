@@ -1,5 +1,5 @@
-import { FORM_CONTROL } from '@helix/shared/config/constant';
-import { isValidAddress } from '@helix/shared/utils';
+import { FORM_CONTROL } from 'shared/config/constant';
+import { isValidAddress } from 'shared/utils';
 import { Form, FormInstance, FormItemProps, Input } from 'antd';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

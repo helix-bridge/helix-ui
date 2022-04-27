@@ -1,7 +1,7 @@
 import { ClockCircleOutlined, ImportOutlined, RightOutlined } from '@ant-design/icons';
-import { EllipsisMiddle } from '@helix/shared/components/widget/EllipsisMiddle';
-import { DATE_TIME_FORMAT } from '@helix/shared/config/constant';
-import { ChainConfig } from '@helix/shared/model';
+import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
+import { DATE_TIME_FORMAT } from 'shared/config/constant';
+import { ChainConfig } from 'shared/model';
 import { Collapse, Progress, Tooltip } from 'antd';
 import { format, fromUnixTime } from 'date-fns/esm';
 import { PropsWithChildren, useMemo } from 'react';

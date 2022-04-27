@@ -5,7 +5,7 @@ import { last, omit, orderBy } from 'lodash';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useEffect, useMemo, useState } from 'react';
-import { DATE_FORMAT } from '@helix/shared/config/constant';
+import { DATE_FORMAT } from 'shared/config/constant';
 import {
   crabConfig,
   darwiniaConfig,
@@ -13,9 +13,9 @@ import {
   pangolinConfig,
   pangoroConfig,
   ropstenConfig,
-} from '@helix/shared/config/network';
-import { ChainConfig, DailyStatistic } from '@helix/shared/model';
-import { fromWei, prettyNumber, rxGet } from '@helix/shared/utils';
+} from 'shared/config/network';
+import { ChainConfig, DailyStatistic } from 'shared/model';
+import { fromWei, prettyNumber, rxGet } from 'shared/utils';
 import { Statistics } from '../components/dashboard/Statistics';
 import { Chain, ChainProps } from '../components/dashboard/Chain';
 import { BarChart, Statistic } from '../components/dashboard/BarChart';

@@ -1,5 +1,5 @@
-import { FORM_CONTROL } from '@helix/shared/config/constant';
-import { CrossChainPayload, CrossChainDirection } from '@helix/shared/model';
+import { FORM_CONTROL } from 'shared/config/constant';
+import { CrossChainPayload, CrossChainDirection } from 'shared/model';
 import { FormInstance } from 'antd';
 import { useEffect, useState } from 'react';
 

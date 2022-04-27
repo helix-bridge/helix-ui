@@ -1,9 +1,9 @@
 import { message } from 'antd';
 import React, { createContext, useEffect, useMemo, useState } from 'react';
 import { delay, Observer, of } from 'rxjs';
-import { TxStatus } from '@helix/shared/components/widget/TxStatus';
-import { LONG_DURATION } from '@helix/shared/config/constant';
-import { RequiredPartial, Tx } from '@helix/shared/model';
+import { TxStatus } from 'shared/components/widget/TxStatus';
+import { LONG_DURATION } from 'shared/config/constant';
+import { RequiredPartial, Tx } from 'shared/model';
 
 export interface TxCtx {
   setTx: (tx: Tx | null) => void;

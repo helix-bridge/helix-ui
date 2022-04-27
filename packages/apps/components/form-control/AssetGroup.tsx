@@ -1,13 +1,6 @@
-import { FORM_CONTROL } from '@helix/shared/config/constant';
-import { AvailableBalance, CrossChainAsset, CustomFormControlProps, DarwiniaAsset, Network } from '@helix/shared/model';
-import {
-  amountLessThanFeeRule,
-  fromWei,
-  insufficientBalanceRule,
-  invalidFeeRule,
-  isRing,
-  toWei,
-} from '@helix/shared/utils';
+import { FORM_CONTROL } from 'shared/config/constant';
+import { AvailableBalance, CrossChainAsset, CustomFormControlProps, DarwiniaAsset, Network } from 'shared/model';
+import { amountLessThanFeeRule, fromWei, insufficientBalanceRule, invalidFeeRule, isRing, toWei } from 'shared/utils';
 import { BN_ZERO } from '@polkadot/util';
 import { Checkbox, Form, FormInstance } from 'antd';
 import FormList from 'antd/lib/form/FormList';

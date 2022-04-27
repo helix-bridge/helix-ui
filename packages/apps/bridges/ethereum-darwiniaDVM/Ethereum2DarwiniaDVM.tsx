@@ -1,6 +1,6 @@
-import { RegisterStatus } from '@helix/shared/config/constant';
-import { CrossChainComponentProps, CrossChainDirection } from '@helix/shared/model';
-import { getBridge } from '@helix/shared/utils';
+import { RegisterStatus } from 'shared/config/constant';
+import { CrossChainComponentProps, CrossChainDirection } from 'shared/model';
+import { getBridge } from 'shared/utils';
 import { useCallback } from 'react';
 import { DVM } from '../DVM/DVM';
 import { EthereumDVMBridgeConfig, Erc20Payload } from './model';

@@ -25,6 +25,7 @@ export const pangolinDVMConfig: DVMChainConfig = {
     { name: 'pangolin-2.png', type: 'minor' },
     { name: 'pangolin-logo.svg', type: 'assist' },
   ],
+  mode: 'dvm',
   name: 'pangolin',
   provider: 'wss://ropsten.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
   social: {
@@ -72,5 +73,5 @@ export const pangolinDVMConfig: DVMChainConfig = {
   ],
   ss58Prefix: 42,
   specVersion: 28060,
-  type: ['ethereum'],
+  category: ['ethereum'],
 };

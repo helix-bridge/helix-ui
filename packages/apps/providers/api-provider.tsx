@@ -16,17 +16,16 @@ import {
   PolkadotChain,
   PolkadotConnection,
   TronConnection,
-} from '@helix/shared/model';
+} from 'shared/model';
 import {
   connect,
   getInitialSetting,
   getPolkadotChainProperties,
-  isDVM,
   isEthereumNetwork,
   verticesToChainConfig,
   waitUntilConnected,
-} from '@helix/shared/utils';
-import { updateStorage } from '@helix/shared/utils/helper/storage';
+} from 'shared/utils';
+import { updateStorage } from 'shared/utils/helper/storage';
 
 interface StoreState {
   mainConnection: Connection;
@@ -58,7 +57,7 @@ const initialNetworkConfig = () => {
   const network = getInitialSetting<Network>('from', null);
   const mode = getInitialSetting<NetworkMode>('fMode', 'native') ?? 'native';
 
-  return network && verticesToChainConfig({ network, mode });
+  return network && verticesToChainConfig({ name: network, mode });
 };
 
 const initialConnection: Connection = {
@@ -79,7 +78,7 @@ const initialState: StoreState = {
 };
 
 const isConnectionOfChain = (chain: ChainConfig) => {
-  const isConnectToMetamask = isDVM(chain) || isEthereumNetwork(chain.name);
+  const isConnectToMetamask = chain.mode === 'dvm' || isEthereumNetwork(chain);
 
   return (target: Connection | NoNullFields<PolkadotConnection> | EthereumConnection) => {
     const { network, chainId } = target;

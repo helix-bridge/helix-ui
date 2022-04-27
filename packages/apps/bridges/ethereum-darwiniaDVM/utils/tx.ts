@@ -1,6 +1,6 @@
-import { abi } from '@helix/shared/config/abi';
-import { TxFn, Tx } from '@helix/shared/model';
-import { getBridge, genEthereumContractTxObs, getErc20MappingAddress } from '@helix/shared/utils';
+import { abi } from 'shared/config/abi';
+import { TxFn, Tx } from 'shared/model';
+import { getBridge, genEthereumContractTxObs, getErc20MappingAddress } from 'shared/utils';
 import { Observable, from, switchMap } from 'rxjs';
 import { EthereumDVMBridgeConfig, Erc20TxPayload } from '../model';
 
@@ -20,7 +20,7 @@ export function issuing(value: Erc20TxPayload): Observable<Tx> {
   const { asset, recipient, amount, direction: transfer, sender } = value;
   const { address } = asset;
 
-  return from(getErc20MappingAddress(transfer.from.provider.rpc)).pipe(
+  return from(getErc20MappingAddress(transfer.from.provider)).pipe(
     switchMap((mappingAddress) =>
       genEthereumContractTxObs(
         mappingAddress,

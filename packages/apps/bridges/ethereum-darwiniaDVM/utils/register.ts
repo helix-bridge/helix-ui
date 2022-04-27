@@ -1,7 +1,7 @@
-import { abi } from '@helix/shared/config/abi';
-import { DarwiniaApiPath } from '@helix/shared/config/api';
-import { LONG_DURATION } from '@helix/shared/config/constant';
-import { EthereumChainConfig, Tx } from '@helix/shared/model';
+import { abi } from 'shared/config/abi';
+import { DarwiniaApiPath } from 'shared/config/api';
+import { LONG_DURATION } from 'shared/config/constant';
+import { EthereumChainConfig, Tx } from 'shared/model';
 import {
   apiUrl,
   ClaimNetworkPrefix,
@@ -18,7 +18,7 @@ import {
   getTokenRegisterStatus,
   rxGet,
   StoredProof,
-} from '@helix/shared/utils';
+} from 'shared/utils';
 import { upperFirst } from 'lodash';
 import {
   catchError,
@@ -143,7 +143,7 @@ export const getRegisterProof: (address: string, config: EthereumChainConfig) =>
   }
 
   const bridge = getAvailableDVMBridge(config);
-  const apiObs = from(entrance.polkadot.getInstance(bridge.arrival.provider.rpc).isReady);
+  const apiObs = from(entrance.polkadot.getInstance(bridge.arrival.provider).isReady);
   const getMmrFromWsm = getMMR(convert);
 
   return rxGet<Erc20RegisterProofRes>({

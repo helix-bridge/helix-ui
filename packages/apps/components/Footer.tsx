@@ -1,7 +1,7 @@
 import { CopyrightOutlined, GithubOutlined, MailOutlined, TwitterOutlined } from '@ant-design/icons';
-import { LanguageProps } from '@helix/shared/components/widget/Language';
-import { ThemeSwitch, ThemeSwitchProps } from '@helix/shared/components/widget/ThemeSwitch';
-import { THEME } from '@helix/shared/config/theme';
+import { LanguageProps } from 'shared/components/widget/Language';
+import { ThemeSwitch, ThemeSwitchProps } from 'shared/components/widget/ThemeSwitch';
+import { THEME } from 'shared/config/theme';
 import { Divider, Layout } from 'antd';
 import { getYear } from 'date-fns';
 import { useTranslation } from 'react-i18next';

@@ -1,4 +1,4 @@
-import { PolkadotChain } from '@helix/shared/model';
+import { PolkadotChain } from 'shared/model';
 import { GraphQLClient, useQuery } from 'graphql-hooks';
 
 const ACCOUNTS = `

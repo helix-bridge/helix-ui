@@ -1,14 +1,8 @@
 import { QuestionCircleFilled, ReloadOutlined } from '@ant-design/icons';
-import { FORM_CONTROL } from '@helix/shared/config/constant';
-import { getToken, useDarwiniaAvailableBalances } from '@helix/shared/hooks';
-import {
-  AvailableBalance,
-  DarwiniaAsset,
-  CrossChainComponentProps,
-  CrossChainPayload,
-  Token,
-} from '@helix/shared/model';
-import { isRing, toWei, fromWei, applyModalObs, createTxWorkflow, getInfoFromHash } from '@helix/shared/utils';
+import { FORM_CONTROL } from 'shared/config/constant';
+import { getToken, useDarwiniaAvailableBalances } from 'shared/hooks';
+import { AvailableBalance, DarwiniaAsset, CrossChainComponentProps, CrossChainPayload, Token } from 'shared/model';
+import { isRing, toWei, fromWei, applyModalObs, createTxWorkflow, getInfoFromHash } from 'shared/utils';
 import { ApiPromise } from '@polkadot/api';
 import { BN_ZERO } from '@polkadot/util';
 import { Button, Descriptions, Form, Spin, Tooltip } from 'antd';

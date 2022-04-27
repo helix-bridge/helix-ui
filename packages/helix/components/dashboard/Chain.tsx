@@ -1,9 +1,9 @@
 import { GithubOutlined, GlobalOutlined, TwitterCircleFilled } from '@ant-design/icons';
 import Image from 'next/image';
 import { useCallback, useMemo } from 'react';
-import { BestNumber } from '@helix/shared/components/widget/BestNumber';
-import { ChainConfig, LogoType } from '@helix/shared/model';
-import { getDisplayName, getNetworkMode } from '@helix/shared/utils';
+import { BestNumber } from 'shared/components/widget/BestNumber';
+import { ChainConfig, LogoType } from 'shared/model';
+import { getDisplayName } from 'shared/utils';
 
 export type ChainProps = ChainConfig & { logoType?: LogoType };
 
@@ -13,13 +13,12 @@ export function Chain(props: ChainProps) {
   }, []);
 
   const { social, logos, logoType = 'main' } = props;
-  const mode = getNetworkMode(props);
 
   const logo = useMemo(() => {
-    const target = logos.find((item) => item.mode === mode && item.type === logoType);
+    const target = logos.find((item) => item.type === logoType);
 
     return target?.name ?? '';
-  }, [logoType, logos, mode]);
+  }, [logoType, logos]);
 
   const chainName = getDisplayName(props);
 

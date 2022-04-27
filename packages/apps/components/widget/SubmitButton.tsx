@@ -1,5 +1,5 @@
-import { ChainConfig, ConnectionStatus } from '@helix/shared/model';
-import { getDisplayName, hasBridge, isBridgeAvailable, isSameNetConfig } from '@helix/shared/utils';
+import { ChainConfig, ConnectionStatus } from 'shared/model';
+import { getDisplayName, hasBridge, isBridgeAvailable, isSameNetConfig } from 'shared/utils';
 import { Button, ButtonProps, Form } from 'antd';
 import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';

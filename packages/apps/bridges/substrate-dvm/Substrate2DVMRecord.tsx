@@ -1,5 +1,5 @@
-import { RecordComponentProps, PolkadotChainConfig, DVMChainConfig } from '@helix/shared/model';
-import { isDVM, dvmAddressToAccountId } from '@helix/shared/utils';
+import { RecordComponentProps, PolkadotChainConfig, DVMChainConfig } from 'shared/model';
+import { dvmAddressToAccountId } from 'shared/utils';
 import { getUnixTime } from 'date-fns';
 import { upperCase } from 'lodash';
 import { useCallback, useMemo } from 'react';
@@ -26,7 +26,7 @@ export function Substrate2DVMRecord({
   }, [departure, record]);
 
   const chainName = useCallback(
-    (config: PolkadotChainConfig) => (isDVM(config) ? `${config?.name} (Smart) ` : config.name),
+    (config: PolkadotChainConfig) => (config.mode === 'dvm' ? `${config?.name} (Smart) ` : config.name),
     []
   );
 

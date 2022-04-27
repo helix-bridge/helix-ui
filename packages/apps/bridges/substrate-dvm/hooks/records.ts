@@ -1,5 +1,5 @@
-import { ChainConfig, PolkadotChainConfig } from '@helix/shared/model';
-import { convertToDvm, convertToSS58 } from '@helix/shared/utils';
+import { ChainConfig, PolkadotChainConfig } from 'shared/model';
+import { convertToDvm, convertToSS58 } from 'shared/utils';
 import { FetchData, GraphQLClient, useManualQuery } from 'graphql-hooks';
 import { useCallback, useMemo } from 'react';
 import { catchError, EMPTY, from, map } from 'rxjs';

@@ -1,11 +1,9 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { useIsMounted } from '@helix/shared/hooks';
-import { Arrival, ChainConfig, Departure, HistoryRouteParam, Network, Vertices } from '@helix/shared/model';
+import { useIsMounted } from 'shared/hooks';
+import { Arrival, ChainConfig, Departure, HistoryRouteParam, Network, Vertices } from 'shared/model';
 import {
   getCrossChainArrivals,
   getDisplayName,
-  getNetworkCategory,
-  getNetworkMode,
   getVerticesFromDisplayName,
   hasBridge,
   isChainConfigEqualTo,
@@ -15,7 +13,7 @@ import {
   isSubstrateDVM,
   isValidAddressStrict,
   verticesToChainConfig,
-} from '@helix/shared/utils';
+} from 'shared/utils';
 import { Affix, Input, message, Pagination, Select, Spin, Tabs, Tooltip } from 'antd';
 import { flow, isBoolean, negate, upperFirst } from 'lodash';
 import { useRouter } from 'next/router';
@@ -31,23 +29,23 @@ const PAGINATOR_DEFAULT = { row: 10, page: 0 };
 
 const defaultSelect: [Departure, Arrival] = [
   {
-    network: 'darwinia',
+    name: 'darwinia',
     mode: 'native',
   },
-  { network: 'crab', mode: 'dvm' },
+  { name: 'crab', mode: 'dvm' },
 ];
 
 // eslint-disable-next-line complexity
 const isAddressValid = (addr: string | null, departure: Vertices) => {
-  const { network, mode } = departure;
+  const { name: network, mode } = departure;
 
   let addressValid = false;
 
   if (addr && network) {
-    if (mode === 'dvm' || isEthereumNetwork(departure.network)) {
+    if (mode === 'dvm' || isEthereumNetwork(departure)) {
       addressValid = isValidAddressStrict(addr, 'ethereum');
     } else {
-      const category = flow([getVerticesFromDisplayName, verticesToChainConfig, getNetworkCategory])(network);
+      const category = flow([getVerticesFromDisplayName, verticesToChainConfig])(network);
 
       addressValid = category && isValidAddressStrict(addr, category === 'polkadot' ? network : category);
     }
@@ -67,13 +65,13 @@ export function CrossChainRecord() {
   const [departure, setDeparture] = useState<Vertices>(() => {
     const { from: network, fMode: mode } = searchParams;
 
-    return (network as Network) && mode ? { network, mode } : defaultSelect[0];
+    return (network as Network) && mode ? { name: network, mode } : defaultSelect[0];
   });
 
   const [arrival, setArrival] = useState<Vertices>(() => {
     const { to: network, tMode: mode } = searchParams;
 
-    return network && mode ? { network, mode } : defaultSelect[1];
+    return network && mode ? { name: network, mode } : defaultSelect[1];
   });
 
   const [loading, setLoading] = useState(false);
@@ -81,15 +79,15 @@ export function CrossChainRecord() {
   const [address, setAddress] = useState<string | null>(null);
 
   const searchPlaceholder = useMemo(() => {
-    const { network, mode } = departure;
+    const { name: network, mode } = departure;
 
-    if (isPolkadotNetwork(network)) {
-      return mode === 'dvm' && !isEthereumNetwork(arrival.network)
+    if (isPolkadotNetwork(departure)) {
+      return mode === 'dvm' && !isEthereumNetwork(arrival)
         ? t('Please fill in a {{network}} smart address which start with 0x', { network: upperFirst(network) })
         : t('Please fill in a substrate address of the {{network}} network.', { network: upperFirst(network) });
     }
 
-    if (isEthereumNetwork(network)) {
+    if (isEthereumNetwork(departure)) {
       return t('Please enter a valid {{network}} address', { network: 'Ethereum' });
     }
 
@@ -139,9 +137,7 @@ export function CrossChainRecord() {
   }, [departure]);
 
   useEffect(() => {
-    const target = fromNetworks.find(
-      (item) => item.name.toLowerCase() === departure.network.toLowerCase()
-    ) as ChainConfig;
+    const target = fromNetworks.find((item) => item.name.toLowerCase() === departure.name.toLowerCase()) as ChainConfig;
     const isSameEnv = (net: ChainConfig) =>
       isBoolean(target.isTest) && isBoolean(net.isTest) ? net.isTest === target.isTest : true;
 
@@ -151,7 +147,7 @@ export function CrossChainRecord() {
 
     if (to && tMode) {
       setArrival({
-        network: to,
+        name: to,
         mode: tMode,
       });
     } else {
@@ -183,18 +179,17 @@ export function CrossChainRecord() {
                 (item) => getDisplayName(item).toLowerCase() === name.toLowerCase()
               ) as ChainConfig;
 
-              const dep = { network: target.name, mode: getNetworkMode(target) };
-              const reachable = hasBridge([dep, arrival]);
+              const reachable = hasBridge([target, arrival]);
 
               const isSameEnv = (net: ChainConfig) =>
                 isBoolean(target.isTest) && isBoolean(net.isTest) ? net.isTest === target.isTest : true;
 
               if (!reachable) {
-                setArrival(getCrossChainArrivals(dep)[0]);
+                setArrival(getCrossChainArrivals(target)[0]);
               }
 
               setToFilters([negate(isChainConfigEqualTo(target)), isSameEnv, isReachable(target)]);
-              setDeparture(dep);
+              setDeparture(target);
             }}
           >
             {fromNetworks.map((item) => {
@@ -219,7 +214,7 @@ export function CrossChainRecord() {
                   (item) => getDisplayName(item).toLowerCase() === name.toLowerCase()
                 ) as ChainConfig;
 
-                setArrival({ network: target.name, mode: getNetworkMode(target) });
+                setArrival(target);
               }}
             >
               {toNetworks.map((item) => {
@@ -234,7 +229,7 @@ export function CrossChainRecord() {
             </Select>
           )}
 
-          {isEthereumNetwork(departure.network) && (
+          {isEthereumNetwork(departure) && (
             <Select
               value={Number(isGenesis)}
               size="large"

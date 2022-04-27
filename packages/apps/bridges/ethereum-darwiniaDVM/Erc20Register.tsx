@@ -1,10 +1,10 @@
 import { CheckCircleOutlined, LoadingOutlined } from '@ant-design/icons';
-import { MappingTokenInfo } from '@helix/shared/components/widget/MappingTokenInfo';
-import { FORM_CONTROL, RegisterStatus } from '@helix/shared/config/constant';
-import { ropstenConfig } from '@helix/shared/config/network';
-import { validateMessages } from '@helix/shared/config/validate-msg';
-import { useLocalSearch } from '@helix/shared/hooks';
-import { Erc20Token, EthereumChainConfig } from '@helix/shared/model';
+import { MappingTokenInfo } from 'shared/components/widget/MappingTokenInfo';
+import { FORM_CONTROL, RegisterStatus } from 'shared/config/constant';
+import { ropstenConfig } from 'shared/config/network';
+import { validateMessages } from 'shared/config/validate-msg';
+import { useLocalSearch } from 'shared/hooks';
+import { Erc20Token, EthereumChainConfig } from 'shared/model';
 import {
   CROSS_CHAIN_NETWORKS,
   getErc20Meta,
@@ -14,7 +14,7 @@ import {
   isValidAddress,
   StoredProof,
   updateStorage,
-} from '@helix/shared/utils';
+} from 'shared/utils';
 import { Button, Descriptions, Empty, Form, Input, List, Progress, Spin, Tabs, Typography } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { PropsWithChildren, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
@@ -208,7 +208,7 @@ export function Erc20Register() {
   const searchFn = useCallback(tokenSearchFactory(tokens), [tokens]);
   const { data } = useLocalSearch(searchFn as (arg: string) => Erc20Token[]);
   const { observer } = useTx();
-  const networks = useMemo(() => CROSS_CHAIN_NETWORKS.filter((item) => item.type.includes('ethereum')), []);
+  const networks = useMemo(() => CROSS_CHAIN_NETWORKS.filter((item) => item.category.includes('ethereum')), []);
 
   const canStart = useMemo(
     () =>

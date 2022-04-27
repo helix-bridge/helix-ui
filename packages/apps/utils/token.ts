@@ -1,4 +1,4 @@
-import { TokenMode } from '@helix/shared/model';
+import { TokenMode } from 'shared/model';
 import { message } from 'antd';
 import { memoize } from 'lodash';
 import Web3 from 'web3';

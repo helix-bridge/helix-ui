@@ -1,7 +1,6 @@
 import { has, isEqual } from 'lodash';
 import { FunctionComponent } from 'react';
 import { ChainConfig } from '../network';
-import { Network, NetworkMode } from '../network/network';
 
 /* ----------------------------------------------- bridge state ------------------------------------------------ */
 
@@ -9,10 +8,7 @@ export type BridgeStatus = 'pending' | 'available' | 'error';
 
 /* ----------------------------------------------- bridge vertices ------------------------------------------------ */
 
-export interface Vertices {
-  network: Network;
-  mode: NetworkMode;
-}
+export type Vertices = Pick<ChainConfig, 'name' | 'mode'>;
 
 export type Departure = Vertices;
 
@@ -109,7 +105,7 @@ export class Bridge<C = BridgeConfig> {
   }
 
   private toVertices(config: ChainConfig): Vertices {
-    return { network: config.name, mode: has(config, 'dvm') ? 'dvm' : 'native' };
+    return { name: config.name, mode: has(config, 'dvm') ? 'dvm' : 'native' };
   }
 
   private isVertices(data: Vertices | ChainConfig): boolean {

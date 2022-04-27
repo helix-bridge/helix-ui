@@ -1,4 +1,4 @@
-import { Arrival, Departure } from '@helix/shared/model';
+import { Arrival, Departure } from 'shared/model';
 
 export interface Paginator {
   row: number;

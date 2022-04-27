@@ -7,7 +7,7 @@ import {
   DeepRequired,
   DVMChainConfig,
   PolkadotChainConfig,
-} from '@helix/shared/model';
+} from 'shared/model';
 
 export interface Substrate2DVMPayload extends CrossChainParty, CrossChainAsset<DarwiniaAsset> {}
 

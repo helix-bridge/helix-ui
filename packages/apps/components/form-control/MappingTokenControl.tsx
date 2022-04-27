@@ -1,9 +1,9 @@
 import { Loading3QuartersOutlined } from '@ant-design/icons';
-import { EllipsisMiddle } from '@helix/shared/components/widget/EllipsisMiddle';
-import { MappingTokenInfo } from '@helix/shared/components/widget/MappingTokenInfo';
-import { RegisterStatus } from '@helix/shared/config/constant';
-import { CustomFormControlProps, MappingToken } from '@helix/shared/model';
-import { fromWei, prettyNumber } from '@helix/shared/utils';
+import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
+import { MappingTokenInfo } from 'shared/components/widget/MappingTokenInfo';
+import { RegisterStatus } from 'shared/config/constant';
+import { CustomFormControlProps, MappingToken } from 'shared/model';
+import { fromWei, prettyNumber } from 'shared/utils';
 import { Progress, Select, Typography } from 'antd';
 import { groupBy } from 'lodash';
 import { PropsWithRef, useCallback, useMemo } from 'react';

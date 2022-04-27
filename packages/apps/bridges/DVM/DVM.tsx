@@ -1,5 +1,5 @@
-import { FORM_CONTROL, LONG_DURATION, RegisterStatus } from '@helix/shared/config/constant';
-import { useIsMounted, useIsMountedOperator } from '@helix/shared/hooks';
+import { FORM_CONTROL, LONG_DURATION, RegisterStatus } from 'shared/config/constant';
+import { useIsMounted, useIsMountedOperator } from 'shared/hooks';
 import {
   ChainConfig,
   CommonPayloadKeys,
@@ -16,14 +16,13 @@ import {
   RequiredPartial,
   Token,
   Tx,
-} from '@helix/shared/model';
+} from 'shared/model';
 import {
   applyModalObs,
   approveToken,
   createTxWorkflow,
   fromWei,
   getAllowance,
-  getNetworkMode,
   insufficientBalanceRule,
   insufficientDailyLimit,
   isPolkadotNetwork,
@@ -31,7 +30,7 @@ import {
   pollWhile,
   prettyNumber,
   toWei,
-} from '@helix/shared/utils';
+} from 'shared/utils';
 import { Button, Descriptions, Form } from 'antd';
 import BN from 'bn.js';
 import { isNull } from 'lodash';
@@ -95,10 +94,9 @@ function TransferInfo({ tokenInfo, amount, direction, dailyLimit, fee }: Transfe
 
   useEffect(() => {
     const { to: arrival } = direction;
-    const mode = getNetworkMode(arrival);
 
     (async () => {
-      if (tokenInfo && isPolkadotNetwork(arrival.name) && mode === 'native') {
+      if (tokenInfo && isPolkadotNetwork(arrival) && arrival.mode === 'native') {
         const result = tokenInfo.symbol.replace('x', '');
 
         setSymbol(result);
@@ -188,7 +186,7 @@ export function DVM({
 
   const recipients = useMemo(
     () =>
-      isPolkadotNetwork(direction.to.name) && assistantConnection.accounts?.length
+      isPolkadotNetwork(direction.to) && assistantConnection.accounts?.length
         ? assistantConnection.accounts
         : undefined,
     [assistantConnection.accounts, direction.to]

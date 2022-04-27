@@ -1,7 +1,7 @@
-import { darwiniaCrabDVM, pangoroPangolinDVM } from '@helix/shared/config/bridge';
-import { ethereumDarwinia, ropstenPangolin } from '@helix/shared/config/bridges/ethereum-darwinia';
-import { ethereumCrabDVM, ropstenPangolinDVM } from '@helix/shared/config/bridges/ethereum-dvm';
-import { crabCrabDVM, pangolinPangolinDVM } from '@helix/shared/config/bridges/substrate-dvm';
+import { darwiniaCrabDVM, pangoroPangolinDVM } from 'shared/config/bridge';
+import { ethereumDarwinia, ropstenPangolin } from 'shared/config/bridges/ethereum-darwinia';
+import { ethereumCrabDVM, ropstenPangolinDVM } from 'shared/config/bridges/ethereum-dvm';
+import { crabCrabDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
 import { FunctionComponent } from 'react';
 import {
   Darwinia2Ethereum,

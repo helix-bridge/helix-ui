@@ -19,7 +19,7 @@ import { RegisterStatus, SHORT_DURATION } from '../../config/constant';
 import { ChainConfig, CrossChainDirection, DVMChainConfig, EthereumChainConfig, MappingToken } from '../../model';
 import { DVMBridgeConfig, getAvailableDVMBridge, getBridge, isS2S, isSubstrateDVM2Substrate } from '../bridge';
 import { MMRProof } from '../mmr';
-import { chainConfigToVertices, connect, entrance } from '../network';
+import { connect, entrance } from '../connection';
 import { getErc20MappingAddress, getS2SMappingAddress } from './mappingParams';
 import { getErc20Meta } from './mappingTokenMeta';
 
@@ -48,8 +48,8 @@ export type StoredProof = {
 /* --------------------------------------------Inner Section------------------------------------------------------- */
 
 function createMappingTokenContract(departure: DVMChainConfig, arrival: ChainConfig, mappingAddress: string): Contract {
-  const web3 = entrance.web3.getInstance(departure.provider.rpc);
-  const s2s = isS2S(chainConfigToVertices(departure), chainConfigToVertices(arrival));
+  const web3 = entrance.web3.getInstance(departure.provider);
+  const s2s = isS2S(departure, arrival);
 
   return new web3.eth.Contract(s2s ? abi.S2SMappingTokenABI : abi.Erc20MappingTokenABI, mappingAddress);
 }
@@ -76,7 +76,7 @@ function getMappingTokensFromDVM(
   arrival: EthereumChainConfig,
   mappingAddress: string
 ) {
-  const s2s = isS2S(chainConfigToVertices(departure), chainConfigToVertices(arrival));
+  const s2s = isS2S(departure, arrival);
   const countObs = from(getMappingTokenLength(departure, arrival, mappingAddress));
   // FIXME: method predicate logic below should be removed after abi method is unified.
   const getToken = (index: number) =>
@@ -90,7 +90,7 @@ function getMappingTokensFromDVM(
         err.pipe(
           tap((error) => {
             console.warn('WEB3 PROVIDER ERROR:', error.message);
-            entrance.web3.removeInstance(departure.provider.rpc);
+            entrance.web3.removeInstance(departure.provider);
           }),
           delayWhen(() => interval(SHORT_DURATION))
         )
@@ -112,7 +112,7 @@ function getMappingTokensFromDVM(
           ? of(1)
           : infoObs.pipe(
               switchMap(({ source }) =>
-                getTokenRegisterStatus(source, bridge.config.contracts.redeem, arrival.provider.etherscan)
+                getTokenRegisterStatus(source, bridge.config.contracts.redeem, arrival.provider)
               )
             );
 
@@ -209,11 +209,11 @@ export const getKnownMappingTokens = (
   }
   const { from: departure, to: arrival } = direction;
 
-  const mappingAddressObs = isSubstrateDVM2Substrate(chainConfigToVertices(departure), chainConfigToVertices(arrival))
-    ? from(getS2SMappingAddress(departure.provider.rpc))
-    : from(getErc20MappingAddress(departure.provider.rpc));
+  const mappingAddressObs = isSubstrateDVM2Substrate(departure, arrival)
+    ? from(getS2SMappingAddress(departure.provider))
+    : from(getErc20MappingAddress(departure.provider));
 
-  const tokens = departure.type.includes('ethereum')
+  const tokens = departure.category.includes('ethereum')
     ? getMappingTokensFromEthereum(currentAccount, direction)
     : mappingAddressObs.pipe(
         switchMap((mappingAddress) =>

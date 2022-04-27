@@ -1,7 +1,7 @@
 import { QuestionCircleFilled } from '@ant-design/icons';
-import { abi } from '@helix/shared/config/abi';
-import { FORM_CONTROL } from '@helix/shared/config/constant';
-import { CrossChainComponentProps, CrossChainPayload, Erc20Token, Network, Tx } from '@helix/shared/model';
+import { abi } from 'shared/config/abi';
+import { FORM_CONTROL } from 'shared/config/constant';
+import { CrossChainComponentProps, CrossChainPayload, Erc20Token, Network, Tx } from 'shared/model';
 import {
   AfterTxCreator,
   applyModalObs,
@@ -21,7 +21,7 @@ import {
   prettyNumber,
   TokenCache,
   toWei,
-} from '@helix/shared/utils';
+} from 'shared/utils';
 import { BN_ZERO } from '@polkadot/util';
 import { Button, Descriptions, Form, Input, Progress, Select, Tooltip } from 'antd';
 import { FormInstance, Rule } from 'antd/lib/form';

@@ -2,7 +2,7 @@ import { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { from, Observable, Observer, mergeMap, tap } from 'rxjs';
 import { Tx } from '../../model';
-import { waitUntilConnected } from '../network';
+import { waitUntilConnected } from '../connection';
 
 function extrinsicSpy(observer: Observer<Tx>) {
   observer.next({ status: 'signing' });

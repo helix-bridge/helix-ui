@@ -1,4 +1,4 @@
-import { CrossChainPayload } from '@helix/shared/model';
+import { CrossChainPayload } from 'shared/model';
 import { useTranslation } from 'react-i18next';
 import { IDescription } from '../widget/IDescription';
 

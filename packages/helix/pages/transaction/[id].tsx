@@ -1,30 +1,29 @@
 import { ClockCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { CrossChainState } from '@helix/shared/components/widget/CrossChainStatus';
-import { EllipsisMiddle } from '@helix/shared/components/widget/EllipsisMiddle';
-import { Icon } from '@helix/shared/components/widget/Icon';
-import { Logo } from '@helix/shared/components/widget/Logo';
-import { SubscanLink } from '@helix/shared/components/widget/SubscanLink';
-import { CrossChainStatus, MIDDLE_DURATION } from '@helix/shared/config/constant';
-import { useIsMounted } from '@helix/shared/hooks';
+import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
+import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
+import { Icon } from 'shared/components/widget/Icon';
+import { Logo } from 'shared/components/widget/Logo';
+import { SubscanLink } from 'shared/components/widget/SubscanLink';
+import { CrossChainStatus, MIDDLE_DURATION } from 'shared/config/constant';
+import { useIsMounted } from 'shared/hooks';
 import {
   NetworkQueryParams,
   Substrate2SubstrateRecord,
   SubstrateSubstrateDVMBridgeConfig,
   UnlockedRecord,
   Vertices,
-} from '@helix/shared/model';
+} from 'shared/model';
 import {
   fromWei,
   getBridge,
   getDisplayName,
-  getNetworkMode,
   gqlName,
   pollWhile,
   prettyNumber,
   revertAccount,
   unixTimeToLocal,
   verticesToChainConfig,
-} from '@helix/shared/utils';
+} from 'shared/utils';
 import { Breadcrumb, Divider, Progress, Tooltip } from 'antd';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
 import { formatDistance, fromUnixTime } from 'date-fns';
@@ -187,36 +186,33 @@ const Page: NextPage<{
       contracts: { issuing: issuingRecipient, redeem: redeemRecipient, genesis },
     } = bridge.config;
 
-    const depMode = getNetworkMode(departure);
-    const arrMode = getNetworkMode(arrival);
-
     const issuingTransfer =
       departureRecord.result === CrossChainStatus.success
         ? [
             {
               chain: departure,
-              from: revertAccount(departureRecord.sender, departure.name, depMode),
+              from: revertAccount(departureRecord.sender, departure),
               to: issuingRecipient,
               token: fromToken,
             },
             {
               chain: arrival,
               from: genesis,
-              to: revertAccount(departureRecord.recipient, arrival.name, arrMode),
+              to: revertAccount(departureRecord.recipient, arrival),
               token: toToken,
             },
           ]
         : [
             {
               chain: departure,
-              from: revertAccount(departureRecord.sender, departure.name, depMode),
+              from: revertAccount(departureRecord.sender, departure),
               to: issuingRecipient,
               token: fromToken,
             },
             {
               chain: departure,
               from: issuingRecipient,
-              to: revertAccount(departureRecord.sender, departure.name, depMode),
+              to: revertAccount(departureRecord.sender, departure),
               token: fromToken,
             },
           ];
@@ -226,14 +222,14 @@ const Page: NextPage<{
         ? [
             {
               chain: departure,
-              from: revertAccount(departureRecord.sender, departure.name, depMode),
+              from: revertAccount(departureRecord.sender, departure),
               to: redeemRecipient,
               token: fromToken,
             },
             {
               chain: arrival,
               from: issuingRecipient,
-              to: revertAccount(departureRecord.recipient, arrival.name, arrMode),
+              to: revertAccount(departureRecord.recipient, arrival),
               token: toToken,
             },
             {
@@ -246,13 +242,13 @@ const Page: NextPage<{
         : [
             {
               chain: departure,
-              from: revertAccount(departureRecord.sender, departure.name, depMode),
+              from: revertAccount(departureRecord.sender, departure),
               to: redeemRecipient,
               token: fromToken,
             },
             {
               chain: departure,
-              to: revertAccount(departureRecord.sender, departure.name, depMode),
+              to: revertAccount(departureRecord.sender, departure),
               from: redeemRecipient,
               token: fromToken,
             },
@@ -337,7 +333,7 @@ const Page: NextPage<{
         >
           {departureRecord && (
             <SubscanLink
-              network={departure.name}
+              network={departure}
               txHash={departureRecord.requestTxHash}
               className="hover:opacity-80 transition-opacity duration-200"
             >
@@ -352,7 +348,7 @@ const Page: NextPage<{
         >
           {finalRecord ? (
             <SubscanLink
-              network={arrival.name}
+              network={arrival}
               txHash={finalRecord?.txHash}
               className="hover:opacity-80 transition-opacity duration-200"
             >
@@ -360,7 +356,7 @@ const Page: NextPage<{
             </SubscanLink>
           ) : departureRecord?.result === CrossChainStatus.reverted ? (
             <SubscanLink
-              network={departure.name}
+              network={departure}
               txHash={departureRecord?.responseTxHash ?? ''}
               className="hover:opacity-80 transition-opacity duration-200"
             >
@@ -437,14 +433,16 @@ const Page: NextPage<{
         <Description title={t('Sender')} tip={t('Address (external or contract) sending the transaction.')}>
           {departureRecord && (
             <EllipsisMiddle copyable>
-              {revertAccount(departureRecord.sender, query.from, query.fromMode)}
+              {revertAccount(departureRecord.sender, { name: query.from, mode: query.fromMode })}
             </EllipsisMiddle>
           )}
         </Description>
 
         <Description title={t('Receiver')} tip={t('Address (external or contract) receiving the transaction.')}>
           {departureRecord && (
-            <EllipsisMiddle copyable>{revertAccount(departureRecord.recipient, query.to, query.toMode)}</EllipsisMiddle>
+            <EllipsisMiddle copyable>
+              {revertAccount(departureRecord.recipient, { name: query.to, mode: query.toMode })}
+            </EllipsisMiddle>
           )}
         </Description>
 
@@ -508,8 +506,8 @@ export async function getServerSideProps(
   const { from, fromMode, to, toMode } = context.query as unknown as NetworkQueryParams;
 
   const vertices: [Vertices, Vertices] = [
-    { network: from, mode: fromMode },
-    { network: to, mode: toMode },
+    { name: from, mode: fromMode },
+    { name: to, mode: toMode },
   ];
 
   const bridge = getBridge(vertices);

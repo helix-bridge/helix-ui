@@ -2,10 +2,10 @@ import { BlockNumber } from '@polkadot/types/interfaces/runtime';
 import { Spin, Tooltip } from 'antd';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { from, mergeMap, retry, startWith, Subscription, switchMap, takeWhile, timer } from 'rxjs';
-import { MIDDLE_DURATION } from '@helix/shared/config/constant';
-import { useIsMounted } from '@helix/shared/hooks';
-import { ChainConfig } from '@helix/shared/model';
-import { entrance, isEthereumNetwork, isPolkadotNetwork, prettyNumber, waitUntilConnected } from '@helix/shared/utils';
+import { MIDDLE_DURATION } from 'shared/config/constant';
+import { useIsMounted } from 'shared/hooks';
+import { ChainConfig } from 'shared/model';
+import { entrance, prettyNumber, waitUntilConnected } from 'shared/utils';
 
 const duration = 6000;
 
@@ -40,8 +40,8 @@ function Component({ config, color = '', onChange = (num) => void num }: BestNum
   useEffect(() => {
     let sub$$: Subscription;
 
-    if (isPolkadotNetwork(config.name)) {
-      const api = entrance.polkadot.getInstance(config.provider.rpc);
+    if (config.category.includes('polkadot')) {
+      const api = entrance.polkadot.getInstance(config.provider);
 
       sub$$ = from(waitUntilConnected(api))
         .pipe(
@@ -53,8 +53,8 @@ function Component({ config, color = '', onChange = (num) => void num }: BestNum
         .subscribe(observer);
     }
 
-    if (isEthereumNetwork(config.name)) {
-      const web3 = entrance.web3.getInstance(config.provider.etherscan);
+    if (config.category.includes('ethereum')) {
+      const web3 = entrance.web3.getInstance(config.provider);
 
       sub$$ = timer(0, duration)
         .pipe(
@@ -69,7 +69,7 @@ function Component({ config, color = '', onChange = (num) => void num }: BestNum
     return () => {
       sub$$?.unsubscribe();
     };
-  }, [config.name, config.provider.etherscan, config.provider.rpc, isMounted, observer]);
+  }, [config.category, config.name, config.provider, isMounted, observer]);
 
   return (
     <Tooltip title={bestNumber}>

@@ -6,12 +6,12 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { FunctionComponent, useEffect, useState } from 'react';
-import GlobalLoading from '@helix/shared/components/widget/GlobalLoading';
-import { toggleTheme } from '@helix/shared/components/widget/ThemeSwitch';
-import { THEME } from '@helix/shared/config/theme';
+import GlobalLoading from 'shared/components/widget/GlobalLoading';
+import { toggleTheme } from 'shared/components/widget/ThemeSwitch';
+import { THEME } from 'shared/config/theme';
 import '../styles/index.scss';
-import '@helix/shared/theme/antd/index.less';
-import { readStorage } from '@helix/shared/utils';
+import 'shared/theme/antd/index.less';
+import { readStorage } from 'shared/utils';
 import AppLayout from '../components/AppLayout';
 import { endpoint } from '../config';
 

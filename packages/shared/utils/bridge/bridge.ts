@@ -12,7 +12,7 @@ import {
   Departure,
   Vertices,
 } from '../../model';
-import { chainConfigToVertices, isDVM, isEthereumNetwork, isPolkadotNetwork } from '../network/network';
+import { isEthereumNetwork, isPolkadotNetwork } from '../network/network';
 
 type BridgePredicateFn = (departure: Vertices, arrival: Vertices) => boolean;
 
@@ -22,10 +22,10 @@ export type DVMBridgeConfig = Required<
 
 export const isSubstrate2SubstrateDVM: BridgePredicateFn = (departure, arrival) => {
   return (
-    isPolkadotNetwork(departure.network) &&
-    isPolkadotNetwork(arrival.network) &&
+    isPolkadotNetwork(departure) &&
+    isPolkadotNetwork(arrival) &&
     arrival.mode === 'dvm' &&
-    arrival.network !== departure.network
+    arrival.name !== departure.name
   );
 };
 
@@ -33,23 +33,23 @@ export const isSubstrateDVM2Substrate: BridgePredicateFn = (departure, arrival) 
   isSubstrate2SubstrateDVM(arrival, departure);
 
 export const isEthereum2Darwinia: BridgePredicateFn = (departure, arrival) => {
-  return isEthereumNetwork(departure.network) && isPolkadotNetwork(arrival.network) && arrival.mode === 'native';
+  return isEthereumNetwork(departure) && isPolkadotNetwork(arrival) && arrival.mode === 'native';
 };
 
 export const isDarwinia2Ethereum: BridgePredicateFn = (departure, arrival) => isEthereum2Darwinia(arrival, departure);
 
 export const isDVM2Ethereum: BridgePredicateFn = (departure, arrival) => {
-  return isPolkadotNetwork(departure.network) && isEthereumNetwork(arrival.network) && departure.mode === 'dvm';
+  return isPolkadotNetwork(departure) && isEthereumNetwork(arrival) && departure.mode === 'dvm';
 };
 
 export const isEthereum2DVM: BridgePredicateFn = (departure, arrival) => isDVM2Ethereum(arrival, departure);
 
 export const isSubstrate2DVM: BridgePredicateFn = (departure, arrival) => {
   return (
-    isPolkadotNetwork(departure.network) &&
-    isPolkadotNetwork(arrival.network) &&
+    isPolkadotNetwork(departure) &&
+    isPolkadotNetwork(arrival) &&
     arrival.mode === 'dvm' &&
-    departure.network === arrival.network
+    departure.name === arrival.name
   );
 };
 
@@ -93,14 +93,14 @@ export function getBridge<T extends BridgeConfig>(
       return pick(item as Vertices, ['network', 'mode']) as Vertices;
     }
 
-    return chainConfigToVertices(item as ChainConfig);
+    return item;
   });
 
   const bridge = BRIDGES.find((item) => isEqual(item.issuing, direction) || isEqual(item.redeem, direction));
 
   if (!bridge) {
     throw new Error(
-      `Bridge from ${direction[0]?.network}(${direction[0].mode}) to ${direction[1]?.network}(${direction[1].mode}) is not exist`
+      `Bridge from ${direction[0]?.name}(${direction[0].mode}) to ${direction[1]?.name}(${direction[1].mode}) is not exist`
     );
   }
 
@@ -116,10 +116,11 @@ export function getBridgeComponent(type: 'crossChain' | 'record') {
       return null;
     }
 
-    const departure = chainConfigToVertices(from);
-    const arrival = chainConfigToVertices(to);
-    const direction = [departure, arrival] as [Departure, Departure];
-    const bridge = getBridge(direction);
+    const direction = [
+      { name: from.name, mode: from.mode },
+      { name: to.name, mode: to.mode },
+    ] as [Departure, Departure];
+    const bridge = getBridge([from, to]);
 
     if (!bridge || bridge.status === 'pending') {
       return ComingSoon;
@@ -139,7 +140,7 @@ export function getBridgeComponent(type: 'crossChain' | 'record') {
 export function getAvailableDVMBridge(departure: ChainConfig): Bridge<DVMBridgeConfig> {
   // FIXME: by default we use the first vertices here.
   const [bridge] = BRIDGES.filter(
-    (item) => item.status === 'available' && isEqual(item.departure, departure) && isDVM(item.arrival)
+    (item) => item.status === 'available' && isEqual(item.departure, departure) && item.arrival.mode === 'dvm'
   );
 
   if (bridge) {

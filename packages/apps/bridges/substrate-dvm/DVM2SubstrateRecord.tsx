@@ -1,6 +1,6 @@
 import { CloudDownloadOutlined } from '@ant-design/icons';
-import { RecordComponentProps, DVMChainConfig, PolkadotChainConfig } from '@helix/shared/model';
-import { isDVM, convertToSS58 } from '@helix/shared/utils';
+import { RecordComponentProps, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
+import { convertToSS58 } from 'shared/utils';
 import { Tooltip } from 'antd';
 import { getUnixTime } from 'date-fns';
 import { useCallback, useMemo } from 'react';
@@ -30,7 +30,7 @@ export function DVM2SubstrateRecord({
   }, [departure, record]);
 
   const chainName = useCallback(
-    (config: PolkadotChainConfig) => (isDVM(config) ? `${config?.name} (Smart) ` : config.name),
+    (config: PolkadotChainConfig) => (config.mode === 'dvm' ? `${config?.name} (Smart) ` : config.name),
     []
   );
 

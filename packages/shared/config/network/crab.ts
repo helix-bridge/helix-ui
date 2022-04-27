@@ -1,13 +1,13 @@
 import { PolkadotChainConfig } from '../../model';
 
 export const crabConfig: PolkadotChainConfig = {
-  endpoints: { mmr: '' },
   isTest: false,
   logos: [
     { name: 'crab.png', type: 'main' },
     { name: 'crab.svg', type: 'minor' },
     { name: 'crab-logo.svg', type: 'assist' },
   ],
+  mode: 'native',
   name: 'crab',
   provider: 'wss://darwinia-crab.api.onfinality.io/public-ws',
   social: {
@@ -27,7 +27,7 @@ export const crabConfig: PolkadotChainConfig = {
       address: '',
     },
   ],
-  type: ['polkadot', 'darwinia'],
+  category: ['polkadot', 'darwinia'],
   ss58Prefix: 42,
   specVersion: 1200,
 };

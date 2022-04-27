@@ -1,13 +1,13 @@
 import { ImportOutlined } from '@ant-design/icons';
-import { DESCRIPTIONS, SYSTEM_NETWORK_CONFIGURATIONS } from '@helix/shared/config/network';
-import { Network } from '@helix/shared/model';
+import { DESCRIPTIONS, SYSTEM_NETWORK_CONFIGURATIONS } from 'shared/config/network';
+import { Network } from 'shared/model';
 import {
   addCustomChain,
   NETWORK_CONFIGURATIONS,
   readStorage,
   removeCustomChain,
   saveNetworkConfig,
-} from '@helix/shared/utils';
+} from 'shared/utils';
 import { Alert, Button, Checkbox, Col, Form, Input, InputNumber, message, Modal, Row, Tooltip } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { isArray, isBoolean, isEqual, isNumber, isObject, isString, last } from 'lodash';

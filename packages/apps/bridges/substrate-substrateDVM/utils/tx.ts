@@ -1,5 +1,5 @@
-import { abi } from '@helix/shared/config/abi';
-import { Tx, CrossChainDirection, PolkadotChainConfig, DVMChainConfig } from '@helix/shared/model';
+import { abi } from 'shared/config/abi';
+import { Tx, CrossChainDirection, PolkadotChainConfig, DVMChainConfig } from 'shared/model';
 import {
   signAndSendExtrinsic,
   convertToDvm,
@@ -8,7 +8,7 @@ import {
   fromWei,
   toWei,
   genEthereumContractTxObs,
-} from '@helix/shared/utils';
+} from 'shared/utils';
 import { ApiPromise } from '@polkadot/api';
 import { Codec } from '@polkadot/types/types';
 import BN from 'bn.js';
@@ -31,7 +31,7 @@ export function redeem(value: RedeemSubstrateTxPayload, mappingAddress: string, 
   const { asset, amount, sender, recipient, direction: transfer } = value;
   const receiver = Web3.utils.hexToBytes(convertToDvm(recipient));
   const WEIGHT = '690133000';
-  const api = entrance.polkadot.getInstance(transfer.from.provider.rpc);
+  const api = entrance.polkadot.getInstance(transfer.from.provider);
 
   const valObs = from(waitUntilConnected(api)).pipe(
     switchMap(() => {

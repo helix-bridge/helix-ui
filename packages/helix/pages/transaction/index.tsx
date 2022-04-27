@@ -1,6 +1,6 @@
 import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Substrate2SubstrateRecord } from '@helix/shared/model';
-import { convertToDvm, getSupportedChains, gqlName, isValidAddress } from '@helix/shared/utils';
+import { Substrate2SubstrateRecord } from 'shared/model';
+import { convertToDvm, getSupportedChains, gqlName, isValidAddress } from 'shared/utils';
 import { Affix, Button, Input, Spin } from 'antd';
 import { getUnixTime } from 'date-fns';
 import { useQuery } from 'graphql-hooks';

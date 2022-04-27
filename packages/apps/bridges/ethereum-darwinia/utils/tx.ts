@@ -1,5 +1,5 @@
-import { abi } from '@helix/shared/config/abi';
-import { CrossChainDirection, LockEventsStorage, PolkadotChainConfig, Tx, TxFn } from '@helix/shared/model';
+import { abi } from 'shared/config/abi';
+import { CrossChainDirection, LockEventsStorage, PolkadotChainConfig, Tx, TxFn } from 'shared/model';
 import {
   buf2hex,
   ClaimNetworkPrefix,
@@ -14,7 +14,7 @@ import {
   isKton,
   isRing,
   signAndSendExtrinsic,
-} from '@helix/shared/utils';
+} from 'shared/utils';
 import { ApiPromise } from '@polkadot/api';
 import { decodeAddress } from '@polkadot/util-crypto';
 import { upperFirst } from 'lodash';
@@ -107,7 +107,7 @@ export function claimToken({
   const { from: departure, to: arrival } = direction;
   const bridge = getBridge<EthereumDarwiniaBridgeConfig>(direction);
   const networkPrefix = upperFirst(departure.name) as ClaimNetworkPrefix;
-  const apiObs = from(entrance.polkadot.getInstance(departure.provider.rpc).isReady);
+  const apiObs = from(entrance.polkadot.getInstance(departure.provider).isReady);
   const header = encodeBlockHeader(blockHeaderStr);
   const storageKey = getD2ELockEventsStorageKey(blockNumber, bridge.config.lockEvents);
 

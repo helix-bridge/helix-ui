@@ -1,5 +1,5 @@
-import { abi } from '@helix/shared/config/abi';
-import { Tx, DVMChainConfig, CrossChainDirection, PolkadotChainConfig } from '@helix/shared/model';
+import { abi } from 'shared/config/abi';
+import { Tx, DVMChainConfig, CrossChainDirection, PolkadotChainConfig } from 'shared/model';
 import {
   dvmAddressToAccountId,
   isRing,
@@ -8,7 +8,7 @@ import {
   genEthereumTransactionObs,
   convertToDvm,
   genEthereumContractTxObs,
-} from '@helix/shared/utils';
+} from 'shared/utils';
 import { ApiPromise } from '@polkadot/api';
 import { TypeRegistry } from '@polkadot/types';
 import BN from 'bn.js';

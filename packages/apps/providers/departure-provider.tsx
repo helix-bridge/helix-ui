@@ -1,5 +1,5 @@
 import { createContext, useState } from 'react';
-import { ChainConfig } from '@helix/shared/model';
+import { ChainConfig } from 'shared/model';
 
 export interface DepartureState {
   from?: ChainConfig;

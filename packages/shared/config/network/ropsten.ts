@@ -14,6 +14,7 @@ export const ropstenConfig: EthereumChainConfig = {
     { name: 'ropsten.svg', type: 'minor' },
   ],
   isTest: true,
+  mode: 'native',
   name: 'ropsten',
   provider: 'wss://ropsten.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
   social: {
@@ -32,5 +33,5 @@ export const ropstenConfig: EthereumChainConfig = {
       address: '',
     },
   ],
-  type: ['ethereum'],
+  category: ['ethereum'],
 };

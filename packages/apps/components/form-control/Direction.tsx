@@ -6,18 +6,17 @@ import {
   CustomFormControlProps,
   HashInfo,
   NullableCrossChainDirection,
-} from '@helix/shared/model';
+} from 'shared/model';
 import {
   getArrival,
   getBridge,
-  getNetworkMode,
   isChainConfigEqualTo,
   isReachable,
   isTraceable,
   patchUrl,
   truth,
   updateStorage,
-} from '@helix/shared/utils';
+} from 'shared/utils';
 import { Button, Tooltip } from 'antd';
 import { isBoolean, isNull, negate } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -89,8 +88,8 @@ export function Direction({ value, onChange, mode = 'default' }: DirectionProps)
     const info = {
       from: from?.name ?? '',
       to: to?.name ?? '',
-      fMode: from ? getNetworkMode(from) : 'native',
-      tMode: to ? getNetworkMode(to) : 'native',
+      fMode: from?.mode ?? 'native',
+      tMode: to?.mode ?? 'native',
     } as HashInfo;
     const ver = getArrival(from, to);
     const reverseVer = getArrival(to, from);

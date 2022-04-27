@@ -1,7 +1,7 @@
-import { IdentAccountAddress } from '@helix/shared/components/widget/IdentAccountAddress';
-import { FORM_CONTROL } from '@helix/shared/config/constant';
-import { AvailableBalance } from '@helix/shared/model';
-import { fromWei, prettyNumber } from '@helix/shared/utils';
+import { IdentAccountAddress } from 'shared/components/widget/IdentAccountAddress';
+import { FORM_CONTROL } from 'shared/config/constant';
+import { AvailableBalance } from 'shared/model';
+import { fromWei, prettyNumber } from 'shared/utils';
 import { Form, FormInstance, Select } from 'antd';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';

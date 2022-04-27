@@ -30,14 +30,9 @@ import {
   PolkadotConnection,
   TronConnection,
 } from '../../model';
-import {
-  getNetworkCategory,
-  isMetamaskInstalled,
-  isNetworkConsistent,
-  isTronLinkReady,
-  waitUntilConnected,
-} from '../network/network';
+import { isMetamaskInstalled, isNetworkConsistent, isTronLinkReady } from '../network';
 import { entrance } from './entrance';
+import { waitUntilConnected } from './polkadot';
 import { switchMetamaskNetwork } from './switch';
 
 type ConnectFn<T extends Connection> = (network: ChainConfig, chainId?: string) => Observable<T>;
@@ -85,7 +80,7 @@ export const getPolkadotConnection: (network: PolkadotChainConfig) => Observable
     })
   );
 
-  const apiInstance = entrance.polkadot.getInstance(network.provider.rpc);
+  const apiInstance = entrance.polkadot.getInstance(network.provider);
   const apiObs = from(waitUntilConnected(apiInstance)).pipe(mapTo(apiInstance));
 
   return combineLatest([extensionObs, apiObs]).pipe(
@@ -240,7 +235,7 @@ const config: ConnectConfig = {
 };
 
 export const connect: ConnectFn<Connection> = (network, chainId) => {
-  const category = getNetworkCategory(network);
+  const category = network.category[0];
 
   if (category === null) {
     return EMPTY;

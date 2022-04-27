@@ -4,9 +4,9 @@ import { hexToU8a } from '@polkadot/util';
 import { lastValueFrom, map } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 import { Network, PolkadotChainConfig } from '../../model';
+import { waitUntilConnected } from '../connection';
 import { remove0x } from '../helper';
-// import { convert } from '../mmrConvert/ckb_merkle_mountain_range_bg';
-import { getChainConfigByName, waitUntilConnected } from '../network';
+import { getChainConfigByName } from '../network';
 import { genProof } from './proof';
 
 interface EncodeMMRoot {
@@ -53,7 +53,7 @@ async function getMMRProofByRPC(api: ApiPromise, blockNumber: number, mmrBlockNu
 async function getMMRProofBySubql(api: ApiPromise, blockNumber: number, mmrBlockNumber: number) {
   const chain = (await api.rpc.system.chain()).toString().toLowerCase() as Extract<Network, 'pangolin' | 'darwinia'>;
   const config = getChainConfigByName(chain) as PolkadotChainConfig;
-  const fetchProofs = proofsFactory(config.endpoints.mmr);
+  const fetchProofs = proofsFactory(`https://api.subquery.network/sq/darwinia-network/${config.name}-mmr`);
   const proof = await genProof(blockNumber, mmrBlockNumber, fetchProofs);
   const encodeProof = proof.proof.map((item) => remove0x(item.replace(/(^\s*)|(\s*$)/g, ''))).join('');
   const size = new TypeRegistry().createType('u64', proof.mmrSize.toString()) as unknown as BigInt;

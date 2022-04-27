@@ -1,6 +1,6 @@
-import { abi } from '@helix/shared/config/abi';
-import { FORM_CONTROL, LONG_DURATION, RegisterStatus } from '@helix/shared/config/constant';
-import { useDarwiniaAvailableBalances, useIsMounted } from '@helix/shared/hooks';
+import { abi } from 'shared/config/abi';
+import { FORM_CONTROL, LONG_DURATION, RegisterStatus } from 'shared/config/constant';
+import { useDarwiniaAvailableBalances, useIsMounted } from 'shared/hooks';
 import {
   AvailableBalance,
   ChainConfig,
@@ -13,7 +13,7 @@ import {
   Network,
   PolkadotChainConfig,
   Token,
-} from '@helix/shared/model';
+} from 'shared/model';
 import {
   amountLessThanFeeRule,
   applyModalObs,
@@ -31,7 +31,7 @@ import {
   toWei,
   waitUntilConnected,
   zeroAmountRule,
-} from '@helix/shared/utils';
+} from 'shared/utils';
 import { Codec } from '@polkadot/types/types';
 import { Descriptions, Form, Progress, Select } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
@@ -173,7 +173,7 @@ export function Substrate2SubstrateDVM({
 
       const { to: arrival } = direction as CrossChainDirection<ChainConfig, DVMChainConfig>;
       const web3 = entrance.web3.getInstance(arrival.ethereumChain.rpcUrls[0]);
-      const mappingAddress = await getS2SMappingAddress(arrival.provider.rpc);
+      const mappingAddress = await getS2SMappingAddress(arrival.provider);
       const contract = new web3.eth.Contract(abi.S2SMappingTokenABI, mappingAddress);
       const token = targetChainTokens.find((item) => isRing(item.symbol));
       const ringAddress = token?.address;

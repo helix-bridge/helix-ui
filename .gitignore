@@ -5,6 +5,8 @@ node_modules
 /**/.DS_Store
 *.pem
 
+/**/.next
+
 .vscode/
 tsconfig.tsbuildinfo
 

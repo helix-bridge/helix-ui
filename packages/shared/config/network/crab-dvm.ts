@@ -25,6 +25,7 @@ export const crabDVMConfig: DVMChainConfig = {
     { name: 'crab.svg', type: 'minor' },
     { name: 'crab-logo.svg', type: 'assist' },
   ],
+  mode: 'dvm',
   name: 'crab',
   provider: '',
   social: {
@@ -70,7 +71,7 @@ export const crabDVMConfig: DVMChainConfig = {
       address: '',
     },
   ],
-  type: ['polkadot'],
+  category: ['polkadot'],
   ss58Prefix: 42,
   specVersion: 1200,
 };

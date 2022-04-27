@@ -1,5 +1,5 @@
-import { abi } from '@helix/shared/config/abi';
-import { FORM_CONTROL } from '@helix/shared/config/constant';
+import { abi } from 'shared/config/abi';
+import { FORM_CONTROL } from 'shared/config/constant';
 import {
   AvailableBalance,
   CrossChainComponentProps,
@@ -7,7 +7,7 @@ import {
   DVMChainConfig,
   PolkadotChainConfig,
   PolkadotConnection,
-} from '@helix/shared/model';
+} from 'shared/model';
 import {
   applyModalObs,
   createTxWorkflow,
@@ -19,7 +19,7 @@ import {
   prettyNumber,
   toWei,
   waitUntilConnected,
-} from '@helix/shared/utils';
+} from 'shared/utils';
 import { ApiPromise } from '@polkadot/api';
 import { BN_ZERO } from '@polkadot/util';
 import { Form, Select } from 'antd';
@@ -200,7 +200,7 @@ export function DVM2Substrate({
         console.warn((error as Record<string, string>).message);
       }
     })();
-  }, [network, direction.to.provider.rpc, accounts, apiPromise]);
+  }, [network, direction.to.provider, accounts, apiPromise]);
 
   return (
     <>

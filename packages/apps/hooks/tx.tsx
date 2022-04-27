@@ -1,11 +1,5 @@
-import { CrossChainPayload, TxSuccessComponentProps, Tx, TxHashType } from '@helix/shared/model';
-import {
-  applyModal,
-  getNetworkMode,
-  isEthereumNetwork,
-  convertToSS58,
-  genHistoryRouteParams,
-} from '@helix/shared/utils';
+import { CrossChainPayload, TxSuccessComponentProps, Tx, TxHashType } from 'shared/model';
+import { applyModal, isEthereumNetwork, convertToSS58, genHistoryRouteParams } from 'shared/utils';
 import { ModalProps, message } from 'antd';
 import { useRouter } from 'next/router';
 import { FunctionComponent, useCallback, useContext } from 'react';
@@ -47,9 +41,8 @@ export function useAfterTx<T extends CrossChainPayload<{ sender: string; recipie
               destroy();
 
               const { from, to } = value.direction;
-              const fMode = getNetworkMode(from);
               const sender =
-                isEthereumNetwork(value.direction.from.name) || fMode === 'dvm'
+                isEthereumNetwork(value.direction.from) || from.mode === 'dvm'
                   ? value.sender
                   : convertToSS58(value.sender, +chain.ss58Format);
 
@@ -58,10 +51,10 @@ export function useAfterTx<T extends CrossChainPayload<{ sender: string; recipie
                   '?' +
                   genHistoryRouteParams({
                     from: from.name,
-                    fMode,
+                    fMode: from.mode,
                     sender,
                     to: to.name,
-                    tMode: getNetworkMode(to),
+                    tMode: to.mode,
                   })
               );
             },

@@ -1,7 +1,7 @@
-import { EvoApiPath } from '@helix/shared/config/api';
-import { FORM_CONTROL } from '@helix/shared/config/constant';
-import { CrossChainDirection, CustomFormControlProps } from '@helix/shared/model';
-import { getBridge, apiUrl, getTimeRange, empty } from '@helix/shared/utils';
+import { EvoApiPath } from 'shared/config/api';
+import { FORM_CONTROL } from 'shared/config/constant';
+import { CrossChainDirection, CustomFormControlProps } from 'shared/model';
+import { getBridge, apiUrl, getTimeRange, empty } from 'shared/utils';
 import { Form, Progress, Select } from 'antd';
 import { Rule } from 'antd/lib/form';
 import { format } from 'date-fns';

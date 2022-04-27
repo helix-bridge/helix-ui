@@ -1,5 +1,5 @@
-import { ChainConfig } from '@helix/shared/model';
-import { CROSS_CHAIN_NETWORKS } from '@helix/shared/utils';
+import { ChainConfig } from 'shared/model';
+import { CROSS_CHAIN_NETWORKS } from 'shared/utils';
 import { useCallback, useEffect, useState } from 'react';
 import { useApi } from './api';
 

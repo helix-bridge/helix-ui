@@ -1,5 +1,5 @@
-import { RecordComponentProps, PolkadotChainConfig } from '@helix/shared/model';
-import { getNetworkMode, isSubstrate2SubstrateDVM, chainConfigToVertices, convertToSS58 } from '@helix/shared/utils';
+import { RecordComponentProps, PolkadotChainConfig } from 'shared/model';
+import { isSubstrate2SubstrateDVM, convertToSS58 } from 'shared/utils';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Subscription, switchMapTo, tap } from 'rxjs';
@@ -20,7 +20,7 @@ export function Substrate2SubstrateDVMRecord({
 }: RecordComponentProps<S2SDVMRecord, PolkadotChainConfig, PolkadotChainConfig>) {
   const { t } = useTranslation();
   const { fetchIssuingRecord, fetchRedeemRecord, fetchMessageEvent } = useRecords(departure!, arrival!);
-  const isRedeem = useMemo(() => departure && getNetworkMode(departure) === 'dvm', [departure]);
+  const isRedeem = useMemo(() => departure && departure.mode === 'dvm', [departure]);
   const [record, setRecord] = useState(originRecord);
   const [messageEvent, setMessageEvent] = useState<BridgeDispatchEventRecord | null>(null);
 
@@ -93,7 +93,7 @@ export function Substrate2SubstrateDVMRecord({
   useEffect(() => {
     const { laneId, nonce, result } = record;
     const attemptsCount = 100;
-    const isS2DVM = isSubstrate2SubstrateDVM(chainConfigToVertices(departure!), chainConfigToVertices(arrival!));
+    const isS2DVM = isSubstrate2SubstrateDVM(departure!, arrival!);
     const queryOriginRecord = isS2DVM ? fetchIssuingRecord : fetchRedeemRecord;
     let subscription: Subscription | null = null;
 

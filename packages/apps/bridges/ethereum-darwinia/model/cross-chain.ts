@@ -5,7 +5,7 @@ import {
   CrossChainParty,
   CrossChainAsset,
   DarwiniaAsset,
-} from '@helix/shared/model';
+} from 'shared/model';
 import { Deposit } from './deposit';
 
 export type IssuingDarwiniaTxPayload = CrossChainPayload<

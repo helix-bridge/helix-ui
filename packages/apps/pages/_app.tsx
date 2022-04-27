@@ -1,9 +1,9 @@
 import '@fontsource/ibm-plex-sans';
-import GlobalLoading from '@helix/shared/components/widget/GlobalLoading';
-import { toggleTheme } from '@helix/shared/components/widget/ThemeSwitch';
-import { THEME } from '@helix/shared/config/theme';
-import '@helix/shared/theme/antd/index.less';
-import { readStorage } from '@helix/shared/utils';
+import GlobalLoading from 'shared/components/widget/GlobalLoading';
+import { toggleTheme } from 'shared/components/widget/ThemeSwitch';
+import { THEME } from 'shared/config/theme';
+import 'shared/theme/antd/index.less';
+import { readStorage } from 'shared/utils';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { ClientContext, GraphQLClient } from 'graphql-hooks';
 import { appWithTranslation } from 'next-i18next';

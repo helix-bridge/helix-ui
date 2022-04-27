@@ -1,6 +1,6 @@
 import { ArrowRightOutlined } from '@ant-design/icons';
-import { CrossChainAsset, CrossChainPayload, PolkadotChainConfig, TxConfirmComponentProps } from '@helix/shared/model';
-import { convertToSS58, fromWei, getNetworkMode, isPolkadotNetwork } from '@helix/shared/utils';
+import { CrossChainAsset, CrossChainPayload, PolkadotChainConfig, TxConfirmComponentProps } from 'shared/model';
+import { convertToSS58, fromWei, isPolkadotNetwork } from 'shared/utils';
 import { getDisplayName } from 'next/dist/shared/lib/utils';
 import { PropsWithChildren, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -45,7 +45,7 @@ export function TransferConfirm({
 
   const sender = useMemo(
     () =>
-      isPolkadotNetwork(value.direction.from.name) && getNetworkMode(value.direction.from) === 'native'
+      isPolkadotNetwork(value.direction.from) && value.direction.from.mode === 'native'
         ? convertToSS58(value.sender, (value.direction.from as PolkadotChainConfig).ss58Prefix)
         : value.sender,
     [value]

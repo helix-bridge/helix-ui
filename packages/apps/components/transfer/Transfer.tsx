@@ -1,7 +1,7 @@
-import { Icon } from '@helix/shared/components/widget/Icon';
-import { Logo } from '@helix/shared/components/widget/Logo';
-import { darwiniaConfig } from '@helix/shared/config/network';
-import { TokenInfo } from '@helix/shared/model';
+import { Icon } from 'shared/components/widget/Icon';
+import { Logo } from 'shared/components/widget/Logo';
+import { darwiniaConfig } from 'shared/config/network';
+import { TokenInfo } from 'shared/model';
 import { Button, Form, InputNumber, InputNumberProps, Typography } from 'antd';
 import { useState } from 'react';
 import { SelectTokenModal, TokenInfoWithMeta } from './SelectTokenModal';

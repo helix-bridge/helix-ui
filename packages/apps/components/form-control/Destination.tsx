@@ -1,10 +1,10 @@
 import { Dropdown, Form, Menu, Select, Tag } from 'antd';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChainConfig } from '@helix/shared/model';
-import { getDisplayName } from '@helix/shared/utils';
-import { Icon } from '@helix/shared/components/widget/Icon';
-import { Logo } from '@helix/shared/components/widget/Logo';
+import { ChainConfig } from 'shared/model';
+import { getDisplayName } from 'shared/utils';
+import { Icon } from 'shared/components/widget/Icon';
+import { Logo } from 'shared/components/widget/Logo';
 
 export type DestinationMode = 'default' | 'card';
 

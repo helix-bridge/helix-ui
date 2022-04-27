@@ -1,5 +1,5 @@
-import { FORM_CONTROL } from '@helix/shared/config/constant';
-import { validateMessages } from '@helix/shared/config/validate-msg';
+import { FORM_CONTROL } from 'shared/config/constant';
+import { validateMessages } from 'shared/config/validate-msg';
 import {
   BridgeState,
   CrossChainComponentProps,
@@ -10,7 +10,7 @@ import {
   NetworkMode,
   NullableCrossChainDirection,
   SubmitFn,
-} from '@helix/shared/model';
+} from 'shared/model';
 import {
   emptyObsFactory,
   getBridge,
@@ -19,7 +19,7 @@ import {
   isReachable,
   isSameNetConfig,
   verticesToChainConfig,
-} from '@helix/shared/utils';
+} from 'shared/utils';
 import { Form, Tooltip } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
@@ -36,8 +36,8 @@ const getDirectionFromSettings: () => NullableCrossChainDirection = () => {
   const go = getInitialSetting('to', '') as Network;
   const fromMode = getInitialSetting('fMode', '') as NetworkMode;
   const toMode = getInitialSetting('tMode', '') as NetworkMode;
-  const from = come ? verticesToChainConfig({ network: come, mode: fromMode ?? 'native' }) : null;
-  const to = go ? verticesToChainConfig({ network: go, mode: toMode ?? 'native' }) : null;
+  const from = come ? verticesToChainConfig({ name: come, mode: fromMode ?? 'native' }) : null;
+  const to = go ? verticesToChainConfig({ name: go, mode: toMode ?? 'native' }) : null;
 
   if (from?.isTest === to?.isTest) {
     return { from, to };

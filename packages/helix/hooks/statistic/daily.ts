@@ -1,4 +1,4 @@
-import { Network, DailyStatistic } from '@helix/shared/model';
+import { Network, DailyStatistic } from 'shared/model';
 import { useQuery } from 'graphql-hooks';
 
 const STATISTICS_QUERY = `

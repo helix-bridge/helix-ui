@@ -1,21 +1,9 @@
-import { RegisterStatus } from '@helix/shared/config/constant';
-import {
-  Action,
-  Erc20RegisterStatus,
-  MappingToken,
-  NullableCrossChainDirection,
-  RequiredPartial,
-} from '@helix/shared/model';
-import {
-  getErc20TokenBalance,
-  getKnownMappingTokens,
-  isDVM,
-  isEthereumNetwork,
-  StoredProof,
-} from '@helix/shared/utils';
 import { message } from 'antd';
 import { useCallback, useMemo, useReducer, useState } from 'react';
 import { map } from 'rxjs';
+import { RegisterStatus } from 'shared/config/constant';
+import { Action, Erc20RegisterStatus, MappingToken, NullableCrossChainDirection, RequiredPartial } from 'shared/model';
+import { getErc20TokenBalance, getKnownMappingTokens, isEthereumNetwork, StoredProof } from 'shared/utils';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 import { useApi } from './api';
 
@@ -89,7 +77,7 @@ export const useMappingTokens = (
   );
 
   useDeepCompareEffect(() => {
-    if (!from || !to || !(isEthereumNetwork(from.name) || isDVM(from))) {
+    if (!from || !to || !(isEthereumNetwork(from) || from.mode === 'dvm')) {
       dispatch({ payload: [], type: 'updateTokens' });
       message.error(
         'The departure and arrival networks must exist and the departure network must be an Ethereum network or a DVM network'

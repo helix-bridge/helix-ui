@@ -1,6 +1,7 @@
 import { EthereumChainConfig } from '../../model';
 
 export const ethereumConfig: EthereumChainConfig = {
+  mode: 'native',
   ethereumChain: {
     chainId: '1',
     chainName: '',
@@ -32,5 +33,5 @@ export const ethereumConfig: EthereumChainConfig = {
       address: '',
     },
   ],
-  type: ['ethereum'],
+  category: ['ethereum'],
 };

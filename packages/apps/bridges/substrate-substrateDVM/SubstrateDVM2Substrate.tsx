@@ -1,4 +1,4 @@
-import { RegisterStatus } from '@helix/shared/config/constant';
+import { RegisterStatus } from 'shared/config/constant';
 import {
   CrossChainComponentProps,
   DVMChainConfig,
@@ -6,8 +6,8 @@ import {
   CrossChainDirection,
   MappingToken,
   DailyLimit,
-} from '@helix/shared/model';
-import { getS2SMappingAddress, entrance, waitUntilConnected, fromWei } from '@helix/shared/utils';
+} from 'shared/model';
+import { getS2SMappingAddress, entrance, waitUntilConnected, fromWei } from 'shared/utils';
 import { Codec } from '@polkadot/types/types';
 import { last } from 'lodash';
 import { useCallback, useEffect } from 'react';
@@ -29,7 +29,7 @@ export function SubstrateDVM2Substrate({
     (value: RedeemSubstrateTxPayload) => {
       const { to } = direction;
 
-      return from(getS2SMappingAddress(value.direction.from.provider.rpc)).pipe(
+      return from(getS2SMappingAddress(value.direction.from.provider)).pipe(
         switchMap((mappingAddress) => redeem(value, mappingAddress, String(to.specVersion)))
       );
     },
@@ -37,7 +37,7 @@ export function SubstrateDVM2Substrate({
   );
 
   const getSpender = useCallback(async (dir: CrossChainDirection) => {
-    const mappingAddress = await getS2SMappingAddress(dir.from.provider.rpc);
+    const mappingAddress = await getS2SMappingAddress(dir.from.provider);
 
     return mappingAddress;
   }, []);
@@ -45,7 +45,7 @@ export function SubstrateDVM2Substrate({
   const getDailyLimit = useCallback(
     async (_: MappingToken) => {
       const { to: arrival } = direction;
-      const api = entrance.polkadot.getInstance(arrival.provider.rpc);
+      const api = entrance.polkadot.getInstance(arrival.provider);
 
       await waitUntilConnected(api);
 
@@ -59,7 +59,7 @@ export function SubstrateDVM2Substrate({
   );
 
   const getFee = useCallback(async ({ to: arrival, from: departure }: CrossChainDirection) => {
-    const api = entrance.polkadot.getInstance(departure.provider.rpc);
+    const api = entrance.polkadot.getInstance(departure.provider);
 
     await waitUntilConnected(api);
 

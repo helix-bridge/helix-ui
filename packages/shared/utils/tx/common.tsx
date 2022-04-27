@@ -10,8 +10,8 @@ import { Contract } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 import { abi } from '../../config/abi';
 import { CrossChainPayload, MappingToken, RequiredPartial, Tx, TxFn } from '../../model';
+import { entrance, waitUntilConnected } from '../connection';
 import { empty } from '../helper';
-import { entrance, waitUntilConnected } from '../network';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ModalSpyFn<T = any> = (observer: Observer<T>, closeFn: () => void) => void;

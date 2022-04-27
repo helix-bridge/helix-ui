@@ -1,6 +1,6 @@
-import { DarwiniaApiPath } from '@helix/shared/config/api';
-import { ChainConfig, ICamelCaseKeys } from '@helix/shared/model';
-import { apiUrl, buf2hex, getBridge, rxGet } from '@helix/shared/utils';
+import { DarwiniaApiPath } from 'shared/config/api';
+import { ChainConfig, ICamelCaseKeys } from 'shared/model';
+import { apiUrl, buf2hex, getBridge, rxGet } from 'shared/utils';
 import { decodeAddress } from '@polkadot/util-crypto';
 import camelCaseKeys from 'camelcase-keys';
 import { useCallback } from 'react';

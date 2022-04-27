@@ -1,6 +1,6 @@
 import { MenuOutlined } from '@ant-design/icons';
-import { THEME } from '@helix/shared/config/theme';
-import { readStorage } from '@helix/shared/utils';
+import { THEME } from 'shared/config/theme';
+import { readStorage } from 'shared/utils';
 import { Button, Drawer, Layout, Tooltip } from 'antd';
 import Image from 'next/image';
 import { useRouter } from 'next/router';

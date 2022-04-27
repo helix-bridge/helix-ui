@@ -1,5 +1,5 @@
-import { BridgeState, CrossChainDirection, PolkadotChainConfig } from '@helix/shared/model';
-import { entrance, waitUntilConnected } from '@helix/shared/utils';
+import { BridgeState, CrossChainDirection, PolkadotChainConfig } from 'shared/model';
+import { entrance, waitUntilConnected } from 'shared/utils';
 import { useEffect, useState } from 'react';
 import { from } from 'rxjs';
 
@@ -10,14 +10,14 @@ export function useBridgeStatus(
   const { to } = direction;
 
   useEffect(() => {
-    const api = entrance.polkadot.getInstance(to.provider.rpc);
+    const api = entrance.polkadot.getInstance(to.provider);
 
     const sub$$ = from(waitUntilConnected(api)).subscribe(() => {
       setSpecVersionOnline(api.runtimeVersion.specVersion.toString());
     });
 
     return () => sub$$.unsubscribe();
-  }, [to.provider.rpc]);
+  }, [to.provider]);
 
   return to.specVersion === +specVersionOnline
     ? { status: 'available', specVersionOnline }

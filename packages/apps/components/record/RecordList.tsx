@@ -1,5 +1,5 @@
-import { Vertices, RecordComponentProps } from '@helix/shared/model';
-import { getBridgeComponent, verticesToChainConfig } from '@helix/shared/utils';
+import { Vertices, RecordComponentProps } from 'shared/model';
+import { getBridgeComponent, verticesToChainConfig } from 'shared/utils';
 import { Empty } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { omit } from 'lodash';

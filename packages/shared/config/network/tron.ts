@@ -6,6 +6,7 @@ export const tronConfig: ChainConfig = {
     { name: 'tron.png', type: 'main' },
     { name: 'tron.png', type: 'minor' },
   ],
+  mode: 'native',
   name: 'tron',
   provider: '',
   social: {
@@ -16,5 +17,5 @@ export const tronConfig: ChainConfig = {
   tokens: [
     { name: 'TRX', decimals: 18, bridges: ['helix'], type: 'native', logo: 'trx.png', symbol: 'TRX', address: '' },
   ],
-  type: ['tron'],
+  category: ['tron'],
 };

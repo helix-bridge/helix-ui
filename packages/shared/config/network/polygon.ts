@@ -11,6 +11,7 @@ export const polygonConfig: EthereumChainConfig = {
   },
   isTest: true,
   logos: [{ name: 'polygon.svg', type: 'main' }],
+  mode: 'native',
   name: 'polygon',
   provider: 'https://polygon-rpc.com/',
   social: {
@@ -22,5 +23,5 @@ export const polygonConfig: EthereumChainConfig = {
     { name: 'RING', decimals: 18, bridges: ['helix'], type: 'mapping', logo: '', symbol: 'RING', address: '' },
     { name: 'MATIC', decimals: 18, bridges: ['helix'], type: 'native', logo: '', symbol: 'MATIC', address: '' },
   ],
-  type: ['ethereum'],
+  category: ['ethereum'],
 };

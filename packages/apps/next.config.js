@@ -1,10 +1,10 @@
 const { i18n } = require('./next-i18next.config');
 const withAntdLess = require('next-plugin-antd-less');
 const withPlugins = require('next-compose-plugins');
-const AntDesignThemePlugin = require('@helix/shared/plugins/antd-theme-plugin');
+const AntDesignThemePlugin = require('../shared/plugins/antd-theme-plugin');
 const path = require('path');
 const antdVarsPath = '../shared/theme/antd/vars.less';
-const { getLessVars } = require('@helix/shared/plugins/antd-theme-generator');
+const { getLessVars } = require('../shared/plugins/antd-theme-generator');
 const themeVariables = getLessVars(path.join(__dirname, antdVarsPath));
 const defaultVars = getLessVars(path.join(__dirname, '../../node_modules/antd/lib/style/themes/default.less'));
 const CircularDependencyPlugin = require('circular-dependency-plugin');

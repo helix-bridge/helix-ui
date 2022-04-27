@@ -1,15 +1,8 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { MIDDLE_DURATION } from '@helix/shared/config/constant';
-import { useIsMountedOperator } from '@helix/shared/hooks';
-import {
-  CrossChainDirection,
-  DarwiniaAsset,
-  DVMChainConfig,
-  PolkadotChainConfig,
-  Token,
-  Tx,
-} from '@helix/shared/model';
-import { createTxWorkflow, entrance, fromWei, genEthereumTransactionObs, toWei } from '@helix/shared/utils';
+import { MIDDLE_DURATION } from 'shared/config/constant';
+import { useIsMountedOperator } from 'shared/hooks';
+import { CrossChainDirection, DarwiniaAsset, DVMChainConfig, PolkadotChainConfig, Token, Tx } from 'shared/model';
+import { createTxWorkflow, entrance, fromWei, genEthereumTransactionObs, toWei } from 'shared/utils';
 import { BN_ZERO } from '@polkadot/util';
 import { Button, message, notification } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';

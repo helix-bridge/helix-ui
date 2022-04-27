@@ -5,7 +5,7 @@ import {
   DeepRequired,
   CommonPayloadKeys,
   MappingToken,
-} from '@helix/shared/model';
+} from 'shared/model';
 
 export interface Substrate2SubstrateDVMPayload extends CrossChainParty, CrossChainAsset<string> {}
 

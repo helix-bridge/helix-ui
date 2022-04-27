@@ -1,4 +1,4 @@
-import { Departure } from '@helix/shared/model';
+import { Departure } from 'shared/model';
 import {
   RecordsQueryRequest,
   rxGet,
@@ -12,7 +12,7 @@ import {
   isDVM2Ethereum,
   isSubstrate2DVM,
   isDVM2Substrate,
-} from '@helix/shared/utils';
+} from 'shared/utils';
 import { isNull, omitBy } from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
 import { EMPTY, Observable, Subscription } from 'rxjs';
@@ -81,7 +81,7 @@ export function useRecords(departure: Departure, arrival: Departure) {
     const req = omitBy<RecordRequestParams>(params, isNull) as RecordRequestParams;
     const [dep] = params.direction;
 
-    if (isTronNetwork(dep.network)) {
+    if (isTronNetwork(dep)) {
       return { ...req, address: window.tronWeb ? window.tronWeb.address.toHex(params.address) : '' };
     }
 
@@ -91,7 +91,7 @@ export function useRecords(departure: Departure, arrival: Departure) {
   const genQueryFn = useCallback<(isGenesis: boolean) => (req: RecordRequestParams) => Observable<unknown>>(
     // eslint-disable-next-line complexity
     (isGenesis = false) => {
-      if (isTronNetwork(departure.network) || (isEthereum2Darwinia(departure, arrival) && isGenesis)) {
+      if (isTronNetwork(departure) || (isEthereum2Darwinia(departure, arrival) && isGenesis)) {
         return darwiniaEthereum.fetchGenesisRecords;
       }
 

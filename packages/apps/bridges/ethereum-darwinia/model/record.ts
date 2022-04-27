@@ -1,4 +1,4 @@
-import { Network } from '@helix/shared/model';
+import { Network } from 'shared/model';
 
 interface DarwiniaListRes<T> {
   count: number;

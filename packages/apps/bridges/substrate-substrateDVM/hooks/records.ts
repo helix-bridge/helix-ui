@@ -1,6 +1,6 @@
-import { SHORT_DURATION } from '@helix/shared/config/constant';
-import { ChainConfig } from '@helix/shared/model';
-import { convertToDvm, pollWhile } from '@helix/shared/utils';
+import { SHORT_DURATION } from 'shared/config/constant';
+import { ChainConfig } from 'shared/model';
+import { convertToDvm, pollWhile } from 'shared/utils';
 import { isHex } from '@polkadot/util';
 import { message } from 'antd';
 import camelCaseKeys from 'camelcase-keys';

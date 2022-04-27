@@ -1,8 +1,8 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Logo } from '@helix/shared/components/widget/Logo';
-import { useLocalSearch } from '@helix/shared/hooks';
-import { ChainConfig, TokenInfo, Vertices } from '@helix/shared/model';
-import { CROSS_CHAIN_NETWORKS, getDisplayName, isDVM } from '@helix/shared/utils';
+import { Logo } from 'shared/components/widget/Logo';
+import { useLocalSearch } from 'shared/hooks';
+import { ChainConfig, TokenInfo, Vertices } from 'shared/model';
+import { CROSS_CHAIN_NETWORKS, getDisplayName } from 'shared/utils';
 import { Input, Radio, Tag, Typography } from 'antd';
 import { chain as lodashChain } from 'lodash';
 import { useTranslation } from 'next-i18next';
@@ -19,7 +19,7 @@ interface SelectTokenModalProps {
 export type TokenInfoWithMeta = TokenInfo & { meta: ChainConfig };
 
 const allTokens: TokenInfoWithMeta[] = lodashChain(CROSS_CHAIN_NETWORKS)
-  .filter((item) => !isDVM(item))
+  .filter((item) => item.mode !== 'dvm')
   .map((item) => item.tokens.map((token) => ({ ...token, address: '', meta: item }))) // meta: without dvm info; do not treat as DVMConfig
   .flatten()
   .value();
@@ -27,18 +27,18 @@ const allTokens: TokenInfoWithMeta[] = lodashChain(CROSS_CHAIN_NETWORKS)
 const nullStr = 'null';
 
 const colors: ({ color: string } & Vertices)[] = [
-  { network: 'crab', mode: 'native', color: '#cd201f' },
-  { network: 'crab', mode: 'dvm', color: '#B32BB6' },
-  { network: 'darwinia', mode: 'native', color: '#FF007A' },
-  { network: 'ethereum', mode: 'native', color: '#1C87ED' },
-  { network: 'ropsten', mode: 'native', color: 'blue' },
-  { network: 'pangolin', mode: 'native', color: 'purple' },
-  { network: 'pangolin', mode: 'dvm', color: 'lime' },
-  { network: 'pangoro', mode: 'native', color: 'cyan' },
+  { name: 'crab', mode: 'native', color: '#cd201f' },
+  { name: 'crab', mode: 'dvm', color: '#B32BB6' },
+  { name: 'darwinia', mode: 'native', color: '#FF007A' },
+  { name: 'ethereum', mode: 'native', color: '#1C87ED' },
+  { name: 'ropsten', mode: 'native', color: 'blue' },
+  { name: 'pangolin', mode: 'native', color: 'purple' },
+  { name: 'pangolin', mode: 'dvm', color: 'lime' },
+  { name: 'pangoro', mode: 'native', color: 'cyan' },
 ];
 
-const chainColor = ({ network, mode }: Vertices): string => {
-  const target = colors.find((item) => item.network === network && item.mode === mode);
+const chainColor = ({ name: network, mode }: Vertices): string => {
+  const target = colors.find((item) => item.name === network && item.mode === mode);
 
   return target?.color ?? 'processing';
 };
@@ -112,7 +112,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel }: SelectTokenMod
 
                 <Typography.Text>{item.name}</Typography.Text>
 
-                <Tag color={chainColor({ network: item.meta.name, mode: tokenModeToChainMode(item.type) })}>
+                <Tag color={chainColor({ name: item.meta.name, mode: tokenModeToChainMode(item.type) })}>
                   {getDisplayName(item.meta, tokenModeToChainMode(item.type))}
                 </Tag>
                 {item.meta.isTest && (

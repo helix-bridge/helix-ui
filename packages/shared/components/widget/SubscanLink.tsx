@@ -1,6 +1,6 @@
 import { Typography } from 'antd';
 import { CSSProperties, PropsWithChildren } from 'react';
-import { Network } from '../../model';
+import { ChainConfig, Network, Vertices } from '../../model';
 import { isPolkadotNetwork } from '../../utils';
 
 const { Link } = Typography;
@@ -11,7 +11,7 @@ interface SubscanLinkProps extends PropsWithChildren<unknown> {
   className?: string;
   copyable?: boolean;
   extrinsic?: { height: string | number; index: number | string };
-  network: Network;
+  network: Vertices | ChainConfig;
   style?: CSSProperties;
   txHash?: string;
 }
@@ -57,7 +57,7 @@ export function SubscanLink({
 
     return (
       <Link
-        href={`https://${omitNetwork.includes(network) ? '' : network + '.'}${mapObj.scan}.io/${
+        href={`https://${omitNetwork.includes(network.name) ? '' : network + '.'}${mapObj.scan}.io/${
           mapObj.txPath
         }/${txHash}`}
         target="_blank"

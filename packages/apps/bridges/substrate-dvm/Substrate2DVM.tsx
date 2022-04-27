@@ -1,13 +1,13 @@
-import { FORM_CONTROL } from '@helix/shared/config/constant';
-import { useDarwiniaAvailableBalances, useIsMountedOperator } from '@helix/shared/hooks';
+import { FORM_CONTROL } from 'shared/config/constant';
+import { useDarwiniaAvailableBalances, useIsMountedOperator } from 'shared/hooks';
 import {
   AvailableBalance,
   CrossChainComponentProps,
   CrossChainPayload,
   DVMChainConfig,
   PolkadotChainConfig,
-} from '@helix/shared/model';
-import { applyModalObs, createTxWorkflow, fromWei, prettyNumber, toWei } from '@helix/shared/utils';
+} from 'shared/model';
+import { applyModalObs, createTxWorkflow, fromWei, prettyNumber, toWei } from 'shared/utils';
 import { Form, Select } from 'antd';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';

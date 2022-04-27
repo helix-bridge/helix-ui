@@ -1,4 +1,4 @@
-import { Network } from '@helix/shared/model';
+import { Network } from 'shared/model';
 import { Button, ButtonProps } from 'antd';
 import { Trans } from 'react-i18next';
 
