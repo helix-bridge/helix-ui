@@ -1,14 +1,14 @@
 import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
 import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
 import { Substrate2SubstrateRecord } from 'shared/model';
-import { fromWei, getChainConfigByName, getDisplayName, prettyNumber, revertAccount } from 'shared/utils';
+import { fromWei, getChainConfig, getDisplayName, prettyNumber, revertAccount } from 'shared/utils';
 import { Tooltip } from 'antd';
 import { formatDistance, fromUnixTime } from 'date-fns';
 
 export function Record({ record }: { record: Substrate2SubstrateRecord }) {
   const { fromChainMode, fromChain, sender, recipient, toChain, toChainMode } = record;
-  const fromConfig = getChainConfigByName(fromChain, fromChainMode);
-  const toConfig = getChainConfigByName(toChain, toChainMode);
+  const fromConfig = getChainConfig(fromChain, fromChainMode);
+  const toConfig = getChainConfig(toChain, toChainMode);
   const now = new Date().toISOString().split('.')[0];
   const fromAccount = revertAccount(sender, { name: fromChain, mode: fromChainMode });
   const toAccount = revertAccount(recipient, { name: toChain, mode: toChainMode });

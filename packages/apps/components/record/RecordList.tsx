@@ -1,5 +1,5 @@
 import { Vertices, RecordComponentProps } from 'shared/model';
-import { getBridgeComponent, verticesToChainConfig } from 'shared/utils';
+import { getBridgeComponent, getChainConfig } from 'shared/utils';
 import { Empty } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { omit } from 'lodash';
@@ -20,8 +20,8 @@ export function RecordList({ departure, arrival, sourceData }: RecordListProps) 
   const Record = useMemo(
     () =>
       getRecordComponent({
-        from: verticesToChainConfig(departure),
-        to: verticesToChainConfig(arrival),
+        from: getChainConfig(departure),
+        to: getChainConfig(arrival),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       }) as FunctionComponent<RecordComponentProps<any>>,
     [departure, arrival]
@@ -34,8 +34,8 @@ export function RecordList({ departure, arrival, sourceData }: RecordListProps) 
       {sourceData.list.map((item, index) => (
         <Record
           record={{ ...item, meta: omit(sourceData, ['list', 'count']) }}
-          departure={verticesToChainConfig(departure)}
-          arrival={verticesToChainConfig(arrival)}
+          departure={getChainConfig(departure)}
+          arrival={getChainConfig(arrival)}
           key={item.tx || index}
         />
       ))}

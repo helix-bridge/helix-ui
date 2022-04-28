@@ -5,10 +5,10 @@ import { Observable, Observer } from 'rxjs';
 import Web3 from 'web3';
 import { SHORT_DURATION } from '../../config/constant';
 import { EthereumChainConfig, MetamaskError, Network } from '../../model';
-import { findNetworkConfig, isNativeMetamaskChain } from '../network/network';
+import { getChainConfig, isNativeMetamaskChain } from '../network/network';
 
 async function switchEthereumChain(network: Network): Promise<null> {
-  const chain = findNetworkConfig(network) as EthereumChainConfig;
+  const chain = getChainConfig(network) as EthereumChainConfig;
   const chainId = Web3.utils.toHex(+chain.ethereumChain.chainId);
 
   const res: null = await window.ethereum.request({
@@ -24,7 +24,7 @@ async function switchEthereumChain(network: Network): Promise<null> {
  */
 async function addEthereumChain(network: Network): Promise<null> {
   // TODO check the chaiId field, store in decimal in configuration but may be required hexadecimal in metamask side.
-  const chain = findNetworkConfig(network) as EthereumChainConfig;
+  const chain = getChainConfig(network) as EthereumChainConfig;
   const chainId = Web3.utils.toHex(+chain.ethereumChain.chainId);
 
   const result = await window.ethereum.request({

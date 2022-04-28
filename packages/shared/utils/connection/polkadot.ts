@@ -12,12 +12,12 @@ import {
   PolkadotConnection,
 } from '../../model';
 import { getUnit } from '../helper';
-import { CROSS_CHAIN_NETWORKS, findNetworkConfig, isChainIdEqual } from '../network';
+import { chainConfigs, getChainConfig, isChainIdEqual } from '../network';
 
 // eslint-disable-next-line complexity
 export async function getConfigByConnection(connection: Connection): Promise<ChainConfig | null> {
   if (connection.type === 'metamask') {
-    const targets = CROSS_CHAIN_NETWORKS.filter((item) => {
+    const targets = chainConfigs.filter((item) => {
       const chain = (item as unknown as EthereumChainConfig).ethereumChain;
 
       return chain && isChainIdEqual(chain.chainId, (connection as EthereumConnection).chainId);
@@ -33,7 +33,7 @@ export async function getConfigByConnection(connection: Connection): Promise<Cha
 
     const chain = await api?.rpc.system.chain();
     const network = chain.toHuman()?.toLowerCase();
-    const target = findNetworkConfig(network);
+    const target = getChainConfig(network);
 
     return chain ? omit(target, 'dvm') : null;
   }

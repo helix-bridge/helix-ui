@@ -2,7 +2,7 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { useIsMounted } from 'shared/hooks';
 import { Arrival, ChainConfig, Departure, HistoryRouteParam, Network, Vertices } from 'shared/model';
 import {
-  getCrossChainArrivals,
+  getArrivals,
   getDisplayName,
   getVerticesFromDisplayName,
   hasBridge,
@@ -12,7 +12,7 @@ import {
   isReachable,
   isSubstrateDVM,
   isValidAddressStrict,
-  verticesToChainConfig,
+  getChainConfig,
 } from 'shared/utils';
 import { Affix, Input, message, Pagination, Select, Spin, Tabs, Tooltip } from 'antd';
 import { flow, isBoolean, negate, upperFirst } from 'lodash';
@@ -45,7 +45,7 @@ const isAddressValid = (addr: string | null, departure: Vertices) => {
     if (mode === 'dvm' || isEthereumNetwork(departure)) {
       addressValid = isValidAddressStrict(addr, 'ethereum');
     } else {
-      const category = flow([getVerticesFromDisplayName, verticesToChainConfig])(network);
+      const category = flow([getVerticesFromDisplayName, getChainConfig])(network);
 
       addressValid = category && isValidAddressStrict(addr, category === 'polkadot' ? network : category);
     }
@@ -105,7 +105,7 @@ export function CrossChainRecord() {
 
   const loadData = useCallback(
     (addr: string | null, confirm: boolean | null, dep: Vertices, arr: Vertices, isGen: boolean, pag: Paginator) => {
-      if (!addr || !isAddressValid(addr, dep) || !isReachable(verticesToChainConfig(dep))(verticesToChainConfig(arr))) {
+      if (!addr || !isAddressValid(addr, dep) || !isReachable(getChainConfig(dep))(getChainConfig(arr))) {
         setSourceData(SOURCE_DATA_DEFAULT);
         setPaginator(PAGINATOR_DEFAULT);
 
@@ -130,8 +130,8 @@ export function CrossChainRecord() {
   );
 
   useEffect(() => {
-    const config = verticesToChainConfig(departure);
-    const arrivals = getCrossChainArrivals(config!);
+    const config = getChainConfig(departure);
+    const arrivals = getArrivals(config!);
 
     setArrival(arrivals[0]);
   }, [departure]);
@@ -151,8 +151,8 @@ export function CrossChainRecord() {
         mode: tMode,
       });
     } else {
-      const config = verticesToChainConfig(departure);
-      const data = getCrossChainArrivals(config!);
+      const config = getChainConfig(departure);
+      const data = getArrivals(config!);
 
       setArrival(data[0]);
     }
@@ -172,7 +172,7 @@ export function CrossChainRecord() {
           <Select
             size="large"
             dropdownClassName="dropdown-networks"
-            value={getDisplayName(verticesToChainConfig(departure)!)}
+            value={getDisplayName(getChainConfig(departure)!)}
             className="capitalize"
             onSelect={(name: string) => {
               const target = fromNetworks.find(
@@ -185,7 +185,7 @@ export function CrossChainRecord() {
                 isBoolean(target.isTest) && isBoolean(net.isTest) ? net.isTest === target.isTest : true;
 
               if (!reachable) {
-                setArrival(getCrossChainArrivals(target)[0]);
+                setArrival(getArrivals(target)[0]);
               }
 
               setToFilters([negate(isChainConfigEqualTo(target)), isSameEnv, isReachable(target)]);
@@ -207,7 +207,7 @@ export function CrossChainRecord() {
             <Select
               size="large"
               dropdownClassName="dropdown-networks"
-              value={getDisplayName(verticesToChainConfig(arrival)!)}
+              value={getDisplayName(getChainConfig(arrival)!)}
               className="type-select capitalize"
               onSelect={(name: string) => {
                 const target = toNetworks.find(
@@ -255,7 +255,7 @@ export function CrossChainRecord() {
               const value = event.target.value;
               if (
                 !isAddressValid(value, departure) ||
-                !isReachable(verticesToChainConfig(departure))(verticesToChainConfig(arrival))
+                !isReachable(getChainConfig(departure))(getChainConfig(arrival))
               ) {
                 return;
               }
@@ -269,7 +269,7 @@ export function CrossChainRecord() {
             onSearch={(value) => {
               if (!isAddressValid(value, departure)) {
                 message.error(t(searchPlaceholder));
-              } else if (!isReachable(verticesToChainConfig(departure))(verticesToChainConfig(arrival))) {
+              } else if (!isReachable(getChainConfig(departure))(getChainConfig(arrival))) {
                 message.error(t('Origin network is not matched to the target network'));
               } else {
                 if (value === address) {

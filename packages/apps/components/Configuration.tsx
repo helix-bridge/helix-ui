@@ -1,13 +1,7 @@
 import { ImportOutlined } from '@ant-design/icons';
-import { DESCRIPTIONS, SYSTEM_NETWORK_CONFIGURATIONS } from 'shared/config/network';
+import { DESCRIPTIONS, SYSTEM_ChAIN_CONFIGURATIONS } from 'shared/config/network';
 import { Network } from 'shared/model';
-import {
-  addCustomChain,
-  NETWORK_CONFIGURATIONS,
-  readStorage,
-  removeCustomChain,
-  saveNetworkConfig,
-} from 'shared/utils';
+import { addCustomChain, chainConfigs, readStorage, removeCustomChain, saveNetworkConfig } from 'shared/utils';
 import { Alert, Button, Checkbox, Col, Form, Input, InputNumber, message, Modal, Row, Tooltip } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { isArray, isBoolean, isEqual, isNumber, isObject, isString, last } from 'lodash';
@@ -88,7 +82,7 @@ export function Configuration({ network }: ConfigurationProps) {
   const { t } = useTranslation();
 
   const controls = getConfigControl(
-    NETWORK_CONFIGURATIONS.find((item) => item.name === network),
+    chainConfigs.find((item) => item.name === network),
     []
   );
 
@@ -128,7 +122,7 @@ export function Configuration({ network }: ConfigurationProps) {
 
       <Button
         onClick={() => {
-          const target = SYSTEM_NETWORK_CONFIGURATIONS.find((item) => item.name === network);
+          const target = SYSTEM_ChAIN_CONFIGURATIONS.find((item) => item.name === network);
 
           form.setFieldsValue(target);
         }}

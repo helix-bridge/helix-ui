@@ -2,7 +2,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Logo } from 'shared/components/widget/Logo';
 import { useLocalSearch } from 'shared/hooks';
 import { ChainConfig, TokenInfo, Vertices } from 'shared/model';
-import { CROSS_CHAIN_NETWORKS, getDisplayName } from 'shared/utils';
+import { chainConfigs, getDisplayName } from 'shared/utils';
 import { Input, Radio, Tag, Typography } from 'antd';
 import { chain as lodashChain } from 'lodash';
 import { useTranslation } from 'next-i18next';
@@ -18,7 +18,7 @@ interface SelectTokenModalProps {
 
 export type TokenInfoWithMeta = TokenInfo & { meta: ChainConfig };
 
-const allTokens: TokenInfoWithMeta[] = lodashChain(CROSS_CHAIN_NETWORKS)
+const allTokens: TokenInfoWithMeta[] = lodashChain(chainConfigs)
   .filter((item) => item.mode !== 'dvm')
   .map((item) => item.tokens.map((token) => ({ ...token, address: '', meta: item }))) // meta: without dvm info; do not treat as DVMConfig
   .flatten()
@@ -88,7 +88,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel }: SelectTokenMod
           {t('All chains')}
         </Radio.Button>
 
-        {CROSS_CHAIN_NETWORKS.map((item, index) => {
+        {chainConfigs.map((item, index) => {
           const name = getDisplayName(item);
 
           return (

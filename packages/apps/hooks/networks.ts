@@ -1,5 +1,5 @@
 import { ChainConfig } from 'shared/model';
-import { CROSS_CHAIN_NETWORKS } from 'shared/utils';
+import { chainConfigs } from 'shared/utils';
 import { useCallback, useEffect, useState } from 'react';
 import { useApi } from './api';
 
@@ -12,15 +12,15 @@ const getGlobalFilters = (isTestDisplay: boolean) => (isTestDisplay ? [] : [omit
 export function useNetworks() {
   const { enableTestNetworks } = useApi();
   const [fromFilters, setFromFilters] = useState<NetworkFilter[]>([]);
-  const [fromNetworks, setFromNetworks] = useState<ChainConfig[]>(CROSS_CHAIN_NETWORKS);
+  const [fromNetworks, setFromNetworks] = useState<ChainConfig[]>(chainConfigs);
   const [toFilters, setToFilters] = useState<NetworkFilter[]>([]);
-  const [toNetworks, setToNetworks] = useState<ChainConfig[]>(CROSS_CHAIN_NETWORKS);
+  const [toNetworks, setToNetworks] = useState<ChainConfig[]>(chainConfigs);
 
   const getNetworks = useCallback(
     (filters: NetworkFilter[]) => {
       return [...getGlobalFilters(enableTestNetworks), ...filters].reduce(
         (networks, predicateFn) => networks.filter((network) => predicateFn(network)),
-        CROSS_CHAIN_NETWORKS
+        chainConfigs
       );
     },
     [enableTestNetworks]

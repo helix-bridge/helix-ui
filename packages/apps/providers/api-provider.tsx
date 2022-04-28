@@ -22,7 +22,7 @@ import {
   getInitialSetting,
   getPolkadotChainProperties,
   isEthereumNetwork,
-  verticesToChainConfig,
+  getChainConfig,
   waitUntilConnected,
 } from 'shared/utils';
 import { updateStorage } from 'shared/utils/helper/storage';
@@ -57,7 +57,7 @@ const initialNetworkConfig = () => {
   const network = getInitialSetting<Network>('from', null);
   const mode = getInitialSetting<NetworkMode>('fMode', 'native') ?? 'native';
 
-  return network && verticesToChainConfig({ name: network, mode });
+  return network && getChainConfig({ name: network, mode });
 };
 
 const initialConnection: Connection = {

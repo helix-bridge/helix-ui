@@ -5,7 +5,7 @@ import { hexToU8a, numberToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { isNull } from 'lodash';
 import Web3 from 'web3';
-import { SYSTEM_NETWORK_CONFIGURATIONS } from '../../config/network';
+import { SYSTEM_ChAIN_CONFIGURATIONS } from '../../config/network';
 import { PolkadotChainConfig, Vertices } from '../../model';
 
 export const registry = new TypeRegistry();
@@ -78,9 +78,7 @@ export function remove0x(text: string): string {
 }
 
 export function revertAccount(account: string, vertices: Vertices): string {
-  const config = SYSTEM_NETWORK_CONFIGURATIONS.find(
-    (item) => item.name === vertices.name && item.mode === vertices.mode
-  );
+  const config = SYSTEM_ChAIN_CONFIGURATIONS.find((item) => item.name === vertices.name && item.mode === vertices.mode);
 
   if (vertices.mode === 'native' || config?.category.includes('polkadot')) {
     return convertToSS58(account, (<PolkadotChainConfig>config).ss58Prefix);

@@ -1,6 +1,4 @@
 import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Substrate2SubstrateRecord } from 'shared/model';
-import { convertToDvm, getSupportedChains, gqlName, isValidAddress } from 'shared/utils';
 import { Affix, Button, Input, Spin } from 'antd';
 import { getUnixTime } from 'date-fns';
 import { useQuery } from 'graphql-hooks';
@@ -12,6 +10,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useVirtual } from 'react-virtual';
 import { distinctUntilChanged, filter, Subject } from 'rxjs';
+import { Substrate2SubstrateRecord } from 'shared/model';
+import { convertToDvm, chainConfigs, gqlName, isValidAddress } from 'shared/utils';
 import { Record } from '../../components/transaction/Record';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
 import { endpoint, Path } from '../../config';
@@ -41,8 +41,6 @@ const S2S_RECORDS = gql`
     }
   }
 `;
-
-const supportedChains = getSupportedChains();
 
 const PAGE_SIZE = 50;
 
@@ -115,7 +113,7 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
       <div className="grid lg:grid-cols-3 gap-0 lg:gap-6 place-items-center my-4 lg:my-6">
         <ViewBoard title={t('transactions')} count={transactionsTotal} />
         <ViewBoard title={t('unique users')} count={accountTotal} />
-        <ViewBoard title={t('supported blockchains')} count={supportedChains.length} />
+        <ViewBoard title={t('supported blockchains')} count={chainConfigs.length} />
       </div>
 
       <Affix offsetTop={64}>

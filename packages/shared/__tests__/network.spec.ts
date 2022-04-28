@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 
-import { NETWORK_GRAPH } from '../utils/network/graph';
-import { CROSS_CHAIN_NETWORKS } from '../utils/network/network';
+import { crossChainGraph } from '../utils/network/graph';
+import { chainConfigs } from '../utils/network/network';
 
 describe('network utils', () => {
   it('should always true', () => {
@@ -9,7 +9,7 @@ describe('network utils', () => {
   });
 
   it('should create bridge graphs', () => {
-    const data = [...NETWORK_GRAPH];
+    const data = [...crossChainGraph];
     const fromCrab = data.find((item) => item[0].name === 'crab' && item[0].mode === 'native');
 
     expect(fromCrab).not.toEqual(undefined);
@@ -72,6 +72,6 @@ describe('network utils', () => {
   });
 
   it('should have 8 cross-chains', () => {
-    expect(CROSS_CHAIN_NETWORKS).toHaveLength(8);
+    expect(chainConfigs).toHaveLength(8);
   });
 });

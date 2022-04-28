@@ -6,7 +6,7 @@ import { validateMessages } from 'shared/config/validate-msg';
 import { useLocalSearch } from 'shared/hooks';
 import { Erc20Token, EthereumChainConfig } from 'shared/model';
 import {
-  CROSS_CHAIN_NETWORKS,
+  chainConfigs,
   getErc20Meta,
   getTokenRegisterStatus,
   hasAvailableDVMBridge,
@@ -208,7 +208,7 @@ export function Erc20Register() {
   const searchFn = useCallback(tokenSearchFactory(tokens), [tokens]);
   const { data } = useLocalSearch(searchFn as (arg: string) => Erc20Token[]);
   const { observer } = useTx();
-  const networks = useMemo(() => CROSS_CHAIN_NETWORKS.filter((item) => item.category.includes('ethereum')), []);
+  const networks = useMemo(() => chainConfigs.filter((item) => item.category.includes('ethereum')), []);
 
   const canStart = useMemo(
     () =>

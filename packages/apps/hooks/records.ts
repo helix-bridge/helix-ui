@@ -2,7 +2,7 @@ import { Departure } from 'shared/model';
 import {
   RecordsQueryRequest,
   rxGet,
-  verticesToChainConfig,
+  getChainConfig,
   isTronNetwork,
   isEthereum2Darwinia,
   isDarwinia2Ethereum,
@@ -70,7 +70,7 @@ export function useRecordsQuery<T = unknown>(req: RecordsQueryRequest): RecordsH
 }
 
 export function useRecords(departure: Departure, arrival: Departure) {
-  const [depConfig, arrConfig] = [verticesToChainConfig(departure), verticesToChainConfig(arrival)];
+  const [depConfig, arrConfig] = [getChainConfig(departure), getChainConfig(arrival)];
 
   const darwiniaEthereum = useDarwiniaEthereum(depConfig, arrConfig);
   const ethereumDarwiniaDVM = useEthereumDarwiniaDVM(depConfig, arrConfig);

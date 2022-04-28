@@ -22,7 +22,7 @@ import {
   prettyNumber,
   revertAccount,
   unixTimeToLocal,
-  verticesToChainConfig,
+  getChainConfig,
 } from 'shared/utils';
 import { Breadcrumb, Divider, Progress, Tooltip } from 'antd';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
@@ -145,7 +145,7 @@ const Page: NextPage<{
       }
     });
 
-    return [verticesToChainConfig(dep as Vertices), verticesToChainConfig(arr as Vertices)];
+    return [getChainConfig(dep as Vertices), getChainConfig(arr as Vertices)];
   }, [router.query]);
 
   const bridge = getBridge<SubstrateSubstrateDVMBridgeConfig>([departure, arrival]);

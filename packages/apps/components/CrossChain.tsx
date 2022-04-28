@@ -18,7 +18,7 @@ import {
   getInitialSetting,
   isReachable,
   isSameNetConfig,
-  verticesToChainConfig,
+  getChainConfig,
 } from 'shared/utils';
 import { Form, Tooltip } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
@@ -36,8 +36,8 @@ const getDirectionFromSettings: () => NullableCrossChainDirection = () => {
   const go = getInitialSetting('to', '') as Network;
   const fromMode = getInitialSetting('fMode', '') as NetworkMode;
   const toMode = getInitialSetting('tMode', '') as NetworkMode;
-  const from = come ? verticesToChainConfig({ name: come, mode: fromMode ?? 'native' }) : null;
-  const to = go ? verticesToChainConfig({ name: go, mode: toMode ?? 'native' }) : null;
+  const from = come ? getChainConfig({ name: come, mode: fromMode ?? 'native' }) : null;
+  const to = go ? getChainConfig({ name: go, mode: toMode ?? 'native' }) : null;
 
   if (from?.isTest === to?.isTest) {
     return { from, to };

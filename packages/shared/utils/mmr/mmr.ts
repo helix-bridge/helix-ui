@@ -6,7 +6,7 @@ import { ajax } from 'rxjs/ajax';
 import { Network, PolkadotChainConfig } from '../../model';
 import { waitUntilConnected } from '../connection';
 import { remove0x } from '../helper';
-import { getChainConfigByName } from '../network';
+import { getChainConfig } from '../network';
 import { genProof } from './proof';
 
 interface EncodeMMRoot {
@@ -52,7 +52,7 @@ async function getMMRProofByRPC(api: ApiPromise, blockNumber: number, mmrBlockNu
 
 async function getMMRProofBySubql(api: ApiPromise, blockNumber: number, mmrBlockNumber: number) {
   const chain = (await api.rpc.system.chain()).toString().toLowerCase() as Extract<Network, 'pangolin' | 'darwinia'>;
-  const config = getChainConfigByName(chain) as PolkadotChainConfig;
+  const config = getChainConfig(chain) as PolkadotChainConfig;
   const fetchProofs = proofsFactory(`https://api.subquery.network/sq/darwinia-network/${config.name}-mmr`);
   const proof = await genProof(blockNumber, mmrBlockNumber, fetchProofs);
   const encodeProof = proof.proof.map((item) => remove0x(item.replace(/(^\s*)|(\s*$)/g, ''))).join('');

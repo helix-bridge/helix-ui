@@ -10,7 +10,7 @@ import { polygonConfig } from './polygon';
 import { ropstenConfig } from './ropsten';
 import { tronConfig } from './tron';
 
-export const SYSTEM_NETWORK_CONFIGURATIONS = [
+export const SYSTEM_ChAIN_CONFIGURATIONS = [
   crabConfig,
   crabDVMConfig,
   darwiniaConfig,

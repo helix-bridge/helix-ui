@@ -4,8 +4,8 @@ import { Arrival, Bridge, BridgeConfig, ContractConfig, Departure } from '../../
 
 const isPro = process.env.NODE_ENV === 'production';
 
-export const NETWORK_GRAPH = new Map(
-  BRIDGES.reduce((acc: [Departure, Arrival[]][], bridge: Bridge<BridgeConfig<ContractConfig>>) => {
+export const crossChainGraph = BRIDGES.reduce(
+  (acc: [Departure, Arrival[]][], bridge: Bridge<BridgeConfig<ContractConfig>>) => {
     if (isPro && !bridge.stable) {
       return acc;
     }
@@ -23,5 +23,6 @@ export const NETWORK_GRAPH = new Map(
     check(bridge.redeem);
 
     return acc;
-  }, [])
+  },
+  []
 );

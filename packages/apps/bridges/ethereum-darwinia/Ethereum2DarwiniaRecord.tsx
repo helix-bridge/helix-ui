@@ -1,5 +1,5 @@
 import { EthereumChainConfig, Network, PolkadotChainConfig, RecordComponentProps } from 'shared/model';
-import { getLegalName, verticesToChainConfig } from 'shared/utils';
+import { getLegalName, getChainConfig } from 'shared/utils';
 import { encodeAddress } from '@polkadot//util-crypto';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +27,7 @@ export function Ethereum2DarwiniaRecord({
   const from = useMemo(
     () =>
       isGenesis
-        ? verticesToChainConfig({
+        ? getChainConfig({
             name: getLegalName(chain) as Network,
             mode: 'native',
           })
