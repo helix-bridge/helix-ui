@@ -1,13 +1,11 @@
 import { mapKeys } from 'lodash';
-import { Network, HistoryRouteParam, StorageInfo, ValueOf, WithNull, NetworkMode, HashInfo } from '../../model';
+import { HashInfo, HistoryRouteParam, StorageInfo, ValueOf, WithNull } from '../../model';
 import { readStorage } from './storage';
 
 interface HashShort {
-  f?: Network;
-  t?: Network;
+  f?: string;
+  t?: string;
   r?: string;
-  fm?: NetworkMode;
-  tm?: NetworkMode;
 }
 
 type SettingKey = keyof StorageInfo | keyof HashInfo;
@@ -23,8 +21,6 @@ const toShort: AdapterMap<HashInfo, HashShort> = {
   from: 'f',
   to: 't',
   recipient: 'r',
-  fMode: 'fm',
-  tMode: 'tm',
 };
 
 const toLong: AdapterMap<HashShort, HashInfo> = Object.entries(toShort).reduce(
@@ -46,7 +42,7 @@ function hashToObj(): { [key in keyof HashShort]: string } {
         return { ...acc, [key]: value };
       }, {}) as { [key in keyof HashShort]: string };
   } catch (err) {
-    return { f: '', t: '', r: '', fm: '', tm: '' };
+    return { f: '', t: '', r: '' };
   }
 }
 
@@ -84,15 +80,13 @@ export function apiUrl(domain: string, path: string): string {
 }
 
 // eslint-disable-next-line complexity
-export const genHistoryRouteParams: (param: HistoryRouteParam) => string = ({ from, sender, to, fMode, tMode }) => {
+export const genHistoryRouteParams: (param: HistoryRouteParam) => string = ({ from, sender, to }) => {
   const params = new URLSearchParams();
 
   [
     { key: 'from', value: from || '' },
     { key: 'sender', value: sender || '' },
     { key: 'to', value: to || '' },
-    { key: 'fMode', value: fMode || 'native' },
-    { key: 'tMode', value: tMode || 'native' },
   ].forEach(({ key, value }) => {
     if (value) {
       params.set(key, value);
@@ -109,7 +103,5 @@ export const getHistoryRouteParams: (search: string) => WithNull<HistoryRoutePar
     from: params.get('from'),
     sender: params.get('sender'),
     to: params.get('to'),
-    fMode: params.get('fMode'),
-    tMode: params.get('tMode'),
   } as HistoryRouteParam;
 };

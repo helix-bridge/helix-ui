@@ -28,7 +28,7 @@ export const pangolinConfig: PolkadotChainConfig = {
       ],
       type: 'native',
       logo: 'token-ring.svg',
-      symbol: '',
+      symbol: 'PRING',
       address: '',
     },
     {
@@ -43,7 +43,7 @@ export const pangolinConfig: PolkadotChainConfig = {
       ],
       type: 'native',
       logo: 'token-kton.svg',
-      symbol: '',
+      symbol: 'PKTON',
       address: '',
     },
   ],

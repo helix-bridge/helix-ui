@@ -1,7 +1,7 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Logo } from 'shared/components/widget/Logo';
 import { useLocalSearch } from 'shared/hooks';
-import { ChainConfig, TokenInfo, Vertices } from 'shared/model';
+import { ChainConfig, TokenWithBridgesInfo, Vertices } from 'shared/model';
 import { chainConfigs, getDisplayName } from 'shared/utils';
 import { Input, Radio, Tag, Typography } from 'antd';
 import { chain as lodashChain } from 'lodash';
@@ -16,7 +16,7 @@ interface SelectTokenModalProps {
   onSelect: (value: TokenInfoWithMeta) => void;
 }
 
-export type TokenInfoWithMeta = TokenInfo & { meta: ChainConfig };
+export type TokenInfoWithMeta = TokenWithBridgesInfo & { meta: ChainConfig };
 
 const allTokens: TokenInfoWithMeta[] = lodashChain(chainConfigs)
   .filter((item) => item.mode !== 'dvm')

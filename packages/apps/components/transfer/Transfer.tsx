@@ -1,7 +1,7 @@
 import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
 import { darwiniaConfig } from 'shared/config/network';
-import { TokenInfo } from 'shared/model';
+import { TokenWithBridgesInfo } from 'shared/model';
 import { Button, Form, InputNumber, InputNumberProps, Typography } from 'antd';
 import { useState } from 'react';
 import { SelectTokenModal, TokenInfoWithMeta } from './SelectTokenModal';
@@ -10,7 +10,7 @@ import { TransferDoneModal } from './TransferDoneModal';
 
 type AmountItemContentProps = InputNumberProps & {
   value?: { amount: string; tokenIndex: number };
-  onChange?: (value: { amount: string; token: TokenInfo }) => void;
+  onChange?: (value: { amount: string; token: TokenWithBridgesInfo }) => void;
 };
 
 const defaultToken = { ...darwiniaConfig.tokens[0], meta: darwiniaConfig };

@@ -1,20 +1,16 @@
 import { THEME } from '../config/theme';
-import { Network, ChainConfig, NetworkMode } from './network';
+import { ChainConfig, Network } from './network';
 
 export interface HashInfo {
-  fMode?: NetworkMode | null;
-  from?: Network | null;
+  from?: string | null;
   recipient?: string | null;
-  tMode?: NetworkMode | null;
-  to?: Network | null;
+  to?: string | null;
 }
 
 export interface HistoryRouteParam {
-  fMode: NetworkMode;
-  from: Network;
+  from: string;
   sender: string;
-  tMode: NetworkMode;
-  to: Network;
+  to: string;
 }
 
 export interface StorageInfo extends HashInfo {

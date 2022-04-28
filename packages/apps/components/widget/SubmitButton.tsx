@@ -57,7 +57,7 @@ export function SubmitButton({
     return <FromItemButton disabled>{t(tx.status)}</FromItemButton>;
   }
 
-  if (from?.name && to?.name && hasBridge({ from, to }) && !isBridgeAvailable(from, to)) {
+  if (from?.name && to?.name && hasBridge([from, to]) && !isBridgeAvailable(from, to)) {
     return <FromItemButton disabled>{t('Coming Soon')}</FromItemButton>;
   }
 

@@ -24,7 +24,7 @@ export const ethereumConfig: EthereumChainConfig = {
   },
   tokens: [
     {
-      name: 'ETHER',
+      name: 'ETHER-ROPSTEN',
       decimals: 18,
       bridges: [
         {

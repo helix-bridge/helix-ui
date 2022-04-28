@@ -1,8 +1,8 @@
+import { Col, Row } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { Row, Col } from 'antd';
-import { Transfer } from '../components/transfer/Transfer';
 import { BridgeSelector } from '../components/BridgeSelector';
+import { CrossChain } from '../components/CrossChain';
 
 function Page() {
   // const [visible, setVisible] = useState(true);
@@ -13,7 +13,8 @@ function Page() {
     <>
       <Row>
         <Col xs={24} sm={8} className="mb-4 sm:mb-0">
-          <Transfer />
+          {/* <Transfer /> */}
+          <CrossChain />
         </Col>
 
         <Col xs={24} sm={{ span: 15, offset: 1 }}>

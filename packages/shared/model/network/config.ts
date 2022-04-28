@@ -34,7 +34,7 @@ interface AvailableBridgeConfig {
   partner: Partner; //
 }
 
-export interface TokenInfo extends Token {
+export interface TokenWithBridgesInfo extends Token {
   type: TokenMode;
   bridges: AvailableBridgeConfig[];
 }
@@ -62,7 +62,7 @@ export interface ChainConfig {
   name: Network;
   provider: string;
   social: Social;
-  tokens: TokenInfo[];
+  tokens: TokenWithBridgesInfo[];
   category: NetworkCategory[]; // the first category decide the wallet connection: ethereum -> metamask, polkadot -> polkadot extension
 }
 

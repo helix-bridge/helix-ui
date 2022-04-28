@@ -9,10 +9,9 @@ import {
   ChainConfig,
   ContractConfig,
   CrossChainDirection,
-  Departure,
   Vertices,
 } from '../../model';
-import { isEthereumNetwork, isPolkadotNetwork } from '../network/network';
+import { getChainConfig, isEthereumNetwork, isPolkadotNetwork } from '../network/network';
 
 type BridgePredicateFn = (departure: Vertices, arrival: Vertices) => boolean;
 
@@ -84,7 +83,9 @@ export function isBridgeAvailable(from: ChainConfig, to: ChainConfig): boolean {
 export function getBridge<T extends BridgeConfig>(
   source: CrossChainDirection | [Vertices | ChainConfig, Vertices | ChainConfig]
 ): Bridge<T> {
-  const data = Array.isArray(source) ? source : ([source.from, source.to] as [ChainConfig, ChainConfig]);
+  const data = Array.isArray(source)
+    ? source
+    : ([source.from, source.to].map((item) => getChainConfig(item.symbol)) as [ChainConfig, ChainConfig]);
 
   const direction = data.map((item) => {
     const asVertices = has(item, 'network') && has(item, 'mode');
@@ -116,11 +117,8 @@ export function getBridgeComponent(type: 'crossChain' | 'record') {
       return null;
     }
 
-    const direction = [
-      { name: from.name, mode: from.mode },
-      { name: to.name, mode: to.mode },
-    ] as [Departure, Departure];
-    const bridge = getBridge([from, to]);
+    const direction = [from, to].map((item) => getChainConfig(item.symbol));
+    const bridge = getBridge(direction as [ChainConfig, ChainConfig]);
 
     if (!bridge || bridge.status === 'pending') {
       return ComingSoon;

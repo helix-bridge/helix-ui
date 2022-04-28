@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 
 import { crossChainGraph } from '../utils/network/graph';
-import { chainConfigs } from '../utils/network/network';
+import { chainConfigs, getChainConfig } from '../utils/network/network';
 
 describe('network utils', () => {
   it('should always true', () => {
@@ -73,5 +73,20 @@ describe('network utils', () => {
 
   it('should have 8 cross-chains', () => {
     expect(chainConfigs).toHaveLength(8);
+  });
+
+  it.only('can get chain config by token name directly', () => {
+    const names = chainConfigs
+      .map((item) => item.tokens)
+      .flat()
+      .map((item) => item.name);
+
+    chainConfigs.forEach((chain) => {
+      chain.tokens.forEach((token) => {
+        const config = getChainConfig(token.name);
+
+        expect(config).toEqual(chain);
+      });
+    });
   });
 });

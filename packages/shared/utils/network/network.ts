@@ -9,6 +9,7 @@ import {
   Network,
   NetworkCategory,
   NetworkMode,
+  TokenWithBridgesInfo,
   Vertices,
 } from '../../model';
 import { getCustomNetworkConfig } from '../helper/storage';
@@ -161,15 +162,36 @@ export function isSameNetConfig(config1: ChainConfig | null, config2: ChainConfi
   return isEqual(config1, config2) || (config1.name === config2.name && config1.mode === config2.mode);
 }
 
+// eslint-disable-next-line complexity
 export function getChainConfig(
   name: Vertices | Network | string | null | undefined,
   mode: NetworkMode = 'native'
 ): ChainConfig {
   if (!name) {
-    throw new Error('You must specify a name or vertical the chain config');
+    throw new Error(`You must pass a 'name' parameter to find the chain config`);
   }
 
-  const compared = typeof name === 'string' ? ({ name, mode } as Vertices) : name;
+  let compared: Vertices;
+
+  if (typeof name === 'string') {
+    const isChainName = chainConfigs.map((item) => item.name).includes(name as Network);
+
+    if (isChainName) {
+      compared = { name, mode } as Vertices;
+    } else {
+      const target = chainConfigs.find((item) => item.tokens.map((token) => token.name).includes(name));
+
+      if (!target) {
+        throw new Error(
+          `Can not find the chain config because of the name '${name}' is neither a chain name nor a token name`
+        );
+      }
+
+      return target;
+    }
+  } else {
+    compared = name;
+  }
 
   const result = chainConfigs.find((item) => isChainEqual(item, compared));
 
@@ -178,6 +200,18 @@ export function getChainConfig(
   }
 
   return result;
+}
+
+export function findToken(symbol: string): { token: TokenWithBridgesInfo; config: ChainConfig } | null {
+  let token: TokenWithBridgesInfo | undefined;
+
+  const config = chainConfigs.find((item) => {
+    token = item.tokens.find((ele) => ele.symbol === symbol);
+
+    return !!token;
+  });
+
+  return config && token ? { config, token } : null;
 }
 
 export function getArrival(from: ChainConfig | null | undefined, to: ChainConfig | null | undefined): Arrival | null {

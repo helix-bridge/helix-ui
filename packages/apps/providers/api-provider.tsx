@@ -10,8 +10,6 @@ import {
   ConnectionStatus,
   EthereumChainConfig,
   EthereumConnection,
-  Network,
-  NetworkMode,
   NoNullFields,
   PolkadotChain,
   PolkadotConnection,
@@ -54,10 +52,9 @@ type Actions =
 const isDev = process.env.REACT_APP_HOST_TYPE === 'dev';
 
 const initialNetworkConfig = () => {
-  const network = getInitialSetting<Network>('from', null);
-  const mode = getInitialSetting<NetworkMode>('fMode', 'native') ?? 'native';
+  const fromToken = getInitialSetting<string>('from', null);
 
-  return network && getChainConfig({ name: network, mode });
+  return fromToken ? getChainConfig(fromToken) : null;
 };
 
 const initialConnection: Connection = {

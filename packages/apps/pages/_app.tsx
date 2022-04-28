@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import { FunctionComponent, useEffect, useState } from 'react';
 import '../styles/index.scss';
 import AppLayout from '../components/AppLayout';
+import { ApiProvider, GqlProvider, TxProvider } from '../providers';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -93,9 +94,15 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
         {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
         {/* @ts-ignore */}
         <ErrorBoundary>
-          <AppLayout>
-            <Component {...pageProps} />
-          </AppLayout>
+          <ApiProvider>
+            <TxProvider>
+              <GqlProvider>
+                <AppLayout>
+                  <Component {...pageProps} />
+                </AppLayout>
+              </GqlProvider>
+            </TxProvider>
+          </ApiProvider>
         </ErrorBoundary>
       </ClientContext.Provider>
     </>

@@ -1,13 +1,17 @@
 import { FormInstance } from 'antd';
 import { Subscription } from 'rxjs';
-import { ChainConfig } from '../network';
+import { TokenWithBridgesInfo } from '../network';
 import { NullableFields } from '../type-operator';
 import { BridgeStatus } from './bridge';
 
 /* ---------------------------------------------------Components props--------------------------------------------------- */
 
+export interface CrossToken extends TokenWithBridgesInfo {
+  amount: string;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type CrossChainPayload<C = any, F extends ChainConfig = ChainConfig, T extends ChainConfig = ChainConfig> = {
+export type CrossChainPayload<C = any, F extends CrossToken = CrossToken, T extends CrossToken = CrossToken> = {
   direction: CrossChainDirection<F, T>;
 } & C;
 
@@ -20,8 +24,8 @@ export interface BridgeState {
 
 export interface CrossChainComponentProps<
   C extends CrossChainParty,
-  F extends ChainConfig = ChainConfig,
-  T extends ChainConfig = ChainConfig
+  F extends CrossToken = CrossToken,
+  T extends CrossToken = CrossToken
 > {
   form: FormInstance<CrossChainPayload<C>>;
   direction: CrossChainDirection<F, T>;
@@ -31,7 +35,7 @@ export interface CrossChainComponentProps<
 
 /* ---------------------------------------------------Bridge elements--------------------------------------------------- */
 
-export interface CrossChainDirection<F = ChainConfig, T = ChainConfig> {
+export interface CrossChainDirection<F = CrossToken, T = CrossToken> {
   from: F;
   to: T;
 }

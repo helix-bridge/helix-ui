@@ -1,3 +1,7 @@
+import { Form, Tooltip, Typography } from 'antd';
+import { useForm } from 'antd/lib/form/Form';
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
 import {
@@ -6,24 +10,19 @@ import {
   CrossChainDirection,
   CrossChainParty,
   CrossChainPayload,
-  Network,
-  NetworkMode,
+  CrossToken,
   NullableCrossChainDirection,
   SubmitFn,
 } from 'shared/model';
 import {
   emptyObsFactory,
+  findToken,
   getBridge,
   getBridgeComponent,
-  getInitialSetting,
-  isReachable,
-  isSameNetConfig,
   getChainConfig,
+  getInitialSetting,
+  isSameNetConfig,
 } from 'shared/utils';
-import { Form, Tooltip } from 'antd';
-import { useForm } from 'antd/lib/form/Form';
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useApi, useTx } from '../hooks';
 import { Direction } from './form-control/Direction';
 import { FromItemButton, SubmitButton } from './widget/SubmitButton';
@@ -32,28 +31,35 @@ const getCrossChainComponent = getBridgeComponent('crossChain');
 
 // eslint-disable-next-line complexity
 const getDirectionFromSettings: () => NullableCrossChainDirection = () => {
-  const come = getInitialSetting('from', '') as Network;
-  const go = getInitialSetting('to', '') as Network;
-  const fromMode = getInitialSetting('fMode', '') as NetworkMode;
-  const toMode = getInitialSetting('tMode', '') as NetworkMode;
-  const from = come ? getChainConfig({ name: come, mode: fromMode ?? 'native' }) : null;
-  const to = go ? getChainConfig({ name: go, mode: toMode ?? 'native' }) : null;
+  const oToken = getInitialSetting<string>('from', null);
+  const tToken = getInitialSetting<string>('to', null);
 
-  if (from?.isTest === to?.isTest) {
-    return { from, to };
-  } else if (from) {
-    return { from, to: null };
-  } else {
-    return { from: null, to };
+  const from = oToken ? findToken(oToken) : null;
+  const to = tToken ? findToken(tToken) : null;
+
+  let fromToken: CrossToken | null = null;
+  let toToken: CrossToken | null = null;
+
+  if (from) {
+    fromToken = { ...from.token, amount: '' };
   }
+
+  if (to) {
+    toToken = { ...to.token, amount: '' };
+  }
+
+  return { from: fromToken, to: toToken };
 };
 
 const validateDirection: (dir: NullableCrossChainDirection) => NullableCrossChainDirection = (dir) => {
   const { from, to } = dir;
-  const isSameEnv = from?.isTest === to?.isTest;
-  const reachable = isReachable(from)(to); // from -> to is available;
 
-  return isSameEnv && reachable ? dir : { from: null, to: null };
+  if (from && to) {
+    const reachable = from.bridges.find((item) => item.partner.symbol === to.symbol);
+    return reachable ? dir : { from: null, to: null };
+  }
+
+  return dir;
 };
 
 // eslint-disable-next-line complexity
@@ -86,7 +92,9 @@ export function CrossChain() {
         const bridge = getBridge({ from: departure, to });
 
         if (bridge.activeAssistantConnection) {
-          connectAssistantNetwork(to);
+          const toConfig = getChainConfig(to.name);
+
+          connectAssistantNetwork(toConfig);
         }
       }
     },
@@ -107,7 +115,8 @@ export function CrossChain() {
 
   useEffect(() => {
     const { from, to } = direction;
-    const fromReady = !!from && isSameNetConfig(from, network) && connectionStatus === 'success';
+    const fromConfig = getChainConfig(from?.name);
+    const fromReady = !!from && isSameNetConfig(fromConfig, network) && connectionStatus === 'success';
 
     setIsReady(fromReady && !!to);
   }, [network, connectionStatus, direction]);
@@ -124,7 +133,7 @@ export function CrossChain() {
       form={form}
       initialValues={{ direction }}
       validateMessages={validateMessages[i18n.language as 'en' | 'zh-CN' | 'zh']}
-      className={tx ? 'filter blur-sm drop-shadow' : ''}
+      className={`dark:bg-antDark p-5 ${tx ? 'filter blur-sm drop-shadow' : ''}`}
     >
       <Form.Item
         name={FORM_CONTROL.direction}
@@ -154,6 +163,20 @@ export function CrossChain() {
         />
       </Form.Item>
 
+      <Form.Item label="Info" className="relative">
+        <div className="h-20 w-full flex flex-col justify-center space-y-2 px-4 bg-gray-900">
+          <div className="flex justify-between items-center">
+            <Typography.Text>Bridge Name</Typography.Text>
+            <Typography.Text>Helix Bridge</Typography.Text>
+          </div>
+
+          <div className="flex justify-between items-center">
+            <Typography.Text>Transaction Fee</Typography.Text>
+            <Typography.Text>50 RING</Typography.Text>
+          </div>
+        </div>
+      </Form.Item>
+
       {isReady && Content && (
         <Content
           form={form}
@@ -166,7 +189,13 @@ export function CrossChain() {
       <div className={connectionStatus === 'success' && direction.from ? 'grid grid-cols-2 gap-4' : ''}>
         <Tooltip title={bridgeState.reason} placement="bottom">
           <div>
-            <SubmitButton {...direction} requireTo launch={launch} disabled={bridgeState.status !== 'available'} />
+            <SubmitButton
+              from={getChainConfig(direction.from?.name)}
+              to={getChainConfig(direction.to?.name)}
+              requireTo
+              launch={launch}
+              disabled={bridgeState.status !== 'available'}
+            />
           </div>
         </Tooltip>
 
