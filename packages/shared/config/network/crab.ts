@@ -16,11 +16,31 @@ export const crabConfig: PolkadotChainConfig = {
     twitter: 'https://twitter.com/DarwiniaNetwork',
   },
   tokens: [
-    { name: 'CRAB', decimals: 9, bridges: ['helix'], type: 'native', logo: 'token-crab.svg', symbol: '', address: '' },
+    {
+      name: 'CRAB',
+      decimals: 9,
+      bridges: [
+        {
+          category: 'helix',
+          name: 'substrate-DVM',
+          partner: { name: 'crab', mode: 'dvm', role: 'receiver', symbol: 'WCRAB' },
+        },
+      ],
+      type: 'native',
+      logo: 'token-crab.svg',
+      symbol: 'CRAB',
+      address: '',
+    },
     {
       name: 'CKTON',
       decimals: 9,
-      bridges: ['helix'],
+      bridges: [
+        {
+          category: 'helix',
+          name: 'substrate-DVM',
+          partner: { name: 'crab', mode: 'dvm', role: 'receiver', symbol: 'WCKTON' },
+        },
+      ],
       type: 'native',
       logo: 'token-ckton.svg',
       symbol: 'CKTON',

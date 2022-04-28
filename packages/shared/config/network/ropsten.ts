@@ -26,7 +26,13 @@ export const ropstenConfig: EthereumChainConfig = {
     {
       name: 'ETHER',
       decimals: 18,
-      bridges: ['helix'],
+      bridges: [
+        {
+          category: 'helix',
+          name: 'ethereum-darwinia',
+          partner: { name: 'pangolin', mode: 'native', role: 'receiver', symbol: 'PRING' },
+        },
+      ],
       type: 'native',
       logo: 'token-ethereum.svg',
       symbol: 'ETHER',

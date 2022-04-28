@@ -14,8 +14,6 @@ export const tronConfig: ChainConfig = {
     github: '',
     twitter: '',
   },
-  tokens: [
-    { name: 'TRX', decimals: 18, bridges: ['helix'], type: 'native', logo: 'trx.png', symbol: 'TRX', address: '' },
-  ],
+  tokens: [{ name: 'TRX', decimals: 18, bridges: [], type: 'native', logo: 'trx.png', symbol: 'TRX', address: '' }],
   category: ['tron'],
 };

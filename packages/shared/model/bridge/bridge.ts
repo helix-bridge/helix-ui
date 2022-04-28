@@ -1,6 +1,6 @@
 import { has, isEqual } from 'lodash';
 import { FunctionComponent } from 'react';
-import { ChainConfig } from '../network';
+import { AvailableBridgeCategory, ChainConfig } from '../network';
 
 /* ----------------------------------------------- bridge state ------------------------------------------------ */
 
@@ -46,8 +46,6 @@ export interface BridgeConfig<C = ContractConfig, K = Record<string, string>> {
 
 /* ----------------------------------------------- bridge  ------------------------------------------------ */
 
-type BridgeCategory = 'helix';
-
 /**
  * departure -> arrival: issuing;
  * departure <- arrival: redeem;
@@ -67,7 +65,7 @@ export class Bridge<C = BridgeConfig> {
 
   readonly redeem: [Arrival, Departure];
 
-  readonly category: BridgeCategory;
+  readonly category: AvailableBridgeCategory;
 
   private _config: C;
 
@@ -80,7 +78,7 @@ export class Bridge<C = BridgeConfig> {
     arrival: ChainConfig,
     config: C,
     options: {
-      category: BridgeCategory;
+      category: AvailableBridgeCategory;
       status?: BridgeStatus;
       stable?: boolean;
       activeAssistantConnection?: boolean;

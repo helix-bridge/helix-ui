@@ -11,9 +11,32 @@ export interface Logo {
 
 export type TokenMode = 'native' | 'mapping';
 
+export type AvailableBridgeCategory = 'helix';
+
+type AvailableBridge = 'substrate-DVM' | 'substrate-substrateDVM' | 'ethereum-darwinia';
+
+type PartnerRole = 'issuer' | 'receiver';
+
+interface Partner {
+  name: Network;
+  mode: NetworkMode;
+  symbol: string; // token symbol
+  /**
+   * partner role beyond to the issuing <-> redeem relationship;
+   * e.g: On substrate to substrateDVM bridge, transform RING to xRING represent the issuing action, the opposite means redeem;
+   * So we mark the substrate chain as issuer and the substrateDVM chain as receiver;
+   */
+  role: PartnerRole;
+}
+interface AvailableBridgeConfig {
+  category: AvailableBridgeCategory;
+  name: AvailableBridge;
+  partner: Partner; //
+}
+
 export interface TokenInfo extends Token {
   type: TokenMode;
-  bridges: string[];
+  bridges: AvailableBridgeConfig[];
 }
 
 interface DVMConfig {

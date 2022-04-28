@@ -20,7 +20,13 @@ export const pangoroConfig: PolkadotChainConfig = {
     {
       name: 'ORING',
       decimals: 9,
-      bridges: ['helix'],
+      bridges: [
+        {
+          category: 'helix',
+          name: 'substrate-substrateDVM',
+          partner: { name: 'pangolin', mode: 'dvm', role: 'receiver', symbol: 'xORING' },
+        },
+      ],
       type: 'native',
       logo: 'token-ring.svg',
       symbol: 'ORING',
@@ -29,7 +35,13 @@ export const pangoroConfig: PolkadotChainConfig = {
     {
       name: 'OKTON',
       decimals: 9,
-      bridges: ['helix'],
+      bridges: [
+        {
+          category: 'helix',
+          name: 'substrate-substrateDVM',
+          partner: { name: 'pangolin', mode: 'dvm', role: 'receiver', symbol: 'xOKTON' },
+        },
+      ],
       type: 'native',
       logo: 'token-kton.svg',
       symbol: 'OKTON',

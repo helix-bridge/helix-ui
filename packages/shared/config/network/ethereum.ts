@@ -26,7 +26,13 @@ export const ethereumConfig: EthereumChainConfig = {
     {
       name: 'ETHER',
       decimals: 18,
-      bridges: ['helix'],
+      bridges: [
+        {
+          category: 'helix',
+          name: 'ethereum-darwinia',
+          partner: { name: 'darwinia', mode: 'native', role: 'receiver', symbol: 'RING' },
+        },
+      ],
       type: 'native',
       logo: 'token-ethereum.svg',
       symbol: 'ETHER',

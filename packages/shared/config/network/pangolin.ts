@@ -16,8 +16,36 @@ export const pangolinConfig: PolkadotChainConfig = {
     twitter: 'https://twitter.com/DarwiniaNetwork',
   },
   tokens: [
-    { name: 'PRING', decimals: 9, bridges: ['helix'], type: 'native', logo: 'token-ring.svg', symbol: '', address: '' },
-    { name: 'PKTON', decimals: 9, bridges: ['helix'], type: 'native', logo: 'token-kton.svg', symbol: '', address: '' },
+    {
+      name: 'PRING',
+      decimals: 9,
+      bridges: [
+        {
+          category: 'helix',
+          name: 'substrate-DVM',
+          partner: { name: 'pangolin', mode: 'dvm', role: 'receiver', symbol: 'WPRING' },
+        },
+      ],
+      type: 'native',
+      logo: 'token-ring.svg',
+      symbol: '',
+      address: '',
+    },
+    {
+      name: 'PKTON',
+      decimals: 9,
+      bridges: [
+        {
+          category: 'helix',
+          name: 'substrate-DVM',
+          partner: { name: 'pangolin', mode: 'dvm', role: 'receiver', symbol: 'WPKTON' },
+        },
+      ],
+      type: 'native',
+      logo: 'token-kton.svg',
+      symbol: '',
+      address: '',
+    },
   ],
   ss58Prefix: 42,
   specVersion: 28060,
