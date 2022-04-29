@@ -10,17 +10,15 @@ import {
   CrossChainDirection,
   CrossChainParty,
   CrossChainPayload,
-  CrossToken,
   NullableCrossChainDirection,
   SubmitFn,
 } from 'shared/model';
 import {
   emptyObsFactory,
-  findToken,
   getBridge,
   getBridgeComponent,
   getChainConfig,
-  getInitialSetting,
+  getDirectionFromSettings,
   isSameNetConfig,
 } from 'shared/utils';
 import { useApi, useTx } from '../hooks';
@@ -28,39 +26,6 @@ import { Direction } from './form-control/Direction';
 import { FromItemButton, SubmitButton } from './widget/SubmitButton';
 
 const getCrossChainComponent = getBridgeComponent('crossChain');
-
-// eslint-disable-next-line complexity
-const getDirectionFromSettings: () => NullableCrossChainDirection = () => {
-  const oToken = getInitialSetting<string>('from', null);
-  const tToken = getInitialSetting<string>('to', null);
-
-  const from = oToken ? findToken(oToken) : null;
-  const to = tToken ? findToken(tToken) : null;
-
-  let fromToken: CrossToken | null = null;
-  let toToken: CrossToken | null = null;
-
-  if (from) {
-    fromToken = { ...from.token, amount: '' };
-  }
-
-  if (to) {
-    toToken = { ...to.token, amount: '' };
-  }
-
-  return { from: fromToken, to: toToken };
-};
-
-const validateDirection: (dir: NullableCrossChainDirection) => NullableCrossChainDirection = (dir) => {
-  const { from, to } = dir;
-
-  if (from && to) {
-    const reachable = from.bridges.find((item) => item.partner.symbol === to.symbol);
-    return reachable ? dir : { from: null, to: null };
-  }
-
-  return dir;
-};
 
 // eslint-disable-next-line complexity
 export function CrossChain() {
@@ -74,7 +39,7 @@ export function CrossChain() {
     connectAssistantNetwork,
   } = useApi();
 
-  const [direction, setDirection] = useState(() => validateDirection(getDirectionFromSettings()));
+  const [direction, setDirection] = useState(() => getDirectionFromSettings());
   const [isReady, setIsReady] = useState(false);
   const [submitFn, setSubmit] = useState<SubmitFn>(emptyObsFactory);
   const [bridgeState, setBridgeState] = useState<BridgeState>({ status: 'available' });

@@ -1,4 +1,4 @@
-import { TokenMode } from 'shared/model';
+import { TokenType } from 'shared/model';
 import { message } from 'antd';
 import { memoize } from 'lodash';
 import Web3 from 'web3';
@@ -30,4 +30,4 @@ export function tokenSearchFactory<T extends { address: string; name: string }>(
   };
 }
 
-export const tokenModeToChainMode = memoize((mode: TokenMode) => (mode === 'mapping' ? 'dvm' : 'native'));
+export const tokenModeToChainMode = memoize((mode: TokenType) => (mode === 'mapping' ? 'dvm' : 'native'));

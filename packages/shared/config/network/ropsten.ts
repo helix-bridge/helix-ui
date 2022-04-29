@@ -26,6 +26,15 @@ export const ropstenConfig: EthereumChainConfig = {
     {
       name: 'ETHER',
       decimals: 18,
+      bridges: [],
+      type: 'native',
+      logo: 'token-ethereum.svg',
+      symbol: 'ETHER',
+      address: '',
+    },
+    {
+      name: 'PRING',
+      decimals: 9,
       bridges: [
         {
           category: 'helix',
@@ -33,9 +42,24 @@ export const ropstenConfig: EthereumChainConfig = {
           partner: { name: 'pangolin', mode: 'native', role: 'receiver', symbol: 'PRING' },
         },
       ],
-      type: 'native',
-      logo: 'token-ethereum.svg',
-      symbol: 'ETHER',
+      type: 'mapping',
+      logo: 'token-ring.svg',
+      symbol: 'PRING',
+      address: '',
+    },
+    {
+      name: 'PKTON',
+      decimals: 9,
+      bridges: [
+        {
+          category: 'helix',
+          name: 'ethereum-darwinia',
+          partner: { name: 'pangolin', mode: 'native', role: 'receiver', symbol: 'PKTON' },
+        },
+      ],
+      type: 'mapping',
+      logo: 'token-kton.svg',
+      symbol: 'PKTON',
       address: '',
     },
   ],

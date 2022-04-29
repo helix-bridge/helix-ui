@@ -25,6 +25,11 @@ export const pangolinConfig: PolkadotChainConfig = {
           name: 'substrate-DVM',
           partner: { name: 'pangolin', mode: 'dvm', role: 'receiver', symbol: 'WPRING' },
         },
+        {
+          category: 'helix',
+          name: 'ethereum-darwinia',
+          partner: { name: 'ropsten', mode: 'native', role: 'issuer', symbol: 'PRING' },
+        },
       ],
       type: 'native',
       logo: 'token-ring.svg',
@@ -39,6 +44,11 @@ export const pangolinConfig: PolkadotChainConfig = {
           category: 'helix',
           name: 'substrate-DVM',
           partner: { name: 'pangolin', mode: 'dvm', role: 'receiver', symbol: 'WPKTON' },
+        },
+        {
+          category: 'helix',
+          name: 'ethereum-darwinia',
+          partner: { name: 'ropsten', mode: 'native', role: 'issuer', symbol: 'PKTON' },
         },
       ],
       type: 'native',

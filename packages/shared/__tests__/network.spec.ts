@@ -1,5 +1,7 @@
 /// <reference types="jest" />
 
+import { crabConfig, crabDVMConfig, pangolinConfig } from '../config/network';
+import { pangolinDVMConfig } from '../config/network/pangolin-dvm';
 import { crossChainGraph } from '../utils/network/graph';
 import { chainConfigs, getChainConfig } from '../utils/network/network';
 
@@ -75,18 +77,54 @@ describe('network utils', () => {
     expect(chainConfigs).toHaveLength(8);
   });
 
-  it.only('can get chain config by token name directly', () => {
-    const names = chainConfigs
-      .map((item) => item.tokens)
-      .flat()
-      .map((item) => item.name);
-
-    chainConfigs.forEach((chain) => {
-      chain.tokens.forEach((token) => {
-        const config = getChainConfig(token.name);
-
-        expect(config).toEqual(chain);
+  it('can get chain config by token name, vertices and Network', () => {
+    // by token name
+    chainConfigs
+      .filter((item) => item.name !== 'ethereum' && item.name !== 'ropsten')
+      .forEach((chain) => {
+        chain.tokens.forEach((token) => {
+          const config = getChainConfig(token.symbol);
+          expect(config).toEqual(chain);
+        });
       });
+
+    // if token is ether: need chain name params
+    chainConfigs
+      .filter((item) => item.name === 'ethereum' || item.name === 'ropsten')
+      .forEach((chain) => {
+        chain.tokens.forEach((token) => {
+          const config = getChainConfig(token.symbol, 'native', chain.name);
+          expect(config).toEqual(chain);
+        });
+      });
+
+    // by vertices
+    chainConfigs.forEach((chain) => {
+      const { name, mode } = chain;
+      const compared = getChainConfig({ name, mode });
+
+      expect(chain).toEqual(compared);
     });
+
+    // by chain name only: native chain config
+    chainConfigs.forEach((chain) => {
+      const { name } = chain;
+      const compared = getChainConfig(name);
+
+      if (name === 'pangolin') {
+        expect(compared).toEqual(pangolinConfig);
+      } else if (name === 'crab') {
+        expect(compared).toEqual(crabConfig);
+      } else {
+        expect(compared).toEqual(chain);
+      }
+    });
+
+    // by chain name and mode
+    const pangolinDVM = getChainConfig({ name: 'pangolin', mode: 'dvm' });
+    const crabDVM = getChainConfig({ name: 'crab', mode: 'dvm' });
+
+    expect(pangolinDVM).toEqual(pangolinDVMConfig);
+    expect(crabDVM).toEqual(crabDVMConfig);
   });
 });

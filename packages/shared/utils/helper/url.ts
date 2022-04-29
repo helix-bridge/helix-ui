@@ -1,5 +1,14 @@
 import { mapKeys } from 'lodash';
-import { HashInfo, HistoryRouteParam, StorageInfo, ValueOf, WithNull } from '../../model';
+import {
+  CrossToken,
+  HashInfo,
+  HistoryRouteParam,
+  NullableCrossChainDirection,
+  StorageInfo,
+  ValueOf,
+  WithNull,
+} from '../../model';
+import { getChainConfig } from '../network';
 import { readStorage } from './storage';
 
 interface HashShort {
@@ -104,4 +113,41 @@ export const getHistoryRouteParams: (search: string) => WithNull<HistoryRoutePar
     sender: params.get('sender'),
     to: params.get('to'),
   } as HistoryRouteParam;
+};
+
+export const validateDirection: (dir: NullableCrossChainDirection) => NullableCrossChainDirection = (dir) => {
+  const { from, to } = dir;
+
+  if (from && to) {
+    const reachable = from.bridges.find((item) => item.partner.symbol === to.symbol);
+
+    return reachable ? dir : { from: null, to: null };
+  }
+
+  return dir;
+};
+
+export const getDirectionFromSettings: () => NullableCrossChainDirection = () => {
+  const fToken = getInitialSetting<string>('from', null);
+  const tToken = getInitialSetting<string>('to', null);
+
+  const from = fToken ? getChainConfig(fToken) : null;
+  const to = tToken ? getChainConfig(tToken) : null;
+
+  let fromToken: CrossToken | null = null;
+  let toToken: CrossToken | null = null;
+
+  if (from) {
+    const token = from.tokens.find((item) => item.symbol === fToken)!;
+
+    fromToken = { ...token, amount: '' };
+  }
+
+  if (to) {
+    const token = to.tokens.find((item) => item.symbol === tToken)!;
+
+    toToken = { ...token, amount: '' };
+  }
+
+  return validateDirection({ from: fromToken, to: toToken });
 };

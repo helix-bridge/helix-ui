@@ -9,7 +9,7 @@ export interface Logo {
   type: LogoType;
 }
 
-export type TokenMode = 'native' | 'mapping';
+export type TokenType = 'native' | 'mapping';
 
 export type AvailableBridgeCategory = 'helix';
 
@@ -35,7 +35,7 @@ interface AvailableBridgeConfig {
 }
 
 export interface TokenWithBridgesInfo extends Token {
-  type: TokenMode;
+  type: TokenType;
   bridges: AvailableBridgeConfig[];
 }
 

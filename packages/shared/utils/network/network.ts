@@ -9,7 +9,7 @@ import {
   Network,
   NetworkCategory,
   NetworkMode,
-  TokenWithBridgesInfo,
+  TokenType,
   Vertices,
 } from '../../model';
 import { getCustomNetworkConfig } from '../helper/storage';
@@ -164,33 +164,43 @@ export function isSameNetConfig(config1: ChainConfig | null, config2: ChainConfi
 
 // eslint-disable-next-line complexity
 export function getChainConfig(
-  name: Vertices | Network | string | null | undefined,
-  mode: NetworkMode = 'native'
+  data: Vertices | Network | string | null | undefined,
+  mode: NetworkMode | TokenType = 'native',
+  chain?: Network
 ): ChainConfig {
-  if (!name) {
+  if (!data) {
     throw new Error(`You must pass a 'name' parameter to find the chain config`);
   }
 
   let compared: Vertices;
 
-  if (typeof name === 'string') {
-    const isChainName = chainConfigs.map((item) => item.name).includes(name as Network);
+  if (typeof data === 'string') {
+    const isChainName = chainConfigs.map((item) => item.name).includes(data as Network);
 
     if (isChainName) {
-      compared = { name, mode } as Vertices;
+      compared = { name: data, mode } as Vertices;
     } else {
-      const target = chainConfigs.find((item) => item.tokens.map((token) => token.name).includes(name));
+      const targets = chainConfigs.filter((item) => item.tokens.map((tk) => tk.symbol).includes(data));
+      let target: ChainConfig | undefined;
+
+      if (targets.length === 1) {
+        target = targets[0];
+      } else {
+        if (chain) {
+          target = targets.find((item) => item.mode === mode && item.name === chain);
+        } else {
+          target = targets.find((item) => item.tokens.find((token) => token.symbol === data && token.type === mode));
+        }
+      }
 
       if (!target) {
-        throw new Error(
-          `Can not find the chain config because of the name '${name}' is neither a chain name nor a token name`
-        );
+        throw new Error(`Can not find the chain config by args: tokenName: ${data}, mode: ${mode}, chain: ${chain} `);
       }
 
       return target;
     }
   } else {
-    compared = name;
+    compared = data;
   }
 
   const result = chainConfigs.find((item) => isChainEqual(item, compared));
@@ -200,18 +210,6 @@ export function getChainConfig(
   }
 
   return result;
-}
-
-export function findToken(symbol: string): { token: TokenWithBridgesInfo; config: ChainConfig } | null {
-  let token: TokenWithBridgesInfo | undefined;
-
-  const config = chainConfigs.find((item) => {
-    token = item.tokens.find((ele) => ele.symbol === symbol);
-
-    return !!token;
-  });
-
-  return config && token ? { config, token } : null;
 }
 
 export function getArrival(from: ChainConfig | null | undefined, to: ChainConfig | null | undefined): Arrival | null {

@@ -24,8 +24,17 @@ export const ethereumConfig: EthereumChainConfig = {
   },
   tokens: [
     {
-      name: 'ETHER-ROPSTEN',
+      name: 'ETHER',
       decimals: 18,
+      bridges: [],
+      type: 'native',
+      logo: 'token-ethereum.svg',
+      symbol: 'ETHER',
+      address: '',
+    },
+    {
+      name: 'RING',
+      decimals: 9,
       bridges: [
         {
           category: 'helix',
@@ -33,9 +42,24 @@ export const ethereumConfig: EthereumChainConfig = {
           partner: { name: 'darwinia', mode: 'native', role: 'receiver', symbol: 'RING' },
         },
       ],
-      type: 'native',
-      logo: 'token-ethereum.svg',
-      symbol: 'ETHER',
+      type: 'mapping',
+      logo: 'token-ring.svg',
+      symbol: 'RING',
+      address: '',
+    },
+    {
+      name: 'KTON',
+      decimals: 9,
+      bridges: [
+        {
+          category: 'helix',
+          name: 'ethereum-darwinia',
+          partner: { name: 'darwinia', mode: 'native', role: 'receiver', symbol: 'KTON' },
+        },
+      ],
+      type: 'mapping',
+      logo: 'token-kton.svg',
+      symbol: 'KTON',
       address: '',
     },
   ],
