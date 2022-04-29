@@ -239,7 +239,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
           }
         },
         error: (err: unknown) => {
-          console.log('%c [ err ]-224', 'font-size:13px; background:pink; color:#bf2c9f;', err);
+          console.log('🚨 ~ file: api-provider.tsx ~ line 242 ~ ApiProvider ~ err', err);
         },
       });
 

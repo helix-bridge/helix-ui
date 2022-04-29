@@ -127,6 +127,7 @@ export const validateDirection: (dir: NullableCrossChainDirection) => NullableCr
   return dir;
 };
 
+// eslint-disable-next-line complexity
 export const getDirectionFromSettings: () => NullableCrossChainDirection = () => {
   const fToken = getInitialSetting<string>('from', null);
   const tToken = getInitialSetting<string>('to', null);
@@ -148,6 +149,23 @@ export const getDirectionFromSettings: () => NullableCrossChainDirection = () =>
 
     toToken = { ...token, amount: '' };
   }
+
+  if (fromToken && !toToken) {
+    const config = getChainConfig(fromToken.bridges[0].partner);
+
+    toToken = { ...config.tokens.find((item) => item.symbol === fromToken?.bridges[0].partner.symbol)!, amount: '' };
+  }
+
+  if (!fromToken && toToken) {
+    const config = getChainConfig(toToken.bridges[0].partner);
+
+    fromToken = { ...config.tokens.find((item) => item.symbol === toToken?.bridges[0].partner.symbol)!, amount: '' };
+  }
+
+  // if (!fromToken && !toToken) {
+  //   fromToken = { ...darwiniaConfig.tokens[0], amount: '' };
+  //   toToken = { ...ethereumConfig.tokens[1], amount: '' };
+  // }
 
   return validateDirection({ from: fromToken, to: toToken });
 };

@@ -6,6 +6,7 @@
     "dev": "NODE_OPTIONS='--inspect' next dev -p 4003",
     "build": "next build",
     "start": "next start",
+    "init:bridge": "./bridge.sh",
     "i18next:scanner": "i18next-scanner --config i18next-scanner.config.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },

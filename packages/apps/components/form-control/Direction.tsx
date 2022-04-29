@@ -3,6 +3,7 @@ import { isBoolean, negate } from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
+import { darwiniaConfig, ethereumConfig } from 'shared/config/network';
 import { BridgeStatus, ChainConfig, CustomFormControlProps, HashInfo, NullableCrossChainDirection } from 'shared/model';
 import {
   getBridge,
@@ -77,10 +78,10 @@ export function Direction({ value, onChange }: DirectionProps) {
   }, [value]);
 
   return (
-    <div className={`relative flex justify-between items-center 'flex-col'`}>
+    <div className={`relative flex justify-between items-center flex-col`}>
       <Destination
         title={t('From')}
-        value={value?.from}
+        value={value?.from ?? { ...darwiniaConfig.tokens[0], amount: '' }}
         onChange={(from) => {
           triggerChange({ from, to: value?.to ?? null });
         }}
@@ -95,7 +96,8 @@ export function Direction({ value, onChange }: DirectionProps) {
 
       <Destination
         title={t('To')}
-        value={value?.to}
+        value={value?.to ?? { ...ethereumConfig.tokens[1], amount: '' }}
+        disabled
         onChange={(to) => {
           triggerChange({ to, from: value?.from ?? null });
         }}

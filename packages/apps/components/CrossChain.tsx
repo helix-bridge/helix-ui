@@ -66,6 +66,8 @@ export function CrossChain() {
     [connectAssistantNetwork]
   );
 
+  void launchAssistantConnection;
+
   const Content = useMemo(() => {
     const { from, to } = direction;
 
@@ -80,14 +82,13 @@ export function CrossChain() {
 
   useEffect(() => {
     const { from, to } = direction;
-    const fromConfig = getChainConfig(from?.name);
-    const fromReady = !!from && isSameNetConfig(fromConfig, network) && connectionStatus === 'success';
+    const fromReady = !!from && isSameNetConfig(getChainConfig(from.name), network) && connectionStatus === 'success';
 
     setIsReady(fromReady && !!to);
   }, [network, connectionStatus, direction]);
 
   useEffect(() => {
-    launchAssistantConnection(direction);
+    // launchAssistantConnection(direction);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -123,7 +124,7 @@ export function CrossChain() {
               FORM_CONTROL.assets,
               FORM_CONTROL.deposit,
             ]);
-            launchAssistantConnection(value);
+            // launchAssistantConnection(value);
           }}
         />
       </Form.Item>
@@ -155,8 +156,8 @@ export function CrossChain() {
         <Tooltip title={bridgeState.reason} placement="bottom">
           <div>
             <SubmitButton
-              from={getChainConfig(direction.from?.name)}
-              to={getChainConfig(direction.to?.name)}
+              from={direction.from ? getChainConfig(direction.from.name) : null}
+              to={direction.to ? getChainConfig(direction.to.name) : null}
               requireTo
               launch={launch}
               disabled={bridgeState.status !== 'available'}

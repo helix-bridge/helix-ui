@@ -19,12 +19,9 @@ interface SelectTokenModalProps {
 export type TokenInfoWithMeta = TokenWithBridgesInfo & { meta: ChainConfig };
 
 const allTokens: TokenInfoWithMeta[] = lodashChain(chainConfigs)
-  .filter((item) => item.mode !== 'dvm')
   .map((item) => item.tokens.map((token) => ({ ...token, address: '', meta: item }))) // meta: without dvm info; do not treat as DVMConfig
   .flatten()
   .value();
-
-const nullStr = 'null';
 
 const colors: ({ color: string } & Vertices)[] = [
   { name: 'crab', mode: 'native', color: '#cd201f' },
@@ -48,20 +45,12 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel }: SelectTokenMod
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const searchFn = useCallback(tokenSearchFactory(allTokens), [allTokens]);
   const { data, setSearch } = useLocalSearch(searchFn);
-  const [chain, setChain] = useState<string>(nullStr);
+  const [chain, setChain] = useState<ChainConfig | 'all'>('all');
 
+  console.log('🚀 ~ file: SelectTokenModal.tsx ~ line 48 ~ SelectTokenModal ~ data', data);
   const tokens = useMemo(
-    () =>
-      data.filter((item) => {
-        if (chain === nullStr) {
-          return true;
-        }
-
-        const mode = tokenModeToChainMode(item.type);
-
-        return getDisplayName(item.meta, mode) === chain;
-      }),
-    [chain, data]
+    () => (chain === 'all' ? allTokens : chain.tokens.map((item) => ({ ...item, meta: chain }))),
+    [chain]
   );
 
   return (
@@ -81,10 +70,10 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel }: SelectTokenMod
         className="mt-1"
         size="small"
         onChange={(event) => {
-          setChain(event.target.value);
+          setChain(event.target.value as ChainConfig);
         }}
       >
-        <Radio.Button value={nullStr} className="mt-2 mr-2 capitalize rounded-none">
+        <Radio.Button value="all" className="mt-2 mr-2 capitalize rounded-none">
           {t('All chains')}
         </Radio.Button>
 
@@ -92,7 +81,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel }: SelectTokenMod
           const name = getDisplayName(item);
 
           return (
-            <Radio.Button key={index} value={name} className="mt-2 mr-2 capitalize rounded-none">
+            <Radio.Button key={index} value={item} className="mt-2 mr-2 capitalize rounded-none">
               {name}
             </Radio.Button>
           );
@@ -113,7 +102,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel }: SelectTokenMod
                 <Typography.Text>{item.name}</Typography.Text>
 
                 <Tag color={chainColor({ name: item.meta.name, mode: tokenModeToChainMode(item.type) })}>
-                  {getDisplayName(item.meta, tokenModeToChainMode(item.type))}
+                  {getDisplayName(item.meta)}
                 </Tag>
                 {item.meta.isTest && (
                   <Tag color="green" className="uppercase">

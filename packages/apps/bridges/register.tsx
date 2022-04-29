@@ -1,8 +1,9 @@
+import { FunctionComponent } from 'react';
 import { darwiniaCrabDVM, pangoroPangolinDVM } from 'shared/config/bridge';
 import { ethereumDarwinia, ropstenPangolin } from 'shared/config/bridges/ethereum-darwinia';
 import { ethereumCrabDVM, ropstenPangolinDVM } from 'shared/config/bridges/ethereum-dvm';
 import { crabCrabDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
-import { FunctionComponent } from 'react';
+import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
 import {
   Darwinia2Ethereum,
   Darwinia2EthereumRecord,
@@ -22,6 +23,22 @@ import {
   SubstrateDVM2Substrate,
   SubstrateDVM2SubstrateRecord,
 } from './substrate-substrateDVM';
+import {
+  Unavailable2Unknown,
+  Unavailable2UnknownRecord,
+  Unknown2Unavailable,
+  Unknown2UnavailableRecord,
+} from './unknown-unavailable';
+
+unknownUnavailable.setIssuingComponents(
+  Unknown2Unavailable as FunctionComponent,
+  Unknown2UnavailableRecord as FunctionComponent
+);
+
+unknownUnavailable.setRedeemComponents(
+  Unavailable2Unknown as FunctionComponent,
+  Unavailable2UnknownRecord as FunctionComponent
+);
 
 /**
  * ethereum <-> darwinia

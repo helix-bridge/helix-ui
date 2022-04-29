@@ -1,6 +1,7 @@
-import { has, isEqual, pick } from 'lodash';
+import { isEqual, pick } from 'lodash';
 import { ComingSoon } from '../../components/widget/ComingSoon';
 import { BRIDGES } from '../../config/bridge';
+import { unknownUnavailable } from '../../config/bridges/unknown-unavailable';
 import {
   Api,
   ApiKeys,
@@ -83,26 +84,19 @@ export function isBridgeAvailable(from: ChainConfig, to: ChainConfig): boolean {
 export function getBridge<T extends BridgeConfig>(
   source: CrossChainDirection | [Vertices | ChainConfig, Vertices | ChainConfig]
 ): Bridge<T> {
-  const data = Array.isArray(source)
-    ? source
-    : ([source.from, source.to].map((item) => getChainConfig(item.symbol)) as [ChainConfig, ChainConfig]);
-
-  const direction = data.map((item) => {
-    const asVertices = has(item, 'network') && has(item, 'mode');
-
-    if (asVertices) {
-      return pick(item as Vertices, ['network', 'mode']) as Vertices;
-    }
-
-    return item;
-  });
+  const direction = Array.isArray(source)
+    ? source.map((item) => pick(item as Vertices, ['name', 'mode']) as Vertices)
+    : [source.from, source.to].map((item) => pick(getChainConfig(item.symbol), ['name', 'mode']));
 
   const bridge = BRIDGES.find((item) => isEqual(item.issuing, direction) || isEqual(item.redeem, direction));
 
   if (!bridge) {
-    throw new Error(
+    console.log(
+      '🚨 ~ file: bridge.ts ~ line 95 ~ Error',
       `Bridge from ${direction[0]?.name}(${direction[0].mode}) to ${direction[1]?.name}(${direction[1].mode}) is not exist`
     );
+
+    return unknownUnavailable as Bridge<T>;
   }
 
   return bridge as Bridge<T>;

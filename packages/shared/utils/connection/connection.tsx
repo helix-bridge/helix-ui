@@ -24,6 +24,7 @@ import {
   ChainConfig,
   Connection,
   ConnectionStatus,
+  EthereumChainConfig,
   EthereumConnection,
   NetworkCategory,
   PolkadotChainConfig,
@@ -201,11 +202,11 @@ const connectToEthereum: ConnectFn<EthereumConnection> = (network, chainId?) => 
     return EMPTY;
   }
 
-  return from(isNetworkConsistent(network.name, chainId)).pipe(
+  return from(isNetworkConsistent(network, chainId)).pipe(
     switchMap((isMatch) =>
       isMatch
         ? getEthereumConnection()
-        : switchMetamaskNetwork(network.name)!.pipe(switchMapTo(getEthereumConnection()))
+        : switchMetamaskNetwork(network as EthereumChainConfig)!.pipe(switchMapTo(getEthereumConnection()))
     )
   );
 };
@@ -234,12 +235,12 @@ const config: ConnectConfig = {
   tron: connectToTron,
 };
 
-export const connect: ConnectFn<Connection> = (network, chainId) => {
-  const category = network.category[0];
+export const connect: ConnectFn<Connection> = (chain, chainId) => {
+  const category = chain.category[0];
 
   if (category === null) {
     return EMPTY;
   }
 
-  return config[category](network, chainId);
+  return config[category](chain, chainId);
 };

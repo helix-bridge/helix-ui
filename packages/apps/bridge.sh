@@ -26,7 +26,7 @@ function checkExist() {
     local arrival=${to}"2"${from}
     local dir=$origin'-'$target
 
-    for cur in $(ls ./src/bridges/); do
+    for cur in $(ls ./bridges/); do
         if [ $cur = $dir ]; then
             echo "\033[31mCreate Failed!\033[0m Bridge $origin <-> $target exist"
             exit 1
@@ -148,7 +148,7 @@ function init() {
     local arrivalRecord=$arrival'Record'
 
     local dir=$origin'-'$target
-    local path='./src/bridges/'$dir
+    local path='./bridges/'$dir
     local index=$path'/index.ts'
 
     mkdir $path
@@ -185,4 +185,4 @@ checkExist
 
 init
 
-./node_modules/prettier/bin-prettier.js ./src/bridges/${origin}'-'${target}/**/*.{ts,tsx} --write
+../../node_modules/prettier/bin-prettier.js ./bridges/${origin}'-'${target}/**/*.{ts,tsx} --write

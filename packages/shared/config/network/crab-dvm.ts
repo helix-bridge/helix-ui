@@ -95,7 +95,7 @@ export const crabDVMConfig: DVMChainConfig = {
       address: '',
     },
   ],
-  category: ['polkadot'],
+  category: ['dvm', 'polkadot', 'ethereum'],
   ss58Prefix: 42,
   specVersion: 1200,
 };

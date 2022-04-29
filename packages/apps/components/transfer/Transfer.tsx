@@ -4,7 +4,7 @@ import { darwiniaConfig } from 'shared/config/network';
 import { TokenWithBridgesInfo } from 'shared/model';
 import { Button, Form, InputNumber, InputNumberProps, Typography } from 'antd';
 import { useState } from 'react';
-import { SelectTokenModal, TokenInfoWithMeta } from './SelectTokenModal';
+import { SelectTokenModal, TokenInfoWithMeta } from '../form-control/SelectTokenModal';
 import { TransferConfirmModal } from './TransferConfirmModal';
 import { TransferDoneModal } from './TransferDoneModal';
 
