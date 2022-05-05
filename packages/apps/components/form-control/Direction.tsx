@@ -63,6 +63,8 @@ export function Direction({ value, onChange }: DirectionProps) {
     const info = {
       from: from?.name ?? '',
       to: to?.name ?? '',
+      fMode: from?.meta.mode ?? '',
+      tMode: to?.meta.mode ?? '',
     } as HashInfo;
 
     if (from && to) {
@@ -81,7 +83,7 @@ export function Direction({ value, onChange }: DirectionProps) {
     <div className={`relative flex justify-between items-center flex-col`}>
       <Destination
         title={t('From')}
-        value={value?.from ?? { ...darwiniaConfig.tokens[0], amount: '' }}
+        value={value?.from ?? { ...darwiniaConfig.tokens[0], amount: '', meta: darwiniaConfig }}
         onChange={(from) => {
           triggerChange({ from, to: value?.to ?? null });
         }}
@@ -96,7 +98,7 @@ export function Direction({ value, onChange }: DirectionProps) {
 
       <Destination
         title={t('To')}
-        value={value?.to ?? { ...ethereumConfig.tokens[1], amount: '' }}
+        value={value?.to ?? { ...ethereumConfig.tokens[1], amount: '', meta: ethereumConfig }}
         disabled
         onChange={(to) => {
           triggerChange({ to, from: value?.from ?? null });

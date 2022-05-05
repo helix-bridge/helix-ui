@@ -35,7 +35,7 @@ export const crabDVMConfig: DVMChainConfig = {
   },
   tokens: [
     {
-      name: 'WCRAB',
+      name: 'CRAB',
       decimals: 9,
       bridges: [
         {
@@ -46,7 +46,7 @@ export const crabDVMConfig: DVMChainConfig = {
       ],
       type: 'native',
       logo: 'token-wcrab.svg',
-      symbol: 'WCRAB',
+      symbol: 'CRAB',
       address: '',
     },
     {

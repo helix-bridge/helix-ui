@@ -1,7 +1,7 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Logo } from 'shared/components/widget/Logo';
 import { useLocalSearch } from 'shared/hooks';
-import { ChainConfig, TokenWithBridgesInfo, Vertices } from 'shared/model';
+import { ChainConfig, TokenInfoWithMeta, Vertices } from 'shared/model';
 import { chainConfigs, getDisplayName } from 'shared/utils';
 import { Input, Radio, Tag, Typography } from 'antd';
 import { chain as lodashChain } from 'lodash';
@@ -15,8 +15,6 @@ interface SelectTokenModalProps {
   onCancel: () => void;
   onSelect: (value: TokenInfoWithMeta) => void;
 }
-
-export type TokenInfoWithMeta = TokenWithBridgesInfo & { meta: ChainConfig };
 
 const allTokens: TokenInfoWithMeta[] = lodashChain(chainConfigs)
   .map((item) => item.tokens.map((token) => ({ ...token, address: '', meta: item }))) // meta: without dvm info; do not treat as DVMConfig
@@ -47,10 +45,9 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel }: SelectTokenMod
   const { data, setSearch } = useLocalSearch(searchFn);
   const [chain, setChain] = useState<ChainConfig | 'all'>('all');
 
-  console.log('🚀 ~ file: SelectTokenModal.tsx ~ line 48 ~ SelectTokenModal ~ data', data);
   const tokens = useMemo(
-    () => (chain === 'all' ? allTokens : chain.tokens.map((item) => ({ ...item, meta: chain }))),
-    [chain]
+    () => (chain === 'all' ? data : data.filter((item) => getDisplayName(item.meta) === getDisplayName(chain))),
+    [chain, data]
   );
 
   return (

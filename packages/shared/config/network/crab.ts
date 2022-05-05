@@ -23,7 +23,7 @@ export const crabConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           name: 'substrate-DVM',
-          partner: { name: 'crab', mode: 'dvm', role: 'receiver', symbol: 'WCRAB' },
+          partner: { name: 'crab', mode: 'dvm', role: 'receiver', symbol: 'CRAB' },
         },
       ],
       type: 'native',

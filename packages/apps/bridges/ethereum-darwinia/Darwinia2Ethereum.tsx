@@ -1,24 +1,22 @@
 import { QuestionCircleFilled, ReloadOutlined } from '@ant-design/icons';
-import { FORM_CONTROL } from 'shared/config/constant';
-import { getToken, useDarwiniaAvailableBalances } from 'shared/hooks';
-import { AvailableBalance, DarwiniaAsset, CrossChainComponentProps, CrossChainPayload, Token } from 'shared/model';
-import { isRing, toWei, fromWei, applyModalObs, createTxWorkflow, getInfoFromHash } from 'shared/utils';
-import { ApiPromise } from '@polkadot/api';
 import { BN_ZERO } from '@polkadot/util';
 import { Button, Descriptions, Form, Spin, Tooltip } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { EMPTY, from, map, Observable } from 'rxjs';
-import Web3 from 'web3';
+import { FORM_CONTROL } from 'shared/config/constant';
+import { getToken, useDarwiniaAvailableBalances } from 'shared/hooks';
+import { AvailableBalance, CrossChainComponentProps, CrossChainPayload, DarwiniaAsset, Token } from 'shared/model';
+import { applyModalObs, createTxWorkflow, fromWei, getInfoFromHash, isRing, toWei } from 'shared/utils';
 import { AssetGroup } from '../../components/form-control/AssetGroup';
 import { PolkadotAccountsItem } from '../../components/form-control/PolkadotAccountsItem';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferSuccess } from '../../components/tx/TransferSuccess';
-import { useApi, useDeparture, useTx, useAfterTx } from '../../hooks';
+import { useAfterTx, useApi, useDeparture, useTx } from '../../hooks';
 import { Darwinia2EthereumPayload, IssuingDarwiniaTxPayload } from './model';
-import { issuing } from './utils';
+import { getRedeemFee, issuing } from './utils';
 
 interface AmountCheckInfo {
   fee: BN | null;
@@ -32,21 +30,6 @@ const INITIAL_ASSETS: Darwinia2EthereumPayload['assets'] = [
 ];
 
 /* ----------------------------------------------Base info helpers-------------------------------------------------- */
-
-async function getFee(api: ApiPromise | null): Promise<BN | null> {
-  try {
-    if (!api) {
-      return null;
-    }
-
-    const fee = api.consts.ethereumBacking.advancedFee.toString();
-
-    return Web3.utils.toBN(fee);
-  } catch (error) {
-    return null;
-  }
-}
-
 function TransferInfo({ fee, availableBalance, assets }: AmountCheckInfo) {
   const { chain } = useApi();
 
@@ -247,7 +230,7 @@ export function Darwinia2Ethereum({ form, setSubmit, direction }: CrossChainComp
       [FORM_CONTROL.recipient]: (recipient || defaultRecipient) ?? void 0,
     });
 
-    const sub$$ = observe(setCrossChainFee, from(getFee(api)));
+    const sub$$ = observe(setCrossChainFee, from(getRedeemFee(api)));
     const balance$$ = from(getBalances(sendAccount)).subscribe(setAvailableBalances);
 
     if (assets) {

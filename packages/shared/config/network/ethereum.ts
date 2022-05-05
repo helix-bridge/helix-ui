@@ -12,7 +12,7 @@ export const ethereumConfig: EthereumChainConfig = {
   },
   isTest: false,
   logos: [
-    { name: 'eth-logo.svg', type: 'main' },
+    { name: 'ethereum.svg', type: 'main' },
     { name: 'ethereum.svg', type: 'minor' },
   ],
   name: 'ethereum',

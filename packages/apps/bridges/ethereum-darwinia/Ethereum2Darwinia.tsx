@@ -48,7 +48,7 @@ import {
   RedeemDarwiniaTxPayload,
   RedeemDepositTxPayload,
 } from './model';
-import { redeem, redeemDeposit } from './utils';
+import { getIssuingFee, redeem, redeemDeposit } from './utils';
 
 interface AmountCheckInfo {
   amount?: string;
@@ -75,16 +75,6 @@ async function getIssuingAllowance(from: string, ringContract: string, issuingCo
   const allowanceAmount = await contract.methods.allowance(from, issuingContract).call();
 
   return Web3.utils.toBN(allowanceAmount || 0);
-}
-
-async function getFee(feeContract: string): Promise<BN> {
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-  const contract = new web3.eth.Contract(abi.registryABI, feeContract);
-  const fee: number = await contract.methods
-    .uintOf('0x55494e545f4252494447455f4645450000000000000000000000000000000000')
-    .call();
-
-  return web3.utils.toBN(fee || 0);
 }
 
 function getAmountRules({ fee, ringBalance, balance, asset, t }: AmountCheckInfo): Rule[] {
@@ -195,7 +185,7 @@ function createApproveRingTx(value: Pick<ApproveValue, 'direction' | 'sender'>, 
     direction: { from, to },
   } = value;
 
-  const bridge = getBridge<EthereumDarwiniaBridgeConfig>([from, to]);
+  const bridge = getBridge<EthereumDarwiniaBridgeConfig>([from.meta, to.meta]);
   const { ring: tokenAddress, issuing: spender } = bridge.config.contracts;
 
   const txObs = approveToken({
@@ -380,7 +370,7 @@ export function Ethereum2Darwinia({ form, setSubmit, direction }: CrossChainComp
 
     Promise.all([
       getErc20TokenBalance(ring, account, false),
-      getFee(feeContract),
+      getIssuingFee(feeContract),
       getIssuingAllowance(account, ring, issuing),
       queryTokenMeta(ring, kton),
     ]).then(([balance, crossFee, allow, tokenMeta]) => {
@@ -391,7 +381,7 @@ export function Ethereum2Darwinia({ form, setSubmit, direction }: CrossChainComp
       setIsBalanceQuerying(false);
       setTokens(tokenMeta);
     });
-    updateDeparture({ from, sender: form.getFieldValue(FORM_CONTROL.sender) });
+    updateDeparture({ from: from.meta, sender: form.getFieldValue(FORM_CONTROL.sender) });
   }, [account, contracts, direction, form, updateDeparture]);
 
   useEffect(() => {

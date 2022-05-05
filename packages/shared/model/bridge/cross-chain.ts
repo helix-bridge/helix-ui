@@ -1,14 +1,16 @@
 import { FormInstance } from 'antd';
 import { Subscription } from 'rxjs';
-import { TokenWithBridgesInfo } from '../network';
+import { ChainConfig, TokenWithBridgesInfo } from '../network';
 import { NullableFields } from '../type-operator';
 import { BridgeStatus } from './bridge';
 
 /* ---------------------------------------------------Components props--------------------------------------------------- */
 
-export interface CrossToken extends TokenWithBridgesInfo {
+export type TokenInfoWithMeta<T extends ChainConfig = ChainConfig> = TokenWithBridgesInfo & { meta: T };
+
+export type CrossToken<T extends ChainConfig = ChainConfig> = TokenInfoWithMeta<T> & {
   amount: string;
-}
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CrossChainPayload<C = any, F extends CrossToken = CrossToken, T extends CrossToken = CrossToken> = {

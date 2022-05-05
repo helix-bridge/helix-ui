@@ -83,7 +83,7 @@ describe('network utils', () => {
       .filter((item) => item.name !== 'ethereum' && item.name !== 'ropsten')
       .forEach((chain) => {
         chain.tokens.forEach((token) => {
-          const config = getChainConfig(token.symbol);
+          const config = getChainConfig(token.symbol, token.type !== chain.mode ? chain.mode : token.type);
           expect(config).toEqual(chain);
         });
       });
@@ -93,7 +93,7 @@ describe('network utils', () => {
       .filter((item) => item.name === 'ethereum' || item.name === 'ropsten')
       .forEach((chain) => {
         chain.tokens.forEach((token) => {
-          const config = getChainConfig(token.symbol, 'native', chain.name);
+          const config = getChainConfig(token.symbol, chain.name);
           expect(config).toEqual(chain);
         });
       });

@@ -21,7 +21,7 @@ export function Destination({
   disabled,
 }: DestinationProps & Pick<InputNumberProps, 'disabled'>) {
   const [visible, setVisible] = useState(false);
-  const config = useMemo(() => getChainConfig(value.symbol, value.type), [value.symbol, value.type]);
+  const config = useMemo(() => getChainConfig(value.symbol, value.meta?.mode ?? 'native'), [value.meta, value.symbol]);
 
   return (
     <Form.Item label={title} rules={[{ required: true }]} className={'relative w-full ' + className}>

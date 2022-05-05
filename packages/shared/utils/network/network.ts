@@ -162,11 +162,17 @@ export function isSameNetConfig(config1: ChainConfig | null, config2: ChainConfi
   return isEqual(config1, config2) || (config1.name === config2.name && config1.mode === config2.mode);
 }
 
+/**
+ * find chain config by:
+ * 1. Vertices only, omit mode parameter
+ * 2. [chain name, chain mode]
+ * 3. [token symbol name, chain mode]
+ * 4. [token symbol name, chain name]
+ */
 // eslint-disable-next-line complexity
 export function getChainConfig(
   data: Vertices | Network | string | null | undefined,
-  mode: NetworkMode | TokenType = 'native',
-  chain?: Network
+  mode: NetworkMode | TokenType | Network = 'native'
 ): ChainConfig {
   if (!data) {
     throw new Error(`You must pass a 'name' parameter to find the chain config`);
@@ -186,15 +192,15 @@ export function getChainConfig(
       if (targets.length === 1) {
         target = targets[0];
       } else {
-        if (chain) {
-          target = targets.find((item) => item.mode === mode && item.name === chain);
+        if (['native', 'dvm', 'mapping'].includes(mode)) {
+          target = targets.find((item) => item.mode === mode);
         } else {
-          target = targets.find((item) => item.tokens.find((token) => token.symbol === data && token.type === mode));
+          target = targets.find((item) => item.name === mode);
         }
       }
 
       if (!target) {
-        throw new Error(`Can not find the chain config by args: tokenName: ${data}, mode: ${mode}, chain: ${chain} `);
+        throw new Error(`Can not find the chain config by args: tokenName: ${data}, mode: ${mode} `);
       }
 
       return target;

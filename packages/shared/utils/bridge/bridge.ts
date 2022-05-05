@@ -1,5 +1,4 @@
 import { isEqual, pick } from 'lodash';
-import { ComingSoon } from '../../components/widget/ComingSoon';
 import { BRIDGES } from '../../config/bridge';
 import { unknownUnavailable } from '../../config/bridges/unknown-unavailable';
 import {
@@ -10,6 +9,7 @@ import {
   ChainConfig,
   ContractConfig,
   CrossChainDirection,
+  NullableFields,
   Vertices,
 } from '../../model';
 import { getChainConfig, isEthereumNetwork, isPolkadotNetwork } from '../network/network';
@@ -75,6 +75,27 @@ export function hasBridge(source: CrossChainDirection | [Vertices | ChainConfig,
   }
 }
 
+export function isTransferable(source: NullableFields<CrossChainDirection, 'from' | 'to'>): boolean {
+  const { from, to } = source;
+
+  if (!from || !to) {
+    return false;
+  }
+
+  const { bridges } = from;
+
+  const res = bridges.find((bridge) => {
+    const { partner } = bridge;
+
+    return (
+      partner.symbol.toLowerCase() === to.symbol.toLowerCase() &&
+      isEqual(pick(partner, ['mode', 'name']), pick(to.meta, ['mode', 'name']))
+    );
+  });
+
+  return !!res;
+}
+
 export function isBridgeAvailable(from: ChainConfig, to: ChainConfig): boolean {
   const bridge = getBridge([from, to]);
 
@@ -86,7 +107,9 @@ export function getBridge<T extends BridgeConfig>(
 ): Bridge<T> {
   const direction = Array.isArray(source)
     ? source.map((item) => pick(item as Vertices, ['name', 'mode']) as Vertices)
-    : [source.from, source.to].map((item) => pick(getChainConfig(item.symbol), ['name', 'mode']));
+    : [source.from, source.to].map((item) =>
+        pick(item.meta ?? getChainConfig(item.symbol, item.type), ['name', 'mode'])
+      );
 
   const bridge = BRIDGES.find((item) => isEqual(item.issuing, direction) || isEqual(item.redeem, direction));
 
@@ -111,11 +134,11 @@ export function getBridgeComponent(type: 'crossChain' | 'record') {
       return null;
     }
 
-    const direction = [from, to].map((item) => getChainConfig(item.symbol));
+    const direction = [from, to].map((item) => item.meta);
     const bridge = getBridge(direction as [ChainConfig, ChainConfig]);
 
     if (!bridge || bridge.status === 'pending') {
-      return ComingSoon;
+      return () => null;
     }
 
     switch (type) {

@@ -3,6 +3,7 @@ import {
   CrossToken,
   HashInfo,
   HistoryRouteParam,
+  NetworkMode,
   NullableCrossChainDirection,
   StorageInfo,
   ValueOf,
@@ -15,6 +16,8 @@ interface HashShort {
   f?: string;
   t?: string;
   r?: string;
+  fm?: NetworkMode;
+  tm?: NetworkMode;
 }
 
 type SettingKey = keyof StorageInfo | keyof HashInfo;
@@ -30,6 +33,8 @@ const toShort: AdapterMap<HashInfo, HashShort> = {
   from: 'f',
   to: 't',
   recipient: 'r',
+  fMode: 'fm',
+  tMode: 'tm',
 };
 
 const toLong: AdapterMap<HashShort, HashInfo> = Object.entries(toShort).reduce(
@@ -51,7 +56,7 @@ function hashToObj(): { [key in keyof HashShort]: string } {
         return { ...acc, [key]: value };
       }, {}) as { [key in keyof HashShort]: string };
   } catch (err) {
-    return { f: '', t: '', r: '' };
+    return { f: '', t: '', r: '', fm: '', tm: '' };
   }
 }
 
@@ -131,9 +136,11 @@ export const validateDirection: (dir: NullableCrossChainDirection) => NullableCr
 export const getDirectionFromSettings: () => NullableCrossChainDirection = () => {
   const fToken = getInitialSetting<string>('from', null);
   const tToken = getInitialSetting<string>('to', null);
+  const fMode = getInitialSetting<NetworkMode>('fMode', 'native') as NetworkMode;
+  const tMode = getInitialSetting<NetworkMode>('tMode', 'native') as NetworkMode;
 
-  const from = fToken ? getChainConfig(fToken) : null;
-  const to = tToken ? getChainConfig(tToken) : null;
+  const from = fToken ? getChainConfig(fToken, fMode) : null;
+  const to = tToken ? getChainConfig(tToken, tMode) : null;
 
   let fromToken: CrossToken | null = null;
   let toToken: CrossToken | null = null;
@@ -141,25 +148,33 @@ export const getDirectionFromSettings: () => NullableCrossChainDirection = () =>
   if (from) {
     const token = from.tokens.find((item) => item.symbol === fToken)!;
 
-    fromToken = { ...token, amount: '' };
+    fromToken = { ...token, amount: '', meta: from };
   }
 
   if (to) {
     const token = to.tokens.find((item) => item.symbol === tToken)!;
 
-    toToken = { ...token, amount: '' };
+    toToken = { ...token, amount: '', meta: to };
   }
 
   if (fromToken && !toToken) {
     const config = getChainConfig(fromToken.bridges[0].partner);
 
-    toToken = { ...config.tokens.find((item) => item.symbol === fromToken?.bridges[0].partner.symbol)!, amount: '' };
+    toToken = {
+      ...config.tokens.find((item) => item.symbol === fromToken?.bridges[0].partner.symbol)!,
+      amount: '',
+      meta: config,
+    };
   }
 
   if (!fromToken && toToken) {
     const config = getChainConfig(toToken.bridges[0].partner);
 
-    fromToken = { ...config.tokens.find((item) => item.symbol === toToken?.bridges[0].partner.symbol)!, amount: '' };
+    fromToken = {
+      ...config.tokens.find((item) => item.symbol === toToken?.bridges[0].partner.symbol)!,
+      amount: '',
+      meta: config,
+    };
   }
 
   // if (!fromToken && !toToken) {
