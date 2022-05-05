@@ -1,9 +1,9 @@
 import { Button, Form, InputNumber, InputNumberProps } from 'antd';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
 import { CrossToken } from 'shared/model';
-import { getChainConfig, getDisplayName } from 'shared/utils';
+import { getDisplayName } from 'shared/utils';
 import { SelectTokenModal } from './SelectTokenModal';
 
 interface DestinationProps {
@@ -21,7 +21,6 @@ export function Destination({
   disabled,
 }: DestinationProps & Pick<InputNumberProps, 'disabled'>) {
   const [visible, setVisible] = useState(false);
-  const config = useMemo(() => getChainConfig(value.symbol, value.meta?.mode ?? 'native'), [value.meta, value.symbol]);
 
   return (
     <Form.Item label={title} rules={[{ required: true }]} className={'relative w-full ' + className}>
@@ -48,7 +47,7 @@ export function Destination({
 
             <div className="flex flex-col items-start space-y-px">
               <strong className="font-medium text-sm">{value.symbol}</strong>
-              <small className="font-light text-xs opacity-60 capitalize">{getDisplayName(config)}</small>
+              <small className="font-light text-xs opacity-60 capitalize">{getDisplayName(value.meta)}</small>
             </div>
 
             <Icon name="down" />

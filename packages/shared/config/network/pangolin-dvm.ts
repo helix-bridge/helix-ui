@@ -35,7 +35,7 @@ export const pangolinDVMConfig: DVMChainConfig = {
   },
   tokens: [
     {
-      name: 'WPRING',
+      name: 'PRING',
       decimals: 9,
       bridges: [
         {
@@ -46,7 +46,7 @@ export const pangolinDVMConfig: DVMChainConfig = {
       ],
       type: 'native',
       logo: 'token-ring.svg',
-      symbol: 'WPRING',
+      symbol: 'PRING',
       address: '0xc52287b259b2431ba0f61BC7EBD0eD793B0b7044',
     },
     {

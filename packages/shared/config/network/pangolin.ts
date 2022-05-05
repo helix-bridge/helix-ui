@@ -23,7 +23,7 @@ export const pangolinConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           name: 'substrate-DVM',
-          partner: { name: 'pangolin', mode: 'dvm', role: 'receiver', symbol: 'WPRING' },
+          partner: { name: 'pangolin', mode: 'dvm', role: 'receiver', symbol: 'PRING' },
         },
         {
           category: 'helix',
