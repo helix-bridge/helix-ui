@@ -22,7 +22,6 @@ import {
   pollWhile,
   prettyNumber,
   revertAccount,
-  unixTimeToLocal,
   verticesToChainConfig,
 } from '@helix/shared/utils';
 import { Breadcrumb, Divider, Progress, Tooltip } from 'antd';
@@ -387,17 +386,15 @@ const Page: NextPage<{
               {arrivalRecord?.result ? <ClockCircleOutlined /> : <Icon name="reload" />}
 
               <span>
-                {formatDistance(
-                  fromUnixTime(departureRecord.startTime),
-                  new Date(new Date().toISOString().split('.')[0]),
-                  {
-                    includeSeconds: true,
-                    addSuffix: true,
-                  }
-                )}
+                {formatDistance(fromUnixTime(departureRecord.startTime), new Date(new Date().toUTCString()), {
+                  includeSeconds: true,
+                  addSuffix: true,
+                })}
               </span>
 
-              <span className="hidden md:inline-block">({unixTimeToLocal(departureRecord.startTime)})</span>
+              <span className="hidden md:inline-block">
+                ({new Date(departureRecord.startTime * 1000).toLocaleString()})
+              </span>
 
               <Divider type="vertical" orientation="center" />
 

@@ -9,7 +9,6 @@ export function Record({ record }: { record: Substrate2SubstrateRecord }) {
   const { fromChainMode, fromChain, sender, recipient, toChain, toChainMode } = record;
   const fromConfig = getChainConfigByName(fromChain, fromChainMode);
   const toConfig = getChainConfigByName(toChain, toChainMode);
-  const now = new Date().toISOString().split('.')[0];
   const fromAccount = revertAccount(sender, fromChain, fromChainMode);
   const toAccount = revertAccount(recipient, toChain, toChainMode);
   const amount = fromWei({ value: record.amount, unit: 'gwei' }, prettyNumber);
@@ -17,7 +16,7 @@ export function Record({ record }: { record: Substrate2SubstrateRecord }) {
   return (
     <>
       <span className="justify-self-start ellipse-two-lines">
-        {formatDistance(fromUnixTime(record.startTime), new Date(now), {
+        {formatDistance(fromUnixTime(record.startTime), new Date(new Date().toUTCString()), {
           includeSeconds: true,
           addSuffix: true,
         })}
