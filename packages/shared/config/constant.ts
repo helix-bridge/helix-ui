@@ -1,3 +1,5 @@
+import { darwiniaConfig, ethereumConfig } from './network';
+
 /* eslint-disable no-magic-numbers */
 export const LONG_DURATION = 10 * 1000;
 
@@ -38,3 +40,8 @@ export enum CrossChainStatusColor {
   '#00AA76',
   '#EC9D00',
 }
+
+export const DEFAULT_DIRECTION = {
+  from: { ...darwiniaConfig.tokens[0], amount: '', meta: darwiniaConfig },
+  to: { ...ethereumConfig.tokens[1], amount: '', meta: ethereumConfig },
+};

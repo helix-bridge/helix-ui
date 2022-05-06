@@ -1,32 +1,20 @@
 import { PauseCircleOutlined } from '@ant-design/icons';
-import { isBoolean, negate } from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
-import { darwiniaConfig, ethereumConfig } from 'shared/config/network';
-import { BridgeStatus, ChainConfig, CustomFormControlProps, HashInfo, NullableCrossChainDirection } from 'shared/model';
-import {
-  getBridge,
-  getChainConfig,
-  isChainConfigEqualTo,
-  isReachable,
-  isTraceable,
-  patchUrl,
-  truth,
-  updateStorage,
-} from 'shared/utils';
-import { useNetworks } from '../../hooks';
+import { BridgeStatus, CrossChainDirection, CustomFormControlProps, HashInfo } from 'shared/model';
+import { getBridge, patchUrl, updateStorage } from 'shared/utils';
 import { Destination } from './Destination';
 
-type DirectionProps = CustomFormControlProps<NullableCrossChainDirection>;
+type DirectionProps = CustomFormControlProps<CrossChainDirection> & { initial: CrossChainDirection };
 
-export function Direction({ value, onChange }: DirectionProps) {
+export function Direction({ value, initial, onChange }: DirectionProps) {
+  const data = value ?? initial;
   const { t } = useTranslation();
-  const { setFromFilters, setToFilters } = useNetworks();
   const [bridgetStatus, setBridgetStatus] = useState<null | BridgeStatus>(null);
 
   const triggerChange = useCallback(
-    (val: NullableCrossChainDirection) => {
+    (val: CrossChainDirection) => {
       if (onChange) {
         onChange(val);
       }
@@ -34,37 +22,13 @@ export function Direction({ value, onChange }: DirectionProps) {
     [onChange]
   );
 
-  const swap = useCallback(() => {
-    triggerChange({
-      from: value?.to ?? null,
-      to: value?.from ?? null,
-    });
-  }, [triggerChange, value?.from, value?.to]);
-
-  // eslint-disable-next-line complexity
   useEffect(() => {
-    const from = value?.from ? getChainConfig(value.from.name) : null;
-    const to = value?.to ? getChainConfig(value.to.name) : null;
-
-    const isSameEnv =
-      from?.isTest === to?.isTest
-        ? isBoolean(from?.isTest) && isBoolean(to?.isTest)
-          ? (net: ChainConfig) => net.isTest === from?.isTest
-          : truth
-        : (net: ChainConfig) => (isBoolean(from?.isTest) && isBoolean(to?.isTest) ? net.isTest === from?.isTest : true);
-
-    setToFilters([negate(isChainConfigEqualTo(from)), isSameEnv, isReachable(from)]);
-    setFromFilters([negate(isChainConfigEqualTo(to)), isSameEnv, isTraceable(to)]);
-  }, [value, setFromFilters, setToFilters]);
-
-  // eslint-disable-next-line complexity
-  useEffect(() => {
-    const { from, to } = value || {};
+    const { from, to } = data;
     const info = {
-      from: from?.name ?? '',
-      to: to?.name ?? '',
-      fMode: from?.meta.mode ?? '',
-      tMode: to?.meta.mode ?? '',
+      from: from.name,
+      to: to.name,
+      fMode: from.meta.mode,
+      tMode: to.meta.mode,
     } as HashInfo;
 
     if (from && to) {
@@ -77,15 +41,15 @@ export function Direction({ value, onChange }: DirectionProps) {
 
     patchUrl(info);
     updateStorage(info);
-  }, [value]);
+  }, [data]);
 
   return (
     <div className={`relative flex justify-between items-center flex-col`}>
       <Destination
         title={t('From')}
-        value={value?.from ?? { ...darwiniaConfig.tokens[0], amount: '', meta: darwiniaConfig }}
+        value={data.from}
         onChange={(from) => {
-          triggerChange({ from, to: value?.to ?? null });
+          triggerChange({ from, to: data.to });
         }}
         className="pr-4"
       />
@@ -93,15 +57,23 @@ export function Direction({ value, onChange }: DirectionProps) {
       {bridgetStatus === 'pending' ? (
         <PauseCircleOutlined className="w-10 h-10 mx-auto" />
       ) : (
-        <Icon onClick={swap} name="switch" className="w-10 h-10 mx-auto transform rotate-90" />
+        <Icon
+          onClick={() => {
+            const { from, to } = data;
+
+            triggerChange({ from: { ...to, amount: '' }, to: { ...from, amount: '' } });
+          }}
+          name="switch"
+          className="w-10 h-10 mx-auto transform rotate-90"
+        />
       )}
 
       <Destination
         title={t('To')}
-        value={value?.to ?? { ...ethereumConfig.tokens[1], amount: '', meta: ethereumConfig }}
+        value={data.to}
         disabled
         onChange={(to) => {
-          triggerChange({ to, from: value?.from ?? null });
+          triggerChange({ to, from: data.from });
         }}
         className="pr-4"
       />

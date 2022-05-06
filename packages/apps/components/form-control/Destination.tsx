@@ -23,7 +23,7 @@ export function Destination({
   const [visible, setVisible] = useState(false);
 
   return (
-    <Form.Item label={title} rules={[{ required: true }]} className={'relative w-full ' + className}>
+    <Form.Item label={title} className={'relative w-full ' + className}>
       <>
         <InputNumber<string>
           value={value?.amount}

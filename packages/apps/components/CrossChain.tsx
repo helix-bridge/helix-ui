@@ -14,14 +14,14 @@ import {
   NullableCrossChainDirection,
   SubmitFn,
 } from 'shared/model';
-import { emptyObsFactory, getChainConfig, getDirectionFromSettings } from 'shared/utils';
+import { emptyObsFactory, getChainConfig } from 'shared/utils';
 import { useApi, useTx } from '../hooks';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { Direction } from './form-control/Direction';
 import { FromItemButton, SubmitButton } from './widget/SubmitButton';
 
 // eslint-disable-next-line complexity
-export function CrossChain() {
+export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const { t, i18n } = useTranslation();
   const [form] = useForm<CrossChainPayload>();
 
@@ -32,7 +32,7 @@ export function CrossChain() {
     connectAssistantNetwork,
   } = useApi();
 
-  const [direction, setDirection] = useState(() => getDirectionFromSettings());
+  const [direction, setDirection] = useState(dir);
   const [bridge, setBridge] = useState<Bridge | null>(null);
   // const [isReady, setIsReady] = useState(false);
   const [submitFn, setSubmit] = useState<SubmitFn>(emptyObsFactory);
@@ -96,19 +96,9 @@ export function CrossChain() {
     >
       <Row>
         <Col xs={24} sm={8} className={`mb-4 sm:mb-0 dark:bg-antDark p-5 ${tx ? 'filter blur-sm drop-shadow' : ''}`}>
-          <Form.Item
-            name={FORM_CONTROL.direction}
-            rules={[
-              { required: true, message: t('Both send and receive network are all required') },
-              {
-                validator: (_, value: CrossChainDirection) => {
-                  return (value.from && value.to) || (!value.from && !value.to) ? Promise.resolve() : Promise.reject();
-                },
-              },
-            ]}
-            className="mb-0"
-          >
+          <Form.Item name={FORM_CONTROL.direction} className="mb-0">
             <Direction
+              initial={direction}
               onChange={(value) => {
                 setDirection(value);
                 form.resetFields([

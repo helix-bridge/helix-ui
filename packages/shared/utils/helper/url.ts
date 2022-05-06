@@ -1,5 +1,7 @@
 import { mapKeys } from 'lodash';
+import { DEFAULT_DIRECTION } from '../../config/constant';
 import {
+  CrossChainDirection,
   CrossToken,
   HashInfo,
   HistoryRouteParam,
@@ -120,27 +122,28 @@ export const getHistoryRouteParams: (search: string) => WithNull<HistoryRoutePar
   } as HistoryRouteParam;
 };
 
-export const validateDirection: (dir: NullableCrossChainDirection) => NullableCrossChainDirection = (dir) => {
+// eslint-disable-next-line complexity
+export const validateDirection: (dir: NullableCrossChainDirection) => CrossChainDirection = (dir) => {
   const { from, to } = dir;
 
   if (from && to) {
     const reachable = from.bridges.find((item) => item.partner.symbol === to.symbol);
 
-    return reachable ? dir : { from: null, to: null };
+    return reachable ? (dir as CrossChainDirection) : DEFAULT_DIRECTION;
   }
 
-  return dir;
+  return { from: from ?? DEFAULT_DIRECTION.from, to: to ?? DEFAULT_DIRECTION.to };
 };
 
 // eslint-disable-next-line complexity
-export const getDirectionFromSettings: () => NullableCrossChainDirection = () => {
+export const getDirectionFromSettings: () => CrossChainDirection = () => {
   const fToken = getInitialSetting<string>('from', null);
   const tToken = getInitialSetting<string>('to', null);
   const fMode = getInitialSetting<NetworkMode>('fMode', 'native') as NetworkMode;
   const tMode = getInitialSetting<NetworkMode>('tMode', 'native') as NetworkMode;
 
-  const from = fToken ? getChainConfig(fToken, fMode) : null;
-  const to = tToken ? getChainConfig(tToken, tMode) : null;
+  const from = fToken && getChainConfig(fToken, fMode);
+  const to = tToken && getChainConfig(tToken, tMode);
 
   let fromToken: CrossToken | null = null;
   let toToken: CrossToken | null = null;
@@ -176,11 +179,6 @@ export const getDirectionFromSettings: () => NullableCrossChainDirection = () =>
       meta: config,
     };
   }
-
-  // if (!fromToken && !toToken) {
-  //   fromToken = { ...darwiniaConfig.tokens[0], amount: '' };
-  //   toToken = { ...ethereumConfig.tokens[1], amount: '' };
-  // }
 
   return validateDirection({ from: fromToken, to: toToken });
 };

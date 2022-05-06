@@ -38,7 +38,7 @@ export const switchMetamaskNetwork: DebouncedFunc<(chain: EthereumChainConfig) =
     const key = `key${Date.now()}`;
 
     return new Observable((observer: Observer<null>) => {
-      notification.error({
+      return notification.error({
         message: <Trans>Incorrect network</Trans>,
         description: (
           <Trans
