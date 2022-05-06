@@ -3,7 +3,7 @@ import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
 import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ChainConfig } from 'shared/model';
 import { Collapse, Progress, Tooltip } from 'antd';
-import { format, fromUnixTime } from 'date-fns/esm';
+import { format, fromUnixTime } from 'date-fns';
 import { PropsWithChildren, useMemo } from 'react';
 import { AssetOverview, AssetOverviewProps } from './AssetOverview';
 import { ProgressesProps, State } from './Progress';

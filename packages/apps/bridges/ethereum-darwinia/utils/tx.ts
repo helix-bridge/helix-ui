@@ -1,3 +1,7 @@
+import { ApiPromise } from '@polkadot/api';
+import { decodeAddress } from '@polkadot/util-crypto';
+import { upperFirst } from 'lodash';
+import { filter, from, map, Observable, switchMap, take, zip } from 'rxjs';
 import { abi } from 'shared/config/abi';
 import { CrossChainDirection, LockEventsStorage, PolkadotChainConfig, Tx, TxFn } from 'shared/model';
 import {
@@ -15,10 +19,6 @@ import {
   isRing,
   signAndSendExtrinsic,
 } from 'shared/utils';
-import { ApiPromise } from '@polkadot/api';
-import { decodeAddress } from '@polkadot/util-crypto';
-import { upperFirst } from 'lodash';
-import { filter, from, map, Observable, switchMap, take, zip } from 'rxjs';
 import { Contract } from 'web3-eth-contract';
 import {
   EthereumDarwiniaBridgeConfig,
@@ -26,7 +26,6 @@ import {
   RedeemDarwiniaTxPayload,
   RedeemDepositTxPayload,
 } from '../model';
-import { convert } from '../../../utils/mmrConvert';
 
 interface ClaimInfo {
   direction: CrossChainDirection;
@@ -50,9 +49,9 @@ export const redeem: TxFn<RedeemDarwiniaTxPayload> = ({ sender, direction, asset
   const { to } = direction;
   const bridge = getBridge<EthereumDarwiniaBridgeConfig>(direction);
   const contractAddress = bridge.config.contracts[asset.toLowerCase() as 'ring' | 'kton'] as string;
-  const options = to.isTest ? { from: sender, gasPrice: '500000000000' } : { from: sender };
+  const options = to.meta.isTest ? { from: sender, gasPrice: '500000000000' } : { from: sender };
 
-  recipient = buf2hex(decodeAddress(recipient, false, (to as PolkadotChainConfig).ss58Prefix).buffer);
+  recipient = buf2hex(decodeAddress(recipient, false, (to.meta as PolkadotChainConfig).ss58Prefix).buffer);
 
   return genEthereumContractTxObs(contractAddress, (contract) =>
     contract.methods.transferFrom(sender, bridge.config.contracts.issuing, amount, recipient).send(options)
@@ -65,7 +64,7 @@ export const redeem: TxFn<RedeemDarwiniaTxPayload> = ({ sender, direction, asset
 export const redeemDeposit: TxFn<RedeemDepositTxPayload> = ({ direction, recipient, sender, deposit }) => {
   const { to } = direction;
   const bridge = getBridge<EthereumDarwiniaBridgeConfig>(direction);
-  recipient = buf2hex(decodeAddress(recipient, false, (to as PolkadotChainConfig).ss58Prefix!).buffer);
+  recipient = buf2hex(decodeAddress(recipient, false, (to.meta as PolkadotChainConfig).ss58Prefix!).buffer);
 
   return genEthereumContractTxObs(
     bridge.config.contracts.redeemDeposit,
@@ -107,24 +106,22 @@ export function claimToken({
   const { from: departure, to: arrival } = direction;
   const bridge = getBridge<EthereumDarwiniaBridgeConfig>(direction);
   const networkPrefix = upperFirst(departure.name) as ClaimNetworkPrefix;
-  const apiObs = from(entrance.polkadot.getInstance(departure.provider).isReady);
+  const apiObs = from(entrance.polkadot.getInstance(departure.meta.provider).isReady);
   const header = encodeBlockHeader(blockHeaderStr);
   const storageKey = getD2ELockEventsStorageKey(blockNumber, bridge.config.lockEvents);
 
-  const accountObs = connect(arrival).pipe(
+  const accountObs = connect(arrival.meta).pipe(
     filter(({ status }) => status === 'success'),
     map(({ accounts }) => accounts[0].address),
     take(1)
   );
-
-  const getMmrFromWsm = getMMR(convert);
 
   return apiObs.pipe(
     switchMap((api) => {
       const eventsProofObs = from(getMPTProof(api, blockHash, storageKey)).pipe(map((str) => str.toHex()));
 
       return MMRRoot && best && best > blockNumber
-        ? zip([from(getMmrFromWsm(api, blockNumber, best, blockHash)), eventsProofObs, accountObs]).pipe(
+        ? zip([from(getMMR(api, blockNumber, best, blockHash)), eventsProofObs, accountObs]).pipe(
             map(
               ([mmrProof, eventsProofStr, account]) =>
                 (contract: Contract) =>
@@ -140,7 +137,7 @@ export function claimToken({
                     .send({ from: account })
             )
           )
-        : zip([from(getMmrFromWsm(api, blockNumber, mmrIndex, blockHash)), eventsProofObs, accountObs]).pipe(
+        : zip([from(getMMR(api, blockNumber, mmrIndex, blockHash)), eventsProofObs, accountObs]).pipe(
             map(([mmrProof, eventsProofStr, account]) => {
               const mmrRootMessage = encodeMMRRootMessage({
                 prefix: networkPrefix,

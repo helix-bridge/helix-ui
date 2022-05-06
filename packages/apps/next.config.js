@@ -70,10 +70,9 @@ module.exports = withPlugins([withAntdLess], {
     localIdentNameFollowDev: true, // default false, for easy to debug on PROD mode
   },
 
-  webpack(config) {
+  webpack(config, options) {
     config.plugins.push(themePlugin);
     config.plugins.push(circularDependencyPlugin);
-
     const wasmExtensionRegExp = /\.wasm$/;
 
     config.resolve.extensions.push('.wasm');
@@ -106,6 +105,10 @@ module.exports = withPlugins([withAntdLess], {
       include: /node_modules/,
       loader: require.resolve('@open-wc/webpack-import-meta-loader'),
     });
+
+    config.output.webassemblyModuleFilename = 'static/wasm/[modulehash].wasm'
+
+    config.experiments = { asyncWebAssembly: true };
 
     return config;
   },

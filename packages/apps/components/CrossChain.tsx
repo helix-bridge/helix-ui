@@ -63,10 +63,10 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const Content = useMemo(() => {
     const { from, to } = direction;
 
-    if (from && to) {
-      const Comp = bridge?.isIssuing(from.meta, to.meta)
+    if (bridge) {
+      const Comp = bridge.isIssuing(from.meta, to.meta)
         ? bridge.IssuingCrossChainComponent
-        : (bridge?.RedeemCrossChainComponent as FunctionComponent<CrossChainComponentProps<CrossChainParty>>);
+        : (bridge.RedeemCrossChainComponent as FunctionComponent<CrossChainComponentProps<CrossChainParty>>);
 
       return Comp ?? null;
     }

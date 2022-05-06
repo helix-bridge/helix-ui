@@ -95,29 +95,26 @@ export function encodeMMRRootMessage(root: EncodeMMRoot) {
   );
 }
 
-export function getMMR(
-  convert: (blockNumber: number, size: BigInt, proof: Uint8Array, blockHash: Uint8Array) => string
-) {
-  return async (
-    api: ApiPromise,
-    blockNumber: number,
-    mmrBlockNumber: number,
-    blockHash: string,
-    byRPC = false
-  ): Promise<MMRProof> => {
-    await waitUntilConnected(api);
+export async function getMMR(
+  api: ApiPromise,
+  blockNumber: number,
+  mmrBlockNumber: number,
+  blockHash: string,
+  byRPC = false
+): Promise<MMRProof> {
+  await waitUntilConnected(api);
+  const convert = (await import('../mmrConvert')).convert;
 
-    const getProof = byRPC ? getMMRProofByRPC : getMMRProofBySubql;
-    const { encodeProof, size } = await getProof(api, blockNumber, mmrBlockNumber);
-    const mmrProofConverted: string = convert(blockNumber, size, hexToU8a('0x' + encodeProof), hexToU8a(blockHash));
-    const [mmrSize, peaksStr, siblingsStr] = mmrProofConverted.split('|');
-    const peaks = peaksStr.split(',');
-    const siblings = siblingsStr.split(',');
+  const getProof = byRPC ? getMMRProofByRPC : getMMRProofBySubql;
+  const { encodeProof, size } = await getProof(api, blockNumber, mmrBlockNumber);
+  const mmrProofConverted: string = convert(blockNumber, size, hexToU8a('0x' + encodeProof), hexToU8a(blockHash));
+  const [mmrSize, peaksStr, siblingsStr] = mmrProofConverted.split('|');
+  const peaks = peaksStr.split(',');
+  const siblings = siblingsStr.split(',');
 
-    return {
-      mmrSize,
-      peaks,
-      siblings,
-    };
+  return {
+    mmrSize,
+    peaks,
+    siblings,
   };
 }

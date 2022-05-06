@@ -209,24 +209,24 @@ export const getKnownMappingTokens = (
   }
   const { from: departure, to: arrival } = direction;
 
-  const mappingAddressObs = isSubstrateDVM2Substrate(departure, arrival)
-    ? from(getS2SMappingAddress(departure.provider))
-    : from(getErc20MappingAddress(departure.provider));
+  const mappingAddressObs = isSubstrateDVM2Substrate(departure.meta, arrival.meta)
+    ? from(getS2SMappingAddress(departure.meta.provider))
+    : from(getErc20MappingAddress(departure.meta.provider));
 
-  const tokens = departure.category.includes('ethereum')
+  const tokens = departure.meta.category.includes('ethereum')
     ? getMappingTokensFromEthereum(currentAccount, direction)
     : mappingAddressObs.pipe(
         switchMap((mappingAddress) =>
           getMappingTokensFromDVM(
             currentAccount,
-            departure as DVMChainConfig,
-            arrival as EthereumChainConfig,
+            departure.meta as DVMChainConfig,
+            arrival.meta as EthereumChainConfig,
             mappingAddress
           )
         )
       );
 
-  return connect(departure).pipe(switchMapTo(tokens));
+  return connect(departure.meta).pipe(switchMapTo(tokens));
 };
 
 /**

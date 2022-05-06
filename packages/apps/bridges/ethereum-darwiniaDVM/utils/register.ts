@@ -1,3 +1,19 @@
+import { upperFirst } from 'lodash';
+import {
+  catchError,
+  delay,
+  EMPTY,
+  forkJoin,
+  from,
+  map,
+  NEVER,
+  Observable,
+  of,
+  retryWhen,
+  switchMap,
+  tap,
+  zip,
+} from 'rxjs';
 import { abi } from 'shared/config/abi';
 import { DarwiniaApiPath } from 'shared/config/api';
 import { LONG_DURATION } from 'shared/config/constant';
@@ -19,23 +35,6 @@ import {
   rxGet,
   StoredProof,
 } from 'shared/utils';
-import { upperFirst } from 'lodash';
-import {
-  catchError,
-  delay,
-  EMPTY,
-  forkJoin,
-  from,
-  map,
-  NEVER,
-  Observable,
-  of,
-  retryWhen,
-  switchMap,
-  tap,
-  zip,
-} from 'rxjs';
-import { convert } from '../../../utils/mmrConvert';
 
 type Erc20RegisterProofRes = Erc20RegisterProof | null;
 
@@ -144,7 +143,6 @@ export const getRegisterProof: (address: string, config: EthereumChainConfig) =>
 
   const bridge = getAvailableDVMBridge(config);
   const apiObs = from(entrance.polkadot.getInstance(bridge.arrival.provider).isReady);
-  const getMmrFromWsm = getMMR(convert);
 
   return rxGet<Erc20RegisterProofRes>({
     url: apiUrl(bridge.config.api.dapp, DarwiniaApiPath.issuingRegister),
@@ -176,7 +174,7 @@ export const getRegisterProof: (address: string, config: EthereumChainConfig) =>
           return NEVER;
         })
       );
-      const mmr = apiObs.pipe(switchMap((api) => getMmrFromWsm(api, block_num, mmr_index, block_hash))).pipe(
+      const mmr = apiObs.pipe(switchMap((api) => getMMR(api, block_num, mmr_index, block_hash))).pipe(
         catchError((err) => {
           console.warn(
             '%c [ get MMR proof error ]-228',
