@@ -1,4 +1,4 @@
-import { Col, Form, Row, Tooltip, Typography } from 'antd';
+import { Col, Form, Row, Tooltip } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +38,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const [submitFn, setSubmit] = useState<SubmitFn>(emptyObsFactory);
   const [bridgeState, setBridgeState] = useState<BridgeState>({ status: 'available' });
   const { tx } = useTx();
+  const [fee, setFee] = useState<number>(0);
 
   const launch = useCallback(() => {
     void submitFn;
@@ -81,6 +82,10 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   //   setIsReady(fromReady && !!to);
   // }, [network, connectionStatus, direction]);
 
+  // useEffect(() => {
+
+  // }, [fee]);
+
   useEffect(() => {
     // launchAssistantConnection(direction);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -98,6 +103,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
         <Col xs={24} sm={8} className={`mb-4 sm:mb-0 dark:bg-antDark p-5 ${tx ? 'filter blur-sm drop-shadow' : ''}`}>
           <Form.Item name={FORM_CONTROL.direction} className="mb-0">
             <Direction
+              fee={fee}
               initial={direction}
               onChange={(value) => {
                 setDirection(value);
@@ -114,26 +120,14 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
             />
           </Form.Item>
 
-          <Form.Item label="Info" className="relative">
-            <div className="h-20 w-full flex flex-col justify-center space-y-2 px-4 bg-gray-900">
-              <div className="flex justify-between items-center">
-                <Typography.Text>Bridge Name</Typography.Text>
-                <Typography.Text className="capitalize">{bridge?.category}</Typography.Text>
-              </div>
-
-              <div className="flex justify-between items-center">
-                <Typography.Text>Transaction Fee</Typography.Text>
-                <Typography.Text>50 RING</Typography.Text>
-              </div>
-            </div>
-          </Form.Item>
-
           {bridge && Content && (
             <Content
               form={form}
-              direction={direction as CrossChainDirection}
+              bridge={bridge}
+              direction={direction}
               setSubmit={setSubmit}
               setBridgeState={setBridgeState}
+              onFeeChange={setFee}
             />
           )}
 

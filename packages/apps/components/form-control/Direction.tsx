@@ -6,9 +6,9 @@ import { BridgeStatus, CrossChainDirection, CustomFormControlProps, HashInfo } f
 import { getBridge, patchUrl, updateStorage } from 'shared/utils';
 import { Destination } from './Destination';
 
-type DirectionProps = CustomFormControlProps<CrossChainDirection> & { initial: CrossChainDirection };
+type DirectionProps = CustomFormControlProps<CrossChainDirection> & { initial: CrossChainDirection; fee: number };
 
-export function Direction({ value, initial, onChange }: DirectionProps) {
+export function Direction({ value, initial, onChange, fee = 0 }: DirectionProps) {
   const data = value ?? initial;
   const { t } = useTranslation();
   const [bridgetStatus, setBridgetStatus] = useState<null | BridgeStatus>(null);
@@ -43,13 +43,22 @@ export function Direction({ value, initial, onChange }: DirectionProps) {
     updateStorage(info);
   }, [data]);
 
+  useEffect(() => {
+    const amount = Number(data.from.amount) - fee;
+
+    triggerChange({ from: data.from, to: { ...data.to, amount: amount > 0 ? String(amount) : '' } });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fee]);
+
   return (
     <div className={`relative flex justify-between items-center flex-col`}>
       <Destination
         title={t('From')}
         value={data.from}
         onChange={(from) => {
-          triggerChange({ from, to: data.to });
+          const amount = Number(from.amount) - fee;
+
+          triggerChange({ from, to: { ...data.to, amount: amount > 0 ? String(amount) : '' } });
         }}
         className="pr-4"
       />

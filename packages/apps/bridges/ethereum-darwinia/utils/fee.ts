@@ -16,6 +16,25 @@ export async function getRedeemFee(bridge: Bridge<EthereumDarwiniaBridgeConfig>)
   return Web3.utils.toBN(fee || 0);
 }
 
+export async function getRedeemTxFee(
+  bridge: Bridge<EthereumDarwiniaBridgeConfig>,
+  params: {
+    recipient: string;
+    sender: string;
+    amount: number;
+  }
+): Promise<BN> {
+  const to = getChainConfig(bridge.issuing[1]);
+  const api = entrance.polkadot.getInstance(to.provider);
+
+  await waitUntilConnected(api);
+
+  const { recipient, sender, amount = 0 } = params;
+  const extrinsic = api.tx.balances.transfer(recipient, new BN(amount));
+
+  return await extrinsic.paymentInfo(sender).then((info) => new BN(info.partialFee ?? 0));
+}
+
 export async function getIssuingFee(bridge: Bridge<EthereumDarwiniaBridgeConfig>): Promise<BN | null> {
   const from = getChainConfig(bridge.issuing[0]);
   const web3 = entrance.web3.getInstance(from.provider);
