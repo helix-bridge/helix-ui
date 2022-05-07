@@ -12,10 +12,6 @@ export const DATE_FORMAT = 'yyyy/MM/dd';
 export const DATE_TIME_FORMAT = 'yyyy/MM/dd HH:mm:ss';
 
 export enum FORM_CONTROL {
-  amount = 'amount',
-  asset = 'asset',
-  assets = 'assets',
-  deposit = 'deposit',
   recipient = 'recipient',
   sender = 'sender',
   direction = 'direction',

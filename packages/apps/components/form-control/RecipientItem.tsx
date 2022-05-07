@@ -1,11 +1,13 @@
-import { AutoComplete, Form, Input } from 'antd';
+import { ApiOutlined } from '@ant-design/icons';
+import { AutoComplete, Button, Form, Input, Tooltip } from 'antd';
 import { upperFirst } from 'lodash';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IdentAccountAddress } from 'shared/components/widget/IdentAccountAddress';
 import { FORM_CONTROL } from 'shared/config/constant';
-import { CrossChainComponentProps, CrossChainParty, IAccountMeta, PolkadotChainConfig } from 'shared/model';
+import { CrossChainComponentProps, CrossChainParty, PolkadotChainConfig } from 'shared/model';
 import { convertToSS58, isPolkadotNetwork, isSameAddress, isValidAddressStrict, patchUrl } from 'shared/utils';
+import { useApi } from '../../providers';
 import { FormItemExtra } from './FormItemExtra';
 
 // eslint-disable-next-line complexity
@@ -13,67 +15,62 @@ export function RecipientItem({
   form,
   extraTip,
   direction,
-  accounts,
   onChange,
-  isDvm = false,
-}: Pick<CrossChainComponentProps<CrossChainParty>, 'form' | 'direction'> & {
+  bridge,
+}: Pick<CrossChainComponentProps<CrossChainParty>, 'form' | 'direction' | 'bridge'> & {
   extraTip?: string | ReactNode;
-  isDvm?: boolean;
-  accounts?: IAccountMeta[];
   onChange?: (value: string) => void;
 }) {
   const { t } = useTranslation();
+  const { assistantConnection, connectAssistantNetwork } = useApi();
 
   const formattedAccounts = useMemo(
     () =>
-      accounts?.map((item) => ({
+      assistantConnection.accounts?.map((item) => ({
         ...item,
         address: convertToSS58(item.address, (direction.to.meta as PolkadotChainConfig).ss58Prefix),
       })),
-    [accounts, direction.to]
+    [assistantConnection.accounts, direction.to.meta]
   );
 
   const { to } = direction;
-  const isPolkadot = isPolkadotNetwork(to.meta);
+  const isPolkadot = isPolkadotNetwork(to.meta) && to.meta.mode === 'native';
   const type = isPolkadot ? to.meta.name : 'ethereum';
 
-  const isValidRecipient = useCallback(
-    (value) => isValidAddressStrict(value, !isDvm ? type : 'ethereum'),
-    [isDvm, type]
-  );
+  const isValidRecipient = useCallback((value: string) => isValidAddressStrict(value, type), [type]);
 
   return (
-    <Form.Item className="mb-0">
-      <Form.Item
-        label={t('Recipient')}
-        name={FORM_CONTROL.recipient}
-        validateFirst
-        validateTrigger="onBlur"
-        rules={[
-          { required: true },
-          {
-            validator(_, value) {
-              return isDvm || !isSameAddress(form.getFieldValue(FORM_CONTROL.sender), value)
-                ? Promise.resolve()
-                : Promise.reject();
-            },
-            message: t('The sending address and the receiving address cannot be the same'),
+    <Form.Item
+      label={t('Recipient')}
+      name={FORM_CONTROL.recipient}
+      validateFirst
+      validateTrigger="onBlur"
+      rules={[
+        { required: true },
+        {
+          validator(_, value: string) {
+            return type === 'ethereum' || !isSameAddress(form.getFieldValue(FORM_CONTROL.sender), value)
+              ? Promise.resolve()
+              : Promise.reject();
           },
-          {
-            validator(_, value) {
-              return isValidRecipient(value) ? Promise.resolve() : Promise.reject();
-            },
-            message: !isDvm
-              ? t('Please enter a valid {{network}} address', { network: upperFirst(to.meta.name) })
-              : t('Please fill in a {{network}} smart address which start with 0x', {
+          message: t('The sending address and the receiving address cannot be the same'),
+        },
+        {
+          validator(_, value: string) {
+            return isValidRecipient(value) ? Promise.resolve() : Promise.reject();
+          },
+          message:
+            type === 'ethereum'
+              ? t('Please fill in a {{network}} smart address which start with 0x', {
                   network: upperFirst(to.meta.name),
-                }),
-          },
-        ]}
-        extra={to ? <FormItemExtra>{extraTip}</FormItemExtra> : ''}
-        className="mb-2"
-      >
-        {isDvm || !formattedAccounts?.length ? (
+                })
+              : t('Please enter a valid {{network}} address', { network: upperFirst(to.meta.name) }),
+        },
+      ]}
+      extra={to ? <FormItemExtra>{extraTip}</FormItemExtra> : ''}
+    >
+      <div className="flex items-center gap-2">
+        {type === 'ethereum' || !formattedAccounts?.length ? (
           <Input
             onBlur={(event) => {
               patchUrl({ recipient: event.target.value });
@@ -104,7 +101,19 @@ export function RecipientItem({
             ))}
           </AutoComplete>
         )}
-      </Form.Item>
+
+        {isPolkadot && bridge.activeAssistantConnection && (
+          <Tooltip title={t('Connect {{network}} to fetch own accounts', { network: to.meta.name })}>
+            <Button
+              onClick={() => {
+                connectAssistantNetwork(to.meta);
+              }}
+              type="link"
+              icon={<ApiOutlined />}
+            ></Button>
+          </Tooltip>
+        )}
+      </div>
     </Form.Item>
   );
 }

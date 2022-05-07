@@ -40,7 +40,8 @@ import { ApproveSuccess } from '../../components/tx/ApproveSuccess';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferSuccess } from '../../components/tx/TransferSuccess';
 import { IDescription } from '../../components/widget/IDescription';
-import { useAfterTx, useApi, useDeparture, useTx } from '../../hooks';
+import { useAfterTx, useTx } from '../../hooks';
+import { useApi } from '../../providers';
 import { DepositItem } from './DepositItem';
 import {
   Ethereum2DarwiniaPayload,
@@ -258,7 +259,6 @@ export function Ethereum2Darwinia({ form, setSubmit, direction }: CrossChainComp
   } = useApi();
 
   const { observer } = useTx();
-  const { updateDeparture } = useDeparture();
   const { afterCrossChain, afterApprove } = useAfterTx<ApproveValue>();
 
   const account = useMemo(() => {
@@ -359,7 +359,6 @@ export function Ethereum2Darwinia({ form, setSubmit, direction }: CrossChainComp
       return;
     }
 
-    const { from } = direction;
     const { ring, kton, fee: feeContract, issuing } = contracts;
     const { recipient } = getInfoFromHash();
 
@@ -381,8 +380,7 @@ export function Ethereum2Darwinia({ form, setSubmit, direction }: CrossChainComp
       setIsBalanceQuerying(false);
       setTokens(tokenMeta);
     });
-    updateDeparture({ from: from.meta, sender: form.getFieldValue(FORM_CONTROL.sender) });
-  }, [account, contracts, direction, form, updateDeparture]);
+  }, [account, contracts, direction, form]);
 
   useEffect(() => {
     updateSubmit(asset);

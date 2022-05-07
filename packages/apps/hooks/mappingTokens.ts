@@ -5,7 +5,7 @@ import { RegisterStatus } from 'shared/config/constant';
 import { Action, Erc20RegisterStatus, MappingToken, NullableCrossChainDirection, RequiredPartial } from 'shared/model';
 import { getErc20TokenBalance, getKnownMappingTokens, isEthereumNetwork, StoredProof } from 'shared/utils';
 import useDeepCompareEffect from 'use-deep-compare-effect';
-import { useApi } from './api';
+import { useApi } from '../providers';
 
 export type MemoedTokenInfo = RequiredPartial<MappingToken, 'name' | 'logo' | 'decimals' | 'address' | 'symbol'>;
 
@@ -77,7 +77,7 @@ export const useMappingTokens = (
   );
 
   useDeepCompareEffect(() => {
-    if (!from || !to || !(isEthereumNetwork(from) || from.mode === 'dvm')) {
+    if (!from || !to || !(isEthereumNetwork(from.meta) || from.meta.mode === 'dvm')) {
       dispatch({ payload: [], type: 'updateTokens' });
       message.error(
         'The departure and arrival networks must exist and the departure network must be an Ethereum network or a DVM network'

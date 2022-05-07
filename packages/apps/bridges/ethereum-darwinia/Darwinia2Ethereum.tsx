@@ -1,4 +1,6 @@
 import { BN_ZERO } from '@polkadot/util';
+import { Input } from 'antd';
+import FormItem from 'antd/lib/form/FormItem';
 import BN from 'bn.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,139 +10,21 @@ import { getToken, useDarwiniaAvailableBalances } from 'shared/hooks';
 import {
   AvailableBalance,
   Bridge,
+  ConnectionStatus,
   CrossChainComponentProps,
   CrossChainPayload,
   DarwiniaAsset,
   Token,
 } from 'shared/model';
-import { applyModalObs, createTxWorkflow, fromWei, getInfoFromHash, isRing, toWei } from 'shared/utils';
-import { PolkadotAccountsItem } from '../../components/form-control/PolkadotAccountsItem';
+import { applyModalObs, createTxWorkflow, fromWei, isRing, prettyNumber, toWei } from 'shared/utils';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferSuccess } from '../../components/tx/TransferSuccess';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
-import { useAfterTx, useApi, useTx } from '../../hooks';
+import { useAfterTx, useTx } from '../../hooks';
+import { useAccount, useApi } from '../../providers';
 import { Darwinia2EthereumPayload, EthereumDarwiniaBridgeConfig, IssuingDarwiniaTxPayload } from './model';
 import { getRedeemFee, getRedeemTxFee, issuing } from './utils';
-
-// interface AmountCheckInfo {
-//   fee: BN | null;
-//   assets: Darwinia2EthereumPayload['assets'];
-//   availableBalance: AvailableBalance[];
-// }
-
-const INITIAL_ASSETS: Darwinia2EthereumPayload['assets'] = [
-  { asset: DarwiniaAsset.ring, amount: '', checked: true },
-  { asset: DarwiniaAsset.kton, amount: '' },
-];
-
-/* ----------------------------------------------Base info helpers-------------------------------------------------- */
-// function TransferInfo({ fee, availableBalance, assets }: AmountCheckInfo) {
-//   const { chain } = useApi();
-
-//   const ringBalance = useMemo(
-//     () => new BN(availableBalance.find((item) => isRing(item.asset))?.max ?? 0),
-//     [availableBalance]
-//   );
-
-//   // eslint-disable-next-line complexity
-//   const isRingBalanceEnough = useMemo(() => {
-//     if (!fee || ringBalance.eq(BN_ZERO)) {
-//       return false;
-//     }
-
-//     const ring = assets.find((item) => isRing(item.asset) && item.checked);
-//     const ringAmount = new BN(toWei({ value: ring?.amount || '0', decimals: 9 }));
-
-//     return ring ? ringAmount.gte(fee) && ringAmount.lte(ringBalance) : ringBalance.gte(fee);
-//   }, [assets, fee, ringBalance]);
-
-//   const hasAssetSet = useMemo(() => !!assets.filter((item) => item.checked && item?.amount).length, [assets]);
-
-//   const chainSymbol = useCallback(
-//     (token: DarwiniaAsset) => getToken(chain.tokens, token)?.symbol || token.toUpperCase(),
-//     [chain.tokens]
-//   );
-
-//   const animationCount = 5;
-
-//   if (!fee || ringBalance.eq(BN_ZERO)) {
-//     return null;
-//   }
-
-//   return (
-//     <Descriptions
-//       size="small"
-//       column={1}
-//       labelStyle={{ color: 'inherit' }}
-//       className={`${isRingBalanceEnough ? 'text-green-400' : 'text-red-400 animate-pulse'}`}
-//       style={{ animationIterationCount: animationCount }}
-//     >
-//       {hasAssetSet && (
-//         <Descriptions.Item label={<Trans>Recipient will receive</Trans>} contentStyle={{ color: 'inherit' }}>
-//           <p className="flex flex-col">
-//             {assets.map((item) => {
-//               if (!item.checked) {
-//                 return null;
-//               } else {
-//                 const { asset, amount } = item;
-
-//                 if (isRing(asset)) {
-//                   const origin = new BN(toWei({ value: amount, decimals: 9 }));
-
-//                   return (
-//                     <span className="mr-2" key={asset}>{`${fromWei({
-//                       value: origin.sub(fee),
-//                       decimals: 9,
-//                     })} ${chainSymbol(DarwiniaAsset.ring)}`}</span>
-//                   );
-//                 } else {
-//                   return (
-//                     <span className="mr-2" key={asset}>{`${amount || 0} ${chainSymbol(DarwiniaAsset.kton)}`}</span>
-//                   );
-//                 }
-//               }
-//             })}
-//           </p>
-//         </Descriptions.Item>
-//       )}
-
-//       <Descriptions.Item label={<Trans>Cross-chain Fee</Trans>} contentStyle={{ color: 'inherit' }}>
-//         <span className="flex items-center">
-//           {fromWei({ value: fee, decimals: 9 })} {chainSymbol(DarwiniaAsset.ring)}
-//           <Tooltip
-//             title={
-//               <ul className="pl-4 list-disc">
-//                 <li>
-//                   <Trans>Fee paid per transaction</Trans>
-//                 </li>
-//                 <li>
-//                   <Trans>If the transaction includes RING, the number of RING cannot be less than the fee</Trans>
-//                 </li>
-//               </ul>
-//             }
-//           >
-//             <QuestionCircleFilled className="ml-2 cursor-pointer" />
-//           </Tooltip>
-//         </span>
-//       </Descriptions.Item>
-
-//       <Descriptions.Item>
-//         <p className="text-gray-400 text-xs">
-//           <Trans>Please initiate a claim transaction of the Ethereum network in the Transfer Records.</Trans>
-//         </p>
-//       </Descriptions.Item>
-
-//       <Descriptions.Item>
-//         <p className="text-gray-400 text-xs">
-//           <Trans>Each claim transaction of Ethereum is estimated to use 600,000 Gas.</Trans>
-//         </p>
-//       </Descriptions.Item>
-//     </Descriptions>
-//   );
-// }
-
-/* ----------------------------------------------Main Section-------------------------------------------------- */
 
 /**
  * @description test chain: pangolin -> ropsten
@@ -155,9 +39,10 @@ export function Darwinia2Ethereum({
   const { t } = useTranslation();
 
   const {
-    mainConnection: { accounts },
+    mainConnection: { accounts, status },
     api,
     chain,
+    network,
   } = useApi();
 
   const [availableBalances, setAvailableBalances] = useState<AvailableBalance[]>([]);
@@ -166,9 +51,9 @@ export function Darwinia2Ethereum({
   const fee = useMemo(() => (crossChainFee ? crossChainFee.add(txFee ?? BN_ZERO) : null), [crossChainFee, txFee]);
   const { observer } = useTx();
   const { afterCrossChain } = useAfterTx<CrossChainPayload<Darwinia2EthereumPayload>>();
-  const getBalances = useDarwiniaAvailableBalances();
-  const [sender, setSender] = useState<string>(form.getFieldValue(FORM_CONTROL.sender));
+  const getBalances = useDarwiniaAvailableBalances(api, network, chain);
   const [recipient, setRecipient] = useState<string>(form.getFieldValue(FORM_CONTROL.recipient));
+  const { account } = useAccount();
 
   useEffect(() => {
     const fn = () => (data: IssuingDarwiniaTxPayload) => {
@@ -199,7 +84,6 @@ export function Darwinia2Ethereum({
         onDisappear: () => {
           form.setFieldsValue({
             [FORM_CONTROL.sender]: data.sender,
-            [FORM_CONTROL.assets]: INITIAL_ASSETS,
           });
           getBalances(data.sender).then(setAvailableBalances);
         },
@@ -213,21 +97,16 @@ export function Darwinia2Ethereum({
 
   // eslint-disable-next-line complexity
   useEffect(() => {
-    const defaultSender = (accounts && accounts[0] && accounts[0].address) || '';
-    const { recipient: defaultRecipient } = getInfoFromHash();
-    const sendAccount = sender || defaultSender;
-
     form.setFieldsValue({
-      [FORM_CONTROL.sender]: sendAccount,
-      [FORM_CONTROL.recipient]: (recipient || defaultRecipient) ?? void 0,
+      [FORM_CONTROL.sender]: account,
     });
 
-    const balance$$ = from(getBalances(sendAccount)).subscribe(setAvailableBalances);
+    const balance$$ = from(getBalances(account)).subscribe(setAvailableBalances);
 
     return () => {
       balance$$.unsubscribe();
     };
-  }, [accounts, form, getBalances, recipient, sender]);
+  }, [account, accounts, form, getBalances, recipient]);
 
   useEffect(() => {
     const sub$$ = from(getRedeemFee(bridge as Bridge<EthereumDarwiniaBridgeConfig>)).subscribe(setCrossChainFee);
@@ -238,20 +117,20 @@ export function Darwinia2Ethereum({
   }, [bridge]);
 
   useEffect(() => {
-    if (!recipient || !sender) {
+    if (!recipient || !account) {
       return;
     }
 
     const sub$$ = from(
       getRedeemTxFee(bridge as Bridge<EthereumDarwiniaBridgeConfig>, {
-        sender,
+        sender: account,
         recipient,
         amount: +direction.from.amount,
       })
     ).subscribe(setTxFee);
 
     return () => sub$$?.unsubscribe();
-  }, [bridge, direction.from.amount, recipient, sender]);
+  }, [account, bridge, direction.from.amount, recipient]);
 
   useEffect(() => {
     if (fee && onFeeChange) {
@@ -263,58 +142,38 @@ export function Darwinia2Ethereum({
 
   return (
     <>
-      <PolkadotAccountsItem
-        availableBalances={availableBalances}
-        onChange={(value) => {
-          getBalances(value).then(setAvailableBalances);
-          setSender(value);
-        }}
-      />
+      {status === ConnectionStatus.success && (
+        <>
+          <FormItem label={t('Balance')}>
+            <div>
+              {availableBalances
+                .filter((item) => item.token.symbol.toLowerCase() === direction.from.symbol.toLowerCase())
+                .map(({ max, token }) => (
+                  <Input
+                    disabled
+                    key={token.symbol}
+                    placeholder={t('Available balance: {{value}} {{symbol}}', {
+                      value: fromWei({ value: max, decimals: token.decimals }, prettyNumber),
+                      symbol: token.symbol,
+                    })}
+                  />
+                ))}
+            </div>
+          </FormItem>
 
-      <RecipientItem
-        form={form}
-        direction={direction}
-        extraTip={t(
-          'After the transaction is confirmed, the account cannot be changed. Please do not fill in the exchange account.'
-        )}
-        onChange={(value) => {
-          setRecipient(value);
-        }}
-      />
-
-      {/* <Form.Item
-        name={FORM_CONTROL.assets}
-        label={
-          <span className="flex items-center">
-            <span className="mr-4">{t('Asset')}</span>
-
-            <Tooltip title={t('Refresh balances')} placement="right">
-              <Button
-                type="link"
-                icon={<ReloadOutlined />}
-                onClick={() => {
-                  form.validateFields(['sender']).then(({ sender }) => {
-                    if (sender) {
-                      getBalances(sender).then(setAvailableBalances);
-                    }
-                  });
-                }}
-                className="flex items-center"
-              ></Button>
-            </Tooltip>
-          </span>
-        }
-        rules={[{ required: true }]}
-        className="mb-0"
-      >
-        <AssetGroup
-          network={form.getFieldValue(FORM_CONTROL.direction).from.name}
-          balances={availableBalances}
-          fee={fee}
-          form={form}
-          onChange={(value) => setCurAssets(value)}
-        />
-      </Form.Item> */}
+          <RecipientItem
+            form={form}
+            direction={direction}
+            bridge={bridge}
+            extraTip={t(
+              'After the transaction is confirmed, the account cannot be changed. Please do not fill in the exchange account.'
+            )}
+            onChange={(value) => {
+              setRecipient(value);
+            }}
+          />
+        </>
+      )}
 
       <CrossChainInfo
         bridge={bridge}
@@ -322,10 +181,6 @@ export function Darwinia2Ethereum({
           fee && { amount: fromWei({ value: fee, decimals: direction.from.decimals }), symbol: direction.from.symbol }
         }
       />
-
-      {/* <Spin spinning={isFeeCalculating} size="small">
-        <TransferInfo fee={fee} availableBalance={availableBalances} assets={currentAssets} />
-      </Spin> */}
     </>
   );
 }

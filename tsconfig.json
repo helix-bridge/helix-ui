@@ -23,7 +23,7 @@
       "cypress",
       "cypress-wait-until",
       "@testing-library/cypress",
-      "cypress-react-selector"
+      "cypress-react-selector",
     ]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

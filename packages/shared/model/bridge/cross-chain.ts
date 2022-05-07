@@ -34,7 +34,7 @@ export interface CrossChainComponentProps<
   bridge: Bridge;
   setSubmit: React.Dispatch<React.SetStateAction<SubmitFn>>;
   setBridgeState: React.Dispatch<React.SetStateAction<BridgeState>>;
-  onFeeChange: React.Dispatch<React.SetStateAction<number>>;
+  onFeeChange: (value: number | null) => void;
 }
 
 /* ---------------------------------------------------Bridge elements--------------------------------------------------- */

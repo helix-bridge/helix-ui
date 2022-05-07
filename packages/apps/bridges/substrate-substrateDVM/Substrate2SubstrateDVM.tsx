@@ -46,7 +46,8 @@ import { PolkadotAccountsItem } from '../../components/form-control/PolkadotAcco
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferSuccess } from '../../components/tx/TransferSuccess';
-import { useAfterTx, useApi, useDeparture, useTx } from '../../hooks';
+import { useAfterTx, useTx } from '../../hooks';
+import { useApi } from '../../providers';
 import { useBridgeStatus } from './hooks';
 import { IssuingSubstrateTxPayload, Substrate2SubstrateDVMPayload } from './model';
 import { issuing } from './utils/tx';

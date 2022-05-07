@@ -6,7 +6,20 @@ import { BridgeStatus, CrossChainDirection, CustomFormControlProps, HashInfo } f
 import { getBridge, patchUrl, updateStorage } from 'shared/utils';
 import { Destination } from './Destination';
 
-type DirectionProps = CustomFormControlProps<CrossChainDirection> & { initial: CrossChainDirection; fee: number };
+type DirectionProps = CustomFormControlProps<CrossChainDirection> & {
+  initial: CrossChainDirection;
+  fee: number | null;
+};
+
+export const calcToAmount = (payment: string, paymentFee: number | null) => {
+  if (paymentFee === null) {
+    return '';
+  }
+
+  const amount = Number(payment) - paymentFee;
+
+  return amount >= 0 ? String(amount) : '';
+};
 
 export function Direction({ value, initial, onChange, fee = 0 }: DirectionProps) {
   const data = value ?? initial;
@@ -43,22 +56,13 @@ export function Direction({ value, initial, onChange, fee = 0 }: DirectionProps)
     updateStorage(info);
   }, [data]);
 
-  useEffect(() => {
-    const amount = Number(data.from.amount) - fee;
-
-    triggerChange({ from: data.from, to: { ...data.to, amount: amount > 0 ? String(amount) : '' } });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fee]);
-
   return (
     <div className={`relative flex justify-between items-center flex-col`}>
       <Destination
         title={t('From')}
         value={data.from}
         onChange={(from) => {
-          const amount = Number(from.amount) - fee;
-
-          triggerChange({ from, to: { ...data.to, amount: amount > 0 ? String(amount) : '' } });
+          triggerChange({ from, to: { ...data.to, amount: calcToAmount(from.amount, fee) } });
         }}
         className="pr-4"
       />
@@ -73,7 +77,7 @@ export function Direction({ value, initial, onChange, fee = 0 }: DirectionProps)
             triggerChange({ from: { ...to, amount: '' }, to: { ...from, amount: '' } });
           }}
           name="switch"
-          className="w-10 h-10 mx-auto transform rotate-90"
+          className="transform rotate-90 cursor-pointer w-10 h-10"
         />
       )}
 

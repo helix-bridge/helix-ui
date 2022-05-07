@@ -1,8 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { negate } from 'lodash';
-import { createContext, useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useState } from 'react';
 import { EMPTY, iif, of, Subscription } from 'rxjs';
-import Web3 from 'web3';
 import {
   Action,
   ChainConfig,
@@ -11,30 +10,31 @@ import {
   EthereumChainConfig,
   EthereumConnection,
   NoNullFields,
-  PolkadotChain,
+  PolkadotChainSimpleToken,
   PolkadotConnection,
   TronConnection,
 } from 'shared/model';
 import {
   connect,
+  getDirectionFromSettings,
   getInitialSetting,
   getPolkadotChainProperties,
   isEthereumNetwork,
-  getChainConfig,
   waitUntilConnected,
 } from 'shared/utils';
 import { updateStorage } from 'shared/utils/helper/storage';
+import Web3 from 'web3';
 
 interface StoreState {
   mainConnection: Connection;
   assistantConnection: Connection;
   connections: (NoNullFields<PolkadotConnection> | EthereumConnection | TronConnection)[];
-  network: ChainConfig | null;
+  network: ChainConfig;
   isDev: boolean;
   enableTestNetworks: boolean;
 }
 
-type SetNetworkAction = Action<'setNetwork', ChainConfig | null>;
+type SetNetworkAction = Action<'setNetwork', ChainConfig>;
 type SetMainConnection = Action<'setMainConnection', Connection>;
 type SetAssistantConnection = Action<'setAssistantConnection', Connection>;
 type SetEnableTestNetworks = Action<'setEnableTestNetworks', boolean>;
@@ -51,11 +51,7 @@ type Actions =
 
 const isDev = process.env.REACT_APP_HOST_TYPE === 'dev';
 
-const initialNetworkConfig = () => {
-  const fromToken = getInitialSetting<string>('from', null);
-
-  return fromToken ? getChainConfig(fromToken) : null;
-};
+const initialDirection = getDirectionFromSettings();
 
 const initialConnection: Connection = {
   status: ConnectionStatus.pending,
@@ -69,7 +65,7 @@ const initialState: StoreState = {
   mainConnection: initialConnection,
   assistantConnection: initialConnection,
   connections: [],
-  network: initialNetworkConfig(),
+  network: initialDirection.from.meta,
   isDev,
   enableTestNetworks: !!getInitialSetting('enableTestNetworks', isDev),
 };
@@ -144,10 +140,10 @@ export type ApiCtx = StoreState & {
   connectNetwork: (network: ChainConfig) => void;
   connectAssistantNetwork: (network: ChainConfig) => void;
   disconnect: () => void;
-  setNetwork: (network: ChainConfig | null) => void;
+  setNetwork: (network: ChainConfig) => void;
   setEnableTestNetworks: (enable: boolean) => void;
   setApi: (api: ApiPromise) => void;
-  chain: PolkadotChain;
+  chain: PolkadotChainSimpleToken;
 };
 
 export const ApiContext = createContext<ApiCtx | null>(null);
@@ -156,7 +152,7 @@ let subscription: Subscription = EMPTY.subscribe();
 
 export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const setNetwork = useCallback((payload: ChainConfig | null) => dispatch({ type: 'setNetwork', payload }), []);
+  const setNetwork = useCallback((payload: ChainConfig) => dispatch({ type: 'setNetwork', payload }), []);
   const setMainConnection = useCallback((payload: Connection) => dispatch({ type: 'setMainConnection', payload }), []);
 
   const setAssistantConnection = useCallback(
@@ -173,7 +169,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   }, []);
 
   const [api, setApi] = useState<ApiPromise | null>(null);
-  const [chain, setChain] = useState<PolkadotChain>({ ss58Format: '', tokens: [] });
+  const [chain, setChain] = useState<PolkadotChainSimpleToken>({ ss58Format: '', tokens: [] });
 
   const observer = useMemo(
     () => ({
@@ -201,7 +197,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   );
 
   const isConnectionAvailable = useCallback(
-    (connection) => {
+    (connection: Connection | undefined) => {
       const availableStatus = [ConnectionStatus.success, ConnectionStatus.connecting, ConnectionStatus];
       const existAvailableConnection = !!connection && availableStatus.includes(connection.status);
 
@@ -257,22 +253,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
 
     setMainConnection(initialConnection);
     setAssistantConnection(initialConnection);
-    setNetwork(null);
-  }, [api, setAssistantConnection, setMainConnection, setNetwork]);
-
-  useEffect(() => {
-    if (!state.network) {
-      setMainConnection(initialConnection);
-      setAssistantConnection(initialConnection);
-    } else {
-      subscription = connect(state.network).subscribe(observer);
-    }
-
-    return () => {
-      console.info('[Api provider] Cancel network subscription of network', state.network?.name);
-      subscription.unsubscribe();
-    };
-  }, [observer, setAssistantConnection, setMainConnection, state.network]);
+  }, [api, setAssistantConnection, setMainConnection]);
 
   useEffect(() => {
     if (!api) {
@@ -307,3 +288,5 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
     </ApiContext.Provider>
   );
 };
+
+export const useApi = () => useContext(ApiContext) as Exclude<ApiCtx, null>;

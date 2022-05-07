@@ -93,6 +93,7 @@ export function Configuration({ network }: ConfigurationProps) {
     message.success({
       content: t('Operation success, you need to refresh the page to use the configuration to take effect'),
       duration: 10,
+      type: 'success',
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

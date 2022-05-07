@@ -4,8 +4,7 @@ import { ModalProps, message } from 'antd';
 import { useRouter } from 'next/router';
 import { FunctionComponent, useCallback, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TxContext, TxCtx } from '../providers';
-import { useApi } from './api';
+import { TxContext, TxCtx, useApi } from '../providers';
 
 export const useTx = () => useContext(TxContext) as Exclude<TxCtx, null>;
 
@@ -42,7 +41,7 @@ export function useAfterTx<T extends CrossChainPayload<{ sender: string; recipie
 
               const { from, to } = value.direction;
               const sender =
-                isEthereumNetwork(value.direction.from) || from.mode === 'dvm'
+                isEthereumNetwork(value.direction.from.meta) || from.meta.mode === 'dvm'
                   ? value.sender
                   : convertToSS58(value.sender, +chain.ss58Format);
 
@@ -50,11 +49,11 @@ export function useAfterTx<T extends CrossChainPayload<{ sender: string; recipie
                 '/history' +
                   '?' +
                   genHistoryRouteParams({
-                    from: from.name,
-                    fMode: from.mode,
+                    from: from.meta.name,
+                    fMode: from.meta.mode,
                     sender,
-                    to: to.name,
-                    tMode: to.mode,
+                    to: to.meta.name,
+                    tMode: to.meta.mode,
                   })
               );
             },

@@ -1,5 +1,6 @@
-import { Col, Form, Row, Tooltip } from 'antd';
+import { Col, Form, Input, Row, Tooltip } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
+import { isEqual, omit } from 'lodash';
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FORM_CONTROL } from 'shared/config/constant';
@@ -7,59 +8,44 @@ import { validateMessages } from 'shared/config/validate-msg';
 import {
   Bridge,
   BridgeState,
+  ConnectionStatus,
   CrossChainComponentProps,
   CrossChainDirection,
   CrossChainParty,
   CrossChainPayload,
-  NullableCrossChainDirection,
   SubmitFn,
 } from 'shared/model';
-import { emptyObsFactory, getChainConfig } from 'shared/utils';
-import { useApi, useTx } from '../hooks';
+import { emptyObsFactory } from 'shared/utils';
+import { useTx } from '../hooks';
+import { useAccount, useApi } from '../providers';
 import { BridgeSelector } from './form-control/BridgeSelector';
-import { Direction } from './form-control/Direction';
-import { FromItemButton, SubmitButton } from './widget/SubmitButton';
+import { calcToAmount, Direction } from './form-control/Direction';
+import { FromItemButton } from './widget/SubmitButton';
 
-// eslint-disable-next-line complexity
+const isDirectionChanged = (pre: CrossChainDirection, cur: CrossChainDirection) => {
+  return !isEqual(
+    { from: omit(pre.from, 'amount'), to: omit(pre.to, 'amount') },
+    { from: omit(cur.from, 'amount'), to: omit(cur.to, 'amount') }
+  );
+};
+
 export function CrossChain({ dir }: { dir: CrossChainDirection }) {
-  const { t, i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [form] = useForm<CrossChainPayload>();
-
-  const {
-    // network,
-    mainConnection: { status: connectionStatus },
-    disconnect,
-    connectAssistantNetwork,
-  } = useApi();
-
+  const { connectNetwork, mainConnection, setNetwork } = useApi();
   const [direction, setDirection] = useState(dir);
   const [bridge, setBridge] = useState<Bridge | null>(null);
-  // const [isReady, setIsReady] = useState(false);
   const [submitFn, setSubmit] = useState<SubmitFn>(emptyObsFactory);
   const [bridgeState, setBridgeState] = useState<BridgeState>({ status: 'available' });
   const { tx } = useTx();
-  const [fee, setFee] = useState<number>(0);
+  const [fee, setFee] = useState<number | null>(null);
+  const { account } = useAccount();
 
   const launch = useCallback(() => {
     void submitFn;
     // form.validateFields().then((values) => submitFn(values));
     form.validateFields().then(console.log);
   }, [form, submitFn]);
-
-  const launchAssistantConnection = useCallback(
-    (data: NullableCrossChainDirection) => {
-      const { to } = data;
-
-      if (bridge && bridge.activeAssistantConnection && to) {
-        const toConfig = getChainConfig(to.name);
-
-        connectAssistantNetwork(toConfig);
-      }
-    },
-    [bridge, connectAssistantNetwork]
-  );
-
-  void launchAssistantConnection;
 
   const Content = useMemo(() => {
     const { from, to } = direction;
@@ -75,19 +61,8 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
     return null;
   }, [bridge, direction]);
 
-  // useEffect(() => {
-  //   const { from, to } = direction;
-  //   const fromReady = !!from && isSameNetConfig(getChainConfig(from.name), network) && connectionStatus === 'success';
-
-  //   setIsReady(fromReady && !!to);
-  // }, [network, connectionStatus, direction]);
-
-  // useEffect(() => {
-
-  // }, [fee]);
-
   useEffect(() => {
-    // launchAssistantConnection(direction);
+    setNetwork(direction.from.meta);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -106,16 +81,13 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
               fee={fee}
               initial={direction}
               onChange={(value) => {
+                if (isDirectionChanged(direction, value)) {
+                  setBridge(null);
+                  form.setFieldsValue({ [FORM_CONTROL.bridge]: null });
+                }
+
                 setDirection(value);
-                form.resetFields([
-                  FORM_CONTROL.sender,
-                  FORM_CONTROL.recipient,
-                  FORM_CONTROL.amount,
-                  FORM_CONTROL.asset,
-                  FORM_CONTROL.assets,
-                  FORM_CONTROL.deposit,
-                ]);
-                // launchAssistantConnection(value);
+                setNetwork(value.from.meta);
               }}
             />
           </Form.Item>
@@ -127,36 +99,33 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
               direction={direction}
               setSubmit={setSubmit}
               setBridgeState={setBridgeState}
-              onFeeChange={setFee}
+              onFeeChange={(value) => {
+                const { from, to } = direction;
+
+                form.setFieldsValue({
+                  [FORM_CONTROL.direction]: { from, to: { ...to, amount: calcToAmount(from.amount, value) } },
+                });
+                setFee(value);
+              }}
             />
           )}
 
-          <div className={connectionStatus === 'success' && direction.from ? 'grid grid-cols-2 gap-4' : ''}>
-            <Tooltip title={bridgeState.reason} placement="bottom">
-              <div>
-                <SubmitButton
-                  from={direction.from ? getChainConfig(direction.from.name) : null}
-                  to={direction.to ? getChainConfig(direction.to.name) : null}
-                  requireTo
-                  launch={launch}
-                  disabled={bridgeState.status !== 'available'}
-                />
-              </div>
-            </Tooltip>
+          <Form.Item name={FORM_CONTROL.sender} className="hidden">
+            <Input value={account} />
+          </Form.Item>
 
-            {connectionStatus === 'success' && (
+          <Tooltip title={bridgeState.reason} placement="bottom">
+            {mainConnection.status === ConnectionStatus.success ? (
+              <FromItemButton onClick={() => launch()}>{t('Transfer')}</FromItemButton>
+            ) : (
               <FromItemButton
-                type="default"
-                onClick={() => {
-                  disconnect();
-                  form.resetFields();
-                }}
-                disabled={!!tx}
+                onClick={() => connectNetwork(direction.from.meta)}
+                disabled={mainConnection.status === ConnectionStatus.connecting}
               >
-                {t('Disconnect')}
+                {t('Connect to Wallet')}
               </FromItemButton>
             )}
-          </div>
+          </Tooltip>
         </Col>
 
         <Col xs={24} sm={{ span: 15, offset: 1 }}>
@@ -164,7 +133,6 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
             <BridgeSelector
               direction={direction}
               onChange={(value) => {
-                console.log('🚀 ~ file: CrossChain.tsx ~ line 194 ~ CrossChain ~ value', value);
                 setBridge(value || null);
               }}
             />

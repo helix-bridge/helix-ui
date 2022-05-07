@@ -10,7 +10,7 @@ export function Icon({
   className?: string;
 }) {
   return (
-    <svg className={`icon ${className}`} onClick={() => onClick && onClick()}>
+    <svg className={`icon w-4 h-4 ${className}`} onClick={() => onClick && onClick()}>
       <use xlinkHref={`#dwa-${name}`}></use>
     </svg>
   );

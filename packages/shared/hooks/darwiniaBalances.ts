@@ -1,13 +1,14 @@
 import { AccountInfo, AccountData } from '@darwinia/types';
 import { ApiPromise } from '@polkadot/api';
 import { useCallback } from 'react';
-import { useApi } from '../../apps/hooks';
-import { AvailableBalance, DarwiniaAsset, Token } from '../model';
+import { AvailableBalance, ChainConfig, DarwiniaAsset, PolkadotChainSimpleToken, Token } from '../model';
 import { waitUntilConnected } from '../utils';
 
-export const getToken: (tokens: Token[], target: DarwiniaAsset) => Token = (tokens, target) => {
+type SimpleToken = Pick<Token, 'decimals' | 'symbol'>;
+
+export const getToken: (tokens: SimpleToken[], target: DarwiniaAsset) => SimpleToken = (tokens, target) => {
   const result = tokens.find((token) => token.symbol.toLowerCase().includes(target.toLowerCase()));
-  const unknown: Token = { symbol: 'unknown', decimals: 9, name: 'unknown', address: '', logo: '' };
+  const unknown = { symbol: 'unknown', decimals: 9 };
 
   return result || unknown;
 };
@@ -51,9 +52,11 @@ async function getDarwiniaBalances(api: ApiPromise, account = ''): Promise<[stri
   }
 }
 
-export function useDarwiniaAvailableBalances() {
-  const { api, chain, network } = useApi();
-
+export function useDarwiniaAvailableBalances(
+  api: ApiPromise | null,
+  network: ChainConfig,
+  chain: PolkadotChainSimpleToken
+) {
   const getBalances = useCallback<(acc: string) => Promise<AvailableBalance[]>>(
     async (account: string | undefined | null) => {
       if (!api || !account) {

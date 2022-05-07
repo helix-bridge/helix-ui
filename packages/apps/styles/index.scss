@@ -2,10 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+$radius-base: 4px;
+
 // icon font class, symbol usage
 .icon {
-  width: 1em;
-  height: 1em;
   vertical-align: -0.15em;
   fill: currentColor;
   overflow: hidden;
@@ -37,5 +37,33 @@
     justify-content: center;
     align-items: center;
     border-top: none;
+  }
+}
+
+.radio-list {
+  display: flex;
+  align-items: center;
+  padding: 2rem 10px;
+  margin-bottom: 1rem;
+  border-radius: $radius-base !important;
+  border-width: 1px !important;
+
+  &.ant-radio-button-wrapper-checked {
+    background: transparent !important;
+  }
+
+  .ant-radio-button + span {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  &::before {
+    visibility: hidden !important;
+  }
+
+  &:hover {
+    color: #ffffff;
   }
 }

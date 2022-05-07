@@ -49,7 +49,8 @@ import { ApproveSuccess } from '../../components/tx/ApproveSuccess';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferSuccess } from '../../components/tx/TransferSuccess';
 import { IDescription } from '../../components/widget/IDescription';
-import { MemoedTokenInfo, useAfterTx, useApi, useMappingTokens, useTx } from '../../hooks';
+import { MemoedTokenInfo, useAfterTx, useMappingTokens, useTx } from '../../hooks';
+import { useApi } from '../../providers';
 
 interface DVMPayload extends CrossChainParty, CrossChainAsset<MappingToken> {}
 

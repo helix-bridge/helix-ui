@@ -11,7 +11,8 @@ import { upperCase } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { of } from 'rxjs';
-import { useApi, useTx } from '../../hooks';
+import { useTx } from '../../hooks';
+import { useApi } from '../../providers';
 
 interface KtonDrawProps {
   direction: CrossChainDirection<DVMChainConfig, PolkadotChainConfig>;

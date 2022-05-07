@@ -1,12 +1,16 @@
 import { CheckCircleOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Button, Descriptions, Empty, Form, Input, List, Progress, Spin, Tabs, Typography } from 'antd';
+import { useForm } from 'antd/lib/form/Form';
+import { PropsWithChildren, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { from, mergeMap } from 'rxjs';
 import { MappingTokenInfo } from 'shared/components/widget/MappingTokenInfo';
-import { FORM_CONTROL, RegisterStatus } from 'shared/config/constant';
+import { DEFAULT_DIRECTION, FORM_CONTROL, RegisterStatus } from 'shared/config/constant';
 import { ropstenConfig } from 'shared/config/network';
 import { validateMessages } from 'shared/config/validate-msg';
 import { useLocalSearch } from 'shared/hooks';
-import { Erc20Token, EthereumChainConfig } from 'shared/model';
+import { CrossToken, Erc20Token, EthereumChainConfig } from 'shared/model';
 import {
-  chainConfigs,
   getErc20Meta,
   getTokenRegisterStatus,
   hasAvailableDVMBridge,
@@ -15,16 +19,11 @@ import {
   StoredProof,
   updateStorage,
 } from 'shared/utils';
-import { Button, Descriptions, Empty, Form, Input, List, Progress, Spin, Tabs, Typography } from 'antd';
-import { useForm } from 'antd/lib/form/Form';
-import { PropsWithChildren, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { from, mergeMap } from 'rxjs';
 import Web3 from 'web3';
 import { Destination } from '../../components/form-control/Destination';
-import { ConnectionIndicator } from '../../components/widget/ConnectionIndicator';
 import { SubmitButton } from '../../components/widget/SubmitButton';
-import { MemoedTokenInfo, useApi, useMappingTokens, useTx } from '../../hooks';
+import { MemoedTokenInfo, useMappingTokens, useTx } from '../../hooks';
+import { useApi } from '../../providers';
 import { confirmRegister, getRegisterProof, launchRegister } from './utils';
 
 interface UpcomingProps {
@@ -58,7 +57,7 @@ function Upcoming({ departure }: UpcomingProps) {
     proofs: knownProofs,
     addKnownProof,
     switchToConfirmed,
-  } = useMappingTokens({ from: departure, to: null }, RegisterStatus.registering);
+  } = useMappingTokens({ from: { meta: departure } as unknown as CrossToken, to: null }, RegisterStatus.registering);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const searchFn = useCallback(tokenSearchFactory(allTokens), [allTokens]);
   const { data, setSearch } = useLocalSearch<MemoedTokenInfo>(searchFn as (arg: string) => MemoedTokenInfo[]);
@@ -200,7 +199,7 @@ export function Erc20Register() {
   const [isLoading, setIsLoading] = useState(false);
 
   const { tokens, dispatch } = useMappingTokens(
-    { from: network as EthereumChainConfig, to: null },
+    { from: { meta: network } as unknown as CrossToken, to: null },
     RegisterStatus.registering
   );
 
@@ -208,7 +207,6 @@ export function Erc20Register() {
   const searchFn = useCallback(tokenSearchFactory(tokens), [tokens]);
   const { data } = useLocalSearch(searchFn as (arg: string) => Erc20Token[]);
   const { observer } = useTx();
-  const networks = useMemo(() => chainConfigs.filter((item) => item.category.includes('ethereum')), []);
 
   const canStart = useMemo(
     () =>
@@ -265,11 +263,10 @@ export function Erc20Register() {
     >
       <Form.Item name="host" label={t('Host Network')} rules={[{ required: true }]}>
         <Destination
-          networks={networks}
-          extra={<ConnectionIndicator config={net} />}
+          value={DEFAULT_DIRECTION.to}
           onChange={(value) => {
             if (value) {
-              setNet(value as EthereumChainConfig);
+              setNet(value.meta as EthereumChainConfig);
             }
           }}
         />
@@ -321,7 +318,7 @@ export function Erc20Register() {
             )
           )}
 
-          <SubmitButton disabled={isLoading || registeredStatus !== 0} from={net} to={null}>
+          <SubmitButton disabled={isLoading || registeredStatus !== 0} from={net} to={net}>
             {t('Register')}
           </SubmitButton>
 

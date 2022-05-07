@@ -1,13 +1,14 @@
-import { MenuOutlined, HddOutlined } from '@ant-design/icons';
-import { THEME } from 'shared/config/theme';
-import { readStorage } from 'shared/utils';
+import { HddOutlined, MenuOutlined } from '@ant-design/icons';
 import { Button, Drawer, Layout, Tooltip } from 'antd';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { PropsWithChildren, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { THEME } from 'shared/config/theme';
+import { readStorage } from 'shared/utils';
 import { Footer } from './Footer';
 import { Navigator } from './Navigator';
+import { ActiveAccount } from './widget/account/ActiveAccount';
 
 const { Header, Content } = Layout;
 
@@ -61,7 +62,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
         </div>
 
         <div className="hidden lg:flex items-center space-x-4">
-          <Button>Connect Wallet</Button>
+          <ActiveAccount />
           <Button className="flex items-center" onClick={() => router.push('history')}>
             <HddOutlined />
             History

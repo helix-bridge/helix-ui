@@ -66,6 +66,7 @@ export const switchMetamaskNetwork: DebouncedFunc<(chain: EthereumChainConfig) =
                     </span>
                   ),
                   duration: 5,
+                  type: 'error',
                 });
               }
             }}

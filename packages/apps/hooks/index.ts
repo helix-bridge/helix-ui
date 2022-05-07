@@ -1,4 +1,3 @@
-export * from './api';
 export * from './lock';
 export * from './mappingTokens';
 export * from './networks';

@@ -13,7 +13,7 @@ import 'shared/theme/antd/index.less';
 import { readStorage } from 'shared/utils';
 import '../bridges/register';
 import AppLayout from '../components/AppLayout';
-import { ApiProvider, GqlProvider, TxProvider } from '../providers';
+import { AccountProvider, ApiProvider, GqlProvider, TxProvider } from '../providers';
 import '../styles/index.scss';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -89,19 +89,22 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
         <meta charSet="utf-8" />
         <title>Helix</title>
         <meta key="description" name="description" content="helix bridge" />
+        <script src="/icon/iconfont.js"></script>
       </Head>
       <ClientContext.Provider value={client}>
         {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
         {/* @ts-ignore */}
         <ErrorBoundary>
           <ApiProvider>
-            <TxProvider>
-              <GqlProvider>
-                <AppLayout>
-                  <Component {...pageProps} />
-                </AppLayout>
-              </GqlProvider>
-            </TxProvider>
+            <AccountProvider>
+              <TxProvider>
+                <GqlProvider>
+                  <AppLayout>
+                    <Component {...pageProps} />
+                  </AppLayout>
+                </GqlProvider>
+              </TxProvider>
+            </AccountProvider>
           </ApiProvider>
         </ErrorBoundary>
       </ClientContext.Provider>
