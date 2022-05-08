@@ -13,7 +13,7 @@ interface CrossChainInfoProps {
 export function CrossChainInfo({ bridge, fee, children }: PropsWithChildren<CrossChainInfoProps>) {
   return (
     <Form.Item label="Info" className="relative">
-      <div className="h-20 w-full flex flex-col justify-center space-y-2 px-4 bg-gray-900">
+      <div className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900">
         <div className="flex justify-between items-center">
           <Typography.Text>Bridge Name</Typography.Text>
           <Typography.Text className="capitalize">{bridge?.category}</Typography.Text>

@@ -33,7 +33,7 @@ import { EthereumAccountItem } from '../../components/form-control/EthereumAccou
 import { FormItemExtra } from '../../components/form-control/FormItemExtra';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
-import { TransferSuccess } from '../../components/tx/TransferSuccess';
+import { TransferDone } from '../../components/tx/TransferDone';
 import { useAfterTx, useTx } from '../../hooks';
 import { useApi } from '../../providers';
 import { KtonDraw } from './KtonDraw';
@@ -159,7 +159,7 @@ export function DVM2Substrate({
 
       const obs = redeem(value, crossChain);
 
-      const afterTransfer = afterCrossChain(TransferSuccess, {
+      const afterTransfer = afterCrossChain(TransferDone, {
         hashType: 'txHash',
         onDisappear: () => {
           form.setFieldsValue({

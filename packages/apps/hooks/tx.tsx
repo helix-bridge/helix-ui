@@ -36,6 +36,8 @@ export function useAfterTx<T extends CrossChainPayload>() {
           okText: t('Cross-chain history'),
           okButtonProps: {
             size: 'large',
+            className: 'w-full',
+            style: { margin: 0 },
             onClick: () => {
               destroy();
 
@@ -58,9 +60,8 @@ export function useAfterTx<T extends CrossChainPayload>() {
               );
             },
           },
-          onCancel: (close) => {
+          onCancel: () => {
             onDisappear(value, tx);
-            close();
           },
           ...rest,
         });

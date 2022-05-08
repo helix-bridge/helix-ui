@@ -38,7 +38,7 @@ import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { ApproveConfirm } from '../../components/tx/ApproveConfirm';
 import { ApproveSuccess } from '../../components/tx/ApproveSuccess';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
-import { TransferSuccess } from '../../components/tx/TransferSuccess';
+import { TransferDone } from '../../components/tx/TransferDone';
 import { IDescription } from '../../components/widget/IDescription';
 import { useAfterTx, useTx } from '../../hooks';
 import { useApi } from '../../providers';
@@ -327,7 +327,7 @@ export function Ethereum2Darwinia({ form, setSubmit, direction }: CrossChainComp
         const fn = () => (value: RedeemDepositTxPayload) =>
           createCrossDepositTx(
             value,
-            afterCrossChain(TransferSuccess, { onDisappear: refreshDeposit as unknown as never })(value)
+            afterCrossChain(TransferDone, { onDisappear: refreshDeposit as unknown as never })(value)
           ).subscribe(observer);
 
         setSubmit(fn);
@@ -344,7 +344,7 @@ export function Ethereum2Darwinia({ form, setSubmit, direction }: CrossChainComp
 
           return createCrossTokenTx(
             actual,
-            afterCrossChain(TransferSuccess, { onDisappear: refreshBalance })(actual)
+            afterCrossChain(TransferDone, { onDisappear: refreshBalance })(actual)
           ).subscribe(observer);
         };
 

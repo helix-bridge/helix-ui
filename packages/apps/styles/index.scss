@@ -67,3 +67,23 @@ $radius-base: 4px;
     color: #ffffff;
   }
 }
+
+.confirm-modal.ant-modal {
+  max-width: calc(100vw - 32px);
+
+  .ant-modal-content {
+    background-color: #151d35;
+  }
+
+  .ant-modal-confirm-btns {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .ant-modal-close-x {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

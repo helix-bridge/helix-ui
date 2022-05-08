@@ -8,6 +8,7 @@ import Web3 from 'web3';
 import { PromiEvent, TransactionConfig, TransactionReceipt } from 'web3-core';
 import { Contract } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
+import { Icon } from '../../components/widget/Icon';
 import { abi } from '../../config/abi';
 import { CrossChainPayload, MappingToken, RequiredPartial, Tx, TxFn } from '../../model';
 import { entrance, waitUntilConnected } from '../connection';
@@ -24,15 +25,21 @@ type IModalFuncs = {
 
 export const txModalConfig: (props: Partial<ModalFuncProps>) => ModalProps = (props) => ({
   okCancel: true,
-  cancelText: <Trans>Cancel</Trans>,
   okText: <Trans>Confirm</Trans>,
-  okButtonProps: { size: 'large' },
-  cancelButtonProps: { size: 'large' },
+  closable: true,
+  closeIcon: <Icon name="close" className="w-6 h-6 text-white opacity-80 hover:opacity-100" />,
+  okButtonProps: { size: 'large', className: 'w-full', style: { margin: 0 } },
+  cancelButtonProps: { size: 'large', hidden: true },
   width: 520,
   centered: true,
   className: 'confirm-modal',
   icon: null,
   destroyOnClose: true,
+  title: (
+    <h3 className="text-center mb-4">
+      <Trans>Transfer</Trans>
+    </h3>
+  ),
   ...props,
 });
 
@@ -59,9 +66,8 @@ export function applyModalObs<T = boolean>(
   return new Observable((observer) => {
     confirm({
       ...others,
-      onCancel: (close) => {
+      onCancel: () => {
         observer.next(false);
-        close();
       },
       onOk: (close) => {
         if (handleOk) {

@@ -61,7 +61,7 @@ export function RecipientItem({
           },
           message:
             type === 'ethereum'
-              ? t('Please fill in a {{network}} smart address which start with 0x', {
+              ? t('Please fill in a {{network}} address which start with 0x', {
                   network: upperFirst(to.meta.name),
                 })
               : t('Please enter a valid {{network}} address', { network: upperFirst(to.meta.name) }),

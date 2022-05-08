@@ -17,7 +17,7 @@ import { Balance } from '../../components/form-control/Balance';
 import { PolkadotAccountsItem } from '../../components/form-control/PolkadotAccountsItem';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
-import { TransferSuccess } from '../../components/tx/TransferSuccess';
+import { TransferDone } from '../../components/tx/TransferDone';
 import { useAfterTx, useTx } from '../../hooks';
 import { useApi } from '../../providers';
 import { SmartTxPayload, Substrate2DVMPayload } from './model/cross-chain';
@@ -57,7 +57,7 @@ export function Substrate2DVM({
       const beforeTransfer = applyModalObs({ content: <TransferConfirm value={value} decimals={decimals} /> });
       const obs = issuing(value, api);
 
-      const afterTransfer = afterCrossChain(TransferSuccess, {
+      const afterTransfer = afterCrossChain(TransferDone, {
         hashType: 'block',
         onDisappear: () => {
           form.setFieldsValue({

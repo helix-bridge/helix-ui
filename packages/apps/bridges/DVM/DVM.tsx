@@ -47,7 +47,7 @@ import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { ApproveConfirm } from '../../components/tx/ApproveConfirm';
 import { ApproveSuccess } from '../../components/tx/ApproveSuccess';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
-import { TransferSuccess } from '../../components/tx/TransferSuccess';
+import { TransferDone } from '../../components/tx/TransferDone';
 import { IDescription } from '../../components/widget/IDescription';
 import { MemoedTokenInfo, useAfterTx, useMappingTokens, useTx } from '../../hooks';
 import { useApi } from '../../providers';
@@ -253,7 +253,7 @@ export function DVM({
       return createTxWorkflow(
         beforeTx,
         txObs,
-        afterCrossChain(TransferSuccess, {
+        afterCrossChain(TransferDone, {
           onDisappear: () => {
             refreshTokenBalance(value.asset.address);
             refreshAllowance(value.direction);

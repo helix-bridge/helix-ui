@@ -39,7 +39,10 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const { account } = useAccount();
 
   const launch = useCallback(() => {
-    form.validateFields().then((values) => submitFn(values));
+    form.validateFields().then((values) => {
+      console.log('🚀 ~ file: CrossChain.tsx ~ line 43 ~ form.validateFields ~ values', values);
+      submitFn(values);
+    });
     // void submitFn;
     // form.validateFields().then(console.log);
   }, [form, submitFn]);
@@ -82,7 +85,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
                   setBridge(null);
                   setFee(null);
                   setSubmit(emptyObsFactory);
-                  form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined });
+                  form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined, [FORM_CONTROL.recipient]: undefined });
                 }
 
                 setDirection(value);
