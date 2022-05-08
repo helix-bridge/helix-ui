@@ -11,12 +11,10 @@ import {
   ConnectionStatus,
   CrossChainComponentProps,
   CrossChainDirection,
-  CrossChainParty,
   CrossChainPayload,
   SubmitFn,
 } from 'shared/model';
 import { emptyObsFactory } from 'shared/utils';
-import { useTx } from '../hooks';
 import { useAccount, useApi } from '../providers';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { calcToAmount, Direction } from './form-control/Direction';
@@ -37,14 +35,13 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const [bridge, setBridge] = useState<Bridge | null>(null);
   const [submitFn, setSubmit] = useState<SubmitFn>(emptyObsFactory);
   const [bridgeState, setBridgeState] = useState<BridgeState>({ status: 'available' });
-  const { tx } = useTx();
   const [fee, setFee] = useState<number | null>(null);
   const { account } = useAccount();
 
   const launch = useCallback(() => {
-    void submitFn;
-    // form.validateFields().then((values) => submitFn(values));
-    form.validateFields().then(console.log);
+    form.validateFields().then((values) => submitFn(values));
+    // void submitFn;
+    // form.validateFields().then(console.log);
   }, [form, submitFn]);
 
   const Content = useMemo(() => {
@@ -53,7 +50,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
     if (bridge) {
       const Comp = bridge.isIssuing(from.meta, to.meta)
         ? bridge.IssuingCrossChainComponent
-        : (bridge.RedeemCrossChainComponent as FunctionComponent<CrossChainComponentProps<CrossChainParty>>);
+        : (bridge.RedeemCrossChainComponent as FunctionComponent<CrossChainComponentProps>);
 
       return Comp ?? null;
     }
@@ -75,7 +72,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
       validateMessages={validateMessages[i18n.language as 'en' | 'zh-CN' | 'zh']}
     >
       <Row>
-        <Col xs={24} sm={8} className={`mb-4 sm:mb-0 dark:bg-antDark p-5 ${tx ? 'filter blur-sm drop-shadow' : ''}`}>
+        <Col xs={24} sm={8} className={`mb-4 sm:mb-0 dark:bg-antDark p-5`}>
           <Form.Item name={FORM_CONTROL.direction} className="mb-0">
             <Direction
               fee={fee}
@@ -83,7 +80,9 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
               onChange={(value) => {
                 if (isDirectionChanged(direction, value)) {
                   setBridge(null);
-                  form.setFieldsValue({ [FORM_CONTROL.bridge]: null });
+                  setFee(null);
+                  setSubmit(emptyObsFactory);
+                  form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined });
                 }
 
                 setDirection(value);

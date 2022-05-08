@@ -5,7 +5,7 @@ import { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IdentAccountAddress } from 'shared/components/widget/IdentAccountAddress';
 import { FORM_CONTROL } from 'shared/config/constant';
-import { CrossChainComponentProps, CrossChainParty, PolkadotChainConfig } from 'shared/model';
+import { CrossChainComponentProps, PolkadotChainConfig } from 'shared/model';
 import { convertToSS58, isPolkadotNetwork, isSameAddress, isValidAddressStrict, patchUrl } from 'shared/utils';
 import { useApi } from '../../providers';
 import { FormItemExtra } from './FormItemExtra';
@@ -17,7 +17,7 @@ export function RecipientItem({
   direction,
   onChange,
   bridge,
-}: Pick<CrossChainComponentProps<CrossChainParty>, 'form' | 'direction' | 'bridge'> & {
+}: Pick<CrossChainComponentProps, 'form' | 'direction' | 'bridge'> & {
   extraTip?: string | ReactNode;
   onChange?: (value: string) => void;
 }) {

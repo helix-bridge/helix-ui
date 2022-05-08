@@ -4,6 +4,7 @@ module.exports = {
   input: [
     'pages/**/*.tsx',
     'components/**/*.tsx',
+    'bridges/**/*.tsx',
     // Use ! to filter out files or directories
     '!src/__tests__/**',
     '!src/components/icons/**',

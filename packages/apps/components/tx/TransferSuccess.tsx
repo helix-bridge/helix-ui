@@ -1,14 +1,14 @@
 import { CheckCircleFilled } from '@ant-design/icons';
-import { getDisplayName } from 'next/dist/shared/lib/utils';
+import { upperFirst } from 'lodash';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { NETWORK_LIGHT_THEME } from 'shared/config/theme';
-import { CrossChainAsset, CrossChainPayload, MappingToken, Network, TxSuccessComponentProps } from 'shared/model';
-import { convertToSS58, fromWei, isEthereumNetwork, isPolkadotNetwork } from 'shared/utils';
+import { CrossChainAsset, Network, PolkadotChainConfig, Token, TxSuccessComponentProps } from 'shared/model';
+import { convertToSS58, getDisplayName, isEthereumNetwork, isPolkadotNetwork } from 'shared/utils';
 import { IDescription } from '../widget/IDescription';
 
-function Detail({ amount, asset }: CrossChainAsset<string | MappingToken>) {
+function Detail({ amount, asset }: CrossChainAsset<string | Token>) {
   return (
     <div>
       <span>{amount}</span>
@@ -17,59 +17,36 @@ function Detail({ amount, asset }: CrossChainAsset<string | MappingToken>) {
   );
 }
 
-// eslint-disable-next-line complexity
-export function TransferSuccess({
-  tx,
-  value,
-  hashType = 'txHash',
-  decimals = 18,
-}: TxSuccessComponentProps<CrossChainPayload>) {
+export function TransferSuccess({ tx, value, hashType = 'txHash' }: TxSuccessComponentProps) {
   const { t } = useTranslation();
-  const color = NETWORK_LIGHT_THEME[value.direction.from?.name as Network]['@project-main-bg'];
+  const color = NETWORK_LIGHT_THEME[value.direction.from.meta.name as Network]['@project-main-bg'];
   const linkProps = { [hashType]: tx.hash };
-  const sender = useMemo(
-    () =>
-      isPolkadotNetwork(value.direction.from) && value.direction.from.mode !== 'dvm'
-        ? convertToSS58(value.sender, value.direction.from.ss58Prefix)
-        : value.sender,
-    [value]
-  );
+
+  const sender = useMemo(() => {
+    const { meta } = value.direction.from;
+
+    return isPolkadotNetwork(meta) && meta.mode === 'native'
+      ? convertToSS58(value.sender, (meta as PolkadotChainConfig).ss58Prefix)
+      : value.sender;
+  }, [value]);
 
   return (
     <>
       <IDescription
-        title={
-          <span className="capitalize">
-            {t('{{network}} Network Address', { network: getDisplayName(value.direction.from) })}
-          </span>
-        }
+        title={t('{{chain}} Network Address', { chain: getDisplayName(value.direction.from.meta) })}
         content={sender}
         icon={<CheckCircleFilled style={{ color }} className="text-2xl" />}
       ></IDescription>
 
       <IDescription
-        title={
-          <span className="capitalize">
-            {t('{{network}} Network Address', { network: getDisplayName(value.direction.to) })}
-          </span>
-        }
+        title={t('{{chain}} Network Address', { chain: upperFirst(getDisplayName(value.direction.to.meta)) })}
         content={value.recipient}
         icon={<CheckCircleFilled style={{ color }} className="text-2xl" />}
       ></IDescription>
 
       <IDescription
         title={t('Details')}
-        content={
-          (value.asset && value.amount && <Detail {...value} amount={fromWei({ value: value.amount, decimals })} />) ||
-          (value.assets &&
-            value.assets.map((item: CrossChainPayload) => (
-              <Detail
-                {...item}
-                amount={item.decimals ? fromWei({ value: item.amount, decimals: item.decimals }) : item.amount}
-                key={item.asset}
-              />
-            )))
-        }
+        content={<Detail amount={value.direction.from.amount} asset={value.direction.from} />}
         icon={<CheckCircleFilled className="text-2xl" style={{ color }} />}
       ></IDescription>
 
@@ -77,9 +54,9 @@ export function TransferSuccess({
         {t('The transaction has been sent, please check the transfer progress in the cross-chain history.')}
       </p>
 
-      <SubscanLink {...linkProps} network={value.direction.from}>
+      <SubscanLink {...linkProps} network={value.direction.from.meta}>
         {t('View in {{scan}} explorer', {
-          scan: isEthereumNetwork(value.direction.from?.name) ? 'Etherscan' : 'Subscan',
+          scan: isEthereumNetwork(value.direction.from.meta) ? 'Etherscan' : 'Subscan',
         })}
       </SubscanLink>
     </>

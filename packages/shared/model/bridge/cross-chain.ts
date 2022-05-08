@@ -1,10 +1,9 @@
 import { FormInstance } from 'antd';
+import React from 'react';
 import { Subscription } from 'rxjs';
 import { ChainConfig, TokenWithBridgesInfo } from '../network';
 import { NullableFields } from '../type-operator';
 import { Bridge, BridgeStatus } from './bridge';
-
-/* ---------------------------------------------------Components props--------------------------------------------------- */
 
 export type TokenInfoWithMeta<T extends ChainConfig = ChainConfig> = TokenWithBridgesInfo & { meta: T };
 
@@ -12,10 +11,14 @@ export type CrossToken<T extends ChainConfig = ChainConfig> = TokenInfoWithMeta<
   amount: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type CrossChainPayload<C = any, F extends CrossToken = CrossToken, T extends CrossToken = CrossToken> = {
+export interface CrossChainPayload<
+  B extends Bridge = Bridge,
+  F extends CrossToken = CrossToken,
+  T extends CrossToken = CrossToken
+> extends CrossChainParty {
+  bridge: B;
   direction: CrossChainDirection<F, T>;
-} & C;
+}
 
 export type SubmitFn = (value: CrossChainPayload) => Subscription;
 
@@ -24,20 +27,14 @@ export interface BridgeState {
   reason?: string;
 }
 
-export interface CrossChainComponentProps<
-  C extends CrossChainParty,
-  F extends CrossToken = CrossToken,
-  T extends CrossToken = CrossToken
-> {
-  form: FormInstance<CrossChainPayload<C>>;
+export interface CrossChainComponentProps<F extends CrossToken = CrossToken, T extends CrossToken = CrossToken> {
+  form: FormInstance<CrossChainPayload>;
   direction: CrossChainDirection<F, T>;
   bridge: Bridge;
   setSubmit: React.Dispatch<React.SetStateAction<SubmitFn>>;
-  setBridgeState: React.Dispatch<React.SetStateAction<BridgeState>>;
+  setBridgeState: (state: BridgeState) => void;
   onFeeChange: (value: number | null) => void;
 }
-
-/* ---------------------------------------------------Bridge elements--------------------------------------------------- */
 
 export interface CrossChainDirection<F = CrossToken, T = CrossToken> {
   from: F;

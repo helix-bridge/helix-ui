@@ -6,36 +6,29 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EMPTY, from } from 'rxjs';
 import { FORM_CONTROL } from 'shared/config/constant';
-import { getToken, useDarwiniaAvailableBalances } from 'shared/hooks';
+import { useDarwiniaAvailableBalances } from 'shared/hooks';
 import {
   AvailableBalance,
   Bridge,
   ConnectionStatus,
   CrossChainComponentProps,
   CrossChainPayload,
-  DarwiniaAsset,
-  Token,
+  SubmitFn,
 } from 'shared/model';
-import { applyModalObs, createTxWorkflow, fromWei, isRing, prettyNumber, toWei } from 'shared/utils';
+import { applyModalObs, createTxWorkflow, fromWei, isRing, prettyNumber } from 'shared/utils';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferSuccess } from '../../components/tx/TransferSuccess';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useTx } from '../../hooks';
 import { useAccount, useApi } from '../../providers';
-import { Darwinia2EthereumPayload, EthereumDarwiniaBridgeConfig, IssuingDarwiniaTxPayload } from './model';
+import { EthereumDarwiniaBridgeConfig, TxPayload } from './model';
 import { getRedeemFee, getRedeemTxFee, issuing } from './utils';
 
 /**
  * @description test chain: pangolin -> ropsten
  */
-export function Darwinia2Ethereum({
-  form,
-  setSubmit,
-  direction,
-  bridge,
-  onFeeChange,
-}: CrossChainComponentProps<Darwinia2EthereumPayload>) {
+export function Darwinia2Ethereum({ form, setSubmit, direction, bridge, onFeeChange }: CrossChainComponentProps) {
   const { t } = useTranslation();
 
   const {
@@ -50,34 +43,19 @@ export function Darwinia2Ethereum({
   const [txFee, setTxFee] = useState<BN | null>(null);
   const fee = useMemo(() => (crossChainFee ? crossChainFee.add(txFee ?? BN_ZERO) : null), [crossChainFee, txFee]);
   const { observer } = useTx();
-  const { afterCrossChain } = useAfterTx<CrossChainPayload<Darwinia2EthereumPayload>>();
+  const { afterCrossChain } = useAfterTx<CrossChainPayload>();
   const getBalances = useDarwiniaAvailableBalances(api, network, chain);
   const [recipient, setRecipient] = useState<string>(form.getFieldValue(FORM_CONTROL.recipient));
   const { account } = useAccount();
 
   useEffect(() => {
-    const fn = () => (data: IssuingDarwiniaTxPayload) => {
+    const fn = () => (data: TxPayload) => {
       if (!api || !fee) {
         return EMPTY.subscribe();
       }
 
-      const { assets } = data;
-
-      const assetsToSend = assets?.map((item) => {
-        const { asset, amount, checked } = item as Required<Darwinia2EthereumPayload['assets'][number]>;
-        const { decimals = 9, symbol = asset } = getToken(chain.tokens, asset as DarwiniaAsset) as Token<DarwiniaAsset>;
-        const amountWei = checked ? toWei({ value: amount, decimals }) : '0';
-
-        return {
-          asset: symbol,
-          decimals,
-          amount: isRing(symbol) && new BN(amountWei).gte(fee) ? new BN(amountWei).sub(fee).toString() : amountWei,
-        };
-      });
-
-      const value = { ...data, assets: assetsToSend };
-      const beforeTransfer = applyModalObs({ content: <TransferConfirm value={value} /> });
-      const obs = issuing(value, api);
+      const beforeTransfer = applyModalObs({ content: <TransferConfirm value={data} /> });
+      const obs = issuing(data, api);
 
       const afterTransfer = afterCrossChain(TransferSuccess, {
         hashType: 'block',
@@ -87,13 +65,13 @@ export function Darwinia2Ethereum({
           });
           getBalances(data.sender).then(setAvailableBalances);
         },
-      })(value);
+      })(data);
 
       return createTxWorkflow(beforeTransfer, obs, afterTransfer).subscribe(observer);
     };
 
-    setSubmit(fn);
-  }, [afterCrossChain, api, chain.tokens, fee, form, getBalances, observer, setSubmit]);
+    setSubmit(fn as unknown as SubmitFn);
+  }, [afterCrossChain, api, fee, form, getBalances, observer, setSubmit]);
 
   // eslint-disable-next-line complexity
   useEffect(() => {
@@ -136,9 +114,9 @@ export function Darwinia2Ethereum({
     if (fee && onFeeChange) {
       const amount = fromWei({ value: fee, decimals: direction.from.decimals });
 
-      onFeeChange(+amount);
+      onFeeChange(isRing(direction.from.symbol) ? +amount : 0);
     }
-  }, [direction.from.decimals, fee, onFeeChange]);
+  }, [direction.from.symbol, direction.from.decimals, fee, onFeeChange]);
 
   return (
     <>
@@ -178,7 +156,10 @@ export function Darwinia2Ethereum({
       <CrossChainInfo
         bridge={bridge}
         fee={
-          fee && { amount: fromWei({ value: fee, decimals: direction.from.decimals }), symbol: direction.from.symbol }
+          fee && {
+            amount: fromWei({ value: fee, decimals: direction.from.decimals }),
+            symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
+          }
         }
       />
     </>

@@ -1,22 +1,22 @@
-import { CrossChainPayload, TxSuccessComponentProps, Tx, TxHashType } from 'shared/model';
-import { applyModal, isEthereumNetwork, convertToSS58, genHistoryRouteParams } from 'shared/utils';
-import { ModalProps, message } from 'antd';
+import { message, ModalProps } from 'antd';
 import { useRouter } from 'next/router';
 import { FunctionComponent, useCallback, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
+import { SHORT_DURATION } from 'shared/config/constant';
+import { CrossChainPayload, Tx, TxHashType, TxSuccessComponentProps } from 'shared/model';
+import { applyModal, convertToSS58, genHistoryRouteParams, isEthereumNetwork } from 'shared/utils';
 import { TxContext, TxCtx, useApi } from '../providers';
 
 export const useTx = () => useContext(TxContext) as Exclude<TxCtx, null>;
 
-export function useAfterTx<T extends CrossChainPayload<{ sender: string; recipient?: string }>>() {
+export function useAfterTx<T extends CrossChainPayload>() {
   const { t } = useTranslation();
   const router = useRouter();
   const { chain } = useApi();
 
   const afterCrossChain = useCallback(
     (
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        Comp: FunctionComponent<TxSuccessComponentProps<CrossChainPayload<any>>>,
+        Comp: FunctionComponent<TxSuccessComponentProps>,
         {
           onDisappear,
           decimals,
@@ -70,8 +70,7 @@ export function useAfterTx<T extends CrossChainPayload<{ sender: string; recipie
 
   const afterApprove = useCallback(
     (
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        Comp: FunctionComponent<TxSuccessComponentProps<CrossChainPayload<any>>>,
+        Comp: FunctionComponent<TxSuccessComponentProps>,
         {
           onDisappear,
           decimals,
@@ -87,7 +86,11 @@ export function useAfterTx<T extends CrossChainPayload<{ sender: string; recipie
       () => {
         message.success({
           content: <Comp tx={tx} value={value} hashType={hashType} decimals={decimals} />,
-          onClose: onDisappear,
+          onClose: () => {
+            onDisappear(value, tx);
+          },
+          duration: SHORT_DURATION,
+          type: 'success',
         });
       },
     []

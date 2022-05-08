@@ -18,14 +18,10 @@ import {
   isKton,
   isRing,
   signAndSendExtrinsic,
+  toWei,
 } from 'shared/utils';
 import { Contract } from 'web3-eth-contract';
-import {
-  EthereumDarwiniaBridgeConfig,
-  IssuingDarwiniaTxPayload,
-  RedeemDarwiniaTxPayload,
-  RedeemDepositTxPayload,
-} from '../model';
+import { EthereumDarwiniaBridgeConfig, TxPayload } from '../model';
 
 interface ClaimInfo {
   direction: CrossChainDirection;
@@ -45,9 +41,11 @@ interface ClaimInfo {
  * @description darwinia <- ethereum
  * Because of the ring was released in advance on ethereum, so the action is issuing, but follow the Protocol Overview, it should be redeem.
  */
-export const redeem: TxFn<RedeemDarwiniaTxPayload> = ({ sender, direction, asset, amount, recipient }) => {
-  const { to } = direction;
-  const bridge = getBridge<EthereumDarwiniaBridgeConfig>(direction);
+export const redeem: TxFn<TxPayload> = ({ sender, direction, recipient, bridge }) => {
+  const {
+    from: { symbol: asset, amount },
+    to,
+  } = direction;
   const contractAddress = bridge.config.contracts[asset.toLowerCase() as 'ring' | 'kton'] as string;
   const options = to.meta.isTest ? { from: sender, gasPrice: '500000000000' } : { from: sender };
 
@@ -59,28 +57,15 @@ export const redeem: TxFn<RedeemDarwiniaTxPayload> = ({ sender, direction, asset
 };
 
 /**
- * @description darwinia <- ethereum
- */
-export const redeemDeposit: TxFn<RedeemDepositTxPayload> = ({ direction, recipient, sender, deposit }) => {
-  const { to } = direction;
-  const bridge = getBridge<EthereumDarwiniaBridgeConfig>(direction);
-  recipient = buf2hex(decodeAddress(recipient, false, (to.meta as PolkadotChainConfig).ss58Prefix!).buffer);
-
-  return genEthereumContractTxObs(
-    bridge.config.contracts.redeemDeposit,
-    (contract) => contract.methods.burnAdnRedeem(deposit, recipient).send({ from: sender }),
-    abi.bankABI
-  );
-};
-
-/**
  * @description darwinia -> ethereum
  */
-export function issuing(value: IssuingDarwiniaTxPayload, api: ApiPromise): Observable<Tx> {
-  const { sender, recipient, assets } = value;
-  const { amount: ring } = assets.find((item) => isRing(item.asset)) || { amount: '0' };
-  const { amount: kton } = assets.find((item) => isKton(item.asset)) || { amount: '0' };
-  const extrinsic = api.tx.ethereumBacking.lock(ring, kton, recipient);
+export function issuing({ sender, recipient, direction }: TxPayload, api: ApiPromise): Observable<Tx> {
+  const {
+    from: { symbol, amount, decimals },
+  } = direction;
+  const num = toWei({ value: amount, decimals });
+
+  const extrinsic = api.tx.ethereumBacking.lock(isRing(symbol) ? num : '0', isKton(symbol) ? num : '0', recipient);
 
   return signAndSendExtrinsic(api, sender, extrinsic);
 }
