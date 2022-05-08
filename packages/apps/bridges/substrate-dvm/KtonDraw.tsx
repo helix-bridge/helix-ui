@@ -58,8 +58,6 @@ export function KtonDraw({ direction, kton, pendingClaimAmount, onSuccess }: Kto
           notification.error({
             message: (
               <div>
-                {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-                {/* @ts-ignore */}
                 <ErrorBoundary>
                   <h3>{t('Claim Failed')}</h3>
                   {(err as Record<string, string>).receipt && (

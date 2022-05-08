@@ -28,8 +28,6 @@ export function RecordList({ departure, arrival, sourceData }: RecordListProps) 
   );
 
   return (
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     <ErrorBoundary>
       {sourceData.list.map((item, index) => (
         <Record

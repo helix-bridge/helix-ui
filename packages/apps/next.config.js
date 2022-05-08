@@ -106,7 +106,7 @@ module.exports = withPlugins([withAntdLess], {
       loader: require.resolve('@open-wc/webpack-import-meta-loader'),
     });
 
-    config.output.webassemblyModuleFilename = 'static/wasm/[modulehash].wasm'
+    config.output.webassemblyModuleFilename = 'static/wasm/[modulehash].wasm';
 
     config.experiments = { asyncWebAssembly: true };
 

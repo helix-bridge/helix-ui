@@ -24,8 +24,6 @@ const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
 const AccountWithIdentify = ({ value }: { value: IAccountMeta }) => {
   return (
     <>
-      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-      {/* @ts-ignore */}
       <Identicon
         theme="substrate"
         size={iconSize}

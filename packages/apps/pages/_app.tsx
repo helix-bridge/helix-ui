@@ -92,8 +92,6 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
         <script src="/icon/iconfont.js"></script>
       </Head>
       <ClientContext.Provider value={client}>
-        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-        {/* @ts-ignore */}
         <ErrorBoundary>
           <ApiProvider>
             <AccountProvider>

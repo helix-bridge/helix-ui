@@ -90,8 +90,6 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
       </Head>
       <ClientContext.Provider value={client}>
         <AppLayout>
-          {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-          {/* @ts-ignore */}
           <ErrorBoundary>
             <Component {...pageProps} />
           </ErrorBoundary>

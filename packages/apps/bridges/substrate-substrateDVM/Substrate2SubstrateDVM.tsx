@@ -415,8 +415,6 @@ export function Substrate2SubstrateDVM({
       </Form.Item>
 
       {!!availableBalances.length && availableBalances[0].token && (
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         <ErrorBoundary>
           <TransferInfo
             fee={fee}
