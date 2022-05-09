@@ -35,7 +35,7 @@ export type TxConfirmComponentProps<T extends Bridge = Bridge> = { value: CrossC
 
 export type TxHashType = 'block' | 'extrinsic' | 'address' | 'txHash'; // consistent with the SubscanLink component props;
 
-export type TxSuccessComponentProps<T extends Bridge = Bridge> = {
+export type TxDoneComponentProps<T extends Bridge = Bridge> = {
   tx: Tx;
   value: CrossChainPayload<T>;
   hashType?: TxHashType;

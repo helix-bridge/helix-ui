@@ -1,13 +1,14 @@
 import { Typography } from 'antd';
+import { i18n, useTranslation } from 'next-i18next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
+import { initReactI18next } from 'react-i18next';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
-import { TxSuccessComponentProps } from 'shared/model';
+import { TxDoneComponentProps } from 'shared/model';
 import { isEthereumNetwork } from 'shared/utils';
 
-export function TransferDone({ tx, value, hashType = 'txHash' }: TxSuccessComponentProps) {
-  const { t } = useTranslation();
+export function TransferDone({ tx, value, hashType = 'txHash' }: TxDoneComponentProps) {
+  const { t } = useTranslation('common', { i18n: i18n?.use(initReactI18next) });
   const linkProps = { [hashType]: tx.hash };
 
   return (

@@ -45,7 +45,7 @@ import { MappingTokenControl } from '../../components/form-control/MappingTokenC
 import { MaxBalance } from '../../components/form-control/MaxBalance';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { ApproveConfirm } from '../../components/tx/ApproveConfirm';
-import { ApproveSuccess } from '../../components/tx/ApproveSuccess';
+import { ApproveDone } from '../../components/tx/ApproveSuccess';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { IDescription } from '../../components/widget/IDescription';
@@ -379,7 +379,7 @@ export function DVM({
                     createTxWorkflow(
                       beforeTx,
                       txObs,
-                      afterApprove(ApproveSuccess, { onDisappear: () => refreshAllowance(value.direction) })(value)
+                      afterApprove(ApproveDone, { onDisappear: () => refreshAllowance(value.direction) })(value)
                     ).subscribe(observer);
                   }}
                   type="link"

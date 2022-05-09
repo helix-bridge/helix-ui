@@ -76,8 +76,6 @@ export function Darwinia2Ethereum({ form, setSubmit, direction, bridge, onFeeCha
       if (!isSufficient(availableBalances, amountWei, fee, symbol)) {
         message.error({
           content: t('Insufficient balance'),
-          duration: 3,
-          type: 'error',
         });
 
         return EMPTY.subscribe();
@@ -100,7 +98,8 @@ export function Darwinia2Ethereum({ form, setSubmit, direction, bridge, onFeeCha
         onDisappear: () => {
           getBalances(data.sender).then(setAvailableBalances);
         },
-      })(data);
+        payload: data,
+      });
 
       return createTxWorkflow(beforeTransfer, obs, afterTransfer).subscribe(observer);
     };

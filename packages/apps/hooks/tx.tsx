@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { FunctionComponent, useCallback, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SHORT_DURATION } from 'shared/config/constant';
-import { CrossChainPayload, Tx, TxHashType, TxSuccessComponentProps } from 'shared/model';
+import { CrossChainPayload, Tx, TxHashType, TxDoneComponentProps } from 'shared/model';
 import { applyModal, convertToSS58, genHistoryRouteParams, isEthereumNetwork } from 'shared/utils';
 import { TxContext, TxCtx, useApi } from '../providers';
 
@@ -16,23 +16,24 @@ export function useAfterTx<T extends CrossChainPayload>() {
 
   const afterCrossChain = useCallback(
     (
-        Comp: FunctionComponent<TxSuccessComponentProps>,
+        Comp: FunctionComponent<TxDoneComponentProps>,
         {
           onDisappear,
           decimals,
           hashType = 'txHash',
+          payload,
           ...rest
         }: Exclude<ModalProps, 'onCancel'> & {
           onDisappear: (value: T, tx: Tx) => void;
           hashType?: TxHashType;
           decimals?: number;
+          payload: T;
         }
       ) =>
-      (value: T) =>
       (tx: Tx) =>
       () => {
         const { destroy } = applyModal({
-          content: <Comp tx={tx} value={value} hashType={hashType} decimals={decimals} />,
+          content: <Comp tx={tx} value={payload} hashType={hashType} decimals={decimals} />,
           okText: t('Cross-chain history'),
           okButtonProps: {
             size: 'large',
@@ -41,11 +42,11 @@ export function useAfterTx<T extends CrossChainPayload>() {
             onClick: () => {
               destroy();
 
-              const { from, to } = value.direction;
+              const { from, to } = payload.direction;
               const sender =
-                isEthereumNetwork(value.direction.from.meta) || from.meta.mode === 'dvm'
-                  ? value.sender
-                  : convertToSS58(value.sender, +chain.ss58Format);
+                isEthereumNetwork(payload.direction.from.meta) || from.meta.mode === 'dvm'
+                  ? payload.sender
+                  : convertToSS58(payload.sender, +chain.ss58Format);
 
               router.push(
                 '/history' +
@@ -61,7 +62,7 @@ export function useAfterTx<T extends CrossChainPayload>() {
             },
           },
           onCancel: () => {
-            onDisappear(value, tx);
+            onDisappear(payload, tx);
           },
           ...rest,
         });
@@ -71,7 +72,7 @@ export function useAfterTx<T extends CrossChainPayload>() {
 
   const afterApprove = useCallback(
     (
-        Comp: FunctionComponent<TxSuccessComponentProps>,
+        Comp: FunctionComponent<TxDoneComponentProps>,
         {
           onDisappear,
           decimals,
