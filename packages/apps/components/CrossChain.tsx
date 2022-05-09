@@ -1,4 +1,4 @@
-import { Col, Form, Input, Row, Tooltip } from 'antd';
+import { Col, Form, Input, message, Row, Tooltip } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { isEqual, omit } from 'lodash';
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
@@ -40,12 +40,25 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
 
   const launch = useCallback(() => {
     form.validateFields().then((values) => {
-      console.log('🚀 ~ file: CrossChain.tsx ~ line 43 ~ form.validateFields ~ values', values);
+      console.log('💰 ~ cross chain args: ', values);
+
+      if (!values.direction.from.amount) {
+        message.error(t('Transfer amount is required'));
+        return;
+      }
+
+      if (!values.direction.to.amount) {
+        message.error(
+          t(
+            'Invalid transfer amount. Make sure transfer amount can cover the fee and both quota and balance is sufficient'
+          )
+        );
+        return;
+      }
+
       submitFn(values);
     });
-    // void submitFn;
-    // form.validateFields().then(console.log);
-  }, [form, submitFn]);
+  }, [form, submitFn, t]);
 
   const Content = useMemo(() => {
     const { from, to } = direction;
@@ -65,6 +78,10 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
     setNetwork(direction.from.meta);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    form.setFieldsValue({ [FORM_CONTROL.sender]: account });
+  }, [account, form]);
 
   return (
     <Form

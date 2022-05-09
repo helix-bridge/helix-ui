@@ -5,10 +5,9 @@ import { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IdentAccountAddress } from 'shared/components/widget/IdentAccountAddress';
 import { FORM_CONTROL } from 'shared/config/constant';
-import { CrossChainComponentProps, PolkadotChainConfig } from 'shared/model';
+import { ConnectionStatus, CrossChainComponentProps, PolkadotChainConfig } from 'shared/model';
 import { convertToSS58, isPolkadotNetwork, isSameAddress, isValidAddressStrict, patchUrl } from 'shared/utils';
 import { useApi } from '../../providers';
-import { FormItemExtra } from './FormItemExtra';
 
 // eslint-disable-next-line complexity
 export function RecipientItem({
@@ -22,7 +21,7 @@ export function RecipientItem({
   onChange?: (value: string) => void;
 }) {
   const { t } = useTranslation();
-  const { assistantConnection, connectAssistantNetwork } = useApi();
+  const { mainConnection, assistantConnection, connectAssistantNetwork } = useApi();
 
   const formattedAccounts = useMemo(
     () =>
@@ -39,9 +38,29 @@ export function RecipientItem({
 
   const isValidRecipient = useCallback((value: string) => isValidAddressStrict(value, type), [type]);
 
+  if (mainConnection.status !== ConnectionStatus.success) {
+    return null;
+  }
+
   return (
     <Form.Item
-      label={t('Recipient')}
+      label={
+        <span className="inline-flex items-center justify-between gap-2">
+          <span>{t('Recipient')}</span>
+          {/* eslint-disable-next-line max-len */}
+          {isPolkadot && bridge.activeAssistantConnection && assistantConnection.status !== ConnectionStatus.success && (
+            <Tooltip title={t('Connect {{network}} to fetch own accounts', { network: to.meta.name })}>
+              <Button
+                onClick={() => {
+                  connectAssistantNetwork(to.meta);
+                }}
+                type="link"
+                icon={<ApiOutlined />}
+              ></Button>
+            </Tooltip>
+          )}
+        </span>
+      }
       name={FORM_CONTROL.recipient}
       validateFirst
       validateTrigger="onBlur"
@@ -67,53 +86,39 @@ export function RecipientItem({
               : t('Please enter a valid {{network}} address', { network: upperFirst(to.meta.name) }),
         },
       ]}
-      extra={to ? <FormItemExtra>{extraTip}</FormItemExtra> : ''}
+      extra={to ? <span>{extraTip}</span> : ''}
     >
-      <div className="flex items-center gap-2">
-        {type === 'ethereum' || !formattedAccounts?.length ? (
-          <Input
-            onBlur={(event) => {
-              patchUrl({ recipient: event.target.value });
-            }}
-            size="large"
-            placeholder={t('Type or select the recipient address')}
-            onChange={(event) => {
-              if (isValidRecipient(event.target.value) && onChange) {
-                onChange(event.target.value);
-              }
-            }}
-          />
-        ) : (
-          <AutoComplete
-            placeholder={t('Type or select the recipient address')}
-            size="large"
-            className="flex-1"
-            onChange={(account) => {
-              if (isValidRecipient(account) && onChange) {
-                onChange(account);
-              }
-            }}
-          >
-            {formattedAccounts.map((item) => (
-              <AutoComplete.Option value={item.address} key={item.address}>
-                <IdentAccountAddress account={item} />
-              </AutoComplete.Option>
-            ))}
-          </AutoComplete>
-        )}
-
-        {isPolkadot && bridge.activeAssistantConnection && (
-          <Tooltip title={t('Connect {{network}} to fetch own accounts', { network: to.meta.name })}>
-            <Button
-              onClick={() => {
-                connectAssistantNetwork(to.meta);
-              }}
-              type="link"
-              icon={<ApiOutlined />}
-            ></Button>
-          </Tooltip>
-        )}
-      </div>
+      {type === 'ethereum' || !formattedAccounts?.length ? (
+        <Input
+          onBlur={(event) => {
+            patchUrl({ recipient: event.target.value });
+          }}
+          size="large"
+          placeholder={t('Type or select the recipient address')}
+          onChange={(event) => {
+            if (isValidRecipient(event.target.value) && onChange) {
+              onChange(event.target.value);
+            }
+          }}
+        />
+      ) : (
+        <AutoComplete
+          placeholder={t('Type or select the recipient address')}
+          size="large"
+          className="flex-1"
+          onChange={(account) => {
+            if (isValidRecipient(account) && onChange) {
+              onChange(account);
+            }
+          }}
+        >
+          {formattedAccounts.map((item) => (
+            <AutoComplete.Option value={item.address} key={item.address}>
+              <IdentAccountAddress account={item} />
+            </AutoComplete.Option>
+          ))}
+        </AutoComplete>
+      )}
     </Form.Item>
   );
 }

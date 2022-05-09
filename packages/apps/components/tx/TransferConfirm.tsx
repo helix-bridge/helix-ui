@@ -1,7 +1,8 @@
 import { ArrowDownOutlined } from '@ant-design/icons';
 import { Alert, Typography } from 'antd';
+import { i18n } from 'next-i18next';
 import { PropsWithChildren, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { initReactI18next, useTranslation } from 'react-i18next';
 import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
 import { Logo } from 'shared/components/widget/Logo';
 import { Bridge, CrossToken, PolkadotChainConfig, TxConfirmComponentProps } from 'shared/model';
@@ -14,7 +15,7 @@ export function TransferConfirm<T extends Bridge = Bridge>({
   fee,
 }: PropsWithChildren<TxConfirmComponentProps<T> & { fee: Fee }>) {
   const { from, to } = value.direction;
-  const { t } = useTranslation();
+  const { t } = useTranslation('common', { i18n: i18n?.use(initReactI18next) });
 
   const sender = useMemo(
     () =>

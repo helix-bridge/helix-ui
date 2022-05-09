@@ -9,10 +9,7 @@ export const ropstenConfig: EthereumChainConfig = {
     },
     rpcUrls: [],
   },
-  logos: [
-    { name: 'ethereum.svg', type: 'main' },
-    { name: 'ropsten.svg', type: 'minor' },
-  ],
+  logos: [{ name: 'ropsten.png', type: 'main' }],
   isTest: true,
   mode: 'native',
   name: 'ropsten',

@@ -1,13 +1,12 @@
 import BN from 'bn.js';
 import { abi } from 'shared/config/abi';
 import { Bridge } from 'shared/model';
-import { entrance, getChainConfig, waitUntilConnected } from 'shared/utils';
+import { entrance, waitUntilConnected } from 'shared/utils';
 import Web3 from 'web3';
 import { EthereumDarwiniaBridgeConfig } from '../model';
 
 export async function getRedeemFee(bridge: Bridge<EthereumDarwiniaBridgeConfig>): Promise<BN | null> {
-  const to = getChainConfig(bridge.issuing[1]);
-  const api = entrance.polkadot.getInstance(to.provider);
+  const api = entrance.polkadot.getInstance(bridge.arrival.provider);
 
   await waitUntilConnected(api);
 
@@ -24,8 +23,7 @@ export async function getRedeemTxFee(
     amount: number;
   }
 ): Promise<BN> {
-  const to = getChainConfig(bridge.issuing[1]);
-  const api = entrance.polkadot.getInstance(to.provider);
+  const api = entrance.polkadot.getInstance(bridge.arrival.provider);
 
   await waitUntilConnected(api);
 
@@ -36,12 +34,16 @@ export async function getRedeemTxFee(
 }
 
 export async function getIssuingFee(bridge: Bridge<EthereumDarwiniaBridgeConfig>): Promise<BN | null> {
-  const from = getChainConfig(bridge.issuing[0]);
-  const web3 = entrance.web3.getInstance(from.provider);
-  const contract = new web3.eth.Contract(abi.registryABI, bridge.config.contracts?.fee);
-  const fee: number = await contract.methods
-    .uintOf('0x55494e545f4252494447455f4645450000000000000000000000000000000000')
-    .call();
+  const web3 = entrance.web3.getInstance(bridge.departure.provider);
+  const contract = new web3.eth.Contract(abi.registryABI, bridge.config.contracts.fee);
+  try {
+    const fee: number = await contract.methods
+      .uintOf('0x55494e545f4252494447455f4645450000000000000000000000000000000000')
+      .call();
 
-  return web3.utils.toBN(fee || 0);
+    return web3.utils.toBN(fee);
+  } catch (error) {
+    console.error('⚠️ ~ file: fee.ts ~ getIssuingFee ~ error', error);
+    return null;
+  }
 }

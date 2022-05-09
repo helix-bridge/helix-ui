@@ -64,7 +64,6 @@ export function Direction({ value, initial, onChange, fee = 0 }: DirectionProps)
         onChange={(from) => {
           triggerChange({ from, to: { ...data.to, amount: calcToAmount(from.amount, fee) } });
         }}
-        className="pr-4"
       />
 
       {bridgetStatus === 'pending' ? (
@@ -88,7 +87,6 @@ export function Direction({ value, initial, onChange, fee = 0 }: DirectionProps)
         onChange={(to) => {
           triggerChange({ to, from: data.from });
         }}
-        className="pr-4"
       />
     </div>
   );

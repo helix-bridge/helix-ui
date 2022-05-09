@@ -11,10 +11,7 @@ export const ethereumConfig: EthereumChainConfig = {
     rpcUrls: [],
   },
   isTest: false,
-  logos: [
-    { name: 'ethereum.png', type: 'main' },
-    { name: 'ethereum.svg', type: 'minor' },
-  ],
+  logos: [{ name: 'ethereum.png', type: 'main' }],
   name: 'ethereum',
   provider: 'wss://mainnet.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
   social: {

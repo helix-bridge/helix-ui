@@ -1,3 +1,4 @@
+import { EyeInvisibleFilled } from '@ant-design/icons';
 import { BN_ZERO } from '@polkadot/util';
 import { message, Typography } from 'antd';
 import BN from 'bn.js';
@@ -6,14 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { EMPTY, from } from 'rxjs';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { useDarwiniaAvailableBalances } from 'shared/hooks';
-import {
-  AvailableBalance,
-  Bridge,
-  ConnectionStatus,
-  CrossChainComponentProps,
-  CrossChainPayload,
-  SubmitFn,
-} from 'shared/model';
+import { AvailableBalance, Bridge, CrossChainComponentProps, CrossChainPayload, SubmitFn } from 'shared/model';
 import { applyModalObs, createTxWorkflow, fromWei, isRing, prettyNumber, toWei } from 'shared/utils';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
@@ -32,14 +26,11 @@ const isSufficient = (balances: AvailableBalance[], amount: BN, fee: BN, symbol:
   return new BN(ring.max).gte(fee) && (isRing(symbol) ? ringSufficient : ktonSufficient);
 };
 
-/**
- * @description test chain: pangolin -> ropsten
- */
 export function Darwinia2Ethereum({ form, setSubmit, direction, bridge, onFeeChange }: CrossChainComponentProps) {
   const { t } = useTranslation();
 
   const {
-    mainConnection: { accounts, status },
+    mainConnection: { accounts },
     api,
     chain,
     network,
@@ -108,10 +99,6 @@ export function Darwinia2Ethereum({ form, setSubmit, direction, bridge, onFeeCha
   }, [afterCrossChain, api, availableBalances, fee, form, getBalances, observer, setSubmit, t]);
 
   useEffect(() => {
-    form.setFieldsValue({
-      [FORM_CONTROL.sender]: account,
-    });
-
     const balance$$ = from(getBalances(account)).subscribe(setAvailableBalances);
 
     return () => {
@@ -153,19 +140,17 @@ export function Darwinia2Ethereum({ form, setSubmit, direction, bridge, onFeeCha
 
   return (
     <>
-      {status === ConnectionStatus.success && (
-        <RecipientItem
-          form={form}
-          direction={direction}
-          bridge={bridge}
-          extraTip={t(
-            'After the transaction is confirmed, the account cannot be changed. Please do not fill in the exchange account.'
-          )}
-          onChange={(value) => {
-            setRecipient(value);
-          }}
-        />
-      )}
+      <RecipientItem
+        form={form}
+        direction={direction}
+        bridge={bridge}
+        extraTip={t(
+          'After the transaction is confirmed, the account cannot be changed. Please do not fill in the exchange account.'
+        )}
+        onChange={(value) => {
+          setRecipient(value);
+        }}
+      />
 
       <CrossChainInfo
         bridge={bridge}
@@ -179,10 +164,14 @@ export function Darwinia2Ethereum({ form, setSubmit, direction, bridge, onFeeCha
         <div className="flex justify-between items-center">
           <Typography.Text>{t('Available balance')}</Typography.Text>
 
-          <Typography.Text className="capitalize">
-            <span>{fromWei({ value: balance?.max, decimals: balance?.token.decimals }, prettyNumber)}</span>
-            <span className="capitalize ml-1">{balance?.token.symbol}</span>
-          </Typography.Text>
+          {balance ? (
+            <Typography.Text className="capitalize">
+              <span>{fromWei({ value: balance.max, decimals: balance.token.decimals }, prettyNumber)}</span>
+              <span className="capitalize ml-1">{balance.token.symbol}</span>
+            </Typography.Text>
+          ) : (
+            <EyeInvisibleFilled />
+          )}
         </div>
       </CrossChainInfo>
     </>

@@ -1,2 +1,3 @@
-export * from './tx';
+export * from './allowance';
 export * from './fee';
+export * from './tx';

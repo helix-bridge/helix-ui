@@ -2,7 +2,8 @@ import { ApiPromise } from '@polkadot/api';
 import { TypeRegistry } from '@polkadot/types';
 import { Modal, ModalFuncProps, ModalProps } from 'antd';
 import BN from 'bn.js';
-import { Trans } from 'react-i18next';
+import { i18n } from 'next-i18next';
+import { initReactI18next, Trans } from 'react-i18next';
 import { EMPTY, finalize, Observable, Observer, switchMap, tap } from 'rxjs';
 import Web3 from 'web3';
 import { PromiEvent, TransactionConfig, TransactionReceipt } from 'web3-core';
@@ -25,7 +26,7 @@ type IModalFuncs = {
 
 export const txModalConfig: (props: Partial<ModalFuncProps>) => ModalProps = (props) => ({
   okCancel: true,
-  okText: <Trans>Confirm</Trans>,
+  okText: <Trans i18n={i18n?.use(initReactI18next)}>Confirm</Trans>,
   closable: true,
   closeIcon: <Icon name="close" className="w-6 h-6 text-white opacity-80 hover:opacity-100" />,
   okButtonProps: { size: 'large', className: 'w-full', style: { margin: 0 } },
@@ -37,7 +38,7 @@ export const txModalConfig: (props: Partial<ModalFuncProps>) => ModalProps = (pr
   destroyOnClose: true,
   title: (
     <h3 className="text-center mb-4">
-      <Trans>Transfer</Trans>
+      <Trans i18n={i18n?.use(initReactI18next)}>Transfer</Trans>
     </h3>
   ),
   ...props,
@@ -46,8 +47,10 @@ export const txModalConfig: (props: Partial<ModalFuncProps>) => ModalProps = (pr
 const { confirm } = Modal;
 
 export function buf2hex(buffer: ArrayBuffer) {
-  // eslint-disable-next-line no-magic-numbers
-  return '0x' + Array.prototype.map.call(new Uint8Array(buffer), (x) => ('00' + x.toString(16)).slice(-2)).join('');
+  const pos = -2;
+  const radix = 16;
+
+  return '0x' + Array.prototype.map.call(new Uint8Array(buffer), (x) => ('00' + x.toString(radix)).slice(pos)).join('');
 }
 
 export function applyModal(props: RequiredPartial<ModalFuncProps, 'content'> & IModalFuncs): { destroy: () => void } {

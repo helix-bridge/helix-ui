@@ -43,16 +43,18 @@ interface ClaimInfo {
  */
 export const redeem: TxFn<TxPayload> = ({ sender, direction, recipient, bridge }) => {
   const {
-    from: { symbol: asset, amount },
+    from: { symbol, amount },
     to,
   } = direction;
-  const contractAddress = bridge.config.contracts[asset.toLowerCase() as 'ring' | 'kton'] as string;
+  const contractAddress = bridge.config.contracts[isRing(symbol) ? 'ring' : 'kton'] as string;
   const options = to.meta.isTest ? { from: sender, gasPrice: '500000000000' } : { from: sender };
 
   recipient = buf2hex(decodeAddress(recipient, false, (to.meta as PolkadotChainConfig).ss58Prefix).buffer);
 
   return genEthereumContractTxObs(contractAddress, (contract) =>
-    contract.methods.transferFrom(sender, bridge.config.contracts.issuing, amount, recipient).send(options)
+    contract.methods
+      .transferFrom(sender, bridge.config.contracts.issuing, toWei({ value: amount }), recipient)
+      .send(options)
   );
 };
 
