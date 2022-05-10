@@ -11,6 +11,7 @@ import {
   createTxWorkflow,
   fromWei,
   getBridge,
+  largeNumber,
   prettyNumber,
   toWei,
 } from 'shared/utils';
@@ -46,7 +47,7 @@ interface AllowanceProps {
   allowance: BN | null;
   direction: CrossChainDirection;
   bridge: Bridge;
-  afterAllow: (allowance: BN) => void;
+  afterAllow: (allowance: BN | null) => void;
 }
 
 export function Allowance({ allowance, direction, afterAllow, bridge }: AllowanceProps) {
@@ -91,7 +92,9 @@ export function Allowance({ allowance, direction, afterAllow, bridge }: Allowanc
 
   return (
     <Typography.Text className="capitalize">
-      <span>{fromWei({ value: allowance }, prettyNumber)}</span>
+      <span>
+        {fromWei({ value: allowance }, largeNumber, (num: string) => prettyNumber(num, { ignoreZeroDecimal: true }))}
+      </span>
       <span className="capitalize ml-1">{direction.from.symbol}</span>
     </Typography.Text>
   );
