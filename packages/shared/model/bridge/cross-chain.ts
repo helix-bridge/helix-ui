@@ -3,7 +3,7 @@ import React from 'react';
 import { Subscription } from 'rxjs';
 import { ChainConfig, TokenWithBridgesInfo } from '../network';
 import { NullableFields } from '../type-operator';
-import { Bridge, BridgeStatus } from './bridge';
+import { Bridge, BridgeConfig, BridgeStatus } from './bridge';
 
 export type TokenInfoWithMeta<T extends ChainConfig = ChainConfig> = TokenWithBridgesInfo & { meta: T };
 
@@ -27,10 +27,14 @@ export interface BridgeState {
   reason?: string;
 }
 
-export interface CrossChainComponentProps<F extends CrossToken = CrossToken, T extends CrossToken = CrossToken> {
+export interface CrossChainComponentProps<
+  B extends BridgeConfig = BridgeConfig,
+  F extends CrossToken = CrossToken,
+  T extends CrossToken = CrossToken
+> {
   form: FormInstance<CrossChainPayload>;
   direction: CrossChainDirection<F, T>;
-  bridge: Bridge;
+  bridge: Bridge<B>;
   setSubmit: React.Dispatch<React.SetStateAction<SubmitFn>>;
   setBridgeState: (state: BridgeState) => void;
   onFeeChange: (value: number | null) => void;

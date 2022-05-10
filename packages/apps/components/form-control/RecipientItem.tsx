@@ -36,6 +36,10 @@ export function RecipientItem({
   const isPolkadot = isPolkadotNetwork(to.meta) && to.meta.mode === 'native';
   const type = isPolkadot ? to.meta.name : 'ethereum';
 
+  const displayLink = useMemo(() => {
+    return isPolkadot && bridge.activeAssistantConnection && assistantConnection.type !== 'polkadot';
+  }, [assistantConnection.type, bridge.activeAssistantConnection, isPolkadot]);
+
   const isValidRecipient = useCallback((value: string) => isValidAddressStrict(value, type), [type]);
 
   if (mainConnection.status !== ConnectionStatus.success) {
@@ -47,8 +51,7 @@ export function RecipientItem({
       label={
         <span className="inline-flex items-center justify-between gap-2">
           <span>{t('Recipient')}</span>
-          {/* eslint-disable-next-line max-len */}
-          {isPolkadot && bridge.activeAssistantConnection && assistantConnection.status !== ConnectionStatus.success && (
+          {displayLink && (
             <Tooltip title={t('Connect {{network}} to fetch own accounts', { network: to.meta.name })}>
               <Button
                 onClick={() => {

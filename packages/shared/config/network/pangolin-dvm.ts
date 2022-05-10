@@ -27,7 +27,7 @@ export const pangolinDVMConfig: DVMChainConfig = {
   ],
   mode: 'dvm',
   name: 'pangolin',
-  provider: 'wss://ropsten.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
+  provider: 'wss://pangolin-rpc.darwinia.network/',
   social: {
     portal: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangolin-rpc.darwinia.network#/explorer',
     github: 'https://github.com/darwinia-network',
@@ -77,7 +77,7 @@ export const pangolinDVMConfig: DVMChainConfig = {
       type: 'mapping',
       logo: 'token-ring.svg',
       symbol: 'xORING',
-      address: '',
+      address: '0xb142658BD18c560D8ea74a31C07297CeCfeCF949',
     },
     {
       name: 'xOKTON',
@@ -96,6 +96,6 @@ export const pangolinDVMConfig: DVMChainConfig = {
     },
   ],
   ss58Prefix: 42,
-  specVersion: 28060,
-  category: ['dvm', 'polkadot', 'ethereum'],
+  specVersion: 28110,
+  category: ['dvm', 'polkadot'],
 };

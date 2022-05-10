@@ -70,7 +70,7 @@ export function SubscanLink({
 
   if (block) {
     return (
-      <Link href={`https://${network}.subscan.io/block/${block}`} target="_blank" {...other}>
+      <Link href={`https://${network.name}.subscan.io/block/${block}`} target="_blank" {...other}>
         {children || block}
       </Link>
     );

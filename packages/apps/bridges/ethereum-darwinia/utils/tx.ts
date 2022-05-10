@@ -21,7 +21,7 @@ import {
   toWei,
 } from 'shared/utils';
 import { Contract } from 'web3-eth-contract';
-import { EthereumDarwiniaBridgeConfig, TxPayload } from '../model';
+import { EthereumDarwiniaBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 
 interface ClaimInfo {
   direction: CrossChainDirection;
@@ -41,7 +41,7 @@ interface ClaimInfo {
  * @description darwinia <- ethereum
  * Because of the ring was released in advance on ethereum, so the action is issuing, but follow the Protocol Overview, it should be redeem.
  */
-export const redeem: TxFn<TxPayload> = ({ sender, direction, recipient, bridge }) => {
+export const issuing: TxFn<IssuingPayload> = ({ sender, direction, recipient, bridge }) => {
   const {
     from: { symbol, amount },
     to,
@@ -61,7 +61,7 @@ export const redeem: TxFn<TxPayload> = ({ sender, direction, recipient, bridge }
 /**
  * @description darwinia -> ethereum
  */
-export function issuing({ sender, recipient, direction }: TxPayload, api: ApiPromise): Observable<Tx> {
+export function redeem({ sender, recipient, direction }: RedeemPayload, api: ApiPromise): Observable<Tx> {
   const {
     from: { symbol, amount, decimals },
   } = direction;

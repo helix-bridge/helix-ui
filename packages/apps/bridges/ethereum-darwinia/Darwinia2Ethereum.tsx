@@ -1,13 +1,19 @@
-import { EyeInvisibleFilled } from '@ant-design/icons';
 import { BN_ZERO } from '@polkadot/util';
-import { message, Typography } from 'antd';
+import { message } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EMPTY, from } from 'rxjs';
-import { FORM_CONTROL } from 'shared/config/constant';
 import { useDarwiniaAvailableBalances } from 'shared/hooks';
-import { AvailableBalance, Bridge, CrossChainComponentProps, CrossChainPayload, SubmitFn } from 'shared/model';
+import {
+  AvailableBalance,
+  CrossChainComponentProps,
+  CrossChainPayload,
+  CrossToken,
+  EthereumChainConfig,
+  PolkadotChainConfig,
+  SubmitFn,
+} from 'shared/model';
 import { applyModalObs, createTxWorkflow, fromWei, isRing, prettyNumber, toWei } from 'shared/utils';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
@@ -15,26 +21,36 @@ import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useTx } from '../../hooks';
 import { useAccount, useApi } from '../../providers';
-import { EthereumDarwiniaBridgeConfig, TxPayload } from './model';
-import { getRedeemFee, getRedeemTxFee, issuing } from './utils';
+import { EthereumDarwiniaBridgeConfig, RedeemPayload } from './model';
+import { getRedeemFee, getRedeemTxFee, redeem } from './utils';
 
-const isSufficient = (balances: AvailableBalance[], amount: BN, fee: BN, symbol: string): boolean => {
+const validateBeforeTx = (balances: AvailableBalance[], amount: BN, fee: BN, symbol: string): string | undefined => {
   const [ring, kton] = balances;
   const ktonSufficient = new BN(kton.max).gte(amount);
   const ringSufficient = new BN(ring.max).gte(amount);
+  const validations: [boolean, string][] = [
+    [new BN(ring.max).gte(fee), 'Insufficient fee'],
+    [isRing(symbol) ? ringSufficient : ktonSufficient, 'Insufficient balance'],
+  ];
+  const target = validations.find((item) => !item[0]);
 
-  return new BN(ring.max).gte(fee) && (isRing(symbol) ? ringSufficient : ktonSufficient);
+  return target && target[1];
 };
 
-export function Darwinia2Ethereum({ form, setSubmit, direction, bridge, onFeeChange }: CrossChainComponentProps) {
+export function Darwinia2Ethereum({
+  form,
+  setSubmit,
+  direction,
+  bridge,
+  onFeeChange,
+}: CrossChainComponentProps<
+  EthereumDarwiniaBridgeConfig,
+  CrossToken<PolkadotChainConfig>,
+  CrossToken<EthereumChainConfig>
+>) {
   const { t } = useTranslation();
 
-  const {
-    mainConnection: { accounts },
-    api,
-    chain,
-    network,
-  } = useApi();
+  const { api, chain, network } = useApi();
 
   const [availableBalances, setAvailableBalances] = useState<AvailableBalance[]>([]);
   const [crossChainFee, setCrossChainFee] = useState<BN | null>(null);
@@ -43,15 +59,28 @@ export function Darwinia2Ethereum({ form, setSubmit, direction, bridge, onFeeCha
   const { observer } = useTx();
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
   const getBalances = useDarwiniaAvailableBalances(api, network, chain);
-  const [recipient, setRecipient] = useState<string>(form.getFieldValue(FORM_CONTROL.recipient));
+  const [recipient, setRecipient] = useState<string>();
   const { account } = useAccount();
+
+  const feeWithSymbol = useMemo(() => {
+    if (fee) {
+      const ring = direction.from.meta.tokens.find((item) => isRing(item.symbol))!;
+
+      return {
+        amount: fromWei({ value: fee, decimals: ring.decimals }),
+        symbol: ring.symbol,
+      };
+    }
+
+    return null;
+  }, [direction, fee]);
 
   const balance = useMemo(() => {
     return availableBalances.find((item) => item.token.symbol.toLowerCase() === direction.from.symbol.toLowerCase());
   }, [availableBalances, direction.from.symbol]);
 
   useEffect(() => {
-    const fn = () => (data: TxPayload) => {
+    const fn = () => (data: RedeemPayload) => {
       if (!api || !fee) {
         return EMPTY.subscribe();
       }
@@ -62,27 +91,18 @@ export function Darwinia2Ethereum({ form, setSubmit, direction, bridge, onFeeCha
         },
       } = data;
 
-      const amountWei = new BN(toWei({ value: amount, decimals }));
+      const msg = validateBeforeTx(availableBalances, new BN(toWei({ value: amount, decimals })), fee, symbol);
 
-      if (!isSufficient(availableBalances, amountWei, fee, symbol)) {
-        message.error({
-          content: t('Insufficient balance'),
-        });
+      if (msg) {
+        message.error(t(msg));
 
         return EMPTY.subscribe();
       }
 
-      const [ring] = availableBalances;
-
       const beforeTransfer = applyModalObs({
-        content: (
-          <TransferConfirm
-            fee={{ ...ring.token, amount: fromWei({ value: fee, decimals: ring.token.decimals }) }}
-            value={data}
-          />
-        ),
+        content: <TransferConfirm fee={feeWithSymbol!} value={data} />,
       });
-      const obs = issuing(data, api);
+      const obs = redeem(data, api);
 
       const afterTransfer = afterCrossChain(TransferDone, {
         hashType: 'block',
@@ -96,22 +116,18 @@ export function Darwinia2Ethereum({ form, setSubmit, direction, bridge, onFeeCha
     };
 
     setSubmit(fn as unknown as SubmitFn);
-  }, [afterCrossChain, api, availableBalances, fee, form, getBalances, observer, setSubmit, t]);
+  }, [afterCrossChain, api, availableBalances, fee, feeWithSymbol, form, getBalances, observer, setSubmit, t]);
 
   useEffect(() => {
     const balance$$ = from(getBalances(account)).subscribe(setAvailableBalances);
 
-    return () => {
-      balance$$.unsubscribe();
-    };
-  }, [account, accounts, form, getBalances, recipient]);
+    return () => balance$$.unsubscribe();
+  }, [account, getBalances]);
 
   useEffect(() => {
-    const sub$$ = from(getRedeemFee(bridge as Bridge<EthereumDarwiniaBridgeConfig>)).subscribe(setCrossChainFee);
+    const sub$$ = from(getRedeemFee(bridge)).subscribe(setCrossChainFee);
 
-    return () => {
-      sub$$.unsubscribe();
-    };
+    return () => sub$$.unsubscribe();
   }, [bridge]);
 
   useEffect(() => {
@@ -120,23 +136,23 @@ export function Darwinia2Ethereum({ form, setSubmit, direction, bridge, onFeeCha
     }
 
     const sub$$ = from(
-      getRedeemTxFee(bridge as Bridge<EthereumDarwiniaBridgeConfig>, {
+      getRedeemTxFee(bridge, {
         sender: account,
         recipient,
         amount: +direction.from.amount,
       })
-    ).subscribe(setTxFee);
+    ).subscribe((result) => setTxFee(result));
 
     return () => sub$$?.unsubscribe();
   }, [account, bridge, direction.from.amount, recipient]);
 
   useEffect(() => {
-    if (fee && onFeeChange) {
+    if (onFeeChange) {
       const amount = fromWei({ value: fee, decimals: direction.from.decimals });
 
       onFeeChange(isRing(direction.from.symbol) ? +amount : 0);
     }
-  }, [direction.from.symbol, direction.from.decimals, fee, onFeeChange]);
+  }, [direction.from.decimals, direction.from.symbol, fee, onFeeChange]);
 
   return (
     <>
@@ -154,26 +170,14 @@ export function Darwinia2Ethereum({ form, setSubmit, direction, bridge, onFeeCha
 
       <CrossChainInfo
         bridge={bridge}
-        fee={
-          fee && {
-            amount: fromWei({ value: fee, decimals: direction.from.decimals }),
-            symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
+        fee={feeWithSymbol}
+        balance={
+          balance && {
+            amount: fromWei({ value: balance.max, decimals: balance.token.decimals }, prettyNumber),
+            symbol: balance.token.symbol,
           }
         }
-      >
-        <div className="flex justify-between items-center">
-          <Typography.Text>{t('Available balance')}</Typography.Text>
-
-          {balance ? (
-            <Typography.Text className="capitalize">
-              <span>{fromWei({ value: balance.max, decimals: balance.token.decimals }, prettyNumber)}</span>
-              <span className="capitalize ml-1">{balance.token.symbol}</span>
-            </Typography.Text>
-          ) : (
-            <EyeInvisibleFilled />
-          )}
-        </div>
-      </CrossChainInfo>
+      ></CrossChainInfo>
     </>
   );
 }

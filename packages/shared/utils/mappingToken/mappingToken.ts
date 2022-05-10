@@ -1,17 +1,6 @@
 import { memoize } from 'lodash';
 import { combineLatest, from, interval, Observable, of, take, timer, zip } from 'rxjs';
-import {
-  catchError,
-  delayWhen,
-  mergeMap,
-  retry,
-  retryWhen,
-  scan,
-  startWith,
-  switchMap,
-  switchMapTo,
-  tap,
-} from 'rxjs/operators';
+import { catchError, delayWhen, mergeMap, retry, retryWhen, scan, startWith, switchMap, tap } from 'rxjs/operators';
 import Web3 from 'web3';
 import { Contract } from 'web3-eth-contract';
 import { abi } from '../../config/abi';
@@ -112,7 +101,7 @@ function getMappingTokensFromDVM(
           ? of(1)
           : infoObs.pipe(
               switchMap(({ source }) =>
-                getTokenRegisterStatus(source, bridge.config.contracts.redeem, arrival.provider)
+                getTokenRegisterStatus(source, bridge.config.contracts.redeem, departure.provider)
               )
             );
 
@@ -226,7 +215,7 @@ export const getKnownMappingTokens = (
         )
       );
 
-  return connect(departure.meta).pipe(switchMapTo(tokens));
+  return connect(departure.meta).pipe(mergeMap(() => tokens));
 };
 
 /**

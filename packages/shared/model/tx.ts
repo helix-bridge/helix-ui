@@ -39,7 +39,6 @@ export type TxDoneComponentProps<T extends Bridge = Bridge> = {
   tx: Tx;
   value: CrossChainPayload<T>;
   hashType?: TxHashType;
-  decimals?: number;
 };
 
 export type CommonPayloadKeys = 'sender' | 'recipient' | 'amount' | 'asset';

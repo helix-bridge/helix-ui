@@ -83,26 +83,28 @@ export function prettyNumber(value: WeiValue, options?: PrettyNumberOptions): st
 const DEFAULT_DECIMALS = 18;
 
 export function fromWei(
-  { value, decimals = DEFAULT_DECIMALS }: { value: WeiValue; decimals?: number },
+  { value, amount, decimals = DEFAULT_DECIMALS }: { value?: WeiValue; decimals?: number; amount?: WeiValue },
   ...fns: ((value: string) => string)[]
 ): string {
   const unit = getUnit(decimals);
+  const data = value || amount;
 
   return [toStr, (val: string) => Web3.utils.fromWei(val || '0', unit), ...fns].reduce(
     (acc, fn) => fn(acc as string),
-    value
+    data
   ) as string;
 }
 
 export function toWei(
-  { value, decimals = DEFAULT_DECIMALS }: { value: WeiValue; decimals?: number },
+  { value, amount, decimals = DEFAULT_DECIMALS }: { value?: WeiValue; decimals?: number; amount?: WeiValue },
   ...fns: ((value: string) => string)[]
 ): string {
   const unit = getUnit(decimals);
+  const data = value || amount;
 
   return [toStr, (val: string) => Web3.utils.toWei(val || '0', unit), ...fns].reduce(
     (acc, fn) => fn(acc as string),
-    value
+    data
   ) as string;
 }
 

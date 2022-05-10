@@ -42,8 +42,9 @@ export async function getIssuingFee(bridge: Bridge<EthereumDarwiniaBridgeConfig>
       .call();
 
     return web3.utils.toBN(fee);
-  } catch (error) {
-    console.error('⚠️ ~ file: fee.ts ~ getIssuingFee ~ error', error);
+  } catch {
+    console.error('⚠️ ~ file: fee.ts ~ getIssuingFee ~ error');
+
     return null;
   }
 }

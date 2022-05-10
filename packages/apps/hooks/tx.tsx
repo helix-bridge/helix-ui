@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { FunctionComponent, useCallback, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SHORT_DURATION } from 'shared/config/constant';
-import { CrossChainPayload, Tx, TxHashType, TxDoneComponentProps } from 'shared/model';
+import { CrossChainPayload, Tx, TxDoneComponentProps, TxHashType } from 'shared/model';
 import { applyModal, convertToSS58, genHistoryRouteParams, isEthereumNetwork } from 'shared/utils';
 import { TxContext, TxCtx, useApi } from '../providers';
 
@@ -19,21 +19,19 @@ export function useAfterTx<T extends CrossChainPayload>() {
         Comp: FunctionComponent<TxDoneComponentProps>,
         {
           onDisappear,
-          decimals,
           hashType = 'txHash',
           payload,
           ...rest
         }: Exclude<ModalProps, 'onCancel'> & {
           onDisappear: (value: T, tx: Tx) => void;
           hashType?: TxHashType;
-          decimals?: number;
           payload: T;
         }
       ) =>
       (tx: Tx) =>
       () => {
         const { destroy } = applyModal({
-          content: <Comp tx={tx} value={payload} hashType={hashType} decimals={decimals} />,
+          content: <Comp tx={tx} value={payload} hashType={hashType} />,
           okText: t('Cross-chain history'),
           okButtonProps: {
             size: 'large',
@@ -75,19 +73,17 @@ export function useAfterTx<T extends CrossChainPayload>() {
         Comp: FunctionComponent<TxDoneComponentProps>,
         {
           onDisappear,
-          decimals,
           hashType = 'txHash',
         }: Exclude<ModalProps, 'onCancel'> & {
           onDisappear: (value: T, tx: Tx) => void;
           hashType?: TxHashType;
-          decimals?: number;
         }
       ) =>
       (value: T) =>
       (tx: Tx) =>
       () => {
         message.success({
-          content: <Comp tx={tx} value={value} hashType={hashType} decimals={decimals} />,
+          content: <Comp tx={tx} value={value} hashType={hashType} />,
           onClose: () => {
             onDisappear(value, tx);
           },

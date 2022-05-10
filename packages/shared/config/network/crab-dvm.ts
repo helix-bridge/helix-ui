@@ -27,7 +27,7 @@ export const crabDVMConfig: DVMChainConfig = {
   ],
   mode: 'dvm',
   name: 'crab',
-  provider: '',
+  provider: 'https://crab-rpc.darwinia.network/',
   social: {
     portal: 'https://crab.network/',
     github: 'https://github.com/darwinia-network/darwinia/tree/main/runtime/crab',
@@ -97,5 +97,5 @@ export const crabDVMConfig: DVMChainConfig = {
   ],
   category: ['dvm', 'polkadot', 'ethereum'],
   ss58Prefix: 42,
-  specVersion: 1200,
+  specVersion: 1210,
 };

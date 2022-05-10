@@ -49,5 +49,5 @@ export const crabConfig: PolkadotChainConfig = {
   ],
   category: ['polkadot', 'darwinia'],
   ss58Prefix: 42,
-  specVersion: 1200,
+  specVersion: 1210,
 };

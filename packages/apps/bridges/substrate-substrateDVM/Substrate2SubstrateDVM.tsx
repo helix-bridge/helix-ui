@@ -1,130 +1,70 @@
-import { abi } from 'shared/config/abi';
-import { FORM_CONTROL, LONG_DURATION, RegisterStatus } from 'shared/config/constant';
+import { EyeInvisibleFilled } from '@ant-design/icons';
+import { BN_ZERO } from '@polkadot/util';
+import { message, Typography } from 'antd';
+import BN from 'bn.js';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { EMPTY, filter, from, of, switchMap } from 'rxjs';
+import { LONG_DURATION, RegisterStatus } from 'shared/config/constant';
 import { useDarwiniaAvailableBalances, useIsMounted } from 'shared/hooks';
 import {
   AvailableBalance,
-  ChainConfig,
+  ConnectionStatus,
   CrossChainComponentProps,
-  CrossChainDirection,
   CrossChainPayload,
-  DailyLimit,
+  CrossToken,
   DVMChainConfig,
-  MappingToken,
-  Network,
   PolkadotChainConfig,
-  Token,
+  SubmitFn,
 } from 'shared/model';
 import {
-  amountLessThanFeeRule,
   applyModalObs,
   createTxWorkflow,
-  entrance,
   fromWei,
   getKnownMappingTokens,
-  getS2SMappingAddress,
-  insufficientBalanceRule,
-  insufficientDailyLimit,
-  invalidFeeRule,
   isRing,
+  largeNumber,
   pollWhile,
   prettyNumber,
   toWei,
-  waitUntilConnected,
-  zeroAmountRule,
 } from 'shared/utils';
-import { Codec } from '@polkadot/types/types';
-import { Descriptions, Form, Progress, Select } from 'antd';
-import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
-import BN from 'bn.js';
-import { capitalize, last } from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { EMPTY, from, of, Subscription, switchMap, takeWhile } from 'rxjs';
-import { Balance } from '../../components/form-control/Balance';
-import { MaxBalance } from '../../components/form-control/MaxBalance';
-import { PolkadotAccountsItem } from '../../components/form-control/PolkadotAccountsItem';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
+import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useTx } from '../../hooks';
-import { useApi } from '../../providers';
+import { useAccount, useApi } from '../../providers';
 import { useBridgeStatus } from './hooks';
-import { IssuingSubstrateTxPayload, Substrate2SubstrateDVMPayload } from './model';
+import { IssuingPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
+import { getDailyLimit, getIssuingFee } from './utils';
 import { issuing } from './utils/tx';
 
-/* ----------------------------------------------Base info helpers-------------------------------------------------- */
+const validateBeforeTx = (balance: BN, amount: BN, fee: BN, limit: BN): string | undefined => {
+  const validations: [boolean, string][] = [
+    [balance.gte(amount), 'Insufficient balance'],
+    [balance.gte(fee), 'Insufficient fee balance'],
+    [limit.gte(amount), 'Insufficient daily limit'],
+  ];
 
-/* ----------------------------------------------Tx section-------------------------------------------------- */
+  const target = validations.find((item) => !item[0]);
 
-interface TransferInfoProps {
-  fee: BN | null;
-  balance: BN | string | number;
-  amount: string;
-  token: Token;
-  dailyLimit: DailyLimit | null;
-}
+  return target && target[1];
+};
 
-// eslint-disable-next-line complexity
-function TransferInfo({ fee, balance, token, amount, dailyLimit }: TransferInfoProps) {
-  const { decimals } = token;
-  const value = new BN(toWei({ value: amount || '0', decimals }));
-  const iterationCount = 5;
-
-  if (!fee || !balance) {
-    return null;
-  }
-
-  if (fee.lt(new BN(0))) {
-    return (
-      <p className="text-red-400 animate-pulse" style={{ animationIterationCount: iterationCount }}>
-        <Trans>Bridge is not healthy, try it again later</Trans>
-      </p>
-    );
-  }
-
-  return (
-    <Descriptions size="small" column={1} labelStyle={{ color: 'inherit' }} className="text-green-400">
-      {value.gte(fee) && !value.isZero() && (
-        <Descriptions.Item label={<Trans>Recipient will receive</Trans>} contentStyle={{ color: 'inherit' }}>
-          {fromWei({ value: value.sub(fee), decimals })} x{token.symbol}
-        </Descriptions.Item>
-      )}
-      <Descriptions.Item label={<Trans>Cross-chain Fee</Trans>} contentStyle={{ color: 'inherit' }}>
-        <span className="flex items-center">
-          {fromWei({ value: fee, decimals })} {token.symbol}
-        </span>
-      </Descriptions.Item>
-
-      <Descriptions.Item label={<Trans>Daily Limit</Trans>} contentStyle={{ color: 'inherit' }}>
-        {dailyLimit ? (
-          fromWei({ value: new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday)), decimals: 9 })
-        ) : (
-          <Trans>Querying</Trans>
-        )}
-      </Descriptions.Item>
-    </Descriptions>
-  );
-}
-
-/* ----------------------------------------------Main Section-------------------------------------------------- */
-
-/**
- * @description test chain: pangoro -> pangolin dvm
- */
-// eslint-disable-next-line complexity
 export function Substrate2SubstrateDVM({
   form,
   setSubmit,
   direction,
+  bridge,
   setBridgeState,
-}: CrossChainComponentProps<Substrate2SubstrateDVMPayload, PolkadotChainConfig, DVMChainConfig>) {
+  onFeeChange,
+}: CrossChainComponentProps<
+  SubstrateSubstrateDVMBridgeConfig,
+  CrossToken<PolkadotChainConfig>,
+  CrossToken<DVMChainConfig>
+>) {
   const { t } = useTranslation();
-
-  const {
-    mainConnection: { accounts },
-    api,
-    chain,
-  } = useApi();
+  const { api, network, chain, assistantConnection, connectAssistantNetwork } = useApi();
   const [availableBalances, setAvailableBalances] = useState<AvailableBalance[]>([]);
 
   const availableBalance = useMemo(() => {
@@ -135,61 +75,26 @@ export function Substrate2SubstrateDVM({
     }
 
     const { max, token, ...rest } = balance;
-    const reserved = new BN(toWei({ value: '1', decimals: token.decimals ?? 9 }));
-    const greatest = new BN(max);
-    const result = greatest.sub(reserved);
+    const result = new BN(max).sub(new BN(toWei({ value: '1', decimals: token.decimals ?? 9 }))); // keep at least 1 in account;
 
-    return { ...rest, token, max: result.gte(new BN(0)) ? result.toString() : '0' };
+    return { ...rest, token, max: result.gte(new BN(0)) ? result : BN_ZERO };
   }, [availableBalances]);
 
-  const [curAmount, setCurAmount] = useState<string>(() => form.getFieldValue(FORM_CONTROL.amount) ?? '');
   const [fee, setFee] = useState<BN | null>(null);
-  const [dailyLimit, setDailyLimit] = useState<DailyLimit | null>(null);
-  const { updateDeparture } = useDeparture();
+  const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { observer } = useTx();
-  const { afterCrossChain } = useAfterTx<CrossChainPayload<Substrate2SubstrateDVMPayload>>();
-  const getAvailableBalances = useDarwiniaAvailableBalances();
-  const [targetChainTokens, setTargetChainTokens] = useState<MappingToken[]>([]);
-  const bridgeState = useBridgeStatus(direction);
+  const { afterCrossChain } = useAfterTx<CrossChainPayload>();
+  const getBalances = useDarwiniaAvailableBalances(api, network, chain);
+  const bridgeState = useBridgeStatus({ from: direction.from.meta, to: direction.to.meta });
+  const { account } = useAccount();
 
-  const getBalances = useCallback<(acc: string) => Promise<AvailableBalance[]>>(
-    async (account: string) => {
-      if (!api || !chain.tokens.length || !form.getFieldValue(FORM_CONTROL.asset)) {
-        return [];
-      }
-
-      const asset = form.getFieldValue(FORM_CONTROL.asset) as string;
-      const balances = await getAvailableBalances(account);
-
-      return balances.filter((item) => asset.toLowerCase().includes(item.asset.toLowerCase()));
-    },
-    [api, chain.tokens.length, form, getAvailableBalances]
-  );
-
-  const getDailyLimit = useCallback<(symbol: string) => Promise<DailyLimit | null>>(
-    async (symbol: string) => {
-      if (!targetChainTokens.length) {
-        return null;
-      }
-
-      const { to: arrival } = direction as CrossChainDirection<ChainConfig, DVMChainConfig>;
-      const web3 = entrance.web3.getInstance(arrival.ethereumChain.rpcUrls[0]);
-      const mappingAddress = await getS2SMappingAddress(arrival.provider);
-      const contract = new web3.eth.Contract(abi.S2SMappingTokenABI, mappingAddress);
-      const token = targetChainTokens.find((item) => isRing(item.symbol));
-      const ringAddress = token?.address;
-      const tokenAddress = isRing(symbol) ? ringAddress : '';
-
-      if (!tokenAddress) {
-        return null;
-      }
-
-      const limit = await contract.methods.dailyLimit(tokenAddress).call();
-      const spentToday = await contract.methods.spentToday(tokenAddress).call();
-
-      return { limit, spentToday };
-    },
-    [targetChainTokens, direction]
+  const feeWithSymbol = useMemo(
+    () =>
+      fee && {
+        amount: fromWei({ value: fee, decimals: direction.from.decimals }),
+        symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
+      },
+    [direction, fee]
   );
 
   const isMounted = useIsMounted();
@@ -199,232 +104,119 @@ export function Substrate2SubstrateDVM({
   }, [bridgeState.status, bridgeState.reason, setBridgeState]);
 
   useEffect(() => {
-    const fn = () => (data: IssuingSubstrateTxPayload) => {
-      if (!api || !fee) {
+    // eslint-disable-next-line complexity
+    const fn = () => (data: IssuingPayload) => {
+      if (!api || !fee || !dailyLimit || !availableBalance?.max) {
         return EMPTY.subscribe();
       }
 
-      const { sender, amount, asset } = data;
-      const decimals = chain.tokens.find((item) => item.symbol === asset)?.decimals || 9;
-      const value = {
-        ...data,
-        amount: new BN(toWei({ value: amount, decimals })).sub(fee).toString(),
-      };
-      const beforeTransfer = applyModalObs({
-        content: <TransferConfirm value={value} decimals={decimals} />,
-      });
-      const obs = issuing(value, api, fee);
-      const afterTransfer = afterCrossChain(TransferDone, {
-        hashType: 'block',
-        onDisappear: () => {
-          form.setFieldsValue({
-            [FORM_CONTROL.sender]: sender,
-          });
-          getBalances(sender).then(setAvailableBalances);
-        },
-        decimals,
-      })(value);
+      const msg = validateBeforeTx(availableBalance.max, new BN(toWei(data.direction.from)), fee, dailyLimit);
 
-      return createTxWorkflow(beforeTransfer, obs, afterTransfer).subscribe(observer);
+      if (msg) {
+        message.error(t(msg));
+        return EMPTY.subscribe();
+      }
+
+      return createTxWorkflow(
+        applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }),
+        issuing(data, api, fee),
+        afterCrossChain(TransferDone, {
+          hashType: 'block',
+          onDisappear: () => getBalances(data.sender).then(setAvailableBalances),
+          payload: data,
+        })
+      ).subscribe(observer);
     };
 
-    setSubmit(fn);
-  }, [afterCrossChain, api, chain.tokens, fee, form, getBalances, observer, setAvailableBalances, setSubmit]);
+    setSubmit(fn as unknown as SubmitFn);
+  }, [afterCrossChain, api, availableBalance, dailyLimit, fee, feeWithSymbol, getBalances, observer, setSubmit, t]);
 
   useEffect(() => {
-    const sub$$ = getKnownMappingTokens('null', { from: direction.to, to: direction.from }).subscribe(({ tokens }) => {
-      setTargetChainTokens(tokens.filter((item) => item.status === RegisterStatus.registered));
-    });
-
-    return () => sub$$?.unsubscribe();
-  }, [direction]);
-
-  useEffect(() => {
-    const sender = (accounts && accounts[0] && accounts[0].address) || '';
-
-    form.setFieldsValue({ [FORM_CONTROL.sender]: sender });
-
-    updateDeparture({ from: form.getFieldValue(FORM_CONTROL.direction).from, sender });
-  }, [form, api, accounts, updateDeparture]);
-
-  useEffect(() => {
-    if (!api) {
+    if (assistantConnection.status !== ConnectionStatus.success) {
+      connectAssistantNetwork(direction.to.meta);
       return;
     }
 
-    const subscription = from(waitUntilConnected(api))
+    const sub$$ = getKnownMappingTokens('null', { from: direction.to, to: direction.from })
       .pipe(
-        switchMap(() => {
-          const section = direction.to.isTest ? `${direction.to.name}FeeMarket` : 'feeMarket';
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          return (api.query as any)[section]['assignedRelayers']().then((data: Codec) => data.toJSON()) as Promise<
-            { id: string; collateral: number; fee: number }[]
-          >;
+        filter(({ tokens }) => !!tokens.length),
+        switchMap(({ tokens }) => {
+          const token = tokens.find(
+            (item) =>
+              item.status === RegisterStatus.registered &&
+              item.symbol.toLowerCase() === direction.to.symbol.toLowerCase()
+          );
+
+          return token
+            ? from(getDailyLimit(token, direction)).pipe(pollWhile(LONG_DURATION, () => isMounted))
+            : of(null);
         })
       )
-      .subscribe((res) => {
-        const marketFee = last(res)?.fee.toString();
+      .subscribe((result) => {
+        const num = result && new BN(result.limit).sub(new BN(result.spentToday));
 
-        setFee(new BN(marketFee ?? -1)); // -1: fee market does not available
+        setDailyLimit(num);
       });
 
-    return () => subscription?.unsubscribe();
-  }, [api, direction.to.isTest, direction.to.name]);
+    return () => sub$$?.unsubscribe();
+  }, [assistantConnection.status, connectAssistantNetwork, direction, isMounted]);
 
   useEffect(() => {
-    const sender = (accounts && accounts[0] && accounts[0].address) || '';
-    const subscription = from(getBalances(sender)).subscribe(setAvailableBalances);
+    const sub$$ = from(getIssuingFee(bridge)).subscribe((result) => {
+      setFee(result);
+
+      if (onFeeChange) {
+        const amount = fromWei({ value: result, decimals: direction.from.decimals });
+
+        onFeeChange(isRing(direction.from.symbol) ? +amount : 0);
+      }
+    });
+
+    return () => sub$$.unsubscribe();
+  }, [bridge, direction.from.decimals, direction.from.symbol, onFeeChange]);
+
+  useEffect(() => {
+    const subscription = from(getBalances(account)).subscribe(setAvailableBalances);
 
     return () => subscription.unsubscribe();
-  }, [accounts, getBalances, setAvailableBalances]);
-
-  useEffect(() => {
-    let sub$$: Subscription | null = null;
-    let sub2$$: Subscription | null = null;
-
-    if (chain.tokens.length) {
-      const asset = chain.tokens[0].symbol;
-
-      sub$$ = from(getBalances(form.getFieldValue(FORM_CONTROL.sender))).subscribe(setAvailableBalances);
-      sub2$$ = of(null)
-        .pipe(
-          switchMap(() => from(getDailyLimit(asset))),
-          pollWhile(LONG_DURATION, () => isMounted)
-        )
-        .subscribe(setDailyLimit);
-
-      form.setFieldsValue({ [FORM_CONTROL.asset]: asset });
-    }
-
-    return () => {
-      sub$$?.unsubscribe();
-      sub2$$?.unsubscribe();
-    };
-  }, [chain.tokens, form, getBalances, getDailyLimit, isMounted, setAvailableBalances, setDailyLimit]);
+  }, [account, getBalances, setAvailableBalances]);
 
   return (
     <>
-      <PolkadotAccountsItem
-        availableBalances={availableBalances}
-        onChange={(value) =>
-          from(getBalances(value))
-            .pipe(takeWhile(() => isMounted))
-            .subscribe(setAvailableBalances)
-        }
-      />
-
       <RecipientItem
         form={form}
         direction={direction}
+        bridge={bridge}
         extraTip={t(
           'After the transaction is confirmed, the account cannot be changed. Please do not fill in the exchange account.'
         )}
-        isDvm
       />
 
-      <Form.Item name={FORM_CONTROL.asset} label={t('Asset')} rules={[{ required: true }]}>
-        <Select
-          size="large"
-          onChange={(value: string) => {
-            from(getBalances(form.getFieldValue(FORM_CONTROL.sender)))
-              .pipe(takeWhile(() => isMounted))
-              .subscribe(setAvailableBalances);
-
-            from(getDailyLimit(value))
-              .pipe(takeWhile(() => isMounted))
-              .subscribe(setDailyLimit);
-          }}
-          placeholder={t('Please select token to be transfer')}
-        >
-          {(chain.tokens || []).map(({ symbol }, index) => (
-            <Select.Option value={symbol} key={symbol + '_' + index} disabled={/kton/i.test(symbol)}>
-              <span>{symbol}</span>
-              {/** FIXME: what's the name ? we can only get symbol, decimals and ss58Format from api properties  */}
-              <sup className="ml-2 text-xs" title={t('name')}>
-                {t('{{network}} native token', {
-                  network: capitalize(form.getFieldValue(FORM_CONTROL.direction)?.from?.name ?? ''),
-                })}
-              </sup>
-            </Select.Option>
-          ))}
-        </Select>
-      </Form.Item>
-
-      {!chain.tokens.length && (
-        <Progress
-          percent={100}
-          showInfo={false}
-          status="active"
-          strokeColor={{ from: '#5745de', to: '#ec3783' }}
-          className="relative -top-6"
-        />
-      )}
-
-      <Form.Item
-        name={FORM_CONTROL.amount}
-        validateFirst
-        label={t('Amount')}
-        rules={[
-          { required: true },
-          invalidFeeRule({ t, compared: fee }),
-          zeroAmountRule({ t }),
-          amountLessThanFeeRule({
-            t,
-            compared: fee ? fee.toString() : null,
-            token: availableBalance?.token,
-            asset: String(form.getFieldValue(FORM_CONTROL.asset)),
-          }),
-          insufficientBalanceRule({
-            t,
-            compared: availableBalance?.max,
-            token: availableBalance?.token,
-          }),
-          insufficientDailyLimit({
-            t,
-            compared: new BN(dailyLimit?.limit ?? '0').sub(new BN(dailyLimit?.spentToday ?? '0')).toString(),
-            token: availableBalance?.token,
-          }),
+      <CrossChainInfo
+        bridge={bridge}
+        fee={feeWithSymbol}
+        balance={
+          availableBalance && {
+            amount: fromWei(
+              { value: availableBalance.max, decimals: availableBalance.token.decimals },
+              // eslint-disable-next-line no-magic-numbers
+              (num: string) => (+num > 1e6 ? largeNumber(num) : num),
+              (num: string) => prettyNumber(num, { ignoreZeroDecimal: true })
+            ),
+            symbol: availableBalance.token.symbol,
+          }
+        }
+        extra={[
+          {
+            name: t('Daily limit'),
+            content: dailyLimit ? (
+              <Typography.Text>{fromWei({ value: dailyLimit, decimals: 9 })}</Typography.Text>
+            ) : (
+              <EyeInvisibleFilled />
+            ),
+          },
         ]}
-      >
-        <Balance
-          size="large"
-          placeholder={t('Available Balance {{balance}}', {
-            balance: !availableBalance
-              ? t('Querying')
-              : fromWei({ value: availableBalance?.max, decimals: availableBalance?.token.decimals }, prettyNumber),
-          })}
-          className="flex-1"
-          onChange={(val) => setCurAmount(val)}
-        >
-          <MaxBalance
-            network={form.getFieldValue(FORM_CONTROL.direction).from?.name as Network}
-            onClick={() => {
-              if (!availableBalance) {
-                return;
-              }
-
-              const { token, max } = availableBalance;
-              const amount = fromWei({ value: max, decimals: token.decimals });
-
-              form.setFieldsValue({ [FORM_CONTROL.amount]: amount });
-              setCurAmount(amount);
-            }}
-            size="large"
-          />
-        </Balance>
-      </Form.Item>
-
-      {!!availableBalances.length && availableBalances[0].token && (
-        <ErrorBoundary>
-          <TransferInfo
-            fee={fee}
-            balance={availableBalances[0].max}
-            amount={curAmount}
-            token={availableBalances[0].token}
-            dailyLimit={dailyLimit}
-          />
-        </ErrorBoundary>
-      )}
+      ></CrossChainInfo>
     </>
   );
 }
