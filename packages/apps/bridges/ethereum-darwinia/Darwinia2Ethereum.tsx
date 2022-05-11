@@ -26,13 +26,13 @@ import { getRedeemFee, getRedeemTxFee, redeem } from './utils';
 
 const validateBeforeTx = (balances: AvailableBalance[], amount: BN, fee: BN, symbol: string): string | undefined => {
   const [ring, kton] = balances;
-  const ktonSufficient = new BN(kton.max).gte(amount);
-  const ringSufficient = new BN(ring.max).gte(amount);
+  const ktonSufficient = new BN(kton.max).lt(amount);
+  const ringSufficient = new BN(ring.max).lt(amount);
   const validations: [boolean, string][] = [
-    [new BN(ring.max).gte(fee), 'Insufficient fee'],
+    [new BN(ring.max).lt(fee), 'Insufficient fee'],
     [isRing(symbol) ? ringSufficient : ktonSufficient, 'Insufficient balance'],
   ];
-  const target = validations.find((item) => !item[0]);
+  const target = validations.find((item) => item[0]);
 
   return target && target[1];
 };
@@ -50,7 +50,7 @@ export function Darwinia2Ethereum({
 >) {
   const { t } = useTranslation();
 
-  const { api, chain, network } = useApi();
+  const { api, network } = useApi();
 
   const [availableBalances, setAvailableBalances] = useState<AvailableBalance[]>([]);
   const [crossChainFee, setCrossChainFee] = useState<BN | null>(null);
@@ -58,7 +58,7 @@ export function Darwinia2Ethereum({
   const fee = useMemo(() => (crossChainFee ? crossChainFee.add(txFee ?? BN_ZERO) : null), [crossChainFee, txFee]);
   const { observer } = useTx();
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
-  const getBalances = useDarwiniaAvailableBalances(api, network, chain);
+  const getBalances = useDarwiniaAvailableBalances(api, network);
   const [recipient, setRecipient] = useState<string>();
   const { account } = useAccount();
 

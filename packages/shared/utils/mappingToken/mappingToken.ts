@@ -5,7 +5,14 @@ import Web3 from 'web3';
 import { Contract } from 'web3-eth-contract';
 import { abi } from '../../config/abi';
 import { RegisterStatus, SHORT_DURATION } from '../../config/constant';
-import { ChainConfig, CrossChainDirection, DVMChainConfig, EthereumChainConfig, MappingToken } from '../../model';
+import {
+  ChainConfig,
+  CrossChainDirection,
+  DVMChainConfig,
+  EthereumChainConfig,
+  MappingToken,
+  PolkadotChainConfig,
+} from '../../model';
 import { DVMBridgeConfig, getAvailableDVMBridge, getBridge, isS2S, isSubstrateDVM2Substrate } from '../bridge';
 import { MMRProof } from '../mmr';
 import { connect, entrance } from '../connection';
@@ -62,7 +69,7 @@ const getMappingTokenLength = memoize(
 function getMappingTokensFromDVM(
   currentAccount: string,
   departure: DVMChainConfig,
-  arrival: EthereumChainConfig,
+  arrival: EthereumChainConfig | PolkadotChainConfig,
   mappingAddress: string
 ) {
   const s2s = isS2S(departure, arrival);

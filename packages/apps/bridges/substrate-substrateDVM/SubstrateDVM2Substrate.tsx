@@ -1,98 +1,221 @@
+import { EyeInvisibleFilled } from '@ant-design/icons';
+import { message, Typography } from 'antd';
+import BN from 'bn.js';
+import { useTranslation } from 'next-i18next';
+import { useEffect, useMemo, useState } from 'react';
+import { EMPTY, from, mergeMap, switchMap } from 'rxjs';
 import { RegisterStatus } from 'shared/config/constant';
 import {
   CrossChainComponentProps,
+  CrossChainPayload,
+  CrossToken,
   DVMChainConfig,
   PolkadotChainConfig,
-  CrossChainDirection,
-  MappingToken,
-  DailyLimit,
+  SubmitFn,
 } from 'shared/model';
-import { getS2SMappingAddress, entrance, waitUntilConnected, fromWei } from 'shared/utils';
-import { Codec } from '@polkadot/types/types';
-import { last } from 'lodash';
-import { useCallback, useEffect } from 'react';
-import { from, switchMap } from 'rxjs';
-import { DVM } from '../DVM';
+import {
+  applyModalObs,
+  createTxWorkflow,
+  entrance,
+  fromWei,
+  getS2SMappingAddress,
+  isRing,
+  prettyNumber,
+  toWei,
+  waitUntilConnected,
+} from 'shared/utils';
+import { Allowance } from '../../components/bridge/Allowance';
+import { RecipientItem } from '../../components/form-control/RecipientItem';
+import { TransferConfirm } from '../../components/tx/TransferConfirm';
+import { TransferDone } from '../../components/tx/TransferDone';
+import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
+import { useAfterTx, useMappingTokens, useTx } from '../../hooks';
 import { useBridgeStatus } from './hooks';
-import { RedeemSubstrateTxPayload, SubstrateDVM2SubstratePayload } from './model';
+import { RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
+import { getRedeemFee } from './utils';
 import { redeem } from './utils/tx';
+
+const validateBeforeTx = (balance: BN, amount: BN, fee: BN, allowance: BN): string | undefined => {
+  const validations: [boolean, string][] = [
+    [balance.lt(fee), 'Insufficient fee'],
+    [balance.lt(amount), 'Insufficient balance'],
+    [allowance.lt(amount), 'Insufficient allowance'],
+  ];
+  const target = validations.find((item) => item[0]);
+
+  return target && target[1];
+};
 
 export function SubstrateDVM2Substrate({
   form,
-  setSubmit,
+  bridge,
   direction,
+  onFeeChange,
+  setSubmit,
   setBridgeState,
-}: CrossChainComponentProps<SubstrateDVM2SubstratePayload, DVMChainConfig, PolkadotChainConfig>) {
+}: CrossChainComponentProps<
+  SubstrateSubstrateDVMBridgeConfig,
+  CrossToken<DVMChainConfig>,
+  CrossToken<PolkadotChainConfig>
+>) {
+  const { t } = useTranslation();
+  const { tokens, refreshTokenBalance } = useMappingTokens(direction, RegisterStatus.registered);
   const bridgeState = useBridgeStatus(direction);
+  const [fee, setFee] = useState<BN | null>(null);
+  const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
+  const [allowance, setAllowance] = useState<BN | null>(null);
+  const [spender, setSpender] = useState<string>('');
+  const { afterCrossChain } = useAfterTx<CrossChainPayload>();
+  const { observer } = useTx();
 
-  const transform = useCallback(
-    (value: RedeemSubstrateTxPayload) => {
-      const { to } = direction;
+  const balance = useMemo(
+    () =>
+      tokens.find(
+        (item) =>
+          item.status === RegisterStatus.registered && item.symbol.toLowerCase() === direction.from.symbol.toLowerCase()
+      )?.balance ?? null,
+    [direction.from.symbol, tokens]
+  );
 
-      return from(getS2SMappingAddress(value.direction.from.provider)).pipe(
-        switchMap((mappingAddress) => redeem(value, mappingAddress, String(to.specVersion)))
+  const feeWithSymbol = useMemo(
+    () =>
+      fee && {
+        amount: fromWei({ value: fee, decimals: direction.from.decimals }),
+        symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
+      },
+    [direction.from.decimals, direction.from.meta.tokens, fee]
+  );
+
+  useEffect(() => {
+    const sub$$ = from(getS2SMappingAddress(direction.from.meta.provider)).subscribe(setSpender);
+
+    return () => sub$$.unsubscribe();
+  }, [direction.from.meta.provider]);
+
+  useEffect(() => {
+    const fn = () => (data: RedeemPayload) => {
+      if (!fee || !balance || !allowance) {
+        return EMPTY.subscribe();
+      }
+
+      const msg = validateBeforeTx(balance, new BN(toWei(direction.from)), fee, allowance);
+      if (msg) {
+        message.error(t(msg));
+        return EMPTY.subscribe();
+      }
+
+      const beforeTx = applyModalObs({
+        content: <TransferConfirm value={data} fee={feeWithSymbol!}></TransferConfirm>,
+      });
+
+      const txObs = from(getS2SMappingAddress(data.direction.from.meta.provider)).pipe(
+        switchMap((mappingAddress) => redeem(data, mappingAddress, String(data.direction.to.meta.specVersion)))
       );
-    },
-    [direction]
-  );
 
-  const getSpender = useCallback(async (dir: CrossChainDirection) => {
-    const mappingAddress = await getS2SMappingAddress(dir.from.provider);
+      return createTxWorkflow(
+        beforeTx,
+        txObs,
+        afterCrossChain(TransferDone, {
+          onDisappear: () => refreshTokenBalance(direction.from.address),
+          payload: data,
+        })
+      ).subscribe(observer);
+    };
 
-    return mappingAddress;
-  }, []);
+    setSubmit(fn as unknown as SubmitFn);
+  }, [
+    afterCrossChain,
+    allowance,
+    balance,
+    direction.from,
+    fee,
+    feeWithSymbol,
+    observer,
+    refreshTokenBalance,
+    setSubmit,
+    t,
+  ]);
 
-  const getDailyLimit = useCallback(
-    async (_: MappingToken) => {
-      const { to: arrival } = direction;
-      const api = entrance.polkadot.getInstance(arrival.provider);
+  useEffect(() => {
+    const { to: arrival } = direction;
+    const api = entrance.polkadot.getInstance(arrival.meta.provider);
+    const sub$$ = from(waitUntilConnected(api))
+      .pipe(
+        mergeMap(() => {
+          const module = arrival.meta.isTest ? 'substrate2SubstrateBacking' : 'toCrabBacking';
+          return from(api.query[module].secureLimitedRingAmount());
+        })
+      )
+      .subscribe((result) => {
+        const [spentToday, limit] = result.toJSON() as [number, number];
+        const num = result && new BN(limit).sub(new BN(spentToday));
 
-      await waitUntilConnected(api);
+        setDailyLimit(num);
+      });
 
-      // TODO: querying should rely on token info.
-      const module = arrival.isTest ? 'substrate2SubstrateBacking' : 'toCrabBacking';
-      const [spentToday, limit] = (await api.query[module].secureLimitedRingAmount()).toJSON() as [number, number];
+    return () => sub$$.unsubscribe();
+  }, [direction]);
 
-      return { spentToday, limit } as DailyLimit;
-    },
-    [direction]
-  );
+  useEffect(() => {
+    const sub$$ = from(getRedeemFee(bridge)).subscribe((result) => {
+      setFee(result);
 
-  const getFee = useCallback(async ({ to: arrival, from: departure }: CrossChainDirection) => {
-    const api = entrance.polkadot.getInstance(departure.provider);
+      if (onFeeChange) {
+        const amount = fromWei({ value: result, decimals: direction.from.decimals });
 
-    await waitUntilConnected(api);
+        onFeeChange(isRing(direction.from.symbol) ? +amount : 0);
+      }
+    });
 
-    const section = arrival.isTest ? `${arrival.name}FeeMarket` : 'feeMarket';
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const module = api.query[section] as any;
-    const res = (await module.assignedRelayers().then((data: Codec) => data.toJSON())) as {
-      id: string;
-      collateral: number;
-      fee: number;
-    }[];
-    const num = fromWei({ value: last(res)?.fee.toString(), decimals: 9 });
-
-    return num;
-  }, []);
+    return () => sub$$.unsubscribe();
+  }, [bridge, direction.from.decimals, direction.from.symbol, onFeeChange]);
 
   useEffect(() => {
     setBridgeState({ status: bridgeState.status, reason: bridgeState.reason });
   }, [bridgeState.status, bridgeState.reason, setBridgeState]);
 
   return (
-    <DVM
-      form={form}
-      direction={direction}
-      setSubmit={setSubmit}
-      transform={transform}
-      canRegister={false}
-      spenderResolver={getSpender}
-      tokenRegisterStatus={RegisterStatus.registered}
-      approveOptions={{ gas: '21000000', gasPrice: '50000000000' }}
-      getDailyLimit={getDailyLimit}
-      getFee={getFee}
-      isDVM={false}
-    />
+    <>
+      <RecipientItem
+        form={form}
+        bridge={bridge}
+        direction={direction}
+        extraTip={t(
+          'After the transaction is confirmed, the account cannot be changed. Please do not fill in the exchange account.'
+        )}
+      />
+
+      <CrossChainInfo
+        bridge={bridge}
+        fee={feeWithSymbol}
+        balance={
+          balance && {
+            amount: fromWei({ value: balance, decimals: direction.from.decimals }),
+            symbol: direction.from.meta.tokens.find((item) => item.type === 'native' && isRing(item.symbol))!.symbol,
+          }
+        }
+        extra={[
+          {
+            name: t('Allowance'),
+            content: (
+              <Allowance
+                direction={direction}
+                onChange={setAllowance}
+                spender={spender}
+                tokenAddress={direction.from.address}
+              />
+            ),
+          },
+          {
+            name: t('Daily limit'),
+            content: dailyLimit ? (
+              <Typography.Text>{fromWei({ value: dailyLimit, decimals: 9 }, prettyNumber)}</Typography.Text>
+            ) : (
+              <EyeInvisibleFilled />
+            ),
+          },
+        ]}
+      ></CrossChainInfo>
+    </>
   );
 }

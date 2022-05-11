@@ -16,6 +16,7 @@ import {
   applyModalObs,
   createTxWorkflow,
   fromWei,
+  getAllowance,
   getErc20TokenBalance,
   isKton,
   isRing,
@@ -28,17 +29,17 @@ import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useTx } from '../../hooks';
 import { useAccount } from '../../providers';
-import { Allowance } from './Allowance';
+import { Allowance } from '../../components/bridge/Allowance';
 import { EthereumDarwiniaBridgeConfig, IssuingPayload } from './model';
-import { getIssuingAllowance, getIssuingFee, issuing } from './utils';
+import { getIssuingFee, issuing } from './utils';
 
-const validateBeforeTx = (balance: BN, amount: BN, fee: BN, ringBalance: BN): string | undefined => {
+const validateBeforeTx = (balance: BN, amount: BN, fee: BN, ringBalance: BN, allowance: BN): string | undefined => {
   const validations: [boolean, string][] = [
-    [ringBalance.gte(fee), 'Insufficient fee'],
-    [balance.gte(amount), 'Insufficient balance'],
+    [ringBalance.lt(fee), 'Insufficient fee'],
+    [balance.lt(amount), 'Insufficient balance'],
+    [allowance.lt(amount), 'Insufficient allowance'],
   ];
-
-  const target = validations.find((item) => !item[0]);
+  const target = validations.find((item) => item[0]);
 
   return target && target[1];
 };
@@ -51,8 +52,8 @@ export function Ethereum2Darwinia({
   onFeeChange,
 }: CrossChainComponentProps<
   EthereumDarwiniaBridgeConfig,
-  CrossToken<PolkadotChainConfig>,
-  CrossToken<EthereumChainConfig>
+  CrossToken<EthereumChainConfig>,
+  CrossToken<PolkadotChainConfig>
 >) {
   const { t } = useTranslation();
   const [allowance, setAllowance] = useState<BN | null>(null);
@@ -95,18 +96,25 @@ export function Ethereum2Darwinia({
         setRingBalance(result);
       });
 
-      getIssuingAllowance(account, ring, issuingAddress).then((num) => setAllowance(num));
+      getAllowance(account, ring, issuingAddress, direction.from.meta.provider).then((num) => setAllowance(num));
     },
-    [account, bridge.config]
+    [account, bridge.config, direction.from.meta.provider]
   );
 
   useEffect(() => {
+    // eslint-disable-next-line complexity
     const fn = () => (value: IssuingPayload) => {
-      if (!fee || !balance || !ringBalance) {
+      if (!fee || !balance || !ringBalance || !allowance) {
         return EMPTY.subscribe();
       }
 
-      const msg = validateBeforeTx(balance, new BN(toWei({ value: direction.from.amount })), fee, ringBalance);
+      const msg = validateBeforeTx(
+        balance,
+        new BN(toWei({ value: direction.from.amount })),
+        fee,
+        ringBalance,
+        allowance
+      );
 
       if (msg) {
         message.error(t(msg));
@@ -123,7 +131,19 @@ export function Ethereum2Darwinia({
     };
 
     setSubmit(fn as unknown as SubmitFn);
-  }, [afterCrossChain, direction, fee, balance, observer, getBalance, ringBalance, setSubmit, t, feeWithSymbol]);
+  }, [
+    afterCrossChain,
+    allowance,
+    balance,
+    direction.from.amount,
+    fee,
+    feeWithSymbol,
+    getBalance,
+    observer,
+    ringBalance,
+    setSubmit,
+    t,
+  ]);
 
   useEffect(() => {
     const sub$$ = from(getIssuingFee(bridge as Bridge<EthereumDarwiniaBridgeConfig>)).subscribe((result) => {
@@ -137,7 +157,7 @@ export function Ethereum2Darwinia({
     });
 
     return () => sub$$.unsubscribe();
-  }, [bridge, direction.from.symbol, fee, onFeeChange]);
+  }, [bridge, direction.from.symbol, onFeeChange]);
 
   useEffect(() => {
     getBalance({ direction });
@@ -172,7 +192,12 @@ export function Ethereum2Darwinia({
           {
             name: t('Allowance'),
             content: (
-              <Allowance direction={direction} bridge={bridge} allowance={allowance} afterAllow={setAllowance} />
+              <Allowance
+                direction={direction}
+                spender={bridge.config.contracts.ring}
+                tokenAddress={bridge.config.contracts.issuing}
+                onChange={setAllowance}
+              />
             ),
           },
         ]}

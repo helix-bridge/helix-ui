@@ -35,9 +35,10 @@ export interface CrossChainComponentProps<
   form: FormInstance<CrossChainPayload>;
   direction: CrossChainDirection<F, T>;
   bridge: Bridge<B>;
+  // make sure page setState function direction to avoid infinite update
   setSubmit: React.Dispatch<React.SetStateAction<SubmitFn>>;
-  setBridgeState: (state: BridgeState) => void;
-  onFeeChange: (value: number | null) => void;
+  setBridgeState: React.Dispatch<React.SetStateAction<BridgeState>>;
+  onFeeChange: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
 export interface CrossChainDirection<F = CrossToken, T = CrossToken> {

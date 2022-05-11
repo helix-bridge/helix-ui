@@ -1,8 +1,8 @@
-import { AccountInfo, AccountData } from '@darwinia/types';
+import { AccountData, AccountInfo } from '@darwinia/types';
 import { ApiPromise } from '@polkadot/api';
 import { useCallback } from 'react';
-import { AvailableBalance, ChainConfig, DarwiniaAsset, PolkadotChainSimpleToken, Token } from '../model';
-import { waitUntilConnected } from '../utils';
+import { AvailableBalance, ChainConfig, DarwiniaAsset, Token } from '../model';
+import { getPolkadotChainProperties, waitUntilConnected } from '../utils';
 
 type SimpleToken = Pick<Token, 'decimals' | 'symbol'>;
 
@@ -52,17 +52,16 @@ async function getDarwiniaBalances(api: ApiPromise, account = ''): Promise<[stri
   }
 }
 
-export function useDarwiniaAvailableBalances(
-  api: ApiPromise | null,
-  network: ChainConfig,
-  chain: PolkadotChainSimpleToken
-) {
+export function useDarwiniaAvailableBalances(api: ApiPromise | null, network: ChainConfig) {
   const getBalances = useCallback<(acc: string) => Promise<AvailableBalance[]>>(
     async (account: string | undefined | null) => {
       if (!api || !account) {
         return [];
       }
 
+      await waitUntilConnected(api);
+
+      const chain = await getPolkadotChainProperties(api);
       const [ring, kton] = await getDarwiniaBalances(api, account);
 
       return [
@@ -79,7 +78,7 @@ export function useDarwiniaAvailableBalances(
         },
       ];
     },
-    [api, chain.tokens, network?.name]
+    [api, network?.name]
   );
 
   return getBalances;

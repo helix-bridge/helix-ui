@@ -83,6 +83,14 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
     form.setFieldsValue({ [FORM_CONTROL.sender]: account });
   }, [account, form]);
 
+  useEffect(() => {
+    const { from, to } = direction;
+
+    form.setFieldsValue({
+      [FORM_CONTROL.direction]: { from, to: { ...to, amount: calcToAmount(from.amount, fee) } },
+    });
+  }, [direction, fee, form]);
+
   return (
     <Form
       name={FORM_CONTROL.direction}
@@ -118,14 +126,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
               direction={direction}
               setSubmit={setSubmit}
               setBridgeState={setBridgeState}
-              onFeeChange={(value) => {
-                const { from, to } = direction;
-
-                form.setFieldsValue({
-                  [FORM_CONTROL.direction]: { from, to: { ...to, amount: calcToAmount(from.amount, value) } },
-                });
-                setFee(value);
-              }}
+              onFeeChange={setFee}
             />
           )}
 

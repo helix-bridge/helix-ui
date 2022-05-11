@@ -17,7 +17,7 @@ interface SelectTokenModalProps {
 }
 
 const allTokens: TokenInfoWithMeta[] = lodashChain(chainConfigs)
-  .map((item) => item.tokens.map((token) => ({ ...token, address: '', meta: item }))) // meta: without dvm info; do not treat as DVMConfig
+  .map((item) => item.tokens.map((token) => ({ ...token, meta: item })))
   .flatten()
   .value();
 

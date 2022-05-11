@@ -11,7 +11,7 @@ import { Contract } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 import { Icon } from '../../components/widget/Icon';
 import { abi } from '../../config/abi';
-import { CrossChainPayload, MappingToken, RequiredPartial, Tx, TxFn } from '../../model';
+import { CrossChainPayload, RequiredPartial, Tx, TxFn } from '../../model';
 import { entrance, waitUntilConnected } from '../connection';
 import { empty } from '../helper';
 
@@ -192,16 +192,25 @@ export const approveToken: TxFn<
   );
 };
 
-export async function getAllowance(sender: string, spender: string, token: MappingToken | null): Promise<BN> {
-  if (!token) {
-    return Web3.utils.toBN(0);
+export async function getAllowance(
+  account: string,
+  spender: string,
+  tokenAddress: string,
+  provider: string
+): Promise<BN | null> {
+  const web3 = entrance.web3.getInstance(provider);
+  const erc20Contract = new web3.eth.Contract(abi.tokenABI, tokenAddress);
+
+  try {
+    const allowanceAmount = await erc20Contract.methods.allowance(account, spender).call();
+
+    return Web3.utils.toBN(allowanceAmount);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.log('⚠ ~ file: allowance.ts getIssuingAllowance ~ error', error.message);
+
+    return null;
   }
-
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-  const erc20Contract = new web3.eth.Contract(abi.tokenABI, token.address);
-  const allowanceAmount = await erc20Contract.methods.allowance(sender, spender).call();
-
-  return Web3.utils.toBN(allowanceAmount || 0);
 }
 
 /* -------------------------------------------Claim Token---------------------------------------------- */

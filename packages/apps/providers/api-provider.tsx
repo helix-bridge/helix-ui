@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 import { negate } from 'lodash';
-import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useReducer, useState } from 'react';
 import { EMPTY, iif, of, Subscription } from 'rxjs';
 import {
   Action,
@@ -10,18 +10,10 @@ import {
   EthereumChainConfig,
   EthereumConnection,
   NoNullFields,
-  PolkadotChainSimpleToken,
   PolkadotConnection,
   TronConnection,
 } from 'shared/model';
-import {
-  connect,
-  getDirectionFromSettings,
-  getInitialSetting,
-  getPolkadotChainProperties,
-  isEthereumNetwork,
-  waitUntilConnected,
-} from 'shared/utils';
+import { connect, getDirectionFromSettings, getInitialSetting, isEthereumNetwork } from 'shared/utils';
 import { updateStorage } from 'shared/utils/helper/storage';
 import Web3 from 'web3';
 
@@ -143,7 +135,6 @@ export type ApiCtx = StoreState & {
   setNetwork: (network: ChainConfig) => void;
   setEnableTestNetworks: (enable: boolean) => void;
   setApi: (api: ApiPromise) => void;
-  chain: PolkadotChainSimpleToken;
 };
 
 export const ApiContext = createContext<ApiCtx | null>(null);
@@ -169,7 +160,6 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   }, []);
 
   const [api, setApi] = useState<ApiPromise | null>(null);
-  const [chain, setChain] = useState<PolkadotChainSimpleToken>({ ss58Format: '', tokens: [] });
 
   const observer = useMemo(
     () => ({
@@ -255,21 +245,6 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
     setAssistantConnection(initialConnection);
   }, [api, setAssistantConnection, setMainConnection]);
 
-  useEffect(() => {
-    if (!api) {
-      setChain({ ss58Format: '', tokens: [] });
-      return;
-    }
-
-    (async () => {
-      await waitUntilConnected(api);
-
-      const chainInfo = await getPolkadotChainProperties(api);
-
-      setChain(chainInfo);
-    })();
-  }, [api]);
-
   return (
     <ApiContext.Provider
       value={{
@@ -281,7 +256,6 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
         setEnableTestNetworks,
         setApi,
         api,
-        chain,
       }}
     >
       {children}

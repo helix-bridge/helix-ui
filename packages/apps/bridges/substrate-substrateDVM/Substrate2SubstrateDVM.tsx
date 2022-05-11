@@ -41,12 +41,12 @@ import { issuing } from './utils/tx';
 
 const validateBeforeTx = (balance: BN, amount: BN, fee: BN, limit: BN): string | undefined => {
   const validations: [boolean, string][] = [
-    [balance.gte(amount), 'Insufficient balance'],
-    [balance.gte(fee), 'Insufficient fee balance'],
-    [limit.gte(amount), 'Insufficient daily limit'],
+    [balance.lt(amount), 'Insufficient balance'],
+    [balance.lt(fee), 'Insufficient fee balance'],
+    [limit.lt(amount), 'Insufficient daily limit'],
   ];
 
-  const target = validations.find((item) => !item[0]);
+  const target = validations.find((item) => item[0]);
 
   return target && target[1];
 };
@@ -64,7 +64,7 @@ export function Substrate2SubstrateDVM({
   CrossToken<DVMChainConfig>
 >) {
   const { t } = useTranslation();
-  const { api, network, chain, assistantConnection, connectAssistantNetwork } = useApi();
+  const { api, network, assistantConnection, connectAssistantNetwork } = useApi();
   const [availableBalances, setAvailableBalances] = useState<AvailableBalance[]>([]);
 
   const availableBalance = useMemo(() => {
@@ -84,8 +84,8 @@ export function Substrate2SubstrateDVM({
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { observer } = useTx();
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
-  const getBalances = useDarwiniaAvailableBalances(api, network, chain);
-  const bridgeState = useBridgeStatus({ from: direction.from.meta, to: direction.to.meta });
+  const getBalances = useDarwiniaAvailableBalances(api, network);
+  const bridgeState = useBridgeStatus(direction);
   const { account } = useAccount();
 
   const feeWithSymbol = useMemo(
@@ -94,7 +94,7 @@ export function Substrate2SubstrateDVM({
         amount: fromWei({ value: fee, decimals: direction.from.decimals }),
         symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
       },
-    [direction, fee]
+    [direction.from.decimals, direction.from.meta.tokens, fee]
   );
 
   const isMounted = useIsMounted();

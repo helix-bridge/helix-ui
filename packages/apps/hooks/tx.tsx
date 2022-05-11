@@ -3,16 +3,15 @@ import { useRouter } from 'next/router';
 import { FunctionComponent, useCallback, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SHORT_DURATION } from 'shared/config/constant';
-import { CrossChainPayload, Tx, TxDoneComponentProps, TxHashType } from 'shared/model';
+import { CrossChainPayload, PolkadotChainConfig, Tx, TxDoneComponentProps, TxHashType } from 'shared/model';
 import { applyModal, convertToSS58, genHistoryRouteParams, isEthereumNetwork } from 'shared/utils';
-import { TxContext, TxCtx, useApi } from '../providers';
+import { TxContext, TxCtx } from '../providers';
 
 export const useTx = () => useContext(TxContext) as Exclude<TxCtx, null>;
 
 export function useAfterTx<T extends CrossChainPayload>() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { chain } = useApi();
 
   const afterCrossChain = useCallback(
     (
@@ -44,7 +43,7 @@ export function useAfterTx<T extends CrossChainPayload>() {
               const sender =
                 isEthereumNetwork(payload.direction.from.meta) || from.meta.mode === 'dvm'
                   ? payload.sender
-                  : convertToSS58(payload.sender, +chain.ss58Format);
+                  : convertToSS58(payload.sender, (payload.direction.from.meta as PolkadotChainConfig).ss58Prefix);
 
               router.push(
                 '/history' +
@@ -65,7 +64,7 @@ export function useAfterTx<T extends CrossChainPayload>() {
           ...rest,
         });
       },
-    [chain.ss58Format, router, t]
+    [router, t]
   );
 
   const afterApprove = useCallback(
@@ -73,19 +72,20 @@ export function useAfterTx<T extends CrossChainPayload>() {
         Comp: FunctionComponent<TxDoneComponentProps>,
         {
           onDisappear,
+          payload,
           hashType = 'txHash',
         }: Exclude<ModalProps, 'onCancel'> & {
           onDisappear: (value: T, tx: Tx) => void;
           hashType?: TxHashType;
+          payload: T;
         }
       ) =>
-      (value: T) =>
       (tx: Tx) =>
       () => {
         message.success({
-          content: <Comp tx={tx} value={value} hashType={hashType} />,
+          content: <Comp tx={tx} value={payload} hashType={hashType} />,
           onClose: () => {
-            onDisappear(value, tx);
+            onDisappear(payload, tx);
           },
           duration: SHORT_DURATION,
           type: 'success',

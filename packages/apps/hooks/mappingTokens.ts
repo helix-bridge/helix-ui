@@ -1,11 +1,11 @@
 import { message } from 'antd';
-import { useCallback, useMemo, useReducer, useState } from 'react';
+import { useCallback, useReducer, useState } from 'react';
 import { map } from 'rxjs';
 import { RegisterStatus } from 'shared/config/constant';
 import { Action, Erc20RegisterStatus, MappingToken, NullableCrossChainDirection, RequiredPartial } from 'shared/model';
 import { getErc20TokenBalance, getKnownMappingTokens, isEthereumNetwork, StoredProof } from 'shared/utils';
 import useDeepCompareEffect from 'use-deep-compare-effect';
-import { useApi } from '../providers';
+import { useAccount } from '../providers';
 
 export type MemoedTokenInfo = RequiredPartial<MappingToken, 'name' | 'logo' | 'decimals' | 'address' | 'symbol'>;
 
@@ -60,11 +60,11 @@ export const useMappingTokens = (
   const [state, dispatch] = useReducer(reducer, initialState);
   const addKnownProof = useCallback((proofs: StoredProof) => dispatch({ payload: proofs, type: 'updateProof' }), []);
   const switchToConfirmed = useCallback((token: string) => dispatch({ payload: token, type: 'switchToConfirmed' }), []);
-  const { mainConnection: connection } = useApi();
-  const { address: currentAccount } = useMemo(() => (connection.accounts || [])[0] ?? '', [connection.accounts]);
+  const { account } = useAccount();
+
   const refreshTokenBalance = useCallback(
     async (tokenAddress: string) => {
-      const balance = await getErc20TokenBalance(tokenAddress, currentAccount, true);
+      const balance = await getErc20TokenBalance(tokenAddress, account, true);
       const tokens = [...state.tokens];
       const index = tokens.findIndex((item) => item.address === tokenAddress);
 
@@ -73,11 +73,11 @@ export const useMappingTokens = (
         dispatch({ payload: tokens, type: 'updateTokens' });
       }
     },
-    [currentAccount, state.tokens]
+    [account, state.tokens]
   );
 
   useDeepCompareEffect(() => {
-    if (!from || !to || !(isEthereumNetwork(from.meta) || from.meta.mode === 'dvm')) {
+    if (!from?.meta || !to?.meta || !(isEthereumNetwork(from.meta) || from.meta.mode === 'dvm')) {
       dispatch({ payload: [], type: 'updateTokens' });
       message.error(
         'The departure and arrival networks must exist and the departure network must be an Ethereum network or a DVM network'
@@ -87,7 +87,7 @@ export const useMappingTokens = (
 
     setLoading(true);
 
-    const subscription = getKnownMappingTokens(currentAccount, { from, to })
+    const subscription = getKnownMappingTokens(account, { from, to })
       .pipe(
         map(({ tokens, total }) => ({
           total,
@@ -116,7 +116,8 @@ export const useMappingTokens = (
         subscription.unsubscribe();
       }
     };
-  }, [currentAccount, from, status, to]);
+    // omit amount in from and to;
+  }, [account, from?.meta, status, to?.meta]);
 
   return {
     ...state,
