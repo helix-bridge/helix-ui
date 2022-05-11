@@ -5,15 +5,9 @@ import { last } from 'lodash';
 import { from, map, Observable, switchMap } from 'rxjs';
 import { abi } from 'shared/config/abi';
 import { Tx } from 'shared/model';
-import {
-  convertToDvm,
-  entrance,
-  fromWei,
-  genEthereumContractTxObs,
-  signAndSendExtrinsic,
-  toWei,
-  waitUntilConnected,
-} from 'shared/utils';
+import { entrance, waitUntilConnected } from 'shared/utils/connection';
+import { convertToDvm, fromWei, toWei } from 'shared/utils/helper';
+import { signAndSendExtrinsic, genEthereumContractTxObs } from 'shared/utils/tx';
 import Web3 from 'web3';
 import { IssuingPayload, RedeemPayload } from '../model';
 

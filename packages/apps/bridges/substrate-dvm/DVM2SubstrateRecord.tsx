@@ -1,6 +1,6 @@
 import { CloudDownloadOutlined } from '@ant-design/icons';
 import { RecordComponentProps, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
-import { convertToSS58 } from 'shared/utils';
+import { convertToSS58 } from 'shared/utils/helper';
 import { Tooltip } from 'antd';
 import { getUnixTime } from 'date-fns';
 import { useCallback, useMemo } from 'react';
@@ -19,7 +19,7 @@ export function DVM2SubstrateRecord({
   const { recipientId } = record;
   // recipientId: 0x64766d3a000000000000008809f9b3acef1da309f49b5ab97a4c0faa64e6ae49
   // eslint-disable-next-line no-magic-numbers
-  const isClaim = recipientId?.includes(departure?.dvm.smartKton.slice(2).toLowerCase() ?? '');
+  const isClaim = recipientId?.includes(departure?.name.slice(2).toLowerCase() ?? '');
 
   const symbol = useMemo(() => {
     if (!departure) {

@@ -11,7 +11,7 @@ import { toggleTheme } from 'shared/components/widget/ThemeSwitch';
 import { THEME } from 'shared/config/theme';
 import '../styles/index.scss';
 import 'shared/theme/antd/index.less';
-import { readStorage } from 'shared/utils';
+import { readStorage } from 'shared/utils/helper';
 import AppLayout from '../components/AppLayout';
 import { endpoint } from '../config';
 

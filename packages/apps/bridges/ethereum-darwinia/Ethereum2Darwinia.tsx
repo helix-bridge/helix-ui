@@ -12,24 +12,16 @@ import {
   PolkadotChainConfig,
   SubmitFn,
 } from 'shared/model';
-import {
-  applyModalObs,
-  createTxWorkflow,
-  fromWei,
-  getAllowance,
-  getErc20TokenBalance,
-  isKton,
-  isRing,
-  prettyNumber,
-  toWei,
-} from 'shared/utils';
+import { fromWei, isKton, isRing, prettyNumber, toWei } from 'shared/utils/helper';
+import { getErc20TokenBalance } from 'shared/utils/mappingToken';
+import { applyModalObs, createTxWorkflow, getAllowance } from 'shared/utils/tx';
+import { Allowance } from '../../components/bridge/Allowance';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useTx } from '../../hooks';
 import { useAccount } from '../../providers';
-import { Allowance } from '../../components/bridge/Allowance';
 import { EthereumDarwiniaBridgeConfig, IssuingPayload } from './model';
 import { getIssuingFee, issuing } from './utils';
 

@@ -13,7 +13,8 @@ import {
   PolkadotChainConfig,
   SubmitFn,
 } from 'shared/model';
-import { applyModalObs, createTxWorkflow, fromWei, isKton, prettyNumber, toWei } from 'shared/utils';
+import { toWei, fromWei, prettyNumber, isKton } from 'shared/utils/helper';
+import { createTxWorkflow, applyModalObs } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';

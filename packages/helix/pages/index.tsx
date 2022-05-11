@@ -15,10 +15,10 @@ import {
   ropstenConfig,
 } from 'shared/config/network';
 import { ChainConfig, DailyStatistic } from 'shared/model';
-import { fromWei, prettyNumber, rxGet } from 'shared/utils';
-import { Statistics } from '../components/dashboard/Statistics';
-import { Chain, ChainProps } from '../components/dashboard/Chain';
+import { fromWei, prettyNumber, rxGet } from 'shared/utils/helper';
 import { BarChart, Statistic } from '../components/dashboard/BarChart';
+import { Chain, ChainProps } from '../components/dashboard/Chain';
+import { Statistics } from '../components/dashboard/Statistics';
 import { TIMEPAST, useDailyStatistic } from '../hooks';
 
 interface StatisticTotal {

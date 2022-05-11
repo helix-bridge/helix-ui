@@ -1,7 +1,7 @@
 import BN from 'bn.js';
 import { abi } from 'shared/config/abi';
 import { Bridge } from 'shared/model';
-import { entrance, waitUntilConnected } from 'shared/utils';
+import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import Web3 from 'web3';
 import { EthereumDarwiniaBridgeConfig } from '../model';
 

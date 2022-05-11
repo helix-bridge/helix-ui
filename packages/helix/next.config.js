@@ -21,9 +21,9 @@ const lightVars = {
 };
 
 // just for dev purpose, use to compare vars in different theme.
-// fs.writeFileSync('./dark.json', JSON.stringify(darkVars));
-// fs.writeFileSync('./light.json', JSON.stringify(lightVars));
-// fs.writeFileSync('./theme.json', JSON.stringify(themeVariables));
+// fs.writeFileSync('./ant-theme-vars/dark.json', JSON.stringify(darkVars));
+// fs.writeFileSync('./ant-theme-vars/light.json', JSON.stringify(lightVars));
+// fs.writeFileSync('./ant-theme-vars/theme.json', JSON.stringify(themeVariables));
 
 const themeOptions = {
   antDir: path.join(__dirname, '../../node_modules/antd'),
@@ -36,7 +36,6 @@ const themeOptions = {
   outputFilePath: path.join(__dirname, './public/color.less'),
   generateOnce: false,
 };
-
 
 const themePlugin = new AntDesignThemePlugin(themeOptions);
 

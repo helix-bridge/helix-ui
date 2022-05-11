@@ -13,17 +13,10 @@ import {
   PolkadotChainConfig,
   SubmitFn,
 } from 'shared/model';
-import {
-  applyModalObs,
-  createTxWorkflow,
-  entrance,
-  fromWei,
-  getS2SMappingAddress,
-  isRing,
-  prettyNumber,
-  toWei,
-  waitUntilConnected,
-} from 'shared/utils';
+import { entrance, waitUntilConnected } from 'shared/utils/connection';
+import { fromWei, isRing, prettyNumber, toWei } from 'shared/utils/helper';
+import { getS2SMappingAddress } from 'shared/utils/mappingToken';
+import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { Allowance } from '../../components/bridge/Allowance';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';

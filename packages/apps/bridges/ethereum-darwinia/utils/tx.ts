@@ -4,22 +4,11 @@ import { upperFirst } from 'lodash';
 import { filter, from, map, Observable, switchMap, take, zip } from 'rxjs';
 import { abi } from 'shared/config/abi';
 import { CrossChainDirection, LockEventsStorage, PolkadotChainConfig, Tx, TxFn } from 'shared/model';
-import {
-  buf2hex,
-  ClaimNetworkPrefix,
-  connect,
-  encodeBlockHeader,
-  encodeMMRRootMessage,
-  entrance,
-  genEthereumContractTxObs,
-  getBridge,
-  getMMR,
-  getMPTProof,
-  isKton,
-  isRing,
-  signAndSendExtrinsic,
-  toWei,
-} from 'shared/utils';
+import { getBridge } from 'shared/utils/bridge';
+import { connect, entrance } from 'shared/utils/connection';
+import { encodeBlockHeader, isKton, isRing, toWei } from 'shared/utils/helper';
+import { ClaimNetworkPrefix, getMMR, encodeMMRRootMessage } from 'shared/utils/mmr';
+import { buf2hex, genEthereumContractTxObs, signAndSendExtrinsic, getMPTProof } from 'shared/utils/tx';
 import { Contract } from 'web3-eth-contract';
 import { EthereumDarwiniaBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 

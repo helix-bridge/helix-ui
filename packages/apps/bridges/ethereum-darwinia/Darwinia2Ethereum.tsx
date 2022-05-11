@@ -15,7 +15,8 @@ import {
   PolkadotChainConfig,
   SubmitFn,
 } from 'shared/model';
-import { applyModalObs, createTxWorkflow, fromWei, isRing, prettyNumber, toWei } from 'shared/utils';
+import { fromWei, isRing, prettyNumber, toWei } from 'shared/utils/helper';
+import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';

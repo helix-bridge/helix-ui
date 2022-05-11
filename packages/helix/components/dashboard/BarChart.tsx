@@ -2,7 +2,7 @@ import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts/highstock';
 import { useRef } from 'react';
 import { THEME } from 'shared/config/theme';
-import { readStorage } from 'shared/utils';
+import { readStorage } from 'shared/utils/helper';
 
 export type Statistic = [number, number];
 

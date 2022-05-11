@@ -4,16 +4,8 @@ import BN from 'bn.js';
 import { EMPTY, Observable } from 'rxjs';
 import { abi } from 'shared/config/abi';
 import { Tx } from 'shared/model';
-import {
-  convertToDvm,
-  convertToSS58,
-  dvmAddressToAccountId,
-  genEthereumContractTxObs,
-  genEthereumTransactionObs,
-  isRing,
-  signAndSendExtrinsic,
-  toWei,
-} from 'shared/utils';
+import { convertToDvm, convertToSS58, dvmAddressToAccountId, isRing, toWei } from 'shared/utils/helper';
+import { signAndSendExtrinsic, genEthereumTransactionObs, genEthereumContractTxObs } from 'shared/utils/tx';
 import { WITHDRAW_ADDRESS } from '../config';
 import { TransferPayload, WithdrawPayload } from '../model';
 

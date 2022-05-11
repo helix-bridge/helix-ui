@@ -1,6 +1,6 @@
 import { SHORT_DURATION } from 'shared/config/constant';
 import { ChainConfig } from 'shared/model';
-import { convertToDvm, pollWhile } from 'shared/utils';
+import { convertToDvm, pollWhile } from 'shared/utils/helper';
 import { isHex } from '@polkadot/util';
 import { message } from 'antd';
 import camelCaseKeys from 'camelcase-keys';

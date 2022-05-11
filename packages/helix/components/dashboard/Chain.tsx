@@ -3,12 +3,12 @@ import Image from 'next/image';
 import { useCallback, useMemo } from 'react';
 import { BestNumber } from 'shared/components/widget/BestNumber';
 import { ChainConfig, LogoType } from 'shared/model';
-import { getDisplayName } from 'shared/utils';
+import { getDisplayName } from 'shared/utils/network';
 
 export type ChainProps = ChainConfig & { logoType?: LogoType };
 
 export function Chain(props: ChainProps) {
-  const open = useCallback((url) => {
+  const open = useCallback((url: string) => {
     window.open(url, '_blank');
   }, []);
 

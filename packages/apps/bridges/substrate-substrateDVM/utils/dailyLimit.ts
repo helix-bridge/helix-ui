@@ -1,6 +1,8 @@
 import { abi } from 'shared/config/abi';
 import { CrossChainDirection, CrossToken, DVMChainConfig, MappingToken, PolkadotChainConfig } from 'shared/model';
-import { entrance, getS2SMappingAddress, isRing } from 'shared/utils';
+import { entrance } from 'shared/utils/connection';
+import { isRing } from 'shared/utils/helper';
+import { getS2SMappingAddress } from 'shared/utils/mappingToken';
 
 interface DailyLimit {
   limit: string;

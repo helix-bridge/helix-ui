@@ -16,17 +16,9 @@ import {
   PolkadotChainConfig,
   SubmitFn,
 } from 'shared/model';
-import {
-  applyModalObs,
-  createTxWorkflow,
-  fromWei,
-  getKnownMappingTokens,
-  isRing,
-  largeNumber,
-  pollWhile,
-  prettyNumber,
-  toWei,
-} from 'shared/utils';
+import { fromWei, isRing, largeNumber, pollWhile, prettyNumber, toWei } from 'shared/utils/helper';
+import { getKnownMappingTokens } from 'shared/utils/mappingToken';
+import { createTxWorkflow, applyModalObs } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';

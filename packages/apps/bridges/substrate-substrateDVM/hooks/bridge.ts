@@ -1,5 +1,5 @@
 import { BridgeState, CrossChainDirection, CrossToken, PolkadotChainConfig } from 'shared/model';
-import { entrance, waitUntilConnected } from 'shared/utils';
+import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { useEffect, useState } from 'react';
 import { from } from 'rxjs';
 

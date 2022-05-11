@@ -18,7 +18,9 @@ import {
   Token,
   Tx,
 } from 'shared/model';
-import { createTxWorkflow, entrance, fromWei, genEthereumTransactionObs, toWei } from 'shared/utils';
+import { entrance } from 'shared/utils/connection';
+import { toWei, fromWei } from 'shared/utils/helper';
+import { genEthereumTransactionObs, createTxWorkflow } from 'shared/utils/tx';
 import { useTx } from '../../hooks';
 import { useApi } from '../../providers';
 import { WITHDRAW_ADDRESS } from './config';

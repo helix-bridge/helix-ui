@@ -1,12 +1,13 @@
-import { abi } from 'shared/config/abi';
-import { ConnectionStatus, RecordComponentProps } from 'shared/model';
-import { connect, entrance, getBridge } from 'shared/utils';
 import { BN_ZERO } from '@polkadot/util';
 import { message } from 'antd';
 import BN from 'bn.js';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EMPTY, filter, from, iif, map, Observable, of, switchMap, take, tap, zip } from 'rxjs';
+import { abi } from 'shared/config/abi';
+import { ConnectionStatus, RecordComponentProps } from 'shared/model';
+import { getBridge } from 'shared/utils/bridge';
+import { connect, entrance } from 'shared/utils/connection';
 import { Progresses, ProgressProps, State } from '../../components/record/Progress';
 import { Record } from '../../components/record/Record';
 import { useTx } from '../../hooks';

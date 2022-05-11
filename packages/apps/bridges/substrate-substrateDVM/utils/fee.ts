@@ -2,7 +2,8 @@ import { Codec } from '@polkadot/types-codec/types';
 import BN from 'bn.js';
 import { last } from 'lodash';
 import { Bridge } from 'shared/model';
-import { entrance, getChainConfig, waitUntilConnected } from 'shared/utils';
+import { entrance, waitUntilConnected } from 'shared/utils/connection';
+import { getChainConfig } from 'shared/utils/network';
 
 export async function getIssuingFee(bridge: Bridge): Promise<BN> {
   const from = getChainConfig(bridge.issuing[0]);

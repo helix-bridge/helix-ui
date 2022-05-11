@@ -1,5 +1,5 @@
 import { EthereumChainConfig, Network, PolkadotChainConfig, RecordComponentProps } from 'shared/model';
-import { getLegalName, getChainConfig } from 'shared/utils';
+import { getLegalName, getChainConfig } from 'shared/utils/network';
 import { encodeAddress } from '@polkadot//util-crypto';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

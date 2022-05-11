@@ -1,9 +1,10 @@
 import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
 import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
 import { Substrate2SubstrateRecord } from 'shared/model';
-import { fromWei, getChainConfig, getDisplayName, prettyNumber, revertAccount } from 'shared/utils';
 import { Tooltip } from 'antd';
 import { formatDistance, fromUnixTime } from 'date-fns';
+import { fromWei, prettyNumber, revertAccount } from 'shared/utils/helper';
+import { getChainConfig, getDisplayName } from 'shared/utils/network';
 
 export function Record({ record }: { record: Substrate2SubstrateRecord }) {
   const { fromChainMode, fromChain, sender, recipient, toChain, toChainMode } = record;

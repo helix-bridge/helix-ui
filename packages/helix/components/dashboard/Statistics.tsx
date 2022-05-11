@@ -1,6 +1,6 @@
 import { Logo } from 'shared/components/widget/Logo';
 import { ChainConfig } from 'shared/model';
-import { getDisplayName } from 'shared/utils';
+import { getDisplayName } from 'shared/utils/network';
 import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 

@@ -1,5 +1,5 @@
 import { RecordComponentProps, PolkadotChainConfig, DVMChainConfig } from 'shared/model';
-import { dvmAddressToAccountId } from 'shared/utils';
+import { dvmAddressToAccountId } from 'shared/utils/helper';
 import { getUnixTime } from 'date-fns';
 import { upperCase } from 'lodash';
 import { useCallback, useMemo } from 'react';

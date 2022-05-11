@@ -24,16 +24,9 @@ import {
   UnlockedRecord,
   Vertices,
 } from 'shared/model';
-import {
-  fromWei,
-  getBridge,
-  getChainConfig,
-  getDisplayName,
-  gqlName,
-  pollWhile,
-  prettyNumber,
-  revertAccount,
-} from 'shared/utils';
+import { getBridge } from 'shared/utils/bridge';
+import { fromWei, gqlName, pollWhile, prettyNumber, revertAccount } from 'shared/utils/helper';
+import { getChainConfig, getDisplayName } from 'shared/utils/network';
 import { endpoint } from '../../config';
 
 type FinalActionRecord = Pick<UnlockedRecord, 'txHash' | 'id' | 'recipient' | 'amount'>;

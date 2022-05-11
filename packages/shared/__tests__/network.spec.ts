@@ -23,7 +23,6 @@ describe('network utils', () => {
     expect(fromCrabDVM![1]).toEqual([
       { name: 'crab', mode: 'native' },
       { name: 'darwinia', mode: 'native' },
-      { name: 'ethereum', mode: 'native' },
     ]);
 
     const fromDarwinia = data.find((item) => item[0].name === 'darwinia' && item[0].mode === 'native');
@@ -38,7 +37,6 @@ describe('network utils', () => {
 
     expect(fromEthereum).not.toEqual(undefined);
     expect(fromEthereum![1]).toEqual([
-      { name: 'crab', mode: 'dvm' },
       { name: 'darwinia', mode: 'native' },
     ]);
 
@@ -56,7 +54,6 @@ describe('network utils', () => {
     expect(fromPangolinDVM![1]).toEqual([
       { name: 'pangolin', mode: 'native' },
       { name: 'pangoro', mode: 'native' },
-      { name: 'ropsten', mode: 'native' },
     ]);
 
     const fromPangoro = data.find((item) => item[0].name === 'pangoro' && item[0].mode === 'native');
@@ -69,7 +66,6 @@ describe('network utils', () => {
     expect(fromRopsten).not.toEqual(undefined);
     expect(fromRopsten![1]).toEqual([
       { name: 'pangolin', mode: 'native' },
-      { name: 'pangolin', mode: 'dvm' },
     ]);
   });
 
