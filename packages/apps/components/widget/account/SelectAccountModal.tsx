@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
 import { IAccountMeta } from 'shared/model';
 import { useApi } from '../../../providers';
-import { BaseModal } from '../../BaseModal';
+import { BaseModal } from '../BaseModal';
 
 type Props = {
   visible: boolean;

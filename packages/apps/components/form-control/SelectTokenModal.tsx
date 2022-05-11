@@ -8,7 +8,7 @@ import { chain as lodashChain } from 'lodash';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useState } from 'react';
 import { tokenModeToChainMode, tokenSearchFactory } from '../../utils';
-import { BaseModal } from '../BaseModal';
+import { BaseModal } from '../widget/BaseModal';
 
 interface SelectTokenModalProps {
   visible: boolean;

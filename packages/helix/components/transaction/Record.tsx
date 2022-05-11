@@ -9,7 +9,6 @@ export function Record({ record }: { record: Substrate2SubstrateRecord }) {
   const { fromChainMode, fromChain, sender, recipient, toChain, toChainMode } = record;
   const fromConfig = getChainConfig(fromChain, fromChainMode);
   const toConfig = getChainConfig(toChain, toChainMode);
-  const now = new Date().toISOString().split('.')[0];
   const fromAccount = revertAccount(sender, { name: fromChain, mode: fromChainMode });
   const toAccount = revertAccount(recipient, { name: toChain, mode: toChainMode });
   const amount = fromWei({ value: record.amount, decimals: 9 }, prettyNumber);

@@ -16,12 +16,7 @@ export function tokenSearchFactory<T extends { address: string; name: string }>(
       } else {
         if (!isExit) {
           isExit = true;
-          message.error(
-            'You might input an invalid token address or a token which not exist',
-            // eslint-disable-next-line no-magic-numbers
-            3,
-            () => (isExit = false)
-          );
+          message.error('You might input an invalid token address or a token which not exist', () => (isExit = false));
         }
       }
     }

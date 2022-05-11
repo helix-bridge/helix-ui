@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Typography, Button } from 'antd';
-import { BaseModal } from './BaseModal';
+import { BaseModal } from './widget/BaseModal';
 
 const Component = ({ visible, onCancel, onOk }: { visible: boolean; onCancel: () => void; onOk: () => void }) => (
   <BaseModal

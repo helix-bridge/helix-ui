@@ -1,6 +1,6 @@
-export interface Unknown2UnavailableRecord {}
-export interface Unavailable2UnknownRecord {}
-export interface Unknown2UnavailableRecordRes {}
-export interface Unavailable2UnknownRecordRes {}
-export interface Unknown2UnavailableRecordsRes {}
-export interface Unavailable2UnknownRecordsRes {}
+export type Unknown2UnavailableRecord = unknown;
+export type Unavailable2UnknownRecord = unknown;
+export type Unknown2UnavailableRecordRes = unknown;
+export type Unavailable2UnknownRecordRes = unknown;
+export type Unknown2UnavailableRecordsRes = unknown;
+export type Unavailable2UnknownRecordsRes = unknown;

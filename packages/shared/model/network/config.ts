@@ -31,7 +31,7 @@ interface Partner {
 interface AvailableBridgeConfig {
   category: AvailableBridgeCategory;
   name: AvailableBridge;
-  partner: Partner; //
+  partner: Partner;
 }
 
 export interface TokenWithBridgesInfo extends Token {

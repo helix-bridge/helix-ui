@@ -1,9 +1,10 @@
-import { unknownConfig, unavailableConfig } from '../../../config/network';
-import { Bridge } from '../../../model';
-import { UnknownUnavailableBridgeConfig } from '../model/bridge';
+import { pangoroConfig, ropstenConfig } from 'shared/config/network';
+import { Bridge } from 'shared/model';
+import { Unknown2UnavailableBridgeConfig } from '../model';
 
-const unknownUnavailableConfig: UnknownUnavailableBridgeConfig = {
-  specVersion: 0,
-};
+const unknownUnavailableConfig: Unknown2UnavailableBridgeConfig = {};
 
-export const unknownUnavailable = new Bridge(unknownConfig, unavailableConfig, unknownUnavailableConfig, {});
+export const unknownUnavailable = new Bridge(pangoroConfig, ropstenConfig, unknownUnavailableConfig, {
+  stable: false,
+  category: 'helix',
+});

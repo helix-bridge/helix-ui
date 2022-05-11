@@ -1,4 +1,15 @@
 import { ClockCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Breadcrumb, Divider, Progress, Tooltip } from 'antd';
+import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
+import { formatDistance, fromUnixTime } from 'date-fns';
+import { gql, request } from 'graphql-request';
+import { GetServerSidePropsContext, NextPage } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { PropsWithChildren, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { from as fromRx, map, of, switchMap } from 'rxjs';
 import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
 import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
 import { Icon } from 'shared/components/widget/Icon';
@@ -16,25 +27,13 @@ import {
 import {
   fromWei,
   getBridge,
+  getChainConfig,
   getDisplayName,
   gqlName,
   pollWhile,
   prettyNumber,
   revertAccount,
-  unixTimeToLocal,
-  getChainConfig,
 } from 'shared/utils';
-import { Breadcrumb, Divider, Progress, Tooltip } from 'antd';
-import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
-import { formatDistance, fromUnixTime } from 'date-fns';
-import { gql, request } from 'graphql-request';
-import { GetServerSidePropsContext, NextPage } from 'next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import { PropsWithChildren, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { from as fromRx, map, of, switchMap } from 'rxjs';
 import { endpoint } from '../../config';
 
 type FinalActionRecord = Pick<UnlockedRecord, 'txHash' | 'id' | 'recipient' | 'amount'>;
@@ -161,10 +160,14 @@ const Page: NextPage<{
 
     return [
       departure.tokens.find(
-        (item) => item.bridges.includes(bridgeName) && item.type === (isIssuing ? 'native' : 'mapping')
+        (token) =>
+          token.type === (isIssuing ? 'native' : 'mapping') &&
+          token.bridges.map((item) => item.category).includes(bridgeName)
       )!,
       arrival.tokens.find(
-        (item) => item.bridges.includes(bridgeName) && item.type === (isIssuing ? 'mapping' : 'native')
+        (token) =>
+          token.type === (isIssuing ? 'mapping' : 'native') &&
+          token.bridges.map((item) => item.category).includes(bridgeName)
       )!,
     ];
   }, [arrival.tokens, departure.tokens, isIssuing]);
