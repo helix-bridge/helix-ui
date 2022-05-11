@@ -1,7 +1,6 @@
 import { FunctionComponent } from 'react';
 import { darwiniaCrabDVM, pangoroPangolinDVM } from 'shared/config/bridge';
 import { ethereumDarwinia, ropstenPangolin } from 'shared/config/bridges/ethereum-darwinia';
-import { ethereumCrabDVM, ropstenPangolinDVM } from 'shared/config/bridges/ethereum-dvm';
 import { crabCrabDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
 import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
 import {
@@ -10,12 +9,6 @@ import {
   Ethereum2Darwinia,
   Ethereum2DarwiniaRecord,
 } from './ethereum-darwinia';
-import {
-  DarwiniaDVM2Ethereum,
-  DarwiniaDVM2EthereumRecord,
-  Ethereum2DarwiniaDVM,
-  Ethereum2DarwiniaDVMRecord,
-} from './ethereum-darwiniaDVM';
 import { DVM2Substrate, DVM2SubstrateRecord, Substrate2DVM, Substrate2DVMRecord } from './substrate-dvm';
 import {
   Substrate2SubstrateDVM,
@@ -92,24 +85,3 @@ crabCrabDVM.setIssuingComponents(Substrate2DVM as FunctionComponent, Substrate2D
 crabCrabDVM.setRedeemComponents(DVM2Substrate as FunctionComponent, DVM2SubstrateRecord as FunctionComponent);
 pangolinPangolinDVM.setIssuingComponents(Substrate2DVM as FunctionComponent, Substrate2DVMRecord as FunctionComponent);
 pangolinPangolinDVM.setRedeemComponents(DVM2Substrate as FunctionComponent, DVM2SubstrateRecord as FunctionComponent);
-
-/**
- * ethereum <-> crab dvm
- * ropsten <-> pangolin dvm
- */
-ethereumCrabDVM.setIssuingComponents(
-  Ethereum2DarwiniaDVM as FunctionComponent,
-  Ethereum2DarwiniaDVMRecord as FunctionComponent
-);
-ethereumCrabDVM.setRedeemComponents(
-  DarwiniaDVM2Ethereum as FunctionComponent,
-  DarwiniaDVM2EthereumRecord as FunctionComponent
-);
-ropstenPangolinDVM.setIssuingComponents(
-  Ethereum2DarwiniaDVM as FunctionComponent,
-  Ethereum2DarwiniaDVMRecord as FunctionComponent
-);
-ropstenPangolinDVM.setRedeemComponents(
-  DarwiniaDVM2Ethereum as FunctionComponent,
-  DarwiniaDVM2EthereumRecord as FunctionComponent
-);
