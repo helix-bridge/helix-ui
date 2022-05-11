@@ -74,7 +74,19 @@ class Web3Entrance extends Entrance<Web3> {
       return new Web3(window.ethereum);
     }
 
-    return new Web3(url);
+    const provider = new Web3.providers.WebsocketProvider(url, {
+      clientConfig: {
+        keepalive: true,
+        keepaliveInterval: 60000,
+      },
+      reconnect: {
+        auto: true,
+        delay: 2500,
+        onTimeout: true,
+      },
+    });
+
+    return new Web3(provider);
   }
 
   afterInit() {

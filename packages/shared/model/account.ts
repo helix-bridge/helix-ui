@@ -23,11 +23,9 @@ export interface PolkadotChainSimpleToken {
   ss58Format: string;
 }
 
-export interface AvailableBalance<T = string> {
-  max: string | number | BN;
-  asset: T;
-  token: Pick<Token, 'symbol' | 'decimals'>;
-}
+export type AvailableBalance = {
+  balance: string | number | BN;
+} & Pick<Token, 'symbol' | 'decimals'>;
 
 export interface DailyLimit {
   limit: string | number;

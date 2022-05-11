@@ -57,7 +57,7 @@ export function SubscanLink({
 
     return (
       <Link
-        href={`https://${omitNetwork.includes(network.name) ? '' : network + '.'}${mapObj.scan}.io/${
+        href={`https://${omitNetwork.includes(network.name) ? '' : network.name + '.'}${mapObj.scan}.io/${
           mapObj.txPath
         }/${txHash}`}
         target="_blank"

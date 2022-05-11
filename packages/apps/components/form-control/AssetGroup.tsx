@@ -46,8 +46,8 @@ export function AssetGroup({
   }, [fee, ringBalance]);
 
   const insufficient = useMemo(
-    () => new BN(feeFormatted || 0).gt(new BN(ringBalance?.max || 0)),
-    [feeFormatted, ringBalance?.max]
+    () => new BN(feeFormatted || 0).gt(new BN(ringBalance?.balance || 0)),
+    [feeFormatted, ringBalance?.balance]
   );
 
   return (
@@ -121,14 +121,14 @@ export function AssetGroup({
                     insufficientBalanceRule({
                       t,
                       token: balance?.token,
-                      compared: balance?.max ?? '0',
+                      compared: balance?.balance ?? '0',
                     }),
                   ]}
                 >
                   <Balance
                     disabled={!target.checked || insufficient}
                     placeholder={t('Available Balance {{balance}}', {
-                      balance: balance?.max ? fromWei({ value: balance.max, decimals }) : t('Querying'),
+                      balance: balance?.balance ? fromWei({ value: balance.balance, decimals }) : t('Querying'),
                     })}
                     onChange={(amount) => {
                       triggerChange({ ...target, amount }, index, value);
@@ -147,7 +147,7 @@ export function AssetGroup({
                           ? new BN(toWei({ value: 1, decimals: balance?.token?.decimals ?? 9 }))
                           : BN_ZERO;
 
-                        const max = balance?.max ? new BN(balance.max).sub(keep) : BN_ZERO;
+                        const max = balance?.balance ? new BN(balance.balance).sub(keep) : BN_ZERO;
 
                         const val = {
                           ...target,

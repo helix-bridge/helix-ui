@@ -1,5 +1,6 @@
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { BN_ZERO } from '@polkadot/util';
-import { message } from 'antd';
+import { message, Tag, Tooltip } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,10 +27,10 @@ import { getRedeemFee, getRedeemTxFee, redeem } from './utils';
 
 const validateBeforeTx = (balances: AvailableBalance[], amount: BN, fee: BN, symbol: string): string | undefined => {
   const [ring, kton] = balances;
-  const ktonSufficient = new BN(kton.max).lt(amount);
-  const ringSufficient = new BN(ring.max).lt(amount);
+  const ktonSufficient = new BN(kton.balance).lt(amount);
+  const ringSufficient = new BN(ring.balance).lt(amount);
   const validations: [boolean, string][] = [
-    [new BN(ring.max).lt(fee), 'Insufficient fee'],
+    [new BN(ring.balance).lt(fee), 'Insufficient fee'],
     [isRing(symbol) ? ringSufficient : ktonSufficient, 'Insufficient balance'],
   ];
   const target = validations.find((item) => item[0]);
@@ -76,7 +77,7 @@ export function Darwinia2Ethereum({
   }, [direction, fee]);
 
   const balance = useMemo(() => {
-    return availableBalances.find((item) => item.token.symbol.toLowerCase() === direction.from.symbol.toLowerCase());
+    return availableBalances.find((item) => item.symbol.toLowerCase() === direction.from.symbol.toLowerCase());
   }, [availableBalances, direction.from.symbol]);
 
   useEffect(() => {
@@ -173,10 +174,26 @@ export function Darwinia2Ethereum({
         fee={feeWithSymbol}
         balance={
           balance && {
-            amount: fromWei({ value: balance.max, decimals: balance.token.decimals }, prettyNumber),
-            symbol: balance.token.symbol,
+            amount: fromWei(balance, prettyNumber),
+            symbol: balance.symbol,
           }
         }
+        extra={[
+          {
+            name: t('Attention'),
+            content: (
+              <Tooltip
+                title={t(
+                  'Please perform a claim asset operation in the history section after the transfer is submitted.'
+                )}
+              >
+                <Tag color="cyan" icon={<InfoCircleOutlined />} className="flex items-center mr-0">
+                  {t('Need claim')}
+                </Tag>
+              </Tooltip>
+            ),
+          },
+        ]}
       ></CrossChainInfo>
     </>
   );

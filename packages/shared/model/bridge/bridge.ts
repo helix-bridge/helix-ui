@@ -103,11 +103,11 @@ export class Bridge<C = BridgeConfig> {
   }
 
   private toVertices(config: ChainConfig): Vertices {
-    return { name: config.name, mode: has(config, 'dvm') ? 'dvm' : 'native' };
+    return { name: config.name, mode: config.mode };
   }
 
   private isVertices(data: Vertices | ChainConfig): boolean {
-    return Object.keys(data).length === 2 && has(data, 'network') && has(data, 'mode');
+    return Object.keys(data).length === 2 && has(data, 'name') && has(data, 'mode');
   }
 
   setIssuingComponents(crossComp: FunctionComponent, recordComp: FunctionComponent): void {

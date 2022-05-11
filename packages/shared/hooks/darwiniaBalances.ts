@@ -66,15 +66,12 @@ export function useDarwiniaAvailableBalances(api: ApiPromise | null, network: Ch
 
       return [
         {
-          max: ring,
-          asset: DarwiniaAsset.ring,
-          checked: true,
-          token: getToken(chain.tokens, network?.name === 'crab' ? DarwiniaAsset.crab : DarwiniaAsset.ring),
+          balance: ring,
+          ...getToken(chain.tokens, network?.name === 'crab' ? DarwiniaAsset.crab : DarwiniaAsset.ring),
         },
         {
-          max: kton,
-          asset: DarwiniaAsset.kton,
-          token: getToken(chain.tokens, DarwiniaAsset.kton),
+          balance: kton,
+          ...getToken(chain.tokens, DarwiniaAsset.kton),
         },
       ];
     },

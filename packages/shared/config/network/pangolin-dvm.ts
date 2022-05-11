@@ -1,14 +1,6 @@
 import { DVMChainConfig } from '../../model';
 
 export const pangolinDVMConfig: DVMChainConfig = {
-  dvm: {
-    kton: '0xDCd3bC4138afE6F324eaA12C356A20cD576edF08',
-    ring: '0xcfDEb76be514c8B8DC8B509E63f95E34ebafD81e',
-    smartKton: '0x8809f9b3ACEF1dA309f49b5Ab97A4C0faA64E6Ae', // ethereum contract address
-    smartRing: '0xc52287b259b2431ba0f61BC7EBD0eD793B0b7044',
-    smartWithdrawKton: '0x0000000000000000000000000000000000000015',
-    smartWithdrawRing: '0x0000000000000000000000000000000000000015',
-  },
   ethereumChain: {
     blockExplorerUrls: ['https://pangolin.subscan.io/'],
     chainId: '43',

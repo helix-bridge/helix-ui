@@ -58,9 +58,7 @@ export function useAfterTx<T extends CrossChainPayload>() {
               );
             },
           },
-          onCancel: () => {
-            onDisappear(payload, tx);
-          },
+          onCancel: () => onDisappear(payload, tx),
           ...rest,
         });
       },
@@ -84,9 +82,7 @@ export function useAfterTx<T extends CrossChainPayload>() {
       () => {
         message.success({
           content: <Comp tx={tx} value={payload} hashType={hashType} />,
-          onClose: () => {
-            onDisappear(payload, tx);
-          },
+          onClose: () => onDisappear(payload, tx),
           duration: SHORT_DURATION,
           type: 'success',
         });

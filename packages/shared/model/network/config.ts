@@ -39,16 +39,6 @@ export interface TokenWithBridgesInfo extends Token {
   bridges: AvailableBridgeConfig[];
 }
 
-interface DVMConfig {
-  ring: string;
-  kton: string;
-  smartKton: string;
-  smartRing: string;
-  smartWithdrawRing: string;
-  smartWithdrawKton: string;
-  [key: string]: string;
-}
-
 interface Social {
   github: string;
   portal: string;
@@ -77,6 +67,4 @@ export interface PolkadotChainConfig extends ChainConfig {
   specVersion: number;
 }
 
-export interface DVMChainConfig extends Omit<EthereumChainConfig, 'name'>, PolkadotChainConfig {
-  dvm: DVMConfig;
-}
+export interface DVMChainConfig extends Omit<EthereumChainConfig, 'name'>, PolkadotChainConfig {}

@@ -17,10 +17,18 @@ interface CrossChainInfoProps {
   bridge: Bridge;
   balance: AmountInfo;
   fee: AmountInfo;
+  hideFee?: boolean;
   extra?: { name: string; content: ReactNode }[];
 }
 
-export function CrossChainInfo({ bridge, fee, balance, extra, children }: PropsWithChildren<CrossChainInfoProps>) {
+export function CrossChainInfo({
+  bridge,
+  fee,
+  balance,
+  extra,
+  children,
+  hideFee,
+}: PropsWithChildren<CrossChainInfoProps>) {
   const { t } = useTranslation();
 
   return (
@@ -31,7 +39,7 @@ export function CrossChainInfo({ bridge, fee, balance, extra, children }: PropsW
           <Typography.Text className="capitalize">{bridge?.category}</Typography.Text>
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className={`flex justify-between items-center ${hideFee ? 'hidden' : ''}`}>
           <Typography.Text>Transaction Fee</Typography.Text>
           {fee ? (
             <Typography.Text>
@@ -42,7 +50,7 @@ export function CrossChainInfo({ bridge, fee, balance, extra, children }: PropsW
           )}
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className={`flex justify-between items-center`}>
           <Typography.Text>{t('Available balance')}</Typography.Text>
 
           {balance ? (

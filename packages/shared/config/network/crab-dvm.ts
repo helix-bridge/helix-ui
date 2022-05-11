@@ -1,14 +1,6 @@
 import { DVMChainConfig } from '../../model';
 
 export const crabDVMConfig: DVMChainConfig = {
-  dvm: {
-    kton: '0xbfE9E136270cE46A2A6a8E8D54718BdAEBEbaA3D',
-    ring: '0x588abe3F7EE935137102C5e2B8042788935f4CB0',
-    smartKton: '0x159933C635570D5042723359fbD1619dFe83D3f3',
-    smartRing: '0x588abe3F7EE935137102C5e2B8042788935f4CB0',
-    smartWithdrawKton: '0x0000000000000000000000000000000000000015',
-    smartWithdrawRing: '0x0000000000000000000000000000000000000015',
-  },
   ethereumChain: {
     blockExplorerUrls: ['https://crab.subscan.io/'],
     chainId: '44',

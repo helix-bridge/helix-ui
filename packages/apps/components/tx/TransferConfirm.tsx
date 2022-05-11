@@ -13,7 +13,7 @@ type Fee = Pick<CrossToken, 'symbol' | 'amount'>;
 export function TransferConfirm<T extends Bridge = Bridge>({
   value,
   fee,
-}: PropsWithChildren<TxConfirmComponentProps<T> & { fee: Fee }>) {
+}: PropsWithChildren<TxConfirmComponentProps<T> & { fee: Fee | null }>) {
   const { from, to } = value.direction;
   const { t } = useTranslation('common', { i18n: i18n?.use(initReactI18next) });
 
@@ -82,12 +82,14 @@ export function TransferConfirm<T extends Bridge = Bridge>({
               <EllipsisMiddle className="w-2/3 text-right">{value.recipient}</EllipsisMiddle>
             </div>
 
-            <div className="flex items-center justify-between overflow-hidden">
-              <Typography.Text className="opacity-60">{t('Fee')}</Typography.Text>
-              <Typography.Text>
-                {fee.amount} {from.symbol}
-              </Typography.Text>
-            </div>
+            {fee && (
+              <div className="flex items-center justify-between overflow-hidden">
+                <Typography.Text className="opacity-60">{t('Fee')}</Typography.Text>
+                <Typography.Text>
+                  {fee.amount} {from.symbol}
+                </Typography.Text>
+              </div>
+            )}
           </div>
         </div>
 

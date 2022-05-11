@@ -1,291 +1,140 @@
-import { abi } from 'shared/config/abi';
-import { FORM_CONTROL } from 'shared/config/constant';
-import {
-  AvailableBalance,
-  CrossChainComponentProps,
-  CrossChainPayload,
-  DVMChainConfig,
-  PolkadotChainConfig,
-  PolkadotConnection,
-} from 'shared/model';
-import {
-  applyModalObs,
-  createTxWorkflow,
-  dvmAddressToAccountId,
-  entrance,
-  fromWei,
-  getPolkadotChainProperties,
-  isKton,
-  prettyNumber,
-  toWei,
-  waitUntilConnected,
-} from 'shared/utils';
-import { ApiPromise } from '@polkadot/api';
-import { BN_ZERO } from '@polkadot/util';
-import { Form, Select } from 'antd';
+import { message } from 'antd';
 import BN from 'bn.js';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { combineLatest, from } from 'rxjs';
-import Web3 from 'web3';
-import { Balance } from '../../components/form-control/Balance';
-import { EthereumAccountItem } from '../../components/form-control/EthereumAccountItem';
-import { FormItemExtra } from '../../components/form-control/FormItemExtra';
+import { EMPTY, from, iif } from 'rxjs';
+import { abi } from 'shared/config/abi';
+import { useIsMountedOperator } from 'shared/hooks';
+import { CrossChainComponentProps, CrossToken, DVMChainConfig, PolkadotChainConfig, SubmitFn } from 'shared/model';
+import { applyModalObs, createTxWorkflow, entrance, fromWei, isRing, prettyNumber, toWei } from 'shared/utils';
+import { WebsocketProvider } from 'web3-core';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
+import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useTx } from '../../hooks';
-import { useApi } from '../../providers';
-import { KtonDraw } from './KtonDraw';
-import { SmartTxPayload, Substrate2DVMPayload } from './model/cross-chain';
+import { useAccount } from '../../providers';
+import { SubstrateDVMBridgeConfig, WithdrawPayload } from './model';
 import { redeem } from './utils';
 
-async function getTokenBalanceEth(ktonAddress: string, account = ''): Promise<[string, string]> {
-  let ring = '0';
-  let kton = '0';
+const validateBeforeTx = (balance: BN, amount: BN): string | undefined =>
+  balance.lt(amount) ? 'Insufficient balance' : void 0;
 
-  if (!Web3.utils.isAddress(account)) {
-    return [ring, kton];
+async function getRingBalance(account: string, provider: string) {
+  const web3 = entrance.web3.getInstance(provider);
+  const currentProvider = web3.currentProvider as WebsocketProvider;
+
+  if (currentProvider.connected) {
+    return await web3.eth.getBalance(account);
+  } else {
+    const promise = new Promise((resolve) => {
+      currentProvider.once('connected', () => {
+        web3.eth.getBalance(account).then((res) => resolve(res));
+      });
+    });
+
+    return promise;
   }
+}
 
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
+async function getKtonBalance(account: string, provider: string, ktonAddress: string) {
+  const web3 = entrance.web3.getInstance(provider);
+  const ktonContract = new web3.eth.Contract(abi.ktonABI, ktonAddress, { gas: 55000 });
 
-  try {
-    ring = await web3.eth.getBalance(account);
-  } catch (error) {
-    console.error(
-      '%c [ get ring balance in ethereum error ]',
-      'font-size:13px; background:pink; color:#bf2c9f;',
-      (error as Record<string, string>).message
-    );
-  }
-
-  try {
-    const ktonContract = new web3.eth.Contract(abi.ktonABI, ktonAddress, { gas: 55000 });
-
-    kton = await ktonContract.methods.balanceOf(account).call();
-  } catch (error) {
-    console.error(
-      '%c [ get kton balance in ethereum error ]',
-      'font-size:13px; background:pink; color:#bf2c9f;',
-      (error as Record<string, string>).message
-    );
-  }
-
-  return [ring, kton];
+  return await ktonContract.methods.balanceOf(account).call();
 }
 
 export function DVM2Substrate({
   form,
   direction,
+  bridge,
+  onFeeChange,
   setSubmit,
-}: CrossChainComponentProps<Substrate2DVMPayload, DVMChainConfig, PolkadotChainConfig>) {
+}: CrossChainComponentProps<SubstrateDVMBridgeConfig, CrossToken<DVMChainConfig>, CrossToken<PolkadotChainConfig>>) {
   const { t } = useTranslation();
-
-  const {
-    network,
-    mainConnection: { accounts },
-    assistantConnection,
-  } = useApi();
-
   const { observer } = useTx();
-  const { afterCrossChain } = useAfterTx<CrossChainPayload<SmartTxPayload<DVMChainConfig>>>();
-  const [availableBalances, setAvailableBalances] = useState<AvailableBalance[]>([]);
-  const [pendingClaimAmount, setPendingClaimAmount] = useState<BN>(BN_ZERO);
-  const [selectedToken, setSelectedToken] = useState<string>(form.getFieldValue(FORM_CONTROL.asset));
-  const kton = useMemo(() => availableBalances.find((item) => isKton(item.asset)), [availableBalances]);
+  const { afterCrossChain } = useAfterTx<WithdrawPayload>();
+  const [balance, setBalance] = useState<BN | null>(null);
+  const { account } = useAccount();
+  const { takeWhileIsMounted } = useIsMountedOperator();
 
-  const apiPromise = useMemo<ApiPromise | null>(
-    () => (assistantConnection as PolkadotConnection).api,
-    [assistantConnection]
-  );
+  const getBalance = useCallback(
+    () =>
+      iif(
+        () => isRing(direction.from.symbol),
+        from(getRingBalance(account, direction.from.meta.provider)),
+        from(getKtonBalance(account, direction.from.meta.provider, direction.from.address))
+      )
+        .pipe(takeWhileIsMounted())
+        .subscribe((result) => setBalance(new BN(result))),
 
-  const availableBalance = useMemo(() => {
-    if (selectedToken && availableBalances.length) {
-      return availableBalances.find((item) => item.token.symbol === selectedToken);
-    }
-
-    return null;
-  }, [availableBalances, selectedToken]);
-
-  const getBalances = useCallback(
-    (api: ApiPromise, account: string, ktonContract: string) => {
-      const balancesObs = from(getTokenBalanceEth(ktonContract, account));
-      const chainInfoObs = from(getPolkadotChainProperties(api));
-
-      return combineLatest([chainInfoObs, balancesObs]).subscribe(([{ tokens }, balances]) => {
-        const data: AvailableBalance[] = tokens.map((token, index) => ({
-          max: balances[index],
-          asset: token.symbol,
-          token,
-        }));
-
-        if (!form.getFieldValue(FORM_CONTROL.asset) && data.length) {
-          const symbol = data[0].token.symbol;
-
-          form.setFieldsValue({ [FORM_CONTROL.asset as string]: symbol });
-          setSelectedToken(symbol);
-        }
-
-        setAvailableBalances(data);
-      });
-    },
-    [form]
+    [account, direction.from.address, direction.from.meta.provider, direction.from.symbol, takeWhileIsMounted]
   );
 
   useEffect(() => {
-    if (!apiPromise || !accounts[0]) {
-      return;
-    }
-
-    const sub$$ = getBalances(apiPromise, accounts[0].address, direction.from.dvm.smartKton);
+    const sub$$ = getBalance();
 
     return () => sub$$.unsubscribe();
-  }, [accounts, apiPromise, direction.from.dvm.smartKton, getBalances]);
+  }, [getBalance]);
 
   useEffect(() => {
-    const fn = () => (data: SmartTxPayload<DVMChainConfig>) => {
-      const { sender, amount, direction: crossChain } = data;
-      const { from: departure } = crossChain;
+    const fn = () => (data: WithdrawPayload) => {
+      if (!balance) {
+        return EMPTY.subscribe();
+      }
 
-      const value = {
-        ...data,
-        amount: toWei({ value: amount }),
-      };
+      const msg = validateBeforeTx(balance, new BN(toWei(data.direction.from)));
 
-      const beforeTransfer = applyModalObs({
-        content: <TransferConfirm value={value} />,
-      });
+      if (msg) {
+        message.error(t(msg));
+        return EMPTY.subscribe();
+      }
 
-      const obs = redeem(value, crossChain);
-
-      const afterTransfer = afterCrossChain(TransferDone, {
-        hashType: 'txHash',
-        onDisappear: () => {
-          form.setFieldsValue({
-            [FORM_CONTROL.sender]: sender,
-          });
-          getBalances(apiPromise!, sender, (departure as DVMChainConfig).dvm.smartKton);
-        },
-        okButtonProps: {
-          size: 'large',
-          disabled: true,
-        },
-      })(value);
-
-      return createTxWorkflow(beforeTransfer, obs, afterTransfer).subscribe(observer);
+      return createTxWorkflow(
+        applyModalObs({
+          content: <TransferConfirm value={data} fee={null} />,
+        }),
+        redeem(data),
+        afterCrossChain(TransferDone, {
+          payload: data,
+          hashType: 'txHash',
+          onDisappear: getBalance,
+        })
+      ).subscribe(observer);
     };
 
-    setSubmit(fn);
-  }, [afterCrossChain, apiPromise, form, getBalances, observer, setSubmit]);
+    setSubmit(fn as unknown as SubmitFn);
+  }, [afterCrossChain, balance, getBalance, observer, setSubmit, t]);
 
   useEffect(() => {
-    (async () => {
-      const account = accounts[0]?.address;
-
-      if (!network || !account || !apiPromise) {
-        return;
-      }
-
-      await waitUntilConnected(apiPromise);
-
-      try {
-        const address = dvmAddressToAccountId(account).toHuman();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const ktonUsableBalance = await (apiPromise.rpc as any).balances.usableBalance(1, address);
-        const usableBalance: string = ktonUsableBalance.usableBalance.toString();
-        const count = Web3.utils.toBN(usableBalance);
-
-        setPendingClaimAmount(count);
-      } catch (error) {
-        console.warn((error as Record<string, string>).message);
-      }
-    })();
-  }, [network, direction.to.provider, accounts, apiPromise]);
+    if (onFeeChange) {
+      onFeeChange(0);
+    }
+  }, [onFeeChange]);
 
   return (
     <>
-      {apiPromise && pendingClaimAmount.gt(BN_ZERO) && (
-        <Form.Item>
-          <KtonDraw
-            direction={direction}
-            kton={kton?.token}
-            pendingClaimAmount={pendingClaimAmount}
-            onSuccess={() => setPendingClaimAmount(BN_ZERO)}
-          />
-        </Form.Item>
-      )}
-
-      <EthereumAccountItem
-        form={form}
-        extra={
-          availableBalances.length && (
-            <FormItemExtra>
-              {t('Available balance {{amount0}} {{symbol0}} {{amount1}} {{symbol1}}', {
-                amount0: fromWei({ value: availableBalances[0].max }, prettyNumber),
-                amount1: fromWei({ value: availableBalances[1].max }, prettyNumber),
-                symbol0: availableBalances[0].token.symbol,
-                symbol1: availableBalances[1].token.symbol,
-              })}
-            </FormItemExtra>
-          )
-        }
-      />
-
       <RecipientItem
         form={form}
         direction={direction}
-        accounts={assistantConnection.accounts}
+        bridge={bridge}
         extraTip={t(
           'Please make sure you have entered the correct {{type}} address. Entering wrong address will cause asset loss and cannot be recovered!',
           { type: 'Substrate' }
         )}
       />
 
-      <Form.Item label={t('Asset')} name={FORM_CONTROL.asset} rules={[{ required: true }]}>
-        <Select
-          onSelect={(symbol: string) => {
-            setSelectedToken(symbol);
-          }}
-          size="large"
-          placeholder={t('Please select token to be transfer')}
-        >
-          {availableBalances.map(({ token: { symbol } }) => (
-            <Select.Option value={symbol} key={symbol}>
-              <span className="uppercase">{symbol}</span>
-            </Select.Option>
-          ))}
-        </Select>
-      </Form.Item>
-
-      <Form.Item
-        label={t('Amount')}
-        name={FORM_CONTROL.amount}
-        rules={[
-          { required: true },
-          ({ getFieldValue }) => ({
-            validator(_, value = '0') {
-              const asset = getFieldValue(FORM_CONTROL.asset);
-              const target = availableBalances.find(({ token: { symbol } }) => symbol === asset);
-              const max = new BN(target?.max ?? 0);
-              const cur = new BN(toWei({ value }) ?? 0);
-
-              return cur.lt(max) ? Promise.resolve() : Promise.reject();
-            },
-            message: t(
-              'The value entered must be greater than 0 and less than or equal to the maximum available value'
-            ),
-          }),
-        ]}
-      >
-        <Balance
-          placeholder={t('Available Balance {{balance}}', {
-            balance: !availableBalance ? t('Querying') : fromWei({ value: availableBalance?.max }, prettyNumber),
-          })}
-          size="large"
-          className="flex-1"
-        />
-      </Form.Item>
+      <CrossChainInfo
+        bridge={bridge}
+        balance={
+          balance && {
+            amount: fromWei({ value: balance }, prettyNumber),
+            symbol: direction.from.symbol,
+          }
+        }
+        fee={null}
+        hideFee
+      ></CrossChainInfo>
     </>
   );
 }

@@ -1,8 +1,4 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { MIDDLE_DURATION } from 'shared/config/constant';
-import { useIsMountedOperator } from 'shared/hooks';
-import { CrossChainDirection, DarwiniaAsset, DVMChainConfig, PolkadotChainConfig, Token, Tx } from 'shared/model';
-import { createTxWorkflow, entrance, fromWei, genEthereumTransactionObs, toWei } from 'shared/utils';
 import { BN_ZERO } from '@polkadot/util';
 import { Button, message, notification } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
@@ -11,11 +7,24 @@ import { upperCase } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { of } from 'rxjs';
+import { MIDDLE_DURATION } from 'shared/config/constant';
+import { useIsMountedOperator } from 'shared/hooks';
+import {
+  CrossChainDirection,
+  CrossToken,
+  DarwiniaAsset,
+  DVMChainConfig,
+  PolkadotChainConfig,
+  Token,
+  Tx,
+} from 'shared/model';
+import { createTxWorkflow, entrance, fromWei, genEthereumTransactionObs, toWei } from 'shared/utils';
 import { useTx } from '../../hooks';
 import { useApi } from '../../providers';
+import { WITHDRAW_ADDRESS } from './config';
 
 interface KtonDrawProps {
-  direction: CrossChainDirection<DVMChainConfig, PolkadotChainConfig>;
+  direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<PolkadotChainConfig>>;
   kton: Token | undefined;
   pendingClaimAmount: BN;
   onSuccess?: () => void;
@@ -35,14 +44,14 @@ export function KtonDraw({ direction, kton, pendingClaimAmount, onSuccess }: Kto
   const claimKton = useCallback(() => {
     const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
     const amount = toWei({ value: pendingClaimAmount, decimals: 9 });
-    const result = web3.eth.abi.encodeParameters(['address', 'uint256'], [direction.from.dvm.smartKton, amount]);
+    const result = web3.eth.abi.encodeParameters(['address', 'uint256'], [direction.from.address, amount]);
     const position = 2;
     const data = '0x3225da29' + result.slice(position);
     const gas = 100000;
 
     const obs = genEthereumTransactionObs({
       from: account,
-      to: direction.from.dvm.smartWithdrawKton,
+      to: WITHDRAW_ADDRESS,
       data,
       value: '0x00',
       gas,
@@ -78,16 +87,7 @@ export function KtonDraw({ direction, kton, pendingClaimAmount, onSuccess }: Kto
       });
 
     setIsDisable(false);
-  }, [
-    account,
-    direction.from.dvm.smartKton,
-    direction.from.dvm.smartWithdrawKton,
-    observer,
-    onSuccess,
-    pendingClaimAmount,
-    t,
-    takeWhileIsMounted,
-  ]);
+  }, [account, direction.from, observer, onSuccess, pendingClaimAmount, t, takeWhileIsMounted]);
 
   if (pendingClaimAmount.lte(BN_ZERO)) {
     return null;

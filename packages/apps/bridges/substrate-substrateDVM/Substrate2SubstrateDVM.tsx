@@ -11,7 +11,6 @@ import {
   AvailableBalance,
   ConnectionStatus,
   CrossChainComponentProps,
-  CrossChainPayload,
   CrossToken,
   DVMChainConfig,
   PolkadotChainConfig,
@@ -74,16 +73,16 @@ export function Substrate2SubstrateDVM({
       return null;
     }
 
-    const { max, token, ...rest } = balance;
+    const { balance: max, ...token } = balance;
     const result = new BN(max).sub(new BN(toWei({ value: '1', decimals: token.decimals ?? 9 }))); // keep at least 1 in account;
 
-    return { ...rest, token, max: result.gte(new BN(0)) ? result : BN_ZERO };
+    return { ...token, max: result.gte(new BN(0)) ? result : BN_ZERO };
   }, [availableBalances]);
 
   const [fee, setFee] = useState<BN | null>(null);
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { observer } = useTx();
-  const { afterCrossChain } = useAfterTx<CrossChainPayload>();
+  const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const getBalances = useDarwiniaAvailableBalances(api, network);
   const bridgeState = useBridgeStatus(direction);
   const { account } = useAccount();
@@ -198,12 +197,12 @@ export function Substrate2SubstrateDVM({
         balance={
           availableBalance && {
             amount: fromWei(
-              { value: availableBalance.max, decimals: availableBalance.token.decimals },
+              availableBalance,
               // eslint-disable-next-line no-magic-numbers
               (num: string) => (+num > 1e6 ? largeNumber(num) : num),
               (num: string) => prettyNumber(num, { ignoreZeroDecimal: true })
             ),
-            symbol: availableBalance.token.symbol,
+            symbol: availableBalance.symbol,
           }
         }
         extra={[

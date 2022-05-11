@@ -82,12 +82,19 @@ export function prettyNumber(value: WeiValue, options?: PrettyNumberOptions): st
 
 const DEFAULT_DECIMALS = 18;
 
+interface WeiArgs {
+  value?: WeiValue;
+  decimals?: number;
+  amount?: WeiValue;
+  balance?: WeiValue;
+}
+
 export function fromWei(
-  { value, amount, decimals = DEFAULT_DECIMALS }: { value?: WeiValue; decimals?: number; amount?: WeiValue },
+  { value, amount, balance, decimals = DEFAULT_DECIMALS }: WeiArgs,
   ...fns: ((value: string) => string)[]
 ): string {
   const unit = getUnit(decimals);
-  const data = value || amount;
+  const data = value || amount || balance;
 
   return [toStr, (val: string) => Web3.utils.fromWei(val || '0', unit), ...fns].reduce(
     (acc, fn) => fn(acc as string),
@@ -96,11 +103,11 @@ export function fromWei(
 }
 
 export function toWei(
-  { value, amount, decimals = DEFAULT_DECIMALS }: { value?: WeiValue; decimals?: number; amount?: WeiValue },
+  { value, amount, balance, decimals = DEFAULT_DECIMALS }: WeiArgs,
   ...fns: ((value: string) => string)[]
 ): string {
   const unit = getUnit(decimals);
-  const data = value || amount;
+  const data = value || amount || balance;
 
   return [toStr, (val: string) => Web3.utils.toWei(val || '0', unit), ...fns].reduce(
     (acc, fn) => fn(acc as string),

@@ -40,7 +40,7 @@ export function PolkadotAccountsItem({ onChange, availableBalances, form }: Polk
           {t('Balance ')}
           <span className="ml-2">
             {availableBalances.length
-              ? availableBalances.map(({ asset, max, token }, index) => (
+              ? availableBalances.map(({ asset, balance: max, token }, index) => (
                   <span key={asset || index} className="mr-2">
                     {fromWei({ value: max, decimals: token.decimals || 9 }, prettyNumber)} {token.symbol}
                   </span>
