@@ -17,7 +17,7 @@ export function Record({ record }: { record: Substrate2SubstrateRecord }) {
   return (
     <>
       <span className="justify-self-start ellipse-two-lines">
-        {formatDistance(fromUnixTime(record.startTime), new Date(now), {
+        {formatDistance(fromUnixTime(record.startTime), new Date(new Date().toUTCString()), {
           includeSeconds: true,
           addSuffix: true,
         })}

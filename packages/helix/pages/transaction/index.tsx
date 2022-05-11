@@ -47,7 +47,6 @@ const PAGE_SIZE = 50;
 function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
   const { t } = useTranslation('common');
   const [isValidSender, setIsValidSender] = useState(true);
-  const startTime = useMemo(() => getUnixTime(new Date()), []);
   const router = useRouter();
   const { data: dailyStatistic } = useDailyStatistic();
   const { total: accountTotal } = useAccountStatistic(endpoint);
@@ -58,7 +57,7 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
   );
 
   const { data, loading, refetch } = useQuery<{ s2sRecords: Substrate2SubstrateRecord[] }>(S2S_RECORDS, {
-    variables: { first: PAGE_SIZE, startTime },
+    variables: { first: PAGE_SIZE, startTime: last(records)?.startTime },
   });
 
   const subject = useMemo(() => new Subject<{ startTime: number; account: string }>(), []);
@@ -97,7 +96,7 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
       )
       .subscribe(({ startTime: time, account: searchValue }) => {
         const variables = omitBy(
-          { first: PAGE_SIZE, startTime: getUnixTime(new Date(time)), sender: searchValue, recipient: searchValue },
+          { first: PAGE_SIZE, startTime: time, sender: searchValue, recipient: searchValue },
           (value) => !value
         );
 
