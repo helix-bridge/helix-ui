@@ -1,5 +1,5 @@
 import { DATE_FORMAT } from 'shared/config/constant';
-import { fromWei, getTimeRange, prettyNumber } from 'shared/utils';
+import { fromWei, getTimeRange, prettyNumber } from 'shared/utils/helper';
 import { Typography } from 'antd';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';

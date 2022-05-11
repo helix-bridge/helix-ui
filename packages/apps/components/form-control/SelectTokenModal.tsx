@@ -2,7 +2,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Logo } from 'shared/components/widget/Logo';
 import { useLocalSearch } from 'shared/hooks';
 import { ChainConfig, TokenInfoWithMeta, Vertices } from 'shared/model';
-import { chainConfigs, getDisplayName } from 'shared/utils';
+import { chainConfigs, getDisplayName } from 'shared/utils/network';
 import { Input, Radio, Tag, Typography } from 'antd';
 import { chain as lodashChain } from 'lodash';
 import { useTranslation } from 'next-i18next';

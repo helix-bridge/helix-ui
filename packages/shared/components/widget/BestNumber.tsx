@@ -5,7 +5,8 @@ import { from, mergeMap, retry, startWith, Subscription, switchMap, takeWhile, t
 import { MIDDLE_DURATION } from 'shared/config/constant';
 import { useIsMounted } from 'shared/hooks';
 import { ChainConfig } from 'shared/model';
-import { entrance, prettyNumber, waitUntilConnected } from 'shared/utils';
+import { prettyNumber } from 'shared/utils/helper';
+import { entrance, waitUntilConnected } from 'shared/utils/connection';
 
 const duration = 6000;
 

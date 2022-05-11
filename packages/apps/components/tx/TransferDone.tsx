@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { initReactI18next } from 'react-i18next';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { TxDoneComponentProps } from 'shared/model';
-import { isEthereumNetwork } from 'shared/utils';
+import { isEthereumNetwork } from 'shared/utils/network';
 
 export function TransferDone({ tx, value, hashType = 'txHash' }: TxDoneComponentProps) {
   const { t } = useTranslation('common', { i18n: i18n?.use(initReactI18next) });

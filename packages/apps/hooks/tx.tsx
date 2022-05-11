@@ -4,7 +4,9 @@ import { FunctionComponent, useCallback, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SHORT_DURATION } from 'shared/config/constant';
 import { CrossChainPayload, PolkadotChainConfig, Tx, TxDoneComponentProps, TxHashType } from 'shared/model';
-import { applyModal, convertToSS58, genHistoryRouteParams, isEthereumNetwork } from 'shared/utils';
+import { convertToSS58, genHistoryRouteParams } from 'shared/utils/helper';
+import { isEthereumNetwork } from 'shared/utils/network';
+import { applyModal } from 'shared/utils/tx';
 import { TxContext, TxCtx } from '../providers';
 
 export const useTx = () => useContext(TxContext) as Exclude<TxCtx, null>;

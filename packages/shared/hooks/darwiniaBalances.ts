@@ -2,7 +2,7 @@ import { AccountData, AccountInfo } from '@darwinia/types';
 import { ApiPromise } from '@polkadot/api';
 import { useCallback } from 'react';
 import { AvailableBalance, ChainConfig, DarwiniaAsset, Token } from '../model';
-import { getPolkadotChainProperties, waitUntilConnected } from '../utils';
+import { getPolkadotChainProperties, waitUntilConnected } from '../utils/connection';
 
 type SimpleToken = Pick<Token, 'decimals' | 'symbol'>;
 

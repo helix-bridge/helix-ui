@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { PropsWithChildren, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { THEME } from 'shared/config/theme';
-import { readStorage } from 'shared/utils';
+import { readStorage } from 'shared/utils/helper';
 import { Footer } from './Footer';
 import { Navigator } from './Navigator';
 import { ActiveAccount } from './widget/account/ActiveAccount';

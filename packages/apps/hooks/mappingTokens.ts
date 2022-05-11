@@ -3,7 +3,8 @@ import { useCallback, useReducer, useState } from 'react';
 import { map } from 'rxjs';
 import { RegisterStatus } from 'shared/config/constant';
 import { Action, Erc20RegisterStatus, MappingToken, NullableCrossChainDirection, RequiredPartial } from 'shared/model';
-import { getErc20TokenBalance, getKnownMappingTokens, isEthereumNetwork, StoredProof } from 'shared/utils';
+import { StoredProof, getErc20TokenBalance, getKnownMappingTokens } from 'shared/utils/mappingToken';
+import { isEthereumNetwork } from 'shared/utils/network';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 import { useAccount } from '../providers';
 

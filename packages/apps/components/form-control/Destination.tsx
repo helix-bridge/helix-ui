@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
 import { CrossToken } from 'shared/model';
-import { getDisplayName } from 'shared/utils';
+import { getDisplayName } from 'shared/utils/network';
 import { SelectTokenModal } from './SelectTokenModal';
 
 interface DestinationProps {
@@ -34,6 +34,11 @@ export function Destination({
           }}
           disabled={disabled}
           size="large"
+          style={{
+            height: '5rem',
+            width: '100%',
+            display: 'flex',
+          }}
           className="h-20 w-full flex items-center"
         />
 

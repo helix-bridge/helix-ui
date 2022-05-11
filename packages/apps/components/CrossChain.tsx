@@ -14,7 +14,7 @@ import {
   CrossChainPayload,
   SubmitFn,
 } from 'shared/model';
-import { emptyObsFactory } from 'shared/utils';
+import { emptyObsFactory } from 'shared/utils/helper';
 import { useAccount, useApi } from '../providers';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { calcToAmount, Direction } from './form-control/Direction';

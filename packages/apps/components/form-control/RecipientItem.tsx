@@ -6,7 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { IdentAccountAddress } from 'shared/components/widget/IdentAccountAddress';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { ConnectionStatus, CrossChainComponentProps, PolkadotChainConfig } from 'shared/model';
-import { convertToSS58, isPolkadotNetwork, isSameAddress, isValidAddressStrict, patchUrl } from 'shared/utils';
+import { convertToSS58, isSameAddress, isValidAddressStrict, patchUrl } from 'shared/utils/helper';
+import { isPolkadotNetwork } from 'shared/utils/network';
 import { useApi } from '../../providers';
 
 // eslint-disable-next-line complexity

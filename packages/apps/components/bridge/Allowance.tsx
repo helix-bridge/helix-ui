@@ -4,16 +4,8 @@ import BN from 'bn.js';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CrossChainDirection, CrossChainPayload } from 'shared/model';
-import {
-  applyModalObs,
-  approveToken,
-  createTxWorkflow,
-  fromWei,
-  getAllowance,
-  largeNumber,
-  prettyNumber,
-  toWei,
-} from 'shared/utils';
+import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
+import { applyModalObs, approveToken, createTxWorkflow, getAllowance } from 'shared/utils/tx';
 import { useAfterTx, useTx } from '../../hooks';
 import { useAccount } from '../../providers';
 import { ApproveConfirm } from '../tx/ApproveConfirm';

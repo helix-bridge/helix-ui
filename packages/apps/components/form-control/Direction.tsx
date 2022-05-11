@@ -3,7 +3,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
 import { BridgeStatus, CrossChainDirection, CustomFormControlProps, HashInfo } from 'shared/model';
-import { getBridge, patchUrl, updateStorage } from 'shared/utils';
+import { getBridge } from 'shared/utils/bridge';
+import { patchUrl, updateStorage } from 'shared/utils/helper';
 import { Destination } from './Destination';
 
 type DirectionProps = CustomFormControlProps<CrossChainDirection> & {

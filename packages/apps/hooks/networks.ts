@@ -1,5 +1,5 @@
 import { ChainConfig } from 'shared/model';
-import { chainConfigs } from 'shared/utils';
+import { chainConfigs } from 'shared/utils/network';
 import { useCallback, useEffect, useState } from 'react';
 import { useApi } from '../providers';
 

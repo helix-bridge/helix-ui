@@ -1,8 +1,9 @@
-import { RecordComponentProps, PolkadotChainConfig } from 'shared/model';
-import { isSubstrate2SubstrateDVM, convertToSS58 } from 'shared/utils';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Subscription, switchMapTo, tap } from 'rxjs';
+import { PolkadotChainConfig, RecordComponentProps } from 'shared/model';
+import { isSubstrate2SubstrateDVM } from 'shared/utils/bridge';
+import { convertToSS58 } from 'shared/utils/helper';
 import { IndexingState, Progresses, ProgressProps, State } from '../../components/record/Progress';
 import { Record } from '../../components/record/Record';
 import { BridgeDispatchEventRecord } from '../../model';

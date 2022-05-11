@@ -13,8 +13,10 @@ import {
   PolkadotConnection,
   TronConnection,
 } from 'shared/model';
-import { connect, getDirectionFromSettings, getInitialSetting, isEthereumNetwork } from 'shared/utils';
+import { connect } from 'shared/utils/connection';
+import { getDirectionFromSettings, getInitialSetting } from 'shared/utils/helper';
 import { updateStorage } from 'shared/utils/helper/storage';
+import { isEthereumNetwork } from 'shared/utils/network';
 import Web3 from 'web3';
 
 interface StoreState {

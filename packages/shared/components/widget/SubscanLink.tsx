@@ -1,7 +1,7 @@
 import { Typography } from 'antd';
 import { CSSProperties, PropsWithChildren } from 'react';
 import { ChainConfig, Network, Vertices } from '../../model';
-import { isPolkadotNetwork } from '../../utils';
+import { isPolkadotNetwork } from '../../utils/network';
 
 const { Link } = Typography;
 

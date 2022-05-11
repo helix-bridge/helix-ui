@@ -4,7 +4,8 @@ import { isEqual } from 'lodash';
 import Image from 'next/image';
 import { useMemo } from 'react';
 import { Bridge, CrossChainDirection, CrossToken, CustomFormControlProps, NullableFields } from 'shared/model';
-import { getBridge, getDisplayName, isTransferable } from 'shared/utils';
+import { getBridge, isTransferable } from 'shared/utils/bridge';
+import { getDisplayName } from 'shared/utils/network';
 
 type TokenOnChainProps = {
   token: CrossToken;

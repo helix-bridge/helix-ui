@@ -1,23 +1,18 @@
+import { isNull, omitBy } from 'lodash';
+import { useCallback, useEffect, useState } from 'react';
+import { EMPTY, Observable, Subscription } from 'rxjs';
 import { Departure } from 'shared/model';
 import {
-  RecordsQueryRequest,
-  rxGet,
-  getChainConfig,
-  isTronNetwork,
   isEthereum2Darwinia,
   isDarwinia2Ethereum,
   isSubstrate2SubstrateDVM,
   isSubstrateDVM2Substrate,
-  isEthereum2DVM,
-  isDVM2Ethereum,
   isSubstrate2DVM,
   isDVM2Substrate,
-} from 'shared/utils';
-import { isNull, omitBy } from 'lodash';
-import { useCallback, useEffect, useState } from 'react';
-import { EMPTY, Observable, Subscription } from 'rxjs';
+} from 'shared/utils/bridge';
+import { RecordsQueryRequest, rxGet } from 'shared/utils/helper';
+import { getChainConfig, isTronNetwork } from 'shared/utils/network';
 import { useRecords as useDarwiniaEthereum } from '../bridges/ethereum-darwinia/hooks';
-import { useRecords as useEthereumDarwiniaDVM } from '../bridges/ethereum-darwiniaDVM/hooks';
 import { useRecords as useSubstrateDVM } from '../bridges/substrate-dvm/hooks';
 import { useRecords as useSubstrateSubstrateDVM } from '../bridges/substrate-substrateDVM/hooks';
 import { RecordRequestParams } from '../model';
@@ -73,7 +68,6 @@ export function useRecords(departure: Departure, arrival: Departure) {
   const [depConfig, arrConfig] = [getChainConfig(departure), getChainConfig(arrival)];
 
   const darwiniaEthereum = useDarwiniaEthereum(depConfig, arrConfig);
-  const ethereumDarwiniaDVM = useEthereumDarwiniaDVM(depConfig, arrConfig);
   const substrateSubstrateDVM = useSubstrateSubstrateDVM(depConfig, arrConfig);
   const substrateDVM = useSubstrateDVM(depConfig, arrConfig);
 
@@ -111,14 +105,6 @@ export function useRecords(departure: Departure, arrival: Departure) {
         return substrateSubstrateDVM.fetchRedeemRecords;
       }
 
-      if (isEthereum2DVM(departure, arrival)) {
-        return ethereumDarwiniaDVM.fetchRedeemRecords;
-      }
-
-      if (isDVM2Ethereum(departure, arrival)) {
-        return ethereumDarwiniaDVM.fetchIssuingRecords;
-      }
-
       if (isSubstrate2DVM(departure, arrival)) {
         return substrateDVM.fetchIssuingRecords;
       }
@@ -137,8 +123,6 @@ export function useRecords(departure: Departure, arrival: Departure) {
       darwiniaEthereum.fetchIssuingRecords,
       substrateSubstrateDVM.fetchIssuingRecords,
       substrateSubstrateDVM.fetchRedeemRecords,
-      ethereumDarwiniaDVM.fetchRedeemRecords,
-      ethereumDarwiniaDVM.fetchIssuingRecords,
       substrateDVM.fetchIssuingRecords,
       substrateDVM.fetchRedeemRecords,
     ]

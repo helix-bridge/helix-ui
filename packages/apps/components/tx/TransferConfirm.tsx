@@ -6,7 +6,8 @@ import { initReactI18next, useTranslation } from 'react-i18next';
 import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
 import { Logo } from 'shared/components/widget/Logo';
 import { Bridge, CrossToken, PolkadotChainConfig, TxConfirmComponentProps } from 'shared/model';
-import { convertToSS58, getDisplayName, isPolkadotNetwork } from 'shared/utils';
+import { convertToSS58 } from 'shared/utils/helper';
+import { getDisplayName, isPolkadotNetwork } from 'shared/utils/network';
 
 type Fee = Pick<CrossToken, 'symbol' | 'amount'>;
 

@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
 import { ConnectionStatus } from 'shared/model';
-import { getConfigByConnection } from 'shared/utils';
+import { getConfigByConnection } from 'shared/utils/connection';
 import { useAccount, useApi } from '../../../providers';
 import { SelectAccountModal } from './SelectAccountModal';
 

@@ -8,7 +8,7 @@ import {
 } from '@ant-design/icons';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { ChainConfig } from 'shared/model';
-import { isEthereumNetwork, isPolkadotNetwork } from 'shared/utils';
+import { isEthereumNetwork, isPolkadotNetwork } from 'shared/utils/network';
 import { Button, Row, Tooltip } from 'antd';
 import { last } from 'lodash';
 import React, { SetStateAction, useMemo, useState } from 'react';

@@ -38,12 +38,6 @@ export const isEthereum2Darwinia: BridgePredicateFn = (departure, arrival) => {
 
 export const isDarwinia2Ethereum: BridgePredicateFn = (departure, arrival) => isEthereum2Darwinia(arrival, departure);
 
-export const isDVM2Ethereum: BridgePredicateFn = (departure, arrival) => {
-  return isPolkadotNetwork(departure) && isEthereumNetwork(arrival) && departure.mode === 'dvm';
-};
-
-export const isEthereum2DVM: BridgePredicateFn = (departure, arrival) => isDVM2Ethereum(arrival, departure);
-
 export const isSubstrate2DVM: BridgePredicateFn = (departure, arrival) => {
   return (
     isPolkadotNetwork(departure) &&

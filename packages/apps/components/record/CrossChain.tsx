@@ -1,25 +1,24 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { useIsMounted } from 'shared/hooks';
-import { Arrival, ChainConfig, Departure, HistoryRouteParam, Network, Vertices } from 'shared/model';
-import {
-  getArrivals,
-  getDisplayName,
-  getVerticesFromDisplayName,
-  hasBridge,
-  isChainConfigEqualTo,
-  isEthereumNetwork,
-  isPolkadotNetwork,
-  isReachable,
-  isSubstrateDVM,
-  isValidAddressStrict,
-  getChainConfig,
-} from 'shared/utils';
 import { Affix, Input, message, Pagination, Select, Spin, Tabs, Tooltip } from 'antd';
 import { flow, isBoolean, negate, upperFirst } from 'lodash';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EMPTY, takeWhile } from 'rxjs';
+import { useIsMounted } from 'shared/hooks';
+import { Arrival, ChainConfig, Departure, HistoryRouteParam, Network, Vertices } from 'shared/model';
+import { hasBridge, isSubstrateDVM } from 'shared/utils/bridge';
+import { isValidAddressStrict } from 'shared/utils/helper';
+import {
+  getArrivals,
+  getChainConfig,
+  getDisplayName,
+  getVerticesFromDisplayName,
+  isChainConfigEqualTo,
+  isEthereumNetwork,
+  isPolkadotNetwork,
+  isReachable,
+} from 'shared/utils/network';
 import { useNetworks, useRecords } from '../../hooks';
 import { Paginator } from '../../model';
 import { RecordList } from './RecordList';
@@ -71,7 +70,7 @@ export function CrossChainRecord() {
   const [arrival, setArrival] = useState<Vertices>(() => {
     const { to: network, tMode: mode } = searchParams;
 
-    return network && mode ? { name: network, mode } : defaultSelect[1];
+    return network && mode ? { name: network as Network, mode } : { name: defaultSelect[0], mode: defaultSelect[1] };
   });
 
   const [loading, setLoading] = useState(false);
@@ -147,7 +146,7 @@ export function CrossChainRecord() {
 
     if (to && tMode) {
       setArrival({
-        name: to,
+        name: to as Network,
         mode: tMode,
       });
     } else {
