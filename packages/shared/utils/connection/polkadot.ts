@@ -24,7 +24,7 @@ export async function getConfigByConnection(connection: Connection): Promise<Cha
     return target ?? null;
   }
 
-  if (connection.type === 'polkadot' && connection.api) {
+  if (connection.type === 'polkadot' && (connection as PolkadotConnection).api) {
     const { api } = connection as NoNullFields<PolkadotConnection>;
 
     await waitUntilConnected(api);

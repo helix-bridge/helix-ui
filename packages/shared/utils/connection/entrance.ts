@@ -29,11 +29,10 @@ abstract class Entrance<T> {
 
     const instance = this.init(url);
 
-    console.log(`:🌎 ~ ${this.name} api list`, this.apiList.map((item) => Object.keys(item)).flat());
-
     this.apiList.push({ [url]: instance });
     this.afterInit(instance);
 
+    console.log(`🌎 ~ ${this.name} api list`, this.apiList.map((item) => Object.keys(item)).flat());
     return instance;
   }
 

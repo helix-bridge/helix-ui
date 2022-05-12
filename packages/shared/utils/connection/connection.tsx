@@ -11,14 +11,13 @@ import {
   EMPTY,
   from,
   map,
-  mapTo,
   merge,
+  mergeMap,
   Observable,
   Observer,
   of,
   startWith,
   switchMap,
-  switchMapTo,
 } from 'rxjs';
 import {
   ChainConfig,
@@ -82,7 +81,7 @@ export const getPolkadotConnection: (network: PolkadotChainConfig) => Observable
   );
 
   const apiInstance = entrance.polkadot.getInstance(network.provider);
-  const apiObs = from(waitUntilConnected(apiInstance)).pipe(mapTo(apiInstance));
+  const apiObs = from(waitUntilConnected(apiInstance)).pipe(map(() => apiInstance));
 
   return combineLatest([extensionObs, apiObs]).pipe(
     switchMap(([envelop, api]: [Exclude<PolkadotConnection, 'api'>, ApiPromise]) => {
@@ -206,7 +205,7 @@ const connectToEthereum: ConnectFn<EthereumConnection> = (network, chainId?) => 
     switchMap((isMatch) =>
       isMatch
         ? getEthereumConnection()
-        : switchMetamaskNetwork(network as EthereumChainConfig)!.pipe(switchMapTo(getEthereumConnection()))
+        : switchMetamaskNetwork(network as EthereumChainConfig)!.pipe(mergeMap(() => getEthereumConnection()))
     )
   );
 };

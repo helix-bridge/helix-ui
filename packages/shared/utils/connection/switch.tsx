@@ -1,6 +1,7 @@
 import { Button, message, notification } from 'antd';
+import { i18n } from 'next-i18next';
 import { DebouncedFunc, throttle } from 'lodash';
-import { Trans } from 'react-i18next';
+import { Trans, initReactI18next } from 'react-i18next';
 import { Observable, Observer } from 'rxjs';
 import Web3 from 'web3';
 import { SHORT_DURATION } from '../../config/constant';
@@ -44,6 +45,7 @@ export const switchMetamaskNetwork: DebouncedFunc<(chain: EthereumChainConfig) =
           <Trans
             i18nKey="Network mismatch, you can switch network manually in metamask or do it automatically by clicking the button below"
             tOptions={{ type: chain }}
+            i18n={i18n?.use(initReactI18next)}
           ></Trans>
         ),
         btn: (
@@ -70,7 +72,11 @@ export const switchMetamaskNetwork: DebouncedFunc<(chain: EthereumChainConfig) =
               }
             }}
           >
-            <Trans i18nKey="Switch to {{ network }}" tOptions={{ network: chain }}></Trans>
+            <Trans
+              i18nKey="Switch to {{ network }}"
+              tOptions={{ network: chain.name }}
+              i18n={i18n?.use(initReactI18next)}
+            ></Trans>
           </Button>
         ),
         key,

@@ -1,5 +1,5 @@
 import { negate } from 'lodash';
-import { createContext, useCallback, useContext, useReducer } from 'react';
+import { createContext, useCallback, useContext, useReducer, useState } from 'react';
 import { EMPTY, iif, of, Subscription } from 'rxjs';
 import {
   Action,
@@ -118,17 +118,21 @@ export type ApiCtx = StoreState & {
   connectDepartureNetwork: (network: ChainConfig) => void;
   connectArrivalNetwork: (network: ChainConfig) => void;
   disconnect: () => void;
+  isConnecting: boolean;
   setDeparture: (network: ChainConfig) => void;
   setEnableTestNetworks: (enable: boolean) => void;
 };
 
 export const ApiContext = createContext<ApiCtx | null>(null);
 
-let subscription: Subscription = EMPTY.subscribe();
+let dep$$: Subscription = EMPTY.subscribe();
+let arr$$: Subscription = EMPTY.subscribe();
 
 export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const setDeparture = useCallback((payload: ChainConfig) => dispatch({ type: 'setDeparture', payload }), []);
+  const [isConnecting, setIsConnecting] = useState<boolean>(false);
+
   const setDepartureConnection = useCallback(
     (payload: Connection) => dispatch({ type: 'setDepartureConnection', payload }),
     []
@@ -162,7 +166,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   );
 
   const getConnection = useCallback(
-    (chainConfig: ChainConfig) => {
+    (chainConfig: ChainConfig, action: (payload: Connection) => void) => {
       const isConnectToMetamask = chainConfig.mode === 'dvm' || isEthereumNetwork(chainConfig);
 
       const target = state.connections.find((item) => {
@@ -173,65 +177,60 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
           : (item as PolkadotConnection).network === chainConfig.name;
       });
 
-      return iif(() => isConnectionAvailable(target), of(target!), connect(chainConfig));
+      setIsConnecting(true);
+
+      return iif(() => isConnectionAvailable(target), of(target!), connect(chainConfig)).subscribe({
+        next: (connection: Connection) => {
+          if (connection.status === ConnectionStatus.success) {
+            addConnection(connection);
+            action(connection);
+            setIsConnecting(false);
+          }
+        },
+        error: (err: unknown) => {
+          console.log('🚨 ~ file: api-provider.tsx ~ get connection ~ error', err);
+          action({ ...initialConnection, status: ConnectionStatus.error });
+          setIsConnecting(false);
+        },
+        complete: () => {
+          console.log('🥀 Departure connection life is over');
+          setIsConnecting(false);
+        },
+      });
     },
-    [isConnectionAvailable, state.connections]
+    [addConnection, isConnectionAvailable, state.connections]
   );
 
   const connectDepartureNetwork = useCallback(
     (chainConfig: ChainConfig) => {
-      subscription.unsubscribe();
+      dep$$.unsubscribe();
+      dep$$ = getConnection(chainConfig, setDepartureConnection);
       setDeparture(chainConfig);
-
-      subscription = getConnection(chainConfig).subscribe({
-        next: (connection: Connection) => {
-          setDepartureConnection(connection);
-
-          if (connection.status === ConnectionStatus.success) {
-            addConnection(connection);
-          }
-        },
-        error: (err: unknown) => {
-          setDepartureConnection({ ...initialConnection, status: ConnectionStatus.error });
-          console.error('%c connection error ', 'font-size:13px; background:pink; color:#bf2c9f;', err);
-        },
-        complete: () => {
-          console.info('Connection life is over');
-        },
-      });
     },
-    [addConnection, getConnection, setDeparture, setDepartureConnection]
+    [getConnection, setDeparture, setDepartureConnection]
   );
 
   const connectArrivalNetwork = useCallback(
     (chainConfig: ChainConfig) => {
-      const sub$$ = getConnection(chainConfig).subscribe({
-        next: (cur: Connection) => {
-          if (cur.status === ConnectionStatus.success) {
-            addConnection(cur);
-            setArrivalConnection(cur);
-          }
-        },
-        error: (err: unknown) => {
-          setArrivalConnection({ ...initialConnection, status: ConnectionStatus.error });
-          console.log('🚨 ~ file: api-provider.tsx ~ line 242 ~ ApiProvider ~ err', err);
-        },
-      });
-
-      subscription.add(sub$$);
+      arr$$.unsubscribe();
+      arr$$ = getConnection(chainConfig, setArrivalConnection);
     },
-    [addConnection, getConnection, setArrivalConnection]
+    [getConnection, setArrivalConnection]
   );
 
   const disconnect = useCallback(() => {
     setDepartureConnection(initialConnection);
     setArrivalConnection(initialConnection);
+    setIsConnecting(false);
+    dep$$.unsubscribe();
+    arr$$.unsubscribe();
   }, [setArrivalConnection, setDepartureConnection]);
 
   return (
     <ApiContext.Provider
       value={{
         ...state,
+        isConnecting,
         connectDepartureNetwork,
         connectArrivalNetwork,
         disconnect,
