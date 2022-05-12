@@ -209,7 +209,7 @@ export const getKnownMappingTokens = (
     ? from(getS2SMappingAddress(departure.meta.provider))
     : from(getErc20MappingAddress(departure.meta.provider));
 
-  const tokens = departure.meta.category.includes('ethereum')
+  const tokens = departure.meta.wallets.includes('metamask')
     ? getMappingTokensFromEthereum(currentAccount, direction)
     : mappingAddressObs.pipe(
         switchMap((mappingAddress) =>

@@ -11,7 +11,7 @@ import {
   isDVM2Substrate,
 } from 'shared/utils/bridge';
 import { RecordsQueryRequest, rxGet } from 'shared/utils/helper';
-import { getChainConfig, isTronNetwork } from 'shared/utils/network';
+import { getChainConfig } from 'shared/utils/network';
 import { useRecords as useDarwiniaEthereum } from '../bridges/ethereum-darwinia/hooks';
 import { useRecords as useSubstrateDVM } from '../bridges/substrate-dvm/hooks';
 import { useRecords as useSubstrateSubstrateDVM } from '../bridges/substrate-substrateDVM/hooks';
@@ -73,11 +73,6 @@ export function useRecords(departure: Departure, arrival: Departure) {
 
   const genParams = useCallback((params: RecordRequestParams) => {
     const req = omitBy<RecordRequestParams>(params, isNull) as RecordRequestParams;
-    const [dep] = params.direction;
-
-    if (isTronNetwork(dep)) {
-      return { ...req, address: window.tronWeb ? window.tronWeb.address.toHex(params.address) : '' };
-    }
 
     return req;
   }, []);
@@ -85,7 +80,7 @@ export function useRecords(departure: Departure, arrival: Departure) {
   const genQueryFn = useCallback<(isGenesis: boolean) => (req: RecordRequestParams) => Observable<unknown>>(
     // eslint-disable-next-line complexity
     (isGenesis = false) => {
-      if (isTronNetwork(departure) || (isEthereum2Darwinia(departure, arrival) && isGenesis)) {
+      if (isEthereum2Darwinia(departure, arrival) && isGenesis) {
         return darwiniaEthereum.fetchGenesisRecords;
       }
 

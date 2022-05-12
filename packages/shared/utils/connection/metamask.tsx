@@ -1,12 +1,74 @@
 import { Button, message, notification } from 'antd';
-import { i18n } from 'next-i18next';
 import { DebouncedFunc, throttle } from 'lodash';
-import { Trans, initReactI18next } from 'react-i18next';
-import { Observable, Observer } from 'rxjs';
+import { i18n } from 'next-i18next';
+import { initReactI18next, Trans } from 'react-i18next';
+import { catchError, combineLatest, from, map, merge, Observable, Observer, of, startWith, switchMap } from 'rxjs';
 import Web3 from 'web3';
 import { SHORT_DURATION } from '../../config/constant';
-import { EthereumChainConfig, MetamaskError } from '../../model';
+import { ConnectionStatus, EthereumChainConfig, EthereumConnection, MetamaskError } from '../../model';
 import { isNativeMetamaskChain } from '../network/network';
+import { entrance } from './entrance';
+
+/**
+ *
+ * @params network id
+ * @description is actual network id match with expected.
+ */
+export async function isNetworkMatch(expectNetworkId: number): Promise<boolean> {
+  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
+  const networkId = await web3.eth.net.getId();
+
+  return expectNetworkId === networkId;
+}
+
+export const getMetamaskConnection: () => Observable<EthereumConnection> = () =>
+  from(window.ethereum.request({ method: 'eth_requestAccounts' })).pipe(
+    switchMap((_) => {
+      const addressToAccounts = (addresses: string[]) =>
+        addresses.map((address) => ({ address, meta: { source: '' } }));
+
+      const request: Observable<EthereumConnection> = combineLatest([
+        from<string[][]>(window.ethereum.request({ method: 'eth_accounts' })),
+        from<string>(window.ethereum.request({ method: 'eth_chainId' })),
+      ]).pipe(
+        map(([addresses, chainId]) => ({
+          accounts: addressToAccounts(addresses),
+          status: ConnectionStatus.success,
+          chainId,
+          type: 'metamask',
+        }))
+      );
+
+      const obs = new Observable((observer: Observer<EthereumConnection>) => {
+        window.ethereum.on('accountsChanged', (accounts: string[]) =>
+          from<string>(window.ethereum.request({ method: 'eth_chainId' })).subscribe((chainId) => {
+            observer.next({
+              status: ConnectionStatus.success,
+              accounts: addressToAccounts(accounts),
+              type: 'metamask',
+              chainId,
+            });
+          })
+        );
+        window.ethereum.on('chainChanged', (chainId: string) => {
+          from<string[][]>(window.ethereum.request({ method: 'eth_accounts' })).subscribe((accounts) => {
+            observer.next({
+              status: ConnectionStatus.success,
+              accounts: addressToAccounts(accounts),
+              type: 'metamask',
+              chainId,
+            });
+          });
+        });
+      });
+
+      return merge(request, obs);
+    }),
+    catchError((_) => {
+      return of<EthereumConnection>({ status: ConnectionStatus.error, accounts: [], type: 'metamask', chainId: '' });
+    }),
+    startWith<EthereumConnection>({ status: ConnectionStatus.connecting, accounts: [], type: 'metamask', chainId: '' })
+  );
 
 async function switchEthereumChain(chain: EthereumChainConfig): Promise<null> {
   const chainId = Web3.utils.toHex(+chain.ethereumChain.chainId);

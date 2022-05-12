@@ -30,5 +30,5 @@ export const hecoConfig: EthereumChainConfig = {
       address: '',
     },
   ],
-  category: ['ethereum'],
+  wallets: ['metamask'],
 };

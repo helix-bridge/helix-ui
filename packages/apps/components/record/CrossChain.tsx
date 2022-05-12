@@ -6,7 +6,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EMPTY, takeWhile } from 'rxjs';
 import { useIsMounted } from 'shared/hooks';
-import { Arrival, ChainConfig, Departure, HistoryRouteParam, Network, Vertices } from 'shared/model';
+import {
+  Arrival,
+  ChainConfig,
+  Departure,
+  EthereumChainConfig,
+  HistoryRouteParam,
+  Network,
+  Vertices,
+} from 'shared/model';
 import { hasBridge, isSubstrateDVM } from 'shared/utils/bridge';
 import { isValidAddressStrict } from 'shared/utils/helper';
 import {
@@ -44,9 +52,10 @@ const isAddressValid = (addr: string | null, departure: Vertices) => {
     if (mode === 'dvm' || isEthereumNetwork(departure)) {
       addressValid = isValidAddressStrict(addr, 'ethereum');
     } else {
-      const category = flow([getVerticesFromDisplayName, getChainConfig])(network);
+      const config: ChainConfig = flow([getVerticesFromDisplayName, getChainConfig])(network);
 
-      addressValid = category && isValidAddressStrict(addr, category === 'polkadot' ? network : category);
+      addressValid =
+        config && isValidAddressStrict(addr, (config as EthereumChainConfig).ethereumChain ? 'ethereum' : config.name);
     }
   }
 

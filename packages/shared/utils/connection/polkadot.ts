@@ -1,45 +1,45 @@
 import { ApiPromise } from '@polkadot/api';
 import { once } from 'lodash';
-import { tronConfig } from '../../config/network';
+import {
+  BehaviorSubject,
+  combineLatest,
+  concatMap,
+  distinctUntilKeyChanged,
+  from,
+  map,
+  Observable,
+  startWith,
+  switchMap,
+} from 'rxjs';
 import {
   ChainConfig,
   Connection,
+  ConnectionStatus,
   EthereumChainConfig,
-  EthereumConnection,
-  NoNullFields,
+  PolkadotChainConfig,
   PolkadotChainSimpleToken,
   PolkadotConnection,
 } from '../../model';
-import { chainConfigs, getChainConfig, isChainIdEqual } from '../network';
+import { chainConfigs } from '../network';
+import { entrance } from './entrance';
 
-// eslint-disable-next-line complexity
-export async function getConfigByConnection(connection: Connection): Promise<ChainConfig | null> {
-  if (connection.type === 'metamask') {
-    const target = chainConfigs.find((item) => {
-      const chain = (item as unknown as EthereumChainConfig).ethereumChain;
+export function convertConnectionToChainConfig(connection: Connection): ChainConfig | null {
+  const { type, chainId } = connection;
 
-      return chain && isChainIdEqual(chain.chainId, (connection as EthereumConnection).chainId);
-    });
-
-    return target ?? null;
+  if (type === 'unknown') {
+    return null;
   }
 
-  if (connection.type === 'polkadot' && (connection as PolkadotConnection).api) {
-    const { api } = connection as NoNullFields<PolkadotConnection>;
+  const config = chainConfigs.find((item) => {
+    const typeMatch = item.wallets.includes(type);
+    const value = (item as EthereumChainConfig).ethereumChain
+      ? (item as EthereumChainConfig).ethereumChain.chainId
+      : item.name;
 
-    await waitUntilConnected(api);
+    return typeMatch && value === chainId;
+  });
 
-    const chain = await api?.rpc.system.chain();
-    const network = chain.toHuman()?.toLowerCase();
-
-    return getChainConfig(network);
-  }
-
-  if (connection.type === 'tron') {
-    return tronConfig;
-  }
-
-  return null;
+  return config ?? null;
 }
 
 export async function waitUntilConnected(api: ApiPromise): Promise<null> {
@@ -71,3 +71,62 @@ export async function getPolkadotChainProperties(api: ApiPromise): Promise<Polka
     { ss58Format, tokens: [] }
   );
 }
+
+export const getPolkadotConnection: (network: PolkadotChainConfig) => Observable<PolkadotConnection> = (network) => {
+  const bundle = import('@polkadot/extension-dapp').then(({ web3Enable, web3Accounts }) => ({
+    web3Enable,
+    web3Accounts,
+  }));
+
+  const extensionObs = from(bundle).pipe(
+    concatMap(({ web3Accounts, web3Enable }) =>
+      from(web3Enable('polkadot-js/apps')).pipe(
+        concatMap((extensions) =>
+          from(web3Accounts()).pipe(
+            map(
+              (accounts) =>
+                ({
+                  accounts: !extensions.length && !accounts.length ? [] : accounts,
+                  type: 'polkadot',
+                  status: 'pending',
+                  chainId: network.name,
+                } as Exclude<PolkadotConnection, 'api'>)
+            )
+          )
+        )
+      )
+    ),
+    startWith<PolkadotConnection>({
+      status: ConnectionStatus.connecting,
+      accounts: [],
+      api: null,
+      type: 'polkadot',
+      chainId: network.name,
+    })
+  );
+
+  const apiInstance = entrance.polkadot.getInstance(network.provider);
+  const apiObs = from(waitUntilConnected(apiInstance)).pipe(map(() => apiInstance));
+
+  return combineLatest([extensionObs, apiObs]).pipe(
+    switchMap(([envelop, api]: [Exclude<PolkadotConnection, 'api'>, ApiPromise]) => {
+      const subject = new BehaviorSubject<PolkadotConnection>(envelop);
+
+      api.on('connected', () => {
+        subject.next({ ...envelop, status: ConnectionStatus.success, api });
+      });
+
+      api.on('disconnected', () => {
+        subject.next({ ...envelop, status: ConnectionStatus.connecting, api });
+      });
+
+      api.on('error', (_) => {
+        subject.next({ ...envelop, status: ConnectionStatus.error, api });
+      });
+
+      subject.next({ ...envelop, status: ConnectionStatus.success, api });
+
+      return subject.asObservable().pipe(distinctUntilKeyChanged('status'));
+    })
+  );
+};

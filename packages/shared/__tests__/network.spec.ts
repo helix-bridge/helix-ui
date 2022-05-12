@@ -6,10 +6,6 @@ import { crossChainGraph } from '../utils/network/graph';
 import { chainConfigs, getChainConfig } from '../utils/network/network';
 
 describe('network utils', () => {
-  it('should always true', () => {
-    expect(1 + 1).toBe(2);
-  });
-
   it('should create bridge graphs', () => {
     const data = [...crossChainGraph];
     const fromCrab = data.find((item) => item[0].name === 'crab' && item[0].mode === 'native');

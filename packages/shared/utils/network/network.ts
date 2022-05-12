@@ -7,8 +7,8 @@ import {
   EthereumChainConfig,
   MetamaskNativeNetworkIds,
   Network,
-  NetworkCategory,
   NetworkMode,
+  PolkadotChainConfig,
   TokenType,
   Vertices,
 } from '../../model';
@@ -19,7 +19,7 @@ export function isChainEqual(chain1: Vertices | ChainConfig, chain2: Vertices | 
   return chain1.name === chain2.name && chain1.mode === chain2.mode;
 }
 
-export const chainConfigs: ChainConfig[] = lodashChain(crossChainGraph)
+export const chainConfigs = lodashChain(crossChainGraph)
   .map(([departure, arrivals]) => [departure, ...arrivals])
   .filter((item) => item.length > 1)
   .flatten()
@@ -33,7 +33,7 @@ export const chainConfigs: ChainConfig[] = lodashChain(crossChainGraph)
       const customConfigs = getCustomNetworkConfig();
 
       if (customConfigs[config.name]) {
-        config = { ...config, ...pick(customConfigs[config.name], Object.keys(config)) };
+        config = { ...config, ...pick(customConfigs[config.name], Object.keys(config)) } as PolkadotChainConfig;
       }
     }
 
@@ -41,31 +41,6 @@ export const chainConfigs: ChainConfig[] = lodashChain(crossChainGraph)
   })
   .sortBy((item) => item.name)
   .valueOf();
-
-function isSpecifyNetworkType(type: NetworkCategory) {
-  const findBy = (target: Vertices) => chainConfigs.find((item) => isChainEqual(item, target)) ?? null;
-
-  return (vertices: ChainConfig | Vertices | null | undefined) => {
-    if (!vertices) {
-      return false;
-    }
-
-    let config = findBy(vertices);
-
-    if (!config) {
-      const name = byNetworkAlias(vertices.name);
-
-      console.warn(
-        `🚀 ~ Can not find the network config by: ${vertices}. Treat it as an alias, find a network named ${name} by it `
-      );
-      if (name) {
-        config = findBy({ name, mode: vertices.mode });
-      }
-    }
-
-    return !!config && config.category.includes(type);
-  };
-}
 
 function byNetworkAlias(network: string): Network | null {
   const minLength = 3;
@@ -125,11 +100,25 @@ export const isTraceable = (chain: ChainConfig | null) => curryRight(isInNodeLis
 export const isChainConfigEqualTo = (chain1: ChainConfig | null) => (chain2: ChainConfig | null) =>
   isEqual(chain1, chain2);
 
-export const isPolkadotNetwork = isSpecifyNetworkType('polkadot');
+export const isPolkadotNetwork = (network: ChainConfig | Vertices | null | undefined) => {
+  if (!network) {
+    return false;
+  }
 
-export const isEthereumNetwork = isSpecifyNetworkType('ethereum');
+  const config = getChainConfig(network);
 
-export const isTronNetwork = isSpecifyNetworkType('tron');
+  return config.wallets.includes('polkadot');
+};
+
+export const isEthereumNetwork = (network: ChainConfig | Vertices | null | undefined) => {
+  if (!network) {
+    return false;
+  }
+
+  const config = getChainConfig(network);
+
+  return config.wallets.includes('metamask');
+};
 
 export function isMetamaskInstalled(): boolean {
   return typeof window.ethereum !== 'undefined' || typeof window.web3 !== 'undefined';

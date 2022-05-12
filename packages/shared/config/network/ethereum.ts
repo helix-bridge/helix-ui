@@ -60,5 +60,5 @@ export const ethereumConfig: EthereumChainConfig = {
       address: '',
     },
   ],
-  category: ['ethereum'],
+  wallets: ['metamask'],
 };

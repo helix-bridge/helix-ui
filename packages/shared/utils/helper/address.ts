@@ -80,7 +80,7 @@ export function remove0x(text: string): string {
 export function revertAccount(account: string, vertices: Vertices): string {
   const config = SYSTEM_ChAIN_CONFIGURATIONS.find((item) => item.name === vertices.name && item.mode === vertices.mode);
 
-  if (vertices.mode === 'native' || config?.category.includes('polkadot')) {
+  if (vertices.mode === 'native' || config?.wallets.includes('polkadot')) {
     return convertToSS58(account, (<PolkadotChainConfig>config).ss58Prefix);
   }
 

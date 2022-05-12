@@ -60,5 +60,5 @@ export const ropstenConfig: EthereumChainConfig = {
       address: '',
     },
   ],
-  category: ['ethereum'],
+  wallets: ['metamask'],
 };

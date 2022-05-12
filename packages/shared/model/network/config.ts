@@ -1,6 +1,6 @@
 import { AddEthereumChainParameter } from '../metamask';
 import { Token } from '../token';
-import { EthereumTypeNetwork, Network, NetworkCategory, NetworkMode, PolkadotTypeNetwork } from './network';
+import { EthereumTypeNetwork, Network, NetworkMode, PolkadotTypeNetwork, SupportedWallet } from './network';
 
 export type LogoType = 'main' | 'minor' | 'assist';
 
@@ -53,7 +53,7 @@ export interface ChainConfig {
   provider: string;
   social: Social;
   tokens: TokenWithBridgesInfo[];
-  category: NetworkCategory[]; // the first category decide the wallet connection: ethereum -> metamask, polkadot -> polkadot extension
+  wallets: SupportedWallet[];
 }
 
 export interface EthereumChainConfig extends ChainConfig {

@@ -23,5 +23,5 @@ export const polygonConfig: EthereumChainConfig = {
     { name: 'RING', decimals: 18, bridges: [], type: 'mapping', logo: '', symbol: 'RING', address: '' },
     { name: 'MATIC', decimals: 18, bridges: [], type: 'native', logo: '', symbol: 'MATIC', address: '' },
   ],
-  category: ['ethereum'],
+  wallets: ['metamask'],
 };

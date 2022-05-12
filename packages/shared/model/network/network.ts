@@ -1,11 +1,9 @@
-export type PolkadotTypeNetwork = 'pangolin' | 'crab' | 'darwinia' | 'pangoro';
+export type PolkadotTypeNetwork = 'pangolin' | 'crab' | 'darwinia' | 'pangoro' | 'polkadot';
 
 export type EthereumTypeNetwork = 'ethereum' | 'ropsten' | 'polygon' | 'heco';
 
-type TronTypeNetwork = 'tron';
-
-export type Network = PolkadotTypeNetwork | EthereumTypeNetwork | TronTypeNetwork;
-
-export type NetworkCategory = 'polkadot' | 'ethereum' | 'darwinia' | 'dvm' | 'tron';
+export type Network = PolkadotTypeNetwork | EthereumTypeNetwork;
 
 export type NetworkMode = 'native' | 'dvm';
+
+export type SupportedWallet = 'metamask' | 'polkadot';

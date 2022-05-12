@@ -10,4 +10,3 @@ export * from './pangolin';
 export * from './pangoro';
 export * from './polygon';
 export * from './ropsten';
-export * from './tron';

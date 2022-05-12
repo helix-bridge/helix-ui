@@ -41,7 +41,7 @@ function Component({ config, color = '', onChange = (num) => void num }: BestNum
   useEffect(() => {
     let sub$$: Subscription;
 
-    if (config.category.includes('polkadot')) {
+    if (config.wallets.includes('polkadot')) {
       const api = entrance.polkadot.getInstance(config.provider);
 
       sub$$ = from(waitUntilConnected(api))
@@ -54,7 +54,7 @@ function Component({ config, color = '', onChange = (num) => void num }: BestNum
         .subscribe(observer);
     }
 
-    if (config.category.includes('ethereum')) {
+    if (config.wallets.includes('metamask')) {
       const web3 = entrance.web3.getInstance(config.provider);
 
       sub$$ = timer(0, duration)
@@ -70,7 +70,7 @@ function Component({ config, color = '', onChange = (num) => void num }: BestNum
     return () => {
       sub$$?.unsubscribe();
     };
-  }, [config.category, config.name, config.provider, isMounted, observer]);
+  }, [config.wallets, config.name, config.provider, isMounted, observer]);
 
   return (
     <Tooltip title={bestNumber}>

@@ -10,7 +10,6 @@ import {
   EthereumConnection,
   NoNullFields,
   PolkadotConnection,
-  TronConnection,
 } from 'shared/model';
 import { connect } from 'shared/utils/connection';
 import { getDirectionFromSettings, getInitialSetting } from 'shared/utils/helper';
@@ -21,7 +20,7 @@ import Web3 from 'web3';
 interface StoreState {
   departureConnection: Connection;
   arrivalConnection: Connection;
-  connections: (NoNullFields<PolkadotConnection> | EthereumConnection | TronConnection)[];
+  connections: (NoNullFields<PolkadotConnection> | EthereumConnection)[];
   departure: ChainConfig;
   isDev: boolean;
   enableTestNetworks: boolean;
@@ -50,6 +49,7 @@ const initialConnection: Connection = {
   status: ConnectionStatus.pending,
   type: 'unknown',
   accounts: [],
+  chainId: 'unknown',
 };
 
 const initialState: StoreState = {
@@ -62,13 +62,7 @@ const initialState: StoreState = {
 };
 
 const isSameConnection = (origin: Connection) => {
-  return (item: Connection) => {
-    return (
-      item.type === origin.type &&
-      ((item as PolkadotConnection).network === (origin as PolkadotConnection).network ||
-        (item as EthereumConnection).chainId === (origin as EthereumConnection).chainId)
-    );
-  };
+  return (item: Connection) => item.type === origin.type && item.chainId === origin.chainId;
 };
 
 // eslint-disable-next-line complexity
@@ -174,7 +168,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
           ? item.type === 'metamask' &&
               (item as EthereumConnection).chainId ===
                 Web3.utils.toHex((chainConfig as EthereumChainConfig).ethereumChain.chainId)
-          : (item as PolkadotConnection).network === chainConfig.name;
+          : (item as PolkadotConnection).chainId === chainConfig.name;
       });
 
       setIsConnecting(true);

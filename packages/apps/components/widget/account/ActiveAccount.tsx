@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
 import { ChainConfig, ConnectionStatus } from 'shared/model';
-import { getConfigByConnection } from 'shared/utils/connection';
+import { convertConnectionToChainConfig } from 'shared/utils/connection';
 import { useAccount, useApi } from '../../../providers';
 import { SelectAccountModal } from './SelectAccountModal';
 
@@ -20,7 +20,7 @@ export function ActiveAccount() {
   const { account, setAccount } = useAccount();
   const [isVisible, setIsVisible] = useState(false);
   const [matched, setMatched] = useState(true);
-  const [configForConnection, setConfigConnection] = useState<ChainConfig>(departure);
+  const [configByConnection, setConfigByConnection] = useState<ChainConfig>(departure);
 
   const disconnected = useMemo(() => {
     const { type, status } = departureConnection;
@@ -36,13 +36,13 @@ export function ActiveAccount() {
       return;
     }
 
-    getConfigByConnection(departureConnection).then((config) => {
-      setMatched(!config || isEqual(departure, config));
+    const config = convertConnectionToChainConfig(departureConnection);
 
-      if (config) {
-        setConfigConnection(config);
-      }
-    });
+    setMatched(!config || isEqual(departure, config));
+
+    if (config) {
+      setConfigByConnection(config);
+    }
   }, [connectDepartureNetwork, departureConnection, departure]);
 
   return (
@@ -70,7 +70,7 @@ export function ActiveAccount() {
 
             <Button
               className={`flex items-center px-2 gap-2 overflow-hidden`}
-              icon={<img src={`/image/${configForConnection.logos[0].name}`} width={24} height={24} />}
+              icon={<img src={`/image/${configByConnection.logos[0].name}`} width={24} height={24} />}
               style={{ maxWidth: 200 }}
               danger={!matched}
             >

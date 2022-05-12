@@ -48,5 +48,5 @@ export const pangoroConfig: PolkadotChainConfig = {
       address: '',
     },
   ],
-  category: ['polkadot'],
+  wallets: ['polkadot'],
 };
