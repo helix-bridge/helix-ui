@@ -14,6 +14,7 @@ import {
   CrossToken,
   DVMChainConfig,
   PolkadotChainConfig,
+  PolkadotConnection,
   SubmitFn,
 } from 'shared/model';
 import { fromWei, isRing, largeNumber, pollWhile, prettyNumber, toWei } from 'shared/utils/helper';
@@ -55,7 +56,7 @@ export function Substrate2SubstrateDVM({
   CrossToken<DVMChainConfig>
 >) {
   const { t } = useTranslation();
-  const { api, departure, arrivalConnection, connectArrivalNetwork } = useApi();
+  const { departureConnection, departure, arrivalConnection, connectArrivalNetwork } = useApi();
   const [availableBalances, setAvailableBalances] = useState<AvailableBalance[]>([]);
 
   const availableBalance = useMemo(() => {
@@ -97,7 +98,8 @@ export function Substrate2SubstrateDVM({
   useEffect(() => {
     // eslint-disable-next-line complexity
     const fn = () => (data: IssuingPayload) => {
-      if (!api || !fee || !dailyLimit || !availableBalance?.balance) {
+      const { api } = departureConnection as PolkadotConnection;
+      if (departureConnection.type !== 'polkadot' || !api || !fee || !dailyLimit || !availableBalance?.balance) {
         return EMPTY.subscribe();
       }
 
@@ -120,7 +122,18 @@ export function Substrate2SubstrateDVM({
     };
 
     setSubmit(fn as unknown as SubmitFn);
-  }, [afterCrossChain, api, availableBalance, dailyLimit, fee, feeWithSymbol, getBalances, observer, setSubmit, t]);
+  }, [
+    afterCrossChain,
+    availableBalance,
+    dailyLimit,
+    departureConnection,
+    fee,
+    feeWithSymbol,
+    getBalances,
+    observer,
+    setSubmit,
+    t,
+  ]);
 
   useEffect(() => {
     if (arrivalConnection.status !== ConnectionStatus.success) {

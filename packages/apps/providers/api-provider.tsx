@@ -1,6 +1,5 @@
-import { ApiPromise } from '@polkadot/api';
 import { negate } from 'lodash';
-import { createContext, useCallback, useContext, useMemo, useReducer, useState } from 'react';
+import { createContext, useCallback, useContext, useReducer } from 'react';
 import { EMPTY, iif, of, Subscription } from 'rxjs';
 import {
   Action,
@@ -51,8 +50,6 @@ const initialConnection: Connection = {
   status: ConnectionStatus.pending,
   type: 'unknown',
   accounts: [],
-  chainId: '',
-  network: null,
 };
 
 const initialState: StoreState = {
@@ -64,24 +61,12 @@ const initialState: StoreState = {
   enableTestNetworks: !!getInitialSetting('enableTestNetworks', isDev),
 };
 
-const isConnectionOfChain = (chain: ChainConfig) => {
-  const isConnectToMetamask = chain.mode === 'dvm' || isEthereumNetwork(chain);
-
-  return (target: Connection | NoNullFields<PolkadotConnection> | EthereumConnection) => {
-    const { network, chainId } = target;
-
-    return isConnectToMetamask
-      ? chainId === Web3.utils.toHex((chain as EthereumChainConfig).ethereumChain.chainId)
-      : network === chain.name;
-  };
-};
-
 const isSameConnection = (origin: Connection) => {
   return (item: Connection) => {
     return (
       item.type === origin.type &&
-      ((item.network === (origin as PolkadotConnection).network && !!item.network) ||
-        (item.chainId === (origin as EthereumConnection).chainId && !!item.chainId))
+      ((item as PolkadotConnection).network === (origin as PolkadotConnection).network ||
+        (item as EthereumConnection).chainId === (origin as EthereumConnection).chainId)
     );
   };
 };
@@ -130,13 +115,11 @@ function reducer(state: StoreState, action: Actions): StoreState {
 }
 
 export type ApiCtx = StoreState & {
-  api: ApiPromise | null;
   connectDepartureNetwork: (network: ChainConfig) => void;
   connectArrivalNetwork: (network: ChainConfig) => void;
   disconnect: () => void;
   setDeparture: (network: ChainConfig) => void;
   setEnableTestNetworks: (enable: boolean) => void;
-  setApi: (api: ApiPromise) => void;
 };
 
 export const ApiContext = createContext<ApiCtx | null>(null);
@@ -146,7 +129,7 @@ let subscription: Subscription = EMPTY.subscribe();
 export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const setDeparture = useCallback((payload: ChainConfig) => dispatch({ type: 'setDeparture', payload }), []);
-  const setMainConnection = useCallback(
+  const setDepartureConnection = useCallback(
     (payload: Connection) => dispatch({ type: 'setDepartureConnection', payload }),
     []
   );
@@ -164,33 +147,6 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
     updateStorage({ enableTestNetworks: payload });
   }, []);
 
-  const [api, setApi] = useState<ApiPromise | null>(null);
-
-  const observer = useMemo(
-    () => ({
-      next: (connection: Connection) => {
-        setMainConnection(connection);
-
-        const nApi = (connection as PolkadotConnection).api;
-
-        if (nApi && connection.status === ConnectionStatus.success) {
-          setApi(nApi);
-          addConnection(connection);
-        } else if (connection.status === ConnectionStatus.success) {
-          addConnection(connection);
-        }
-      },
-      error: (err: unknown) => {
-        setMainConnection({ ...initialConnection, status: ConnectionStatus.error });
-        console.error('%c connection error ', 'font-size:13px; background:pink; color:#bf2c9f;', err);
-      },
-      complete: () => {
-        console.info('Connection life is over');
-      },
-    }),
-    [addConnection, setMainConnection]
-  );
-
   const isConnectionAvailable = useCallback(
     (connection: Connection | undefined) => {
       const availableStatus = [ConnectionStatus.success, ConnectionStatus.connecting, ConnectionStatus];
@@ -205,24 +161,51 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
     [removeConnection]
   );
 
+  const getConnection = useCallback(
+    (chainConfig: ChainConfig) => {
+      const isConnectToMetamask = chainConfig.mode === 'dvm' || isEthereumNetwork(chainConfig);
+
+      const target = state.connections.find((item) => {
+        return isConnectToMetamask
+          ? item.type === 'metamask' &&
+              (item as EthereumConnection).chainId ===
+                Web3.utils.toHex((chainConfig as EthereumChainConfig).ethereumChain.chainId)
+          : (item as PolkadotConnection).network === chainConfig.name;
+      });
+
+      return iif(() => isConnectionAvailable(target), of(target!), connect(chainConfig));
+    },
+    [isConnectionAvailable, state.connections]
+  );
+
   const connectDepartureNetwork = useCallback(
     (chainConfig: ChainConfig) => {
-      const target = state.connections.find(isConnectionOfChain(chainConfig));
-
       subscription.unsubscribe();
-
       setDeparture(chainConfig);
 
-      subscription = iif(() => isConnectionAvailable(target), of(target!), connect(chainConfig)).subscribe(observer);
+      subscription = getConnection(chainConfig).subscribe({
+        next: (connection: Connection) => {
+          setDepartureConnection(connection);
+
+          if (connection.status === ConnectionStatus.success) {
+            addConnection(connection);
+          }
+        },
+        error: (err: unknown) => {
+          setDepartureConnection({ ...initialConnection, status: ConnectionStatus.error });
+          console.error('%c connection error ', 'font-size:13px; background:pink; color:#bf2c9f;', err);
+        },
+        complete: () => {
+          console.info('Connection life is over');
+        },
+      });
     },
-    [isConnectionAvailable, observer, setDeparture, state.connections]
+    [addConnection, getConnection, setDeparture, setDepartureConnection]
   );
 
   const connectArrivalNetwork = useCallback(
     (chainConfig: ChainConfig) => {
-      const target = state.connections.find(isConnectionOfChain(chainConfig));
-
-      const sub$$ = iif(() => isConnectionAvailable(target), of(target!), connect(chainConfig)).subscribe({
+      const sub$$ = getConnection(chainConfig).subscribe({
         next: (cur: Connection) => {
           if (cur.status === ConnectionStatus.success) {
             addConnection(cur);
@@ -230,25 +213,20 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
           }
         },
         error: (err: unknown) => {
+          setArrivalConnection({ ...initialConnection, status: ConnectionStatus.error });
           console.log('🚨 ~ file: api-provider.tsx ~ line 242 ~ ApiProvider ~ err', err);
         },
       });
 
       subscription.add(sub$$);
     },
-    [addConnection, isConnectionAvailable, setArrivalConnection, state.connections]
+    [addConnection, getConnection, setArrivalConnection]
   );
 
   const disconnect = useCallback(() => {
-    if (api && api.isConnected) {
-      subscription.unsubscribe();
-
-      setApi(null);
-    }
-
-    setMainConnection(initialConnection);
+    setDepartureConnection(initialConnection);
     setArrivalConnection(initialConnection);
-  }, [api, setArrivalConnection, setMainConnection]);
+  }, [setArrivalConnection, setDepartureConnection]);
 
   return (
     <ApiContext.Provider
@@ -259,8 +237,6 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
         disconnect,
         setDeparture,
         setEnableTestNetworks,
-        setApi,
-        api,
       }}
     >
       {children}

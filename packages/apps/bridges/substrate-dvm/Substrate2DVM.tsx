@@ -11,6 +11,7 @@ import {
   CrossToken,
   DVMChainConfig,
   PolkadotChainConfig,
+  PolkadotConnection,
   SubmitFn,
 } from 'shared/model';
 import { toWei, fromWei, prettyNumber, isKton } from 'shared/utils/helper';
@@ -35,7 +36,7 @@ export function Substrate2DVM({
   setSubmit,
 }: CrossChainComponentProps<SubstrateDVMBridgeConfig, CrossToken<PolkadotChainConfig>, CrossToken<DVMChainConfig>>) {
   const { t } = useTranslation();
-  const { api, departure } = useApi();
+  const { departureConnection, departure } = useApi();
   const [balance, setBalance] = useState<AvailableBalance | null>(null);
   const getBalances = useDarwiniaAvailableBalances(departure);
   const { afterCrossChain } = useAfterTx<TransferPayload>();
@@ -54,7 +55,8 @@ export function Substrate2DVM({
 
   useEffect(() => {
     const fn = () => (data: TransferPayload) => {
-      if (!api || !balance) {
+      const { api, type } = departureConnection as PolkadotConnection;
+      if (type !== 'polkadot' || !api || !balance) {
         return EMPTY.subscribe();
       }
 
@@ -77,7 +79,7 @@ export function Substrate2DVM({
     };
 
     setSubmit(fn as unknown as SubmitFn);
-  }, [afterCrossChain, api, balance, getBalance, observer, setSubmit, t]);
+  }, [afterCrossChain, balance, departureConnection, getBalance, observer, setSubmit, t]);
 
   useEffect(() => {
     const sub$$ = getBalance();

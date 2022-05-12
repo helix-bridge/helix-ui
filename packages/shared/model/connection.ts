@@ -20,7 +20,6 @@ export interface Connection {
   status: ConnectionStatus;
   accounts: IAccountMeta[];
   type: ConnectionType;
-  [key: string]: unknown;
 }
 
 export interface PolkadotConnection extends Connection {

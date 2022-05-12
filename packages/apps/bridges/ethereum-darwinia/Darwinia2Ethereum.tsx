@@ -13,6 +13,7 @@ import {
   CrossToken,
   EthereumChainConfig,
   PolkadotChainConfig,
+  PolkadotConnection,
   SubmitFn,
 } from 'shared/model';
 import { fromWei, isRing, prettyNumber, toWei } from 'shared/utils/helper';
@@ -52,7 +53,7 @@ export function Darwinia2Ethereum({
 >) {
   const { t } = useTranslation();
 
-  const { api, departure } = useApi();
+  const { departureConnection, departure } = useApi();
 
   const [availableBalances, setAvailableBalances] = useState<AvailableBalance[]>([]);
   const [crossChainFee, setCrossChainFee] = useState<BN | null>(null);
@@ -83,7 +84,8 @@ export function Darwinia2Ethereum({
 
   useEffect(() => {
     const fn = () => (data: RedeemPayload) => {
-      if (!api || !fee) {
+      const { api, type } = departureConnection as PolkadotConnection;
+      if (type !== 'polkadot' || !api || !fee) {
         return EMPTY.subscribe();
       }
 
@@ -118,7 +120,17 @@ export function Darwinia2Ethereum({
     };
 
     setSubmit(fn as unknown as SubmitFn);
-  }, [afterCrossChain, api, availableBalances, fee, feeWithSymbol, form, getBalances, observer, setSubmit, t]);
+  }, [
+    afterCrossChain,
+    availableBalances,
+    departureConnection,
+    fee,
+    feeWithSymbol,
+    getBalances,
+    observer,
+    setSubmit,
+    t,
+  ]);
 
   useEffect(() => {
     const balance$$ = from(getBalances(account)).subscribe(setAvailableBalances);
