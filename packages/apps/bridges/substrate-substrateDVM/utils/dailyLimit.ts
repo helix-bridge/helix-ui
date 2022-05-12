@@ -16,7 +16,7 @@ export async function getDailyLimit(
   const {
     to: { meta: arrival },
   } = direction;
-  const web3 = entrance.web3.getInstance(arrival.ethereumChain.rpcUrls[0]);
+  const web3 = entrance.web3.getInstance(arrival.provider);
   const mappingAddress = await getS2SMappingAddress(arrival.provider);
   const contract = new web3.eth.Contract(abi.S2SMappingTokenABI, mappingAddress);
   //   const token = targetChainTokens.find((item) => isRing(item.symbol));

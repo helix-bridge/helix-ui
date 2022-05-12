@@ -1,12 +1,14 @@
 import { typesBundleForPolkadotApps } from '@darwinia/types/mix';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import Web3 from 'web3';
+import { SHORT_DURATION } from '../../config/constant';
 
 interface ApiGuy<T> {
   [key: string]: T;
 }
 
 abstract class Entrance<T> {
+  abstract readonly name: string;
   abstract apiList: ApiGuy<T>[];
   abstract beforeRemove(instance: T): void;
   abstract init(url: string): T;
@@ -27,6 +29,8 @@ abstract class Entrance<T> {
 
     const instance = this.init(url);
 
+    console.log(`:🌎 ~ ${this.name} api list`, this.apiList.map((item) => Object.keys(item)).flat());
+
     this.apiList.push({ [url]: instance });
     this.afterInit(instance);
 
@@ -44,10 +48,12 @@ abstract class Entrance<T> {
 }
 
 class PolkadotEntrance extends Entrance<ApiPromise> {
+  name = 'polkadot';
+
   apiList: ApiGuy<ApiPromise>[] = [];
 
   init(url: string) {
-    const provider = new WsProvider(url);
+    const provider = new WsProvider(url, SHORT_DURATION);
 
     return new ApiPromise({
       provider,
@@ -65,6 +71,8 @@ class PolkadotEntrance extends Entrance<ApiPromise> {
 }
 
 class Web3Entrance extends Entrance<Web3> {
+  name = 'web3';
+
   apiList: ApiGuy<Web3>[] = [];
 
   defaultProvider = 'ethereum';

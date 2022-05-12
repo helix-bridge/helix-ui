@@ -54,13 +54,7 @@ export function RecipientItem({
           <span>{t('Recipient')}</span>
           {displayLink && (
             <Tooltip title={t('Connect {{network}} to fetch own accounts', { network: to.meta.name })}>
-              <Button
-                onClick={() => {
-                  connectArrivalNetwork(to.meta);
-                }}
-                type="link"
-                icon={<ApiOutlined />}
-              ></Button>
+              <Button onClick={() => connectArrivalNetwork(to.meta)} type="link" icon={<ApiOutlined />}></Button>
             </Tooltip>
           )}
         </span>

@@ -39,7 +39,7 @@ export function Destination({
             width: '100%',
             display: 'flex',
           }}
-          className="h-20 w-full flex items-center"
+          className="h-20 w-full flex items-center destination"
         />
 
         <div className="absolute top-0 left-auto right-0 h-20 flex justify-center items-center px-3">

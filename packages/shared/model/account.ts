@@ -24,7 +24,7 @@ export interface PolkadotChainSimpleToken {
 }
 
 export type AvailableBalance = {
-  balance: string | number | BN;
+  balance: BN;
 } & Pick<Token, 'symbol' | 'decimals'>;
 
 export interface DailyLimit {

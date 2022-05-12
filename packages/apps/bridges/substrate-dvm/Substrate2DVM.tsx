@@ -37,7 +37,7 @@ export function Substrate2DVM({
   const { t } = useTranslation();
   const { api, departure } = useApi();
   const [balance, setBalance] = useState<AvailableBalance | null>(null);
-  const getBalances = useDarwiniaAvailableBalances(api, departure);
+  const getBalances = useDarwiniaAvailableBalances(departure);
   const { afterCrossChain } = useAfterTx<TransferPayload>();
   const { observer } = useTx();
   const { account } = useAccount();

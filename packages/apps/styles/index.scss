@@ -87,3 +87,13 @@ $radius-base: 4px;
     justify-content: center;
   }
 }
+
+.destination {
+  .ant-input-number-handler-wrap {
+    display: none !important;
+  }
+
+  .ant-input-number-input-wrap {
+    width: 70%;
+  }
+}

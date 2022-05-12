@@ -68,14 +68,14 @@ export function Substrate2SubstrateDVM({
     const { balance: max, ...token } = balance;
     const result = new BN(max).sub(new BN(toWei({ value: '1', decimals: token.decimals ?? 9 }))); // keep at least 1 in account;
 
-    return { ...token, max: result.gte(new BN(0)) ? result : BN_ZERO };
+    return { ...token, balance: result.gte(new BN(0)) ? result : BN_ZERO } as AvailableBalance;
   }, [availableBalances]);
 
   const [fee, setFee] = useState<BN | null>(null);
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { observer } = useTx();
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
-  const getBalances = useDarwiniaAvailableBalances(api, departure);
+  const getBalances = useDarwiniaAvailableBalances(departure);
   const bridgeState = useBridgeStatus(direction);
   const { account } = useAccount();
 
@@ -97,11 +97,11 @@ export function Substrate2SubstrateDVM({
   useEffect(() => {
     // eslint-disable-next-line complexity
     const fn = () => (data: IssuingPayload) => {
-      if (!api || !fee || !dailyLimit || !availableBalance?.max) {
+      if (!api || !fee || !dailyLimit || !availableBalance?.balance) {
         return EMPTY.subscribe();
       }
 
-      const msg = validateBeforeTx(availableBalance.max, new BN(toWei(data.direction.from)), fee, dailyLimit);
+      const msg = validateBeforeTx(availableBalance.balance, new BN(toWei(data.direction.from)), fee, dailyLimit);
 
       if (msg) {
         message.error(t(msg));

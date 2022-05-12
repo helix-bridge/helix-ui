@@ -60,7 +60,7 @@ export function Darwinia2Ethereum({
   const fee = useMemo(() => (crossChainFee ? crossChainFee.add(txFee ?? BN_ZERO) : null), [crossChainFee, txFee]);
   const { observer } = useTx();
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
-  const getBalances = useDarwiniaAvailableBalances(api, departure);
+  const getBalances = useDarwiniaAvailableBalances(departure);
   const [recipient, setRecipient] = useState<string>();
   const { account } = useAccount();
 

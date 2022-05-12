@@ -19,7 +19,7 @@ export const crabDVMConfig: DVMChainConfig = {
   ],
   mode: 'dvm',
   name: 'crab',
-  provider: 'https://crab-rpc.darwinia.network/',
+  provider: 'wss://darwinia-crab.api.onfinality.io/public-ws',
   social: {
     portal: 'https://crab.network/',
     github: 'https://github.com/darwinia-network/darwinia/tree/main/runtime/crab',
