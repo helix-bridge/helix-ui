@@ -35,9 +35,9 @@ export function Substrate2DVM({
   setSubmit,
 }: CrossChainComponentProps<SubstrateDVMBridgeConfig, CrossToken<PolkadotChainConfig>, CrossToken<DVMChainConfig>>) {
   const { t } = useTranslation();
-  const { api, network } = useApi();
+  const { api, departure } = useApi();
   const [balance, setBalance] = useState<AvailableBalance | null>(null);
-  const getBalances = useDarwiniaAvailableBalances(api, network);
+  const getBalances = useDarwiniaAvailableBalances(api, departure);
   const { afterCrossChain } = useAfterTx<TransferPayload>();
   const { observer } = useTx();
   const { account } = useAccount();

@@ -38,8 +38,8 @@ export function SubmitButton({
 }: PropsWithChildren<SubmitButtonProps>) {
   const { t } = useTranslation();
   const {
-    mainConnection: { status },
-    connectNetwork,
+    departureConnection: { status },
+    connectDepartureNetwork,
   } = useApi();
 
   const errorConnections: ConnectionStatus[] = [
@@ -52,7 +52,7 @@ export function SubmitButton({
   return !launch || errorConnections.includes(status) ? (
     <FromItemButton
       onClick={() => {
-        connectNetwork(from);
+        connectDepartureNetwork(from);
       }}
     >
       {children || t('Connect to Wallet')}

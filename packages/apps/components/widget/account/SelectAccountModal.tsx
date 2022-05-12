@@ -39,7 +39,7 @@ const AccountWithIdentify = ({ value }: { value: IAccountMeta }) => {
 
 export const SelectAccountModal: React.FC<Props> = ({ visible, defaultValue, title, footer, onSelect, onCancel }) => {
   const {
-    mainConnection: { accounts },
+    departureConnection: { accounts },
   } = useApi();
   const { t } = useTranslation();
 

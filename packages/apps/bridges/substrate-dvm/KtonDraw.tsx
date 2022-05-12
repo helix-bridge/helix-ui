@@ -34,8 +34,8 @@ interface KtonDrawProps {
 
 export function KtonDraw({ direction, kton, pendingClaimAmount, onSuccess }: KtonDrawProps) {
   const {
-    network,
-    mainConnection: { accounts },
+    departure,
+    departureConnection: { accounts },
   } = useApi();
   const [isDisable, setIsDisable] = useState(false);
   const { observer } = useTx();
@@ -97,7 +97,7 @@ export function KtonDraw({ direction, kton, pendingClaimAmount, onSuccess }: Kto
 
   return (
     <div
-      className={`flex items-center justify-between p-2 rounded-xl border border-opacity-20 border-white bg-${network?.name}`}
+      className={`flex items-center justify-between p-2 rounded-xl border border-opacity-20 border-white bg-${departure?.name}`}
     >
       <div className="flex items-center">
         {isDisable ? (

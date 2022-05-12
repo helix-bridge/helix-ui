@@ -14,24 +14,25 @@ export const AccountContext = createContext<AccountCtx | null>(null);
 
 export const AccountProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   const [account, setAccount] = useState<string>('');
-  const { mainConnection } = useApi();
+  const { departureConnection } = useApi();
 
   const accountWithMeta = useMemo(
-    () => mainConnection.accounts.find((item) => isSameAddress(item.address, account)) ?? mainConnection.accounts[0],
-    [account, mainConnection]
+    () =>
+      departureConnection.accounts.find((item) => isSameAddress(item.address, account)) ??
+      departureConnection.accounts[0],
+    [account, departureConnection]
   );
 
   useEffect(() => {
     const accStorage = readStorage().activeAccount;
     const acc =
-      mainConnection.accounts.find((value) => value.address === accStorage)?.address ||
-      mainConnection.accounts[0]?.address;
+      departureConnection.accounts.find((value) => value.address === accStorage)?.address ||
+      departureConnection.accounts[0]?.address;
 
     if (acc) {
       setAccount(acc);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mainConnection]);
+  }, [departureConnection.accounts]);
 
   useEffect(() => {
     updateStorage({ activeAccount: account });

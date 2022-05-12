@@ -15,30 +15,30 @@ const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
 });
 
 export function ActiveAccount() {
-  const { mainConnection, network, connectNetwork, disconnect } = useApi();
+  const { departureConnection, departure, connectDepartureNetwork, disconnect } = useApi();
   const { t } = useTranslation();
   const { account, setAccount } = useAccount();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const { status } = mainConnection;
+    const { status } = departureConnection;
 
     if (status === ConnectionStatus.success) {
-      getConfigByConnection(mainConnection).then((config) => {
-        if (config && !isEqual(network, config)) {
-          connectNetwork(network);
+      getConfigByConnection(departureConnection).then((config) => {
+        if (config && !isEqual(departure, config)) {
+          connectDepartureNetwork(departure);
         }
       });
     }
-  }, [connectNetwork, mainConnection, network]);
+  }, [connectDepartureNetwork, departureConnection, departure]);
 
   return (
     <>
-      {mainConnection.accounts.length >= 1 ? (
+      {departureConnection.accounts.length >= 1 ? (
         <>
           <section
             onClick={() => {
-              if (mainConnection.accounts.length > 1) {
+              if (departureConnection.accounts.length > 1) {
                 setIsVisible(true);
               }
             }}
@@ -46,12 +46,12 @@ export function ActiveAccount() {
           >
             <Button
               className={`flex items-center px-2 gap-2 overflow-hidden`}
-              icon={<img src={`/image/${network.logos[0].name}`} width={24} height={24} />}
+              icon={<img src={`/image/${departure.logos[0].name}`} width={24} height={24} />}
               style={{ maxWidth: 200 }}
             >
               <span className="truncate">{account}</span>
 
-              {mainConnection.accounts.length > 1 && <Icon name="down" className="w-8 h-8" />}
+              {departureConnection.accounts.length > 1 && <Icon name="down" className="w-8 h-8" />}
             </Button>
 
             <span className="lg:hidden flex">
@@ -65,11 +65,11 @@ export function ActiveAccount() {
 
           <SettingFilled
             onClick={() => setIsVisible(true)}
-            className={`lg:hidden inline-flex items-center text-2xl h-8 text-${network.name}-main`}
+            className={`lg:hidden inline-flex items-center text-2xl h-8 text-${departure.name}-main`}
           />
         </>
       ) : (
-        <Button onClick={() => connectNetwork(network)}>{t('Connect Wallet')}</Button>
+        <Button onClick={() => connectDepartureNetwork(departure)}>{t('Connect Wallet')}</Button>
       )}
 
       <SelectAccountModal

@@ -29,13 +29,13 @@ function ActiveAccount({
   chain: ChainConfig;
 }>) {
   const ref = useRef<HTMLSpanElement>(null);
-  const { network } = useApi();
+  const { departure } = useApi();
   const containerCls = useMemo(
     () =>
-      `flex items-center justify-between leading-normal whitespace-nowrap p-1 overflow-hidden bg-${network.name} 
+      `flex items-center justify-between leading-normal whitespace-nowrap p-1 overflow-hidden bg-${departure.name} 
         ${isLargeRounded ? 'rounded-xl ' : 'rounded-lg '}
         ${className}`,
-    [isLargeRounded, className, network]
+    [isLargeRounded, className, departure]
   );
 
   return (
@@ -51,7 +51,7 @@ function ActiveAccount({
 
 export function Connection() {
   const { account } = useAccount();
-  const { network } = useApi();
+  const { departure } = useApi();
 
   return (
     <section className={`flex items-center gap-2 connection`}>
@@ -61,7 +61,7 @@ export function Connection() {
             className="max-w-xs text-white hidden lg:flex cursor-pointer"
             logoStyle={{ width: 24 }}
             isLargeRounded={false}
-            chain={network}
+            chain={departure}
           >
             <EllipsisMiddle className="text-white overflow-hidden mr-2" copyable>
               {account}

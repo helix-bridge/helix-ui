@@ -30,7 +30,7 @@ const isDirectionChanged = (pre: CrossChainDirection, cur: CrossChainDirection) 
 export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const { i18n, t } = useTranslation();
   const [form] = useForm<CrossChainPayload>();
-  const { connectNetwork, mainConnection, setNetwork } = useApi();
+  const { connectDepartureNetwork, departureConnection, setDeparture } = useApi();
   const [direction, setDirection] = useState(dir);
   const [bridge, setBridge] = useState<Bridge | null>(null);
   const [submitFn, setSubmit] = useState<SubmitFn>(emptyObsFactory);
@@ -75,7 +75,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   }, [bridge, direction]);
 
   useEffect(() => {
-    setNetwork(direction.from.meta);
+    setDeparture(direction.from.meta);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -114,7 +114,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
                 }
 
                 setDirection(value);
-                setNetwork(value.from.meta);
+                setDeparture(value.from.meta);
               }}
             />
           </Form.Item>
@@ -135,12 +135,12 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
           </Form.Item>
 
           <Tooltip title={bridgeState.reason} placement="bottom">
-            {mainConnection.status === ConnectionStatus.success ? (
+            {departureConnection.status === ConnectionStatus.success ? (
               <FromItemButton onClick={() => launch()}>{t('Transfer')}</FromItemButton>
             ) : (
               <FromItemButton
-                onClick={() => connectNetwork(direction.from.meta)}
-                disabled={mainConnection.status === ConnectionStatus.connecting}
+                onClick={() => connectDepartureNetwork(direction.from.meta)}
+                disabled={departureConnection.status === ConnectionStatus.connecting}
               >
                 {t('Connect to Wallet')}
               </FromItemButton>

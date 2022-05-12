@@ -22,15 +22,15 @@ export function RecipientItem({
   onChange?: (value: string) => void;
 }) {
   const { t } = useTranslation();
-  const { mainConnection, assistantConnection, connectAssistantNetwork } = useApi();
+  const { departureConnection, arrivalConnection, connectArrivalNetwork } = useApi();
 
   const formattedAccounts = useMemo(
     () =>
-      assistantConnection.accounts?.map((item) => ({
+      arrivalConnection.accounts?.map((item) => ({
         ...item,
         address: convertToSS58(item.address, (direction.to.meta as PolkadotChainConfig).ss58Prefix),
       })),
-    [assistantConnection.accounts, direction.to.meta]
+    [arrivalConnection.accounts, direction.to.meta]
   );
 
   const { to } = direction;
@@ -38,12 +38,12 @@ export function RecipientItem({
   const type = isPolkadot ? to.meta.name : 'ethereum';
 
   const displayLink = useMemo(() => {
-    return isPolkadot && bridge.activeAssistantConnection && assistantConnection.type !== 'polkadot';
-  }, [assistantConnection.type, bridge.activeAssistantConnection, isPolkadot]);
+    return isPolkadot && bridge.activeArrivalConnection && arrivalConnection.type !== 'polkadot';
+  }, [arrivalConnection.type, bridge.activeArrivalConnection, isPolkadot]);
 
   const isValidRecipient = useCallback((value: string) => isValidAddressStrict(value, type), [type]);
 
-  if (mainConnection.status !== ConnectionStatus.success) {
+  if (departureConnection.status !== ConnectionStatus.success) {
     return null;
   }
 
@@ -56,7 +56,7 @@ export function RecipientItem({
             <Tooltip title={t('Connect {{network}} to fetch own accounts', { network: to.meta.name })}>
               <Button
                 onClick={() => {
-                  connectAssistantNetwork(to.meta);
+                  connectArrivalNetwork(to.meta);
                 }}
                 type="link"
                 icon={<ApiOutlined />}

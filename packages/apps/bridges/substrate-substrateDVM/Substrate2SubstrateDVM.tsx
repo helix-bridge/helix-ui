@@ -55,7 +55,7 @@ export function Substrate2SubstrateDVM({
   CrossToken<DVMChainConfig>
 >) {
   const { t } = useTranslation();
-  const { api, network, assistantConnection, connectAssistantNetwork } = useApi();
+  const { api, departure, arrivalConnection, connectArrivalNetwork } = useApi();
   const [availableBalances, setAvailableBalances] = useState<AvailableBalance[]>([]);
 
   const availableBalance = useMemo(() => {
@@ -75,7 +75,7 @@ export function Substrate2SubstrateDVM({
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { observer } = useTx();
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
-  const getBalances = useDarwiniaAvailableBalances(api, network);
+  const getBalances = useDarwiniaAvailableBalances(api, departure);
   const bridgeState = useBridgeStatus(direction);
   const { account } = useAccount();
 
@@ -123,8 +123,8 @@ export function Substrate2SubstrateDVM({
   }, [afterCrossChain, api, availableBalance, dailyLimit, fee, feeWithSymbol, getBalances, observer, setSubmit, t]);
 
   useEffect(() => {
-    if (assistantConnection.status !== ConnectionStatus.success) {
-      connectAssistantNetwork(direction.to.meta);
+    if (arrivalConnection.status !== ConnectionStatus.success) {
+      connectArrivalNetwork(direction.to.meta);
       return;
     }
 
@@ -150,7 +150,7 @@ export function Substrate2SubstrateDVM({
       });
 
     return () => sub$$?.unsubscribe();
-  }, [assistantConnection.status, connectAssistantNetwork, direction, isMounted]);
+  }, [arrivalConnection.status, connectArrivalNetwork, direction, isMounted]);
 
   useEffect(() => {
     const sub$$ = from(getIssuingFee(bridge)).subscribe((result) => {

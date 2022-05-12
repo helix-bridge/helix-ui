@@ -20,25 +20,25 @@ import { isEthereumNetwork } from 'shared/utils/network';
 import Web3 from 'web3';
 
 interface StoreState {
-  mainConnection: Connection;
-  assistantConnection: Connection;
+  departureConnection: Connection;
+  arrivalConnection: Connection;
   connections: (NoNullFields<PolkadotConnection> | EthereumConnection | TronConnection)[];
-  network: ChainConfig;
+  departure: ChainConfig;
   isDev: boolean;
   enableTestNetworks: boolean;
 }
 
-type SetNetworkAction = Action<'setNetwork', ChainConfig>;
-type SetMainConnection = Action<'setMainConnection', Connection>;
-type SetAssistantConnection = Action<'setAssistantConnection', Connection>;
+type SetDeparture = Action<'setDeparture', ChainConfig>;
+type SetDepartureConnection = Action<'setDepartureConnection', Connection>;
+type SetArrivalConnection = Action<'setArrivalConnection', Connection>;
 type SetEnableTestNetworks = Action<'setEnableTestNetworks', boolean>;
 type AddConnection = Action<'addConnection', Connection>;
 type RemoveConnection = Action<'removeConnection', Connection>;
 
 type Actions =
-  | SetNetworkAction
-  | SetMainConnection
-  | SetAssistantConnection
+  | SetDeparture
+  | SetDepartureConnection
+  | SetArrivalConnection
   | SetEnableTestNetworks
   | AddConnection
   | RemoveConnection;
@@ -56,10 +56,10 @@ const initialConnection: Connection = {
 };
 
 const initialState: StoreState = {
-  mainConnection: initialConnection,
-  assistantConnection: initialConnection,
+  departureConnection: initialConnection,
+  arrivalConnection: initialConnection,
   connections: [],
-  network: initialDirection.from.meta,
+  departure: initialDirection.from.meta,
   isDev,
   enableTestNetworks: !!getInitialSetting('enableTestNetworks', isDev),
 };
@@ -89,16 +89,16 @@ const isSameConnection = (origin: Connection) => {
 // eslint-disable-next-line complexity
 function reducer(state: StoreState, action: Actions): StoreState {
   switch (action.type) {
-    case 'setNetwork': {
-      return { ...state, network: action.payload };
+    case 'setDeparture': {
+      return { ...state, departure: action.payload };
     }
 
-    case 'setMainConnection': {
-      return { ...state, mainConnection: action.payload };
+    case 'setDepartureConnection': {
+      return { ...state, departureConnection: action.payload };
     }
 
-    case 'setAssistantConnection': {
-      return { ...state, assistantConnection: action.payload };
+    case 'setArrivalConnection': {
+      return { ...state, arrivalConnection: action.payload };
     }
 
     case 'setEnableTestNetworks': {
@@ -131,10 +131,10 @@ function reducer(state: StoreState, action: Actions): StoreState {
 
 export type ApiCtx = StoreState & {
   api: ApiPromise | null;
-  connectNetwork: (network: ChainConfig) => void;
-  connectAssistantNetwork: (network: ChainConfig) => void;
+  connectDepartureNetwork: (network: ChainConfig) => void;
+  connectArrivalNetwork: (network: ChainConfig) => void;
   disconnect: () => void;
-  setNetwork: (network: ChainConfig) => void;
+  setDeparture: (network: ChainConfig) => void;
   setEnableTestNetworks: (enable: boolean) => void;
   setApi: (api: ApiPromise) => void;
 };
@@ -145,11 +145,14 @@ let subscription: Subscription = EMPTY.subscribe();
 
 export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const setNetwork = useCallback((payload: ChainConfig) => dispatch({ type: 'setNetwork', payload }), []);
-  const setMainConnection = useCallback((payload: Connection) => dispatch({ type: 'setMainConnection', payload }), []);
+  const setDeparture = useCallback((payload: ChainConfig) => dispatch({ type: 'setDeparture', payload }), []);
+  const setMainConnection = useCallback(
+    (payload: Connection) => dispatch({ type: 'setDepartureConnection', payload }),
+    []
+  );
 
-  const setAssistantConnection = useCallback(
-    (payload: Connection) => dispatch({ type: 'setAssistantConnection', payload }),
+  const setArrivalConnection = useCallback(
+    (payload: Connection) => dispatch({ type: 'setArrivalConnection', payload }),
     []
   );
 
@@ -202,20 +205,20 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
     [removeConnection]
   );
 
-  const connectNetwork = useCallback(
+  const connectDepartureNetwork = useCallback(
     (chainConfig: ChainConfig) => {
       const target = state.connections.find(isConnectionOfChain(chainConfig));
 
       subscription.unsubscribe();
 
-      setNetwork(chainConfig);
+      setDeparture(chainConfig);
 
       subscription = iif(() => isConnectionAvailable(target), of(target!), connect(chainConfig)).subscribe(observer);
     },
-    [isConnectionAvailable, observer, setNetwork, state.connections]
+    [isConnectionAvailable, observer, setDeparture, state.connections]
   );
 
-  const connectAssistantNetwork = useCallback(
+  const connectArrivalNetwork = useCallback(
     (chainConfig: ChainConfig) => {
       const target = state.connections.find(isConnectionOfChain(chainConfig));
 
@@ -223,7 +226,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
         next: (cur: Connection) => {
           if (cur.status === ConnectionStatus.success) {
             addConnection(cur);
-            setAssistantConnection(cur);
+            setArrivalConnection(cur);
           }
         },
         error: (err: unknown) => {
@@ -233,7 +236,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
 
       subscription.add(sub$$);
     },
-    [addConnection, isConnectionAvailable, setAssistantConnection, state.connections]
+    [addConnection, isConnectionAvailable, setArrivalConnection, state.connections]
   );
 
   const disconnect = useCallback(() => {
@@ -244,17 +247,17 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
     }
 
     setMainConnection(initialConnection);
-    setAssistantConnection(initialConnection);
-  }, [api, setAssistantConnection, setMainConnection]);
+    setArrivalConnection(initialConnection);
+  }, [api, setArrivalConnection, setMainConnection]);
 
   return (
     <ApiContext.Provider
       value={{
         ...state,
-        connectNetwork,
-        connectAssistantNetwork,
+        connectDepartureNetwork,
+        connectArrivalNetwork,
         disconnect,
-        setNetwork,
+        setDeparture,
         setEnableTestNetworks,
         setApi,
         api,
