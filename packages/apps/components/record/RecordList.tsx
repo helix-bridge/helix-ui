@@ -1,10 +1,11 @@
-import { Vertices, RecordComponentProps } from 'shared/model';
-import { getBridgeComponent, getChainConfig } from 'shared/utils';
 import { Empty } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { omit } from 'lodash';
 import { FunctionComponent, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { RecordComponentProps, Vertices } from 'shared/model';
+import { getBridgeComponent } from 'shared/utils/bridge';
+import { getChainConfig } from 'shared/utils/network';
 
 interface RecordListProps {
   departure: Vertices;
@@ -20,7 +21,11 @@ export function RecordList({ departure, arrival, sourceData }: RecordListProps) 
   const Record = useMemo(
     () =>
       getRecordComponent({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         from: getChainConfig(departure),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         to: getChainConfig(arrival),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       }) as FunctionComponent<RecordComponentProps<any>>,

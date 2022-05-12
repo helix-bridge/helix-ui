@@ -64,13 +64,13 @@ export function CrossChainRecord() {
   const [departure, setDeparture] = useState<Vertices>(() => {
     const { from: network, fMode: mode } = searchParams;
 
-    return (network as Network) && mode ? { name: network, mode } : defaultSelect[0];
+    return (network as Network) && mode ? { name: network as Network, mode } : defaultSelect[0];
   });
 
   const [arrival, setArrival] = useState<Vertices>(() => {
     const { to: network, tMode: mode } = searchParams;
 
-    return network && mode ? { name: network as Network, mode } : { name: defaultSelect[0], mode: defaultSelect[1] };
+    return network && mode ? { name: network as Network, mode } : defaultSelect[1];
   });
 
   const [loading, setLoading] = useState(false);

@@ -1,12 +1,13 @@
 import { ImportOutlined } from '@ant-design/icons';
-import { DESCRIPTIONS, SYSTEM_ChAIN_CONFIGURATIONS } from 'shared/config/network';
-import { Network } from 'shared/model';
-import { addCustomChain, chainConfigs, readStorage, removeCustomChain, saveNetworkConfig } from 'shared/utils';
+import { chainConfigs } from 'shared/utils/network';
 import { Alert, Button, Checkbox, Col, Form, Input, InputNumber, message, Modal, Row, Tooltip } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { isArray, isBoolean, isEqual, isNumber, isObject, isString, last } from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { DESCRIPTIONS, SYSTEM_ChAIN_CONFIGURATIONS } from 'shared/config/network';
+import { ChainConfig, Network } from 'shared/model';
+import { addCustomChain, readStorage, removeCustomChain, saveNetworkConfig } from 'shared/utils/helper';
 
 interface ConfigurationProps {
   network: Network;
@@ -82,7 +83,7 @@ export function Configuration({ network }: ConfigurationProps) {
   const { t } = useTranslation();
 
   const controls = getConfigControl(
-    chainConfigs.find((item) => item.name === network),
+    chainConfigs.find((item: ChainConfig) => item.name === network),
     []
   );
 

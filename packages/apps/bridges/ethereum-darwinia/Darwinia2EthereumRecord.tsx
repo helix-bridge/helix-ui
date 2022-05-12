@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EMPTY, filter, from, iif, map, Observable, of, switchMap, take, tap, zip } from 'rxjs';
 import { abi } from 'shared/config/abi';
-import { ConnectionStatus, RecordComponentProps } from 'shared/model';
+import { ConnectionStatus, CrossChainDirection, RecordComponentProps } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { connect, entrance } from 'shared/utils/connection';
 import { Progresses, ProgressProps, State } from '../../components/record/Progress';
@@ -39,7 +39,7 @@ export function Darwinia2EthereumRecord({
   const [hash, setHash] = useState(tx);
 
   const claim = useCallback(
-    (monitor) => {
+    (monitor: (state: boolean) => void) => {
       const {
         signatures: sign,
         ringValue: ring,
@@ -87,7 +87,7 @@ export function Darwinia2EthereumRecord({
           switchMap(([isRingSuf, isKtonSuf]) =>
             isRingSuf && isKtonSuf
               ? claimToken({
-                  direction: { from: departure!, to: arrival! },
+                  direction: { from: { meta: departure! }, to: { meta: departure! } } as unknown as CrossChainDirection,
                   mmrIndex,
                   mmrRoot,
                   mmrSignatures: sign,

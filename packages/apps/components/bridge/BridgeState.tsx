@@ -2,7 +2,7 @@ import { Alert } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { map } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
-import { useApi } from '../../hooks';
+import { useApi } from '../../providers';
 
 interface IncidentResponse {
   page: Page;
