@@ -22,12 +22,6 @@ const client = new GraphQLClient({
   url: isDev ? 'http://localhost:4002/graphql' : 'https://wormhole-apollo.darwinia.network/',
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions, no-unused-expressions
-(function () {
-  import('shared/utils/mmrConvert/ckb_merkle_mountain_range');
-  // Import which .wasm files you need here
-});
-
 function MyApp({ Component, pageProps }: AppProps & { Component: FunctionComponent }) {
   const router = useRouter();
 
