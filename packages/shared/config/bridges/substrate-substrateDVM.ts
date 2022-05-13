@@ -18,6 +18,7 @@ const darwiniaCrabDVMConfig: SubstrateSubstrateDVMBridgeConfig = {
 export const darwiniaCrabDVM = new Bridge(darwiniaConfig, crabDVMConfig, darwiniaCrabDVMConfig, {
   category: 'helix',
   activeArrivalConnection: true,
+  name: 'substrate-substrateDVM',
 });
 
 const pangoroPangolinDVMConfig: SubstrateSubstrateDVMBridgeConfig = {
@@ -35,4 +36,5 @@ const pangoroPangolinDVMConfig: SubstrateSubstrateDVMBridgeConfig = {
 export const pangoroPangolinDVM = new Bridge(pangoroConfig, pangolinDVMConfig, pangoroPangolinDVMConfig, {
   category: 'helix',
   activeArrivalConnection: true,
+  name: 'substrate-substrateDVM',
 });

@@ -19,15 +19,15 @@ export const darwiniaConfig: PolkadotChainConfig = {
     {
       name: 'RING',
       decimals: 9,
-      bridges: [
+      cross: [
         {
           category: 'helix',
-          name: 'substrate-substrateDVM',
+          bridge: 'substrate-substrateDVM',
           partner: { name: 'crab', mode: 'dvm', role: 'receiver', symbol: 'xRING' },
         },
         {
           category: 'helix',
-          name: 'ethereum-darwinia',
+          bridge: 'ethereum-darwinia',
           partner: { name: 'ethereum', mode: 'native', role: 'issuer', symbol: 'RING' },
         },
       ],
@@ -39,15 +39,15 @@ export const darwiniaConfig: PolkadotChainConfig = {
     {
       name: 'KTON',
       decimals: 9,
-      bridges: [
+      cross: [
         {
           category: 'helix',
-          name: 'substrate-substrateDVM',
+          bridge: 'substrate-substrateDVM',
           partner: { name: 'crab', mode: 'dvm', role: 'receiver', symbol: 'xKTON' },
         },
         {
           category: 'helix',
-          name: 'ethereum-darwinia',
+          bridge: 'ethereum-darwinia',
           partner: { name: 'ethereum', mode: 'native', role: 'issuer', symbol: 'KTON' },
         },
       ],

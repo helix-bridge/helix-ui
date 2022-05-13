@@ -23,7 +23,7 @@ export const hecoConfig: EthereumChainConfig = {
     {
       name: 'RING',
       decimals: 18,
-      bridges: [],
+      cross: [],
       type: 'mapping',
       logo: 'token-ring.svg',
       symbol: 'RING',

@@ -23,7 +23,7 @@ export const ethereumConfig: EthereumChainConfig = {
     {
       name: 'ETHER',
       decimals: 18,
-      bridges: [],
+      cross: [],
       type: 'native',
       logo: 'token-ethereum.svg',
       symbol: 'ETHER',
@@ -32,10 +32,10 @@ export const ethereumConfig: EthereumChainConfig = {
     {
       name: 'RING',
       decimals: 9,
-      bridges: [
+      cross: [
         {
           category: 'helix',
-          name: 'ethereum-darwinia',
+          bridge: 'ethereum-darwinia',
           partner: { name: 'darwinia', mode: 'native', role: 'receiver', symbol: 'RING' },
         },
       ],
@@ -43,14 +43,15 @@ export const ethereumConfig: EthereumChainConfig = {
       logo: 'token-ring.svg',
       symbol: 'RING',
       address: '',
+      claim: true,
     },
     {
       name: 'KTON',
       decimals: 9,
-      bridges: [
+      cross: [
         {
           category: 'helix',
-          name: 'ethereum-darwinia',
+          bridge: 'ethereum-darwinia',
           partner: { name: 'darwinia', mode: 'native', role: 'receiver', symbol: 'KTON' },
         },
       ],
@@ -58,6 +59,7 @@ export const ethereumConfig: EthereumChainConfig = {
       logo: 'token-kton.svg',
       symbol: 'KTON',
       address: '',
+      claim: true,
     },
   ],
   wallets: ['metamask'],

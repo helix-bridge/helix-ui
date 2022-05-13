@@ -11,9 +11,9 @@ export interface Logo {
 
 export type TokenType = 'native' | 'mapping';
 
-export type AvailableBridgeCategory = 'helix';
+export type BridgeCategory = 'helix';
 
-type AvailableBridge = 'substrate-DVM' | 'substrate-substrateDVM' | 'ethereum-darwinia';
+export type BridgeName = 'substrate-DVM' | 'substrate-substrateDVM' | 'ethereum-darwinia';
 
 type PartnerRole = 'issuer' | 'receiver';
 
@@ -28,15 +28,16 @@ interface Partner {
    */
   role: PartnerRole;
 }
-interface AvailableBridgeConfig {
-  category: AvailableBridgeCategory;
-  name: AvailableBridge;
+interface CrossOverview {
+  category: BridgeCategory;
+  bridge: BridgeName;
   partner: Partner;
 }
 
 export interface TokenWithBridgesInfo extends Token {
   type: TokenType;
-  bridges: AvailableBridgeConfig[];
+  cross: CrossOverview[];
+  claim?: boolean;
 }
 
 interface Social {

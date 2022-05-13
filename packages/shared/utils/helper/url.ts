@@ -127,7 +127,7 @@ export const validateDirection: (dir: NullableCrossChainDirection) => CrossChain
   const { from, to } = dir;
 
   if (from && to) {
-    const reachable = from.bridges.find((item) => item.partner.symbol === to.symbol);
+    const reachable = from.cross.find((item) => item.partner.symbol === to.symbol);
 
     return reachable ? (dir as CrossChainDirection) : DEFAULT_DIRECTION;
   }
@@ -161,20 +161,20 @@ export const getDirectionFromSettings: () => CrossChainDirection = () => {
   }
 
   if (fromToken && !toToken) {
-    const config = getChainConfig(fromToken.bridges[0].partner);
+    const config = getChainConfig(fromToken.cross[0].partner);
 
     toToken = {
-      ...config.tokens.find((item) => item.symbol === fromToken?.bridges[0].partner.symbol)!,
+      ...config.tokens.find((item) => item.symbol === fromToken?.cross[0].partner.symbol)!,
       amount: '',
       meta: config,
     };
   }
 
   if (!fromToken && toToken) {
-    const config = getChainConfig(toToken.bridges[0].partner);
+    const config = getChainConfig(toToken.cross[0].partner);
 
     fromToken = {
-      ...config.tokens.find((item) => item.symbol === toToken?.bridges[0].partner.symbol)!,
+      ...config.tokens.find((item) => item.symbol === toToken?.cross[0].partner.symbol)!,
       amount: '',
       meta: config,
     };

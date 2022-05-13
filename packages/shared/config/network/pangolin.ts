@@ -19,15 +19,15 @@ export const pangolinConfig: PolkadotChainConfig = {
     {
       name: 'PRING',
       decimals: 9,
-      bridges: [
+      cross: [
         {
           category: 'helix',
-          name: 'substrate-DVM',
+          bridge: 'substrate-DVM',
           partner: { name: 'pangolin', mode: 'dvm', role: 'receiver', symbol: 'PRING' },
         },
         {
           category: 'helix',
-          name: 'ethereum-darwinia',
+          bridge: 'ethereum-darwinia',
           partner: { name: 'ropsten', mode: 'native', role: 'issuer', symbol: 'PRING' },
         },
       ],
@@ -39,15 +39,15 @@ export const pangolinConfig: PolkadotChainConfig = {
     {
       name: 'PKTON',
       decimals: 9,
-      bridges: [
+      cross: [
         {
           category: 'helix',
-          name: 'substrate-DVM',
+          bridge: 'substrate-DVM',
           partner: { name: 'pangolin', mode: 'dvm', role: 'receiver', symbol: 'WPKTON' },
         },
         {
           category: 'helix',
-          name: 'ethereum-darwinia',
+          bridge: 'ethereum-darwinia',
           partner: { name: 'ropsten', mode: 'native', role: 'issuer', symbol: 'PKTON' },
         },
       ],

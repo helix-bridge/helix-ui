@@ -1,6 +1,6 @@
-import { has, isEqual } from 'lodash';
+import { isEqual, pick } from 'lodash';
 import { FunctionComponent } from 'react';
-import { AvailableBridgeCategory, ChainConfig } from '../network';
+import { BridgeCategory, BridgeName, ChainConfig } from '../network';
 
 /* ----------------------------------------------- bridge state ------------------------------------------------ */
 
@@ -13,8 +13,6 @@ export type Vertices = Pick<ChainConfig, 'name' | 'mode'>;
 export type Departure = Vertices;
 
 export type Arrival = Vertices;
-
-export type BridgeDirection = [Departure, Arrival];
 
 /* ----------------------------------------------- bridge config ------------------------------------------------ */
 
@@ -51,6 +49,8 @@ export interface BridgeConfig<C = ContractConfig, K = Record<string, string>> {
  * departure <- arrival: redeem;
  */
 export class Bridge<C = BridgeConfig> {
+  readonly name: BridgeName;
+
   readonly status: BridgeStatus;
 
   readonly stable: boolean;
@@ -65,7 +65,9 @@ export class Bridge<C = BridgeConfig> {
 
   readonly redeem: [Arrival, Departure];
 
-  readonly category: AvailableBridgeCategory;
+  readonly category: BridgeCategory;
+
+  readonly isTest: boolean;
 
   private _config: C;
 
@@ -78,7 +80,8 @@ export class Bridge<C = BridgeConfig> {
     arrival: ChainConfig,
     config: C,
     options: {
-      category: AvailableBridgeCategory;
+      name: BridgeName;
+      category: BridgeCategory;
       status?: BridgeStatus;
       stable?: boolean;
       activeArrivalConnection?: boolean;
@@ -87,6 +90,7 @@ export class Bridge<C = BridgeConfig> {
     const dep = this.toVertices(departure);
     const arr = this.toVertices(arrival);
 
+    this.name = options.name;
     this.departure = departure;
     this.arrival = arrival;
     this.issuing = [dep, arr];
@@ -96,6 +100,7 @@ export class Bridge<C = BridgeConfig> {
     this.stable = options?.stable ?? true;
     this.activeArrivalConnection = options?.activeArrivalConnection ?? false;
     this.category = options.category;
+    this.isTest = departure.isTest;
   }
 
   get config() {
@@ -104,10 +109,6 @@ export class Bridge<C = BridgeConfig> {
 
   private toVertices(config: ChainConfig): Vertices {
     return { name: config.name, mode: config.mode };
-  }
-
-  private isVertices(data: Vertices | ChainConfig): boolean {
-    return Object.keys(data).length === 2 && has(data, 'name') && has(data, 'mode');
   }
 
   setIssuingComponents(crossComp: FunctionComponent, recordComp: FunctionComponent): void {
@@ -121,17 +122,17 @@ export class Bridge<C = BridgeConfig> {
   }
 
   isIssuing(dep: Departure | ChainConfig, arr: Departure | ChainConfig): boolean {
-    const departure = this.isVertices(dep) ? dep : this.toVertices(<ChainConfig>dep);
-    const arrival = this.isVertices(arr) ? arr : this.toVertices(<ChainConfig>arr);
-
-    return isEqual(this.issuing, [departure, arrival]);
+    return isEqual(
+      this.issuing,
+      [dep, arr].map((item) => pick(item, ['name', 'mode']))
+    );
   }
 
   isRedeem(dep: Departure | ChainConfig, arr: Departure | ChainConfig): boolean {
-    const departure = this.isVertices(dep) ? dep : this.toVertices(<ChainConfig>dep);
-    const arrival = this.isVertices(arr) ? arr : this.toVertices(<ChainConfig>arr);
-
-    return isEqual(this.redeem, [departure, arrival]);
+    return isEqual(
+      this.redeem,
+      [dep, arr].map((item) => pick(item, ['name', 'mode']))
+    );
   }
 
   get IssuingCrossChainComponent() {

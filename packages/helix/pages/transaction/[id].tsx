@@ -155,12 +155,12 @@ const Page: NextPage<{
       departure.tokens.find(
         (token) =>
           token.type === (isIssuing ? 'native' : 'mapping') &&
-          token.bridges.map((item) => item.category).includes(bridgeName)
+          token.cross.map((item) => item.category).includes(bridgeName)
       )!,
       arrival.tokens.find(
         (token) =>
           token.type === (isIssuing ? 'mapping' : 'native') &&
-          token.bridges.map((item) => item.category).includes(bridgeName)
+          token.cross.map((item) => item.category).includes(bridgeName)
       )!,
     ];
   }, [arrival.tokens, departure.tokens, isIssuing]);

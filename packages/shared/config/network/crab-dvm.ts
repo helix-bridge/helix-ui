@@ -29,10 +29,10 @@ export const crabDVMConfig: DVMChainConfig = {
     {
       name: 'CRAB',
       decimals: 9,
-      bridges: [
+      cross: [
         {
           category: 'helix',
-          name: 'substrate-DVM',
+          bridge: 'substrate-DVM',
           partner: { name: 'crab', mode: 'native', role: 'issuer', symbol: 'CRAB' },
         },
       ],
@@ -44,10 +44,10 @@ export const crabDVMConfig: DVMChainConfig = {
     {
       name: 'WCKTON',
       decimals: 9,
-      bridges: [
+      cross: [
         {
           category: 'helix',
-          name: 'substrate-DVM',
+          bridge: 'substrate-DVM',
           partner: { name: 'crab', mode: 'native', role: 'issuer', symbol: 'CKTON' },
         },
       ],
@@ -55,14 +55,15 @@ export const crabDVMConfig: DVMChainConfig = {
       logo: 'token-wckton.svg',
       symbol: 'WCKTON',
       address: '',
+      claim: true,
     },
     {
       name: 'xRING',
       decimals: 9,
-      bridges: [
+      cross: [
         {
           category: 'helix',
-          name: 'substrate-substrateDVM',
+          bridge: 'substrate-substrateDVM',
           partner: { name: 'darwinia', mode: 'native', role: 'issuer', symbol: 'RING' },
         },
       ],
@@ -74,10 +75,10 @@ export const crabDVMConfig: DVMChainConfig = {
     {
       name: 'xKTON',
       decimals: 9,
-      bridges: [
+      cross: [
         {
           category: 'helix',
-          name: 'substrate-substrateDVM',
+          bridge: 'substrate-substrateDVM',
           partner: { name: 'darwinia', mode: 'native', role: 'issuer', symbol: 'KTON' },
         },
       ],

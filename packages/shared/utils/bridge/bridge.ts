@@ -69,16 +69,16 @@ export function hasBridge(source: CrossChainDirection | [Vertices | ChainConfig,
   }
 }
 
-export function isTransferable(source: NullableFields<CrossChainDirection, 'from' | 'to'>): boolean {
+function getBridgeOverviews(source: NullableFields<CrossChainDirection, 'from' | 'to'>) {
   const { from, to } = source;
 
   if (!from || !to) {
-    return false;
+    return [];
   }
 
-  const { bridges } = from;
+  const { cross: bridges } = from;
 
-  const res = bridges.find((bridge) => {
+  return bridges.filter((bridge) => {
     const { partner } = bridge;
 
     return (
@@ -86,8 +86,10 @@ export function isTransferable(source: NullableFields<CrossChainDirection, 'from
       isEqual(pick(partner, ['mode', 'name']), pick(to.meta, ['mode', 'name']))
     );
   });
+}
 
-  return !!res;
+export function isTransferable(source: NullableFields<CrossChainDirection, 'from' | 'to'>): boolean {
+  return !!getBridgeOverviews(source).length;
 }
 
 export function isBridgeAvailable(from: ChainConfig, to: ChainConfig): boolean {
@@ -117,6 +119,16 @@ export function getBridge<T extends BridgeConfig>(
   }
 
   return bridge as Bridge<T>;
+}
+
+export function getBridges(source: CrossChainDirection): Bridge[] {
+  const overviews = getBridgeOverviews(source);
+
+  return BRIDGES.filter(
+    (bridge) =>
+      bridge.isTest === source.from.meta.isTest &&
+      overviews.find((overview) => overview.category === bridge.category && overview.bridge === bridge.name)
+  );
 }
 
 export function getBridgeComponent(type: 'crossChain' | 'record') {

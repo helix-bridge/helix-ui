@@ -11,6 +11,11 @@ export type CrossToken<T extends ChainConfig = ChainConfig> = TokenInfoWithMeta<
   amount: string;
 };
 
+export interface CrossChainParty {
+  recipient: string;
+  sender: string;
+}
+
 export interface CrossChainPayload<
   B extends Bridge = Bridge,
   F extends CrossToken = CrossToken,
@@ -47,17 +52,3 @@ export interface CrossChainDirection<F = CrossToken, T = CrossToken> {
 }
 
 export type NullableCrossChainDirection = NullableFields<CrossChainDirection, 'from' | 'to'>;
-
-export interface CrossChainParty {
-  recipient: string;
-  sender: string;
-}
-
-/**
- * for native token, T = string;
- * for mapped token, T = Mapping Token;
- */
-export interface CrossChainAsset<T = string> {
-  amount: string;
-  asset: T | null;
-}

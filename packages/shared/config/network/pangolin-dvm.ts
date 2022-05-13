@@ -29,10 +29,10 @@ export const pangolinDVMConfig: DVMChainConfig = {
     {
       name: 'PRING',
       decimals: 9,
-      bridges: [
+      cross: [
         {
           category: 'helix',
-          name: 'substrate-DVM',
+          bridge: 'substrate-DVM',
           partner: { name: 'pangolin', mode: 'native', role: 'issuer', symbol: 'PRING' },
         },
       ],
@@ -44,10 +44,10 @@ export const pangolinDVMConfig: DVMChainConfig = {
     {
       name: 'WPKTON',
       decimals: 9,
-      bridges: [
+      cross: [
         {
           category: 'helix',
-          name: 'substrate-DVM',
+          bridge: 'substrate-DVM',
           partner: { name: 'pangolin', mode: 'native', role: 'issuer', symbol: 'PKTON' },
         },
       ],
@@ -55,14 +55,15 @@ export const pangolinDVMConfig: DVMChainConfig = {
       logo: 'token-kton.svg',
       symbol: 'WPKTON',
       address: '0x8809f9b3ACEF1dA309f49b5Ab97A4C0faA64E6Ae',
+      claim: true,
     },
     {
       name: 'xORING',
       decimals: 9,
-      bridges: [
+      cross: [
         {
           category: 'helix',
-          name: 'substrate-substrateDVM',
+          bridge: 'substrate-substrateDVM',
           partner: { name: 'pangoro', mode: 'native', role: 'issuer', symbol: 'oRING' },
         },
       ],
@@ -74,10 +75,10 @@ export const pangolinDVMConfig: DVMChainConfig = {
     {
       name: 'xOKTON',
       decimals: 9,
-      bridges: [
+      cross: [
         {
           category: 'helix',
-          name: 'substrate-substrateDVM',
+          bridge: 'substrate-substrateDVM',
           partner: { name: 'pangoro', mode: 'native', role: 'issuer', symbol: 'oKTON' },
         },
       ],

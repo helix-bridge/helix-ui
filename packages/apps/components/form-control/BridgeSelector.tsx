@@ -1,10 +1,9 @@
-import { ArrowRightOutlined, CheckSquareFilled, SmileOutlined, SyncOutlined } from '@ant-design/icons';
-import { Radio, Result, Space, Typography } from 'antd';
-import { isEqual } from 'lodash';
+import { ArrowRightOutlined, InfoCircleFilled, SmileOutlined, SyncOutlined } from '@ant-design/icons';
+import { Radio, Result, Space, Tooltip, Typography } from 'antd';
+import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
-import { useMemo } from 'react';
 import { Bridge, CrossChainDirection, CrossToken, CustomFormControlProps, NullableFields } from 'shared/model';
-import { getBridge, isTransferable } from 'shared/utils/bridge';
+import { getBridges } from 'shared/utils/bridge';
 import { getDisplayName } from 'shared/utils/network';
 
 type TokenOnChainProps = {
@@ -35,21 +34,8 @@ const TokenOnChain = ({ token, isFrom }: TokenOnChainProps) => (
 );
 
 export function BridgeSelector({ direction, value, onChange }: BridgeSelectorProps) {
-  // TODO: support multi bridges
-  const bridge = useMemo(
-    () => (isTransferable(direction) ? getBridge(direction as CrossChainDirection) : null),
-    [direction]
-  );
-
-  const isUnknownBridge = useMemo(() => {
-    if (!bridge) {
-      return true;
-    }
-
-    const [departure, arrival] = bridge.issuing;
-
-    return departure.name === 'pangoro' && arrival.name === 'crab'; // FIXME: pangoro <-> crab is unknown bridge.
-  }, [bridge]);
+  const { t } = useTranslation();
+  const bridges = getBridges(direction as CrossChainDirection);
 
   return (
     <div className="dark:bg-antDark p-5 overflow-auto" style={{ maxHeight: '65vh', minHeight: '20vh' }}>
@@ -58,7 +44,7 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
         <Typography.Text>Latest bridge data</Typography.Text>
       </div>
 
-      {isUnknownBridge ? (
+      {!bridges.length ? (
         <Result
           icon={<SmileOutlined />}
           title="Please select the parameters for your desired transfer and enter an amount."
@@ -77,29 +63,44 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
           }}
         >
           <Space direction="vertical" className="w-full" size="middle">
-            <Radio.Button className="w-full bg-gray-900" style={{ height: 'fit-content' }} value={bridge}>
-              <div className="relative flex justify-between items-center pr-3 py-3">
-                {isEqual(bridge?.issuing, value?.issuing) && (
-                  <CheckSquareFilled className="absolute -top-px left-auto -right-4" />
+            {bridges.map((item, index) => (
+              <Radio.Button
+                key={index}
+                className="w-full bg-gray-900 relative"
+                style={{ height: 'fit-content' }}
+                value={item}
+              >
+                {direction.to?.claim && (
+                  <div className="cursor-help absolute -top-3 left-1">
+                    <Tooltip
+                      title={t(
+                        'Please perform a claim asset operation in the history section after the transfer is submitted.'
+                      )}
+                    >
+                      <InfoCircleFilled />
+                    </Tooltip>
+                  </div>
                 )}
 
-                <TokenOnChain token={direction.from as CrossToken} isFrom />
+                <div className="relative flex justify-between items-center pr-3 py-3">
+                  <TokenOnChain token={direction.from as CrossToken} isFrom />
 
-                <div className="relative w-56 hidden lg:flex justify-center text-white">
-                  <div className="py-1 w-24 rounded-3xl bg-gray-700 flex justify-center items-center space-x-2 z-10">
-                    <Image alt="..." src={`/image/${bridge?.category}-bridge.svg`} width={28} height={28} />
-                    <strong className="capitalize">{bridge?.category}</strong>
+                  <div className="relative w-56 hidden lg:flex justify-center text-white">
+                    <div className="py-1 w-24 rounded-3xl bg-gray-700 flex justify-center items-center space-x-2 z-10">
+                      <Image alt="..." src={`/image/${item?.category}-bridge.svg`} width={28} height={28} />
+                      <strong className="capitalize">{item?.category}</strong>
+                    </div>
+                    <Image alt="..." src="/image/bridge-to.svg" layout="fill" priority />
                   </div>
-                  <Image alt="..." src="/image/bridge-to.svg" layout="fill" priority />
-                </div>
 
-                <div className="lg:hidden absolute top-0 bottom-0 left-0 right-0 m-auto w-7 flex items-end justify-center pb-3 opacity-40">
-                  <ArrowRightOutlined />
-                </div>
+                  <div className="lg:hidden absolute top-0 bottom-0 left-0 right-0 m-auto w-7 flex items-end justify-center pb-3 opacity-40">
+                    <ArrowRightOutlined />
+                  </div>
 
-                <TokenOnChain token={direction.to as CrossToken} />
-              </div>
-            </Radio.Button>
+                  <TokenOnChain token={direction.to as CrossToken} />
+                </div>
+              </Radio.Button>
+            ))}
           </Space>
         </Radio.Group>
       )}
