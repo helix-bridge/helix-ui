@@ -152,3 +152,7 @@ export const switchMetamaskNetwork: DebouncedFunc<(chain: EthereumChainConfig) =
   },
   SHORT_DURATION
 );
+
+export function isMetamaskInstalled(): boolean {
+  return typeof window.ethereum !== 'undefined' || typeof window.web3 !== 'undefined';
+}

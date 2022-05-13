@@ -7,4 +7,5 @@ const unknownUnavailableConfig: Unknown2UnavailableBridgeConfig = {};
 export const unknownUnavailable = new Bridge(pangoroConfig, ropstenConfig, unknownUnavailableConfig, {
   stable: false,
   category: 'helix',
+  name: 'substrate-DVM',
 });

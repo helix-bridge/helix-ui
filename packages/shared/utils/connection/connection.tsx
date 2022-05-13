@@ -2,6 +2,7 @@ import { Modal } from 'antd';
 import Link from 'antd/lib/typography/Link';
 import { Trans } from 'react-i18next';
 import { EMPTY, from, mergeMap, Observable, switchMap } from 'rxjs';
+import Web3 from 'web3';
 import {
   ChainConfig,
   Connection,
@@ -10,9 +11,10 @@ import {
   PolkadotChainConfig,
   PolkadotConnection,
   SupportedWallet,
+  Vertices,
 } from '../../model';
-import { isMetamaskInstalled, isNetworkConsistent } from '../network';
-import { getMetamaskConnection, switchMetamaskNetwork } from './metamask';
+import { getChainConfig } from '../network';
+import { getMetamaskConnection, isMetamaskInstalled, switchMetamaskNetwork } from './metamask';
 import { getPolkadotConnection } from './polkadot';
 
 type ConnectFn<T extends Connection> = (network: ChainConfig, extension?: SupportedWallet) => Observable<T>;
@@ -34,6 +36,16 @@ const showWarning = (plugin: string, downloadUrl: string) =>
 
 const connectPolkadot: ConnectFn<PolkadotConnection> = (network) =>
   !network ? EMPTY : getPolkadotConnection(network as PolkadotChainConfig);
+
+async function isNetworkConsistent(vertices: Vertices, id = ''): Promise<boolean> {
+  id = id && Web3.utils.isHex(id) ? parseInt(id, 16).toString() : id;
+  // id 1: eth mainnet 3: ropsten 4: rinkeby 5: goerli 42: kovan  43: pangolin 44: crab
+  const actualId: string = id ? await Promise.resolve(id) : await window.ethereum.request({ method: 'net_version' });
+  const chain = getChainConfig(vertices) as EthereumChainConfig;
+  const storedId = chain.ethereumChain.chainId;
+
+  return storedId === actualId;
+}
 
 const connectMetamask: ConnectFn<EthereumConnection> = (network, chainId?) => {
   if (!isMetamaskInstalled()) {

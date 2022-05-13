@@ -7,9 +7,9 @@ import { CrossChainPayload, PolkadotChainConfig, Tx, TxDoneComponentProps, TxHas
 import { convertToSS58, genHistoryRouteParams } from 'shared/utils/helper';
 import { isEthereumNetwork } from 'shared/utils/network';
 import { applyModal } from 'shared/utils/tx';
-import { ConfigContext, ConfigCtx } from '../providers';
+import { TxContext, TxCtx } from '../providers';
 
-export const useTx = () => useContext(ConfigContext) as Exclude<ConfigCtx, null>;
+export const useTx = () => useContext(TxContext) as Exclude<TxCtx, null>;
 
 export function useAfterTx<T extends CrossChainPayload>() {
   const { t } = useTranslation();
