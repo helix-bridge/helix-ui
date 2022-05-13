@@ -8,6 +8,7 @@ import { THEME } from 'shared/config/theme';
 import { readStorage } from 'shared/utils/helper';
 import { Footer } from './Footer';
 import { Navigator } from './Navigator';
+import { Tools } from './Tools';
 import { ActiveAccount } from './widget/account/ActiveAccount';
 
 const { Header, Content } = Layout;
@@ -67,7 +68,8 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
             <HddOutlined />
             History
           </Button>
-          <Button>•••</Button>
+
+          <Tools />
         </div>
       </Header>
 

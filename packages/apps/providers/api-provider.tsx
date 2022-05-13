@@ -12,8 +12,7 @@ import {
   PolkadotConnection,
 } from 'shared/model';
 import { connect } from 'shared/utils/connection';
-import { getDirectionFromSettings, getInitialSetting } from 'shared/utils/helper';
-import { updateStorage } from 'shared/utils/helper/storage';
+import { getDirectionFromSettings } from 'shared/utils/helper';
 import { isEthereumNetwork } from 'shared/utils/network';
 
 interface StoreState {
@@ -22,23 +21,15 @@ interface StoreState {
   connections: (NoNullFields<PolkadotConnection> | EthereumConnection)[];
   departure: ChainConfig;
   isDev: boolean;
-  enableTestNetworks: boolean;
 }
 
 type SetDeparture = Action<'setDeparture', ChainConfig>;
 type SetDepartureConnection = Action<'setDepartureConnection', Connection>;
 type SetArrivalConnection = Action<'setArrivalConnection', Connection>;
-type SetEnableTestNetworks = Action<'setEnableTestNetworks', boolean>;
 type AddConnection = Action<'addConnection', Connection>;
 type RemoveConnection = Action<'removeConnection', Connection>;
 
-type Actions =
-  | SetDeparture
-  | SetDepartureConnection
-  | SetArrivalConnection
-  | SetEnableTestNetworks
-  | AddConnection
-  | RemoveConnection;
+type Actions = SetDeparture | SetDepartureConnection | SetArrivalConnection | AddConnection | RemoveConnection;
 
 const isDev = process.env.REACT_APP_HOST_TYPE === 'dev';
 
@@ -57,7 +48,6 @@ const initialState: StoreState = {
   connections: [],
   departure: initialDirection.from.meta,
   isDev,
-  enableTestNetworks: !!getInitialSetting('enableTestNetworks', isDev),
 };
 
 const isSameConnection = (origin: Connection) => {
@@ -77,10 +67,6 @@ function reducer(state: StoreState, action: Actions): StoreState {
 
     case 'setArrivalConnection': {
       return { ...state, arrivalConnection: action.payload };
-    }
-
-    case 'setEnableTestNetworks': {
-      return { ...state, enableTestNetworks: action.payload };
     }
 
     case 'addConnection': {
@@ -113,7 +99,6 @@ export type ApiCtx = StoreState & {
   disconnect: () => void;
   isConnecting: boolean;
   setDeparture: (network: ChainConfig) => void;
-  setEnableTestNetworks: (enable: boolean) => void;
 };
 
 export const ApiContext = createContext<ApiCtx | null>(null);
@@ -138,11 +123,6 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
 
   const removeConnection = useCallback((payload: Connection) => dispatch({ type: 'removeConnection', payload }), []);
   const addConnection = useCallback((payload: Connection) => dispatch({ type: 'addConnection', payload }), []);
-
-  const setEnableTestNetworks = useCallback((payload: boolean) => {
-    dispatch({ type: 'setEnableTestNetworks', payload });
-    updateStorage({ enableTestNetworks: payload });
-  }, []);
 
   const isConnectionAvailable = useCallback(
     (connection: Connection | undefined) => {
@@ -226,7 +206,6 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
         connectArrivalNetwork,
         disconnect,
         setDeparture,
-        setEnableTestNetworks,
       }}
     >
       {children}

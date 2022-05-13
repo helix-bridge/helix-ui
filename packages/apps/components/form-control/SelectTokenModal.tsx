@@ -1,12 +1,13 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Logo } from 'shared/components/widget/Logo';
-import { useLocalSearch } from 'shared/hooks';
-import { ChainConfig, TokenInfoWithMeta, Vertices } from 'shared/model';
-import { chainConfigs, getDisplayName } from 'shared/utils/network';
 import { Input, Radio, Tag, Typography } from 'antd';
 import { chain as lodashChain } from 'lodash';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useState } from 'react';
+import { Logo } from 'shared/components/widget/Logo';
+import { useLocalSearch } from 'shared/hooks';
+import { ChainConfig, TokenInfoWithMeta, Vertices } from 'shared/model';
+import { chainConfigs, getDisplayName } from 'shared/utils/network';
+import { useConfig } from '../../providers';
 import { tokenModeToChainMode, tokenSearchFactory } from '../../utils';
 import { BaseModal } from '../widget/BaseModal';
 
@@ -15,11 +16,6 @@ interface SelectTokenModalProps {
   onCancel: () => void;
   onSelect: (value: TokenInfoWithMeta) => void;
 }
-
-const allTokens: TokenInfoWithMeta[] = lodashChain(chainConfigs)
-  .map((item) => item.tokens.map((token) => ({ ...token, meta: item })))
-  .flatten()
-  .value();
 
 const colors: ({ color: string } & Vertices)[] = [
   { name: 'crab', mode: 'native', color: '#cd201f' },
@@ -40,6 +36,18 @@ const chainColor = ({ name: network, mode }: Vertices): string => {
 
 export const SelectTokenModal = ({ visible, onSelect, onCancel }: SelectTokenModalProps) => {
   const { t } = useTranslation();
+  const { enableTestNetworks } = useConfig();
+
+  const allTokens = useMemo(
+    () =>
+      lodashChain(chainConfigs)
+        .filter((item) => enableTestNetworks || !item.isTest)
+        .map((item) => item.tokens.map((token) => ({ ...token, meta: item })))
+        .flatten()
+        .value(),
+    [enableTestNetworks]
+  );
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const searchFn = useCallback(tokenSearchFactory(allTokens), [allTokens]);
   const { data, setSearch } = useLocalSearch(searchFn);
@@ -74,15 +82,17 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel }: SelectTokenMod
           {t('All chains')}
         </Radio.Button>
 
-        {chainConfigs.map((item, index) => {
-          const name = getDisplayName(item);
+        {chainConfigs
+          .filter((item) => enableTestNetworks || !item.isTest)
+          .map((item, index) => {
+            const name = getDisplayName(item);
 
-          return (
-            <Radio.Button key={index} value={item} className="mt-2 mr-2 capitalize rounded-none">
-              {name}
-            </Radio.Button>
-          );
-        })}
+            return (
+              <Radio.Button key={index} value={item} className="mt-2 mr-2 capitalize rounded-none">
+                {name}
+              </Radio.Button>
+            );
+          })}
       </Radio.Group>
 
       <div className="max-h-96 overflow-auto mt-5">

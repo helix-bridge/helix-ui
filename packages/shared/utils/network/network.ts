@@ -5,10 +5,12 @@ import {
   Arrival,
   ChainConfig,
   EthereumChainConfig,
+  EthereumTypeNetwork,
   MetamaskNativeNetworkIds,
   Network,
   NetworkMode,
   PolkadotChainConfig,
+  PolkadotTypeNetwork,
   TokenType,
   Vertices,
 } from '../../model';
@@ -105,9 +107,9 @@ export const isPolkadotNetwork = (network: ChainConfig | Vertices | null | undef
     return false;
   }
 
-  const config = getChainConfig(network);
+  const known: PolkadotTypeNetwork[] = ['crab', 'darwinia', 'pangolin', 'pangoro', 'polkadot'];
 
-  return config.wallets.includes('polkadot');
+  return known.includes(network.name as PolkadotTypeNetwork);
 };
 
 export const isEthereumNetwork = (network: ChainConfig | Vertices | null | undefined) => {
@@ -115,9 +117,9 @@ export const isEthereumNetwork = (network: ChainConfig | Vertices | null | undef
     return false;
   }
 
-  const config = getChainConfig(network);
+  const known: EthereumTypeNetwork[] = ['ethereum', 'ropsten', 'heco', 'polygon'];
 
-  return config.wallets.includes('metamask');
+  return known.includes(network.name as EthereumTypeNetwork);
 };
 
 export function isMetamaskInstalled(): boolean {
