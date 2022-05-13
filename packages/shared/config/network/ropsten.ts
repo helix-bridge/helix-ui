@@ -2,7 +2,7 @@ import { EthereumChainConfig } from '../../model';
 
 export const ropstenConfig: EthereumChainConfig = {
   ethereumChain: {
-    chainId: '3',
+    chainId: '0x3',
     chainName: '',
     nativeCurrency: {
       decimals: 18,

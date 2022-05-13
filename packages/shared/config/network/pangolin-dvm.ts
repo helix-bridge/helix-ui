@@ -3,7 +3,7 @@ import { DVMChainConfig } from '../../model';
 export const pangolinDVMConfig: DVMChainConfig = {
   ethereumChain: {
     blockExplorerUrls: ['https://pangolin.subscan.io/'],
-    chainId: '43',
+    chainId: '0x2b',
     chainName: 'pangolin',
     nativeCurrency: {
       decimals: 18,

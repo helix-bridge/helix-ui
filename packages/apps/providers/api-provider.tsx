@@ -15,7 +15,6 @@ import { connect } from 'shared/utils/connection';
 import { getDirectionFromSettings, getInitialSetting } from 'shared/utils/helper';
 import { updateStorage } from 'shared/utils/helper/storage';
 import { isEthereumNetwork } from 'shared/utils/network';
-import Web3 from 'web3';
 
 interface StoreState {
   departureConnection: Connection;
@@ -165,9 +164,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
 
       const target = state.connections.find((item) => {
         return isConnectToMetamask
-          ? item.type === 'metamask' &&
-              (item as EthereumConnection).chainId ===
-                Web3.utils.toHex((chainConfig as EthereumChainConfig).ethereumChain.chainId)
+          ? (item as EthereumConnection).chainId === (chainConfig as EthereumChainConfig).ethereumChain.chainId
           : (item as PolkadotConnection).chainId === chainConfig.name;
       });
 

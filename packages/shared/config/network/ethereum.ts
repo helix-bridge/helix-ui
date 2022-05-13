@@ -3,7 +3,7 @@ import { EthereumChainConfig } from '../../model';
 export const ethereumConfig: EthereumChainConfig = {
   mode: 'native',
   ethereumChain: {
-    chainId: '1',
+    chainId: '0x1',
     chainName: '',
     nativeCurrency: {
       decimals: 18,

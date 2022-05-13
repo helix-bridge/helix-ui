@@ -3,7 +3,7 @@ import { DVMChainConfig } from '../../model';
 export const crabDVMConfig: DVMChainConfig = {
   ethereumChain: {
     blockExplorerUrls: ['https://crab.subscan.io/'],
-    chainId: '44',
+    chainId: '0x2c',
     chainName: 'crab',
     nativeCurrency: {
       decimals: 18,

@@ -1,26 +1,28 @@
-import { DisconnectOutlined, LoadingOutlined, SettingFilled } from '@ant-design/icons';
-import { Badge, Button, Tooltip } from 'antd';
+import { DisconnectOutlined, InfoCircleFilled, LoadingOutlined, SettingFilled } from '@ant-design/icons';
+import { Badge, Button, message, Tooltip } from 'antd';
 import { isEqual } from 'lodash';
 import dynamic from 'next/dynamic';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
-import { ChainConfig, ConnectionStatus } from 'shared/model';
-import { convertConnectionToChainConfig } from 'shared/utils/connection';
+import { ConnectionStatus, EthereumChainConfig, SupportedWallet } from 'shared/model';
+import { convertConnectionToChainConfig, switchEthereumChain } from 'shared/utils/connection';
 import { useAccount, useApi } from '../../../providers';
 import { SelectAccountModal } from './SelectAccountModal';
+import { SelectWalletModal } from './SelectWalletModal';
 
 const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
   ssr: false,
 });
 
+// eslint-disable-next-line complexity
 export function ActiveAccount() {
   const { departureConnection, departure, connectDepartureNetwork, disconnect, isConnecting } = useApi();
   const { t } = useTranslation();
   const { account, setAccount } = useAccount();
   const [isVisible, setIsVisible] = useState(false);
+  const [isWalletVisible, setIsWalletVisible] = useState(false);
   const [matched, setMatched] = useState(true);
-  const [configByConnection, setConfigByConnection] = useState<ChainConfig>(departure);
 
   const disconnected = useMemo(() => {
     const { type, status } = departureConnection;
@@ -38,25 +40,14 @@ export function ActiveAccount() {
 
     const config = convertConnectionToChainConfig(departureConnection);
 
-    setMatched(!config || isEqual(departure, config));
-
-    if (config) {
-      setConfigByConnection(config);
-    }
+    setMatched(isEqual(departure, config));
   }, [connectDepartureNetwork, departureConnection, departure]);
 
   return (
     <>
       {departureConnection.accounts.length >= 1 ? (
         <>
-          <section
-            onClick={() => {
-              if (departureConnection.accounts.length > 1) {
-                setIsVisible(true);
-              }
-            }}
-            className={`flex items-center gap-2 relative`}
-          >
+          <section className={`flex items-center gap-2 relative`}>
             {disconnected && (
               <Badge
                 count={
@@ -68,11 +59,36 @@ export function ActiveAccount() {
               ></Badge>
             )}
 
+            {(departure as EthereumChainConfig).ethereumChain &&
+              (departure as EthereumChainConfig).ethereumChain.chainId !== departureConnection.chainId && (
+                <Badge
+                  count={
+                    <Tooltip title={t('Chain mismatched')}>
+                      <InfoCircleFilled
+                        onClick={() => switchEthereumChain(departure as EthereumChainConfig)}
+                        className="text-yellow-300"
+                      />
+                    </Tooltip>
+                  }
+                  className="absolute -top-2 -right-2 z-20"
+                ></Badge>
+              )}
+
             <Button
               className={`flex items-center px-2 gap-2 overflow-hidden`}
-              icon={<img src={`/image/${configByConnection.logos[0].name}`} width={24} height={24} />}
+              icon={<img src={`/image/${departureConnection.type}.svg`} width={24} height={24} />}
               style={{ maxWidth: 200 }}
               danger={!matched}
+              onClick={() => {
+                if (!matched) {
+                  setIsWalletVisible(true);
+                  return;
+                }
+
+                if (matched && departureConnection.accounts.length > 1) {
+                  setIsVisible(true);
+                }
+              }}
             >
               <span className="truncate">{account}</span>
 
@@ -108,14 +124,33 @@ export function ActiveAccount() {
         defaultValue={account}
         onCancel={() => setIsVisible(false)}
         onSelect={(acc) => {
-          if (acc !== account) {
-            setAccount(acc);
-          }
+          setAccount(acc);
           setIsVisible(false);
         }}
         title={
           <div className="inline-flex items-center space-x-1">
             <span>{t('Select active account')}</span>
+          </div>
+        }
+        footer={null}
+      />
+
+      <SelectWalletModal
+        visible={isWalletVisible}
+        defaultValue={departureConnection.type}
+        onCancel={() => setIsWalletVisible(false)}
+        onSelect={(wallet) => {
+          setIsWalletVisible(false);
+
+          if (departure.wallets.includes(wallet as SupportedWallet)) {
+            connectDepartureNetwork(departure);
+          } else {
+            message.error(t('The selected wallet does not match the token to be transferred'));
+          }
+        }}
+        title={
+          <div className="inline-flex items-center space-x-1">
+            <span>{t('Switch wallet')}</span>
           </div>
         }
         footer={null}

@@ -70,7 +70,7 @@ export const getMetamaskConnection: () => Observable<EthereumConnection> = () =>
     startWith<EthereumConnection>({ status: ConnectionStatus.connecting, accounts: [], type: 'metamask', chainId: '' })
   );
 
-async function switchEthereumChain(chain: EthereumChainConfig): Promise<null> {
+export async function switchEthereumChain(chain: EthereumChainConfig): Promise<null> {
   const chainId = Web3.utils.toHex(+chain.ethereumChain.chainId);
 
   const res: null = await window.ethereum.request({

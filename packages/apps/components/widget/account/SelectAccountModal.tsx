@@ -1,4 +1,4 @@
-import { Button, Empty, Radio } from 'antd';
+import { Button, Empty, Radio, Typography } from 'antd';
 import dynamic from 'next/dynamic';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -30,9 +30,12 @@ const AccountWithIdentify = ({ value }: { value: IAccountMeta }) => {
         className="mr-2 rounded-full border border-solid border-gray-100"
         value={value.address}
       />
-      <span className="flex flex-col leading-5 overflow-hidden">
-        <EllipsisMiddle className="opacity-60 w-full">{value.address}</EllipsisMiddle>
-      </span>
+      <div className="flex flex-col ">
+        <Typography.Text>{value.meta?.name}</Typography.Text>
+        <span className="flex flex-col leading-5 overflow-hidden">
+          <EllipsisMiddle className="opacity-60 w-full">{value.address}</EllipsisMiddle>
+        </span>
+      </div>
     </>
   );
 };

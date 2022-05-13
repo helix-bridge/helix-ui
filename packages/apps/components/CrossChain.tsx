@@ -150,12 +150,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
 
         <Col xs={24} sm={{ span: 15, offset: 1 }}>
           <Form.Item name={FORM_CONTROL.bridge} rules={[{ required: true }]}>
-            <BridgeSelector
-              direction={direction}
-              onChange={(value) => {
-                setBridge(value || null);
-              }}
-            />
+            <BridgeSelector direction={direction} onChange={(value) => setBridge(value || null)} />
           </Form.Item>
         </Col>
       </Row>
