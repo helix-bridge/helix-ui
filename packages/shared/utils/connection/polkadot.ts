@@ -11,36 +11,8 @@ import {
   startWith,
   switchMap,
 } from 'rxjs';
-import {
-  ChainConfig,
-  Connection,
-  ConnectionStatus,
-  EthereumChainConfig,
-  PolkadotChainConfig,
-  PolkadotChainSimpleToken,
-  PolkadotConnection,
-} from '../../model';
-import { chainConfigs } from '../network';
+import { ConnectionStatus, PolkadotChainConfig, PolkadotChainSimpleToken, PolkadotConnection } from '../../model';
 import { entrance } from './entrance';
-
-export function convertConnectionToChainConfig(connection: Connection): ChainConfig | null {
-  const { type, chainId } = connection;
-
-  if (type === 'unknown') {
-    return null;
-  }
-
-  const config = chainConfigs.find((item) => {
-    const typeMatch = item.wallets.includes(type);
-    const value = (item as EthereumChainConfig).ethereumChain
-      ? (item as EthereumChainConfig).ethereumChain.chainId
-      : item.name;
-
-    return typeMatch && value === chainId;
-  });
-
-  return config ?? null;
-}
 
 export async function waitUntilConnected(api: ApiPromise): Promise<null> {
   await api.isReady;
