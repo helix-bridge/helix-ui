@@ -7,13 +7,9 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { FunctionComponent, useEffect, useState } from 'react';
 import GlobalLoading from 'shared/components/widget/GlobalLoading';
-import { toggleTheme } from 'shared/components/widget/ThemeSwitch';
-import { THEME } from 'shared/config/theme';
-import 'shared/theme/antd/index.less';
-import { readStorage } from 'shared/utils/helper';
 import '../bridges/register';
 import AppLayout from '../components/AppLayout';
-import { AccountProvider, ApiProvider, GqlProvider, TxProvider, ConfigProvider } from '../providers';
+import { AccountProvider, ApiProvider, ConfigProvider, GqlProvider, TxProvider } from '../providers';
 import '../styles/index.scss';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -66,20 +62,8 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
 
     const script = document.createElement('script');
 
-    script.addEventListener('load', () => {
-      const theme = readStorage().theme;
-
-      toggleTheme(theme ?? THEME.DARK);
-    });
-
     script.src = 'https://cdn.bootcdn.net/ajax/libs/less.js/2.7.2/less.min.js';
     document.body.appendChild(script);
-
-    const css = document.createElement('link');
-    css.href = '/color.less';
-    css.rel = 'stylesheet/less';
-    css.type = 'text/css';
-    document.body.appendChild(css);
   }, []);
 
   return (
