@@ -199,10 +199,10 @@ export async function getAllowance(
   provider: string
 ): Promise<BN | null> {
   const web3 = entrance.web3.getInstance(provider);
-  const erc20Contract = new web3.eth.Contract(abi.tokenABI, tokenAddress);
+  const erc20Contract = new web3.eth.Contract(abi.tokenABI, spender);
 
   try {
-    const allowanceAmount = await erc20Contract.methods.allowance(account, spender).call();
+    const allowanceAmount = await erc20Contract.methods.allowance(account, tokenAddress).call();
 
     return Web3.utils.toBN(allowanceAmount);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

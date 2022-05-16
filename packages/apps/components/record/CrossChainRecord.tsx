@@ -1,5 +1,4 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Affix, Input, message, Pagination, Select, Spin, Tabs, Tooltip } from 'antd';
+import { Affix, Input, message, Pagination, Radio, Select, Spin } from 'antd';
 import { flow, isBoolean, negate, upperFirst } from 'lodash';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -15,7 +14,7 @@ import {
   Network,
   Vertices,
 } from 'shared/model';
-import { hasBridge, isSubstrateDVM } from 'shared/utils/bridge';
+import { hasBridge } from 'shared/utils/bridge';
 import { isValidAddressStrict } from 'shared/utils/helper';
 import {
   getArrivals,
@@ -176,124 +175,141 @@ export function CrossChainRecord() {
   return (
     <>
       <Affix offsetTop={63}>
-        <Input.Group size="large" className="select-search flex items-center w-full mb-8dark:bg-black flex-1">
-          <Select
-            size="large"
-            dropdownClassName="dropdown-networks"
-            value={getDisplayName(getChainConfig(departure)!)}
-            className="capitalize"
-            onSelect={(name: string) => {
-              const target = fromNetworks.find(
-                (item) => getDisplayName(item).toLowerCase() === name.toLowerCase()
-              ) as ChainConfig;
+        <div className="flex justify-between items-center w-full gap-4 mb-4">
+          <Radio.Group
+            onChange={(event) => {
+              const num = Number(event.target.value);
 
-              const reachable = hasBridge([target, arrival]);
-
-              const isSameEnv = (net: ChainConfig) =>
-                isBoolean(target.isTest) && isBoolean(net.isTest) ? net.isTest === target.isTest : true;
-
-              if (!reachable) {
-                setArrival(getArrivals(target)[0]);
-              }
-
-              setToFilters([negate(isChainConfigEqualTo(target)), isSameEnv, isReachable(target)]);
-              setDeparture(target);
+              setConfirmed(num < 0 ? null : !!num);
             }}
+            defaultValue={'-1'}
+            buttonStyle="solid"
+            size="large"
           >
-            {fromNetworks.map((item) => {
-              const name = getDisplayName(item);
+            <Radio.Button value="-1">{t('All')}</Radio.Button>
+            <Radio.Button value="1">{t('Pending')}</Radio.Button>
+            <Radio.Button value="0">{t('Success')}</Radio.Button>
+          </Radio.Group>
 
-              return (
-                <Select.Option value={name} key={name} className="capitalize">
-                  <span title={t('From')}>{name}</span>
-                </Select.Option>
-              );
-            })}
-          </Select>
-
-          {departure && (
+          <Input.Group size="large" className="select-search flex items-center mb-8dark:bg-black flex-1 max-w-lg">
             <Select
               size="large"
               dropdownClassName="dropdown-networks"
-              value={getDisplayName(getChainConfig(arrival)!)}
-              className="type-select capitalize"
+              value={getDisplayName(getChainConfig(departure)!)}
+              className="capitalize"
               onSelect={(name: string) => {
-                const target = toNetworks.find(
+                const target = fromNetworks.find(
                   (item) => getDisplayName(item).toLowerCase() === name.toLowerCase()
                 ) as ChainConfig;
 
-                setArrival(target);
+                const reachable = hasBridge([target, arrival]);
+
+                const isSameEnv = (net: ChainConfig) =>
+                  isBoolean(target.isTest) && isBoolean(net.isTest) ? net.isTest === target.isTest : true;
+
+                if (!reachable) {
+                  setArrival(getArrivals(target)[0]);
+                }
+
+                setToFilters([negate(isChainConfigEqualTo(target)), isSameEnv, isReachable(target)]);
+                setDeparture(target);
               }}
             >
-              {toNetworks.map((item) => {
+              {fromNetworks.map((item) => {
                 const name = getDisplayName(item);
 
                 return (
                   <Select.Option value={name} key={name} className="capitalize">
-                    <span title={t('To')}>{name}</span>
+                    <span title={t('From')}>{name}</span>
                   </Select.Option>
                 );
               })}
             </Select>
-          )}
 
-          {isEthereumNetwork(departure) && (
-            <Select
-              value={Number(isGenesis)}
-              size="large"
-              onChange={(key) => {
-                setIGenesis(!!key);
-              }}
-              className="type-select capitalize"
-            >
-              <Select.Option value={0} key={0}>
-                {t('Normal')}
-              </Select.Option>
-              <Select.Option value={1} key={1}>
-                {t('Genesis')}
-              </Select.Option>
-            </Select>
-          )}
+            {departure && (
+              <Select
+                size="large"
+                dropdownClassName="dropdown-networks"
+                value={getDisplayName(getChainConfig(arrival)!)}
+                className="type-select capitalize"
+                onSelect={(name: string) => {
+                  const target = toNetworks.find(
+                    (item) => getDisplayName(item).toLowerCase() === name.toLowerCase()
+                  ) as ChainConfig;
 
-          <Input.Search
-            defaultValue={searchParams?.sender || ''}
-            loading={loading}
-            placeholder={searchPlaceholder}
-            onChange={(event) => {
-              const value = event.target.value;
-              if (
-                !isAddressValid(value, departure) ||
-                !isReachable(getChainConfig(departure))(getChainConfig(arrival))
-              ) {
-                return;
-              }
+                  setArrival(target);
+                }}
+              >
+                {toNetworks.map((item) => {
+                  const name = getDisplayName(item);
 
-              if (value === address) {
-                loadData(address, confirmed, departure, arrival, isGenesis, paginator);
-              } else {
-                setAddress(value);
-              }
-            }}
-            onSearch={(value) => {
-              if (!isAddressValid(value, departure)) {
-                message.error(t(searchPlaceholder));
-              } else if (!isReachable(getChainConfig(departure))(getChainConfig(arrival))) {
-                message.error(t('Origin network is not matched to the target network'));
-              } else {
+                  return (
+                    <Select.Option value={name} key={name} className="capitalize">
+                      <span title={t('To')}>{name}</span>
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+            )}
+
+            {isEthereumNetwork(departure) && (
+              <Select
+                value={Number(isGenesis)}
+                size="large"
+                onChange={(key) => {
+                  setIGenesis(!!key);
+                }}
+                className="type-select capitalize"
+              >
+                <Select.Option value={0} key={0}>
+                  {t('Normal')}
+                </Select.Option>
+                <Select.Option value={1} key={1}>
+                  {t('Genesis')}
+                </Select.Option>
+              </Select>
+            )}
+
+            <Input.Search
+              defaultValue={searchParams?.sender || ''}
+              loading={loading}
+              placeholder={searchPlaceholder}
+              onChange={(event) => {
+                const value = event.target.value;
+                if (
+                  !isAddressValid(value, departure) ||
+                  !isReachable(getChainConfig(departure))(getChainConfig(arrival))
+                ) {
+                  return;
+                }
+
                 if (value === address) {
                   loadData(address, confirmed, departure, arrival, isGenesis, paginator);
                 } else {
                   setAddress(value);
                 }
-              }
-            }}
-            enterButton={t('Search')}
-            size="large"
-          />
-        </Input.Group>
+              }}
+              onSearch={(value) => {
+                if (!isAddressValid(value, departure)) {
+                  message.error(t(searchPlaceholder));
+                } else if (!isReachable(getChainConfig(departure))(getChainConfig(arrival))) {
+                  message.error(t('Origin network is not matched to the target network'));
+                } else {
+                  if (value === address) {
+                    loadData(address, confirmed, departure, arrival, isGenesis, paginator);
+                  } else {
+                    setAddress(value);
+                  }
+                }
+              }}
+              enterButton={t('Search')}
+              size="large"
+            />
+          </Input.Group>
+        </div>
       </Affix>
 
-      {!isSubstrateDVM(departure, arrival) ? (
+      {/* {!isSubstrateDVM(departure, arrival) ? (
         <Tabs
           type="card"
           onChange={(event) => {
@@ -324,10 +340,10 @@ export function CrossChainRecord() {
         </Tabs>
       ) : (
         <div className="h-8 mt-4"></div>
-      )}
+      )} */}
 
       <Spin spinning={loading} size="large">
-        <div className="bg-gray-200 dark:bg-antDark p-4 -mt-4">
+        <div className="bg-gray-200 dark:bg-antDark p-4">
           <RecordList departure={departure} arrival={arrival} sourceData={sourceData} />
 
           <div className="w-full max-w-6xl flex justify-center items-center mx-auto mt-4">

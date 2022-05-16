@@ -41,7 +41,7 @@ export function ActiveAccount() {
     const config = convertConnectionToChainConfig(departureConnection);
 
     setMatched(isEqual(departure, config));
-  }, [connectDepartureNetwork, departureConnection, departure]);
+  }, [departure, departureConnection]);
 
   return (
     <>

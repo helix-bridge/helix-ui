@@ -14,6 +14,7 @@ import {
   Vertices,
 } from '../../model';
 import { chainConfigs, getChainConfig } from '../network';
+import { entrance } from './entrance';
 import { getMetamaskConnection, isMetamaskInstalled, switchMetamaskNetwork } from './metamask';
 import { getPolkadotConnection } from './polkadot';
 
@@ -40,11 +41,12 @@ const connectPolkadot: ConnectFn<PolkadotConnection> = (network) =>
 async function isNetworkConsistent(vertices: Vertices, id = ''): Promise<boolean> {
   id = id && Web3.utils.isHex(id) ? parseInt(id, 16).toString() : id;
   // id 1: eth mainnet 3: ropsten 4: rinkeby 5: goerli 42: kovan  43: pangolin 44: crab
-  const actualId: string = id ? await Promise.resolve(id) : await window.ethereum.request({ method: 'net_version' });
+  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
+  const actualId: string | number = id ? await Promise.resolve(id) : await web3.eth.net.getId();
   const chain = getChainConfig(vertices) as EthereumChainConfig;
   const storedId = chain.ethereumChain.chainId;
 
-  return storedId === actualId;
+  return storedId === Web3.utils.toHex(actualId);
 }
 
 const connectMetamask: ConnectFn<EthereumConnection> = (network, chainId?) => {
