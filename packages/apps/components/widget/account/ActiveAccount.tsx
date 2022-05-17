@@ -1,12 +1,17 @@
-import { DisconnectOutlined, InfoCircleFilled, LoadingOutlined, SettingFilled } from '@ant-design/icons';
+import {
+  CloseCircleOutlined,
+  DisconnectOutlined,
+  InfoCircleFilled,
+  LoadingOutlined,
+  SettingFilled,
+} from '@ant-design/icons';
 import { Badge, Button, message, Tooltip } from 'antd';
-import { isEqual } from 'lodash';
 import dynamic from 'next/dynamic';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
 import { ConnectionStatus, EthereumChainConfig, SupportedWallet } from 'shared/model';
-import { convertConnectionToChainConfig, switchEthereumChain } from 'shared/utils/connection';
+import { switchEthereumChain } from 'shared/utils/connection';
 import { useAccount, useApi } from '../../../providers';
 import { SelectAccountModal } from './SelectAccountModal';
 import { SelectWalletModal } from './SelectWalletModal';
@@ -38,16 +43,16 @@ export function ActiveAccount() {
       return;
     }
 
-    const config = convertConnectionToChainConfig(departureConnection);
+    // const config = convertConnectionToChainConfig(departureConnection);
 
-    setMatched(isEqual(departure, config));
+    setMatched(departure.wallets.includes(departureConnection.type as SupportedWallet));
   }, [departure, departureConnection]);
 
   return (
     <>
       {departureConnection.accounts.length >= 1 ? (
         <>
-          <section className={`flex items-center gap-2 relative`}>
+          <section className={`flex items-center relative`}>
             {disconnected && (
               <Badge
                 count={
@@ -59,7 +64,8 @@ export function ActiveAccount() {
               ></Badge>
             )}
 
-            {(departure as EthereumChainConfig).ethereumChain &&
+            {matched &&
+              (departure as EthereumChainConfig).ethereumChain &&
               (departure as EthereumChainConfig).ethereumChain.chainId !== departureConnection.chainId && (
                 <Badge
                   count={
@@ -75,10 +81,17 @@ export function ActiveAccount() {
               )}
 
             <Button
-              className={`flex items-center px-2 gap-2 overflow-hidden`}
-              icon={<img src={`/image/${departureConnection.type}.svg`} width={24} height={24} />}
+              className={`flex items-center justify-around px-2 gap-2 overflow-hidden`}
+              icon={
+                matched ? (
+                  <img src={`/image/${departureConnection.type}.svg`} width={24} height={24} className="mr-2" />
+                ) : (
+                  <CloseCircleOutlined />
+                )
+              }
               style={{ maxWidth: 200 }}
               danger={!matched}
+              type={!matched ? 'primary' : 'default'}
               onClick={() => {
                 if (!matched) {
                   setIsWalletVisible(true);
@@ -90,9 +103,9 @@ export function ActiveAccount() {
                 }
               }}
             >
-              <span className="truncate">{account}</span>
+              <span className="truncate">{matched ? account : t('Wrong Network')}</span>
 
-              {departureConnection.accounts.length > 1 && <Icon name="down" className="w-8 h-8" />}
+              {departureConnection.accounts.length > 1 && matched && <Icon name="down" className="w-8 h-8" />}
             </Button>
 
             <span className="lg:hidden flex">

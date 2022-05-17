@@ -54,7 +54,7 @@ export const crabDVMConfig: DVMChainConfig = {
       type: 'native',
       logo: 'token-wckton.svg',
       symbol: 'WCKTON',
-      address: '',
+      address: '0x159933C635570D5042723359fbD1619dFe83D3f3',
       claim: true,
     },
     {
@@ -70,7 +70,7 @@ export const crabDVMConfig: DVMChainConfig = {
       type: 'mapping',
       logo: 'token-oring.svg',
       symbol: 'xRING',
-      address: '',
+      address: '0x7399Ea6C9d35124d893B8d9808930e9d3F211501',
     },
     {
       name: 'xKTON',
