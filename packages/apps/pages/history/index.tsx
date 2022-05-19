@@ -1,7 +1,7 @@
 import { CheckCircleOutlined } from '@ant-design/icons';
 import { Button, Empty, List, Tag, Typography } from 'antd';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Image from 'next/image';
-import { CrossChainRecord } from '../../components/record/CrossChainRecord';
 
 export const NoData = () => (
   <div className="dark:bg-antDark mt-3 flex justify-center items-center" style={{ minHeight: '70vh' }}>
@@ -50,7 +50,13 @@ export const HistoryItem = ({ onClaim }: { onClaim: () => void }) => (
 );
 
 function Page() {
-  return <CrossChainRecord></CrossChainRecord>;
+  return <div>history</div>;
 }
+
+export const getStaticProps = async ({ locale }: { locale: string }) => ({
+  props: {
+    ...(await serverSideTranslations(locale, ['common'])),
+  },
+});
 
 export default Page;

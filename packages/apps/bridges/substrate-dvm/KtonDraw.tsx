@@ -19,10 +19,9 @@ import {
   Tx,
 } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
-import { toWei, fromWei } from 'shared/utils/helper';
-import { genEthereumTransactionObs, createTxWorkflow } from 'shared/utils/tx';
-import { useTx } from '../../hooks';
-import { useApi } from '../../providers';
+import { fromWei, toWei } from 'shared/utils/helper';
+import { createTxWorkflow, genEthereumTransactionObs } from 'shared/utils/tx';
+import { useApi, useTx } from '../../providers';
 import { WITHDRAW_ADDRESS } from './config';
 
 interface KtonDrawProps {
@@ -48,7 +47,7 @@ export function KtonDraw({ direction, kton, pendingClaimAmount, onSuccess }: Kto
     const amount = toWei({ value: pendingClaimAmount, decimals: 9 });
     const result = web3.eth.abi.encodeParameters(['address', 'uint256'], [direction.from.address, amount]);
     const position = 2;
-    const data = '0x3225da29' + result.slice(position);
+    const data = '0x3225da29' + result.slice(position); // transfer_and_call(address, unit256)
     const gas = 100000;
 
     const obs = genEthereumTransactionObs({

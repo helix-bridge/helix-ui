@@ -3,17 +3,17 @@ import { decodeAddress } from '@polkadot/util-crypto';
 import { upperFirst } from 'lodash';
 import { filter, from, map, Observable, switchMap, take, zip } from 'rxjs';
 import { abi } from 'shared/config/abi';
-import { CrossChainDirection, LockEventsStorage, PolkadotChainConfig, Tx, TxFn } from 'shared/model';
+import { ChainConfig, LockEventsStorage, PolkadotChainConfig, Tx, TxFn } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { connect, entrance } from 'shared/utils/connection';
 import { encodeBlockHeader, isKton, isRing, toWei } from 'shared/utils/helper';
-import { ClaimNetworkPrefix, getMMR, encodeMMRRootMessage } from 'shared/utils/mmr';
-import { buf2hex, genEthereumContractTxObs, signAndSendExtrinsic, getMPTProof } from 'shared/utils/tx';
+import { ClaimNetworkPrefix, encodeMMRRootMessage, getMMR } from 'shared/utils/mmr';
+import { buf2hex, genEthereumContractTxObs, getMPTProof, signAndSendExtrinsic } from 'shared/utils/tx';
 import { Contract } from 'web3-eth-contract';
 import { EthereumDarwiniaBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 
 interface ClaimInfo {
-  direction: CrossChainDirection;
+  direction: { from: ChainConfig; to: ChainConfig };
   mmrIndex: number;
   mmrRoot: string;
   mmrSignatures: string;
@@ -80,13 +80,13 @@ export function claimToken({
   meta: { MMRRoot, best },
 }: ClaimInfo): Observable<Tx> {
   const { from: departure, to: arrival } = direction;
-  const bridge = getBridge<EthereumDarwiniaBridgeConfig>(direction);
+  const bridge = getBridge<EthereumDarwiniaBridgeConfig>([direction.from, direction.to]);
   const networkPrefix = upperFirst(departure.name) as ClaimNetworkPrefix;
-  const apiObs = from(entrance.polkadot.getInstance(departure.meta.provider).isReady);
+  const apiObs = from(entrance.polkadot.getInstance(departure.provider).isReady);
   const header = encodeBlockHeader(blockHeaderStr);
   const storageKey = getD2ELockEventsStorageKey(blockNumber, bridge.config.lockEvents);
 
-  const accountObs = connect(arrival.meta).pipe(
+  const accountObs = connect(arrival).pipe(
     filter(({ status }) => status === 'success'),
     map(({ accounts }) => accounts[0].address),
     take(1)

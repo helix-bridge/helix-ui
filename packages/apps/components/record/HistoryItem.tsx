@@ -1,30 +1,49 @@
 import { CheckCircleOutlined } from '@ant-design/icons';
-import { List, Tag, Typography, Button } from 'antd';
-import { useTranslation } from 'next-i18next';
+import { List, Tag, Tooltip, Typography } from 'antd';
+import { formatDistance, fromUnixTime } from 'date-fns';
 import Image from 'next/image';
+import { PropsWithChildren, ReactNode } from 'react';
+import { CrossChainStatus, CrossChainStatusColor } from 'shared/config/constant';
+import { Result } from 'shared/model';
 
-export const HistoryItem = ({ onClaim }: { onClaim?: () => void }) => {
-  const { t } = useTranslation();
+interface HistoryItemProps {
+  record: {
+    result: Result;
+    startTime: number;
+  };
+  token: {
+    amount: string;
+    symbol: string;
+    logo: string;
+  };
+  process: ReactNode;
+}
 
+export const HistoryItem = ({ record, token, children, process }: PropsWithChildren<HistoryItemProps>) => {
   return (
     <List.Item className="flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-2 lg:space-y-0 bg-gray-900 p-2 lg:p-3 mb-2 border border-gray-800">
       <div className="flex space-x-px lg:space-x-2">
         <Tag
           icon={<CheckCircleOutlined />}
-          color="success"
-          className="flex items-center justify-center pr-0 lg:pr-2 bg-green-600 text-white"
+          className="flex items-center justify-center pr-0 lg:pr-2 text-white"
+          style={{ backgroundColor: CrossChainStatusColor[record.result] }}
         >
-          <span className="hidden lg:inline">Successed</span>
+          <span className="hidden lg:inline">{CrossChainStatus[record.result]}</span>
         </Tag>
+
         <div className="flex flex-col">
-          <Typography.Text>23 mins ago</Typography.Text>
-          <Typography.Text>From CSC to Darwinia</Typography.Text>
-        </div>
-        <div className="flex items-center justify-center pl-5">
-          <Button onClick={onClaim}>{t('Claim')}</Button>
+          <Typography.Text>
+            {formatDistance(fromUnixTime(record.startTime), new Date(new Date().toUTCString()), {
+              includeSeconds: true,
+              addSuffix: true,
+            })}
+          </Typography.Text>
+
+          {process}
         </div>
       </div>
-      <div className="flex items-center">
+
+      <div className="flex items-center gap-4 flex-1 justify-end">
         <Tag
           color="warning"
           className="flex items-center justify-center order-last lg:order-first bg-yellow-500 text-white font-bold text-sm"
@@ -32,16 +51,19 @@ export const HistoryItem = ({ onClaim }: { onClaim?: () => void }) => {
         >
           Out
         </Tag>
-        <div className="flex items-center space-x-1 lg:mx-4">
-          <Image alt="..." src="/image/token-ring.svg" width={40} height={40} />
-          <div className="flex flex-col">
-            <Typography.Text>100,000.87</Typography.Text>
-            <Typography.Text>xRING</Typography.Text>
+
+        <div className="flex items-center space-x-4 lg:mx-4">
+          <Image alt="..." src={`/image/${token.logo}`} width={40} height={40} />
+
+          <div className="flex flex-col md:w-28 truncate">
+            <Tooltip title={token.amount}>
+              <span className="truncate">{token.amount}</span>
+            </Tooltip>
+            <span className="capitalize">{token.symbol}</span>
           </div>
         </div>
-        <a href="#" rel="noopener noreferrer" target="_bank" className="mx-4 lg:mx-0">
-          <Image alt="..." src="/image/goto.svg" width={30} height={30} />
-        </a>
+
+        <div className="mx-4 lg:mx-0 text-pangolin-main">{children}</div>
       </div>
     </List.Item>
   );

@@ -1,4 +1,4 @@
-interface Transfer {
+export interface Transfer {
   amount: string;
   senderId: string;
   timestamp: string;
@@ -6,7 +6,7 @@ interface Transfer {
   section: 'kton' | 'balances';
   method: string;
   // eslint-disable-next-line id-denylist
-  block: { blockHash: string; number: number; specVersion: number };
+  block: { blockHash: string; number: number; specVersion: number; extrinsicHash: string };
 }
 
 export interface Substrate2DVMRecordsRes {

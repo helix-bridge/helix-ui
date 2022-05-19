@@ -89,13 +89,12 @@ export const switchMetamaskNetwork: DebouncedFunc<(chain: EthereumChainConfig) =
 
     return new Observable((observer: Observer<null>) => {
       return notification.error({
-        message: <Trans>Incorrect network</Trans>,
+        message: <Trans i18n={i18n?.use(initReactI18next)}>Incorrect network</Trans>,
         description: (
-          <Trans
-            i18nKey="Network mismatch, you can switch network manually in metamask or do it automatically by clicking the button below"
-            tOptions={{ type: chain }}
-            i18n={i18n?.use(initReactI18next)}
-          ></Trans>
+          <Trans i18n={i18n?.use(initReactI18next)}>
+            Network mismatch, you can switch network manually in metamask or do it automatically by clicking the button
+            below
+          </Trans>
         ),
         btn: (
           <Button
@@ -112,7 +111,9 @@ export const switchMetamaskNetwork: DebouncedFunc<(chain: EthereumChainConfig) =
                 message.error({
                   content: (
                     <span>
-                      <Trans>Network switch failed, please switch it in the metamask plugin!</Trans>
+                      <Trans i18n={i18n?.use(initReactI18next)}>
+                        Network switch failed, please switch it in the metamask plugin!
+                      </Trans>
                       <span className="ml-2">{(err as MetamaskError).message}</span>
                     </span>
                   ),

@@ -1,9 +1,11 @@
-import { HddOutlined, MenuOutlined } from '@ant-design/icons';
-import { Button, Drawer, Layout, Tooltip } from 'antd';
+import { ContainerOutlined, HddOutlined, MenuOutlined } from '@ant-design/icons';
+import { Drawer, Layout, Menu, MenuProps, Tooltip } from 'antd';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { PropsWithChildren, useState } from 'react';
+import { PropsWithChildren, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Icon } from 'shared/components/widget/Icon';
 import { THEME } from 'shared/config/theme';
 import { readStorage } from 'shared/utils/helper';
 import { Footer } from './Footer';
@@ -19,14 +21,68 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
   const [collapsed, setCollapsed] = useState(true);
   const router = useRouter();
 
+  const menus = useMemo<MenuProps['items']>(
+    () => [
+      {
+        label: <Link href="/">{t('Aggregator')}</Link>,
+        key: 'aggregator',
+        theme: 'dark',
+      },
+      {
+        label: <Link href="/nft">{t('NFT')}</Link>,
+        key: 'nft',
+        theme: 'dark',
+      },
+      {
+        label: <Link href="/claim">{t('Claim')}</Link>,
+        key: 'claim',
+        icon: <ContainerOutlined style={{ verticalAlign: 0 }} />,
+      },
+      {
+        label: (
+          <span className="inline-flex items-center gap-1">
+            <span>{t('History')}</span>
+            <Icon name="down" />
+          </span>
+        ),
+        key: 'history',
+        icon: <HddOutlined style={{ verticalAlign: 0 }} />,
+        children: [
+          {
+            label: (
+              <a href="https://helixbridge.app/transaction" rel="noreferrer" target="_blank">
+                {t('History Records')}
+              </a>
+            ),
+            key: 'records',
+          },
+          {
+            label: <Link href="/history">{t('Ethereum - Darwinia Records')}</Link>,
+            key: 'ed-history',
+          },
+        ],
+      },
+    ],
+    [t]
+  );
+
+  const activeRouteKeys = useMemo(() => {
+    const current = router.pathname.split('/').filter((item) => item);
+    if (!current.length) {
+      return ['aggregator'];
+    }
+
+    return current;
+  }, [router.pathname]);
+
   return (
     <Layout className="min-h-screen overflow-scroll">
       <Header
         className="fixed left-0 right-0 top-0 z-40 flex items-center justify-between sm:px-16 px-4 border-b"
         style={{ marginTop: -1, borderColor: '#113b5d' }}
       >
-        <div className="flex items-center space-x-5">
-          <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-5">
+          <div className="flex items-center gap-2">
             <Tooltip title={t('Helix is in beta. Please use at your own risk level')}>
               <Image
                 src="/image/bridges/helix.png"
@@ -37,14 +93,11 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
                 className="cursor-pointer"
               />
             </Tooltip>
+
             <Image alt="..." src="/image/beta.svg" width={35} height={18} />
           </div>
-          <span className="hidden lg:inline transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap">
-            Bridge Aggregator
-          </span>
-          <span className="hidden lg:inline transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap">
-            NFT Bridge
-          </span>
+
+          <Menu mode="horizontal" items={menus} selectedKeys={activeRouteKeys} className="bg-transparent" />
         </div>
 
         <Drawer
@@ -64,10 +117,6 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
 
         <div className="hidden lg:flex items-center space-x-4">
           <ActiveAccount />
-          <Button className="flex items-center" onClick={() => router.push('history')}>
-            <HddOutlined />
-            History
-          </Button>
 
           <Tools />
         </div>

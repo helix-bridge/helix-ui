@@ -13,7 +13,7 @@ export function useRecords(
   departure: ChainConfig,
   arrival: ChainConfig
 ): RecordsHooksResult<RecordList<Substrate2DVMRecord>, Omit<RecordRequestParams, 'confirmed'>> {
-  const subql = '';
+  const subql = 'https://api.subquery.network/sq/darwinia-network/wormhole-';
 
   const issuingClient = useMemo(
     () => new GraphQLClient({ url: `${subql}${departure.name}` || UNKNOWN_CLIENT }),

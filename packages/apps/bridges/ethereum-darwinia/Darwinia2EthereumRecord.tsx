@@ -5,12 +5,12 @@ import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EMPTY, filter, from, iif, map, Observable, of, switchMap, take, tap, zip } from 'rxjs';
 import { abi } from 'shared/config/abi';
-import { ConnectionStatus, CrossChainDirection, RecordComponentProps } from 'shared/model';
+import { ConnectionStatus, RecordComponentProps } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { connect, entrance } from 'shared/utils/connection';
 import { Progresses, ProgressProps, State } from '../../components/record/Progress';
 import { Record } from '../../components/record/Record';
-import { useTx } from '../../hooks';
+import { useTx } from '../../providers';
 import { Darwinia2EthereumMeta, Darwinia2EthereumRecord as D2ERecord, EthereumDarwiniaBridgeConfig } from './model';
 import { claimToken } from './utils';
 
@@ -35,7 +35,7 @@ export function Darwinia2EthereumRecord({
 }: RecordComponentProps<D2ERecord & { meta: Darwinia2EthereumMeta }>) {
   const { t } = useTranslation();
   const { observer, setTx } = useTx();
-  const { blockTimestamp, signatures, target, ringValue, ktonValue, extrinsicIndex, tx } = record;
+  const { blockTimestamp, signatures, ringValue, ktonValue, extrinsicIndex, tx, target } = record;
   const [hash, setHash] = useState(tx);
 
   const claim = useCallback(
@@ -87,7 +87,7 @@ export function Darwinia2EthereumRecord({
           switchMap(([isRingSuf, isKtonSuf]) =>
             isRingSuf && isKtonSuf
               ? claimToken({
-                  direction: { from: { meta: departure! }, to: { meta: departure! } } as unknown as CrossChainDirection,
+                  direction: { from: departure!, to: departure! },
                   mmrIndex,
                   mmrRoot,
                   mmrSignatures: sign,

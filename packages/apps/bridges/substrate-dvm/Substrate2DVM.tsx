@@ -20,8 +20,8 @@ import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
-import { useAfterTx, useTx } from '../../hooks';
-import { useAccount, useApi } from '../../providers';
+import { useAfterTx } from '../../hooks';
+import { useAccount, useApi, useTx } from '../../providers';
 import { SubstrateDVMBridgeConfig, TransferPayload } from './model';
 import { issuing } from './utils';
 

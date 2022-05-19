@@ -3,32 +3,22 @@ import camelCaseKeys from 'camelcase-keys';
 import { useCallback } from 'react';
 import { catchError, filter, map, Observable, of } from 'rxjs';
 import { DarwiniaApiPath } from 'shared/config/api';
-import { ChainConfig, ICamelCaseKeys } from 'shared/model';
+import { ICamelCaseKeys } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { apiUrl, rxGet } from 'shared/utils/helper';
 import { buf2hex } from 'shared/utils/tx';
-import { FetchRecords, RecordList, RecordRequestParams, RecordsHooksResult } from '../../../model';
+import { RecordList, RecordRequestParams, RecordsHooksResult } from '../../../model';
 import {
   Darwinia2EthereumHistoryRes,
   Darwinia2EthereumRecord,
   Ethereum2DarwiniaRedeemHistoryRes,
   Ethereum2DarwiniaRedeemRecord,
-  Ethereum2DarwiniaRingBurnHistoryRes,
-  Ethereum2DarwiniaRingBurnRecord,
   EthereumDarwiniaBridgeConfig,
 } from '../model';
 
-export function useRecords(
-  _: ChainConfig,
-  _2: ChainConfig
-): RecordsHooksResult<
+export function useRecords(): RecordsHooksResult<
   RecordList<ICamelCaseKeys<Darwinia2EthereumRecord> | ICamelCaseKeys<Ethereum2DarwiniaRedeemRecord>>
-> & {
-  fetchGenesisRecords: FetchRecords<
-    Ethereum2DarwiniaRingBurnHistoryRes<ICamelCaseKeys<Ethereum2DarwiniaRingBurnRecord>>,
-    RecordRequestParams
-  >;
-} {
+> {
   const fetchIssuingRecords = useCallback(({ address, confirmed, direction, paginator }: RecordRequestParams) => {
     const bridge = getBridge<EthereumDarwiniaBridgeConfig>(direction);
     const api = bridge.config.api.dapp;
@@ -67,28 +57,8 @@ export function useRecords(
     ) as NonNullable<Observable<Ethereum2DarwiniaRedeemHistoryRes<ICamelCaseKeys<Ethereum2DarwiniaRedeemRecord>>>>;
   }, []);
 
-  const fetchGenesisRecords = useCallback(({ address, confirmed, direction, paginator }: RecordRequestParams) => {
-    const bridge = getBridge<EthereumDarwiniaBridgeConfig>(direction);
-    const api = bridge.config.api.dapp;
-
-    return rxGet<Ethereum2DarwiniaRingBurnHistoryRes & { isGenesis: boolean }>({
-      url: apiUrl(api, DarwiniaApiPath.ringBurn),
-      params: { address, confirmed, ...paginator },
-    }).pipe(
-      map((res) => ({
-        count: res?.count ?? 0,
-        list: (res?.list ?? []).map((item) => camelCaseKeys({ ...item, isGenesis: true })),
-      })),
-      catchError((err) => {
-        console.error('%c [ genesis api request error: ]', 'font-size:13px; background:pink; color:#bf2c9f;', err);
-        return of(null);
-      })
-    ) as NonNullable<Observable<Ethereum2DarwiniaRingBurnHistoryRes<ICamelCaseKeys<Ethereum2DarwiniaRingBurnRecord>>>>;
-  }, []);
-
   return {
     fetchRedeemRecords,
     fetchIssuingRecords,
-    fetchGenesisRecords,
   };
 }

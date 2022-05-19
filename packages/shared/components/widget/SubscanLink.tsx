@@ -30,7 +30,7 @@ export function SubscanLink({
   if (address) {
     return (
       <Link
-        href={`https://${network}.subscan.io/account/${address}`}
+        href={`https://${network.name}.subscan.io/account/${address}`}
         target="_blank"
         copyable={copyable}
         className="w-full"
@@ -44,7 +44,7 @@ export function SubscanLink({
     const { height, index } = extrinsic;
 
     return (
-      <Link href={`https://${network}.subscan.io/extrinsic/${height}-${index}`} target="_blank" {...other}>
+      <Link href={`https://${network.name}.subscan.io/extrinsic/${height}-${index}`} target="_blank" {...other}>
         {children}
       </Link>
     );

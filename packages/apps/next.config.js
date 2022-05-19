@@ -77,48 +77,51 @@ module.exports = withPlugins([withAntdLess, circularDependencyPlugin], {
   },
 
   webpack(config, { isServer, dev }) {
-    const wasmExtensionRegExp = /\.wasm$/;
+    // const wasmExtensionRegExp = /\.wasm$/;
 
-    config.resolve.extensions.push('.wasm');
+    // config.resolve.extensions.push('.wasm');
 
-    config.module.rules.forEach((rule) => {
-      (rule.oneOf || []).forEach((oneOf) => {
-        if (oneOf.loader && oneOf.loader.indexOf('file-loader') >= 0) {
-          // make file-loader ignore WASM files
-          oneOf.exclude.push(wasmExtensionRegExp);
-        }
-      });
-    });
+    // config.module.rules.forEach((rule) => {
+    //   (rule.oneOf || []).forEach((oneOf) => {
+    //     if (oneOf.loader && oneOf.loader.indexOf('file-loader') >= 0) {
+    //       // make file-loader ignore WASM files
+    //       oneOf.exclude.push(wasmExtensionRegExp);
+    //     }
+    //   });
+    // });
 
-    // add a dedicated loader for WASM
-    config.module.rules.push({
-      test: wasmExtensionRegExp,
-      type: 'javascript/auto',
-      include: path.resolve(__dirname, 'src'),
-      use: [{ loader: require.resolve('wasm-loader'), options: {} }],
-    });
+    // // add a dedicated loader for WASM
+    // config.module.rules.push({
+    //   test: wasmExtensionRegExp,
+    //   type: 'javascript/auto',
+    //   include: path.resolve(__dirname, 'src'),
+    //   use: [{ loader: require.resolve('wasm-loader'), options: {} }],
+    // });
 
-    config.module.rules.push({
-      test: /\.mjs$/,
-      include: /node_modules/,
-      type: 'javascript/auto',
-    });
+    // config.module.rules.push({
+    //   test: /\.mjs$/,
+    //   include: /node_modules/,
+    //   type: 'javascript/auto',
+    // });
 
-    config.module.rules.push({
-      test: /\.js$/,
-      include: /node_modules/,
-      loader: require.resolve('@open-wc/webpack-import-meta-loader'),
-    });
+    // config.module.rules.push({
+    //   test: /\.js$/,
+    //   include: /node_modules/,
+    //   loader: require.resolve('@open-wc/webpack-import-meta-loader'),
+    // });
 
-    config.experiments = {
-      asyncWebAssembly: true,
-      layers: true,
-    };
+    // config.experiments = {
+    //   asyncWebAssembly: true,
+    //   layers: true,
+    // };
 
-    if (!dev && isServer) {
-      config.output.webassemblyModuleFilename = 'chunks/[id].wasm';
-      config.plugins.push(new WasmChunksFixPlugin());
-    }
+    // if (!dev && isServer) {
+    //   config.output.webassemblyModuleFilename = 'chunks/[id].wasm';
+    //   config.plugins.push(new WasmChunksFixPlugin());
+    // }
+    config.output.webassemblyModuleFilename = 'static/wasm/[modulehash].wasm';
+
+    config.experiments = { asyncWebAssembly: true }
 
     return config;
   },

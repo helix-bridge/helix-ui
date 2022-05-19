@@ -1,15 +1,12 @@
 import { message, ModalProps } from 'antd';
 import { useRouter } from 'next/router';
-import { FunctionComponent, useCallback, useContext } from 'react';
+import { FunctionComponent, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SHORT_DURATION } from 'shared/config/constant';
 import { CrossChainPayload, PolkadotChainConfig, Tx, TxDoneComponentProps, TxHashType } from 'shared/model';
 import { convertToSS58, genHistoryRouteParams } from 'shared/utils/helper';
 import { isEthereumNetwork } from 'shared/utils/network';
 import { applyModal } from 'shared/utils/tx';
-import { TxContext, TxCtx } from '../providers';
-
-export const useTx = () => useContext(TxContext) as Exclude<TxCtx, null>;
 
 export function useAfterTx<T extends CrossChainPayload>() {
   const { t } = useTranslation();

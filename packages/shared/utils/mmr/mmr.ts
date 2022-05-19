@@ -6,6 +6,7 @@ import { ajax } from 'rxjs/ajax';
 import { Network, PolkadotChainConfig } from '../../model';
 import { waitUntilConnected } from '../connection';
 import { remove0x } from '../helper';
+import { convert, updateInstance } from '../mmrConvert/ckb_next';
 import { getChainConfig } from '../network';
 import { genProof } from './proof';
 
@@ -37,18 +38,6 @@ const MMR_QUERY = `
     }
   }
 `;
-
-async function getMMRProofByRPC(api: ApiPromise, blockNumber: number, mmrBlockNumber: number) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const proof = await (api.rpc as any).headerMMR.genProof(blockNumber, mmrBlockNumber);
-  const proofStr = proof.proof.substring(1, proof.proof.length - 1); // remove '[' and ']'
-  const proofHexStr: string[] = proofStr.split(',').map((item: string) => {
-    return remove0x(item.replace(/(^\s*)|(\s*$)/g, ''));
-  });
-  const encodeProof = proofHexStr.join('');
-
-  return { encodeProof, size: proof.mmrSize as BigInt };
-}
 
 async function getMMRProofBySubql(api: ApiPromise, blockNumber: number, mmrBlockNumber: number) {
   const chain = (await api.rpc.system.chain()).toString().toLowerCase() as Extract<Network, 'pangolin' | 'darwinia'>;
@@ -99,14 +88,14 @@ export async function getMMR(
   api: ApiPromise,
   blockNumber: number,
   mmrBlockNumber: number,
-  blockHash: string,
-  byRPC = false
+  blockHash: string
 ): Promise<MMRProof> {
   await waitUntilConnected(api);
-  const convert = (await import('../mmrConvert')).convert;
+  const instance = await import('../mmrConvert/ckb_merkle_mountain_range_bg.wasm');
 
-  const getProof = byRPC ? getMMRProofByRPC : getMMRProofBySubql;
-  const { encodeProof, size } = await getProof(api, blockNumber, mmrBlockNumber);
+  updateInstance(instance);
+
+  const { encodeProof, size } = await getMMRProofBySubql(api, blockNumber, mmrBlockNumber);
   const mmrProofConverted: string = convert(blockNumber, size, hexToU8a('0x' + encodeProof), hexToU8a(blockHash));
   const [mmrSize, peaksStr, siblingsStr] = mmrProofConverted.split('|');
   const peaks = peaksStr.split(',');

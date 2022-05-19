@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import React, { createContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { delay, Observer, of } from 'rxjs';
 import { TxStatus } from 'shared/components/widget/TxStatus';
 import { LONG_DURATION } from 'shared/config/constant';
@@ -14,14 +14,17 @@ export interface TxCtx {
 
 export const TxContext = createContext<TxCtx | null>(null);
 
+export const useTx = () => useContext(TxContext) as Exclude<TxCtx, null>;
+
 export const TxProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   const [tx, setTx] = useState<Tx | null>(null);
   const [canceler, setCanceler] = useState<(() => void) | null>(null);
+
   const observer = useMemo<Observer<Tx>>(() => {
     return {
       next: setTx,
       error: (error: RequiredPartial<Tx, 'error'>) => {
-        message.info(error.error.message);
+        message.error(error.error.message);
         setTx(null);
       },
       complete: () => {

@@ -14,7 +14,7 @@ import { last } from 'lodash';
 import React, { SetStateAction, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Subscription } from 'rxjs';
-import { useTx } from '../../hooks';
+import { useTx } from '../../providers';
 import { BridgeDispatchEventRecord } from '../../model';
 
 export enum State {

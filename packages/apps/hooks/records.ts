@@ -67,7 +67,7 @@ export function useRecordsQuery<T = unknown>(req: RecordsQueryRequest): RecordsH
 export function useRecords(departure: Departure, arrival: Departure) {
   const [depConfig, arrConfig] = [getChainConfig(departure), getChainConfig(arrival)];
 
-  const darwiniaEthereum = useDarwiniaEthereum(depConfig, arrConfig);
+  const darwiniaEthereum = useDarwiniaEthereum();
   const substrateSubstrateDVM = useSubstrateSubstrateDVM(depConfig, arrConfig);
   const substrateDVM = useSubstrateDVM(depConfig, arrConfig);
 
@@ -77,14 +77,10 @@ export function useRecords(departure: Departure, arrival: Departure) {
     return req;
   }, []);
 
-  const genQueryFn = useCallback<(isGenesis: boolean) => (req: RecordRequestParams) => Observable<unknown>>(
+  const genQueryFn = useCallback<() => (req: RecordRequestParams) => Observable<unknown>>(
     // eslint-disable-next-line complexity
-    (isGenesis = false) => {
-      if (isEthereum2Darwinia(departure, arrival) && isGenesis) {
-        return darwiniaEthereum.fetchGenesisRecords;
-      }
-
-      if (isEthereum2Darwinia(departure, arrival) && !isGenesis) {
+    () => {
+      if (isEthereum2Darwinia(departure, arrival)) {
         return darwiniaEthereum.fetchRedeemRecords;
       }
 
@@ -113,7 +109,6 @@ export function useRecords(departure: Departure, arrival: Departure) {
     [
       departure,
       arrival,
-      darwiniaEthereum.fetchGenesisRecords,
       darwiniaEthereum.fetchRedeemRecords,
       darwiniaEthereum.fetchIssuingRecords,
       substrateSubstrateDVM.fetchIssuingRecords,
@@ -124,7 +119,7 @@ export function useRecords(departure: Departure, arrival: Departure) {
   );
 
   const queryRecords = useCallback(
-    (params: RecordRequestParams, isGenesis: boolean) => {
+    (params: RecordRequestParams) => {
       const { direction, address } = params;
 
       if (!direction || !address) {
@@ -132,7 +127,7 @@ export function useRecords(departure: Departure, arrival: Departure) {
       }
 
       const req = genParams(params);
-      const fn = genQueryFn(isGenesis);
+      const fn = genQueryFn();
 
       return fn(req);
     },

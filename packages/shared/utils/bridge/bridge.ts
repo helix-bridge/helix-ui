@@ -131,33 +131,6 @@ export function getBridges(source: CrossChainDirection): Bridge[] {
   );
 }
 
-export function getBridgeComponent(type: 'crossChain' | 'record') {
-  // eslint-disable-next-line complexity
-  return (dir: CrossChainDirection) => {
-    const { from, to } = dir;
-
-    if (!from || !to) {
-      return null;
-    }
-
-    const direction = [from, to].map((item) => item.meta);
-    const bridge = getBridge(direction as [ChainConfig, ChainConfig]);
-
-    if (!bridge || bridge.status === 'pending') {
-      return () => null;
-    }
-
-    switch (type) {
-      case 'record':
-        return isEqual(bridge.issuing, direction) ? bridge.IssuingRecordComponent : bridge.RedeemRecordComponent;
-      default:
-        return isEqual(bridge.issuing, direction)
-          ? bridge.IssuingCrossChainComponent
-          : bridge.RedeemCrossChainComponent;
-    }
-  };
-}
-
 export function getAvailableDVMBridge(departure: ChainConfig): Bridge<DVMBridgeConfig> {
   // FIXME: by default we use the first vertices here.
   const [bridge] = BRIDGES.filter(

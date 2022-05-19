@@ -9,7 +9,7 @@ type Props = {
   defaultValue: string;
   title: React.ReactNode;
   footer: React.ReactNode;
-  onSelect: (address: string) => void;
+  onSelect: (address: SupportedWallet) => void;
   onCancel: () => void;
 };
 

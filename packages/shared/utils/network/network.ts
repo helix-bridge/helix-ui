@@ -1,4 +1,4 @@
-import { chain as lodashChain, curry, isEqual, pick, upperFirst } from 'lodash';
+import { chain as lodashChain, curry, pick, upperFirst } from 'lodash';
 import { NETWORK_SIMPLE, SYSTEM_ChAIN_CONFIGURATIONS } from '../../config/network';
 import {
   ChainConfig,
@@ -80,7 +80,7 @@ export function getLegalName(network: string): Network | string {
 export const getArrivals = (departure: ChainConfig) => {
   const target = crossChainGraph.find(([item]) => isChainEqual(item, departure));
 
-  return target ? target[1] : [];
+  return target ? target[1].map((item) => getChainConfig(item)) : [];
 };
 
 const isInNodeList = (chain1: ChainConfig | null, chain2: ChainConfig | null) => {
@@ -94,9 +94,6 @@ const isInNodeList = (chain1: ChainConfig | null, chain2: ChainConfig | null) =>
 };
 
 export const isReachable = (chain: ChainConfig | null) => curry(isInNodeList)(chain); // relation: chain1 -> chain2 ---- Find the relation by chain1
-
-export const isChainConfigEqualTo = (chain1: ChainConfig | null) => (chain2: ChainConfig | null) =>
-  isEqual(chain1, chain2);
 
 export const isPolkadotNetwork = (network: ChainConfig | Vertices | null | undefined) => {
   if (!network) {
