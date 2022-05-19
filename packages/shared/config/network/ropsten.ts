@@ -21,15 +21,6 @@ export const ropstenConfig: EthereumChainConfig = {
   },
   tokens: [
     {
-      name: 'ETHER',
-      decimals: 18,
-      cross: [],
-      type: 'native',
-      logo: 'token-ethereum.svg',
-      symbol: 'ETHER',
-      address: '',
-    },
-    {
       name: 'PRING',
       decimals: 9,
       cross: [

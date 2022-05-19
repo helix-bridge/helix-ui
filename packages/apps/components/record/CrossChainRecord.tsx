@@ -22,6 +22,7 @@ export function CrossChainRecord() {
   const [activeTab, setActiveTab] = useState('e2d');
   const { fetchIssuingRecords, fetchRedeemRecords } = useRecords();
   const [isTestChain, setIsTest] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [ethereumDarwinia, setEthereumDarwiniaData] = useState<{ count: number; list: any[] }>({ count: 0, list: [] });
 
   const ethereumDarwiniaDirection = useMemo<[EthereumChainConfig, PolkadotChainConfig]>(

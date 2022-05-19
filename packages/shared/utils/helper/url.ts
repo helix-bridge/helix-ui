@@ -1,5 +1,5 @@
 import { mapKeys } from 'lodash';
-import { DEFAULT_DIRECTION } from '../../config/constant';
+import { DEFAULT_DEV_DIRECTION, DEFAULT_DIRECTION } from '../../config/constant';
 import {
   CrossChainDirection,
   CrossToken,
@@ -30,6 +30,8 @@ type SettingValue = ValueOf<HashInfo> & ValueOf<StorageInfo>;
 export type AdapterMap<T extends object, D extends object> = {
   [key in keyof T]?: keyof D;
 };
+
+const isDev = process.env.REACT_APP_HOST_TYPE === 'dev';
 
 const toShort: AdapterMap<HashInfo, HashShort> = {
   from: 'f',
@@ -122,17 +124,21 @@ export const getHistoryRouteParams: (search: string) => WithNull<HistoryRoutePar
   } as HistoryRouteParam;
 };
 
+export const getDefaultDirection = () =>
+  getInitialSetting('enableTestNetworks', isDev) ? DEFAULT_DEV_DIRECTION : DEFAULT_DIRECTION;
+
 // eslint-disable-next-line complexity
 export const validateDirection: (dir: NullableCrossChainDirection) => CrossChainDirection = (dir) => {
   const { from, to } = dir;
+  const direction = getDefaultDirection();
 
   if (from && to) {
     const reachable = from.cross.find((item) => item.partner.symbol === to.symbol);
 
-    return reachable ? (dir as CrossChainDirection) : DEFAULT_DIRECTION;
+    return reachable ? (dir as CrossChainDirection) : direction;
   }
 
-  return { from: from ?? DEFAULT_DIRECTION.from, to: to ?? DEFAULT_DIRECTION.to };
+  return { from: from ?? direction.from, to: to ?? direction.to };
 };
 
 // eslint-disable-next-line complexity

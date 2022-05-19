@@ -2,7 +2,7 @@ import { Button, Form, InputNumber, InputNumberProps } from 'antd';
 import { useState } from 'react';
 import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
-import { CrossToken } from 'shared/model';
+import { CrossToken, TokenInfoWithMeta } from 'shared/model';
 import { getDisplayName } from 'shared/utils/network';
 import { SelectTokenModal } from './SelectTokenModal';
 
@@ -11,6 +11,7 @@ interface DestinationProps {
   onChange?: (value: CrossToken) => void;
   title?: string;
   value: CrossToken;
+  fromToken?: TokenInfoWithMeta;
 }
 
 export function Destination({
@@ -19,6 +20,7 @@ export function Destination({
   onChange,
   className,
   disabled,
+  fromToken,
 }: DestinationProps & Pick<InputNumberProps, 'disabled'>) {
   const [visible, setVisible] = useState(false);
 
@@ -61,6 +63,7 @@ export function Destination({
 
         <SelectTokenModal
           visible={visible}
+          fromToken={fromToken}
           onCancel={() => setVisible(false)}
           onSelect={(val) => {
             setVisible(false);

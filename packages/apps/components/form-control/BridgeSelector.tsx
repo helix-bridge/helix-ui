@@ -1,4 +1,4 @@
-import { ArrowRightOutlined, SmileOutlined, SyncOutlined } from '@ant-design/icons';
+import { ArrowRightOutlined, FrownOutlined, SyncOutlined } from '@ant-design/icons';
 import { Badge, Radio, Result, Space, Tooltip, Typography } from 'antd';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
@@ -33,28 +33,6 @@ const TokenOnChain = ({ token, isFrom }: TokenOnChainProps) => (
   </div>
 );
 
-// const Content = ({ direction, bridge }: { direction: BridgeSelectorProps['direction']; bridge: Bridge }) => {
-//   return (
-//     <div className="relative flex justify-between items-center pr-3 py-3">
-//       <TokenOnChain token={direction.from as CrossToken} isFrom />
-
-//       <div className="relative w-56 hidden lg:flex justify-center text-white">
-//         <div className="py-1 w-24 rounded-3xl bg-gray-700 flex justify-center items-center space-x-2 z-10">
-//           <Image alt="..." src={`/image/${bridge?.category}-bridge.svg`} width={28} height={28} />
-//           <strong className="capitalize">{bridge?.category}</strong>
-//         </div>
-//         <Image alt="..." src="/image/bridge-to.svg" layout="fill" priority />
-//       </div>
-
-//       <div className="lg:hidden absolute top-0 bottom-0 left-0 right-0 m-auto w-7 flex items-end justify-center pb-3 opacity-40">
-//         <ArrowRightOutlined />
-//       </div>
-
-//       <TokenOnChain token={direction.to as CrossToken} />
-//     </div>
-//   );
-// };
-
 export function BridgeSelector({ direction, value, onChange }: BridgeSelectorProps) {
   const { t } = useTranslation();
   const bridges = getBridges(direction as CrossChainDirection);
@@ -68,10 +46,7 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
       </div>
 
       {!bridges.length ? (
-        <Result
-          icon={<SmileOutlined />}
-          title="Please select the parameters for your desired transfer and enter an amount."
-        />
+        <Result icon={<FrownOutlined />} title="No bridge found for selected tokens" />
       ) : (
         <Radio.Group
           className="w-full"

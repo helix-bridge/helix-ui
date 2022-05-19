@@ -21,15 +21,6 @@ export const ethereumConfig: EthereumChainConfig = {
   },
   tokens: [
     {
-      name: 'ETHER',
-      decimals: 18,
-      cross: [],
-      type: 'native',
-      logo: 'token-ethereum.svg',
-      symbol: 'ETHER',
-      address: '',
-    },
-    {
       name: 'RING',
       decimals: 9,
       cross: [

@@ -84,6 +84,7 @@ export function Direction({ value, initial, onChange, fee = 0 }: DirectionProps)
       <Destination
         title={t('To')}
         value={data.to}
+        fromToken={data.from}
         disabled
         onChange={(to) => {
           triggerChange({ to, from: data.from });

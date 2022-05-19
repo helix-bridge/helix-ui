@@ -1,4 +1,4 @@
-import { SearchOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, SearchOutlined } from '@ant-design/icons';
 import { Input, Radio, Tag, Typography } from 'antd';
 import { chain as lodashChain } from 'lodash';
 import { useTranslation } from 'next-i18next';
@@ -15,37 +15,77 @@ interface SelectTokenModalProps {
   visible: boolean;
   onCancel: () => void;
   onSelect: (value: TokenInfoWithMeta) => void;
+  fromToken?: TokenInfoWithMeta;
 }
 
 const colors: ({ color: string } & Vertices)[] = [
   { name: 'crab', mode: 'native', color: '#cd201f' },
-  { name: 'crab', mode: 'dvm', color: '#B32BB6' },
+  // { name: 'crab', mode: 'dvm', color: '#B32BB6' },
   { name: 'darwinia', mode: 'native', color: '#FF007A' },
   { name: 'ethereum', mode: 'native', color: '#1C87ED' },
   { name: 'ropsten', mode: 'native', color: 'blue' },
   { name: 'pangolin', mode: 'native', color: 'purple' },
-  { name: 'pangolin', mode: 'dvm', color: 'lime' },
+  // { name: 'pangolin', mode: 'dvm', color: 'lime' },
   { name: 'pangoro', mode: 'native', color: 'cyan' },
 ];
 
-const chainColor = ({ name: network, mode }: Vertices): string => {
-  const target = colors.find((item) => item.name === network && item.mode === mode);
+const chainColor = ({ name: network }: Vertices): string => {
+  const target = colors.find((item) => item.name === network);
 
   return target?.color ?? 'processing';
 };
 
-export const SelectTokenModal = ({ visible, onSelect, onCancel }: SelectTokenModalProps) => {
+const removeLeaderCharacters = (name: string): string => {
+  // ring -> xRING kton -> xKTON CKTON -> WCKTON
+  if (name.startsWith('x') || name.startsWith('W')) {
+    return name.slice(1);
+  }
+
+  return name;
+};
+
+export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: SelectTokenModalProps) => {
   const { t } = useTranslation();
   const { enableTestNetworks } = useConfig();
+
+  const chainFilter = useCallback(
+    (chain: ChainConfig) => {
+      const envEqual = chain.isTest === enableTestNetworks;
+
+      if (!fromToken) {
+        return envEqual;
+      }
+
+      const partners = fromToken.cross.map((item) => item.partner);
+
+      return envEqual && !!partners.find((partner) => partner.name === chain.name && partner.mode === chain.mode);
+    },
+    [enableTestNetworks, fromToken]
+  );
 
   const allTokens = useMemo(
     () =>
       lodashChain(chainConfigs)
-        .filter((item) => enableTestNetworks || !item.isTest)
-        .map((item) => item.tokens.map((token) => ({ ...token, meta: item })))
+        .filter((item) => chainFilter(item))
+        .map((item) =>
+          item.tokens
+            .filter(
+              (token) => !fromToken || removeLeaderCharacters(token.symbol) === removeLeaderCharacters(fromToken.symbol)
+            )
+            .map((token) => ({ ...token, meta: item }))
+        )
         .flatten()
         .value(),
-    [enableTestNetworks]
+    [chainFilter, fromToken]
+  );
+
+  const allChains = useMemo(
+    () =>
+      lodashChain(allTokens)
+        .map((item) => item.meta)
+        .uniqWith((pre, cure) => pre.name === cure.name && pre.mode === cure.mode)
+        .value(),
+    [allTokens]
   );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -82,17 +122,15 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel }: SelectTokenMod
           {t('All chains')}
         </Radio.Button>
 
-        {chainConfigs
-          .filter((item) => enableTestNetworks || !item.isTest)
-          .map((item, index) => {
-            const name = getDisplayName(item);
+        {allChains.map((item, index) => {
+          const name = getDisplayName(item);
 
-            return (
-              <Radio.Button key={index} value={item} className="mt-2 mr-2 capitalize rounded-none">
-                {name}
-              </Radio.Button>
-            );
-          })}
+          return (
+            <Radio.Button key={index} value={item} className="mt-2 mr-2 capitalize rounded-none">
+              {name}
+            </Radio.Button>
+          );
+        })}
       </Radio.Group>
 
       <div className="max-h-96 overflow-auto mt-5">
@@ -111,12 +149,28 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel }: SelectTokenMod
                 <Tag color={chainColor({ name: item.meta.name, mode: tokenModeToChainMode(item.type) })}>
                   {getDisplayName(item.meta)}
                 </Tag>
+
                 {item.meta.isTest && (
                   <Tag color="green" className="uppercase">
                     {t('test')}
                   </Tag>
                 )}
               </div>
+
+              {item.name.includes('CKTON') && (
+                <a
+                  onClick={(event) => {
+                    event.stopPropagation();
+                  }}
+                  href="https://apps.darwinia.network/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2"
+                >
+                  <AppstoreOutlined />
+                  {t('Go To Apps')}
+                </a>
+              )}
             </div>
           ))}
         </div>

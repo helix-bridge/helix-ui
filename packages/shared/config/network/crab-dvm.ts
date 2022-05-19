@@ -45,11 +45,11 @@ export const crabDVMConfig: DVMChainConfig = {
       name: 'WCKTON',
       decimals: 9,
       cross: [
-        {
-          category: 'helix',
-          bridge: 'substrate-DVM',
-          partner: { name: 'crab', mode: 'native', role: 'issuer', symbol: 'CKTON' },
-        },
+        // {
+        //   category: 'helix',
+        //   bridge: 'substrate-DVM',
+        //   partner: { name: 'crab', mode: 'native', role: 'issuer', symbol: 'CKTON' },
+        // },
       ],
       type: 'native',
       logo: 'token-wckton.svg',

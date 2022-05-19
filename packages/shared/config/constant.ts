@@ -1,4 +1,4 @@
-import { darwiniaConfig, ethereumConfig } from './network';
+import { darwiniaConfig, ethereumConfig, pangolinConfig, ropstenConfig } from './network';
 
 /* eslint-disable no-magic-numbers */
 export const LONG_DURATION = 10 * 1000;
@@ -40,4 +40,9 @@ export enum CrossChainStatusColor {
 export const DEFAULT_DIRECTION = {
   from: { ...darwiniaConfig.tokens[0], amount: '', meta: darwiniaConfig },
   to: { ...ethereumConfig.tokens[1], amount: '', meta: ethereumConfig },
+};
+
+export const DEFAULT_DEV_DIRECTION = {
+  from: { ...pangolinConfig.tokens[0], amount: '', meta: pangolinConfig },
+  to: { ...ropstenConfig.tokens[1], amount: '', meta: ropstenConfig },
 };
