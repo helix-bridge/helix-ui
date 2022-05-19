@@ -32,6 +32,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
         label: <Link href="/nft">{t('NFT')}</Link>,
         key: 'nft',
         theme: 'dark',
+        disabled: true,
       },
       {
         label: <Link href="/claim">{t('Claim')}</Link>,

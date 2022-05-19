@@ -43,6 +43,7 @@ export const ropstenConfig: EthereumChainConfig = {
       logo: 'token-ring.svg',
       symbol: 'PRING',
       address: '',
+      claim: true,
     },
     {
       name: 'PKTON',
@@ -58,6 +59,7 @@ export const ropstenConfig: EthereumChainConfig = {
       logo: 'token-kton.svg',
       symbol: 'PKTON',
       address: '',
+      claim: true,
     },
   ],
   wallets: ['metamask'],
