@@ -157,7 +157,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
                 )}
               </div>
 
-              {item.name.includes('CKTON') && (
+              {(item.name.includes('CKTON') || item.name.includes('PKTON')) && (
                 <a
                   onClick={(event) => {
                     event.stopPropagation();

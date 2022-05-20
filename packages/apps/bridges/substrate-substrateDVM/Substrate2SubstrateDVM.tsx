@@ -4,8 +4,8 @@ import { message, Typography } from 'antd';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { EMPTY, filter, from, of, switchMap } from 'rxjs';
-import { LONG_DURATION, RegisterStatus } from 'shared/config/constant';
+import { EMPTY, from, of, switchMap } from 'rxjs';
+import { LONG_DURATION } from 'shared/config/constant';
 import { useDarwiniaAvailableBalances, useIsMounted } from 'shared/hooks';
 import {
   AvailableBalance,
@@ -18,8 +18,7 @@ import {
   SubmitFn,
 } from 'shared/model';
 import { fromWei, isRing, largeNumber, pollWhile, prettyNumber, toWei } from 'shared/utils/helper';
-import { getKnownMappingTokens } from 'shared/utils/mappingToken';
-import { createTxWorkflow, applyModalObs } from 'shared/utils/tx';
+import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
@@ -141,20 +140,10 @@ export function Substrate2SubstrateDVM({
       return;
     }
 
-    const sub$$ = getKnownMappingTokens('null', { from: direction.to, to: direction.from })
+    const sub$$ = of(null)
       .pipe(
-        filter(({ tokens }) => !!tokens.length),
-        switchMap(({ tokens }) => {
-          const token = tokens.find(
-            (item) =>
-              item.status === RegisterStatus.registered &&
-              item.symbol.toLowerCase() === direction.to.symbol.toLowerCase()
-          );
-
-          return token
-            ? from(getDailyLimit(token, direction)).pipe(pollWhile(LONG_DURATION, () => isMounted))
-            : of(null);
-        })
+        switchMap(() => from(getDailyLimit(direction.to.address, direction))),
+        pollWhile(LONG_DURATION, () => isMounted)
       )
       .subscribe((result) => {
         const num = result && new BN(result.limit).sub(new BN(result.spentToday));

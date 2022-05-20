@@ -1,5 +1,5 @@
-import { ArrowRightOutlined, FrownOutlined, SyncOutlined } from '@ant-design/icons';
-import { Badge, Radio, Result, Space, Tooltip, Typography } from 'antd';
+import { ArrowRightOutlined, FrownOutlined } from '@ant-design/icons';
+import { Badge, Radio, Result, Space, Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 import { Bridge, CrossChainDirection, CrossToken, CustomFormControlProps, NullableFields } from 'shared/model';
@@ -40,11 +40,6 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
 
   return (
     <div className="dark:bg-antDark p-5 overflow-auto" style={{ maxHeight: '65vh', minHeight: '20vh' }}>
-      <div className="flex items-center space-x-2 mb-2 ml-px">
-        <SyncOutlined />
-        <Typography.Text>Latest bridge data</Typography.Text>
-      </div>
-
       {!bridges.length ? (
         <Result icon={<FrownOutlined />} title="No bridge found for selected tokens" />
       ) : (

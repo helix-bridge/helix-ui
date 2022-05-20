@@ -4,7 +4,6 @@ import BN from 'bn.js';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { EMPTY, from, mergeMap, switchMap } from 'rxjs';
-import { RegisterStatus } from 'shared/config/constant';
 import {
   CrossChainComponentProps,
   CrossChainPayload,
@@ -15,15 +14,15 @@ import {
 } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { fromWei, isRing, prettyNumber, toWei } from 'shared/utils/helper';
-import { getS2SMappingAddress } from 'shared/utils/mappingToken';
+import { getErc20TokenBalance, getS2SMappingAddress } from 'shared/utils/mappingToken';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { Allowance } from '../../components/bridge/Allowance';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
-import { useAfterTx, useMappingTokens } from '../../hooks';
-import { useTx } from '../../providers';
+import { useAfterTx } from '../../hooks';
+import { useAccount, useTx } from '../../providers';
 import { useBridgeStatus } from './hooks';
 import { RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getRedeemFee } from './utils';
@@ -53,23 +52,15 @@ export function SubstrateDVM2Substrate({
   CrossToken<PolkadotChainConfig>
 >) {
   const { t } = useTranslation();
-  const { tokens, refreshTokenBalance } = useMappingTokens(direction, RegisterStatus.registered);
   const bridgeState = useBridgeStatus(direction);
+  const [balance, setBalance] = useState<BN | null>(null);
   const [fee, setFee] = useState<BN | null>(null);
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const [allowance, setAllowance] = useState<BN | null>(null);
   const [spender, setSpender] = useState<string>('');
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
   const { observer } = useTx();
-
-  const balance = useMemo(
-    () =>
-      tokens.find(
-        (item) =>
-          item.status === RegisterStatus.registered && item.symbol.toLowerCase() === direction.from.symbol.toLowerCase()
-      )?.balance ?? null,
-    [direction.from.symbol, tokens]
-  );
+  const { account } = useAccount();
 
   const feeWithSymbol = useMemo(
     () =>
@@ -79,6 +70,14 @@ export function SubstrateDVM2Substrate({
       },
     [direction.from.decimals, direction.from.meta.tokens, fee]
   );
+
+  useEffect(() => {
+    const sub$$ = from(getErc20TokenBalance(direction.from.address, account, false)).subscribe((result) =>
+      setBalance(result)
+    );
+
+    return () => sub$$.unsubscribe();
+  }, [account, direction.from.address, direction.from.meta.provider]);
 
   useEffect(() => {
     const sub$$ = from(getS2SMappingAddress(direction.from.meta.provider)).subscribe(setSpender);
@@ -110,25 +109,15 @@ export function SubstrateDVM2Substrate({
         beforeTx,
         txObs,
         afterCrossChain(TransferDone, {
-          onDisappear: () => refreshTokenBalance(direction.from.address),
+          onDisappear: () =>
+            getErc20TokenBalance(direction.from.address, account, false).then((result) => setBalance(result)),
           payload: data,
         })
       ).subscribe(observer);
     };
 
     setSubmit(fn as unknown as SubmitFn);
-  }, [
-    afterCrossChain,
-    allowance,
-    balance,
-    direction.from,
-    fee,
-    feeWithSymbol,
-    observer,
-    refreshTokenBalance,
-    setSubmit,
-    t,
-  ]);
+  }, [account, afterCrossChain, allowance, balance, direction.from, fee, feeWithSymbol, observer, setSubmit, t]);
 
   useEffect(() => {
     const { to: arrival } = direction;

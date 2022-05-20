@@ -14,14 +14,14 @@ import {
 } from 'shared/model';
 import { fromWei, isKton, isRing, prettyNumber, toWei } from 'shared/utils/helper';
 import { getErc20TokenBalance } from 'shared/utils/mappingToken';
-import { applyModalObs, createTxWorkflow, getAllowance } from 'shared/utils/tx';
+import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { Allowance } from '../../components/bridge/Allowance';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
-import { useAccount, useTx } from '../../providers';
+import { useAccount, useApi, useTx } from '../../providers';
 import { EthereumDarwiniaBridgeConfig, IssuingPayload } from './model';
 import { getIssuingFee, issuing } from './utils';
 
@@ -48,6 +48,7 @@ export function Ethereum2Darwinia({
   CrossToken<PolkadotChainConfig>
 >) {
   const { t } = useTranslation();
+  const { departureConnection } = useApi();
   const [allowance, setAllowance] = useState<BN | null>(null);
   const [balance, setBalance] = useState<BN | null>(null);
   const [fee, setFee] = useState<BN | null>(null);
@@ -71,7 +72,7 @@ export function Ethereum2Darwinia({
         return;
       }
 
-      const { kton, ring, issuing: issuingAddress } = (bridge.config as EthereumDarwiniaBridgeConfig).contracts;
+      const { kton, ring } = (bridge.config as EthereumDarwiniaBridgeConfig).contracts;
 
       if (isKton(value.direction.from.symbol)) {
         getErc20TokenBalance(kton, account, false).then((result) => {
@@ -87,10 +88,8 @@ export function Ethereum2Darwinia({
 
         setRingBalance(result);
       });
-
-      getAllowance(account, ring, issuingAddress, direction.from.meta.provider).then((num) => setAllowance(num));
     },
-    [account, bridge.config, direction.from.meta.provider]
+    [account, bridge.config]
   );
 
   useEffect(() => {
@@ -152,8 +151,12 @@ export function Ethereum2Darwinia({
   }, [bridge, direction.from.symbol, onFeeChange]);
 
   useEffect(() => {
-    getBalance({ direction });
-  }, [direction, getBalance]);
+    if (departureConnection.chainId !== direction.from.meta.ethereumChain.chainId) {
+      setBalance(null);
+    } else {
+      getBalance({ direction });
+    }
+  }, [direction, getBalance, departureConnection]);
 
   return (
     <>
@@ -186,8 +189,8 @@ export function Ethereum2Darwinia({
             content: (
               <Allowance
                 direction={direction}
-                spender={bridge.config.contracts.ring}
-                tokenAddress={bridge.config.contracts.issuing}
+                spender={bridge.config.contracts.issuing}
+                tokenAddress={bridge.config.contracts.ring}
                 onChange={setAllowance}
               />
             ),

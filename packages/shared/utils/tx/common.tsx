@@ -193,16 +193,16 @@ export const approveToken: TxFn<
 };
 
 export async function getAllowance(
-  account: string,
+  sender: string,
   spender: string,
   tokenAddress: string,
   provider: string
 ): Promise<BN | null> {
   const web3 = entrance.web3.getInstance(provider);
-  const erc20Contract = new web3.eth.Contract(abi.tokenABI, spender);
+  const erc20Contract = new web3.eth.Contract(abi.tokenABI, tokenAddress);
 
   try {
-    const allowanceAmount = await erc20Contract.methods.allowance(account, tokenAddress).call();
+    const allowanceAmount = await erc20Contract.methods.allowance(sender, spender).call();
 
     return Web3.utils.toBN(allowanceAmount);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

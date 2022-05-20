@@ -1,5 +1,5 @@
 import { abi } from 'shared/config/abi';
-import { CrossChainDirection, CrossToken, DVMChainConfig, MappingToken, PolkadotChainConfig } from 'shared/model';
+import { CrossChainDirection, CrossToken, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { isRing } from 'shared/utils/helper';
 import { getS2SMappingAddress } from 'shared/utils/mappingToken';
@@ -10,7 +10,7 @@ interface DailyLimit {
 }
 
 export async function getDailyLimit(
-  token: MappingToken,
+  token: string,
   direction: CrossChainDirection<CrossToken<PolkadotChainConfig>, CrossToken<DVMChainConfig>>
 ): Promise<DailyLimit | null> {
   const {
@@ -19,8 +19,7 @@ export async function getDailyLimit(
   const web3 = entrance.web3.getInstance(arrival.provider);
   const mappingAddress = await getS2SMappingAddress(arrival.provider);
   const contract = new web3.eth.Contract(abi.S2SMappingTokenABI, mappingAddress);
-  //   const token = targetChainTokens.find((item) => isRing(item.symbol));
-  const ringAddress = token?.address;
+  const ringAddress = token;
   const tokenAddress = isRing(direction.from.symbol) ? ringAddress : '';
 
   if (!tokenAddress) {

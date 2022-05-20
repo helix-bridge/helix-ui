@@ -204,12 +204,13 @@ export const getKnownMappingTokens = (
     return of({ total: 0, tokens: [] });
   }
   const { from: departure, to: arrival } = direction;
+  const isSDVM2S = isSubstrateDVM2Substrate(departure.meta, arrival.meta);
 
-  const mappingAddressObs = isSubstrateDVM2Substrate(departure.meta, arrival.meta)
+  const mappingAddressObs = isSDVM2S
     ? from(getS2SMappingAddress(departure.meta.provider))
     : from(getErc20MappingAddress(departure.meta.provider));
 
-  const tokens = departure.meta.wallets.includes('metamask')
+  const tokens = !isSDVM2S
     ? getMappingTokensFromEthereum(currentAccount, direction)
     : mappingAddressObs.pipe(
         switchMap((mappingAddress) =>

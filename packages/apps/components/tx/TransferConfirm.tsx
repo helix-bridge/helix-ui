@@ -40,7 +40,7 @@ export function TransferConfirm<T extends Bridge = Bridge>({
             </div>
 
             <div className="flex flex-col items-end">
-              <Typography.Text strong type="danger">
+              <Typography.Text strong type="warning">
                 {from.amount}
               </Typography.Text>
               <Typography.Text strong>{from.symbol}</Typography.Text>

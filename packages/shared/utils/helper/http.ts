@@ -7,6 +7,7 @@ export interface RecordsQueryRequest {
   params: Record<string, string | number | boolean | undefined | null>;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface RecordsQueryResponse<T = any> {
   code: number;
   detail: string;
