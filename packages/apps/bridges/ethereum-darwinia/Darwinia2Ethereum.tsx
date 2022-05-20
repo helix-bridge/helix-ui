@@ -16,7 +16,7 @@ import {
   PolkadotConnection,
   SubmitFn,
 } from 'shared/model';
-import { fromWei, isRing, prettyNumber, toWei } from 'shared/utils/helper';
+import { fromWei, isRing, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
@@ -77,10 +77,6 @@ export function Darwinia2Ethereum({
 
     return null;
   }, [direction, fee]);
-
-  const balance = useMemo(() => {
-    return availableBalances.find((item) => item.symbol.toLowerCase() === direction.from.symbol.toLowerCase());
-  }, [availableBalances, direction.from.symbol]);
 
   useEffect(() => {
     const fn = () => (data: RedeemPayload) => {
@@ -185,12 +181,6 @@ export function Darwinia2Ethereum({
       <CrossChainInfo
         bridge={bridge}
         fee={feeWithSymbol}
-        balance={
-          balance && {
-            amount: fromWei(balance, prettyNumber),
-            symbol: balance.symbol,
-          }
-        }
         extra={[
           {
             name: t('Attention'),

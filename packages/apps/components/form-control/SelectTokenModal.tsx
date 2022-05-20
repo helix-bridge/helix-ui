@@ -6,7 +6,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { useLocalSearch } from 'shared/hooks';
 import { ChainConfig, TokenInfoWithMeta, Vertices } from 'shared/model';
-import { chainConfigs, getDisplayName } from 'shared/utils/network';
+import { chainConfigs, getDisplayName, isDarwiniaDVMNetwork } from 'shared/utils/network';
 import { useConfig } from '../../providers';
 import { tokenModeToChainMode, tokenSearchFactory } from '../../utils';
 import { BaseModal } from '../widget/BaseModal';
@@ -157,7 +157,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
                 )}
               </div>
 
-              {(item.name.includes('CKTON') || item.name.includes('PKTON')) && (
+              {(item.name.includes('CKTON') || item.name.includes('PKTON')) && isDarwiniaDVMNetwork(item.meta) && (
                 <a
                   onClick={(event) => {
                     event.stopPropagation();

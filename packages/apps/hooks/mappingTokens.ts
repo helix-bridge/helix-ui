@@ -3,8 +3,9 @@ import { useCallback, useReducer, useState } from 'react';
 import { map } from 'rxjs';
 import { RegisterStatus } from 'shared/config/constant';
 import { Action, Erc20RegisterStatus, MappingToken, NullableCrossChainDirection, RequiredPartial } from 'shared/model';
-import { StoredProof, getErc20TokenBalance, getKnownMappingTokens } from 'shared/utils/mappingToken';
+import { StoredProof, getKnownMappingTokens } from 'shared/utils/mappingToken';
 import { isEthereumNetwork } from 'shared/utils/network';
+import { getErc20Balance } from 'shared/utils/network/balance';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 import { useAccount } from '../providers';
 
@@ -65,7 +66,7 @@ export const useMappingTokens = (
 
   const refreshTokenBalance = useCallback(
     async (tokenAddress: string) => {
-      const balance = await getErc20TokenBalance(tokenAddress, account, true);
+      const balance = await getErc20Balance(tokenAddress, account, true);
       const tokens = [...state.tokens];
       const index = tokens.findIndex((item) => item.address === tokenAddress);
 

@@ -1,4 +1,5 @@
 import { FormInstance } from 'antd';
+import BN from 'bn.js';
 import React from 'react';
 import { Subscription } from 'rxjs';
 import { ChainConfig, TokenWithBridgesInfo } from '../network';
@@ -40,6 +41,7 @@ export interface CrossChainComponentProps<
   form: FormInstance<CrossChainPayload>;
   direction: CrossChainDirection<F, T>;
   bridge: Bridge<B>;
+  balance: BN | BN[] | null;
   // make sure page setState function direction to avoid infinite update
   setSubmit: React.Dispatch<React.SetStateAction<SubmitFn>>;
   setBridgeState: React.Dispatch<React.SetStateAction<BridgeState>>;

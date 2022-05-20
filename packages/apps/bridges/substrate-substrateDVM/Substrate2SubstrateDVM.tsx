@@ -17,7 +17,7 @@ import {
   PolkadotConnection,
   SubmitFn,
 } from 'shared/model';
-import { fromWei, isRing, largeNumber, pollWhile, prettyNumber, toWei } from 'shared/utils/helper';
+import { fromWei, isRing, pollWhile, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
@@ -188,17 +188,6 @@ export function Substrate2SubstrateDVM({
       <CrossChainInfo
         bridge={bridge}
         fee={feeWithSymbol}
-        balance={
-          availableBalance && {
-            amount: fromWei(
-              availableBalance,
-              // eslint-disable-next-line no-magic-numbers
-              (num: string) => (+num > 1e6 ? largeNumber(num) : num),
-              (num: string) => prettyNumber(num, { ignoreZeroDecimal: true })
-            ),
-            symbol: availableBalance.symbol,
-          }
-        }
         extra={[
           {
             name: t('Daily limit'),

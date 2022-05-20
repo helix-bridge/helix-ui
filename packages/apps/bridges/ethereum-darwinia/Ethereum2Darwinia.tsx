@@ -12,8 +12,8 @@ import {
   PolkadotChainConfig,
   SubmitFn,
 } from 'shared/model';
-import { fromWei, isKton, isRing, prettyNumber, toWei } from 'shared/utils/helper';
-import { getErc20TokenBalance } from 'shared/utils/mappingToken';
+import { fromWei, isKton, isRing, toWei } from 'shared/utils/helper';
+import { getErc20Balance } from 'shared/utils/network/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { Allowance } from '../../components/bridge/Allowance';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
@@ -75,13 +75,13 @@ export function Ethereum2Darwinia({
       const { kton, ring } = (bridge.config as EthereumDarwiniaBridgeConfig).contracts;
 
       if (isKton(value.direction.from.symbol)) {
-        getErc20TokenBalance(kton, account, false).then((result) => {
+        getErc20Balance(kton, account, false).then((result) => {
           setBalance(result);
         });
       }
 
       // always need to refresh ring balance, because of it is a fee token
-      getErc20TokenBalance(ring, account, false).then((result) => {
+      getErc20Balance(ring, account, false).then((result) => {
         if (isRing(value.direction.from.symbol)) {
           setBalance(result);
         }
@@ -177,12 +177,6 @@ export function Ethereum2Darwinia({
       <CrossChainInfo
         bridge={bridge}
         fee={feeWithSymbol}
-        balance={
-          balance && {
-            amount: fromWei({ value: balance }, prettyNumber),
-            symbol: direction.from.symbol,
-          }
-        }
         extra={[
           {
             name: t('Allowance'),

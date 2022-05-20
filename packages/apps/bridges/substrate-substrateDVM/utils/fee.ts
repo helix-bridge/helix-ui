@@ -1,13 +1,10 @@
 import { Codec } from '@polkadot/types-codec/types';
 import BN from 'bn.js';
 import { last } from 'lodash';
-import { Bridge } from 'shared/model';
+import { Bridge, ChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { getChainConfig } from 'shared/utils/network';
 
-export async function getIssuingFee(bridge: Bridge): Promise<BN> {
-  const from = getChainConfig(bridge.issuing[0]);
-  const to = getChainConfig(bridge.issuing[1]);
+export async function getFee(from: ChainConfig, to: ChainConfig): Promise<BN> {
   const api = entrance.polkadot.getInstance(from.provider);
   const section = to.isTest ? `${to.name}FeeMarket` : 'feeMarket';
 
@@ -24,4 +21,10 @@ export async function getIssuingFee(bridge: Bridge): Promise<BN> {
   return new BN(marketFee ?? -1); // -1: fee market does not available
 }
 
-export const getRedeemFee = getIssuingFee;
+export async function getIssuingFee(bridge: Bridge): Promise<BN> {
+  return getFee(bridge.departure, bridge.arrival);
+}
+
+export async function getRedeemFee(bridge: Bridge): Promise<BN> {
+  return getFee(bridge.arrival, bridge.departure);
+}

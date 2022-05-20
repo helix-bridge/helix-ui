@@ -29,9 +29,7 @@ export const AccountProvider = ({ children }: React.PropsWithChildren<unknown>) 
       departureConnection.accounts.find((value) => value.address === accStorage)?.address ||
       departureConnection.accounts[0]?.address;
 
-    if (acc) {
-      setAccount(acc);
-    }
+    setAccount(acc ?? '');
   }, [departureConnection.accounts]);
 
   useEffect(() => {

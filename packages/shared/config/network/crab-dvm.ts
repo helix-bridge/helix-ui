@@ -28,7 +28,7 @@ export const crabDVMConfig: DVMChainConfig = {
   tokens: [
     {
       name: 'CRAB',
-      decimals: 9,
+      decimals: 18,
       cross: [
         {
           category: 'helix',
@@ -39,7 +39,7 @@ export const crabDVMConfig: DVMChainConfig = {
       type: 'native',
       logo: 'token-wcrab.svg',
       symbol: 'CRAB',
-      address: '',
+      address: '0x588abe3F7EE935137102C5e2B8042788935f4CB0',
     },
     {
       name: 'WCKTON',

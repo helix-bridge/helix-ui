@@ -34,7 +34,7 @@ export const darwiniaConfig: PolkadotChainConfig = {
       type: 'native',
       logo: 'token-ring.svg',
       symbol: 'RING',
-      address: '',
+      address: '0x9469d013805bffb7d3debe5e7839237e535ec483',
     },
     {
       name: 'KTON',
@@ -54,7 +54,7 @@ export const darwiniaConfig: PolkadotChainConfig = {
       type: 'native',
       logo: 'token-kton.svg',
       symbol: 'KTON',
-      address: '',
+      address: '0x9f284e1337a815fe77d2ff4ae46544645b20c5ff',
     },
   ],
   ss58Prefix: 18,

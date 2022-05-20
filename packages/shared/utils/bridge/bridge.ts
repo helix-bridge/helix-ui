@@ -21,30 +21,25 @@ export type DVMBridgeConfig = Required<
 >;
 
 export const isSubstrate2SubstrateDVM: BridgePredicateFn = (departure, arrival) => {
-  return (
-    isPolkadotNetwork(departure) &&
-    isPolkadotNetwork(arrival) &&
-    arrival.mode === 'dvm' &&
-    arrival.name !== departure.name
-  );
+  return isPolkadotNetwork(departure) && arrival.mode === 'dvm' && arrival.name !== departure.name;
 };
 
 export const isSubstrateDVM2Substrate: BridgePredicateFn = (departure, arrival) =>
   isSubstrate2SubstrateDVM(arrival, departure);
 
 export const isEthereum2Darwinia: BridgePredicateFn = (departure, arrival) => {
-  return isEthereumNetwork(departure) && isPolkadotNetwork(arrival) && arrival.mode === 'native';
+  return (
+    isEthereumNetwork(departure) &&
+    departure.mode === 'native' &&
+    isPolkadotNetwork(arrival) &&
+    arrival.mode === 'native'
+  );
 };
 
 export const isDarwinia2Ethereum: BridgePredicateFn = (departure, arrival) => isEthereum2Darwinia(arrival, departure);
 
 export const isSubstrate2DVM: BridgePredicateFn = (departure, arrival) => {
-  return (
-    isPolkadotNetwork(departure) &&
-    isPolkadotNetwork(arrival) &&
-    arrival.mode === 'dvm' &&
-    departure.name === arrival.name
-  );
+  return isPolkadotNetwork(departure) && arrival.mode === 'dvm' && departure.name === arrival.name;
 };
 
 export const isDVM2Substrate: BridgePredicateFn = (departure, arrival) => isSubstrate2DVM(arrival, departure);

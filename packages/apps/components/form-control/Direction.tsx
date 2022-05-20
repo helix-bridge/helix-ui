@@ -1,15 +1,18 @@
 import { PauseCircleOutlined } from '@ant-design/icons';
-import { useCallback, useEffect, useState } from 'react';
+import { Tooltip } from 'antd';
+import BN from 'bn.js';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
 import { BridgeStatus, CrossChainDirection, CustomFormControlProps, HashInfo } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
-import { patchUrl, updateStorage } from 'shared/utils/helper';
+import { fromWei, isKton, isRing, largeNumber, patchUrl, prettyNumber, updateStorage } from 'shared/utils/helper';
 import { Destination } from './Destination';
 
 type DirectionProps = CustomFormControlProps<CrossChainDirection> & {
   initial: CrossChainDirection;
   fee: number | null;
+  balance: BN | BN[] | null;
 };
 
 export const calcToAmount = (payment: string, paymentFee: number | null) => {
@@ -22,7 +25,7 @@ export const calcToAmount = (payment: string, paymentFee: number | null) => {
   return amount >= 0 ? String(amount) : '';
 };
 
-export function Direction({ value, initial, onChange, fee = 0 }: DirectionProps) {
+export function Direction({ value, initial, onChange, balance, fee = 0 }: DirectionProps) {
   const data = value ?? initial;
   const { t } = useTranslation();
   const [bridgetStatus, setBridgetStatus] = useState<null | BridgeStatus>(null);
@@ -35,6 +38,24 @@ export function Direction({ value, initial, onChange, fee = 0 }: DirectionProps)
     },
     [onChange]
   );
+
+  const iBalance = useMemo(() => {
+    if (Array.isArray(balance)) {
+      const [ring, kton] = balance;
+
+      if (isRing(data.from.symbol)) {
+        return ring;
+      }
+
+      if (isKton(data.from.symbol)) {
+        return kton;
+      }
+
+      return null;
+    }
+
+    return balance;
+  }, [balance, data.from.symbol]);
 
   useEffect(() => {
     const { from, to } = data;
@@ -66,6 +87,27 @@ export function Direction({ value, initial, onChange, fee = 0 }: DirectionProps)
           triggerChange({ from, to: { ...data.to, amount: calcToAmount(from.amount, fee) } });
         }}
       />
+
+      {iBalance && (
+        <div className="absolute right-0 top-28 cursor-pointer space-x-2">
+          <Tooltip
+            title={
+              // eslint-disable-next-line no-magic-numbers
+              iBalance.gt(new BN(1_000_000))
+                ? fromWei({ value: iBalance, decimals: data.from.decimals }, prettyNumber)
+                : ''
+            }
+          >
+            {fromWei(
+              { value: iBalance, decimals: data.from.decimals },
+              // eslint-disable-next-line no-magic-numbers
+              (val: string) => (+val > 1e6 ? largeNumber(val) : val),
+              (val: string) => prettyNumber(val, { ignoreZeroDecimal: true, decimal: 3 })
+            )}
+          </Tooltip>
+          <span>{data.from.symbol}</span>
+        </div>
+      )}
 
       {bridgetStatus === 'pending' ? (
         <PauseCircleOutlined className="w-10 h-10 mx-auto" />

@@ -1,14 +1,18 @@
 import { chain as lodashChain, curry, pick, upperFirst } from 'lodash';
 import { NETWORK_SIMPLE, SYSTEM_ChAIN_CONFIGURATIONS } from '../../config/network';
 import {
+  knownDarwiniaDVMNetworks,
+  knownDarwiniaNetworks,
+  knownEthereumNetworks,
+  knownPolkadotNetworks,
+} from '../../config/network/category';
+import {
   ChainConfig,
   EthereumChainConfig,
-  EthereumTypeNetwork,
   MetamaskNativeNetworkIds,
   Network,
   NetworkMode,
   PolkadotChainConfig,
-  PolkadotTypeNetwork,
   TokenType,
   Vertices,
 } from '../../model';
@@ -95,25 +99,21 @@ const isInNodeList = (chain1: ChainConfig | null, chain2: ChainConfig | null) =>
 
 export const isReachable = (chain: ChainConfig | null) => curry(isInNodeList)(chain); // relation: chain1 -> chain2 ---- Find the relation by chain1
 
-export const isPolkadotNetwork = (network: ChainConfig | Vertices | null | undefined) => {
+const isSpecifyNetwork = (known: Vertices[]) => (network: ChainConfig | Vertices | null | undefined) => {
   if (!network) {
     return false;
   }
 
-  const known: PolkadotTypeNetwork[] = ['crab', 'darwinia', 'pangolin', 'pangoro', 'polkadot'];
-
-  return known.includes(network.name as PolkadotTypeNetwork);
+  return known.some((item) => item.mode === network.mode && item.name === network.name);
 };
 
-export const isEthereumNetwork = (network: ChainConfig | Vertices | null | undefined) => {
-  if (!network) {
-    return false;
-  }
+export const isPolkadotNetwork = isSpecifyNetwork(knownPolkadotNetworks);
 
-  const known: EthereumTypeNetwork[] = ['ethereum', 'ropsten', 'heco', 'polygon'];
+export const isDarwiniaNetwork = isSpecifyNetwork(knownDarwiniaNetworks);
 
-  return known.includes(network.name as EthereumTypeNetwork);
-};
+export const isDarwiniaDVMNetwork = isSpecifyNetwork(knownDarwiniaDVMNetworks);
+
+export const isEthereumNetwork = isSpecifyNetwork(knownEthereumNetworks);
 
 /**
  * find chain config by:
@@ -191,7 +191,7 @@ export function getDisplayName(config: ChainConfig | null, networkMode?: Network
   const mode = networkMode ?? config.mode;
   const name = upperFirst(config.name);
 
-  return isPolkadotNetwork(config) && mode === 'dvm' ? `${name}-Smart` : name;
+  return mode === 'dvm' ? `${name} Smart` : name;
 }
 
 export function getVerticesFromDisplayName(name: string): Vertices {

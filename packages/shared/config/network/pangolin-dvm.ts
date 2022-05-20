@@ -28,7 +28,7 @@ export const pangolinDVMConfig: DVMChainConfig = {
   tokens: [
     {
       name: 'PRING',
-      decimals: 9,
+      decimals: 18,
       cross: [
         {
           category: 'helix',
@@ -39,11 +39,11 @@ export const pangolinDVMConfig: DVMChainConfig = {
       type: 'native',
       logo: 'token-ring.svg',
       symbol: 'PRING',
-      address: '',
+      address: '0xc52287b259b2431ba0f61BC7EBD0eD793B0b7044',
     },
     {
       name: 'WPKTON',
-      decimals: 9,
+      decimals: 18,
       cross: [
         {
           category: 'helix',

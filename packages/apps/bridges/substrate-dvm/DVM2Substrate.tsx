@@ -2,14 +2,12 @@ import { message } from 'antd';
 import BN from 'bn.js';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { EMPTY, from, iif } from 'rxjs';
-import { abi } from 'shared/config/abi';
+import { EMPTY, from } from 'rxjs';
 import { useIsMountedOperator } from 'shared/hooks';
 import { CrossChainComponentProps, CrossToken, DVMChainConfig, PolkadotChainConfig, SubmitFn } from 'shared/model';
-import { entrance } from 'shared/utils/connection';
-import { isRing, toWei, fromWei, prettyNumber } from 'shared/utils/helper';
-import { createTxWorkflow, applyModalObs } from 'shared/utils/tx';
-import { WebsocketProvider } from 'web3-core';
+import { isKton, toWei } from 'shared/utils/helper';
+import { getDVMBalance } from 'shared/utils/network/balance';
+import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
@@ -21,30 +19,6 @@ import { redeem } from './utils';
 
 const validateBeforeTx = (balance: BN, amount: BN): string | undefined =>
   balance.lt(amount) ? 'Insufficient balance' : void 0;
-
-async function getRingBalance(account: string, provider: string) {
-  const web3 = entrance.web3.getInstance(provider);
-  const currentProvider = web3.currentProvider as WebsocketProvider;
-
-  if (currentProvider.connected) {
-    return await web3.eth.getBalance(account);
-  } else {
-    const promise = new Promise((resolve) => {
-      currentProvider.once('connected', () => {
-        web3.eth.getBalance(account).then((res) => resolve(res));
-      });
-    });
-
-    return promise;
-  }
-}
-
-async function getKtonBalance(account: string, provider: string, ktonAddress: string) {
-  const web3 = entrance.web3.getInstance(provider);
-  const ktonContract = new web3.eth.Contract(abi.ktonABI, ktonAddress, { gas: 55000 });
-
-  return await ktonContract.methods.balanceOf(account).call();
-}
 
 export function DVM2Substrate({
   form,
@@ -60,18 +34,20 @@ export function DVM2Substrate({
   const { account } = useAccount();
   const { takeWhileIsMounted } = useIsMountedOperator();
 
-  const getBalance = useCallback(
-    () =>
-      iif(
-        () => isRing(direction.from.symbol),
-        from(getRingBalance(account, direction.from.meta.provider)),
-        from(getKtonBalance(account, direction.from.meta.provider, direction.from.address))
-      )
-        .pipe(takeWhileIsMounted())
-        .subscribe((result) => setBalance(new BN(result))),
+  const getBalance = useCallback(() => {
+    if (!account) {
+      setBalance(null);
 
-    [account, direction.from.address, direction.from.meta.provider, direction.from.symbol, takeWhileIsMounted]
-  );
+      return EMPTY.subscribe();
+    }
+
+    const kton = direction.from.meta.tokens.find((item) => isKton(item.symbol) && item.type === 'native')!;
+    const source = from(getDVMBalance(kton.address, account));
+
+    return source.pipe(takeWhileIsMounted()).subscribe((result) => {
+      setBalance(new BN(result[0])); // kton transfer implemented in apps.
+    });
+  }, [account, direction.from.meta.tokens, takeWhileIsMounted]);
 
   useEffect(() => {
     const sub$$ = getBalance();
@@ -126,17 +102,7 @@ export function DVM2Substrate({
         )}
       />
 
-      <CrossChainInfo
-        bridge={bridge}
-        balance={
-          balance && {
-            amount: fromWei({ value: balance }, prettyNumber),
-            symbol: direction.from.symbol,
-          }
-        }
-        fee={null}
-        hideFee
-      ></CrossChainInfo>
+      <CrossChainInfo bridge={bridge} fee={null} hideFee></CrossChainInfo>
     </>
   );
 }

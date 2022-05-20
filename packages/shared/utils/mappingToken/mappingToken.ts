@@ -14,8 +14,9 @@ import {
   PolkadotChainConfig,
 } from '../../model';
 import { DVMBridgeConfig, getAvailableDVMBridge, getBridge, isS2S, isSubstrateDVM2Substrate } from '../bridge';
-import { MMRProof } from '../mmr';
 import { connect, entrance } from '../connection';
+import { MMRProof } from '../mmr';
+import { getErc20Balance } from '../network/balance';
 import { getErc20MappingAddress, getS2SMappingAddress } from './mappingParams';
 import { getErc20Meta } from './mappingTokenMeta';
 
@@ -114,7 +115,7 @@ function getMappingTokensFromDVM(
 
         const balanceObs =
           currentAccount && Web3.utils.isAddress(currentAccount)
-            ? from(getErc20TokenBalance(address, currentAccount, false))
+            ? from(getErc20Balance(address, currentAccount, false))
             : of(Web3.utils.toBN(0));
 
         return zip(
@@ -151,9 +152,7 @@ function getMappingTokensFromEthereum(currentAccount: string, direction: CrossCh
         const infoObs = from(getErc20Meta(address)).pipe(catchError(() => of(null)));
         const statusObs = from(getTokenRegisterStatus(address, bridge.config.contracts.redeem));
 
-        const balanceObs = currentAccount
-          ? from(getErc20TokenBalance(address, currentAccount))
-          : of(Web3.utils.toBN(0));
+        const balanceObs = currentAccount ? from(getErc20Balance(address, currentAccount)) : of(Web3.utils.toBN(0));
 
         return zip(
           [infoObs, statusObs, balanceObs],
@@ -266,29 +265,3 @@ export const getTokenRegisterStatus: (
 
     return RegisterStatus.unregister;
   };
-
-/**
- *
- * @param tokenAddress - token contract address
- * @param account - current active metamask account
- * @returns balance of the account
- */
-export async function getErc20TokenBalance(address: string, account: string, isErc20Native = true) {
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-  const tokenAbi = isErc20Native ? abi.Erc20ABI : abi.tokenABI;
-  const contract = new web3.eth.Contract(tokenAbi, address);
-
-  try {
-    const balance = await contract.methods.balanceOf(account).call();
-
-    return Web3.utils.toBN(balance);
-  } catch (err) {
-    console.info(
-      `%c [ get token(${address}) balance error. account: ${account} ]-52`,
-      'font-size:13px; background:pink; color:#bf2c9f;',
-      (err as Record<string, string>).message
-    );
-  }
-
-  return Web3.utils.toBN(0);
-}

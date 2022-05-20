@@ -14,8 +14,8 @@ import {
   PolkadotConnection,
   SubmitFn,
 } from 'shared/model';
-import { toWei, fromWei, prettyNumber, isKton } from 'shared/utils/helper';
-import { createTxWorkflow, applyModalObs } from 'shared/utils/tx';
+import { isKton, toWei } from 'shared/utils/helper';
+import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
@@ -106,12 +106,6 @@ export function Substrate2DVM({
 
       <CrossChainInfo
         bridge={bridge}
-        balance={
-          balance && {
-            amount: fromWei(balance, prettyNumber),
-            symbol: direction.from.symbol,
-          }
-        }
         hideFee
         fee={null}
         extra={

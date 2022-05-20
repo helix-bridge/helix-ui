@@ -14,7 +14,8 @@ import {
 } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { fromWei, isRing, prettyNumber, toWei } from 'shared/utils/helper';
-import { getErc20TokenBalance, getS2SMappingAddress } from 'shared/utils/mappingToken';
+import { getS2SMappingAddress } from 'shared/utils/mappingToken';
+import { getErc20Balance } from 'shared/utils/network/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { Allowance } from '../../components/bridge/Allowance';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
@@ -72,9 +73,14 @@ export function SubstrateDVM2Substrate({
   );
 
   useEffect(() => {
-    const sub$$ = from(getErc20TokenBalance(direction.from.address, account, false)).subscribe((result) =>
-      setBalance(result)
-    );
+    if (!account) {
+      return;
+    }
+
+    const sub$$ = from(getErc20Balance(direction.from.address, account, false)).subscribe((result) => {
+      setBalance(result);
+      console.log('🚀 ~ file: SubstrateDVM2Substrate.tsx ~ line 82 ~ useEffect ~ result', result.toString());
+    });
 
     return () => sub$$.unsubscribe();
   }, [account, direction.from.address, direction.from.meta.provider]);
@@ -110,7 +116,7 @@ export function SubstrateDVM2Substrate({
         txObs,
         afterCrossChain(TransferDone, {
           onDisappear: () =>
-            getErc20TokenBalance(direction.from.address, account, false).then((result) => setBalance(result)),
+            getErc20Balance(direction.from.address, account, false).then((result) => setBalance(result)),
           payload: data,
         })
       ).subscribe(observer);
@@ -130,8 +136,8 @@ export function SubstrateDVM2Substrate({
         })
       )
       .subscribe((result) => {
-        const [spentToday, limit] = result.toJSON() as [number, number];
-        const num = result && new BN(limit).sub(new BN(spentToday));
+        const data = result.toJSON() as [number, number];
+        const num = result && new BN(data[1]);
 
         setDailyLimit(num);
       });
@@ -171,12 +177,6 @@ export function SubstrateDVM2Substrate({
       <CrossChainInfo
         bridge={bridge}
         fee={feeWithSymbol}
-        balance={
-          balance && {
-            amount: fromWei({ value: balance, decimals: direction.from.decimals }),
-            symbol: direction.from.meta.tokens.find((item) => item.type === 'native' && isRing(item.symbol))!.symbol,
-          }
-        }
         extra={[
           {
             name: t('Allowance'),
@@ -192,7 +192,13 @@ export function SubstrateDVM2Substrate({
           {
             name: t('Daily limit'),
             content: dailyLimit ? (
-              <Typography.Text>{fromWei({ value: dailyLimit, decimals: 9 }, prettyNumber)}</Typography.Text>
+              <Typography.Text>
+                {dailyLimit.isZero()
+                  ? t('No limit')
+                  : fromWei({ value: dailyLimit, decimals: 9 }, (val: string) =>
+                      prettyNumber(val, { ignoreZeroDecimal: true })
+                    )}
+              </Typography.Text>
             ) : (
               <EyeInvisibleFilled />
             ),

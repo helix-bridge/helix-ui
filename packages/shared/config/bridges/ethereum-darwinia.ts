@@ -7,10 +7,10 @@ const ethereumDarwiniaConfig: EthereumDarwiniaBridgeConfig = {
   contracts: {
     fee: '0x6B0940772516B69088904564A56d09CFe6Bb3D85',
     issuing: '0xea7938985898af7fd945b03b7bc2e405e744e913',
-    kton: '0x9f284e1337a815fe77d2ff4ae46544645b20c5ff',
+    kton: '0x9f284e1337a815fe77d2ff4ae46544645b20c5ff', // remove
     redeem: '0x5f44dd8e59f56aa04fe54e95cc690560ae706b18',
     redeemDeposit: '0x649fdf6ee483a96e020b889571e93700fbd82d88',
-    ring: '0x9469d013805bffb7d3debe5e7839237e535ec483',
+    ring: '0x9469d013805bffb7d3debe5e7839237e535ec483', // remove
   },
   lockEvents: [
     {
