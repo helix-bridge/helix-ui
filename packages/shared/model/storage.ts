@@ -19,7 +19,6 @@ export interface HistoryRouteParam {
 
 export interface StorageInfo extends HashInfo {
   theme?: THEME;
-  enableTestNetworks?: boolean;
   config?: Partial<{ [key in Network]: ChainConfig }>;
   custom?: Network[];
   activeAccount?: string;

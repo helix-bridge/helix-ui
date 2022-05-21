@@ -7,7 +7,6 @@ import { Logo } from 'shared/components/widget/Logo';
 import { useLocalSearch } from 'shared/hooks';
 import { ChainConfig, TokenInfoWithMeta, Vertices } from 'shared/model';
 import { chainConfigs, getDisplayName, isDarwiniaDVMNetwork } from 'shared/utils/network';
-import { useConfig } from '../../providers';
 import { tokenModeToChainMode, tokenSearchFactory } from '../../utils';
 import { BaseModal } from '../widget/BaseModal';
 
@@ -46,27 +45,10 @@ const removeLeaderCharacters = (name: string): string => {
 
 export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: SelectTokenModalProps) => {
   const { t } = useTranslation();
-  const { enableTestNetworks } = useConfig();
-
-  const chainFilter = useCallback(
-    (chain: ChainConfig) => {
-      const envEqual = chain.isTest === enableTestNetworks;
-
-      if (!fromToken) {
-        return envEqual;
-      }
-
-      const partners = fromToken.cross.map((item) => item.partner);
-
-      return envEqual && !!partners.find((partner) => partner.name === chain.name && partner.mode === chain.mode);
-    },
-    [enableTestNetworks, fromToken]
-  );
 
   const allTokens = useMemo(
     () =>
       lodashChain(chainConfigs)
-        .filter((item) => chainFilter(item))
         .map((item) =>
           item.tokens
             .filter(
@@ -76,7 +58,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
         )
         .flatten()
         .value(),
-    [chainFilter, fromToken]
+    [fromToken]
   );
 
   const allChains = useMemo(

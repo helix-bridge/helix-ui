@@ -9,6 +9,7 @@ import { EMPTY, filter, from, iif, map, Observable, of, switchMap, take, tap, zi
 import { Logo } from 'shared/components/widget/Logo';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { abi } from 'shared/config/abi';
+import { isTestChain } from 'shared/config/env';
 import { darwiniaConfig, ethereumConfig, pangolinConfig, ropstenConfig } from 'shared/config/network';
 import { ConnectionStatus, EthereumChainConfig, ICamelCaseKeys, PolkadotChainConfig } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
@@ -18,7 +19,7 @@ import { getDisplayName } from 'shared/utils/network';
 import { HistoryItem } from '../../components/record/HistoryItem';
 import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
-import { useAccount, useConfig, useTx } from '../../providers';
+import { useAccount, useTx } from '../../providers';
 import { useRecords } from './hooks';
 import { Darwinia2EthereumHistoryRes, Darwinia2EthereumRecord, EthereumDarwiniaBridgeConfig } from './model';
 import { claimToken } from './utils';
@@ -42,7 +43,6 @@ const PAGINATOR_DEFAULT = { row: 10, page: 0 };
 // eslint-disable-next-line complexity
 export function Claim({ confirmed }: { confirmed: boolean | null }) {
   const { t } = useTranslation();
-  const { enableTestNetworks: isTestChain } = useConfig();
   const { account } = useAccount();
   const { fetchIssuingRecords } = useRecords();
   const [loading, setLoading] = useState(false);
@@ -52,7 +52,7 @@ export function Claim({ confirmed }: { confirmed: boolean | null }) {
 
   const [departure, arrival] = useMemo<[PolkadotChainConfig, EthereumChainConfig]>(
     () => (isTestChain ? [pangolinConfig, ropstenConfig] : [darwiniaConfig, ethereumConfig]),
-    [isTestChain]
+    []
   );
 
   useEffect(() => {

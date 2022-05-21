@@ -11,11 +11,12 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
+import { isTestChain } from 'shared/config/env';
 import { crabDVMConfig, darwiniaConfig, pangolinConfig } from 'shared/config/network';
 import { pangolinDVMConfig } from 'shared/config/network/pangolin-dvm';
 import { ChainConfig, ConnectionStatus, EthereumChainConfig, SupportedWallet } from 'shared/model';
 import { switchEthereumChain } from 'shared/utils/connection';
-import { useAccount, useApi, useConfig } from '../../../providers';
+import { useAccount, useApi } from '../../../providers';
 import { SelectAccountModal } from './SelectAccountModal';
 import { SelectWalletModal } from './SelectWalletModal';
 
@@ -182,7 +183,6 @@ function ActiveAccountStrict() {
 
 function ActiveAccountNormal() {
   const { departureConnection, departure, connectDepartureNetwork, disconnect, isConnecting } = useApi();
-  const { enableTestNetworks } = useConfig();
   const { t } = useTranslation();
   const { account, setAccount } = useAccount();
   const [isVisible, setIsVisible] = useState(false);
@@ -275,9 +275,9 @@ function ActiveAccountNormal() {
           let config: ChainConfig;
 
           if (wallet === 'metamask') {
-            config = enableTestNetworks ? pangolinDVMConfig : crabDVMConfig;
+            config = isTestChain ? pangolinDVMConfig : crabDVMConfig;
           } else {
-            config = enableTestNetworks ? pangolinConfig : darwiniaConfig;
+            config = isTestChain ? pangolinConfig : darwiniaConfig;
           }
 
           setIsWalletVisible(false);

@@ -9,7 +9,7 @@ import { FunctionComponent, useEffect, useState } from 'react';
 import GlobalLoading from 'shared/components/widget/GlobalLoading';
 import '../bridges/register';
 import AppLayout from '../components/AppLayout';
-import { AccountProvider, ApiProvider, ConfigProvider, GqlProvider, TxProvider } from '../providers';
+import { AccountProvider, ApiProvider, GqlProvider, TxProvider } from '../providers';
 import '../styles/index.scss';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -77,19 +77,17 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
       </Head>
       <ClientContext.Provider value={client}>
         <ErrorBoundary>
-          <ConfigProvider>
-            <ApiProvider>
-              <AccountProvider>
-                <TxProvider>
-                  <GqlProvider>
-                    <AppLayout>
-                      <Component {...pageProps} />
-                    </AppLayout>
-                  </GqlProvider>
-                </TxProvider>
-              </AccountProvider>
-            </ApiProvider>
-          </ConfigProvider>
+          <ApiProvider>
+            <AccountProvider>
+              <TxProvider>
+                <GqlProvider>
+                  <AppLayout>
+                    <Component {...pageProps} />
+                  </AppLayout>
+                </GqlProvider>
+              </TxProvider>
+            </AccountProvider>
+          </ApiProvider>
         </ErrorBoundary>
       </ClientContext.Provider>
     </>

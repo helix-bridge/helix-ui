@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useMemo, useState } from 'react';
 import { useContext } from 'react';
 import { IAccountMeta } from 'shared/model';
 import { isSameAddress, readStorage, updateStorage } from 'shared/utils/helper';
-import { useApi } from './api-provider';
+import { useApi } from './api';
 
 export interface AccountCtx {
   account: string;

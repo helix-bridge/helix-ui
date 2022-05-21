@@ -1,13 +1,12 @@
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useEffect, useState } from 'react';
+import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { CrossChainDirection } from 'shared/model';
-import { getDefaultDirection, getDirectionFromSettings } from 'shared/utils/helper';
+import { getDirectionFromSettings } from 'shared/utils/helper';
 import { CrossChain } from '../components/CrossChain';
 
-const defaultDirection = getDefaultDirection();
-
 function Page() {
-  const [dir, setDir] = useState<CrossChainDirection>(defaultDirection);
+  const [dir, setDir] = useState<CrossChainDirection>(DEFAULT_DIRECTION);
 
   useEffect(() => {
     const loc = getDirectionFromSettings();

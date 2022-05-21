@@ -1,6 +1,7 @@
 import { Affix, Radio, Tabs } from 'antd';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isTestChain } from 'shared/config/env';
 import {
   crabConfig,
   crabDVMConfig,
@@ -14,22 +15,21 @@ import { DVMChainConfig, EthereumChainConfig, PolkadotChainConfig } from 'shared
 import { getDisplayName } from 'shared/utils/network';
 import { Claim as DarwiniaEthereumClaim } from '../../bridges/ethereum-darwinia';
 import { Claim as SubstrateDVMClaim } from '../../bridges/substrate-dvm/Claim';
-import { useConfig } from '../../providers';
 
 export default function Page() {
   const { t } = useTranslation();
-  const { enableTestNetworks: isTestChain } = useConfig();
   const [confirmed, setConfirmed] = useState<boolean | null>(null);
+
   const [activeTab, setActiveTab] = useState('e2d');
 
   const ethereumDarwiniaDirection = useMemo<[PolkadotChainConfig, EthereumChainConfig]>(
     () => (isTestChain ? [pangolinConfig, ropstenConfig] : [darwiniaConfig, ethereumConfig]),
-    [isTestChain]
+    []
   );
 
   const substrateDVMDirection = useMemo<[PolkadotChainConfig, DVMChainConfig]>(
     () => (isTestChain ? [pangolinConfig, pangolinDVMConfig] : [crabConfig, crabDVMConfig]),
-    [isTestChain]
+    []
   );
 
   return (

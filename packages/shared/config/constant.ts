@@ -1,3 +1,4 @@
+import { CHAIN_TYPE } from './env';
 import { darwiniaConfig, ethereumConfig, pangolinConfig, ropstenConfig } from './network';
 
 /* eslint-disable no-magic-numbers */
@@ -37,12 +38,14 @@ export enum CrossChainStatusColor {
   '#EC9D00',
 }
 
-export const DEFAULT_DIRECTION = {
+const DEFAULT_FORMAL_DIRECTION = {
   from: { ...darwiniaConfig.tokens[0], amount: '', meta: darwiniaConfig },
   to: { ...ethereumConfig.tokens[1], amount: '', meta: ethereumConfig },
 };
 
-export const DEFAULT_DEV_DIRECTION = {
+const DEFAULT_DEV_DIRECTION = {
   from: { ...pangolinConfig.tokens[0], amount: '', meta: pangolinConfig },
   to: { ...ropstenConfig.tokens[1], amount: '', meta: ropstenConfig },
 };
+
+export const DEFAULT_DIRECTION = CHAIN_TYPE === 'formal' ? DEFAULT_FORMAL_DIRECTION : DEFAULT_DEV_DIRECTION;

@@ -1,30 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ChainConfig } from 'shared/model';
 import { chainConfigs } from 'shared/utils/network';
-import { useConfig } from '../providers';
 
 type NetworkFilter = (network: ChainConfig) => boolean;
 
-const omitTestChain: NetworkFilter = (net) => !net.isTest;
-
-const getGlobalFilters = (isTestDisplay: boolean) => (isTestDisplay ? [] : [omitTestChain]);
-
 export function useNetworks() {
-  const { enableTestNetworks } = useConfig();
   const [fromFilters, setFromFilters] = useState<NetworkFilter[]>([]);
   const [fromNetworks, setFromNetworks] = useState<ChainConfig[]>(chainConfigs);
   const [toFilters, setToFilters] = useState<NetworkFilter[]>([]);
   const [toNetworks, setToNetworks] = useState<ChainConfig[]>(chainConfigs);
 
-  const getNetworks = useCallback(
-    (filters: NetworkFilter[]) => {
-      return [...getGlobalFilters(enableTestNetworks), ...filters].reduce(
-        (networks, predicateFn) => networks.filter((network) => predicateFn(network)),
-        chainConfigs
-      );
-    },
-    [enableTestNetworks]
-  );
+  const getNetworks = useCallback((filters: NetworkFilter[]) => {
+    return filters.reduce((networks, predicateFn) => networks.filter((network) => predicateFn(network)), chainConfigs);
+  }, []);
 
   useEffect(() => {
     const from = getNetworks(fromFilters);
