@@ -5,7 +5,7 @@ import { crabCrabDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrat
 import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
 import {
   Darwinia2Ethereum,
-  Darwinia2EthereumRecord,
+  Darwinia2EthereumHistory,
   Ethereum2Darwinia,
   Ethereum2DarwiniaRecord,
 } from './ethereum-darwinia';
@@ -43,7 +43,7 @@ ethereumDarwinia.setIssuingComponents(
 );
 ethereumDarwinia.setRedeemComponents(
   Darwinia2Ethereum as FunctionComponent,
-  Darwinia2EthereumRecord as FunctionComponent
+  Darwinia2EthereumHistory as FunctionComponent
 );
 ropstenPangolin.setIssuingComponents(
   Ethereum2Darwinia as FunctionComponent,
@@ -51,7 +51,7 @@ ropstenPangolin.setIssuingComponents(
 );
 ropstenPangolin.setRedeemComponents(
   Darwinia2Ethereum as FunctionComponent,
-  Darwinia2EthereumRecord as FunctionComponent
+  Darwinia2EthereumHistory as FunctionComponent
 );
 
 /**

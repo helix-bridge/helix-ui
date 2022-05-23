@@ -1,4 +1,5 @@
 import { Affix, Radio, Tabs } from 'antd';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isTestChain } from 'shared/config/env';
@@ -16,7 +17,7 @@ import { getDisplayName } from 'shared/utils/network';
 import { Claim as DarwiniaEthereumClaim } from '../../bridges/ethereum-darwinia';
 import { Claim as SubstrateDVMClaim } from '../../bridges/substrate-dvm/Claim';
 
-export default function Page() {
+function Page() {
   const { t } = useTranslation();
   const [confirmed, setConfirmed] = useState<boolean | null>(null);
 
@@ -67,3 +68,11 @@ export default function Page() {
     </>
   );
 }
+
+export const getStaticProps = async ({ locale }: { locale: string }) => ({
+  props: {
+    ...(await serverSideTranslations(locale, ['common'])),
+  },
+});
+
+export default Page;

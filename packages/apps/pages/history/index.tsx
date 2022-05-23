@@ -1,56 +1,65 @@
-import { CheckCircleOutlined } from '@ant-design/icons';
-import { Button, Empty, List, Tag, Typography } from 'antd';
+import { Affix, Radio, Tabs } from 'antd';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import Image from 'next/image';
-
-export const NoData = () => (
-  <div className="dark:bg-antDark mt-3 flex justify-center items-center" style={{ minHeight: '70vh' }}>
-    <Empty />
-  </div>
-);
-
-export const HistoryItem = ({ onClaim }: { onClaim: () => void }) => (
-  <List.Item className="flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-2 lg:space-y-0 bg-gray-900 p-2 lg:p-3 mb-2 border border-gray-800">
-    <div className="flex space-x-px lg:space-x-2">
-      <Tag
-        icon={<CheckCircleOutlined />}
-        color="success"
-        className="flex items-center justify-center pr-0 lg:pr-2 bg-green-600 text-white"
-      >
-        <span className="hidden lg:inline">Successed</span>
-      </Tag>
-      <div className="flex flex-col">
-        <Typography.Text>23 mins ago</Typography.Text>
-        <Typography.Text>From CSC to Darwinia</Typography.Text>
-      </div>
-      <div className="flex items-center justify-center pl-5">
-        <Button onClick={onClaim}>Claim</Button>
-      </div>
-    </div>
-    <div className="flex items-center">
-      <Tag
-        color="warning"
-        className="flex items-center justify-center order-last lg:order-first bg-yellow-500 text-white font-bold text-sm"
-        style={{ height: 'fit-content' }}
-      >
-        Out
-      </Tag>
-      <div className="flex items-center space-x-1 lg:mx-4">
-        <Image alt="..." src="/image/token-ring.svg" width={40} height={40} />
-        <div className="flex flex-col">
-          <Typography.Text>100,000.87</Typography.Text>
-          <Typography.Text>xRING</Typography.Text>
-        </div>
-      </div>
-      <a href="#" rel="noopener noreferrer" target="_bank" className="mx-4 lg:mx-0">
-        <Image alt="..." src="/image/goto.svg" width={30} height={30} />
-      </a>
-    </div>
-  </List.Item>
-);
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { isTestChain } from 'shared/config/env';
+import { darwiniaConfig, ethereumConfig, pangolinConfig, ropstenConfig } from 'shared/config/network';
+import { EthereumChainConfig, PolkadotChainConfig } from 'shared/model';
+import { getDisplayName } from 'shared/utils/network';
+import { Darwinia2EthereumHistory } from '../../bridges/ethereum-darwinia';
+import { Ethereum2DarwiniaHistory } from '../../bridges/ethereum-darwinia/Ethereum2DarwiniaHistory';
 
 function Page() {
-  return <div>history</div>;
+  const { t } = useTranslation();
+  const [confirmed, setConfirmed] = useState<boolean | null>(null);
+
+  const [activeTab, setActiveTab] = useState('d2e');
+
+  const ethereumDarwiniaDirection = useMemo<[PolkadotChainConfig, EthereumChainConfig]>(
+    () => (isTestChain ? [pangolinConfig, ropstenConfig] : [darwiniaConfig, ethereumConfig]),
+    []
+  );
+
+  return (
+    <>
+      <Affix offsetTop={63}>
+        <div className="flex justify-between items-center py-4" style={{ background: '#020822' }}>
+          <Radio.Group
+            onChange={(event) => {
+              const num = Number(event.target.value);
+
+              setConfirmed(num < 0 ? null : !!num);
+            }}
+            defaultValue={'-1'}
+            buttonStyle="solid"
+            size="large"
+          >
+            <Radio.Button value="-1">{t('All')}</Radio.Button>
+            <Radio.Button value="1">{t('Pending')}</Radio.Button>
+            <Radio.Button value="0">{t('Success')}</Radio.Button>
+          </Radio.Group>
+        </div>
+      </Affix>
+
+      <div className="bg-gray-200 dark:bg-antDark px-4 pb-4">
+        <Tabs onChange={(event) => setActiveTab(event)} size="large" className="mt-4" defaultActiveKey={activeTab}>
+          <Tabs.TabPane tab={ethereumDarwiniaDirection.map((item) => getDisplayName(item)).join(' -> ')} key="d2e">
+            {<Darwinia2EthereumHistory confirmed={confirmed} />}
+          </Tabs.TabPane>
+
+          <Tabs.TabPane
+            tab={ethereumDarwiniaDirection
+              .map((item) => getDisplayName(item))
+              .reverse()
+              .join(' -> ')}
+            key="e2d"
+          >
+            <Ethereum2DarwiniaHistory confirmed={confirmed} />
+          </Tabs.TabPane>
+        </Tabs>
+      </div>
+    </>
+  );
 }
 
 export const getStaticProps = async ({ locale }: { locale: string }) => ({

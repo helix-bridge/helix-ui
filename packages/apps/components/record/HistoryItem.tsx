@@ -52,7 +52,7 @@ export const HistoryItem = ({ record, token, children, process }: PropsWithChild
           Out
         </Tag>
 
-        <div className="flex items-center space-x-4 lg:mx-4">
+        <div className="flex items-center gap-4 lg:mx-4">
           <Image alt="..." src={`/image/${token.logo}`} width={40} height={40} />
 
           <div className="flex flex-col md:w-28 truncate">

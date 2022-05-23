@@ -4,10 +4,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { PropsWithChildren, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
 import { THEME } from 'shared/config/theme';
 import { readStorage } from 'shared/utils/helper';
+import { useITranslation } from '../hooks';
 import { Footer } from './Footer';
 import { Navigator } from './Navigator';
 import { Tools } from './Tools';
@@ -16,7 +16,7 @@ import { ActiveAccount } from './widget/account/ActiveAccount';
 const { Header, Content } = Layout;
 
 function AppLayout({ children }: PropsWithChildren<unknown>) {
-  const { t } = useTranslation('common');
+  const { t } = useITranslation();
   const [theme, setTheme] = useState<THEME>(readStorage().theme ?? THEME.DARK);
   const [collapsed, setCollapsed] = useState(true);
   const router = useRouter();
