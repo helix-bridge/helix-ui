@@ -7,12 +7,11 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { FunctionComponent, useEffect, useState } from 'react';
 import GlobalLoading from 'shared/components/widget/GlobalLoading';
+import { isDev } from 'shared/config/env';
 import '../bridges/register';
 import AppLayout from '../components/AppLayout';
 import { AccountProvider, ApiProvider, GqlProvider, TxProvider } from '../providers';
 import '../styles/index.scss';
-
-const isDev = process.env.NODE_ENV === 'development';
 
 const client = new GraphQLClient({
   url: isDev ? 'http://localhost:4002/graphql' : 'https://wormhole-apollo.darwinia.network/',

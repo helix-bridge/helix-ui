@@ -55,7 +55,7 @@ export const HistoryItem = ({ record, token, children, process }: PropsWithChild
         <div className="flex items-center gap-4 lg:mx-4">
           <Image alt="..." src={`/image/${token.logo}`} width={40} height={40} />
 
-          <div className="flex flex-col md:w-28 truncate">
+          <div className={` flex flex-col md:${children ? 'w-28' : 'w-12'} truncate`}>
             <Tooltip title={token.amount}>
               <span className="truncate">{token.amount}</span>
             </Tooltip>

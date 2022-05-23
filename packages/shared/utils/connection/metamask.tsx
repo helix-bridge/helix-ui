@@ -5,8 +5,25 @@ import { initReactI18next, Trans } from 'react-i18next';
 import { catchError, combineLatest, from, map, merge, Observable, Observer, of, startWith, switchMap } from 'rxjs';
 import Web3 from 'web3';
 import { SHORT_DURATION } from '../../config/constant';
-import { ConnectionStatus, EthereumChainConfig, EthereumConnection, MetamaskError } from '../../model';
-import { isNativeMetamaskChain } from '../network/network';
+import {
+  ConnectionStatus,
+  EthereumChainConfig,
+  EthereumConnection,
+  MetamaskError,
+  MetamaskNativeNetworkIds,
+} from '../../model';
+
+function isNativeMetamaskChain(chain: EthereumChainConfig): boolean {
+  const ids = [
+    MetamaskNativeNetworkIds.ethereum,
+    MetamaskNativeNetworkIds.ropsten,
+    MetamaskNativeNetworkIds.rinkeby,
+    MetamaskNativeNetworkIds.goerli,
+    MetamaskNativeNetworkIds.kovan,
+  ];
+
+  return ids.includes(+chain.ethereumChain.chainId);
+}
 
 export const getMetamaskConnection: () => Observable<EthereumConnection> = () =>
   from(window.ethereum.request({ method: 'eth_requestAccounts' })).pipe(

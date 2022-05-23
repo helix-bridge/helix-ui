@@ -1,6 +1,7 @@
 import { negate } from 'lodash';
 import { createContext, useCallback, useContext, useReducer, useState } from 'react';
 import { EMPTY, iif, of, Subscription } from 'rxjs';
+import { isDev } from 'shared/config/env';
 import {
   Action,
   ChainConfig,
@@ -30,8 +31,6 @@ type AddConnection = Action<'addConnection', Connection>;
 type RemoveConnection = Action<'removeConnection', Connection>;
 
 type Actions = SetDeparture | SetDepartureConnection | SetArrivalConnection | AddConnection | RemoveConnection;
-
-const isDev = process.env.REACT_APP_HOST_TYPE === 'dev';
 
 const initialDirection = getDirectionFromSettings();
 

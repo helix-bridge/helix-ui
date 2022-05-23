@@ -15,7 +15,7 @@ const GlobalLoading = ({ isRouteChanging }: { isRouteChanging: boolean }) => {
           transition: opacity ${animationDuration}ms linear;
         }
         .bar {
-          background: #5745de;
+          background: #00b2ff;
           height: 2px;
           left: 0;
           margin-left: ${(-1 + progress) * 100}%;
@@ -26,7 +26,7 @@ const GlobalLoading = ({ isRouteChanging }: { isRouteChanging: boolean }) => {
           z-index: 1031;
         }
         .spinner {
-          box-shadow: 0 0 10px #5745de, 0 0 5px #5745de;
+          box-shadow: 0 0 10px #00b2ff, 0 0 5px #00b2ff;
           display: block;
           height: 100%;
           opacity: 1;

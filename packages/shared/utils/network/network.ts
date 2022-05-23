@@ -1,4 +1,4 @@
-import { chain as lodashChain, curry, pick, upperFirst } from 'lodash';
+import { chain as lodashChain, pick, upperFirst } from 'lodash';
 import { NETWORK_SIMPLE, SYSTEM_ChAIN_CONFIGURATIONS } from '../../config/network';
 import {
   knownDarwiniaDVMNetworks,
@@ -6,20 +6,11 @@ import {
   knownEthereumNetworks,
   knownPolkadotNetworks,
 } from '../../config/network/category';
-import {
-  ChainConfig,
-  EthereumChainConfig,
-  MetamaskNativeNetworkIds,
-  Network,
-  NetworkMode,
-  PolkadotChainConfig,
-  TokenType,
-  Vertices,
-} from '../../model';
+import { ChainConfig, Network, NetworkMode, PolkadotChainConfig, TokenType, Vertices } from '../../model';
 import { getCustomNetworkConfig } from '../helper/storage';
 import { crossChainGraph } from './graph';
 
-export function isChainEqual(chain1: Vertices | ChainConfig, chain2: Vertices | ChainConfig): boolean {
+function isChainEqual(chain1: Vertices | ChainConfig, chain2: Vertices | ChainConfig): boolean {
   return chain1.name === chain2.name && chain1.mode === chain2.mode;
 }
 
@@ -87,24 +78,12 @@ export const getArrivals = (departure: ChainConfig) => {
   return target ? target[1].map((item) => getChainConfig(item)) : [];
 };
 
-const isInNodeList = (chain1: ChainConfig | null, chain2: ChainConfig | null) => {
-  if (!chain1 || !chain2) {
-    return true;
-  }
-
-  const vertices = getArrivals(chain1);
-
-  return !!vertices.find((item) => isChainEqual(item, chain2));
-};
-
-export const isReachable = (chain: ChainConfig | null) => curry(isInNodeList)(chain); // relation: chain1 -> chain2 ---- Find the relation by chain1
-
 const isSpecifyNetwork = (known: Vertices[]) => (network: ChainConfig | Vertices | null | undefined) => {
   if (!network) {
     return false;
   }
 
-  return known.some((item) => item.mode === network.mode && item.name === network.name);
+  return known.some((item) => isChainEqual(item, network));
 };
 
 export const isPolkadotNetwork = isSpecifyNetwork(knownPolkadotNetworks);
@@ -171,18 +150,6 @@ export function getChainConfig(
   return result;
 }
 
-export function isNativeMetamaskChain(chain: EthereumChainConfig): boolean {
-  const ids = [
-    MetamaskNativeNetworkIds.ethereum,
-    MetamaskNativeNetworkIds.ropsten,
-    MetamaskNativeNetworkIds.rinkeby,
-    MetamaskNativeNetworkIds.goerli,
-    MetamaskNativeNetworkIds.kovan,
-  ];
-
-  return ids.includes(+chain.ethereumChain.chainId);
-}
-
 export function getDisplayName(config: ChainConfig | null, networkMode?: NetworkMode): string {
   if (!config) {
     return 'unknown';
@@ -191,11 +158,5 @@ export function getDisplayName(config: ChainConfig | null, networkMode?: Network
   const mode = networkMode ?? config.mode;
   const name = upperFirst(config.name);
 
-  return mode === 'dvm' ? `${name} Smart` : name;
-}
-
-export function getVerticesFromDisplayName(name: string): Vertices {
-  const [network, mode] = name.split('-') as [Network, string];
-
-  return { name: network, mode: mode?.toLowerCase() === 'smart' ? 'dvm' : 'native' };
+  return mode === 'dvm' ? `${name} Smart Chain` : name;
 }

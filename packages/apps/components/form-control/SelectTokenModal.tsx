@@ -94,13 +94,13 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
       <Radio.Group
         defaultValue={chain}
         buttonStyle="solid"
-        className="mt-1"
+        className="mt-2 mb-3"
         size="small"
         onChange={(event) => {
           setChain(event.target.value as ChainConfig);
         }}
       >
-        <Radio.Button value="all" className="mt-2 mr-2 capitalize rounded-none">
+        <Radio.Button value="all" className="mt-2 mr-2 capitalize" style={{ borderRadius: 0 }}>
           {t('All chains')}
         </Radio.Button>
 
@@ -108,19 +108,25 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
           const name = getDisplayName(item);
 
           return (
-            <Radio.Button key={index} value={item} className="mt-2 mr-2 capitalize rounded-none">
+            <Radio.Button key={index} value={item} className="mt-2 mr-2 capitalize" style={{ borderRadius: 0 }}>
               {name}
             </Radio.Button>
           );
         })}
       </Radio.Group>
 
-      <div className="max-h-96 overflow-auto mt-5">
-        <div className="flex flex-col space-y-2">
-          {tokens.map((item, index) => (
-            <div
-              className="flex items-center justify-between border border-gray-800 bg-gray-900 py-3 px-2 cursor-pointer transition-all duration-300 hover:bg-gray-800"
+      <div className="max-h-96 overflow-auto flex flex-col gap-2">
+        {/* eslint-disable-next-line complexity */}
+        {tokens.map((item, index) => {
+          const disabled = /^x[O]?KTON/.test(item.symbol) && !item.address;
+
+          return (
+            <button
+              className={`flex items-center justify-between border border-gray-800 py-3 px-2 cursor-pointer transition-all duration-300  ${
+                disabled ? 'bg-gray-700 cursor-not-allowed hover:bg-gray-700' : 'bg-gray-900 hover:bg-gray-800'
+              }`}
               key={index}
+              disabled={disabled}
               onClick={() => onSelect(item)}
             >
               <div className="flex items-center space-x-2">
@@ -153,9 +159,9 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
                   {t('Go To Apps')}
                 </a>
               )}
-            </div>
-          ))}
-        </div>
+            </button>
+          );
+        })}
       </div>
     </BaseModal>
   );

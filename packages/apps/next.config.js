@@ -2,25 +2,13 @@ const { i18n } = require('./next-i18next.config');
 const withAntdLess = require('next-plugin-antd-less');
 const withPlugins = require('next-compose-plugins');
 const path = require('path');
-// const antdVarsPath = '../shared/theme/antd/vars.less';
-// const { getLessVars } = require('../shared/plugins/antd-theme-generator');
-// const themeVariables = getLessVars(path.join(__dirname, antdVarsPath));
-// const defaultVars = getLessVars(path.join(__dirname, '../../node_modules/antd/lib/style/themes/default.less'));
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const darkVars = require('../shared/theme/antd/dark.json');
 const projectVars = require('../shared/theme/antd/vars.json');
-const pangolinVariables = require('../shared/theme/network/dark/pangolin.json');
+const crabVariables = require('../shared/theme/network/dark/crab.json');
+const proVariables = require('../shared/theme/network/dark/pro.json');
 
-// const darkVars = {
-//   ...getLessVars(path.join(__dirname, '../../node_modules/antd/lib/style/themes/dark.less')),
-//   '@primary-color': defaultVars['@primary-color'],
-//   '@picker-basic-cell-active-with-range-color': 'darken(@primary-color, 20%)',
-// };
-
-// just for dev purpose, use to compare vars in different theme.
-// fs.writeFileSync('./ant-theme-vars/dark.json', JSON.stringify(darkVars));
-// fs.writeFileSync('./ant-theme-vars/light.json', JSON.stringify(lightVars));
-// fs.writeFileSync('./ant-theme-vars/theme.json', JSON.stringify(themeVariables));
+const envVariables = process.env.CHAIN_TYPE === 'test' ? crabVariables : proVariables;
 
 const circularDependencyPlugin = new CircularDependencyPlugin({
   exclude: /\*.js|node_modules/,
@@ -28,23 +16,6 @@ const circularDependencyPlugin = new CircularDependencyPlugin({
   allowAsyncCycles: false,
   cwd: process.cwd(),
 });
-
-class WasmChunksFixPlugin {
-  apply(compiler) {
-    compiler.hooks.thisCompilation.tap('WasmChunksFixPlugin', (compilation) => {
-      compilation.hooks.processAssets.tap({ name: 'WasmChunksFixPlugin' }, (assets) =>
-        Object.entries(assets).forEach(([pathname, source]) => {
-          if (!pathname.match(/\.wasm$/)) return;
-          compilation.deleteAsset(pathname);
-
-          const name = pathname.split('/')[1];
-          const info = compilation.assetsInfo.get(pathname);
-          compilation.emitAsset(name, source, info);
-        })
-      );
-    });
-  }
-}
 
 module.exports = withPlugins([withAntdLess, circularDependencyPlugin], {
   experimental: {
@@ -57,8 +28,7 @@ module.exports = withPlugins([withAntdLess, circularDependencyPlugin], {
   modifyVars: {
     ...darkVars,
     ...projectVars,
-    // ...themeVariables,
-    ...pangolinVariables,
+    ...envVariables,
   },
   cssLoaderOptions: {
     mode: 'local',

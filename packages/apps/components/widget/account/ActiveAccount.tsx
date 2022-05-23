@@ -33,7 +33,7 @@ export function ActiveAccount() {
 
 // eslint-disable-next-line complexity
 function ActiveAccountStrict() {
-  const { departureConnection, departure, connectDepartureNetwork, disconnect, isConnecting } = useApi();
+  const { departureConnection, departure, connectDepartureNetwork, isConnecting } = useApi();
   const { t } = useTranslation();
   const { account, setAccount } = useAccount();
   const [isVisible, setIsVisible] = useState(false);
@@ -90,10 +90,10 @@ function ActiveAccountStrict() {
               )}
 
             <Button
-              className={`flex items-center justify-around px-2 gap-2 overflow-hidden`}
+              className={`flex items-center justify-around px-1 overflow-hidden`}
               icon={
                 matched ? (
-                  <img src={`/image/${departureConnection.type}.svg`} width={24} height={24} className="mr-2" />
+                  <img src={`/image/${departureConnection.type}.svg`} width={18} height={18} />
                 ) : (
                   <CloseCircleOutlined />
                 )
@@ -112,7 +112,7 @@ function ActiveAccountStrict() {
                 }
               }}
             >
-              <span className="truncate">{matched ? account : t('Wrong Network')}</span>
+              <span className="truncate ml-1">{matched ? account : t('Wrong Network')}</span>
 
               {departureConnection.accounts.length > 1 && matched && <Icon name="down" className="w-8 h-8" />}
             </Button>
@@ -121,10 +121,6 @@ function ActiveAccountStrict() {
               <Identicon value={account} size={20} className="rounded-full border p-1" />
             </span>
           </section>
-
-          <Button onClick={() => disconnect()} className="hidden lg:block">
-            {t('Disconnect')}
-          </Button>
 
           <SettingFilled
             onClick={() => setIsVisible(true)}
@@ -211,8 +207,8 @@ function ActiveAccountNormal() {
             )}
 
             <Button
-              className={`flex items-center justify-around px-2 gap-2 overflow-hidden`}
-              icon={<img src={`/image/${departureConnection.type}.svg`} width={24} height={24} className="mr-2" />}
+              className={`flex items-center justify-around px-1 overflow-hidden`}
+              icon={<img src={`/image/${departureConnection.type}.svg`} width={18} height={18} />}
               style={{ maxWidth: 200 }}
               onClick={() => {
                 if (departureConnection.accounts.length > 1) {
@@ -222,7 +218,7 @@ function ActiveAccountNormal() {
                 }
               }}
             >
-              <span className="truncate">{account}</span>
+              <span className="truncate ml-1">{account}</span>
 
               {departureConnection.accounts.length > 1 && <Icon name="down" className="w-8 h-8" />}
             </Button>

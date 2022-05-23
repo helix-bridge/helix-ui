@@ -1,14 +1,13 @@
-import { Dropdown, Menu, Typography } from 'antd';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { DownOutlined } from '@ant-design/icons';
 import { AntdIconProps } from '@ant-design/icons/lib/components/AntdIcon';
+import { Dropdown, Menu, Typography } from 'antd';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { isDev } from 'shared/config/env';
 import { THEME } from 'shared/config/theme';
 import { Path } from '../config';
-
-const isDev = process.env.NODE_ENV === 'development';
 
 interface Nav {
   label: string;

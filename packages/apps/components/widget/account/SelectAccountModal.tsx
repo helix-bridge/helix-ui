@@ -1,9 +1,7 @@
-import { Button, Empty, Radio, Typography } from 'antd';
+import { Button, Empty, Radio } from 'antd';
 import dynamic from 'next/dynamic';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
-import { IAccountMeta } from 'shared/model';
 import { useApi } from '../../../providers';
 import { BaseModal } from '../BaseModal';
 
@@ -20,25 +18,6 @@ const iconSize = 36;
 const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
   ssr: false,
 });
-
-const AccountWithIdentify = ({ value }: { value: IAccountMeta }) => {
-  return (
-    <>
-      <Identicon
-        theme="substrate"
-        size={iconSize}
-        className="mr-2 rounded-full border border-solid border-gray-100"
-        value={value.address}
-      />
-      <div className="flex flex-col ">
-        <Typography.Text>{value.meta?.name}</Typography.Text>
-        <span className="flex flex-col leading-5 overflow-hidden">
-          <EllipsisMiddle className="opacity-60 w-full">{value.address}</EllipsisMiddle>
-        </span>
-      </div>
-    </>
-  );
-};
 
 export const SelectAccountModal: React.FC<Props> = ({ visible, defaultValue, title, footer, onSelect, onCancel }) => {
   const {
@@ -67,7 +46,19 @@ export const SelectAccountModal: React.FC<Props> = ({ visible, defaultValue, tit
               key={item.address}
               className={`radio-list transform transition-all duration-300 hover:scale-105`}
             >
-              <AccountWithIdentify value={item} />
+              <>
+                <Identicon
+                  theme="substrate"
+                  size={iconSize}
+                  className="mr-2 rounded-full border border-solid border-gray-100"
+                  value={item.address}
+                />
+                <div className="flex flex-col">
+                  <span>{item.meta?.name}</span>
+
+                  <span className="truncate w-11/12">{item.address}</span>
+                </div>
+              </>
             </Radio.Button>
           ))}
         </Radio.Group>
