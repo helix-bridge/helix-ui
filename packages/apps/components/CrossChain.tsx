@@ -28,7 +28,7 @@ import { emptyObsFactory, isKton, isRing } from 'shared/utils/helper';
 import { getDarwiniaBalance, getDVMBalance, getErc20Balance } from 'shared/utils/network/balance';
 import { useAccount, useApi } from '../providers';
 import { BridgeSelector } from './form-control/BridgeSelector';
-import { calcToAmount, Direction } from './form-control/Direction';
+import { Direction } from './form-control/Direction';
 import { FromItemButton } from './widget/SubmitButton';
 
 const isDirectionChanged = (pre: CrossChainDirection, cur: CrossChainDirection) => {
@@ -135,14 +135,6 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   useEffect(() => {
     form.setFieldsValue({ [FORM_CONTROL.sender]: account });
   }, [account, form]);
-
-  useEffect(() => {
-    const { from, to } = direction;
-
-    form.setFieldsValue({
-      [FORM_CONTROL.direction]: { from, to: { ...to, amount: calcToAmount(from.amount, fee) } },
-    });
-  }, [direction, fee, form]);
 
   useEffect(() => {
     if (!account) {

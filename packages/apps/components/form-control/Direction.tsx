@@ -15,7 +15,7 @@ type DirectionProps = CustomFormControlProps<CrossChainDirection> & {
   balance: BN | BN[] | null;
 };
 
-export const calcToAmount = (payment: string, paymentFee: number | null) => {
+const calcToAmount = (payment: string, paymentFee: number | null) => {
   if (paymentFee === null) {
     return '';
   }
@@ -77,6 +77,11 @@ export function Direction({ value, initial, onChange, balance, fee = 0 }: Direct
     patchUrl(info);
     updateStorage(info);
   }, [data]);
+
+  useEffect(() => {
+    triggerChange({ from: data.from, to: { ...data.to, amount: calcToAmount(data.from.amount, fee) } });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fee]);
 
   return (
     <div className={`relative flex justify-between items-center flex-col`}>

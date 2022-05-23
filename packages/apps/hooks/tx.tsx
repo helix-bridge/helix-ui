@@ -3,9 +3,8 @@ import { useRouter } from 'next/router';
 import { FunctionComponent, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SHORT_DURATION } from 'shared/config/constant';
-import { CrossChainPayload, PolkadotChainConfig, Tx, TxDoneComponentProps, TxHashType } from 'shared/model';
-import { convertToSS58, genHistoryRouteParams } from 'shared/utils/helper';
-import { isEthereumNetwork } from 'shared/utils/network';
+import { CrossChainPayload, Tx, TxDoneComponentProps, TxHashType } from 'shared/model';
+import { isDarwinia2Ethereum, isEthereum2Darwinia } from 'shared/utils/bridge';
 import { applyModal } from 'shared/utils/tx';
 
 export function useAfterTx<T extends CrossChainPayload>() {
@@ -39,22 +38,12 @@ export function useAfterTx<T extends CrossChainPayload>() {
               destroy();
 
               const { from, to } = payload.direction;
-              const sender =
-                isEthereumNetwork(payload.direction.from.meta) || from.meta.mode === 'dvm'
-                  ? payload.sender
-                  : convertToSS58(payload.sender, (payload.direction.from.meta as PolkadotChainConfig).ss58Prefix);
 
-              router.push(
-                '/history' +
-                  '?' +
-                  genHistoryRouteParams({
-                    from: from.meta.name,
-                    fMode: from.meta.mode,
-                    sender,
-                    to: to.meta.name,
-                    tMode: to.meta.mode,
-                  })
-              );
+              if (isDarwinia2Ethereum(from.meta, to.meta) || isEthereum2Darwinia(from.meta, to.meta)) {
+                router.push('/history');
+              } else {
+                window.open('https://helixbridge.app/zh/transaction', '_blank');
+              }
             },
           },
           onCancel: () => onDisappear(payload, tx),
