@@ -35,8 +35,8 @@ function Page() {
             size="large"
           >
             <Radio.Button value="-1">{t('All')}</Radio.Button>
-            <Radio.Button value="1">{t('Pending')}</Radio.Button>
-            <Radio.Button value="0">{t('Success')}</Radio.Button>
+            <Radio.Button value="0">{t('Pending')}</Radio.Button>
+            <Radio.Button value="1">{t('Success')}</Radio.Button>
           </Radio.Group>
         </div>
       </Affix>
