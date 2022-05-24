@@ -52,9 +52,14 @@ export function Destination({
           >
             <Logo name={value.logo} width={40} height={40} />
 
-            <div className="flex flex-col items-start space-y-px">
-              <strong className="font-medium text-sm">{value.symbol}</strong>
-              <small className="font-light text-xs opacity-60 capitalize">{getDisplayName(value.meta)}</small>
+            <div className="flex flex-col items-start space-y-px w-16 text-left">
+              <strong className="font-medium text-sm truncate w-full">{value.symbol}</strong>
+              <small
+                className="font-light text-xs opacity-60 w-full capitalize truncate"
+                title={getDisplayName(value.meta)}
+              >
+                {getDisplayName(value.meta)}
+              </small>
             </div>
 
             <Icon name="down" />

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { IdentAccountAddress } from 'shared/components/widget/IdentAccountAddress';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { ConnectionStatus, CrossChainComponentProps, PolkadotChainConfig } from 'shared/model';
-import { convertToSS58, isSameAddress, isValidAddressStrict, patchUrl } from 'shared/utils/helper';
+import { convertToSS58, isSameAddress, isValidAddressStrict } from 'shared/utils/helper';
 import { isPolkadotNetwork } from 'shared/utils/network';
 import { useApi } from '../../providers';
 
@@ -88,9 +88,6 @@ export function RecipientItem({
     >
       {type === 'ethereum' || !formattedAccounts?.length ? (
         <Input
-          onBlur={(event) => {
-            patchUrl({ recipient: event.target.value });
-          }}
           size="large"
           placeholder={t('Type or select the recipient address')}
           onChange={(event) => {

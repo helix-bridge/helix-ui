@@ -135,8 +135,11 @@ export const validateDirection: (dir: NullableCrossChainDirection) => CrossChain
   return { from: from ?? DEFAULT_DIRECTION.from, to: to ?? DEFAULT_DIRECTION.to };
 };
 
+/**
+ * TODO: Find the correct CrossChainDirection by the information from the hash or localStorage settings
+ */
 // eslint-disable-next-line complexity
-export const getDirectionFromSettings: () => CrossChainDirection = () => {
+export const getDirectionFromSettingsWeak: () => CrossChainDirection = () => {
   const fToken = getInitialSetting<string>('from', null);
   const tToken = getInitialSetting<string>('to', null);
   const fMode = getInitialSetting<NetworkMode>('fMode', 'native') as NetworkMode;
@@ -181,4 +184,8 @@ export const getDirectionFromSettings: () => CrossChainDirection = () => {
   }
 
   return validateDirection({ from: fromToken, to: toToken });
+};
+
+export const getDirectionFromSettings: () => CrossChainDirection = () => {
+  return DEFAULT_DIRECTION;
 };

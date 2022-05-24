@@ -1,9 +1,10 @@
-import { message } from 'antd';
+import { notification } from 'antd';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { delay, Observer, of } from 'rxjs';
 import { TxStatus } from 'shared/components/widget/TxStatus';
 import { LONG_DURATION } from 'shared/config/constant';
 import { RequiredPartial, Tx } from 'shared/model';
+import { useITranslation } from '../hooks';
 
 export interface TxCtx {
   setTx: (tx: Tx | null) => void;
@@ -17,6 +18,7 @@ export const TxContext = createContext<TxCtx | null>(null);
 export const useTx = () => useContext(TxContext) as Exclude<TxCtx, null>;
 
 export const TxProvider = ({ children }: React.PropsWithChildren<unknown>) => {
+  const { t } = useITranslation();
   const [tx, setTx] = useState<Tx | null>(null);
   const [canceler, setCanceler] = useState<(() => void) | null>(null);
 
@@ -24,13 +26,22 @@ export const TxProvider = ({ children }: React.PropsWithChildren<unknown>) => {
     return {
       next: setTx,
       error: (error: RequiredPartial<Tx, 'error'>) => {
-        message.error(error.error.message);
+        notification.error({
+          message: (
+            <div>
+              <p>{t('Transaction aborted because of')}</p>
+              <p className="font-bold">{error.error.message}</p>
+            </div>
+          ),
+          duration: 5,
+        });
         setTx(null);
       },
       complete: () => {
         console.info('[ tx completed! ]');
       },
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

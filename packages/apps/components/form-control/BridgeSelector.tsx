@@ -1,7 +1,9 @@
-import { ArrowRightOutlined, FrownOutlined } from '@ant-design/icons';
+import { ArrowRightOutlined, FrownOutlined, MehOutlined } from '@ant-design/icons';
 import { Badge, Radio, Result, Space, Tooltip } from 'antd';
+import { matches } from 'lodash';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
+import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { Bridge, CrossChainDirection, CrossToken, CustomFormControlProps, NullableFields } from 'shared/model';
 import { getBridges } from 'shared/utils/bridge';
 import { getDisplayName } from 'shared/utils/network';
@@ -37,11 +39,21 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
   const { t } = useTranslation();
   const bridges = getBridges(direction as CrossChainDirection);
   const needClaim = direction.to?.claim;
+  const { from, to } = DEFAULT_DIRECTION;
+  const origin = { from: { name: from.name, type: from.type }, to: { name: to.name, type: to.type } };
+  const isDefault = matches(origin);
 
   return (
-    <div className="dark:bg-antDark p-5 overflow-auto" style={{ maxHeight: '65vh', minHeight: '20vh' }}>
+    <div className="p-5 overflow-auto" style={{ maxHeight: '65vh', minHeight: '20vh' }}>
       {!bridges.length ? (
-        <Result icon={<FrownOutlined />} title="No bridge found for selected tokens" />
+        isDefault(direction) ? (
+          <Result
+            icon={<MehOutlined />}
+            title="Please select the parameters for your desired transfer and enter an amount."
+          />
+        ) : (
+          <Result icon={<FrownOutlined />} title="No bridge found for selected tokens" />
+        )
       ) : (
         <Radio.Group
           className="w-full"

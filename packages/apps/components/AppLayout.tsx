@@ -52,13 +52,13 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
           {
             label: (
               <a href="https://helixbridge.app/transaction" rel="noreferrer" target="_blank">
-                {t('History Records')}
+                {t('History Record')}
               </a>
             ),
             key: 'records',
           },
           {
-            label: <Link href="/history">{t('Ethereum - Darwinia Records')}</Link>,
+            label: <Link href="/history">{t('Ethereum - Darwinia Record')}</Link>,
             key: 'ed-history',
           },
         ],

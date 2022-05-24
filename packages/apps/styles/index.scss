@@ -12,6 +12,10 @@ $bg-dark: #151d35;
   overflow: hidden;
 }
 
+.anticon {
+  vertical-align: 0 !important;
+}
+
 .helix-modal {
   .ant-modal-close-x {
     display: flex;

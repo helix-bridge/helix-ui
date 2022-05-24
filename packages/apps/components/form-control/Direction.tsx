@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
 import { BridgeStatus, CrossChainDirection, CustomFormControlProps, HashInfo } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
-import { fromWei, isKton, isRing, largeNumber, patchUrl, prettyNumber, updateStorage } from 'shared/utils/helper';
+import { fromWei, isKton, isRing, largeNumber, prettyNumber, updateStorage } from 'shared/utils/helper';
 import { Destination } from './Destination';
 
 type DirectionProps = CustomFormControlProps<CrossChainDirection> & {
@@ -74,7 +74,6 @@ export function Direction({ value, initial, onChange, balance, fee = 0 }: Direct
       setBridgetStatus(null);
     }
 
-    patchUrl(info);
     updateStorage(info);
   }, [data]);
 

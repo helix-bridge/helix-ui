@@ -211,8 +211,23 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
           </Tooltip>
         </Col>
 
-        <Col xs={24} sm={{ span: 15, offset: 1 }}>
-          <Form.Item name={FORM_CONTROL.bridge} rules={[{ required: true }]}>
+        <Col xs={24} sm={{ span: 15, offset: 1 }} className="dark:bg-antDark">
+          <Form.Item
+            name={FORM_CONTROL.bridge}
+            rules={[
+              {
+                validator(_r, value: unknown) {
+                  if (!value) {
+                    message.error(t('Please select a bridge first!'));
+                    return Promise.reject();
+                  }
+
+                  return Promise.resolve();
+                },
+              },
+            ]}
+            className="mb-0"
+          >
             <BridgeSelector direction={direction} onChange={(value) => setBridge(value || null)} />
           </Form.Item>
         </Col>
