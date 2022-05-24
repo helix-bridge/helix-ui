@@ -9,7 +9,6 @@ import { LONG_DURATION } from 'shared/config/constant';
 import { useDarwiniaAvailableBalances, useIsMounted } from 'shared/hooks';
 import {
   AvailableBalance,
-  ConnectionStatus,
   CrossChainComponentProps,
   CrossToken,
   DVMChainConfig,
@@ -55,7 +54,7 @@ export function Substrate2SubstrateDVM({
   CrossToken<DVMChainConfig>
 >) {
   const { t } = useTranslation();
-  const { departureConnection, departure, arrivalConnection, connectArrivalNetwork } = useApi();
+  const { departureConnection, departure } = useApi();
   const [availableBalances, setAvailableBalances] = useState<AvailableBalance[]>([]);
 
   const availableBalance = useMemo(() => {
@@ -135,11 +134,6 @@ export function Substrate2SubstrateDVM({
   ]);
 
   useEffect(() => {
-    if (arrivalConnection.status !== ConnectionStatus.success) {
-      connectArrivalNetwork(direction.to.meta);
-      return;
-    }
-
     const sub$$ = of(null)
       .pipe(
         switchMap(() => from(getDailyLimit(direction.to.address, direction))),
@@ -152,7 +146,7 @@ export function Substrate2SubstrateDVM({
       });
 
     return () => sub$$?.unsubscribe();
-  }, [arrivalConnection.status, connectArrivalNetwork, direction, isMounted]);
+  }, [direction, isMounted]);
 
   useEffect(() => {
     const sub$$ = from(getIssuingFee(bridge)).subscribe((result) => {

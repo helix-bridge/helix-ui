@@ -1,5 +1,6 @@
+import { CaretDownOutlined } from '@ant-design/icons';
 import { Form, Spin, Typography } from 'antd';
-import { PropsWithChildren, ReactNode } from 'react';
+import { PropsWithChildren, ReactNode, useState } from 'react';
 import { Bridge } from 'shared/model';
 
 type AmountInfo =
@@ -18,6 +19,8 @@ interface CrossChainInfoProps {
 }
 
 export function CrossChainInfo({ bridge, fee, extra, children, hideFee }: PropsWithChildren<CrossChainInfoProps>) {
+  const [collapse, setCollapse] = useState(true);
+
   return (
     <Form.Item label="Info" className="relative">
       <div className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900">
@@ -37,13 +40,27 @@ export function CrossChainInfo({ bridge, fee, extra, children, hideFee }: PropsW
           )}
         </div>
 
-        {extra &&
-          extra.map((item) => (
-            <div key={item.name} className="flex justify-between items-center">
-              <Typography.Text>{item.name}</Typography.Text>
-              {item.content}
+        {extra && (
+          <>
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => setCollapse(!collapse)}>
+              <span className="flex-1 bg-gray-800 h-px" />
+              <CaretDownOutlined
+                className={`text-gray-700 transform transition-all duration-300 ${collapse ? '' : 'rotate-180'}`}
+              />
+              <span className="flex-1 bg-gray-800 h-px" />
             </div>
-          ))}
+
+            {extra.map((item) => (
+              <div
+                key={item.name}
+                className={`justify-between items-center transition-all duration-100 ${collapse ? 'hidden' : 'flex'}`}
+              >
+                <Typography.Text>{item.name}</Typography.Text>
+                {item.content}
+              </div>
+            ))}
+          </>
+        )}
 
         {children}
       </div>
