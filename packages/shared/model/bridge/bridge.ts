@@ -53,8 +53,6 @@ export class Bridge<C = BridgeConfig> {
 
   readonly status: BridgeStatus;
 
-  readonly stable: boolean;
-
   readonly activeArrivalConnection: boolean;
 
   readonly departure: ChainConfig;
@@ -83,7 +81,6 @@ export class Bridge<C = BridgeConfig> {
       name: BridgeName;
       category: BridgeCategory;
       status?: BridgeStatus;
-      stable?: boolean;
       activeArrivalConnection?: boolean;
     }
   ) {
@@ -97,7 +94,6 @@ export class Bridge<C = BridgeConfig> {
     this.redeem = [arr, dep];
     this._config = config;
     this.status = options?.status ?? 'available';
-    this.stable = options?.stable ?? true;
     this.activeArrivalConnection = options?.activeArrivalConnection ?? false;
     this.category = options.category;
     this.isTest = departure.isTest;

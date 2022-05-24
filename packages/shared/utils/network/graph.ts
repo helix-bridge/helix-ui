@@ -2,14 +2,8 @@ import { isEqual } from 'lodash';
 import { BRIDGES } from '../../config/bridge';
 import { Arrival, Bridge, BridgeConfig, ContractConfig, Departure } from '../../model';
 
-const isPro = process.env.NODE_ENV === 'production';
-
 export const crossChainGraph = BRIDGES.reduce(
   (acc: [Departure, Arrival[]][], bridge: Bridge<BridgeConfig<ContractConfig>>) => {
-    if (isPro && !bridge.stable) {
-      return acc;
-    }
-
     const check = ([ver1, ver2]: [Departure, Departure]) => {
       const departure = acc.find((item) => isEqual(item[0], ver1));
       if (departure) {
