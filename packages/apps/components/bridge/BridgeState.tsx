@@ -2,7 +2,7 @@ import { Alert } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { map } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
-import { useApi } from '../../providers';
+import { isDev } from 'shared/config/env';
 
 interface IncidentResponse {
   page: Page;
@@ -45,14 +45,12 @@ interface BridgeStateProps {
 }
 
 export function BridgeState({ className = '' }: BridgeStateProps) {
-  const { isDev } = useApi();
-
   const url = useMemo(
     () =>
       isDev
         ? 'https://jsr14wbllzf1.statuspage.io/api/v2/incidents/unresolved.json'
         : 'https://kjb7q9wwny2q.statuspage.io/api/v2/incidents/unresolved.json',
-    [isDev]
+    []
   );
 
   const [message, setMessage] = useState('');

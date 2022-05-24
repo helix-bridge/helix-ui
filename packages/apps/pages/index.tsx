@@ -2,14 +2,19 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useEffect, useState } from 'react';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { CrossChainDirection } from 'shared/model';
-import { getDirectionFromSettings } from 'shared/utils/helper';
+import { getDirectionFromSettings, readStorage } from 'shared/utils/helper';
 import { CrossChain } from '../components/CrossChain';
+import { DisclaimerModal } from '../components/widget/DisclaimerModal';
 
 function Page() {
   const [dir, setDir] = useState<CrossChainDirection>(DEFAULT_DIRECTION);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const loc = getDirectionFromSettings();
+    const warning = readStorage().warning;
+
+    setVisible(warning ?? true);
 
     setDir(loc);
   }, []);
@@ -17,7 +22,7 @@ function Page() {
   return (
     <>
       <CrossChain dir={dir} />
-      {/* <DisclaimerModal visible={visible} onCancel={() => setVisible(false)} onOk={() => setVisible(false)} /> */}
+      <DisclaimerModal visible={visible} onCancel={() => setVisible(false)} onOk={() => setVisible(false)} />
     </>
   );
 }

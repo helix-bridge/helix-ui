@@ -22,4 +22,5 @@ export interface StorageInfo extends HashInfo {
   config?: Partial<{ [key in Network]: ChainConfig }>;
   custom?: Network[];
   activeAccount?: string;
+  warning?: boolean;
 }

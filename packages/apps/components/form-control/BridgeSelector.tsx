@@ -7,6 +7,7 @@ import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { Bridge, CrossChainDirection, CrossToken, CustomFormControlProps, NullableFields } from 'shared/model';
 import { getBridges } from 'shared/utils/bridge';
 import { getDisplayName } from 'shared/utils/network';
+import { BridgeState } from '../bridge/BridgeState';
 
 type TokenOnChainProps = {
   token: CrossToken;
@@ -44,7 +45,9 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
   const isDefault = matches(origin);
 
   return (
-    <div className="p-5 overflow-auto" style={{ maxHeight: '65vh', minHeight: '20vh' }}>
+    <div className="p-5 overflow-auto relative" style={{ maxHeight: '65vh', minHeight: '20vh' }}>
+      <BridgeState className="w-full absolute top-0 right-0 left-0" />
+
       {!bridges.length ? (
         isDefault(direction) ? (
           <Result

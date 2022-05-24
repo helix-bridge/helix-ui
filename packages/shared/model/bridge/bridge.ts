@@ -107,14 +107,12 @@ export class Bridge<C = BridgeConfig> {
     return { name: config.name, mode: config.mode };
   }
 
-  setIssuingComponents(crossComp: FunctionComponent, recordComp: FunctionComponent): void {
+  setIssuingComponents(crossComp: FunctionComponent): void {
     this.crossChain.set(this.issuing, crossComp);
-    this.record.set(this.issuing, recordComp);
   }
 
-  setRedeemComponents(crossComp: FunctionComponent, recordComp: FunctionComponent) {
+  setRedeemComponents(crossComp: FunctionComponent) {
     this.crossChain.set(this.redeem, crossComp);
-    this.record.set(this.redeem, recordComp);
   }
 
   isIssuing(dep: Departure | ChainConfig, arr: Departure | ChainConfig): boolean {
@@ -137,13 +135,5 @@ export class Bridge<C = BridgeConfig> {
 
   get RedeemCrossChainComponent() {
     return this.crossChain.get(this.redeem);
-  }
-
-  get IssuingRecordComponent() {
-    return this.record.get(this.issuing);
-  }
-
-  get RedeemRecordComponent() {
-    return this.record.get(this.redeem);
   }
 }

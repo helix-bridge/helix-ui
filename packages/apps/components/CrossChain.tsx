@@ -29,7 +29,7 @@ import { getDarwiniaBalance, getDVMBalance, getErc20Balance } from 'shared/utils
 import { useAccount, useApi } from '../providers';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { Direction } from './form-control/Direction';
-import { FromItemButton } from './widget/SubmitButton';
+import { FromItemButton } from './widget/FormItemButton';
 
 const isDirectionChanged = (pre: CrossChainDirection, cur: CrossChainDirection) => {
   return !isEqual(
