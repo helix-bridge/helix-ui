@@ -49,6 +49,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
   const allTokens = useMemo(
     () =>
       lodashChain(chainConfigs)
+        .filter((item) => !fromToken || !(fromToken.meta.name === item.name && fromToken.meta.mode === item.mode))
         .map((item) =>
           item.tokens
             .filter(
