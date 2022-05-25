@@ -19,7 +19,7 @@ import { CrossChainStatus, MIDDLE_DURATION } from 'shared/config/constant';
 import { useIsMounted } from 'shared/hooks';
 import {
   NetworkQueryParams,
-  Substrate2SubstrateRecord,
+  HelixHistoryRecord,
   SubstrateSubstrateDVMBridgeConfig,
   UnlockedRecord,
   Vertices,
@@ -114,8 +114,8 @@ function Description({ tip, title, children }: PropsWithChildren<{ tip: string; 
 
 const Page: NextPage<{
   id: string;
-  issuingRecord: Substrate2SubstrateRecord | null;
-  redeemRecord: Substrate2SubstrateRecord | null;
+  issuingRecord: HelixHistoryRecord | null;
+  redeemRecord: HelixHistoryRecord | null;
   lockOrUnlockRecord: FinalActionRecord | null;
   // eslint-disable-next-line complexity
 }> = ({ id, issuingRecord, redeemRecord, lockOrUnlockRecord }) => {
@@ -492,9 +492,7 @@ const Page: NextPage<{
   );
 };
 
-export async function getServerSideProps(
-  context: GetServerSidePropsContext<{ id: string }, Substrate2SubstrateRecord>
-) {
+export async function getServerSideProps(context: GetServerSidePropsContext<{ id: string }, HelixHistoryRecord>) {
   const translations = await serverSideTranslations(context.locale ?? 'en', ['common']);
   const { id } = context.params!;
   const { from, fromMode, to, toMode } = context.query as unknown as NetworkQueryParams;

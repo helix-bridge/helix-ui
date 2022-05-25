@@ -1,6 +1,6 @@
 import { Nullable } from '../type-operator';
 import { Result } from '../substrate-substrateDVM';
-import { Network, NetworkMode } from '../network';
+import { Network } from '../network';
 
 export interface DailyStatistic {
   id: string;
@@ -8,13 +8,12 @@ export interface DailyStatistic {
   dailyCount: number;
 }
 
-export interface Substrate2SubstrateRecord {
+export interface HelixHistoryRecord {
   amount: string;
   bridge: string;
   endTime?: Nullable<number>;
   fee: string;
   fromChain: Network;
-  fromChainMode: NetworkMode;
   id: string;
   laneId: string;
   nonce: string;
@@ -25,6 +24,5 @@ export interface Substrate2SubstrateRecord {
   sender: string;
   startTime: number;
   toChain: Network;
-  toChainMode: NetworkMode;
   token: string;
 }

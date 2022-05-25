@@ -1,18 +1,28 @@
-import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
-import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
-import { Substrate2SubstrateRecord } from 'shared/model';
 import { Tooltip } from 'antd';
 import { formatDistance, fromUnixTime } from 'date-fns';
+import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
+import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
+import { HelixHistoryRecord } from 'shared/model';
+import { isDVM2Substrate } from 'shared/utils/bridge';
 import { fromWei, prettyNumber, revertAccount } from 'shared/utils/helper';
-import { getChainConfig, getDisplayName } from 'shared/utils/network';
+import { getChainConfig, getDisplayName, toVertices } from 'shared/utils/network';
 
-export function Record({ record }: { record: Substrate2SubstrateRecord }) {
-  const { fromChainMode, fromChain, sender, recipient, toChain, toChainMode } = record;
-  const fromConfig = getChainConfig(fromChain, fromChainMode);
-  const toConfig = getChainConfig(toChain, toChainMode);
-  const fromAccount = revertAccount(sender, { name: fromChain, mode: fromChainMode });
-  const toAccount = revertAccount(recipient, { name: toChain, mode: toChainMode });
-  const amount = fromWei({ value: record.amount, decimals: 9 }, prettyNumber);
+// eslint-disable-next-line complexity
+export function Record({ record }: { record: HelixHistoryRecord }) {
+  const { fromChain, sender, recipient, toChain } = record;
+  const departure = toVertices(fromChain);
+  const arrival = toVertices(toChain);
+  const fromConfig = getChainConfig(departure);
+  const toConfig = getChainConfig(arrival);
+  const fromAccount = revertAccount(sender, departure);
+  const toAccount = revertAccount(recipient, arrival);
+  const amount = fromWei(
+    { value: record.amount, decimals: isDVM2Substrate(departure, arrival) ? 18 : 9 },
+    prettyNumber
+  );
+  const tokenName = !record.token.startsWith('0x')
+    ? record.token
+    : `${departure.mode === 'dvm' ? 'x' : ''}${fromConfig?.isTest ? 'O' : ''}RING`;
 
   return (
     <>
@@ -41,14 +51,14 @@ export function Record({ record }: { record: Substrate2SubstrateRecord }) {
         </EllipsisMiddle>
       </div>
 
-      <span>{`${fromChainMode === 'dvm' ? 'x' : ''}${fromConfig?.isTest ? 'O' : ''}RING`}</span>
+      <span>{tokenName}</span>
 
       <Tooltip title={amount}>
         <span className="justify-self-center max-w-full truncate">{amount}</span>
       </Tooltip>
 
       <span className="justify-self-center">
-        {fromWei({ value: record.fee, decimals: fromChainMode === 'dvm' ? 18 : 9 })}
+        {fromWei({ value: record.fee, decimals: departure.mode === 'dvm' ? 18 : 9 })}
       </span>
 
       <span className="justify-self-center capitalize">{record.bridge}</span>

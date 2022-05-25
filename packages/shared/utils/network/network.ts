@@ -160,3 +160,9 @@ export function getDisplayName(config: ChainConfig | null, networkMode?: Network
 
   return mode === 'dvm' ? `${name} Smart Chain` : name;
 }
+
+export function toVertices(name: string): Vertices {
+  const isDvm = name.includes('-dvm');
+
+  return isDvm ? { name: name.split('-')[0] as Network, mode: 'dvm' } : { name: name as Network, mode: 'native' };
+}
