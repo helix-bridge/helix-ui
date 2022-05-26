@@ -1,5 +1,4 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { message, Tag, Tooltip } from 'antd';
+import { message } from 'antd';
 import BN from 'bn.js';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +13,7 @@ import {
   PolkadotConnection,
   SubmitFn,
 } from 'shared/model';
-import { isKton, toWei } from 'shared/utils/helper';
+import { toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
@@ -104,31 +103,7 @@ export function Substrate2DVM({
         )}
       />
 
-      <CrossChainInfo
-        bridge={bridge}
-        hideFee
-        fee={null}
-        extra={
-          isKton(direction.from.symbol)
-            ? [
-                {
-                  name: t('Attention'),
-                  content: (
-                    <Tooltip
-                      title={t(
-                        'Please perform a claim asset operation in the history section after the transfer is submitted.'
-                      )}
-                    >
-                      <Tag color="cyan" icon={<InfoCircleOutlined />} className="flex items-center mr-0">
-                        {t('Need claim')}
-                      </Tag>
-                    </Tooltip>
-                  ),
-                },
-              ]
-            : []
-        }
-      ></CrossChainInfo>
+      <CrossChainInfo bridge={bridge} hideFee fee={null}></CrossChainInfo>
     </>
   );
 }

@@ -14,7 +14,8 @@ type Fee = Pick<CrossToken, 'symbol' | 'amount'>;
 export function TransferConfirm<T extends Bridge = Bridge>({
   value,
   fee,
-}: PropsWithChildren<TxConfirmComponentProps<T> & { fee: Fee | null }>) {
+  needClaim,
+}: PropsWithChildren<TxConfirmComponentProps<T> & { fee: Fee | null; needClaim?: boolean }>) {
   const { from, to } = value.direction;
   const { t } = useTranslation('common', { i18n: i18n?.use(initReactI18next) });
 
@@ -40,8 +41,8 @@ export function TransferConfirm<T extends Bridge = Bridge>({
             </div>
 
             <div className="flex flex-col items-end">
-              <Typography.Text strong type="warning">
-                {from.amount}
+              <Typography.Text strong type="danger">
+                -{from.amount}
               </Typography.Text>
               <Typography.Text strong>{from.symbol}</Typography.Text>
             </div>
@@ -58,7 +59,7 @@ export function TransferConfirm<T extends Bridge = Bridge>({
 
             <div className="flex flex-col items-end">
               <Typography.Text strong type="success">
-                {to.amount}
+                +{to.amount}
               </Typography.Text>
               <Typography.Text strong>{to.symbol}</Typography.Text>
             </div>
@@ -94,13 +95,15 @@ export function TransferConfirm<T extends Bridge = Bridge>({
           </div>
         </div>
 
-        <Alert
-          type="warning"
-          message={t(
-            'Please initiate a claim transaction of the Ethereum Network in the Transfer History to receive this token. And it needs to prepare some ETH as the gas fee to claim this token.'
-          )}
-          showIcon
-        />
+        {needClaim && (
+          <Alert
+            type="warning"
+            message={t(
+              'Please initiate a claim transaction of the Ethereum Network in the Transfer History to receive this token. And it needs to prepare some ETH as the gas fee to claim this token.'
+            )}
+            showIcon
+          />
+        )}
       </div>
     </>
   );

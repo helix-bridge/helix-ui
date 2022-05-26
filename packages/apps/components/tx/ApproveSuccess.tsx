@@ -1,10 +1,10 @@
 import { Typography } from 'antd';
-import { useTranslation } from 'react-i18next';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { TxDoneComponentProps } from 'shared/model';
+import { useITranslation } from '../../hooks';
 
 export function ApproveDone({ value, tx }: TxDoneComponentProps) {
-  const { t } = useTranslation();
+  const { t } = useITranslation();
 
   return (
     <>

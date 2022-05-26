@@ -2,11 +2,10 @@ import { EyeInvisibleFilled } from '@ant-design/icons';
 import { Button, Tooltip, Typography } from 'antd';
 import BN from 'bn.js';
 import { useCallback, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { CrossChainDirection, CrossChainPayload } from 'shared/model';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
 import { applyModalObs, approveToken, createTxWorkflow, getAllowance } from 'shared/utils/tx';
-import { useAfterTx } from '../../hooks';
+import { useAfterTx, useITranslation } from '../../hooks';
 import { useAccount, useTx } from '../../providers';
 import { ApproveConfirm } from '../tx/ApproveConfirm';
 import { ApproveDone } from '../tx/ApproveSuccess';
@@ -21,7 +20,7 @@ interface AllowanceProps {
 }
 
 export function Allowance({ direction, onChange, spender, tokenAddress }: AllowanceProps) {
-  const { t } = useTranslation();
+  const { t } = useITranslation();
   const { account } = useAccount();
   const { afterApprove } = useAfterTx<ApproveValue>();
   const { observer } = useTx();
@@ -63,6 +62,7 @@ export function Allowance({ direction, onChange, spender, tokenAddress }: Allowa
             const value = { sender: account, direction };
             const { sender } = value;
             const beforeTx = applyModalObs({
+              title: <h3 className="text-center mb-4">{t('Approve')}</h3>,
               content: <ApproveConfirm value={value} />,
             });
             const txObs = approveToken({

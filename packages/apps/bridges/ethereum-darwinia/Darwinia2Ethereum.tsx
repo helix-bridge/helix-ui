@@ -1,6 +1,6 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { BN_ZERO } from '@polkadot/util';
-import { message, Tag, Tooltip } from 'antd';
+import { message, Tag, Tooltip, Typography } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -100,7 +100,7 @@ export function Darwinia2Ethereum({
       }
 
       const beforeTransfer = applyModalObs({
-        content: <TransferConfirm fee={feeWithSymbol!} value={data} />,
+        content: <TransferConfirm fee={feeWithSymbol!} value={data} needClaim />,
       });
       const obs = redeem(data, api);
 
@@ -178,26 +178,18 @@ export function Darwinia2Ethereum({
         }}
       />
 
-      <CrossChainInfo
-        bridge={bridge}
-        fee={feeWithSymbol}
-        extra={[
-          {
-            name: t('Attention'),
-            content: (
-              <Tooltip
-                title={t(
-                  'Please perform a claim asset operation in the history section after the transfer is submitted.'
-                )}
-              >
-                <Tag color="cyan" icon={<InfoCircleOutlined />} className="flex items-center mr-0">
-                  {t('Need claim')}
-                </Tag>
-              </Tooltip>
-            ),
-          },
-        ]}
-      ></CrossChainInfo>
+      <CrossChainInfo bridge={bridge} fee={feeWithSymbol}>
+        <div className={`flex justify-between items-center transition-all duration-100`}>
+          <Typography.Text>{t('Attention')}</Typography.Text>
+          <Tooltip
+            title={t('Please perform a claim asset operation in the history section after the transfer is submitted.')}
+          >
+            <Tag color="cyan" icon={<InfoCircleOutlined />} className="flex items-center mr-0">
+              {t('Need claim')}
+            </Tag>
+          </Tooltip>
+        </div>
+      </CrossChainInfo>
     </>
   );
 }
