@@ -55,7 +55,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
 
           <Button
             onClick={() => {
-              window.open('https://wormhole.darwinia.network', '_blank');
+              window.open('https://apps.helixbridge.app/', '_blank');
             }}
             type="primary"
             size="large"

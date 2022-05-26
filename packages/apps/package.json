@@ -6,7 +6,7 @@
     "dev": "NODE_OPTIONS='--inspect' next dev -p 4003",
     "build": "next build",
     "build:test": "NODE_ENV=test next build",
-    "start": "next start",
+    "start": "next start -p 4003",
     "start:test": "NODE_ENV=test next start",
     "init:bridge": "./bridge.sh",
     "i18next:scanner": "i18next-scanner --config i18next-scanner.config.js",

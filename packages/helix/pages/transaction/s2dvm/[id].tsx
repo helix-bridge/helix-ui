@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
 import { WITHDRAW_ADDRESS } from 'shared/config/address';
+import { ENDPOINT } from 'shared/config/env';
 import { HelixHistoryRecord, SubstrateDVMBridgeConfig } from 'shared/model';
 import { getBridge, isDVM2Substrate } from 'shared/utils/bridge';
 import { fromWei, gqlName, prettyNumber, revertAccount } from 'shared/utils/helper';
@@ -19,7 +20,6 @@ import { Timestamp } from '../../../components/transaction/Timestamp';
 import { TransferDescription } from '../../../components/transaction/TransferDescription';
 import { TransferDetail } from '../../../components/transaction/TransferDetail';
 import { TxStatus } from '../../../components/transaction/TxStatus';
-import { endpoint } from '../../../config/endpoint';
 
 const HISTORY_RECORD_BY_ID = gql`
   query historyRecordById($id: String!) {
@@ -155,7 +155,7 @@ const Page: NextPage<{
 export async function getServerSideProps(context: GetServerSidePropsContext<{ id: string }, HelixHistoryRecord>) {
   const translations = await serverSideTranslations(context.locale ?? 'en', ['common']);
   const { id } = context.params!;
-  const result = await request(endpoint, HISTORY_RECORD_BY_ID, { id });
+  const result = await request(ENDPOINT, HISTORY_RECORD_BY_ID, { id });
 
   return {
     props: {

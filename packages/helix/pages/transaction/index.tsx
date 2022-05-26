@@ -8,13 +8,14 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useVirtual } from 'react-virtual';
+import { ENDPOINT } from 'shared/config/env';
 import { HelixHistoryRecord } from 'shared/model';
 import { isS2S, isSubstrateDVM } from 'shared/utils/bridge';
 import { convertToDvm, gqlName, isValidAddress } from 'shared/utils/helper';
 import { chainConfigs, toVertices } from 'shared/utils/network';
 import { Record } from '../../components/transaction/Record';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
-import { endpoint, Path } from '../../config';
+import { Path } from '../../config';
 import { useAccountStatistic, useDailyStatistic } from '../../hooks';
 
 const HISTORY_RECORDS = gql`
@@ -47,7 +48,7 @@ function Page({ records }: { records: HelixHistoryRecord[] }) {
   const [isValidSender, setIsValidSender] = useState(true);
   const router = useRouter();
   const { data: dailyStatistic } = useDailyStatistic();
-  const { total: accountTotal } = useAccountStatistic(endpoint);
+  const { total: accountTotal } = useAccountStatistic(ENDPOINT);
   const [page, setPage] = useState(1);
 
   const transactionsTotal = useMemo(
@@ -219,7 +220,7 @@ function Page({ records }: { records: HelixHistoryRecord[] }) {
 export const getServerSideProps = async ({ locale }: { locale: string }) => {
   const translations = await serverSideTranslations(locale ?? 'en', ['common']);
 
-  const records = await request(endpoint, HISTORY_RECORDS, {
+  const records = await request(ENDPOINT, HISTORY_RECORDS, {
     row: PAGE_SIZE,
     page: 0,
   }).then((res) => res && res[gqlName(HISTORY_RECORDS)]);

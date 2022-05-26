@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { from as fromRx, map, of, switchMap } from 'rxjs';
 import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
 import { CrossChainStatus, MIDDLE_DURATION } from 'shared/config/constant';
+import { ENDPOINT } from 'shared/config/env';
 import { useIsMounted } from 'shared/hooks';
 import { HelixHistoryRecord, NetworkQueryParams, SubstrateSubstrateDVMBridgeConfig, Vertices } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
@@ -21,7 +22,6 @@ import { Timestamp } from '../../../components/transaction/Timestamp';
 import { TransferDescription } from '../../../components/transaction/TransferDescription';
 import { TransferDetail } from '../../../components/transaction/TransferDetail';
 import { TxStatus } from '../../../components/transaction/TxStatus';
-import { endpoint } from '../../../config';
 
 const BURN_RECORD_QUERY = gql`
   query burnRecord($id: ID!) {
@@ -228,11 +228,11 @@ const Page: NextPage<{
     const sub$$ = of(null)
       .pipe(
         switchMap(() => {
-          const unlockObs = fromRx(request(endpoint, SUBSTRATE_UNLOCKED_RECORD_QUERY, { id })).pipe(
+          const unlockObs = fromRx(request(ENDPOINT, SUBSTRATE_UNLOCKED_RECORD_QUERY, { id })).pipe(
             map((res) => res[gqlName(SUBSTRATE_UNLOCKED_RECORD_QUERY)])
           );
 
-          const lockObs = fromRx(request(endpoint, DVM_LOCK_RECORD_QUERY, { id })).pipe(
+          const lockObs = fromRx(request(ENDPOINT, DVM_LOCK_RECORD_QUERY, { id })).pipe(
             map((res) => res[gqlName(DVM_LOCK_RECORD_QUERY)])
           );
 
@@ -321,15 +321,15 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ id
   const bridge = getBridge(vertices);
   const isIssuing = bridge.isIssuing(...vertices);
 
-  const issuing = request(endpoint, S2S_ISSUING_RECORD_QUERY, { id });
+  const issuing = request(ENDPOINT, S2S_ISSUING_RECORD_QUERY, { id });
 
-  const unlocked = request(endpoint, SUBSTRATE_UNLOCKED_RECORD_QUERY, { id }).then(
+  const unlocked = request(ENDPOINT, SUBSTRATE_UNLOCKED_RECORD_QUERY, { id }).then(
     (res) => res && res[gqlName(SUBSTRATE_UNLOCKED_RECORD_QUERY)]
   );
 
-  const redeem = request(endpoint, BURN_RECORD_QUERY, { id });
+  const redeem = request(ENDPOINT, BURN_RECORD_QUERY, { id });
 
-  const locked = request(endpoint, DVM_LOCK_RECORD_QUERY, { id }).then(
+  const locked = request(ENDPOINT, DVM_LOCK_RECORD_QUERY, { id }).then(
     (res) => res && res[gqlName(DVM_LOCK_RECORD_QUERY)]
   );
 
