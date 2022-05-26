@@ -1,14 +1,15 @@
 import { Typography } from 'antd';
-import { i18n, useTranslation } from 'next-i18next';
+import { i18n, Trans } from 'next-i18next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { initReactI18next } from 'react-i18next';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { TxDoneComponentProps } from 'shared/model';
 import { isEthereumNetwork } from 'shared/utils/network';
+import { useITranslation } from '../../hooks';
 
 export function TransferDone({ tx, value, hashType = 'txHash' }: TxDoneComponentProps) {
-  const { t } = useTranslation('common', { i18n: i18n?.use(initReactI18next) });
+  const { t } = useITranslation();
   const linkProps = { [hashType]: tx.hash };
 
   return (
@@ -18,10 +19,10 @@ export function TransferDone({ tx, value, hashType = 'txHash' }: TxDoneComponent
 
         <Typography.Paragraph>{t('Transfer Submitted')}</Typography.Paragraph>
 
-        <Typography.Text className="text-center">
-          The transaction has been sent, please check the transfer progress in the{' '}
-          <Link href="/history">{t('history')}</Link>.
-        </Typography.Text>
+        <Trans i18nKey="viewTransactionHistory" i18n={i18n?.use(initReactI18next)} className="text-center">
+          The transaction has been sent, please check the transfer progress in the {''}
+          <Link href="/history">history</Link>
+        </Trans>
 
         <SubscanLink {...linkProps} network={value.direction.from.meta}>
           {t('View in {{scan}} explorer', {

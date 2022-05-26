@@ -185,7 +185,7 @@ export function Darwinia2Ethereum({
             title={t('Please perform a claim asset operation in the history section after the transfer is submitted.')}
           >
             <Tag color="cyan" icon={<InfoCircleOutlined />} className="flex items-center mr-0">
-              {t('Need claim')}
+              {t('Need Claim')}
             </Tag>
           </Tooltip>
         </div>

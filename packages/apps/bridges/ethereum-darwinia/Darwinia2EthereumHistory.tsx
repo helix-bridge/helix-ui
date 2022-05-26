@@ -118,7 +118,7 @@ export function Darwinia2EthereumHistory({ confirmed }: { confirmed: boolean | n
           ))
         ) : (
           <Empty
-            description={!data ? t('Please connect to Polkadot extension') : t('No data')}
+            description={!data ? t('Please connect to Polkadot extension') : t('No Data')}
             image={!data ? <Logo name="polkadot.svg" width={96} height={96} /> : undefined}
           />
         )}

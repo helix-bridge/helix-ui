@@ -1,7 +1,6 @@
 import { message } from 'antd';
 import BN from 'bn.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
 import { EMPTY, from } from 'rxjs';
 import {
   Bridge,
@@ -20,7 +19,7 @@ import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
-import { useAfterTx } from '../../hooks';
+import { useAfterTx, useITranslation } from '../../hooks';
 import { useAccount, useApi, useTx } from '../../providers';
 import { EthereumDarwiniaBridgeConfig, IssuingPayload } from './model';
 import { getIssuingFee, issuing } from './utils';
@@ -47,7 +46,7 @@ export function Ethereum2Darwinia({
   CrossToken<EthereumChainConfig>,
   CrossToken<PolkadotChainConfig>
 >) {
-  const { t } = useTranslation();
+  const { t } = useITranslation();
   const { departureConnection } = useApi();
   const [allowance, setAllowance] = useState<BN | null>(null);
   const [balance, setBalance] = useState<BN | null>(null);
@@ -166,10 +165,9 @@ export function Ethereum2Darwinia({
         bridge={bridge}
         extraTip={
           <span className="inline-block mt-2">
-            <Trans>
-              Please be sure to fill in the real Darwinia mainnet account, and keep the account recovery files such as
-              mnemonic properly.
-            </Trans>
+            {t(
+              'Please be sure to fill in the real Darwinia mainnet account, and keep the account recovery files such as mnemonic properly.'
+            )}
           </span>
         }
       />

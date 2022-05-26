@@ -194,7 +194,7 @@ export function SubstrateDVM2Substrate({
             content: dailyLimit ? (
               <Typography.Text>
                 {dailyLimit.isZero()
-                  ? t('No limit')
+                  ? t('Infinite')
                   : fromWei({ value: dailyLimit, decimals: 9 }, (val: string) =>
                       prettyNumber(val, { ignoreZeroDecimal: true })
                     )}

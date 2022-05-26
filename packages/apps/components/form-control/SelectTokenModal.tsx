@@ -82,7 +82,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
   );
 
   return (
-    <BaseModal title="Select a token" visible={visible} footer={null} width={540} onCancel={onCancel}>
+    <BaseModal title={t('Select Token')} visible={visible} footer={null} width={540} onCancel={onCancel}>
       <Input
         suffix={<SearchOutlined />}
         size="large"

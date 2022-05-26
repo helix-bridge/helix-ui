@@ -133,7 +133,7 @@ function ActiveAccountStrict() {
           icon={isConnecting && <LoadingOutlined />}
           onClick={() => connectDepartureNetwork(departure)}
         >
-          {t('Connect Wallet')}
+          {t('Connect to Wallet')}
         </Button>
       )}
 
@@ -243,7 +243,7 @@ function ActiveAccountNormal() {
           icon={isConnecting && <LoadingOutlined />}
           onClick={() => setIsWalletVisible(true)}
         >
-          {t('Connect Wallet')}
+          {t('Connect to Wallet')}
         </Button>
       )}
 

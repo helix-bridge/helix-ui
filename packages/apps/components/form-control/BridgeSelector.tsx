@@ -52,10 +52,10 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
         isDefault(direction) ? (
           <Result
             icon={<MehOutlined />}
-            title="Please select the parameters for your desired transfer and enter an amount."
+            title={t('Please select the parameters for your desired transfer and enter an amount.')}
           />
         ) : (
-          <Result icon={<FrownOutlined />} title="No bridge found for selected tokens" />
+          <Result icon={<FrownOutlined />} title={t('No bridge found for selected tokens')} />
         )
       ) : (
         <Radio.Group

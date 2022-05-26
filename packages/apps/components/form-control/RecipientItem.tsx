@@ -7,7 +7,7 @@ import { IdentAccountAddress } from 'shared/components/widget/IdentAccountAddres
 import { FORM_CONTROL } from 'shared/config/constant';
 import { ConnectionStatus, CrossChainComponentProps, PolkadotChainConfig } from 'shared/model';
 import { convertToSS58, isSameAddress, isValidAddressStrict } from 'shared/utils/helper';
-import { isPolkadotNetwork } from 'shared/utils/network';
+import { getDisplayName, isPolkadotNetwork } from 'shared/utils/network';
 import { useApi } from '../../providers';
 
 // eslint-disable-next-line complexity
@@ -79,7 +79,7 @@ export function RecipientItem({
           message:
             type === 'ethereum'
               ? t('Please fill in a {{network}} address which start with 0x', {
-                  network: upperFirst(to.meta.name),
+                  network: getDisplayName(to.meta),
                 })
               : t('Please enter a valid {{network}} address', { network: upperFirst(to.meta.name) }),
         },

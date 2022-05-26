@@ -29,7 +29,7 @@ export function useAfterTx<T extends CrossChainPayload>() {
       () => {
         const { destroy } = applyModal({
           content: <Comp tx={tx} value={payload} hashType={hashType} />,
-          okText: t('Cross-chain history'),
+          okText: t('History'),
           okButtonProps: {
             size: 'large',
             className: 'w-full',
