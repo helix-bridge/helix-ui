@@ -14,12 +14,13 @@ export function Record({ record }: { record: HelixHistoryRecord }) {
   const arrival = toVertices(toChain);
   const fromConfig = getChainConfig(departure);
   const toConfig = getChainConfig(arrival);
-  const fromAccount = revertAccount(sender, departure);
-  const toAccount = revertAccount(recipient, arrival);
-  const amount = fromWei(
-    { value: record.amount, decimals: isDVM2Substrate(departure, arrival) ? 18 : 9 },
-    prettyNumber
+  const fromAccount = revertAccount(sender, fromConfig);
+  const toAccount = revertAccount(recipient, toConfig);
+
+  const amount = fromWei({ value: record.amount, decimals: isDVM2Substrate(departure, arrival) ? 18 : 9 }, (val) =>
+    prettyNumber(val, { ignoreZeroDecimal: true })
   );
+
   const tokenName = !record.token.startsWith('0x')
     ? record.token
     : `${departure.mode === 'dvm' ? 'x' : ''}${fromConfig?.isTest ? 'O' : ''}RING`;
@@ -54,7 +55,9 @@ export function Record({ record }: { record: HelixHistoryRecord }) {
       <span>{tokenName}</span>
 
       <Tooltip title={amount}>
-        <span className="justify-self-center max-w-full truncate">{amount}</span>
+        <span className="justify-self-center max-w-full truncate">
+          {prettyNumber(amount, { decimal: 3, ignoreZeroDecimal: true })}
+        </span>
       </Tooltip>
 
       <span className="justify-self-center">

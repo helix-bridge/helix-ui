@@ -1,2 +1,2 @@
 export * from './query';
-export * from './address';
+export * from 'shared/config/address';

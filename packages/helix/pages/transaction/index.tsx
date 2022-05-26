@@ -9,8 +9,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useVirtual } from 'react-virtual';
 import { HelixHistoryRecord } from 'shared/model';
+import { isS2S, isSubstrateDVM } from 'shared/utils/bridge';
 import { convertToDvm, gqlName, isValidAddress } from 'shared/utils/helper';
-import { chainConfigs } from 'shared/utils/network';
+import { chainConfigs, toVertices } from 'shared/utils/network';
 import { Record } from '../../components/transaction/Record';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
 import { endpoint, Path } from '../../config';
@@ -76,7 +77,6 @@ function Page({ records }: { records: HelixHistoryRecord[] }) {
     }
   }, [data]);
 
-  // eslint-disable-next-line complexity
   useEffect(() => {
     const [lastItem] = [...rowVirtualizer.virtualItems].reverse();
 
@@ -177,8 +177,17 @@ function Page({ records }: { records: HelixHistoryRecord[] }) {
                       }}
                       key={row.key}
                       onClick={() => {
+                        const from = toVertices(record.fromChain);
+                        const to = toVertices(record.toChain);
+                        const radix = 16;
+                        const paths = isS2S(from, to)
+                          ? ['s2s', record.laneId + '0x' + Number(record.nonce).toString(radix)]
+                          : isSubstrateDVM(from, to)
+                          ? ['s2dvm', record.id]
+                          : [];
+
                         router.push({
-                          pathname: Path.transaction + '/' + record.id,
+                          pathname: `${Path.transaction}/${paths.join('/')}`,
                           query: new URLSearchParams({
                             from: record.fromChain,
                             to: record.toChain,

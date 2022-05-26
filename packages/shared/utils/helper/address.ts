@@ -5,8 +5,7 @@ import { hexToU8a, numberToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { isNull } from 'lodash';
 import Web3 from 'web3';
-import { SYSTEM_ChAIN_CONFIGURATIONS } from '../../config/network';
-import { PolkadotChainConfig, Vertices } from '../../model';
+import { ChainConfig, PolkadotChainConfig } from '../../model';
 
 export const registry = new TypeRegistry();
 
@@ -78,14 +77,12 @@ export function remove0x(text: string): string {
 }
 
 // eslint-disable-next-line complexity
-export function revertAccount(account: string, vertices: Vertices): string {
-  const config = SYSTEM_ChAIN_CONFIGURATIONS.find((item) => item.name === vertices.name && item.mode === vertices.mode);
-
-  if (vertices.mode === 'native' || config?.wallets.includes('polkadot')) {
+export function revertAccount(account: string, config: ChainConfig): string {
+  if (config.mode === 'native' || config?.wallets.includes('polkadot')) {
     return convertToSS58(account, (<PolkadotChainConfig>config).ss58Prefix);
   }
 
-  if (vertices.mode === 'dvm' && account.startsWith('0x64766d3a00000000000000')) {
+  if (config.mode === 'dvm' && account.startsWith('0x64766d3a00000000000000')) {
     return convertToEth(account) ?? account;
   }
 
