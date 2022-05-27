@@ -3,18 +3,15 @@ import { Affix, Button, Input, Spin } from 'antd';
 import { useQuery } from 'graphql-hooks';
 import request, { gql } from 'graphql-request';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useVirtual } from 'react-virtual';
 import { ENDPOINT } from 'shared/config/env';
 import { HelixHistoryRecord } from 'shared/model';
-import { isS2S, isSubstrateDVM } from 'shared/utils/bridge';
 import { convertToDvm, gqlName, isValidAddress } from 'shared/utils/helper';
-import { chainConfigs, toVertices } from 'shared/utils/network';
+import { chainConfigs } from 'shared/utils/network';
 import { Record } from '../../components/transaction/Record';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
-import { Path } from '../../config';
 import { useAccountStatistic, useDailyStatistic } from '../../hooks';
 
 const HISTORY_RECORDS = gql`
@@ -45,7 +42,6 @@ const PAGE_SIZE = 50;
 function Page({ records }: { records: HelixHistoryRecord[] }) {
   const { t } = useTranslation('common');
   const [isValidSender, setIsValidSender] = useState(true);
-  const router = useRouter();
   const { data: dailyStatistic } = useDailyStatistic();
   const { total: accountTotal } = useAccountStatistic(ENDPOINT);
   const [page, setPage] = useState(1);
@@ -77,17 +73,24 @@ function Page({ records }: { records: HelixHistoryRecord[] }) {
     }
   }, [data]);
 
+  // eslint-disable-next-line complexity
   useEffect(() => {
     const [lastItem] = [...rowVirtualizer.virtualItems].reverse();
 
-    if (lastItem && lastItem.index && !loading && lastItem.index >= source.length - 1) {
+    if (
+      lastItem &&
+      lastItem.index &&
+      !loading &&
+      lastItem.index >= source.length - 1 &&
+      data?.historyRecords.length === PAGE_SIZE
+    ) {
       setPage((pre) => pre + 1);
     }
-  }, [loading, rowVirtualizer.virtualItems, source]);
+  }, [data?.historyRecords.length, loading, rowVirtualizer.virtualItems, source]);
 
   useEffect(() => {
     // for refresh
-    if (page === 0 && !!source.length) {
+    if (page === 0 && source.length === PAGE_SIZE) {
       setPage(1);
     }
   }, [page, source.length]);
@@ -183,27 +186,9 @@ function Page({ records }: { records: HelixHistoryRecord[] }) {
                         transform: `translateY(${row.start}px)`,
                       }}
                       key={row.key}
-                      onClick={() => {
-                        const from = toVertices(record.fromChain);
-                        const to = toVertices(record.toChain);
-                        const radix = 16;
-                        const paths = isS2S(from, to)
-                          ? ['s2s', record.laneId + '0x' + Number(record.nonce).toString(radix)]
-                          : isSubstrateDVM(from, to)
-                          ? ['s2dvm', record.id]
-                          : [];
-
-                        router.push({
-                          pathname: `${Path.transaction}/${paths.join('/')}`,
-                          query: new URLSearchParams({
-                            from: record.fromChain,
-                            to: record.toChain,
-                          }).toString(),
-                        });
-                      }}
                     >
                       {isLoaderRow ? (
-                        data.historyRecords?.length ? (
+                        data.historyRecords?.length === PAGE_SIZE ? (
                           <Spin className="col-span-full" />
                         ) : (
                           <span className="col-span-full text-center">{t('Nothing more to load')}</span>

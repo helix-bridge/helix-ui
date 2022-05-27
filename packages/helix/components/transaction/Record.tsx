@@ -1,11 +1,14 @@
-import { Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import { formatDistance, fromUnixTime } from 'date-fns';
+import { useRouter } from 'next/router';
 import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
 import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
+import { Icon } from 'shared/components/widget/Icon';
 import { HelixHistoryRecord } from 'shared/model';
-import { isDVM2Substrate } from 'shared/utils/bridge';
+import { isDVM2Substrate, isS2S, isSubstrateDVM } from 'shared/utils/bridge';
 import { fromWei, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { getChainConfig, getDisplayName, toVertices } from 'shared/utils/network';
+import { Path } from '../../config';
 
 // eslint-disable-next-line complexity
 export function Record({ record }: { record: HelixHistoryRecord }) {
@@ -16,6 +19,7 @@ export function Record({ record }: { record: HelixHistoryRecord }) {
   const toConfig = getChainConfig(arrival);
   const fromAccount = revertAccount(sender, fromConfig);
   const toAccount = revertAccount(recipient, toConfig);
+  const router = useRouter();
 
   const amount = fromWei({ value: record.amount, decimals: isDVM2Substrate(departure, arrival) ? 18 : 9 }, (val) =>
     prettyNumber(val, { ignoreZeroDecimal: true })
@@ -65,7 +69,34 @@ export function Record({ record }: { record: HelixHistoryRecord }) {
       </span>
 
       <span className="justify-self-center capitalize">{record.bridge}</span>
-      <CrossChainState value={record.result} />
+
+      <div className="flex items-center">
+        <CrossChainState value={record.result} />
+
+        <Button
+          type="link"
+          onClick={() => {
+            const from = toVertices(record.fromChain);
+            const to = toVertices(record.toChain);
+            const radix = 16;
+            const paths = isS2S(from, to)
+              ? ['s2s', record.laneId + '0x' + Number(record.nonce).toString(radix)]
+              : isSubstrateDVM(from, to)
+              ? ['s2dvm', record.id]
+              : [];
+
+            router.push({
+              pathname: `${Path.transaction}/${paths.join('/')}`,
+              query: new URLSearchParams({
+                from: record.fromChain,
+                to: record.toChain,
+              }).toString(),
+            });
+          }}
+        >
+          <Icon name="view" className="text-xl" />
+        </Button>
+      </div>
     </>
   );
 }
