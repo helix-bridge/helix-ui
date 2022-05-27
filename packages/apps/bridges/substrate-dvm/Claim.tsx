@@ -21,6 +21,9 @@ import { HistoryItem } from '../../components/record/HistoryItem';
 import { useAccount, useTx } from '../../providers';
 import { WITHDRAW_ADDRESS } from './config';
 
+/**
+ * @deprecated remove after implemented in apps
+ */
 export function Claim() {
   const { t } = useTranslation();
   const { account } = useAccount();
