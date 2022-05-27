@@ -7,4 +7,4 @@ export const isDev = ENV === 'development';
 export const isTestChain = CHAIN_TYPE === 'test' || isDev;
 export const isProd = !isDev;
 
-console.log(`🎢 Chain env ${CHAIN_TYPE}; Runtime env ${ENV}`);
+console.log(`⛓️ Chains environment: ${CHAIN_TYPE}; 🖥️ Runtime environment: ${ENV}`);

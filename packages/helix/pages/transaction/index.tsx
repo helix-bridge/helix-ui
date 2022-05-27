@@ -1,6 +1,5 @@
 import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
 import { Affix, Button, Input, Spin } from 'antd';
-import { getUnixTime } from 'date-fns';
 import { useQuery } from 'graphql-hooks';
 import request, { gql } from 'graphql-request';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -58,7 +57,7 @@ function Page({ records }: { records: HelixHistoryRecord[] }) {
 
   const [account, setAccount] = useState<string | undefined>();
 
-  const { data, loading, refetch } = useQuery<{ historyRecords: HelixHistoryRecord[] }>(HISTORY_RECORDS, {
+  const { data, loading } = useQuery<{ historyRecords: HelixHistoryRecord[] }>(HISTORY_RECORDS, {
     variables: { row: PAGE_SIZE, page, sender: account, recipient: account },
   });
 
@@ -85,6 +84,13 @@ function Page({ records }: { records: HelixHistoryRecord[] }) {
       setPage((pre) => pre + 1);
     }
   }, [loading, rowVirtualizer.virtualItems, source]);
+
+  useEffect(() => {
+    // for refresh
+    if (page === 0 && !!source.length) {
+      setPage(1);
+    }
+  }, [page, source.length]);
 
   return (
     <div>
@@ -130,7 +136,7 @@ function Page({ records }: { records: HelixHistoryRecord[] }) {
               type="link"
               onClick={() => {
                 setSource([]);
-                refetch({ variables: { first: PAGE_SIZE, startTime: getUnixTime(new Date()) } });
+                setPage(0);
               }}
               disabled={loading}
               className="flex items-center cursor-pointer"
@@ -217,8 +223,8 @@ function Page({ records }: { records: HelixHistoryRecord[] }) {
   );
 }
 
-export const getServerSideProps = async ({ locale }: { locale: string }) => {
-  const translations = await serverSideTranslations(locale ?? 'en', ['common']);
+export async function getStaticProps() {
+  const translations = await serverSideTranslations('en', ['common']);
 
   const records = await request(ENDPOINT, HISTORY_RECORDS, {
     row: PAGE_SIZE,
@@ -230,7 +236,8 @@ export const getServerSideProps = async ({ locale }: { locale: string }) => {
       ...translations,
       records,
     },
+    revalidate: 10,
   };
-};
+}
 
 export default Page;
