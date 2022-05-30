@@ -140,14 +140,15 @@ export function Ethereum2Darwinia({
       setFee(result);
 
       if (onFeeChange) {
-        const amount = fromWei({ value: result });
-
-        onFeeChange(isRing(direction.from.symbol) ? +amount : 0);
+        onFeeChange({
+          amount: +fromWei({ value: result }),
+          symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
+        });
       }
     });
 
     return () => sub$$.unsubscribe();
-  }, [bridge, direction.from.symbol, onFeeChange]);
+  }, [bridge, direction.from.meta.tokens, direction.from.symbol, onFeeChange]);
 
   useEffect(() => {
     if (departureConnection.chainId !== direction.from.meta.ethereumChain.chainId) {

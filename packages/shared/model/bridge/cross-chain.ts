@@ -46,7 +46,7 @@ export interface CrossChainComponentProps<
   // make sure page setState function direction to avoid infinite update
   setSubmit: React.Dispatch<React.SetStateAction<SubmitFn>>;
   setBridgeState: React.Dispatch<React.SetStateAction<BridgeState>>;
-  onFeeChange: React.Dispatch<React.SetStateAction<number | null>>;
+  onFeeChange: React.Dispatch<React.SetStateAction<{ amount: number; symbol: string } | null>>;
   updateAllowancePayload: React.Dispatch<React.SetStateAction<{ spender: string; tokenAddress: string } | null>>;
 }
 

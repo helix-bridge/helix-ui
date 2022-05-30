@@ -150,14 +150,15 @@ export function SubstrateDVM2Substrate({
       setFee(result);
 
       if (onFeeChange) {
-        const amount = fromWei({ value: result, decimals: direction.from.decimals });
-
-        onFeeChange(isRing(direction.from.symbol) ? +amount : 0);
+        onFeeChange({
+          amount: isRing(direction.from.symbol) ? +fromWei({ value: result, decimals: direction.from.decimals }) : 0,
+          symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
+        });
       }
     });
 
     return () => sub$$.unsubscribe();
-  }, [bridge, direction.from.decimals, direction.from.symbol, onFeeChange]);
+  }, [bridge, direction.from.decimals, direction.from.meta.tokens, direction.from.symbol, onFeeChange]);
 
   useEffect(() => {
     setBridgeState({ status: bridgeState.status, reason: bridgeState.reason });

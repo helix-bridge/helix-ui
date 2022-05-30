@@ -13,7 +13,7 @@ import {
   PolkadotConnection,
   SubmitFn,
 } from 'shared/model';
-import { toWei } from 'shared/utils/helper';
+import { isRing, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
@@ -84,9 +84,12 @@ export function Substrate2DVM({
 
   useEffect(() => {
     if (onFeeChange) {
-      onFeeChange(0);
+      onFeeChange({
+        amount: 0,
+        symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
+      });
     }
-  }, [onFeeChange]);
+  }, [direction.from.meta.tokens, onFeeChange]);
 
   return (
     <>

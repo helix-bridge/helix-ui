@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { EMPTY, from } from 'rxjs';
 import { useIsMountedOperator } from 'shared/hooks';
 import { CrossChainComponentProps, CrossToken, DVMChainConfig, PolkadotChainConfig, SubmitFn } from 'shared/model';
-import { isKton, toWei } from 'shared/utils/helper';
+import { isKton, isRing, toWei } from 'shared/utils/helper';
 import { getDVMBalance } from 'shared/utils/network/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
@@ -80,9 +80,12 @@ export function DVM2Substrate({
 
   useEffect(() => {
     if (onFeeChange) {
-      onFeeChange(0);
+      onFeeChange({
+        amount: 0,
+        symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
+      });
     }
-  }, [onFeeChange]);
+  }, [direction.from.meta.tokens, onFeeChange]);
 
   return (
     <>

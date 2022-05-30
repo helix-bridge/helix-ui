@@ -155,12 +155,10 @@ export function Darwinia2Ethereum({
   }, [account, bridge, direction.from.amount, recipient]);
 
   useEffect(() => {
-    if (onFeeChange) {
-      const amount = fromWei({ value: fee, decimals: direction.from.decimals });
-
-      onFeeChange(isRing(direction.from.symbol) ? +amount : 0);
+    if (onFeeChange && feeWithSymbol) {
+      onFeeChange({ ...feeWithSymbol, amount: +feeWithSymbol.amount });
     }
-  }, [direction.from.decimals, direction.from.symbol, fee, onFeeChange]);
+  }, [feeWithSymbol, onFeeChange]);
 
   return (
     <>

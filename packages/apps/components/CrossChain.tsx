@@ -89,7 +89,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const [bridge, setBridge] = useState<Bridge | null>(null);
   const [submitFn, setSubmit] = useState<SubmitFn>(emptyObsFactory);
   const [bridgeState, setBridgeState] = useState<BridgeState>({ status: 'available' });
-  const [fee, setFee] = useState<number | null>(null);
+  const [fee, setFee] = useState<{ amount: number; symbol: string } | null>(null);
   const { account } = useAccount();
   const [balance, setBalance] = useState<BN | BN[] | null>(null);
   const { allowance, approve, queryAllowance } = useAllowance(direction);

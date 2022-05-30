@@ -11,7 +11,7 @@ import { Destination } from './Destination';
 
 type DirectionProps = CustomFormControlProps<CrossChainDirection> & {
   initial: CrossChainDirection;
-  fee: number | null;
+  fee: { amount: number; symbol: string } | null;
   balance: BN | BN[] | null;
 };
 
@@ -25,7 +25,7 @@ const calcToAmount = (payment: string, paymentFee: number | null) => {
   return amount >= 0 ? String(amount) : '';
 };
 
-export function Direction({ value, initial, onChange, balance, fee = 0 }: DirectionProps) {
+export function Direction({ value, initial, onChange, balance, fee = { amount: 0, symbol: '' } }: DirectionProps) {
   const data = value ?? initial;
   const { t } = useTranslation();
   const [bridgetStatus, setBridgetStatus] = useState<null | BridgeStatus>(null);
@@ -80,10 +80,16 @@ export function Direction({ value, initial, onChange, balance, fee = 0 }: Direct
   useEffect(() => {
     triggerChange({
       from: data.from,
-      to: { ...data.to, amount: data.from.amount !== '' ? calcToAmount(data.from.amount, fee) : '' },
+      to: {
+        ...data.to,
+        amount:
+          data.from.amount !== '' && fee?.symbol === data.from.symbol
+            ? calcToAmount(data.from.amount, fee.amount)
+            : data.from.amount,
+      },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fee]);
+  }, [fee?.amount, fee?.symbol]);
 
   return (
     <div className={`relative flex justify-between items-center flex-col`}>
@@ -91,7 +97,13 @@ export function Direction({ value, initial, onChange, balance, fee = 0 }: Direct
         title={t('From')}
         value={data.from}
         onChange={(from) => {
-          triggerChange({ from, to: { ...data.to, amount: calcToAmount(from.amount, fee) } });
+          triggerChange({
+            from,
+            to: {
+              ...data.to,
+              amount: fee && fee.symbol === from.symbol ? calcToAmount(from.amount, fee.amount) : from.amount,
+            },
+          });
         }}
       />
 
