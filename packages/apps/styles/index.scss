@@ -2,13 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-// icon font class, symbol usage
+$radius-base: 4px;
+$bg-dark: #151d35;
+
+// icon-font class, symbol usage
 .icon {
-  width: 1em;
-  height: 1em;
   vertical-align: -0.15em;
   fill: currentColor;
   overflow: hidden;
+}
+
+.anticon {
+  vertical-align: 0 !important;
 }
 
 .helix-modal {
@@ -19,7 +24,7 @@
   }
 
   .ant-modal-content {
-    background: #151d35;
+    background: $bg-dark;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(50px);
   }
@@ -29,7 +34,7 @@
     justify-content: center;
     align-items: center;
     border-bottom: none;
-    background: #151d35;
+    background: $bg-dark;
   }
 
   .ant-modal-footer {
@@ -37,5 +42,80 @@
     justify-content: center;
     align-items: center;
     border-top: none;
+  }
+}
+
+.radio-list {
+  display: flex;
+  align-items: center;
+  padding: 2rem 10px;
+  margin-bottom: 1rem;
+  border-radius: $radius-base !important;
+  border-width: 1px !important;
+
+  &.ant-radio-button-wrapper-checked {
+    background: transparent !important;
+  }
+
+  .ant-radio-button + span {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  &::before {
+    visibility: hidden !important;
+  }
+
+  &:hover {
+    color: #ffffff;
+  }
+}
+
+.select-search {
+  .type-select .ant-select-selector {
+    border-radius: 0 !important;
+  }
+
+  .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+    border-right: none;
+    min-width: max-content;
+  }
+
+  .ant-input {
+    border-radius: 0;
+  }
+}
+
+.confirm-modal.ant-modal {
+  max-width: calc(100vw - 32px);
+
+  .ant-modal-content {
+    background-color: $bg-dark;
+  }
+
+  .ant-modal-confirm-btns {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .ant-modal-close-x {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.destination {
+  .ant-input-number-handler-wrap {
+    display: none !important;
+  }
+
+  .ant-input-number-input-wrap {
+    width: 70%;
   }
 }

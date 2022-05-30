@@ -1,50 +1,63 @@
-import { DVMChainConfig } from '../../model';
+import { PolkadotChainConfig } from '../../model';
 
-export const pangolinConfig: DVMChainConfig = {
-  dvm: {
-    kton: '0xDCd3bC4138afE6F324eaA12C356A20cD576edF08',
-    ring: '0xcfDEb76be514c8B8DC8B509E63f95E34ebafD81e',
-    smartKton: '0x8809f9b3ACEF1dA309f49b5Ab97A4C0faA64E6Ae',
-    smartRing: '0xc52287b259b2431ba0f61BC7EBD0eD793B0b7044',
-    smartWithdrawKton: '0x0000000000000000000000000000000000000015',
-    smartWithdrawRing: '0x0000000000000000000000000000000000000015',
-  },
-  ethereumChain: {
-    blockExplorerUrls: ['https://pangolin.subscan.io/'],
-    chainId: '43',
-    chainName: 'pangolin',
-    nativeCurrency: {
-      decimals: 18,
-      symbol: 'PRING',
-    },
-    rpcUrls: ['https://pangolin-rpc.darwinia.network/'],
-  },
-  endpoints: {
-    mmr: 'https://api.subquery.network/sq/darwinia-network/pangolin-mmr',
-  },
+export const pangolinConfig: PolkadotChainConfig = {
   isTest: true,
   logos: [
-    { name: 'pangolin.png', type: 'main', mode: 'native' },
-    { name: 'pangolin.svg', type: 'minor', mode: 'native' },
-    { name: 'pangolin-logo.svg', type: 'assist', mode: 'native' },
-    { name: 'pangolin-smart.png', type: 'main', mode: 'dvm' },
-    { name: 'pangolin-2.png', type: 'minor', mode: 'dvm' },
+    { name: 'pangolin.png', type: 'main' },
+    { name: 'pangolin.svg', type: 'minor' },
+    { name: 'pangolin-logo.svg', type: 'assist' },
   ],
+  mode: 'native',
   name: 'pangolin',
-  provider: {
-    etherscan: 'wss://ropsten.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
-    rpc: 'wss://pangolin-rpc.darwinia.network',
-  },
+  provider: 'wss://pangolin-rpc.darwinia.network',
   social: {
     portal: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangolin-rpc.darwinia.network#/explorer',
     github: 'https://github.com/darwinia-network',
     twitter: 'https://twitter.com/DarwiniaNetwork',
   },
   tokens: [
-    { name: 'PRING', precision: 9, bridges: ['helix'], type: 'native', logo: 'ring.svg' },
-    { name: 'xORING', precision: 9, bridges: ['helix'], type: 'mapping', logo: 'ring.svg' },
+    {
+      name: 'PRING',
+      decimals: 9,
+      cross: [
+        {
+          category: 'helix',
+          bridge: 'substrate-DVM',
+          partner: { name: 'pangolin', mode: 'dvm', role: 'receiver', symbol: 'PRING' },
+        },
+        {
+          category: 'helix',
+          bridge: 'ethereum-darwinia',
+          partner: { name: 'ropsten', mode: 'native', role: 'issuer', symbol: 'PRING' },
+        },
+      ],
+      type: 'native',
+      logo: 'token-ring.svg',
+      symbol: 'PRING',
+      address: '',
+    },
+    {
+      name: 'PKTON',
+      decimals: 9,
+      cross: [
+        {
+          category: 'helix',
+          bridge: 'substrate-DVM',
+          partner: { name: 'pangolin', mode: 'dvm', role: 'receiver', symbol: 'WPKTON' },
+        },
+        {
+          category: 'helix',
+          bridge: 'ethereum-darwinia',
+          partner: { name: 'ropsten', mode: 'native', role: 'issuer', symbol: 'PKTON' },
+        },
+      ],
+      type: 'native',
+      logo: 'token-kton.svg',
+      symbol: 'PKTON',
+      address: '',
+    },
   ],
   ss58Prefix: 42,
   specVersion: 28060,
-  type: ['polkadot', 'darwinia'],
+  wallets: ['polkadot'],
 };

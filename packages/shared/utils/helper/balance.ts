@@ -1,6 +1,6 @@
 import { Unit, unitMap, Units } from 'web3-utils';
 import BN from 'bn.js';
-import { isNull, isNumber, isString, isUndefined } from 'lodash';
+import { isEmpty, isNull, isNumber, isString, isUndefined } from 'lodash';
 import Web3 from 'web3';
 import Bignumber from 'bignumber.js';
 
@@ -23,10 +23,6 @@ export function getUnit(num: number): Unit {
   }
 }
 
-export function getPrecisionByUnit(unit: Unit): number {
-  return ETH_UNITS[unit].length - 1;
-}
-
 // eslint-disable-next-line complexity
 const toStr = (value: WeiValue): string => {
   if (BN.isBN(value) || Bignumber.isBigNumber(value)) {
@@ -47,16 +43,23 @@ const isDecimal = (value: number | string) => {
 };
 
 // eslint-disable-next-line complexity
-export function prettyNumber(
-  value: WeiValue,
-  { decimal, ignoreZeroDecimal }: PrettyNumberOptions = { decimal: 3, ignoreZeroDecimal: false }
-): string {
+export function prettyNumber(value: WeiValue, options?: PrettyNumberOptions): string {
+  const { decimal, ignoreZeroDecimal } =
+    !options || isEmpty(options) ? { decimal: 3, ignoreZeroDecimal: false } : options;
+
   if (value === null || typeof value === 'undefined') {
     return '-';
   }
 
   if (typeof value === 'number' || BN.isBN(value) || Bignumber.isBigNumber(value)) {
     value = value.toString();
+  }
+
+  let unit = '';
+
+  if (/[A-Z]/i.test(value)) {
+    unit = value.slice(-1);
+    value = value.slice(0, -1);
   }
 
   const isDecimalNumber = isDecimal(value);
@@ -74,26 +77,41 @@ export function prettyNumber(
       ? prefix
       : `${prefix}.${'0'.padEnd(decimal!, '0')}`;
 
-  return +result === 0 ? '0' : result;
+  return (+result === 0 ? '0' : result) + unit;
+}
+
+const DEFAULT_DECIMALS = 18;
+
+interface WeiArgs {
+  value?: WeiValue;
+  decimals?: number;
+  amount?: WeiValue;
+  balance?: WeiValue;
 }
 
 export function fromWei(
-  { value, unit = 'ether' }: { value: WeiValue; unit?: Unit },
+  { value, amount, balance, decimals = DEFAULT_DECIMALS }: WeiArgs,
   ...fns: ((value: string) => string)[]
 ): string {
+  const unit = getUnit(decimals);
+  const data = value || amount || balance;
+
   return [toStr, (val: string) => Web3.utils.fromWei(val || '0', unit), ...fns].reduce(
     (acc, fn) => fn(acc as string),
-    value
+    data
   ) as string;
 }
 
 export function toWei(
-  { value, unit = 'ether' }: { value: WeiValue; unit?: Unit },
+  { value, amount, balance, decimals = DEFAULT_DECIMALS }: WeiArgs,
   ...fns: ((value: string) => string)[]
 ): string {
+  const unit = getUnit(decimals);
+  const data = value || amount || balance;
+
   return [toStr, (val: string) => Web3.utils.toWei(val || '0', unit), ...fns].reduce(
     (acc, fn) => fn(acc as string),
-    value
+    data
   ) as string;
 }
 
@@ -102,3 +120,22 @@ const completeDecimal = (value: string, bits: number): string => {
 
   return length > bits ? value.slice(0, bits) : value;
 };
+
+export function largeNumber(num: string | number, decimals = 0) {
+  const lookup = [
+    { value: 1, symbol: '' },
+    { value: 1e3, symbol: 'K' },
+    { value: 1e6, symbol: 'M' },
+    { value: 1e9, symbol: 'G' },
+    { value: 1e12, symbol: 'T' },
+    { value: 1e15, symbol: 'P' },
+    { value: 1e18, symbol: 'E' },
+  ];
+  const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+  const result = lookup
+    .slice()
+    .reverse()
+    .find((item) => +num >= item.value);
+
+  return result ? (+num / result.value).toFixed(decimals).replace(rx, '$1') + result.symbol : '0';
+}

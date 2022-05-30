@@ -5,7 +5,7 @@ import { last, omit, orderBy } from 'lodash';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useEffect, useMemo, useState } from 'react';
-import { DATE_FORMAT } from '@helix/shared/config/constant';
+import { DATE_FORMAT } from 'shared/config/constant';
 import {
   crabConfig,
   darwiniaConfig,
@@ -13,12 +13,12 @@ import {
   pangolinConfig,
   pangoroConfig,
   ropstenConfig,
-} from '@helix/shared/config/network';
-import { ChainConfig, DailyStatistic } from '@helix/shared/model';
-import { fromWei, prettyNumber, rxGet } from '@helix/shared/utils';
-import { Statistics } from '../components/dashboard/Statistics';
-import { Chain, ChainProps } from '../components/dashboard/Chain';
+} from 'shared/config/network';
+import { ChainConfig, DailyStatistic } from 'shared/model';
+import { fromWei, prettyNumber, rxGet } from 'shared/utils/helper';
 import { BarChart, Statistic } from '../components/dashboard/BarChart';
+import { Chain, ChainProps } from '../components/dashboard/Chain';
+import { Statistics } from '../components/dashboard/Statistics';
 import { TIMEPAST, useDailyStatistic } from '../hooks';
 
 interface StatisticTotal {
@@ -55,7 +55,7 @@ function Page() {
 
     return {
       volume: dailyStatistics
-        .map(({ id, dailyVolume }) => [secondsToMilliseconds(+id), +fromWei({ value: dailyVolume, unit: 'gwei' })])
+        .map(({ id, dailyVolume }) => [secondsToMilliseconds(+id), +fromWei({ value: dailyVolume, decimals: 9 })])
         .reverse() as Statistic[],
       transactions: dailyStatistics
         .map(({ id, dailyCount }) => [secondsToMilliseconds(+id), dailyCount])
@@ -107,7 +107,7 @@ function Page() {
     const volumes = calcRank('volume').map(({ chain, total }) => ({
       chain,
       // Great than the actual total because of fromWei does not support float number;
-      total: fromWei({ value: Math.ceil(total.toNumber()), unit: 'gwei' }),
+      total: fromWei({ value: Math.ceil(total.toNumber()), decimals: 9 }),
     }));
 
     const vTotal = volumes.reduce((acc, cur) => acc.plus(cur.total), new Bignumber(0));

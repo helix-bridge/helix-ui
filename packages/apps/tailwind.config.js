@@ -1,6 +1,5 @@
 module.exports = {
   darkMode: 'class', // or 'media' or 'class'
-  important: true,
   theme: {
     extend: {
       animation: {

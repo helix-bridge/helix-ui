@@ -1,31 +1,26 @@
 import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Substrate2SubstrateRecord } from '@helix/shared/model';
-import { convertToDvm, getSupportedChains, gqlName, isValidAddress } from '@helix/shared/utils';
 import { Affix, Button, Input, Spin } from 'antd';
-import { getUnixTime } from 'date-fns';
 import { useQuery } from 'graphql-hooks';
 import request, { gql } from 'graphql-request';
-import { isEqual, last, omitBy } from 'lodash';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useVirtual } from 'react-virtual';
-import { distinctUntilChanged, filter, Subject } from 'rxjs';
+import { ENDPOINT } from 'shared/config/env';
+import { HelixHistoryRecord } from 'shared/model';
+import { convertToDvm, gqlName, isValidAddress } from 'shared/utils/helper';
+import { chainConfigs } from 'shared/utils/network';
 import { Record } from '../../components/transaction/Record';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
-import { endpoint, Path } from '../../config';
 import { useAccountStatistic, useDailyStatistic } from '../../hooks';
 
-const S2S_RECORDS = gql`
-  query s2sRecords($first: Int!, $startTime: Int!, $sender: String, $recipient: String) {
-    s2sRecords(first: $first, startTime: $startTime, sender: $sender, recipient: $recipient) {
+const HISTORY_RECORDS = gql`
+  query historyRecords($row: Int!, $page: Int!, $sender: String, $recipient: String) {
+    historyRecords(row: $row, page: $page, sender: $sender, recipient: $recipient) {
       id
       bridge
       fromChain
-      fromChainMode
       toChain
-      toChainMode
       laneId
       nonce
       requestTxHash
@@ -42,29 +37,27 @@ const S2S_RECORDS = gql`
   }
 `;
 
-const supportedChains = getSupportedChains();
-
 const PAGE_SIZE = 50;
 
-function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
+function Page({ records }: { records: HelixHistoryRecord[] }) {
   const { t } = useTranslation('common');
   const [isValidSender, setIsValidSender] = useState(true);
-  const router = useRouter();
   const { data: dailyStatistic } = useDailyStatistic();
-  const { total: accountTotal } = useAccountStatistic(endpoint);
+  const { total: accountTotal } = useAccountStatistic(ENDPOINT);
+  const [page, setPage] = useState(1);
 
   const transactionsTotal = useMemo(
     () => (dailyStatistic?.dailyStatistics || []).reduce((acc, cur) => acc + cur.dailyCount, 0) ?? '-',
     [dailyStatistic]
   );
 
-  const { data, loading, refetch } = useQuery<{ s2sRecords: Substrate2SubstrateRecord[] }>(S2S_RECORDS, {
-    variables: { first: PAGE_SIZE, startTime: last(records)?.startTime },
+  const [account, setAccount] = useState<string | undefined>();
+
+  const { data, loading } = useQuery<{ historyRecords: HelixHistoryRecord[] }>(HISTORY_RECORDS, {
+    variables: { row: PAGE_SIZE, page, sender: account, recipient: account },
   });
 
-  const subject = useMemo(() => new Subject<{ startTime: number; account: string }>(), []);
-  const [source, setSource] = useState<Substrate2SubstrateRecord[]>(records);
-  const [account, setAccount] = useState<string>('');
+  const [source, setSource] = useState<HelixHistoryRecord[]>(records);
   const virtualBoxRef = useRef(null);
 
   const rowVirtualizer = useVirtual({
@@ -75,46 +68,39 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
   });
 
   useEffect(() => {
-    if (data?.s2sRecords && data.s2sRecords?.length) {
-      setSource((pre) => [...pre, ...data.s2sRecords]);
+    if (data?.historyRecords && data.historyRecords?.length) {
+      setSource((pre) => [...pre, ...data.historyRecords]);
     }
   }, [data]);
 
   // eslint-disable-next-line complexity
   useEffect(() => {
     const [lastItem] = [...rowVirtualizer.virtualItems].reverse();
-    const courser = last(source);
 
-    if (lastItem && lastItem.index && !loading && courser && lastItem.index >= source.length - 1) {
-      subject.next({ startTime: courser.startTime, account });
+    if (
+      lastItem &&
+      lastItem.index &&
+      !loading &&
+      lastItem.index >= source.length - 1 &&
+      data?.historyRecords.length === PAGE_SIZE
+    ) {
+      setPage((pre) => pre + 1);
     }
-  }, [account, loading, rowVirtualizer.virtualItems, source, subject]);
+  }, [data?.historyRecords.length, loading, rowVirtualizer.virtualItems, source]);
 
   useEffect(() => {
-    const sub$$ = subject
-      .pipe(
-        filter((time) => !!time),
-        distinctUntilChanged((pre, cur) => isEqual(pre, cur))
-      )
-      .subscribe(({ startTime: time, account: searchValue }) => {
-        const variables = omitBy(
-          { first: PAGE_SIZE, startTime: time, sender: searchValue, recipient: searchValue },
-          (value) => !value
-        );
-
-        refetch({ variables });
-      });
-
-    return () => sub$$.unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // for refresh
+    if (page === 0 && source.length === PAGE_SIZE) {
+      setPage(1);
+    }
+  }, [page, source.length]);
 
   return (
     <div>
       <div className="grid lg:grid-cols-3 gap-0 lg:gap-6 place-items-center my-4 lg:my-6">
         <ViewBoard title={t('transactions')} count={transactionsTotal} />
         <ViewBoard title={t('unique users')} count={accountTotal} />
-        <ViewBoard title={t('supported blockchains')} count={supportedChains.length} />
+        <ViewBoard title={t('supported blockchains')} count={chainConfigs.length} />
       </div>
 
       <Affix offsetTop={64}>
@@ -130,27 +116,20 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
                 if (!value) {
                   setIsValidSender(true);
                   setSource([]);
-                  refetch({ variables: { first: PAGE_SIZE, startTime: getUnixTime(new Date()) } });
+                  setAccount(undefined);
+                  setPage(0);
                 }
 
                 try {
                   const address = isValidAddress(value, 'ethereum') ? value : convertToDvm(value);
 
                   setSource([]);
-                  refetch({
-                    variables: {
-                      first: PAGE_SIZE,
-                      startTime: getUnixTime(new Date()),
-                      sender: address,
-                      recipient: address,
-                    },
-                  });
+                  setAccount(address);
+                  setPage(0);
                   setIsValidSender(true);
                 } catch {
                   setIsValidSender(false);
                 }
-
-                setAccount(value);
               }}
               placeholder={t('Search by address')}
               className={`max-w-md ${isValidSender ? '' : 'border-red-400'}`}
@@ -160,7 +139,7 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
               type="link"
               onClick={() => {
                 setSource([]);
-                refetch({ variables: { first: PAGE_SIZE, startTime: getUnixTime(new Date()) } });
+                setPage(0);
               }}
               disabled={loading}
               className="flex items-center cursor-pointer"
@@ -207,20 +186,9 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
                         transform: `translateY(${row.start}px)`,
                       }}
                       key={row.key}
-                      onClick={() => {
-                        router.push({
-                          pathname: Path.transaction + '/' + record.id,
-                          query: new URLSearchParams({
-                            from: record.fromChain,
-                            to: record.toChain,
-                            fromMode: record.fromChainMode,
-                            toMode: record.toChainMode,
-                          }).toString(),
-                        });
-                      }}
                     >
                       {isLoaderRow ? (
-                        data.s2sRecords?.length ? (
+                        data.historyRecords?.length === PAGE_SIZE ? (
                           <Spin className="col-span-full" />
                         ) : (
                           <span className="col-span-full text-center">{t('Nothing more to load')}</span>
@@ -240,21 +208,21 @@ function Page({ records }: { records: Substrate2SubstrateRecord[] }) {
   );
 }
 
-export const getServerSideProps = async ({ locale }: { locale: string }) => {
-  const translations = await serverSideTranslations(locale ?? 'en', ['common']);
-  const startTime = getUnixTime(new Date());
+export async function getStaticProps() {
+  const translations = await serverSideTranslations('en', ['common']);
 
-  const records = await request(endpoint, S2S_RECORDS, {
-    first: PAGE_SIZE,
-    startTime,
-  }).then((res) => res && res[gqlName(S2S_RECORDS)]);
+  const records = await request(ENDPOINT, HISTORY_RECORDS, {
+    row: PAGE_SIZE,
+    page: 0,
+  }).then((res) => res && res[gqlName(HISTORY_RECORDS)]);
 
   return {
     props: {
       ...translations,
       records,
     },
+    revalidate: 10,
   };
-};
+}
 
 export default Page;

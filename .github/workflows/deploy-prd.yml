@@ -49,15 +49,6 @@ jobs:
           project_name: "helix-${{ steps.better-name.outputs.NAME }}"
           script_run: false
           dist_path: .
-
-      - name: Slack Notification
-        uses: rtCamp/action-slack-notify@v2
-        if: contains(github.ref, matrix.package) || contains(github.ref, '-') == false
-        env:
-          SLACK_CHANNEL: helix-ui
-          SLACK_COLOR: ${{ job.status }}
-          SLACK_ICON: https://avatars.githubusercontent.com/u/14985020?s=48&v=4
-          SLACK_MESSAGE: "${{ steps.smart-vercel.outputs.PREVIEW_LINK }}"
-          SLACK_TITLE: Preview
-          SLACK_USERNAME: Vercel
-          SLACK_WEBHOOK: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+          enable_notify_slack: true
+          slack_channel: helix-ui
+          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}

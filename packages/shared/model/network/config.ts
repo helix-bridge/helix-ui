@@ -1,35 +1,43 @@
 import { AddEthereumChainParameter } from '../metamask';
-import { EthereumTypeNetwork, Network, NetworkCategory, NetworkMode, PolkadotTypeNetwork } from './network';
+import { Token } from '../token';
+import { EthereumTypeNetwork, Network, NetworkMode, PolkadotTypeNetwork, SupportedWallet } from './network';
 
 export type LogoType = 'main' | 'minor' | 'assist';
 
 export interface Logo {
   name: string;
-  mode: NetworkMode;
   type: LogoType;
 }
 
-interface Token {
-  name: string;
-  type: 'native' | 'mapping';
-  bridges: string[];
-  precision: number;
-  logo: string;
+export type TokenType = 'native' | 'mapping';
+
+export type BridgeCategory = 'helix';
+
+export type BridgeName = 'substrate-DVM' | 'substrate-substrateDVM' | 'ethereum-darwinia';
+
+type PartnerRole = 'issuer' | 'receiver';
+
+interface Partner {
+  name: Network;
+  mode: NetworkMode;
+  symbol: string; // token symbol
+  /**
+   * partner role beyond to the issuing <-> redeem relationship;
+   * e.g: On substrate to substrateDVM bridge, transform RING to xRING represent the issuing action, the opposite means redeem;
+   * So we mark the substrate chain as issuer and the substrateDVM chain as receiver;
+   */
+  role: PartnerRole;
+}
+interface CrossOverview {
+  category: BridgeCategory;
+  bridge: BridgeName;
+  partner: Partner;
 }
 
-interface DVMConfig {
-  ring: string;
-  kton: string;
-  smartKton: string;
-  smartRing: string;
-  smartWithdrawRing: string;
-  smartWithdrawKton: string;
-  [key: string]: string;
-}
-
-interface ProviderConfig {
-  rpc: string;
-  etherscan: string;
+export interface TokenWithBridgesInfo extends Token {
+  type: TokenType;
+  cross: CrossOverview[];
+  claim?: boolean;
 }
 
 interface Social {
@@ -40,12 +48,13 @@ interface Social {
 
 export interface ChainConfig {
   isTest: boolean;
+  mode: NetworkMode;
   logos: Logo[];
   name: Network;
-  provider: ProviderConfig;
+  provider: string;
   social: Social;
-  tokens: Token[];
-  type: NetworkCategory[];
+  tokens: TokenWithBridgesInfo[];
+  wallets: SupportedWallet[];
 }
 
 export interface EthereumChainConfig extends ChainConfig {
@@ -57,11 +66,6 @@ export interface PolkadotChainConfig extends ChainConfig {
   name: PolkadotTypeNetwork;
   ss58Prefix: number;
   specVersion: number;
-  endpoints: {
-    mmr: string;
-  };
 }
 
-export interface DVMChainConfig extends Omit<EthereumChainConfig, 'name'>, PolkadotChainConfig {
-  dvm: DVMConfig;
-}
+export interface DVMChainConfig extends Omit<EthereumChainConfig, 'name'>, PolkadotChainConfig {}

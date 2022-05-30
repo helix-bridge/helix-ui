@@ -1,27 +1,27 @@
-import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { Row, Col } from 'antd';
-import { useState } from 'react';
-import { Transfer } from '../components/transfer/Transfer';
-import { BridgeSelector } from '../components/BridgeSelector';
-import { DisclaimerModal } from '../components/DisclaimerModal';
+import { useEffect, useState } from 'react';
+import { DEFAULT_DIRECTION } from 'shared/config/constant';
+import { CrossChainDirection } from 'shared/model';
+import { getDirectionFromSettings, readStorage } from 'shared/utils/helper';
+import { CrossChain } from '../components/CrossChain';
+import { DisclaimerModal } from '../components/widget/DisclaimerModal';
 
 function Page() {
-  const [visible, setVisible] = useState(true);
-  const { t } = useTranslation();
-  void t;
+  const [dir, setDir] = useState<CrossChainDirection>(DEFAULT_DIRECTION);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const loc = getDirectionFromSettings();
+    const warning = readStorage().warning;
+
+    setVisible(warning ?? true);
+
+    setDir(loc);
+  }, []);
 
   return (
     <>
-      <Row>
-        <Col xs={24} sm={8}>
-          <Transfer />
-        </Col>
-        <Col xs={24} sm={0} className="h-5"></Col>
-        <Col xs={24} sm={{ span: 15, offset: 1 }}>
-          <BridgeSelector />
-        </Col>
-      </Row>
+      <CrossChain dir={dir} />
       <DisclaimerModal visible={visible} onCancel={() => setVisible(false)} onOk={() => setVisible(false)} />
     </>
   );

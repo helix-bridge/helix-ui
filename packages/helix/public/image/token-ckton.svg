@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>CKTON@svg</title>
+    <defs>
+        <linearGradient x1="6.55040337%" y1="50%" x2="109.348603%" y2="50%" id="linearGradient-1">
+            <stop stop-color="#FE3876" offset="0%"></stop>
+            <stop stop-color="#7C30DD" offset="71.4447846%"></stop>
+            <stop stop-color="#3A30DD" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="40.1669124%" y1="20.9158919%" x2="65.0012276%" y2="50%" id="linearGradient-2">
+            <stop stop-color="#FE3876" offset="0%"></stop>
+            <stop stop-color="#7C30DD" offset="71.4447846%"></stop>
+            <stop stop-color="#6330DD" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="154.577652%" id="linearGradient-3">
+            <stop stop-color="#350AA6" offset="0%"></stop>
+            <stop stop-color="#4211B0" offset="33.6592458%"></stop>
+            <stop stop-color="#CD359D" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="72.7398037%" y1="50%" x2="-42.3900199%" y2="93.0062008%" id="linearGradient-4">
+            <stop stop-color="#3A30DD" offset="0%"></stop>
+            <stop stop-color="#7C30DD" offset="28.5552154%"></stop>
+            <stop stop-color="#FE3876" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="56.3361211%" y1="-3911.26484%" x2="56.3361334%" y2="5155.9486%" id="linearGradient-5">
+            <stop stop-color="#FE3876" offset="0%"></stop>
+            <stop stop-color="#7C30DD" offset="71.4447846%"></stop>
+            <stop stop-color="#3A30DD" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="100%" y1="94.4564278%" x2="0%" y2="5.54357215%" id="linearGradient-6">
+            <stop stop-color="#3A30DD" offset="0%"></stop>
+            <stop stop-color="#7C30DD" offset="28.5552154%"></stop>
+            <stop stop-color="#FE3876" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="39.02239%" y1="33.8978281%" x2="74.9101349%" y2="69.4891927%" id="linearGradient-7">
+            <stop stop-color="#350AA6" offset="0%"></stop>
+            <stop stop-color="#7C30DD" offset="28.5552154%"></stop>
+            <stop stop-color="#FE3876" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="77.91679%" y1="40.7713183%" x2="34.511298%" y2="87.3481726%" id="linearGradient-8">
+            <stop stop-color="#350AA6" offset="0%"></stop>
+            <stop stop-color="#7C30DD" offset="28.5552154%"></stop>
+            <stop stop-color="#FE3876" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="100%" y1="54.8012368%" x2="0%" y2="45.1987632%" id="linearGradient-9">
+            <stop stop-color="#3A30DD" offset="0%"></stop>
+            <stop stop-color="#7C30DD" offset="28.5552154%"></stop>
+            <stop stop-color="#FE3876" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="46.3379121%" y1="88.3500491%" x2="67.0929518%" y2="13.3764932%" id="linearGradient-10">
+            <stop stop-color="#3A30DD" offset="0%"></stop>
+            <stop stop-color="#7C30DD" offset="28.5552154%"></stop>
+            <stop stop-color="#FE3876" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="CKTON" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <polygon id="Path" fill="url(#linearGradient-1)" fill-rule="nonzero" points="32.3572271 21 48.3134814 40.269291 3.55271368e-15 59.538582"></polygon>
+        <polygon id="Combined-Shape" fill="url(#linearGradient-2)" fill-rule="nonzero" points="99.8460549 118.096706 149.011811 59.538582 174.088255 59.538582 99.7189888 148.544355"></polygon>
+        <polygon id="Combined-Shape-Copy-16" fill="url(#linearGradient-3)" fill-rule="nonzero" points="149.011811 59.538582 0 59.538582 48.3134814 40.269291 158.47989 40.269291 174.088255 59.538582"></polygon>
+        <polygon id="Combined-Shape-Copy-16" fill="url(#linearGradient-4)" fill-rule="nonzero" points="149.011811 59.538582 158.47989 40.269291 174.088255 59.538582"></polygon>
+        <polygon id="Combined-Shape" fill="url(#linearGradient-5)" fill-rule="nonzero" points="158.47989 40.269291 48.3134814 40.269291 32.3572271 21 167.297871 21"></polygon>
+        <polygon id="Combined-Shape-Copy" fill="url(#linearGradient-6)" fill-rule="nonzero" points="174.088255 59.538582 158.47989 40.269291 167.297871 21 199.35072 59.538582"></polygon>
+        <polygon id="Combined-Shape-Copy" fill="url(#linearGradient-7)" fill-rule="nonzero" points="99.7189888 148.544355 174.088255 59.538582 199.35072 59.538582 125.015509 148.074401 99.8917033 178.106465"></polygon>
+        <polygon id="Combined-Shape-Copy" fill="url(#linearGradient-8)" fill-rule="nonzero" points="70.4385384 113.676114 99.8189888 148.544355 99.9917034 178.106465 32.798617 98.0771639"></polygon>
+        <polygon id="Combined-Shape-Copy" fill="url(#linearGradient-9)" fill-rule="nonzero" points="70.4385384 113.676114 32.798617 98.0771639 83.1375259 98.0771639"></polygon>
+        <polygon id="Combined-Shape" fill="url(#linearGradient-10)" fill-rule="nonzero" points="83.1375259 98.0771639 70.4385384 113.676114 99.8189888 148.544355 99.9460549 118.096706"></polygon>
+    </g>
+</svg>

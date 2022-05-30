@@ -1,11 +1,11 @@
 import { MenuOutlined } from '@ant-design/icons';
-import { THEME } from '@helix/shared/config/theme';
-import { readStorage } from '@helix/shared/utils';
 import { Button, Drawer, Layout, Tooltip } from 'antd';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { PropsWithChildren, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { THEME } from 'shared/config/theme';
+import { readStorage } from 'shared/utils/helper';
 import { Path } from '../config';
 import { Footer } from './Footer';
 import { Navigator } from './Navigator';
@@ -55,7 +55,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
 
           <Button
             onClick={() => {
-              window.open('https://wormhole.darwinia.network', '_blank');
+              window.open('https://apps.helixbridge.app/', '_blank');
             }}
             type="primary"
             size="large"

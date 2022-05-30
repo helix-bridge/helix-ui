@@ -56,7 +56,7 @@ const getAlertProps = (tx: Tx, cancel: () => void): AlertProps => {
   }
 
   if (tx.status === 'error') {
-    return { type: 'error', message: tx.error, icon: <CloseCircleOutlined /> };
+    return { type: 'error', message: tx.error?.message, icon: <CloseCircleOutlined /> };
   }
 
   return {

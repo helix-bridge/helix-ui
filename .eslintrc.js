@@ -136,7 +136,7 @@ module.exports = {
     'no-magic-numbers': [
       'error',
       {
-        ignore: [0, 1, -1, 2, 10, 100, 1000],
+        ignore: [0, 1, -1, 2, 9, 10, 18, 100, 1000],
       },
     ],
     'no-new-wrappers': 'error',

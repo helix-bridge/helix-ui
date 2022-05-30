@@ -6,17 +6,13 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { FunctionComponent, useEffect, useState } from 'react';
-import GlobalLoading from '@helix/shared/components/widget/GlobalLoading';
-import { toggleTheme } from '@helix/shared/components/widget/ThemeSwitch';
-import { THEME } from '@helix/shared/config/theme';
-import '../styles/index.scss';
-import '@helix/shared/theme/antd/index.less';
-import { readStorage } from '@helix/shared/utils';
+import GlobalLoading from 'shared/components/widget/GlobalLoading';
+import { ENDPOINT } from 'shared/config/env';
 import AppLayout from '../components/AppLayout';
-import { endpoint } from '../config';
+import '../styles/index.scss';
 
 const client = new GraphQLClient({
-  url: endpoint,
+  url: ENDPOINT,
 });
 
 function MyApp({ Component, pageProps }: AppProps & { Component: FunctionComponent }) {
@@ -63,20 +59,8 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
 
     const script = document.createElement('script');
 
-    script.addEventListener('load', () => {
-      const theme = readStorage().theme;
-
-      toggleTheme(theme ?? THEME.DARK);
-    });
-
     script.src = 'https://cdn.bootcdn.net/ajax/libs/less.js/2.7.2/less.min.js';
     document.body.appendChild(script);
-
-    const css = document.createElement('link');
-    css.href = '/color.less';
-    css.rel = 'stylesheet/less';
-    css.type = 'text/css';
-    document.body.appendChild(css);
   }, []);
 
   return (
@@ -90,8 +74,6 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
       </Head>
       <ClientContext.Provider value={client}>
         <AppLayout>
-          {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-          {/* @ts-ignore */}
           <ErrorBoundary>
             <Component {...pageProps} />
           </ErrorBoundary>

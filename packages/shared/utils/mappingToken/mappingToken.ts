@@ -1,25 +1,22 @@
 import { memoize } from 'lodash';
 import { combineLatest, from, interval, Observable, of, take, timer, zip } from 'rxjs';
-import {
-  catchError,
-  delayWhen,
-  mergeMap,
-  retry,
-  retryWhen,
-  scan,
-  startWith,
-  switchMap,
-  switchMapTo,
-  tap,
-} from 'rxjs/operators';
+import { catchError, delayWhen, mergeMap, retry, retryWhen, scan, startWith, switchMap, tap } from 'rxjs/operators';
 import Web3 from 'web3';
 import { Contract } from 'web3-eth-contract';
 import { abi } from '../../config/abi';
 import { RegisterStatus, SHORT_DURATION } from '../../config/constant';
-import { ChainConfig, CrossChainDirection, DVMChainConfig, EthereumChainConfig, MappingToken } from '../../model';
+import {
+  ChainConfig,
+  CrossChainDirection,
+  DVMChainConfig,
+  EthereumChainConfig,
+  MappingToken,
+  PolkadotChainConfig,
+} from '../../model';
 import { DVMBridgeConfig, getAvailableDVMBridge, getBridge, isS2S, isSubstrateDVM2Substrate } from '../bridge';
+import { connect, entrance } from '../connection';
 import { MMRProof } from '../mmr';
-import { chainConfigToVertices, connect, entrance } from '../network';
+import { getErc20Balance } from '../network/balance';
 import { getErc20MappingAddress, getS2SMappingAddress } from './mappingParams';
 import { getErc20Meta } from './mappingTokenMeta';
 
@@ -48,8 +45,8 @@ export type StoredProof = {
 /* --------------------------------------------Inner Section------------------------------------------------------- */
 
 function createMappingTokenContract(departure: DVMChainConfig, arrival: ChainConfig, mappingAddress: string): Contract {
-  const web3 = entrance.web3.getInstance(departure.provider.rpc);
-  const s2s = isS2S(chainConfigToVertices(departure), chainConfigToVertices(arrival));
+  const web3 = entrance.web3.getInstance(departure.provider);
+  const s2s = isS2S(departure, arrival);
 
   return new web3.eth.Contract(s2s ? abi.S2SMappingTokenABI : abi.Erc20MappingTokenABI, mappingAddress);
 }
@@ -73,10 +70,10 @@ const getMappingTokenLength = memoize(
 function getMappingTokensFromDVM(
   currentAccount: string,
   departure: DVMChainConfig,
-  arrival: EthereumChainConfig,
+  arrival: EthereumChainConfig | PolkadotChainConfig,
   mappingAddress: string
 ) {
-  const s2s = isS2S(chainConfigToVertices(departure), chainConfigToVertices(arrival));
+  const s2s = isS2S(departure, arrival);
   const countObs = from(getMappingTokenLength(departure, arrival, mappingAddress));
   // FIXME: method predicate logic below should be removed after abi method is unified.
   const getToken = (index: number) =>
@@ -90,7 +87,7 @@ function getMappingTokensFromDVM(
         err.pipe(
           tap((error) => {
             console.warn('WEB3 PROVIDER ERROR:', error.message);
-            entrance.web3.removeInstance(departure.provider.rpc);
+            entrance.web3.removeInstance(departure.provider);
           }),
           delayWhen(() => interval(SHORT_DURATION))
         )
@@ -112,13 +109,13 @@ function getMappingTokensFromDVM(
           ? of(1)
           : infoObs.pipe(
               switchMap(({ source }) =>
-                getTokenRegisterStatus(source, bridge.config.contracts.redeem, arrival.provider.etherscan)
+                getTokenRegisterStatus(source, bridge.config.contracts.redeem, departure.provider)
               )
             );
 
         const balanceObs =
           currentAccount && Web3.utils.isAddress(currentAccount)
-            ? from(getErc20TokenBalance(address, currentAccount, false))
+            ? from(getErc20Balance(address, currentAccount, false))
             : of(Web3.utils.toBN(0));
 
         return zip(
@@ -127,6 +124,7 @@ function getMappingTokensFromDVM(
             ({
               ...info,
               ...token,
+              decimals: +token.decimals,
               balance,
               status,
               address,
@@ -151,18 +149,17 @@ function getMappingTokensFromEthereum(currentAccount: string, direction: CrossCh
   const getToken = (index: number) =>
     from(backingContract.methods.allAssets(index).call() as Promise<string>).pipe(
       switchMap((address) => {
-        const infoObs = from(getErc20Meta(address)).pipe(catchError(() => of({})));
+        const infoObs = from(getErc20Meta(address)).pipe(catchError(() => of(null)));
         const statusObs = from(getTokenRegisterStatus(address, bridge.config.contracts.redeem));
 
-        const balanceObs = currentAccount
-          ? from(getErc20TokenBalance(address, currentAccount))
-          : of(Web3.utils.toBN(0));
+        const balanceObs = currentAccount ? from(getErc20Balance(address, currentAccount)) : of(Web3.utils.toBN(0));
 
         return zip(
           [infoObs, statusObs, balanceObs],
           (info, status, balance) =>
             ({
-              ...info,
+              ...(info ?? {}),
+              decimals: +(info?.decimals ?? 18),
               balance,
               status,
               address,
@@ -206,25 +203,26 @@ export const getKnownMappingTokens = (
     return of({ total: 0, tokens: [] });
   }
   const { from: departure, to: arrival } = direction;
+  const isSDVM2S = isSubstrateDVM2Substrate(departure.meta, arrival.meta);
 
-  const mappingAddressObs = isSubstrateDVM2Substrate(chainConfigToVertices(departure), chainConfigToVertices(arrival))
-    ? from(getS2SMappingAddress(departure.provider.rpc))
-    : from(getErc20MappingAddress(departure.provider.rpc));
+  const mappingAddressObs = isSDVM2S
+    ? from(getS2SMappingAddress(departure.meta.provider))
+    : from(getErc20MappingAddress(departure.meta.provider));
 
-  const tokens = departure.type.includes('ethereum')
+  const tokens = !isSDVM2S
     ? getMappingTokensFromEthereum(currentAccount, direction)
     : mappingAddressObs.pipe(
         switchMap((mappingAddress) =>
           getMappingTokensFromDVM(
             currentAccount,
-            departure as DVMChainConfig,
-            arrival as EthereumChainConfig,
+            departure.meta as DVMChainConfig,
+            arrival.meta as EthereumChainConfig,
             mappingAddress
           )
         )
       );
 
-  return connect(departure).pipe(switchMapTo(tokens));
+  return connect(departure.meta).pipe(mergeMap(() => tokens));
 };
 
 /**
@@ -267,29 +265,3 @@ export const getTokenRegisterStatus: (
 
     return RegisterStatus.unregister;
   };
-
-/**
- *
- * @param tokenAddress - token contract address
- * @param account - current active metamask account
- * @returns balance of the account
- */
-export async function getErc20TokenBalance(address: string, account: string, isErc20Native = true) {
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-  const tokenAbi = isErc20Native ? abi.Erc20ABI : abi.tokenABI;
-  const contract = new web3.eth.Contract(tokenAbi, address);
-
-  try {
-    const balance = await contract.methods.balanceOf(account).call();
-
-    return Web3.utils.toBN(balance);
-  } catch (err) {
-    console.info(
-      `%c [ get token(${address}) balance error. account: ${account} ]-52`,
-      'font-size:13px; background:pink; color:#bf2c9f;',
-      (err as Record<string, string>).message
-    );
-  }
-
-  return Web3.utils.toBN(0);
-}

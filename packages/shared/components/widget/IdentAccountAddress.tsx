@@ -1,4 +1,4 @@
-import Identicon from '@polkadot/react-identicon';
+import dynamic from 'next/dynamic';
 import { IAccountMeta } from '../../model';
 import { EllipsisMiddle } from './EllipsisMiddle';
 
@@ -7,6 +7,10 @@ interface IdentAccountProps {
   className?: string;
   iconSize?: number;
 }
+
+const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
+  ssr: false,
+});
 
 // eslint-disable-next-line no-magic-numbers
 export function IdentAccountAddress({ account: { address, meta }, className = '', iconSize = 32 }: IdentAccountProps) {

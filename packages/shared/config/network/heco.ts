@@ -10,17 +10,25 @@ export const hecoConfig: EthereumChainConfig = {
     rpcUrls: ['https://http-mainnet.hecochain.com'],
   },
   isTest: true,
-  logos: [{ name: 'heco.png', type: 'main', mode: 'native' }],
+  logos: [{ name: 'heco.png', type: 'main' }],
+  mode: 'native',
   name: 'heco',
-  provider: {
-    etherscan: 'https://http-mainnet.hecochain.com',
-    rpc: '',
-  },
+  provider: 'https://http-mainnet.hecochain.com',
   social: {
     portal: 'https://www.hecochain.com/en-us/',
     github: 'https://github.com/stars-labs/',
     twitter: 'https://twitter.com/HECO_Chain',
   },
-  tokens: [{ name: 'RING', precision: 18, bridges: ['helix'], type: 'mapping', logo: 'ring.svg' }],
-  type: ['ethereum'],
+  tokens: [
+    {
+      name: 'RING',
+      decimals: 18,
+      cross: [],
+      type: 'mapping',
+      logo: 'token-ring.svg',
+      symbol: 'RING',
+      address: '',
+    },
+  ],
+  wallets: ['metamask'],
 };

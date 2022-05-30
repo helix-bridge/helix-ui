@@ -18,16 +18,14 @@ export type IAccountMeta = WithOptional<InjectedAccountWithMeta, 'meta'>;
 // eslint-disable-next-line no-magic-numbers
 export type Erc20RegisterStatus = 0 | 1 | 2;
 
-export interface PolkadotChain {
-  tokens: Token[];
+export interface PolkadotChainSimpleToken {
+  tokens: Pick<Token, 'symbol' | 'decimals'>[];
   ss58Format: string;
 }
 
-export interface AvailableBalance<T = string> {
-  max: string | number | BN;
-  asset: T;
-  token: Token;
-}
+export type AvailableBalance = {
+  balance: BN;
+} & Pick<Token, 'symbol' | 'decimals'>;
 
 export interface DailyLimit {
   limit: string | number;

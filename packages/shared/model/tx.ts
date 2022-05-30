@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
-import { Unit } from 'web3-utils';
-import { CrossChainPayload } from './bridge';
+import { Bridge, CrossChainPayload } from './bridge';
 
 export type TxStatus =
   | 'future'
@@ -32,15 +31,11 @@ export interface Tx {
 
 export type TxFn<T> = (value: T) => Observable<Tx>;
 
-export type TxConfirmComponentProps<T> = { value: CrossChainPayload<T>; unit?: Unit };
+export type TxConfirmComponentProps<T extends Bridge = Bridge> = { value: CrossChainPayload<T> };
 
-export type TxHashType = 'block' | 'extrinsic' | 'address' | 'txHash'; // consistent with the SubscanLink component props;
-
-export type TxSuccessComponentProps<T> = {
+export type TxDoneComponentProps<T extends Bridge = Bridge> = {
   tx: Tx;
   value: CrossChainPayload<T>;
-  hashType?: TxHashType;
-  unit?: Unit;
 };
 
 export type CommonPayloadKeys = 'sender' | 'recipient' | 'amount' | 'asset';

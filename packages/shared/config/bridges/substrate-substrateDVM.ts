@@ -1,6 +1,7 @@
 import { Bridge, SubstrateSubstrateDVMBridgeConfig } from '../../model';
 import { EVOLUTION_DOMAIN } from '../api';
-import { darwiniaConfig, crabConfig, pangoroConfig, pangolinConfig } from '../network';
+import { crabDVMConfig, darwiniaConfig, pangoroConfig } from '../network';
+import { pangolinDVMConfig } from '../network/pangolin-dvm';
 
 const darwiniaCrabDVMConfig: SubstrateSubstrateDVMBridgeConfig = {
   api: {
@@ -14,9 +15,10 @@ const darwiniaCrabDVMConfig: SubstrateSubstrateDVMBridgeConfig = {
   },
 };
 
-export const darwiniaCrabDVM = new Bridge(darwiniaConfig, crabConfig, darwiniaCrabDVMConfig, {
+export const darwiniaCrabDVM = new Bridge(darwiniaConfig, crabDVMConfig, darwiniaCrabDVMConfig, {
   category: 'helix',
-  activeAssistantConnection: true,
+  activeArrivalConnection: true,
+  name: 'substrate-substrateDVM',
 });
 
 const pangoroPangolinDVMConfig: SubstrateSubstrateDVMBridgeConfig = {
@@ -31,7 +33,8 @@ const pangoroPangolinDVMConfig: SubstrateSubstrateDVMBridgeConfig = {
   },
 };
 
-export const pangoroPangolinDVM = new Bridge(pangoroConfig, pangolinConfig, pangoroPangolinDVMConfig, {
+export const pangoroPangolinDVM = new Bridge(pangoroConfig, pangolinDVMConfig, pangoroPangolinDVMConfig, {
   category: 'helix',
-  activeAssistantConnection: true,
+  activeArrivalConnection: true,
+  name: 'substrate-substrateDVM',
 });

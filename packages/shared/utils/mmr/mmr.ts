@@ -4,9 +4,10 @@ import { hexToU8a } from '@polkadot/util';
 import { lastValueFrom, map } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 import { Network, PolkadotChainConfig } from '../../model';
+import { waitUntilConnected } from '../connection';
 import { remove0x } from '../helper';
-// import { convert } from '../mmrConvert/ckb_merkle_mountain_range_bg';
-import { getChainConfigByName, waitUntilConnected } from '../network';
+import { convert, updateInstance } from '../mmrConvert/ckb_next';
+import { getChainConfig } from '../network';
 import { genProof } from './proof';
 
 interface EncodeMMRoot {
@@ -38,22 +39,10 @@ const MMR_QUERY = `
   }
 `;
 
-async function getMMRProofByRPC(api: ApiPromise, blockNumber: number, mmrBlockNumber: number) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const proof = await (api.rpc as any).headerMMR.genProof(blockNumber, mmrBlockNumber);
-  const proofStr = proof.proof.substring(1, proof.proof.length - 1); // remove '[' and ']'
-  const proofHexStr: string[] = proofStr.split(',').map((item: string) => {
-    return remove0x(item.replace(/(^\s*)|(\s*$)/g, ''));
-  });
-  const encodeProof = proofHexStr.join('');
-
-  return { encodeProof, size: proof.mmrSize as BigInt };
-}
-
 async function getMMRProofBySubql(api: ApiPromise, blockNumber: number, mmrBlockNumber: number) {
   const chain = (await api.rpc.system.chain()).toString().toLowerCase() as Extract<Network, 'pangolin' | 'darwinia'>;
-  const config = getChainConfigByName(chain) as PolkadotChainConfig;
-  const fetchProofs = proofsFactory(config.endpoints.mmr);
+  const config = getChainConfig(chain) as PolkadotChainConfig;
+  const fetchProofs = proofsFactory(`https://api.subquery.network/sq/darwinia-network/${config.name}-mmr`);
   const proof = await genProof(blockNumber, mmrBlockNumber, fetchProofs);
   const encodeProof = proof.proof.map((item) => remove0x(item.replace(/(^\s*)|(\s*$)/g, ''))).join('');
   const size = new TypeRegistry().createType('u64', proof.mmrSize.toString()) as unknown as BigInt;
@@ -95,29 +84,26 @@ export function encodeMMRRootMessage(root: EncodeMMRoot) {
   );
 }
 
-export function getMMR(
-  convert: (blockNumber: number, size: BigInt, proof: Uint8Array, blockHash: Uint8Array) => string
-) {
-  return async (
-    api: ApiPromise,
-    blockNumber: number,
-    mmrBlockNumber: number,
-    blockHash: string,
-    byRPC = false
-  ): Promise<MMRProof> => {
-    await waitUntilConnected(api);
+export async function getMMR(
+  api: ApiPromise,
+  blockNumber: number,
+  mmrBlockNumber: number,
+  blockHash: string
+): Promise<MMRProof> {
+  await waitUntilConnected(api);
+  const instance = await import('../mmrConvert/ckb_merkle_mountain_range_bg.wasm');
 
-    const getProof = byRPC ? getMMRProofByRPC : getMMRProofBySubql;
-    const { encodeProof, size } = await getProof(api, blockNumber, mmrBlockNumber);
-    const mmrProofConverted: string = convert(blockNumber, size, hexToU8a('0x' + encodeProof), hexToU8a(blockHash));
-    const [mmrSize, peaksStr, siblingsStr] = mmrProofConverted.split('|');
-    const peaks = peaksStr.split(',');
-    const siblings = siblingsStr.split(',');
+  updateInstance(instance);
 
-    return {
-      mmrSize,
-      peaks,
-      siblings,
-    };
+  const { encodeProof, size } = await getMMRProofBySubql(api, blockNumber, mmrBlockNumber);
+  const mmrProofConverted: string = convert(blockNumber, size, hexToU8a('0x' + encodeProof), hexToU8a(blockHash));
+  const [mmrSize, peaksStr, siblingsStr] = mmrProofConverted.split('|');
+  const peaks = peaksStr.split(',');
+  const siblings = siblingsStr.split(',');
+
+  return {
+    mmrSize,
+    peaks,
+    siblings,
   };
 }

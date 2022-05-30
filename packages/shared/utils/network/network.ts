@@ -1,96 +1,41 @@
-import { ApiPromise } from '@polkadot/api';
-import { chain as lodashChain, curry, curryRight, has, isEqual, isNull, omit, once, pick, upperFirst } from 'lodash';
-import Web3 from 'web3';
-import { NETWORK_SIMPLE, SYSTEM_NETWORK_CONFIGURATIONS, tronConfig } from '../../config/network';
+import { chain as lodashChain, pick, upperFirst } from 'lodash';
+import { NETWORK_SIMPLE, SYSTEM_ChAIN_CONFIGURATIONS } from '../../config/network';
 import {
-  Arrival,
-  ChainConfig,
-  Connection,
-  Departure,
-  DVMChainConfig,
-  EthereumChainConfig,
-  EthereumConnection,
-  MetamaskNativeNetworkIds,
-  Network,
-  NetworkCategory,
-  NetworkMode,
-  NoNullFields,
-  PolkadotChain,
-  PolkadotChainConfig,
-  PolkadotConnection,
-  Vertices,
-} from '../../model';
-import { entrance } from '../connection/entrance';
-import { convertToSS58 } from '../helper/address';
-import { getUnit } from '../helper/balance';
+  knownDarwiniaDVMNetworks,
+  knownDarwiniaNetworks,
+  knownEthereumNetworks,
+  knownPolkadotNetworks,
+} from '../../config/network/category';
+import { ChainConfig, Network, NetworkMode, PolkadotChainConfig, TokenType, Vertices } from '../../model';
 import { getCustomNetworkConfig } from '../helper/storage';
-import { NETWORK_GRAPH } from './graph';
+import { crossChainGraph } from './graph';
 
-export const NETWORK_CONFIGURATIONS = SYSTEM_NETWORK_CONFIGURATIONS.map((item) => {
-  const customConfigs = getCustomNetworkConfig();
+function isChainEqual(chain1: Vertices | ChainConfig, chain2: Vertices | ChainConfig): boolean {
+  return chain1.name === chain2.name && chain1.mode === chain2.mode;
+}
 
-  return customConfigs[item.name] ? { ...item, ...pick(customConfigs[item.name], Object.keys(item)) } : item;
-});
-
-/**
- * generate network configs, use dvm field to distinct whether the config is dvm config.
- */
-export const CROSS_CHAIN_NETWORKS: ChainConfig[] = lodashChain([...NETWORK_GRAPH])
+export const chainConfigs = lodashChain(crossChainGraph)
   .map(([departure, arrivals]) => [departure, ...arrivals])
   .filter((item) => item.length > 1)
   .flatten()
-  .unionWith((cur, pre) => cur.mode === pre.mode && cur.network === pre.network)
-  .map(({ network, mode }) => {
-    const config: ChainConfig | undefined = NETWORK_CONFIGURATIONS.find((item) => item.name === network);
+  .unionWith(isChainEqual)
+  .map((vertices) => {
+    let config = SYSTEM_ChAIN_CONFIGURATIONS.find((item) => isChainEqual(vertices, item));
 
     if (!config) {
-      throw new Error(`Can not find ${network} network configuration`);
-    }
+      throw new Error(`Can not find ${vertices.name} network configuration`);
+    } else {
+      const customConfigs = getCustomNetworkConfig();
 
-    return config.type.includes('polkadot') && mode === 'native'
-      ? (omit(config, 'dvm') as Omit<ChainConfig, 'dvm'>)
-      : config;
-  })
-  .sortBy((item) => item.name)
-  .valueOf();
-
-export const AIRPORT_NETWORKS: ChainConfig[] = NETWORK_CONFIGURATIONS.filter((item) =>
-  ['ethereum', 'crab', 'tron'].includes(item.name)
-).map((item) => omit(item, 'dvm'));
-
-function isSpecifyNetworkType(type: NetworkCategory) {
-  const findBy = (name: Network) => NETWORK_CONFIGURATIONS.find((item) => item.name === name) ?? null;
-
-  return (network: Network | null | undefined) => {
-    if (!network) {
-      return false;
-    }
-
-    let config = findBy(network);
-
-    if (!config) {
-      const name = byNetworkAlias(network);
-
-      console.warn(
-        `🚀 ~ Can not find the network config by: ${network}. Treat it as an alias, find a network named ${name} by it `
-      );
-      if (name) {
-        config = findBy(name);
+      if (customConfigs[config.name]) {
+        config = { ...config, ...pick(customConfigs[config.name], Object.keys(config)) } as PolkadotChainConfig;
       }
     }
 
-    return !!config && config.type.includes(type);
-  };
-}
-
-export function getSupportedChains() {
-  return lodashChain([...NETWORK_GRAPH])
-    .map(([departure, arrivals]) => [departure, ...arrivals])
-    .filter((item) => item.length > 1)
-    .flatten()
-    .unionWith((cur, pre) => cur.mode === pre.mode && cur.network === pre.network)
-    .valueOf();
-}
+    return config;
+  })
+  .sortBy((item) => item.name)
+  .valueOf();
 
 function byNetworkAlias(network: string): Network | null {
   const minLength = 3;
@@ -99,7 +44,7 @@ function byNetworkAlias(network: string): Network | null {
     const len = name.length;
     const shortestName = name.slice(0, startAt);
 
-    return new Array(len - startAt).fill('').map((_, index) => shortestName + name.substr(startAt, index));
+    return new Array(len - startAt).fill('').map((_, index) => shortestName + name.slice(startAt, index));
   };
 
   const alias = new Map([
@@ -127,314 +72,97 @@ export function getLegalName(network: string): Network | string {
   return byNetworkAlias(network) || network;
 }
 
-const isChainConfigEqual = (net1: ChainConfig | null, net2: ChainConfig | null) => isEqual(net1, net2);
+export const getArrivals = (departure: ChainConfig) => {
+  const target = crossChainGraph.find(([item]) => isChainEqual(item, departure));
 
-const getArrivals = (source: Map<Departure, Arrival[]>, departure: ChainConfig) => {
-  const mode: NetworkMode = getNetworkMode(departure);
-  const target = [...source].find(([item]) => item.network === departure.name && item.mode === mode);
-
-  return target ? target[1] : [];
+  return target ? target[1].map((item) => getChainConfig(item)) : [];
 };
 
-const isInNodeList = (net1: ChainConfig | null, net2: ChainConfig | null) => {
-  if (!net1 || !net2) {
-    return true;
+const isSpecifyNetwork = (known: Vertices[]) => (network: ChainConfig | Vertices | null | undefined) => {
+  if (!network) {
+    return false;
   }
 
-  const vertices = getArrivals(NETWORK_GRAPH, net1);
-
-  return !!vertices.find((item) => item.network === net2.name && item.mode === getNetworkMode(net2));
+  return known.some((item) => isChainEqual(item, network));
 };
 
-export const isReachable = (net: ChainConfig | null) => curry(isInNodeList)(net); // relation: net1 -> net2 ---- Find the relation by net1
-export const isTraceable = (net: ChainConfig | null) => curryRight(isInNodeList)(net); // relation: net1 -> net2 ---- Find the relation by net2
-export const isChainConfigEqualTo = curry(isChainConfigEqual);
-export const isPolkadotNetwork = isSpecifyNetworkType('polkadot');
-export const isEthereumNetwork = isSpecifyNetworkType('ethereum');
-export const isTronNetwork = isSpecifyNetworkType('tron');
+export const isPolkadotNetwork = isSpecifyNetwork(knownPolkadotNetworks);
 
-export function isMetamaskInstalled(): boolean {
-  return typeof window.ethereum !== 'undefined' || typeof window.web3 !== 'undefined';
-}
+export const isDarwiniaNetwork = isSpecifyNetwork(knownDarwiniaNetworks);
+
+export const isDarwiniaDVMNetwork = isSpecifyNetwork(knownDarwiniaDVMNetworks);
+
+export const isEthereumNetwork = isSpecifyNetwork(knownEthereumNetworks);
 
 /**
- * Unlike metamask, it does not lead the user to unlock the wallet.
- * Tron link may not be initialized, so if it is not detected successfully, delay 2 seconds and detect again.
- * FIXME: If the wallet status changes from unlocked to locked, the account of the last user use will still be available
+ * find chain config by:
+ * 1. Vertices only, omit mode parameter
+ * 2. [chain name, chain mode]
+ * 3. [token symbol name, chain mode]
+ * 4. [token symbol name, chain name]
  */
-export async function isTronLinkReady(): Promise<boolean> {
-  if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
-    return true;
-  }
-
-  const timeout = 2000;
-
-  return await new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(window.tronWeb && window.tronWeb.defaultAddress.base58);
-    }, timeout);
-  });
-}
-
-export function getNetworkMode(config: ChainConfig): NetworkMode {
-  return has(config, 'dvm') ? 'dvm' : 'native';
-}
-
-export function isDVM(config: ChainConfig): boolean {
-  return getNetworkMode(config) === 'dvm';
-}
-
-/**
- * @description map chain config to vertices
- */
-export function chainConfigToVertices(config: ChainConfig) {
-  const vertices: Vertices = { network: config.name, mode: getNetworkMode(config) };
-
-  return vertices;
-}
-
-/**
- * @description map vertices to chain config
- */
-export function verticesToChainConfig(vertices: Vertices) {
-  const { mode, network } = vertices;
-
-  const config = findNetworkConfig(network);
-
-  return mode === 'native' ? (omit(config, 'dvm') as ChainConfig) : config;
-}
-
-export function isSameNetConfig(config1: ChainConfig | null, config2: ChainConfig | null): boolean {
-  if (!config1 || !config2) {
-    return [config1, config2].every(isNull);
-  }
-
-  return (
-    isEqual(config1, config2) || (config1.name === config2.name && getNetworkMode(config1) === getNetworkMode(config2))
-  );
-}
-
-export function getChainConfigByName(name: Network | null | undefined, mode?: NetworkMode): ChainConfig | null {
-  if (name) {
-    const config = NETWORK_CONFIGURATIONS.find((item) => item.name === name) ?? null;
-
-    return mode === 'native' ? omit(config, 'dvm') : config;
-  }
-
-  console.warn('🚀 Can not find target network config by name: ', name);
-
-  return null;
-}
-
 // eslint-disable-next-line complexity
-export function getArrival(from: ChainConfig | null | undefined, to: ChainConfig | null | undefined): Arrival | null {
-  if (!from || !to) {
-    return null;
+export function getChainConfig(
+  data: Vertices | Network | string | null | undefined,
+  mode: NetworkMode | TokenType | Network = 'native'
+): ChainConfig {
+  if (!data) {
+    throw new Error(`You must pass a 'name' parameter to find the chain config`);
   }
 
-  const mode = getNetworkMode(from);
-  let departure = NETWORK_CONFIGURATIONS.find((config) => config.name === from.name) as ChainConfig;
+  let compared: Vertices;
 
-  if (mode === 'native') {
-    departure = omit(departure, 'dvm');
+  if (typeof data === 'string') {
+    const isChainName = chainConfigs.map((item) => item.name).includes(data as Network);
+
+    if (isChainName) {
+      compared = { name: data, mode } as Vertices;
+    } else {
+      const targets = chainConfigs.filter((item) => item.tokens.map((tk) => tk.symbol).includes(data));
+      let target: ChainConfig | undefined;
+
+      if (targets.length === 1) {
+        target = targets[0];
+      } else {
+        if (['native', 'dvm', 'mapping'].includes(mode)) {
+          target = targets.find((item) => item.mode === mode);
+        } else {
+          target = targets.find((item) => item.name === mode);
+        }
+      }
+
+      if (!target) {
+        throw new Error(`Can not find the chain config by args: tokenName: ${data}, mode: ${mode} `);
+      }
+
+      return target;
+    }
+  } else {
+    compared = data;
   }
 
-  if (mode === 'dvm' && !Object.prototype.hasOwnProperty.call(departure, 'dvm')) {
-    console.warn('Try to get arrival config in dvm mode, but the config does not include dvm info');
+  const result = chainConfigs.find((item) => isChainEqual(item, compared));
+
+  if (!result) {
+    throw new Error(`Can not find the chain config by ${JSON.stringify(compared)}`);
   }
 
-  return getArrivals(NETWORK_GRAPH, departure).find((item) => item.network === to.name) ?? null;
+  return result;
 }
 
-export async function isNetworkConsistent(network: Network, id = ''): Promise<boolean> {
-  id = id && Web3.utils.isHex(id) ? parseInt(id, 16).toString() : id;
-  // id 1: eth mainnet 3: ropsten 4: rinkeby 5: goerli 42: kovan  43: pangolin 44: crab
-  const actualId: string = id ? await Promise.resolve(id) : await window.ethereum.request({ method: 'net_version' });
-  const chain = getChainConfigByName(network) as EthereumChainConfig;
-  const storedId = chain.ethereumChain.chainId;
-
-  return storedId === actualId;
-}
-
-export function isNativeMetamaskChain(network: Network): boolean {
-  const ids = [
-    MetamaskNativeNetworkIds.ethereum,
-    MetamaskNativeNetworkIds.ropsten,
-    MetamaskNativeNetworkIds.rinkeby,
-    MetamaskNativeNetworkIds.goerli,
-    MetamaskNativeNetworkIds.kovan,
-  ];
-  const chain = getChainConfigByName(network) as EthereumChainConfig;
-
-  return ids.includes(+chain.ethereumChain.chainId);
-}
-
-export function getNetworkCategory(config: ChainConfig): NetworkCategory | null {
-  if (config.type.includes('polkadot')) {
-    return isDVM(config) ? 'dvm' : 'polkadot';
-  } else if (config.type.includes('ethereum')) {
-    return 'ethereum';
-  } else if (config.type.includes('tron')) {
-    return 'tron';
-  }
-
-  return null;
-}
-
-/**
- * @returns - current active account in metamask;
- */
-export async function getMetamaskActiveAccount() {
-  if (typeof window.ethereum === 'undefined') {
-    return;
-  }
-
-  await window.ethereum.request({ method: 'eth_requestAccounts' });
-
-  const accounts = await window.ethereum.request({
-    method: 'eth_accounts',
-  });
-
-  // metamask just return the active account now, so the result array contains only one account;
-  return accounts[0];
-}
-
-/**
- *
- * @params network id
- * @description is actual network id match with expected.
- */
-export async function isNetworkMatch(expectNetworkId: number): Promise<boolean> {
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-  const networkId = await web3.eth.net.getId();
-
-  return expectNetworkId === networkId;
-}
-
-export function getDisplayName(config: ChainConfig | null): string {
+export function getDisplayName(config: ChainConfig | null, networkMode?: NetworkMode): string {
   if (!config) {
     return 'unknown';
   }
 
-  const mode = getNetworkMode(config);
+  const mode = networkMode ?? config.mode;
   const name = upperFirst(config.name);
 
-  return mode === 'dvm' ? `${name}-Smart` : name;
+  return mode === 'dvm' ? `${name} Smart Chain` : name;
 }
 
-export function getVerticesFromDisplayName(name: string): Vertices {
-  const [network, mode] = name.split('-') as [Network, string];
+export function toVertices(name: string): Vertices {
+  const isDvm = name.includes('-dvm');
 
-  return { network, mode: ['smart', 'dvm'].includes(mode?.toLowerCase()) ? 'dvm' : 'native' };
-}
-
-// eslint-disable-next-line complexity
-export async function getConfigByConnection(connection: Connection): Promise<ChainConfig | null> {
-  if (connection.type === 'metamask') {
-    const targets = CROSS_CHAIN_NETWORKS.filter((item) => {
-      const chain = (item as unknown as EthereumChainConfig).ethereumChain;
-
-      return chain && isChainIdEqual(chain.chainId, (connection as EthereumConnection).chainId);
-    });
-
-    return (targets.length > 1 ? targets.find((item) => (item as unknown as DVMChainConfig).dvm) : targets[0]) ?? null;
-  }
-
-  if (connection.type === 'polkadot' && connection.api) {
-    const { api } = connection as NoNullFields<PolkadotConnection>;
-
-    await waitUntilConnected(api);
-
-    const chain = await api?.rpc.system.chain();
-    const network = chain.toHuman()?.toLowerCase();
-    const target = findNetworkConfig(network);
-
-    return chain ? omit(target, 'dvm') : null;
-  }
-
-  if (connection.type === 'tron') {
-    return tronConfig;
-  }
-
-  return null;
-}
-
-export async function waitUntilConnected(api: ApiPromise): Promise<null> {
-  await api.isReady;
-
-  return new Promise((resolve) => {
-    if (!api.isConnected) {
-      api.on(
-        'connected',
-        once(() => resolve(null))
-      );
-    } else {
-      resolve(null);
-    }
-  });
-}
-
-export function isChainIdEqual(id1: string | number, id2: string | number): boolean {
-  id1 = Web3.utils.toHex(id1);
-  id2 = Web3.utils.toHex(id2);
-
-  return id1 === id2;
-}
-
-export function getCrossChainArrivals(dep: ChainConfig | Vertices): Arrival[] {
-  const departure = has(dep, 'mode') ? verticesToChainConfig(dep as Vertices) : (dep as ChainConfig);
-
-  return getArrivals(NETWORK_GRAPH, departure);
-}
-
-export function findNetworkConfig(network: Network | string): ChainConfig {
-  const target = NETWORK_CONFIGURATIONS.find((item) => item.name === network || item.name === byNetworkAlias(network));
-
-  if (!target) {
-    throw new Error(`Can not find chain configuration by ${network}`);
-  }
-
-  return target;
-}
-
-export async function getPolkadotChainProperties(api: ApiPromise): Promise<PolkadotChain> {
-  const chainState = await api?.rpc.system.properties();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { tokenDecimals, tokenSymbol, ss58Format } = chainState?.toHuman() as any;
-
-  return tokenDecimals.reduce(
-    (acc: PolkadotChain, decimal: string, index: number) => {
-      const unit = getUnit(+decimal);
-      const token = { decimal: unit, symbol: tokenSymbol[index] };
-
-      return { ...acc, tokens: [...acc.tokens, token] };
-    },
-    { ss58Format, tokens: [] } as PolkadotChain
-  );
-}
-
-export function revertAccount(account: string, network: Network, mode: NetworkMode): string {
-  if (isPolkadotNetwork(network) && mode !== 'dvm') {
-    const config = getChainConfigByName(network) as PolkadotChainConfig;
-
-    return convertToSS58(account, config.ss58Prefix);
-  }
-
-  return account;
-}
-
-/**
- * @description add chain in metamask
- */
-export async function addEthereumChain(network: Network): Promise<null> {
-  // TODO check the chaiId field, store in decimal in configuration but may be required hexadecimal in metamask side.
-  const chain = findNetworkConfig(network) as EthereumChainConfig;
-  const chainId = Web3.utils.toHex(+chain.ethereumChain.chainId);
-
-  const result = await window.ethereum.request({
-    method: 'wallet_addEthereumChain',
-    params: [{ ...chain.ethereumChain, chainId }],
-  });
-
-  return result;
+  return isDvm ? { name: name.split('-')[0] as Network, mode: 'dvm' } : { name: name as Network, mode: 'native' };
 }

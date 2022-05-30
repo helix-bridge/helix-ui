@@ -1,15 +1,15 @@
 import { CopyrightOutlined, GithubOutlined, MailOutlined, TwitterOutlined } from '@ant-design/icons';
-import { LanguageProps } from '@helix/shared/components/widget/Language';
-import { ThemeSwitch, ThemeSwitchProps } from '@helix/shared/components/widget/ThemeSwitch';
-import { THEME } from '@helix/shared/config/theme';
 import { Divider, Layout } from 'antd';
 import { getYear } from 'date-fns';
-import { useTranslation } from 'react-i18next';
+import { LanguageProps } from 'shared/components/widget/Language';
+import { ThemeSwitch, ThemeSwitchProps } from 'shared/components/widget/ThemeSwitch';
+import { THEME } from 'shared/config/theme';
+import { useITranslation } from '../hooks';
 
 type FooterProps = LanguageProps & { className?: string } & ThemeSwitchProps;
 
 export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
-  const { t } = useTranslation();
+  const { t } = useITranslation();
   // const color = theme === THEME.LIGHT ? '#0d101d' : undefined;
 
   return (

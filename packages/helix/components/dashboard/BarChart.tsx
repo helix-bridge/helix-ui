@@ -1,8 +1,8 @@
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts/highstock';
 import { useRef } from 'react';
-import { THEME } from '@helix/shared/config/theme';
-import { readStorage } from '@helix/shared/utils';
+import { THEME } from 'shared/config/theme';
+import { readStorage } from 'shared/utils/helper';
 
 export type Statistic = [number, number];
 
@@ -14,7 +14,7 @@ interface BarChartProps {
 export function BarChart({ data, name }: BarChartProps) {
   const charRef = useRef(null);
   const isDark = !readStorage().theme || readStorage().theme === THEME.DARK;
-  const mainColor = '#816eeb';
+  const mainColor = '#00b2ff';
   const barColor = isDark ? '#151e33' : 'rgb(229,231,235)';
 
   const options = {

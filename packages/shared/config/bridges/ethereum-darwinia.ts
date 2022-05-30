@@ -1,17 +1,16 @@
-import { omit } from 'lodash';
+import { Bridge, EthereumDarwiniaBridgeConfig } from '../../model';
 import { EVOLUTION_DOMAIN } from '../api';
 import { darwiniaConfig, ethereumConfig, pangolinConfig, ropstenConfig } from '../network';
-import { Bridge, EthereumDarwiniaBridgeConfig } from '../../model';
 
 const ethereumDarwiniaConfig: EthereumDarwiniaBridgeConfig = {
   api: { dapp: 'https://api.darwinia.network', evolution: EVOLUTION_DOMAIN.product },
   contracts: {
     fee: '0x6B0940772516B69088904564A56d09CFe6Bb3D85',
     issuing: '0xea7938985898af7fd945b03b7bc2e405e744e913',
-    kton: '0x9f284e1337a815fe77d2ff4ae46544645b20c5ff',
+    kton: '0x9f284e1337a815fe77d2ff4ae46544645b20c5ff', // remove
     redeem: '0x5f44dd8e59f56aa04fe54e95cc690560ae706b18',
     redeemDeposit: '0x649fdf6ee483a96e020b889571e93700fbd82d88',
-    ring: '0x9469d013805bffb7d3debe5e7839237e535ec483',
+    ring: '0x9469d013805bffb7d3debe5e7839237e535ec483', // remove
   },
   lockEvents: [
     {
@@ -32,7 +31,8 @@ const ethereumDarwiniaConfig: EthereumDarwiniaBridgeConfig = {
  */
 export const ethereumDarwinia = new Bridge(ethereumConfig, darwiniaConfig, ethereumDarwiniaConfig, {
   category: 'helix',
-  activeAssistantConnection: true,
+  activeArrivalConnection: true,
+  name: 'ethereum-darwinia',
 });
 
 const ropstenDVMChainConfig: EthereumDarwiniaBridgeConfig = {
@@ -60,7 +60,8 @@ const ropstenDVMChainConfig: EthereumDarwiniaBridgeConfig = {
 /**
  * ethereum <-> darwinia testnet
  */
-export const ropstenPangolin = new Bridge(ropstenConfig, omit(pangolinConfig, 'dvm'), ropstenDVMChainConfig, {
+export const ropstenPangolin = new Bridge(ropstenConfig, pangolinConfig, ropstenDVMChainConfig, {
   category: 'helix',
-  activeAssistantConnection: true,
+  activeArrivalConnection: true,
+  name: 'ethereum-darwinia',
 });

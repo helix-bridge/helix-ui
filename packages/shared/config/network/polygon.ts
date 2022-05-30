@@ -10,20 +10,18 @@ export const polygonConfig: EthereumChainConfig = {
     rpcUrls: ['https://polygon-rpc.com/'],
   },
   isTest: true,
-  logos: [{ name: 'polygon.svg', type: 'main', mode: 'native' }],
+  logos: [{ name: 'polygon.svg', type: 'main' }],
+  mode: 'native',
   name: 'polygon',
-  provider: {
-    etherscan: 'https://polygon-rpc.com/',
-    rpc: '',
-  },
+  provider: 'https://polygon-rpc.com/',
   social: {
     portal: 'https://polygon.technology/',
     github: 'https://github.com/maticnetwork/',
     twitter: 'https://twitter.com/0xPolygon',
   },
   tokens: [
-    { name: 'RING', precision: 18, bridges: ['helix'], type: 'mapping', logo: '' },
-    { name: 'MATIC', precision: 18, bridges: ['helix'], type: 'native', logo: '' },
+    { name: 'RING', decimals: 18, cross: [], type: 'mapping', logo: '', symbol: 'RING', address: '' },
+    { name: 'MATIC', decimals: 18, cross: [], type: 'native', logo: '', symbol: 'MATIC', address: '' },
   ],
-  type: ['ethereum'],
+  wallets: ['metamask'],
 };

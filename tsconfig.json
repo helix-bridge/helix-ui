@@ -16,8 +16,15 @@
     "incremental": true,
     "downlevelIteration": true,
     "paths": {
-      "@helix/shared": ["/packages/shared"],
-    }
+      // has no effect
+      "@helix/shared": ["/packages/shared"]
+    },
+    "types": [
+      "cypress",
+      "cypress-wait-until",
+      "@testing-library/cypress",
+      "cypress-react-selector",
+    ]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

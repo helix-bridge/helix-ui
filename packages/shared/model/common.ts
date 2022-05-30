@@ -1,4 +1,4 @@
-import { Network, NetworkMode } from './network';
+import { Network } from './network';
 
 export interface Action<U, T = string> {
   type: U;
@@ -12,8 +12,6 @@ export type NetworkThemeConfig<T> = Config<Network, T>;
 export interface NetworkQueryParams {
   from: Network;
   to: Network;
-  fromMode: NetworkMode;
-  toMode: NetworkMode;
 }
 
 export enum DarwiniaAsset {

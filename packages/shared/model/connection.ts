@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 import { IAccountMeta } from './account';
-import { PolkadotTypeNetwork } from './network';
+import { PolkadotTypeNetwork, SupportedWallet } from './network';
 
 /**
  * pending: initial state, indicate that the connection never launched.
@@ -14,22 +14,15 @@ export enum ConnectionStatus {
   error = 'error',
 }
 
-export type ConnectionType = 'polkadot' | 'metamask' | 'tron' | 'unknown';
-
 export interface Connection {
   status: ConnectionStatus;
   accounts: IAccountMeta[];
-  type: ConnectionType;
-  [key: string]: unknown;
+  type: SupportedWallet | 'unknown';
+  chainId: PolkadotTypeNetwork | string;
 }
 
 export interface PolkadotConnection extends Connection {
   api: ApiPromise | null;
-  network: PolkadotTypeNetwork;
 }
 
-export interface EthereumConnection extends Connection {
-  chainId: string;
-}
-
-export type TronConnection = Connection;
+export type EthereumConnection = Connection;

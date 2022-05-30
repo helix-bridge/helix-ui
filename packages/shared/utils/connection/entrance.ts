@@ -1,12 +1,14 @@
 import { typesBundleForPolkadotApps } from '@darwinia/types/mix';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import Web3 from 'web3';
+import { SHORT_DURATION } from '../../config/constant';
 
 interface ApiGuy<T> {
   [key: string]: T;
 }
 
 abstract class Entrance<T> {
+  abstract readonly name: string;
   abstract apiList: ApiGuy<T>[];
   abstract beforeRemove(instance: T): void;
   abstract init(url: string): T;
@@ -30,6 +32,7 @@ abstract class Entrance<T> {
     this.apiList.push({ [url]: instance });
     this.afterInit(instance);
 
+    console.log(`🌎 ~ ${this.name} api list`, this.apiList.map((item) => Object.keys(item)).flat());
     return instance;
   }
 
@@ -44,10 +47,12 @@ abstract class Entrance<T> {
 }
 
 class PolkadotEntrance extends Entrance<ApiPromise> {
+  name = 'polkadot';
+
   apiList: ApiGuy<ApiPromise>[] = [];
 
   init(url: string) {
-    const provider = new WsProvider(url);
+    const provider = new WsProvider(url, SHORT_DURATION);
 
     return new ApiPromise({
       provider,
@@ -65,6 +70,8 @@ class PolkadotEntrance extends Entrance<ApiPromise> {
 }
 
 class Web3Entrance extends Entrance<Web3> {
+  name = 'web3';
+
   apiList: ApiGuy<Web3>[] = [];
 
   defaultProvider = 'ethereum';
@@ -74,7 +81,19 @@ class Web3Entrance extends Entrance<Web3> {
       return new Web3(window.ethereum);
     }
 
-    return new Web3(url);
+    const provider = new Web3.providers.WebsocketProvider(url, {
+      clientConfig: {
+        keepalive: true,
+        keepaliveInterval: 60000,
+      },
+      reconnect: {
+        auto: true,
+        delay: 2500,
+        onTimeout: true,
+      },
+    });
+
+    return new Web3(provider);
   }
 
   afterInit() {

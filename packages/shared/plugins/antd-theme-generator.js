@@ -441,6 +441,9 @@ async function generateTheme({
     const varFileContent = combineLess(varFile, nodeModulesPath);
     let antdLess = await bundle({
       src: antdStylesFile,
+      rootVars: {
+        'root-entry-name': 'default'
+      },
     });
     // console.log(varFileContent);
     customColorRegexArray = [

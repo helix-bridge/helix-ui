@@ -2,7 +2,7 @@ import { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { from, Observable, Observer, mergeMap, tap } from 'rxjs';
 import { Tx } from '../../model';
-import { waitUntilConnected } from '../network';
+import { waitUntilConnected } from '../connection';
 
 function extrinsicSpy(observer: Observer<Tx>) {
   observer.next({ status: 'signing' });
@@ -13,9 +13,14 @@ function extrinsicSpy(observer: Observer<Tx>) {
       return;
     }
 
-    console.info('%c [ extrinsic status ]-22', 'font-size:13px; background:pink; color:blue;', result.status.toJSON());
+    console.info(
+      '%c [ extrinsic status ]-22',
+      'font-size:13px; background:pink; color:blue;',
+      result.status.toJSON(),
+      result
+    );
 
-    const { error, inBlock, finalized } = result.status.toJSON() as Record<string, string>;
+    const { error } = result.status.toJSON() as Record<string, string>;
 
     if (result.status.isBroadcast) {
       observer.next({ status: 'broadcast' });
@@ -26,11 +31,11 @@ function extrinsicSpy(observer: Observer<Tx>) {
     }
 
     if (result.status.isInBlock) {
-      observer.next({ status: 'inblock', hash: inBlock });
+      observer.next({ status: 'inblock', hash: result.txHash.toString() });
     }
 
     if (result.status.isFinalized) {
-      observer.next({ status: 'finalized', hash: finalized });
+      observer.next({ status: 'finalized', hash: result.txHash.toString() });
       observer.complete();
     }
 

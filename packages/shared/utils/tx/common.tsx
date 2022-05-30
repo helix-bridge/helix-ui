@@ -2,16 +2,18 @@ import { ApiPromise } from '@polkadot/api';
 import { TypeRegistry } from '@polkadot/types';
 import { Modal, ModalFuncProps, ModalProps } from 'antd';
 import BN from 'bn.js';
-import { Trans } from 'react-i18next';
+import { i18n } from 'next-i18next';
+import { initReactI18next, Trans } from 'react-i18next';
 import { EMPTY, finalize, Observable, Observer, switchMap, tap } from 'rxjs';
 import Web3 from 'web3';
 import { PromiEvent, TransactionConfig, TransactionReceipt } from 'web3-core';
 import { Contract } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
+import { Icon } from '../../components/widget/Icon';
 import { abi } from '../../config/abi';
-import { CrossChainPayload, MappingToken, RequiredPartial, Tx, TxFn } from '../../model';
+import { CrossChainPayload, RequiredPartial, Tx, TxFn } from '../../model';
+import { entrance, waitUntilConnected } from '../connection';
 import { empty } from '../helper';
-import { entrance, waitUntilConnected } from '../network';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ModalSpyFn<T = any> = (observer: Observer<T>, closeFn: () => void) => void;
@@ -24,23 +26,31 @@ type IModalFuncs = {
 
 export const txModalConfig: (props: Partial<ModalFuncProps>) => ModalProps = (props) => ({
   okCancel: true,
-  cancelText: <Trans>Cancel</Trans>,
-  okText: <Trans>Confirm</Trans>,
-  okButtonProps: { size: 'large' },
-  cancelButtonProps: { size: 'large' },
+  okText: <Trans i18n={i18n?.use(initReactI18next)}>Confirm</Trans>,
+  closable: true,
+  closeIcon: <Icon name="close" className="w-6 h-6 text-white opacity-80 hover:opacity-100" />,
+  okButtonProps: { size: 'large', className: 'w-full', style: { margin: 0 } },
+  cancelButtonProps: { size: 'large', hidden: true },
   width: 520,
   centered: true,
   className: 'confirm-modal',
   icon: null,
   destroyOnClose: true,
+  title: (
+    <h3 className="text-center mb-4">
+      <Trans i18n={i18n?.use(initReactI18next)}>Transfer</Trans>
+    </h3>
+  ),
   ...props,
 });
 
 const { confirm } = Modal;
 
 export function buf2hex(buffer: ArrayBuffer) {
-  // eslint-disable-next-line no-magic-numbers
-  return '0x' + Array.prototype.map.call(new Uint8Array(buffer), (x) => ('00' + x.toString(16)).slice(-2)).join('');
+  const pos = -2;
+  const radix = 16;
+
+  return '0x' + Array.prototype.map.call(new Uint8Array(buffer), (x) => ('00' + x.toString(radix)).slice(pos)).join('');
 }
 
 export function applyModal(props: RequiredPartial<ModalFuncProps, 'content'> & IModalFuncs): { destroy: () => void } {
@@ -59,9 +69,8 @@ export function applyModalObs<T = boolean>(
   return new Observable((observer) => {
     confirm({
       ...others,
-      onCancel: (close) => {
+      onCancel: () => {
         observer.next(false);
-        close();
       },
       onOk: (close) => {
         if (handleOk) {
@@ -183,16 +192,25 @@ export const approveToken: TxFn<
   );
 };
 
-export async function getAllowance(sender: string, spender: string, token: MappingToken | null): Promise<BN> {
-  if (!token) {
-    return Web3.utils.toBN(0);
+export async function getAllowance(
+  sender: string,
+  spender: string,
+  tokenAddress: string,
+  provider: string
+): Promise<BN | null> {
+  const web3 = entrance.web3.getInstance(provider);
+  const erc20Contract = new web3.eth.Contract(abi.tokenABI, tokenAddress);
+
+  try {
+    const allowanceAmount = await erc20Contract.methods.allowance(sender, spender).call();
+
+    return Web3.utils.toBN(allowanceAmount);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.log('⚠ ~ file: allowance.ts getIssuingAllowance ~ error', error.message);
+
+    return null;
   }
-
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-  const erc20Contract = new web3.eth.Contract(abi.tokenABI, token.address);
-  const allowanceAmount = await erc20Contract.methods.allowance(sender, spender).call();
-
-  return Web3.utils.toBN(allowanceAmount || 0);
 }
 
 /* -------------------------------------------Claim Token---------------------------------------------- */

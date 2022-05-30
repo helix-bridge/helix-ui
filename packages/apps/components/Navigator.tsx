@@ -5,9 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { DownOutlined } from '@ant-design/icons';
 import { AntdIconProps } from '@ant-design/icons/lib/components/AntdIcon';
-import { THEME } from '@helix/shared/config/theme';
-
-const isDev = process.env.NODE_ENV === 'development';
+import { THEME } from 'shared/config/theme';
+import { isDev } from 'shared/config/env';
 
 interface Nav {
   label: string;

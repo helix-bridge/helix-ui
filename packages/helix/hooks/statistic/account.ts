@@ -1,4 +1,4 @@
-import { PolkadotChain } from '@helix/shared/model';
+import { PolkadotChainSimpleToken } from 'shared/model';
 import { GraphQLClient, useQuery } from 'graphql-hooks';
 
 const ACCOUNTS = `
@@ -9,7 +9,7 @@ query accounts($chain: String) {
 } 
 `;
 
-export function useAccountStatistic(url: string, chain?: PolkadotChain) {
+export function useAccountStatistic(url: string, chain?: PolkadotChainSimpleToken) {
   const fetchS2sFormal = useQuery<{ accounts: { total: number } }>(ACCOUNTS, {
     client: new GraphQLClient({ url }),
     variables: { chain },

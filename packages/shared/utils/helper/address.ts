@@ -5,6 +5,7 @@ import { hexToU8a, numberToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { isNull } from 'lodash';
 import Web3 from 'web3';
+import { ChainConfig, PolkadotChainConfig } from '../../model';
 
 export const registry = new TypeRegistry();
 
@@ -73,4 +74,17 @@ export function remove0x(text: string): string {
     return text.slice(start);
   }
   return text;
+}
+
+// eslint-disable-next-line complexity
+export function revertAccount(account: string, config: ChainConfig): string {
+  if (config.mode === 'native' || config?.wallets.includes('polkadot')) {
+    return convertToSS58(account, (<PolkadotChainConfig>config).ss58Prefix);
+  }
+
+  if (config.mode === 'dvm' && account.startsWith('0x64766d3a00000000000000')) {
+    return convertToEth(account) ?? account;
+  }
+
+  return account;
 }

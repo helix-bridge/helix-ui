@@ -1,10 +1,22 @@
 import { mapKeys } from 'lodash';
-import { Network, HistoryRouteParam, StorageInfo, ValueOf, WithNull, NetworkMode, HashInfo } from '../../model';
+import { DEFAULT_DIRECTION } from '../../config/constant';
+import {
+  CrossChainDirection,
+  CrossToken,
+  HashInfo,
+  HistoryRouteParam,
+  NetworkMode,
+  NullableCrossChainDirection,
+  StorageInfo,
+  ValueOf,
+  WithNull,
+} from '../../model';
+import { getChainConfig } from '../network';
 import { readStorage } from './storage';
 
 interface HashShort {
-  f?: Network;
-  t?: Network;
+  f?: string;
+  t?: string;
   r?: string;
   fm?: NetworkMode;
   tm?: NetworkMode;
@@ -84,15 +96,13 @@ export function apiUrl(domain: string, path: string): string {
 }
 
 // eslint-disable-next-line complexity
-export const genHistoryRouteParams: (param: HistoryRouteParam) => string = ({ from, sender, to, fMode, tMode }) => {
+export const genHistoryRouteParams: (param: HistoryRouteParam) => string = ({ from, sender, to }) => {
   const params = new URLSearchParams();
 
   [
     { key: 'from', value: from || '' },
     { key: 'sender', value: sender || '' },
     { key: 'to', value: to || '' },
-    { key: 'fMode', value: fMode || 'native' },
-    { key: 'tMode', value: tMode || 'native' },
   ].forEach(({ key, value }) => {
     if (value) {
       params.set(key, value);
@@ -109,7 +119,73 @@ export const getHistoryRouteParams: (search: string) => WithNull<HistoryRoutePar
     from: params.get('from'),
     sender: params.get('sender'),
     to: params.get('to'),
-    fMode: params.get('fMode'),
-    tMode: params.get('tMode'),
   } as HistoryRouteParam;
+};
+
+// eslint-disable-next-line complexity
+export const validateDirection: (dir: NullableCrossChainDirection) => CrossChainDirection = (dir) => {
+  const { from, to } = dir;
+
+  if (from && to) {
+    const reachable = from.cross.find((item) => item.partner.symbol === to.symbol);
+
+    return reachable ? (dir as CrossChainDirection) : DEFAULT_DIRECTION;
+  }
+
+  return { from: from ?? DEFAULT_DIRECTION.from, to: to ?? DEFAULT_DIRECTION.to };
+};
+
+/**
+ * TODO: Find the correct CrossChainDirection by the information from the hash or localStorage settings
+ */
+// eslint-disable-next-line complexity
+export const getDirectionFromSettingsWeak: () => CrossChainDirection = () => {
+  const fToken = getInitialSetting<string>('from', null);
+  const tToken = getInitialSetting<string>('to', null);
+  const fMode = getInitialSetting<NetworkMode>('fMode', 'native') as NetworkMode;
+  const tMode = getInitialSetting<NetworkMode>('tMode', 'native') as NetworkMode;
+
+  const from = fToken && getChainConfig(fToken, fMode);
+  const to = tToken && getChainConfig(tToken, tMode);
+
+  let fromToken: CrossToken | null = null;
+  let toToken: CrossToken | null = null;
+
+  if (from) {
+    const token = from.tokens.find((item) => item.symbol === fToken)!;
+
+    fromToken = { ...token, amount: '', meta: from };
+  }
+
+  if (to) {
+    const token = to.tokens.find((item) => item.symbol === tToken)!;
+
+    toToken = { ...token, amount: '', meta: to };
+  }
+
+  if (fromToken && !toToken) {
+    const config = getChainConfig(fromToken.cross[0].partner);
+
+    toToken = {
+      ...config.tokens.find((item) => item.symbol === fromToken?.cross[0].partner.symbol)!,
+      amount: '',
+      meta: config,
+    };
+  }
+
+  if (!fromToken && toToken) {
+    const config = getChainConfig(toToken.cross[0].partner);
+
+    fromToken = {
+      ...config.tokens.find((item) => item.symbol === toToken?.cross[0].partner.symbol)!,
+      amount: '',
+      meta: config,
+    };
+  }
+
+  return validateDirection({ from: fromToken, to: toToken });
+};
+
+export const getDirectionFromSettings: () => CrossChainDirection = () => {
+  return DEFAULT_DIRECTION;
 };

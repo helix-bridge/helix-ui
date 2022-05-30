@@ -1,17 +1,33 @@
-import { CrossChainState } from '@helix/shared/components/widget/CrossChainStatus';
-import { EllipsisMiddle } from '@helix/shared/components/widget/EllipsisMiddle';
-import { Substrate2SubstrateRecord } from '@helix/shared/model';
-import { fromWei, getChainConfigByName, getDisplayName, prettyNumber, revertAccount } from '@helix/shared/utils';
-import { Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import { formatDistance, fromUnixTime } from 'date-fns';
+import { useRouter } from 'next/router';
+import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
+import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
+import { Icon } from 'shared/components/widget/Icon';
+import { HelixHistoryRecord } from 'shared/model';
+import { isDVM2Substrate, isS2S, isSubstrateDVM } from 'shared/utils/bridge';
+import { fromWei, prettyNumber, revertAccount } from 'shared/utils/helper';
+import { getChainConfig, getDisplayName, toVertices } from 'shared/utils/network';
+import { Path } from '../../config';
 
-export function Record({ record }: { record: Substrate2SubstrateRecord }) {
-  const { fromChainMode, fromChain, sender, recipient, toChain, toChainMode } = record;
-  const fromConfig = getChainConfigByName(fromChain, fromChainMode);
-  const toConfig = getChainConfigByName(toChain, toChainMode);
-  const fromAccount = revertAccount(sender, fromChain, fromChainMode);
-  const toAccount = revertAccount(recipient, toChain, toChainMode);
-  const amount = fromWei({ value: record.amount, unit: 'gwei' }, prettyNumber);
+// eslint-disable-next-line complexity
+export function Record({ record }: { record: HelixHistoryRecord }) {
+  const { fromChain, sender, recipient, toChain } = record;
+  const departure = toVertices(fromChain);
+  const arrival = toVertices(toChain);
+  const fromConfig = getChainConfig(departure);
+  const toConfig = getChainConfig(arrival);
+  const fromAccount = revertAccount(sender, fromConfig);
+  const toAccount = revertAccount(recipient, toConfig);
+  const router = useRouter();
+
+  const amount = fromWei({ value: record.amount, decimals: isDVM2Substrate(departure, arrival) ? 18 : 9 }, (val) =>
+    prettyNumber(val, { ignoreZeroDecimal: true })
+  );
+
+  const tokenName = !record.token.startsWith('0x')
+    ? record.token
+    : `${departure.mode === 'dvm' ? 'x' : ''}${fromConfig?.isTest ? 'O' : ''}RING`;
 
   return (
     <>
@@ -40,18 +56,47 @@ export function Record({ record }: { record: Substrate2SubstrateRecord }) {
         </EllipsisMiddle>
       </div>
 
-      <span>{`${fromChainMode === 'dvm' ? 'x' : ''}${fromConfig?.isTest ? 'O' : ''}RING`}</span>
+      <span>{tokenName}</span>
 
       <Tooltip title={amount}>
-        <span className="justify-self-center max-w-full truncate">{amount}</span>
+        <span className="justify-self-center max-w-full truncate">
+          {prettyNumber(amount, { decimal: 3, ignoreZeroDecimal: true })}
+        </span>
       </Tooltip>
 
       <span className="justify-self-center">
-        {fromWei({ value: record.fee, unit: fromChainMode === 'dvm' ? 'ether' : 'gwei' })}
+        {fromWei({ value: record.fee, decimals: departure.mode === 'dvm' ? 18 : 9 })}
       </span>
 
       <span className="justify-self-center capitalize">{record.bridge}</span>
-      <CrossChainState value={record.result} />
+
+      <div className="flex items-center">
+        <CrossChainState value={record.result} />
+
+        <Button
+          type="link"
+          onClick={() => {
+            const from = toVertices(record.fromChain);
+            const to = toVertices(record.toChain);
+            const radix = 16;
+            const paths = isS2S(from, to)
+              ? ['s2s', record.laneId + '0x' + Number(record.nonce).toString(radix)]
+              : isSubstrateDVM(from, to)
+              ? ['s2dvm', record.id]
+              : [];
+
+            router.push({
+              pathname: `${Path.transaction}/${paths.join('/')}`,
+              query: new URLSearchParams({
+                from: record.fromChain,
+                to: record.toChain,
+              }).toString(),
+            });
+          }}
+        >
+          <Icon name="view" className="text-xl" />
+        </Button>
+      </div>
     </>
   );
 }
