@@ -42,10 +42,12 @@ export interface CrossChainComponentProps<
   direction: CrossChainDirection<F, T>;
   bridge: Bridge<B>;
   balance: BN | BN[] | null;
+  allowance: BN | null;
   // make sure page setState function direction to avoid infinite update
   setSubmit: React.Dispatch<React.SetStateAction<SubmitFn>>;
   setBridgeState: React.Dispatch<React.SetStateAction<BridgeState>>;
   onFeeChange: React.Dispatch<React.SetStateAction<number | null>>;
+  updateAllowancePayload: React.Dispatch<React.SetStateAction<{ spender: string; tokenAddress: string } | null>>;
 }
 
 export interface CrossChainDirection<F = CrossToken, T = CrossToken> {

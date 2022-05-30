@@ -2,6 +2,7 @@ import { CaretDownOutlined } from '@ant-design/icons';
 import { Form, Spin, Typography } from 'antd';
 import { PropsWithChildren, ReactNode, useState } from 'react';
 import { Bridge } from 'shared/model';
+import { useITranslation } from '../../hooks';
 
 type AmountInfo =
   | {
@@ -19,18 +20,19 @@ interface CrossChainInfoProps {
 }
 
 export function CrossChainInfo({ bridge, fee, extra, children, hideFee }: PropsWithChildren<CrossChainInfoProps>) {
+  const { t } = useITranslation();
   const [collapse, setCollapse] = useState(true);
 
   return (
-    <Form.Item label="Info" className="relative">
+    <Form.Item label={t('Information')} className="relative">
       <div className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900">
         <div className="flex justify-between items-center">
-          <Typography.Text>Bridge Name</Typography.Text>
+          <Typography.Text>{t('Bridge Name')}</Typography.Text>
           <Typography.Text className="capitalize">{bridge?.category}</Typography.Text>
         </div>
 
         <div className={`flex justify-between items-center ${hideFee ? 'hidden' : ''}`}>
-          <Typography.Text>Transaction Fee</Typography.Text>
+          <Typography.Text>{t('Transaction Fee')}</Typography.Text>
           {fee ? (
             <Typography.Text>
               {fee.amount} {fee.symbol}

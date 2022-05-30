@@ -25,7 +25,7 @@ export function Destination({
   const [visible, setVisible] = useState(false);
 
   return (
-    <Form.Item label={title} className={'relative w-full ' + className}>
+    <Form.Item label={title} className={'relative w-full mb-2 ' + className}>
       <>
         <InputNumber<string>
           value={value?.amount}
@@ -50,7 +50,13 @@ export function Destination({
             className="flex items-center space-x-2 py-2 bg-gray-800 border-none"
             onClick={() => setVisible(true)}
           >
-            <Logo name={value.logo} width={40} height={40} />
+            <div className="relative w-10 h-10">
+              <Logo name={value.logo} layout="fill" />
+
+              <span className="absolute -bottom-1 right-0">
+                <Logo chain={value.meta} width={12} height={12} />
+              </span>
+            </div>
 
             <div className="flex flex-col items-start space-y-px w-16 text-left">
               <strong className="font-medium text-sm truncate w-full">{value.symbol}</strong>

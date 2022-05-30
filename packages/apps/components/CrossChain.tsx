@@ -26,10 +26,11 @@ import {
 } from 'shared/utils/bridge';
 import { emptyObsFactory, isKton, isRing } from 'shared/utils/helper';
 import { getDarwiniaBalance, getDVMBalance, getErc20Balance } from 'shared/utils/network/balance';
+import { useAllowance } from '../hooks/allowance';
 import { useAccount, useApi } from '../providers';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { Direction } from './form-control/Direction';
-import { FromItemButton } from './widget/FormItemButton';
+import { FormItemButton } from './widget/FormItemButton';
 
 const isDirectionChanged = (pre: CrossChainDirection, cur: CrossChainDirection) => {
   return !isEqual(
@@ -79,6 +80,7 @@ async function getBalance(direction: CrossChainDirection, account: string): Prom
   return null;
 }
 
+// eslint-disable-next-line complexity
 export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const { i18n, t } = useTranslation();
   const [form] = useForm<CrossChainPayload>();
@@ -90,6 +92,20 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const [fee, setFee] = useState<number | null>(null);
   const { account } = useAccount();
   const [balance, setBalance] = useState<BN | BN[] | null>(null);
+  const { allowance, approve, queryAllowance } = useAllowance(direction);
+  const [allowancePayload, setAllowancePayload] = useState<{ spender: string; tokenAddress: string } | null>(null);
+
+  const allowanceEnough = useMemo(() => {
+    if (!allowance || !balance) {
+      return false;
+    }
+
+    if (Array.isArray(balance)) {
+      return isRing(direction.from.symbol) ? allowance.gt(balance[0]) : true;
+    }
+
+    return allowance.gt(balance);
+  }, [allowance, balance, direction.from.symbol]);
 
   const launch = useCallback(() => {
     form.validateFields().then((values) => {
@@ -97,15 +113,6 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
 
       if (!values.direction.from.amount) {
         message.error(t('Transfer amount is required'));
-        return;
-      }
-
-      if (!values.direction.to.amount) {
-        message.error(
-          t(
-            'Invalid transfer amount. Make sure transfer amount can cover the fee and both quota and balance is sufficient'
-          )
-        );
         return;
       }
 
@@ -142,15 +149,18 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
     }
 
     const sub$$ = fromRx(getBalance(direction, account)).subscribe((result) => {
-      console.log(
-        '🚀 ~ file: CrossChain.tsx ~ line 153 ~ const sub$$=fromRx ~ result',
-        Array.isArray(result) ? result.map((item) => item.toString()) : result?.toString()
-      );
+      console.log('💰 ~ balances', Array.isArray(result) ? result.map((item) => item.toString()) : result?.toString());
       setBalance(result);
     });
 
     return () => sub$$?.unsubscribe();
   }, [account, direction]);
+
+  useEffect(() => {
+    if (allowancePayload) {
+      queryAllowance(allowancePayload);
+    }
+  }, [allowancePayload, queryAllowance]);
 
   return (
     <Form
@@ -171,6 +181,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
                 if (isDirectionChanged(direction, value)) {
                   setBridge(null);
                   setFee(null);
+                  setAllowancePayload(null);
                   setSubmit(emptyObsFactory);
                   form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined, [FORM_CONTROL.recipient]: undefined });
                 }
@@ -187,9 +198,11 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
               bridge={bridge}
               direction={direction}
               balance={balance}
+              allowance={allowance}
               setSubmit={setSubmit}
               setBridgeState={setBridgeState}
               onFeeChange={setFee}
+              updateAllowancePayload={setAllowancePayload}
             />
           )}
 
@@ -197,18 +210,22 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
             <Input value={account} />
           </Form.Item>
 
-          <Tooltip title={bridgeState.reason} placement="bottom">
-            {departureConnection.status === ConnectionStatus.success ? (
-              <FromItemButton onClick={() => launch()}>{t('Transfer')}</FromItemButton>
-            ) : (
-              <FromItemButton
-                onClick={() => connectDepartureNetwork(direction.from.meta)}
-                disabled={departureConnection.status === ConnectionStatus.connecting}
-              >
-                {t('Connect to Wallet')}
-              </FromItemButton>
-            )}
-          </Tooltip>
+          {!allowanceEnough && allowancePayload && account ? (
+            <FormItemButton onClick={() => approve(allowancePayload)}>{t('Approve')}</FormItemButton>
+          ) : (
+            <Tooltip title={bridgeState.reason} placement="bottom">
+              {departureConnection.status === ConnectionStatus.success ? (
+                <FormItemButton onClick={() => launch()}>{t('Transfer')}</FormItemButton>
+              ) : (
+                <FormItemButton
+                  onClick={() => connectDepartureNetwork(direction.from.meta)}
+                  disabled={departureConnection.status === ConnectionStatus.connecting}
+                >
+                  {t('Connect to Wallet')}
+                </FormItemButton>
+              )}
+            </Tooltip>
+          )}
         </Col>
 
         <Col xs={24} sm={{ span: 15, offset: 1 }} className="dark:bg-antDark">

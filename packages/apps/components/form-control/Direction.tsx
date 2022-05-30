@@ -96,24 +96,23 @@ export function Direction({ value, initial, onChange, balance, fee = 0 }: Direct
       />
 
       {iBalance && (
-        <div className="absolute right-0 top-28 cursor-pointer space-x-2">
-          <Tooltip
-            title={
-              // eslint-disable-next-line no-magic-numbers
-              iBalance.gt(new BN(1_000_000))
-                ? fromWei({ value: iBalance, decimals: data.from.decimals }, prettyNumber)
-                : ''
-            }
-          >
-            {fromWei(
-              { value: iBalance, decimals: data.from.decimals },
-              // eslint-disable-next-line no-magic-numbers
-              (val: string) => (+val > 1e6 ? largeNumber(val) : val),
-              (val: string) => prettyNumber(val, { ignoreZeroDecimal: true, decimal: 3 })
-            )}
-          </Tooltip>
-          <span>{data.from.symbol}</span>
-        </div>
+        <Tooltip
+          title={
+            // eslint-disable-next-line no-magic-numbers
+            iBalance.gt(new BN(1_000_000))
+              ? fromWei({ value: iBalance, decimals: data.from.decimals }, prettyNumber)
+              : ''
+          }
+          className="absolute right-0 top-28 cursor-pointer space-x-2 text-xs"
+        >
+          {fromWei(
+            { value: iBalance, decimals: data.from.decimals },
+            // eslint-disable-next-line no-magic-numbers
+            (val: string) => (+val > 1e6 ? largeNumber(val) : val),
+            (val: string) => prettyNumber(val, { ignoreZeroDecimal: true, decimal: 3 })
+          )}
+          <span className="ml-2">{data.from.symbol}</span>
+        </Tooltip>
       )}
 
       {bridgetStatus === 'pending' ? (
@@ -126,7 +125,7 @@ export function Direction({ value, initial, onChange, balance, fee = 0 }: Direct
             triggerChange({ from: { ...to, amount: '' }, to: { ...from, amount: '' } });
           }}
           name="switch"
-          className="transform rotate-90 cursor-pointer w-10 h-10"
+          className="transform rotate-90 cursor-pointer w-8 h-8 translate-y-3"
         />
       )}
 

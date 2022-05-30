@@ -69,15 +69,9 @@ export function DVM2Substrate({
       }
 
       return createTxWorkflow(
-        applyModalObs({
-          content: <TransferConfirm value={data} fee={null} />,
-        }),
+        applyModalObs({ content: <TransferConfirm value={data} fee={null} /> }),
         redeem(data),
-        afterCrossChain(TransferDone, {
-          payload: data,
-          hashType: 'txHash',
-          onDisappear: getBalance,
-        })
+        afterCrossChain(TransferDone, { payload: data, onDisappear: getBalance })
       ).subscribe(observer);
     };
 

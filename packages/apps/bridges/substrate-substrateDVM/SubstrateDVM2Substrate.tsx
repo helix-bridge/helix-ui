@@ -13,11 +13,10 @@ import {
   SubmitFn,
 } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { fromWei, isRing, prettyNumber, toWei } from 'shared/utils/helper';
+import { fromWei, isRing, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
 import { getS2SMappingAddress } from 'shared/utils/mappingToken';
 import { getErc20Balance } from 'shared/utils/network/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
-import { Allowance } from '../../components/bridge/Allowance';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
@@ -29,9 +28,8 @@ import { RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getRedeemFee } from './utils';
 import { redeem } from './utils/tx';
 
-const validateBeforeTx = (balance: BN, amount: BN, fee: BN, allowance: BN): string | undefined => {
+const validateBeforeTx = (balance: BN, amount: BN, allowance: BN): string | undefined => {
   const validations: [boolean, string][] = [
-    [balance.lt(fee), 'Insufficient fee'],
     [balance.lt(amount), 'Insufficient balance'],
     [allowance.lt(amount), 'Insufficient allowance'],
   ];
@@ -41,12 +39,14 @@ const validateBeforeTx = (balance: BN, amount: BN, fee: BN, allowance: BN): stri
 };
 
 export function SubstrateDVM2Substrate({
+  allowance,
   form,
   bridge,
   direction,
   onFeeChange,
   setSubmit,
   setBridgeState,
+  updateAllowancePayload,
 }: CrossChainComponentProps<
   SubstrateSubstrateDVMBridgeConfig,
   CrossToken<DVMChainConfig>,
@@ -57,8 +57,6 @@ export function SubstrateDVM2Substrate({
   const [balance, setBalance] = useState<BN | null>(null);
   const [fee, setFee] = useState<BN | null>(null);
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
-  const [allowance, setAllowance] = useState<BN | null>(null);
-  const [spender, setSpender] = useState<string>('');
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
   const { observer } = useTx();
   const { account } = useAccount();
@@ -79,17 +77,18 @@ export function SubstrateDVM2Substrate({
 
     const sub$$ = from(getErc20Balance(direction.from.address, account, false)).subscribe((result) => {
       setBalance(result);
-      console.log('🚀 ~ file: SubstrateDVM2Substrate.tsx ~ line 82 ~ useEffect ~ result', result.toString());
     });
 
     return () => sub$$.unsubscribe();
   }, [account, direction.from.address, direction.from.meta.provider]);
 
   useEffect(() => {
-    const sub$$ = from(getS2SMappingAddress(direction.from.meta.provider)).subscribe(setSpender);
+    const sub$$ = from(getS2SMappingAddress(direction.from.meta.provider)).subscribe((spender) => {
+      updateAllowancePayload({ spender, tokenAddress: direction.from.address });
+    });
 
     return () => sub$$.unsubscribe();
-  }, [direction.from.meta.provider]);
+  }, [direction.from.address, direction.from.meta.provider, updateAllowancePayload]);
 
   useEffect(() => {
     const fn = () => (data: RedeemPayload) => {
@@ -97,7 +96,8 @@ export function SubstrateDVM2Substrate({
         return EMPTY.subscribe();
       }
 
-      const msg = validateBeforeTx(balance, new BN(toWei(direction.from)), fee, allowance);
+      const msg = validateBeforeTx(balance, new BN(toWei(direction.from)), allowance);
+
       if (msg) {
         message.error(t(msg));
         return EMPTY.subscribe();
@@ -181,12 +181,14 @@ export function SubstrateDVM2Substrate({
           {
             name: t('Allowance'),
             content: (
-              <Allowance
-                direction={direction}
-                onChange={setAllowance}
-                spender={spender}
-                tokenAddress={direction.from.address}
-              />
+              <Typography.Text className="capitalize">
+                <span>
+                  {fromWei({ value: allowance }, largeNumber, (num: string) =>
+                    prettyNumber(num, { ignoreZeroDecimal: true })
+                  )}
+                </span>
+                <span className="capitalize ml-1">{direction.from.symbol}</span>
+              </Typography.Text>
             ),
           },
           {

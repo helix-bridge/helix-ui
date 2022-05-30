@@ -48,72 +48,79 @@ export function RecipientItem({
   }
 
   return (
-    <Form.Item
-      label={
-        <span className="inline-flex items-center justify-between gap-2">
-          <span>{t('Recipient')}</span>
-          {displayLink && (
-            <Tooltip title={t('Connect {{network}} to fetch own accounts', { network: to.meta.name })}>
-              <Button onClick={() => connectArrivalNetwork(to.meta)} type="link" icon={<ApiOutlined />}></Button>
-            </Tooltip>
-          )}
-        </span>
-      }
-      name={FORM_CONTROL.recipient}
-      validateFirst
-      validateTrigger="onBlur"
-      rules={[
-        { required: true },
-        {
-          validator(_, value: string) {
-            return type === 'ethereum' || !isSameAddress(form.getFieldValue(FORM_CONTROL.sender), value)
-              ? Promise.resolve()
-              : Promise.reject();
+    <div className="relative">
+      <Form.Item
+        label={t('Recipient')}
+        name={FORM_CONTROL.recipient}
+        validateFirst
+        validateTrigger="onBlur"
+        className="mb-4"
+        rules={[
+          { required: true },
+          {
+            validator(_, value: string) {
+              return type === 'ethereum' || !isSameAddress(form.getFieldValue(FORM_CONTROL.sender), value)
+                ? Promise.resolve()
+                : Promise.reject();
+            },
+            message: t('The sending address and the receiving address cannot be the same'),
           },
-          message: t('The sending address and the receiving address cannot be the same'),
-        },
-        {
-          validator(_, value: string) {
-            return isValidRecipient(value) ? Promise.resolve() : Promise.reject();
+          {
+            validator(_, value: string) {
+              return isValidRecipient(value) ? Promise.resolve() : Promise.reject();
+            },
+            message:
+              type === 'ethereum'
+                ? t('Please fill in a {{network}} address which start with 0x', {
+                    network: getDisplayName(to.meta),
+                  })
+                : t('Please enter a valid {{network}} address', { network: upperFirst(to.meta.name) }),
           },
-          message:
-            type === 'ethereum'
-              ? t('Please fill in a {{network}} address which start with 0x', {
-                  network: getDisplayName(to.meta),
-                })
-              : t('Please enter a valid {{network}} address', { network: upperFirst(to.meta.name) }),
-        },
-      ]}
-      extra={to ? <span>{extraTip}</span> : ''}
-    >
-      {type === 'ethereum' || !formattedAccounts?.length ? (
-        <Input
-          size="large"
-          placeholder={t('Type or select the recipient address')}
-          onChange={(event) => {
-            if (isValidRecipient(event.target.value) && onChange) {
-              onChange(event.target.value);
-            }
-          }}
-        />
-      ) : (
-        <AutoComplete
-          placeholder={t('Type or select the recipient address')}
-          size="large"
-          className="flex-1"
-          onChange={(account) => {
-            if (isValidRecipient(account) && onChange) {
-              onChange(account);
-            }
-          }}
-        >
-          {formattedAccounts.map((item) => (
-            <AutoComplete.Option value={item.address} key={item.address}>
-              <IdentAccountAddress account={item} />
-            </AutoComplete.Option>
-          ))}
-        </AutoComplete>
-      )}
-    </Form.Item>
+        ]}
+        extra={to ? <span className="text-xs">{extraTip}</span> : ''}
+      >
+        {type === 'ethereum' || !formattedAccounts?.length ? (
+          <Input
+            size="large"
+            placeholder={t('Type or select the recipient address')}
+            onChange={(event) => {
+              if (isValidRecipient(event.target.value) && onChange) {
+                onChange(event.target.value);
+              }
+            }}
+          />
+        ) : (
+          <AutoComplete
+            placeholder={t('Type or select the recipient address')}
+            size="large"
+            className="flex-1"
+            onChange={(account) => {
+              if (isValidRecipient(account) && onChange) {
+                onChange(account);
+              }
+            }}
+          >
+            {formattedAccounts.map((item) => (
+              <AutoComplete.Option value={item.address} key={item.address}>
+                <IdentAccountAddress account={item} />
+              </AutoComplete.Option>
+            ))}
+          </AutoComplete>
+        )}
+      </Form.Item>
+
+      <div className="absolute top-0 right-0">
+        {displayLink && (
+          <Tooltip title={t('Fetch own accounts')}>
+            <Button
+              size="small"
+              onClick={() => connectArrivalNetwork(to.meta)}
+              type="link"
+              icon={<ApiOutlined />}
+            ></Button>
+          </Tooltip>
+        )}
+      </div>
+    </div>
   );
 }

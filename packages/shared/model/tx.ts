@@ -33,12 +33,9 @@ export type TxFn<T> = (value: T) => Observable<Tx>;
 
 export type TxConfirmComponentProps<T extends Bridge = Bridge> = { value: CrossChainPayload<T> };
 
-export type TxHashType = 'block' | 'extrinsic' | 'address' | 'txHash'; // consistent with the SubscanLink component props;
-
 export type TxDoneComponentProps<T extends Bridge = Bridge> = {
   tx: Tx;
   value: CrossChainPayload<T>;
-  hashType?: TxHashType;
 };
 
 export type CommonPayloadKeys = 'sender' | 'recipient' | 'amount' | 'asset';

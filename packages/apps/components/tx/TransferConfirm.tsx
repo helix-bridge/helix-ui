@@ -3,7 +3,6 @@ import { Alert, Typography } from 'antd';
 import { i18n } from 'next-i18next';
 import { PropsWithChildren, useMemo } from 'react';
 import { initReactI18next, useTranslation } from 'react-i18next';
-import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
 import { Logo } from 'shared/components/widget/Logo';
 import { Bridge, CrossToken, PolkadotChainConfig, TxConfirmComponentProps } from 'shared/model';
 import { convertToSS58 } from 'shared/utils/helper';
@@ -76,12 +75,12 @@ export function TransferConfirm<T extends Bridge = Bridge>({
           <div className="flex flex-col space-y-2 mt-1 p-3 bg-gray-900 border border-gray-800">
             <div className="flex items-center justify-between overflow-hidden">
               <Typography.Text className="opacity-60">{t('From')}</Typography.Text>
-              <EllipsisMiddle className="w-2/3 text-right">{sender}</EllipsisMiddle>
+              <span className="truncate text-right w-11/12">{sender}</span>
             </div>
 
             <div className="flex items-center justify-between overflow-hidden">
               <Typography.Text className="opacity-60">{t('To')}</Typography.Text>
-              <EllipsisMiddle className="w-2/3 text-right">{value.recipient}</EllipsisMiddle>
+              <span className="truncate text-right w-11/12">{value.recipient}</span>
             </div>
 
             {fee && (

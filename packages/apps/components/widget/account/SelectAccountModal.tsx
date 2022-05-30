@@ -2,6 +2,8 @@ import { Button, Empty, Radio } from 'antd';
 import dynamic from 'next/dynamic';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { PolkadotChainConfig } from 'shared/model';
+import { convertToSS58 } from 'shared/utils/helper';
 import { useApi } from '../../../providers';
 import { BaseModal } from '../BaseModal';
 
@@ -22,8 +24,13 @@ const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
 export const SelectAccountModal: React.FC<Props> = ({ visible, defaultValue, title, footer, onSelect, onCancel }) => {
   const {
     departureConnection: { accounts },
+    departure,
   } = useApi();
   const { t } = useTranslation();
+  const data = accounts.map((item) => ({
+    ...item,
+    address: convertToSS58(item.address, (departure as PolkadotChainConfig).ss58Prefix),
+  }));
 
   return (
     <BaseModal
@@ -38,9 +45,9 @@ export const SelectAccountModal: React.FC<Props> = ({ visible, defaultValue, tit
       }}
       footer={footer}
     >
-      {accounts?.length ? (
+      {data?.length ? (
         <Radio.Group className="w-full" defaultValue={defaultValue} onChange={(event) => onSelect(event.target.value)}>
-          {accounts.map((item) => (
+          {data.map((item) => (
             <Radio.Button
               value={item.address}
               key={item.address}

@@ -29,10 +29,9 @@ import { IssuingPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getDailyLimit, getIssuingFee } from './utils';
 import { issuing } from './utils/tx';
 
-const validateBeforeTx = (balance: BN, amount: BN, fee: BN, limit: BN): string | undefined => {
+const validateBeforeTx = (balance: BN, amount: BN, limit: BN): string | undefined => {
   const validations: [boolean, string][] = [
     [balance.lt(amount), 'Insufficient balance'],
-    [balance.lt(fee), 'Insufficient fee balance'],
     [limit.lt(amount), 'Insufficient daily limit'],
   ];
 
@@ -97,11 +96,12 @@ export function Substrate2SubstrateDVM({
     // eslint-disable-next-line complexity
     const fn = () => (data: IssuingPayload) => {
       const { api } = departureConnection as PolkadotConnection;
+
       if (departureConnection.type !== 'polkadot' || !api || !fee || !dailyLimit || !availableBalance?.balance) {
         return EMPTY.subscribe();
       }
 
-      const msg = validateBeforeTx(availableBalance.balance, new BN(toWei(data.direction.from)), fee, dailyLimit);
+      const msg = validateBeforeTx(availableBalance.balance, new BN(toWei(data.direction.from)), dailyLimit);
 
       if (msg) {
         message.error(t(msg));
@@ -112,7 +112,6 @@ export function Substrate2SubstrateDVM({
         applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }),
         issuing(data, api, fee),
         afterCrossChain(TransferDone, {
-          hashType: 'block',
           onDisappear: () => getBalances(data.sender).then(setAvailableBalances),
           payload: data,
         })

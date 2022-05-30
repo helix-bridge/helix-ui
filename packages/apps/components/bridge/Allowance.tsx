@@ -1,14 +1,15 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
-import { Button, Tooltip, Typography } from 'antd';
+import { Tooltip } from 'antd';
 import BN from 'bn.js';
 import { useCallback, useEffect, useState } from 'react';
 import { CrossChainDirection, CrossChainPayload } from 'shared/model';
-import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
+import { toWei } from 'shared/utils/helper';
 import { applyModalObs, approveToken, createTxWorkflow, getAllowance } from 'shared/utils/tx';
 import { useAfterTx, useITranslation } from '../../hooks';
 import { useAccount, useTx } from '../../providers';
 import { ApproveConfirm } from '../tx/ApproveConfirm';
 import { ApproveDone } from '../tx/ApproveSuccess';
+import { FormItemButton } from '../widget/FormItemButton';
 
 type ApproveValue = CrossChainPayload;
 
@@ -57,7 +58,7 @@ export function Allowance({ direction, onChange, spender, tokenAddress }: Allowa
   if (allowance.lt(new BN(toWei({ value: direction.from.amount })))) {
     return (
       <Tooltip title={t('Exceed the authorized amount, click to authorize more amount, or reduce the transfer amount')}>
-        <Button
+        <FormItemButton
           onClick={() => {
             const value = { sender: account, direction };
             const { sender } = value;
@@ -82,18 +83,11 @@ export function Allowance({ direction, onChange, spender, tokenAddress }: Allowa
           }}
           size="small"
         >
-          approve
-        </Button>
+          {t('Approve')}
+        </FormItemButton>
       </Tooltip>
     );
   }
 
-  return (
-    <Typography.Text className="capitalize">
-      <span>
-        {fromWei({ value: allowance }, largeNumber, (num: string) => prettyNumber(num, { ignoreZeroDecimal: true }))}
-      </span>
-      <span className="capitalize ml-1">{direction.from.symbol}</span>
-    </Typography.Text>
-  );
+  return null;
 }

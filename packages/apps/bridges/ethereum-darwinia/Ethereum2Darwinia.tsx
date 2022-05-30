@@ -1,4 +1,4 @@
-import { message } from 'antd';
+import { message, Typography } from 'antd';
 import BN from 'bn.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { EMPTY, from } from 'rxjs';
@@ -11,10 +11,9 @@ import {
   PolkadotChainConfig,
   SubmitFn,
 } from 'shared/model';
-import { fromWei, isKton, isRing, toWei } from 'shared/utils/helper';
+import { fromWei, isKton, isRing, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
 import { getErc20Balance } from 'shared/utils/network/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
-import { Allowance } from '../../components/bridge/Allowance';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
@@ -36,11 +35,13 @@ const validateBeforeTx = (balance: BN, amount: BN, fee: BN, ringBalance: BN, all
 };
 
 export function Ethereum2Darwinia({
+  allowance,
   form,
   setSubmit,
   direction,
   bridge,
   onFeeChange,
+  updateAllowancePayload,
 }: CrossChainComponentProps<
   EthereumDarwiniaBridgeConfig,
   CrossToken<EthereumChainConfig>,
@@ -48,7 +49,6 @@ export function Ethereum2Darwinia({
 >) {
   const { t } = useITranslation();
   const { departureConnection } = useApi();
-  const [allowance, setAllowance] = useState<BN | null>(null);
   const [balance, setBalance] = useState<BN | null>(null);
   const [fee, setFee] = useState<BN | null>(null);
   const [ringBalance, setRingBalance] = useState<BN | null>(null);
@@ -157,6 +157,12 @@ export function Ethereum2Darwinia({
     }
   }, [direction, getBalance, departureConnection]);
 
+  useEffect(() => {
+    if (isRing(direction.from.symbol)) {
+      updateAllowancePayload({ spender: bridge.config.contracts.issuing, tokenAddress: bridge.config.contracts.ring });
+    }
+  }, [bridge.config.contracts.issuing, bridge.config.contracts.ring, direction.from.symbol, updateAllowancePayload]);
+
   return (
     <>
       <RecipientItem
@@ -175,19 +181,25 @@ export function Ethereum2Darwinia({
       <CrossChainInfo
         bridge={bridge}
         fee={feeWithSymbol}
-        extra={[
-          {
-            name: t('Allowance'),
-            content: (
-              <Allowance
-                direction={direction}
-                spender={bridge.config.contracts.issuing}
-                tokenAddress={bridge.config.contracts.ring}
-                onChange={setAllowance}
-              />
-            ),
-          },
-        ]}
+        extra={
+          isRing(direction.from.symbol)
+            ? [
+                {
+                  name: t('Allowance'),
+                  content: (
+                    <Typography.Text className="capitalize">
+                      <span>
+                        {fromWei({ value: allowance }, largeNumber, (num: string) =>
+                          prettyNumber(num, { ignoreZeroDecimal: true })
+                        )}
+                      </span>
+                      <span className="capitalize ml-1">{direction.from.symbol}</span>
+                    </Typography.Text>
+                  ),
+                },
+              ]
+            : undefined
+        }
       ></CrossChainInfo>
     </>
   );

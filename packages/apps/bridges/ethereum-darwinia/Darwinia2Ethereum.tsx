@@ -81,6 +81,7 @@ export function Darwinia2Ethereum({
   useEffect(() => {
     const fn = () => (data: RedeemPayload) => {
       const { api, type } = departureConnection as PolkadotConnection;
+
       if (type !== 'polkadot' || !api || !fee) {
         return EMPTY.subscribe();
       }
@@ -105,10 +106,7 @@ export function Darwinia2Ethereum({
       const obs = redeem(data, api);
 
       const afterTransfer = afterCrossChain(TransferDone, {
-        hashType: 'block',
-        onDisappear: () => {
-          getBalances(data.sender).then(setAvailableBalances);
-        },
+        onDisappear: () => getBalances(data.sender).then(setAvailableBalances),
         payload: data,
       });
 

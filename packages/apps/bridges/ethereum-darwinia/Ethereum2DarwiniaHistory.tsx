@@ -69,6 +69,7 @@ function Record({
   );
 }
 
+// eslint-disable-next-line complexity
 export function Ethereum2DarwiniaHistory({ confirmed }: { confirmed: boolean | null }) {
   const { t } = useITranslation();
   const { account } = useAccount();
@@ -108,8 +109,8 @@ export function Ethereum2DarwiniaHistory({ confirmed }: { confirmed: boolean | n
           ))
         ) : (
           <Empty
-            description={t('Please connect to Metamask')}
-            image={<Logo name="metamask.svg" width={96} height={96} />}
+            description={!data ? t('Please connect to Metamask') : t('No Data')}
+            image={!data ? <Logo name="metamask.svg" width={96} height={96} /> : undefined}
           />
         )}
 

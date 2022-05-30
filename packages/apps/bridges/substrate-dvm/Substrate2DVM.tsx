@@ -69,11 +69,7 @@ export function Substrate2DVM({
       return createTxWorkflow(
         applyModalObs({ content: <TransferConfirm value={data} fee={null} /> }),
         issuing(data, api),
-        afterCrossChain(TransferDone, {
-          hashType: 'block',
-          onDisappear: getBalance,
-          payload: data,
-        })
+        afterCrossChain(TransferDone, { onDisappear: getBalance, payload: data })
       ).subscribe(observer);
     };
 

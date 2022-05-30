@@ -29,7 +29,7 @@ const TokenOnChain = ({ token, isFrom }: TokenOnChainProps) => (
 
     <div className={`flex flex-col space-y-1 ${isFrom ? 'order-2 lg:ml-6' : 'order-1 items-end'}`}>
       <strong className={`font-medium text-sm ${isFrom ? 'text-left' : 'text-right'}`}>
-        {token.amount || '-'} {token.symbol}
+        {token.amount ? `${token.amount} ${token.symbol}` : <span></span>}
       </strong>
       <small className="font-light text-xs opacity-70">on {getDisplayName(token.meta)}</small>
     </div>

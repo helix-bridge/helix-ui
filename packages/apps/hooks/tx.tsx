@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { FunctionComponent, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SHORT_DURATION } from 'shared/config/constant';
-import { CrossChainPayload, Tx, TxDoneComponentProps, TxHashType } from 'shared/model';
+import { CrossChainPayload, Tx, TxDoneComponentProps } from 'shared/model';
 import { isDarwinia2Ethereum, isEthereum2Darwinia } from 'shared/utils/bridge';
 import { applyModal } from 'shared/utils/tx';
 
@@ -16,19 +16,17 @@ export function useAfterTx<T extends CrossChainPayload>() {
         Comp: FunctionComponent<TxDoneComponentProps>,
         {
           onDisappear,
-          hashType = 'txHash',
           payload,
           ...rest
         }: Exclude<ModalProps, 'onCancel'> & {
           onDisappear: (value: T, tx: Tx) => void;
-          hashType?: TxHashType;
           payload: T;
         }
       ) =>
       (tx: Tx) =>
       () => {
         const { destroy } = applyModal({
-          content: <Comp tx={tx} value={payload} hashType={hashType} />,
+          content: <Comp tx={tx} value={payload} />,
           okText: t('History'),
           okButtonProps: {
             size: 'large',
@@ -59,17 +57,15 @@ export function useAfterTx<T extends CrossChainPayload>() {
         {
           onDisappear,
           payload,
-          hashType = 'txHash',
         }: Exclude<ModalProps, 'onCancel'> & {
           onDisappear: (value: T, tx: Tx) => void;
-          hashType?: TxHashType;
           payload: T;
         }
       ) =>
       (tx: Tx) =>
       () => {
         message.success({
-          content: <Comp tx={tx} value={payload} hashType={hashType} />,
+          content: <Comp tx={tx} value={payload} />,
           onClose: () => onDisappear(payload, tx),
           duration: SHORT_DURATION,
           type: 'success',

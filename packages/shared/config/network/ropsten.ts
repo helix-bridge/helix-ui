@@ -22,7 +22,7 @@ export const ropstenConfig: EthereumChainConfig = {
   tokens: [
     {
       name: 'PRING',
-      decimals: 9,
+      decimals: 18,
       cross: [
         {
           category: 'helix',
@@ -33,12 +33,12 @@ export const ropstenConfig: EthereumChainConfig = {
       type: 'mapping',
       logo: 'token-ring.svg',
       symbol: 'PRING',
-      address: '',
+      address: '0xb52FBE2B925ab79a821b261C82c5Ba0814AAA5e0',
       claim: true,
     },
     {
       name: 'PKTON',
-      decimals: 9,
+      decimals: 18,
       cross: [
         {
           category: 'helix',
@@ -49,7 +49,7 @@ export const ropstenConfig: EthereumChainConfig = {
       type: 'mapping',
       logo: 'token-kton.svg',
       symbol: 'PKTON',
-      address: '',
+      address: '0x1994100c58753793D52c6f457f189aa3ce9cEe94',
       claim: true,
     },
   ],
