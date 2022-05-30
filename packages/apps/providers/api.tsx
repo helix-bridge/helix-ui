@@ -10,10 +10,11 @@ import {
   EthereumChainConfig,
   EthereumConnection,
   NoNullFields,
+  PolkadotChainConfig,
   PolkadotConnection,
 } from 'shared/model';
 import { connect } from 'shared/utils/connection';
-import { getDirectionFromSettings } from 'shared/utils/helper';
+import { convertToSS58, getDirectionFromSettings } from 'shared/utils/helper';
 import { isEthereumNetwork } from 'shared/utils/network';
 
 interface StoreState {
@@ -152,6 +153,15 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
       return iif(() => isConnectionAvailable(target), of(target!), connect(chainConfig)).subscribe({
         next: (connection: Connection) => {
           if (connection.status === ConnectionStatus.success) {
+            if (connection.type === 'polkadot') {
+              connection = {
+                ...connection,
+                accounts: connection.accounts.map((item) => ({
+                  ...item,
+                  address: convertToSS58(item.address, (state.departure as PolkadotChainConfig).ss58Prefix),
+                })),
+              };
+            }
             addConnection(connection);
             action(connection);
             setIsConnecting(false);
@@ -168,7 +178,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
         },
       });
     },
-    [addConnection, isConnectionAvailable, state.connections]
+    [addConnection, isConnectionAvailable, state.connections, state.departure]
   );
 
   const connectDepartureNetwork = useCallback(

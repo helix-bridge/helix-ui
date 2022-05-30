@@ -8,10 +8,8 @@ import { Icon } from 'shared/components/widget/Icon';
 import { isTestChain } from 'shared/config/env';
 import { crabDVMConfig, darwiniaConfig, pangolinConfig } from 'shared/config/network';
 import { pangolinDVMConfig } from 'shared/config/network/pangolin-dvm';
-import { ChainConfig, ConnectionStatus, EthereumChainConfig, PolkadotChainConfig, SupportedWallet } from 'shared/model';
+import { ChainConfig, ConnectionStatus, EthereumChainConfig, SupportedWallet } from 'shared/model';
 import { switchEthereumChain } from 'shared/utils/connection';
-import { convertToSS58 } from 'shared/utils/helper';
-import { isPolkadotNetwork } from 'shared/utils/network';
 import { useAccount, useApi } from '../../../providers';
 import { SelectAccountModal } from './SelectAccountModal';
 import { SelectWalletModal } from './SelectWalletModal';
@@ -112,13 +110,7 @@ function ActiveAccountStrict() {
                 }
               }}
             >
-              <span className="truncate ml-1">
-                {matched
-                  ? isPolkadotNetwork(departure)
-                    ? convertToSS58(account, (departure as PolkadotChainConfig).ss58Prefix)
-                    : account
-                  : t('Wrong Network')}
-              </span>
+              <span className="truncate ml-1">{matched ? account : t('Wrong Network')}</span>
 
               {departureConnection.accounts.length > 1 && matched && <Icon name="down" className="w-8 h-8" />}
             </Button>
@@ -184,7 +176,7 @@ function ActiveAccountStrict() {
 }
 
 function ActiveAccountNormal() {
-  const { departureConnection, departure, connectDepartureNetwork, disconnect, isConnecting } = useApi();
+  const { departureConnection, departure, connectDepartureNetwork, isConnecting } = useApi();
   const { t } = useTranslation();
   const { account, setAccount } = useAccount();
   const [isVisible, setIsVisible] = useState(false);
@@ -233,10 +225,6 @@ function ActiveAccountNormal() {
               <Identicon value={account} size={20} className="rounded-full border p-1" />
             </span>
           </section>
-
-          <Button onClick={() => disconnect()} className="hidden lg:block">
-            {t('Disconnect')}
-          </Button>
 
           <SettingFilled
             onClick={() => setIsVisible(true)}

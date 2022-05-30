@@ -1,10 +1,8 @@
 import { ArrowRightOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { Empty, Pagination, Spin } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { Button, Empty, Pagination, Spin } from 'antd';
+import { useEffect, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
-import { isTestChain } from 'shared/config/env';
-import { darwiniaConfig, ethereumConfig, pangolinConfig, ropstenConfig } from 'shared/config/network';
 import { EthereumChainConfig, ICamelCaseKeys, PolkadotChainConfig } from 'shared/model';
 import { fromWei, isKton, isRing, prettyNumber } from 'shared/utils/helper';
 import { getDisplayName } from 'shared/utils/network';
@@ -12,7 +10,7 @@ import Web3 from 'web3';
 import { HistoryItem } from '../../components/record/HistoryItem';
 import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
-import { useAccount } from '../../providers';
+import { useAccount, useApi } from '../../providers';
 import { useRecords } from './hooks';
 import { Ethereum2DarwiniaRedeemHistoryRes, Ethereum2DarwiniaRedeemRecord } from './model';
 
@@ -70,8 +68,15 @@ function Record({
 }
 
 // eslint-disable-next-line complexity
-export function Ethereum2DarwiniaHistory({ confirmed }: { confirmed: boolean | null }) {
+export function Ethereum2DarwiniaHistory({
+  confirmed,
+  direction,
+}: {
+  confirmed: boolean | null;
+  direction: [PolkadotChainConfig, EthereumChainConfig];
+}) {
   const { t } = useITranslation();
+  const { connectDepartureNetwork } = useApi();
   const { account } = useAccount();
   const { fetchRedeemRecords } = useRecords();
   const [loading, setLoading] = useState(false);
@@ -81,10 +86,7 @@ export function Ethereum2DarwiniaHistory({ confirmed }: { confirmed: boolean | n
     ICamelCaseKeys<Ethereum2DarwiniaRedeemRecord>
   > | null>(null);
 
-  const [departure, arrival] = useMemo<[EthereumChainConfig, PolkadotChainConfig]>(
-    () => (isTestChain ? [ropstenConfig, pangolinConfig] : [ethereumConfig, darwiniaConfig]),
-    []
-  );
+  const [arrival, departure] = direction;
 
   useEffect(() => {
     if (!account || !Web3.utils.isAddress(account)) {
@@ -109,7 +111,13 @@ export function Ethereum2DarwiniaHistory({ confirmed }: { confirmed: boolean | n
           ))
         ) : (
           <Empty
-            description={!data ? t('Please connect to Metamask') : t('No Data')}
+            description={
+              !data ? (
+                <Button onClick={() => connectDepartureNetwork(departure)}>{t('Connect to Wallet')}</Button>
+              ) : (
+                t('No Data')
+              )
+            }
             image={!data ? <Logo name="metamask.svg" width={96} height={96} /> : undefined}
           />
         )}

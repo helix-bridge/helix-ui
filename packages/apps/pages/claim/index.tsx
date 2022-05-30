@@ -1,5 +1,6 @@
 import { Affix, Radio, Tabs } from 'antd';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useEffect } from 'react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isTestChain } from 'shared/config/env';
@@ -7,10 +8,12 @@ import { darwiniaConfig, ethereumConfig, pangolinConfig, ropstenConfig } from 's
 import { EthereumChainConfig, PolkadotChainConfig } from 'shared/model';
 import { getDisplayName } from 'shared/utils/network';
 import { Claim as DarwiniaEthereumClaim } from '../../bridges/ethereum-darwinia';
+import { useApi } from '../../providers';
 
 function Page() {
   const { t } = useTranslation();
   const [confirmed, setConfirmed] = useState<boolean | null>(null);
+  const { setDeparture } = useApi();
 
   const [activeTab, setActiveTab] = useState('e2d');
 
@@ -18,6 +21,10 @@ function Page() {
     () => (isTestChain ? [pangolinConfig, ropstenConfig] : [darwiniaConfig, ethereumConfig]),
     []
   );
+
+  useEffect(() => {
+    setDeparture(ethereumDarwiniaDirection[0]);
+  }, [ethereumDarwiniaDirection, setDeparture]);
 
   return (
     <>
@@ -43,7 +50,7 @@ function Page() {
       <div className="bg-gray-200 dark:bg-antDark px-4 pb-4">
         <Tabs onChange={(event) => setActiveTab(event)} size="large" className="mt-4" defaultActiveKey={activeTab}>
           <Tabs.TabPane tab={ethereumDarwiniaDirection.map((item) => getDisplayName(item)).join(' -> ')} key="d2e">
-            <DarwiniaEthereumClaim confirmed={confirmed} />
+            <DarwiniaEthereumClaim confirmed={confirmed} direction={ethereumDarwiniaDirection} />
           </Tabs.TabPane>
         </Tabs>
       </div>

@@ -5,8 +5,8 @@ import { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IdentAccountAddress } from 'shared/components/widget/IdentAccountAddress';
 import { FORM_CONTROL } from 'shared/config/constant';
-import { ConnectionStatus, CrossChainComponentProps, PolkadotChainConfig } from 'shared/model';
-import { convertToSS58, isSameAddress, isValidAddressStrict } from 'shared/utils/helper';
+import { ConnectionStatus, CrossChainComponentProps } from 'shared/model';
+import { isSameAddress, isValidAddressStrict } from 'shared/utils/helper';
 import { getDisplayName, isPolkadotNetwork } from 'shared/utils/network';
 import { useApi } from '../../providers';
 
@@ -23,16 +23,6 @@ export function RecipientItem({
 }) {
   const { t } = useTranslation();
   const { departureConnection, arrivalConnection, connectArrivalNetwork } = useApi();
-
-  const formattedAccounts = useMemo(
-    () =>
-      arrivalConnection.accounts?.map((item) => ({
-        ...item,
-        address: convertToSS58(item.address, (direction.to.meta as PolkadotChainConfig).ss58Prefix),
-      })),
-    [arrivalConnection.accounts, direction.to.meta]
-  );
-
   const { to } = direction;
   const isPolkadot = isPolkadotNetwork(to.meta) && to.meta.mode === 'native';
   const type = isPolkadot ? to.meta.name : 'ethereum';
@@ -79,7 +69,7 @@ export function RecipientItem({
         ]}
         extra={to ? <span className="text-xs">{extraTip}</span> : ''}
       >
-        {type === 'ethereum' || !formattedAccounts?.length ? (
+        {type === 'ethereum' || !arrivalConnection.accounts?.length ? (
           <Input
             size="large"
             placeholder={t('Type or select the recipient address')}
@@ -100,7 +90,7 @@ export function RecipientItem({
               }
             }}
           >
-            {formattedAccounts.map((item) => (
+            {arrivalConnection.accounts.map((item) => (
               <AutoComplete.Option value={item.address} key={item.address}>
                 <IdentAccountAddress account={item} />
               </AutoComplete.Option>

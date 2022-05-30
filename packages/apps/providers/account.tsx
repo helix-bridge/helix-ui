@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useMemo, useState } from 'react';
 import { useContext } from 'react';
-import { IAccountMeta } from 'shared/model';
+import { IAccountMeta, SupportedWallet } from 'shared/model';
 import { isSameAddress, readStorage, updateStorage } from 'shared/utils/helper';
 import { useApi } from './api';
 
@@ -24,17 +24,17 @@ export const AccountProvider = ({ children }: React.PropsWithChildren<unknown>) 
   );
 
   useEffect(() => {
-    const accStorage = readStorage().activeAccount;
+    const accStorage = readStorage()[departureConnection.type as SupportedWallet];
     const acc =
-      departureConnection.accounts.find((value) => value.address === accStorage)?.address ||
+      departureConnection.accounts.find((value) => isSameAddress(value.address, accStorage ?? ''))?.address ||
       departureConnection.accounts[0]?.address;
 
     setAccount(acc ?? '');
-  }, [departureConnection.accounts]);
+  }, [departureConnection.accounts, departureConnection.type]);
 
   useEffect(() => {
-    updateStorage({ activeAccount: account });
-  }, [account]);
+    updateStorage({ [departureConnection.type]: account });
+  }, [account, departureConnection.type]);
 
   return (
     <AccountContext.Provider

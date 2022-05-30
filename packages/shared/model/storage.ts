@@ -1,5 +1,5 @@
 import { THEME } from '../config/theme';
-import { ChainConfig, Network, NetworkMode } from './network';
+import { ChainConfig, Network, NetworkMode, SupportedWallet } from './network';
 
 export interface HashInfo {
   fMode?: NetworkMode | null;
@@ -17,10 +17,11 @@ export interface HistoryRouteParam {
   to: string;
 }
 
-export interface StorageInfo extends HashInfo {
+export type StorageInfo = HashInfo & {
   theme?: THEME;
   config?: Partial<{ [key in Network]: ChainConfig }>;
   custom?: Network[];
-  activeAccount?: string;
   warning?: boolean;
-}
+} & {
+  [key in SupportedWallet]?: string;
+};

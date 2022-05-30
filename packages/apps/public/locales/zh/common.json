@@ -69,8 +69,6 @@
   "Origin network is not matched to the target network": "源链和目标源不匹配",
   "Pending": "进行中",
   "Please be sure to fill in the real Darwinia mainnet account, and keep the account recovery files such as mnemonic properly.": "请务必填写真实的 Darwinia 主网地址，并妥善保管助记词等账号恢复文件。",
-  "Please connect to Metamask": "请连接 metamask",
-  "Please connect to Polkadot extension": "请连接 polkadot 插件",
   "Please enter a valid {{network}} address": "请输入有效的 {{network}} 地址",
   "Please fill in a substrate address of the {{network}} network.": "请输入 {{network}} 网络的 substrate 地址",
   "Please fill in a {{network}} address which start with 0x": "请填入以 0x 开头的 {{network}} 地址",

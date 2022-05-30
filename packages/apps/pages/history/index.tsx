@@ -44,7 +44,7 @@ function Page() {
       <div className="bg-gray-200 dark:bg-antDark px-4 pb-4">
         <Tabs onChange={(event) => setActiveTab(event)} size="large" className="mt-4" defaultActiveKey={activeTab}>
           <Tabs.TabPane tab={ethereumDarwiniaDirection.map((item) => getDisplayName(item)).join(' -> ')} key="d2e">
-            {<Darwinia2EthereumHistory confirmed={confirmed} />}
+            {<Darwinia2EthereumHistory confirmed={confirmed} direction={ethereumDarwiniaDirection} />}
           </Tabs.TabPane>
 
           <Tabs.TabPane
@@ -54,7 +54,7 @@ function Page() {
               .join(' -> ')}
             key="e2d"
           >
-            <Ethereum2DarwiniaHistory confirmed={confirmed} />
+            <Ethereum2DarwiniaHistory confirmed={confirmed} direction={ethereumDarwiniaDirection} />
           </Tabs.TabPane>
         </Tabs>
       </div>

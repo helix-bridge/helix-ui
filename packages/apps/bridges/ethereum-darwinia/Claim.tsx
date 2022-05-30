@@ -3,14 +3,12 @@ import { BN_ZERO } from '@polkadot/util';
 import { Button, Empty, message, Pagination, Spin, Tag } from 'antd';
 import BN from 'bn.js';
 import { omit } from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EMPTY, filter, from, iif, map, Observable, of, switchMap, take, tap, zip } from 'rxjs';
 import { Logo } from 'shared/components/widget/Logo';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { abi } from 'shared/config/abi';
-import { isTestChain } from 'shared/config/env';
-import { darwiniaConfig, ethereumConfig, pangolinConfig, ropstenConfig } from 'shared/config/network';
 import { ConnectionStatus, EthereumChainConfig, ICamelCaseKeys, PolkadotChainConfig } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { connect, entrance } from 'shared/utils/connection';
@@ -19,7 +17,7 @@ import { getDisplayName } from 'shared/utils/network';
 import { HistoryItem } from '../../components/record/HistoryItem';
 import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
-import { useAccount, useTx } from '../../providers';
+import { useAccount, useApi, useTx } from '../../providers';
 import { useRecords } from './hooks';
 import { Darwinia2EthereumHistoryRes, Darwinia2EthereumRecord, EthereumDarwiniaBridgeConfig } from './model';
 import { claimToken } from './utils';
@@ -41,19 +39,21 @@ function isSufficient(
 const PAGINATOR_DEFAULT = { row: 10, page: 0 };
 
 // eslint-disable-next-line complexity
-export function Claim({ confirmed }: { confirmed: boolean | null }) {
+export function Claim({
+  confirmed,
+  direction,
+}: {
+  confirmed: boolean | null;
+  direction: [PolkadotChainConfig, EthereumChainConfig];
+}) {
   const { t } = useTranslation();
+  const { connectDepartureNetwork } = useApi();
   const { account } = useAccount();
   const { fetchIssuingRecords } = useRecords();
   const [loading, setLoading] = useState(false);
   const [paginator, setPaginator] = useState<Paginator>(PAGINATOR_DEFAULT);
-
   const [data, setData] = useState<Darwinia2EthereumHistoryRes<ICamelCaseKeys<Darwinia2EthereumRecord>> | null>(null);
-
-  const [departure, arrival] = useMemo<[PolkadotChainConfig, EthereumChainConfig]>(
-    () => (isTestChain ? [pangolinConfig, ropstenConfig] : [darwiniaConfig, ethereumConfig]),
-    []
-  );
+  const [departure, arrival] = direction;
 
   useEffect(() => {
     if (!account || !isSS58Address(account)) {
@@ -82,7 +82,13 @@ export function Claim({ confirmed }: { confirmed: boolean | null }) {
           ))
         ) : (
           <Empty
-            description={!data ? t('Please connect to Polkadot extension') : t('No Data')}
+            description={
+              !data ? (
+                <Button onClick={() => connectDepartureNetwork(departure)}>{t('Connect to Wallet')}</Button>
+              ) : (
+                t('No Data')
+              )
+            }
             image={!data ? <Logo name="polkadot.svg" width={96} height={96} /> : undefined}
           />
         )}

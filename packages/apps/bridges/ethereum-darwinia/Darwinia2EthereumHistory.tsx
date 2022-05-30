@@ -1,18 +1,16 @@
 import { ArrowRightOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { Empty, Pagination, Spin } from 'antd';
+import { Button, Empty, Pagination, Spin } from 'antd';
 import { omit } from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Logo } from 'shared/components/widget/Logo';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
-import { isTestChain } from 'shared/config/env';
-import { darwiniaConfig, ethereumConfig, pangolinConfig, ropstenConfig } from 'shared/config/network';
 import { EthereumChainConfig, ICamelCaseKeys, PolkadotChainConfig } from 'shared/model';
 import { fromWei, isKton, isRing, isSS58Address, prettyNumber } from 'shared/utils/helper';
 import { getDisplayName } from 'shared/utils/network';
 import { HistoryItem } from '../../components/record/HistoryItem';
 import { Paginator } from '../../model';
-import { useAccount } from '../../providers';
+import { useAccount, useApi } from '../../providers';
 import { useRecords } from './hooks';
 import { Darwinia2EthereumHistoryRes, Darwinia2EthereumRecord } from './model';
 
@@ -76,19 +74,21 @@ function Record({
 }
 
 // eslint-disable-next-line complexity
-export function Darwinia2EthereumHistory({ confirmed }: { confirmed: boolean | null }) {
+export function Darwinia2EthereumHistory({
+  confirmed,
+  direction,
+}: {
+  confirmed: boolean | null;
+  direction: [PolkadotChainConfig, EthereumChainConfig];
+}) {
   const { t } = useTranslation();
   const { account } = useAccount();
   const { fetchIssuingRecords } = useRecords();
   const [loading, setLoading] = useState(false);
   const [paginator, setPaginator] = useState<Paginator>(PAGINATOR_DEFAULT);
-
+  const { connectDepartureNetwork } = useApi();
   const [data, setData] = useState<Darwinia2EthereumHistoryRes<ICamelCaseKeys<Darwinia2EthereumRecord>> | null>(null);
-
-  const [departure, arrival] = useMemo<[PolkadotChainConfig, EthereumChainConfig]>(
-    () => (isTestChain ? [pangolinConfig, ropstenConfig] : [darwiniaConfig, ethereumConfig]),
-    []
-  );
+  const [departure, arrival] = direction;
 
   useEffect(() => {
     if (!account || !isSS58Address(account)) {
@@ -118,7 +118,13 @@ export function Darwinia2EthereumHistory({ confirmed }: { confirmed: boolean | n
           ))
         ) : (
           <Empty
-            description={!data ? t('Please connect to Polkadot extension') : t('No Data')}
+            description={
+              !data ? (
+                <Button onClick={() => connectDepartureNetwork(departure)}>{t('Connect to Wallet')}</Button>
+              ) : (
+                t('No Data')
+              )
+            }
             image={!data ? <Logo name="polkadot.svg" width={96} height={96} /> : undefined}
           />
         )}
