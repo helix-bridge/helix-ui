@@ -55,6 +55,19 @@ jobs:
           script_run: false
           dist_path: .
 
+      - uses: ./.github/actions/smart-vercel
+        name: Deploy ${{ matrix.package }}
+        id: smart-vercel
+        if: steps.changed-files.outputs.any_changed == 'true' && matrix.package == 'app'
+        with:
+          vercel_token: ${{ secrets.VERCEL_TOKEN }}
+          vercel_group: itering
+          preview_output: true
+          alias_domain: "helix-${{ steps.better-name.outputs.NAME }}-test-stg"
+          project_name: "helix-${{ steps.better-name.outputs.NAME }}-test"
+          script_run: false
+          dist_path: .
+
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
         if: steps.changed-files.outputs.any_changed == 'true'
