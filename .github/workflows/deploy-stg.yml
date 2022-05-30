@@ -59,7 +59,7 @@ jobs:
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy ${{ matrix.package }}
-        if: steps.changed-files.outputs.any_changed == 'true' && matrix.package == 'app'
+        if: steps.changed-files.outputs.any_changed == 'true' && matrix.package == 'apps'
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
