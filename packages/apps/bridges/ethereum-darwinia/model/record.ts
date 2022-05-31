@@ -1,7 +1,7 @@
 import { Network } from 'shared/model';
 import { RecordList } from '../../../model';
 
-export interface Ethereum2DarwiniaRecord {
+interface Ethereum2DarwiniaRecord {
   address: string;
   amount: string;
   block_num: number;
@@ -12,11 +12,6 @@ export interface Ethereum2DarwiniaRecord {
   target: string;
   tx: string;
 }
-export interface Ethereum2DarwiniaRingBurnRecord extends Ethereum2DarwiniaRecord {
-  id: number;
-}
-
-export type Ethereum2DarwiniaRingBurnHistoryRes<R = Ethereum2DarwiniaRingBurnRecord> = RecordList<R>;
 
 export interface Ethereum2DarwiniaRedeemRecord extends Ethereum2DarwiniaRecord {
   darwinia_tx: string;
@@ -47,5 +42,3 @@ export type Darwinia2EthereumHistoryRes<R = Darwinia2EthereumRecord> = RecordLis
   best: number;
   MMRRoot: string;
 };
-
-export type Darwinia2EthereumMeta = Pick<Darwinia2EthereumHistoryRes, 'best' | 'MMRRoot'>;

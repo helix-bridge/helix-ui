@@ -8,6 +8,7 @@ import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { from, mergeMap, of } from 'rxjs';
 import { Logo } from 'shared/components/widget/Logo';
+import { WITHDRAW_ADDRESS } from 'shared/config/address';
 import { isTestChain } from 'shared/config/env';
 import { crabConfig, crabDVMConfig, pangolinConfig } from 'shared/config/network';
 import { pangolinDVMConfig } from 'shared/config/network/pangolin-dvm';
@@ -19,7 +20,6 @@ import { createTxWorkflow, genEthereumTransactionObs } from 'shared/utils/tx';
 import Web3 from 'web3';
 import { HistoryItem } from '../../components/record/HistoryItem';
 import { useAccount, useTx } from '../../providers';
-import { WITHDRAW_ADDRESS } from './config';
 
 /**
  * @deprecated remove after implemented in apps

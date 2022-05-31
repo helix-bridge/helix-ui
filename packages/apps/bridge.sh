@@ -47,55 +47,47 @@ function component() {
 }
 
 function indexEmpty() {
-    echo "export {};" >>$1'/index.ts'
+    echo "export default void 0;" >>$1'/index.ts'
 }
 
 function initModel() {
     local name=${from}''${to}
 
     echo "
-        import { ContractConfig, BridgeConfig, Api, ApiKeys } from '../../../model';
+        import { ContractConfig, BridgeConfig, Api, ApiKeys } from 'shared/model';
 
-        interface ${name}ContractConfig extends ContractConfig { }
+        type ${name}ContractConfig = ContractConfig;
 
         export type $2BridgeConfig = Required<BridgeConfig<${name}ContractConfig, Api<ApiKeys>>>;
     " >>$1'/bridge.ts'
 
     echo "
-        import { CommonPayloadKeys, DeepRequired } from '../../../model';
-        import { CrossChainAsset, CrossChainParty, CrossChainPayload } from '../../../model/bridge';
+        import { Bridge, CrossChainPayload, CrossToken, ChainConfig } from 'shared/model';
+        import { $2BridgeConfig } from './bridge';
 
-        export type Issuing${from}TxPayload = CrossChainPayload<
-            DeepRequired<$2Payload, ['sender' | 'assets' | 'recipient']>
+        export type IssuingPayload = CrossChainPayload<
+            Bridge<$2BridgeConfig>,
+            CrossToken<ChainConfig>,
+            CrossToken<ChainConfig>
         >;
 
-        export type Redeem${from}TxPayload = CrossChainPayload<DeepRequired<$3Payload, [CommonPayloadKeys]>>;
-
-        export interface $2Payload extends CrossChainParty, CrossChainAsset { }
-
-        export interface $3Payload extends CrossChainParty, CrossChainAsset { }
-    " >>$1'/cross-chain.ts'
-
-    echo "
-        export interface $2Record {}
-        export interface $3Record {}
-        export interface $2RecordRes {}
-        export interface $3RecordRes {}
-        export interface $2RecordsRes {}
-        export interface $3RecordsRes {}
-    " >>$1'/record.ts'
+        export type RedeemPayload = CrossChainPayload<
+            Bridge<$2BridgeConfig>,
+            CrossToken<ChainConfig>,
+            CrossToken<ChainConfig>
+        >;
+    " >>$1'/tx.ts'
 
     echo "
         export * from './bridge';
-        export * from './cross-chain';
-        export * from './record';
+        export * from './tx';
     " >>$1'/index.ts'
 }
 
 function initConfig() {
     echo "
-        import { ${origin}Config, ${target}Config } from '../../../config/network';
-        import { Bridge } from '../../../model';
+        import { ${origin}Config, ${target}Config } from 'shared/config/network';
+        import { Bridge } from 'shared/model';
         import { ${from}${to}BridgeConfig } from '../model/bridge';
 
         const ${origin}${to}Config: ${from}${to}BridgeConfig = { 
@@ -110,42 +102,47 @@ function initConfig() {
 
 function initUitls() {
     echo "
-        import { Observable } from 'rxjs';
-        import { Tx } from '../../../model';
+        import { Observable, EMPTY } from 'rxjs';
+        import { Tx } from 'shared/model';
 
-        export function issuing(): Observable<Tx> {}
+        export function issuing(): Observable<Tx> {
+            return EMPTY;
+        }
 
-        export function redeem(): Observable<Tx> {}
+        export function redeem(): Observable<Tx> {
+            return EMPTY;
+        }
     " >>$1'/tx.ts'
 
-    echo "export * from './tx';" >>$1'/index.ts'
+    echo "
+        import BN from 'bn.js';
+        import { Bridge } from 'shared/model';
+
+
+        export async function getRedeemFee(bridge: Bridge): Promise<BN | null> {
+           console.log('Unfinished getRedeemFee for birdge', bridge);
+           return  new BN(0); 
+        }
+
+        export async function getIssuingFee(bridge: Bridge): Promise<BN | null> {
+           console.log('Unfinished getIssuing for birdge', bridge);
+           return  new BN(0); 
+        }
+    " >>$1'/fee.ts'
+
+    echo "
+        export * from './tx';
+        export * from './fee';
+    " >>$1'/index.ts'
 }
 
 function initHooks() {
-    echo "
-        import { useCallback } from 'react';
-        import { ChainConfig, RecordsHooksResult, RecordList } from '../../../model';
-
-        export function useRecords(departure: ChainConfig, arrival: ChainConfig): RecordsHooksResult<RecordList<unknown>> {
-            const fetchIssuingRecords = useCallback(() => { }, []);
-            const fetchRedeemRecords = useCallback(() => { }, []);
-
-            return {
-                fetchRedeemRecords,
-                fetchIssuingRecords,
-            }
-        }
-    " >>$1'/records.ts'
-
-    echo "export * from './records';" >>$1'/index.ts'
+    echo "export default void 0;" >>$1'/index.ts'
 }
 
 function init() {
     local departure=${from}"2"${to}
     local arrival=${to}"2"${from}
-
-    local departureRecord=$departure'Record'
-    local arrivalRecord=$arrival'Record'
 
     local dir=$origin'-'$target
     local path='./bridges/'$dir
@@ -170,13 +167,9 @@ function init() {
 
     component $departure $path
     component $arrival $path
-    component $departureRecord $path
-    component $arrivalRecord $path
 
     indexFile $departure $index
     indexFile $arrival $index
-    indexFile $departureRecord $index
-    indexFile $arrivalRecord $index
 
     echo "\033[32mCreate success!\033[0m"
 }

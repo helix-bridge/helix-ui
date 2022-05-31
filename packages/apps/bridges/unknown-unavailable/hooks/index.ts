@@ -1,1 +1,1 @@
-export * from './records';
+export default void 0;
