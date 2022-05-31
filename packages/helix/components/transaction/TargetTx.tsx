@@ -1,7 +1,6 @@
-import { Progress } from 'antd';
+import { Progress, Typography } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { CrossChainStatus } from 'shared/config/constant';
 import { HelixHistoryRecord, UnlockedRecord } from 'shared/model';
@@ -33,7 +32,9 @@ export function TargetTx({
           txHash={finalRecord?.txHash}
           className="hover:opacity-80 transition-opacity duration-200"
         >
-          <EllipsisMiddle copyable>{finalRecord.txHash}</EllipsisMiddle>
+          <Typography.Text copyable className="truncate">
+            {finalRecord.txHash}
+          </Typography.Text>
         </SubscanLink>
       ) : departureRecord?.result === CrossChainStatus.reverted ? (
         <SubscanLink
@@ -41,7 +42,9 @@ export function TargetTx({
           txHash={departureRecord?.responseTxHash ?? ''}
           className="hover:opacity-80 transition-opacity duration-200"
         >
-          <EllipsisMiddle copyable>{departureRecord.responseTxHash}</EllipsisMiddle>
+          <Typography.Text copyable className="truncate">
+            {departureRecord.responseTxHash}
+          </Typography.Text>
         </SubscanLink>
       ) : (
         <Progress percent={50} className="max-w-xs" />

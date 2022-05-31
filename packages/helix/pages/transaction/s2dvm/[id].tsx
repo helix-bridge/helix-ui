@@ -1,11 +1,10 @@
-import { Divider } from 'antd';
+import { Divider, Typography } from 'antd';
 import { gql, request } from 'graphql-request';
 import { GetServerSidePropsContext, NextPage } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
-import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
 import { WITHDRAW_ADDRESS } from 'shared/config/address';
 import { ENDPOINT } from 'shared/config/env';
 import { HelixHistoryRecord, SubstrateDVMBridgeConfig } from 'shared/model';
@@ -117,11 +116,15 @@ const Page: NextPage<{
         <Divider />
 
         <TransferDescription title={t('Sender')} tip={t('Address (external or contract) sending the transaction.')}>
-          <EllipsisMiddle copyable>{revertAccount(record.sender, departure)}</EllipsisMiddle>
+          <Typography.Text copyable className="truncate">
+            {revertAccount(record.sender, departure)}
+          </Typography.Text>
         </TransferDescription>
 
         <TransferDescription title={t('Receiver')} tip={t('Address (external or contract) receiving the transaction.')}>
-          <EllipsisMiddle copyable>{revertAccount(record.recipient, arrival)}</EllipsisMiddle>
+          <Typography.Text copyable className="truncate">
+            {revertAccount(record.recipient, arrival)}
+          </Typography.Text>
         </TransferDescription>
 
         {!!transfers.length && <TransferDetail transfers={transfers} amount={amount} />}

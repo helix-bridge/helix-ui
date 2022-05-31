@@ -1,6 +1,6 @@
+import { Typography } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { toVertices } from 'shared/utils/network';
 import { TransferDescription } from './TransferDescription';
@@ -17,7 +17,9 @@ export function SourceTx({ hash }: { hash: string | undefined }) {
     >
       {hash && (
         <SubscanLink network={departure} txHash={hash} className="hover:opacity-80 transition-opacity duration-200">
-          <EllipsisMiddle copyable>{hash}</EllipsisMiddle>
+          <Typography.Text copyable className="truncate">
+            {hash}
+          </Typography.Text>
         </SubscanLink>
       )}
     </TransferDescription>

@@ -2,7 +2,6 @@ import { Button, Tooltip } from 'antd';
 import { formatDistance, fromUnixTime } from 'date-fns';
 import { useRouter } from 'next/router';
 import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
-import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
 import { Icon } from 'shared/components/widget/Icon';
 import { HelixHistoryRecord } from 'shared/model';
 import { isDVM2Substrate, isS2S, isSubstrateDVM } from 'shared/utils/bridge';
@@ -42,18 +41,14 @@ export function Record({ record }: { record: HelixHistoryRecord }) {
         <Tooltip title={fromAccount}>
           <span className="capitalize">{getDisplayName(fromConfig)}</span>
         </Tooltip>
-        <EllipsisMiddle deviation={5} isGrow>
-          {fromAccount}
-        </EllipsisMiddle>
+        <span className="truncate">{fromAccount}</span>
       </div>
 
       <div className="flex flex-col col-span-3 overflow-hidden pl-2 pr-4">
         <Tooltip title={toAccount}>
           <span className="capitalize">{getDisplayName(toConfig)}</span>
         </Tooltip>
-        <EllipsisMiddle deviation={5} isGrow>
-          {toAccount}
-        </EllipsisMiddle>
+        <span className="truncate">{toAccount}</span>
       </div>
 
       <span>{tokenName}</span>
