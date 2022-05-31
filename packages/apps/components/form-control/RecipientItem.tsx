@@ -5,8 +5,8 @@ import { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IdentAccountAddress } from 'shared/components/widget/IdentAccountAddress';
 import { FORM_CONTROL } from 'shared/config/constant';
-import { ConnectionStatus, CrossChainComponentProps } from 'shared/model';
-import { isSameAddress, isValidAddressStrict } from 'shared/utils/helper';
+import { ConnectionStatus, CrossChainComponentProps, PolkadotChainConfig } from 'shared/model';
+import { convertToSS58, isSameAddress, isValidAddressStrict } from 'shared/utils/helper';
 import { getDisplayName, isPolkadotNetwork } from 'shared/utils/network';
 import { useApi } from '../../providers';
 
@@ -30,6 +30,15 @@ export function RecipientItem({
   const displayLink = useMemo(() => {
     return isPolkadot && bridge.activeArrivalConnection && arrivalConnection.type !== 'polkadot';
   }, [arrivalConnection.type, bridge.activeArrivalConnection, isPolkadot]);
+
+  const accounts = useMemo(() => {
+    const prefix = (direction.to.meta as PolkadotChainConfig).ss58Prefix;
+    const source = arrivalConnection.accounts ?? [];
+
+    return prefix === undefined
+      ? source
+      : source.map((item) => ({ ...item, address: convertToSS58(item.address, prefix) }));
+  }, [arrivalConnection.accounts, direction.to.meta]);
 
   const isValidRecipient = useCallback((value: string) => isValidAddressStrict(value, type), [type]);
 
@@ -69,7 +78,7 @@ export function RecipientItem({
         ]}
         extra={to ? <span className="text-xs">{extraTip}</span> : ''}
       >
-        {type === 'ethereum' || !arrivalConnection.accounts?.length ? (
+        {type === 'ethereum' || !accounts?.length ? (
           <Input
             size="large"
             placeholder={t('Type or select the recipient address')}
@@ -90,7 +99,7 @@ export function RecipientItem({
               }
             }}
           >
-            {arrivalConnection.accounts.map((item) => (
+            {accounts.map((item) => (
               <AutoComplete.Option value={item.address} key={item.address}>
                 <IdentAccountAddress account={item} />
               </AutoComplete.Option>

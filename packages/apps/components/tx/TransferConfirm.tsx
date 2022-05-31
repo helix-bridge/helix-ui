@@ -87,7 +87,7 @@ export function TransferConfirm<T extends Bridge = Bridge>({
               <div className="flex items-center justify-between overflow-hidden">
                 <Typography.Text className="opacity-60">{t('Fee')}</Typography.Text>
                 <Typography.Text>
-                  {fee.amount} {from.symbol}
+                  {fee.amount} {fee.symbol}
                 </Typography.Text>
               </div>
             )}

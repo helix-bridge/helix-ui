@@ -2,7 +2,6 @@ import { message, ModalProps } from 'antd';
 import { useRouter } from 'next/router';
 import { FunctionComponent, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SHORT_DURATION } from 'shared/config/constant';
 import { CrossChainPayload, Tx, TxDoneComponentProps } from 'shared/model';
 import { isDarwinia2Ethereum, isEthereum2Darwinia } from 'shared/utils/bridge';
 import { applyModal } from 'shared/utils/tx';
@@ -67,7 +66,7 @@ export function useAfterTx<T extends CrossChainPayload>() {
         message.success({
           content: <Comp tx={tx} value={payload} />,
           onClose: () => onDisappear(payload, tx),
-          duration: SHORT_DURATION,
+          duration: 5,
           type: 'success',
         });
       },
