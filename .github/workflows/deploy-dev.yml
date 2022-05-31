@@ -16,6 +16,17 @@ jobs:
       - name: Lint
         run: yarn lint
 
+  unit_test:
+    name: UnitTest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: install
+        run: yarn
+      - name: test
+        run: yarn test:shared
+
   deploy-package:
     name: Deploy package
     runs-on: ubuntu-latest

@@ -1,4 +1,4 @@
-import { mapKeys } from 'lodash';
+import { isEqual, mapKeys } from 'lodash';
 import { DEFAULT_DIRECTION } from '../../config/constant';
 import {
   CrossChainDirection,
@@ -125,6 +125,10 @@ export const getHistoryRouteParams: (search: string) => WithNull<HistoryRoutePar
 // eslint-disable-next-line complexity
 export const validateDirection: (dir: NullableCrossChainDirection) => CrossChainDirection = (dir) => {
   const { from, to } = dir;
+
+  if (isEqual(from, to)) {
+    return DEFAULT_DIRECTION;
+  }
 
   if (from && to) {
     const reachable = from.cross.find((item) => item.partner.symbol === to.symbol);
