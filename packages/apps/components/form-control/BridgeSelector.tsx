@@ -45,8 +45,8 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
   const isDefault = matches(origin);
 
   return (
-    <div className="p-5 overflow-auto relative" style={{ maxHeight: '65vh', minHeight: '20vh' }}>
-      <BridgeState className="w-full absolute top-0 right-0 left-0" />
+    <div className="p-5 overflow-auto" style={{ maxHeight: '65vh', minHeight: '20vh' }}>
+      <BridgeState className="w-full mb-2" />
 
       {!bridges.length ? (
         isDefault(direction) ? (
