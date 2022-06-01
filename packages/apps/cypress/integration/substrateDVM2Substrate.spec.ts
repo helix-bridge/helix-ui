@@ -5,7 +5,7 @@ describe('Substrate DVM to Substrate', () => {
   const hrefRegExp = /^https:\/\/pangolin.subscan.io\/extrinsic\/0x\w+$/;
 
   before(() => {
-    // cy.activeMetamask();
+    cy.activeMetamask();
   });
 
   beforeEach(() => {

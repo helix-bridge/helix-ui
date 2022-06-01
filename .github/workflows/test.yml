@@ -85,7 +85,7 @@ jobs:
           if [ "${UNIT_OK}" == "ok" ]; then
             UNIT_STATUS="💚 ${UNIT_OK}"
           else
-            UNIT_STATUS=" ${UNIT_ERR}"
+            UNIT_STATUS="💔 ${UNIT_ERR}"
           fi
 
           SHA='${{github.event.pull_request.head.sha}}'
