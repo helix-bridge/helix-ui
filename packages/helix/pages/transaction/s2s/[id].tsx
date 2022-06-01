@@ -1,4 +1,4 @@
-import { Divider } from 'antd';
+import { Divider, Typography } from 'antd';
 import { gql, request } from 'graphql-request';
 import { GetServerSidePropsContext, NextPage } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from as fromRx, map, of, switchMap } from 'rxjs';
-import { EllipsisMiddle } from 'shared/components/widget/EllipsisMiddle';
 import { CrossChainStatus, MIDDLE_DURATION } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { useIsMounted } from 'shared/hooks';
@@ -272,13 +271,17 @@ const Page: NextPage<{
 
         <TransferDescription title={t('Sender')} tip={t('Address (external or contract) sending the transaction.')}>
           {departureRecord && (
-            <EllipsisMiddle copyable>{revertAccount(departureRecord.sender, departure)}</EllipsisMiddle>
+            <Typography.Text copyable className="truncate">
+              {revertAccount(departureRecord.sender, departure)}
+            </Typography.Text>
           )}
         </TransferDescription>
 
         <TransferDescription title={t('Receiver')} tip={t('Address (external or contract) receiving the transaction.')}>
           {departureRecord && (
-            <EllipsisMiddle copyable>{revertAccount(departureRecord.recipient, arrival)}</EllipsisMiddle>
+            <Typography.Text copyable className="truncate">
+              {revertAccount(departureRecord.recipient, arrival)}
+            </Typography.Text>
           )}
         </TransferDescription>
 
