@@ -190,9 +190,9 @@ declare namespace Cypress {
 
     waitForReactComponent(): Chainable<Subject>;
 
-    checkTxInfo(text: string | number | RegExp): Chainable<Subject>;
+    submitTx(): Chainable<Subject>;
 
-    confirmTxInfo(): Chainable<Subject>;
+    confirmTx(): Chainable<Subject>;
 
     checkTxResult(text: string, hrefRegExp: RegExp, timeout?: number): Chainable<Subject>;
 
@@ -200,10 +200,12 @@ declare namespace Cypress {
 
     selectToToken(chain: string, symbol: string): Chainable<Subject>;
 
-    connectToWallet(config: { networkName: 'pangolin'; networkId: 43; isTestnet: true }): Chainable<Subject>;
+    connectToWallet(config: { networkName: string; networkId: number; isTestnet: boolean }): Chainable<Subject>;
 
     agreeAndContinue(): Chainable<Subject>;
 
     typeAmount(amount: string): Chainable<Subject>;
+    
+    typeRecipient(recipient: string): Chainable<Subject>;
   }
 }

@@ -208,11 +208,11 @@ Cypress.Commands.add('waitForReactComponent', () => {
 });
 
 // cross-chain commands
-Cypress.Commands.add('checkTxInfo', (text) => {
-  return cy.get('.ant-modal-confirm-content .ant-typography').contains(text);
+Cypress.Commands.add('submitTx', () => {
+  return cy.get('button').contains('Transfer').click();
 });
 
-Cypress.Commands.add('confirmTxInfo', () => {
+Cypress.Commands.add('confirmTx', () => {
   return cy.get('.ant-modal-confirm-btns button').contains('Confirm').click();
 });
 
@@ -247,17 +247,13 @@ Cypress.Commands.add('selectToToken', (chain, symbol) => {
 });
 
 Cypress.Commands.add('connectToWallet', (config: { networkName: string; networkId: number; isTestnet: boolean }) => {
-  return cy
-    .get('.ant-btn-default')
-    .contains('Connect to Wallet')
-    .click()
-    .then(() => {
-      // metamask may have two steps here: 1. approve  2. switch
-      cy.acceptMetamaskSwitch(config);
-      cy.acceptMetamaskSwitch(config);
-    });
+  return cy.get('.ant-btn-default').contains('Connect to Wallet').click();
 });
 
 Cypress.Commands.add('typeAmount', (amount: string) => {
   return cy.get('input[role="spinbutton"]').first().type(amount);
+});
+
+Cypress.Commands.add('typeRecipient', (recipient: string) => {
+  return cy.get('input[placeholder="Type or select the recipient address"]').type(recipient);
 });

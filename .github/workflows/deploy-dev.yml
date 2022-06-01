@@ -27,6 +27,51 @@ jobs:
       - name: test
         run: yarn test:shared
 
+  test-e2e:
+    name: E2ETest
+    runs-on: ubuntu-latest
+    outputs:
+      check-ok: ${{ steps.output-ok.outputs.STATUS }}
+      check-err: ${{ steps.output-err.outputs.STATUS }}
+    container:
+      image: cypress/browsers:node14.17.0-chrome88-ff89
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run E2E tests 🧪
+        uses: cypress-io/github-action@v2
+        with:
+          start: yarn dev:apps
+          wait-on: 'http://localhost:4003'
+          wait-on-timeout: 300
+          command: yarn test:e2e:ci:apps
+          record: true
+          parallel: true
+          browser: chrome
+          cache-key: ${{ runner.os }}-hash-${{ hashFiles('yarn.lock') }}
+          group: 'Actions example'
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: e2e-screenshots
+          path: cypress/screenshots
+
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: e2e-videos
+          path: cypress/videos
+
+      - id: output-ok
+        run: echo "::set-output name=STATUS::ok"
+      - id: output-err
+        if: failure()
+        run: echo "::set-output name=STATUS::err"
+
+
   deploy-package:
     name: Deploy package
     runs-on: ubuntu-latest
