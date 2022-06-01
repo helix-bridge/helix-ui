@@ -209,7 +209,7 @@ Cypress.Commands.add('waitForReactComponent', () => {
 
 // cross-chain commands
 Cypress.Commands.add('submitTx', () => {
-  return cy.get('.cypress-submit').contains('Transfer').click();
+  return cy.get('.cy-submit').contains('Transfer').click();
 });
 
 Cypress.Commands.add('confirmTx', () => {

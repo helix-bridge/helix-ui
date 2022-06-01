@@ -5,7 +5,7 @@ describe('Substrate DVM to Substrate', () => {
   const hrefRegExp = /^https:\/\/pangolin.subscan.io\/extrinsic\/0x\w+$/;
 
   before(() => {
-    cy.activeMetamask();
+    // cy.activeMetamask();
   });
 
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe('Substrate DVM to Substrate', () => {
 
     cy.typeRecipient(recipient);
 
-    cy.get('button').contains('Approve').click();
+    cy.get('.cy-approve').click();
 
     cy.confirmTx();
 
@@ -48,9 +48,7 @@ describe('Substrate DVM to Substrate', () => {
     cy.selectFromToken('Pangolin Smart Chain', 'xORING');
     cy.selectToToken('Pangoro', 'ORING');
 
-    cy.connectToWallet().then(() => {
-      cy.acceptMetamaskSwitch(chain);
-    });
+    cy.connectToWallet();
 
     cy.typeAmount('0.1');
 

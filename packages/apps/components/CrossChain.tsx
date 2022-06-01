@@ -212,7 +212,9 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
           </Form.Item>
 
           {!allowanceEnough && allowancePayload && account ? (
-            <FormItemButton onClick={() => approve(allowancePayload)}>{t('Approve')}</FormItemButton>
+            <FormItemButton onClick={() => approve(allowancePayload)} className="cy-approve">
+              {t('Approve')}
+            </FormItemButton>
           ) : departureConnection.status === ConnectionStatus.success ? (
             <>
               {bridgeState.status !== 'available' && (
@@ -225,7 +227,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
               <FormItemButton
                 disabled={bridgeState.status !== 'available'}
                 onClick={() => launch()}
-                className="cypress-submit"
+                className="cy-submit"
               >
                 {t('Transfer')}
               </FormItemButton>
