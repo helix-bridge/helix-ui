@@ -43,10 +43,12 @@ export const HistoryItem = ({ record, token, children, process }: PropsWithChild
         </div>
       </div>
 
-      <div className="flex items-center gap-4 flex-1 justify-end">
+      <div
+        className={`grid ${children ? 'grid-cols-3' : 'grid-cols-2'} items-center gap-4 justify-end place-items-center`}
+      >
         <Tag
           color="warning"
-          className="flex items-center justify-center order-last lg:order-first bg-yellow-500 text-white font-bold text-sm"
+          className="text-center bg-yellow-500 text-white font-bold w-16"
           style={{ height: 'fit-content' }}
         >
           Out
@@ -55,15 +57,15 @@ export const HistoryItem = ({ record, token, children, process }: PropsWithChild
         <div className="flex items-center gap-4 lg:mx-4">
           <Image alt="..." src={`/image/${token.logo}`} width={40} height={40} />
 
-          <div className={` flex flex-col md:${children ? 'w-28' : 'w-12'} truncate`}>
+          <div>
             <Tooltip title={token.amount}>
-              <span className="truncate">{token.amount}</span>
+              <p className="truncate md:w-40">{token.amount}</p>
             </Tooltip>
-            <span className="capitalize">{token.symbol}</span>
+            <p className="capitalize">{token.symbol}</p>
           </div>
         </div>
 
-        <div className="mx-4 lg:mx-0 text-pangolin-main">{children}</div>
+        {children && <div className="mx-4 lg:mx-0 text-pangolin-main">{children}</div>}
       </div>
     </List.Item>
   );
