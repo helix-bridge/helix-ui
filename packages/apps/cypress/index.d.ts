@@ -200,7 +200,7 @@ declare namespace Cypress {
 
     selectToToken(chain: string, symbol: string): Chainable<Subject>;
 
-    connectToWallet(config: { networkName: string; networkId: number; isTestnet: boolean }): Chainable<Subject>;
+    connectToWallet(): Chainable<Subject>;
 
     agreeAndContinue(): Chainable<Subject>;
 

@@ -209,7 +209,7 @@ Cypress.Commands.add('waitForReactComponent', () => {
 
 // cross-chain commands
 Cypress.Commands.add('submitTx', () => {
-  return cy.get('button').contains('Transfer').click();
+  return cy.get('.cypress-submit').contains('Transfer').click();
 });
 
 Cypress.Commands.add('confirmTx', () => {
@@ -246,7 +246,7 @@ Cypress.Commands.add('selectToToken', (chain, symbol) => {
     .then(() => cy.get('.helix-modal:nth-child(2) button .ant-typography').contains(symbol).click());
 });
 
-Cypress.Commands.add('connectToWallet', (config: { networkName: string; networkId: number; isTestnet: boolean }) => {
+Cypress.Commands.add('connectToWallet', () => {
   return cy.get('.ant-btn-default').contains('Connect to Wallet').click();
 });
 

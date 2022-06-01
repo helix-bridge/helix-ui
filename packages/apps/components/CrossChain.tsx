@@ -215,7 +215,9 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
           ) : (
             <Tooltip title={bridgeState.reason} placement="bottom">
               {departureConnection.status === ConnectionStatus.success ? (
-                <FormItemButton onClick={() => launch()}>{t('Transfer')}</FormItemButton>
+                <FormItemButton onClick={() => launch()} className="cypress-submit">
+                  {t('Transfer')}
+                </FormItemButton>
               ) : (
                 <FormItemButton
                   onClick={() => connectDepartureNetwork(direction.from.meta)}

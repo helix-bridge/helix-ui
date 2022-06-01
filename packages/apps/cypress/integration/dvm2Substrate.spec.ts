@@ -15,13 +15,14 @@ describe('DVM to main net', () => {
   });
 
   it('should launch ring tx', () => {
-    const chai = { networkName: 'pangolin', networkId: 43, isTestnet: true };
+    const chain = { networkName: 'pangolin', networkId: 43, isTestnet: true };
+ 
     cy.selectFromToken('Pangolin Smart Chain', 'PRING');
     cy.selectToToken('Pangolin', 'PRING');
 
-    cy.connectToWallet(chai).then(() => {
-      cy.acceptMetamaskSwitch(chai);
-      cy.acceptMetamaskSwitch(chai);
+    cy.connectToWallet().then(() => {
+      cy.acceptMetamaskSwitch(chain);
+      cy.acceptMetamaskSwitch(chain);
     });
 
     cy.typeAmount('1');
