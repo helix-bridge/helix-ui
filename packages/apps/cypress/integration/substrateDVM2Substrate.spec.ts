@@ -43,8 +43,6 @@ describe('Substrate DVM to Substrate', () => {
   });
 
   it('should launch xORing tx', () => {
-    const chain = { networkName: 'pangolin', networkId: 43, isTestnet: true };
-
     cy.selectFromToken('Pangolin Smart Chain', 'xORING');
     cy.selectToToken('Pangoro', 'ORING');
 
