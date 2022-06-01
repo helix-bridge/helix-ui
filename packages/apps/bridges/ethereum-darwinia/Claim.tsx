@@ -240,7 +240,7 @@ function Record({
         </div>
       }
     >
-      <div className="flex items-center justify-center pl-5">
+      <div className="flex items-center justify-center">
         {signatures && !hash ? (
           <Button disabled={isClaiming} onClick={claim}>
             {t('Claim')}

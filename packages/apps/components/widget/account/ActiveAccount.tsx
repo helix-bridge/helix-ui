@@ -2,7 +2,7 @@ import { CloseCircleOutlined, DisconnectOutlined, LoadingOutlined, SettingFilled
 import { Badge, Button, message, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
 import { isTestChain } from 'shared/config/env';
@@ -10,7 +10,7 @@ import { crabDVMConfig, darwiniaConfig, pangolinConfig } from 'shared/config/net
 import { pangolinDVMConfig } from 'shared/config/network/pangolin-dvm';
 import { ChainConfig, ConnectionStatus, EthereumChainConfig, SupportedWallet } from 'shared/model';
 import { switchEthereumChain } from 'shared/utils/connection';
-import { useAccount, useApi } from '../../../providers';
+import { useAccount, useApi, useWallet } from '../../../providers';
 import { SelectAccountModal } from './SelectAccountModal';
 import { SelectWalletModal } from './SelectWalletModal';
 
@@ -32,38 +32,13 @@ function ActiveAccountStrict() {
   const { account, setAccount } = useAccount();
   const [isVisible, setIsVisible] = useState(false);
   const [isWalletVisible, setIsWalletVisible] = useState(false);
-  const [walletMatched, setWalletMatched] = useState(true);
+  const { matched, walletMatched, chainMatched } = useWallet();
 
   const disconnected = useMemo(() => {
     const { type, status } = departureConnection;
 
     return type !== 'unknown' && status !== ConnectionStatus.success;
   }, [departureConnection]);
-
-  const chainMatched = useMemo(() => {
-    if (departureConnection.type === 'metamask') {
-      return (
-        walletMatched &&
-        (departure as EthereumChainConfig).ethereumChain &&
-        (departure as EthereumChainConfig).ethereumChain.chainId === departureConnection.chainId
-      );
-    }
-
-    return true;
-  }, [departure, departureConnection.chainId, departureConnection.type, walletMatched]);
-
-  const matched = useMemo(() => walletMatched && chainMatched, [chainMatched, walletMatched]);
-
-  useEffect(() => {
-    const { type } = departureConnection;
-
-    if (type === 'unknown') {
-      setWalletMatched(true);
-      return;
-    }
-
-    setWalletMatched(departure.wallets.includes(departureConnection.type as SupportedWallet));
-  }, [departure, departureConnection]);
 
   return (
     <>

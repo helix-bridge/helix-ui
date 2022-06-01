@@ -1,10 +1,12 @@
+import { message } from 'antd';
 import BN from 'bn.js';
 import { useState, useCallback } from 'react';
+import { EMPTY } from 'rxjs';
 import { CrossChainDirection, CrossChainPayload } from 'shared/model';
 import { getAllowance, applyModalObs, approveToken, createTxWorkflow } from 'shared/utils/tx';
 import { ApproveConfirm } from '../components/tx/ApproveConfirm';
 import { ApproveDone } from '../components/tx/ApproveSuccess';
-import { useAccount, useTx } from '../providers';
+import { useAccount, useTx, useWallet } from '../providers';
 import { useITranslation } from './translation';
 import { useAfterTx } from './tx';
 
@@ -16,6 +18,7 @@ export function useAllowance(direction: CrossChainDirection) {
   const { afterApprove } = useAfterTx<ApproveValue>();
   const { observer } = useTx();
   const [allowance, setAllowance] = useState<BN | null>(null);
+  const { matched } = useWallet();
 
   const queryAllowance = useCallback(
     async ({ spender, tokenAddress }: { spender: string; tokenAddress: string }) => {
@@ -41,6 +44,11 @@ export function useAllowance(direction: CrossChainDirection) {
       content: <ApproveConfirm value={value} />,
     });
     const txObs = approveToken({ sender, ...payload });
+
+    if (!matched) {
+      message.error(t('Wrong Network'));
+      return EMPTY.subscribe();
+    }
 
     return createTxWorkflow(
       beforeTx,

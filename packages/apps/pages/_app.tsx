@@ -10,7 +10,7 @@ import GlobalLoading from 'shared/components/widget/GlobalLoading';
 import { ENDPOINT } from 'shared/config/env';
 import '../bridges/register';
 import AppLayout from '../components/AppLayout';
-import { AccountProvider, ApiProvider, GqlProvider, TxProvider } from '../providers';
+import { AccountProvider, ApiProvider, GqlProvider, TxProvider, WalletProvider } from '../providers';
 import '../styles/index.scss';
 
 const client = new GraphQLClient({
@@ -77,15 +77,17 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
       <ClientContext.Provider value={client}>
         <ErrorBoundary>
           <ApiProvider>
-            <AccountProvider>
-              <TxProvider>
-                <GqlProvider>
-                  <AppLayout>
-                    <Component {...pageProps} />
-                  </AppLayout>
-                </GqlProvider>
-              </TxProvider>
-            </AccountProvider>
+            <WalletProvider>
+              <AccountProvider>
+                <TxProvider>
+                  <GqlProvider>
+                    <AppLayout>
+                      <Component {...pageProps} />
+                    </AppLayout>
+                  </GqlProvider>
+                </TxProvider>
+              </AccountProvider>
+            </WalletProvider>
           </ApiProvider>
         </ErrorBoundary>
       </ClientContext.Provider>
