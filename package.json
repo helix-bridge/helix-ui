@@ -19,6 +19,7 @@
     "lint": "npm run eslint && npm run stylelint",
     "test:shared": "cd packages/shared && yarn test",
     "test:shared:watch": "cd packages/shared && yarn test:watch",
+    "test:e2e:ci:apps": "cd packages/apps && yarn test:e2e:ci",
     "format": "prettier  packages/**/*.{ts,tsx} --write"
   },
   "devDependencies": {

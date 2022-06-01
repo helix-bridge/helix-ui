@@ -4,5 +4,5 @@
     "baseUrl": "./",
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "../shared/model/camelCaseKeys.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "cypress"]
 }

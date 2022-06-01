@@ -11,3 +11,6 @@ node_modules
 tsconfig.tsbuildinfo
 
 packages/shared/model/icon/iconfont.json
+packages/apps/cypress/plugins/extensions
+packages/apps/cypress/screenshots
+packages/apps/cypress/videos

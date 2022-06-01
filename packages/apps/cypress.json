@@ -1,0 +1,37 @@
+{
+  "baseUrl": "http://localhost:4003",
+  "chromeWebSecurity": true,
+  "component": {
+    "componentFolder": "src",
+    "testFiles": "__tests__/**/*.test.{js,ts,jsx,tsx}"
+  },
+  "defaultCommandTimeout": 30000,
+  "env": {
+    "coverage": false,
+    "product": "",
+    "staging": "",
+    "cypress-react-selector": {
+      "root": "#__next"
+    },
+    "accounts": {
+      "pangolin": "5FA7CzAgT5fNDFRdb4UWSZX3b9HJsPuR7F5BF4YotSpKxAA2",
+      "pangoro": "2rGH1BB1E6fvTqiVrHMwNw8r5VrFYznvafn2Uf7amvYdCZ9f",
+      "ropsten": "0x245b4775082c144c22a4874b0fba8c70c510c5ae",
+      "pangolinDVM": "0x245b4775082c144c22a4874b0fba8c70c510c5ae"
+    }
+  },
+  "ignoreTestFiles": "*/examples/**",
+  "nodeVersion": "bundled",
+  "pageLoadTimeout": 30000,
+  "projectId": "37wetq",
+  "requestTimeout": 3000,
+  "retries": {
+    "openMode": 0,
+    "runMode": 0
+  },
+  "userAgent": "synpress",
+  "video": true,
+  "videoCompression": 15,
+  "viewportHeight": 768,
+  "viewportWidth": 1366
+}

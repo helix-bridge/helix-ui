@@ -24,6 +24,7 @@ import { EthereumDarwiniaBridgeConfig, IssuingPayload } from './model';
 import { getIssuingFee, issuing } from './utils';
 
 const validateBeforeTx = (balance: BN, amount: BN, fee: BN, ringBalance: BN, allowance: BN): string | undefined => {
+  console.log('🚀 ~ file: Ethereum2Darwinia.tsx ~ line 27 ~ allowance', allowance.toString(), fee.toString());
   const validations: [boolean, string][] = [
     [ringBalance.lt(fee), 'Insufficient fee'],
     [balance.lt(amount), 'Insufficient balance'],
@@ -159,10 +160,8 @@ export function Ethereum2Darwinia({
   }, [direction, getBalance, departureConnection]);
 
   useEffect(() => {
-    if (isRing(direction.from.symbol)) {
-      updateAllowancePayload({ spender: bridge.config.contracts.issuing, tokenAddress: bridge.config.contracts.ring });
-    }
-  }, [bridge.config.contracts.issuing, bridge.config.contracts.ring, direction.from.symbol, updateAllowancePayload]);
+    updateAllowancePayload({ spender: bridge.config.contracts.issuing, tokenAddress: bridge.config.contracts.ring });
+  }, [bridge.config.contracts.issuing, bridge.config.contracts.ring, updateAllowancePayload]);
 
   return (
     <>

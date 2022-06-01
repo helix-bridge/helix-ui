@@ -128,7 +128,7 @@ export function genEthereumContractTxObs(
   return new Observable((observer) => {
     try {
       const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-      const contract = new web3.eth.Contract(contractAbi, contractAddress);
+      const contract = new web3.eth.Contract(contractAbi, contractAddress) as unknown as Contract;
 
       observer.next({ status: 'signing' });
 

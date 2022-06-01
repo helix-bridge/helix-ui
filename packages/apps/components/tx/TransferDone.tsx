@@ -28,7 +28,7 @@ export function TransferDone({ tx, value }: TxDoneComponentProps) {
             scan:
               isPolkadotNetwork(value.direction.from.meta) || isDarwiniaDVMNetwork(value.direction.from.meta)
                 ? 'Subscan'
-                : 'Ethereum',
+                : 'Etherscan',
           })}
         </SubscanLink>
       </div>

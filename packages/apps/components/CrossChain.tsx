@@ -1,4 +1,5 @@
-import { Col, Form, Input, message, Row, Tooltip } from 'antd';
+import { WarningFilled } from '@ant-design/icons';
+import { Col, Form, Input, message, Row } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import BN from 'bn.js';
 import { isEqual, omit } from 'lodash';
@@ -211,20 +212,33 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
           </Form.Item>
 
           {!allowanceEnough && allowancePayload && account ? (
-            <FormItemButton onClick={() => approve(allowancePayload)}>{t('Approve')}</FormItemButton>
-          ) : (
-            <Tooltip title={bridgeState.reason} placement="bottom">
-              {departureConnection.status === ConnectionStatus.success ? (
-                <FormItemButton onClick={() => launch()}>{t('Transfer')}</FormItemButton>
-              ) : (
-                <FormItemButton
-                  onClick={() => connectDepartureNetwork(direction.from.meta)}
-                  disabled={departureConnection.status === ConnectionStatus.connecting}
-                >
-                  {t('Connect to Wallet')}
-                </FormItemButton>
+            <FormItemButton onClick={() => approve(allowancePayload)} className="cy-approve">
+              {t('Approve')}
+            </FormItemButton>
+          ) : departureConnection.status === ConnectionStatus.success ? (
+            <>
+              {bridgeState.status !== 'available' && (
+                <div className="w-full flex items-center gap-4 p-4 bg-white border text-gray-900 rounded-sm">
+                  <WarningFilled className="text-yellow-400 text-xl" />
+                  <span>{bridgeState.reason}</span>
+                </div>
               )}
-            </Tooltip>
+
+              <FormItemButton
+                disabled={bridgeState.status !== 'available'}
+                onClick={() => launch()}
+                className="cy-submit"
+              >
+                {t('Transfer')}
+              </FormItemButton>
+            </>
+          ) : (
+            <FormItemButton
+              onClick={() => connectDepartureNetwork(direction.from.meta)}
+              disabled={departureConnection.status === ConnectionStatus.connecting}
+            >
+              {t('Connect to Wallet')}
+            </FormItemButton>
           )}
         </Col>
 

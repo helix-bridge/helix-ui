@@ -54,16 +54,6 @@ export const isS2S: BridgePredicateFn = (departure, arrival) => {
   return [isSubstrate2SubstrateDVM, isSubstrateDVM2Substrate].some((fn) => fn(departure, arrival));
 };
 
-export function hasBridge(source: CrossChainDirection | [Vertices | ChainConfig, Vertices | ChainConfig]): boolean {
-  try {
-    getBridge(source);
-
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
-
 function getBridgeOverviews(source: NullableFields<CrossChainDirection, 'from' | 'to'>) {
   const { from, to } = source;
 
@@ -81,16 +71,6 @@ function getBridgeOverviews(source: NullableFields<CrossChainDirection, 'from' |
       isEqual(pick(partner, ['mode', 'name']), pick(to.meta, ['mode', 'name']))
     );
   });
-}
-
-export function isTransferable(source: NullableFields<CrossChainDirection, 'from' | 'to'>): boolean {
-  return !!getBridgeOverviews(source).length;
-}
-
-export function isBridgeAvailable(from: ChainConfig, to: ChainConfig): boolean {
-  const bridge = getBridge([from, to]);
-
-  return !!bridge && bridge.status === 'available';
 }
 
 export function getBridge<T extends BridgeConfig>(
@@ -139,13 +119,4 @@ export function getAvailableDVMBridge(departure: ChainConfig): Bridge<DVMBridgeC
   }
 
   return bridge as Bridge<DVMBridgeConfig>;
-}
-
-export function hasAvailableDVMBridge(departure: ChainConfig): boolean {
-  try {
-    getAvailableDVMBridge(departure);
-    return true;
-  } catch (_) {
-    return false;
-  }
 }

@@ -48,7 +48,10 @@ function createMappingTokenContract(departure: DVMChainConfig, arrival: ChainCon
   const web3 = entrance.web3.getInstance(departure.provider);
   const s2s = isS2S(departure, arrival);
 
-  return new web3.eth.Contract(s2s ? abi.S2SMappingTokenABI : abi.Erc20MappingTokenABI, mappingAddress);
+  return new web3.eth.Contract(
+    s2s ? abi.S2SMappingTokenABI : abi.Erc20MappingTokenABI,
+    mappingAddress
+  ) as unknown as Contract;
 }
 
 const getMappingTokenLength = memoize(
