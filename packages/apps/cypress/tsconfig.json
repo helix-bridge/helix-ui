@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "types": [
+      "cypress",
+      "@types/puppeteer-core",
+      "cypress-wait-until",
+      "@testing-library/cypress",
+      "cypress-react-selector"
+    ]
+  },
+  "include": ["**/*.ts"]
+}
