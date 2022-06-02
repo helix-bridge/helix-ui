@@ -20,7 +20,7 @@ describe('Substrate DVM to Substrate', () => {
     cy.selectToToken('Pangoro', 'ORING');
 
     cy.connectToWallet().then(() => {
-      cy.acceptMetamaskSwitch(chain);
+      // cy.acceptMetamaskSwitch(chain);
     });
 
     cy.typeAmount('0.1');
