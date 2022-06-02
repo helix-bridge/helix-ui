@@ -60,7 +60,5 @@ describe('Substrate DVM to Substrate', () => {
     cy.confirmTx();
     cy.wait(5000);
     cy.confirmMetamaskTransaction();
-
-    cy.checkTxResult('View in Subscan explorer', hrefRegExp);
   });
 });

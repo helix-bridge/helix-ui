@@ -119,20 +119,19 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
       <div className="max-h-96 overflow-auto flex flex-col gap-2">
         {/* eslint-disable-next-line complexity */}
         {tokens.map((item, index) => {
-          const disabled = /^[x]?[O]?KTON/.test(item.symbol) && !item.address;
+          const isS2SKton = /^[x]?[O]?KTON/.test(item.symbol) && !item.address;
           const isAppsFeature =
             ['CKTON', 'PKTON', 'WCKTON', 'WPKTON'].some((name) => item.symbol.includes(name)) &&
             isDarwiniaDVMNetwork(item.meta);
+          const disabled = isS2SKton || isAppsFeature;
 
           return (
             <button
               className={`flex items-center justify-between border border-gray-800 py-3 px-2 cursor-pointer transition-all duration-300  ${
-                disabled || isAppsFeature
-                  ? 'bg-gray-700 cursor-not-allowed hover:bg-gray-700'
-                  : 'bg-gray-900 hover:bg-gray-800'
+                disabled ? 'bg-gray-700 cursor-not-allowed hover:bg-gray-700' : 'bg-gray-900 hover:bg-gray-800'
               }`}
               key={index}
-              disabled={disabled || isAppsFeature}
+              disabled={disabled}
               onClick={() => onSelect(item)}
             >
               <div className="flex items-center space-x-2">

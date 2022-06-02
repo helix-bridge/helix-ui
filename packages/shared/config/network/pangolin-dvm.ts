@@ -72,21 +72,6 @@ export const pangolinDVMConfig: DVMChainConfig = {
       symbol: 'xORING',
       address: '0xb142658BD18c560D8ea74a31C07297CeCfeCF949',
     },
-    {
-      name: 'xOKTON',
-      decimals: 9,
-      cross: [
-        {
-          category: 'helix',
-          bridge: 'substrate-substrateDVM',
-          partner: { name: 'pangoro', mode: 'native', role: 'issuer', symbol: 'oKTON' },
-        },
-      ],
-      type: 'mapping',
-      logo: 'token-kton.svg',
-      symbol: 'xOKTON',
-      address: '',
-    },
   ],
   ss58Prefix: 42,
   specVersion: 28110,
