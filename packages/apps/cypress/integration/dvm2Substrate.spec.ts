@@ -33,7 +33,6 @@ describe('DVM to main net', () => {
     cy.submitTx();
     cy.confirmTx();
 
-    cy.wait(5000);
     cy.confirmMetamaskTransaction();
   });
 });
