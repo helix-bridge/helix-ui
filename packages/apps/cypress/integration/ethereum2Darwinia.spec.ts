@@ -2,6 +2,7 @@
 
 describe('Ethereum to Darwinia', () => {
   const { pangolin: recipient } = Cypress.env('accounts');
+  const hrefRegExp = /^https:\/\/ropsten.etherscan.io\/tx\/0x\w+$/;
 
   before(() => {
     cy.activeMetamask();
@@ -28,6 +29,7 @@ describe('Ethereum to Darwinia', () => {
     cy.confirmTx();
 
     cy.confirmMetamaskTransaction();
+    cy.checkTxResult('View in Etherscan explorer', hrefRegExp, 3 * 60 * 1000);
   });
 
   it('should launch kton tx', () => {
@@ -46,5 +48,6 @@ describe('Ethereum to Darwinia', () => {
 
     cy.wait(5000);
     cy.confirmMetamaskTransaction();
+    cy.checkTxResult('View in Etherscan explorer', hrefRegExp, 3 * 60 * 1000);
   });
 });
