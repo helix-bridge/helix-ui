@@ -8,6 +8,9 @@ jobs:
   test-unit:
     name: UnitTest
     runs-on: ubuntu-latest
+    outputs:
+      check-ok: ${{ steps.output-ok.outputs.STATUS }}
+      check-err: ${{ steps.output-err.outputs.STATUS }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -15,6 +18,12 @@ jobs:
         run: yarn
       - name: test
         run: yarn test:shared
+
+      - id: output-ok
+        run: echo "::set-output name=STATUS::ok"
+      - id: output-err
+        if: failure()
+        run: echo "::set-output name=STATUS::err"
 
   test-e2e:
     name: E2ETest
