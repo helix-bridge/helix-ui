@@ -89,6 +89,6 @@ export const crabDVMConfig: DVMChainConfig = {
     },
   ],
   ss58Prefix: 42,
-  specVersion: 1221,
+  specVersion: 1223,
   wallets: ['metamask'],
 };
