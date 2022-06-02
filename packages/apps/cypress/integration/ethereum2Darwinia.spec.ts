@@ -28,7 +28,9 @@ describe('Ethereum to Darwinia', () => {
     cy.submitTx();
     cy.confirmTx();
 
+    cy.wait(5000);
     cy.confirmMetamaskTransaction();
+
     cy.checkTxResult('View in Etherscan explorer', hrefRegExp, 3 * 60 * 1000);
   });
 
@@ -48,6 +50,7 @@ describe('Ethereum to Darwinia', () => {
 
     cy.wait(5000);
     cy.confirmMetamaskTransaction();
+
     cy.checkTxResult('View in Etherscan explorer', hrefRegExp, 3 * 60 * 1000);
   });
 });

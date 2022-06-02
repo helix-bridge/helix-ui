@@ -33,7 +33,9 @@ describe('DVM to main net', () => {
     cy.submitTx();
     cy.confirmTx();
 
+    cy.wait(5000);
     cy.confirmMetamaskTransaction();
+
     cy.checkTxResult('View in Subscan explorer', hrefRegExp);
   });
 });

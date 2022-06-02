@@ -34,7 +34,9 @@ describe('Substrate DVM to Substrate', () => {
 
     cy.confirmTx();
 
+    cy.wait(5000);
     cy.confirmMetamaskPermissionToSpend();
+
     cy.get('.ant-message', { timeout: 1 * 60 * 1000 })
       .find('a')
       .should('have.text', 'View in Etherscan explorer');
@@ -56,8 +58,9 @@ describe('Substrate DVM to Substrate', () => {
 
     cy.submitTx();
     cy.confirmTx();
-
+    cy.wait(5000);
     cy.confirmMetamaskTransaction();
+
     cy.checkTxResult('View in Subscan explorer', hrefRegExp);
   });
 });
