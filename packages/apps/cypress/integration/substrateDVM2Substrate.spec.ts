@@ -3,6 +3,7 @@
 describe('Substrate DVM to Substrate', () => {
   const { pangoro: recipient } = Cypress.env('accounts');
   const hrefRegExp = /^https:\/\/pangolin.subscan.io\/extrinsic\/0x\w+$/;
+  const chain = { networkName: 'pangolin', networkId: 43, isTestnet: true };
 
   before(() => {
     cy.activeMetamask();
@@ -13,14 +14,13 @@ describe('Substrate DVM to Substrate', () => {
     cy.agreeAndContinue();
   });
 
-  it('approve before launch tx', () => {
-    const chain = { networkName: 'pangolin', networkId: 43, isTestnet: true };
-
+  it.skip('approve before launch tx', () => {
     cy.selectFromToken('Pangolin Smart Chain', 'xORING');
     cy.selectToToken('Pangoro', 'ORING');
 
     cy.connectToWallet().then(() => {
-      // cy.acceptMetamaskSwitch(chain);
+      cy.acceptMetamaskSwitch(chain);
+      cy.acceptMetamaskSwitch(chain);
     });
 
     cy.typeAmount('0.1');
@@ -45,7 +45,10 @@ describe('Substrate DVM to Substrate', () => {
     cy.selectFromToken('Pangolin Smart Chain', 'xORING');
     cy.selectToToken('Pangoro', 'ORING');
 
-    cy.connectToWallet();
+    cy.connectToWallet().then(() => {
+      cy.acceptMetamaskSwitch(chain);
+      cy.acceptMetamaskSwitch(chain);
+    });
 
     cy.typeAmount('0.1');
 
