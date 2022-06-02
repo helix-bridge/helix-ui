@@ -15,7 +15,7 @@ export function issuing(value: IssuingPayload, api: ApiPromise, fee: BN): Observ
   const { sender, recipient, direction } = value;
   const { from: departure, to } = direction;
   const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).sub(fee).toString();
-  const WEIGHT = '1509000000';
+  const WEIGHT = '4000000000';
   const module = departure.meta.isTest ? 'substrate2SubstrateBacking' : 'toCrabBacking';
   const extrinsic = api.tx[module].lockAndRemoteIssue(String(to.meta.specVersion), WEIGHT, amount, fee, recipient);
 
