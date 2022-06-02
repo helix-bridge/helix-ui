@@ -184,6 +184,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
                   setFee(null);
                   setAllowancePayload(null);
                   setSubmit(emptyObsFactory);
+                  setBridgeState({ status: 'available' });
                   form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined, [FORM_CONTROL.recipient]: undefined });
                 }
 
