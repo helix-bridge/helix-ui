@@ -110,7 +110,7 @@ export function Substrate2SubstrateDVM({
 
       return createTxWorkflow(
         applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }),
-        issuing(data, api, fee),
+        issuing(data, fee),
         afterCrossChain(TransferDone, {
           onDisappear: () => getBalances(data.sender).then(setAvailableBalances),
           payload: data,

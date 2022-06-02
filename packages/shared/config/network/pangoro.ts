@@ -32,21 +32,6 @@ export const pangoroConfig: PolkadotChainConfig = {
       symbol: 'ORING',
       address: '',
     },
-    {
-      name: 'OKTON',
-      decimals: 9,
-      cross: [
-        {
-          category: 'helix',
-          bridge: 'substrate-substrateDVM',
-          partner: { name: 'pangolin', mode: 'dvm', role: 'receiver', symbol: 'xOKTON' },
-        },
-      ],
-      type: 'native',
-      logo: 'token-kton.svg',
-      symbol: 'OKTON',
-      address: '',
-    },
   ],
   wallets: ['polkadot'],
 };

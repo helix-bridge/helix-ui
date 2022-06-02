@@ -1,4 +1,3 @@
-import { ApiPromise } from '@polkadot/api';
 import { Codec } from '@polkadot/types/types';
 import BN from 'bn.js';
 import { last } from 'lodash';
@@ -7,13 +6,14 @@ import { abi } from 'shared/config/abi';
 import { Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { convertToDvm, fromWei, toWei } from 'shared/utils/helper';
-import { signAndSendExtrinsic, genEthereumContractTxObs } from 'shared/utils/tx';
+import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import Web3 from 'web3';
 import { IssuingPayload, RedeemPayload } from '../model';
 
-export function issuing(value: IssuingPayload, api: ApiPromise, fee: BN): Observable<Tx> {
+export function issuing(value: IssuingPayload, fee: BN): Observable<Tx> {
   const { sender, recipient, direction } = value;
   const { from: departure, to } = direction;
+  const api = entrance.polkadot.getInstance(direction.from.meta.provider);
   const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).sub(fee).toString();
   const WEIGHT = '4000000000';
   const module = departure.meta.isTest ? 'substrate2SubstrateBacking' : 'toCrabBacking';
