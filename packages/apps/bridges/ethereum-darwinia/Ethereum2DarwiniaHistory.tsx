@@ -25,7 +25,7 @@ function Record({
   departure: EthereumChainConfig;
   arrival: PolkadotChainConfig;
 }) {
-  const { blockTimestamp, tx, darwiniaTx, currency, isRelayed, amount } = record;
+  const { blockTimestamp, tx, darwiniaTx, currency, amount } = record;
   const [height, index] = darwiniaTx.split('-');
   const isRingTransfer = isRing(currency);
   const token = departure.tokens.find((item) => (isRingTransfer ? isRing(item.symbol) : isKton(item.symbol)))!;
@@ -34,7 +34,7 @@ function Record({
     <HistoryItem
       key={blockTimestamp}
       record={{
-        result: isRelayed && darwiniaTx ? 1 : 0,
+        result: tx ? 1 : 0,
         startTime: blockTimestamp,
       }}
       token={{

@@ -10,7 +10,6 @@ describe('Substrate DVM to Substrate', () => {
 
   beforeEach(() => {
     cy.visit(Cypress.config().baseUrl);
-    cy.waitForReact();
     cy.agreeAndContinue();
   });
 
@@ -61,6 +60,6 @@ describe('Substrate DVM to Substrate', () => {
     cy.wait(5000);
     cy.confirmMetamaskTransaction();
 
-    cy.checkTxResult('View in Subscan explorer', hrefRegExp);
+    // cy.checkTxResult('View in Subscan explorer', hrefRegExp);
   });
 });

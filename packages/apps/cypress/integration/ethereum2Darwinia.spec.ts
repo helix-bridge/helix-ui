@@ -10,7 +10,6 @@ describe('Ethereum to Darwinia', () => {
 
   beforeEach(() => {
     cy.visit(Cypress.config().baseUrl);
-    cy.waitForReact();
     cy.agreeAndContinue();
   });
 
@@ -29,9 +28,10 @@ describe('Ethereum to Darwinia', () => {
     cy.confirmTx();
 
     cy.wait(5000);
-    cy.confirmMetamaskTransaction();
+    cy.rejectMetamaskTransaction();
+    // cy.confirmMetamaskTransaction();
 
-    cy.checkTxResult('View in Etherscan explorer', hrefRegExp, 3 * 60 * 1000);
+    // cy.checkTxResult('View in Etherscan explorer', hrefRegExp, 3 * 60 * 1000);
   });
 
   it('should launch kton tx', () => {
@@ -49,8 +49,9 @@ describe('Ethereum to Darwinia', () => {
     cy.confirmTx();
 
     cy.wait(5000);
-    cy.confirmMetamaskTransaction();
+    cy.rejectMetamaskTransaction();
+    // cy.confirmMetamaskTransaction();
 
-    cy.checkTxResult('View in Etherscan explorer', hrefRegExp, 3 * 60 * 1000);
+    // cy.checkTxResult('View in Etherscan explorer', hrefRegExp, 3 * 60 * 1000);
   });
 });
