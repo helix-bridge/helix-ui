@@ -1,4 +1,10 @@
-# [3.0.0](https://github.com/helix-bridge/helix/compare/v1.0.2-helix...v3.0.0) (2022-06-02)
+## [3.0.1](https://github.com/helix-bridge/helix/compare/v3.0.0...v3.0.1) (2022-06-02)
+
+### Features
+
+* Bump Crab spec version
+
+## [3.0.0](https://github.com/helix-bridge/helix/compare/v1.0.2-helix...v3.0.0) (2022-06-02)
 
 
 ### Bug Fixes
