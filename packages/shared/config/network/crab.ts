@@ -48,6 +48,6 @@ export const crabConfig: PolkadotChainConfig = {
     },
   ],
   ss58Prefix: 42,
-  specVersion: 1223,
+  specVersion: 1224,
   wallets: ['polkadot'],
 };
