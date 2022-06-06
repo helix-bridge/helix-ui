@@ -1,6 +1,4 @@
-import { Codec } from '@polkadot/types/types';
 import BN from 'bn.js';
-import { last } from 'lodash';
 import { from, map, Observable, switchMap } from 'rxjs';
 import { abi } from 'shared/config/abi';
 import { Tx } from 'shared/model';
@@ -9,6 +7,7 @@ import { convertToDvm, fromWei, toWei } from 'shared/utils/helper';
 import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import Web3 from 'web3';
 import { IssuingPayload, RedeemPayload } from '../model';
+import { getFee } from './fee';
 
 export function issuing(value: IssuingPayload, fee: BN): Observable<Tx> {
   const { sender, recipient, direction } = value;
@@ -33,14 +32,9 @@ export function redeem(value: RedeemPayload, mappingAddress: string, specVersion
   const api = entrance.polkadot.getInstance(departure.meta.provider);
 
   const valObs = from(waitUntilConnected(api)).pipe(
-    switchMap(() => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (api.query as any)[`${to.meta.name}FeeMarket`]
-        ['assignedRelayers']()
-        .then((data: Codec) => data.toJSON()) as Promise<{ id: string; collateral: number; fee: number }[]>;
-    }),
+    switchMap(() => getFee(departure.meta, to.meta)),
     map((res) => {
-      const num = fromWei({ value: last(res)?.fee.toString(), decimals: 9 });
+      const num = fromWei({ value: res, decimals: 9 });
 
       return Web3.utils.toHex(toWei({ value: num }));
     })
