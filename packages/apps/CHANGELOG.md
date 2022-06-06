@@ -1,3 +1,7 @@
+## [3.0.3](https://github.com/helix-bridge/helix/compare/v3.0.2-apps...v3.0.3) (2022-06-06)
+
+
+
 ## [3.0.2](https://github.com/helix-bridge/helix/compare/v3.0.1...v3.0.2) (2022-06-03)
 
 ### Features
