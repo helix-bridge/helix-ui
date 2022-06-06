@@ -34,11 +34,10 @@ export function redeem(value: RedeemPayload, mappingAddress: string, specVersion
 
   const valObs = from(waitUntilConnected(api)).pipe(
     switchMap(() => {
-      const section = to.meta.isTest ? `${to.meta.name}FeeMarket` : 'feeMarket';
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (api.query as any)[section]['assignedRelayers']().then((data: Codec) => data.toJSON()) as Promise<
-        { id: string; collateral: number; fee: number }[]
-      >;
+      return (api.query as any)[`${to.meta.name}FeeMarket`]
+        ['assignedRelayers']()
+        .then((data: Codec) => data.toJSON()) as Promise<{ id: string; collateral: number; fee: number }[]>;
     }),
     map((res) => {
       const num = fromWei({ value: last(res)?.fee.toString(), decimals: 9 });
