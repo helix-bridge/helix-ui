@@ -70,7 +70,7 @@ export function TransferConfirm<T extends Bridge = Bridge>({
         </div>
 
         <div className="mt-5 mb-3">
-          <Typography.Text>{t('Info')}</Typography.Text>
+          <Typography.Text>{t('Information')}</Typography.Text>
 
           <div className="flex flex-col space-y-2 mt-1 p-3 bg-gray-900 border border-gray-800">
             <div className="flex items-center justify-between overflow-hidden">
