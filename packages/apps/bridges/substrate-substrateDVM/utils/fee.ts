@@ -6,11 +6,12 @@ import { entrance, waitUntilConnected } from 'shared/utils/connection';
 
 export async function getFee(from: ChainConfig, to: ChainConfig): Promise<BN> {
   const api = entrance.polkadot.getInstance(from.provider);
-  const section = to.isTest ? `${to.name}FeeMarket` : 'feeMarket';
 
   await waitUntilConnected(api);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const res = (await (api.query as any)[section]['assignedRelayers']().then((data: Codec) => data.toJSON())) as {
+  const res = (await (api.query as any)[`${to.name}FeeMarket`]
+    ['assignedRelayers']()
+    .then((data: Codec) => data.toJSON())) as {
     id: string;
     collateral: number;
     fee: number;
