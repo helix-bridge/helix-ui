@@ -4,18 +4,23 @@ import { last } from 'lodash';
 import { Bridge, ChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 
-export async function getFee(from: ChainConfig, to: ChainConfig): Promise<BN> {
+const queryFeeFromRelayers = async (from: ChainConfig, to: ChainConfig) => {
   const api = entrance.polkadot.getInstance(from.provider);
+  const section = from.mode === 'dvm' || to.isTest ? `${to.name}FeeMarket` : 'feeMarket';
 
   await waitUntilConnected(api);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const res = (await (api.query as any)[`${to.name}FeeMarket`]
-    ['assignedRelayers']()
-    .then((data: Codec) => data.toJSON())) as {
-    id: string;
-    collateral: number;
-    fee: number;
-  }[];
+
+  return api.query[section]['assignedRelayers']().then((data: Codec) => data.toJSON()) as Promise<
+    {
+      id: string;
+      collateral: number;
+      fee: number;
+    }[]
+  >;
+};
+
+export async function getFee(from: ChainConfig, to: ChainConfig): Promise<BN> {
+  const res = await queryFeeFromRelayers(from, to);
 
   const marketFee = last(res)?.fee.toString();
 
