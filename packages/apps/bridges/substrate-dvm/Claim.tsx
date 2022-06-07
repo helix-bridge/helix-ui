@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { from, mergeMap, of } from 'rxjs';
 import { Logo } from 'shared/components/widget/Logo';
 import { WITHDRAW_ADDRESS } from 'shared/config/address';
-import { isTestChain } from 'shared/config/env';
+import { isTestChainOrDevEnv } from 'shared/config/env';
 import { crabConfig, crabDVMConfig, pangolinConfig } from 'shared/config/network';
 import { pangolinDVMConfig } from 'shared/config/network/pangolin-dvm';
 import { DVMChainConfig, PolkadotChainConfig, Tx } from 'shared/model';
@@ -31,7 +31,7 @@ export function Claim() {
   const [claiming, setClaiming] = useState(false);
 
   const [departure, arrival] = useMemo<[PolkadotChainConfig, DVMChainConfig]>(
-    () => (isTestChain ? [pangolinConfig, pangolinDVMConfig] : [crabConfig, crabDVMConfig]),
+    () => (isTestChainOrDevEnv ? [pangolinConfig, pangolinDVMConfig] : [crabConfig, crabDVMConfig]),
     []
   );
 

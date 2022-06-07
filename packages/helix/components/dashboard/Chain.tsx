@@ -1,32 +1,22 @@
 import { GithubOutlined, GlobalOutlined, TwitterCircleFilled } from '@ant-design/icons';
 import Image from 'next/image';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { BestNumber } from 'shared/components/widget/BestNumber';
-import { ChainConfig, LogoType } from 'shared/model';
+import { ChainConfig } from 'shared/model';
 import { getDisplayName } from 'shared/utils/network';
 
-export type ChainProps = ChainConfig & { logoType?: LogoType };
-
-export function Chain(props: ChainProps) {
+export function Chain(props: ChainConfig) {
   const open = useCallback((url: string) => {
     window.open(url, '_blank');
   }, []);
 
-  const { social, logos, logoType = 'main' } = props;
-
-  const logo = useMemo(() => {
-    const target = logos.find((item) => item.type === logoType);
-
-    return target?.name ?? '';
-  }, [logoType, logos]);
-
+  const { social, logos } = props;
   const chainName = getDisplayName(props);
-
   const { portal, twitter, github } = social;
 
   return (
     <div className="flex items-center px-6 py-8 gap-6 bg-gray-200 dark:bg-antDark">
-      <Image src={`/image/${logo}`} width={70} height={70} />
+      <Image src={`/image/${logos[0].name}`} width={70} height={70} />
 
       <div className="flex flex-col gap-2">
         <h6 className="capitalize">{chainName}</h6>
