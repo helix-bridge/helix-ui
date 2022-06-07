@@ -72,16 +72,16 @@ export function Ethereum2Darwinia({
         return;
       }
 
-      const { kton, ring } = (bridge.config as EthereumDarwiniaBridgeConfig).contracts;
+      const [ring, kton] = direction.from.meta.tokens; // FIXME: Token order on ethereum and ropsten must be 0 for ring, 1 for kton;
 
       if (isKton(value.direction.from.symbol)) {
-        getErc20Balance(kton, account, false).then((result) => {
+        getErc20Balance(kton.address, account, false).then((result) => {
           setBalance(result);
         });
       }
 
       // always need to refresh ring balance, because of it is a fee token
-      getErc20Balance(ring, account, false).then((result) => {
+      getErc20Balance(ring.address, account, false).then((result) => {
         if (isRing(value.direction.from.symbol)) {
           setBalance(result);
         }
@@ -89,7 +89,7 @@ export function Ethereum2Darwinia({
         setRingBalance(result);
       });
     },
-    [account, bridge.config]
+    [account, direction.from.meta.tokens]
   );
 
   useEffect(() => {
@@ -160,8 +160,10 @@ export function Ethereum2Darwinia({
   }, [direction, getBalance, departureConnection]);
 
   useEffect(() => {
-    updateAllowancePayload({ spender: bridge.config.contracts.issuing, tokenAddress: bridge.config.contracts.ring });
-  }, [bridge.config.contracts.issuing, bridge.config.contracts.ring, updateAllowancePayload]);
+    const ring = direction.from.meta.tokens.find((item) => isRing(item.symbol))!;
+
+    updateAllowancePayload({ spender: bridge.config.contracts.issuing, tokenAddress: ring.address });
+  }, [bridge.config.contracts.issuing, direction.from.meta.tokens, updateAllowancePayload]);
 
   return (
     <>

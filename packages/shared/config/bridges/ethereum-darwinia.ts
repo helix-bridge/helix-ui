@@ -2,7 +2,6 @@ import { Bridge, EthereumDarwiniaBridgeConfig } from '../../model';
 import { darwiniaConfig, ethereumConfig, pangolinConfig, ropstenConfig } from '../network';
 
 const ethereumDarwiniaConfig: EthereumDarwiniaBridgeConfig = {
-  api: { dapp: 'https://api.darwinia.network' },
   contracts: {
     fee: '0x6B0940772516B69088904564A56d09CFe6Bb3D85',
     issuing: '0xea7938985898af7fd945b03b7bc2e405e744e913',
@@ -32,7 +31,6 @@ export const ethereumDarwinia = new Bridge(ethereumConfig, darwiniaConfig, ether
 });
 
 const ropstenDVMChainConfig: EthereumDarwiniaBridgeConfig = {
-  api: { dapp: 'https://api.darwinia.network.l2me.com' },
   contracts: {
     fee: '0x6982702995b053A21389219c1BFc0b188eB5a372',
     issuing: '0x49262B932E439271d05634c32978294C7Ea15d0C',

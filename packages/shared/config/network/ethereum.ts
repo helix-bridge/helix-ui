@@ -19,6 +19,7 @@ export const ethereumConfig: EthereumChainConfig = {
     github: 'https://github.com/ethereum/ethereum-org-website',
     twitter: 'https://twitter.com/ethdotorg',
   },
+  // FIXME: Token order must be 0 for ring, 1 for kton;
   tokens: [
     {
       name: 'RING',

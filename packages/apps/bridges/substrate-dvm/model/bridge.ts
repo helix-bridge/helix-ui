@@ -1,3 +1,3 @@
-import { Api, ApiKeys, BridgeConfig, ContractConfig } from 'shared/model';
+import { BridgeConfig } from 'shared/model';
 
-export type SubstrateDVMBridgeConfig = Required<Omit<BridgeConfig<ContractConfig, Api<ApiKeys>>, 'contracts'>>;
+export type SubstrateDVMBridgeConfig = Required<Omit<BridgeConfig, 'contracts'>>;

@@ -16,15 +16,6 @@ export type Arrival = Vertices;
 
 /* ----------------------------------------------- bridge config ------------------------------------------------ */
 
-/**
- * TODO: remove centralized API:
- * dapp: e2d records; erc20 register proof querying
- * subscan: airdrop records in crab
- */
-export type ApiKeys = 'mmr' | 'dapp' | 'subscan';
-
-export type Api<T extends ApiKeys> = { [key in T]: string };
-
 export interface LockEventsStorage {
   min: number;
   max: number | null;
@@ -36,9 +27,8 @@ export interface ContractConfig {
   redeem: string;
 }
 
-export interface BridgeConfig<C = ContractConfig, K = Record<string, string>> {
+export interface BridgeConfig<C = ContractConfig> {
   contracts?: C;
-  api?: K;
 }
 
 /* ----------------------------------------------- bridge  ------------------------------------------------ */
@@ -69,8 +59,6 @@ export class Bridge<C = BridgeConfig> {
   private _config: C;
 
   private crossChain: Map<Departure[], FunctionComponent> = new Map();
-
-  private record: Map<Departure[], FunctionComponent> = new Map();
 
   constructor(
     departure: ChainConfig,

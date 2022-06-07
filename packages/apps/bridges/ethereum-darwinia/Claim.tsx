@@ -22,16 +22,11 @@ import { useRecords } from './hooks';
 import { Darwinia2EthereumHistoryRes, Darwinia2EthereumRecord, EthereumDarwiniaBridgeConfig } from './model';
 import { claimToken } from './utils';
 
-function isSufficient(
-  config: EthereumDarwiniaBridgeConfig,
-  tokenType: 'ring' | 'kton',
-  amount: BN
-): Observable<boolean> {
+function isSufficient(config: EthereumDarwiniaBridgeConfig, tokenAddress: string, amount: BN): Observable<boolean> {
   const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-  const store = config.contracts;
-  const contract = new web3.eth.Contract(abi.tokenIssuingABI, store.redeem);
-  const limit = from(contract.methods.dailyLimit(store[tokenType]).call() as Promise<string>);
-  const toadySpent = from(contract.methods.spentToday(store[tokenType]).call() as Promise<string>);
+  const contract = new web3.eth.Contract(abi.tokenIssuingABI, config.contracts.redeem);
+  const limit = from(contract.methods.dailyLimit(tokenAddress).call() as Promise<string>);
+  const toadySpent = from(contract.methods.spentToday(tokenAddress).call() as Promise<string>);
 
   return zip([limit, toadySpent]).pipe(map(([total, spent]) => new BN(total).sub(new BN(spent)).gte(amount)));
 }
@@ -60,7 +55,7 @@ export function Claim({
       return;
     }
 
-    fetchIssuingRecords({ address: account, direction: [arrival, departure], confirmed, paginator }).subscribe({
+    fetchIssuingRecords({ address: account, confirmed, paginator }).subscribe({
       next: (result) => setData(result as Darwinia2EthereumHistoryRes<ICamelCaseKeys<Darwinia2EthereumRecord>>),
       error: () => setLoading(false),
       complete: () => setLoading(false),
@@ -156,8 +151,17 @@ function Record({
           const ringBN = new BN(ring);
           const ktonBN = new BN(kton);
           const bridge = getBridge<EthereumDarwiniaBridgeConfig>([departure!, arrival!]);
-          const isRingSufficient = iif(() => ringBN.gt(BN_ZERO), isSufficient(bridge.config, 'ring', ringBN), of(true));
-          const isKtonSufficient = iif(() => ktonBN.gt(BN_ZERO), isSufficient(bridge.config, 'kton', ktonBN), of(true));
+          const [{ address: ringAddress }, { address: ktonAddress }] = arrival.tokens; // FIXME: Token order on ethereum and ropsten must be 0 for ring, 1 for kton;
+          const isRingSufficient = iif(
+            () => ringBN.gt(BN_ZERO),
+            isSufficient(bridge.config, ringAddress, ringBN),
+            of(true)
+          );
+          const isKtonSufficient = iif(
+            () => ktonBN.gt(BN_ZERO),
+            isSufficient(bridge.config, ktonAddress, ktonBN),
+            of(true)
+          );
 
           return zip(isRingSufficient, isKtonSufficient);
         }),

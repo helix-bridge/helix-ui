@@ -19,6 +19,7 @@ export const ropstenConfig: EthereumChainConfig = {
     github: 'https://github.com/ethereum/ropsten',
     twitter: 'https://twitter.com/ethdotorg',
   },
+  // FIXME: Token order must be 0 for ring, 1 for kton;
   tokens: [
     {
       name: 'PRING',
