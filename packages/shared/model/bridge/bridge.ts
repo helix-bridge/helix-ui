@@ -19,10 +19,9 @@ export type Arrival = Vertices;
 /**
  * TODO: remove centralized API:
  * dapp: e2d records; erc20 register proof querying
- * evolution: deposit records
  * subscan: airdrop records in crab
  */
-export type ApiKeys = 'mmr' | 'evolution' | 'dapp' | 'subscan';
+export type ApiKeys = 'mmr' | 'dapp' | 'subscan';
 
 export type Api<T extends ApiKeys> = { [key in T]: string };
 

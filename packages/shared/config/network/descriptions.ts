@@ -11,7 +11,6 @@ export const DESCRIPTIONS: {
   //   comment: 'Endpoint of proof after registering Erc20 Token',
   //   type: 'string',
   // },
-  // { path: ['api', 'evolution'], editable: true, comment: 'Deposit querying endpoint', type: 'string' },
   // { path: ['api', 'subGraph'], editable: true, comment: 'The graph endpoint', type: 'string' },
   // { path: ['api', 'subql'], editable: true, comment: 'Subql endpoint', type: 'string' },
   // { path: ['api', 'subscan'], editable: true, comment: 'Airdrop endpoint', type: 'string' },

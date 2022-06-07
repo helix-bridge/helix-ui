@@ -2,7 +2,6 @@ import { decodeAddress } from '@polkadot/util-crypto';
 import camelCaseKeys from 'camelcase-keys';
 import { useCallback } from 'react';
 import { catchError, filter, map, Observable, of } from 'rxjs';
-import { DarwiniaApiPath } from 'shared/config/api';
 import { ICamelCaseKeys } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { apiUrl, rxGet } from 'shared/utils/helper';
@@ -24,7 +23,7 @@ export function useRecords(): RecordsHooksResult<
     const api = bridge.config.api.dapp;
 
     return rxGet<Darwinia2EthereumHistoryRes>({
-      url: apiUrl(api, DarwiniaApiPath.locks),
+      url: apiUrl(api, 'ethereumBacking/locks'),
       params: { address: buf2hex(decodeAddress(address).buffer), confirmed, ...paginator },
     }).pipe(
       map((res) => (res ? { ...res, list: res.list.map((item) => camelCaseKeys(item)) } : { count: 0, list: [] })),
@@ -41,7 +40,7 @@ export function useRecords(): RecordsHooksResult<
     const api = bridge.config.api.dapp;
 
     return rxGet<Ethereum2DarwiniaRedeemHistoryRes>({
-      url: apiUrl(api, DarwiniaApiPath.redeem),
+      url: apiUrl(api, 'redeem'),
       params: { address, confirmed, ...paginator },
     }).pipe(
       map((res) => (res ? { ...res, list: res.list.map((item) => camelCaseKeys(item)) } : { count: 0, list: [] })),

@@ -16,9 +16,7 @@ import { getChainConfig, isEthereumNetwork, isPolkadotNetwork } from '../network
 
 type BridgePredicateFn = (departure: Vertices, arrival: Vertices) => boolean;
 
-export type DVMBridgeConfig = Required<
-  BridgeConfig<ContractConfig & { proof: string }, Pick<Api<ApiKeys>, 'dapp' | 'evolution'>>
->;
+export type DVMBridgeConfig = Required<BridgeConfig<ContractConfig & { proof: string }, Pick<Api<ApiKeys>, 'dapp'>>>;
 
 export const isSubstrate2SubstrateDVM: BridgePredicateFn = (departure, arrival) => {
   return isPolkadotNetwork(departure) && arrival.mode === 'dvm' && arrival.name !== departure.name;
