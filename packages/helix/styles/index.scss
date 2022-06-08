@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+$radius-base: 4px;
+$bg-dark: #151d35;
+
 // icon font class, symbol usage
 .icon {
   width: 1em;
@@ -104,7 +107,7 @@
 }
 
 .progress-steps {
-  border-radius: 4px;
+  border-radius: $radius-base;
   overflow: hidden;
 
   .step {
@@ -165,7 +168,7 @@
   > .ant-form-item {
   &:nth-child(even) {
     background: rgba(31, 41, 55, 0.5);
-    border-radius: 4px;
+    border-radius: $radius-base;
   }
 }
 
@@ -179,4 +182,8 @@
 
 .ant-typography .anticon-copy {
   vertical-align: middle;
+}
+
+.explorer-table .ant-table-thead > tr > th {
+  background: $bg-dark;
 }

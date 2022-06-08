@@ -32,6 +32,7 @@
   "Total {{title}}": "Total {{title}}",
   "Transaction": "Transaction",
   "Transaction Fee": "Transaction Fee",
+  "Transfer Direction": "Transfer Direction",
   "Unique character string (TxID) assigned to every verified transaction on the Source Chain.": "Unique character string (TxID) assigned to every verified transaction on the Source Chain.",
   "Unique character string (TxID) assigned to every verified transaction on the Target Chain.": "Unique character string (TxID) assigned to every verified transaction on the Target Chain.",
   "Value": "Value",

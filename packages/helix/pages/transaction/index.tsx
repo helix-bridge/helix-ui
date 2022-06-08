@@ -1,16 +1,23 @@
-import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Affix, Button, Input, Pagination, Spin } from 'antd';
+import { ArrowRightOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
+import { Affix, Button, Input, Layout, Table, Tooltip, Typography } from 'antd';
+import { ColumnType } from 'antd/lib/table';
+import { formatDistance, fromUnixTime } from 'date-fns';
 import request, { gql } from 'graphql-request';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, map } from 'rxjs';
+import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
+import { Icon } from 'shared/components/widget/Icon';
+import { Logo } from 'shared/components/widget/Logo';
 import { ENDPOINT } from 'shared/config/env';
 import { HelixHistoryRecord } from 'shared/model';
-import { convertToDvm, gqlName, isValidAddress } from 'shared/utils/helper';
-import { chainConfigs } from 'shared/utils/network';
-import { Record } from '../../components/transaction/Record';
+import { isDVM2Substrate, isS2S, isSubstrateDVM } from 'shared/utils/bridge';
+import { convertToDvm, fromWei, gqlName, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
+import { chainConfigs, getChainConfig, getDisplayName, toVertices } from 'shared/utils/network';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
+import { Path } from '../../config';
 import { useAccountStatistic, useDailyStatistic } from '../../hooks';
 
 const HISTORY_RECORDS = gql`
@@ -39,10 +46,29 @@ const HISTORY_RECORDS = gql`
   }
 `;
 
-const PAGE_SIZE = 10;
+function RecordAccount({ chain, account }: { chain: string; account: string }) {
+  const vertices = toVertices(chain);
+  const chainConfig = getChainConfig(vertices);
+  const displayAccount = revertAccount(account, chainConfig);
+
+  return (
+    <div className="flex flex-col overflow-hidden">
+      <span className="inline-flex items-center gap-2">
+        <Logo name={chainConfig.logos[0].name} width={16} height={16} />
+        <span className="capitalize">{getDisplayName(chainConfig)}</span>
+      </span>
+      <Tooltip title={<Typography.Text copyable>{displayAccount}</Typography.Text>}>
+        <span className="truncate w-24 sm:w-36 md:w-48 lg:w-96">{displayAccount}</span>
+      </Tooltip>
+    </div>
+  );
+}
+
+const PAGE_SIZE = 20;
 
 function Page({ records, count }: { records: HelixHistoryRecord[]; count: number }) {
   const { t } = useTranslation('common');
+  const router = useRouter();
   const [isValidSender, setIsValidSender] = useState(true);
   const { data: dailyStatistic } = useDailyStatistic();
   const { total: accountTotal } = useAccountStatistic(ENDPOINT);
@@ -58,6 +84,122 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
   const [account, setAccount] = useState<string | undefined>();
   const [source, setSource] = useState<HelixHistoryRecord[]>(records);
   const [loading, setLoading] = useState(false);
+
+  const columns: ColumnType<HelixHistoryRecord>[] = [
+    {
+      title: t('Time'),
+      dataIndex: 'startTime',
+      width: '10%',
+      render: (value) => (
+        <span className="whitespace-nowrap">
+          {formatDistance(fromUnixTime(value), new Date(new Date().toUTCString()), {
+            includeSeconds: true,
+            addSuffix: true,
+          })}
+        </span>
+      ),
+    },
+    {
+      title: <div className="w-full text-center">{t('Transfer Direction')}</div>,
+      key: 'cross-direction',
+      dataIndex: 'fromChain',
+      width: '50%',
+      render(chain: string, record) {
+        return (
+          <div className="flex items-center gap-4 cursor-pointer">
+            <RecordAccount chain={chain} account={record.sender} />
+            <ArrowRightOutlined />
+            <RecordAccount chain={record.toChain} account={record.recipient} />
+          </div>
+        );
+      },
+    },
+    {
+      title: t('Asset'),
+      dataIndex: 'token',
+      render(value: string, record) {
+        const vertices = toVertices(record.fromChain);
+        const chainConfig = getChainConfig(vertices);
+        const tokenName = !record.token.startsWith('0x')
+          ? value
+          : `${chainConfig.mode === 'dvm' ? 'x' : ''}${chainConfig?.isTest ? 'O' : ''}RING`;
+
+        return <span>{tokenName}</span>;
+      },
+    },
+    {
+      title: t('Amount'),
+      dataIndex: 'amount',
+      render(value: string, record) {
+        const { fromChain, toChain } = record;
+        const departure = toVertices(fromChain);
+        const arrival = toVertices(toChain);
+        const amount = fromWei({ value, decimals: isDVM2Substrate(departure, arrival) ? 18 : 9 }, (val) =>
+          prettyNumber(val, { ignoreZeroDecimal: true })
+        );
+
+        return (
+          <Tooltip title={amount}>
+            <span className="justify-self-center max-w-full truncate">
+              {prettyNumber(amount, { decimal: 3, ignoreZeroDecimal: true })}
+            </span>
+          </Tooltip>
+        );
+      },
+    },
+    {
+      title: t('Fee'),
+      dataIndex: 'fee',
+      width: '5%',
+      render(value: string, record) {
+        const { fromChain } = record;
+        const departure = toVertices(fromChain);
+        return (
+          <span className="justify-self-center">{fromWei({ value, decimals: departure.mode === 'dvm' ? 18 : 9 })}</span>
+        );
+      },
+    },
+    {
+      title: t('Bridge'),
+      dataIndex: 'bridge',
+      render: (value) => <span className="justify-self-center capitalize">{value}</span>,
+    },
+    {
+      title: t('Status'),
+      dataIndex: 'result',
+      width: '5%',
+      render: (value, record) => {
+        return (
+          <div className="flex gap-8 items-center">
+            <CrossChainState value={value} />
+            <Button
+              type="link"
+              onClick={() => {
+                const departure = toVertices(record.fromChain);
+                const arrival = toVertices(record.toChain);
+                const radix = 16;
+                const paths = isS2S(departure, arrival)
+                  ? ['s2s', record.laneId + '0x' + Number(record.nonce).toString(radix)]
+                  : isSubstrateDVM(departure, arrival)
+                  ? ['s2dvm', record.id]
+                  : [];
+
+                router.push({
+                  pathname: `${Path.transaction}/${paths.join('/')}`,
+                  query: new URLSearchParams({
+                    from: record.fromChain,
+                    to: record.toChain,
+                  }).toString(),
+                });
+              }}
+            >
+              <Icon name="view" className="text-xl" />
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
 
   useEffect(() => {
     setLoading(true);
@@ -80,15 +222,15 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
   }, [account, page, pageSize]);
 
   return (
-    <div>
-      <div className="grid lg:grid-cols-3 gap-0 lg:gap-6 place-items-center my-4 lg:my-6">
+    <>
+      <div className="grid lg:grid-cols-3 gap-0 lg:gap-6 place-items-center py-2 lg:py-4">
         <ViewBoard title={t('transactions')} count={transactionsTotal} />
         <ViewBoard title={t('unique users')} count={accountTotal} />
         <ViewBoard title={t('supported blockchains')} count={chainConfigs.length} />
       </div>
 
-      <Affix offsetTop={64}>
-        <div>
+      <Affix offsetTop={62}>
+        <Layout className="pb-2 lg:pb-4">
           <div className="flex justify-between">
             <Input
               size="large"
@@ -144,58 +286,26 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
               <SyncOutlined />
             </Button>
           </div>
-
-          <div className="mt-4 lg:mt-6 grid grid-cols-12 border-b border-gray-500 items-center p-4 bg-gray-200 dark:bg-antDark">
-            <span className="mr-5">{t('Time')}</span>
-            <span className="col-span-3 overflow-hidden pl-4 pr-2">{t('From')}</span>
-            <span className="col-span-3 overflow-hidden pl-2 pr-4">{t('To')}</span>
-            <span>{t('Asset')}</span>
-            <span className="justify-self-center">{t('Amount')}</span>
-            <span className="justify-self-center">{t('Fee')}</span>
-            <span className="justify-self-center">{t('Bridge')}</span>
-            <span>{t('Status')}</span>
-          </div>
-
-          <div
-            // header: 64px search box: 40px table header + margin: 78px footer 54px
-            style={{ height: 'calc(100vh - 40px - 64px - 78px - 54px)' }}
-            className="overflow-auto"
-          >
-            {loading ? (
-              <Spin spinning={loading} size="large" className="w-full" style={{ margin: '1em' }} />
-            ) : (
-              <div style={{ width: '100%', position: 'relative' }}>
-                {source.map((record, index) => {
-                  const bg = index % 2 === 0 ? 'bg-gray-200 dark:bg-antDark' : '';
-
-                  return (
-                    <div
-                      className={`grid grid-cols-12 items-center py-2 px-4 cursor-pointer transition-all duration-300 
-                      hover:bg-gray-400 dark:hover:bg-gray-800 ${bg}`}
-                      key={record.id}
-                    >
-                      <Record record={record} />
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            <Pagination
-              pageSize={pageSize}
-              current={page}
-              total={total}
-              onChange={(current: number, size: number) => {
-                setPage(current);
-                setPageSize(size);
-              }}
-              style={{ margin: '1em 0' }}
-              className="text-right"
-            />
-          </div>
-        </div>
+        </Layout>
       </Affix>
-    </div>
+
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={source}
+        size="small"
+        loading={loading}
+        pagination={{ pageSize, total, current: page, size: 'default' }}
+        onChange={({ current, pageSize: size }) => {
+          setPage(current ?? 1);
+          setPageSize(size ?? PAGE_SIZE);
+        }}
+        rowClassName={(_, index) => {
+          return index % 2 === 0 ? 'bg-gray-200 dark:bg-gray-900' : '';
+        }}
+        className="explorer-table"
+      />
+    </>
   );
 }
 
