@@ -1,11 +1,10 @@
 import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Affix, Button, Input, Spin } from 'antd';
-import { useQuery } from 'graphql-hooks';
+import { Affix, Button, Input, Pagination, Spin } from 'antd';
 import request, { gql } from 'graphql-request';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useVirtual } from 'react-virtual';
+import { from, map } from 'rxjs';
 import { ENDPOINT } from 'shared/config/env';
 import { HelixHistoryRecord } from 'shared/model';
 import { convertToDvm, gqlName, isValidAddress } from 'shared/utils/helper';
@@ -17,34 +16,39 @@ import { useAccountStatistic, useDailyStatistic } from '../../hooks';
 const HISTORY_RECORDS = gql`
   query historyRecords($row: Int!, $page: Int!, $sender: String, $recipient: String) {
     historyRecords(row: $row, page: $page, sender: $sender, recipient: $recipient) {
-      id
-      bridge
-      fromChain
-      toChain
-      laneId
-      nonce
-      requestTxHash
-      responseTxHash
-      sender
-      recipient
-      token
-      amount
-      startTime
-      endTime
-      result
-      fee
+      total
+      records {
+        id
+        bridge
+        fromChain
+        toChain
+        laneId
+        nonce
+        requestTxHash
+        responseTxHash
+        sender
+        recipient
+        token
+        amount
+        startTime
+        endTime
+        result
+        fee
+      }
     }
   }
 `;
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 10;
 
-function Page({ records }: { records: HelixHistoryRecord[] }) {
+function Page({ records, count }: { records: HelixHistoryRecord[]; count: number }) {
   const { t } = useTranslation('common');
   const [isValidSender, setIsValidSender] = useState(true);
   const { data: dailyStatistic } = useDailyStatistic();
   const { total: accountTotal } = useAccountStatistic(ENDPOINT);
   const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(count);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
 
   const transactionsTotal = useMemo(
     () => (dailyStatistic?.dailyStatistics || []).reduce((acc, cur) => acc + cur.dailyCount, 0) ?? '-',
@@ -52,48 +56,28 @@ function Page({ records }: { records: HelixHistoryRecord[] }) {
   );
 
   const [account, setAccount] = useState<string | undefined>();
-
-  const { data, loading } = useQuery<{ historyRecords: HelixHistoryRecord[] }>(HISTORY_RECORDS, {
-    variables: { row: PAGE_SIZE, page, sender: account, recipient: account },
-  });
-
   const [source, setSource] = useState<HelixHistoryRecord[]>(records);
-  const virtualBoxRef = useRef(null);
-
-  const rowVirtualizer = useVirtual({
-    size: source.length + 1,
-    parentRef: virtualBoxRef,
-    // eslint-disable-next-line no-magic-numbers
-    estimateSize: useCallback(() => 60, []),
-  });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (data?.historyRecords && data.historyRecords?.length) {
-      setSource((pre) => [...pre, ...data.historyRecords]);
-    }
-  }, [data]);
+    setLoading(true);
+    const args = {
+      page: page - 1,
+      row: pageSize,
+      sender: account,
+      recipient: account,
+    };
 
-  // eslint-disable-next-line complexity
-  useEffect(() => {
-    const [lastItem] = [...rowVirtualizer.virtualItems].reverse();
+    const sub$$ = from(request(ENDPOINT, HISTORY_RECORDS, args))
+      .pipe(map((res) => res && res[gqlName(HISTORY_RECORDS)]))
+      .subscribe((result) => {
+        setTotal(result.total);
+        setSource(result.records);
+        setLoading(false);
+      });
 
-    if (
-      lastItem &&
-      lastItem.index &&
-      !loading &&
-      lastItem.index >= source.length - 1 &&
-      data?.historyRecords.length === PAGE_SIZE
-    ) {
-      setPage((pre) => pre + 1);
-    }
-  }, [data?.historyRecords.length, loading, rowVirtualizer.virtualItems, source]);
-
-  useEffect(() => {
-    // for refresh
-    if (page === 0 && source.length === PAGE_SIZE) {
-      setPage(1);
-    }
-  }, [page, source.length]);
+    return () => sub$$.unsubscribe();
+  }, [account, page, pageSize]);
 
   return (
     <div>
@@ -117,7 +101,7 @@ function Page({ records }: { records: HelixHistoryRecord[] }) {
                   setIsValidSender(true);
                   setSource([]);
                   setAccount(undefined);
-                  setPage(0);
+                  setPage(1);
                 }
 
                 try {
@@ -125,7 +109,7 @@ function Page({ records }: { records: HelixHistoryRecord[] }) {
 
                   setSource([]);
                   setAccount(address);
-                  setPage(0);
+                  setPage(1);
                   setIsValidSender(true);
                 } catch {
                   setIsValidSender(false);
@@ -138,8 +122,20 @@ function Page({ records }: { records: HelixHistoryRecord[] }) {
             <Button
               type="link"
               onClick={() => {
-                setSource([]);
-                setPage(0);
+                if (page === 1) {
+                  setLoading(true);
+                  from(
+                    request(ENDPOINT, HISTORY_RECORDS, { page: 0, row: pageSize, sender: account, recipient: account })
+                  )
+                    .pipe(map((res) => res && res[gqlName(HISTORY_RECORDS)]))
+                    .subscribe((result) => {
+                      setTotal(result.total);
+                      setSource(result.records);
+                      setLoading(false);
+                    });
+                } else {
+                  setPage(1);
+                }
               }}
               disabled={loading}
               className="flex items-center cursor-pointer"
@@ -163,44 +159,39 @@ function Page({ records }: { records: HelixHistoryRecord[] }) {
           <div
             // header: 64px search box: 40px table header + margin: 78px footer 54px
             style={{ height: 'calc(100vh - 40px - 64px - 78px - 54px)' }}
-            ref={virtualBoxRef}
             className="overflow-auto"
           >
-            {data && (
-              <div style={{ height: rowVirtualizer.totalSize, width: '100%', position: 'relative' }}>
-                {rowVirtualizer.virtualItems.map((row) => {
-                  const record = source[row.index];
-                  const isLoaderRow = row.index > source?.length - 1;
-                  const bg = row.index % 2 === 0 ? 'bg-gray-200 dark:bg-antDark' : '';
+            {loading ? (
+              <Spin spinning={loading} size="large" className="w-full" style={{ margin: '1em' }} />
+            ) : (
+              <div style={{ width: '100%', position: 'relative' }}>
+                {source.map((record, index) => {
+                  const bg = index % 2 === 0 ? 'bg-gray-200 dark:bg-antDark' : '';
 
                   return (
                     <div
                       className={`grid grid-cols-12 items-center py-2 px-4 cursor-pointer transition-all duration-300 
                       hover:bg-gray-400 dark:hover:bg-gray-800 ${bg}`}
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: `${row.size}px`,
-                        transform: `translateY(${row.start}px)`,
-                      }}
-                      key={row.key}
+                      key={record.id}
                     >
-                      {isLoaderRow ? (
-                        data.historyRecords?.length === PAGE_SIZE ? (
-                          <Spin className="col-span-full" />
-                        ) : (
-                          <span className="col-span-full text-center">{t('Nothing more to load')}</span>
-                        )
-                      ) : (
-                        record && <Record record={record} />
-                      )}
+                      <Record record={record} />
                     </div>
                   );
                 })}
               </div>
             )}
+
+            <Pagination
+              pageSize={pageSize}
+              current={page}
+              total={total}
+              onChange={(current: number, size: number) => {
+                setPage(current);
+                setPageSize(size);
+              }}
+              style={{ margin: '1em 0' }}
+              className="text-right"
+            />
           </div>
         </div>
       </Affix>
@@ -211,7 +202,7 @@ function Page({ records }: { records: HelixHistoryRecord[] }) {
 export async function getStaticProps() {
   const translations = await serverSideTranslations('en', ['common']);
 
-  const records = await request(ENDPOINT, HISTORY_RECORDS, {
+  const { records, total } = await request(ENDPOINT, HISTORY_RECORDS, {
     row: PAGE_SIZE,
     page: 0,
   }).then((res) => res && res[gqlName(HISTORY_RECORDS)]);
@@ -220,6 +211,7 @@ export async function getStaticProps() {
     props: {
       ...translations,
       records,
+      count: total,
     },
     revalidate: 10,
   };

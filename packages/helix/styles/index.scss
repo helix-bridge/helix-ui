@@ -11,6 +11,11 @@
   overflow: hidden;
 }
 
+// reset .anticon
+.anticon {
+  vertical-align: 0;
+}
+
 .confirm-modal.ant-modal {
   max-width: calc(100vw - 32px);
 

@@ -66,7 +66,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
         </div>
       </Header>
 
-      <Content className="sm:px-16 sm:pt-4 px-4 py-1 my-24 sm:my-20">{children}</Content>
+      <Content className="sm:px-16 sm:pt-16 px-4 py-1">{children}</Content>
 
       <Footer onThemeChange={setTheme} />
     </Layout>
