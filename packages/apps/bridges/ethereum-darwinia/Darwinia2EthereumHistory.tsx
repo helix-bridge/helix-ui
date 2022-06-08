@@ -96,7 +96,7 @@ export function Darwinia2EthereumHistory({
       return;
     }
 
-    fetchIssuingRecords({ address: account, direction: [arrival, departure], confirmed, paginator }).subscribe({
+    fetchIssuingRecords({ address: account, confirmed, paginator }).subscribe({
       next: (result) => setData(result as Darwinia2EthereumHistoryRes<ICamelCaseKeys<Darwinia2EthereumRecord>>),
       error: () => setLoading(false),
       complete: () => setLoading(false),

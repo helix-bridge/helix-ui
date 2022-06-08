@@ -32,15 +32,14 @@ interface ClaimInfo {
  */
 export const issuing: TxFn<IssuingPayload> = ({ sender, direction, recipient, bridge }) => {
   const {
-    from: { symbol, amount },
+    from: { address, amount },
     to,
   } = direction;
-  const contractAddress = bridge.config.contracts[isRing(symbol) ? 'ring' : 'kton'] as string;
   const options = to.meta.isTest ? { from: sender, gasPrice: '500000000000' } : { from: sender };
 
   recipient = buf2hex(decodeAddress(recipient, false, (to.meta as PolkadotChainConfig).ss58Prefix).buffer);
 
-  return genEthereumContractTxObs(contractAddress, (contract) =>
+  return genEthereumContractTxObs(address, (contract) =>
     contract.methods
       .transferFrom(sender, bridge.config.contracts.issuing, toWei({ value: amount }), recipient)
       .send(options)

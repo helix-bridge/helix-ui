@@ -54,11 +54,11 @@ function initModel() {
     local name=${from}''${to}
 
     echo "
-        import { ContractConfig, BridgeConfig, Api, ApiKeys } from 'shared/model';
+        import { ContractConfig, BridgeConfig } from 'shared/model';
 
         type ${name}ContractConfig = ContractConfig;
 
-        export type $2BridgeConfig = Required<BridgeConfig<${name}ContractConfig, Api<ApiKeys>>>;
+        export type $2BridgeConfig = Required<BridgeConfig<${name}ContractConfig>>;
     " >>$1'/bridge.ts'
 
     echo "

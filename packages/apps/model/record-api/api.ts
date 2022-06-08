@@ -1,5 +1,3 @@
-import { Arrival, Departure } from 'shared/model';
-
 export interface Paginator {
   row: number;
   page: number;
@@ -7,7 +5,6 @@ export interface Paginator {
 
 export interface RecordRequestParams {
   address: string;
-  direction: [Departure, Arrival];
   paginator: Paginator;
   confirmed: boolean | null;
 }

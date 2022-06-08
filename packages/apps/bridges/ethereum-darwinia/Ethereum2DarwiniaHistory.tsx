@@ -94,7 +94,7 @@ export function Ethereum2DarwiniaHistory({
       return;
     }
 
-    fetchRedeemRecords({ address: account, direction: [arrival, departure], confirmed, paginator }).subscribe({
+    fetchRedeemRecords({ address: account, confirmed, paginator }).subscribe({
       next: (result) =>
         setData(result as Ethereum2DarwiniaRedeemHistoryRes<ICamelCaseKeys<Ethereum2DarwiniaRedeemRecord>>),
       error: () => setLoading(false),
