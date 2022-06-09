@@ -23,7 +23,7 @@ export const ethereumConfig: EthereumChainConfig = {
   tokens: [
     {
       name: 'RING',
-      decimals: 9,
+      decimals: 18,
       cross: [
         {
           category: 'helix',
@@ -39,7 +39,7 @@ export const ethereumConfig: EthereumChainConfig = {
     },
     {
       name: 'KTON',
-      decimals: 9,
+      decimals: 18,
       cross: [
         {
           category: 'helix',
