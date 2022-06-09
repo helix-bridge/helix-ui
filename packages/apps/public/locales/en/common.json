@@ -49,6 +49,7 @@
   "Please initiate a claim transaction of the Ethereum Network in the Transfer History to receive this token. And it needs to prepare some ETH as the gas fee to claim this token.": "Please initiate a claim transaction of the Ethereum Network in the Transfer History to receive this token. And it needs to prepare some ETH as the gas fee to claim this token.",
   "Please make sure you have entered the correct {{type}} address. Entering wrong address will cause asset loss and cannot be recovered!": "Please make sure you have entered the correct {{type}} address. Entering wrong address will cause asset loss and cannot be recovered!",
   "Please perform a claim asset operation in the history section after the transfer is submitted.": "Please perform a claim asset operation in the history section after the transfer is submitted.",
+  "Please select a bridge first!": "Please select a bridge first!",
   "Please select the parameters for your desired transfer and enter an amount.": "Please select the parameters for your desired transfer and enter an amount.",
   "Processing": "Processing",
   "Recipient": "Recipient",

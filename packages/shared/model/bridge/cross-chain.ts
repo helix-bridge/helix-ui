@@ -1,8 +1,9 @@
 import { FormInstance } from 'antd';
 import BN from 'bn.js';
 import React from 'react';
-import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ChainConfig, TokenWithBridgesInfo } from '../network';
+import { Tx } from '../tx';
 import { NullableFields } from '../type-operator';
 import { Bridge, BridgeConfig, BridgeStatus } from './bridge';
 
@@ -26,7 +27,7 @@ export interface CrossChainPayload<
   direction: CrossChainDirection<F, T>;
 }
 
-export type SubmitFn = (value: CrossChainPayload) => Subscription;
+export type TxObservableFactory = (value: CrossChainPayload) => Observable<Tx>;
 
 export interface BridgeState {
   status: BridgeStatus;
@@ -44,7 +45,7 @@ export interface CrossChainComponentProps<
   balance: BN | BN[] | null;
   allowance: BN | null;
   // make sure page setState function direction to avoid infinite update
-  setSubmit: React.Dispatch<React.SetStateAction<SubmitFn>>;
+  setTxObservableFactory: React.Dispatch<React.SetStateAction<TxObservableFactory>>;
   setBridgeState: React.Dispatch<React.SetStateAction<BridgeState>>;
   onFeeChange: React.Dispatch<React.SetStateAction<{ amount: number; symbol: string } | null>>;
   updateAllowancePayload: React.Dispatch<React.SetStateAction<{ spender: string; tokenAddress: string } | null>>;

@@ -10,7 +10,7 @@ import {
   CrossToken,
   DVMChainConfig,
   PolkadotChainConfig,
-  SubmitFn,
+  TxObservableFactory,
 } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { fromWei, isRing, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
@@ -22,7 +22,7 @@ import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
-import { useAccount, useTx } from '../../providers';
+import { useAccount } from '../../providers';
 import { useBridgeStatus } from './hooks';
 import { RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getRedeemFee } from './utils';
@@ -44,7 +44,7 @@ export function SubstrateDVM2Substrate({
   bridge,
   direction,
   onFeeChange,
-  setSubmit,
+  setTxObservableFactory,
   setBridgeState,
   updateAllowancePayload,
 }: CrossChainComponentProps<
@@ -58,7 +58,6 @@ export function SubstrateDVM2Substrate({
   const [fee, setFee] = useState<BN | null>(null);
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
-  const { observer } = useTx();
   const { account } = useAccount();
 
   const feeWithSymbol = useMemo(
@@ -119,11 +118,11 @@ export function SubstrateDVM2Substrate({
             getErc20Balance(direction.from.address, account, false).then((result) => setBalance(result)),
           payload: data,
         })
-      ).subscribe(observer);
+      );
     };
 
-    setSubmit(fn as unknown as SubmitFn);
-  }, [account, afterCrossChain, allowance, balance, direction.from, fee, feeWithSymbol, observer, setSubmit, t]);
+    setTxObservableFactory(fn as unknown as TxObservableFactory);
+  }, [account, afterCrossChain, allowance, balance, direction.from, fee, feeWithSymbol, setTxObservableFactory, t]);
 
   useEffect(() => {
     const { to: arrival } = direction;

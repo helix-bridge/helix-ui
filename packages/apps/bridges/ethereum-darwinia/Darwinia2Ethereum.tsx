@@ -14,7 +14,7 @@ import {
   EthereumChainConfig,
   PolkadotChainConfig,
   PolkadotConnection,
-  SubmitFn,
+  TxObservableFactory,
 } from 'shared/model';
 import { fromWei, isRing, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
@@ -23,7 +23,7 @@ import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
-import { useAccount, useApi, useTx } from '../../providers';
+import { useAccount, useApi } from '../../providers';
 import { EthereumDarwiniaBridgeConfig, RedeemPayload } from './model';
 import { getRedeemFee, getRedeemTxFee, redeem } from './utils';
 
@@ -42,7 +42,7 @@ const validateBeforeTx = (balances: AvailableBalance[], amount: BN, fee: BN, sym
 
 export function Darwinia2Ethereum({
   form,
-  setSubmit,
+  setTxObservableFactory,
   direction,
   bridge,
   onFeeChange,
@@ -59,7 +59,6 @@ export function Darwinia2Ethereum({
   const [crossChainFee, setCrossChainFee] = useState<BN | null>(null);
   const [txFee, setTxFee] = useState<BN | null>(null);
   const fee = useMemo(() => (crossChainFee ? crossChainFee.add(txFee ?? BN_ZERO) : null), [crossChainFee, txFee]);
-  const { observer } = useTx();
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
   const getBalances = useDarwiniaAvailableBalances(departure);
   const [recipient, setRecipient] = useState<string>();
@@ -83,7 +82,7 @@ export function Darwinia2Ethereum({
       const { api, type } = departureConnection as PolkadotConnection;
 
       if (type !== 'polkadot' || !api || !fee) {
-        return EMPTY.subscribe();
+        return EMPTY;
       }
 
       const {
@@ -97,7 +96,7 @@ export function Darwinia2Ethereum({
       if (msg) {
         message.error(t(msg));
 
-        return EMPTY.subscribe();
+        return EMPTY;
       }
 
       const beforeTransfer = applyModalObs({
@@ -110,10 +109,10 @@ export function Darwinia2Ethereum({
         payload: data,
       });
 
-      return createTxWorkflow(beforeTransfer, obs, afterTransfer).subscribe(observer);
+      return createTxWorkflow(beforeTransfer, obs, afterTransfer);
     };
 
-    setSubmit(fn as unknown as SubmitFn);
+    setTxObservableFactory(fn as unknown as TxObservableFactory);
   }, [
     afterCrossChain,
     availableBalances,
@@ -121,8 +120,7 @@ export function Darwinia2Ethereum({
     fee,
     feeWithSymbol,
     getBalances,
-    observer,
-    setSubmit,
+    setTxObservableFactory,
     t,
   ]);
 

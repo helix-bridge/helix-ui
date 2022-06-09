@@ -4,7 +4,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EMPTY, from } from 'rxjs';
 import { useIsMountedOperator } from 'shared/hooks';
-import { CrossChainComponentProps, CrossToken, DVMChainConfig, PolkadotChainConfig, SubmitFn } from 'shared/model';
+import {
+  CrossChainComponentProps,
+  CrossToken,
+  DVMChainConfig,
+  PolkadotChainConfig,
+  TxObservableFactory,
+} from 'shared/model';
 import { isKton, isRing, toWei } from 'shared/utils/helper';
 import { getDVMBalance } from 'shared/utils/network/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
@@ -13,7 +19,7 @@ import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
-import { useAccount, useTx } from '../../providers';
+import { useAccount } from '../../providers';
 import { SubstrateDVMBridgeConfig, WithdrawPayload } from './model';
 import { redeem } from './utils';
 
@@ -25,10 +31,9 @@ export function DVM2Substrate({
   direction,
   bridge,
   onFeeChange,
-  setSubmit,
+  setTxObservableFactory,
 }: CrossChainComponentProps<SubstrateDVMBridgeConfig, CrossToken<DVMChainConfig>, CrossToken<PolkadotChainConfig>>) {
   const { t } = useTranslation();
-  const { observer } = useTx();
   const { afterCrossChain } = useAfterTx<WithdrawPayload>();
   const [balance, setBalance] = useState<BN | null>(null);
   const { account } = useAccount();
@@ -72,11 +77,11 @@ export function DVM2Substrate({
         applyModalObs({ content: <TransferConfirm value={data} fee={null} /> }),
         redeem(data),
         afterCrossChain(TransferDone, { payload: data, onDisappear: getBalance })
-      ).subscribe(observer);
+      );
     };
 
-    setSubmit(fn as unknown as SubmitFn);
-  }, [afterCrossChain, balance, getBalance, observer, setSubmit, t]);
+    setTxObservableFactory(fn as unknown as TxObservableFactory);
+  }, [afterCrossChain, balance, getBalance, setTxObservableFactory, t]);
 
   useEffect(() => {
     if (onFeeChange) {

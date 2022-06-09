@@ -14,7 +14,7 @@ import {
   DVMChainConfig,
   PolkadotChainConfig,
   PolkadotConnection,
-  SubmitFn,
+  TxObservableFactory,
 } from 'shared/model';
 import { fromWei, isRing, pollWhile, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
@@ -23,7 +23,7 @@ import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
-import { useAccount, useApi, useTx } from '../../providers';
+import { useAccount, useApi } from '../../providers';
 import { useBridgeStatus } from './hooks';
 import { IssuingPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getDailyLimit, getIssuingFee } from './utils';
@@ -42,7 +42,7 @@ const validateBeforeTx = (balance: BN, amount: BN, limit: BN): string | undefine
 
 export function Substrate2SubstrateDVM({
   form,
-  setSubmit,
+  setTxObservableFactory,
   direction,
   bridge,
   setBridgeState,
@@ -71,7 +71,6 @@ export function Substrate2SubstrateDVM({
 
   const [fee, setFee] = useState<BN | null>(null);
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
-  const { observer } = useTx();
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const getBalances = useDarwiniaAvailableBalances(departure);
   const bridgeState = useBridgeStatus(direction);
@@ -115,10 +114,10 @@ export function Substrate2SubstrateDVM({
           onDisappear: () => getBalances(data.sender).then(setAvailableBalances),
           payload: data,
         })
-      ).subscribe(observer);
+      );
     };
 
-    setSubmit(fn as unknown as SubmitFn);
+    setTxObservableFactory(fn as unknown as TxObservableFactory);
   }, [
     afterCrossChain,
     availableBalance,
@@ -127,8 +126,7 @@ export function Substrate2SubstrateDVM({
     fee,
     feeWithSymbol,
     getBalances,
-    observer,
-    setSubmit,
+    setTxObservableFactory,
     t,
   ]);
 

@@ -11,7 +11,7 @@ import {
   DVMChainConfig,
   PolkadotChainConfig,
   PolkadotConnection,
-  SubmitFn,
+  TxObservableFactory,
 } from 'shared/model';
 import { isRing, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
@@ -20,7 +20,7 @@ import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
-import { useAccount, useApi, useTx } from '../../providers';
+import { useAccount, useApi } from '../../providers';
 import { SubstrateDVMBridgeConfig, TransferPayload } from './model';
 import { issuing } from './utils';
 
@@ -32,14 +32,13 @@ export function Substrate2DVM({
   direction,
   bridge,
   onFeeChange,
-  setSubmit,
+  setTxObservableFactory,
 }: CrossChainComponentProps<SubstrateDVMBridgeConfig, CrossToken<PolkadotChainConfig>, CrossToken<DVMChainConfig>>) {
   const { t } = useTranslation();
   const { departureConnection, departure } = useApi();
   const [balance, setBalance] = useState<AvailableBalance | null>(null);
   const getBalances = useDarwiniaAvailableBalances(departure);
   const { afterCrossChain } = useAfterTx<TransferPayload>();
-  const { observer } = useTx();
   const { account } = useAccount();
 
   const getBalance = useCallback(
@@ -70,11 +69,11 @@ export function Substrate2DVM({
         applyModalObs({ content: <TransferConfirm value={data} fee={null} /> }),
         issuing(data, api),
         afterCrossChain(TransferDone, { onDisappear: getBalance, payload: data })
-      ).subscribe(observer);
+      );
     };
 
-    setSubmit(fn as unknown as SubmitFn);
-  }, [afterCrossChain, balance, departureConnection, getBalance, observer, setSubmit, t]);
+    setTxObservableFactory(fn as unknown as TxObservableFactory);
+  }, [afterCrossChain, balance, departureConnection, getBalance, setTxObservableFactory, t]);
 
   useEffect(() => {
     const sub$$ = getBalance();

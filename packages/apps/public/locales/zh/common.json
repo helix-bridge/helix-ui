@@ -49,6 +49,7 @@
   "Please initiate a claim transaction of the Ethereum Network in the Transfer History to receive this token. And it needs to prepare some ETH as the gas fee to claim this token.": "转账发起后，请在历史记录中领取，需要一些 ETH 作为手续费",
   "Please make sure you have entered the correct {{type}} address. Entering wrong address will cause asset loss and cannot be recovered!": "请确保您输入正确的 {{type}} 地址，因地址输入错误导致的损失无法找回！",
   "Please perform a claim asset operation in the history section after the transfer is submitted.": "转账提交后请在记录中领取",
+  "Please select a bridge first!": "请选择使用的桥！",
   "Please select the parameters for your desired transfer and enter an amount.": "请选择转账 token 及数量",
   "Processing": "处理中...",
   "Recipient": "接收地址",

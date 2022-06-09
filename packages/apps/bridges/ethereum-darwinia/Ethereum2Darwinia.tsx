@@ -9,7 +9,7 @@ import {
   CrossToken,
   EthereumChainConfig,
   PolkadotChainConfig,
-  SubmitFn,
+  TxObservableFactory,
 } from 'shared/model';
 import { fromWei, isKton, isRing, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
 import { getErc20Balance } from 'shared/utils/network/balance';
@@ -19,7 +19,7 @@ import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useITranslation } from '../../hooks';
-import { useAccount, useApi, useTx } from '../../providers';
+import { useAccount, useApi } from '../../providers';
 import { EthereumDarwiniaBridgeConfig, IssuingPayload } from './model';
 import { getIssuingFee, issuing } from './utils';
 
@@ -38,7 +38,7 @@ const validateBeforeTx = (balance: BN, amount: BN, fee: BN, ringBalance: BN, all
 export function Ethereum2Darwinia({
   allowance,
   form,
-  setSubmit,
+  setTxObservableFactory,
   direction,
   bridge,
   onFeeChange,
@@ -54,7 +54,6 @@ export function Ethereum2Darwinia({
   const [fee, setFee] = useState<BN | null>(null);
   const [ringBalance, setRingBalance] = useState<BN | null>(null);
   const { account } = useAccount();
-  const { observer } = useTx();
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
 
   const feeWithSymbol = useMemo(
@@ -118,10 +117,10 @@ export function Ethereum2Darwinia({
         }),
         issuing(value),
         afterCrossChain(TransferDone, { onDisappear: getBalance, payload: value })
-      ).subscribe(observer);
+      );
     };
 
-    setSubmit(fn as unknown as SubmitFn);
+    setTxObservableFactory(fn as unknown as TxObservableFactory);
   }, [
     afterCrossChain,
     allowance,
@@ -130,9 +129,8 @@ export function Ethereum2Darwinia({
     fee,
     feeWithSymbol,
     getBalance,
-    observer,
     ringBalance,
-    setSubmit,
+    setTxObservableFactory,
     t,
   ]);
 

@@ -1,6 +1,6 @@
 import { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { from, Observable, Observer, mergeMap, tap } from 'rxjs';
+import { from, switchMap, Observable, Observer, tap } from 'rxjs';
 import { Tx } from '../../model';
 import { waitUntilConnected } from '../connection';
 
@@ -51,16 +51,14 @@ export function signAndSendExtrinsic(
   extrinsic: SubmittableExtrinsic<'promise', SubmittableResult>
 ) {
   const obs = new Observable((spy: Observer<Tx>) => {
-    waitUntilConnected(api!)
-      .then(() => extrinsic.signAndSend(sender, extrinsicSpy(spy)))
-      .catch((error) => {
-        spy.error({ status: 'error', error });
-      });
+    extrinsic.signAndSend(sender, extrinsicSpy(spy)).catch((error) => spy.error({ status: 'error', error }));
   });
+
   const web3FromAddress = import('@polkadot/extension-dapp').then((res) => res.web3FromAddress(sender));
 
   return from(web3FromAddress).pipe(
     tap((injector) => api.setSigner(injector.signer)),
-    mergeMap(() => obs)
+    switchMap(() => from(waitUntilConnected(api))),
+    switchMap(() => obs)
   );
 }

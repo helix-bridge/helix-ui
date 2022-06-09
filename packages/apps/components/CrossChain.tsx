@@ -5,7 +5,7 @@ import BN from 'bn.js';
 import { isEqual, omit } from 'lodash';
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { from as fromRx, iif, of } from 'rxjs';
+import { EMPTY, from as fromRx, iif, of, tap } from 'rxjs';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
 import {
@@ -15,11 +15,11 @@ import {
   CrossChainComponentProps,
   CrossChainDirection,
   CrossChainPayload,
-  SubmitFn,
+  TxObservableFactory,
 } from 'shared/model';
-import { emptyObsFactory, isRing } from 'shared/utils/helper';
+import { isRing } from 'shared/utils/helper';
 import { useAllowance } from '../hooks/allowance';
-import { useAccount, useApi, useWallet } from '../providers';
+import { useAccount, useApi, useTx, useWallet } from '../providers';
 import { getBalance } from '../utils';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { Direction } from './form-control/Direction';
@@ -39,7 +39,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const { connectDepartureNetwork, departureConnection, setDeparture } = useApi();
   const [direction, setDirection] = useState(dir);
   const [bridge, setBridge] = useState<Bridge | null>(null);
-  const [submitFn, setSubmit] = useState<SubmitFn>(emptyObsFactory);
+  const [createTxObservable, setTxObservableFactory] = useState<TxObservableFactory>(() => EMPTY);
   const [bridgeState, setBridgeState] = useState<BridgeState>({ status: 'available' });
   const [fee, setFee] = useState<{ amount: number; symbol: string } | null>(null);
   const { account } = useAccount();
@@ -47,6 +47,8 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const { allowance, approve, queryAllowance } = useAllowance(direction);
   const [allowancePayload, setAllowancePayload] = useState<{ spender: string; tokenAddress: string } | null>(null);
   const { matched } = useWallet();
+  const { observer } = useTx();
+  const [isBalanceLoading, setIsBalanceLoading] = useState(false);
 
   const allowanceEnough = useMemo(() => {
     if (!allowance || !balance) {
@@ -62,15 +64,27 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
 
   const launch = useCallback(() => {
     form.validateFields().then((values) => {
-      console.log('🚀 ~ cross chain args: ', values);
-
       if (!values.direction.from.amount) {
         message.error(t('Transfer amount is required'));
       } else {
-        submitFn(values);
+        createTxObservable(values).subscribe({
+          ...observer,
+          complete() {
+            observer.complete();
+
+            iif(
+              () => !!account && matched,
+              fromRx(getBalance(direction, account)).pipe(tap(() => setIsBalanceLoading(true))),
+              of(null)
+            ).subscribe((result) => {
+              setBalance(result);
+              setIsBalanceLoading(false);
+            });
+          },
+        });
       }
     });
-  }, [form, submitFn, t]);
+  }, [form, t, createTxObservable, observer, direction, account, matched]);
 
   const Content = useMemo(() => {
     const { from, to } = direction;
@@ -96,13 +110,14 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   }, [account, form]);
 
   useEffect(() => {
-    if (!account) {
-      return;
-    }
-
-    const sub$$ = iif(() => matched, fromRx(getBalance(direction, account)), of(null)).subscribe((result) => {
+    const sub$$ = iif(
+      () => !!account && matched,
+      fromRx(getBalance(direction, account)).pipe(tap(() => setIsBalanceLoading(true))),
+      of(null)
+    ).subscribe((result) => {
       console.log('💰 ~ balances', Array.isArray(result) ? result.map((item) => item.toString()) : result?.toString());
       setBalance(result);
+      setIsBalanceLoading(false);
     });
 
     return () => sub$$.unsubscribe();
@@ -128,13 +143,14 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
             <Direction
               fee={fee}
               balance={balance}
+              isBalanceLoading={isBalanceLoading}
               initial={direction}
               onChange={(value) => {
                 if (isDirectionChanged(direction, value)) {
                   setBridge(null);
                   setFee(null);
                   setAllowancePayload(null);
-                  setSubmit(emptyObsFactory);
+                  setTxObservableFactory(() => EMPTY);
                   setBridgeState({ status: 'available' });
                   form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined, [FORM_CONTROL.recipient]: undefined });
                 }
@@ -152,7 +168,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
               direction={direction}
               balance={balance}
               allowance={allowance}
-              setSubmit={setSubmit}
+              setTxObservableFactory={setTxObservableFactory}
               setBridgeState={setBridgeState}
               onFeeChange={setFee}
               updateAllowancePayload={setAllowancePayload}
@@ -195,7 +211,22 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
         </Col>
 
         <Col xs={24} sm={{ span: 15, offset: 1 }} className="dark:bg-antDark">
-          <Form.Item name={FORM_CONTROL.bridge} rules={[{ required: true }]} className="mb-0">
+          <Form.Item
+            name={FORM_CONTROL.bridge}
+            rules={[
+              {
+                validator(_r, value: unknown) {
+                  if (!value) {
+                    message.error(t('Please select a bridge first!'));
+                    return Promise.reject();
+                  }
+
+                  return Promise.resolve();
+                },
+              },
+            ]}
+            className="mb-0"
+          >
             <BridgeSelector direction={direction} onChange={(value) => setBridge(value || null)} />
           </Form.Item>
         </Col>
