@@ -45,7 +45,6 @@ export async function getBalance(direction: CrossChainDirection, account: string
   }
 
   if (isSubstrateDVM2Substrate(from.meta, to.meta)) {
-    // from if xRing, xKton do not supported.
     return getErc20Balance(from.address, account, false);
   }
 

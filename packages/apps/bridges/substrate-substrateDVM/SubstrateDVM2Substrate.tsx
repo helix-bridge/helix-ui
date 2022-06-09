@@ -80,7 +80,7 @@ export function SubstrateDVM2Substrate({
     });
 
     return () => sub$$.unsubscribe();
-  }, [account, direction.from.address, direction.from.meta.provider]);
+  }, [account, direction.from.address]);
 
   useEffect(() => {
     const sub$$ = from(getS2SMappingAddress(direction.from.meta.provider)).subscribe((spender) => {

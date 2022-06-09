@@ -5,7 +5,7 @@ import BN from 'bn.js';
 import { isEqual, omit } from 'lodash';
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { from as fromRx } from 'rxjs';
+import { from as fromRx, iif, of } from 'rxjs';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
 import {
@@ -19,7 +19,7 @@ import {
 } from 'shared/model';
 import { emptyObsFactory, isRing } from 'shared/utils/helper';
 import { useAllowance } from '../hooks/allowance';
-import { useAccount, useApi } from '../providers';
+import { useAccount, useApi, useWallet } from '../providers';
 import { getBalance } from '../utils';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { Direction } from './form-control/Direction';
@@ -46,6 +46,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const [balance, setBalance] = useState<BN | BN[] | null>(null);
   const { allowance, approve, queryAllowance } = useAllowance(direction);
   const [allowancePayload, setAllowancePayload] = useState<{ spender: string; tokenAddress: string } | null>(null);
+  const { matched } = useWallet();
 
   const allowanceEnough = useMemo(() => {
     if (!allowance || !balance) {
@@ -99,13 +100,13 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
       return;
     }
 
-    const sub$$ = fromRx(getBalance(direction, account)).subscribe((result) => {
+    const sub$$ = iif(() => matched, fromRx(getBalance(direction, account)), of(null)).subscribe((result) => {
       console.log('💰 ~ balances', Array.isArray(result) ? result.map((item) => item.toString()) : result?.toString());
       setBalance(result);
     });
 
-    return () => sub$$?.unsubscribe();
-  }, [account, direction]);
+    return () => sub$$.unsubscribe();
+  }, [account, direction, matched]);
 
   useEffect(() => {
     if (allowancePayload) {
