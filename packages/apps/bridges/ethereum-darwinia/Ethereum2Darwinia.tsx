@@ -1,6 +1,6 @@
 import { message, Typography } from 'antd';
 import BN from 'bn.js';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { EMPTY, from } from 'rxjs';
 import {
   Bridge,
@@ -11,15 +11,13 @@ import {
   PolkadotChainConfig,
   TxObservableFactory,
 } from 'shared/model';
-import { fromWei, isKton, isRing, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
-import { getErc20Balance } from 'shared/utils/network/balance';
+import { fromWei, isRing, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useITranslation } from '../../hooks';
-import { useAccount, useApi } from '../../providers';
 import { EthereumDarwiniaBridgeConfig, IssuingPayload } from './model';
 import { getIssuingFee, issuing } from './utils';
 
@@ -43,17 +41,14 @@ export function Ethereum2Darwinia({
   bridge,
   onFeeChange,
   updateAllowancePayload,
+  balance: balances,
 }: CrossChainComponentProps<
   EthereumDarwiniaBridgeConfig,
   CrossToken<EthereumChainConfig>,
   CrossToken<PolkadotChainConfig>
 >) {
   const { t } = useITranslation();
-  const { departureConnection } = useApi();
-  const [balance, setBalance] = useState<BN | null>(null);
   const [fee, setFee] = useState<BN | null>(null);
-  const [ringBalance, setRingBalance] = useState<BN | null>(null);
-  const { account } = useAccount();
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
 
   const feeWithSymbol = useMemo(
@@ -65,41 +60,17 @@ export function Ethereum2Darwinia({
     [direction, fee]
   );
 
-  const getBalance = useCallback(
-    (value: Pick<CrossChainPayload, 'direction'>) => {
-      if (!account) {
-        return;
-      }
-
-      const [ring, kton] = direction.from.meta.tokens; // FIXME: Token order on ethereum and ropsten must be 0 for ring, 1 for kton;
-
-      if (isKton(value.direction.from.symbol)) {
-        getErc20Balance(kton.address, account, false).then((result) => {
-          setBalance(result);
-        });
-      }
-
-      // always need to refresh ring balance, because of it is a fee token
-      getErc20Balance(ring.address, account, false).then((result) => {
-        if (isRing(value.direction.from.symbol)) {
-          setBalance(result);
-        }
-
-        setRingBalance(result);
-      });
-    },
-    [account, direction.from.meta.tokens]
-  );
+  const [ringBalance, ktonBalance] = balances as BN[];
 
   useEffect(() => {
     // eslint-disable-next-line complexity
     const fn = () => (value: IssuingPayload) => {
-      if (!fee || !balance || !ringBalance || !allowance) {
-        return EMPTY.subscribe();
+      if (!fee || !balances || !ringBalance || !allowance) {
+        return EMPTY;
       }
 
       const msg = validateBeforeTx(
-        balance,
+        isRing(direction.from.symbol) ? ringBalance : ktonBalance,
         new BN(toWei({ value: direction.from.amount })),
         fee,
         ringBalance,
@@ -108,7 +79,7 @@ export function Ethereum2Darwinia({
 
       if (msg) {
         message.error(t(msg));
-        return EMPTY.subscribe();
+        return EMPTY;
       }
 
       return createTxWorkflow(
@@ -116,7 +87,7 @@ export function Ethereum2Darwinia({
           content: <TransferConfirm value={value} fee={feeWithSymbol!} />,
         }),
         issuing(value),
-        afterCrossChain(TransferDone, { onDisappear: getBalance, payload: value })
+        afterCrossChain(TransferDone, { payload: value })
       );
     };
 
@@ -124,11 +95,12 @@ export function Ethereum2Darwinia({
   }, [
     afterCrossChain,
     allowance,
-    balance,
+    balances,
     direction.from.amount,
+    direction.from.symbol,
     fee,
     feeWithSymbol,
-    getBalance,
+    ktonBalance,
     ringBalance,
     setTxObservableFactory,
     t,
@@ -148,14 +120,6 @@ export function Ethereum2Darwinia({
 
     return () => sub$$.unsubscribe();
   }, [bridge, direction.from.meta.tokens, direction.from.symbol, onFeeChange]);
-
-  useEffect(() => {
-    if (departureConnection.chainId !== direction.from.meta.ethereumChain.chainId) {
-      setBalance(null);
-    } else {
-      getBalance({ direction });
-    }
-  }, [direction, getBalance, departureConnection]);
 
   useEffect(() => {
     const ring = direction.from.meta.tokens.find((item) => isRing(item.symbol))!;

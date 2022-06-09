@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { EMPTY, from } from 'rxjs';
 import { useDarwiniaAvailableBalances } from 'shared/hooks';
 import {
-  AvailableBalance,
   CrossChainComponentProps,
   CrossChainPayload,
   CrossToken,
@@ -27,12 +26,12 @@ import { useAccount, useApi } from '../../providers';
 import { EthereumDarwiniaBridgeConfig, RedeemPayload } from './model';
 import { getRedeemFee, getRedeemTxFee, redeem } from './utils';
 
-const validateBeforeTx = (balances: AvailableBalance[], amount: BN, fee: BN, symbol: string): string | undefined => {
+const validateBeforeTx = (balances: BN[], amount: BN, fee: BN, symbol: string): string | undefined => {
   const [ring, kton] = balances;
-  const ktonSufficient = new BN(kton.balance).lt(amount);
-  const ringSufficient = new BN(ring.balance).lt(amount);
+  const ktonSufficient = kton.lt(amount);
+  const ringSufficient = ring.lt(amount);
   const validations: [boolean, string][] = [
-    [new BN(ring.balance).lt(fee), 'Insufficient fee'],
+    [ring.lt(fee), 'Insufficient fee'],
     [isRing(symbol) ? ringSufficient : ktonSufficient, 'Insufficient balance'],
   ];
   const target = validations.find((item) => item[0]);
@@ -46,6 +45,7 @@ export function Darwinia2Ethereum({
   direction,
   bridge,
   onFeeChange,
+  balance: availableBalances,
 }: CrossChainComponentProps<
   EthereumDarwiniaBridgeConfig,
   CrossToken<PolkadotChainConfig>,
@@ -55,7 +55,6 @@ export function Darwinia2Ethereum({
 
   const { departureConnection, departure } = useApi();
 
-  const [availableBalances, setAvailableBalances] = useState<AvailableBalance[]>([]);
   const [crossChainFee, setCrossChainFee] = useState<BN | null>(null);
   const [txFee, setTxFee] = useState<BN | null>(null);
   const fee = useMemo(() => (crossChainFee ? crossChainFee.add(txFee ?? BN_ZERO) : null), [crossChainFee, txFee]);
@@ -78,10 +77,11 @@ export function Darwinia2Ethereum({
   }, [direction, fee]);
 
   useEffect(() => {
+    // eslint-disable-next-line complexity
     const fn = () => (data: RedeemPayload) => {
       const { api, type } = departureConnection as PolkadotConnection;
 
-      if (type !== 'polkadot' || !api || !fee) {
+      if (type !== 'polkadot' || !api || !fee || !availableBalances) {
         return EMPTY;
       }
 
@@ -91,7 +91,7 @@ export function Darwinia2Ethereum({
         },
       } = data;
 
-      const msg = validateBeforeTx(availableBalances, new BN(toWei({ value: amount, decimals })), fee, symbol);
+      const msg = validateBeforeTx(availableBalances as BN[], new BN(toWei({ value: amount, decimals })), fee, symbol);
 
       if (msg) {
         message.error(t(msg));
@@ -103,11 +103,7 @@ export function Darwinia2Ethereum({
         content: <TransferConfirm fee={feeWithSymbol!} value={data} needClaim />,
       });
       const obs = redeem(data, api);
-
-      const afterTransfer = afterCrossChain(TransferDone, {
-        onDisappear: () => getBalances(data.sender).then(setAvailableBalances),
-        payload: data,
-      });
+      const afterTransfer = afterCrossChain(TransferDone, { payload: data });
 
       return createTxWorkflow(beforeTransfer, obs, afterTransfer);
     };
@@ -123,12 +119,6 @@ export function Darwinia2Ethereum({
     setTxObservableFactory,
     t,
   ]);
-
-  useEffect(() => {
-    const balance$$ = from(getBalances(account)).subscribe(setAvailableBalances);
-
-    return () => balance$$.unsubscribe();
-  }, [account, getBalances]);
 
   useEffect(() => {
     const sub$$ = from(getRedeemFee(bridge)).subscribe(setCrossChainFee);

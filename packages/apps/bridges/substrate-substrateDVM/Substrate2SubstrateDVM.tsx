@@ -1,5 +1,4 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
-import { BN_ZERO } from '@polkadot/util';
 import { message, Typography } from 'antd';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
@@ -8,7 +7,6 @@ import { EMPTY, from, of, switchMap } from 'rxjs';
 import { LONG_DURATION } from 'shared/config/constant';
 import { useDarwiniaAvailableBalances, useIsMounted } from 'shared/hooks';
 import {
-  AvailableBalance,
   CrossChainComponentProps,
   CrossToken,
   DVMChainConfig,
@@ -23,7 +21,7 @@ import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
-import { useAccount, useApi } from '../../providers';
+import { useApi } from '../../providers';
 import { useBridgeStatus } from './hooks';
 import { IssuingPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getDailyLimit, getIssuingFee } from './utils';
@@ -47,6 +45,7 @@ export function Substrate2SubstrateDVM({
   bridge,
   setBridgeState,
   onFeeChange,
+  balance: availableBalances,
 }: CrossChainComponentProps<
   SubstrateSubstrateDVMBridgeConfig,
   CrossToken<PolkadotChainConfig>,
@@ -54,27 +53,12 @@ export function Substrate2SubstrateDVM({
 >) {
   const { t } = useTranslation();
   const { departureConnection, departure } = useApi();
-  const [availableBalances, setAvailableBalances] = useState<AvailableBalance[]>([]);
-
-  const availableBalance = useMemo(() => {
-    const balance = availableBalances[0];
-
-    if (!balance) {
-      return null;
-    }
-
-    const { balance: max, ...token } = balance;
-    const result = new BN(max).sub(new BN(toWei({ value: '1', decimals: token.decimals ?? 9 }))); // keep at least 1 in account;
-
-    return { ...token, balance: result.gte(new BN(0)) ? result : BN_ZERO } as AvailableBalance;
-  }, [availableBalances]);
-
   const [fee, setFee] = useState<BN | null>(null);
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const getBalances = useDarwiniaAvailableBalances(departure);
   const bridgeState = useBridgeStatus(direction);
-  const { account } = useAccount();
+  const [availableBalance] = availableBalances as BN[];
 
   const feeWithSymbol = useMemo(
     () =>
@@ -96,11 +80,11 @@ export function Substrate2SubstrateDVM({
     const fn = () => (data: IssuingPayload) => {
       const { api } = departureConnection as PolkadotConnection;
 
-      if (departureConnection.type !== 'polkadot' || !api || !fee || !dailyLimit || !availableBalance?.balance) {
+      if (departureConnection.type !== 'polkadot' || !api || !fee || !dailyLimit || !availableBalance) {
         return EMPTY.subscribe();
       }
 
-      const msg = validateBeforeTx(availableBalance.balance, new BN(toWei(data.direction.from)), dailyLimit);
+      const msg = validateBeforeTx(availableBalance, new BN(toWei(data.direction.from)), dailyLimit);
 
       if (msg) {
         message.error(t(msg));
@@ -110,10 +94,7 @@ export function Substrate2SubstrateDVM({
       return createTxWorkflow(
         applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }),
         issuing(data, fee),
-        afterCrossChain(TransferDone, {
-          onDisappear: () => getBalances(data.sender).then(setAvailableBalances),
-          payload: data,
-        })
+        afterCrossChain(TransferDone, { payload: data })
       );
     };
 
@@ -159,12 +140,6 @@ export function Substrate2SubstrateDVM({
 
     return () => sub$$.unsubscribe();
   }, [bridge, direction.from.decimals, direction.from.meta.tokens, direction.from.symbol, onFeeChange]);
-
-  useEffect(() => {
-    const subscription = from(getBalances(account)).subscribe(setAvailableBalances);
-
-    return () => subscription.unsubscribe();
-  }, [account, getBalances, setAvailableBalances]);
 
   return (
     <>

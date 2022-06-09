@@ -18,7 +18,7 @@ export function useAfterTx<T extends CrossChainPayload>() {
           payload,
           ...rest
         }: Exclude<ModalProps, 'onCancel'> & {
-          onDisappear: (value: T, tx: Tx) => void;
+          onDisappear?: (value: T, tx: Tx) => void;
           payload: T;
         }
       ) =>
@@ -43,7 +43,11 @@ export function useAfterTx<T extends CrossChainPayload>() {
               }
             },
           },
-          onCancel: () => onDisappear(payload, tx),
+          onCancel: () => {
+            if (onDisappear) {
+              onDisappear(payload, tx);
+            }
+          },
           ...rest,
         });
       },

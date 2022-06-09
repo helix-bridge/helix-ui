@@ -15,7 +15,6 @@ import {
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { fromWei, isRing, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
 import { getS2SMappingAddress } from 'shared/utils/mappingToken';
-import { getErc20Balance } from 'shared/utils/network/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
@@ -43,6 +42,7 @@ export function SubstrateDVM2Substrate({
   form,
   bridge,
   direction,
+  balance,
   onFeeChange,
   setTxObservableFactory,
   setBridgeState,
@@ -54,7 +54,6 @@ export function SubstrateDVM2Substrate({
 >) {
   const { t } = useTranslation();
   const bridgeState = useBridgeStatus(direction);
-  const [balance, setBalance] = useState<BN | null>(null);
   const [fee, setFee] = useState<BN | null>(null);
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
@@ -70,18 +69,6 @@ export function SubstrateDVM2Substrate({
   );
 
   useEffect(() => {
-    if (!account) {
-      return;
-    }
-
-    const sub$$ = from(getErc20Balance(direction.from.address, account, false)).subscribe((result) => {
-      setBalance(result);
-    });
-
-    return () => sub$$.unsubscribe();
-  }, [account, direction.from.address]);
-
-  useEffect(() => {
     const sub$$ = from(getS2SMappingAddress(direction.from.meta.provider)).subscribe((spender) => {
       updateAllowancePayload({ spender, tokenAddress: direction.from.address });
     });
@@ -95,7 +82,7 @@ export function SubstrateDVM2Substrate({
         return EMPTY.subscribe();
       }
 
-      const msg = validateBeforeTx(balance, new BN(toWei(direction.from)), allowance);
+      const msg = validateBeforeTx(balance as BN, new BN(toWei(direction.from)), allowance);
 
       if (msg) {
         message.error(t(msg));
@@ -110,15 +97,7 @@ export function SubstrateDVM2Substrate({
         switchMap((mappingAddress) => redeem(data, mappingAddress, String(data.direction.to.meta.specVersion)))
       );
 
-      return createTxWorkflow(
-        beforeTx,
-        txObs,
-        afterCrossChain(TransferDone, {
-          onDisappear: () =>
-            getErc20Balance(direction.from.address, account, false).then((result) => setBalance(result)),
-          payload: data,
-        })
-      );
+      return createTxWorkflow(beforeTx, txObs, afterCrossChain(TransferDone, { payload: data }));
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
