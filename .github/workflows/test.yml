@@ -42,7 +42,7 @@ jobs:
           start: yarn dev:apps
           wait-on: 'http://localhost:4003'
           wait-on-timeout: 300
-          command: yarn test:e2e:ci:apps
+          command: yarn test:apps:e2e:ci
           record: true
           parallel: true
           browser: chrome
