@@ -28,11 +28,12 @@ export function DVM2Substrate({
   direction,
   bridge,
   onFeeChange,
-  balance,
+  balance: balances,
   setTxObservableFactory,
 }: CrossChainComponentProps<SubstrateDVMBridgeConfig, CrossToken<DVMChainConfig>, CrossToken<PolkadotChainConfig>>) {
   const { t } = useTranslation();
   const { afterCrossChain } = useAfterTx<WithdrawPayload>();
+  const [balance] = (balances ?? []) as BN[];
 
   useEffect(() => {
     const fn = () => (data: WithdrawPayload) => {

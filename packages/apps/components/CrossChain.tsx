@@ -1,5 +1,5 @@
-import { WarningFilled } from '@ant-design/icons';
-import { Col, Form, Input, message, Row } from 'antd';
+import { InfoCircleOutlined, WarningFilled } from '@ant-design/icons';
+import { Col, Form, Input, message, Row, Tooltip } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import BN from 'bn.js';
 import { isEqual, omit } from 'lodash';
@@ -188,7 +188,10 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
               {bridgeState.status !== 'available' && (
                 <div className="w-full flex items-center gap-4 p-4 bg-white border text-gray-900 rounded-sm">
                   <WarningFilled className="text-yellow-400 text-xl" />
-                  <span>{bridgeState.reason}</span>
+                  <span className="mr-2">{t('The system is under maintenance, please try again later')}</span>
+                  <Tooltip title={bridgeState.reason}>
+                    <InfoCircleOutlined />
+                  </Tooltip>
                 </div>
               )}
 

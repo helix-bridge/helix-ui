@@ -22,7 +22,6 @@ import { EthereumDarwiniaBridgeConfig, IssuingPayload } from './model';
 import { getIssuingFee, issuing } from './utils';
 
 const validateBeforeTx = (balance: BN, amount: BN, fee: BN, ringBalance: BN, allowance: BN): string | undefined => {
-  console.log('🚀 ~ file: Ethereum2Darwinia.tsx ~ line 27 ~ allowance', allowance.toString(), fee.toString());
   const validations: [boolean, string][] = [
     [ringBalance.lt(fee), 'Insufficient fee'],
     [balance.lt(amount), 'Insufficient balance'],
@@ -60,20 +59,20 @@ export function Ethereum2Darwinia({
     [direction, fee]
   );
 
-  const [ringBalance, ktonBalance] = balances as BN[];
+  const [ring, kton] = (balances ?? []) as BN[];
 
   useEffect(() => {
     // eslint-disable-next-line complexity
     const fn = () => (value: IssuingPayload) => {
-      if (!fee || !balances || !ringBalance || !allowance) {
+      if (!fee || !balances || !ring || !allowance) {
         return EMPTY;
       }
 
       const msg = validateBeforeTx(
-        isRing(direction.from.symbol) ? ringBalance : ktonBalance,
+        isRing(direction.from.symbol) ? ring : kton,
         new BN(toWei({ value: direction.from.amount })),
         fee,
-        ringBalance,
+        ring,
         allowance
       );
 
@@ -100,8 +99,8 @@ export function Ethereum2Darwinia({
     direction.from.symbol,
     fee,
     feeWithSymbol,
-    ktonBalance,
-    ringBalance,
+    kton,
+    ring,
     setTxObservableFactory,
     t,
   ]);
@@ -122,9 +121,9 @@ export function Ethereum2Darwinia({
   }, [bridge, direction.from.meta.tokens, direction.from.symbol, onFeeChange]);
 
   useEffect(() => {
-    const ring = direction.from.meta.tokens.find((item) => isRing(item.symbol))!;
+    const token = direction.from.meta.tokens.find((item) => isRing(item.symbol))!;
 
-    updateAllowancePayload({ spender: bridge.config.contracts.issuing, tokenAddress: ring.address });
+    updateAllowancePayload({ spender: bridge.config.contracts.issuing, tokenAddress: token.address });
   }, [bridge.config.contracts.issuing, direction.from.meta.tokens, updateAllowancePayload]);
 
   return (

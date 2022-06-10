@@ -28,7 +28,7 @@ export const txModalConfig: (props: Partial<ModalFuncProps>) => ModalProps = (pr
   okCancel: true,
   okText: <Trans i18n={i18n?.use(initReactI18next)}>Confirm</Trans>,
   closable: true,
-  closeIcon: <Icon name="close" className="w-6 h-6 text-white opacity-80 hover:opacity-100" />,
+  closeIcon: <Icon name="close" />,
   okButtonProps: { size: 'large', className: 'w-full', style: { margin: 0 } },
   cancelButtonProps: { size: 'large', hidden: true },
   width: 520,
