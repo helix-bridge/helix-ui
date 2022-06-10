@@ -10,19 +10,18 @@ import {
   CrossToken,
   DVMChainConfig,
   PolkadotChainConfig,
-  SubmitFn,
+  TxObservableFactory,
 } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { fromWei, isRing, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
 import { getS2SMappingAddress } from 'shared/utils/mappingToken';
-import { getErc20Balance } from 'shared/utils/network/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
-import { useAccount, useTx } from '../../providers';
+import { useAccount } from '../../providers';
 import { useBridgeStatus } from './hooks';
 import { RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getRedeemFee } from './utils';
@@ -43,8 +42,9 @@ export function SubstrateDVM2Substrate({
   form,
   bridge,
   direction,
+  balance,
   onFeeChange,
-  setSubmit,
+  setTxObservableFactory,
   setBridgeState,
   updateAllowancePayload,
 }: CrossChainComponentProps<
@@ -54,11 +54,9 @@ export function SubstrateDVM2Substrate({
 >) {
   const { t } = useTranslation();
   const bridgeState = useBridgeStatus(direction);
-  const [balance, setBalance] = useState<BN | null>(null);
   const [fee, setFee] = useState<BN | null>(null);
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
-  const { observer } = useTx();
   const { account } = useAccount();
 
   const feeWithSymbol = useMemo(
@@ -69,18 +67,6 @@ export function SubstrateDVM2Substrate({
       },
     [direction.from.decimals, direction.from.meta.tokens, fee]
   );
-
-  useEffect(() => {
-    if (!account) {
-      return;
-    }
-
-    const sub$$ = from(getErc20Balance(direction.from.address, account, false)).subscribe((result) => {
-      setBalance(result);
-    });
-
-    return () => sub$$.unsubscribe();
-  }, [account, direction.from.address, direction.from.meta.provider]);
 
   useEffect(() => {
     const sub$$ = from(getS2SMappingAddress(direction.from.meta.provider)).subscribe((spender) => {
@@ -96,7 +82,7 @@ export function SubstrateDVM2Substrate({
         return EMPTY.subscribe();
       }
 
-      const msg = validateBeforeTx(balance, new BN(toWei(direction.from)), allowance);
+      const msg = validateBeforeTx(balance as BN, new BN(toWei(direction.from)), allowance);
 
       if (msg) {
         message.error(t(msg));
@@ -111,19 +97,11 @@ export function SubstrateDVM2Substrate({
         switchMap((mappingAddress) => redeem(data, mappingAddress, String(data.direction.to.meta.specVersion)))
       );
 
-      return createTxWorkflow(
-        beforeTx,
-        txObs,
-        afterCrossChain(TransferDone, {
-          onDisappear: () =>
-            getErc20Balance(direction.from.address, account, false).then((result) => setBalance(result)),
-          payload: data,
-        })
-      ).subscribe(observer);
+      return createTxWorkflow(beforeTx, txObs, afterCrossChain(TransferDone, { payload: data }));
     };
 
-    setSubmit(fn as unknown as SubmitFn);
-  }, [account, afterCrossChain, allowance, balance, direction.from, fee, feeWithSymbol, observer, setSubmit, t]);
+    setTxObservableFactory(fn as unknown as TxObservableFactory);
+  }, [account, afterCrossChain, allowance, balance, direction.from, fee, feeWithSymbol, setTxObservableFactory, t]);
 
   useEffect(() => {
     const { to: arrival } = direction;

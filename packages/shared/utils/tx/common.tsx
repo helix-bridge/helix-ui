@@ -2,9 +2,10 @@ import { ApiPromise } from '@polkadot/api';
 import { TypeRegistry } from '@polkadot/types';
 import { Modal, ModalFuncProps, ModalProps } from 'antd';
 import BN from 'bn.js';
+import { noop } from 'lodash';
 import { i18n } from 'next-i18next';
 import { initReactI18next, Trans } from 'react-i18next';
-import { EMPTY, finalize, Observable, Observer, switchMap, tap } from 'rxjs';
+import { EMPTY, Observable, Observer, switchMap, tap, finalize } from 'rxjs';
 import Web3 from 'web3';
 import { PromiEvent, TransactionConfig, TransactionReceipt } from 'web3-core';
 import { Contract } from 'web3-eth-contract';
@@ -13,7 +14,6 @@ import { Icon } from '../../components/widget/Icon';
 import { abi } from '../../config/abi';
 import { CrossChainPayload, RequiredPartial, Tx, TxFn } from '../../model';
 import { entrance, waitUntilConnected } from '../connection';
-import { empty } from '../helper';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ModalSpyFn<T = any> = (observer: Observer<T>, closeFn: () => void) => void;
@@ -28,7 +28,7 @@ export const txModalConfig: (props: Partial<ModalFuncProps>) => ModalProps = (pr
   okCancel: true,
   okText: <Trans i18n={i18n?.use(initReactI18next)}>Confirm</Trans>,
   closable: true,
-  closeIcon: <Icon name="close" className="w-6 h-6 text-white opacity-80 hover:opacity-100" />,
+  closeIcon: <Icon name="close" />,
   okButtonProps: { size: 'large', className: 'w-full', style: { margin: 0 } },
   cancelButtonProps: { size: 'large', hidden: true },
   width: 520,
@@ -71,6 +71,7 @@ export function applyModalObs<T = boolean>(
       ...others,
       onCancel: () => {
         observer.next(false);
+        observer.error({ status: 'error', error: new Error('Unconfirmed') });
       },
       onOk: (close) => {
         if (handleOk) {
@@ -79,6 +80,7 @@ export function applyModalObs<T = boolean>(
           observer.next(true);
           close();
         }
+        observer.complete();
       },
       afterClose: () => {
         if (afterClose) {
@@ -96,7 +98,7 @@ export function createTxWorkflow(
   txObs: Observable<Tx>,
   after: AfterTxCreator
 ): Observable<Tx> {
-  let finish: () => void = empty;
+  let finish: () => void = noop;
 
   return before.pipe(
     switchMap((confirmed) =>

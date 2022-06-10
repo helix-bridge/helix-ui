@@ -1,5 +1,5 @@
 import { PauseCircleOutlined } from '@ant-design/icons';
-import { Tooltip } from 'antd';
+import { Spin, Tooltip } from 'antd';
 import BN from 'bn.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +13,7 @@ type DirectionProps = CustomFormControlProps<CrossChainDirection> & {
   initial: CrossChainDirection;
   fee: { amount: number; symbol: string } | null;
   balance: BN | BN[] | null;
+  isBalanceLoading: boolean;
 };
 
 const calcToAmount = (payment: string, paymentFee: number | null) => {
@@ -25,7 +26,15 @@ const calcToAmount = (payment: string, paymentFee: number | null) => {
   return amount >= 0 ? String(amount) : '';
 };
 
-export function Direction({ value, initial, onChange, balance, fee = { amount: 0, symbol: '' } }: DirectionProps) {
+// eslint-disable-next-line complexity
+export function Direction({
+  value,
+  initial,
+  onChange,
+  balance,
+  isBalanceLoading = false,
+  fee = { amount: 0, symbol: '' },
+}: DirectionProps) {
   const data = value ?? initial;
   const { t } = useTranslation();
   const [bridgetStatus, setBridgetStatus] = useState<null | BridgeStatus>(null);
@@ -107,7 +116,13 @@ export function Direction({ value, initial, onChange, balance, fee = { amount: 0
         }}
       />
 
-      {iBalance && (
+      {isBalanceLoading && (
+        <div className="absolute right-0 top-28 cursor-pointer space-x-2 text-xs">
+          <Spin spinning size="small" />
+        </div>
+      )}
+
+      {iBalance && !isBalanceLoading && (
         <Tooltip
           title={
             // eslint-disable-next-line no-magic-numbers

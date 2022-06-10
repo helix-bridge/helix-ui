@@ -1,6 +1,6 @@
 import { message, Typography } from 'antd';
 import BN from 'bn.js';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { EMPTY, from } from 'rxjs';
 import {
   Bridge,
@@ -9,22 +9,19 @@ import {
   CrossToken,
   EthereumChainConfig,
   PolkadotChainConfig,
-  SubmitFn,
+  TxObservableFactory,
 } from 'shared/model';
-import { fromWei, isKton, isRing, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
-import { getErc20Balance } from 'shared/utils/network/balance';
+import { fromWei, isRing, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useITranslation } from '../../hooks';
-import { useAccount, useApi, useTx } from '../../providers';
 import { EthereumDarwiniaBridgeConfig, IssuingPayload } from './model';
 import { getIssuingFee, issuing } from './utils';
 
 const validateBeforeTx = (balance: BN, amount: BN, fee: BN, ringBalance: BN, allowance: BN): string | undefined => {
-  console.log('🚀 ~ file: Ethereum2Darwinia.tsx ~ line 27 ~ allowance', allowance.toString(), fee.toString());
   const validations: [boolean, string][] = [
     [ringBalance.lt(fee), 'Insufficient fee'],
     [balance.lt(amount), 'Insufficient balance'],
@@ -38,23 +35,19 @@ const validateBeforeTx = (balance: BN, amount: BN, fee: BN, ringBalance: BN, all
 export function Ethereum2Darwinia({
   allowance,
   form,
-  setSubmit,
+  setTxObservableFactory,
   direction,
   bridge,
   onFeeChange,
   updateAllowancePayload,
+  balance: balances,
 }: CrossChainComponentProps<
   EthereumDarwiniaBridgeConfig,
   CrossToken<EthereumChainConfig>,
   CrossToken<PolkadotChainConfig>
 >) {
   const { t } = useITranslation();
-  const { departureConnection } = useApi();
-  const [balance, setBalance] = useState<BN | null>(null);
   const [fee, setFee] = useState<BN | null>(null);
-  const [ringBalance, setRingBalance] = useState<BN | null>(null);
-  const { account } = useAccount();
-  const { observer } = useTx();
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
 
   const feeWithSymbol = useMemo(
@@ -66,50 +59,26 @@ export function Ethereum2Darwinia({
     [direction, fee]
   );
 
-  const getBalance = useCallback(
-    (value: Pick<CrossChainPayload, 'direction'>) => {
-      if (!account) {
-        return;
-      }
-
-      const [ring, kton] = direction.from.meta.tokens; // FIXME: Token order on ethereum and ropsten must be 0 for ring, 1 for kton;
-
-      if (isKton(value.direction.from.symbol)) {
-        getErc20Balance(kton.address, account, false).then((result) => {
-          setBalance(result);
-        });
-      }
-
-      // always need to refresh ring balance, because of it is a fee token
-      getErc20Balance(ring.address, account, false).then((result) => {
-        if (isRing(value.direction.from.symbol)) {
-          setBalance(result);
-        }
-
-        setRingBalance(result);
-      });
-    },
-    [account, direction.from.meta.tokens]
-  );
+  const [ring, kton] = (balances ?? []) as BN[];
 
   useEffect(() => {
     // eslint-disable-next-line complexity
     const fn = () => (value: IssuingPayload) => {
-      if (!fee || !balance || !ringBalance || !allowance) {
-        return EMPTY.subscribe();
+      if (!fee || !balances || !ring || !allowance) {
+        return EMPTY;
       }
 
       const msg = validateBeforeTx(
-        balance,
+        isRing(direction.from.symbol) ? ring : kton,
         new BN(toWei({ value: direction.from.amount })),
         fee,
-        ringBalance,
+        ring,
         allowance
       );
 
       if (msg) {
         message.error(t(msg));
-        return EMPTY.subscribe();
+        return EMPTY;
       }
 
       return createTxWorkflow(
@@ -117,22 +86,22 @@ export function Ethereum2Darwinia({
           content: <TransferConfirm value={value} fee={feeWithSymbol!} />,
         }),
         issuing(value),
-        afterCrossChain(TransferDone, { onDisappear: getBalance, payload: value })
-      ).subscribe(observer);
+        afterCrossChain(TransferDone, { payload: value })
+      );
     };
 
-    setSubmit(fn as unknown as SubmitFn);
+    setTxObservableFactory(fn as unknown as TxObservableFactory);
   }, [
     afterCrossChain,
     allowance,
-    balance,
+    balances,
     direction.from.amount,
+    direction.from.symbol,
     fee,
     feeWithSymbol,
-    getBalance,
-    observer,
-    ringBalance,
-    setSubmit,
+    kton,
+    ring,
+    setTxObservableFactory,
     t,
   ]);
 
@@ -152,17 +121,9 @@ export function Ethereum2Darwinia({
   }, [bridge, direction.from.meta.tokens, direction.from.symbol, onFeeChange]);
 
   useEffect(() => {
-    if (departureConnection.chainId !== direction.from.meta.ethereumChain.chainId) {
-      setBalance(null);
-    } else {
-      getBalance({ direction });
-    }
-  }, [direction, getBalance, departureConnection]);
+    const token = direction.from.meta.tokens.find((item) => isRing(item.symbol))!;
 
-  useEffect(() => {
-    const ring = direction.from.meta.tokens.find((item) => isRing(item.symbol))!;
-
-    updateAllowancePayload({ spender: bridge.config.contracts.issuing, tokenAddress: ring.address });
+    updateAllowancePayload({ spender: bridge.config.contracts.issuing, tokenAddress: token.address });
   }, [bridge.config.contracts.issuing, direction.from.meta.tokens, updateAllowancePayload]);
 
   return (

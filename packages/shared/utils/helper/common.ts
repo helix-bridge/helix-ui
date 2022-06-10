@@ -1,18 +1,7 @@
-import { EMPTY } from 'rxjs';
 import { addDays, fromUnixTime } from 'date-fns';
 
 // eslint-disable-next-line no-magic-numbers
 export const timezoneOffSet = new Date().getTimezoneOffset() * 60;
-
-// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-export function empty(...args: any[]) {
-  // nothing to do
-}
-
-// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-export function emptyObsFactory() {
-  return EMPTY.subscribe();
-}
 
 export function truth(): true {
   return true;
