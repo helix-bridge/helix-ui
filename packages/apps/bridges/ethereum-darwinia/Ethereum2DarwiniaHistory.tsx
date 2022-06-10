@@ -34,7 +34,7 @@ function Record({
     <HistoryItem
       key={blockTimestamp}
       record={{
-        result: tx ? 1 : 0,
+        result: tx && darwiniaTx ? 1 : 0,
         startTime: blockTimestamp,
       }}
       token={{
