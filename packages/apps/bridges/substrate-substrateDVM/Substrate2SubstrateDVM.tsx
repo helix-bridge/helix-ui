@@ -11,7 +11,6 @@ import {
   CrossToken,
   DVMChainConfig,
   PolkadotChainConfig,
-  PolkadotConnection,
   TxObservableFactory,
 } from 'shared/model';
 import { fromWei, isRing, pollWhile, toWei } from 'shared/utils/helper';
@@ -45,7 +44,7 @@ export function Substrate2SubstrateDVM({
   bridge,
   setBridgeState,
   onFeeChange,
-  balance: availableBalances,
+  balance: balances,
 }: CrossChainComponentProps<
   SubstrateSubstrateDVMBridgeConfig,
   CrossToken<PolkadotChainConfig>,
@@ -58,7 +57,7 @@ export function Substrate2SubstrateDVM({
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const getBalances = useDarwiniaAvailableBalances(departure);
   const bridgeState = useBridgeStatus(direction);
-  const [availableBalance] = availableBalances as BN[];
+  const [ring] = balances as BN[];
 
   const feeWithSymbol = useMemo(
     () =>
@@ -78,13 +77,11 @@ export function Substrate2SubstrateDVM({
   useEffect(() => {
     // eslint-disable-next-line complexity
     const fn = () => (data: IssuingPayload) => {
-      const { api } = departureConnection as PolkadotConnection;
-
-      if (departureConnection.type !== 'polkadot' || !api || !fee || !dailyLimit || !availableBalance) {
+      if (!fee || !dailyLimit || !ring) {
         return EMPTY.subscribe();
       }
 
-      const msg = validateBeforeTx(availableBalance, new BN(toWei(data.direction.from)), dailyLimit);
+      const msg = validateBeforeTx(ring, new BN(toWei(data.direction.from)), dailyLimit);
 
       if (msg) {
         message.error(t(msg));
@@ -101,7 +98,7 @@ export function Substrate2SubstrateDVM({
     setTxObservableFactory(fn as unknown as TxObservableFactory);
   }, [
     afterCrossChain,
-    availableBalance,
+    ring,
     dailyLimit,
     departureConnection,
     fee,

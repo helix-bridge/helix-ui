@@ -8,7 +8,6 @@ import {
   CrossToken,
   DVMChainConfig,
   PolkadotChainConfig,
-  PolkadotConnection,
   TxObservableFactory,
 } from 'shared/model';
 import { isRing, toWei } from 'shared/utils/helper';
@@ -40,8 +39,7 @@ export function Substrate2DVM({
 
   useEffect(() => {
     const fn = () => (data: TransferPayload) => {
-      const { api, type } = departureConnection as PolkadotConnection;
-      if (type !== 'polkadot' || !api || !balance) {
+      if (!balance) {
         return EMPTY;
       }
 
@@ -54,7 +52,7 @@ export function Substrate2DVM({
 
       return createTxWorkflow(
         applyModalObs({ content: <TransferConfirm value={data} fee={null} /> }),
-        issuing(data, api),
+        issuing(data),
         afterCrossChain(TransferDone, { payload: data })
       );
     };

@@ -1,4 +1,3 @@
-import { ApiPromise } from '@polkadot/api';
 import { decodeAddress } from '@polkadot/util-crypto';
 import { upperFirst } from 'lodash';
 import { filter, from, map, Observable, switchMap, take, zip } from 'rxjs';
@@ -49,11 +48,12 @@ export const issuing: TxFn<IssuingPayload> = ({ sender, direction, recipient, br
 /**
  * @description darwinia -> ethereum
  */
-export function redeem({ sender, recipient, direction }: RedeemPayload, api: ApiPromise): Observable<Tx> {
+export function redeem({ sender, recipient, direction }: RedeemPayload): Observable<Tx> {
   const {
     from: { symbol, amount, decimals },
   } = direction;
   const num = toWei({ value: amount, decimals });
+  const api = entrance.polkadot.getInstance(direction.from.meta.provider);
 
   const extrinsic = api.tx.ethereumBacking.lock(isRing(symbol) ? num : '0', isKton(symbol) ? num : '0', recipient);
 

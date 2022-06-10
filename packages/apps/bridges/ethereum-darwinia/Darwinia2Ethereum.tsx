@@ -12,7 +12,6 @@ import {
   CrossToken,
   EthereumChainConfig,
   PolkadotChainConfig,
-  PolkadotConnection,
   TxObservableFactory,
 } from 'shared/model';
 import { fromWei, isRing, toWei } from 'shared/utils/helper';
@@ -77,11 +76,8 @@ export function Darwinia2Ethereum({
   }, [direction, fee]);
 
   useEffect(() => {
-    // eslint-disable-next-line complexity
     const fn = () => (data: RedeemPayload) => {
-      const { api, type } = departureConnection as PolkadotConnection;
-
-      if (type !== 'polkadot' || !api || !fee || !availableBalances) {
+      if (!fee || !availableBalances) {
         return EMPTY;
       }
 
@@ -102,7 +98,7 @@ export function Darwinia2Ethereum({
       const beforeTransfer = applyModalObs({
         content: <TransferConfirm fee={feeWithSymbol!} value={data} needClaim />,
       });
-      const obs = redeem(data, api);
+      const obs = redeem(data);
       const afterTransfer = afterCrossChain(TransferDone, { payload: data });
 
       return createTxWorkflow(beforeTransfer, obs, afterTransfer);

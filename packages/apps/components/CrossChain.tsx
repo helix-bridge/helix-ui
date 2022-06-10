@@ -3,7 +3,7 @@ import { Col, Form, Input, message, Row, Tooltip } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import BN from 'bn.js';
 import { isEqual, omit } from 'lodash';
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
+import { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EMPTY, from as fromRx, iif, of, tap } from 'rxjs';
 import { FORM_CONTROL } from 'shared/config/constant';
@@ -61,30 +61,6 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
 
     return allowance.gt(balance);
   }, [allowance, balance, direction.from.symbol]);
-
-  const launch = useCallback(() => {
-    form.validateFields().then((values) => {
-      if (!values.direction.from.amount) {
-        message.error(t('Transfer amount is required'));
-      } else {
-        createTxObservable(values).subscribe({
-          ...observer,
-          complete() {
-            observer.complete();
-
-            iif(
-              () => !!account && matched,
-              fromRx(getBalance(direction, account)).pipe(tap(() => setIsBalanceLoading(true))),
-              of(null)
-            ).subscribe((result) => {
-              setBalance(result);
-              setIsBalanceLoading(false);
-            });
-          },
-        });
-      }
-    });
-  }, [form, t, createTxObservable, observer, direction, account, matched]);
 
   const Content = useMemo(() => {
     const { from, to } = direction;
@@ -197,7 +173,34 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
 
               <FormItemButton
                 disabled={bridgeState.status !== 'available'}
-                onClick={() => launch()}
+                onClick={() => {
+                  if (!matched) {
+                    message.error('Wrong Network');
+                    return;
+                  }
+
+                  form.validateFields().then((values) => {
+                    if (!values.direction.from.amount) {
+                      message.error(t('Transfer amount is required'));
+                    } else {
+                      createTxObservable(values).subscribe({
+                        ...observer,
+                        complete() {
+                          observer.complete();
+
+                          iif(
+                            () => !!account && matched,
+                            fromRx(getBalance(direction, account)).pipe(tap(() => setIsBalanceLoading(true))),
+                            of(null)
+                          ).subscribe((result) => {
+                            setBalance(result);
+                            setIsBalanceLoading(false);
+                          });
+                        },
+                      });
+                    }
+                  });
+                }}
                 className="cy-submit"
               >
                 {t('Transfer')}
