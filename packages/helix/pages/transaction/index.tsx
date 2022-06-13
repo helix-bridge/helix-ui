@@ -9,7 +9,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, map } from 'rxjs';
 import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
-import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
 import { ENDPOINT } from 'shared/config/env';
 import { HelixHistoryRecord } from 'shared/model';
@@ -89,7 +88,6 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
     {
       title: t('Time'),
       dataIndex: 'startTime',
-      width: '10%',
       render: (value) => (
         <span className="whitespace-nowrap">
           {formatDistance(fromUnixTime(value), new Date(new Date().toUTCString()), {
@@ -100,10 +98,9 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
       ),
     },
     {
-      title: <div className="w-full text-center">{t('Transfer Direction')}</div>,
+      title: <div className="w-full">{t('Transfer Direction')}</div>,
       key: 'cross-direction',
       dataIndex: 'fromChain',
-      width: '50%',
       render(chain: string, record) {
         return (
           <div className="flex items-center gap-4 cursor-pointer">
@@ -124,7 +121,7 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
           ? value
           : `${chainConfig.mode === 'dvm' ? 'x' : ''}${chainConfig?.isTest ? 'O' : ''}RING`;
 
-        return <span>{tokenName}</span>;
+        return <span className="uppercase">{tokenName}</span>;
       },
     },
     {
@@ -150,7 +147,6 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
     {
       title: t('Fee'),
       dataIndex: 'fee',
-      width: '5%',
       render(value: string, record) {
         const { fromChain } = record;
         const departure = toVertices(fromChain);
@@ -167,34 +163,10 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
     {
       title: t('Status'),
       dataIndex: 'result',
-      width: '5%',
-      render: (value, record) => {
+      render: (value) => {
         return (
           <div className="flex gap-8 items-center">
             <CrossChainState value={value} />
-            <Button
-              type="link"
-              onClick={() => {
-                const departure = toVertices(record.fromChain);
-                const arrival = toVertices(record.toChain);
-                const radix = 16;
-                const paths = isS2S(departure, arrival)
-                  ? ['s2s', record.laneId + '0x' + Number(record.nonce).toString(radix)]
-                  : isSubstrateDVM(departure, arrival)
-                  ? ['s2dvm', record.id]
-                  : [];
-
-                router.push({
-                  pathname: `${Path.transaction}/${paths.join('/')}`,
-                  query: new URLSearchParams({
-                    from: record.fromChain,
-                    to: record.toChain,
-                  }).toString(),
-                });
-              }}
-            >
-              <Icon name="view" className="text-xl" />
-            </Button>
           </div>
         );
       },
@@ -295,6 +267,26 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
         dataSource={source}
         size="small"
         loading={loading}
+        onRow={(record) => ({
+          onClick() {
+            const departure = toVertices(record.fromChain);
+            const arrival = toVertices(record.toChain);
+            const radix = 16;
+            const paths = isS2S(departure, arrival)
+              ? ['s2s', record.laneId + '0x' + Number(record.nonce).toString(radix)]
+              : isSubstrateDVM(departure, arrival)
+              ? ['s2dvm', record.id]
+              : [];
+
+            router.push({
+              pathname: `${Path.transaction}/${paths.join('/')}`,
+              query: new URLSearchParams({
+                from: record.fromChain,
+                to: record.toChain,
+              }).toString(),
+            });
+          },
+        })}
         pagination={{ pageSize, total, current: page, size: 'default' }}
         onChange={({ current, pageSize: size }) => {
           setPage(current ?? 1);
