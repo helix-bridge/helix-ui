@@ -3,8 +3,8 @@ import { PolkadotChainConfig } from '../../model';
 export const pangolinParachainConfig: PolkadotChainConfig = {
   isTest: true,
   logos: [
-    { name: 'pangolin-smart.png', type: 'main' },
-    { name: 'pangolin-2.png', type: 'minor' },
+    { name: 'pangolin.png', type: 'main' },
+    { name: 'pangolin.svg', type: 'minor' },
     { name: 'pangolin-logo.svg', type: 'assist' },
   ],
   mode: 'native',
@@ -23,7 +23,7 @@ export const pangolinParachainConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'parachain-substrate',
-          partner: { name: 'pangolin', mode: 'native', role: 'issuer', symbol: 'PRING' },
+          partner: { name: 'pangolin', mode: 'native', role: 'receiver', symbol: 'PRING' },
         },
       ],
       type: 'native',

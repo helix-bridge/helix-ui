@@ -46,10 +46,27 @@ const removeLeaderCharacters = (name: string): string => {
 export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: SelectTokenModalProps) => {
   const { t } = useTranslation();
 
+  const inPartners = useCallback(
+    (target: ChainConfig) => {
+      if (!fromToken) {
+        return true;
+      }
+
+      return !!fromToken.cross.find(
+        (cross) => cross.partner.name === target.name && cross.partner.mode === target.mode
+      );
+    },
+    [fromToken]
+  );
+
   const allTokens = useMemo(
     () =>
       lodashChain(chainConfigs)
-        .filter((item) => !fromToken || !(fromToken.meta.name === item.name && fromToken.meta.mode === item.mode))
+        .filter(
+          (item) =>
+            !fromToken ||
+            (!(fromToken.meta.name === item.name && fromToken.meta.mode === item.mode) && inPartners(item))
+        )
         .map((item) =>
           item.tokens
             .filter(
@@ -59,7 +76,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
         )
         .flatten()
         .value(),
-    [fromToken]
+    [fromToken, inPartners]
   );
 
   const allChains = useMemo(

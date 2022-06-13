@@ -25,6 +25,11 @@ export const crabConfig: PolkadotChainConfig = {
           bridge: 'substrate-DVM',
           partner: { name: 'crab', mode: 'dvm', role: 'receiver', symbol: 'CRAB' },
         },
+        {
+          category: 'helix',
+          bridge: 'parachain-substrate',
+          partner: { name: 'crab-parachain', mode: 'native', role: 'issuer', symbol: 'CRAB' },
+        },
       ],
       type: 'native',
       logo: 'token-crab.svg',

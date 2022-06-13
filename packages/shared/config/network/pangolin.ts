@@ -30,6 +30,11 @@ export const pangolinConfig: PolkadotChainConfig = {
           bridge: 'ethereum-darwinia',
           partner: { name: 'ropsten', mode: 'native', role: 'issuer', symbol: 'PRING' },
         },
+        {
+          category: 'helix',
+          bridge: 'parachain-substrate',
+          partner: { name: 'pangolin-parachain', mode: 'native', role: 'issuer', symbol: 'PRING' },
+        },
       ],
       type: 'native',
       logo: 'token-ring.svg',
