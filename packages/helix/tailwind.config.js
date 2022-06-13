@@ -69,6 +69,10 @@ module.exports = {
           main: '#e6007a',
         },
       }),
+      maxWidth: {
+        'eth-account': '25em',
+        'polkadot-account': '30em',
+      },
     },
   },
   plugins: [
@@ -84,8 +88,5 @@ module.exports = {
       backgroundOpacity: ['before', 'after'],
     },
   },
-  content: [
-    "./pages/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
 };
