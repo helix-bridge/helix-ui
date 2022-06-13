@@ -4,7 +4,7 @@ export const ENDPOINT = (process.env.ENDPOINT as string) || (process.env.NEXT_PU
 
 export const isFormalChain = CHAIN_TYPE === 'formal';
 export const isDev = ENV === 'development';
-export const isTestChain = CHAIN_TYPE === 'test' || isDev;
+export const isTestChainOrDevEnv = CHAIN_TYPE === 'test' || isDev;
 export const isProd = !isDev;
 
 console.log(`⛓️ Chains environment: ${CHAIN_TYPE}; 🖥️ Runtime environment: ${ENV}`);

@@ -3,7 +3,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useEffect } from 'react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isTestChain } from 'shared/config/env';
+import { isTestChainOrDevEnv } from 'shared/config/env';
 import { darwiniaConfig, ethereumConfig, pangolinConfig, ropstenConfig } from 'shared/config/network';
 import { EthereumChainConfig, PolkadotChainConfig } from 'shared/model';
 import { getDisplayName } from 'shared/utils/network';
@@ -18,7 +18,7 @@ function Page() {
   const [activeTab, setActiveTab] = useState('e2d');
 
   const ethereumDarwiniaDirection = useMemo<[PolkadotChainConfig, EthereumChainConfig]>(
-    () => (isTestChain ? [pangolinConfig, ropstenConfig] : [darwiniaConfig, ethereumConfig]),
+    () => (isTestChainOrDevEnv ? [pangolinConfig, ropstenConfig] : [darwiniaConfig, ethereumConfig]),
     []
   );
 

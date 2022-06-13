@@ -6,7 +6,7 @@ import React, { useMemo, useState } from 'react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
-import { isTestChain } from 'shared/config/env';
+import { isTestChainOrDevEnv } from 'shared/config/env';
 import { crabDVMConfig, darwiniaConfig, pangolinConfig } from 'shared/config/network';
 import { pangolinDVMConfig } from 'shared/config/network/pangolin-dvm';
 import { ChainConfig, ConnectionStatus, EthereumChainConfig, SupportedWallet } from 'shared/model';
@@ -253,9 +253,9 @@ function ActiveAccountNormal() {
           let config: ChainConfig;
 
           if (wallet === 'metamask') {
-            config = isTestChain ? pangolinDVMConfig : crabDVMConfig;
+            config = isTestChainOrDevEnv ? pangolinDVMConfig : crabDVMConfig;
           } else {
-            config = isTestChain ? pangolinConfig : darwiniaConfig;
+            config = isTestChainOrDevEnv ? pangolinConfig : darwiniaConfig;
           }
 
           setIsWalletVisible(false);

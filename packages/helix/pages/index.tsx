@@ -1,23 +1,20 @@
 import { Spin } from 'antd';
 import Bignumber from 'bignumber.js';
 import { format, secondsToMilliseconds, subMilliseconds } from 'date-fns';
-import { last, omit, orderBy } from 'lodash';
+import { last, orderBy } from 'lodash';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useEffect, useMemo, useState } from 'react';
+import { Subscription } from 'rxjs';
 import { DATE_FORMAT } from 'shared/config/constant';
-import {
-  crabConfig,
-  darwiniaConfig,
-  ethereumConfig,
-  pangolinConfig,
-  pangoroConfig,
-  ropstenConfig,
-} from 'shared/config/network';
+import { isFormalChain } from 'shared/config/env';
+import { crabDVMConfig, darwiniaConfig, pangoroConfig } from 'shared/config/network';
+import { pangolinDVMConfig } from 'shared/config/network/pangolin-dvm';
 import { ChainConfig, DailyStatistic } from 'shared/model';
 import { fromWei, prettyNumber, rxGet } from 'shared/utils/helper';
+import { chainConfigs } from 'shared/utils/network';
 import { BarChart, Statistic } from '../components/dashboard/BarChart';
-import { Chain, ChainProps } from '../components/dashboard/Chain';
+import { Chain } from '../components/dashboard/Chain';
 import { Statistics } from '../components/dashboard/Statistics';
 import { TIMEPAST, useDailyStatistic } from '../hooks';
 
@@ -29,22 +26,16 @@ interface StatisticTotal {
 // @see response of: https://api.coingecko.com/api/v3/coins/list
 type CoinIds = 'darwinia-crab-network' | 'darwinia-network-native-token';
 
-const chains: ChainProps[] = [
-  ethereumConfig,
-  darwiniaConfig,
-  crabConfig,
-  ropstenConfig,
-  omit(pangolinConfig, 'dvm'),
-  pangolinConfig,
-  pangoroConfig,
-];
+const s2sIssuingConfig = isFormalChain ? darwiniaConfig : pangoroConfig;
+const s2sBackingConfig = isFormalChain ? crabDVMConfig : pangolinDVMConfig;
 
 function Page() {
   const { t } = useTranslation('common');
   const { data: dailyStatistic, loading } = useDailyStatistic();
-  const { data: crabStatistic } = useDailyStatistic('crab');
-  const { data: darwiniaStatistic } = useDailyStatistic('darwinia');
-  const [prices, setPrices] = useState({ crab: { usd: 1 }, darwinia: { usd: 1 } });
+  // Need to query the events on target chain, so issuing statistic should pass backing config.
+  const { data: s2sIssuingStatistic } = useDailyStatistic(s2sBackingConfig.name);
+  const { data: s2sBackingStatistic } = useDailyStatistic(s2sIssuingConfig.name);
+  const [prices, setPrices] = useState({ [s2sBackingConfig.name]: { usd: 1 }, [s2sIssuingConfig.name]: { usd: 1 } });
 
   const { volume, transactions, transactionsTotal } = useMemo(() => {
     if (!dailyStatistic) {
@@ -88,10 +79,13 @@ function Page() {
     });
 
     const rankSource = [
-      { chain: crabConfig, statistic: calcChainTotal(crabStatistic?.dailyStatistics || [], prices.crab.usd) },
       {
-        chain: darwiniaConfig,
-        statistic: calcChainTotal(darwiniaStatistic?.dailyStatistics || [], prices.darwinia.usd),
+        chain: s2sBackingConfig,
+        statistic: calcChainTotal(s2sIssuingStatistic?.dailyStatistics || [], prices[s2sBackingConfig.name].usd),
+      },
+      {
+        chain: s2sIssuingConfig,
+        statistic: calcChainTotal(s2sBackingStatistic?.dailyStatistics || [], prices[s2sIssuingConfig.name].usd),
       },
     ];
 
@@ -123,21 +117,25 @@ function Page() {
         total: prettyNumber(total.toString(), { decimal: 0 }),
       })),
     };
-  }, [crabStatistic?.dailyStatistics, darwiniaStatistic?.dailyStatistics, prices.crab.usd, prices.darwinia.usd]);
+  }, [prices, s2sBackingStatistic?.dailyStatistics, s2sIssuingStatistic?.dailyStatistics]);
 
   useEffect(() => {
-    const sub$$ = rxGet<{ [key in CoinIds]: { usd: number } }>({
-      url: 'https://api.coingecko.com/api/v3/simple/price',
-      params: { ids: 'darwinia-crab-network,darwinia-network-native-token', vs_currencies: 'usd' },
-    }).subscribe((res) => {
-      if (res) {
-        const { 'darwinia-crab-network': crab, 'darwinia-network-native-token': darwinia } = res;
+    let sub$$: Subscription;
 
-        setPrices({ crab, darwinia });
-      }
-    });
+    if (isFormalChain) {
+      sub$$ = rxGet<{ [key in CoinIds]: { usd: number } }>({
+        url: 'https://api.coingecko.com/api/v3/simple/price',
+        params: { ids: 'darwinia-crab-network,darwinia-network-native-token', vs_currencies: 'usd' },
+      }).subscribe((res) => {
+        if (res) {
+          const { 'darwinia-crab-network': crab, 'darwinia-network-native-token': darwinia } = res;
 
-    return () => sub$$.unsubscribe();
+          setPrices({ crab, darwinia });
+        }
+      });
+    }
+
+    return () => sub$$?.unsubscribe();
   }, []);
 
   return (
@@ -166,7 +164,7 @@ function Page() {
         <h2 className="uppercase my-6">{t<string>('chains')}</h2>
 
         <div className="grid md:grid-cols-4 gap-4 lg:gap-6">
-          {chains.map((item, index) => (
+          {chainConfigs.map((item, index) => (
             <Chain {...item} key={index} />
           ))}
         </div>
