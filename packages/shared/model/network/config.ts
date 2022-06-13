@@ -13,7 +13,7 @@ export type TokenType = 'native' | 'mapping';
 
 export type BridgeCategory = 'helix';
 
-export type BridgeName = 'substrate-DVM' | 'substrate-substrateDVM' | 'ethereum-darwinia';
+export type BridgeName = 'substrate-DVM' | 'substrate-substrateDVM' | 'ethereum-darwinia' | 'parachain-substrate';
 
 type PartnerRole = 'issuer' | 'receiver';
 

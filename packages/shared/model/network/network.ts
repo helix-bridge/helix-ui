@@ -1,4 +1,11 @@
-export type PolkadotTypeNetwork = 'pangolin' | 'crab' | 'darwinia' | 'pangoro' | 'polkadot';
+export type PolkadotTypeNetwork =
+  | 'pangolin'
+  | 'crab'
+  | 'darwinia'
+  | 'pangoro'
+  | 'polkadot'
+  | 'pangolin-parachain'
+  | 'crab-parachain';
 
 export type EthereumTypeNetwork = 'ethereum' | 'ropsten' | 'polygon' | 'heco';
 
