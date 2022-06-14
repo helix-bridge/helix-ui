@@ -68,4 +68,14 @@ export interface PolkadotChainConfig extends ChainConfig {
   specVersion: number;
 }
 
+/**
+ * TODO: Should omit the ss58Prefix and specVersion fields on PolkadotChainConfig?
+ *
+ * Better, fix the name field and then remove the mode field on ChainConfig;
+ * ```ts
+ * interface DVMChainConfig extends Omit<EthereumChainConfig, 'name'> {
+ *    name: PolkadotTypeNetwork + '-dvm'
+ * }
+ * ```
+ */
 export interface DVMChainConfig extends Omit<EthereumChainConfig, 'name'>, PolkadotChainConfig {}
