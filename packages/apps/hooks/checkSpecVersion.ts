@@ -3,11 +3,7 @@ import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { useEffect, useState } from 'react';
 import { from } from 'rxjs';
 
-/**
- * @deprecated
- * TODO: replace with useCheckSpecVersion
- */
-export function useBridgeStatus(
+export function useCheckSpecVersion(
   direction: CrossChainDirection<CrossToken<PolkadotChainConfig>, CrossToken<PolkadotChainConfig>>
 ): BridgeState & { specVersionOnline: string } {
   const [specVersionOnline, setSpecVersionOnline] = useState<string>('');

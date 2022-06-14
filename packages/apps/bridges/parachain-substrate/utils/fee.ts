@@ -1,12 +1,36 @@
+import { Codec } from '@polkadot/types-codec/types';
 import BN from 'bn.js';
-import { Bridge } from 'shared/model';
+import { last } from 'lodash';
+import { Bridge, ChainConfig } from 'shared/model';
+import { entrance, waitUntilConnected } from 'shared/utils/connection';
 
-export async function getRedeemFee(bridge: Bridge): Promise<BN | null> {
-  console.log('Unfinished getRedeemFee for birdge', bridge);
-  return new BN(0);
+const queryFeeFromRelayers = async (from: ChainConfig, to: ChainConfig) => {
+  const api = entrance.polkadot.getInstance(to.provider);
+  const section = `${to.name}ParachainFeeMarket`;
+
+  await waitUntilConnected(api);
+
+  return api.query[section]['assignedRelayers']().then((data: Codec) => data.toJSON()) as Promise<
+    {
+      id: string;
+      collateral: number;
+      fee: number;
+    }[]
+  >;
+};
+
+async function getFee(from: ChainConfig, to: ChainConfig): Promise<BN> {
+  const res = await queryFeeFromRelayers(from, to);
+
+  const marketFee = last(res)?.fee.toString();
+
+  return new BN(marketFee ?? -1); // -1: fee market does not available
 }
 
-export async function getIssuingFee(bridge: Bridge): Promise<BN | null> {
-  console.log('Unfinished getIssuing for birdge', bridge);
-  return new BN(0);
+export async function getIssuingFee(bridge: Bridge): Promise<BN> {
+  return getFee(bridge.departure, bridge.arrival);
+}
+
+export async function getRedeemFee(bridge: Bridge): Promise<BN> {
+  return getFee(bridge.arrival, bridge.departure);
 }
