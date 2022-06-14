@@ -51,7 +51,7 @@ function RecordAccount({ chain, account }: { chain: string; account: string }) {
   const displayAccount = revertAccount(account, chainConfig);
 
   return (
-    <div className="flex flex-col overflow-hidden">
+    <div className="flex flex-col overflow-hidden" style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
       <span className="inline-flex items-center gap-2">
         <Logo name={chainConfig.logos[0].name} width={16} height={16} />
         <span className="capitalize">{getDisplayName(chainConfig)}</span>
@@ -88,6 +88,7 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
     {
       title: t('Time'),
       dataIndex: 'startTime',
+      width: '5%',
       render: (value) => (
         <span className="whitespace-nowrap">
           {formatDistance(fromUnixTime(value), new Date(new Date().toUTCString()), {
@@ -98,17 +99,27 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
       ),
     },
     {
-      title: <div className="w-full">{t('Transfer Direction')}</div>,
-      key: 'cross-direction',
+      title: t('From'),
       dataIndex: 'fromChain',
+      width: '20%',
       render(chain: string, record) {
-        return (
-          <div className="flex items-center gap-4 cursor-pointer">
-            <RecordAccount chain={chain} account={record.sender} />
-            <ArrowRightOutlined />
-            <RecordAccount chain={record.toChain} account={record.recipient} />
-          </div>
-        );
+        return <RecordAccount chain={chain} account={record.sender} />;
+      },
+    },
+    {
+      title: '',
+      key: 'direction',
+      align: 'center',
+      render() {
+        return <ArrowRightOutlined />;
+      },
+    },
+    {
+      title: t('To'),
+      dataIndex: 'toChain',
+      width: '20%',
+      render(chain: string, record) {
+        return <RecordAccount chain={chain} account={record.recipient} />;
       },
     },
     {
