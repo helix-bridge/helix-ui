@@ -13,6 +13,7 @@ export interface HelixHistoryRecord {
   bridge: string;
   endTime?: Nullable<number>;
   fee: string;
+  feeToken: string;
   fromChain: Network;
   id: string;
   laneId: string;

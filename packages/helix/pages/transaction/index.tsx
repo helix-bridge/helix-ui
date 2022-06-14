@@ -1,7 +1,8 @@
-import { ArrowRightOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
+import { ArrowRightOutlined, ClockCircleOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
 import { Affix, Button, Input, Layout, Table, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import { formatDistance, fromUnixTime } from 'date-fns';
+import format from 'date-fns-tz/format';
 import request, { gql } from 'graphql-request';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
@@ -9,8 +10,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, map } from 'rxjs';
 import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
-import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
+import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { HelixHistoryRecord } from 'shared/model';
 import { isDVM2Substrate, isS2S, isSubstrateDVM } from 'shared/utils/bridge';
@@ -41,23 +42,31 @@ const HISTORY_RECORDS = gql`
         endTime
         result
         fee
+        feeToken
       }
     }
   }
 `;
 
-function RecordAccount({ chain, account }: { chain: string; account: string }) {
+function RecordAccount({ chain, account, partner }: { chain: string; account: string; partner: string }) {
   const vertices = toVertices(chain);
   const chainConfig = getChainConfig(vertices);
   const displayAccount = revertAccount(account, chainConfig);
 
   return (
-    <div className="flex flex-col overflow-hidden">
+    <div className="flex flex-col overflow-hidden" style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
       <span className="inline-flex items-center gap-2">
         <Logo name={chainConfig.logos[0].name} width={16} height={16} />
         <span className="capitalize">{getDisplayName(chainConfig)}</span>
       </span>
-      <Tooltip title={<Typography.Text copyable>{displayAccount}</Typography.Text>}>
+      <Tooltip
+        title={
+          <div>
+            <span className="mr-2">{partner}: </span>
+            <Typography.Text copyable>{displayAccount}</Typography.Text>
+          </div>
+        }
+      >
         <span className="truncate w-24 sm:w-36 md:w-48 lg:w-96">{displayAccount}</span>
       </Tooltip>
     </div>
@@ -89,29 +98,47 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
     {
       title: t('Time'),
       dataIndex: 'startTime',
-      width: '10%',
-      render: (value) => (
-        <span className="whitespace-nowrap">
-          {formatDistance(fromUnixTime(value), new Date(new Date().toUTCString()), {
-            includeSeconds: true,
-            addSuffix: true,
-          })}
-        </span>
+      width: '5%',
+      render: (value: number) => (
+        <Tooltip
+          title={
+            <div className="flex items-center gap-2">
+              <ClockCircleOutlined />
+              <span>{format(value * 1000, DATE_TIME_FORMAT)}</span>
+            </div>
+          }
+        >
+          <span className="whitespace-nowrap">
+            {formatDistance(fromUnixTime(value), new Date(new Date().toUTCString()), {
+              includeSeconds: true,
+              addSuffix: true,
+            })}
+          </span>
+        </Tooltip>
       ),
     },
     {
-      title: <div className="w-full text-center">{t('Transfer Direction')}</div>,
-      key: 'cross-direction',
+      title: t('From'),
       dataIndex: 'fromChain',
-      width: '50%',
+      width: '20%',
       render(chain: string, record) {
-        return (
-          <div className="flex items-center gap-4 cursor-pointer">
-            <RecordAccount chain={chain} account={record.sender} />
-            <ArrowRightOutlined />
-            <RecordAccount chain={record.toChain} account={record.recipient} />
-          </div>
-        );
+        return <RecordAccount chain={chain} account={record.sender} partner={t('Sender')} />;
+      },
+    },
+    {
+      title: '',
+      key: 'direction',
+      align: 'center',
+      render() {
+        return <ArrowRightOutlined />;
+      },
+    },
+    {
+      title: t('To'),
+      dataIndex: 'toChain',
+      width: '20%',
+      render(chain: string, record) {
+        return <RecordAccount chain={chain} account={record.recipient} partner={t('Recipient')} />;
       },
     },
     {
@@ -141,7 +168,7 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
         return (
           <Tooltip title={amount}>
             <span className="justify-self-center max-w-full truncate">
-              {prettyNumber(amount, { decimal: 3, ignoreZeroDecimal: true })}
+              {prettyNumber(amount, { decimal: 2, ignoreZeroDecimal: true })}
             </span>
           </Tooltip>
         );
@@ -150,12 +177,18 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
     {
       title: t('Fee'),
       dataIndex: 'fee',
-      width: '5%',
       render(value: string, record) {
         const { fromChain } = record;
         const departure = toVertices(fromChain);
+        const decimals = departure.mode === 'dvm' ? 18 : 9;
+
         return (
-          <span className="justify-self-center">{fromWei({ value, decimals: departure.mode === 'dvm' ? 18 : 9 })}</span>
+          <Tooltip title={fromWei({ value, decimals })}>
+            <span className="justify-self-center">
+              {fromWei({ value, decimals }, (val) => prettyNumber(val, { decimal: 2, ignoreZeroDecimal: true }))}{' '}
+              {record.feeToken !== 'null' && <span>{record.feeToken}</span>}
+            </span>
+          </Tooltip>
         );
       },
     },
@@ -167,34 +200,10 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
     {
       title: t('Status'),
       dataIndex: 'result',
-      width: '5%',
-      render: (value, record) => {
+      render: (value) => {
         return (
           <div className="flex gap-8 items-center">
             <CrossChainState value={value} />
-            <Button
-              type="link"
-              onClick={() => {
-                const departure = toVertices(record.fromChain);
-                const arrival = toVertices(record.toChain);
-                const radix = 16;
-                const paths = isS2S(departure, arrival)
-                  ? ['s2s', record.laneId + '0x' + Number(record.nonce).toString(radix)]
-                  : isSubstrateDVM(departure, arrival)
-                  ? ['s2dvm', record.id]
-                  : [];
-
-                router.push({
-                  pathname: `${Path.transaction}/${paths.join('/')}`,
-                  query: new URLSearchParams({
-                    from: record.fromChain,
-                    to: record.toChain,
-                  }).toString(),
-                });
-              }}
-            >
-              <Icon name="view" className="text-xl" />
-            </Button>
           </div>
         );
       },
@@ -295,6 +304,26 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
         dataSource={source}
         size="small"
         loading={loading}
+        onRow={(record) => ({
+          onClick() {
+            const departure = toVertices(record.fromChain);
+            const arrival = toVertices(record.toChain);
+            const radix = 16;
+            const paths = isS2S(departure, arrival)
+              ? ['s2s', record.laneId + '0x' + Number(record.nonce).toString(radix)]
+              : isSubstrateDVM(departure, arrival)
+              ? ['s2dvm', record.id]
+              : [];
+
+            router.push({
+              pathname: `${Path.transaction}/${paths.join('/')}`,
+              query: new URLSearchParams({
+                from: record.fromChain,
+                to: record.toChain,
+              }).toString(),
+            });
+          },
+        })}
         pagination={{ pageSize, total, current: page, size: 'default' }}
         onChange={({ current, pageSize: size }) => {
           setPage(current ?? 1);
