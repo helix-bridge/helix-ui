@@ -1,6 +1,6 @@
 import { AddEthereumChainParameter } from '../metamask';
 import { Token } from '../token';
-import { EthereumTypeNetwork, Network, NetworkMode, PolkadotTypeNetwork, SupportedWallet } from './network';
+import { DVMNetwork, EthereumTypeNetwork, Network, PolkadotTypeNetwork, SupportedWallet } from './network';
 
 export type LogoType = 'main' | 'minor' | 'assist';
 
@@ -19,7 +19,6 @@ type PartnerRole = 'issuer' | 'receiver';
 
 interface Partner {
   name: Network;
-  mode: NetworkMode;
   symbol: string; // token symbol
   /**
    * partner role beyond to the issuing <-> redeem relationship;
@@ -37,6 +36,7 @@ interface CrossOverview {
 export interface TokenWithBridgesInfo extends Token {
   type: TokenType;
   cross: CrossOverview[];
+  host: Network;
   claim?: boolean;
 }
 
@@ -48,7 +48,6 @@ interface Social {
 
 export interface ChainConfig {
   isTest: boolean;
-  mode: NetworkMode;
   logos: Logo[];
   name: Network;
   provider: string;
@@ -68,14 +67,9 @@ export interface PolkadotChainConfig extends ChainConfig {
   specVersion: number;
 }
 
-/**
- * TODO: Should omit the ss58Prefix and specVersion fields on PolkadotChainConfig?
- *
- * Better, fix the name field and then remove the mode field on ChainConfig;
- * ```ts
- * interface DVMChainConfig extends Omit<EthereumChainConfig, 'name'> {
- *    name: PolkadotTypeNetwork + '-dvm'
- * }
- * ```
- */
-export interface DVMChainConfig extends Omit<EthereumChainConfig, 'name'>, PolkadotChainConfig {}
+export interface DVMChainConfig extends ChainConfig {
+  name: DVMNetwork;
+  ethereumChain: AddEthereumChainParameter;
+  ss58Prefix: number;
+  specVersion: number;
+}

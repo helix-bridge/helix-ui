@@ -7,7 +7,6 @@ export const pangolinParachainConfig: PolkadotChainConfig = {
     { name: 'pangolin.svg', type: 'minor' },
     { name: 'pangolin-logo.svg', type: 'assist' },
   ],
-  mode: 'native',
   name: 'pangolin-parachain',
   provider: 'wss://pangolin-rpc.darwinia.network/',
   social: {
@@ -23,10 +22,11 @@ export const pangolinParachainConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'parachain-substrate',
-          partner: { name: 'pangolin', mode: 'native', role: 'receiver', symbol: 'PRING' },
+          partner: { name: 'pangolin', role: 'receiver', symbol: 'PRING' },
         },
       ],
       type: 'native',
+      host: 'pangolin-parachain',
       logo: 'token-ring.svg',
       symbol: 'PRING',
       address: '',

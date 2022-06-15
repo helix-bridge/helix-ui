@@ -71,8 +71,6 @@ export function Direction({
     const info = {
       from: from.name,
       to: to.name,
-      fMode: from.meta.mode,
-      tMode: to.meta.mode,
     } as HashInfo;
 
     if (from && to) {

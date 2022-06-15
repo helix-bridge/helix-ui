@@ -140,7 +140,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
 
   const getConnection = useCallback(
     (chainConfig: ChainConfig, action: (payload: Connection) => void) => {
-      const isConnectToMetamask = chainConfig.mode === 'dvm' || isEthereumNetwork(chainConfig);
+      const isConnectToMetamask = isEthereumNetwork(chainConfig);
 
       const target = state.connections.find((item) => {
         return isConnectToMetamask

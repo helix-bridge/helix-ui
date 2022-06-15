@@ -1,7 +1,6 @@
 import { EthereumChainConfig } from '../../model';
 
 export const ethereumConfig: EthereumChainConfig = {
-  mode: 'native',
   ethereumChain: {
     chainId: '0x1',
     chainName: '',
@@ -28,10 +27,11 @@ export const ethereumConfig: EthereumChainConfig = {
         {
           category: 'helix',
           bridge: 'ethereum-darwinia',
-          partner: { name: 'darwinia', mode: 'native', role: 'receiver', symbol: 'RING' },
+          partner: { name: 'darwinia', role: 'receiver', symbol: 'RING' },
         },
       ],
       type: 'mapping',
+      host: 'ethereum',
       logo: 'token-ring.svg',
       symbol: 'RING',
       address: '0x9469d013805bffb7d3debe5e7839237e535ec483',
@@ -44,10 +44,11 @@ export const ethereumConfig: EthereumChainConfig = {
         {
           category: 'helix',
           bridge: 'ethereum-darwinia',
-          partner: { name: 'darwinia', mode: 'native', role: 'receiver', symbol: 'KTON' },
+          partner: { name: 'darwinia', role: 'receiver', symbol: 'KTON' },
         },
       ],
       type: 'mapping',
+      host: 'ethereum',
       logo: 'token-kton.svg',
       symbol: 'KTON',
       address: '0x9f284e1337a815fe77d2ff4ae46544645b20c5ff',

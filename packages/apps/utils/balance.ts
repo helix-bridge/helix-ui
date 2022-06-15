@@ -15,7 +15,7 @@ import { getDarwiniaBalance, getDVMBalance, getErc20Balance } from 'shared/utils
 export async function getBalance(direction: CrossChainDirection, account: string): Promise<BN[] | BN | null> {
   const { from, to } = direction;
 
-  if (isEthereum2Darwinia(from.meta, to.meta)) {
+  if (isEthereum2Darwinia(from.meta.name, to.meta.name)) {
     const [ring, kton] = await Promise.all(
       from.meta.tokens
         .filter((item) => isRing(item.symbol) || isKton(item.symbol))
@@ -26,25 +26,25 @@ export async function getBalance(direction: CrossChainDirection, account: string
     return [ring, kton];
   }
 
-  if (isDarwinia2Ethereum(from.meta, to.meta)) {
+  if (isDarwinia2Ethereum(from.meta.name, to.meta.name)) {
     return getDarwiniaBalance(from.meta.provider, account);
   }
 
-  if (isSubstrate2DVM(from.meta, to.meta)) {
+  if (isSubstrate2DVM(from.meta.name, to.meta.name)) {
     return getDarwiniaBalance(from.meta.provider, account);
   }
 
-  if (isDVM2Substrate(from.meta, to.meta)) {
+  if (isDVM2Substrate(from.meta.name, to.meta.name)) {
     const kton = from.meta.tokens.find((item) => item.type === 'native' && isKton(item.symbol))!;
 
     return getDVMBalance(kton.address, account);
   }
 
-  if (isSubstrate2SubstrateDVM(from.meta, to.meta)) {
+  if (isSubstrate2SubstrateDVM(from.meta.name, to.meta.name)) {
     return getDarwiniaBalance(from.meta.provider, account);
   }
 
-  if (isSubstrateDVM2Substrate(from.meta, to.meta)) {
+  if (isSubstrateDVM2Substrate(from.meta.name, to.meta.name)) {
     return getErc20Balance(from.address, account, false);
   }
 

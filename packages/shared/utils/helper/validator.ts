@@ -4,13 +4,13 @@ import BN from 'bn.js';
 import type { ValidatorRule } from 'rc-field-form/lib/interface';
 import { TFunction } from 'react-i18next';
 import Web3 from 'web3';
-import { Network, NetworkMode, PolkadotChainConfig, PolkadotTypeNetwork, Token } from '../../model';
-import { isPolkadotNetwork, chainConfigs } from '../network/network';
+import { Network, PolkadotChainConfig, Token } from '../../model';
+import { chainConfigs, isPolkadotNetwork } from '../network/network';
 import { canConvertToEth, convertToEth, convertToSS58, dvmAddressToAccountId } from './address';
 import { toWei } from './balance';
 
 // eslint-disable-next-line complexity
-export const isValidAddress = (address: string, network: Network, mode: NetworkMode = 'native'): boolean => {
+export const isValidAddress = (address: string, network: Network): boolean => {
   if (network === 'ethereum') {
     const isDvm = Web3.utils.isAddress(address);
     const isSS58 = isSS58Address(address);
@@ -18,7 +18,7 @@ export const isValidAddress = (address: string, network: Network, mode: NetworkM
     return isDvm || (isSS58 && canConvertToEth(address));
   }
 
-  if (isPolkadotNetwork({ name: network as PolkadotTypeNetwork, mode })) {
+  if (isPolkadotNetwork(network)) {
     return isSS58Address(address);
   }
 
@@ -34,7 +34,7 @@ export const isValidAddressStrict = (address: string, network: Network): boolean
     return isSS58Address(address, 0);
   }
 
-  if (isPolkadotNetwork({ name: network as PolkadotTypeNetwork, mode: 'native' })) {
+  if (isPolkadotNetwork(network)) {
     const target = chainConfigs.find((item) => item.name === network) as PolkadotChainConfig;
 
     return isSS58Address(address, target.ss58Prefix);

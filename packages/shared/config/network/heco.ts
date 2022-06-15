@@ -11,7 +11,6 @@ export const hecoConfig: EthereumChainConfig = {
   },
   isTest: true,
   logos: [{ name: 'heco.png', type: 'main' }],
-  mode: 'native',
   name: 'heco',
   provider: 'https://http-mainnet.hecochain.com',
   social: {
@@ -26,6 +25,7 @@ export const hecoConfig: EthereumChainConfig = {
       cross: [],
       type: 'mapping',
       logo: 'token-ring.svg',
+      host: 'heco',
       symbol: 'RING',
       address: '',
     },

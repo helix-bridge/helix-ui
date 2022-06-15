@@ -5,7 +5,7 @@ import {
   CrossToken,
   HashInfo,
   HistoryRouteParam,
-  NetworkMode,
+  Network,
   NullableCrossChainDirection,
   StorageInfo,
   ValueOf,
@@ -18,8 +18,6 @@ interface HashShort {
   f?: string;
   t?: string;
   r?: string;
-  fm?: NetworkMode;
-  tm?: NetworkMode;
 }
 
 type SettingKey = keyof StorageInfo | keyof HashInfo;
@@ -35,8 +33,6 @@ const toShort: AdapterMap<HashInfo, HashShort> = {
   from: 'f',
   to: 't',
   recipient: 'r',
-  fMode: 'fm',
-  tMode: 'tm',
 };
 
 const toLong: AdapterMap<HashShort, HashInfo> = Object.entries(toShort).reduce(
@@ -58,7 +54,7 @@ function hashToObj(): { [key in keyof HashShort]: string } {
         return { ...acc, [key]: value };
       }, {}) as { [key in keyof HashShort]: string };
   } catch (err) {
-    return { f: '', t: '', r: '', fm: '', tm: '' };
+    return { f: '', t: '', r: '' };
   }
 }
 
@@ -144,13 +140,11 @@ export const validateDirection: (dir: NullableCrossChainDirection) => CrossChain
  */
 // eslint-disable-next-line complexity
 export const getDirectionFromSettingsWeak: () => CrossChainDirection = () => {
-  const fToken = getInitialSetting<string>('from', null);
-  const tToken = getInitialSetting<string>('to', null);
-  const fMode = getInitialSetting<NetworkMode>('fMode', 'native') as NetworkMode;
-  const tMode = getInitialSetting<NetworkMode>('tMode', 'native') as NetworkMode;
+  const fToken = getInitialSetting<Network>('from', null);
+  const tToken = getInitialSetting<Network>('to', null);
 
-  const from = fToken && getChainConfig(fToken, fMode);
-  const to = tToken && getChainConfig(tToken, tMode);
+  const from = fToken && getChainConfig(fToken);
+  const to = tToken && getChainConfig(tToken);
 
   let fromToken: CrossToken | null = null;
   let toToken: CrossToken | null = null;
@@ -168,7 +162,7 @@ export const getDirectionFromSettingsWeak: () => CrossChainDirection = () => {
   }
 
   if (fromToken && !toToken) {
-    const config = getChainConfig(fromToken.cross[0].partner);
+    const config = getChainConfig(fromToken.cross[0].partner.name);
 
     toToken = {
       ...config.tokens.find((item) => item.symbol === fromToken?.cross[0].partner.symbol)!,
@@ -178,7 +172,7 @@ export const getDirectionFromSettingsWeak: () => CrossChainDirection = () => {
   }
 
   if (!fromToken && toToken) {
-    const config = getChainConfig(toToken.cross[0].partner);
+    const config = getChainConfig(toToken.cross[0].partner.name);
 
     fromToken = {
       ...config.tokens.find((item) => item.symbol === toToken?.cross[0].partner.symbol)!,

@@ -24,7 +24,7 @@ export function RecipientItem({
   const { t } = useTranslation();
   const { departureConnection, arrivalConnection, connectArrivalNetwork } = useApi();
   const { to } = direction;
-  const isPolkadot = isPolkadotNetwork(to.meta) && to.meta.mode === 'native';
+  const isPolkadot = isPolkadotNetwork(to.meta);
   const type = isPolkadot ? to.meta.name : 'ethereum';
 
   const displayLink = useMemo(() => {

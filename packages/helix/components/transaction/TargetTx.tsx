@@ -3,8 +3,7 @@ import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { CrossChainStatus } from 'shared/config/constant';
-import { HelixHistoryRecord, UnlockedRecord } from 'shared/model';
-import { toVertices } from 'shared/utils/network';
+import { HelixHistoryRecord, Network, UnlockedRecord } from 'shared/model';
 import { TransferDescription } from './TransferDescription';
 
 export type FinalActionRecord = Pick<UnlockedRecord, 'txHash' | 'id' | 'recipient' | 'amount'>;
@@ -18,8 +17,8 @@ export function TargetTx({
 }) {
   const { t } = useTranslation();
   const router = useRouter();
-  const departure = toVertices(router.query.from as string);
-  const arrival = toVertices(router.query.to as string);
+  const departure = router.query.from as Network;
+  const arrival = router.query.to as Network;
 
   return (
     <TransferDescription

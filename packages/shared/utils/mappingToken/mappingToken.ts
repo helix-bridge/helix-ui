@@ -13,7 +13,7 @@ import {
   MappingToken,
   PolkadotChainConfig,
 } from '../../model';
-import { DVMBridgeConfig, getAvailableDVMBridge, getBridge, isS2S, isSubstrateDVM2Substrate } from '../bridge';
+import { DVMBridgeConfig, getAvailableDVMBridge, getBridge, isSubstrateSubstrate, isSubstrateDVM2Substrate } from '../bridge';
 import { connect, entrance } from '../connection';
 import { MMRProof } from '../mmr';
 import { getErc20Balance } from '../network/balance';
@@ -46,7 +46,7 @@ export type StoredProof = {
 
 function createMappingTokenContract(departure: DVMChainConfig, arrival: ChainConfig, mappingAddress: string): Contract {
   const web3 = entrance.web3.getInstance(departure.provider);
-  const s2s = isS2S(departure, arrival);
+  const s2s = isSubstrateSubstrate(departure, arrival);
 
   return new web3.eth.Contract(
     s2s ? abi.S2SMappingTokenABI : abi.Erc20MappingTokenABI,
@@ -76,7 +76,7 @@ function getMappingTokensFromDVM(
   arrival: EthereumChainConfig | PolkadotChainConfig,
   mappingAddress: string
 ) {
-  const s2s = isS2S(departure, arrival);
+  const s2s = isSubstrateSubstrate(departure, arrival);
   const countObs = from(getMappingTokenLength(departure, arrival, mappingAddress));
   // FIXME: method predicate logic below should be removed after abi method is unified.
   const getToken = (index: number) =>

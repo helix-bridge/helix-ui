@@ -20,7 +20,7 @@ export function TransferConfirm<T extends Bridge = Bridge>({
 
   const sender = useMemo(
     () =>
-      isPolkadotNetwork(value.direction.from.meta) && value.direction.from.meta.mode === 'native'
+      isPolkadotNetwork(value.direction.from.meta)
         ? convertToSS58(value.sender, (value.direction.from.meta as PolkadotChainConfig).ss58Prefix)
         : value.sender,
     [value]

@@ -1,29 +1,20 @@
 import { chain as lodashChain, pick, upperFirst } from 'lodash';
 import { NETWORK_SIMPLE, SYSTEM_ChAIN_CONFIGURATIONS } from '../../config/network';
-import {
-  knownDarwiniaDVMNetworks,
-  knownDarwiniaNetworks,
-  knownEthereumNetworks,
-  knownPolkadotNetworks,
-} from '../../config/network/category';
-import { ChainConfig, Network, NetworkMode, PolkadotChainConfig, TokenType, Vertices } from '../../model';
+import { knownDVMNetworks, knownEthereumNetworks, knownPolkadotNetworks } from '../../config/network/category';
+import { ChainConfig, Network, PolkadotChainConfig } from '../../model';
 import { getCustomNetworkConfig } from '../helper/storage';
 import { crossChainGraph } from './graph';
-
-function isChainEqual(chain1: Vertices | ChainConfig, chain2: Vertices | ChainConfig): boolean {
-  return chain1.name === chain2.name && chain1.mode === chain2.mode;
-}
 
 export const chainConfigs = lodashChain(crossChainGraph)
   .map(([departure, arrivals]) => [departure, ...arrivals])
   .filter((item) => item.length > 1)
   .flatten()
-  .unionWith(isChainEqual)
+  .unionWith((pre, next) => pre === next)
   .map((vertices) => {
-    let config = SYSTEM_ChAIN_CONFIGURATIONS.find((item) => isChainEqual(vertices, item));
+    let config = SYSTEM_ChAIN_CONFIGURATIONS.find((item) => vertices === item.name);
 
     if (!config) {
-      throw new Error(`Can not find ${vertices.name} network configuration`);
+      throw new Error(`Can not find ${vertices} network configuration`);
     } else {
       const customConfigs = getCustomNetworkConfig();
 
@@ -73,96 +64,51 @@ export function getLegalName(network: string): Network | string {
 }
 
 export const getArrivals = (departure: ChainConfig) => {
-  const target = crossChainGraph.find(([item]) => isChainEqual(item, departure));
+  const target = crossChainGraph.find(([item]) => departure.name === item);
 
   return target ? target[1].map((item) => getChainConfig(item)) : [];
 };
 
-const isSpecifyNetwork = (known: Vertices[]) => (network: ChainConfig | Vertices | null | undefined) => {
+const isSpecifyNetwork = (known: Network[]) => (network: ChainConfig | Network | null | undefined) => {
   if (!network) {
     return false;
   }
 
-  return known.some((item) => isChainEqual(item, network));
+  return known.some((item) => item === network || item === (network as ChainConfig)?.name);
 };
 
 export const isPolkadotNetwork = isSpecifyNetwork(knownPolkadotNetworks);
 
-export const isDarwiniaNetwork = isSpecifyNetwork(knownDarwiniaNetworks);
-
-export const isDarwiniaDVMNetwork = isSpecifyNetwork(knownDarwiniaDVMNetworks);
+export const isDVMNetwork = isSpecifyNetwork(knownDVMNetworks);
 
 export const isEthereumNetwork = isSpecifyNetwork(knownEthereumNetworks);
 
-/**
- * find chain config by:
- * 1. Vertices only, omit mode parameter
- * 2. [chain name, chain mode]
- * 3. [token symbol name, chain mode]
- * 4. [token symbol name, chain name]
- */
-// eslint-disable-next-line complexity
-export function getChainConfig(
-  data: Vertices | Network | string | null | undefined,
-  mode: NetworkMode | TokenType | Network = 'native'
-): ChainConfig {
-  if (!data) {
+export function getChainConfig(name: Network | null | undefined): ChainConfig {
+  if (!name) {
     throw new Error(`You must pass a 'name' parameter to find the chain config`);
   }
 
-  let compared: Vertices;
-
-  if (typeof data === 'string') {
-    const isChainName = chainConfigs.map((item) => item.name).includes(data as Network);
-
-    if (isChainName) {
-      compared = { name: data, mode } as Vertices;
-    } else {
-      const targets = chainConfigs.filter((item) => item.tokens.map((tk) => tk.symbol).includes(data));
-      let target: ChainConfig | undefined;
-
-      if (targets.length === 1) {
-        target = targets[0];
-      } else {
-        if (['native', 'dvm', 'mapping'].includes(mode)) {
-          target = targets.find((item) => item.mode === mode);
-        } else {
-          target = targets.find((item) => item.name === mode);
-        }
-      }
-
-      if (!target) {
-        throw new Error(`Can not find the chain config by args: tokenName: ${data}, mode: ${mode} `);
-      }
-
-      return target;
-    }
-  } else {
-    compared = data;
-  }
-
-  const result = chainConfigs.find((item) => isChainEqual(item, compared));
+  const result = chainConfigs.find((item) => item.name === name);
 
   if (!result) {
-    throw new Error(`Can not find the chain config by ${JSON.stringify(compared)}`);
+    throw new Error(`Can not find the chain config by ${name}`);
   }
 
   return result;
 }
 
-export function getDisplayName(config: ChainConfig | null, networkMode?: NetworkMode): string {
+export function getDisplayName(config: ChainConfig | null): string {
   if (!config) {
     return 'unknown';
   }
 
-  const mode = networkMode ?? config.mode;
-  const name = upperFirst(config.name);
+  if (isDVMNetwork(config.name)) {
+    return `${upperFirst(config.name.split('-')[0])} Smart Chain`;
+  }
 
-  return mode === 'dvm' ? `${name} Smart Chain` : name;
-}
+  if (config.name.includes('parachain')) {
+    return config.name.split('-').map(upperFirst).join(' ');
+  }
 
-export function toVertices(name: string): Vertices {
-  const isDvm = name.includes('-dvm');
-
-  return isDvm ? { name: name.split('-')[0] as Network, mode: 'dvm' } : { name: name as Network, mode: 'native' };
+  return config.name;
 }
