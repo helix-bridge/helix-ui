@@ -9,13 +9,7 @@ import { from as fromRx, map, of, switchMap } from 'rxjs';
 import { CrossChainStatus, MIDDLE_DURATION } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { useIsMounted } from 'shared/hooks';
-import {
-  HelixHistoryRecord,
-  Network,
-  NetworkQueryParams,
-  SubstrateSubstrateDVMBridgeConfig,
-  Network,
-} from 'shared/model';
+import { HelixHistoryRecord, Network, NetworkQueryParams, SubstrateSubstrateDVMBridgeConfig } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { fromWei, gqlName, pollWhile, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';

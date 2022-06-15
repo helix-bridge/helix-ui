@@ -21,6 +21,10 @@ export const NETWORK_LIGHT_THEME: NetworkThemeConfig<{ [key in keyof typeof darw
   heco: pangolin,
   polygon: pangolin,
   polkadot: pangolin,
+  'pangolin-dvm': pangolin,
+  'crab-dvm': crab,
+  'pangolin-parachain': pangolin,
+  'crab-parachain': crab,
 };
 
 export const SKIN_THEME = {
@@ -39,6 +43,10 @@ export const NETWORK_DARK_THEME: NetworkThemeConfig<{ [key in keyof typeof darwi
   heco: pangolinDark,
   polygon: pangolinDark,
   polkadot: pangoroDark,
+  'pangolin-dvm': pangolinDark,
+  'crab-dvm': crabDark,
+  'pangolin-parachain': pangolinDark,
+  'crab-parachain': crabDark,
 };
 
 export enum THEME {

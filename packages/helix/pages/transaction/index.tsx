@@ -13,10 +13,10 @@ import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
 import { Logo } from 'shared/components/widget/Logo';
 import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
-import { HelixHistoryRecord } from 'shared/model';
-import { isDVM2Substrate, isS2S, isSubstrateDVM } from 'shared/utils/bridge';
+import { HelixHistoryRecord, Network } from 'shared/model';
+import { isDVM2Substrate, isSubstrateSubstrate, isSubstrateDVM } from 'shared/utils/bridge';
 import { convertToDvm, fromWei, gqlName, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
-import { chainConfigs, getChainConfig, getDisplayName, toVertices } from 'shared/utils/network';
+import { chainConfigs, getChainConfig, getDisplayName, isDVMNetwork } from 'shared/utils/network';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
 import { Path } from '../../config';
 import { useAccountStatistic, useDailyStatistic } from '../../hooks';
@@ -48,9 +48,8 @@ const HISTORY_RECORDS = gql`
   }
 `;
 
-function RecordAccount({ chain, account, partner }: { chain: string; account: string; partner: string }) {
-  const vertices = toVertices(chain);
-  const chainConfig = getChainConfig(vertices);
+function RecordAccount({ chain, account, partner }: { chain: Network; account: string; partner: string }) {
+  const chainConfig = getChainConfig(chain);
   const displayAccount = revertAccount(account, chainConfig);
 
   return (
@@ -121,7 +120,7 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
       title: t('From'),
       dataIndex: 'fromChain',
       width: '20%',
-      render(chain: string, record) {
+      render(chain: Network, record) {
         return <RecordAccount chain={chain} account={record.sender} partner={t('Sender')} />;
       },
     },
@@ -137,7 +136,7 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
       title: t('To'),
       dataIndex: 'toChain',
       width: '20%',
-      render(chain: string, record) {
+      render(chain: Network, record) {
         return <RecordAccount chain={chain} account={record.recipient} partner={t('Recipient')} />;
       },
     },
@@ -145,11 +144,10 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
       title: t('Asset'),
       dataIndex: 'token',
       render(value: string, record) {
-        const vertices = toVertices(record.fromChain);
-        const chainConfig = getChainConfig(vertices);
+        const chainConfig = getChainConfig(record.fromChain);
         const tokenName = !record.token.startsWith('0x')
           ? value
-          : `${chainConfig.mode === 'dvm' ? 'x' : ''}${chainConfig?.isTest ? 'O' : ''}RING`;
+          : `${isDVMNetwork(record.fromChain) ? 'x' : ''}${chainConfig?.isTest ? 'O' : ''}RING`;
 
         return <span>{tokenName}</span>;
       },
@@ -159,9 +157,7 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
       dataIndex: 'amount',
       render(value: string, record) {
         const { fromChain, toChain } = record;
-        const departure = toVertices(fromChain);
-        const arrival = toVertices(toChain);
-        const amount = fromWei({ value, decimals: isDVM2Substrate(departure, arrival) ? 18 : 9 }, (val) =>
+        const amount = fromWei({ value, decimals: isDVM2Substrate(fromChain, toChain) ? 18 : 9 }, (val) =>
           prettyNumber(val, { ignoreZeroDecimal: true })
         );
 
@@ -179,8 +175,7 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
       dataIndex: 'fee',
       render(value: string, record) {
         const { fromChain } = record;
-        const departure = toVertices(fromChain);
-        const decimals = departure.mode === 'dvm' ? 18 : 9;
+        const decimals = isDVMNetwork(fromChain) ? 18 : 9;
 
         return (
           <Tooltip title={fromWei({ value, decimals })}>
@@ -306,12 +301,11 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
         loading={loading}
         onRow={(record) => ({
           onClick() {
-            const departure = toVertices(record.fromChain);
-            const arrival = toVertices(record.toChain);
+            const { fromChain, toChain } = record;
             const radix = 16;
-            const paths = isS2S(departure, arrival)
+            const paths = isSubstrateSubstrate(fromChain, toChain)
               ? ['s2s', record.laneId + '0x' + Number(record.nonce).toString(radix)]
-              : isSubstrateDVM(departure, arrival)
+              : isSubstrateDVM(fromChain, toChain)
               ? ['s2dvm', record.id]
               : [];
 

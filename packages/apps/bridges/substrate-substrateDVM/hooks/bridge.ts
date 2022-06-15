@@ -1,4 +1,4 @@
-import { BridgeState, CrossChainDirection, CrossToken, PolkadotChainConfig } from 'shared/model';
+import { BridgeState, CrossChainDirection, CrossToken, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { useEffect, useState } from 'react';
 import { from } from 'rxjs';
@@ -8,7 +8,10 @@ import { from } from 'rxjs';
  * TODO: replace with useCheckSpecVersion
  */
 export function useBridgeStatus(
-  direction: CrossChainDirection<CrossToken<PolkadotChainConfig>, CrossToken<PolkadotChainConfig>>
+  direction: CrossChainDirection<
+    CrossToken<PolkadotChainConfig | DVMChainConfig>,
+    CrossToken<PolkadotChainConfig | DVMChainConfig>
+  >
 ): BridgeState & { specVersionOnline: string } {
   const [specVersionOnline, setSpecVersionOnline] = useState<string>('');
   const { to } = direction;
