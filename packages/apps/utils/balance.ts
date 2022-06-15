@@ -15,6 +15,10 @@ import { getDarwiniaBalance, getDVMBalance, getErc20Balance } from 'shared/utils
 export async function getBalance(direction: CrossChainDirection, account: string): Promise<BN[] | BN | null> {
   const { from, to } = direction;
 
+  if (!account) {
+    return null;
+  }
+
   if (isEthereum2Darwinia(from.meta.name, to.meta.name)) {
     const [ring, kton] = await Promise.all(
       from.meta.tokens

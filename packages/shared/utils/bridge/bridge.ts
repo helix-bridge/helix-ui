@@ -7,32 +7,36 @@ import {
   ChainConfig,
   ContractConfig,
   CrossChainDirection,
-  NullableFields,
   Network,
+  NullableFields,
 } from '../../model';
-import { getChainConfig, isDVMNetwork, isEthereumNetwork, isPolkadotNetwork } from '../network/network';
+import { getChainConfig, isDVMNetwork, isEthereumNetwork } from '../network/network';
 
 type BridgePredicateFn = (departure: Network, arrival: Network) => boolean;
 
 export type DVMBridgeConfig = Required<BridgeConfig<ContractConfig & { proof: string }>>;
 
 export const isSubstrate2SubstrateDVM: BridgePredicateFn = (departure, arrival) => {
-  return isPolkadotNetwork(departure) && isDVMNetwork(arrival);
+  const is = departure === 'pangoro' || departure === 'darwinia';
+
+  return is && isDVMNetwork(arrival);
 };
 
 export const isSubstrateDVM2Substrate: BridgePredicateFn = (departure, arrival) =>
   isSubstrate2SubstrateDVM(arrival, departure);
 
 export const isEthereum2Darwinia: BridgePredicateFn = (departure, arrival) => {
-  const isChain = arrival === 'darwinia' || arrival === 'pangolin';
+  const is = arrival === 'darwinia' || arrival === 'pangolin';
 
-  return isChain && isEthereumNetwork(departure) && isPolkadotNetwork(arrival);
+  return is && isEthereumNetwork(departure) && !isDVMNetwork(departure);
 };
 
 export const isDarwinia2Ethereum: BridgePredicateFn = (departure, arrival) => isEthereum2Darwinia(arrival, departure);
 
 export const isSubstrate2DVM: BridgePredicateFn = (departure, arrival) => {
-  return isPolkadotNetwork(departure) && arrival.includes('dvm') && departure === arrival;
+  const is = departure === 'crab' || departure === 'pangolin';
+
+  return is && isDVMNetwork(arrival) && arrival.startsWith(departure);
 };
 
 export const isDVM2Substrate: BridgePredicateFn = (departure, arrival) => isSubstrate2DVM(arrival, departure);
