@@ -27,7 +27,6 @@ describe('DVM to main net', () => {
 
     cy.connectToWallet().then(() => {
       cy.acceptMetamaskSwitch(chain);
-      cy.acceptMetamaskSwitch(chain);
     });
 
     cy.typeAmount('1');
