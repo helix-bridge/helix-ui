@@ -8,6 +8,10 @@ describe('DVM to main net', () => {
     cy.activeMetamask();
   });
 
+  after(() => { 
+    cy.changeMetamaskNetwork('ropsten');
+  })
+
   beforeEach(() => {
     cy.visit(Cypress.config().baseUrl);
     cy.agreeAndContinue();
@@ -26,6 +30,7 @@ describe('DVM to main net', () => {
     cy.selectToToken('Pangolin', 'PRING');
 
     cy.connectToWallet().then(() => {
+      cy.acceptMetamaskSwitch(chain);
       cy.acceptMetamaskSwitch(chain);
     });
 
