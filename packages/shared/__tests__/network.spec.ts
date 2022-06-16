@@ -1,9 +1,10 @@
 /// <reference types="jest" />
 
-import { crabConfig, crabDVMConfig, pangolinConfig } from '../config/network';
+import { crabConfig, crabDVMConfig, darwiniaConfig, ethereumConfig, pangolinConfig } from '../config/network';
+import { crabParachainConfig } from '../config/network/crab-parachain';
 import { pangolinDVMConfig } from '../config/network/pangolin-dvm';
 import { crossChainGraph } from '../utils/network/graph';
-import { chainConfigs, getChainConfig } from '../utils/network/network';
+import { chainConfigs, getChainConfig, getDisplayName, isDVMNetwork, isEthereumNetwork, isPolkadotNetwork } from '../utils/network/network';
 
 describe('network utils', () => {
   it('should create bridge graphs', () => {
@@ -61,4 +62,37 @@ describe('network utils', () => {
       expect(chain).toEqual(compared);
     });
   });
+
+  it('can recognize polkadot network', () => { 
+    expect(isPolkadotNetwork('crab')).toBe(true);
+    expect(isPolkadotNetwork('darwinia')).toBe(true);
+    expect(isPolkadotNetwork('pangolin')).toBe(true);
+    expect(isPolkadotNetwork('pangoro')).toBe(true);
+  });
+
+  it('can recognize ethereum network', () => { 
+    expect(isEthereumNetwork('ethereum')).toBe(true);
+    expect(isEthereumNetwork('ropsten')).toBe(true);
+    expect(isEthereumNetwork('crab-dvm')).toBe(true);
+    expect(isEthereumNetwork('pangolin-dvm')).toBe(true);
+  });
+
+  it('can recognize dvm network', () => { 
+    expect(isDVMNetwork('crab-dvm')).toBe(true);
+    expect(isDVMNetwork('pangolin-dvm')).toBe(true);
+  });
+
+  it('can get network config by chain name', () => { 
+    expect(getChainConfig('crab')).toEqual(crabConfig);
+    expect(getChainConfig('crab-dvm')).toEqual(crabDVMConfig);
+    expect(getChainConfig('crab-parachain')).toEqual(crabParachainConfig);
+    expect(getChainConfig('ethereum')).toEqual(ethereumConfig);
+    expect(getChainConfig('darwinia')).toEqual(darwiniaConfig);
+  });
+
+  it('can convert display name', () => { 
+    expect(getDisplayName(crabConfig)).toEqual('Crab');
+    expect(getDisplayName(crabDVMConfig)).toEqual('Crab Smart Chain');
+    expect(getDisplayName(crabParachainConfig)).toEqual('Crab Parachain');
+  })
 });

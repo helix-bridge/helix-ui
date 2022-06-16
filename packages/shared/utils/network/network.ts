@@ -1,5 +1,5 @@
 import { chain as lodashChain, pick, upperFirst } from 'lodash';
-import { NETWORK_SIMPLE, SYSTEM_ChAIN_CONFIGURATIONS } from '../../config/network';
+import { SYSTEM_ChAIN_CONFIGURATIONS } from '../../config/network';
 import { knownDVMNetworks, knownEthereumNetworks, knownPolkadotNetworks } from '../../config/network/category';
 import { ChainConfig, Network, PolkadotChainConfig } from '../../model';
 import { getCustomNetworkConfig } from '../helper/storage';
@@ -27,47 +27,6 @@ export const chainConfigs = lodashChain(crossChainGraph)
   })
   .sortBy((item) => item.name)
   .valueOf();
-
-function byNetworkAlias(network: string): Network | null {
-  const minLength = 3;
-
-  const allowAlias: (full: string, at?: number) => string[] = (name, startAt = minLength) => {
-    const len = name.length;
-    const shortestName = name.slice(0, startAt);
-
-    return new Array(len - startAt).fill('').map((_, index) => shortestName + name.slice(startAt, index));
-  };
-
-  const alias = new Map([
-    ['ethereum', [...allowAlias('ethereum')]],
-    ['crab', ['darwinia crab']],
-  ]);
-
-  let res = null;
-
-  for (const [name, value] of alias) {
-    if (value.find((item) => item === network.toLowerCase())) {
-      res = name;
-      break;
-    }
-  }
-
-  return res as Network | null;
-}
-
-export function getLegalName(network: string): Network | string {
-  if (NETWORK_SIMPLE.find((item) => item.name === network)) {
-    return network;
-  }
-
-  return byNetworkAlias(network) || network;
-}
-
-export const getArrivals = (departure: ChainConfig) => {
-  const target = crossChainGraph.find(([item]) => departure.name === item);
-
-  return target ? target[1].map((item) => getChainConfig(item)) : [];
-};
 
 const isSpecifyNetwork = (known: Network[]) => (network: ChainConfig | Network | null | undefined) => {
   if (!network) {

@@ -13,6 +13,9 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
+    "@babel/plugin-transform-runtime": "^7.18.5",
+    "@babel/preset-env": "^7.18.2",
+    "@babel/preset-react": "^7.17.12",
     "@darwinia/types": "^2.7.3",
     "@fontsource/ibm-plex-sans": "^4.5.7",
     "@metamask/jazzicon": "^2.0.0",
@@ -21,6 +24,7 @@
     "@polkadot/util": "^9.1.1",
     "@polkadot/util-crypto": "^9.1.1",
     "antd": "4.20.2",
+    "babel-plugin-transform-import-meta": "^2.1.1",
     "bignumber.js": "^9.0.2",
     "bn.js": "^5.2.0",
     "camelcase-keys": "^7.0.2",
