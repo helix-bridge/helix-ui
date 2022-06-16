@@ -329,8 +329,8 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
           setPage(current ?? 1);
           setPageSize(size ?? PAGE_SIZE);
         }}
-        rowClassName={(_, index) => {
-          return index % 2 === 0 ? 'bg-gray-200 dark:bg-gray-900' : '';
+        rowClassName={() => {
+          return 'cursor-pointer';
         }}
         className="explorer-table"
       />
