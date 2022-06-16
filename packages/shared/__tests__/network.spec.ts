@@ -12,7 +12,8 @@ describe('network utils', () => {
     const fromCrab = data.find((item) => item[0] === 'crab');
 
     expect(fromCrab).not.toEqual(undefined);
-    expect(fromCrab![1]).toEqual(['crab-dvm', 'crab-parachain']);
+    // expect(fromCrab![1]).toEqual(['crab-dvm', 'crab-parachain']);
+    expect(fromCrab![1]).toEqual(['crab-dvm']);
 
     const fromCrabDVM = data.find((item) => item[0] === 'crab-dvm');
 
@@ -50,8 +51,8 @@ describe('network utils', () => {
     expect(fromRopsten![1]).toEqual(['pangolin']);
   });
 
-  it('should have 10 cross-chains', () => {
-    expect(chainConfigs).toHaveLength(10);
+  it('should have desired number of cross-chains', () => {
+    expect(chainConfigs).toHaveLength(9);
   });
 
   it('can get chain config by chain name', () => {
@@ -85,7 +86,7 @@ describe('network utils', () => {
   it('can get network config by chain name', () => { 
     expect(getChainConfig('crab')).toEqual(crabConfig);
     expect(getChainConfig('crab-dvm')).toEqual(crabDVMConfig);
-    expect(getChainConfig('crab-parachain')).toEqual(crabParachainConfig);
+    // expect(getChainConfig('crab-parachain')).toEqual(crabParachainConfig);
     expect(getChainConfig('ethereum')).toEqual(ethereumConfig);
     expect(getChainConfig('darwinia')).toEqual(darwiniaConfig);
   });

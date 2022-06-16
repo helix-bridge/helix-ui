@@ -17,7 +17,7 @@ export const crabParachainConfig: PolkadotChainConfig = {
   tokens: [
     {
       name: 'CRAB',
-      decimals: 9,
+      decimals: 18,
       cross: [
         {
           category: 'helix',

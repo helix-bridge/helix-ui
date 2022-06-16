@@ -17,7 +17,7 @@ export const pangolinParachainConfig: PolkadotChainConfig = {
   tokens: [
     {
       name: 'PRING',
-      decimals: 9,
+      decimals: 18,
       cross: [
         {
           category: 'helix',

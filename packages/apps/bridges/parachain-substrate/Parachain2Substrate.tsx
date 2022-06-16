@@ -63,10 +63,10 @@ export function Parachain2Substrate({
   const feeWithSymbol = useMemo(
     () =>
       fee && {
-        amount: fromWei({ value: fee, decimals: direction.from.decimals }),
+        amount: fromWei({ value: fee, decimals: direction.to.decimals }),
         symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
       },
-    [direction.from.decimals, direction.from.meta.tokens, fee]
+    [direction.from.meta.tokens, direction.to.decimals, fee]
   );
 
   useEffect(() => {
@@ -134,14 +134,14 @@ export function Parachain2Substrate({
 
       if (onFeeChange) {
         onFeeChange({
-          amount: isRing(direction.from.symbol) ? +fromWei({ value: result, decimals: direction.from.decimals }) : 0,
+          amount: isRing(direction.from.symbol) ? +fromWei({ value: result, decimals: direction.to.decimals }) : 0,
           symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
         });
       }
     });
 
     return () => sub$$.unsubscribe();
-  }, [bridge, direction.from.decimals, direction.from.meta.tokens, direction.from.symbol, onFeeChange]);
+  }, [bridge, direction.from.meta.tokens, direction.from.symbol, direction.to.decimals, onFeeChange]);
 
   return (
     <>
