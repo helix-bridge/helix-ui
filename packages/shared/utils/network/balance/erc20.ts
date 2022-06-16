@@ -3,11 +3,10 @@ import Web3 from 'web3';
 import { abi } from '../../../config/abi';
 import { entrance } from '../../connection';
 
-export async function getBalance(tokenAddress: string, account: string, isErc20Native = true): Promise<BN> {
+export async function getBalance(tokenAddress: string, account: string): Promise<BN> {
   try {
     const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-    const tokenAbi = isErc20Native ? abi.Erc20ABI : abi.tokenABI;
-    const contract = new web3.eth.Contract(tokenAbi, tokenAddress);
+    const contract = new web3.eth.Contract(abi.tokenABI, tokenAddress);
     const balance = await contract.methods.balanceOf(account).call();
 
     return Web3.utils.toBN(balance);

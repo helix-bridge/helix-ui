@@ -43,7 +43,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const [bridgeState, setBridgeState] = useState<BridgeState>({ status: 'available' });
   const [fee, setFee] = useState<{ amount: number; symbol: string } | null>(null);
   const { account } = useAccount();
-  const [balance, setBalance] = useState<BN | BN[] | null>(null);
+  const [balances, setBalances] = useState<BN[] | null>(null);
   const { allowance, approve, queryAllowance } = useAllowance(direction);
   const [allowancePayload, setAllowancePayload] = useState<{ spender: string; tokenAddress: string } | null>(null);
   const { matched } = useWallet();
@@ -51,16 +51,16 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
 
   const allowanceEnough = useMemo(() => {
-    if (!allowance || !balance) {
+    if (!allowance || !balances) {
       return false;
     }
 
-    if (Array.isArray(balance)) {
-      return isRing(direction.from.symbol) ? allowance.gt(balance[0]) : true;
+    if (Array.isArray(balances)) {
+      return isRing(direction.from.symbol) ? allowance.gt(balances[0]) : true;
     }
 
-    return allowance.gt(balance);
-  }, [allowance, balance, direction.from.symbol]);
+    return allowance.gt(balances);
+  }, [allowance, balances, direction.from.symbol]);
 
   const Content = useMemo(() => {
     const { from, to } = direction;
@@ -91,8 +91,11 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
       fromRx(getBalance(direction, account)).pipe(tap(() => setIsBalanceLoading(true))),
       of(null)
     ).subscribe((result) => {
-      console.log('💰 ~ balances', Array.isArray(result) ? result.map((item) => item.toString()) : result?.toString());
-      setBalance(result);
+      console.log(
+        '💰 ~ balances',
+        result?.map((item) => item.toString())
+      );
+      setBalances(result);
       setIsBalanceLoading(false);
     });
 
@@ -118,7 +121,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
           <Form.Item name={FORM_CONTROL.direction} className="mb-0">
             <Direction
               fee={fee}
-              balance={balance}
+              balance={balances}
               isBalanceLoading={isBalanceLoading}
               initial={direction}
               onChange={(value) => {
@@ -142,7 +145,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
               form={form}
               bridge={bridge}
               direction={direction}
-              balance={balance}
+              balances={balances}
               allowance={allowance}
               setTxObservableFactory={setTxObservableFactory}
               setBridgeState={setBridgeState}
@@ -193,7 +196,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
                             fromRx(getBalance(direction, account)).pipe(tap(() => setIsBalanceLoading(true))),
                             of(null)
                           ).subscribe((result) => {
-                            setBalance(result);
+                            setBalances(result);
                             setIsBalanceLoading(false);
                           });
                         },

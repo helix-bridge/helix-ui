@@ -41,6 +41,15 @@ export const isSubstrate2DVM: BridgePredicateFn = (departure, arrival) => {
 
 export const isDVM2Substrate: BridgePredicateFn = (departure, arrival) => isSubstrate2DVM(arrival, departure);
 
+export const isParachain2Substrate: BridgePredicateFn = (departure, arrival) => {
+  const is = departure === 'crab-parachain' || departure === 'pangolin-parachain';
+
+  return is && departure.startsWith(arrival);
+};
+
+export const isSubstrate2Parachain: BridgePredicateFn = (departure, arrival) =>
+  isParachain2Substrate(arrival, departure);
+
 /**
  * Shorthand functions for predication without direction
  */
@@ -55,6 +64,7 @@ export const isSubstrateSubstrate: BridgePredicateFn = isCrossFactory(
 );
 export const isEthereumDarwinia: BridgePredicateFn = isCrossFactory(isEthereum2Darwinia, isDarwinia2Ethereum);
 export const isSubstrateDVM: BridgePredicateFn = isCrossFactory(isSubstrate2DVM, isDVM2Substrate);
+export const isParachainSubstrate: BridgePredicateFn = isCrossFactory(isParachain2Substrate, isSubstrate2Parachain);
 
 function getBridgeOverviews(source: NullableFields<CrossChainDirection, 'from' | 'to'>) {
   const { from, to } = source;

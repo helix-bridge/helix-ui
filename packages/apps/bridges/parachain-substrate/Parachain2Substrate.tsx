@@ -1,4 +1,5 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
+import { hexToU8a } from '@polkadot/util';
 import { message, Typography } from 'antd';
 import BN from 'bn.js';
 import { upperFirst } from 'lodash';
@@ -24,7 +25,7 @@ import { useAfterTx, useCheckSpecVersion } from '../../hooks';
 import { useApi } from '../../providers';
 import { IssuingPayload, Parachain2SubstrateBridgeConfig } from './model';
 import { getIssuingFee } from './utils';
-import { issuing } from './utils/tx';
+import { redeem } from './utils/tx';
 
 const validateBeforeTx = (balance: BN, amount: BN, limit: BN): string | undefined => {
   const validations: [boolean, string][] = [
@@ -44,7 +45,7 @@ export function Parachain2Substrate({
   bridge,
   setBridgeState,
   onFeeChange,
-  balance: balances,
+  balances,
 }: CrossChainComponentProps<
   Parachain2SubstrateBridgeConfig,
   CrossToken<PolkadotChainConfig>,
@@ -57,7 +58,7 @@ export function Parachain2Substrate({
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const getBalances = useDarwiniaAvailableBalances(departure);
   const bridgeState = useCheckSpecVersion(direction);
-  const [ring] = balances as BN[];
+  const [ring] = (balances ?? []) as BN[];
 
   const feeWithSymbol = useMemo(
     () =>
@@ -76,19 +77,19 @@ export function Parachain2Substrate({
     // eslint-disable-next-line complexity
     const fn = () => (data: IssuingPayload) => {
       if (!fee || !dailyLimit || !ring) {
-        return EMPTY.subscribe();
+        return EMPTY;
       }
 
       const msg = validateBeforeTx(ring, new BN(toWei(data.direction.from)), dailyLimit);
 
       if (msg) {
         message.error(t(msg));
-        return EMPTY.subscribe();
+        return EMPTY;
       }
 
       return createTxWorkflow(
         applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }),
-        issuing(data, fee),
+        redeem(data, fee),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
@@ -107,20 +108,21 @@ export function Parachain2Substrate({
   ]);
 
   useEffect(() => {
-    const { to: arrival } = direction;
-    const api = entrance.polkadot.getInstance(arrival.meta.provider);
+    const api = entrance.polkadot.getInstance(direction.from.meta.provider);
+
     const sub$$ = from(waitUntilConnected(api))
       .pipe(
         mergeMap(() => {
-          const module = `from${upperFirst(arrival.meta.name)}Issuing`;
+          const module = `from${upperFirst(direction.to.meta.name)}Issuing`;
+
           return from(api.query[module].secureLimitedRingAmount());
         })
       )
       .subscribe((result) => {
-        const data = result.toJSON() as [number, number];
-        const num = result && new BN(data[1]);
+        const data = result.toJSON() as [number, string]; // [0, hexString]
+        const num = hexToU8a(data[1]);
 
-        setDailyLimit(num);
+        setDailyLimit(new BN(num));
       });
 
     return () => sub$$.unsubscribe();

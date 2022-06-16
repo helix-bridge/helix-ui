@@ -6,13 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { IdentAccountAddress } from 'shared/components/widget/IdentAccountAddress';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { ConnectionStatus, CrossChainComponentProps, PolkadotChainConfig } from 'shared/model';
-import { convertToSS58, isSameAddress, isValidAddressStrict } from 'shared/utils/helper';
+import { convertToSS58, isValidAddressStrict } from 'shared/utils/helper';
 import { getDisplayName, isPolkadotNetwork } from 'shared/utils/network';
 import { useApi } from '../../providers';
 
 // eslint-disable-next-line complexity
 export function RecipientItem({
-  form,
   extraTip,
   direction,
   onChange,
@@ -56,14 +55,6 @@ export function RecipientItem({
         className="mb-4"
         rules={[
           { required: true },
-          {
-            validator(_, value: string) {
-              return type === 'ethereum' || !isSameAddress(form.getFieldValue(FORM_CONTROL.sender), value)
-                ? Promise.resolve()
-                : Promise.reject();
-            },
-            message: t('The sending address and the receiving address cannot be the same'),
-          },
           {
             validator(_, value: string) {
               return isValidRecipient(value) ? Promise.resolve() : Promise.reject();

@@ -4,7 +4,7 @@ import { last } from 'lodash';
 import { Bridge, ChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 
-const queryFeeFromRelayers = async (from: ChainConfig, to: ChainConfig) => {
+const queryFeeFromRelayers = async (_: ChainConfig, to: ChainConfig) => {
   const api = entrance.polkadot.getInstance(to.provider);
   const section = `${to.name}ParachainFeeMarket`;
 
@@ -31,6 +31,4 @@ export async function getIssuingFee(bridge: Bridge): Promise<BN> {
   return getFee(bridge.departure, bridge.arrival);
 }
 
-export async function getRedeemFee(bridge: Bridge): Promise<BN> {
-  return getFee(bridge.arrival, bridge.departure);
-}
+export const getRedeemFee = getIssuingFee;

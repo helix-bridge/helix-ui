@@ -24,7 +24,7 @@ import { useAfterTx, useCheckSpecVersion } from '../../hooks';
 import { useApi } from '../../providers';
 import { IssuingPayload, Parachain2SubstrateBridgeConfig } from './model';
 import { getRedeemFee } from './utils';
-import { redeem } from './utils/tx';
+import { issuing } from './utils/tx';
 
 const validateBeforeTx = (balance: BN, amount: BN, limit: BN): string | undefined => {
   const validations: [boolean, string][] = [
@@ -44,7 +44,7 @@ export function Substrate2Parachain({
   bridge,
   setBridgeState,
   onFeeChange,
-  balance: balances,
+  balances,
 }: CrossChainComponentProps<
   Parachain2SubstrateBridgeConfig,
   CrossToken<PolkadotChainConfig>,
@@ -57,7 +57,7 @@ export function Substrate2Parachain({
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const getBalances = useDarwiniaAvailableBalances(departure);
   const bridgeState = useCheckSpecVersion(direction);
-  const [ring] = balances as BN[];
+  const [ring] = (balances ?? []) as BN[];
 
   const feeWithSymbol = useMemo(
     () =>
@@ -71,23 +71,24 @@ export function Substrate2Parachain({
   useEffect(() => {
     setBridgeState({ status: bridgeState.status, reason: bridgeState.reason });
   }, [bridgeState.status, bridgeState.reason, setBridgeState]);
+
   useEffect(() => {
     // eslint-disable-next-line complexity
     const fn = () => (data: IssuingPayload) => {
       if (!fee || !dailyLimit || !ring) {
-        return EMPTY.subscribe();
+        return EMPTY;
       }
 
       const msg = validateBeforeTx(ring, new BN(toWei(data.direction.from)), dailyLimit);
 
       if (msg) {
         message.error(t(msg));
-        return EMPTY.subscribe();
+        return EMPTY;
       }
 
       return createTxWorkflow(
         applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }),
-        redeem(data, fee),
+        issuing(data, fee),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
@@ -106,12 +107,13 @@ export function Substrate2Parachain({
   ]);
 
   useEffect(() => {
-    const { to: arrival } = direction;
-    const api = entrance.polkadot.getInstance(arrival.meta.provider);
+    const api = entrance.polkadot.getInstance(direction.from.meta.provider);
+
     const sub$$ = from(waitUntilConnected(api))
       .pipe(
         mergeMap(() => {
-          const module = `to${arrival.meta.name.split('-').map(upperFirst).join('')}Backing`;
+          const module = `to${direction.to.meta.name.split('-').map(upperFirst).join('')}Backing`;
+
           return from(api.query[module].secureLimitedRingAmount());
         })
       )

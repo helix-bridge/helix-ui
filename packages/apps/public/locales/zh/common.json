@@ -61,7 +61,6 @@
   "Symbol": "代币符号",
   "Target Chain": "目标链",
   "The selected wallet does not match the token to be transferred": "当前的钱包与转账的 token 不匹配",
-  "The sending address and the receiving address cannot be the same": "发送地址和接收地址不能相同",
   "The system is under maintenance, please try again later": "升级维护中，请稍候再试",
   "The transaction has been packaged": "交易已打包",
   "The transaction has been sent, please check the transaction progress in the history or explorer.": "交易已发出，你可以在历史记录或浏览器中查看交易进度",

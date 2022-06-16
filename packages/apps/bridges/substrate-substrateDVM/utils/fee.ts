@@ -7,7 +7,7 @@ import { isDVMNetwork } from 'shared/utils/network';
 
 const queryFeeFromRelayers = async (from: ChainConfig, to: ChainConfig) => {
   const api = entrance.polkadot.getInstance(from.provider);
-  const section = isDVMNetwork(from.name) || to.isTest ? `${to.name}FeeMarket` : 'feeMarket';
+  const section = isDVMNetwork(from.name) || to.isTest ? `${to.name.split('-')[0]}FeeMarket` : 'feeMarket';
 
   await waitUntilConnected(api);
 
