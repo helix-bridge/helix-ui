@@ -2,7 +2,7 @@ import { Button, Empty, Radio } from 'antd';
 import dynamic from 'next/dynamic';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useApi } from '../../../providers';
+import { IAccountMeta } from 'shared/model';
 import { BaseModal } from '../BaseModal';
 
 type Props = {
@@ -10,6 +10,7 @@ type Props = {
   defaultValue: string;
   title: React.ReactNode;
   footer: React.ReactNode;
+  accounts: IAccountMeta[];
   onSelect: (address: string) => void;
   onCancel: () => void;
 };
@@ -19,10 +20,15 @@ const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
   ssr: false,
 });
 
-export const SelectAccountModal: React.FC<Props> = ({ visible, defaultValue, title, footer, onSelect, onCancel }) => {
-  const {
-    departureConnection: { accounts },
-  } = useApi();
+export const SelectAccountModal: React.FC<Props> = ({
+  accounts,
+  visible,
+  defaultValue,
+  title,
+  footer,
+  onSelect,
+  onCancel,
+}) => {
   const { t } = useTranslation();
 
   return (

@@ -182,23 +182,28 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
                   form.validateFields().then((values) => {
                     if (!values.direction.from.amount) {
                       message.error(t('Transfer amount is required'));
-                    } else {
-                      createTxObservable(values).subscribe({
-                        ...observer,
-                        complete() {
-                          observer.complete();
-
-                          iif(
-                            () => !!account && matched,
-                            fromRx(getBalance(direction, account)).pipe(tap(() => setIsBalanceLoading(true))),
-                            of(null)
-                          ).subscribe((result) => {
-                            setBalance(result);
-                            setIsBalanceLoading(false);
-                          });
-                        },
-                      });
+                      return;
                     }
+                    if (!values.direction.to.amount) {
+                      message.error(t('Transfer amount invalid'));
+                      return;
+                    }
+
+                    createTxObservable(values).subscribe({
+                      ...observer,
+                      complete() {
+                        observer.complete();
+
+                        iif(
+                          () => !!account && matched,
+                          fromRx(getBalance(direction, account)).pipe(tap(() => setIsBalanceLoading(true))),
+                          of(null)
+                        ).subscribe((result) => {
+                          setBalance(result);
+                          setIsBalanceLoading(false);
+                        });
+                      },
+                    });
                   });
                 }}
                 className="cy-submit"

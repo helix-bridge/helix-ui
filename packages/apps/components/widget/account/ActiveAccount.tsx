@@ -2,15 +2,15 @@ import { CloseCircleOutlined, DisconnectOutlined, LoadingOutlined, SettingFilled
 import { Badge, Button, message, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import React, { useMemo, useState } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
-import { isTestChainOrDevEnv } from 'shared/config/env';
+import { isFormalChain, isTestChainOrDevEnv } from 'shared/config/env';
 import { crabDVMConfig, darwiniaConfig, pangolinConfig } from 'shared/config/network';
 import { pangolinDVMConfig } from 'shared/config/network/pangolin-dvm';
 import { ChainConfig, ConnectionStatus, EthereumChainConfig, SupportedWallet } from 'shared/model';
 import { switchEthereumChain } from 'shared/utils/connection';
+import { convertToSS58 } from 'shared/utils/helper';
 import { isPolkadotNetwork } from 'shared/utils/network';
 import { useAccount, useApi, useWallet } from '../../../providers';
 import { SelectAccountModal } from './SelectAccountModal';
@@ -125,6 +125,7 @@ function ActiveAccountStrict() {
 
       <SelectAccountModal
         visible={isVisible}
+        accounts={departureConnection.accounts}
         defaultValue={account}
         onCancel={() => setIsVisible(false)}
         onSelect={(acc) => {
@@ -166,7 +167,7 @@ function ActiveAccountStrict() {
 function ActiveAccountNormal() {
   const { departureConnection, departure, connectDepartureNetwork, isConnecting } = useApi();
   const { t } = useTranslation();
-  const { account, setAccount } = useAccount();
+  const { account: address, setAccount } = useAccount();
   const [isVisible, setIsVisible] = useState(false);
   const [isWalletVisible, setIsWalletVisible] = useState(false);
 
@@ -175,6 +176,14 @@ function ActiveAccountNormal() {
 
     return type !== 'unknown' && status !== ConnectionStatus.success;
   }, [departureConnection]);
+
+  const prefix = useMemo(() => (isFormalChain ? darwiniaConfig.ss58Prefix : pangolinConfig.ss58Prefix), []);
+  const account = useMemo(() => convertToSS58(address, prefix), [address, prefix]);
+
+  const accounts = useMemo(
+    () => departureConnection.accounts.map((item) => ({ ...item, address: convertToSS58(item.address, prefix) })),
+    [departureConnection.accounts, prefix]
+  );
 
   return (
     <>
@@ -232,6 +241,7 @@ function ActiveAccountNormal() {
       <SelectAccountModal
         visible={isVisible}
         defaultValue={account}
+        accounts={accounts}
         onCancel={() => setIsVisible(false)}
         onSelect={(acc) => {
           setAccount(acc);
