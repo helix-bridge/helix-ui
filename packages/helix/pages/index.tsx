@@ -10,7 +10,7 @@ import { DATE_FORMAT } from 'shared/config/constant';
 import { isFormalChain } from 'shared/config/env';
 import { crabDVMConfig, darwiniaConfig, pangoroConfig } from 'shared/config/network';
 import { pangolinDVMConfig } from 'shared/config/network/pangolin-dvm';
-import { ChainConfig, DailyStatistic } from 'shared/model';
+import { ChainConfig, DailyStatistic, Network } from 'shared/model';
 import { fromWei, prettyNumber, rxGet } from 'shared/utils/helper';
 import { chainConfigs } from 'shared/utils/network';
 import { BarChart, Statistic } from '../components/dashboard/BarChart';
@@ -28,14 +28,15 @@ type CoinIds = 'darwinia-crab-network' | 'darwinia-network-native-token';
 
 const s2sIssuingConfig = isFormalChain ? darwiniaConfig : pangoroConfig;
 const s2sBackingConfig = isFormalChain ? crabDVMConfig : pangolinDVMConfig;
+const s2sBackingName = s2sBackingConfig.name.split('-')[0] as Network;
 
 function Page() {
   const { t } = useTranslation('common');
   const { data: dailyStatistic, loading } = useDailyStatistic();
   // Need to query the events on target chain, so issuing statistic should pass backing config.
-  const { data: s2sIssuingStatistic } = useDailyStatistic(s2sBackingConfig.name);
+  const { data: s2sIssuingStatistic } = useDailyStatistic(s2sBackingName);
   const { data: s2sBackingStatistic } = useDailyStatistic(s2sIssuingConfig.name);
-  const [prices, setPrices] = useState({ [s2sBackingConfig.name]: { usd: 1 }, [s2sIssuingConfig.name]: { usd: 1 } });
+  const [prices, setPrices] = useState({ [s2sBackingName]: { usd: 1 }, [s2sIssuingConfig.name]: { usd: 1 } });
 
   const { volume, transactions, transactionsTotal } = useMemo(() => {
     if (!dailyStatistic) {
@@ -81,7 +82,7 @@ function Page() {
     const rankSource = [
       {
         chain: s2sBackingConfig,
-        statistic: calcChainTotal(s2sIssuingStatistic?.dailyStatistics || [], prices[s2sBackingConfig.name].usd),
+        statistic: calcChainTotal(s2sIssuingStatistic?.dailyStatistics || [], prices[s2sBackingName].usd),
       },
       {
         chain: s2sIssuingConfig,
