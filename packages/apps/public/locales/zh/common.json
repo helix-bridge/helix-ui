@@ -71,6 +71,7 @@
   "Transaction Fee": "手续费",
   "Transaction aborted because of": "交易中止",
   "Transfer": "转账",
+  "Transfer amount invalid": "无效的转账金额",
   "Transfer amount is required": "转账金额是必填项",
   "Type or select the recipient address": "输入或选择接收账号",
   "View in {{scan}} explorer": "在 {{scan}} 浏览器中查看",

@@ -71,6 +71,7 @@
   "Transaction Fee": "Transaction Fee",
   "Transaction aborted because of": "Transaction aborted because of",
   "Transfer": "Transfer",
+  "Transfer amount invalid": "Transfer amount invalid",
   "Transfer amount is required": "Transfer amount is required",
   "Type or select the recipient address": "Type or select the recipient address",
   "View in {{scan}} explorer": "View in {{scan}} explorer",
