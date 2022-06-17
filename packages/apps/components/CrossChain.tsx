@@ -187,7 +187,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
                       message.error(t('Transfer amount is required'));
                       return;
                     }
-                    
+
                     if (!values.direction.to.amount) {
                       message.error(t('Transfer amount invalid'));
                       return;
@@ -203,7 +203,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
                           fromRx(getBalance(direction, account)).pipe(tap(() => setIsBalanceLoading(true))),
                           of(null)
                         ).subscribe((result) => {
-                          setBalance(result);
+                          setBalances(result);
                           setIsBalanceLoading(false);
                         });
                       },
