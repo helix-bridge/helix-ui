@@ -3,6 +3,6 @@
   "compilerOptions": {
     "baseUrl": "./",
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "../shared/model/camelCaseKeys.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "../shared/model/camelCaseKeys.ts", "./jest-setup.ts"],
   "exclude": ["node_modules", "cypress"]
 }
