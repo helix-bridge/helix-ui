@@ -14,6 +14,10 @@ describe('Substrate DVM to Substrate', () => {
     cy.agreeAndContinue();
   });
 
+  after(() => {
+    cy.changeMetamaskNetwork('ropsten');
+  });
+
   it.skip('approve before launch tx', () => {
     cy.selectFromToken('Pangolin Smart Chain', 'xORING');
     cy.selectToToken('Pangoro', 'ORING');
@@ -46,7 +50,6 @@ describe('Substrate DVM to Substrate', () => {
     cy.selectToToken('Pangoro', 'ORING');
 
     cy.connectToWallet().then(() => {
-      cy.acceptMetamaskSwitch(chain);
       cy.acceptMetamaskSwitch(chain);
     });
 

@@ -1,6 +1,6 @@
-import { isEqual, pick } from 'lodash';
+import { isEqual } from 'lodash';
 import { FunctionComponent } from 'react';
-import { BridgeCategory, BridgeName, ChainConfig } from '../network';
+import { BridgeCategory, BridgeName, ChainConfig, Network } from '../network';
 
 /* ----------------------------------------------- bridge state ------------------------------------------------ */
 
@@ -8,11 +8,9 @@ export type BridgeStatus = 'pending' | 'available' | 'error';
 
 /* ----------------------------------------------- bridge vertices ------------------------------------------------ */
 
-export type Vertices = Pick<ChainConfig, 'name' | 'mode'>;
+export type Departure = Network;
 
-export type Departure = Vertices;
-
-export type Arrival = Vertices;
+export type Arrival = Network;
 
 /* ----------------------------------------------- bridge config ------------------------------------------------ */
 
@@ -71,8 +69,8 @@ export class Bridge<C = BridgeConfig> {
       activeArrivalConnection?: boolean;
     }
   ) {
-    const dep = this.toVertices(departure);
-    const arr = this.toVertices(arrival);
+    const dep = departure.name;
+    const arr = arrival.name;
 
     this.name = options.name;
     this.departure = departure;
@@ -90,10 +88,6 @@ export class Bridge<C = BridgeConfig> {
     return this._config;
   }
 
-  private toVertices(config: ChainConfig): Vertices {
-    return { name: config.name, mode: config.mode };
-  }
-
   setIssuingComponents(crossComp: FunctionComponent): void {
     this.crossChain.set(this.issuing, crossComp);
   }
@@ -105,14 +99,14 @@ export class Bridge<C = BridgeConfig> {
   isIssuing(dep: Departure | ChainConfig, arr: Departure | ChainConfig): boolean {
     return isEqual(
       this.issuing,
-      [dep, arr].map((item) => pick(item, ['name', 'mode']))
+      [dep, arr].map((item) => (typeof item === 'object' ? item.name : item))
     );
   }
 
   isRedeem(dep: Departure | ChainConfig, arr: Departure | ChainConfig): boolean {
     return isEqual(
       this.redeem,
-      [dep, arr].map((item) => pick(item, ['name', 'mode']))
+      [dep, arr].map((item) => (typeof item === 'object' ? item.name : item))
     );
   }
 

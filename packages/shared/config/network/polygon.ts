@@ -11,7 +11,6 @@ export const polygonConfig: EthereumChainConfig = {
   },
   isTest: true,
   logos: [{ name: 'polygon.svg', type: 'main' }],
-  mode: 'native',
   name: 'polygon',
   provider: 'https://polygon-rpc.com/',
   social: {
@@ -20,8 +19,8 @@ export const polygonConfig: EthereumChainConfig = {
     twitter: 'https://twitter.com/0xPolygon',
   },
   tokens: [
-    { name: 'RING', decimals: 18, cross: [], type: 'mapping', logo: '', symbol: 'RING', address: '' },
-    { name: 'MATIC', decimals: 18, cross: [], type: 'native', logo: '', symbol: 'MATIC', address: '' },
+    { name: 'RING', decimals: 18, cross: [], type: 'mapping', host: 'polygon', logo: '', symbol: 'RING', address: '' },
+    { name: 'MATIC', decimals: 18, cross: [], type: 'native', host: 'polygon', logo: '', symbol: 'MATIC', address: '' },
   ],
   wallets: ['metamask'],
 };

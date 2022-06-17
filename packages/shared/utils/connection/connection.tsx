@@ -11,9 +11,8 @@ import {
   PolkadotChainConfig,
   PolkadotConnection,
   SupportedWallet,
-  Vertices,
 } from '../../model';
-import { chainConfigs, getChainConfig } from '../network';
+import { chainConfigs } from '../network';
 import { entrance } from './entrance';
 import { getMetamaskConnection, isMetamaskInstalled, switchMetamaskNetwork } from './metamask';
 import { getPolkadotConnection } from './polkadot';
@@ -38,12 +37,11 @@ const showWarning = (plugin: string, downloadUrl: string) =>
 const connectPolkadot: ConnectFn<PolkadotConnection> = (network) =>
   !network ? EMPTY : getPolkadotConnection(network as PolkadotChainConfig);
 
-async function isNetworkConsistent(vertices: Vertices, id = ''): Promise<boolean> {
+async function isNetworkConsistent(chain: EthereumChainConfig, id = ''): Promise<boolean> {
   id = id && Web3.utils.isHex(id) ? parseInt(id, 16).toString() : id;
   // id 1: eth mainnet 3: ropsten 4: rinkeby 5: goerli 42: kovan  43: pangolin 44: crab
   const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
   const actualId: string | number = id ? await Promise.resolve(id) : await web3.eth.net.getId();
-  const chain = getChainConfig(vertices) as EthereumChainConfig;
   const storedId = chain.ethereumChain.chainId;
 
   return storedId === Web3.utils.toHex(actualId);
@@ -59,7 +57,7 @@ const connectMetamask: ConnectFn<EthereumConnection> = (network, chainId?) => {
     return EMPTY;
   }
 
-  return from(isNetworkConsistent(network, chainId)).pipe(
+  return from(isNetworkConsistent(network as EthereumChainConfig, chainId)).pipe(
     switchMap((isMatch) =>
       isMatch
         ? getMetamaskConnection()

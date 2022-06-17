@@ -42,7 +42,7 @@ export interface CrossChainComponentProps<
   form: FormInstance<CrossChainPayload>;
   direction: CrossChainDirection<F, T>;
   bridge: Bridge<B>;
-  balance: BN | BN[] | null;
+  balances: BN[] | null;
   allowance: BN | null;
   // make sure page setState function direction to avoid infinite update
   setTxObservableFactory: React.Dispatch<React.SetStateAction<TxObservableFactory>>;

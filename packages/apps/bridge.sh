@@ -9,13 +9,13 @@ function validate() {
     fi
 }
 
-read -p "Pleash enter an target chain name: "
+read -p "Pleash enter an origin chain name: "
 
 origin=$REPLY
 validate $origin
 from=$(echo ${origin:0:1} | tr a-z A-Z)${origin:1}
 
-read -p "Pleash enter an origin chain name: "
+read -p "Pleash enter an target chain name: "
 
 target=$REPLY
 validate $target
@@ -86,6 +86,7 @@ function initModel() {
 
 function initConfig() {
     echo "
+        // Move this file to shared package!
         import { ${origin}Config, ${target}Config } from 'shared/config/network';
         import { Bridge } from 'shared/model';
         import { ${from}${to}BridgeConfig } from '../model/bridge';

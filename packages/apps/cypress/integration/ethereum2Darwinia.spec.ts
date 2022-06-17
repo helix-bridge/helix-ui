@@ -8,6 +8,10 @@ describe('Ethereum to Darwinia', () => {
     cy.activeMetamask();
   });
 
+  after(() => { 
+    cy.changeMetamaskNetwork('ropsten');
+  })
+
   beforeEach(() => {
     cy.visit(Cypress.config().baseUrl);
     cy.agreeAndContinue();

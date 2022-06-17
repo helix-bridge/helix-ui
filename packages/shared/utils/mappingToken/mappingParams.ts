@@ -13,7 +13,3 @@ const s2sMappingAddress: (rpc: string) => Promise<string> = async (rpc: string) 
 };
 
 export const getS2SMappingAddress = memoize(s2sMappingAddress);
-
-export const getErc20MappingAddress: (rpc: string) => Promise<string> = (_: string) => {
-  return Promise.resolve('0xcB8531Bc0B7C8F41B55CF4E94698C37b130597B9');
-};

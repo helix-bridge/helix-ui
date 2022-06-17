@@ -28,7 +28,7 @@ export function DVM2Substrate({
   direction,
   bridge,
   onFeeChange,
-  balance: balances,
+  balances,
   setTxObservableFactory,
 }: CrossChainComponentProps<SubstrateDVMBridgeConfig, CrossToken<DVMChainConfig>, CrossToken<PolkadotChainConfig>>) {
   const { t } = useTranslation();

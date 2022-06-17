@@ -44,7 +44,7 @@ export function Darwinia2Ethereum({
   direction,
   bridge,
   onFeeChange,
-  balance: availableBalances,
+  balances,
 }: CrossChainComponentProps<
   EthereumDarwiniaBridgeConfig,
   CrossToken<PolkadotChainConfig>,
@@ -77,7 +77,7 @@ export function Darwinia2Ethereum({
 
   useEffect(() => {
     const fn = () => (data: RedeemPayload) => {
-      if (!fee || !availableBalances) {
+      if (!fee || !balances) {
         return EMPTY;
       }
 
@@ -87,7 +87,7 @@ export function Darwinia2Ethereum({
         },
       } = data;
 
-      const msg = validateBeforeTx(availableBalances as BN[], new BN(toWei({ value: amount, decimals })), fee, symbol);
+      const msg = validateBeforeTx(balances as BN[], new BN(toWei({ value: amount, decimals })), fee, symbol);
 
       if (msg) {
         message.error(t(msg));
@@ -105,16 +105,7 @@ export function Darwinia2Ethereum({
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [
-    afterCrossChain,
-    availableBalances,
-    departureConnection,
-    fee,
-    feeWithSymbol,
-    getBalances,
-    setTxObservableFactory,
-    t,
-  ]);
+  }, [afterCrossChain, balances, departureConnection, fee, feeWithSymbol, getBalances, setTxObservableFactory, t]);
 
   useEffect(() => {
     const sub$$ = from(getRedeemFee(bridge)).subscribe(setCrossChainFee);

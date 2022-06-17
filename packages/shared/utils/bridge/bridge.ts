@@ -1,4 +1,4 @@
-import { isEqual, pick } from 'lodash';
+import { isEqual } from 'lodash';
 import { BRIDGES } from '../../config/bridge';
 import { unknownUnavailable } from '../../config/bridges/unknown-unavailable';
 import {
@@ -7,48 +7,64 @@ import {
   ChainConfig,
   ContractConfig,
   CrossChainDirection,
+  Network,
   NullableFields,
-  Vertices,
 } from '../../model';
-import { getChainConfig, isEthereumNetwork, isPolkadotNetwork } from '../network/network';
+import { getChainConfig, isDVMNetwork, isEthereumNetwork } from '../network/network';
 
-type BridgePredicateFn = (departure: Vertices, arrival: Vertices) => boolean;
+type BridgePredicateFn = (departure: Network, arrival: Network) => boolean;
 
 export type DVMBridgeConfig = Required<BridgeConfig<ContractConfig & { proof: string }>>;
 
 export const isSubstrate2SubstrateDVM: BridgePredicateFn = (departure, arrival) => {
-  return isPolkadotNetwork(departure) && arrival.mode === 'dvm' && arrival.name !== departure.name;
+  const is = departure === 'pangoro' || departure === 'darwinia';
+
+  return is && isDVMNetwork(arrival);
 };
 
 export const isSubstrateDVM2Substrate: BridgePredicateFn = (departure, arrival) =>
   isSubstrate2SubstrateDVM(arrival, departure);
 
 export const isEthereum2Darwinia: BridgePredicateFn = (departure, arrival) => {
-  return (
-    isEthereumNetwork(departure) &&
-    departure.mode === 'native' &&
-    isPolkadotNetwork(arrival) &&
-    arrival.mode === 'native'
-  );
+  const is = arrival === 'darwinia' || arrival === 'pangolin';
+
+  return is && isEthereumNetwork(departure) && !isDVMNetwork(departure);
 };
 
 export const isDarwinia2Ethereum: BridgePredicateFn = (departure, arrival) => isEthereum2Darwinia(arrival, departure);
 
 export const isSubstrate2DVM: BridgePredicateFn = (departure, arrival) => {
-  return isPolkadotNetwork(departure) && arrival.mode === 'dvm' && departure.name === arrival.name;
+  const is = departure === 'crab' || departure === 'pangolin';
+
+  return is && isDVMNetwork(arrival) && arrival.startsWith(departure);
 };
 
 export const isDVM2Substrate: BridgePredicateFn = (departure, arrival) => isSubstrate2DVM(arrival, departure);
 
-export const isSubstrateDVM: BridgePredicateFn = (departure, arrival) =>
-  isSubstrate2DVM(departure, arrival) || isDVM2Substrate(departure, arrival);
+export const isParachain2Substrate: BridgePredicateFn = (departure, arrival) => {
+  const is = departure === 'crab-parachain' || departure === 'pangolin-parachain';
+
+  return is && departure.startsWith(arrival);
+};
+
+export const isSubstrate2Parachain: BridgePredicateFn = (departure, arrival) =>
+  isParachain2Substrate(arrival, departure);
 
 /**
  * Shorthand functions for predication without direction
  */
-export const isS2S: BridgePredicateFn = (departure, arrival) => {
-  return [isSubstrate2SubstrateDVM, isSubstrateDVM2Substrate].some((fn) => fn(departure, arrival));
-};
+const isCrossFactory =
+  (...fns: BridgePredicateFn[]) =>
+  (departure: Network, arrival: Network) =>
+    fns.some((fn) => fn(departure, arrival));
+
+export const isSubstrateSubstrate: BridgePredicateFn = isCrossFactory(
+  isSubstrate2SubstrateDVM,
+  isSubstrateDVM2Substrate
+);
+export const isEthereumDarwinia: BridgePredicateFn = isCrossFactory(isEthereum2Darwinia, isDarwinia2Ethereum);
+export const isSubstrateDVM: BridgePredicateFn = isCrossFactory(isSubstrate2DVM, isDVM2Substrate);
+export const isParachainSubstrate: BridgePredicateFn = isCrossFactory(isParachain2Substrate, isSubstrate2Parachain);
 
 function getBridgeOverviews(source: NullableFields<CrossChainDirection, 'from' | 'to'>) {
   const { from, to } = source;
@@ -62,28 +78,27 @@ function getBridgeOverviews(source: NullableFields<CrossChainDirection, 'from' |
   return bridges.filter((bridge) => {
     const { partner } = bridge;
 
-    return (
-      partner.symbol.toLowerCase() === to.symbol.toLowerCase() &&
-      isEqual(pick(partner, ['mode', 'name']), pick(to.meta, ['mode', 'name']))
-    );
+    return partner.symbol.toLowerCase() === to.symbol.toLowerCase() && isEqual(partner.name, to.meta.name);
   });
 }
 
 export function getBridge<T extends BridgeConfig>(
-  source: CrossChainDirection | [Vertices | ChainConfig, Vertices | ChainConfig]
+  source: CrossChainDirection | [Network | ChainConfig, Network | ChainConfig]
 ): Bridge<T> {
   const direction = Array.isArray(source)
-    ? source.map((item) => pick(item as Vertices, ['name', 'mode']) as Vertices)
-    : [source.from, source.to].map((item) =>
-        pick(item.meta ?? getChainConfig(item.symbol, item.type), ['name', 'mode'])
-      );
+    ? source.map((item) => (typeof item === 'object' ? item.name : (item as Network)))
+    : [source.from, source.to].map((item) => {
+        const conf = item.meta ?? getChainConfig(item.host);
+
+        return conf.name;
+      });
 
   const bridge = BRIDGES.find((item) => isEqual(item.issuing, direction) || isEqual(item.redeem, direction));
 
   if (!bridge) {
     console.log(
       '🚨 ~ file: bridge.ts ~ line 95 ~ Error',
-      `Bridge from ${direction[0]?.name}(${direction[0].mode}) to ${direction[1]?.name}(${direction[1].mode}) is not exist`
+      `Bridge from ${direction[0]} to ${direction[1]} is not exist`
     );
 
     return unknownUnavailable as Bridge<T>;
@@ -105,7 +120,7 @@ export function getBridges(source: CrossChainDirection): Bridge[] {
 export function getAvailableDVMBridge(departure: ChainConfig): Bridge<DVMBridgeConfig> {
   // FIXME: by default we use the first vertices here.
   const [bridge] = BRIDGES.filter(
-    (item) => item.status === 'available' && isEqual(item.departure, departure) && item.arrival.mode === 'dvm'
+    (item) => item.status === 'available' && isEqual(item.departure, departure) && item.arrival.name.includes('dvm')
   );
 
   if (bridge) {

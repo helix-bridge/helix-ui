@@ -1,16 +1,12 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
-import BN from 'bn.js';
-import type { ValidatorRule } from 'rc-field-form/lib/interface';
-import { TFunction } from 'react-i18next';
 import Web3 from 'web3';
-import { Network, NetworkMode, PolkadotChainConfig, PolkadotTypeNetwork, Token } from '../../model';
-import { isPolkadotNetwork, chainConfigs } from '../network/network';
+import { Network, PolkadotChainConfig } from '../../model';
+import { chainConfigs, isPolkadotNetwork } from '../network/network';
 import { canConvertToEth, convertToEth, convertToSS58, dvmAddressToAccountId } from './address';
-import { toWei } from './balance';
 
 // eslint-disable-next-line complexity
-export const isValidAddress = (address: string, network: Network, mode: NetworkMode = 'native'): boolean => {
+export const isValidAddress = (address: string, network: Network): boolean => {
   if (network === 'ethereum') {
     const isDvm = Web3.utils.isAddress(address);
     const isSS58 = isSS58Address(address);
@@ -18,7 +14,7 @@ export const isValidAddress = (address: string, network: Network, mode: NetworkM
     return isDvm || (isSS58 && canConvertToEth(address));
   }
 
-  if (isPolkadotNetwork({ name: network as PolkadotTypeNetwork, mode })) {
+  if (isPolkadotNetwork(network)) {
     return isSS58Address(address);
   }
 
@@ -34,7 +30,7 @@ export const isValidAddressStrict = (address: string, network: Network): boolean
     return isSS58Address(address, 0);
   }
 
-  if (isPolkadotNetwork({ name: network as PolkadotTypeNetwork, mode: 'native' })) {
+  if (isPolkadotNetwork(network)) {
     const target = chainConfigs.find((item) => item.name === network) as PolkadotChainConfig;
 
     return isSS58Address(address, target.ss58Prefix);
@@ -104,88 +100,3 @@ export const isSameAddress = (from: string, to: string): boolean => {
 export const isRing = (name: string | null | undefined) => /ring/i.test(String(name)) || /crab/i.test(String(name));
 
 export const isKton = (name: string | null | undefined) => /kton/i.test(String(name));
-
-export const isDeposit = (name: string | null | undefined) => /deposit/i.test(String(name));
-
-/* ------------------------------------Form Validators------------------------------------- */
-
-export type Validator = ValidatorRule['validator'];
-
-export interface ValidateOptions {
-  t: TFunction;
-  compared?: string | BN | number | null;
-  token?: Pick<Token, 'symbol' | 'decimals'>;
-  asset?: string;
-}
-
-export type ValidatorFactory = (options: ValidateOptions) => Validator;
-
-export type ValidatorRuleFactory = (options: ValidateOptions) => ValidatorRule;
-
-const zeroAmountValidator: Validator = (_o, val) => {
-  return new BN(val).isZero() ? Promise.reject() : Promise.resolve();
-};
-
-export const zeroAmountRule: ValidatorRuleFactory = (options) => {
-  const { t } = options;
-
-  return { validator: zeroAmountValidator, message: t('The transfer amount must great than 0') };
-};
-
-const amountLessThanFeeValidatorFactory: ValidatorFactory = (options) => (_, val) => {
-  const { token, compared: fee, asset } = options;
-
-  if (!fee) {
-    return Promise.reject();
-  }
-
-  const { decimals = 9 } = token || {};
-  const cur = new BN(toWei({ value: val, decimals }));
-  let pass = true;
-
-  if (isRing(asset)) {
-    pass = cur.gte(new BN(fee));
-  }
-
-  return pass ? Promise.resolve() : Promise.reject();
-};
-
-export const amountLessThanFeeRule: ValidatorRuleFactory = (options) => {
-  const { t } = options;
-  const validator = amountLessThanFeeValidatorFactory(options);
-
-  return { validator, message: t('The transfer amount is not enough to cover the fee') };
-};
-
-const insufficientBalanceValidatorFactory: ValidatorFactory = (options) => (_, val) => {
-  const { compared = '0', token } = options;
-  const max = new BN(compared as string);
-  const value = new BN(toWei({ value: val, decimals: token?.decimals ?? 9 }));
-
-  return value.gt(max) ? Promise.reject() : Promise.resolve();
-};
-
-export const insufficientBalanceRule: ValidatorRuleFactory = (options) => {
-  const { t } = options;
-  const validator = insufficientBalanceValidatorFactory(options);
-
-  return { validator, message: t('Insufficient balance') };
-};
-
-export const invalidFeeRule: ValidatorRuleFactory = (options) => {
-  const { t, compared } = options;
-
-  return {
-    validator: () => {
-      return !compared || new BN(compared).lt(new BN(0)) ? Promise.reject() : Promise.resolve();
-    },
-    message: t('Can not verify amount because of invalid fee'),
-  };
-};
-
-export const insufficientDailyLimit: ValidatorRuleFactory = (options) => {
-  const { t } = options;
-  const validator = insufficientBalanceValidatorFactory(options);
-
-  return { validator, message: t('Insufficient transfer amount today') };
-};

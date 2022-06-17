@@ -9,10 +9,10 @@ import { from as fromRx, map, of, switchMap } from 'rxjs';
 import { CrossChainStatus, MIDDLE_DURATION } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { useIsMounted } from 'shared/hooks';
-import { HelixHistoryRecord, NetworkQueryParams, SubstrateSubstrateDVMBridgeConfig, Vertices } from 'shared/model';
+import { HelixHistoryRecord, Network, NetworkQueryParams, SubstrateSubstrateDVMBridgeConfig } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { fromWei, gqlName, pollWhile, prettyNumber, revertAccount } from 'shared/utils/helper';
-import { getChainConfig, toVertices } from 'shared/utils/network';
+import { getChainConfig } from 'shared/utils/network';
 import { IBreadcrumb } from '../../../components/transaction/Breadcrumb';
 import { Bridge } from '../../../components/transaction/Bridge';
 import { SourceTx } from '../../../components/transaction/SourceTx';
@@ -100,10 +100,10 @@ const Page: NextPage<{
   const isMounted = useIsMounted();
 
   const [departure, arrival] = useMemo(() => {
-    const dep = toVertices(router.query.from as string);
-    const arr = toVertices(router.query.to as string);
+    const dep = router.query.from as Network;
+    const arr = router.query.to as Network;
 
-    return [getChainConfig(dep as Vertices), getChainConfig(arr as Vertices)];
+    return [getChainConfig(dep as Network), getChainConfig(arr as Network)];
   }, [router.query]);
 
   const bridge = getBridge<SubstrateSubstrateDVMBridgeConfig>([departure, arrival]);
@@ -319,7 +319,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ id
   const { id } = context.params!;
   const { from, to } = context.query as unknown as NetworkQueryParams;
 
-  const vertices: [Vertices, Vertices] = [toVertices(from), toVertices(to)];
+  const vertices: [Network, Network] = [from, to];
 
   const bridge = getBridge(vertices);
   const isIssuing = bridge.isIssuing(...vertices);

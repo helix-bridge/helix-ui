@@ -7,10 +7,10 @@ import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { WITHDRAW_ADDRESS } from 'shared/config/address';
 import { ENDPOINT } from 'shared/config/env';
-import { HelixHistoryRecord, SubstrateDVMBridgeConfig } from 'shared/model';
+import { HelixHistoryRecord, Network, SubstrateDVMBridgeConfig } from 'shared/model';
 import { getBridge, isDVM2Substrate } from 'shared/utils/bridge';
 import { fromWei, gqlName, prettyNumber, revertAccount } from 'shared/utils/helper';
-import { getChainConfig, toVertices } from 'shared/utils/network';
+import { getChainConfig } from 'shared/utils/network';
 import { IBreadcrumb } from '../../../components/transaction/Breadcrumb';
 import { Bridge } from '../../../components/transaction/Bridge';
 import { SourceTx } from '../../../components/transaction/SourceTx';
@@ -49,12 +49,13 @@ const Page: NextPage<{
 }> = ({ record }) => {
   const { t } = useTranslation();
   const router = useRouter();
-  const departure = getChainConfig(toVertices(router.query.from as string));
-  const arrival = getChainConfig(toVertices(router.query.to as string));
+  const departure = getChainConfig(router.query.from as Network);
+  const arrival = getChainConfig(router.query.to as Network);
   const bridge = getBridge<SubstrateDVMBridgeConfig>([departure, arrival]);
   const isIssuing = bridge.isIssuing(departure, arrival);
   const amount = useMemo(
-    () => fromWei({ value: record.amount, decimals: isDVM2Substrate(departure, arrival) ? 18 : 9 }, prettyNumber),
+    () =>
+      fromWei({ value: record.amount, decimals: isDVM2Substrate(departure.name, arrival.name) ? 18 : 9 }, prettyNumber),
     [arrival, departure, record.amount]
   );
 

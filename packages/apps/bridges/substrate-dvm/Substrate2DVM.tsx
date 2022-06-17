@@ -28,7 +28,7 @@ export function Substrate2DVM({
   form,
   direction,
   bridge,
-  balance: balances,
+  balances,
   onFeeChange,
   setTxObservableFactory,
 }: CrossChainComponentProps<SubstrateDVMBridgeConfig, CrossToken<PolkadotChainConfig>, CrossToken<DVMChainConfig>>) {

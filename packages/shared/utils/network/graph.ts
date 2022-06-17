@@ -9,7 +9,7 @@ export const crossChainGraph = BRIDGES.reduce(
       if (departure) {
         departure[1].push(ver2);
       } else {
-        acc.push([{ ...ver1 }, [{ ...ver2 }]]);
+        acc.push([ver1, [ver2]]);
       }
     };
 

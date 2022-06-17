@@ -2,19 +2,17 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
-import { Vertices } from 'shared/model';
+import { Network } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
-import { getChainConfig, getDisplayName, toVertices } from 'shared/utils/network';
+import { getChainConfig, getDisplayName } from 'shared/utils/network';
 
 export function Bridge() {
   const router = useRouter();
 
-  const [departure, arrival] = useMemo(() => {
-    const dep = toVertices(router.query.from as string);
-    const arr = toVertices(router.query.to as string);
-
-    return [getChainConfig(dep as Vertices), getChainConfig(arr as Vertices)];
-  }, [router.query]);
+  const [departure, arrival] = useMemo(
+    () => [getChainConfig(router.query.from as Network), getChainConfig(router.query.to as Network)],
+    [router.query]
+  );
 
   const bridge = getBridge([departure, arrival]);
 

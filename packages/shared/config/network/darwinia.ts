@@ -2,7 +2,6 @@ import { PolkadotChainConfig } from '../../model';
 
 export const darwiniaConfig: PolkadotChainConfig = {
   isTest: false,
-  mode: 'native',
   name: 'darwinia',
   logos: [
     { name: 'darwinia.png', type: 'main' },
@@ -23,15 +22,16 @@ export const darwiniaConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'substrate-substrateDVM',
-          partner: { name: 'crab', mode: 'dvm', role: 'receiver', symbol: 'xRING' },
+          partner: { name: 'crab-dvm', role: 'receiver', symbol: 'xRING' },
         },
         {
           category: 'helix',
           bridge: 'ethereum-darwinia',
-          partner: { name: 'ethereum', mode: 'native', role: 'issuer', symbol: 'RING' },
+          partner: { name: 'ethereum', role: 'issuer', symbol: 'RING' },
         },
       ],
       type: 'native',
+      host: 'darwinia',
       logo: 'token-ring.svg',
       symbol: 'RING',
       address: '0x9469d013805bffb7d3debe5e7839237e535ec483',
@@ -43,15 +43,16 @@ export const darwiniaConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'substrate-substrateDVM',
-          partner: { name: 'crab', mode: 'dvm', role: 'receiver', symbol: 'xKTON' },
+          partner: { name: 'crab-dvm', role: 'receiver', symbol: 'xKTON' },
         },
         {
           category: 'helix',
           bridge: 'ethereum-darwinia',
-          partner: { name: 'ethereum', mode: 'native', role: 'issuer', symbol: 'KTON' },
+          partner: { name: 'ethereum', role: 'issuer', symbol: 'KTON' },
         },
       ],
       type: 'native',
+      host: 'darwinia',
       logo: 'token-kton.svg',
       symbol: 'KTON',
       address: '0x9f284e1337a815fe77d2ff4ae46544645b20c5ff',

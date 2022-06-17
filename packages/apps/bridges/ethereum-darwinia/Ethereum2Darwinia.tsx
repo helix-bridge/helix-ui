@@ -40,7 +40,7 @@ export function Ethereum2Darwinia({
   bridge,
   onFeeChange,
   updateAllowancePayload,
-  balance: balances,
+  balances,
 }: CrossChainComponentProps<
   EthereumDarwiniaBridgeConfig,
   CrossToken<EthereumChainConfig>,

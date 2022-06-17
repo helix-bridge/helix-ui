@@ -55,13 +55,13 @@ jobs:
         if: failure()
         with:
           name: e2e-screenshots
-          path: cypress/screenshots
+          path: packages/apps/cypress/screenshots
 
       - uses: actions/upload-artifact@v1
         if: failure()
         with:
           name: e2e-videos
-          path: cypress/videos
+          path: packages/apps/cypress/videos
 
       - id: output-ok
         run: echo "::set-output name=STATUS::ok"

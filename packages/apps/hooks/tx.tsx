@@ -36,7 +36,10 @@ export function useAfterTx<T extends CrossChainPayload>() {
 
               const { from, to } = payload.direction;
 
-              if (isDarwinia2Ethereum(from.meta, to.meta) || isEthereum2Darwinia(from.meta, to.meta)) {
+              if (
+                isDarwinia2Ethereum(from.meta.name, to.meta.name) ||
+                isEthereum2Darwinia(from.meta.name, to.meta.name)
+              ) {
                 router.push('/history');
               } else {
                 window.open('https://helixbridge.app/zh/transaction', '_blank');

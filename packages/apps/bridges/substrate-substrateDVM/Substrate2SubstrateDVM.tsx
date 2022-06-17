@@ -44,7 +44,7 @@ export function Substrate2SubstrateDVM({
   bridge,
   setBridgeState,
   onFeeChange,
-  balance: balances,
+  balances,
 }: CrossChainComponentProps<
   SubstrateSubstrateDVMBridgeConfig,
   CrossToken<PolkadotChainConfig>,
@@ -57,7 +57,7 @@ export function Substrate2SubstrateDVM({
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const getBalances = useDarwiniaAvailableBalances(departure);
   const bridgeState = useBridgeStatus(direction);
-  const [ring] = balances as BN[];
+  const [ring] = (balances ?? []) as BN[];
 
   const feeWithSymbol = useMemo(
     () =>
@@ -78,14 +78,14 @@ export function Substrate2SubstrateDVM({
     // eslint-disable-next-line complexity
     const fn = () => (data: IssuingPayload) => {
       if (!fee || !dailyLimit || !ring) {
-        return EMPTY.subscribe();
+        return EMPTY;
       }
 
       const msg = validateBeforeTx(ring, new BN(toWei(data.direction.from)), dailyLimit);
 
       if (msg) {
         message.error(t(msg));
-        return EMPTY.subscribe();
+        return EMPTY;
       }
 
       return createTxWorkflow(

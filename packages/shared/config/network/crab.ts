@@ -7,7 +7,6 @@ export const crabConfig: PolkadotChainConfig = {
     { name: 'crab.svg', type: 'minor' },
     { name: 'crab-logo.svg', type: 'assist' },
   ],
-  mode: 'native',
   name: 'crab',
   provider: 'wss://darwinia-crab.api.onfinality.io/public-ws',
   social: {
@@ -23,10 +22,16 @@ export const crabConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'substrate-DVM',
-          partner: { name: 'crab', mode: 'dvm', role: 'receiver', symbol: 'CRAB' },
+          partner: { name: 'crab-dvm', role: 'receiver', symbol: 'CRAB' },
+        },
+        {
+          category: 'helix',
+          bridge: 'parachain-substrate',
+          partner: { name: 'crab-parachain', role: 'issuer', symbol: 'CRAB' },
         },
       ],
       type: 'native',
+      host: 'crab',
       logo: 'token-crab.svg',
       symbol: 'CRAB',
       address: '',
@@ -42,6 +47,7 @@ export const crabConfig: PolkadotChainConfig = {
         // },
       ],
       type: 'native',
+      host: 'crab',
       logo: 'token-ckton.svg',
       symbol: 'CKTON',
       address: '',

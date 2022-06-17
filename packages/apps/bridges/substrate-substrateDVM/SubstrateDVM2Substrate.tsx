@@ -42,7 +42,7 @@ export function SubstrateDVM2Substrate({
   form,
   bridge,
   direction,
-  balance,
+  balances,
   onFeeChange,
   setTxObservableFactory,
   setBridgeState,
@@ -78,15 +78,15 @@ export function SubstrateDVM2Substrate({
 
   useEffect(() => {
     const fn = () => (data: RedeemPayload) => {
-      if (!fee || !balance || !allowance) {
-        return EMPTY.subscribe();
+      if (!fee || !balances || !allowance) {
+        return EMPTY;
       }
 
-      const msg = validateBeforeTx(balance as BN, new BN(toWei(direction.from)), allowance);
+      const msg = validateBeforeTx(balances[0] as BN, new BN(toWei(direction.from)), allowance);
 
       if (msg) {
         message.error(t(msg));
-        return EMPTY.subscribe();
+        return EMPTY;
       }
 
       const beforeTx = applyModalObs({
@@ -101,7 +101,7 @@ export function SubstrateDVM2Substrate({
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [account, afterCrossChain, allowance, balance, direction.from, fee, feeWithSymbol, setTxObservableFactory, t]);
+  }, [account, afterCrossChain, allowance, balances, direction.from, fee, feeWithSymbol, setTxObservableFactory, t]);
 
   useEffect(() => {
     const { to: arrival } = direction;

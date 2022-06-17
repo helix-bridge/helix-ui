@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { initReactI18next } from 'react-i18next';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { TxDoneComponentProps } from 'shared/model';
-import { isDarwiniaDVMNetwork, isPolkadotNetwork } from 'shared/utils/network';
+import { isDVMNetwork, isPolkadotNetwork } from 'shared/utils/network';
 import { useITranslation } from '../../hooks';
 
 export function TransferDone({ tx, value }: TxDoneComponentProps) {
@@ -26,7 +26,7 @@ export function TransferDone({ tx, value }: TxDoneComponentProps) {
         <SubscanLink txHash={tx.hash} network={value.direction.from.meta}>
           {t('View in {{scan}} explorer', {
             scan:
-              isPolkadotNetwork(value.direction.from.meta) || isDarwiniaDVMNetwork(value.direction.from.meta)
+              isPolkadotNetwork(value.direction.from.meta) || isDVMNetwork(value.direction.from.meta)
                 ? 'Subscan'
                 : 'Etherscan',
           })}

@@ -1,25 +1,4 @@
-import { addDays, fromUnixTime } from 'date-fns';
-
-// eslint-disable-next-line no-magic-numbers
-export const timezoneOffSet = new Date().getTimezoneOffset() * 60;
-
-export function truth(): true {
-  return true;
-}
-
-export function getTimeRange(
-  startTime: number,
-  duration: number
-): {
-  start: Date;
-  end: Date;
-} {
-  const base = 30;
-  const start = fromUnixTime(startTime);
-  const end = addDays(start, base * duration);
-
-  return { start, end };
-}
+import { fromUnixTime } from 'date-fns';
 
 export const gqlName = (query: string) =>
   query
@@ -28,5 +7,8 @@ export const gqlName = (query: string) =>
     .slice(0, -1) as string;
 
 export function unixTimeToLocal(time: number) {
+  // eslint-disable-next-line no-magic-numbers
+  const timezoneOffSet = new Date().getTimezoneOffset() * 60;
+
   return fromUnixTime(time - timezoneOffSet).toLocaleString();
 }

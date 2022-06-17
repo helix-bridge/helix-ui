@@ -6,7 +6,6 @@ export const pangoroConfig: PolkadotChainConfig = {
     { name: 'pangoro.png', type: 'main' },
     { name: 'pangoro.png', type: 'minor' },
   ],
-  mode: 'native',
   name: 'pangoro',
   provider: 'wss://pangoro-rpc.darwinia.network',
   social: {
@@ -24,10 +23,11 @@ export const pangoroConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'substrate-substrateDVM',
-          partner: { name: 'pangolin', mode: 'dvm', role: 'receiver', symbol: 'xORING' },
+          partner: { name: 'pangolin-dvm', role: 'receiver', symbol: 'xORING' },
         },
       ],
       type: 'native',
+      host: 'pangoro',
       logo: 'token-ring.svg',
       symbol: 'ORING',
       address: '',

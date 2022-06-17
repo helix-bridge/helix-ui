@@ -61,7 +61,6 @@
   "Symbol": "Symbol",
   "Target Chain": "Target Chain",
   "The selected wallet does not match the token to be transferred": "The selected wallet does not match the token to be transferred",
-  "The sending address and the receiving address cannot be the same": "The sending address and the receiving address cannot be the same",
   "The system is under maintenance, please try again later": "The system is under maintenance, please try again later",
   "The transaction has been packaged": "The transaction has been packaged",
   "The transaction has been sent, please check the transaction progress in the history or explorer.": "The transaction has been sent, please check the transaction progress in the history or explorer.",

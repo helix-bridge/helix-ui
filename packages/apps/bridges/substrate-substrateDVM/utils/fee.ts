@@ -3,10 +3,11 @@ import BN from 'bn.js';
 import { last } from 'lodash';
 import { Bridge, ChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
+import { isDVMNetwork } from 'shared/utils/network';
 
 const queryFeeFromRelayers = async (from: ChainConfig, to: ChainConfig) => {
   const api = entrance.polkadot.getInstance(from.provider);
-  const section = from.mode === 'dvm' || to.isTest ? `${to.name}FeeMarket` : 'feeMarket';
+  const section = isDVMNetwork(from.name) || to.isTest ? `${to.name.split('-')[0]}FeeMarket` : 'feeMarket';
 
   await waitUntilConnected(api);
 

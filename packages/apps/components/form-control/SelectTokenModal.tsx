@@ -5,9 +5,9 @@ import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { useLocalSearch } from 'shared/hooks';
-import { ChainConfig, TokenInfoWithMeta, Vertices } from 'shared/model';
-import { chainConfigs, getDisplayName, isDarwiniaDVMNetwork } from 'shared/utils/network';
-import { tokenModeToChainMode, tokenSearchFactory } from '../../utils';
+import { ChainConfig, TokenInfoWithMeta, Network } from 'shared/model';
+import { chainConfigs, getDisplayName, isDVMNetwork } from 'shared/utils/network';
+import { tokenSearchFactory } from '../../utils';
 import { BaseModal } from '../widget/BaseModal';
 
 interface SelectTokenModalProps {
@@ -17,18 +17,18 @@ interface SelectTokenModalProps {
   fromToken?: TokenInfoWithMeta;
 }
 
-const colors: ({ color: string } & Vertices)[] = [
-  { name: 'crab', mode: 'native', color: '#cd201f' },
-  // { name: 'crab', mode: 'dvm', color: '#B32BB6' },
-  { name: 'darwinia', mode: 'native', color: '#FF007A' },
-  { name: 'ethereum', mode: 'native', color: '#1C87ED' },
-  { name: 'ropsten', mode: 'native', color: 'blue' },
-  { name: 'pangolin', mode: 'native', color: 'purple' },
-  // { name: 'pangolin', mode: 'dvm', color: 'lime' },
-  { name: 'pangoro', mode: 'native', color: 'cyan' },
+const colors: { name: Network; color: string }[] = [
+  { name: 'crab', color: '#cd201f' },
+  { name: 'crab-dvm', color: '#B32BB6' },
+  { name: 'darwinia', color: '#FF007A' },
+  { name: 'ethereum', color: '#1C87ED' },
+  { name: 'ropsten', color: 'blue' },
+  { name: 'pangolin', color: 'purple' },
+  { name: 'pangolin-dvm', color: 'lime' },
+  { name: 'pangoro', color: 'cyan' },
 ];
 
-const chainColor = ({ name: network }: Vertices): string => {
+const chainColor = (network: Network): string => {
   const target = colors.find((item) => item.name === network);
 
   return target?.color ?? 'processing';
@@ -46,10 +46,21 @@ const removeLeaderCharacters = (name: string): string => {
 export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: SelectTokenModalProps) => {
   const { t } = useTranslation();
 
+  const inPartners = useCallback(
+    (target: ChainConfig) => {
+      if (!fromToken) {
+        return true;
+      }
+
+      return !!fromToken.cross.find((cross) => cross.partner.name === target.name);
+    },
+    [fromToken]
+  );
+
   const allTokens = useMemo(
     () =>
       lodashChain(chainConfigs)
-        .filter((item) => !fromToken || !(fromToken.meta.name === item.name && fromToken.meta.mode === item.mode))
+        .filter((item) => !fromToken || (!(fromToken.meta.name === item.name) && inPartners(item)))
         .map((item) =>
           item.tokens
             .filter(
@@ -59,14 +70,14 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
         )
         .flatten()
         .value(),
-    [fromToken]
+    [fromToken, inPartners]
   );
 
   const allChains = useMemo(
     () =>
       lodashChain(allTokens)
         .map((item) => item.meta)
-        .uniqWith((pre, cure) => pre.name === cure.name && pre.mode === cure.mode)
+        .uniqWith((pre, cure) => pre.name === cure.name)
         .value(),
     [allTokens]
   );
@@ -122,7 +133,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
           const isS2SKton = /^[x]?[O]?KTON/.test(item.symbol) && !item.address;
           const isAppsFeature =
             ['CKTON', 'PKTON', 'WCKTON', 'WPKTON'].some((name) => item.symbol.includes(name)) &&
-            isDarwiniaDVMNetwork(item.meta);
+            isDVMNetwork(item.meta);
           const disabled = isS2SKton || isAppsFeature;
 
           return (
@@ -139,9 +150,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
 
                 <Typography.Text>{item.name}</Typography.Text>
 
-                <Tag color={chainColor({ name: item.meta.name, mode: tokenModeToChainMode(item.type) })}>
-                  {getDisplayName(item.meta)}
-                </Tag>
+                <Tag color={chainColor(item.meta.name)}>{getDisplayName(item.meta)}</Tag>
 
                 {item.meta.isTest && (
                   <Tag color="green" className="uppercase">

@@ -6,6 +6,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { isNull } from 'lodash';
 import Web3 from 'web3';
 import { ChainConfig, PolkadotChainConfig } from '../../model';
+import { isDVMNetwork, isPolkadotNetwork } from '../network';
 
 export const registry = new TypeRegistry();
 
@@ -78,11 +79,11 @@ export function remove0x(text: string): string {
 
 // eslint-disable-next-line complexity
 export function revertAccount(account: string, config: ChainConfig): string {
-  if (config.mode === 'native' || config?.wallets.includes('polkadot')) {
+  if (isPolkadotNetwork(config.name) || config?.wallets.includes('polkadot')) {
     return convertToSS58(account, (<PolkadotChainConfig>config).ss58Prefix);
   }
 
-  if (config.mode === 'dvm' && account.startsWith('0x64766d3a00000000000000')) {
+  if (isDVMNetwork(config.name) && account.startsWith('0x64766d3a00000000000000')) {
     return convertToEth(account) ?? account;
   }
 

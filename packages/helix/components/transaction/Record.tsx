@@ -4,29 +4,27 @@ import { useRouter } from 'next/router';
 import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
 import { Icon } from 'shared/components/widget/Icon';
 import { HelixHistoryRecord } from 'shared/model';
-import { isDVM2Substrate, isS2S, isSubstrateDVM } from 'shared/utils/bridge';
+import { isDVM2Substrate, isSubstrateSubstrate, isSubstrateDVM } from 'shared/utils/bridge';
 import { fromWei, prettyNumber, revertAccount } from 'shared/utils/helper';
-import { getChainConfig, getDisplayName, toVertices } from 'shared/utils/network';
+import { getChainConfig, getDisplayName } from 'shared/utils/network';
 import { Path } from '../../config';
 
 // eslint-disable-next-line complexity
 export function Record({ record }: { record: HelixHistoryRecord }) {
   const { fromChain, sender, recipient, toChain } = record;
-  const departure = toVertices(fromChain);
-  const arrival = toVertices(toChain);
-  const fromConfig = getChainConfig(departure);
-  const toConfig = getChainConfig(arrival);
+  const fromConfig = getChainConfig(fromChain);
+  const toConfig = getChainConfig(toChain);
   const fromAccount = revertAccount(sender, fromConfig);
   const toAccount = revertAccount(recipient, toConfig);
   const router = useRouter();
 
-  const amount = fromWei({ value: record.amount, decimals: isDVM2Substrate(departure, arrival) ? 18 : 9 }, (val) =>
+  const amount = fromWei({ value: record.amount, decimals: isDVM2Substrate(fromChain, toChain) ? 18 : 9 }, (val) =>
     prettyNumber(val, { ignoreZeroDecimal: true })
   );
 
   const tokenName = !record.token.startsWith('0x')
     ? record.token
-    : `${departure.mode === 'dvm' ? 'x' : ''}${fromConfig?.isTest ? 'O' : ''}RING`;
+    : `${fromChain.includes('dvm') ? 'x' : ''}${fromConfig?.isTest ? 'O' : ''}RING`;
 
   return (
     <>
@@ -60,7 +58,7 @@ export function Record({ record }: { record: HelixHistoryRecord }) {
       </Tooltip>
 
       <span className="justify-self-center">
-        {fromWei({ value: record.fee, decimals: departure.mode === 'dvm' ? 18 : 9 })}
+        {fromWei({ value: record.fee, decimals: fromChain.includes('dvm') ? 18 : 9 })}
       </span>
 
       <span className="justify-self-center capitalize">{record.bridge}</span>
@@ -71,12 +69,10 @@ export function Record({ record }: { record: HelixHistoryRecord }) {
         <Button
           type="link"
           onClick={() => {
-            const from = toVertices(record.fromChain);
-            const to = toVertices(record.toChain);
             const radix = 16;
-            const paths = isS2S(from, to)
+            const paths = isSubstrateSubstrate(record.fromChain, record.toChain)
               ? ['s2s', record.laneId + '0x' + Number(record.nonce).toString(radix)]
-              : isSubstrateDVM(from, to)
+              : isSubstrateDVM(record.fromChain, record.toChain)
               ? ['s2dvm', record.id]
               : [];
 
