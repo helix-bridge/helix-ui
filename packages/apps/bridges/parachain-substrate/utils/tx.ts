@@ -12,7 +12,7 @@ export function redeem(value: IssuingPayload, fee: BN): Observable<Tx> {
   const { from: departure, to } = direction;
   const api = entrance.polkadot.getInstance(direction.from.meta.provider);
   const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).sub(fee).toString();
-  const WEIGHT = '8000000000';
+  const WEIGHT = '10000000000';
   const module = `from${upperFirst(to.meta.name)}Issuing`;
   const extrinsic = api.tx[module].burnAndRemoteUnlock(String(to.meta.specVersion), WEIGHT, amount, fee, recipient);
 
@@ -24,7 +24,7 @@ export function issuing(value: RedeemPayload, fee: BN): Observable<Tx> {
   const { from: departure, to } = direction;
   const api = entrance.polkadot.getInstance(direction.from.meta.provider);
   const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).sub(fee).toString();
-  const WEIGHT = '8000000000';
+  const WEIGHT = '10000000000';
   const module = `to${to.host.split('-').map(upperFirst).join('')}Backing`;
   const extrinsic = api.tx[module].lockAndRemoteIssue(String(to.meta.specVersion), WEIGHT, amount, fee, recipient);
 
