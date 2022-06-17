@@ -22,6 +22,10 @@
     "test:shared": "cd packages/shared && yarn test",
     "test:shared:watch": "cd packages/shared && yarn test:watch",
     "test:apps:e2e:ci": "cd packages/apps && yarn test:e2e:ci",
+    "test:apps:unit": "cd packages/apps && yarn test:unit",
+    "test:apps:unit:watch": "cd packages/apps && yarn test:unit:watch",
+    "test:helix:unit": "cd packages/helix && yarn test:unit",
+    "test:helix:unit:watch": "cd packages/helix && yarn test:unit:watch",
     "format": "prettier  packages/**/*.{ts,tsx} --write"
   },
   "devDependencies": {
@@ -55,8 +59,6 @@
     "eslint-plugin-react-hooks": "^4.4.0",
     "html-webpack-plugin": "4",
     "husky": "^7.0.4",
-    "jest": "27.0.4",
-    "ts-jest": "^27.1.4",
     "lerna": "^4.0.0",
     "prettier": "^2.6.2",
     "stylelint": "^13.12.0",
