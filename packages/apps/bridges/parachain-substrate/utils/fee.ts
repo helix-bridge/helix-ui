@@ -1,12 +1,13 @@
 import { Codec } from '@polkadot/types-codec/types';
+import { hexToU8a } from '@polkadot/util';
 import BN from 'bn.js';
-import { last } from 'lodash';
+import { last, lowerFirst, upperFirst } from 'lodash';
 import { Bridge, ChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 
-const queryFeeFromRelayers = async (_: ChainConfig, to: ChainConfig) => {
-  const api = entrance.polkadot.getInstance(to.provider);
-  const section = `${to.name}ParachainFeeMarket`;
+const queryFeeFromRelayers = async (from: ChainConfig, to: ChainConfig) => {
+  const api = entrance.polkadot.getInstance(from.provider);
+  const section = lowerFirst(`${to.name.split('-').map(upperFirst).join('')}FeeMarket`);
 
   await waitUntilConnected(api);
 
@@ -22,7 +23,8 @@ const queryFeeFromRelayers = async (_: ChainConfig, to: ChainConfig) => {
 async function getFee(from: ChainConfig, to: ChainConfig): Promise<BN> {
   const res = await queryFeeFromRelayers(from, to);
 
-  const marketFee = last(res)?.fee.toString();
+  const data = last(res)?.fee.toString();
+  const marketFee = data?.startsWith('0x') ? hexToU8a(data) : data;
 
   return new BN(marketFee ?? -1); // -1: fee market does not available
 }
@@ -31,4 +33,6 @@ export async function getIssuingFee(bridge: Bridge): Promise<BN> {
   return getFee(bridge.departure, bridge.arrival);
 }
 
-export const getRedeemFee = getIssuingFee;
+export async function getRedeemFee(bridge: Bridge): Promise<BN> {
+  return getFee(bridge.arrival, bridge.departure);
+}
