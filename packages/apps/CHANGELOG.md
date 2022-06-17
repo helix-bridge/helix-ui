@@ -1,3 +1,17 @@
+# [3.1.0](https://github.com/helix-bridge/helix/compare/v1.0.6-helix...v3.1.0) (2022-06-17)
+
+
+### Bug Fixes
+
+* some known issue ([#67](https://github.com/helix-bridge/helix/issues/67)) ([cadf6c8](https://github.com/helix-bridge/helix/commit/cadf6c8bc3c5adffc05c1663dc75004bd46e8e16)), closes [#64](https://github.com/helix-bridge/helix/issues/64) [#66](https://github.com/helix-bridge/helix/issues/66) [#62](https://github.com/helix-bridge/helix/issues/62)
+
+
+### Features
+
+* parachain transfer ([#58](https://github.com/helix-bridge/helix/issues/58)) ([2c92e4e](https://github.com/helix-bridge/helix/commit/2c92e4e2a0d4c3ccaf44817d1f8476f9429b4b6a)), closes [#21](https://github.com/helix-bridge/helix/issues/21)
+
+
+
 ## [3.0.3](https://github.com/helix-bridge/helix/compare/v3.0.2-apps...v3.0.3) (2022-06-06)
 
 
