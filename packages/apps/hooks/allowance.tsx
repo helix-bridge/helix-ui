@@ -4,10 +4,10 @@ import { useState, useCallback } from 'react';
 import { EMPTY } from 'rxjs';
 import { CrossChainDirection, CrossChainPayload } from 'shared/model';
 import { getAllowance, applyModalObs, approveToken, createTxWorkflow } from 'shared/utils/tx';
+import { useITranslation } from 'shared/hooks/translation';
 import { ApproveConfirm } from '../components/tx/ApproveConfirm';
 import { ApproveDone } from '../components/tx/ApproveSuccess';
 import { useAccount, useTx, useWallet } from '../providers';
-import { useITranslation } from './translation';
 import { useAfterTx } from './tx';
 
 type ApproveValue = CrossChainPayload;

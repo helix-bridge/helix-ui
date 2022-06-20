@@ -11,4 +11,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/jest-setup.ts'],
   extensionsToTreatAsEsm: ['.ts'],
   testEnvironment: 'jsdom',
+  transformIgnorePatterns: [
+    "node_modules/(?!(@polkadot|react-i18next|next-i18next))",
+  ],
 };
