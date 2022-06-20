@@ -4,7 +4,7 @@ import { getYear } from 'date-fns';
 import { LanguageProps } from 'shared/components/widget/Language';
 import { ThemeSwitch, ThemeSwitchProps } from 'shared/components/widget/ThemeSwitch';
 import { THEME } from 'shared/config/theme';
-import { useITranslation } from '../hooks';
+import { useITranslation } from 'shared/hooks';
 
 type FooterProps = LanguageProps & { className?: string } & ThemeSwitchProps;
 
