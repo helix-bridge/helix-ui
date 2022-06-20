@@ -5,9 +5,10 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
-import { ENDPOINT, SUBSTRATE_DVM_WITHDRAW } from 'shared/config/env';
+import { CrossChainStatus } from 'shared/config/constant';
+import { ENDPOINT, SUBSTRATE_PARACHAIN_BACKING, SUBSTRATE_PARACHAIN_BURN } from 'shared/config/env';
 import { HelixHistoryRecord, Network, SubstrateDVMBridgeConfig } from 'shared/model';
-import { getBridge, isDVM2Substrate } from 'shared/utils/bridge';
+import { getBridge, isParachain2Substrate } from 'shared/utils/bridge';
 import { fromWei, gqlName, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
 import { IBreadcrumb } from '../../../components/transaction/Breadcrumb';
@@ -32,7 +33,10 @@ const Page: NextPage<{
   const isIssuing = bridge.isIssuing(departure, arrival);
   const amount = useMemo(
     () =>
-      fromWei({ value: record.amount, decimals: isDVM2Substrate(departure.name, arrival.name) ? 18 : 9 }, prettyNumber),
+      fromWei(
+        { value: record.amount, decimals: isParachain2Substrate(departure.name, arrival.name) ? 18 : 9 },
+        prettyNumber
+      ),
     [arrival, departure, record.amount]
   );
 
@@ -40,39 +44,76 @@ const Page: NextPage<{
     const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.token.toLowerCase())!;
     const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === record.token.toLowerCase())!;
 
-    const issuingTransfer = [
-      {
-        chain: departure,
-        from: revertAccount(record.sender, departure),
-        to: toToken.address,
-        token: fromToken,
-      },
-      {
-        chain: arrival,
-        from: toToken.address,
-        to: revertAccount(record.recipient, arrival),
-        token: toToken,
-      },
-    ];
+    const issuingTransfer =
+      record.result === CrossChainStatus.success
+        ? [
+            {
+              chain: departure,
+              from: revertAccount(record.sender, departure),
+              to: SUBSTRATE_PARACHAIN_BACKING,
+              token: fromToken,
+            },
+            {
+              chain: arrival,
+              from: SUBSTRATE_PARACHAIN_BACKING,
+              to: revertAccount(record.recipient, arrival),
+              token: toToken,
+            },
+          ]
+        : [
+            {
+              chain: departure,
+              from: revertAccount(record.sender, departure),
+              to: SUBSTRATE_PARACHAIN_BACKING,
+              token: fromToken,
+            },
+            {
+              chain: arrival,
+              from: SUBSTRATE_PARACHAIN_BACKING,
+              to: revertAccount(record.sender, departure),
+              token: fromToken,
+            },
+          ];
 
-    const redeemTransfer = [
-      {
-        chain: departure,
-        from: revertAccount(record.sender, departure),
-        to: SUBSTRATE_DVM_WITHDRAW,
-        token: fromToken,
-      },
-      {
-        chain: arrival,
-        from: SUBSTRATE_DVM_WITHDRAW,
-
-        to: revertAccount(record.recipient, arrival),
-        token: toToken,
-      },
-    ];
+    const redeemTransfer =
+      record.result === CrossChainStatus.success
+        ? [
+            {
+              chain: departure,
+              from: revertAccount(record.sender, departure),
+              to: SUBSTRATE_PARACHAIN_BURN,
+              token: fromToken,
+            },
+            {
+              chain: departure,
+              from: SUBSTRATE_PARACHAIN_BURN,
+              to: 'miner', // todo IS a fixed address or a miner address ?
+              token: fromToken,
+            },
+            {
+              chain: arrival,
+              from: SUBSTRATE_PARACHAIN_BURN,
+              to: revertAccount(record.recipient, arrival),
+              token: toToken,
+            },
+          ]
+        : [
+            {
+              chain: departure,
+              from: revertAccount(record.sender, departure),
+              to: SUBSTRATE_PARACHAIN_BURN,
+              token: fromToken,
+            },
+            {
+              chain: departure,
+              from: SUBSTRATE_PARACHAIN_BURN,
+              to: revertAccount(record.sender, departure),
+              token: fromToken,
+            },
+          ];
 
     return isIssuing ? issuingTransfer : redeemTransfer;
-  }, [arrival, departure, isIssuing, record.recipient, record.sender, record.token]);
+  }, [arrival, departure, isIssuing, record.recipient, record.result, record.sender, record.token]);
 
   return (
     <>

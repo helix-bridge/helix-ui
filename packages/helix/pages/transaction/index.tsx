@@ -1,5 +1,5 @@
 import { ArrowRightOutlined, ClockCircleOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Affix, Button, Input, Layout, Table, Tooltip, Typography } from 'antd';
+import { Affix, Button, Input, Layout, message, Table, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import { formatDistance, fromUnixTime } from 'date-fns';
 import format from 'date-fns-tz/format';
@@ -14,12 +14,13 @@ import { Logo } from 'shared/components/widget/Logo';
 import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { HelixHistoryRecord, Network } from 'shared/model';
-import { isDVM2Substrate, isSubstrateSubstrate, isSubstrateDVM } from 'shared/utils/bridge';
+import { isDVM2Substrate, isParachain2Substrate } from 'shared/utils/bridge';
 import { convertToDvm, fromWei, gqlName, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { chainConfigs, getChainConfig, getDisplayName, isDVMNetwork } from 'shared/utils/network';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
 import { Path } from '../../config';
 import { useAccountStatistic, useDailyStatistic } from '../../hooks';
+import { getDetailPaths } from '../../utils';
 
 const HISTORY_RECORDS = gql`
   query historyRecords($row: Int!, $page: Int!, $sender: String, $recipient: String) {
@@ -157,8 +158,12 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
       dataIndex: 'amount',
       render(value: string, record) {
         const { fromChain, toChain } = record;
-        const amount = fromWei({ value, decimals: isDVM2Substrate(fromChain, toChain) ? 18 : 9 }, (val) =>
-          prettyNumber(val, { ignoreZeroDecimal: true })
+        const amount = fromWei(
+          {
+            value,
+            decimals: isDVM2Substrate(fromChain, toChain) || isParachain2Substrate(fromChain, toChain) ? 18 : 9,
+          },
+          (val) => prettyNumber(val, { ignoreZeroDecimal: true })
         );
 
         return (
@@ -175,7 +180,7 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
       dataIndex: 'fee',
       render(value: string, record) {
         const { fromChain } = record;
-        const decimals = isDVMNetwork(fromChain) ? 18 : 9;
+        const decimals = isDVMNetwork(fromChain) || fromChain.includes('parachain') ? 18 : 9;
 
         return (
           <Tooltip title={fromWei({ value, decimals })}>
@@ -302,20 +307,19 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
         onRow={(record) => ({
           onClick() {
             const { fromChain, toChain } = record;
-            const radix = 16;
-            const paths = isSubstrateSubstrate(fromChain, toChain)
-              ? ['s2s', record.laneId + '0x' + Number(record.nonce).toString(radix)]
-              : isSubstrateDVM(fromChain, toChain)
-              ? ['s2dvm', record.id]
-              : [];
+            const paths = getDetailPaths(fromChain, toChain, record);
 
-            router.push({
-              pathname: `${Path.transaction}/${paths.join('/')}`,
-              query: new URLSearchParams({
-                from: record.fromChain,
-                to: record.toChain,
-              }).toString(),
-            });
+            if (paths.length) {
+              router.push({
+                pathname: `${Path.transaction}/${paths.join('/')}`,
+                query: new URLSearchParams({
+                  from: record.fromChain,
+                  to: record.toChain,
+                }).toString(),
+              });
+            } else {
+              message.error(`Can not find the detail page for ${fromChain} to ${toChain}`);
+            }
           },
         })}
         pagination={{ pageSize, total, current: page, size: 'default' }}

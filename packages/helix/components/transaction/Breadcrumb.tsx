@@ -6,7 +6,10 @@ export function IBreadcrumb({ txHash }: { txHash: string }) {
   const { t } = useTranslation();
 
   return (
-    <Breadcrumb className="whitespace-nowrap flex items-center overflow-hidden overflow-ellipsis">
+    <Breadcrumb
+      className="whitespace-nowrap flex items-center overflow-hidden overflow-ellipsis"
+      style={{ marginTop: '1.5rem' }}
+    >
       <BreadcrumbItem>{t('Explorer')}</BreadcrumbItem>
       <BreadcrumbItem>{t('Transaction')}</BreadcrumbItem>
       <BreadcrumbItem>

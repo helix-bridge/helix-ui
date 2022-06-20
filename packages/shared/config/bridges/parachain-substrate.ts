@@ -11,8 +11,8 @@ const parachainCrabConfig: ParachainSubstrateBridgeConfig = {
 };
 
 export const parachainCrab = new Bridge<ParachainSubstrateBridgeConfig>(
-  crabParachainConfig,
   crabConfig,
+  crabParachainConfig,
   parachainCrabConfig,
   {
     category: 'helix',
@@ -29,8 +29,8 @@ const parachainPangolinConfig: ParachainSubstrateBridgeConfig = {
 };
 
 export const parachainPangolin = new Bridge<ParachainSubstrateBridgeConfig>(
-  pangolinParachainConfig,
   pangolinConfig,
+  pangolinParachainConfig,
   parachainPangolinConfig,
   { category: 'helix', activeArrivalConnection: true, name: 'parachain-substrate' }
 );
