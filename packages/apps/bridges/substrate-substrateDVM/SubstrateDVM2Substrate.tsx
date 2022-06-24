@@ -1,4 +1,5 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
+import { BN_ZERO } from '@polkadot/util';
 import { message, Typography } from 'antd';
 import BN from 'bn.js';
 import { useTranslation } from 'next-i18next';
@@ -27,10 +28,11 @@ import { RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getRedeemFee } from './utils';
 import { redeem } from './utils/tx';
 
-const validateBeforeTx = (balance: BN, amount: BN, allowance: BN): string | undefined => {
+const validateBeforeTx = (balance: BN, amount: BN, allowance: BN, fee: BN): string | undefined => {
   const validations: [boolean, string][] = [
     [balance.lt(amount), 'Insufficient balance'],
     [allowance.lt(amount), 'Insufficient allowance'],
+    [fee.lt(BN_ZERO), 'Invalid fee'],
   ];
   const target = validations.find((item) => item[0]);
 
@@ -82,7 +84,7 @@ export function SubstrateDVM2Substrate({
         return EMPTY;
       }
 
-      const msg = validateBeforeTx(balances[0] as BN, new BN(toWei(direction.from)), allowance);
+      const msg = validateBeforeTx(balances[0] as BN, new BN(toWei(direction.from)), allowance, fee);
 
       if (msg) {
         message.error(t(msg));
