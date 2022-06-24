@@ -14,7 +14,7 @@
     "lib"
   ],
   "scripts": {
-    "test": "cross-env CHAIN_TYPE=all jest --config=jest.config.js",
+    "test": "cross-env CHAIN_TYPE=all jest --config=jest.config.js --coverage",
     "test:watch": "cross-env CHAIN_TYPE=all jest --watch"
   },
   "peerDependencies": {

@@ -18,8 +18,8 @@ export function TransferDetail({
       tip={t('List of tokens transferred in this cross-chain transaction.')}
     >
       <div className="flex flex-col gap-2">
-        {transfers.map(({ chain, from, to, token }) => (
-          <div key={token.name} className="flex items-center gap-2">
+        {transfers.map(({ chain, from, to, token }, index) => (
+          <div key={[token.name, token.host, index].join('-')} className="flex items-center gap-2">
             <Logo chain={chain} width={16} height={16} className="w-5" />
             <span>{t('From')}</span>
             <span className="w-32 text-center truncate">{from}</span>
