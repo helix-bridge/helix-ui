@@ -2,7 +2,18 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "./",
+    "jsx": "preserve"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "../shared/model/camelCaseKeys.ts", "./jest-setup.ts", "../shared/hooks/translation.ts"],
-  "exclude": ["node_modules", "cypress"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "../shared/model/camelCaseKeys.ts",
+    "./jest-setup.ts",
+    "../shared/hooks/translation.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "cypress"
+  ]
 }
