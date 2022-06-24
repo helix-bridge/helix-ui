@@ -1,10 +1,11 @@
 import { TypeRegistry } from '@polkadot/types';
+import { u8aToHex } from '@polkadot/util';
 import BN from 'bn.js';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, from as rxFrom, switchMap, mergeMap } from 'rxjs';
 import { abi } from 'shared/config/abi';
 import { WITHDRAW_ADDRESS } from 'shared/config/address';
 import { Tx } from 'shared/model';
-import { entrance } from 'shared/utils/connection';
+import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { convertToDvm, convertToSS58, dvmAddressToAccountId, isRing, toWei } from 'shared/utils/helper';
 import { genEthereumContractTxObs, genEthereumTransactionObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import { TransferPayload, WithdrawPayload } from '../model';
@@ -40,13 +41,26 @@ export function redeem(value: WithdrawPayload): Observable<Tx> {
   }
 
   if (isRing(from.symbol)) {
-    return genEthereumTransactionObs({
-      from: sender,
-      to: WITHDRAW_ADDRESS,
-      data: accountId,
-      value: amount,
-      gas: 55000,
-    });
+    const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
+    const api = entrance.polkadot.getInstance(from.meta.provider);
+
+    return rxFrom(waitUntilConnected(api)).pipe(
+      mergeMap(async () => api.tx.balances.transfer(recipient, toWei({ value: from.amount, decimals: 9 }))),
+      switchMap((extrinsic) =>
+        rxFrom(
+          web3.eth.estimateGas({ from: sender, to: WITHDRAW_ADDRESS, data: u8aToHex(extrinsic.method.toU8a()) })
+        ).pipe(
+          switchMap((gas) =>
+            genEthereumTransactionObs({
+              from: sender,
+              to: WITHDRAW_ADDRESS,
+              data: u8aToHex(extrinsic.method.toU8a()),
+              gas,
+            })
+          )
+        )
+      )
+    );
   }
 
   const withdrawalAddress = convertToDvm(recipient);

@@ -27,7 +27,10 @@ export function SubscanLink({
   txHash,
   ...other
 }: SubscanLinkProps) {
-  const network = typeof networkOrChainConfig === 'object' ? networkOrChainConfig.name : networkOrChainConfig;
+  const network =
+    typeof networkOrChainConfig === 'object'
+      ? (networkOrChainConfig.name.split('-')[0] as Network)
+      : networkOrChainConfig;
 
   if (address) {
     return (
