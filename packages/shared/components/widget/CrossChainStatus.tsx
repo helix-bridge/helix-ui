@@ -12,7 +12,7 @@ export function CrossChainState({ value, className = '' }: { value: number; clas
       className={`flex items-center gap-1 px-2 rounded-xs max-w-max min-w-min h-6 text-gray-200 ${className}`}
     >
       <Icon />
-      <span>{CrossChainStatus[value]}</span>
+      <span className="h-full">{CrossChainStatus[value]}</span>
     </div>
   );
 }

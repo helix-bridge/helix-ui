@@ -5,9 +5,9 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
-import { CrossChainStatus } from 'shared/config/constant';
-import { ENDPOINT, SUBSTRATE_PARACHAIN_BACKING, SUBSTRATE_PARACHAIN_BURN } from 'shared/config/env';
-import { HelixHistoryRecord, Network, SubstrateDVMBridgeConfig } from 'shared/model';
+import { CrossChainStatus, GENESIS_ADDRESS } from 'shared/config/constant';
+import { ENDPOINT, SUBSTRATE_PARACHAIN_BACKING } from 'shared/config/env';
+import { HelixHistoryRecord, Network, ParachainSubstrateBridgeConfig } from 'shared/model';
 import { getBridge, isParachain2Substrate } from 'shared/utils/bridge';
 import { fromWei, gqlName, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
@@ -29,7 +29,7 @@ const Page: NextPage<{
   const router = useRouter();
   const departure = getChainConfig(router.query.from as Network);
   const arrival = getChainConfig(router.query.to as Network);
-  const bridge = getBridge<SubstrateDVMBridgeConfig>([departure, arrival]);
+  const bridge = getBridge<ParachainSubstrateBridgeConfig>([departure, arrival]);
   const isIssuing = bridge.isIssuing(departure, arrival);
   const amount = useMemo(
     () =>
@@ -55,7 +55,7 @@ const Page: NextPage<{
             },
             {
               chain: arrival,
-              from: SUBSTRATE_PARACHAIN_BACKING,
+              from: GENESIS_ADDRESS,
               to: revertAccount(record.recipient, arrival),
               token: toToken,
             },
@@ -81,19 +81,19 @@ const Page: NextPage<{
             {
               chain: departure,
               from: revertAccount(record.sender, departure),
-              to: SUBSTRATE_PARACHAIN_BURN,
-              token: fromToken,
-            },
-            {
-              chain: departure,
-              from: SUBSTRATE_PARACHAIN_BURN,
-              to: 'miner', // todo IS a fixed address or a miner address ?
+              to: SUBSTRATE_PARACHAIN_BACKING,
               token: fromToken,
             },
             {
               chain: arrival,
-              from: SUBSTRATE_PARACHAIN_BURN,
+              from: SUBSTRATE_PARACHAIN_BACKING,
               to: revertAccount(record.recipient, arrival),
+              token: toToken,
+            },
+            {
+              chain: departure,
+              from: revertAccount(record.sender, departure),
+              to: GENESIS_ADDRESS,
               token: toToken,
             },
           ]
@@ -101,12 +101,12 @@ const Page: NextPage<{
             {
               chain: departure,
               from: revertAccount(record.sender, departure),
-              to: SUBSTRATE_PARACHAIN_BURN,
+              to: SUBSTRATE_PARACHAIN_BACKING,
               token: fromToken,
             },
             {
               chain: departure,
-              from: SUBSTRATE_PARACHAIN_BURN,
+              from: SUBSTRATE_PARACHAIN_BACKING,
               to: revertAccount(record.sender, departure),
               token: fromToken,
             },
