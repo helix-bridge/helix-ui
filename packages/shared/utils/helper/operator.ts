@@ -3,7 +3,7 @@ import { last, mergeMap, MonoTypeOperatorFunction, scan, takeWhile, tap, timer }
 function attemptsGuardFactory(maxAttempts: number) {
   return (attemptsCount: number) => {
     if (attemptsCount > maxAttempts) {
-      throw new Error(`Exceeded maxAttempts: ${maxAttempts}, actual attempts: ${attemptsCount}`);
+      throw new Error(`Exceeded max attempts: ${maxAttempts}`);
     }
   };
 }

@@ -5,12 +5,19 @@ import { useRouter } from 'next/router';
 import { PropsWithChildren, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Footer } from 'shared/components/Footer';
+import { Nav, Navigator } from 'shared/components/Navigator';
 import { THEME } from 'shared/config/theme';
 import { readStorage } from 'shared/utils/helper';
 import { Path } from '../config';
-import { Navigator } from './Navigator';
 
 const { Header, Content } = Layout;
+
+const navigators: Nav[] = [
+  { label: 'Dashboard', path: Path.root },
+  { label: 'Explorer', path: Path.transaction },
+  // { label: 'DAO', path: 'dao' },
+  // { label: 'Docs', path: Path.docs },
+];
 
 function AppLayout({ children }: PropsWithChildren<unknown>) {
   const { t } = useTranslation('common');
@@ -43,7 +50,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
           bodyStyle={{ padding: 0 }}
           className="block lg:hidden"
         >
-          <Navigator theme={theme} toggle={() => setCollapsed(true)} />
+          <Navigator navigators={navigators} theme={theme} onClick={() => setCollapsed(true)} />
         </Drawer>
 
         <div onClick={() => setCollapsed(false)} className="block lg:hidden">
@@ -51,7 +58,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
         </div>
 
         <div className="hidden lg:flex lg:justify-end items-center lg:flex-1 ml-2 md:ml-8 lg:ml-12">
-          <Navigator theme={theme} />
+          <Navigator navigators={navigators} theme={theme} />
 
           <Button
             onClick={() => {

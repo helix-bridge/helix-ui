@@ -39,21 +39,18 @@ export function Language({
   return (
     <Dropdown
       overlay={
-        <Menu>
-          {lang.map((item) => (
-            <Menu.Item
-              onClick={() => {
-                if (current !== item.name) {
-                  setCurrent(item.short);
-                  i18n.changeLanguage(item.short);
-                }
-              }}
-              key={item.short}
-            >
-              {t(item.name)}
-            </Menu.Item>
-          ))}
-        </Menu>
+        <Menu
+          items={lang.map((item) => ({
+            key: item.short,
+            label: t(item.name),
+            onClick() {
+              if (current !== item.name) {
+                setCurrent(item.short);
+                i18n.changeLanguage(item.short);
+              }
+            },
+          }))}
+        />
       }
       className={className}
     >

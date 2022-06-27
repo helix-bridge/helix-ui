@@ -5,15 +5,20 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { PropsWithChildren, useMemo, useState } from 'react';
 import { Footer } from 'shared/components/Footer';
+import { Nav, Navigator } from 'shared/components/Navigator';
 import { Icon } from 'shared/components/widget/Icon';
 import { THEME } from 'shared/config/theme';
 import { readStorage } from 'shared/utils/helper';
 import { useITranslation } from '../hooks';
-import { Navigator } from './Navigator';
 import { Tools } from './Tools';
 import { ActiveAccount } from './widget/account/ActiveAccount';
 
 const { Header, Content } = Layout;
+
+const navigators: Nav[] = [
+  { label: 'Home', path: '/' },
+  { label: 'History', path: '/history' },
+];
 
 function AppLayout({ children }: PropsWithChildren<unknown>) {
   const { t } = useITranslation();
@@ -109,7 +114,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
           bodyStyle={{ padding: 0 }}
           className="block lg:hidden"
         >
-          <Navigator theme={theme} toggle={() => setCollapsed(true)} />
+          <Navigator navigators={navigators} theme={theme} onClick={() => setCollapsed(true)} />
         </Drawer>
 
         <div onClick={() => setCollapsed(false)} className="block lg:hidden">
