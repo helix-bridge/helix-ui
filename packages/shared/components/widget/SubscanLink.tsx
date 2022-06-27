@@ -30,7 +30,7 @@ export function SubscanLink({
   const network =
     typeof networkOrChainConfig === 'object'
       ? (networkOrChainConfig.name.split('-')[0] as Network)
-      : networkOrChainConfig;
+      : (networkOrChainConfig.split('-')[0] as Network);
 
   if (address) {
     return (
