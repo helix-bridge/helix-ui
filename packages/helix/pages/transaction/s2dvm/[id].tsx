@@ -30,6 +30,7 @@ const Page: NextPage<{
   const arrival = getChainConfig(router.query.to as Network);
   const bridge = getBridge<SubstrateDVMBridgeConfig>([departure, arrival]);
   const isIssuing = bridge.isIssuing(departure, arrival);
+
   const amount = useMemo(
     () =>
       fromWei({ value: record.amount, decimals: isDVM2Substrate(departure.name, arrival.name) ? 18 : 9 }, prettyNumber),

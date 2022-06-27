@@ -1,5 +1,5 @@
 import { Divider, Typography } from 'antd';
-import { gql, request } from 'graphql-request';
+import { request } from 'graphql-request';
 import { GetServerSidePropsContext, NextPage } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
@@ -21,72 +21,12 @@ import { Timestamp } from '../../../components/transaction/Timestamp';
 import { TransferDescription } from '../../../components/transaction/TransferDescription';
 import { TransferDetail } from '../../../components/transaction/TransferDetail';
 import { TxStatus } from '../../../components/transaction/TxStatus';
-
-const BURN_RECORD_QUERY = gql`
-  query burnRecord($id: ID!) {
-    burnRecord(id: $id) {
-      amount
-      endTime
-      laneId
-      nonce
-      recipient
-      requestTxHash
-      responseTxHash
-      result
-      sender
-      startTime
-      token
-      fee
-    }
-  }
-`;
-
-const DVM_LOCK_RECORD_QUERY = gql`
-  query dvmLockRecord($id: ID!) {
-    dvmLockRecord(id: $id) {
-      id
-      laneId
-      nonce
-      recipient
-      txHash
-      amount
-      token
-    }
-  }
-`;
-
-const S2S_ISSUING_RECORD_QUERY = gql`
-  query lockRecord($id: ID!) {
-    lockRecord(id: $id) {
-      id
-      amount
-      endTime
-      nonce
-      recipient
-      requestTxHash
-      responseTxHash
-      result
-      sender
-      startTime
-      token
-      fee
-    }
-  }
-`;
-
-const SUBSTRATE_UNLOCKED_RECORD_QUERY = gql`
-  query unlockRecord($id: ID!) {
-    unlockRecord(id: $id) {
-      id
-      recipient
-      token
-      amount
-      timestamp
-      txHash
-      block
-    }
-  }
-`;
+import {
+  BURN_RECORD_QUERY,
+  DVM_LOCK_RECORD_QUERY,
+  S2S_ISSUING_RECORD_QUERY,
+  SUBSTRATE_UNLOCKED_RECORD_QUERY,
+} from '../../../config/gql';
 
 const Page: NextPage<{
   id: string;

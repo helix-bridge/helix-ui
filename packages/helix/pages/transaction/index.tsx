@@ -3,7 +3,7 @@ import { Affix, Button, Input, Layout, message, Table, Tooltip, Typography } fro
 import { ColumnType } from 'antd/lib/table';
 import { formatDistance, fromUnixTime } from 'date-fns';
 import format from 'date-fns-tz/format';
-import request, { gql } from 'graphql-request';
+import request from 'graphql-request';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
@@ -18,36 +18,9 @@ import { isDVM2Substrate, isParachain2Substrate } from 'shared/utils/bridge';
 import { convertToDvm, fromWei, gqlName, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { chainConfigs, getChainConfig, getDisplayName, isDVMNetwork } from 'shared/utils/network';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
-import { Path } from '../../config';
+import { HISTORY_RECORDS, Path } from '../../config';
 import { useAccountStatistic, useDailyStatistic } from '../../hooks';
 import { getDetailPaths } from '../../utils';
-
-const HISTORY_RECORDS = gql`
-  query historyRecords($row: Int!, $page: Int!, $sender: String, $recipient: String) {
-    historyRecords(row: $row, page: $page, sender: $sender, recipient: $recipient) {
-      total
-      records {
-        id
-        bridge
-        fromChain
-        toChain
-        laneId
-        nonce
-        requestTxHash
-        responseTxHash
-        sender
-        recipient
-        token
-        amount
-        startTime
-        endTime
-        result
-        fee
-        feeToken
-      }
-    }
-  }
-`;
 
 function RecordAccount({ chain, account, partner }: { chain: Network; account: string; partner: string }) {
   const chainConfig = getChainConfig(chain);
