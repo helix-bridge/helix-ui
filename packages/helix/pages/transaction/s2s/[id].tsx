@@ -239,10 +239,15 @@ const Page: NextPage<{
         }),
         pollWhile(MIDDLE_DURATION, () => isMounted, 100)
       )
-      .subscribe((result) => {
-        if (result) {
-          setFinalRecord(result);
-        }
+      .subscribe({
+        next(result) {
+          if (result) {
+            setFinalRecord(result);
+          }
+        },
+        error(error: Error) {
+          console.warn('🚨 ~ s2s detail polling exceed maximum limit  ', error.message);
+        },
       });
 
     return () => sub$$?.unsubscribe();

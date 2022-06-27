@@ -96,6 +96,7 @@ module.exports = {
         max: 5,
       },
     ],
+    curly: 2,
     eqeqeq: ['error', 'smart'],
     'guard-for-in': 'error',
     'id-denylist': [

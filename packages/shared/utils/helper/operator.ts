@@ -1,4 +1,4 @@
-import { last, MonoTypeOperatorFunction, scan, switchMapTo, takeWhile, tap, timer } from 'rxjs';
+import { last, mergeMap, MonoTypeOperatorFunction, scan, takeWhile, tap, timer } from 'rxjs';
 
 function attemptsGuardFactory(maxAttempts: number) {
   return (attemptsCount: number) => {
@@ -24,7 +24,7 @@ export function pollWhile<T>(
     const poll$ = timer(0, pollInterval).pipe(
       scan((attempts) => ++attempts, 0),
       tap(attemptsGuardFactory(maxAttempts)),
-      switchMapTo(source$),
+      mergeMap(() => source$),
       takeWhile(isPollingActive, true)
     );
 
