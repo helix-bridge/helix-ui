@@ -53,7 +53,7 @@ jobs:
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
       - uses: ./.github/actions/smart-vercel
-        name: Deploy apps-test
+        name: Deploy ${{ matrix.package }}
         if: contains(github.ref, 'apps') || contains(github.ref, '-') == false
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
