@@ -70,7 +70,7 @@ jobs:
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
       - uses: ./.github/actions/smart-vercel
-        name: Deploy ${{ matrix.package }} (dev)
+        name: Deploy ${{ matrix.package }} (test)
         if: steps.changed-files.outputs.any_changed == 'true'
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
