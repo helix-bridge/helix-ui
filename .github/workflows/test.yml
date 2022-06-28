@@ -43,7 +43,7 @@ jobs:
       - name: Run E2E tests 🧪
         uses: cypress-io/github-action@v2
         with:
-          start: yarn dev:apps
+          start: yarn dev:apps:test
           wait-on: 'http://localhost:4003'
           wait-on-timeout: 300
           command: yarn test:apps:e2e:ci
