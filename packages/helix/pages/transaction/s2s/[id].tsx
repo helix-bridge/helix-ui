@@ -5,7 +5,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { from as fromRx, map, of, switchMap } from 'rxjs';
+import { from as fromRx, map } from 'rxjs';
 import { CrossChainStatus, MIDDLE_DURATION } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { useIsMounted } from 'shared/hooks';
@@ -164,21 +164,11 @@ const Page: NextPage<{
       return;
     }
 
-    const sub$$ = of(null)
-      .pipe(
-        switchMap(() => {
-          const unlockObs = fromRx(request(ENDPOINT, SUBSTRATE_UNLOCKED_RECORD_QUERY, { id })).pipe(
-            map((res) => res[gqlName(SUBSTRATE_UNLOCKED_RECORD_QUERY)])
-          );
+    const query = isIssuing ? SUBSTRATE_UNLOCKED_RECORD_QUERY : DVM_LOCK_RECORD_QUERY;
 
-          const lockObs = fromRx(request(ENDPOINT, DVM_LOCK_RECORD_QUERY, { id })).pipe(
-            map((res) => res[gqlName(DVM_LOCK_RECORD_QUERY)])
-          );
-
-          return isIssuing ? lockObs : unlockObs;
-        }),
-        pollWhile(MIDDLE_DURATION, () => isMounted, 100)
-      )
+    const sub$$ = fromRx(request(ENDPOINT, query, { id }))
+      .pipe(map((res) => res[gqlName(query)]))
+      .pipe(pollWhile(MIDDLE_DURATION, () => isMounted, 100))
       .subscribe({
         next(result) {
           if (result) {
