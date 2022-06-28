@@ -9,7 +9,9 @@
     "start:apps": "node_modules/.bin/lerna run --scope apps --stream start",
     "start:apps:test": "node_modules/.bin/lerna run --scope apps --stream start:test",
     "dev:helix": "node_modules/.bin/lerna run --scope helix --stream dev",
+    "dev:helix:test": "node_modules/.bin/lerna run --scope helix --stream dev:test",
     "dev:apps": "node_modules/.bin/lerna run --scope apps --stream dev",
+    "dev:apps:test": "node_modules/.bin/lerna run --scope apps --stream dev:test",
     "build:helix": "node_modules/.bin/lerna run --scope helix --stream build",
     "build:helix:test": "node_modules/.bin/lerna run --scope helix --stream build:test",
     "build:apps": "node_modules/.bin/lerna run --scope apps --stream build",
@@ -26,6 +28,7 @@
     "test:apps:unit:watch": "cd packages/apps && yarn test:unit:watch",
     "test:helix:unit": "cd packages/helix && yarn test:unit",
     "test:helix:unit:watch": "cd packages/helix && yarn test:unit:watch",
+    "test:unit": "yarn test:helix:unit && yarn test:apps:unit && yarn test:shared",
     "format": "prettier  packages/**/*.{ts,tsx} --write"
   },
   "devDependencies": {

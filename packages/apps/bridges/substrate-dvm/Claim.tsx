@@ -8,8 +8,7 @@ import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { from, mergeMap, of } from 'rxjs';
 import { Logo } from 'shared/components/widget/Logo';
-import { WITHDRAW_ADDRESS } from 'shared/config/address';
-import { isTestChainOrDevEnv } from 'shared/config/env';
+import { isTestChain, SUBSTRATE_DVM_WITHDRAW } from 'shared/config/env';
 import { crabConfig, crabDVMConfig, pangolinConfig } from 'shared/config/network';
 import { pangolinDVMConfig } from 'shared/config/network/pangolin-dvm';
 import { DVMChainConfig, PolkadotChainConfig, Tx } from 'shared/model';
@@ -31,7 +30,7 @@ export function Claim() {
   const [claiming, setClaiming] = useState(false);
 
   const [departure, arrival] = useMemo<[PolkadotChainConfig, DVMChainConfig]>(
-    () => (isTestChainOrDevEnv ? [pangolinConfig, pangolinDVMConfig] : [crabConfig, crabDVMConfig]),
+    () => (isTestChain ? [pangolinConfig, pangolinDVMConfig] : [crabConfig, crabDVMConfig]),
     []
   );
 
@@ -49,7 +48,7 @@ export function Claim() {
 
     const obs = genEthereumTransactionObs({
       from: account,
-      to: WITHDRAW_ADDRESS,
+      to: SUBSTRATE_DVM_WITHDRAW,
       data,
       value: '0x00',
       gas,

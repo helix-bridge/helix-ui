@@ -14,7 +14,7 @@
     "lib"
   ],
   "scripts": {
-    "test": "cross-env CHAIN_TYPE=all jest --config=jest.config.js",
+    "test": "cross-env CHAIN_TYPE=all jest --config=jest.config.js --coverage",
     "test:watch": "cross-env CHAIN_TYPE=all jest --watch"
   },
   "peerDependencies": {
@@ -34,6 +34,7 @@
     "@polkadot/x-randomvalues": "^9.1.1",
     "@tanem/react-nprogress": "^5.0.0",
     "bn.js": "^5.2.0",
+    "next": "12.1.4",
     "next-i18next": "^11.0.0",
     "react-dom": "18.1.0",
     "react": "18.1.0",

@@ -7,11 +7,12 @@
     "build": "next build",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "dev": "NODE_OPTIONS='--inspect' next dev -p 4001",
+    "dev:test": "NODE_ENV=test NODE_OPTIONS='--inspect' next dev -p 4001",
     "i18next:scanner": "i18next-scanner --config i18next-scanner.config.js",
     "start:test": "NODE_ENV=test next start -p 4001",
     "start": "next start -p 4001",
     "test:unit:watch": "cross-env CHAIN_TYPE=all jest --watch",
-    "test:unit": "cross-env CHAIN_TYPE=all jest --config=jest.config.js"
+    "test:unit": "cross-env CHAIN_TYPE=all jest --config=jest.config.js --coverage"
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",

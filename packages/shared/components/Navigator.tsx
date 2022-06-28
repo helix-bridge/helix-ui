@@ -1,14 +1,14 @@
-import { Dropdown, Menu, Typography } from 'antd';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { DownOutlined } from '@ant-design/icons';
 import { AntdIconProps } from '@ant-design/icons/lib/components/AntdIcon';
-import { THEME } from 'shared/config/theme';
+import { Dropdown, Menu, Typography } from 'antd';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useMemo } from 'react';
 import { isDev } from 'shared/config/env';
+import { THEME } from 'shared/config/theme';
+import { useITranslation } from '../hooks';
 
-interface Nav {
+export interface Nav {
   label: string;
   path: string;
   extra?: boolean;
@@ -18,17 +18,13 @@ interface Nav {
 }
 
 interface NavigatorProps {
+  navigators: Nav[];
   theme?: THEME;
-  toggle?: () => void;
+  onClick?: () => void;
 }
 
-const navigators: Nav[] = [
-  { label: 'Home', path: '/' },
-  { label: 'History', path: '/history' },
-];
-
 function NavLink({ nav, theme }: { nav: Nav; theme: THEME }) {
-  const { t } = useTranslation();
+  const { t } = useITranslation();
   const router = useRouter();
   const textCls = useMemo(() => (theme === 'dark' ? '' : 'text-pangolin-main'), [theme]);
   const active =
@@ -58,7 +54,7 @@ function NavLink({ nav, theme }: { nav: Nav; theme: THEME }) {
 }
 
 function RouteLink({ path, label }: Nav) {
-  const { t } = useTranslation();
+  const { t } = useITranslation();
 
   return path.includes('http') ? (
     <Typography.Link href={path} target="_blank">
@@ -69,24 +65,24 @@ function RouteLink({ path, label }: Nav) {
   );
 }
 
-const getActiveNav = (path: string) => {
+const getActiveNav = (path: string, navigators: Nav[]) => {
   return navigators
     .filter((item) => path === item.path)
     .map((item) => navigators.find((nav) => nav.path.startsWith(item.path)))
     .filter((item) => !!item) as Nav[];
 };
 
-export function Navigator({ toggle, theme = THEME.DARK }: NavigatorProps) {
-  const { t } = useTranslation();
+export function Navigator({ navigators, onClick, theme = THEME.DARK }: NavigatorProps) {
+  const { t } = useITranslation();
   const { pathname } = useRouter();
 
-  const navItems = useMemo(() => navigators.filter((item) => isDev || (!isDev && !item.hide)), []);
+  const navItems = useMemo(() => navigators.filter((item) => isDev || (!isDev && !item.hide)), [navigators]);
 
   const selectedNavMenu = useMemo<string[]>(() => {
-    const nav = getActiveNav(pathname);
+    const nav = getActiveNav(pathname, navigators);
 
     return [nav.length ? nav[0].path : ''];
-  }, [pathname]);
+  }, [pathname, navigators]);
 
   return (
     <>
@@ -96,13 +92,12 @@ export function Navigator({ toggle, theme = THEME.DARK }: NavigatorProps) {
             <Dropdown
               key={index}
               overlay={
-                <Menu>
-                  {nav.slice(1).map((item, idx) => (
-                    <Menu.Item key={item.path + '_' + idx}>
-                      <RouteLink {...item} />
-                    </Menu.Item>
-                  ))}
-                </Menu>
+                <Menu
+                  items={nav.slice(1).map((item, idx) => ({
+                    key: item.path + '_' + idx,
+                    label: <RouteLink {...item} />,
+                  }))}
+                />
               }
             >
               <div className="flex items-center">
@@ -120,24 +115,20 @@ export function Navigator({ toggle, theme = THEME.DARK }: NavigatorProps) {
         theme={theme}
         mode="inline"
         defaultSelectedKeys={selectedNavMenu}
+        items={navigators.map(({ Icon, path, label, className }) => ({
+          key: path,
+          label: <Link href={path}>{t(label)}</Link>,
+          icon: Icon ? <Icon /> : null,
+          className,
+          onClick() {
+            if (onClick) {
+              onClick();
+            }
+          },
+        }))}
         className="block lg:hidden flex-1"
         style={{ background: theme === THEME.DARK ? 'transparent' : 'inherit' }}
-      >
-        {navigators.map(({ Icon, path, label, className }) => (
-          <Menu.Item
-            icon={Icon ? <Icon /> : null}
-            key={path}
-            className={className}
-            onClick={() => {
-              if (toggle) {
-                toggle();
-              }
-            }}
-          >
-            <Link href={path}>{t(label)}</Link>
-          </Menu.Item>
-        ))}
-      </Menu>
+      />
     </>
   );
 }

@@ -12,7 +12,7 @@ import {
 } from '../../model';
 import { getChainConfig, isDVMNetwork, isEthereumNetwork } from '../network/network';
 
-type BridgePredicateFn = (departure: Network, arrival: Network) => boolean;
+export type BridgePredicateFn = (departure: Network, arrival: Network) => boolean;
 
 export type DVMBridgeConfig = Required<BridgeConfig<ContractConfig & { proof: string }>>;
 

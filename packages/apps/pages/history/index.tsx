@@ -2,7 +2,7 @@ import { Affix, Radio, Tabs } from 'antd';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isTestChainOrDevEnv } from 'shared/config/env';
+import { isTestChain } from 'shared/config/env';
 import { darwiniaConfig, ethereumConfig, pangolinConfig, ropstenConfig } from 'shared/config/network';
 import { EthereumChainConfig, PolkadotChainConfig } from 'shared/model';
 import { getDisplayName } from 'shared/utils/network';
@@ -16,7 +16,7 @@ function Page() {
   const [activeTab, setActiveTab] = useState('d2e');
 
   const ethereumDarwiniaDirection = useMemo<[PolkadotChainConfig, EthereumChainConfig]>(
-    () => (isTestChainOrDevEnv ? [pangolinConfig, ropstenConfig] : [darwiniaConfig, ethereumConfig]),
+    () => (isTestChain ? [pangolinConfig, ropstenConfig] : [darwiniaConfig, ethereumConfig]),
     []
   );
 

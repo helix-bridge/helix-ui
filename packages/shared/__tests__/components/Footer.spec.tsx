@@ -1,5 +1,13 @@
-import { queryByText, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { Footer } from '../../components/Footer';
+
+jest.mock('next-i18next', () => ({
+  useTranslation() {
+    return {
+      t: (label: string) => label,
+    };
+  },
+}));
 
 describe('<Footer />', () => {
   it('should display copyright', () => {

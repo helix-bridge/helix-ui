@@ -1,7 +1,10 @@
+import { ArrowRightOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 import { Logo } from 'shared/components/widget/Logo';
 import { ChainConfig, TokenWithBridgesInfo } from 'shared/model';
+import { getDisplayName } from 'shared/utils/network';
 import { TransferDescription } from './TransferDescription';
 
 export function TransferDetail({
@@ -12,23 +15,41 @@ export function TransferDetail({
   amount: string;
 }) {
   const { t } = useTranslation();
+
   return (
     <TransferDescription
       title={t('Token Transfer')}
       tip={t('List of tokens transferred in this cross-chain transaction.')}
     >
-      <div className="flex flex-col gap-2">
-        {transfers.map(({ chain, from, to, token }) => (
-          <div key={token.name} className="flex items-center gap-2">
-            <Logo chain={chain} width={16} height={16} className="w-5" />
-            <span>{t('From')}</span>
-            <span className="w-32 text-center truncate">{from}</span>
-            <span>{t('To')}</span>
-            <span className="w-32 text-center truncate">{to}</span>
-            <span>{t('For')}</span>
-            <Image src={`/image/${token.logo}`} width={16} height={16} className="w-5" />
-            <span>
-              {amount} {token.name}
+      <div className="flex flex-col flex-1 gap-2">
+        {transfers.map(({ chain, from, to, token }, index) => (
+          <div
+            key={[token.name, token.host, index].join('-')}
+            className="w-full md:w-2/3 2xl:w-1/2 grid grid-cols-12 items-center"
+          >
+            <span className="flex items-center gap-2 col-span-3">
+              <Logo chain={chain} width={16} height={16} className="w-5" />
+              <span className="truncate">{getDisplayName(chain)}</span>
+            </span>
+
+            <span className="grid grid-cols-12 items-center gap-2 col-span-6">
+              <Tooltip title={from}>
+                <span className="text-center truncate col-span-5">{from}</span>
+              </Tooltip>
+
+              <ArrowRightOutlined />
+
+              <Tooltip title={to}>
+                <span className="text-center truncate col-span-5">{to}</span>
+              </Tooltip>
+            </span>
+
+            <span className="flex items-center gap-2 col-span-3">
+              <span>{t('For')}</span>
+              <Image src={`/image/${token.logo}`} width={16} height={16} className="w-5" />
+              <span className="whitespace-nowrap">
+                {amount} {token.name}
+              </span>
             </span>
           </div>
         ))}

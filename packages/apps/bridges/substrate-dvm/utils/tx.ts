@@ -3,7 +3,7 @@ import { u8aToHex } from '@polkadot/util';
 import BN from 'bn.js';
 import { EMPTY, Observable, from as rxFrom, switchMap, mergeMap } from 'rxjs';
 import { abi } from 'shared/config/abi';
-import { WITHDRAW_ADDRESS } from 'shared/config/address';
+import { SUBSTRATE_DVM_WITHDRAW } from 'shared/config/env';
 import { Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { convertToDvm, convertToSS58, dvmAddressToAccountId, isRing, toWei } from 'shared/utils/helper';
@@ -48,12 +48,12 @@ export function redeem(value: WithdrawPayload): Observable<Tx> {
       mergeMap(async () => api.tx.balances.transfer(recipient, toWei({ value: from.amount, decimals: 9 }))),
       switchMap((extrinsic) =>
         rxFrom(
-          web3.eth.estimateGas({ from: sender, to: WITHDRAW_ADDRESS, data: u8aToHex(extrinsic.method.toU8a()) })
+          web3.eth.estimateGas({ from: sender, to: SUBSTRATE_DVM_WITHDRAW, data: u8aToHex(extrinsic.method.toU8a()) })
         ).pipe(
           switchMap((gas) =>
             genEthereumTransactionObs({
               from: sender,
-              to: WITHDRAW_ADDRESS,
+              to: SUBSTRATE_DVM_WITHDRAW,
               data: u8aToHex(extrinsic.method.toU8a()),
               gas,
             })
