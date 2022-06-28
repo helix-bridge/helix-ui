@@ -3,6 +3,7 @@ import { Affix, Button, Input, Layout, message, Table, Tooltip, Typography } fro
 import { ColumnType } from 'antd/lib/table';
 import { formatDistance, fromUnixTime } from 'date-fns';
 import format from 'date-fns-tz/format';
+import { useQuery } from 'graphql-hooks';
 import request from 'graphql-request';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
@@ -18,8 +19,8 @@ import { isDVM2Substrate, isParachain2Substrate } from 'shared/utils/bridge';
 import { convertToDvm, fromWei, gqlName, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { chainConfigs, getChainConfig, getDisplayName, isDVMNetwork } from 'shared/utils/network';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
-import { HISTORY_RECORDS, Path } from '../../config';
-import { useAccountStatistic, useDailyStatistic } from '../../hooks';
+import { ACCOUNTS, HISTORY_RECORDS, Path } from '../../config';
+import { useDailyStatistic } from '../../hooks';
 import { getDetailPaths } from '../../utils';
 
 function RecordAccount({ chain, account, partner }: { chain: Network; account: string; partner: string }) {
@@ -53,7 +54,7 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
   const router = useRouter();
   const [isValidSender, setIsValidSender] = useState(true);
   const { data: dailyStatistic } = useDailyStatistic();
-  const { total: accountTotal } = useAccountStatistic(ENDPOINT);
+  const { data: accountRes } = useQuery<{ accounts: { total: number } }>(ACCOUNTS);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(count);
   const [pageSize, setPageSize] = useState(PAGE_SIZE);
@@ -207,7 +208,7 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
     <>
       <div className="grid lg:grid-cols-3 gap-0 lg:gap-6 place-items-center py-2 lg:py-4">
         <ViewBoard title={t('transactions')} count={transactionsTotal} />
-        <ViewBoard title={t('unique users')} count={accountTotal} />
+        <ViewBoard title={t('unique users')} count={accountRes?.accounts?.total ?? 0} />
         <ViewBoard title={t('supported blockchains')} count={chainConfigs.length} />
       </div>
 
