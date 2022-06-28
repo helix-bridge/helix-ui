@@ -15,8 +15,17 @@ import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { HelixHistoryRecord, Network } from 'shared/model';
 import { isDVM2Substrate, isParachain2Substrate } from 'shared/utils/bridge';
-import { convertToDvm, fromWei, gqlName, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
+import {
+  convertToDvm,
+  fromWei,
+  gqlName,
+  isSS58Address,
+  isValidAddress,
+  prettyNumber,
+  revertAccount,
+} from 'shared/utils/helper';
 import { chainConfigs, getChainConfig, getDisplayName, isDVMNetwork } from 'shared/utils/network';
+import web3 from 'web3';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
 import { HISTORY_RECORDS, Path } from '../../config';
 import { useAccountStatistic, useDailyStatistic } from '../../hooks';
@@ -184,14 +193,15 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
   ];
 
   useEffect(() => {
-    setLoading(true);
+    const acc = account && web3.utils.isAddress(account) ? account.toLowerCase() : account;
     const args = {
       page: page - 1,
       row: pageSize,
-      sender: account,
-      recipient: account,
+      sender: acc,
+      recipient: acc,
     };
 
+    setLoading(true);
     const sub$$ = from(request(ENDPOINT, HISTORY_RECORDS, args))
       .pipe(map((res) => res && res[gqlName(HISTORY_RECORDS)]))
       .subscribe((result) => {
@@ -218,20 +228,18 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
               size="large"
               suffix={<SearchOutlined />}
               allowClear
+              // eslint-disable-next-line complexity
               onChange={(event) => {
                 const value = event.target.value;
 
-                if (!value) {
-                  setIsValidSender(true);
-                  setSource([]);
-                  setAccount(undefined);
-                  setPage(1);
+                if (value && !web3.utils.isAddress(value) && !isSS58Address(value)) {
+                  setIsValidSender(false);
+                  return;
                 }
 
                 try {
                   const address = isValidAddress(value, 'ethereum') ? value : convertToDvm(value);
 
-                  setSource([]);
                   setAccount(address);
                   setPage(1);
                   setIsValidSender(true);
