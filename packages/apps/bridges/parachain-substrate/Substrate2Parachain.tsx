@@ -1,4 +1,5 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
+import { hexToU8a } from '@polkadot/util';
 import { message, Typography } from 'antd';
 import BN from 'bn.js';
 import { upperFirst } from 'lodash';
@@ -23,7 +24,7 @@ import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../hooks';
 import { useApi } from '../../providers';
 import { IssuingPayload, Parachain2SubstrateBridgeConfig } from './model';
-import { getRedeemFee } from './utils';
+import { getIssuingFee } from './utils';
 import { issuing } from './utils/tx';
 
 const validateBeforeTx = (balance: BN, amount: BN, limit: BN): string | undefined => {
@@ -65,7 +66,7 @@ export function Substrate2Parachain({
         amount: fromWei({ value: fee, decimals: direction.from.decimals }),
         symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
       },
-    [direction.from.decimals, direction.from.meta.tokens, fee]
+    [direction.from.meta.tokens, direction.from.decimals, fee]
   );
 
   useEffect(() => {
@@ -107,28 +108,28 @@ export function Substrate2Parachain({
   ]);
 
   useEffect(() => {
-    const api = entrance.polkadot.getInstance(direction.from.meta.provider);
+    const api = entrance.polkadot.getInstance(direction.to.meta.provider);
 
     const sub$$ = from(waitUntilConnected(api))
       .pipe(
         mergeMap(() => {
-          const module = `to${direction.to.meta.name.split('-').map(upperFirst).join('')}Backing`;
+          const module = `from${upperFirst(direction.from.meta.name)}Issuing`;
 
           return from(api.query[module].secureLimitedRingAmount());
         })
       )
       .subscribe((result) => {
-        const data = result.toJSON() as [number, number];
-        const num = result && new BN(data[1]);
+        const data = result.toJSON() as [number, string]; // [0, hexString]
+        const num = hexToU8a(data[1]);
 
-        setDailyLimit(num);
+        setDailyLimit(new BN(num));
       });
 
     return () => sub$$.unsubscribe();
   }, [direction]);
 
   useEffect(() => {
-    const sub$$ = from(getRedeemFee(bridge)).subscribe((result) => {
+    const sub$$ = from(getIssuingFee(bridge)).subscribe((result) => {
       setFee(result);
 
       if (onFeeChange) {
@@ -140,7 +141,7 @@ export function Substrate2Parachain({
     });
 
     return () => sub$$.unsubscribe();
-  }, [bridge, direction.from.decimals, direction.from.meta.tokens, direction.from.symbol, onFeeChange]);
+  }, [bridge, direction.from.meta.tokens, direction.from.symbol, direction.from.decimals, onFeeChange]);
 
   return (
     <>

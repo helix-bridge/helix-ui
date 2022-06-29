@@ -1,5 +1,4 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
-import { hexToU8a } from '@polkadot/util';
 import { message, Typography } from 'antd';
 import BN from 'bn.js';
 import { upperFirst } from 'lodash';
@@ -24,7 +23,7 @@ import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../hooks';
 import { useApi } from '../../providers';
 import { IssuingPayload, Parachain2SubstrateBridgeConfig } from './model';
-import { getIssuingFee } from './utils';
+import { getRedeemFee } from './utils';
 import { redeem } from './utils/tx';
 
 const validateBeforeTx = (balance: BN, amount: BN, limit: BN): string | undefined => {
@@ -66,7 +65,7 @@ export function Parachain2Substrate({
         amount: fromWei({ value: fee, decimals: direction.from.decimals }),
         symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
       },
-    [direction.from.meta.tokens, direction.from.decimals, fee]
+    [direction.from.decimals, direction.from.meta.tokens, fee]
   );
 
   useEffect(() => {
@@ -80,7 +79,7 @@ export function Parachain2Substrate({
         return EMPTY;
       }
 
-      const msg = validateBeforeTx(ring, new BN(toWei(data.direction.from)), dailyLimit);
+      const msg = validateBeforeTx(ring, new BN(toWei({ value: data.direction.from.amount, decimals: 9 })), dailyLimit); // amount decimal: 18; dailyLimit decimal: 9; compare with 9;
 
       if (msg) {
         message.error(t(msg));
@@ -108,28 +107,28 @@ export function Parachain2Substrate({
   ]);
 
   useEffect(() => {
-    const api = entrance.polkadot.getInstance(direction.from.meta.provider);
+    const api = entrance.polkadot.getInstance(direction.to.meta.provider);
 
     const sub$$ = from(waitUntilConnected(api))
       .pipe(
         mergeMap(() => {
-          const module = `from${upperFirst(direction.to.meta.name)}Issuing`;
+          const module = `to${direction.from.meta.name.split('-').map(upperFirst).join('')}Backing`;
 
           return from(api.query[module].secureLimitedRingAmount());
         })
       )
       .subscribe((result) => {
-        const data = result.toJSON() as [number, string]; // [0, hexString]
-        const num = hexToU8a(data[1]);
+        const data = result.toJSON() as [number, number];
+        const num = result && new BN(data[1]);
 
-        setDailyLimit(new BN(num));
+        setDailyLimit(num);
       });
 
     return () => sub$$.unsubscribe();
   }, [direction]);
 
   useEffect(() => {
-    const sub$$ = from(getIssuingFee(bridge)).subscribe((result) => {
+    const sub$$ = from(getRedeemFee(bridge)).subscribe((result) => {
       setFee(result);
 
       if (onFeeChange) {
@@ -141,7 +140,7 @@ export function Parachain2Substrate({
     });
 
     return () => sub$$.unsubscribe();
-  }, [bridge, direction.from.meta.tokens, direction.from.symbol, direction.from.decimals, onFeeChange]);
+  }, [bridge, direction.from.decimals, direction.from.meta.tokens, direction.from.symbol, onFeeChange]);
 
   return (
     <>
