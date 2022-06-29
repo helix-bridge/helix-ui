@@ -87,7 +87,7 @@ const Page: NextPage<{
       <div className="px-8 py-3 mt-6 bg-gray-200 dark:bg-antDark">
         <SourceTx hash={record.requestTxHash} />
 
-        <TargetTx finalRecord={{ ...record, txHash: record.responseTxHash! }} />
+        <TargetTx record={record} />
 
         <TxStatus result={record.result} />
 

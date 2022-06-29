@@ -1,15 +1,18 @@
 import { Divider, Typography } from 'antd';
 import { request } from 'graphql-request';
+import { isEqual } from 'lodash';
 import { GetServerSidePropsContext, NextPage } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
-import { useMemo } from 'react';
-import { CrossChainStatus, GENESIS_ADDRESS } from 'shared/config/constant';
+import { useEffect, useMemo, useState } from 'react';
+import { distinctUntilChanged, from as fromRx, map, of, switchMap } from 'rxjs';
+import { CrossChainStatus, GENESIS_ADDRESS, MIDDLE_DURATION } from 'shared/config/constant';
 import { ENDPOINT, SUBSTRATE_PARACHAIN_BACKING } from 'shared/config/env';
+import { useIsMounted } from 'shared/hooks';
 import { HelixHistoryRecord, Network, ParachainSubstrateBridgeConfig } from 'shared/model';
 import { getBridge, isParachain2Substrate } from 'shared/utils/bridge';
-import { fromWei, gqlName, prettyNumber, revertAccount } from 'shared/utils/helper';
+import { fromWei, gqlName, pollWhile, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
 import { IBreadcrumb } from '../../../components/transaction/Breadcrumb';
 import { Bridge } from '../../../components/transaction/Bridge';
@@ -23,14 +26,18 @@ import { HISTORY_RECORD_BY_ID } from '../../../config';
 
 const Page: NextPage<{
   id: string;
-  record: HelixHistoryRecord;
-}> = ({ record }) => {
+  data: HelixHistoryRecord;
+}> = ({ id, data }) => {
   const { t } = useTranslation();
   const router = useRouter();
+  const isMounted = useIsMounted();
   const departure = getChainConfig(router.query.from as Network);
   const arrival = getChainConfig(router.query.to as Network);
   const bridge = getBridge<ParachainSubstrateBridgeConfig>([departure, arrival]);
   const isIssuing = bridge.isIssuing(departure, arrival);
+
+  const [record, setRecord] = useState<HelixHistoryRecord>(data);
+
   const amount = useMemo(
     () =>
       fromWei(
@@ -115,6 +122,37 @@ const Page: NextPage<{
     return isIssuing ? issuingTransfer : redeemTransfer;
   }, [arrival, departure, isIssuing, record.recipient, record.result, record.sender, record.token]);
 
+  useEffect(() => {
+    if (record.result > CrossChainStatus.pending) {
+      return;
+    }
+
+    const sub$$ = of(null)
+      .pipe(
+        switchMap(() => fromRx(request(ENDPOINT, HISTORY_RECORD_BY_ID, { id }))),
+        map((res) => res[gqlName(HISTORY_RECORD_BY_ID)]),
+        pollWhile<HelixHistoryRecord>(
+          MIDDLE_DURATION,
+          (res) => isMounted && res.result === CrossChainStatus.pending,
+          100
+        ),
+        distinctUntilChanged((pre, cur) => isEqual(pre, cur))
+      )
+      .subscribe({
+        next(result) {
+          if (result) {
+            setRecord(result);
+          }
+        },
+        error(error: Error) {
+          console.warn('🚨 ~ s2s detail polling exceed maximum limit  ', error.message);
+        },
+      });
+
+    return () => sub$$?.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <IBreadcrumb txHash={record.requestTxHash} />
@@ -127,7 +165,7 @@ const Page: NextPage<{
       <div className="px-8 py-3 mt-6 bg-gray-200 dark:bg-antDark">
         <SourceTx hash={record.requestTxHash} />
 
-        <TargetTx finalRecord={{ ...record, txHash: record.responseTxHash! }} />
+        <TargetTx record={record} />
 
         <TxStatus result={record.result} />
 
@@ -184,7 +222,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ id
     props: {
       ...translations,
       id,
-      record: result[gqlName(HISTORY_RECORD_BY_ID)],
+      data: result[gqlName(HISTORY_RECORD_BY_ID)],
     },
   };
 }
