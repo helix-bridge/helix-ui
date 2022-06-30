@@ -1,0 +1,209 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<SourceTx /> render TargetTx 1`] = `
+<div
+  className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6"
+>
+  <div
+    className="w-36 flex items-center gap-2"
+  >
+    <span
+      aria-label="info-circle"
+      className="anticon anticon-info-circle cursor-help"
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      role="img"
+    >
+      <svg
+        aria-hidden="true"
+        data-icon="info-circle"
+        fill="currentColor"
+        focusable="false"
+        height="1em"
+        viewBox="64 64 896 896"
+        width="1em"
+      >
+        <path
+          d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+        />
+        <path
+          d="M464 336a48 48 0 1096 0 48 48 0 10-96 0zm72 112h-48c-4.4 0-8 3.6-8 8v272c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V456c0-4.4-3.6-8-8-8z"
+        />
+      </svg>
+    </span>
+    <span
+      className="capitalize"
+    >
+      Target Tx Hash
+    </span>
+  </div>
+  <a
+    className="ant-typography hover:opacity-80 transition-opacity duration-200"
+    href="https://crab.subscan.io/extrinsic/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
+    onClick={null}
+    rel="noopener noreferrer"
+    style={
+      Object {
+        "WebkitLineClamp": undefined,
+      }
+    }
+    target="_blank"
+  >
+    <span
+      className="ant-typography truncate"
+      onClick={null}
+      style={
+        Object {
+          "WebkitLineClamp": undefined,
+        }
+      }
+    >
+      0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668
+      <div
+        aria-label="Copy"
+        className="ant-typography-copy"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        role="button"
+        style={
+          Object {
+            "background": "transparent",
+            "border": 0,
+            "display": "inline-block",
+            "lineHeight": "inherit",
+            "padding": 0,
+          }
+        }
+        tabIndex={0}
+      >
+        <span
+          aria-label="copy"
+          className="anticon anticon-copy"
+          role="img"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="copy"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M832 64H296c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h496v688c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V96c0-17.7-14.3-32-32-32zM704 192H192c-17.7 0-32 14.3-32 32v530.7c0 8.5 3.4 16.6 9.4 22.6l173.3 173.3c2.2 2.2 4.7 4 7.4 5.5v1.9h4.2c3.5 1.3 7.2 2 11 2H704c17.7 0 32-14.3 32-32V224c0-17.7-14.3-32-32-32zM350 856.2L263.9 770H350v86.2zM664 888H414V746c0-22.1-17.9-40-40-40H232V264h432v624z"
+            />
+          </svg>
+        </span>
+      </div>
+    </span>
+  </a>
+</div>
+`;
+
+exports[`<TargetTx /> render TargetTx 1`] = `
+<div
+  className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6"
+>
+  <div
+    className="w-36 flex items-center gap-2"
+  >
+    <span
+      aria-label="info-circle"
+      className="anticon anticon-info-circle cursor-help"
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      role="img"
+    >
+      <svg
+        aria-hidden="true"
+        data-icon="info-circle"
+        fill="currentColor"
+        focusable="false"
+        height="1em"
+        viewBox="64 64 896 896"
+        width="1em"
+      >
+        <path
+          d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+        />
+        <path
+          d="M464 336a48 48 0 1096 0 48 48 0 10-96 0zm72 112h-48c-4.4 0-8 3.6-8 8v272c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V456c0-4.4-3.6-8-8-8z"
+        />
+      </svg>
+    </span>
+    <span
+      className="capitalize"
+    >
+      Target Tx Hash
+    </span>
+  </div>
+  <a
+    className="ant-typography hover:opacity-80 transition-opacity duration-200"
+    href="https://crab.subscan.io/extrinsic/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
+    onClick={null}
+    rel="noopener noreferrer"
+    style={
+      Object {
+        "WebkitLineClamp": undefined,
+      }
+    }
+    target="_blank"
+  >
+    <span
+      className="ant-typography truncate"
+      onClick={null}
+      style={
+        Object {
+          "WebkitLineClamp": undefined,
+        }
+      }
+    >
+      0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668
+      <div
+        aria-label="Copy"
+        className="ant-typography-copy"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        role="button"
+        style={
+          Object {
+            "background": "transparent",
+            "border": 0,
+            "display": "inline-block",
+            "lineHeight": "inherit",
+            "padding": 0,
+          }
+        }
+        tabIndex={0}
+      >
+        <span
+          aria-label="copy"
+          className="anticon anticon-copy"
+          role="img"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="copy"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M832 64H296c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h496v688c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V96c0-17.7-14.3-32-32-32zM704 192H192c-17.7 0-32 14.3-32 32v530.7c0 8.5 3.4 16.6 9.4 22.6l173.3 173.3c2.2 2.2 4.7 4 7.4 5.5v1.9h4.2c3.5 1.3 7.2 2 11 2H704c17.7 0 32-14.3 32-32V224c0-17.7-14.3-32-32-32zM350 856.2L263.9 770H350v86.2zM664 888H414V746c0-22.1-17.9-40-40-40H232V264h432v624z"
+            />
+          </svg>
+        </span>
+      </div>
+    </span>
+  </a>
+</div>
+`;

@@ -60,7 +60,7 @@ export const pangolinDVMConfig: DVMChainConfig = {
     },
     {
       name: 'xORING',
-      decimals: 18,
+      decimals: 9,
       cross: [
         {
           category: 'helix',

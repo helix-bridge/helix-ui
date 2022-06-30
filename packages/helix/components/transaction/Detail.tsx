@@ -32,12 +32,10 @@ export function Detail({ record, transfers }: DetailProps) {
   }, [departure.tokens, record?.amount, record.token]);
 
   const feeDecimals = useMemo(() => {
-    const token = departure.tokens.find(
-      (item) => item.symbol.toLowerCase() === (record.feeToken ?? record.token).toLowerCase()
-    );
+    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === record.feeToken.toLowerCase());
 
     return token?.decimals ?? 9;
-  }, [departure.tokens, record.feeToken, record.token]);
+  }, [departure.tokens, record.feeToken]);
 
   return (
     <>
@@ -55,7 +53,7 @@ export function Detail({ record, transfers }: DetailProps) {
 
         <TxStatus result={record.result} />
 
-        <Timestamp departureRecord={record} arrivalRecord={record} />
+        <Timestamp record={record} />
 
         <Divider />
 
@@ -86,7 +84,7 @@ export function Detail({ record, transfers }: DetailProps) {
           title={t('Transaction Fee')}
           tip={'Amount paid for processing the cross-chain transaction.'}
         >
-          {fromWei({ value: record.fee, decimals: feeDecimals })} {transfers[0].token.name}
+          {fromWei({ value: record.fee, decimals: feeDecimals })} {record.feeToken}
         </TransferDescription>
 
         <Divider />
