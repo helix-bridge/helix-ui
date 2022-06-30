@@ -9,11 +9,11 @@ export const ACCOUNTS = `
 `;
 
 export const STATISTICS_QUERY = `
-  query dailyStatistics($timepast: Int!, $chain: String) {
-    dailyStatistics(timepast: $timepast, chain: $chain) {
+  query queryDailyStatistics($timepast: Int!, $chain: String) {
+    queryDailyStatistics(timepast: $timepast, from: $chain) {
       dailyCount
       dailyVolume
-      id
+      timestamp
     }
   }
 `;

@@ -3,7 +3,7 @@ import { Result } from '../substrate-substrateDVM';
 import { Network } from '../network';
 
 export interface DailyStatistic {
-  id: string;
+  timestamp: string;
   dailyVolume: string;
   dailyCount: number;
 }

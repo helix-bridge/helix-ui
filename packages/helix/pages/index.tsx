@@ -1,71 +1,80 @@
 import { Spin } from 'antd';
 import Bignumber from 'bignumber.js';
 import { format, secondsToMilliseconds, subMilliseconds } from 'date-fns';
+import request from 'graphql-request';
 import { last, orderBy } from 'lodash';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useEffect, useMemo, useState } from 'react';
 import { Subscription } from 'rxjs';
 import { DATE_FORMAT } from 'shared/config/constant';
-import { isFormalChain } from 'shared/config/env';
-import { crabDVMConfig, darwiniaConfig, pangoroConfig } from 'shared/config/network';
-import { pangolinDVMConfig } from 'shared/config/network/pangolin-dvm';
-import { ChainConfig, DailyStatistic, Network } from 'shared/model';
-import { fromWei, prettyNumber, rxGet } from 'shared/utils/helper';
+import { ENDPOINT, isFormalChain, isTestChain } from 'shared/config/env';
+import { SYSTEM_ChAIN_CONFIGURATIONS } from 'shared/config/network';
+import { ChainConfig, DailyStatistic } from 'shared/model';
+import { fromWei, gqlName, prettyNumber, rxGet } from 'shared/utils/helper';
 import { chainConfigs } from 'shared/utils/network';
 import { BarChart, Statistic } from '../components/dashboard/BarChart';
 import { Chain } from '../components/dashboard/Chain';
 import { Statistics } from '../components/dashboard/Statistics';
-import { TIMEPAST, useDailyStatistic } from '../hooks';
+import { STATISTICS_QUERY, TIMEPAST } from '../config';
 
 interface StatisticTotal {
   volume: Bignumber;
   transactions: Bignumber;
 }
 
+interface ChainStatistic {
+  chain: ChainConfig;
+  data: DailyStatistic[];
+}
+
 // @see response of: https://api.coingecko.com/api/v3/coins/list
 type CoinIds = 'darwinia-crab-network' | 'darwinia-network-native-token';
 
-const s2sIssuingConfig = isFormalChain ? darwiniaConfig : pangoroConfig;
-const s2sBackingConfig = isFormalChain ? crabDVMConfig : pangolinDVMConfig;
-const s2sBackingName = s2sBackingConfig.name.split('-')[0] as Network;
+const configs = SYSTEM_ChAIN_CONFIGURATIONS.filter((config) => config.isTest === isTestChain);
 
-function Page() {
+const initialPrices = Object.fromEntries(configs.map((item) => [item.name, { usd: 1 }]));
+
+function Page({
+  chainStatistics,
+  dailyStatistics,
+}: {
+  chainStatistics: ChainStatistic[];
+  dailyStatistics: DailyStatistic[];
+}) {
   const { t } = useTranslation('common');
-  const { data: dailyStatistic, loading } = useDailyStatistic();
-  // Need to query the events on target chain, so issuing statistic should pass backing config.
-  const { data: s2sIssuingStatistic } = useDailyStatistic(s2sBackingName);
-  const { data: s2sBackingStatistic } = useDailyStatistic(s2sIssuingConfig.name);
-  const [prices, setPrices] = useState({ [s2sBackingName]: { usd: 1 }, [s2sIssuingConfig.name]: { usd: 1 } });
+  const [loading] = useState(false);
+  const [prices, setPrices] = useState(initialPrices);
 
   const { volume, transactions, transactionsTotal } = useMemo(() => {
-    if (!dailyStatistic) {
+    if (!dailyStatistics) {
       return { volume: [], transactions: [], volumeTotal: 0, transactionsTotal: 0 };
     }
 
-    const { dailyStatistics } = dailyStatistic;
-
     return {
       volume: dailyStatistics
-        .map(({ id, dailyVolume }) => [secondsToMilliseconds(+id), +fromWei({ value: dailyVolume, decimals: 9 })])
+        .map(({ timestamp, dailyVolume }) => [
+          secondsToMilliseconds(+timestamp),
+          +fromWei({ value: dailyVolume, decimals: 9 }),
+        ])
         .reverse() as Statistic[],
       transactions: dailyStatistics
-        .map(({ id, dailyCount }) => [secondsToMilliseconds(+id), dailyCount])
+        .map(({ timestamp, dailyCount }) => [secondsToMilliseconds(+timestamp), +dailyCount])
         .reverse() as Statistic[],
       transactionsTotal: prettyNumber(
         dailyStatistics.reduce((acc, cur) => acc.plus(new Bignumber(cur.dailyCount)), new Bignumber(0)),
         { decimal: 0 }
       ),
     };
-  }, [dailyStatistic]);
+  }, [dailyStatistics]);
 
   const startTime = useMemo(() => {
-    const date = !dailyStatistic?.dailyStatistics?.length
+    const date = !dailyStatistics?.length
       ? subMilliseconds(new Date(), secondsToMilliseconds(TIMEPAST)).getTime()
-      : secondsToMilliseconds(+last(dailyStatistic!.dailyStatistics)!.id);
+      : secondsToMilliseconds(+last(dailyStatistics)!.timestamp);
 
     return format(date, DATE_FORMAT) + ' (+UTC)';
-  }, [dailyStatistic]);
+  }, [dailyStatistics]);
 
   const { volumeRank, transactionsRank, volumeTotal } = useMemo(() => {
     const calcTotal = (key: keyof DailyStatistic) => (acc: Bignumber, cur: DailyStatistic) =>
@@ -79,16 +88,10 @@ function Page() {
       transactions: data.reduce(calcTransactionsTotal, new Bignumber(0)),
     });
 
-    const rankSource = [
-      {
-        chain: s2sBackingConfig,
-        statistic: calcChainTotal(s2sIssuingStatistic?.dailyStatistics || [], prices[s2sBackingName].usd),
-      },
-      {
-        chain: s2sIssuingConfig,
-        statistic: calcChainTotal(s2sBackingStatistic?.dailyStatistics || [], prices[s2sIssuingConfig.name].usd),
-      },
-    ];
+    const rankSource = chainStatistics.map((item) => ({
+      ...item,
+      statistic: calcChainTotal(item.data, prices[item.chain.name].usd),
+    }));
 
     const calcRank: (key: keyof StatisticTotal) => { chain: ChainConfig; total: Bignumber }[] = (
       key: keyof StatisticTotal
@@ -118,7 +121,7 @@ function Page() {
         total: prettyNumber(total.toString(), { decimal: 0 }),
       })),
     };
-  }, [prices, s2sBackingStatistic?.dailyStatistics, s2sIssuingStatistic?.dailyStatistics]);
+  }, [prices, chainStatistics]);
 
   useEffect(() => {
     let sub$$: Subscription;
@@ -131,7 +134,7 @@ function Page() {
         if (res) {
           const { 'darwinia-crab-network': crab, 'darwinia-network-native-token': darwinia } = res;
 
-          setPrices({ crab, darwinia });
+          setPrices((pre) => ({ ...pre, crab, darwinia }));
         }
       });
     }
@@ -174,10 +177,29 @@ function Page() {
   );
 }
 
-export const getStaticProps = async ({ locale }: { locale: string }) => ({
-  props: {
-    ...(await serverSideTranslations(locale, ['common'])),
-  },
-});
+export const getStaticProps = async ({ locale }: { locale: string }) => {
+  const translations = await serverSideTranslations(locale, ['common']);
+
+  const statistics = await Promise.all([
+    ...configs.map((chain) =>
+      request(ENDPOINT, STATISTICS_QUERY, { timepast: TIMEPAST, chain: chain.name }).then((res) => ({
+        chain,
+        data: res[gqlName(STATISTICS_QUERY)],
+      }))
+    ),
+    request(ENDPOINT, STATISTICS_QUERY, { timepast: TIMEPAST }).then((res) => ({
+      chain: 'all',
+      data: res[gqlName(STATISTICS_QUERY)],
+    })),
+  ]).then((result) => result.filter((item) => item.data.length));
+
+  return {
+    props: {
+      ...translations,
+      chainStatistics: statistics.filter((item) => item.chain !== 'all'),
+      dailyStatistics: statistics.find((item) => item.chain === 'all')!.data,
+    },
+  };
+};
 
 export default Page;
