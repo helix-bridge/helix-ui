@@ -1,6 +1,75 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<SourceTx /> render TargetTx 1`] = `
+exports[`<TargetTx /> render TargetTx with pending record 1`] = `
+<div
+  className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6"
+>
+  <div
+    className="w-36 flex items-center gap-2"
+  >
+    <span
+      aria-label="info-circle"
+      className="anticon anticon-info-circle cursor-help"
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      role="img"
+    >
+      <svg
+        aria-hidden="true"
+        data-icon="info-circle"
+        fill="currentColor"
+        focusable="false"
+        height="1em"
+        viewBox="64 64 896 896"
+        width="1em"
+      >
+        <path
+          d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+        />
+        <path
+          d="M464 336a48 48 0 1096 0 48 48 0 10-96 0zm72 112h-48c-4.4 0-8 3.6-8 8v272c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V456c0-4.4-3.6-8-8-8z"
+        />
+      </svg>
+    </span>
+    <span
+      className="capitalize"
+    >
+      Target Tx Hash
+    </span>
+  </div>
+  <div
+    className="ant-progress ant-progress-line ant-progress-status-normal ant-progress-show-info ant-progress-default max-w-xs"
+  >
+    <div
+      className="ant-progress-outer"
+    >
+      <div
+        className="ant-progress-inner"
+      >
+        <div
+          className="ant-progress-bg"
+          style={
+            Object {
+              "background": undefined,
+              "borderRadius": undefined,
+              "height": 8,
+              "width": "50%",
+            }
+          }
+        />
+      </div>
+    </div>
+    <span
+      className="ant-progress-text"
+      title="50%"
+    >
+      50%
+    </span>
+  </div>
+</div>
+`;
+
+exports[`<TargetTx /> render TargetTx with revert record 1`] = `
 <div
   className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6"
 >
@@ -39,7 +108,7 @@ exports[`<SourceTx /> render TargetTx 1`] = `
   </div>
   <a
     className="ant-typography hover:opacity-80 transition-opacity duration-200"
-    href="https://crab.subscan.io/extrinsic/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
+    href="https://darwinia.subscan.io/extrinsic/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
     onClick={null}
     rel="noopener noreferrer"
     style={
@@ -104,7 +173,7 @@ exports[`<SourceTx /> render TargetTx 1`] = `
 </div>
 `;
 
-exports[`<TargetTx /> render TargetTx 1`] = `
+exports[`<TargetTx /> render TargetTx with success record 1`] = `
 <div
   className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6"
 >

@@ -44,8 +44,16 @@ describe('<Timestamp />', () => {
     token: '0x6d6f646c64612f6272696e670000000000000000',
   };
 
-  it('render Timestamp', () => {
+  it('render Timestamp with success', () => {
     const component = create(<Timestamp record={record} />);
+
+    let tree = component.toJSON();
+
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('render Timestamp with processing', () => {
+    const component = create(<Timestamp record={{ ...record, result: 0, endTime: null }} />);
 
     let tree = component.toJSON();
 

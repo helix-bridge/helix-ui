@@ -17,7 +17,7 @@ export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
       title={t('Target Tx Hash')}
       tip={t('Unique character string (TxID) assigned to every verified transaction on the Target Chain.')}
     >
-      {record?.responseTxHash ? (
+      {record && record.responseTxHash ? (
         <SubscanLink
           network={record.result === CrossChainStatus.reverted ? departure : arrival}
           txHash={record.responseTxHash}

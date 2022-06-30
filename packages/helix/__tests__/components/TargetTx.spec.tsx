@@ -47,8 +47,24 @@ describe('<TargetTx />', () => {
     token: '0x6d6f646c64612f6272696e670000000000000000',
   };
 
-  it('render TargetTx', () => {
+  it('render TargetTx with success record', () => {
     const component = create(<TargetTx record={record} />);
+
+    let tree = component.toJSON();
+
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('render TargetTx with revert record', () => {
+    const component = create(<TargetTx record={{ ...record, result: 2 }} />);
+
+    let tree = component.toJSON();
+
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('render TargetTx with pending record', () => {
+    const component = create(<TargetTx record={{ ...record, responseTxHash: null }} />);
 
     let tree = component.toJSON();
 

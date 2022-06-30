@@ -20,4 +20,12 @@ describe('<TxStatus />', () => {
 
     expect(tree).toMatchSnapshot();
   });
+
+  it('should render pending status default', () => {
+    const component = create(<TxStatus />);
+
+    let tree = component.toJSON();
+
+    expect(tree).toMatchSnapshot();
+  });
 });
