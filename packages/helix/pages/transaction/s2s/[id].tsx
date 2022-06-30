@@ -19,35 +19,36 @@ const Page: NextPage<{
   data: HelixHistoryRecord;
 }> = ({ id, data }) => {
   const router = useRouter();
-  const departure = getChainConfig(router.query.from as Network);
-  const arrival = getChainConfig(router.query.to as Network);
-  const bridge = getBridge<SubstrateSubstrateDVMBridgeConfig>([departure, arrival]);
-  const isIssuing = bridge.isIssuing(departure, arrival);
-
-  const [fromToken, toToken] = useMemo(() => {
-    const bridgeName = 'helix';
-
-    return [
-      departure.tokens.find(
-        (token) =>
-          token.type === (isIssuing ? 'native' : 'mapping') &&
-          token.cross.map((item) => item.category).includes(bridgeName)
-      )!,
-      arrival.tokens.find(
-        (token) =>
-          token.type === (isIssuing ? 'mapping' : 'native') &&
-          token.cross.map((item) => item.category).includes(bridgeName)
-      )!,
-    ];
-  }, [arrival.tokens, departure.tokens, isIssuing]);
-
   const { record } = useUpdatableRecord(data, id);
 
   // eslint-disable-next-line complexity
   const transfers = useMemo(() => {
-    if (!record || record?.result === CrossChainStatus.pending) {
+    if (!record || record.result === CrossChainStatus.pending) {
       return [];
     }
+
+    const departure = getChainConfig(router.query.from as Network);
+    const arrival = getChainConfig(router.query.to as Network);
+    const bridge = getBridge<SubstrateSubstrateDVMBridgeConfig>([departure, arrival]);
+    const isIssuing = bridge.isIssuing(departure, arrival);
+    const bridgeName = 'helix';
+
+    /**
+     * TODO: find by token name
+     *
+     * @see https://github.com/helix-bridge/indexer/pull/40
+     */
+    const fromToken = departure.tokens.find(
+      (token) =>
+        token.type === (isIssuing ? 'native' : 'mapping') &&
+        token.cross.map((item) => item.category).includes(bridgeName)
+    )!;
+
+    const toToken = arrival.tokens.find(
+      (token) =>
+        token.type === (isIssuing ? 'mapping' : 'native') &&
+        token.cross.map((item) => item.category).includes(bridgeName)
+    )!;
 
     const {
       contracts: { issuing: issuingRecipient, redeem: redeemRecipient, genesis },
@@ -122,7 +123,7 @@ const Page: NextPage<{
           ];
 
     return isIssuing ? issuingTransfer : redeemTransfer;
-  }, [arrival, bridge.config, departure, record, fromToken, isIssuing, toToken]);
+  }, [record, router.query.from, router.query.to]);
 
   return <Detail record={record} transfers={transfers} />;
 };

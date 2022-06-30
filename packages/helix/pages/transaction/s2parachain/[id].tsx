@@ -21,12 +21,17 @@ const Page: NextPage<{
 }> = ({ id, data }) => {
   const router = useRouter();
   const { record } = useUpdatableRecord(data, id);
-  const departure = getChainConfig(router.query.from as Network);
-  const arrival = getChainConfig(router.query.to as Network);
-  const bridge = getBridge<ParachainSubstrateBridgeConfig>([departure, arrival]);
-  const isIssuing = bridge.isIssuing(departure, arrival);
 
+  // eslint-disable-next-line complexity
   const transfers = useMemo(() => {
+    if (!record || record.result === CrossChainStatus.pending) {
+      return [];
+    }
+
+    const departure = getChainConfig(router.query.from as Network);
+    const arrival = getChainConfig(router.query.to as Network);
+    const bridge = getBridge<ParachainSubstrateBridgeConfig>([departure, arrival]);
+    const isIssuing = bridge.isIssuing(departure, arrival);
     const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.token.toLowerCase())!;
     const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === record.token.toLowerCase())!;
 
@@ -99,7 +104,7 @@ const Page: NextPage<{
           ];
 
     return isIssuing ? issuingTransfer : redeemTransfer;
-  }, [arrival, departure, isIssuing, record.recipient, record.result, record.sender, record.token]);
+  }, [record, router.query.from, router.query.to]);
 
   return <Detail record={record} transfers={transfers} />;
 };
