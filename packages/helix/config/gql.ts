@@ -23,23 +23,23 @@ export const HISTORY_RECORDS = gql`
     historyRecords(row: $row, page: $page, sender: $sender, recipient: $recipient) {
       total
       records {
-        id
-        bridge
-        fromChain
-        toChain
-        laneId
-        nonce
-        requestTxHash
-        responseTxHash
-        sender
-        recipient
-        token
         amount
-        startTime
+        bridge
         endTime
-        result
         fee
         feeToken
+        fromChain
+        id
+        laneId
+        nonce
+        recipient
+        requestTxHash
+        responseTxHash
+        result
+        sender
+        startTime
+        toChain
+        token
       }
     }
   }
@@ -48,22 +48,23 @@ export const HISTORY_RECORDS = gql`
 export const HISTORY_RECORD_BY_ID = gql`
   query historyRecordById($id: String!) {
     historyRecordById(id: $id) {
-      id
+      amount
       bridge
+      endTime
+      fee
+      feeToken
       fromChain
-      toChain
+      id
       laneId
       nonce
+      recipient
       requestTxHash
       responseTxHash
-      sender
-      recipient
-      token
-      amount
-      startTime
-      endTime
       result
-      fee
+      sender
+      startTime
+      toChain
+      token
     }
   }
 `;

@@ -14,16 +14,11 @@ interface StatisticsProps {
   startTime: string;
   total: string | number;
   rank: ChainStatisticOverview[];
-  currency?: string;
-}
-
-enum Currency {
-  usd = '$',
+  currency?: '$';
 }
 
 export function Statistics({ children, startTime, total, title, rank, currency }: PropsWithChildren<StatisticsProps>) {
   const { t } = useTranslation('common');
-  const currencyIcon = currency && Currency['usd'];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 mt-4 lg:mt-6">
@@ -40,7 +35,7 @@ export function Statistics({ children, startTime, total, title, rank, currency }
 
         <div className="flex flex-col gap-2 items-center justify-center mt-4 mb-2 md:mt-10 md:mb-6">
           <h2 className="text-4xl">
-            {currencyIcon}
+            {currency}
             {total}
           </h2>
           <span className="text-gray-400">
@@ -63,7 +58,7 @@ export function Statistics({ children, startTime, total, title, rank, currency }
               </div>
 
               <span className="uppercase">
-                {currencyIcon}
+                {currency}
                 {iTotal}
               </span>
             </div>

@@ -141,7 +141,7 @@ function Page() {
 
   return (
     <div>
-      <Statistics title={t('volumes')} startTime={startTime} total={volumeTotal} rank={volumeRank} currency="usd">
+      <Statistics title={t('volumes')} startTime={startTime} total={volumeTotal} rank={volumeRank} currency="$">
         {loading ? (
           <div className="block relative top-1/3 text-center">
             <Spin />
