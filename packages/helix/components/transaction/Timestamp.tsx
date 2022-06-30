@@ -8,6 +8,7 @@ import { TransferDescription } from './TransferDescription';
 
 export function Timestamp({ record }: { record: HelixHistoryRecord | null }) {
   const { t } = useTranslation();
+
   return (
     <TransferDescription
       title={t('Timestamp')}
@@ -15,7 +16,7 @@ export function Timestamp({ record }: { record: HelixHistoryRecord | null }) {
     >
       {record && (
         <div className="flex items-center gap-2 whitespace-nowrap">
-          {record?.result ? <ClockCircleOutlined /> : <Icon name="reload" />}
+          {record.result ? <ClockCircleOutlined /> : <Icon name="reload" />}
 
           <span>
             {formatDistance(fromUnixTime(record.startTime), new Date(new Date().toUTCString()), {

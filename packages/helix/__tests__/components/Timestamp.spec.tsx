@@ -23,6 +23,8 @@ jest.mock('next/router', () => ({
   },
 }));
 
+jest.useFakeTimers('modern').setSystemTime(new Date('2022-06-30'));
+
 describe('<Timestamp />', () => {
   const record: HelixHistoryRecord = {
     amount: '645000000000',
@@ -43,6 +45,16 @@ describe('<Timestamp />', () => {
     toChain: 'crab-dvm',
     token: '0x6d6f646c64612f6272696e670000000000000000',
   };
+
+  let mockDate: any;
+
+  beforeAll(() => {
+    mockDate = jest.spyOn(Date.prototype, 'toLocaleString').mockReturnValue('2022/6/30 下午1:10:54');
+  });
+
+  afterAll(() => {
+    mockDate.mockRestore();
+  });
 
   it('render Timestamp with success', () => {
     const component = create(<Timestamp record={record} />);
