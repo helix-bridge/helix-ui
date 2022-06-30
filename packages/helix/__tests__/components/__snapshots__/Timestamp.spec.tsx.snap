@@ -49,7 +49,7 @@ exports[`<Timestamp /> render Timestamp with processing 1`] = `
       />
     </svg>
     <span>
-      about 2 hours ago
+      about 3 hours ago
     </span>
     <span
       className="hidden md:inline-block"
@@ -164,7 +164,7 @@ exports[`<Timestamp /> render Timestamp with success 1`] = `
       </svg>
     </span>
     <span>
-      about 2 hours ago
+      about 3 hours ago
     </span>
     <span
       className="hidden md:inline-block"
