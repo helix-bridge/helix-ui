@@ -76,6 +76,6 @@ export const pangolinDVMConfig: DVMChainConfig = {
     },
   ],
   ss58Prefix: 42,
-  specVersion: 28130,
+  specVersion: 28140,
   wallets: ['metamask'],
 };
