@@ -3,18 +3,10 @@ import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { CrossChainStatus } from 'shared/config/constant';
-import { HelixHistoryRecord, Network, UnlockedRecord } from 'shared/model';
+import { HelixHistoryRecord, Network } from 'shared/model';
 import { TransferDescription } from './TransferDescription';
 
-export type FinalActionRecord = Pick<UnlockedRecord, 'txHash' | 'id' | 'recipient' | 'amount'>;
-
-export function TargetTx({
-  departureRecord,
-  finalRecord,
-}: {
-  departureRecord?: HelixHistoryRecord | null;
-  finalRecord: FinalActionRecord | null;
-}) {
+export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
   const { t } = useTranslation();
   const router = useRouter();
   const departure = router.query.from as Network;
@@ -25,24 +17,14 @@ export function TargetTx({
       title={t('Target Tx Hash')}
       tip={t('Unique character string (TxID) assigned to every verified transaction on the Target Chain.')}
     >
-      {finalRecord ? (
+      {record && record.responseTxHash ? (
         <SubscanLink
-          network={arrival}
-          txHash={finalRecord?.txHash}
+          network={record.result === CrossChainStatus.reverted ? departure : arrival}
+          txHash={record.responseTxHash}
           className="hover:opacity-80 transition-opacity duration-200"
         >
           <Typography.Text copyable className="truncate">
-            {finalRecord.txHash}
-          </Typography.Text>
-        </SubscanLink>
-      ) : departureRecord?.result === CrossChainStatus.reverted ? (
-        <SubscanLink
-          network={departure}
-          txHash={departureRecord?.responseTxHash ?? ''}
-          className="hover:opacity-80 transition-opacity duration-200"
-        >
-          <Typography.Text copyable className="truncate">
-            {departureRecord.responseTxHash}
+            {record.responseTxHash}
           </Typography.Text>
         </SubscanLink>
       ) : (

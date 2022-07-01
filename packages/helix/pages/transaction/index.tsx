@@ -14,7 +14,7 @@ import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
 import { Logo } from 'shared/components/widget/Logo';
 import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
-import { HelixHistoryRecord, Network } from 'shared/model';
+import { DailyStatistic, HelixHistoryRecord, Network } from 'shared/model';
 import { isDVM2Substrate, isParachain2Substrate } from 'shared/utils/bridge';
 import {
   convertToDvm,
@@ -28,8 +28,7 @@ import {
 import { chainConfigs, getChainConfig, getDisplayName, isDVMNetwork } from 'shared/utils/network';
 import web3 from 'web3';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
-import { ACCOUNTS, HISTORY_RECORDS, Path } from '../../config';
-import { useDailyStatistic } from '../../hooks';
+import { ACCOUNTS, HISTORY_RECORDS, Path, STATISTICS_QUERY, TIMEPAST } from '../../config';
 import { getDetailPaths } from '../../utils';
 
 function RecordAccount({ chain, account, partner }: { chain: Network; account: string; partner: string }) {
@@ -58,19 +57,26 @@ function RecordAccount({ chain, account, partner }: { chain: Network; account: s
 
 const PAGE_SIZE = 20;
 
-function Page({ records, count }: { records: HelixHistoryRecord[]; count: number }) {
+function Page({
+  records,
+  count,
+  dailyStatistics,
+}: {
+  records: HelixHistoryRecord[];
+  count: number;
+  dailyStatistics: DailyStatistic[];
+}) {
   const { t } = useTranslation('common');
   const router = useRouter();
   const [isValidSender, setIsValidSender] = useState(true);
-  const { data: dailyStatistic } = useDailyStatistic();
   const { data: accountRes } = useQuery<{ accounts: { total: number } }>(ACCOUNTS);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(count);
   const [pageSize, setPageSize] = useState(PAGE_SIZE);
 
   const transactionsTotal = useMemo(
-    () => (dailyStatistic?.dailyStatistics || []).reduce((acc, cur) => acc + cur.dailyCount, 0) ?? '-',
-    [dailyStatistic]
+    () => (dailyStatistics || []).reduce((acc, cur) => acc + cur.dailyCount, 0) ?? '-',
+    [dailyStatistics]
   );
 
   const [account, setAccount] = useState<string | undefined>();
@@ -326,10 +332,15 @@ export async function getStaticProps() {
     page: 0,
   }).then((res) => res && res[gqlName(HISTORY_RECORDS)]);
 
+  const dailyStatistics = await request(ENDPOINT, STATISTICS_QUERY, { timepast: TIMEPAST }).then(
+    (res) => res[gqlName(STATISTICS_QUERY)]
+  );
+
   return {
     props: {
       ...translations,
       records,
+      dailyStatistics,
       count: total,
     },
     revalidate: 10,

@@ -64,6 +64,6 @@ export const pangolinConfig: PolkadotChainConfig = {
     },
   ],
   ss58Prefix: 42,
-  specVersion: 28130,
+  specVersion: 28140,
   wallets: ['polkadot'],
 };

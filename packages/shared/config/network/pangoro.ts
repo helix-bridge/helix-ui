@@ -14,7 +14,7 @@ export const pangoroConfig: PolkadotChainConfig = {
     twitter: 'https://twitter.com/DarwiniaNetwork',
   },
   ss58Prefix: 18,
-  specVersion: 28130,
+  specVersion: 28140,
   tokens: [
     {
       name: 'ORING',

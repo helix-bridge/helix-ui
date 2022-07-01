@@ -4,9 +4,8 @@ import { BridgePredicateFn, isParachainSubstrate, isSubstrateDVM, isSubstrateSub
 type DirectionPaths = [BridgePredicateFn, string, string];
 
 export function getDetailPaths(fromChain: Network, toChain: Network, record: HelixHistoryRecord): string[] {
-  const radix = 16;
   const filters: DirectionPaths[] = [
-    [isSubstrateSubstrate, 's2s', record.laneId + '0x' + Number(record.nonce).toString(radix)],
+    [isSubstrateSubstrate, 's2s', record.id],
     [isSubstrateDVM, 's2dvm', record.id],
     [isParachainSubstrate, 's2parachain', record.id],
   ];

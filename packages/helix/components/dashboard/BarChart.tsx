@@ -3,12 +3,17 @@ import Highcharts from 'highcharts/highstock';
 import { useRef } from 'react';
 import { THEME } from 'shared/config/theme';
 import { readStorage } from 'shared/utils/helper';
+import HighchartsExporting from 'highcharts/modules/exporting';
 
 export type Statistic = [number, number];
 
 interface BarChartProps {
   data: Statistic[]; // [timestamp<million seconds>, value];
   name: string;
+}
+
+if (typeof Highcharts === 'object') {
+  HighchartsExporting(Highcharts);
 }
 
 export function BarChart({ data, name }: BarChartProps) {
@@ -95,6 +100,9 @@ export function BarChart({ data, name }: BarChartProps) {
     },
     series: [{ type: 'column', name, data }],
     credits: {
+      enabled: false,
+    },
+    exporting: {
       enabled: false,
     },
   };
