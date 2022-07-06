@@ -51,7 +51,7 @@ export function Detail({ record, transfers }: DetailProps) {
 
         <TargetTx record={record} />
 
-        <TxStatus result={record.result} />
+        <TxStatus record={record} />
 
         <Timestamp record={record} />
 

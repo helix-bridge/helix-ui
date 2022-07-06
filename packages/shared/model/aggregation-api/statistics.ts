@@ -21,6 +21,8 @@ export interface HelixHistoryRecord {
   recipient: string;
   requestTxHash: string;
   responseTxHash?: Nullable<string>;
+  targetTxHash: string;
+  bridgeDispatchError: string;
   result: Result;
   sender: string;
   startTime: number;

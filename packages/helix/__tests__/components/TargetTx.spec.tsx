@@ -45,6 +45,8 @@ describe('<TargetTx />', () => {
     startTime: 1656565854,
     toChain: 'crab-dvm',
     token: '0x6d6f646c64612f6272696e670000000000000000',
+    targetTxHash: '',
+    bridgeDispatchError: '',
   };
 
   it('render TargetTx with success record', () => {
