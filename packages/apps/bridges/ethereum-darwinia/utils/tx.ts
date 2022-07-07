@@ -31,7 +31,7 @@ interface ClaimInfo {
  */
 export const issuing: TxFn<IssuingPayload> = ({ sender, direction, recipient, bridge }) => {
   const {
-    from: { address, amount },
+    from: { address },
     to,
   } = direction;
   const options = to.meta.isTest ? { from: sender, gasPrice: '500000000000' } : { from: sender };
@@ -40,7 +40,7 @@ export const issuing: TxFn<IssuingPayload> = ({ sender, direction, recipient, br
 
   return genEthereumContractTxObs(address, (contract) =>
     contract.methods
-      .transferFrom(sender, bridge.config.contracts.issuing, toWei({ value: amount }), recipient)
+      .transferFrom(sender, bridge.config.contracts.issuing, toWei({ value: to.amount }), recipient)
       .send(options)
   );
 };
