@@ -1,3 +1,13 @@
+## [3.1.4](https://github.com/helix-bridge/helix/compare/v3.1.3-apps...v3.1.4) (2022-07-07)
+
+
+### Bug Fixes
+
+* **#90:** e2d allowance ([#92](https://github.com/helix-bridge/helix/issues/92)) ([d89f6ca](https://github.com/helix-bridge/helix/commit/d89f6ca986b472ed8d8439b89cfce7fe3bc5191e)), closes [#90](https://github.com/helix-bridge/helix/issues/90)
+* e2d transfer amount sub fee ([#93](https://github.com/helix-bridge/helix/issues/93)) ([e058f2c](https://github.com/helix-bridge/helix/commit/e058f2c8935078e97ea90a7ed45242a9fee5d049))
+* target tx hash ([#91](https://github.com/helix-bridge/helix/issues/91)) ([0caacac](https://github.com/helix-bridge/helix/commit/0caacaca191332f4f941b284bed55c5bdd4b0201))
+
+
 # [3.1.0](https://github.com/helix-bridge/helix/compare/v1.0.6-helix...v3.1.0) (2022-06-17)
 
 
