@@ -18,7 +18,7 @@ export const pangolinDVMConfig: DVMChainConfig = {
     { name: 'pangolin-logo.svg', type: 'assist' },
   ],
   name: 'pangolin-dvm',
-  provider: 'wss://pangolin-rpc.darwinia.network/',
+  provider: 'wss://pangolin-rpc.darwinia.network',
   social: {
     portal: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangolin-rpc.darwinia.network#/explorer',
     github: 'https://github.com/darwinia-network',

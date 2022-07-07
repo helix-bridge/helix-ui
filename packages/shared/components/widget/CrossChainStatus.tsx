@@ -3,7 +3,11 @@ import { CrossChainStatus, CrossChainStatusColor } from '../../config/constant';
 
 const StatusIcons = [ClockCircleFilled, CheckCircleFilled, CloseCircleFilled];
 
-export function CrossChainState({ value, className = '' }: { value: number; className?: string }) {
+export function CrossChainState({
+  value,
+  children,
+  className = '',
+}: React.PropsWithChildren<{ value: number; className?: string }>) {
   const Icon = StatusIcons[value];
 
   return (
@@ -13,6 +17,7 @@ export function CrossChainState({ value, className = '' }: { value: number; clas
     >
       <Icon />
       <span className="h-full">{CrossChainStatus[value]}</span>
+      {children}
     </div>
   );
 }

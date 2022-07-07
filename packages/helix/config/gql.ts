@@ -35,6 +35,8 @@ export const HISTORY_RECORDS = gql`
         recipient
         requestTxHash
         responseTxHash
+        targetTxHash
+        bridgeDispatchError
         result
         sender
         startTime
@@ -60,6 +62,8 @@ export const HISTORY_RECORD_BY_ID = gql`
       recipient
       requestTxHash
       responseTxHash
+      targetTxHash
+      bridgeDispatchError
       result
       sender
       startTime

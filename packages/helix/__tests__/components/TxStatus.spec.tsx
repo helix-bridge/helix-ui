@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 
 import { create } from 'react-test-renderer';
-import { Result } from 'shared/model';
+import { HelixHistoryRecord, Result } from 'shared/model';
 import { TxStatus } from '../../components/transaction/TxStatus';
 
 jest.mock('next-i18next', () => ({
@@ -14,7 +14,7 @@ jest.mock('next-i18next', () => ({
 
 describe('<TxStatus />', () => {
   it.each([0, 1, 2])('render TxStatus %s', (result) => {
-    const component = create(<TxStatus result={result as Result} />);
+    const component = create(<TxStatus record={{ result } as HelixHistoryRecord} />);
 
     let tree = component.toJSON();
 
@@ -22,7 +22,7 @@ describe('<TxStatus />', () => {
   });
 
   it('should render pending status default', () => {
-    const component = create(<TxStatus />);
+    const component = create(<TxStatus record={null} />);
 
     let tree = component.toJSON();
 

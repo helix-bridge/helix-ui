@@ -2,7 +2,7 @@
 
 exports[`<TxStatus /> render TxStatus 0 1`] = `
 <div
-  className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6"
+  className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6 relative"
 >
   <div
     className="w-36 flex items-center gap-2"
@@ -38,7 +38,7 @@ exports[`<TxStatus /> render TxStatus 0 1`] = `
     </span>
   </div>
   <div
-    className="flex items-center gap-1 px-2 rounded-xs max-w-max min-w-min h-6 text-gray-200 "
+    className="flex items-center gap-1 px-2 rounded-xs max-w-max min-w-min h-6 text-gray-200 relative"
     style={
       Object {
         "backgroundColor": "#00b3ff",
@@ -75,7 +75,7 @@ exports[`<TxStatus /> render TxStatus 0 1`] = `
 
 exports[`<TxStatus /> render TxStatus 1 1`] = `
 <div
-  className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6"
+  className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6 relative"
 >
   <div
     className="w-36 flex items-center gap-2"
@@ -111,7 +111,7 @@ exports[`<TxStatus /> render TxStatus 1 1`] = `
     </span>
   </div>
   <div
-    className="flex items-center gap-1 px-2 rounded-xs max-w-max min-w-min h-6 text-gray-200 "
+    className="flex items-center gap-1 px-2 rounded-xs max-w-max min-w-min h-6 text-gray-200 relative"
     style={
       Object {
         "backgroundColor": "#00AA76",
@@ -148,7 +148,7 @@ exports[`<TxStatus /> render TxStatus 1 1`] = `
 
 exports[`<TxStatus /> render TxStatus 2 1`] = `
 <div
-  className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6"
+  className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6 relative"
 >
   <div
     className="w-36 flex items-center gap-2"
@@ -184,7 +184,7 @@ exports[`<TxStatus /> render TxStatus 2 1`] = `
     </span>
   </div>
   <div
-    className="flex items-center gap-1 px-2 rounded-xs max-w-max min-w-min h-6 text-gray-200 "
+    className="flex items-center gap-1 px-2 rounded-xs max-w-max min-w-min h-6 text-gray-200 relative"
     style={
       Object {
         "backgroundColor": "#EC9D00",
@@ -221,7 +221,7 @@ exports[`<TxStatus /> render TxStatus 2 1`] = `
 
 exports[`<TxStatus /> should render pending status default 1`] = `
 <div
-  className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6"
+  className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6 relative"
 >
   <div
     className="w-36 flex items-center gap-2"
@@ -257,7 +257,7 @@ exports[`<TxStatus /> should render pending status default 1`] = `
     </span>
   </div>
   <div
-    className="flex items-center gap-1 px-2 rounded-xs max-w-max min-w-min h-6 text-gray-200 "
+    className="flex items-center gap-1 px-2 rounded-xs max-w-max min-w-min h-6 text-gray-200 relative"
     style={
       Object {
         "backgroundColor": "#00b3ff",

@@ -12,7 +12,7 @@ export const polygonConfig: EthereumChainConfig = {
   isTest: true,
   logos: [{ name: 'polygon.svg', type: 'main' }],
   name: 'polygon',
-  provider: 'https://polygon-rpc.com/',
+  provider: 'https://polygon-rpc.com',
   social: {
     portal: 'https://polygon.technology/',
     github: 'https://github.com/maticnetwork/',

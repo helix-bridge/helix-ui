@@ -2,9 +2,10 @@ import { Divider, Typography } from 'antd';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { useITranslation } from 'shared/hooks';
-import { ChainConfig, HelixHistoryRecord, Network, TokenWithBridgesInfo } from 'shared/model';
+import { HelixHistoryRecord, Network } from 'shared/model';
 import { fromWei, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
+import { TransferStep } from '../../model/transfer';
 import { IBreadcrumb } from './Breadcrumb';
 import { Bridge } from './Bridge';
 import { SourceTx } from './SourceTx';
@@ -16,7 +17,7 @@ import { TxStatus } from './TxStatus';
 
 interface DetailProps {
   record: HelixHistoryRecord;
-  transfers: { from: string; to: string; chain: ChainConfig; token: TokenWithBridgesInfo }[];
+  transfers: TransferStep[];
 }
 
 export function Detail({ record, transfers }: DetailProps) {
@@ -51,7 +52,7 @@ export function Detail({ record, transfers }: DetailProps) {
 
         <TargetTx record={record} />
 
-        <TxStatus result={record.result} />
+        <TxStatus record={record} />
 
         <Timestamp record={record} />
 
@@ -84,7 +85,7 @@ export function Detail({ record, transfers }: DetailProps) {
           title={t('Transaction Fee')}
           tip={'Amount paid for processing the cross-chain transaction.'}
         >
-          {fromWei({ value: record.fee, decimals: feeDecimals })} {record.feeToken}
+          {fromWei({ value: record.fee, decimals: feeDecimals })} {record.feeToken === 'null' ? null : record.feeToken}
         </TransferDescription>
 
         <Divider />

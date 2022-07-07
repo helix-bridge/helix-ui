@@ -7,6 +7,7 @@ import { getBridge } from 'shared/utils/bridge';
 import { revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
 import { Detail } from '../../../components/transaction/Detail';
+import { TransferStep } from '../../../model/transfer';
 import { getServerSideRecordProps } from '../../../utils/getServerSideRecordProps';
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ id: string }, HelixHistoryRecord>) {
@@ -27,32 +28,32 @@ const Page: NextPage<{
     const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.token.toLowerCase())!;
     const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === record.token.toLowerCase())!;
 
-    const issuingTransfer = [
+    const issuingTransfer: TransferStep[] = [
       {
         chain: departure,
-        from: revertAccount(record.sender, departure),
-        to: toToken.address,
+        sender: revertAccount(record.sender, departure),
+        recipient: toToken.address,
         token: fromToken,
       },
       {
         chain: arrival,
-        from: toToken.address,
-        to: revertAccount(record.recipient, arrival),
+        sender: toToken.address,
+        recipient: revertAccount(record.recipient, arrival),
         token: toToken,
       },
     ];
 
-    const redeemTransfer = [
+    const redeemTransfer: TransferStep[] = [
       {
         chain: departure,
-        from: revertAccount(record.sender, departure),
-        to: SUBSTRATE_DVM_WITHDRAW,
+        sender: revertAccount(record.sender, departure),
+        recipient: SUBSTRATE_DVM_WITHDRAW,
         token: fromToken,
       },
       {
         chain: arrival,
-        from: SUBSTRATE_DVM_WITHDRAW,
-        to: revertAccount(record.recipient, arrival),
+        sender: SUBSTRATE_DVM_WITHDRAW,
+        recipient: revertAccount(record.recipient, arrival),
         token: toToken,
       },
     ];

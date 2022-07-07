@@ -197,7 +197,7 @@ export const getStaticProps = async ({ locale }: { locale: string }) => {
     props: {
       ...translations,
       chainStatistics: statistics.filter((item) => item.chain !== 'all'),
-      dailyStatistics: statistics.find((item) => item.chain === 'all')!.data,
+      dailyStatistics: statistics.find((item) => item.chain === 'all')?.data ?? [],
     },
   };
 };
