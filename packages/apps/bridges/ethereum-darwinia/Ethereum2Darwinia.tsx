@@ -23,7 +23,7 @@ import { getIssuingFee, issuing } from './utils';
 
 const validateBeforeTx = (balance: BN, amount: BN, fee: BN, ringBalance: BN, allowance: BN): string | undefined => {
   const validations: [boolean, string][] = [
-    [ringBalance.lt(fee), 'Insufficient fee'],
+    [ringBalance.lt(fee), 'Insufficient balance to pay fee'],
     [balance.lt(amount), 'Insufficient balance'],
     [allowance.lt(amount), 'Insufficient allowance'],
   ];

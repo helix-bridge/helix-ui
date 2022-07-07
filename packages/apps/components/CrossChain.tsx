@@ -17,7 +17,6 @@ import {
   CrossChainPayload,
   TxObservableFactory,
 } from 'shared/model';
-import { isRing } from 'shared/utils/helper';
 import { useAllowance } from '../hooks/allowance';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
 import { getBalance } from '../utils';
@@ -56,11 +55,11 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
     }
 
     if (Array.isArray(balances)) {
-      return isRing(direction.from.symbol) ? allowance.gt(balances[0]) : true;
+      return allowance.gt(balances[0]);
     }
 
     return allowance.gt(balances);
-  }, [allowance, balances, direction.from.symbol]);
+  }, [allowance, balances]);
 
   const Content = useMemo(() => {
     const { from, to } = direction;
