@@ -5,7 +5,7 @@ import { Network } from '../network';
 export interface DailyStatistic {
   timestamp: string;
   dailyVolume: string;
-  dailyCount: number;
+  dailyCount: string;
 }
 
 export interface HelixHistoryRecord {

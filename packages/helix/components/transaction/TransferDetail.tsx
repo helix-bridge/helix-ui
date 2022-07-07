@@ -3,17 +3,11 @@ import { Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 import { Logo } from 'shared/components/widget/Logo';
-import { ChainConfig, TokenWithBridgesInfo } from 'shared/model';
 import { getDisplayName } from 'shared/utils/network';
+import { TransferStep } from '../../model/transfer';
 import { TransferDescription } from './TransferDescription';
 
-export function TransferDetail({
-  transfers,
-  amount,
-}: {
-  transfers: { chain: ChainConfig; from: string; to: string; token: TokenWithBridgesInfo }[];
-  amount: string;
-}) {
+export function TransferDetail({ transfers, amount }: { transfers: TransferStep[]; amount: string }) {
   const { t } = useTranslation();
 
   return (
@@ -22,7 +16,7 @@ export function TransferDetail({
       tip={t('List of tokens transferred in this cross-chain transaction.')}
     >
       <div className="flex flex-col flex-1 gap-2">
-        {transfers.map(({ chain, from, to, token }, index) => (
+        {transfers.map(({ chain, sender, recipient, token }, index) => (
           <div
             key={[token.name, token.host, index].join('-')}
             className="w-full md:w-2/3 2xl:w-1/2 grid grid-cols-12 items-center"
@@ -33,14 +27,14 @@ export function TransferDetail({
             </span>
 
             <span className="grid grid-cols-12 items-center gap-2 col-span-6">
-              <Tooltip title={from}>
-                <span className="text-center truncate col-span-5">{from}</span>
+              <Tooltip title={sender}>
+                <span className="text-center truncate col-span-5">{sender}</span>
               </Tooltip>
 
               <ArrowRightOutlined />
 
-              <Tooltip title={to}>
-                <span className="text-center truncate col-span-5">{to}</span>
+              <Tooltip title={recipient}>
+                <span className="text-center truncate col-span-5">{recipient}</span>
               </Tooltip>
             </span>
 

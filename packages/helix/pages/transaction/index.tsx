@@ -75,7 +75,7 @@ function Page({
   const [pageSize, setPageSize] = useState(PAGE_SIZE);
 
   const transactionsTotal = useMemo(
-    () => (dailyStatistics || []).reduce((acc, cur) => acc + cur.dailyCount, 0) ?? '-',
+    () => (dailyStatistics || []).reduce((acc, cur) => acc + Number(cur.dailyCount), 0) ?? '-',
     [dailyStatistics]
   );
 

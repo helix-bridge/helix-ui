@@ -1,14 +1,17 @@
+import { Result } from 'antd';
 import { GetServerSidePropsContext, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { CrossChainStatus, GENESIS_ADDRESS } from 'shared/config/constant';
 import { SUBSTRATE_PARACHAIN_BACKING } from 'shared/config/env';
+import { useITranslation } from 'shared/hooks';
 import { HelixHistoryRecord, Network, ParachainSubstrateBridgeConfig } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
 import { Detail } from '../../../components/transaction/Detail';
 import { useUpdatableRecord } from '../../../hooks';
+import { TransferStep } from '../../../model/transfer';
 import { getServerSideRecordProps } from '../../../utils/getServerSideRecordProps';
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ id: string }, HelixHistoryRecord>) {
@@ -19,13 +22,14 @@ const Page: NextPage<{
   id: string;
   data: HelixHistoryRecord;
 }> = ({ id, data }) => {
+  const { t } = useITranslation();
   const router = useRouter();
   const { record } = useUpdatableRecord(data, id);
 
   // eslint-disable-next-line complexity
   const transfers = useMemo(() => {
-    if (!record || record.result === CrossChainStatus.pending) {
-      return [];
+    if (!record) {
+      return null;
     }
 
     const departure = getChainConfig(router.query.from as Network);
@@ -35,78 +39,72 @@ const Page: NextPage<{
     const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.token.toLowerCase())!;
     const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === record.token.toLowerCase())!;
 
-    const issuingTransfer =
-      record.result === CrossChainStatus.success
-        ? [
-            {
-              chain: departure,
-              from: revertAccount(record.sender, departure),
-              to: SUBSTRATE_PARACHAIN_BACKING,
-              token: fromToken,
-            },
-            {
-              chain: arrival,
-              from: GENESIS_ADDRESS,
-              to: revertAccount(record.recipient, arrival),
-              token: toToken,
-            },
-          ]
-        : [
-            {
-              chain: departure,
-              from: revertAccount(record.sender, departure),
-              to: SUBSTRATE_PARACHAIN_BACKING,
-              token: fromToken,
-            },
-            {
-              chain: arrival,
-              from: SUBSTRATE_PARACHAIN_BACKING,
-              to: revertAccount(record.sender, departure),
-              token: fromToken,
-            },
-          ];
+    const issueStart: TransferStep = {
+      chain: departure,
+      sender: revertAccount(record.sender, departure),
+      recipient: SUBSTRATE_PARACHAIN_BACKING,
+      token: fromToken,
+    };
+    const issueSuccess: TransferStep = {
+      chain: arrival,
+      sender: GENESIS_ADDRESS,
+      recipient: revertAccount(record.recipient, arrival),
+      token: toToken,
+    };
+    const issueFail: TransferStep = {
+      chain: arrival,
+      sender: SUBSTRATE_PARACHAIN_BACKING,
+      recipient: revertAccount(record.sender, departure),
+      token: fromToken,
+    };
 
-    const redeemTransfer =
+    const redeemStart: TransferStep = {
+      chain: departure,
+      sender: revertAccount(record.sender, departure),
+      recipient: SUBSTRATE_PARACHAIN_BACKING,
+      token: fromToken,
+    };
+    const redeemDispatch: TransferStep = {
+      chain: arrival,
+      sender: SUBSTRATE_PARACHAIN_BACKING,
+      recipient: revertAccount(record.recipient, arrival),
+      token: toToken,
+    };
+    const redeemSuccess: TransferStep = {
+      chain: departure,
+      sender: revertAccount(record.sender, departure),
+      recipient: GENESIS_ADDRESS,
+      token: toToken,
+    };
+    const redeemFail: TransferStep = {
+      chain: departure,
+      sender: SUBSTRATE_PARACHAIN_BACKING,
+      recipient: revertAccount(record.sender, departure),
+      token: fromToken,
+    };
+
+    if (record.result === CrossChainStatus.pending) {
+      return isIssuing ? [issueStart] : [redeemStart];
+    }
+
+    const issuingTransfer: TransferStep[] = [
+      issueStart,
+      record.result === CrossChainStatus.success ? issueSuccess : issueFail,
+    ];
+
+    const redeemTransfer: TransferStep[] =
       record.result === CrossChainStatus.success
-        ? [
-            {
-              chain: departure,
-              from: revertAccount(record.sender, departure),
-              to: SUBSTRATE_PARACHAIN_BACKING,
-              token: fromToken,
-            },
-            {
-              chain: arrival,
-              from: SUBSTRATE_PARACHAIN_BACKING,
-              to: revertAccount(record.recipient, arrival),
-              token: toToken,
-            },
-            {
-              chain: departure,
-              from: revertAccount(record.sender, departure),
-              to: GENESIS_ADDRESS,
-              token: toToken,
-            },
-          ]
-        : [
-            {
-              chain: departure,
-              from: revertAccount(record.sender, departure),
-              to: SUBSTRATE_PARACHAIN_BACKING,
-              token: fromToken,
-            },
-            {
-              chain: departure,
-              from: SUBSTRATE_PARACHAIN_BACKING,
-              to: revertAccount(record.sender, departure),
-              token: fromToken,
-            },
-          ];
+        ? [redeemStart, redeemDispatch, redeemSuccess]
+        : [redeemStart, redeemFail];
 
     return isIssuing ? issuingTransfer : redeemTransfer;
   }, [record, router.query.from, router.query.to]);
 
-  return <Detail record={record} transfers={transfers} />;
+  return transfers ? (
+    <Detail record={record} transfers={transfers} />
+  ) : (
+    <Result status="error" title={t('Record not found')} />
+  );
 };
 
 export default Page;
