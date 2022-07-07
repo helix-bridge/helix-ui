@@ -2,7 +2,7 @@
 
 exports[`<Timestamp /> render Timestamp with processing 1`] = `
 <div
-  className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6"
+  className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6 relative"
 >
   <div
     className="w-36 flex items-center gap-2"
@@ -103,7 +103,7 @@ exports[`<Timestamp /> render Timestamp with processing 1`] = `
 
 exports[`<Timestamp /> render Timestamp with success 1`] = `
 <div
-  className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6"
+  className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6 relative"
 >
   <div
     className="w-36 flex items-center gap-2"
