@@ -1,7 +1,7 @@
 import { GithubOutlined, GlobalOutlined, TwitterCircleFilled } from '@ant-design/icons';
-import Image from 'next/image';
 import { useCallback } from 'react';
 import { BestNumber } from 'shared/components/widget/BestNumber';
+import { Logo } from 'shared/components/widget/Logo';
 import { ChainConfig } from 'shared/model';
 import { getDisplayName } from 'shared/utils/network';
 
@@ -16,7 +16,7 @@ export function Chain(props: ChainConfig) {
 
   return (
     <div className="flex items-center px-6 py-8 gap-6 bg-gray-200 dark:bg-antDark">
-      <Image src={`/image/${logos[0].name}`} width={70} height={70} />
+      <Logo name={logos[0].name} width={70} height={70} />
 
       <div className="flex flex-col gap-2">
         <h6 className="capitalize">{chainName}</h6>

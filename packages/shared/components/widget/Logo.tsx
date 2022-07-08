@@ -6,9 +6,10 @@ interface LogoProps extends Omit<ImageProps, 'src'> {
   chain?: ChainConfig | null | undefined;
   name?: string;
   logoType?: LogoType;
+  className?: string;
 }
 
-export function Logo({ chain, logoType = 'main', name = '', ...rest }: LogoProps) {
+export function Logo({ chain, className = '', logoType = 'main', name = '', ...rest }: LogoProps) {
   const [logo, setLogo] = useState(name);
 
   useEffect(() => {
@@ -23,5 +24,5 @@ export function Logo({ chain, logoType = 'main', name = '', ...rest }: LogoProps
     }
   }, [chain, logoType]);
 
-  return <Image {...rest} src={`/image/${name || logo}`} />;
+  return <Image {...rest} src={`/image/${name || logo}`} className={`rounded-full ${className}`} />;
 }
