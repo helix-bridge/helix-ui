@@ -64,7 +64,7 @@ exports[`<Bridge /> render bridge 1`] = `
         />
       </span>
       <img
-        className="w-5 md:w-10"
+        className="rounded-full w-5 md:w-10"
         data-nimg="intrinsic"
         decoding="async"
         src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
@@ -93,7 +93,7 @@ exports[`<Bridge /> render bridge 1`] = `
       />
       <noscript>
         <img
-          className="w-5 md:w-10"
+          className="rounded-full w-5 md:w-10"
           data-nimg="intrinsic"
           decoding="async"
           loading="lazy"
@@ -302,7 +302,7 @@ exports[`<Bridge /> render bridge 1`] = `
         />
       </span>
       <img
-        className="w-5 md:w-10"
+        className="rounded-full w-5 md:w-10"
         data-nimg="intrinsic"
         decoding="async"
         src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
@@ -331,7 +331,7 @@ exports[`<Bridge /> render bridge 1`] = `
       />
       <noscript>
         <img
-          className="w-5 md:w-10"
+          className="rounded-full w-5 md:w-10"
           data-nimg="intrinsic"
           decoding="async"
           loading="lazy"

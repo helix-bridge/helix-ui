@@ -1,7 +1,6 @@
 import { ArrowRightOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
-import Image from 'next/image';
 import { Logo } from 'shared/components/widget/Logo';
 import { getDisplayName } from 'shared/utils/network';
 import { TransferStep } from '../../model/transfer';
@@ -40,7 +39,7 @@ export function TransferDetail({ transfers, amount }: { transfers: TransferStep[
 
             <span className="flex items-center gap-2 col-span-3">
               <span>{t('For')}</span>
-              <Image src={`/image/${token.logo}`} width={16} height={16} className="w-5" />
+              <Logo name={token.logo} width={16} height={16} className="w-5" />
               <span className="whitespace-nowrap">
                 {amount} {token.name}
               </span>
