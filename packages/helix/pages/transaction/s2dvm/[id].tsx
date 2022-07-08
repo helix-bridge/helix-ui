@@ -19,12 +19,12 @@ const Page: NextPage<{
   data: HelixHistoryRecord;
 }> = ({ data: record }) => {
   const router = useRouter();
+  const departure = getChainConfig(router.query.from as Network);
+  const arrival = getChainConfig(router.query.to as Network);
+  const bridge = getBridge<SubstrateDVMBridgeConfig>([departure, arrival]);
+  const isIssuing = bridge.isIssuing(departure, arrival);
 
   const transfers = useMemo(() => {
-    const departure = getChainConfig(router.query.from as Network);
-    const arrival = getChainConfig(router.query.to as Network);
-    const bridge = getBridge<SubstrateDVMBridgeConfig>([departure, arrival]);
-    const isIssuing = bridge.isIssuing(departure, arrival);
     const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.token.toLowerCase())!;
     const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === record.token.toLowerCase())!;
 
@@ -59,9 +59,14 @@ const Page: NextPage<{
     ];
 
     return isIssuing ? issuingTransfer : redeemTransfer;
-  }, [record.recipient, record.sender, record.token, router.query.from, router.query.to]);
+  }, [arrival, departure, isIssuing, record.recipient, record.sender, record.token]);
 
-  return <Detail record={record} transfers={transfers} />;
+  return (
+    <Detail
+      record={isIssuing ? record : { ...record, amount: record.amount.toString().padEnd(9, '0') }}
+      transfers={transfers}
+    />
+  );
 };
 
 export default Page;
