@@ -1,3 +1,9 @@
+## [3.1.5](https://github.com/helix-bridge/helix/compare/v3.1.4-apps...v3.1.5) (2022-07-08)
+
+### Style
+
+* update chain logo ([#95](https://github.com/helix-bridge/helix/issues/95)) 
+
 ## [3.1.4](https://github.com/helix-bridge/helix/compare/v3.1.3-apps...v3.1.4) (2022-07-07)
 
 
