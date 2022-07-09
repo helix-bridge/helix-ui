@@ -35,9 +35,29 @@ const configs = SYSTEM_ChAIN_CONFIGURATIONS.filter((config) => config.isTest ===
 
 const initialPrices = Object.fromEntries(configs.map((item) => [item.name, { usd: 1 }]));
 
+const queryStatistics = async () => {
+  const statistics = await Promise.all([
+    ...configs.map((chain) =>
+      request(ENDPOINT, STATISTICS_QUERY, { timepast: TIMEPAST, chain: chain.name }).then((res) => ({
+        chain,
+        data: res[gqlName(STATISTICS_QUERY)],
+      }))
+    ),
+    request(ENDPOINT, STATISTICS_QUERY, { timepast: TIMEPAST }).then((res) => ({
+      chain: 'all',
+      data: res[gqlName(STATISTICS_QUERY)],
+    })),
+  ]).then((result) => result.filter((item) => item.data.length));
+
+  return {
+    chainStatistics: statistics.filter((item) => item.chain !== 'all') as ChainStatistic[],
+    dailyStatistics: statistics.find((item) => item.chain === 'all')?.data ?? [],
+  };
+};
+
 function Page({
-  chainStatistics,
-  dailyStatistics,
+  chainStatistics: chainData,
+  dailyStatistics: dailyData,
 }: {
   chainStatistics: ChainStatistic[];
   dailyStatistics: DailyStatistic[];
@@ -45,6 +65,8 @@ function Page({
   const { t } = useTranslation('common');
   const [loading] = useState(false);
   const [prices, setPrices] = useState(initialPrices);
+  const [chainStatistics, setChainStatistics] = useState<ChainStatistic[]>(chainData);
+  const [dailyStatistics, setDailyStatistics] = useState<DailyStatistic[]>(dailyData);
 
   const { volume, transactions, transactionsTotal } = useMemo(() => {
     if (!dailyStatistics) {
@@ -139,6 +161,11 @@ function Page({
       });
     }
 
+    queryStatistics().then((result) => {
+      setDailyStatistics(result.dailyStatistics);
+      setChainStatistics(result.chainStatistics);
+    });
+
     return () => sub$$?.unsubscribe();
   }, []);
 
@@ -179,26 +206,14 @@ function Page({
 
 export const getStaticProps = async ({ locale }: { locale: string }) => {
   const translations = await serverSideTranslations(locale, ['common']);
-
-  const statistics = await Promise.all([
-    ...configs.map((chain) =>
-      request(ENDPOINT, STATISTICS_QUERY, { timepast: TIMEPAST, chain: chain.name }).then((res) => ({
-        chain,
-        data: res[gqlName(STATISTICS_QUERY)],
-      }))
-    ),
-    request(ENDPOINT, STATISTICS_QUERY, { timepast: TIMEPAST }).then((res) => ({
-      chain: 'all',
-      data: res[gqlName(STATISTICS_QUERY)],
-    })),
-  ]).then((result) => result.filter((item) => item.data.length));
+  const statistics = await queryStatistics();
 
   return {
     props: {
       ...translations,
-      chainStatistics: statistics.filter((item) => item.chain !== 'all'),
-      dailyStatistics: statistics.find((item) => item.chain === 'all')?.data ?? [],
+      ...statistics,
     },
+    revalidate: 10,
   };
 };
 

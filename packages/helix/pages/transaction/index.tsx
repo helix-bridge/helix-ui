@@ -208,13 +208,11 @@ function Page({
       recipient: acc,
     };
 
-    setLoading(true);
     const sub$$ = from(request(ENDPOINT, HISTORY_RECORDS, args))
       .pipe(map((res) => res && res[gqlName(HISTORY_RECORDS)]))
       .subscribe((result) => {
         setTotal(result.total);
         setSource(result.records);
-        setLoading(false);
       });
 
     return () => sub$$.unsubscribe();
