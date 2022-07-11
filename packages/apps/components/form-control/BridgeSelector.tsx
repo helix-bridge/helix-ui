@@ -3,12 +3,20 @@ import { Badge, Radio, Result, Space, Tooltip } from 'antd';
 import { matches } from 'lodash';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
-import { useMemo } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { Logo } from 'shared/components/widget/Logo';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
-import { Bridge, CrossChainDirection, CrossToken, CustomFormControlProps, NullableFields } from 'shared/model';
+import {
+  Bridge,
+  BridgeCategory,
+  CrossChainDirection,
+  CrossToken,
+  CustomFormControlProps,
+  NullableFields,
+} from 'shared/model';
 import { getBridges } from 'shared/utils/bridge';
 import { getDisplayName } from 'shared/utils/network';
+import { bridgeCategoryDisplay } from '../../utils';
 import { BridgeState } from '../bridge/BridgeState';
 
 type TokenOnChainProps = {
@@ -20,12 +28,17 @@ type BridgeSelectorProps = CustomFormControlProps<Bridge> & {
   direction: NullableFields<CrossChainDirection, 'from' | 'to'>;
 };
 
+const logoHeight: { [key in BridgeCategory]: number } = {
+  helix: 28,
+  cBridge: 18,
+};
+
 const TokenOnChain = ({ token, isFrom }: TokenOnChainProps) => (
   <div className="flex items-center text-white">
     <div className={`hidden lg:block relative w-14 h-14 ${isFrom ? 'order-1' : 'order-2 ml-3'}`}>
-      <Image src={`/image/${token.logo}`} alt="..." layout="fill" />
+      <Logo name={token.logo} alt="..." layout="fill" />
       <span className="w-7 h-7 absolute top-auto bottom-1 left-auto -right-3">
-        <Image src={`/image/${token.meta?.logos[0].name}`} alt="..." layout="fill" />
+        <Logo name={token.meta?.logos[0].name} alt="..." layout="fill" />
       </span>
     </div>
 
@@ -79,6 +92,7 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
           }}
         >
           <Space direction="vertical" className="w-full" size="middle">
+            {/* eslint-disable-next-line complexity */}
             {bridges.map((item, index) => (
               <Badge.Ribbon
                 text={
@@ -107,9 +121,14 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
                     <TokenOnChain token={direction.from as CrossToken} isFrom />
 
                     <div className="relative w-56 hidden lg:flex justify-center text-white">
-                      <div className="py-1 w-24 rounded-3xl bg-gray-700 flex justify-center items-center space-x-2 z-10">
-                        <Image alt="..." src={`/image/${item?.category}-bridge.svg`} width={28} height={28} />
-                        <strong className="capitalize">{item?.category}</strong>
+                      <div className="py-1 rounded-3xl bg-gray-700 flex justify-center items-center space-x-2 z-10 px-2 min-w-24">
+                        <Image
+                          alt="..."
+                          src={`/image/${item?.category}-bridge.svg`}
+                          width={28}
+                          height={logoHeight[item.category ?? 'helix']}
+                        />
+                        <strong>{bridgeCategoryDisplay(item?.category)}</strong>
                       </div>
                       <Image alt="..." src="/image/bridge-to.svg" layout="fill" priority />
                     </div>

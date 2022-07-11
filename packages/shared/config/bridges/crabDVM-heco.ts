@@ -11,5 +11,5 @@ const crabDVMHecoConfig: CrabDVMHecoBridgeConfig = {
 
 export const crabDVMHeco = new Bridge(crabDVMConfig, hecoConfig, crabDVMHecoConfig, {
   name: 'crabDVM-heco',
-  category: 'helix',
+  category: 'cBridge',
 });

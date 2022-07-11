@@ -2,14 +2,14 @@ import { EthereumChainConfig } from '../../model';
 
 export const hecoConfig: EthereumChainConfig = {
   ethereumChain: {
-    chainId: '128',
+    chainId: '0x80',
     chainName: 'heco-mainnet',
     nativeCurrency: {
       decimals: 18,
     },
     rpcUrls: ['https://http-mainnet.hecochain.com'],
   },
-  isTest: true,
+  isTest: false,
   logos: [{ name: 'heco.png', type: 'main' }],
   name: 'heco',
   provider: 'https://http-mainnet.hecochain.com',
@@ -22,7 +22,13 @@ export const hecoConfig: EthereumChainConfig = {
     {
       name: 'RING',
       decimals: 18,
-      cross: [],
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-heco',
+          partner: { name: 'crab-dvm', role: 'issuer', symbol: 'xRING' },
+        },
+      ],
       type: 'mapping',
       logo: 'token-ring.svg',
       host: 'heco',

@@ -67,6 +67,11 @@ export const crabDVMConfig: DVMChainConfig = {
           bridge: 'substrate-substrateDVM',
           partner: { name: 'darwinia', role: 'issuer', symbol: 'RING' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-heco',
+          partner: { name: 'heco', role: 'receiver', symbol: 'RING' },
+        },
       ],
       type: 'mapping',
       host: 'crab-dvm',

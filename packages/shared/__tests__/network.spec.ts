@@ -18,7 +18,7 @@ describe('network utils', () => {
     const fromCrabDVM = data.find((item) => item[0] === 'crab-dvm');
 
     expect(fromCrabDVM).not.toEqual(undefined);
-    expect(fromCrabDVM![1]).toEqual(['crab', 'darwinia']);
+    expect(fromCrabDVM![1]).toEqual(['crab', 'darwinia', 'heco']);
 
     const fromDarwinia = data.find((item) => item[0] === 'darwinia');
 
@@ -52,7 +52,7 @@ describe('network utils', () => {
   });
 
   it('should have desired number of cross-chains', () => {
-    expect(chainConfigs).toHaveLength(9);
+    expect(chainConfigs).toHaveLength(10);
   });
 
   it('can get chain config by chain name', () => {

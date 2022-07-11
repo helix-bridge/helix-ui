@@ -3,6 +3,7 @@ import { Form, Spin, Typography } from 'antd';
 import { PropsWithChildren, ReactNode, useState } from 'react';
 import { Bridge } from 'shared/model';
 import { useITranslation } from '../../hooks';
+import { bridgeCategoryDisplay } from '../../utils';
 
 type AmountInfo =
   | {
@@ -28,7 +29,7 @@ export function CrossChainInfo({ bridge, fee, extra, children, hideFee }: PropsW
       <div className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900">
         <div className="flex justify-between items-center">
           <Typography.Text>{t('Bridge Name')}</Typography.Text>
-          <Typography.Text className="capitalize">{bridge?.category}</Typography.Text>
+          <Typography.Text>{bridgeCategoryDisplay(bridge?.category)}</Typography.Text>
         </div>
 
         <div className={`flex justify-between items-center ${hideFee ? 'hidden' : ''}`}>
