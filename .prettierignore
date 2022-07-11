@@ -2,3 +2,4 @@ cypress/plugins/
 cypress/pages/
 cypress/extensions/
 plugins/
+**/cBridge/
