@@ -11,9 +11,14 @@ export interface Logo {
 
 export type TokenType = 'native' | 'mapping';
 
-export type BridgeCategory = 'helix';
+export type BridgeCategory = 'helix' | 'cBridge';
 
-export type BridgeName = 'substrate-DVM' | 'substrate-substrateDVM' | 'ethereum-darwinia' | 'parachain-substrate';
+export type BridgeName =
+  | 'substrate-DVM'
+  | 'substrate-substrateDVM'
+  | 'ethereum-darwinia'
+  | 'parachain-substrate'
+  | 'crabDVM-heco';
 
 type PartnerRole = 'issuer' | 'receiver';
 

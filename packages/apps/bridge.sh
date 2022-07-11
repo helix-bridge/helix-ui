@@ -58,21 +58,24 @@ function initModel() {
 
         type ${name}ContractConfig = ContractConfig;
 
-        export type $2BridgeConfig = Required<BridgeConfig<${name}ContractConfig>>;
+        export type ${name}BridgeConfig = Required<BridgeConfig<${name}ContractConfig>>;
     " >>$1'/bridge.ts'
+
+    cp $1'/bridge.ts' '../shared/model/bridges/'${origin}'-'${target}'.ts'
+    echo "export * from './${origin}-${target}';" >> '../shared/model/bridges/index.ts'
 
     echo "
         import { Bridge, CrossChainPayload, CrossToken, ChainConfig } from 'shared/model';
-        import { $2BridgeConfig } from './bridge';
+        import { ${name}BridgeConfig } from './bridge';
 
         export type IssuingPayload = CrossChainPayload<
-            Bridge<$2BridgeConfig>,
+            Bridge<${name}BridgeConfig>,
             CrossToken<ChainConfig>,
             CrossToken<ChainConfig>
         >;
 
         export type RedeemPayload = CrossChainPayload<
-            Bridge<$2BridgeConfig>,
+            Bridge<${name}BridgeConfig>,
             CrossToken<ChainConfig>,
             CrossToken<ChainConfig>
         >;
@@ -85,20 +88,24 @@ function initModel() {
 }
 
 function initConfig() {
+    # TODO: allow select category
     echo "
-        // Move this file to shared package!
         import { ${origin}Config, ${target}Config } from 'shared/config/network';
         import { Bridge } from 'shared/model';
-        import { ${from}${to}BridgeConfig } from '../model/bridge';
+        import { ${from}${to}BridgeConfig } from 'shared/model';
 
         const ${origin}${to}Config: ${from}${to}BridgeConfig = { 
-            specVersion: 0, 
+            contracts: {
+                issuing: '',
+                redeem: ''
+            } 
         };
 
-        export const ${origin}${to} = new Bridge(${origin}Config, ${target}Config, ${origin}${to}Config, {});
-    " >>$1'/bridge.ts'
-
-    echo "export * from './bridge';" >>$1'/index.ts'
+        export const ${origin}${to} = new Bridge(${origin}Config, ${target}Config, ${origin}${to}Config, {
+            name: '${origin}-${target}',
+            category: 'helix',
+        });
+    " >>$1'/'${origin}'-'${target}'.ts'
 }
 
 function initUitls() {
@@ -148,6 +155,7 @@ function init() {
     local dir=$origin'-'$target
     local path='./bridges/'$dir
     local index=$path'/index.ts'
+    local shared='../shared'
 
     mkdir $path
 
@@ -155,7 +163,7 @@ function init() {
     initModel $path'/model' $departure $arrival
 
     mkdir $path'/config'
-    initConfig $path'/config' $departure $arrival
+    initConfig $shared'/config/bridges' $departure $arrival
 
     mkdir $path'/utils'
     initUitls $path'/utils'
@@ -180,3 +188,5 @@ checkExist
 init
 
 ../../node_modules/prettier/bin-prettier.js ./bridges/${origin}'-'${target}/**/*.{ts,tsx} --write
+../../node_modules/prettier/bin-prettier.js ../shared/config/**/*.ts --write
+../../node_modules/prettier/bin-prettier.js ../shared/model/**/*.ts --write
