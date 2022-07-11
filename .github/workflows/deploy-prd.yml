@@ -54,7 +54,7 @@ jobs:
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy ${{ matrix.package }} (test)
-        if: contains(github.ref, 'apps') || contains(github.ref, '-') == false
+        if: contains(github.ref, matrix.package) || contains(github.ref, '-') == false
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
