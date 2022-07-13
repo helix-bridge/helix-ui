@@ -78,6 +78,7 @@
   "View in {{scan}} explorer": "View in {{scan}} explorer",
   "Waiting for approve, you need to approve this transaction in your wallet": "Waiting for approve, you need to approve this transaction in your wallet",
   "Wallet provider offline": "Wallet provider offline",
+  "When the transaction is successful, the extrinsic message will be provided": "When the transaction is successful, the extrinsic message will be provided",
   "Wrong Network": "Wrong Network",
   "You haven’t created an address yet, please create a address first.": "You haven’t created an address yet, please create a address first.",
   "history": "history",
