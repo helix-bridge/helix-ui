@@ -1,7 +1,7 @@
-import { message, Typography } from 'antd';
+import { Typography } from 'antd';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
-import { EMPTY, from } from 'rxjs';
+import { from } from 'rxjs';
 import {
   Bridge,
   CrossChainComponentProps,
@@ -18,19 +18,9 @@ import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useITranslation } from '../../hooks';
+import { getTxObservable } from '../../utils/tx';
 import { EthereumDarwiniaBridgeConfig, IssuingPayload } from './model';
-import { getIssuingFee, issuing } from './utils';
-
-const validateBeforeTx = (balance: BN, amount: BN, fee: BN, ringBalance: BN, allowance: BN): string | undefined => {
-  const validations: [boolean, string][] = [
-    [ringBalance.lt(fee), 'Insufficient balance to pay fee'],
-    [balance.lt(amount), 'Insufficient balance'],
-    [allowance.lt(amount), 'Insufficient allowance'],
-  ];
-  const target = validations.find((item) => item[0]);
-
-  return target && target[1];
-};
+import { getIssuingFee, issuing, validateBeforeTx } from './utils';
 
 export function Ethereum2Darwinia({
   allowance,
@@ -62,31 +52,26 @@ export function Ethereum2Darwinia({
   const [ring, kton] = (balances ?? []) as BN[];
 
   useEffect(() => {
-    // eslint-disable-next-line complexity
     const fn = () => (value: IssuingPayload) => {
-      if (!fee || !balances || !ring || !allowance) {
-        return EMPTY;
-      }
-
-      const msg = validateBeforeTx(
-        isRing(direction.from.symbol) ? ring : kton,
-        new BN(toWei({ value: direction.from.amount })),
+      const validateRes = validateBeforeTx([fee, balances, ring, allowance], {
+        balance: isRing(direction.from.symbol) ? ring : kton,
+        amount: new BN(toWei({ value: direction.from.amount })),
         fee,
-        ring,
-        allowance
-      );
+        ringBalance: ring,
+        allowance,
+      });
 
-      if (msg) {
-        message.error(t(msg));
-        return EMPTY;
-      }
-
-      return createTxWorkflow(
-        applyModalObs({
-          content: <TransferConfirm value={value} fee={feeWithSymbol!} />,
-        }),
-        issuing(value),
-        afterCrossChain(TransferDone, { payload: value })
+      return getTxObservable(
+        validateRes,
+        () =>
+          createTxWorkflow(
+            applyModalObs({
+              content: <TransferConfirm value={value} fee={feeWithSymbol!} />,
+            }),
+            issuing(value),
+            afterCrossChain(TransferDone, { payload: value })
+          ),
+        t
       );
     };
 

@@ -1,10 +1,10 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
 import { BN_ZERO } from '@polkadot/util';
-import { message, Typography } from 'antd';
+import { Typography } from 'antd';
 import BN from 'bn.js';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
-import { EMPTY, from, mergeMap, switchMap } from 'rxjs';
+import { from, mergeMap, switchMap } from 'rxjs';
 import {
   CrossChainComponentProps,
   CrossChainPayload,
@@ -23,21 +23,11 @@ import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
 import { useAccount } from '../../providers';
+import { getTxObservable } from '../../utils/tx';
 import { useBridgeStatus } from './hooks';
 import { RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getRedeemFee } from './utils';
-import { redeem } from './utils/tx';
-
-const validateBeforeTx = (balance: BN, amount: BN, allowance: BN, fee: BN): string | undefined => {
-  const validations: [boolean, string][] = [
-    [balance.lt(amount), 'Insufficient balance'],
-    [allowance.lt(amount), 'Insufficient allowance'],
-    [fee.lt(BN_ZERO), 'Invalid fee'],
-  ];
-  const target = validations.find((item) => item[0]);
-
-  return target && target[1];
-};
+import { redeem, validateBeforeTx } from './utils/tx';
 
 export function SubstrateDVM2Substrate({
   allowance,
@@ -80,16 +70,12 @@ export function SubstrateDVM2Substrate({
 
   useEffect(() => {
     const fn = () => (data: RedeemPayload) => {
-      if (!fee || !balances || !allowance) {
-        return EMPTY;
-      }
-
-      const msg = validateBeforeTx(balances[0] as BN, new BN(toWei(direction.from)), allowance, fee);
-
-      if (msg) {
-        message.error(t(msg));
-        return EMPTY;
-      }
+      const msg = validateBeforeTx([fee, balances, allowance], {
+        balance: balances ? balances[0] : BN_ZERO,
+        amount: new BN(toWei(direction.from)),
+        allowance,
+        fee,
+      });
 
       const beforeTx = applyModalObs({
         content: <TransferConfirm value={data} fee={feeWithSymbol!}></TransferConfirm>,
@@ -99,7 +85,11 @@ export function SubstrateDVM2Substrate({
         switchMap((mappingAddress) => redeem(data, mappingAddress, String(data.direction.to.meta.specVersion)))
       );
 
-      return createTxWorkflow(beforeTx, txObs, afterCrossChain(TransferDone, { payload: data }));
+      return getTxObservable(
+        msg,
+        () => createTxWorkflow(beforeTx, txObs, afterCrossChain(TransferDone, { payload: data })),
+        t
+      );
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);

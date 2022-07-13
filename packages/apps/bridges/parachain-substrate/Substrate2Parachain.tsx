@@ -1,11 +1,11 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
 import { hexToU8a } from '@polkadot/util';
-import { message, Typography } from 'antd';
+import { Typography } from 'antd';
 import BN from 'bn.js';
 import { upperFirst } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { EMPTY, from, mergeMap } from 'rxjs';
+import { from, mergeMap } from 'rxjs';
 import { useDarwiniaAvailableBalances } from 'shared/hooks';
 import {
   CrossChainComponentProps,
@@ -15,7 +15,7 @@ import {
   TxObservableFactory,
 } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { fromWei, isRing, toWei } from 'shared/utils/helper';
+import { fromWei, isRing, prettyNumber, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
@@ -23,20 +23,10 @@ import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../hooks';
 import { useApi } from '../../providers';
+import { getTxObservable } from '../../utils/tx';
 import { IssuingPayload, Parachain2SubstrateBridgeConfig } from './model';
 import { getIssuingFee } from './utils';
-import { issuing } from './utils/tx';
-
-const validateBeforeTx = (balance: BN, amount: BN, limit: BN): string | undefined => {
-  const validations: [boolean, string][] = [
-    [balance.lt(amount), 'Insufficient balance'],
-    [limit.lt(amount), 'Insufficient daily limit'],
-  ];
-
-  const target = validations.find((item) => item[0]);
-
-  return target && target[1];
-};
+import { issuing, validateBeforeTx } from './utils/tx';
 
 export function Substrate2Parachain({
   form,
@@ -74,23 +64,22 @@ export function Substrate2Parachain({
   }, [bridgeState.status, bridgeState.reason, setBridgeState]);
 
   useEffect(() => {
-    // eslint-disable-next-line complexity
     const fn = () => (data: IssuingPayload) => {
-      if (!fee || !dailyLimit || !ring) {
-        return EMPTY;
-      }
+      const validateRes = validateBeforeTx([fee, dailyLimit, ring], {
+        balance: ring,
+        amount: new BN(toWei(data.direction.from)),
+        dailyLimit,
+      });
 
-      const msg = validateBeforeTx(ring, new BN(toWei(data.direction.from)), dailyLimit);
-
-      if (msg) {
-        message.error(t(msg));
-        return EMPTY;
-      }
-
-      return createTxWorkflow(
-        applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }),
-        issuing(data, fee),
-        afterCrossChain(TransferDone, { payload: data })
+      return getTxObservable(
+        validateRes,
+        () =>
+          createTxWorkflow(
+            applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }),
+            issuing(data, fee!),
+            afterCrossChain(TransferDone, { payload: data })
+          ),
+        t
       );
     };
 
@@ -161,7 +150,11 @@ export function Substrate2Parachain({
           {
             name: t('Daily limit'),
             content: dailyLimit ? (
-              <Typography.Text>{fromWei({ value: dailyLimit, decimals: 9 })}</Typography.Text>
+              <Typography.Text>
+                {fromWei({ value: dailyLimit, decimals: 18 }, (value) =>
+                  prettyNumber(value, { ignoreZeroDecimal: true })
+                )}
+              </Typography.Text>
             ) : (
               <EyeInvisibleFilled />
             ),

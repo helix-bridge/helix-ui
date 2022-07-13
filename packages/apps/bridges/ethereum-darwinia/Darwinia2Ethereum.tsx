@@ -1,10 +1,10 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { BN_ZERO } from '@polkadot/util';
-import { message, Tag, Tooltip, Typography } from 'antd';
+import { Tag, Tooltip, Typography } from 'antd';
 import BN from 'bn.js';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { EMPTY, from } from 'rxjs';
+import { from } from 'rxjs';
 import { useDarwiniaAvailableBalances } from 'shared/hooks';
 import {
   CrossChainComponentProps,
@@ -22,21 +22,9 @@ import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
 import { useAccount, useApi } from '../../providers';
+import { getTxObservable } from '../../utils/tx';
 import { EthereumDarwiniaBridgeConfig, RedeemPayload } from './model';
-import { getRedeemFee, getRedeemTxFee, redeem } from './utils';
-
-const validateBeforeTx = (balances: BN[], amount: BN, fee: BN, symbol: string): string | undefined => {
-  const [ring, kton] = balances;
-  const ktonSufficient = kton.lt(amount);
-  const ringSufficient = ring.lt(amount);
-  const validations: [boolean, string][] = [
-    [ring.lt(fee), 'Insufficient fee'],
-    [isRing(symbol) ? ringSufficient : ktonSufficient, 'Insufficient balance'],
-  ];
-  const target = validations.find((item) => item[0]);
-
-  return target && target[1];
-};
+import { getRedeemFee, getRedeemTxFee, redeem, validateBeforeTx } from './utils';
 
 export function Darwinia2Ethereum({
   form,
@@ -77,31 +65,32 @@ export function Darwinia2Ethereum({
 
   useEffect(() => {
     const fn = () => (data: RedeemPayload) => {
-      if (!fee || !balances) {
-        return EMPTY;
-      }
-
       const {
         direction: {
           from: { amount, symbol, decimals },
         },
       } = data;
 
-      const msg = validateBeforeTx(balances as BN[], new BN(toWei({ value: amount, decimals })), fee, symbol);
+      const [ringBalance, ktonBalance] = balances ?? [];
 
-      if (msg) {
-        message.error(t(msg));
-
-        return EMPTY;
-      }
-
-      const beforeTransfer = applyModalObs({
-        content: <TransferConfirm fee={feeWithSymbol!} value={data} needClaim />,
+      const validateRes = validateBeforeTx([fee, balances], {
+        balance: isRing(symbol) ? ringBalance : ktonBalance,
+        amount: new BN(toWei({ value: amount, decimals })),
+        fee,
+        ringBalance,
       });
-      const obs = redeem(data);
-      const afterTransfer = afterCrossChain(TransferDone, { payload: data });
 
-      return createTxWorkflow(beforeTransfer, obs, afterTransfer);
+      const creator = () => {
+        const beforeTransfer = applyModalObs({
+          content: <TransferConfirm fee={feeWithSymbol!} value={data} needClaim />,
+        });
+        const obs = redeem(data);
+        const afterTransfer = afterCrossChain(TransferDone, { payload: data });
+
+        return createTxWorkflow(beforeTransfer, obs, afterTransfer);
+      };
+
+      return getTxObservable(validateRes, creator, t);
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);

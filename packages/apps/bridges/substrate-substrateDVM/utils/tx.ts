@@ -1,3 +1,4 @@
+import { BN_ZERO } from '@polkadot/util';
 import BN from 'bn.js';
 import { from, map, Observable, switchMap } from 'rxjs';
 import { abi } from 'shared/config/abi';
@@ -6,6 +7,9 @@ import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { convertToDvm, fromWei, toWei } from 'shared/utils/helper';
 import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import Web3 from 'web3';
+import { TxValidationMessages } from '../../../config/validation';
+import { TxValidation } from '../../../model';
+import { txValidatorFactory } from '../../../utils/tx';
 import { IssuingPayload, RedeemPayload } from '../model';
 import { getFee } from './fee';
 
@@ -59,3 +63,18 @@ export function redeem(value: RedeemPayload, mappingAddress: string, specVersion
     )
   );
 }
+
+export const validator = ({ balance, amount, dailyLimit, allowance, fee }: TxValidation): string | undefined => {
+  const validations: [boolean, string][] = [
+    [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
+    [!!dailyLimit && dailyLimit.lt(amount), TxValidationMessages.dailyLimitLessThanAmount],
+    [!!allowance && allowance?.lt(amount), TxValidationMessages.allowanceLessThanAmount],
+    [!!fee && fee?.lt(BN_ZERO), TxValidationMessages.invalidFee],
+  ];
+
+  const target = validations.find((item) => item[0]);
+
+  return target && target[1];
+};
+
+export const validateBeforeTx = txValidatorFactory(validator);

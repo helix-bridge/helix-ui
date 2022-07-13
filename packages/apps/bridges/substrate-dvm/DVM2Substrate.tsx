@@ -1,8 +1,6 @@
-import { message } from 'antd';
 import BN from 'bn.js';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { EMPTY } from 'rxjs';
 import {
   CrossChainComponentProps,
   CrossToken,
@@ -17,11 +15,9 @@ import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
+import { getTxObservable } from '../../utils/tx';
 import { SubstrateDVMBridgeConfig, WithdrawPayload } from './model';
-import { redeem } from './utils';
-
-const validateBeforeTx = (balance: BN, amount: BN): string | undefined =>
-  balance.lt(amount) ? 'Insufficient balance' : void 0;
+import { redeem, validateBeforeTx } from './utils';
 
 export function DVM2Substrate({
   form,
@@ -37,21 +33,20 @@ export function DVM2Substrate({
 
   useEffect(() => {
     const fn = () => (data: WithdrawPayload) => {
-      if (!balance) {
-        return EMPTY;
-      }
+      const validateRes = validateBeforeTx([balance], {
+        balance,
+        amount: new BN(toWei(data.direction.from)),
+      });
 
-      const msg = validateBeforeTx(balance as BN, new BN(toWei(data.direction.from)));
-
-      if (msg) {
-        message.error(t(msg));
-        return EMPTY;
-      }
-
-      return createTxWorkflow(
-        applyModalObs({ content: <TransferConfirm value={data} fee={null} /> }),
-        redeem(data),
-        afterCrossChain(TransferDone, { payload: data })
+      return getTxObservable(
+        validateRes,
+        () =>
+          createTxWorkflow(
+            applyModalObs({ content: <TransferConfirm value={data} fee={null} /> }),
+            redeem(data),
+            afterCrossChain(TransferDone, { payload: data })
+          ),
+        t
       );
     };
 
