@@ -1,6 +1,7 @@
 import BN from 'bn.js';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { mergeMap } from 'rxjs';
 import {
   CrossChainComponentProps,
   CrossToken,
@@ -16,9 +17,8 @@ import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
 import { useApi } from '../../providers';
-import { getTxObservable } from '../../utils/tx';
 import { SubstrateDVMBridgeConfig, TransferPayload } from './model';
-import { issuing, validateBeforeTx } from './utils';
+import { issuing, validate } from './utils';
 
 export function Substrate2DVM({
   form,
@@ -35,20 +35,15 @@ export function Substrate2DVM({
 
   useEffect(() => {
     const fn = () => (data: TransferPayload) => {
-      const validateRes = validateBeforeTx([balance], {
+      const validateObs = validate([balance], {
         balance,
         amount: new BN(toWei(data.direction.from)),
       });
 
-      return getTxObservable(
-        validateRes,
-        () =>
-          createTxWorkflow(
-            applyModalObs({ content: <TransferConfirm value={data} fee={null} /> }),
-            issuing(data),
-            afterCrossChain(TransferDone, { payload: data })
-          ),
-        t
+      return createTxWorkflow(
+        validateObs.pipe(mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={null} /> }))),
+        issuing(data),
+        afterCrossChain(TransferDone, { payload: data })
       );
     };
 

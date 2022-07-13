@@ -4,7 +4,7 @@ import { Tag, Tooltip, Typography } from 'antd';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { from } from 'rxjs';
+import { from, mergeMap } from 'rxjs';
 import { useDarwiniaAvailableBalances } from 'shared/hooks';
 import {
   CrossChainComponentProps,
@@ -22,9 +22,8 @@ import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
 import { useAccount, useApi } from '../../providers';
-import { getTxObservable } from '../../utils/tx';
 import { EthereumDarwiniaBridgeConfig, RedeemPayload } from './model';
-import { getRedeemFee, getRedeemTxFee, redeem, validateBeforeTx } from './utils';
+import { getRedeemFee, getRedeemTxFee, redeem, validate } from './utils';
 
 export function Darwinia2Ethereum({
   form,
@@ -73,24 +72,24 @@ export function Darwinia2Ethereum({
 
       const [ringBalance, ktonBalance] = balances ?? [];
 
-      const validateRes = validateBeforeTx([fee, balances], {
+      const validateObs = validate([fee, balances], {
         balance: isRing(symbol) ? ringBalance : ktonBalance,
         amount: new BN(toWei({ value: amount, decimals })),
         fee,
         ringBalance,
       });
 
-      const creator = () => {
-        const beforeTransfer = applyModalObs({
-          content: <TransferConfirm fee={feeWithSymbol!} value={data} needClaim />,
-        });
-        const obs = redeem(data);
-        const afterTransfer = afterCrossChain(TransferDone, { payload: data });
+      const beforeTransfer = validateObs.pipe(
+        mergeMap(() =>
+          applyModalObs({
+            content: <TransferConfirm fee={feeWithSymbol!} value={data} needClaim />,
+          })
+        )
+      );
+      const obs = redeem(data);
+      const afterTransfer = afterCrossChain(TransferDone, { payload: data });
 
-        return createTxWorkflow(beforeTransfer, obs, afterTransfer);
-      };
-
-      return getTxObservable(validateRes, creator, t);
+      return createTxWorkflow(beforeTransfer, obs, afterTransfer);
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);

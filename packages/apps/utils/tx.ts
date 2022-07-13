@@ -1,26 +1,29 @@
-import { message } from 'antd';
 import { isBoolean, isString } from 'lodash';
-import { TFunction } from 'react-i18next';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, of, switchMap, throwError } from 'rxjs';
 import { NullableFields, Tx } from 'shared/model';
 
-export function txValidatorFactory<T>(validator: (params: T) => string | undefined) {
-  return (checkedValues: unknown[], params: NullableFields<T, keyof T>) => {
-    return checkedValues.every((value) => !!value) && validator(params as T);
-  };
-}
+type GenValidationFn<T> = (params: T) => [boolean, string][];
 
-export function getTxObservable(
-  validateResult: string | boolean | undefined,
-  txObsCreator: () => Observable<Tx>,
-  t: TFunction
-): Observable<Tx> {
-  if (isString(validateResult)) {
-    message.error(t(validateResult));
-    return EMPTY;
-  } else if (isBoolean(validateResult)) {
-    return EMPTY;
-  } else {
-    return txObsCreator();
-  }
+export function validationObsFactory<T>(genValidations: GenValidationFn<T>) {
+  const validate = (data: ReturnType<GenValidationFn<T>>) => {
+    const target = data.find((item) => item[0]);
+
+    return target && target[1];
+  };
+
+  return (checkedValues: unknown[], params: NullableFields<T, keyof T>): Observable<boolean> => {
+    const result = checkedValues.every((value) => !!value) && validate(genValidations(params as T));
+
+    return of(result).pipe(
+      switchMap((res) => {
+        if (isString(res)) {
+          return throwError(() => <Pick<Tx, 'error' | 'status'>>{ error: new Error(res), status: 'error' });
+        } else if (isBoolean(res)) {
+          return EMPTY;
+        } else {
+          return of(true);
+        }
+      })
+    );
+  };
 }

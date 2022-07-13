@@ -23,10 +23,9 @@ import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../hooks';
 import { useApi } from '../../providers';
-import { getTxObservable } from '../../utils/tx';
 import { IssuingPayload, Parachain2SubstrateBridgeConfig } from './model';
 import { getIssuingFee } from './utils';
-import { issuing, validateBeforeTx } from './utils/tx';
+import { issuing, validate } from './utils/tx';
 
 export function Substrate2Parachain({
   form,
@@ -65,21 +64,18 @@ export function Substrate2Parachain({
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
-      const validateRes = validateBeforeTx([fee, dailyLimit, ring], {
+      const validateObs = validate([fee, dailyLimit, ring], {
         balance: ring,
         amount: new BN(toWei(data.direction.from)),
         dailyLimit,
       });
 
-      return getTxObservable(
-        validateRes,
-        () =>
-          createTxWorkflow(
-            applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }),
-            issuing(data, fee!),
-            afterCrossChain(TransferDone, { payload: data })
-          ),
-        t
+      return createTxWorkflow(
+        validateObs.pipe(
+          mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
+        ),
+        issuing(data, fee!),
+        afterCrossChain(TransferDone, { payload: data })
       );
     };
 

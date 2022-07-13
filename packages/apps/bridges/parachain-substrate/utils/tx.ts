@@ -7,7 +7,7 @@ import { toWei } from 'shared/utils/helper';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
 import { TxValidationMessages } from '../../../config/validation';
 import { TxValidation } from '../../../model';
-import { txValidatorFactory } from '../../../utils/tx';
+import { validationObsFactory } from '../../../utils/tx';
 import { IssuingPayload, RedeemPayload } from '../model';
 
 export function redeem(value: IssuingPayload, fee: BN): Observable<Tx> {
@@ -34,19 +34,13 @@ export function issuing(value: RedeemPayload, fee: BN): Observable<Tx> {
   return signAndSendExtrinsic(api, sender, extrinsic);
 }
 
-const validator = ({
+const genValidations = ({
   balance,
   amount,
   dailyLimit,
-}: RequiredPartial<TxValidation, 'dailyLimit' | 'balance' | 'amount'>): string | undefined => {
-  const validations: [boolean, string][] = [
-    [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
-    [dailyLimit.lt(amount), TxValidationMessages.dailyLimitLessThanAmount],
-  ];
+}: RequiredPartial<TxValidation, 'dailyLimit' | 'balance' | 'amount'>): [boolean, string][] => [
+  [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
+  [dailyLimit.lt(amount), TxValidationMessages.dailyLimitLessThanAmount],
+];
 
-  const target = validations.find((item) => item[0]);
-
-  return target && target[1];
-};
-
-export const validateBeforeTx = txValidatorFactory(validator);
+export const validate = validationObsFactory(genValidations);

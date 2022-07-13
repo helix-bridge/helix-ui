@@ -3,7 +3,7 @@ import { Typography } from 'antd';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { from, of, switchMap } from 'rxjs';
+import { from, mergeMap, of, switchMap } from 'rxjs';
 import { LONG_DURATION } from 'shared/config/constant';
 import { useDarwiniaAvailableBalances, useIsMounted } from 'shared/hooks';
 import {
@@ -21,11 +21,10 @@ import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
 import { useApi } from '../../providers';
-import { getTxObservable } from '../../utils/tx';
 import { useBridgeStatus } from './hooks';
 import { IssuingPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getDailyLimit, getIssuingFee } from './utils';
-import { issuing, validateBeforeTx } from './utils/tx';
+import { issuing, validate } from './utils/tx';
 
 export function Substrate2SubstrateDVM({
   form,
@@ -66,21 +65,18 @@ export function Substrate2SubstrateDVM({
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
-      const msg = validateBeforeTx([fee, dailyLimit, ring], {
+      const validateObs = validate([fee, dailyLimit, ring], {
         balance: ring,
         amount: new BN(toWei(data.direction.from)),
         dailyLimit,
       });
 
-      return getTxObservable(
-        msg,
-        () =>
-          createTxWorkflow(
-            applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }),
-            issuing(data, fee!),
-            afterCrossChain(TransferDone, { payload: data })
-          ),
-        t
+      return createTxWorkflow(
+        validateObs.pipe(
+          mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
+        ),
+        issuing(data, fee!),
+        afterCrossChain(TransferDone, { payload: data })
       );
     };
 

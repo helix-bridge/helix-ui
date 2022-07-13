@@ -1,7 +1,7 @@
 import { Typography } from 'antd';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
-import { from } from 'rxjs';
+import { from, mergeMap } from 'rxjs';
 import {
   Bridge,
   CrossChainComponentProps,
@@ -18,9 +18,8 @@ import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useITranslation } from '../../hooks';
-import { getTxObservable } from '../../utils/tx';
 import { EthereumDarwiniaBridgeConfig, IssuingPayload } from './model';
-import { getIssuingFee, issuing, validateBeforeTx } from './utils';
+import { getIssuingFee, issuing, validate } from './utils';
 
 export function Ethereum2Darwinia({
   allowance,
@@ -53,7 +52,7 @@ export function Ethereum2Darwinia({
 
   useEffect(() => {
     const fn = () => (value: IssuingPayload) => {
-      const validateRes = validateBeforeTx([fee, balances, ring, allowance], {
+      const validateObs = validate([fee, balances, ring, allowance], {
         balance: isRing(direction.from.symbol) ? ring : kton,
         amount: new BN(toWei({ value: direction.from.amount })),
         fee,
@@ -61,17 +60,16 @@ export function Ethereum2Darwinia({
         allowance,
       });
 
-      return getTxObservable(
-        validateRes,
-        () =>
-          createTxWorkflow(
+      return createTxWorkflow(
+        validateObs.pipe(
+          mergeMap(() =>
             applyModalObs({
               content: <TransferConfirm value={value} fee={feeWithSymbol!} />,
-            }),
-            issuing(value),
-            afterCrossChain(TransferDone, { payload: value })
-          ),
-        t
+            })
+          )
+        ),
+        issuing(value),
+        afterCrossChain(TransferDone, { payload: value })
       );
     };
 

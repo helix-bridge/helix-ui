@@ -13,7 +13,7 @@ import { buf2hex, genEthereumContractTxObs, getMPTProof, signAndSendExtrinsic } 
 import { Contract } from 'web3-eth-contract';
 import { TxValidationMessages } from '../../../config/validation';
 import { TxValidation } from '../../../model';
-import { txValidatorFactory } from '../../../utils/tx';
+import { validationObsFactory } from '../../../utils/tx';
 import { EthereumDarwiniaBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 
 interface ClaimInfo {
@@ -148,16 +148,11 @@ export function claimToken({
 
 type ITxValidation = RequiredPartial<TxValidation, 'balance' | 'amount' | 'fee'> & { ringBalance: BN };
 
-const validator = ({ balance, amount, fee, ringBalance, allowance }: ITxValidation): string | undefined => {
-  const validations: [boolean, string][] = [
-    [ringBalance.lt(fee), TxValidationMessages.balanceLessThanFee],
-    [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
-    [!!allowance && allowance.lt(amount), TxValidationMessages.allowanceLessThanAmount],
-    [!!fee && fee?.lt(BN_ZERO), TxValidationMessages.invalidFee],
-  ];
-  const target = validations.find((item) => item[0]);
+const genValidations = ({ balance, amount, fee, ringBalance, allowance }: ITxValidation): [boolean, string][] => [
+  [ringBalance.lt(fee), TxValidationMessages.balanceLessThanFee],
+  [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
+  [!!allowance && allowance.lt(amount), TxValidationMessages.allowanceLessThanAmount],
+  [!!fee && fee?.lt(BN_ZERO), TxValidationMessages.invalidFee],
+];
 
-  return target && target[1];
-};
-
-export const validateBeforeTx = txValidatorFactory(validator);
+export const validate = validationObsFactory(genValidations);

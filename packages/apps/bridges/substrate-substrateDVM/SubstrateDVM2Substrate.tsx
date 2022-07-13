@@ -23,11 +23,10 @@ import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
 import { useAccount } from '../../providers';
-import { getTxObservable } from '../../utils/tx';
 import { useBridgeStatus } from './hooks';
 import { RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getRedeemFee } from './utils';
-import { redeem, validateBeforeTx } from './utils/tx';
+import { redeem, validate } from './utils/tx';
 
 export function SubstrateDVM2Substrate({
   allowance,
@@ -70,26 +69,26 @@ export function SubstrateDVM2Substrate({
 
   useEffect(() => {
     const fn = () => (data: RedeemPayload) => {
-      const msg = validateBeforeTx([fee, balances, allowance], {
+      const validateObs = validate([fee, balances, allowance], {
         balance: balances ? balances[0] : BN_ZERO,
         amount: new BN(toWei(direction.from)),
         allowance,
         fee,
       });
 
-      const beforeTx = applyModalObs({
-        content: <TransferConfirm value={data} fee={feeWithSymbol!}></TransferConfirm>,
-      });
+      const beforeTx = validateObs.pipe(
+        mergeMap(() =>
+          applyModalObs({
+            content: <TransferConfirm value={data} fee={feeWithSymbol!}></TransferConfirm>,
+          })
+        )
+      );
 
       const txObs = from(getS2SMappingAddress(data.direction.from.meta.provider)).pipe(
         switchMap((mappingAddress) => redeem(data, mappingAddress, String(data.direction.to.meta.specVersion)))
       );
 
-      return getTxObservable(
-        msg,
-        () => createTxWorkflow(beforeTx, txObs, afterCrossChain(TransferDone, { payload: data })),
-        t
-      );
+      return createTxWorkflow(beforeTx, txObs, afterCrossChain(TransferDone, { payload: data }));
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);

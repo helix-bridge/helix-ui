@@ -10,7 +10,7 @@ import { convertToDvm, convertToSS58, dvmAddressToAccountId, isRing, toWei } fro
 import { genEthereumContractTxObs, genEthereumTransactionObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import { TxValidationMessages } from '../../../config/validation';
 import { TxValidation } from '../../../model';
-import { txValidatorFactory } from '../../../utils/tx';
+import { validationObsFactory } from '../../../utils/tx';
 import { TransferPayload, WithdrawPayload } from '../model';
 
 export function issuing(value: TransferPayload): Observable<Tx> {
@@ -75,7 +75,8 @@ export function redeem(value: WithdrawPayload): Observable<Tx> {
   );
 }
 
-const validator = ({ balance, amount }: TxValidation): string | undefined =>
-  balance.lt(amount) ? TxValidationMessages.balanceLessThanAmount : void 0;
+const genValidations = ({ balance, amount }: TxValidation): [boolean, string][] => [
+  [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
+];
 
-export const validateBeforeTx = txValidatorFactory(validator);
+export const validate = validationObsFactory(genValidations);
