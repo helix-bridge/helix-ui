@@ -1,8 +1,9 @@
 import { ArrowRightOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { Button, Empty, Pagination, Spin } from 'antd';
+import { Button, Empty, Pagination, Spin, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
+import { CrossChainStatus } from 'shared/config/constant';
 import { EthereumChainConfig, ICamelCaseKeys, PolkadotChainConfig } from 'shared/model';
 import { fromWei, isKton, isRing, prettyNumber } from 'shared/utils/helper';
 import { getDisplayName } from 'shared/utils/network';
@@ -25,16 +26,18 @@ function Record({
   departure: EthereumChainConfig;
   arrival: PolkadotChainConfig;
 }) {
+  const { t } = useITranslation();
   const { blockTimestamp, tx, darwiniaTx, currency, amount } = record;
   const [height, index] = darwiniaTx.split('-');
   const isRingTransfer = isRing(currency);
   const token = departure.tokens.find((item) => (isRingTransfer ? isRing(item.symbol) : isKton(item.symbol)))!;
+  const result = tx && darwiniaTx ? 1 : 0;
 
   return (
     <HistoryItem
       key={blockTimestamp}
       record={{
-        result: tx && darwiniaTx ? 1 : 0,
+        result,
         startTime: blockTimestamp,
       }}
       token={{
@@ -57,9 +60,16 @@ function Record({
           <div className="flex items-center gap-2">
             <Logo name={arrival.logos[0].name} width={14} height={14} />
             <span>{getDisplayName(arrival)}</span>
-            <SubscanLink network={arrival} extrinsic={{ height, index }}>
-              <PaperClipOutlined className="hover:text-pangolin-main cursor-pointer" />
-            </SubscanLink>
+
+            {result !== CrossChainStatus.pending ? (
+              <SubscanLink network={arrival} extrinsic={{ height, index }}>
+                <PaperClipOutlined className="hover:text-pangolin-main cursor-pointer" />
+              </SubscanLink>
+            ) : (
+              <Tooltip title={t('When the transaction is successful, the extrinsic message will be provided')}>
+                <PaperClipOutlined className="cursor-pointer" />
+              </Tooltip>
+            )}
           </div>
         </div>
       }

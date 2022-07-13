@@ -78,6 +78,7 @@
   "View in {{scan}} explorer": "在 {{scan}} 浏览器中查看",
   "Waiting for approve, you need to approve this transaction in your wallet": "等待授权，您需要在钱包中授权此操作",
   "Wallet provider offline": "钱包连接已掉线",
+  "When the transaction is successful, the extrinsic message will be provided": "交易完成后可查看",
   "Wrong Network": "错误的网络",
   "You haven’t created an address yet, please create a address first.": "未发现可用地址，请创建",
   "history": "历史记录",
