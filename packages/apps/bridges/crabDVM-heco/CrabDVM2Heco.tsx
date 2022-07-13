@@ -2,7 +2,8 @@ import { message, Typography } from 'antd';
 import BN from 'bn.js';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
-import { EMPTY, from } from 'rxjs';
+import { EMPTY } from 'rxjs';
+import { FORM_CONTROL } from 'shared/config/constant';
 import {
   CrabDVMHecoBridgeConfig,
   CrossChainComponentProps,
@@ -12,17 +13,21 @@ import {
   EthereumChainConfig,
   TxObservableFactory,
 } from 'shared/model';
-import { fromWei, isRing, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
-import { getS2SMappingAddress } from 'shared/utils/mappingToken';
+import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
+import { SlippageItem } from '../../components/form-control/Slippage';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
 import { useAccount } from '../../providers';
-import { RedeemPayload } from './model';
-import { getRedeemFee, issuing } from './utils';
+import { WebClient } from '../cBridge/ts-proto/gateway/GatewayServiceClientPb';
+import { EstimateAmtRequest } from '../cBridge/ts-proto/gateway/gateway_pb';
+import { IssuingPayload } from './model';
+import { issuing } from './utils';
+
+const client = new WebClient(`https://cbridge-prod2.celer.network`, null, null);
 
 const validateBeforeTx = (balance: BN, amount: BN, allowance: BN): string | undefined => {
   const validations: [boolean, string][] = [
@@ -48,26 +53,31 @@ export function CrabDVM2Heco({
   const [fee, setFee] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
   const { account } = useAccount();
+  const [receiveAmount, setReceiveAmount] = useState<string>('0');
+  const [maxSlippage, setMaxSlippage] = useState(0);
 
   const feeWithSymbol = useMemo(
     () =>
       fee && {
-        amount: fromWei({ value: fee, decimals: direction.from.decimals }),
-        symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
+        amount: fromWei({ value: fee, decimals: direction.to.decimals }),
+        symbol: direction.from.symbol,
       },
-    [direction.from.decimals, direction.from.meta.tokens, fee]
+    [direction.from.symbol, direction.to.decimals, fee]
   );
 
   useEffect(() => {
-    const sub$$ = from(getS2SMappingAddress(direction.from.meta.provider)).subscribe((spender) => {
-      updateAllowancePayload({ spender, tokenAddress: direction.from.address });
+    updateAllowancePayload({
+      spender: '0xbb7684cc5408f4dd0921e5c2cadd547b8f1ad573',
+      tokenAddress: direction.from.address,
     });
-
-    return () => sub$$.unsubscribe();
-  }, [direction.from.address, direction.from.meta.provider, updateAllowancePayload]);
+  }, [direction.from.address, updateAllowancePayload]);
 
   useEffect(() => {
-    const fn = () => (data: RedeemPayload) => {
+    form.setFieldsValue({ [FORM_CONTROL.recipient]: account });
+  }, [form, account]);
+
+  useEffect(() => {
+    const fn = () => (data: Omit<IssuingPayload, 'maxSlippage'>) => {
       if (!fee || !balances || !allowance) {
         return EMPTY;
       }
@@ -79,43 +89,99 @@ export function CrabDVM2Heco({
         return EMPTY;
       }
 
+      const payload = {
+        ...data,
+        direction: {
+          ...data.direction,
+          to: { ...data.direction.to, amount: fromWei({ value: receiveAmount, decimals: direction.to.decimals }) },
+        },
+        maxSlippage,
+      };
+
       const beforeTx = applyModalObs({
-        content: <TransferConfirm value={data} fee={feeWithSymbol!}></TransferConfirm>,
+        content: <TransferConfirm value={payload} fee={feeWithSymbol!}></TransferConfirm>,
       });
 
-      const txObs = issuing();
+      const txObs = issuing(payload);
 
       return createTxWorkflow(beforeTx, txObs, afterCrossChain(TransferDone, { payload: data }));
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [account, afterCrossChain, allowance, balances, direction.from, fee, feeWithSymbol, setTxObservableFactory, t]);
+  }, [
+    account,
+    afterCrossChain,
+    allowance,
+    balances,
+    direction.from,
+    direction.to.decimals,
+    fee,
+    feeWithSymbol,
+    receiveAmount,
+    setTxObservableFactory,
+    t,
+    maxSlippage,
+  ]);
 
   useEffect(() => {
-    const sub$$ = from(getRedeemFee(bridge)).subscribe((result) => {
-      setFee(result);
+    if (!direction.from.amount || !account) {
+      return;
+    }
 
-      if (onFeeChange) {
-        onFeeChange({
-          amount: isRing(direction.from.symbol) ? +fromWei({ value: result, decimals: direction.from.decimals }) : 0,
-          symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
-        });
-      }
-    });
+    const estimateRequest = new EstimateAmtRequest();
+    const slippage = form.getFieldValue(FORM_CONTROL.slippage);
+    const srcChainId = parseInt(direction.from.meta.ethereumChain.chainId, 16);
+    const dstChainId = parseInt(direction.to.meta.ethereumChain.chainId, 16);
+    const symbol = direction.from.symbol.slice(1); // as RING
+    const amount = toWei({ value: direction.from.amount, decimals: direction.from.decimals });
 
-    return () => sub$$.unsubscribe();
-  }, [bridge, direction.from.decimals, direction.from.meta.tokens, direction.from.symbol, onFeeChange]);
+    estimateRequest.setSrcChainId(srcChainId);
+    estimateRequest.setDstChainId(dstChainId);
+    estimateRequest.setTokenSymbol(symbol);
+    estimateRequest.setUsrAddr(account);
+    // eslint-disable-next-line no-magic-numbers
+    estimateRequest.setSlippageTolerance(slippage * 1e4);
+    estimateRequest.setAmt(amount);
+
+    client
+      .estimateAmt(estimateRequest, null)
+      .then((res) => {
+        const { estimatedReceiveAmt, percFee, baseFee, maxSlippage: largestSlippage } = res.toObject();
+        const feeTotal = new BN(baseFee).add(new BN(percFee));
+
+        setReceiveAmount(estimatedReceiveAmt);
+        setMaxSlippage(largestSlippage);
+        setFee(feeTotal);
+
+        if (onFeeChange) {
+          onFeeChange({
+            amount: +fromWei({ value: feeTotal, decimals: direction.to.decimals }),
+            symbol: direction.from.symbol,
+          });
+        }
+      })
+      .catch((error) => {
+        console.warn('🚀 ~ file: CrabDVM2Heco.tsx ~ line 131 ~ useEffect ~ error', error);
+      });
+  }, [
+    account,
+    direction.from.amount,
+    direction.to.decimals,
+    direction.from.meta.ethereumChain.chainId,
+    direction.from.symbol,
+    direction.to.meta.ethereumChain.chainId,
+    form,
+    onFeeChange,
+    direction.from.decimals,
+  ]);
 
   return (
     <>
-      <RecipientItem
-        form={form}
-        bridge={bridge}
-        direction={direction}
-        extraTip={t(
-          'After the transaction is confirmed, the account cannot be changed. Please do not fill in the exchange account.'
-        )}
-      />
+      <div className="hidden">
+        <RecipientItem form={form} bridge={bridge} direction={direction} />
+      </div>
+
+      <SlippageItem form={form} bridge={bridge} direction={direction} />
 
       <CrossChainInfo
         bridge={bridge}

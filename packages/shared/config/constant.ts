@@ -17,6 +17,7 @@ export enum FORM_CONTROL {
   sender = 'sender',
   direction = 'direction',
   bridge = 'bridge',
+  slippage = 'slippage',
 }
 
 export enum RegisterStatus {

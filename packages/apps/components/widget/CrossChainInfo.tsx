@@ -1,7 +1,8 @@
 import { CaretDownOutlined } from '@ant-design/icons';
-import { Form, Spin, Typography } from 'antd';
+import { Form, Spin, Tooltip, Typography } from 'antd';
 import { PropsWithChildren, ReactNode, useState } from 'react';
 import { Bridge } from 'shared/model';
+import { prettyNumber } from 'shared/utils/helper';
 import { useITranslation } from '../../hooks';
 import { bridgeCategoryDisplay } from '../../utils';
 
@@ -36,7 +37,8 @@ export function CrossChainInfo({ bridge, fee, extra, children, hideFee }: PropsW
           <Typography.Text>{t('Transaction Fee')}</Typography.Text>
           {fee ? (
             <Typography.Text>
-              {fee.amount} {fee.symbol}
+              <Tooltip title={fee.amount}>{prettyNumber(fee.amount, { decimal: 3 })}</Tooltip>
+              <span className="ml-1">{fee.symbol}</span>
             </Typography.Text>
           ) : (
             <Spin spinning size="small"></Spin>

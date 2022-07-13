@@ -1,14 +1,14 @@
-import { Bridge, CrossChainPayload, CrossToken, ChainConfig } from 'shared/model';
+import { Bridge, CrossChainPayload, CrossToken, DVMChainConfig, EthereumChainConfig } from 'shared/model';
 import { CrabDVMHecoBridgeConfig } from './bridge';
 
 export type IssuingPayload = CrossChainPayload<
   Bridge<CrabDVMHecoBridgeConfig>,
-  CrossToken<ChainConfig>,
-  CrossToken<ChainConfig>
->;
+  CrossToken<EthereumChainConfig>,
+  CrossToken<DVMChainConfig>
+> & { maxSlippage: number };
 
 export type RedeemPayload = CrossChainPayload<
   Bridge<CrabDVMHecoBridgeConfig>,
-  CrossToken<ChainConfig>,
-  CrossToken<ChainConfig>
->;
+  CrossToken<DVMChainConfig>,
+  CrossToken<EthereumChainConfig>
+> & { maxSlippage: number };

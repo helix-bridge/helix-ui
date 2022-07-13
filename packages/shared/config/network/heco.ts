@@ -33,7 +33,7 @@ export const hecoConfig: EthereumChainConfig = {
       logo: 'token-ring.svg',
       host: 'heco',
       symbol: 'RING',
-      address: '',
+      address: '0x15e65456310ecb216B51EfBd8a1dBf753353DcF9',
     },
   ],
   wallets: ['metamask'],

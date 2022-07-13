@@ -15,6 +15,7 @@ import {
   NullableFields,
 } from 'shared/model';
 import { getBridges } from 'shared/utils/bridge';
+import { prettyNumber } from 'shared/utils/helper';
 import { getDisplayName } from 'shared/utils/network';
 import { bridgeCategoryDisplay } from '../../utils';
 import { BridgeState } from '../bridge/BridgeState';
@@ -44,7 +45,16 @@ const TokenOnChain = ({ token, isFrom }: TokenOnChainProps) => (
 
     <div className={`flex flex-col space-y-1 ${isFrom ? 'order-2 lg:ml-6' : 'order-1 items-end'}`}>
       <strong className={`font-medium text-sm ${isFrom ? 'text-left' : 'text-right'}`}>
-        {token.amount ? `${token.amount} ${token.symbol}` : <span></span>}
+        {token.amount ? (
+          <span>
+            <Tooltip title={token.amount}>
+              {prettyNumber(token.amount, { decimal: 3, ignoreZeroDecimal: true })}
+            </Tooltip>
+            <span className="ml-1">{token.symbol}</span>
+          </span>
+        ) : (
+          <span></span>
+        )}
       </strong>
       <small className="font-light text-xs opacity-70">on {getDisplayName(token.meta)}</small>
     </div>
