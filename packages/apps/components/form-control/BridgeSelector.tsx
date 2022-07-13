@@ -5,6 +5,7 @@ import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 import { useMemo } from 'react';
 import { useEffect } from 'react';
+import { Logo } from 'shared/components/widget/Logo';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { Bridge, CrossChainDirection, CrossToken, CustomFormControlProps, NullableFields } from 'shared/model';
 import { getBridges } from 'shared/utils/bridge';
@@ -23,9 +24,9 @@ type BridgeSelectorProps = CustomFormControlProps<Bridge> & {
 const TokenOnChain = ({ token, isFrom }: TokenOnChainProps) => (
   <div className="flex items-center text-white">
     <div className={`hidden lg:block relative w-14 h-14 ${isFrom ? 'order-1' : 'order-2 ml-3'}`}>
-      <Image src={`/image/${token.logo}`} alt="..." layout="fill" />
+      <Logo name={token.logo} alt="..." layout="fill" />
       <span className="w-7 h-7 absolute top-auto bottom-1 left-auto -right-3">
-        <Image src={`/image/${token.meta?.logos[0].name}`} alt="..." layout="fill" />
+        <Logo name={token.meta?.logos[0].name} alt="..." layout="fill" />
       </span>
     </div>
 
