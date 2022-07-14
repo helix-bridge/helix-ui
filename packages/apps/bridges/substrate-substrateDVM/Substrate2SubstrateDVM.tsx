@@ -1,9 +1,9 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
-import { message, Typography } from 'antd';
+import { Typography } from 'antd';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { EMPTY, from, of, switchMap } from 'rxjs';
+import { from, mergeMap, of, switchMap } from 'rxjs';
 import { LONG_DURATION } from 'shared/config/constant';
 import { useDarwiniaAvailableBalances, useIsMounted } from 'shared/hooks';
 import {
@@ -24,18 +24,7 @@ import { useApi } from '../../providers';
 import { useBridgeStatus } from './hooks';
 import { IssuingPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getDailyLimit, getIssuingFee } from './utils';
-import { issuing } from './utils/tx';
-
-const validateBeforeTx = (balance: BN, amount: BN, limit: BN): string | undefined => {
-  const validations: [boolean, string][] = [
-    [balance.lt(amount), 'Insufficient balance'],
-    [limit.lt(amount), 'Insufficient daily limit'],
-  ];
-
-  const target = validations.find((item) => item[0]);
-
-  return target && target[1];
-};
+import { issuing, validate } from './utils/tx';
 
 export function Substrate2SubstrateDVM({
   form,
@@ -75,22 +64,18 @@ export function Substrate2SubstrateDVM({
   }, [bridgeState.status, bridgeState.reason, setBridgeState]);
 
   useEffect(() => {
-    // eslint-disable-next-line complexity
     const fn = () => (data: IssuingPayload) => {
-      if (!fee || !dailyLimit || !ring) {
-        return EMPTY;
-      }
-
-      const msg = validateBeforeTx(ring, new BN(toWei(data.direction.from)), dailyLimit);
-
-      if (msg) {
-        message.error(t(msg));
-        return EMPTY;
-      }
+      const validateObs = validate([fee, dailyLimit, ring], {
+        balance: ring,
+        amount: new BN(toWei(data.direction.from)),
+        dailyLimit,
+      });
 
       return createTxWorkflow(
-        applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }),
-        issuing(data, fee),
+        validateObs.pipe(
+          mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
+        ),
+        issuing(data, fee!),
         afterCrossChain(TransferDone, { payload: data })
       );
     };

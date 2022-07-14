@@ -1,10 +1,13 @@
 import BN from 'bn.js';
 import { upperFirst } from 'lodash';
 import { Observable } from 'rxjs';
-import { Tx } from 'shared/model';
+import { RequiredPartial, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
+import { TxValidationMessages } from '../../../config/validation';
+import { TxValidation } from '../../../model';
+import { validationObsFactory } from '../../../utils/tx';
 import { IssuingPayload, RedeemPayload } from '../model';
 
 export function redeem(value: IssuingPayload, fee: BN): Observable<Tx> {
@@ -30,3 +33,14 @@ export function issuing(value: RedeemPayload, fee: BN): Observable<Tx> {
 
   return signAndSendExtrinsic(api, sender, extrinsic);
 }
+
+const genValidations = ({
+  balance,
+  amount,
+  dailyLimit,
+}: RequiredPartial<TxValidation, 'dailyLimit' | 'balance' | 'amount'>): [boolean, string][] => [
+  [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
+  [dailyLimit.lt(amount), TxValidationMessages.dailyLimitLessThanAmount],
+];
+
+export const validate = validationObsFactory(genValidations);

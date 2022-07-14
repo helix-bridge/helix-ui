@@ -1,14 +1,19 @@
+import { BN_ZERO } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/util-crypto';
+import BN from 'bn.js';
 import { upperFirst } from 'lodash';
 import { filter, from, map, Observable, switchMap, take, zip } from 'rxjs';
 import { abi } from 'shared/config/abi';
-import { ChainConfig, LockEventsStorage, PolkadotChainConfig, Tx, TxFn } from 'shared/model';
+import { ChainConfig, LockEventsStorage, PolkadotChainConfig, RequiredPartial, Tx, TxFn } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { connect, entrance } from 'shared/utils/connection';
 import { encodeBlockHeader, isKton, isRing, toWei } from 'shared/utils/helper';
 import { ClaimNetworkPrefix, encodeMMRRootMessage, getMMR } from 'shared/utils/mmr';
 import { buf2hex, genEthereumContractTxObs, getMPTProof, signAndSendExtrinsic } from 'shared/utils/tx';
 import { Contract } from 'web3-eth-contract';
+import { TxValidationMessages } from '../../../config/validation';
+import { TxValidation } from '../../../model';
+import { validationObsFactory } from '../../../utils/tx';
 import { EthereumDarwiniaBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 
 interface ClaimInfo {
@@ -140,3 +145,14 @@ export function claimToken({
     switchMap((txFn) => genEthereumContractTxObs(bridge.config.contracts.redeem || '', txFn, abi.tokenIssuingABI))
   );
 }
+
+type ITxValidation = RequiredPartial<TxValidation, 'balance' | 'amount' | 'fee'> & { ringBalance: BN };
+
+const genValidations = ({ balance, amount, fee, ringBalance, allowance }: ITxValidation): [boolean, string][] => [
+  [ringBalance.lt(fee), TxValidationMessages.balanceLessThanFee],
+  [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
+  [!!allowance && allowance.lt(amount), TxValidationMessages.allowanceLessThanAmount],
+  [!!fee && fee?.lt(BN_ZERO), TxValidationMessages.invalidFee],
+];
+
+export const validate = validationObsFactory(genValidations);

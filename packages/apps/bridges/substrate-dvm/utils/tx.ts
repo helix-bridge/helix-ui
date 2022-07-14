@@ -8,6 +8,9 @@ import { Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { convertToDvm, convertToSS58, dvmAddressToAccountId, isRing, toWei } from 'shared/utils/helper';
 import { genEthereumContractTxObs, genEthereumTransactionObs, signAndSendExtrinsic } from 'shared/utils/tx';
+import { TxValidationMessages } from '../../../config/validation';
+import { TxValidation } from '../../../model';
+import { validationObsFactory } from '../../../utils/tx';
 import { TransferPayload, WithdrawPayload } from '../model';
 
 export function issuing(value: TransferPayload): Observable<Tx> {
@@ -71,3 +74,9 @@ export function redeem(value: WithdrawPayload): Observable<Tx> {
     abi.ktonABI
   );
 }
+
+const genValidations = ({ balance, amount }: TxValidation): [boolean, string][] => [
+  [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
+];
+
+export const validate = validationObsFactory(genValidations);

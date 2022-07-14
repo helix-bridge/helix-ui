@@ -12,8 +12,7 @@ describe('network utils', () => {
     const fromCrab = data.find((item) => item[0] === 'crab');
 
     expect(fromCrab).not.toEqual(undefined);
-    // expect(fromCrab![1]).toEqual(['crab-dvm', 'crab-parachain']);
-    expect(fromCrab![1]).toEqual(['crab-dvm']);
+    expect(fromCrab![1]).toEqual(['crab-dvm', 'crab-parachain']);
 
     const fromCrabDVM = data.find((item) => item[0] === 'crab-dvm');
 
