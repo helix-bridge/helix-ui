@@ -5,23 +5,17 @@ import { last, lowerFirst, upperFirst } from 'lodash';
 import { Bridge, ChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 
-const queryFeeFromRelayers = async (from: ChainConfig, to: ChainConfig) => {
+async function getFee(from: ChainConfig, to: ChainConfig): Promise<BN> {
   const api = entrance.polkadot.getInstance(from.provider);
   const section = lowerFirst(`${to.name.split('-').map(upperFirst).join('')}FeeMarket`);
 
   await waitUntilConnected(api);
 
-  return api.query[section]['assignedRelayers']().then((data: Codec) => data.toJSON()) as Promise<
-    {
-      id: string;
-      collateral: number;
-      fee: number;
-    }[]
-  >;
-};
-
-async function getFee(from: ChainConfig, to: ChainConfig): Promise<BN> {
-  const res = await queryFeeFromRelayers(from, to);
+  const res = (await api.query[section]['assignedRelayers']().then((data: Codec) => data.toJSON())) as {
+    id: string;
+    collateral: number;
+    fee: number;
+  }[];
 
   const data = last(res)?.fee.toString();
   const marketFee = data?.startsWith('0x') ? hexToU8a(data) : data;

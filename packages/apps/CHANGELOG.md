@@ -1,3 +1,12 @@
+## [3.1.6](https://github.com/helix-bridge/helix/compare/v1.0.13-helix...v3.1.6) (2022-07-13)
+
+
+### Bug Fixes
+
+* **#100:** Eth darwinia finish link ([#103](https://github.com/helix-bridge/helix/issues/103)) ([d61de1d](https://github.com/helix-bridge/helix/commit/d61de1d606a1102a4e72214cb3242d31690df42c)), closes [#100](https://github.com/helix-bridge/helix/issues/100)
+
+
+
 ## [3.1.5](https://github.com/helix-bridge/helix/compare/v3.1.4-apps...v3.1.5) (2022-07-08)
 
 ### Style
