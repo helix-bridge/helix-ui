@@ -18,6 +18,7 @@ export const parachainCrab = new Bridge<ParachainSubstrateBridgeConfig>(
     category: 'helix',
     activeArrivalConnection: true,
     name: 'parachain-substrate',
+    disableRedeem: true,
   }
 );
 

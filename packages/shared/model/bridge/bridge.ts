@@ -54,6 +54,10 @@ export class Bridge<C = BridgeConfig> {
 
   readonly isTest: boolean;
 
+  readonly disableIssuing: boolean;
+
+  readonly disableRedeem: boolean;
+
   private _config: C;
 
   private crossChain: Map<Departure[], FunctionComponent> = new Map();
@@ -67,6 +71,8 @@ export class Bridge<C = BridgeConfig> {
       category: BridgeCategory;
       status?: BridgeStatus;
       activeArrivalConnection?: boolean;
+      disableIssuing?: boolean;
+      disableRedeem?: boolean;
     }
   ) {
     const dep = departure.name;
@@ -78,10 +84,12 @@ export class Bridge<C = BridgeConfig> {
     this.issuing = [dep, arr];
     this.redeem = [arr, dep];
     this._config = config;
-    this.status = options?.status ?? 'available';
-    this.activeArrivalConnection = options?.activeArrivalConnection ?? false;
+    this.status = options.status ?? 'available';
+    this.activeArrivalConnection = options.activeArrivalConnection ?? false;
     this.category = options.category;
     this.isTest = departure.isTest;
+    this.disableIssuing = options.disableIssuing ?? false;
+    this.disableRedeem = options.disableRedeem ?? false;
   }
 
   get config() {
