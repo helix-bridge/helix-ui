@@ -134,7 +134,8 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
           const isAppsFeature =
             ['CKTON', 'PKTON', 'WCKTON', 'WPKTON'].some((name) => item.symbol.includes(name)) &&
             isDVMNetwork(item.meta);
-          const disabled = isS2SKton || isAppsFeature;
+          const isFromCrabParachain = !fromToken && item.meta.name === 'crab-parachain';
+          const disabled = isS2SKton || isAppsFeature || isFromCrabParachain;
 
           return (
             <button
