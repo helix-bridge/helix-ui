@@ -1,8 +1,8 @@
-import { message, Typography } from 'antd';
+import { Typography } from 'antd';
 import BN from 'bn.js';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
-import { EMPTY } from 'rxjs';
+import { mergeMap } from 'rxjs';
 import { FORM_CONTROL } from 'shared/config/constant';
 import {
   CrabDVMHecoBridgeConfig,
@@ -25,19 +25,9 @@ import { useAccount } from '../../providers';
 import { WebClient } from '../cBridge/ts-proto/gateway/GatewayServiceClientPb';
 import { EstimateAmtRequest } from '../cBridge/ts-proto/gateway/gateway_pb';
 import { IssuingPayload } from './model';
-import { issuing } from './utils';
+import { issuing, validate } from './utils';
 
 const client = new WebClient(`https://cbridge-prod2.celer.network`, null, null);
-
-const validateBeforeTx = (balance: BN, amount: BN, allowance: BN): string | undefined => {
-  const validations: [boolean, string][] = [
-    [balance.lt(amount), 'Insufficient balance'],
-    [allowance.lt(amount), 'Insufficient allowance'],
-  ];
-  const target = validations.find((item) => item[0]);
-
-  return target && target[1];
-};
 
 export function CrabDVM2Heco({
   allowance,
@@ -67,10 +57,10 @@ export function CrabDVM2Heco({
 
   useEffect(() => {
     updateAllowancePayload({
-      spender: '0xbb7684cc5408f4dd0921e5c2cadd547b8f1ad573',
+      spender: bridge.config.contracts.issuing,
       tokenAddress: direction.from.address,
     });
-  }, [direction.from.address, updateAllowancePayload]);
+  }, [bridge.config.contracts.issuing, direction.from.address, updateAllowancePayload]);
 
   useEffect(() => {
     form.setFieldsValue({ [FORM_CONTROL.recipient]: account });
@@ -78,16 +68,11 @@ export function CrabDVM2Heco({
 
   useEffect(() => {
     const fn = () => (data: Omit<IssuingPayload, 'maxSlippage'>) => {
-      if (!fee || !balances || !allowance) {
-        return EMPTY;
-      }
-
-      const msg = validateBeforeTx(balances[0] as BN, new BN(toWei(direction.from)), allowance);
-
-      if (msg) {
-        message.error(t(msg));
-        return EMPTY;
-      }
+      const validateObs = validate([fee, balances, allowance], {
+        balance: balances![0],
+        amount: new BN(toWei(direction.from)),
+        allowance,
+      });
 
       const payload = {
         ...data,
@@ -98,13 +83,17 @@ export function CrabDVM2Heco({
         maxSlippage,
       };
 
-      const beforeTx = applyModalObs({
-        content: <TransferConfirm value={payload} fee={feeWithSymbol!}></TransferConfirm>,
-      });
+      const beforeTx = validateObs.pipe(
+        mergeMap(() =>
+          applyModalObs({
+            content: <TransferConfirm value={payload} fee={feeWithSymbol!}></TransferConfirm>,
+          })
+        )
+      );
 
       const txObs = issuing(payload);
 
-      return createTxWorkflow(beforeTx, txObs, afterCrossChain(TransferDone, { payload: data }));
+      return createTxWorkflow(beforeTx, txObs, afterCrossChain(TransferDone, { payload }));
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);

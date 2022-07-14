@@ -26,11 +26,13 @@ export const TxProvider = ({ children }: React.PropsWithChildren<unknown>) => {
     return {
       next: setTx,
       error: (error: RequiredPartial<Tx, 'error'>) => {
+        const errInfo = typeof error.error === 'string' ? error.error : error.error.message;
+
         notification.error({
           message: (
             <div>
               <p>{t('Transaction aborted because of')}</p>
-              <p className="font-bold">{error.error.message}</p>
+              <p className="font-bold">{errInfo}</p>
             </div>
           ),
           duration: 5,
