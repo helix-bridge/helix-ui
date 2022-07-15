@@ -1,6 +1,7 @@
-import { BN_ZERO } from '@polkadot/util';
 import { EMPTY, Observable } from 'rxjs';
+import { Contract } from 'web3-eth-contract';
 import { Tx } from 'shared/model';
+import { entrance } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { AbiItem } from 'web3-utils';
@@ -39,10 +40,17 @@ export function redeem(): Observable<Tx> {
   return EMPTY;
 }
 
-export const genValidations = ({ balance, amount, allowance, fee }: TxValidation): [boolean, string][] => [
+export const genValidations = ({ balance, amount, allowance }: TxValidation): [boolean, string][] => [
   [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
   [!!allowance && allowance?.lt(amount), TxValidationMessages.allowanceLessThanAmount],
-  [!!fee && fee?.lt(BN_ZERO), TxValidationMessages.invalidFee],
 ];
 
 export const validate = validationObsFactory(genValidations);
+
+export const getMinimalMaxSlippage = async (contractAddress: string) => {
+  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
+  const contract = new web3.eth.Contract(bridgeAbi as AbiItem[], contractAddress) as unknown as Contract;
+  const result = await contract.methods.minimalMaxSlippage().call();
+
+  return result;
+};

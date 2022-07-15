@@ -1,6 +1,6 @@
-import { CaretDownOutlined } from '@ant-design/icons';
+import { CaretDownOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Form, Spin, Tooltip, Typography } from 'antd';
-import { PropsWithChildren, ReactNode, useState } from 'react';
+import { PropsWithChildren, ReactNode, useMemo, useState } from 'react';
 import { Bridge } from 'shared/model';
 import { prettyNumber } from 'shared/utils/helper';
 import { useITranslation } from '../../hooks';
@@ -19,11 +19,40 @@ interface CrossChainInfoProps {
   fee: AmountInfo;
   hideFee?: boolean;
   extra?: { name: string; content: ReactNode }[];
+  isDynamicFee?: boolean;
 }
 
-export function CrossChainInfo({ bridge, fee, extra, children, hideFee }: PropsWithChildren<CrossChainInfoProps>) {
+export function CrossChainInfo({
+  bridge,
+  fee,
+  extra,
+  children,
+  hideFee,
+  isDynamicFee = false,
+}: PropsWithChildren<CrossChainInfoProps>) {
   const { t } = useITranslation();
   const [collapse, setCollapse] = useState(true);
+
+  const feeContent = useMemo(() => {
+    if (fee) {
+      return (
+        <Typography.Text>
+          <Tooltip title={fee.amount} className="cursor-help">
+            {prettyNumber(fee.amount, { decimal: 3 })}
+          </Tooltip>
+          <span className="ml-1">{fee.symbol}</span>
+        </Typography.Text>
+      );
+    }
+
+    return isDynamicFee ? (
+      <Tooltip title={t('The transaction fee is dynamic, need some conditions to estimate it')}>
+        <QuestionCircleOutlined className="cursor-pointer" />
+      </Tooltip>
+    ) : (
+      <Spin spinning size="small"></Spin>
+    );
+  }, [fee, isDynamicFee, t]);
 
   return (
     <Form.Item label={t('Information')} className="relative">
@@ -35,14 +64,7 @@ export function CrossChainInfo({ bridge, fee, extra, children, hideFee }: PropsW
 
         <div className={`flex justify-between items-center ${hideFee ? 'hidden' : ''}`}>
           <Typography.Text>{t('Transaction Fee')}</Typography.Text>
-          {fee ? (
-            <Typography.Text>
-              <Tooltip title={fee.amount}>{prettyNumber(fee.amount, { decimal: 3 })}</Tooltip>
-              <span className="ml-1">{fee.symbol}</span>
-            </Typography.Text>
-          ) : (
-            <Spin spinning size="small"></Spin>
-          )}
+          {feeContent}
         </div>
 
         {extra && (

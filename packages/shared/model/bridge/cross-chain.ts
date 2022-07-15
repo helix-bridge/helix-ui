@@ -25,6 +25,7 @@ export interface CrossChainPayload<
 > extends CrossChainParty {
   bridge: B;
   direction: CrossChainDirection<F, T>;
+  slippage?: number;
 }
 
 export type TxObservableFactory = (value: CrossChainPayload) => Observable<Tx>;

@@ -1,8 +1,10 @@
-import { Typography } from 'antd';
+import { Button, Typography } from 'antd';
 import BN from 'bn.js';
-import { useTranslation } from 'next-i18next';
+import { i18n, Trans, useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
-import { mergeMap } from 'rxjs';
+import { initReactI18next } from 'react-i18next';
+import { from, mergeMap } from 'rxjs';
+import { Logo } from 'shared/components/widget/Logo';
 import { FORM_CONTROL } from 'shared/config/constant';
 import {
   CrabDVMHecoBridgeConfig,
@@ -16,16 +18,21 @@ import {
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
-import { SlippageItem } from '../../components/form-control/Slippage';
+import {
+  DEFAULT_SLIPPAGE,
+  SlippageItem,
+  SLIPPAGE_SCALE,
+  UI_SLIPPAGE_SCALE,
+} from '../../components/form-control/Slippage';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
 import { useAccount } from '../../providers';
 import { WebClient } from '../cBridge/ts-proto/gateway/GatewayServiceClientPb';
-import { EstimateAmtRequest } from '../cBridge/ts-proto/gateway/gateway_pb';
+import { EstimateAmtRequest, EstimateAmtResponse } from '../cBridge/ts-proto/gateway/gateway_pb';
 import { IssuingPayload } from './model';
-import { issuing, validate } from './utils';
+import { getMinimalMaxSlippage, issuing, validate } from './utils';
 
 const client = new WebClient(`https://cbridge-prod2.celer.network`, null, null);
 
@@ -40,20 +47,67 @@ export function CrabDVM2Heco({
   updateAllowancePayload,
 }: CrossChainComponentProps<CrabDVMHecoBridgeConfig, CrossToken<EthereumChainConfig>, CrossToken<DVMChainConfig>>) {
   const { t } = useTranslation();
-  const [fee, setFee] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
   const { account } = useAccount();
-  const [receiveAmount, setReceiveAmount] = useState<string>('0');
-  const [maxSlippage, setMaxSlippage] = useState(0);
+  const [estimateResult, setEstimateResult] = useState<EstimateAmtResponse.AsObject | null>(null);
+  const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE * UI_SLIPPAGE_SCALE);
+  const [minimalMaxSlippage, setMinimalMaxSlippage] = useState<number | null>(null);
 
   const feeWithSymbol = useMemo(
     () =>
-      fee && {
-        amount: fromWei({ value: fee, decimals: direction.to.decimals }),
+      estimateResult && {
+        amount: fromWei({
+          value: new BN(estimateResult.baseFee).add(new BN(estimateResult.percFee)),
+          decimals: direction.to.decimals,
+        }),
         symbol: direction.from.symbol,
       },
-    [direction.from.symbol, direction.to.decimals, fee]
+    [direction.from.symbol, direction.to.decimals, estimateResult]
   );
+
+  const extraInfo = useMemo(() => {
+    if (!estimateResult) {
+      return [];
+    }
+
+    return [
+      {
+        name: t('Bridge Rate'),
+        content: estimateResult && (
+          <div className="flex items-center gap-1">
+            <div className="flex item-center gap-1">
+              <span>1 {direction.from.symbol} on</span>
+              <Logo name={direction.from.meta.logos[0].name} width={22} height={22} />
+            </div>
+
+            <span>≈</span>
+
+            <div className="flex item-center gap-1">
+              <span>
+                {estimateResult.bridgeRate} {direction.to.symbol} on
+              </span>
+              <Logo name={direction.to.meta.logos[0].name} width={22} height={22} />
+            </div>
+          </div>
+        ),
+      },
+    ];
+  }, [
+    direction.from.meta.logos,
+    direction.from.symbol,
+    direction.to.meta.logos,
+    direction.to.symbol,
+    estimateResult,
+    t,
+  ]);
+
+  useEffect(() => {
+    const sub$$ = from(getMinimalMaxSlippage(bridge.config.contracts.issuing)).subscribe((result) => {
+      setMinimalMaxSlippage(+result);
+    });
+
+    return () => sub$$.unsubscribe();
+  }, [bridge.config.contracts.issuing]);
 
   useEffect(() => {
     updateAllowancePayload({
@@ -68,17 +122,22 @@ export function CrabDVM2Heco({
 
   useEffect(() => {
     const fn = () => (data: Omit<IssuingPayload, 'maxSlippage'>) => {
-      const validateObs = validate([fee, balances, allowance], {
+      const validateObs = validate([balances, allowance, estimateResult], {
         balance: balances![0],
         amount: new BN(toWei(direction.from)),
         allowance,
       });
 
+      const { estimatedReceiveAmt, maxSlippage } = estimateResult!;
+
       const payload = {
         ...data,
         direction: {
           ...data.direction,
-          to: { ...data.direction.to, amount: fromWei({ value: receiveAmount, decimals: direction.to.decimals }) },
+          to: {
+            ...data.direction.to,
+            amount: fromWei({ value: estimatedReceiveAmt, decimals: direction.to.decimals }),
+          },
         },
         maxSlippage,
       };
@@ -98,27 +157,28 @@ export function CrabDVM2Heco({
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
   }, [
-    account,
     afterCrossChain,
     allowance,
     balances,
     direction.from,
     direction.to.decimals,
-    fee,
+    estimateResult,
     feeWithSymbol,
-    receiveAmount,
     setTxObservableFactory,
-    t,
-    maxSlippage,
   ]);
 
   useEffect(() => {
     if (!direction.from.amount || !account) {
+      setEstimateResult(null);
+
+      if (onFeeChange) {
+        onFeeChange(null);
+      }
+
       return;
     }
 
     const estimateRequest = new EstimateAmtRequest();
-    const slippage = form.getFieldValue(FORM_CONTROL.slippage);
     const srcChainId = parseInt(direction.from.meta.ethereumChain.chainId, 16);
     const dstChainId = parseInt(direction.to.meta.ethereumChain.chainId, 16);
     const symbol = direction.from.symbol.slice(1); // as RING
@@ -128,19 +188,16 @@ export function CrabDVM2Heco({
     estimateRequest.setDstChainId(dstChainId);
     estimateRequest.setTokenSymbol(symbol);
     estimateRequest.setUsrAddr(account);
-    // eslint-disable-next-line no-magic-numbers
-    estimateRequest.setSlippageTolerance(slippage * 1e4);
+    estimateRequest.setSlippageTolerance(slippage);
     estimateRequest.setAmt(amount);
 
-    client
-      .estimateAmt(estimateRequest, null)
-      .then((res) => {
-        const { estimatedReceiveAmt, percFee, baseFee, maxSlippage: largestSlippage } = res.toObject();
+    const sub$$ = from(client.estimateAmt(estimateRequest, null)).subscribe({
+      next(res) {
+        const result = res.toObject();
+        const { percFee, baseFee } = result;
         const feeTotal = new BN(baseFee).add(new BN(percFee));
 
-        setReceiveAmount(estimatedReceiveAmt);
-        setMaxSlippage(largestSlippage);
-        setFee(feeTotal);
+        setEstimateResult(result);
 
         if (onFeeChange) {
           onFeeChange({
@@ -148,10 +205,13 @@ export function CrabDVM2Heco({
             symbol: direction.from.symbol,
           });
         }
-      })
-      .catch((error) => {
-        console.warn('🚀 ~ file: CrabDVM2Heco.tsx ~ line 131 ~ useEffect ~ error', error);
-      });
+      },
+      error(error) {
+        console.warn('🚨 Estimate amount error', error);
+      },
+    });
+
+    return () => sub$$.unsubscribe();
   }, [
     account,
     direction.from.amount,
@@ -162,6 +222,7 @@ export function CrabDVM2Heco({
     form,
     onFeeChange,
     direction.from.decimals,
+    slippage,
   ]);
 
   return (
@@ -170,11 +231,33 @@ export function CrabDVM2Heco({
         <RecipientItem form={form} bridge={bridge} direction={direction} />
       </div>
 
-      <SlippageItem form={form} bridge={bridge} direction={direction} />
+      <SlippageItem onChange={(value) => setSlippage(value)} form={form} bridge={bridge} direction={direction} />
+
+      {minimalMaxSlippage && minimalMaxSlippage > slippage && (
+        <div className="mb-3">
+          <Trans i18nKey="recommendSlippage" i18n={i18n?.use(initReactI18next)}>
+            Strongly recommend the slippage greater or equal than
+            <Button
+              type="link"
+              className="px-1"
+              onClick={() => {
+                const recommend = +(minimalMaxSlippage / SLIPPAGE_SCALE).toFixed(2);
+                setSlippage(recommend * SLIPPAGE_SCALE);
+
+                form.setFieldsValue({ [FORM_CONTROL.slippage]: recommend });
+              }}
+            >
+              {(minimalMaxSlippage / SLIPPAGE_SCALE).toFixed(2) + '%'}
+            </Button>
+            to prevent failure
+          </Trans>
+        </div>
+      )}
 
       <CrossChainInfo
         bridge={bridge}
         fee={feeWithSymbol}
+        isDynamicFee
         extra={[
           {
             name: t('Allowance'),
@@ -189,6 +272,7 @@ export function CrabDVM2Heco({
               </Typography.Text>
             ),
           },
+          ...extraInfo,
         ]}
       ></CrossChainInfo>
     </>

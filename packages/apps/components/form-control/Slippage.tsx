@@ -1,9 +1,15 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Form, InputNumber, Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
-import { useEffect } from 'react';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { CrossChainComponentProps } from 'shared/model';
+
+export const DEFAULT_SLIPPAGE = 0.3;
+
+// @see https://github.com/celer-network/sgn-v2-contracts/blob/4881d5b85db2f0e378bf45990054dbcb141d0c7c/contracts/liquidity-bridge/Bridge.sol#L65
+export const SLIPPAGE_SCALE = 1e6;
+
+export const UI_SLIPPAGE_SCALE = 1e4;
 
 export function SlippageItem({
   onChange,
@@ -11,13 +17,6 @@ export function SlippageItem({
   onChange?: (value: number) => void;
 }) {
   const { t } = useTranslation();
-  // const initialValue = 0.3;
-
-  useEffect(() => {
-    if (onChange) {
-      // onChange(initialValue);
-    }
-  }, []);
 
   return (
     <Form.Item
@@ -38,18 +37,18 @@ export function SlippageItem({
       validateTrigger="onBlur"
       className="mb-4"
       rules={[{ required: true }]}
-      initialValue={0.3}
+      initialValue={DEFAULT_SLIPPAGE}
     >
       <InputNumber<number>
         size="large"
-        min={0.3}
+        min={DEFAULT_SLIPPAGE}
         max={10}
         step={1}
         formatter={(value) => `${value}%`}
         parser={(value) => Number(value!.replace('%', ''))}
         onChange={(value) => {
           if (onChange) {
-            onChange(value);
+            onChange(value * UI_SLIPPAGE_SCALE);
           }
         }}
         style={{
