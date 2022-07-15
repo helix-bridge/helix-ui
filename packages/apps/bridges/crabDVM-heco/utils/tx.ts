@@ -1,22 +1,22 @@
-import { EMPTY, Observable } from 'rxjs';
-import { Contract } from 'web3-eth-contract';
+import { Observable } from 'rxjs';
 import { Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
+import { Contract } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 import { TxValidationMessages } from '../../../config/validation';
 import { TxValidation } from '../../../model';
 import { validationObsFactory } from '../../../utils/tx';
 import bridgeAbi from '../config/abi/bridge.json';
-import { IssuingPayload } from '../model';
+import { IssuingPayload, RedeemPayload } from '../model';
 
-export function issuing(value: IssuingPayload): Observable<Tx> {
+export function transfer(value: IssuingPayload | RedeemPayload): Observable<Tx> {
   const {
     sender,
     recipient,
     direction: {
-      from: { address: tokenAddress, amount, decimals },
+      from: { address: tokenAddress, amount, decimals, meta: fromChain },
       to,
     },
     maxSlippage,
@@ -25,19 +25,17 @@ export function issuing(value: IssuingPayload): Observable<Tx> {
   const dstChainId = parseInt(to.meta.ethereumChain.chainId, 16);
   const nonce = Date.now();
   const transferAmount = toWei({ value: amount, decimals });
+  const { contracts } = bridge.config;
+  const contractAddress = bridge.isIssuing(fromChain, to.meta) ? contracts.issuing : contracts.redeem;
 
   return genEthereumContractTxObs(
-    bridge.config.contracts.issuing,
+    contractAddress,
     (contract) =>
       contract.methods
         .send(recipient, tokenAddress, transferAmount, dstChainId, nonce, maxSlippage)
         .send({ from: sender }),
     bridgeAbi as AbiItem[]
   );
-}
-
-export function redeem(): Observable<Tx> {
-  return EMPTY;
 }
 
 export const genValidations = ({ balance, amount, allowance }: TxValidation): [boolean, string][] => [
