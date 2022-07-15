@@ -1,3 +1,9 @@
+# [1.1.0](https://github.com/helix-bridge/helix/compare/v1.0.13-helix...v1.1.0) (2022-07-15)
+
+### Features
+
+* crab parachain ([#104](https://github.com/helix-bridge/helix/issues/104)) ([61d1a57](https://github.com/helix-bridge/helix/commit/61d1a57b8cb13bd63a0a1db59eb9301ef3cd0812))
+
 ## [1.0.11](https://github.com/helix-bridge/helix/compare/v3.1.4-apps...v1.0.11) (2022-07-08)
 
 ### Style
