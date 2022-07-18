@@ -16,7 +16,6 @@ import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { SYSTEM_ChAIN_CONFIGURATIONS } from 'shared/config/network';
 import { DailyStatistic, HelixHistoryRecord, Network } from 'shared/model';
-import { isDVM2Substrate, isParachain2Substrate } from 'shared/utils/bridge';
 import {
   convertToDvm,
   fromWei,
@@ -27,6 +26,7 @@ import {
   revertAccount,
 } from 'shared/utils/helper';
 import { chainConfigs, getChainConfig, getDisplayName, isDVMNetwork } from 'shared/utils/network';
+import { getAmountFromHelixRecord, getTokenNameFromHelixRecord } from 'shared/utils/record';
 import web3 from 'web3';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
 import { ACCOUNTS, HISTORY_RECORDS, Path, STATISTICS_QUERY, TIMEPAST } from '../../config';
@@ -134,27 +134,15 @@ function Page({
     {
       title: t('Asset'),
       dataIndex: 'token',
-      render(value: string, record) {
-        const chainConfig = getChainConfig(record.fromChain);
-        const tokenName = !record.token.startsWith('0x')
-          ? value
-          : `${isDVMNetwork(record.fromChain) ? 'x' : ''}${chainConfig?.isTest ? 'O' : ''}RING`;
-
-        return <span>{tokenName}</span>;
+      render(_: string, record) {
+        return <span>{getTokenNameFromHelixRecord(record)}</span>;
       },
     },
     {
       title: t('Amount'),
       dataIndex: 'amount',
-      render(value: string, record) {
-        const { fromChain, toChain } = record;
-        const amount = fromWei(
-          {
-            value,
-            decimals: isDVM2Substrate(fromChain, toChain) || isParachain2Substrate(fromChain, toChain) ? 18 : 9,
-          },
-          (val) => prettyNumber(val, { ignoreZeroDecimal: true })
-        );
+      render(_: string, record) {
+        const amount = getAmountFromHelixRecord(record);
 
         return (
           <Tooltip title={amount}>

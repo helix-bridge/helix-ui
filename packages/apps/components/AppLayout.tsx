@@ -10,8 +10,10 @@ import { Icon } from 'shared/components/widget/Icon';
 import { THEME } from 'shared/config/theme';
 import { readStorage } from 'shared/utils/helper';
 import { useITranslation } from '../hooks';
+import { Personal } from './record/Personal';
 import { Tools } from './Tools';
 import { ActiveAccount } from './widget/account/ActiveAccount';
+import { BaseModal } from './widget/BaseModal';
 
 const { Header, Content } = Layout;
 
@@ -25,6 +27,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
   const [theme, setTheme] = useState<THEME>(readStorage().theme ?? THEME.DARK);
   const [collapsed, setCollapsed] = useState(true);
   const router = useRouter();
+  const [isPersonalHistoryVisible, setIsPersonalHistoryVisible] = useState<boolean>(false);
 
   const menus = useMemo<MenuProps['items']>(
     () => [
@@ -63,7 +66,11 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
             key: 'records',
           },
           {
-            label: <Link href="/history">{t('Ethereum - Darwinia Record')}</Link>,
+            label: <a onClick={() => setIsPersonalHistoryVisible(true)}>{t('My History')}</a>,
+            key: 'personal-history',
+          },
+          {
+            label: <Link href="/history/ed">{t('Ethereum - Darwinia Record')}</Link>,
             key: 'ed-history',
           },
         ],
@@ -131,6 +138,17 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
       <Content className="sm:px-16 sm:pt-4 px-4 py-1 my-24 sm:my-20">{children}</Content>
 
       <Footer onThemeChange={setTheme} />
+
+      <BaseModal
+        title={t('Transfer History')}
+        visible={isPersonalHistoryVisible}
+        onCancel={() => setIsPersonalHistoryVisible(false)}
+        footer={null}
+        width="50%"
+        maskClosable={false}
+      >
+        <Personal></Personal>
+      </BaseModal>
     </Layout>
   );
 }
