@@ -1,3 +1,4 @@
+import { BN, hexToBn } from '@polkadot/util';
 import { Observable } from 'rxjs';
 import { Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
@@ -11,6 +12,8 @@ import { validationObsFactory } from '../../../utils/tx';
 import bridgeAbi from '../config/abi/bridge.json';
 import { IssuingPayload, RedeemPayload } from '../model';
 
+const prefix = hexToBn('0x6878000000000000');
+
 export function transfer(value: IssuingPayload | RedeemPayload): Observable<Tx> {
   const {
     sender,
@@ -23,7 +26,7 @@ export function transfer(value: IssuingPayload | RedeemPayload): Observable<Tx> 
     bridge,
   } = value;
   const dstChainId = parseInt(to.meta.ethereumChain.chainId, 16);
-  const nonce = Date.now();
+  const nonce = new BN(Date.now()).add(prefix).toString();
   const transferAmount = toWei({ value: amount, decimals });
   const { contracts } = bridge.config;
   const contractAddress = bridge.isIssuing(fromChain, to.meta) ? contracts.issuing : contracts.redeem;
