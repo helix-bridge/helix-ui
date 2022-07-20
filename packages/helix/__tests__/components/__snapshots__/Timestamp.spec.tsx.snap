@@ -55,7 +55,7 @@ exports[`<Timestamp /> render Timestamp with processing 1`] = `
       className="hidden md:inline-block"
     >
       (
-      2022/06/30 13:10:54
+      2022/06/30 05:10:54
       )
     </span>
     <div
@@ -170,7 +170,7 @@ exports[`<Timestamp /> render Timestamp with success 1`] = `
       className="hidden md:inline-block"
     >
       (
-      2022/06/30 13:10:54
+      2022/06/30 05:10:54
       )
     </span>
     <div

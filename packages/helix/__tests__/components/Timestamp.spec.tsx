@@ -58,6 +58,10 @@ describe('<Timestamp />', () => {
     mockDate.mockRestore();
   });
 
+  it('should always be UTC', () => {
+    expect(new Date().getTimezoneOffset()).toBe(0);
+  });
+
   it('render Timestamp with success', () => {
     const component = create(<Timestamp record={record} />);
 
