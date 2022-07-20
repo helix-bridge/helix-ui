@@ -26,9 +26,7 @@ export function Timestamp({ record }: { record: HelixHistoryRecord | null }) {
             })}
           </span>
 
-          <span className="hidden md:inline-block">
-            ({format(new Date(new Date(record.startTime * 1000).toUTCString()), DATE_TIME_FORMAT)})
-          </span>
+          <span className="hidden md:inline-block">({format(fromUnixTime(record.startTime), DATE_TIME_FORMAT)})</span>
 
           <Divider type="vertical" orientation="center" />
 
