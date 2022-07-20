@@ -1,3 +1,12 @@
+## [1.1.1](https://github.com/helix-bridge/helix/compare/v3.2.0-apps...v1.1.1) (2022-07-20)
+
+
+### Features
+
+* support c bridge transaction ([#109](https://github.com/helix-bridge/helix/issues/109)) ([76d2d7d](https://github.com/helix-bridge/helix/commit/76d2d7deb1b26eedad71e69d108257002fd57e08))
+
+
+
 # [1.1.0](https://github.com/helix-bridge/helix/compare/v1.0.13-helix...v1.1.0) (2022-07-15)
 
 ### Features
