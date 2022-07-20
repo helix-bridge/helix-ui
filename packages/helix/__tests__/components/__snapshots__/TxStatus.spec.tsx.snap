@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<TxStatus /> render TxStatus 0 1`] = `
+exports[`<TxStatus /> render TxStatus: 0 1`] = `
 <div
   className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6 relative"
 >
@@ -73,7 +73,7 @@ exports[`<TxStatus /> render TxStatus 0 1`] = `
 </div>
 `;
 
-exports[`<TxStatus /> render TxStatus 1 1`] = `
+exports[`<TxStatus /> render TxStatus: 1 1`] = `
 <div
   className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6 relative"
 >
@@ -146,7 +146,7 @@ exports[`<TxStatus /> render TxStatus 1 1`] = `
 </div>
 `;
 
-exports[`<TxStatus /> render TxStatus 2 1`] = `
+exports[`<TxStatus /> render TxStatus: 2 1`] = `
 <div
   className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6 relative"
 >
@@ -216,6 +216,9 @@ exports[`<TxStatus /> render TxStatus 2 1`] = `
       reverted
     </span>
   </div>
+  <span>
+    SpecVersionMismatch
+  </span>
 </div>
 `;
 

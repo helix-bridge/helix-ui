@@ -14,9 +14,7 @@ export function TxStatus({ record }: { record: HelixHistoryRecord | null }) {
     >
       <CrossChainState value={record?.result ?? CrossChainStatus.pending} className="relative"></CrossChainState>
 
-      {record?.result === CrossChainStatus.reverted && record.bridgeDispatchError && (
-        <span>{record?.bridgeDispatchError}</span>
-      )}
+      {record?.result === CrossChainStatus.reverted && <span>{record.bridgeDispatchError}</span>}
     </TransferDescription>
   );
 }

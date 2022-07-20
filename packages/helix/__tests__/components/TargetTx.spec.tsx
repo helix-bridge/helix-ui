@@ -49,24 +49,21 @@ describe('<TargetTx />', () => {
     bridgeDispatchError: '',
   };
 
-  it('render TargetTx with success record', () => {
-    const component = create(<TargetTx record={record} />);
+  it.each([
+    record,
+    { ...record, result: 0 },
+    { ...record, result: 2 },
+    { ...record, targetTxHash: record.responseTxHash },
+  ])('render target tx with TxStatus: $result', ({ result, ...rest }) => {
+    const component = create(<TargetTx record={{ result, ...rest } as HelixHistoryRecord} />);
 
     let tree = component.toJSON();
 
     expect(tree).toMatchSnapshot();
   });
 
-  it('render TargetTx with revert record', () => {
-    const component = create(<TargetTx record={{ ...record, result: 2 }} />);
-
-    let tree = component.toJSON();
-
-    expect(tree).toMatchSnapshot();
-  });
-
-  it('render TargetTx with pending record', () => {
-    const component = create(<TargetTx record={{ ...record, responseTxHash: null }} />);
+  it('render null', () => {
+    const component = create(<TargetTx record={null} />);
 
     let tree = component.toJSON();
 

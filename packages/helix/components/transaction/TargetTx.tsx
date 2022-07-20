@@ -22,11 +22,11 @@ export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
       return (
         <SubscanLink
           network={arrival}
-          txHash={record?.targetTxHash}
+          txHash={record.targetTxHash}
           className="hover:opacity-80 transition-opacity duration-200"
         >
           <Typography.Text copyable className="truncate">
-            {record?.targetTxHash}
+            {record.targetTxHash}
           </Typography.Text>
         </SubscanLink>
       );
@@ -40,7 +40,7 @@ export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
           className="hover:opacity-80 transition-opacity duration-200"
         >
           <Typography.Text copyable className="truncate">
-            {record?.responseTxHash}
+            {record.responseTxHash}
           </Typography.Text>
         </SubscanLink>
       );

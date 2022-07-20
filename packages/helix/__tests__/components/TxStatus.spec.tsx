@@ -13,8 +13,12 @@ jest.mock('next-i18next', () => ({
 }));
 
 describe('<TxStatus />', () => {
-  it.each([0, 1, 2])('render TxStatus %s', (result) => {
-    const component = create(<TxStatus record={{ result } as HelixHistoryRecord} />);
+  it.each([
+    { result: 0, bridgeDispatchError: '' },
+    { result: 1, bridgeDispatchError: '' },
+    { result: 2, bridgeDispatchError: 'SpecVersionMismatch' },
+  ])('render TxStatus: $result', ({ result, ...rest }) => {
+    const component = create(<TxStatus record={{ result, ...rest } as HelixHistoryRecord} />);
 
     let tree = component.toJSON();
 
