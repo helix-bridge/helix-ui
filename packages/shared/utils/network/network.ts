@@ -42,12 +42,12 @@ export const isDVMNetwork = isSpecifyNetwork(knownDVMNetworks);
 
 export const isEthereumNetwork = isSpecifyNetwork(knownEthereumNetworks);
 
-export function getChainConfig(name: Network | null | undefined): ChainConfig {
+export function getChainConfig(name: Network | null | undefined, source = chainConfigs): ChainConfig {
   if (!name) {
     throw new Error(`You must pass a 'name' parameter to find the chain config`);
   }
 
-  const result = chainConfigs.find((item) => item.name === name);
+  const result = source.find((item) => item.name === name);
 
   if (!result) {
     throw new Error(`Can not find the chain config by ${name}`);

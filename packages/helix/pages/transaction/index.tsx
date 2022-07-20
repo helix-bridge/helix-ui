@@ -14,6 +14,7 @@ import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
 import { Logo } from 'shared/components/widget/Logo';
 import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
+import { SYSTEM_ChAIN_CONFIGURATIONS } from 'shared/config/network';
 import { DailyStatistic, HelixHistoryRecord, Network } from 'shared/model';
 import { isDVM2Substrate, isParachain2Substrate } from 'shared/utils/bridge';
 import {
@@ -32,7 +33,7 @@ import { ACCOUNTS, HISTORY_RECORDS, Path, STATISTICS_QUERY, TIMEPAST } from '../
 import { getDetailPaths } from '../../utils';
 
 function RecordAccount({ chain, account, partner }: { chain: Network; account: string; partner: string }) {
-  const chainConfig = getChainConfig(chain);
+  const chainConfig = getChainConfig(chain, SYSTEM_ChAIN_CONFIGURATIONS);
   const displayAccount = revertAccount(account, chainConfig);
 
   return (
