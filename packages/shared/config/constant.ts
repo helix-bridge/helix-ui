@@ -31,11 +31,33 @@ export enum CrossChainStatus {
   reverted,
 }
 
+export enum CBridgeHistoryStatus {
+  unknown,
+  submitting,
+  failed,
+  waitingForSgnConfirmation,
+  waitingForFundRelease,
+  completed,
+  toBeRefunded,
+  requestingRefund,
+  refundToBeConfirmed,
+  confirmingYourRefund,
+  refunded,
+}
+
 // TODO: implement by tailwindcss ?
 export enum CrossChainStatusColor {
   '#00b3ff',
   '#00AA76',
   '#EC9D00',
+  '#00b3fe',
+  '#00b3fd',
+  '#00AA75',
+  '#EC9D01',
+  '#00b3fc',
+  '#00b3fb',
+  '#00b3fa',
+  '#00AA74',
 }
 
 const DEFAULT_FORMAL_DIRECTION = {
