@@ -116,18 +116,3 @@ export function getBridges(source: CrossChainDirection): Bridge[] {
       overviews.find((overview) => overview.category === bridge.category && overview.bridge === bridge.name)
   );
 }
-
-export function getAvailableDVMBridge(departure: ChainConfig): Bridge<DVMBridgeConfig> {
-  // FIXME: by default we use the first vertices here.
-  const [bridge] = BRIDGES.filter(
-    (item) => item.status === 'available' && isEqual(item.departure, departure) && item.arrival.name.includes('dvm')
-  );
-
-  if (bridge) {
-    throw new Error(
-      `Can not find available bridge(Ethereum type <-> DVM type) by departure network: ${departure.name}`
-    );
-  }
-
-  return bridge as Bridge<DVMBridgeConfig>;
-}

@@ -8,7 +8,7 @@ import { Icon } from './Icon';
 export const toggleTheme = (theme: THEME, network: Network = 'pangolin') => {
   const networkTheme = theme === THEME.DARK ? NETWORK_DARK_THEME : NETWORK_LIGHT_THEME;
 
-  if (typeof window !== 'undefined' && window.less) {
+  if (typeof window !== 'undefined' && window.less && window.less.modifyVars) {
     window.less
       .modifyVars({
         ...SKIN_THEME[theme],

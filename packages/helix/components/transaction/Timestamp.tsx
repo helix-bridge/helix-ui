@@ -1,8 +1,9 @@
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Divider, Progress } from 'antd';
-import { formatDistance, fromUnixTime } from 'date-fns';
+import { format, formatDistance, fromUnixTime } from 'date-fns';
 import { useTranslation } from 'next-i18next';
 import { Icon } from 'shared/components/widget/Icon';
+import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { HelixHistoryRecord } from 'shared/model';
 import { TransferDescription } from './TransferDescription';
 
@@ -25,7 +26,7 @@ export function Timestamp({ record }: { record: HelixHistoryRecord | null }) {
             })}
           </span>
 
-          <span className="hidden md:inline-block">({new Date(record.startTime * 1000).toLocaleString()})</span>
+          <span className="hidden md:inline-block">({format(fromUnixTime(record.startTime), DATE_TIME_FORMAT)})</span>
 
           <Divider type="vertical" orientation="center" />
 
