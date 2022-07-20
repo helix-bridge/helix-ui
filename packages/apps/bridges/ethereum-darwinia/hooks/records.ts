@@ -14,7 +14,7 @@ import {
   Ethereum2DarwiniaRedeemRecord,
 } from '../model';
 
-const E2D_ENDPOINT = isFormalChain ? 'https://api.darwinia.network' : 'https://api.darwinia.network.l2me.com';
+const E2D_ENDPOINT = isFormalChain ? 'https://helix-api.darwinia.network' : 'https://api.darwinia.network.l2me.com';
 
 export function useRecords(): RecordsHooksResult<
   RecordList<ICamelCaseKeys<Darwinia2EthereumRecord> | ICamelCaseKeys<Ethereum2DarwiniaRedeemRecord>>
