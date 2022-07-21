@@ -50,6 +50,11 @@ module.exports = {
         'mock-bottom-border-light': '0px 10px 1px -8px rgba(255,255,255,.85)',
       },
       colors: (_) => ({
+        helix: { 
+          green: "#52C41A",
+          red: "#FF4D4F",
+          blue: "#00B2FF",
+        }, 
         crab: {
           main: '#EC3783',
         },

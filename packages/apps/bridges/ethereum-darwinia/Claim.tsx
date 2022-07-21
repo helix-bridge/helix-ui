@@ -18,7 +18,7 @@ import { HistoryItem } from '../../components/record/HistoryItem';
 import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
 import { useAccount, useApi, useTx } from '../../providers';
-import { useRecords } from './hooks';
+import { fetchDarwinia2EthereumRecords } from '../../utils/records';
 import { Darwinia2EthereumHistoryRes, Darwinia2EthereumRecord, EthereumDarwiniaBridgeConfig } from './model';
 import { claimToken } from './utils';
 
@@ -32,79 +32,6 @@ function isSufficient(config: EthereumDarwiniaBridgeConfig, tokenAddress: string
 }
 
 const PAGINATOR_DEFAULT = { row: 10, page: 0 };
-
-// eslint-disable-next-line complexity
-export function Claim({
-  confirmed,
-  direction,
-}: {
-  confirmed: boolean | null;
-  direction: [PolkadotChainConfig, EthereumChainConfig];
-}) {
-  const { t } = useTranslation();
-  const { connectDepartureNetwork } = useApi();
-  const { account } = useAccount();
-  const { fetchIssuingRecords } = useRecords();
-  const [loading, setLoading] = useState(false);
-  const [paginator, setPaginator] = useState<Paginator>(PAGINATOR_DEFAULT);
-  const [data, setData] = useState<Darwinia2EthereumHistoryRes<ICamelCaseKeys<Darwinia2EthereumRecord>> | null>(null);
-  const [departure, arrival] = direction;
-
-  useEffect(() => {
-    if (!account || !isSS58Address(account)) {
-      return;
-    }
-
-    fetchIssuingRecords({ address: account, confirmed, paginator }).subscribe({
-      next: (result) => setData(result as Darwinia2EthereumHistoryRes<ICamelCaseKeys<Darwinia2EthereumRecord>>),
-      error: () => setLoading(false),
-      complete: () => setLoading(false),
-    });
-  }, [account, arrival, confirmed, departure, fetchIssuingRecords, paginator]);
-
-  return (
-    <Spin spinning={loading}>
-      <div>
-        {data?.list.length ? (
-          data?.list.map((record) => (
-            <Record
-              key={record.extrinsicIndex}
-              record={record}
-              departure={departure}
-              arrival={arrival}
-              meta={omit(data, ['list', 'count'])}
-            />
-          ))
-        ) : (
-          <Empty
-            description={
-              !data ? (
-                <Button onClick={() => connectDepartureNetwork(departure)}>{t('Connect to Wallet')}</Button>
-              ) : (
-                t('No Data')
-              )
-            }
-            image={!data ? <Logo name="polkadot.svg" width={96} height={96} /> : undefined}
-          />
-        )}
-
-        <div className="flex justify-end items-center">
-          {!!data?.count && (
-            <Pagination
-              onChange={(page: number) => {
-                setPaginator({ ...paginator, page: page - 1 });
-              }}
-              current={paginator.page + 1}
-              pageSize={paginator.row}
-              total={data.count ?? 0}
-              showTotal={() => t('Total {{total}}', { total: data.count })}
-            />
-          )}
-        </div>
-      </div>
-    </Spin>
-  );
-}
 
 // eslint-disable-next-line complexity
 function Record({
@@ -254,5 +181,77 @@ function Record({
         )}
       </div>
     </HistoryItem>
+  );
+}
+
+// eslint-disable-next-line complexity
+export function Claim({
+  confirmed,
+  direction,
+}: {
+  confirmed: boolean | null;
+  direction: [PolkadotChainConfig, EthereumChainConfig];
+}) {
+  const { t } = useTranslation();
+  const { connectDepartureNetwork } = useApi();
+  const { account } = useAccount();
+  const [loading, setLoading] = useState(false);
+  const [paginator, setPaginator] = useState<Paginator>(PAGINATOR_DEFAULT);
+  const [data, setData] = useState<Darwinia2EthereumHistoryRes<ICamelCaseKeys<Darwinia2EthereumRecord>> | null>(null);
+  const [departure, arrival] = direction;
+
+  useEffect(() => {
+    if (!account || !isSS58Address(account)) {
+      return;
+    }
+
+    fetchDarwinia2EthereumRecords({ address: account, confirmed, paginator }, departure).subscribe({
+      next: (result) => setData(result as Darwinia2EthereumHistoryRes<ICamelCaseKeys<Darwinia2EthereumRecord>>),
+      error: () => setLoading(false),
+      complete: () => setLoading(false),
+    });
+  }, [account, arrival, confirmed, departure, paginator]);
+
+  return (
+    <Spin spinning={loading}>
+      <div>
+        {data?.list.length ? (
+          data?.list.map((record) => (
+            <Record
+              key={record.extrinsicIndex}
+              record={record}
+              departure={departure}
+              arrival={arrival}
+              meta={omit(data, ['list', 'count'])}
+            />
+          ))
+        ) : (
+          <Empty
+            description={
+              !data ? (
+                <Button onClick={() => connectDepartureNetwork(departure)}>{t('Connect to Wallet')}</Button>
+              ) : (
+                t('No Data')
+              )
+            }
+            image={!data ? <Logo name="polkadot.svg" width={96} height={96} /> : undefined}
+          />
+        )}
+
+        <div className="flex justify-end items-center">
+          {!!data?.count && (
+            <Pagination
+              onChange={(page: number) => {
+                setPaginator({ ...paginator, page: page - 1 });
+              }}
+              current={paginator.page + 1}
+              pageSize={paginator.row}
+              total={data.count ?? 0}
+              showTotal={() => t('Total {{total}}', { total: data.count })}
+            />
+          )}
+        </div>
+      </div>
+    </Spin>
   );
 }

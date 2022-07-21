@@ -10,8 +10,8 @@ export function BridgeArrow({ category, showName = true }: BridgeArrowProps) {
   const asHistory = !showName;
 
   return (
-    <div className={asHistory ? 'flex justify-center px-4' : ''}>
-      <div className={`relative hidden lg:flex justify-center text-white ${!asHistory ? 'w-56' : 'w-28'}`}>
+    <div className={asHistory ? 'flex justify-center px-4 flex-1' : ''}>
+      <div className={`relative hidden lg:flex justify-center text-white ${!asHistory ? 'w-56' : 'w-1/2'}`}>
         <div
           className={`${
             showName ? 'py-1 w-24 rounded-3xl' : 'p-2 w-auto rounded-full'

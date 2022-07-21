@@ -12,7 +12,7 @@ import { HistoryItem } from '../../components/record/HistoryItem';
 import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
 import { useAccount, useApi } from '../../providers';
-import { useRecords } from './hooks';
+import { fetchEthereum2DarwiniaRecords } from '../../utils/records';
 import { Ethereum2DarwiniaRedeemHistoryRes, Ethereum2DarwiniaRedeemRecord } from './model';
 
 const PAGINATOR_DEFAULT = { row: 10, page: 0 };
@@ -88,7 +88,6 @@ export function Ethereum2DarwiniaHistory({
   const { t } = useITranslation();
   const { connectDepartureNetwork } = useApi();
   const { account } = useAccount();
-  const { fetchRedeemRecords } = useRecords();
   const [loading, setLoading] = useState(false);
   const [paginator, setPaginator] = useState<Paginator>(PAGINATOR_DEFAULT);
 
@@ -104,13 +103,13 @@ export function Ethereum2DarwiniaHistory({
       return;
     }
 
-    fetchRedeemRecords({ address: account, confirmed, paginator }).subscribe({
+    fetchEthereum2DarwiniaRecords({ address: account, confirmed, paginator }, departure).subscribe({
       next: (result) =>
         setData(result as Ethereum2DarwiniaRedeemHistoryRes<ICamelCaseKeys<Ethereum2DarwiniaRedeemRecord>>),
       error: () => setLoading(false),
       complete: () => setLoading(false),
     });
-  }, [account, arrival, confirmed, departure, fetchRedeemRecords, paginator]);
+  }, [account, arrival, confirmed, departure, paginator]);
 
   return (
     <Spin spinning={loading}>

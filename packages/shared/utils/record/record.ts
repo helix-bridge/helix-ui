@@ -1,6 +1,6 @@
-import BN from 'bn.js';
+import Bignumber from 'bignumber.js';
 import { HelixHistoryRecord } from '../../model';
-import { isDVM2Substrate, isParachain2Substrate } from '../bridge';
+import { isDVM2Substrate, isEthereum2Darwinia, isParachain2Substrate } from '../bridge';
 import { fromWei, prettyNumber } from '../helper';
 import { getChainConfig, isDVMNetwork } from '../network';
 
@@ -18,7 +18,12 @@ export function getSendAmountFromHelixRecord(record: HelixHistoryRecord) {
   return fromWei(
     {
       value: record.amount,
-      decimals: isDVM2Substrate(fromChain, toChain) || isParachain2Substrate(fromChain, toChain) ? 18 : 9,
+      decimals:
+        isDVM2Substrate(fromChain, toChain) ||
+        isParachain2Substrate(fromChain, toChain) ||
+        isEthereum2Darwinia(fromChain, toChain)
+          ? 18
+          : 9,
     },
     (val) => prettyNumber(val, { ignoreZeroDecimal: true })
   );
@@ -36,5 +41,13 @@ export function getReceiveAmountFromHelixRecord(record: HelixHistoryRecord) {
   const token = getTokenNameFromHelixRecord(record);
   const feeAmount = getFeeAmountFromHelixRecord(record);
 
-  return token !== record.feeToken ? sendAmount : new BN(sendAmount).sub(new BN(feeAmount)).toString();
+  try {
+    return token !== record.feeToken
+      ? sendAmount
+      : new Bignumber(sendAmount).minus(new Bignumber(feeAmount)).toString();
+  } catch (err) {
+    console.log('🚀 ~ file: record.ts ~ line 36 ~ getReceiveAmountFromHelixRecord ~ sendAmount', sendAmount, record);
+
+    return 'NaN';
+  }
 }

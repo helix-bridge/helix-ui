@@ -6,15 +6,15 @@ import { useTranslation } from 'react-i18next';
 import { Logo } from 'shared/components/widget/Logo';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { CrossChainStatus } from 'shared/config/constant';
-import { EthereumChainConfig, ICamelCaseKeys, PolkadotChainConfig } from 'shared/model';
-import { fromWei, isKton, isRing, isSS58Address, prettyNumber } from 'shared/utils/helper';
+import { EthereumChainConfig, HelixHistoryRecord, PolkadotChainConfig } from 'shared/model';
+import { isSS58Address, prettyNumber } from 'shared/utils/helper';
 import { getDisplayName } from 'shared/utils/network';
 import { HistoryItem } from '../../components/record/HistoryItem';
 import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
 import { useAccount, useApi } from '../../providers';
-import { useRecords } from './hooks';
-import { Darwinia2EthereumHistoryRes, Darwinia2EthereumRecord } from './model';
+import { fetchDarwinia2EthereumRecords } from '../../utils/records';
+import { Darwinia2EthereumHistoryRes } from './model';
 
 const PAGINATOR_DEFAULT = { row: 10, page: 0 };
 
@@ -24,33 +24,26 @@ function Record({
   departure,
   arrival,
 }: {
-  record: ICamelCaseKeys<Darwinia2EthereumRecord>;
+  record: HelixHistoryRecord;
   departure: PolkadotChainConfig;
   arrival: EthereumChainConfig;
   meta: Omit<Darwinia2EthereumHistoryRes, 'list' | 'count'>;
 }) {
   const { t } = useITranslation();
-  const { blockTimestamp, signatures, ringValue, ktonValue, extrinsicIndex, tx } = record;
-  const [height, index] = extrinsicIndex.split('-');
-  const token =
-    +ringValue > 0
-      ? departure.tokens.find((item) => isRing(item.symbol))!
-      : departure.tokens.find((item) => isKton(item.symbol))!;
-  const [hash] = useState(tx);
-  const result = signatures && !hash ? 0 : 1;
+  const { result, requestTxHash, targetTxHash: hash, amount, token } = record;
+  const [height, index] = requestTxHash.split('-');
+  const target = departure.tokens.find((item) => item.symbol === token)!;
 
   return (
     <HistoryItem
-      key={extrinsicIndex}
+      key={record.requestTxHash}
       record={{
         result,
-        startTime: blockTimestamp,
+        startTime: record.startTime,
       }}
       token={{
-        ...token,
-        amount: fromWei({ value: +ringValue > 0 ? ringValue : ktonValue, decimals: 9 }, (value) =>
-          prettyNumber(value, { ignoreZeroDecimal: true })
-        ),
+        ...target,
+        amount: prettyNumber(amount, { ignoreZeroDecimal: true }),
       }}
       process={
         <div className="flex justify-between items-center gap-2">
@@ -94,11 +87,10 @@ export function Darwinia2EthereumHistory({
 }) {
   const { t } = useTranslation();
   const { account } = useAccount();
-  const { fetchIssuingRecords } = useRecords();
   const [loading, setLoading] = useState(false);
   const [paginator, setPaginator] = useState<Paginator>(PAGINATOR_DEFAULT);
   const { connectDepartureNetwork } = useApi();
-  const [data, setData] = useState<Darwinia2EthereumHistoryRes<ICamelCaseKeys<Darwinia2EthereumRecord>> | null>(null);
+  const [data, setData] = useState<Darwinia2EthereumHistoryRes<HelixHistoryRecord> | null>(null);
   const [departure, arrival] = direction;
 
   useEffect(() => {
@@ -107,12 +99,12 @@ export function Darwinia2EthereumHistory({
       return;
     }
 
-    fetchIssuingRecords({ address: account, confirmed, paginator }).subscribe({
-      next: (result) => setData(result as Darwinia2EthereumHistoryRes<ICamelCaseKeys<Darwinia2EthereumRecord>>),
+    fetchDarwinia2EthereumRecords({ address: account, confirmed, paginator }, departure).subscribe({
+      next: (result) => setData(result as Darwinia2EthereumHistoryRes<HelixHistoryRecord>),
       error: () => setLoading(false),
       complete: () => setLoading(false),
     });
-  }, [account, arrival, confirmed, departure, fetchIssuingRecords, paginator]);
+  }, [account, arrival, confirmed, departure, paginator]);
 
   return (
     <Spin spinning={loading}>
@@ -120,7 +112,7 @@ export function Darwinia2EthereumHistory({
         {data?.list.length ? (
           data?.list.map((record) => (
             <Record
-              key={record.extrinsicIndex}
+              key={record.requestTxHash}
               record={record}
               departure={departure}
               arrival={arrival}

@@ -1,6 +1,8 @@
+import { Tooltip } from 'antd';
 import { PropsWithChildren } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { CrossToken } from 'shared/model';
+import { prettyNumber } from 'shared/utils/helper';
 import { getDisplayName } from 'shared/utils/network';
 
 type TokenOnChainProps = {
@@ -36,10 +38,16 @@ export const TokenOnChain = ({
       <div className={`flex flex-col space-y-1 truncate ${isFrom ? 'order-2 lg:ml-6' : 'order-1 items-end'}`}>
         <strong
           className={`font-medium text-sm ${isFrom ? 'text-left' : 'text-right'} ${
-            asHistory ? (isFrom ? 'text-red-400' : 'text-green-400') : ''
+            asHistory ? (isFrom ? 'text-helix-red' : 'text-helix-green') : ''
           }`}
         >
-          {token.amount ? `${asHistory ? (isFrom ? '- ' : '+ ') : ''}${token.amount} ${token.symbol}` : <span></span>}
+          <Tooltip title={token.amount ?? null}>
+            {token.amount &&
+              `${asHistory ? (isFrom ? '- ' : '+ ') : ''}${prettyNumber(token.amount, {
+                ignoreZeroDecimal: true,
+                decimal: 5,
+              })} ${token.symbol}`}
+          </Tooltip>
         </strong>
 
         <small className="font-light text-xs opacity-70">

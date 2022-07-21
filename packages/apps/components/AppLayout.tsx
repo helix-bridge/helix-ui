@@ -144,7 +144,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
         visible={isPersonalHistoryVisible}
         onCancel={() => setIsPersonalHistoryVisible(false)}
         footer={null}
-        width="50%"
+        width="55%"
         maskClosable={false}
       >
         <Personal></Personal>
