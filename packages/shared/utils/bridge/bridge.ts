@@ -50,6 +50,9 @@ export const isParachain2Substrate: BridgePredicateFn = (departure, arrival) => 
 export const isSubstrate2Parachain: BridgePredicateFn = (departure, arrival) =>
   isParachain2Substrate(arrival, departure);
 
+export const isCrabDVM2Heco: BridgePredicateFn = (departure, arrival) => departure === 'crab-dvm' && arrival === 'heco';
+export const isHeco2CrabDVM: BridgePredicateFn = (departure, arrival) => isCrabDVM2Heco(arrival, departure);
+
 /**
  * Shorthand functions for predication without direction
  */

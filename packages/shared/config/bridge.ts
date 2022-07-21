@@ -1,10 +1,11 @@
+import { crabDVMHeco } from './bridges/crabDVM-heco';
 import { ethereumDarwinia, ropstenPangolin } from './bridges/ethereum-darwinia';
 import { parachainCrab, parachainPangolin } from './bridges/parachain-substrate';
 import { crabCrabDVM, pangolinPangolinDVM } from './bridges/substrate-dvm';
 import { darwiniaCrabDVM, pangoroPangolinDVM } from './bridges/substrate-substrateDVM';
 import { CHAIN_TYPE } from './env';
 
-const formalBridges = [crabCrabDVM, darwiniaCrabDVM, ethereumDarwinia, parachainCrab];
+const formalBridges = [crabCrabDVM, darwiniaCrabDVM, ethereumDarwinia, parachainCrab, crabDVMHeco];
 
 const testBridges = [pangolinPangolinDVM, pangoroPangolinDVM, ropstenPangolin, parachainPangolin];
 

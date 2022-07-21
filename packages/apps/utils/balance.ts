@@ -1,9 +1,11 @@
 import BN from 'bn.js';
 import { CrossChainDirection } from 'shared/model';
 import {
+  isCrabDVM2Heco,
   isDarwinia2Ethereum,
   isDVM2Substrate,
   isEthereum2Darwinia,
+  isHeco2CrabDVM,
   isParachain2Substrate,
   isSubstrate2DVM,
   isSubstrate2Parachain,
@@ -48,13 +50,15 @@ export async function getBalance(direction: CrossChainDirection, account: string
     return getDVMBalance(kton.address, account);
   }
 
-  if (isSubstrateDVM2Substrate(fromChain, toChain)) {
+  if ([isSubstrateDVM2Substrate, isCrabDVM2Heco, isHeco2CrabDVM].some((fn) => fn(fromChain, toChain))) {
     return getErc20Balance(from.address, account).then((res) => [res]);
   }
 
   if (isParachain2Substrate(fromChain, toChain)) {
     return getParachainBalance(from.meta.provider, account).then((res) => [res]);
   }
+
+  console.warn(`🚨 Can not find a method to fetch balance of ${from.symbol} for ${fromChain} to ${toChain} transfer `);
 
   return null;
 }

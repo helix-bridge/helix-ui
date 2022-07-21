@@ -59,7 +59,7 @@ describe('Substrate DVM to Substrate', () => {
 
     cy.typeRecipient(recipient);
 
-    cy.contains(/\d+\sPRING/);
+    cy.contains(/\d+(\.?(?=\d+)\d+)?\sPRING/);
 
     cy.submitTx();
     cy.confirmTx();

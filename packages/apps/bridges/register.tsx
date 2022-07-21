@@ -1,11 +1,13 @@
 import { FunctionComponent } from 'react';
 import { darwiniaCrabDVM, pangoroPangolinDVM } from 'shared/config/bridge';
+import { crabDVMHeco } from 'shared/config/bridges/crabDVM-heco';
 import { ethereumDarwinia, ropstenPangolin } from 'shared/config/bridges/ethereum-darwinia';
 import { parachainCrab, parachainPangolin } from 'shared/config/bridges/parachain-substrate';
 import { crabCrabDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
 import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
+import { CrabDVM2Heco, Heco2CrabDVM } from './crabDVM-heco';
 import { Darwinia2Ethereum, Ethereum2Darwinia } from './ethereum-darwinia';
-import { Substrate2Parachain, Parachain2Substrate } from './parachain-substrate';
+import { Parachain2Substrate, Substrate2Parachain } from './parachain-substrate';
 import { DVM2Substrate, Substrate2DVM } from './substrate-dvm';
 import { Substrate2SubstrateDVM, SubstrateDVM2Substrate } from './substrate-substrateDVM';
 import { Unavailable2Unknown, Unknown2Unavailable } from './unknown-unavailable';
@@ -51,3 +53,10 @@ parachainCrab.setIssuingComponents(Substrate2Parachain as FunctionComponent);
 parachainCrab.setRedeemComponents(Parachain2Substrate as FunctionComponent);
 parachainPangolin.setIssuingComponents(Substrate2Parachain as FunctionComponent);
 parachainPangolin.setRedeemComponents(Parachain2Substrate as FunctionComponent);
+
+/**
+ * cBridge
+ * crab dvm <-> heco
+ */
+crabDVMHeco.setIssuingComponents(CrabDVM2Heco as FunctionComponent);
+crabDVMHeco.setRedeemComponents(Heco2CrabDVM as FunctionComponent);
