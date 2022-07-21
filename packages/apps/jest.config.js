@@ -3,7 +3,7 @@ module.exports = {
   globals: {
     'ts-jest': {
       isolatedModules: true,
-      tsConfig: './tsconfig.test.json'
+      tsconfig: './tsconfig.test.json'
     },
   },
   transform: {
@@ -13,4 +13,7 @@ module.exports = {
   extensionsToTreatAsEsm: ['.ts'],
   testEnvironment: 'jsdom',
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/', '<rootDir>/cypress'],
+  transformIgnorePatterns: [
+    "node_modules/(?!(@polkadot|react-i18next|next-i18next))",
+  ],
 };

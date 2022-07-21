@@ -6,17 +6,14 @@ import { prettyNumber } from 'shared/utils/helper';
 import { useITranslation } from '../../hooks';
 import { bridgeCategoryDisplay } from '../../utils';
 
-type AmountInfo =
-  | {
-      amount: string;
-      symbol: string;
-    }
-  | null
-  | undefined;
+type AmountInfo = {
+  amount: string;
+  symbol: string;
+};
 
 interface CrossChainInfoProps {
   bridge: Bridge;
-  fee: AmountInfo;
+  fee?: AmountInfo | null;
   hideFee?: boolean;
   extra?: { name: string; content: ReactNode }[];
   isDynamicFee?: boolean;
@@ -38,7 +35,7 @@ export function CrossChainInfo({
       return (
         <Typography.Text>
           <Tooltip title={fee.amount} className="cursor-help">
-            {prettyNumber(fee.amount, { decimal: 3 })}
+            {prettyNumber(fee.amount, { decimal: 3, ignoreZeroDecimal: true })}
           </Tooltip>
           <span className="ml-1">{fee.symbol}</span>
         </Typography.Text>
@@ -69,7 +66,11 @@ export function CrossChainInfo({
 
         {extra && (
           <>
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => setCollapse(!collapse)}>
+            <div
+              className="flex items-center gap-2 cursor-pointer"
+              data-testid="toggle-btn"
+              onClick={() => setCollapse(!collapse)}
+            >
               <span className="flex-1 bg-gray-800 h-px" />
               <CaretDownOutlined
                 className={`text-gray-700 transform transition-all duration-300 ${collapse ? '' : 'rotate-180'}`}
@@ -80,6 +81,7 @@ export function CrossChainInfo({
             {extra.map((item) => (
               <div
                 key={item.name}
+                data-testid={item.name}
                 className={`justify-between items-center transition-all duration-100 ${collapse ? 'hidden' : 'flex'}`}
               >
                 <Typography.Text>{item.name}</Typography.Text>

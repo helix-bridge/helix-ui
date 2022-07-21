@@ -1,7 +1,10 @@
 {
-  "extends": "../..//tsconfig.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "isolatedModules": true,
+    "noEmit": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "next-env.d.ts",

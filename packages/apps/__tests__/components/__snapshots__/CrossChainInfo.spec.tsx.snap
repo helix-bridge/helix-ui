@@ -1,0 +1,496 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CrossChainInfo /> render cross-chain and extra nodes 1`] = `
+<div
+  className="ant-row ant-form-item relative"
+  style={Object {}}
+>
+  <div
+    className="ant-col ant-form-item-label"
+    style={Object {}}
+  >
+    <label
+      className=""
+      title="Information"
+    >
+      Information
+    </label>
+  </div>
+  <div
+    className="ant-col ant-form-item-control"
+    style={Object {}}
+  >
+    <div
+      className="ant-form-item-control-input"
+    >
+      <div
+        className="ant-form-item-control-input-content"
+      >
+        <div
+          className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900"
+        >
+          <div
+            className="flex justify-between items-center"
+          >
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              Bridge Name
+            </span>
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              helix
+            </span>
+          </div>
+          <div
+            className="flex justify-between items-center "
+          >
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              Transaction Fee
+            </span>
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              <span
+                className="cursor-help"
+                onMouseEnter={[Function]}
+                onMouseLeave={[Function]}
+              >
+                8
+              </span>
+              <span
+                className="ml-1"
+              >
+                RING
+              </span>
+            </span>
+          </div>
+          <div
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={[Function]}
+          >
+            <span
+              className="flex-1 bg-gray-800 h-px"
+            />
+            <span
+              aria-label="caret-down"
+              className="anticon anticon-caret-down text-gray-700 transform transition-all duration-300 "
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="caret-down"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="0 0 1024 1024"
+                width="1em"
+              >
+                <path
+                  d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"
+                />
+              </svg>
+            </span>
+            <span
+              className="flex-1 bg-gray-800 h-px"
+            />
+          </div>
+          <div
+            className="justify-between items-center transition-all duration-100 hidden"
+          >
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              Allowance
+            </span>
+            <span
+              className="ant-typography capitalize"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              <span>
+                10000000
+              </span>
+              <span
+                className="capitalize ml-1"
+              >
+                PRING
+              </span>
+            </span>
+          </div>
+          <div
+            className="justify-between items-center transition-all duration-100 hidden"
+          >
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              Daily limit
+            </span>
+            <span
+              className="ant-typography capitalize"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              <span>
+                100000000
+              </span>
+              <span
+                className="capitalize ml-1"
+              >
+                PRING
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`<CrossChainInfo /> render cross-chain item 1`] = `
+<div
+  className="ant-row ant-form-item relative"
+  style={Object {}}
+>
+  <div
+    className="ant-col ant-form-item-label"
+    style={Object {}}
+  >
+    <label
+      className=""
+      title="Information"
+    >
+      Information
+    </label>
+  </div>
+  <div
+    className="ant-col ant-form-item-control"
+    style={Object {}}
+  >
+    <div
+      className="ant-form-item-control-input"
+    >
+      <div
+        className="ant-form-item-control-input-content"
+      >
+        <div
+          className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900"
+        >
+          <div
+            className="flex justify-between items-center"
+          >
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              Bridge Name
+            </span>
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              helix
+            </span>
+          </div>
+          <div
+            className="flex justify-between items-center "
+          >
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              Transaction Fee
+            </span>
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              <span
+                className="cursor-help"
+                onMouseEnter={[Function]}
+                onMouseLeave={[Function]}
+              >
+                8
+              </span>
+              <span
+                className="ml-1"
+              >
+                PRING
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`<CrossChainInfo /> render cross-chain with children 1`] = `
+<div
+  className="ant-row ant-form-item relative"
+  style={Object {}}
+>
+  <div
+    className="ant-col ant-form-item-label"
+    style={Object {}}
+  >
+    <label
+      className=""
+      title="Information"
+    >
+      Information
+    </label>
+  </div>
+  <div
+    className="ant-col ant-form-item-control"
+    style={Object {}}
+  >
+    <div
+      className="ant-form-item-control-input"
+    >
+      <div
+        className="ant-form-item-control-input-content"
+      >
+        <div
+          className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900"
+        >
+          <div
+            className="flex justify-between items-center"
+          >
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              Bridge Name
+            </span>
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              helix
+            </span>
+          </div>
+          <div
+            className="flex justify-between items-center "
+          >
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              Transaction Fee
+            </span>
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              <span
+                className="cursor-help"
+                onMouseEnter={[Function]}
+                onMouseLeave={[Function]}
+              >
+                8
+              </span>
+              <span
+                className="ml-1"
+              >
+                RING
+              </span>
+            </span>
+          </div>
+          <span>
+            can receive children node
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`<CrossChainInfo /> render cross-chain with dynamic fee 1`] = `
+<div
+  className="ant-row ant-form-item relative"
+  style={Object {}}
+>
+  <div
+    className="ant-col ant-form-item-label"
+    style={Object {}}
+  >
+    <label
+      className=""
+      title="Information"
+    >
+      Information
+    </label>
+  </div>
+  <div
+    className="ant-col ant-form-item-control"
+    style={Object {}}
+  >
+    <div
+      className="ant-form-item-control-input"
+    >
+      <div
+        className="ant-form-item-control-input-content"
+      >
+        <div
+          className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900"
+        >
+          <div
+            className="flex justify-between items-center"
+          >
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              Bridge Name
+            </span>
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              helix
+            </span>
+          </div>
+          <div
+            className="flex justify-between items-center "
+          >
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              Transaction Fee
+            </span>
+            <span
+              className="ant-typography"
+              onClick={null}
+              style={
+                Object {
+                  "WebkitLineClamp": undefined,
+                }
+              }
+            >
+              <span
+                className="cursor-help"
+                onMouseEnter={[Function]}
+                onMouseLeave={[Function]}
+              >
+                8
+              </span>
+              <span
+                className="ml-1"
+              >
+                RING
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
