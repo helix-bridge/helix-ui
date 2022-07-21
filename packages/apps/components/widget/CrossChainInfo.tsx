@@ -35,9 +35,8 @@ export function CrossChainInfo({
       return (
         <Typography.Text>
           <Tooltip title={fee.amount} className="cursor-help">
-            {prettyNumber(fee.amount, { decimal: 3, ignoreZeroDecimal: true })}
+            {prettyNumber(fee.amount, { decimal: 3, ignoreZeroDecimal: true })} {fee.symbol}
           </Tooltip>
-          <span className="ml-1">{fee.symbol}</span>
         </Typography.Text>
       );
     }
