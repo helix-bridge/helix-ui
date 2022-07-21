@@ -164,6 +164,7 @@ function ActiveAccountStrict() {
   );
 }
 
+// TODO: remove it; we do not need it anymore if the apps has no other page
 function ActiveAccountNormal() {
   const { departureConnection, departure, connectDepartureNetwork, isConnecting } = useApi();
   const { t } = useTranslation();

@@ -1,12 +1,10 @@
-import { ContainerOutlined, HddOutlined, MenuOutlined } from '@ant-design/icons';
-import { Drawer, Layout, Menu, MenuProps, Tooltip } from 'antd';
+import { MenuOutlined } from '@ant-design/icons';
+import { Button, Drawer, Layout, Tooltip } from 'antd';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { PropsWithChildren, useMemo, useState } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import { Footer } from 'shared/components/Footer';
 import { Nav, Navigator } from 'shared/components/Navigator';
-import { Icon } from 'shared/components/widget/Icon';
 import { THEME } from 'shared/config/theme';
 import { readStorage } from 'shared/utils/helper';
 import { useITranslation } from '../hooks';
@@ -28,65 +26,6 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
   const [collapsed, setCollapsed] = useState(true);
   const router = useRouter();
   const [isPersonalHistoryVisible, setIsPersonalHistoryVisible] = useState<boolean>(false);
-
-  const menus = useMemo<MenuProps['items']>(
-    () => [
-      {
-        label: <Link href="/">{t('Aggregator')}</Link>,
-        key: 'aggregator',
-        theme: 'dark',
-      },
-      {
-        label: <Link href="/nft">{t('NFT')}</Link>,
-        key: 'nft',
-        theme: 'dark',
-        disabled: true,
-      },
-      {
-        label: <Link href="/claim">{t('Claim')}</Link>,
-        key: 'claim',
-        icon: <ContainerOutlined style={{ verticalAlign: 0 }} />,
-      },
-      {
-        label: (
-          <span className="inline-flex items-center gap-1">
-            <span>{t('History')}</span>
-            <Icon name="down" />
-          </span>
-        ),
-        key: 'history',
-        icon: <HddOutlined style={{ verticalAlign: 0 }} />,
-        children: [
-          {
-            label: (
-              <a href="https://helixbridge.app/transaction" rel="noreferrer" target="_blank">
-                {t('History Record')}
-              </a>
-            ),
-            key: 'records',
-          },
-          {
-            label: <a onClick={() => setIsPersonalHistoryVisible(true)}>{t('My History')}</a>,
-            key: 'personal-history',
-          },
-          {
-            label: <Link href="/history/ed">{t('Ethereum - Darwinia Record')}</Link>,
-            key: 'ed-history',
-          },
-        ],
-      },
-    ],
-    [t]
-  );
-
-  const activeRouteKeys = useMemo(() => {
-    const current = router.pathname.split('/').filter((item) => item);
-    if (!current.length) {
-      return ['aggregator'];
-    }
-
-    return current;
-  }, [router.pathname]);
 
   return (
     <Layout className="min-h-screen overflow-scroll">
@@ -110,7 +49,9 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
             <Image alt="..." src="/image/beta.svg" width={35} height={18} />
           </div>
 
-          <Menu mode="horizontal" items={menus} selectedKeys={activeRouteKeys} className="bg-transparent" />
+          <Button onClick={() => setIsPersonalHistoryVisible(true)} type="link" className="text-white">
+            {t('History')}
+          </Button>
         </div>
 
         <Drawer

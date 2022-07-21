@@ -119,7 +119,6 @@ export function Personal() {
   useEffect(() => {
     if (!account) {
       setSource([]);
-      setPaginator({ row: 10, page: 0 });
       setClaimMeta(null);
       return;
     }
