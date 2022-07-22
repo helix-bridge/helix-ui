@@ -26,7 +26,7 @@ import {
   revertAccount,
 } from 'shared/utils/helper';
 import { chainConfigs, getChainConfig, getDisplayName, isDVMNetwork } from 'shared/utils/network';
-import { getSendAmountFromHelixRecord, getTokenNameFromHelixRecord } from 'shared/utils/record';
+import { getSentAmountFromHelixRecord, getTokenNameFromHelixRecord } from 'shared/utils/record';
 import web3 from 'web3';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
 import { ACCOUNTS, HISTORY_RECORDS, Path, STATISTICS_QUERY, TIMEPAST } from '../../config';
@@ -142,7 +142,7 @@ function Page({
       title: t('Amount'),
       dataIndex: 'amount',
       render(_: string, record) {
-        const amount = getSendAmountFromHelixRecord(record);
+        const amount = getSentAmountFromHelixRecord(record);
 
         return (
           <Tooltip title={amount}>

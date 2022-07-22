@@ -36,7 +36,7 @@ export function getFeeAmountFromHelixRecord(record: HelixHistoryRecord) {
   return fromWei({ value: record.fee, decimals });
 }
 
-export function getSenderAmountFromHelixRecord(record: HelixHistoryRecord) {
+export function getSentAmountFromHelixRecord(record: HelixHistoryRecord) {
   const receivedAmount = getReceivedAmountFromHelixRecord(record);
   const token = getTokenNameFromHelixRecord(record);
   const feeAmount = getFeeAmountFromHelixRecord(record);

@@ -3,7 +3,7 @@ import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
-import { CrossChainStatus } from 'shared/config/constant';
+import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord, Network } from 'shared/model';
 import { TransferDescription } from './TransferDescription';
 
@@ -14,11 +14,11 @@ export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
   const arrival = router.query.to as Network;
 
   const content = useMemo(() => {
-    if (record?.result === CrossChainStatus.pending) {
+    if (record?.result === RecordStatus.pending) {
       return <Progress percent={50} className="max-w-xs" />;
     }
 
-    if (record?.result === CrossChainStatus.success) {
+    if (record?.result === RecordStatus.success) {
       return (
         <SubscanLink
           network={arrival}
@@ -32,7 +32,7 @@ export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
       );
     }
 
-    if (record?.result === CrossChainStatus.reverted) {
+    if (record?.result === RecordStatus.refunded) {
       return (
         <SubscanLink
           network={departure}

@@ -2,7 +2,7 @@ import request from 'graphql-request';
 import { isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
 import { switchMap, from, distinctUntilChanged, map, of } from 'rxjs';
-import { CrossChainStatus, MIDDLE_DURATION } from 'shared/config/constant';
+import { RecordStatus, MIDDLE_DURATION } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { useIsMounted } from 'shared/hooks';
 import { HelixHistoryRecord } from 'shared/model';
@@ -14,7 +14,7 @@ export function useUpdatableRecord(data: HelixHistoryRecord, id: string) {
   const isMounted = useIsMounted();
 
   useEffect(() => {
-    if (record.result > CrossChainStatus.pending) {
+    if (record.result > RecordStatus.pending) {
       return;
     }
 
@@ -22,11 +22,7 @@ export function useUpdatableRecord(data: HelixHistoryRecord, id: string) {
       .pipe(
         switchMap(() => from(request(ENDPOINT, HISTORY_RECORD_BY_ID, { id }))),
         map((res) => res[gqlName(HISTORY_RECORD_BY_ID)]),
-        pollWhile<HelixHistoryRecord>(
-          MIDDLE_DURATION,
-          (res) => isMounted && res.result === CrossChainStatus.pending,
-          100
-        ),
+        pollWhile<HelixHistoryRecord>(MIDDLE_DURATION, (res) => isMounted && res.result === RecordStatus.pending, 100),
         distinctUntilChanged((pre, cur) => isEqual(pre, cur))
       )
       .subscribe({
