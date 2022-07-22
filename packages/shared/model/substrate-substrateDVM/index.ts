@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-magic-numbers
-export type Result = 0 | 1 | 2; // 0 TokenLocked 1 TokenLockedConfirmed success 2 TokenLockedConfirmed fail
+import { RecordStatus } from '../../config/constant';
 
 export interface SubstrateDVM2SubstrateRecord {
   lane_id: string;
@@ -10,7 +9,7 @@ export interface SubstrateDVM2SubstrateRecord {
   recipient: string;
   token: string;
   amount: string;
-  result: Result;
+  result: RecordStatus;
   start_timestamp: string;
   end_timestamp: string;
   fee: string;
@@ -33,7 +32,7 @@ export interface Substrate2SubstrateDVMRecord {
   recipient: string;
   token: string;
   amount: string;
-  result: Result;
+  result: RecordStatus;
   startTimestamp: string;
   endTimestamp: string;
   fee: string;

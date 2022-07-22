@@ -1,66 +1,18 @@
-import { ArrowRightOutlined, FrownOutlined, MehOutlined } from '@ant-design/icons';
+import { FrownOutlined, MehOutlined } from '@ant-design/icons';
 import { Badge, Radio, Result, Space, Tooltip } from 'antd';
 import { matches } from 'lodash';
 import { useTranslation } from 'next-i18next';
-import Image from 'next/image';
-import { useCallback, useMemo } from 'react';
-import { useEffect } from 'react';
-import { Logo } from 'shared/components/widget/Logo';
+import { useCallback, useEffect, useMemo } from 'react';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
-import {
-  Bridge,
-  BridgeCategory,
-  CrossChainDirection,
-  CrossToken,
-  CustomFormControlProps,
-  NullableFields,
-} from 'shared/model';
+import { Bridge, CrossChainDirection, CrossToken, CustomFormControlProps, NullableFields } from 'shared/model';
 import { getBridges } from 'shared/utils/bridge';
-import { prettyNumber } from 'shared/utils/helper';
-import { getDisplayName } from 'shared/utils/network';
-import { bridgeCategoryDisplay } from '../../utils';
+import { BridgeArrow } from '../bridge/BridgeArrow';
 import { BridgeState } from '../bridge/BridgeState';
-
-type TokenOnChainProps = {
-  token: CrossToken;
-  isFrom?: boolean;
-};
+import { TokenOnChain } from '../widget/TokenOnChain';
 
 type BridgeSelectorProps = CustomFormControlProps<Bridge> & {
   direction: NullableFields<CrossChainDirection, 'from' | 'to'>;
 };
-
-const logoHeight: { [key in BridgeCategory]: number } = {
-  helix: 28,
-  cBridge: 18,
-};
-
-const TokenOnChain = ({ token, isFrom }: TokenOnChainProps) => (
-  <div className="flex items-center text-white">
-    <div className={`hidden lg:block relative w-14 h-14 ${isFrom ? 'order-1' : 'order-2 ml-3'}`}>
-      <Logo name={token.logo} alt="..." layout="fill" />
-      <span className="w-7 h-7 absolute top-auto bottom-1 left-auto -right-3">
-        <Logo name={token.meta?.logos[0].name} alt="..." layout="fill" />
-      </span>
-    </div>
-
-    <div className={`flex flex-col space-y-1 ${isFrom ? 'order-2 lg:ml-6' : 'order-1 items-end'}`}>
-      <strong className={`font-medium text-sm ${isFrom ? 'text-left' : 'text-right'}`}>
-        {token.amount ? (
-          <span>
-            <Tooltip title={token.amount}>
-              {prettyNumber(token.amount, { decimal: 3, ignoreZeroDecimal: true })}
-            </Tooltip>
-            <span className="ml-1">{token.symbol}</span>
-          </span>
-        ) : (
-          <span></span>
-        )}
-      </strong>
-      <small className="font-light text-xs opacity-70">on {getDisplayName(token.meta)}</small>
-    </div>
-  </div>
-);
 
 export function BridgeSelector({ direction, value, onChange }: BridgeSelectorProps) {
   const { t } = useTranslation();
@@ -145,22 +97,7 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
                   <div className={`relative flex justify-between items-center pr-3 py-3 ${needClaim ? 'pt-8' : ''}`}>
                     <TokenOnChain token={direction.from as CrossToken} isFrom />
 
-                    <div className="relative w-56 hidden lg:flex justify-center text-white">
-                      <div className="py-1 rounded-3xl bg-gray-700 flex justify-center items-center space-x-2 z-10 px-2 min-w-24">
-                        <Image
-                          alt="..."
-                          src={`/image/${item?.category}-bridge.svg`}
-                          width={28}
-                          height={logoHeight[item.category ?? 'helix']}
-                        />
-                        <strong>{bridgeCategoryDisplay(item?.category)}</strong>
-                      </div>
-                      <Image alt="..." src="/image/bridge-to.svg" layout="fill" priority />
-                    </div>
-
-                    <div className="lg:hidden absolute top-0 bottom-0 left-0 right-0 m-auto w-7 flex items-end justify-center pb-3 opacity-40">
-                      <ArrowRightOutlined />
-                    </div>
+                    <BridgeArrow category={item?.category ?? 'helix'} />
 
                     <TokenOnChain token={direction.to as CrossToken} />
                   </div>

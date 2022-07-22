@@ -45,7 +45,7 @@ describe('<Timestamp />', () => {
     toChain: 'crab-dvm',
     token: '0x6d6f646c64612f6272696e670000000000000000',
     targetTxHash: '',
-    bridgeDispatchError: '',
+    reason: '',
   };
 
   let mockDate: any;

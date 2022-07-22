@@ -14,9 +14,9 @@ jest.mock('next-i18next', () => ({
 
 describe('<TxStatus />', () => {
   it.each([
-    { result: 0, bridgeDispatchError: '' },
-    { result: 1, bridgeDispatchError: '' },
-    { result: 2, bridgeDispatchError: 'SpecVersionMismatch' },
+    { result: 0, reason: '' },
+    { result: 1, reason: '' },
+    { result: 2, reason: 'SpecVersionMismatch' },
   ])('render TxStatus: $result', ({ result, ...rest }) => {
     const component = create(<TxStatus record={{ result, ...rest } as HelixHistoryRecord} />);
 

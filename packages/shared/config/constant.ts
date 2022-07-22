@@ -26,13 +26,15 @@ export enum RegisterStatus {
   registering,
 }
 
-export enum CrossChainStatus {
+export enum RecordStatus {
   pending,
+  pendingToRefund,
+  pendingToClaim,
   success,
-  reverted,
+  refunded,
 }
 
-export enum CBridgeHistoryStatus {
+export enum CBridgeRecordStatus {
   unknown,
   submitting,
   failed,
@@ -44,6 +46,23 @@ export enum CBridgeHistoryStatus {
   refundToBeConfirmed,
   confirmingYourRefund,
   refunded,
+}
+
+/**
+ * @see https://cbridge-docs.celer.network/developer/api-reference/gateway-gettransferstatus
+ * explain the reason for CBridgeRecordStatus.toBeRefunded
+ */
+export enum XferStatus {
+  unknown,
+  okToRelay,
+  success,
+  badLiquidity,
+  badSlippage,
+  badToken,
+  refundRequested,
+  refundDone,
+  badXferDisabled,
+  badDestChain,
 }
 
 // TODO: implement by tailwindcss ?

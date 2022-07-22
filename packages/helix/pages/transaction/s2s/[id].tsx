@@ -2,7 +2,7 @@ import { Result } from 'antd';
 import { GetServerSidePropsContext, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
-import { CrossChainStatus } from 'shared/config/constant';
+import { RecordStatus } from 'shared/config/constant';
 import { useITranslation } from 'shared/hooks';
 import { HelixHistoryRecord, Network, SubstrateSubstrateDVMBridgeConfig } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
@@ -99,17 +99,15 @@ const Page: NextPage<{
       token: fromToken,
     };
 
-    if (record.result === CrossChainStatus.pending) {
+    if (record.result === RecordStatus.pending) {
       return isIssuing ? [issueStart] : [redeemFail];
     }
 
     const issuingTransfer =
-      record.result === CrossChainStatus.success ? [issueStart, issueSuccess] : [issueStart, issueFail];
+      record.result === RecordStatus.success ? [issueStart, issueSuccess] : [issueStart, issueFail];
 
     const redeemTransfer =
-      record.result === CrossChainStatus.success
-        ? [redeemStart, redeemDispatch, redeemSuccess]
-        : [redeemStart, redeemFail];
+      record.result === RecordStatus.success ? [redeemStart, redeemDispatch, redeemSuccess] : [redeemStart, redeemFail];
 
     return isIssuing ? issuingTransfer : redeemTransfer;
   }, [record, router.query.from, router.query.to]);
