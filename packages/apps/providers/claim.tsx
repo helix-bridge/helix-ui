@@ -1,17 +1,30 @@
 import { BN_ZERO } from '@polkadot/util';
 import { message } from 'antd';
 import BN from 'bn.js';
-import { useCallback, useState } from 'react';
-import { EMPTY, filter, from, iif, map, Observable, of, switchMap, take, tap, zip } from 'rxjs';
+import { createContext, useCallback, useContext, useState } from 'react';
+import { filter, take, switchMap, iif, of, zip, tap, EMPTY, from, map, Observable, Subscription } from 'rxjs';
 import { abi } from 'shared/config/abi';
-import { ConnectionStatus, HelixHistoryRecord, ICamelCaseKeys } from 'shared/model';
+import { ICamelCaseKeys, HelixHistoryRecord, ConnectionStatus } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { connect, entrance } from 'shared/utils/connection';
 import { getChainConfig } from 'shared/utils/network';
-import { useITranslation } from '../../../hooks';
-import { useTx } from '../../../providers';
-import { Darwinia2EthereumHistoryRes, Darwinia2EthereumRecord, EthereumDarwiniaBridgeConfig } from '../model';
-import { claimToken } from '../utils';
+import {
+  Darwinia2EthereumRecord,
+  Darwinia2EthereumHistoryRes,
+  EthereumDarwiniaBridgeConfig,
+} from '../bridges/ethereum-darwinia/model';
+import { claimToken } from '../bridges/ethereum-darwinia/utils';
+import { useITranslation } from '../hooks';
+import { useTx } from './tx';
+
+interface ClaimCtx {
+  isClaiming: boolean;
+  claim: (
+    record: ICamelCaseKeys<Darwinia2EthereumRecord & HelixHistoryRecord>,
+    meta: Omit<Darwinia2EthereumHistoryRes, 'list' | 'count'>
+  ) => Subscription;
+  claimedList: { id: string; hash: string }[];
+}
 
 function isSufficient(config: EthereumDarwiniaBridgeConfig, tokenAddress: string, amount: BN): Observable<boolean> {
   const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
@@ -22,7 +35,9 @@ function isSufficient(config: EthereumDarwiniaBridgeConfig, tokenAddress: string
   return zip([limit, toadySpent]).pipe(map(([total, spent]) => new BN(total).sub(new BN(spent)).gte(amount)));
 }
 
-export function useDarwinia2EthereumClaim() {
+export const ClaimContext = createContext<ClaimCtx | null>(null);
+
+export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   const { t } = useITranslation();
   const { observer, setTx } = useTx();
   const [isClaiming, setIsClaiming] = useState(false);
@@ -117,5 +132,17 @@ export function useDarwinia2EthereumClaim() {
     [observer, setTx, t]
   );
 
-  return { claim, isClaiming, claimedList };
-}
+  return (
+    <ClaimContext.Provider
+      value={{
+        claimedList,
+        claim,
+        isClaiming,
+      }}
+    >
+      {children}
+    </ClaimContext.Provider>
+  );
+};
+
+export const useClaim = () => useContext(ClaimContext) as Exclude<ClaimCtx, null>;

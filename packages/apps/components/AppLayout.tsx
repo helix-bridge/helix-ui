@@ -85,8 +85,11 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
         visible={isPersonalHistoryVisible}
         onCancel={() => setIsPersonalHistoryVisible(false)}
         footer={null}
-        width="55%"
+        width="max-content"
         maskClosable={false}
+        bodyStyle={{
+          minWidth: 'max(30vw, 520px)',
+        }}
       >
         <Personal></Personal>
       </BaseModal>

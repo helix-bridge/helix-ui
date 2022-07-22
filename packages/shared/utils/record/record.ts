@@ -1,6 +1,6 @@
 import Bignumber from 'bignumber.js';
 import { HelixHistoryRecord } from '../../model';
-import { isDVM2Substrate, isEthereum2Darwinia, isParachain2Substrate } from '../bridge';
+import { isDVM2Substrate, isEthereum2Darwinia, isParachain2Substrate, isParachainSubstrate } from '../bridge';
 import { fromWei, prettyNumber } from '../helper';
 import { getChainConfig, isDVMNetwork } from '../network';
 
@@ -42,11 +42,18 @@ export function getReceiveAmountFromHelixRecord(record: HelixHistoryRecord) {
   const feeAmount = getFeeAmountFromHelixRecord(record);
 
   try {
-    return token !== record.feeToken
-      ? sendAmount
-      : new Bignumber(sendAmount).minus(new Bignumber(feeAmount)).toString();
+    const result =
+      token !== record.feeToken || isParachainSubstrate(record.fromChain, record.toChain)
+        ? sendAmount
+        : new Bignumber(sendAmount).minus(new Bignumber(feeAmount)).toString();
+
+    if (+result < 0) {
+      throw new Error(`Record ${record.id}, sendAmount: ${sendAmount}, calculate received amount: ${result}`);
+    }
+
+    return result;
   } catch (err) {
-    console.log('🚀 ~ file: record.ts ~ line 36 ~ getReceiveAmountFromHelixRecord ~ sendAmount', sendAmount, record);
+    console.error((err as unknown as Error).message);
 
     return 'NaN';
   }

@@ -54,6 +54,7 @@ module.exports = {
           green: "#52C41A",
           red: "#FF4D4F",
           blue: "#00B2FF",
+          yellow: "#FAAD14"
         }, 
         crab: {
           main: '#EC3783',

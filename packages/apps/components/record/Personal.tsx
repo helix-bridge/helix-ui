@@ -7,8 +7,7 @@ import { EMPTY, from, map } from 'rxjs';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { CrossChainStatus, DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
-import { HelixHistoryRecord, ICamelCaseKeys } from 'shared/model';
-import { isDarwinia2Ethereum } from 'shared/utils/bridge';
+import { HelixHistoryRecord } from 'shared/model';
 import { convertToDvm, gqlName, isValidAddress } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
 import {
@@ -16,15 +15,17 @@ import {
   getSendAmountFromHelixRecord,
   getTokenNameFromHelixRecord,
 } from 'shared/utils/record';
-import { useDarwinia2EthereumClaim } from '../../bridges/ethereum-darwinia/hooks/claim';
-import { Darwinia2EthereumHistoryRes, Darwinia2EthereumRecord } from '../../bridges/ethereum-darwinia/model';
+import { Darwinia2EthereumHistoryRes } from '../../bridges/ethereum-darwinia/model';
 import { HISTORY_RECORDS } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
 import { useAccount, useApi } from '../../providers';
+import { useClaim } from '../../providers/claim';
 import { fetchDarwinia2EthereumRecords, fetchEthereum2DarwiniaRecords } from '../../utils/records';
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { TokenOnChain } from '../widget/TokenOnChain';
+import { Pending } from './Pending';
+import { Reverted } from './Reverted';
 
 enum HistoryType {
   ethereumDarwinia = 1,
@@ -42,7 +43,7 @@ export function Personal() {
   const [source, setSource] = useState<HelixHistoryRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [paginator, setPaginator] = useState<Paginator>({ row: 10, page: 0 });
-  const { claim, claimedList, isClaiming } = useDarwinia2EthereumClaim();
+  const { claimedList } = useClaim();
   const [claimMeta, setClaimMeta] = useState<Omit<Darwinia2EthereumHistoryRes, 'list' | 'count'> | null>(null);
 
   const records = useMemo<HelixHistoryRecord[]>(() => {
@@ -231,7 +232,7 @@ export function Personal() {
 
                   return (
                     <div className="flex justify-between items-center " key={record.id}>
-                      <div className="flex-1 flex justify-between self-stretch pr-8 p-4 border border-gray-800 mb-4 bg-gray-900 rounded-xs">
+                      <div className="flex-1 grid grid-cols-3 self-stretch pr-8 p-4 border border-gray-800 mb-4 bg-gray-900 rounded-xs">
                         <TokenOnChain
                           token={{ ...fromToken, meta: dep, amount: getSendAmountFromHelixRecord(record) }}
                           isFrom
@@ -271,39 +272,20 @@ export function Personal() {
                         </TokenOnChain>
                       </div>
 
-                      <div className="text-right w-1/5 pl-4 pr-6 py-3  border border-gray-800 mb-4 bg-gray-900 rounded-xs">
-                        <div className="mb-2">{format(record.startTime * 1000, DATE_TIME_FORMAT)}</div>
+                      <div className="text-right pl-4 pr-6 py-4  border border-gray-800 mb-4 bg-gray-900 rounded-xs">
+                        <div className="mb-2 whitespace-nowrap text-xs">
+                          {format(record.startTime * 1000, DATE_TIME_FORMAT)}
+                        </div>
 
                         {record.result === CrossChainStatus.pending && (
-                          <div className="flex items-center justify-end gap-2">
-                            {!isDarwinia2Ethereum(fromChain, toChain) ? (
-                              <span className="text-helix-blue">{t('Waiting for fund release')}</span>
-                            ) : (
-                              <Button
-                                disabled={isClaiming}
-                                size="small"
-                                onClick={() =>
-                                  claim(
-                                    record as ICamelCaseKeys<Darwinia2EthereumRecord & HelixHistoryRecord>,
-                                    claimMeta!
-                                  )
-                                }
-                              >
-                                {t('Claim')}
-                              </Button>
-                            )}
-                          </div>
+                          <Pending record={record} claimMeta={claimMeta} />
                         )}
 
                         {record.result === CrossChainStatus.success && (
                           <div className="text-helix-green">{t('Success')}</div>
                         )}
 
-                        {record.result === CrossChainStatus.reverted && (
-                          <Button type="primary" size="small">
-                            {t('Refund')}
-                          </Button>
-                        )}
+                        {record.result === CrossChainStatus.reverted && <Reverted record={record} />}
                       </div>
                     </div>
                   );
