@@ -1,6 +1,7 @@
 import { decodeAddress } from '@polkadot/util-crypto';
 import camelCaseKeys from 'camelcase-keys';
 import { catchError, filter, map, Observable, of } from 'rxjs';
+import { RecordStatus } from 'shared/config/constant';
 import { isFormalChain } from 'shared/config/env';
 import { ChainConfig, HelixHistoryRecord, ICamelCaseKeys } from 'shared/model';
 import { apiUrl, isKton, isRing, rxGet } from 'shared/utils/helper';
@@ -48,8 +49,8 @@ export const fetchDarwinia2EthereumRecords = (
                 requestTxHash: extrinsicIndex,
                 responseTxHash: '',
                 targetTxHash: tx,
-                bridgeDispatchError: '',
-                result: signatures && !tx ? 0 : 1,
+                reason: '',
+                result: signatures && !tx ? RecordStatus.pendingToClaim : RecordStatus.success,
                 sender: accountId,
                 startTime: blockTimestamp,
                 toChain: arrival.partner.name,
@@ -103,8 +104,8 @@ export const fetchEthereum2DarwiniaRecords = (
                 requestTxHash: tx,
                 responseTxHash: '',
                 targetTxHash: darwiniaTx,
-                bridgeDispatchError: '',
-                result: tx && darwiniaTx ? 1 : 0,
+                reason: '',
+                result: tx && darwiniaTx ? RecordStatus.success : RecordStatus.pending,
                 sender: '',
                 startTime: blockTimestamp,
                 toChain: arrival.partner.name,

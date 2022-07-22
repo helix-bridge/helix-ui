@@ -20,6 +20,8 @@ export const TokenOnChain = ({
   asHistory,
   className = '',
 }: PropsWithChildren<TokenOnChainProps>) => {
+  const chainLogoProps = asHistory ? { width: 40, height: 40 } : { width: 60, height: 60 };
+
   return (
     <div className={`flex items-center text-white ${className}`}>
       <div
@@ -27,7 +29,7 @@ export const TokenOnChain = ({
           isFrom ? 'order-1' : 'order-2 ml-3'
         }`}
       >
-        <Logo name={token.logo} alt="..." width={40} height={40} />
+        <Logo name={token.logo} {...chainLogoProps} />
         <span
           className={`${asHistory ? 'w-4 h-4 -right-2' : 'w-7 h-7 -right-3'} absolute top-auto bottom-1 left-auto `}
         >

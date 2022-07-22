@@ -8,7 +8,7 @@ import { Nav, Navigator } from 'shared/components/Navigator';
 import { THEME } from 'shared/config/theme';
 import { readStorage } from 'shared/utils/helper';
 import { useITranslation } from '../hooks';
-import { Personal } from './record/Personal';
+import { History } from './history/History';
 import { Tools } from './Tools';
 import { ActiveAccount } from './widget/account/ActiveAccount';
 import { BaseModal } from './widget/BaseModal';
@@ -91,7 +91,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
           minWidth: 'max(30vw, 520px)',
         }}
       >
-        <Personal></Personal>
+        <History></History>
       </BaseModal>
     </Layout>
   );

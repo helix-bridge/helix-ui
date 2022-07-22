@@ -3,7 +3,7 @@ import { isCrabHeco } from 'shared/utils/bridge';
 import { useITranslation } from '../../hooks';
 import { RecordStatusComponentProps } from '../../model/component';
 
-export function Reverted({ record }: RecordStatusComponentProps) {
+export function Refund({ record }: RecordStatusComponentProps) {
   const { t } = useITranslation();
   const { fromChain, toChain } = record;
 

@@ -1,6 +1,6 @@
 import { Nullable } from '../type-operator';
-import { Result } from '../substrate-substrateDVM';
 import { BridgeCategory, Network } from '../network';
+import { RecordStatus } from '../../config/constant';
 
 export interface DailyStatistic {
   timestamp: string;
@@ -22,8 +22,8 @@ export interface HelixHistoryRecord {
   requestTxHash: string;
   responseTxHash?: Nullable<string>;
   targetTxHash: string;
-  bridgeDispatchError: string;
-  result: Result;
+  reason: string;
+  result: RecordStatus;
   sender: string;
   startTime: number;
   toChain: Network;

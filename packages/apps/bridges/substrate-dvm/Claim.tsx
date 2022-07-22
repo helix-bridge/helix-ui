@@ -17,7 +17,7 @@ import { dvmAddressToAccountId, fromWei, isKton, prettyNumber, toWei } from 'sha
 import { getDisplayName } from 'shared/utils/network';
 import { createTxWorkflow, genEthereumTransactionObs } from 'shared/utils/tx';
 import Web3 from 'web3';
-import { HistoryItem } from '../../components/record/HistoryItem';
+import { HistoryItem } from '../../components/history/HistoryItem';
 import { useAccount, useTx } from '../../providers';
 
 /**

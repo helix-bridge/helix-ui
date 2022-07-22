@@ -36,7 +36,7 @@ export const HISTORY_RECORDS = gql`
         requestTxHash
         responseTxHash
         targetTxHash
-        bridgeDispatchError
+        reason
         result
         sender
         startTime
@@ -63,7 +63,7 @@ export const HISTORY_RECORD_BY_ID = gql`
       requestTxHash
       responseTxHash
       targetTxHash
-      bridgeDispatchError
+      reason
       result
       sender
       startTime

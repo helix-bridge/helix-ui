@@ -1,8 +1,8 @@
 import { gql } from 'graphql-request';
 
 export const HISTORY_RECORDS = gql`
-  query historyRecords($row: Int!, $page: Int!, $sender: String, $result: Int) {
-    historyRecords(row: $row, page: $page, sender: $sender, result: $result) {
+  query historyRecords($row: Int!, $page: Int!, $sender: String, $results: [Int]) {
+    historyRecords(row: $row, page: $page, sender: $sender, results: $results) {
       total
       records {
         amount
@@ -18,13 +18,21 @@ export const HISTORY_RECORDS = gql`
         requestTxHash
         responseTxHash
         targetTxHash
-        bridgeDispatchError
+        reason
         result
         sender
         startTime
         toChain
         token
       }
+    }
+  }
+`;
+
+export const STATUS_STATISTICS = gql`
+  query historyRecords($sender: String, $result: Int!) {
+    historyRecords(sender: $sender, results: [$result]) {
+      total
     }
   }
 `;

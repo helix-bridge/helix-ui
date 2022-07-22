@@ -1,22 +1,22 @@
 import { LoadingOutlined, PaperClipOutlined, ReloadOutlined, SwapOutlined } from '@ant-design/icons';
-import { Button, Empty, Pagination, Radio, Result, Spin, Tabs, Tooltip } from 'antd';
+import { Badge, Button, Empty, Pagination, Radio, Result, Spin, Tabs, Tooltip } from 'antd';
 import { format } from 'date-fns';
 import request from 'graphql-request';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { EMPTY, from, map } from 'rxjs';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
-import { CrossChainStatus, DATE_TIME_FORMAT } from 'shared/config/constant';
+import { DATE_TIME_FORMAT, RecordStatus } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { HelixHistoryRecord } from 'shared/model';
 import { convertToDvm, gqlName, isValidAddress } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
 import {
-  getReceiveAmountFromHelixRecord,
-  getSendAmountFromHelixRecord,
+  getReceivedAmountFromHelixRecord,
+  getSenderAmountFromHelixRecord,
   getTokenNameFromHelixRecord,
 } from 'shared/utils/record';
 import { Darwinia2EthereumHistoryRes } from '../../bridges/ethereum-darwinia/model';
-import { HISTORY_RECORDS } from '../../config/gql';
+import { HISTORY_RECORDS, STATUS_STATISTICS } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
 import { useAccount, useApi } from '../../providers';
@@ -25,7 +25,9 @@ import { fetchDarwinia2EthereumRecords, fetchEthereum2DarwiniaRecords } from '..
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { TokenOnChain } from '../widget/TokenOnChain';
 import { Pending } from './Pending';
-import { Reverted } from './Reverted';
+import { PendingToClaim } from './PendingToClaim';
+import { PendingToRefund } from './PendingToRefund';
+import { Refund } from './Refund';
 
 enum HistoryType {
   ethereumDarwinia = 1,
@@ -33,9 +35,9 @@ enum HistoryType {
 }
 
 // eslint-disable-next-line complexity
-export function Personal() {
+export function History() {
   const { t } = useITranslation();
-  const [result, setResult] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<number>(-1);
   const { account } = useAccount();
   const { connectDepartureNetwork, departure, isConnecting, departureConnection } = useApi();
   const [historyType, setHistoryType] = useState<HistoryType>(HistoryType.normal);
@@ -45,6 +47,7 @@ export function Personal() {
   const [paginator, setPaginator] = useState<Paginator>({ row: 10, page: 0 });
   const { claimedList } = useClaim();
   const [claimMeta, setClaimMeta] = useState<Omit<Darwinia2EthereumHistoryRes, 'list' | 'count'> | null>(null);
+  const [refundedAmount, setRefundedAmount] = useState(0);
 
   const records = useMemo<HelixHistoryRecord[]>(() => {
     if (historyType === HistoryType.ethereumDarwinia && departureConnection.type === 'polkadot') {
@@ -58,12 +61,24 @@ export function Personal() {
     return source;
   }, [claimedList, departureConnection.type, historyType, source]);
 
+  const results = useMemo(() => {
+    if (activeTab < 0) {
+      return null;
+    } else if (activeTab === 0) {
+      return [RecordStatus.pending, RecordStatus.pendingToClaim, RecordStatus.pendingToRefund];
+    } else if (activeTab === 1) {
+      return [RecordStatus.success];
+    } else {
+      return [RecordStatus.refunded];
+    }
+  }, [activeTab]);
+
   const fetchData = useCallback(() => {
     const sender = isValidAddress(account, 'ethereum') ? account : convertToDvm(account);
     const args = {
       ...paginator,
       sender,
-      result: result === null ? undefined : result,
+      results: results === null ? undefined : results,
     };
 
     setLoading(true);
@@ -79,13 +94,13 @@ export function Personal() {
           setLoading(false);
         },
       });
-  }, [account, paginator, result]);
+  }, [account, paginator, results]);
 
   const fetchEthereumDarwiniaData = useCallback(() => {
     const params = {
       address: account,
       paginator,
-      confirmed: typeof result === 'number' ? !!result : result,
+      confirmed: Array.isArray(results) ? results.length === 1 : null,
     };
 
     if (departureConnection.type === 'polkadot') {
@@ -115,7 +130,18 @@ export function Personal() {
     }
 
     return EMPTY.subscribe();
-  }, [account, departure, departureConnection.type, paginator, result]);
+  }, [account, departure, departureConnection.type, paginator, results]);
+
+  useEffect(() => {
+    const sender = isValidAddress(account, 'ethereum') ? account : convertToDvm(account);
+    const sub$$ = from(request(ENDPOINT, STATUS_STATISTICS, { result: RecordStatus.refunded, sender }))
+      .pipe(map((res) => res && res[gqlName(STATUS_STATISTICS)]))
+      .subscribe((res) => {
+        setRefundedAmount(res.total);
+      });
+
+    return () => sub$$.unsubscribe();
+  }, [account]);
 
   useEffect(() => {
     if (!account) {
@@ -176,7 +202,8 @@ export function Personal() {
         onTabClick={(key) => {
           const res = Number(key) - 1;
 
-          setResult(res < 0 ? null : res);
+          setActiveTab(res);
+
           setPaginator({ row: 10, page: 0 });
         }}
         tabBarExtraContent={{
@@ -203,10 +230,9 @@ export function Personal() {
             <Tabs.TabPane
               tab={
                 label === 'Refund' ? (
-                  <div className="flex items-center gap-2">
+                  <Badge count={refundedAmount} offset={[10, 0]} color={'blue'}>
                     <span>{t(label)}</span>
-                    <span className="rounded-full bg-blue-400 text-xs p-0.5 text-white">10</span>
-                  </div>
+                  </Badge>
                 ) : (
                   t(label)
                 )
@@ -234,7 +260,7 @@ export function Personal() {
                     <div className="flex justify-between items-center " key={record.id}>
                       <div className="flex-1 grid grid-cols-3 self-stretch pr-8 p-4 border border-gray-800 mb-4 bg-gray-900 rounded-xs">
                         <TokenOnChain
-                          token={{ ...fromToken, meta: dep, amount: getSendAmountFromHelixRecord(record) }}
+                          token={{ ...fromToken, meta: dep, amount: getSenderAmountFromHelixRecord(record) }}
                           isFrom
                           asHistory
                         >
@@ -250,7 +276,7 @@ export function Personal() {
                         <BridgeArrow category={record.bridge} showName={false} />
 
                         <TokenOnChain
-                          token={{ ...toToken, meta: arrival, amount: getReceiveAmountFromHelixRecord(record) }}
+                          token={{ ...toToken, meta: arrival, amount: getReceivedAmountFromHelixRecord(record) }}
                           asHistory
                           className="justify-end"
                         >
@@ -277,15 +303,19 @@ export function Personal() {
                           {format(record.startTime * 1000, DATE_TIME_FORMAT)}
                         </div>
 
-                        {record.result === CrossChainStatus.pending && (
-                          <Pending record={record} claimMeta={claimMeta} />
+                        {record.result === RecordStatus.pending && <Pending record={record} />}
+
+                        {record.result === RecordStatus.pendingToClaim && (
+                          <PendingToClaim record={record} claimMeta={claimMeta} />
                         )}
 
-                        {record.result === CrossChainStatus.success && (
+                        {record.result === RecordStatus.pendingToRefund && <PendingToRefund record={record} />}
+
+                        {record.result === RecordStatus.success && (
                           <div className="text-helix-green">{t('Success')}</div>
                         )}
 
-                        {record.result === CrossChainStatus.reverted && <Reverted record={record} />}
+                        {record.result === RecordStatus.refunded && <Refund record={record} />}
                       </div>
                     </div>
                   );

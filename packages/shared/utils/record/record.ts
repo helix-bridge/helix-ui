@@ -12,7 +12,7 @@ export function getTokenNameFromHelixRecord(record: HelixHistoryRecord) {
     : `${isDVMNetwork(record.fromChain) ? 'x' : ''}${chainConfig?.isTest ? 'O' : ''}RING`;
 }
 
-export function getSendAmountFromHelixRecord(record: HelixHistoryRecord) {
+export function getReceivedAmountFromHelixRecord(record: HelixHistoryRecord) {
   const { fromChain, toChain } = record;
 
   return fromWei(
@@ -36,19 +36,19 @@ export function getFeeAmountFromHelixRecord(record: HelixHistoryRecord) {
   return fromWei({ value: record.fee, decimals });
 }
 
-export function getReceiveAmountFromHelixRecord(record: HelixHistoryRecord) {
-  const sendAmount = getSendAmountFromHelixRecord(record);
+export function getSenderAmountFromHelixRecord(record: HelixHistoryRecord) {
+  const receivedAmount = getReceivedAmountFromHelixRecord(record);
   const token = getTokenNameFromHelixRecord(record);
   const feeAmount = getFeeAmountFromHelixRecord(record);
 
   try {
     const result =
       token !== record.feeToken || isParachainSubstrate(record.fromChain, record.toChain)
-        ? sendAmount
-        : new Bignumber(sendAmount).minus(new Bignumber(feeAmount)).toString();
+        ? new Bignumber(receivedAmount).plus(new Bignumber(feeAmount)).toString()
+        : receivedAmount;
 
     if (+result < 0) {
-      throw new Error(`Record ${record.id}, sendAmount: ${sendAmount}, calculate received amount: ${result}`);
+      throw new Error(`Record ${record.id}, sendAmount: ${receivedAmount}, calculate received amount: ${result}`);
     }
 
     return result;
