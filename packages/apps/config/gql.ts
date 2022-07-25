@@ -36,3 +36,29 @@ export const STATUS_STATISTICS = gql`
     }
   }
 `;
+
+export const HISTORY_RECORD_BY_ID = gql`
+  query historyRecordById($id: String!) {
+    historyRecordById(id: $id) {
+      amount
+      bridge
+      endTime
+      fee
+      feeToken
+      fromChain
+      id
+      laneId
+      nonce
+      recipient
+      requestTxHash
+      responseTxHash
+      targetTxHash
+      reason
+      result
+      sender
+      startTime
+      toChain
+      token
+    }
+  }
+`;

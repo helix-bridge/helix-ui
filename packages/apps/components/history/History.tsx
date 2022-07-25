@@ -235,7 +235,7 @@ export function History() {
             <Tabs.TabPane
               tab={
                 label === 'Pending' ? (
-                  <Badge count={goOnAmount} offset={[10, 0]} color={'blue'}>
+                  <Badge count={goOnAmount} offset={[10, 0]} color="red">
                     <span>{t(label)}</span>
                   </Badge>
                 ) : (
