@@ -12,7 +12,7 @@ import { convertToDvm, gqlName, isValidAddress } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
 import {
   getReceivedAmountFromHelixRecord,
-  getSenderAmountFromHelixRecord,
+  getSentAmountFromHelixRecord,
   getTokenNameFromHelixRecord,
 } from 'shared/utils/record';
 import { Darwinia2EthereumHistoryRes } from '../../bridges/ethereum-darwinia/model';
@@ -47,7 +47,7 @@ export function History() {
   const [paginator, setPaginator] = useState<Paginator>({ row: 10, page: 0 });
   const { claimedList } = useClaim();
   const [claimMeta, setClaimMeta] = useState<Omit<Darwinia2EthereumHistoryRes, 'list' | 'count'> | null>(null);
-  const [refundedAmount, setRefundedAmount] = useState(0);
+  const [goOnAmount, setGoOnAmount] = useState(0);
 
   const records = useMemo<HelixHistoryRecord[]>(() => {
     if (historyType === HistoryType.ethereumDarwinia && departureConnection.type === 'polkadot') {
@@ -134,10 +134,15 @@ export function History() {
 
   useEffect(() => {
     const sender = isValidAddress(account, 'ethereum') ? account : convertToDvm(account);
-    const sub$$ = from(request(ENDPOINT, STATUS_STATISTICS, { result: RecordStatus.refunded, sender }))
+    const sub$$ = from(
+      request(ENDPOINT, STATUS_STATISTICS, {
+        results: [RecordStatus.pendingToClaim, RecordStatus.pendingToRefund],
+        sender,
+      })
+    )
       .pipe(map((res) => res && res[gqlName(STATUS_STATISTICS)]))
       .subscribe((res) => {
-        setRefundedAmount(res.total);
+        setGoOnAmount(res.total);
       });
 
     return () => sub$$.unsubscribe();
@@ -229,8 +234,8 @@ export function History() {
           .map((label, index) => (
             <Tabs.TabPane
               tab={
-                label === 'Refund' ? (
-                  <Badge count={refundedAmount} offset={[10, 0]} color={'blue'}>
+                label === 'Pending' ? (
+                  <Badge count={goOnAmount} offset={[10, 0]} color={'blue'}>
                     <span>{t(label)}</span>
                   </Badge>
                 ) : (
@@ -260,7 +265,7 @@ export function History() {
                     <div className="flex justify-between items-center " key={record.id}>
                       <div className="flex-1 grid grid-cols-3 self-stretch pr-8 p-4 border border-gray-800 mb-4 bg-gray-900 rounded-xs">
                         <TokenOnChain
-                          token={{ ...fromToken, meta: dep, amount: getSenderAmountFromHelixRecord(record) }}
+                          token={{ ...fromToken, meta: dep, amount: getSentAmountFromHelixRecord(record) }}
                           isFrom
                           asHistory
                         >

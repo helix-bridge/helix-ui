@@ -30,8 +30,8 @@ export const HISTORY_RECORDS = gql`
 `;
 
 export const STATUS_STATISTICS = gql`
-  query historyRecords($sender: String, $result: Int!) {
-    historyRecords(sender: $sender, results: [$result]) {
+  query historyRecords($sender: String, $results: [Int!]) {
+    historyRecords(sender: $sender, results: $results) {
       total
     }
   }
