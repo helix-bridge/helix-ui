@@ -65,21 +65,6 @@ export enum XferStatus {
   badDestChain,
 }
 
-// TODO: implement by tailwindcss ?
-export enum CrossChainStatusColor {
-  '#00b3ff',
-  '#00AA76',
-  '#EC9D00',
-  '#00b3fe',
-  '#00b3fd',
-  '#00AA75',
-  '#EC9D01',
-  '#00b3fc',
-  '#00b3fb',
-  '#00b3fa',
-  '#00AA74',
-}
-
 const DEFAULT_FORMAL_DIRECTION = {
   from: { ...darwiniaConfig.tokens[0], amount: '', meta: darwiniaConfig },
   to: { ...ethereumConfig.tokens[1], amount: '', meta: ethereumConfig },

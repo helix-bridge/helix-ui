@@ -49,6 +49,10 @@ export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
     return null;
   }, [arrival, departure, record]);
 
+  if (record && record.bridge === 'cBridge' && record.result === RecordStatus.refunded) {
+    return null;
+  }
+
   return (
     <TransferDescription
       title={t('Target Tx Hash')}

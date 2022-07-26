@@ -61,14 +61,13 @@ export function SubscanLink({
     const mapObj = isSubscan ? { scan: 'subscan', txPath: 'extrinsic' } : { scan: 'etherscan', txPath: 'tx' };
     const omitNetwork: Network[] = ['ethereum'];
 
+    const href =
+      network === 'heco'
+        ? `https://hecoinfo.com/tx/${txHash}`
+        : `https://${omitNetwork.includes(network) ? '' : network + '.'}${mapObj.scan}.io/${mapObj.txPath}/${txHash}`;
+
     return (
-      <Link
-        href={`https://${omitNetwork.includes(network) ? '' : network + '.'}${mapObj.scan}.io/${
-          mapObj.txPath
-        }/${txHash}`}
-        target="_blank"
-        {...other}
-      >
+      <Link href={href} target="_blank" {...other}>
         {children}
       </Link>
     );

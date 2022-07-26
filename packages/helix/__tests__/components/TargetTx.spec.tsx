@@ -1,6 +1,7 @@
 /// <reference types="jest" />
 
 import { create } from 'react-test-renderer';
+import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord } from 'shared/model';
 import { TargetTx } from '../../components/transaction/TargetTx';
 
@@ -52,7 +53,10 @@ describe('<TargetTx />', () => {
   it.each([
     record,
     { ...record, result: 0 },
+    { ...record, result: 1 },
     { ...record, result: 2 },
+    { ...record, result: 3 },
+    { ...record, result: 4 },
     { ...record, targetTxHash: record.responseTxHash },
   ])('render target tx with TxStatus: $result', ({ result, ...rest }) => {
     const component = create(<TargetTx record={{ result, ...rest } as HelixHistoryRecord} />);
@@ -64,6 +68,14 @@ describe('<TargetTx />', () => {
 
   it('render null', () => {
     const component = create(<TargetTx record={null} />);
+
+    let tree = component.toJSON();
+
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('should render null if refunded', () => {
+    const component = create(<TargetTx record={{ ...record, result: RecordStatus.refunded, bridge: 'cBridge' }} />);
 
     let tree = component.toJSON();
 
