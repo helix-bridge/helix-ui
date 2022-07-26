@@ -1,3 +1,14 @@
+# [4.0.0](https://github.com/helix-bridge/helix/compare/v3.2.1-apps...v4.0.0) (2022-07-26)
+
+
+### Features
+
+* cBridge transfer detail ([#115](https://github.com/helix-bridge/helix/issues/115)) ([527d342](https://github.com/helix-bridge/helix/commit/527d342f1d81e3c8aa418570be11028cd6585715))
+* crab dvm <> heco ([#101](https://github.com/helix-bridge/helix/issues/101)) ([7850d59](https://github.com/helix-bridge/helix/commit/7850d591fe42df00c2d019aea4dc85dbde08b1ad))
+* personal history ([#107](https://github.com/helix-bridge/helix/issues/107)) ([f161150](https://github.com/helix-bridge/helix/commit/f16115033121762058dc615efded780205fbeb3d))
+
+
+
 ## [3.2.1](https://github.com/helix-bridge/helix/compare/v3.2.0-apps...v3.2.1) (2022-07-20)
 
 
