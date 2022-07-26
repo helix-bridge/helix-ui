@@ -1,4 +1,4 @@
-import { MenuOutlined } from '@ant-design/icons';
+import { HddOutlined, MenuOutlined } from '@ant-design/icons';
 import { Button, Drawer, Layout, Tooltip } from 'antd';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -48,10 +48,6 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
 
             <Image alt="..." src="/image/beta.svg" width={35} height={18} />
           </div>
-
-          <Button onClick={() => setIsPersonalHistoryVisible(true)} type="link" className="text-white">
-            {t('History')}
-          </Button>
         </div>
 
         <Drawer
@@ -72,6 +68,10 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
         <div className="hidden lg:flex items-center space-x-4">
           <ActiveAccount />
 
+          <Button icon={<HddOutlined />} onClick={() => setIsPersonalHistoryVisible(true)} className="text-white">
+            {t('History')}
+          </Button>
+
           <Tools />
         </div>
       </Header>
@@ -87,6 +87,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
         footer={null}
         width="max-content"
         maskClosable={false}
+        destroyOnClose
         bodyStyle={{
           minWidth: 'max(30vw, 520px)',
         }}

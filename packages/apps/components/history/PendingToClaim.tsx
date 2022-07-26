@@ -16,6 +16,7 @@ export function PendingToClaim({
     <Button
       disabled={isClaiming}
       size="small"
+      type="primary"
       onClick={() => claim(record as ICamelCaseKeys<Darwinia2EthereumRecord & HelixHistoryRecord>, claimMeta!)}
     >
       {t('Claim')}

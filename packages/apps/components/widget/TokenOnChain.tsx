@@ -1,9 +1,12 @@
 import { Tooltip } from 'antd';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
-import { CrossToken } from 'shared/model';
+import { CrossToken, EthereumChainConfig } from 'shared/model';
+import { isNetworkConsistent } from 'shared/utils/connection';
 import { prettyNumber } from 'shared/utils/helper';
 import { getDisplayName } from 'shared/utils/network';
+import { useITranslation } from '../../hooks';
+import { addToMetamask } from '../../utils';
 
 type TokenOnChainProps = {
   token: CrossToken;
@@ -20,7 +23,21 @@ export const TokenOnChain = ({
   asHistory,
   className = '',
 }: PropsWithChildren<TokenOnChainProps>) => {
+  const { t } = useITranslation();
   const chainLogoProps = asHistory ? { width: 40, height: 40 } : { width: 60, height: 60 };
+  const [isEthereumChainActive, setIsEthereumChainActive] = useState(false);
+
+  useEffect(() => {
+    const isEthereumType = !!(token.meta as EthereumChainConfig).ethereumChain;
+
+    if (isEthereumType) {
+      isNetworkConsistent(token.meta as EthereumChainConfig).then((same) => {
+        setIsEthereumChainActive(same);
+      });
+    } else {
+      setIsEthereumChainActive(false);
+    }
+  }, [token.meta]);
 
   return (
     <div className={`flex items-center text-white ${className}`}>
@@ -52,9 +69,22 @@ export const TokenOnChain = ({
           </Tooltip>
         </strong>
 
-        <small className="font-light text-xs opacity-70">
+        <small className="font-light text-xs opacity-70 inline-flex items-center gap-1">
           <span>on {getDisplayName(token.meta)}</span>
-          <span className="ml-1">{children}</span>
+          <span>{children}</span>
+          {isEthereumChainActive && (
+            <Tooltip title={t('Add to metamask')}>
+              <Logo
+                name="metamask.svg"
+                width={14}
+                height={14}
+                className="cursor-pointer"
+                onClick={() => {
+                  addToMetamask(token);
+                }}
+              />
+            </Tooltip>
+          )}
         </small>
       </div>
     </div>

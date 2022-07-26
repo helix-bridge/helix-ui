@@ -17,13 +17,20 @@ import { claimToken } from '../bridges/ethereum-darwinia/utils';
 import { useITranslation } from '../hooks';
 import { useTx } from './tx';
 
+interface Claimed {
+  id: string;
+  hash: string;
+}
+
 interface ClaimCtx {
   isClaiming: boolean;
   claim: (
     record: ICamelCaseKeys<Darwinia2EthereumRecord & HelixHistoryRecord>,
     meta: Omit<Darwinia2EthereumHistoryRes, 'list' | 'count'>
   ) => Subscription;
-  claimedList: { id: string; hash: string }[];
+  claimedList: Claimed[];
+  refundedList: Claimed[];
+  onRefundSuccess: (data: Claimed) => void;
 }
 
 function isSufficient(config: EthereumDarwiniaBridgeConfig, tokenAddress: string, amount: BN): Observable<boolean> {
@@ -41,7 +48,8 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
   const { t } = useITranslation();
   const { observer, setTx } = useTx();
   const [isClaiming, setIsClaiming] = useState(false);
-  const [claimedList, setClaimedList] = useState<{ id: string; hash: string }[]>([]);
+  const [claimedList, setClaimedList] = useState<Claimed[]>([]);
+  const [refundedList, setRefundedList] = useState<Claimed[]>([]);
 
   const claim = useCallback(
     (
@@ -138,6 +146,8 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
         claimedList,
         claim,
         isClaiming,
+        refundedList,
+        onRefundSuccess: (data) => setRefundedList((pre) => [...pre, data]),
       }}
     >
       {children}

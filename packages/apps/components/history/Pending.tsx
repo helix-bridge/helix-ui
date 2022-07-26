@@ -6,7 +6,7 @@ export function Pending(_: RecordStatusComponentProps) {
 
   return (
     <div className="flex items-center justify-end gap-2">
-      <span className="text-helix-blue">{t('Waiting for fund release')}</span>
+      <span className="text-helix-blue">{t('Pending')}</span>
     </div>
   );
 }

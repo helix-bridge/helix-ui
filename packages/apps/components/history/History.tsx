@@ -27,7 +27,7 @@ import { TokenOnChain } from '../widget/TokenOnChain';
 import { Pending } from './Pending';
 import { PendingToClaim } from './PendingToClaim';
 import { PendingToRefund } from './PendingToRefund';
-import { Refund } from './Refund';
+import { Refunded } from './Refunded';
 
 enum HistoryType {
   ethereumDarwinia = 1,
@@ -45,7 +45,7 @@ export function History() {
   const [source, setSource] = useState<HelixHistoryRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [paginator, setPaginator] = useState<Paginator>({ row: 10, page: 0 });
-  const { claimedList } = useClaim();
+  const { claimedList, refundedList } = useClaim();
   const [claimMeta, setClaimMeta] = useState<Omit<Darwinia2EthereumHistoryRes, 'list' | 'count'> | null>(null);
   const [goOnAmount, setGoOnAmount] = useState(0);
 
@@ -58,8 +58,14 @@ export function History() {
       });
     }
 
-    return source;
-  }, [claimedList, departureConnection.type, historyType, source]);
+    return source.map((record) => {
+      if (refundedList.find((item) => item.id === record.id)) {
+        record.result = RecordStatus.refunded;
+      }
+
+      return record;
+    });
+  }, [claimedList, departureConnection.type, historyType, refundedList, source]);
 
   const results = useMemo(() => {
     if (activeTab < 0) {
@@ -132,9 +138,9 @@ export function History() {
     return EMPTY.subscribe();
   }, [account, departure, departureConnection.type, paginator, results]);
 
-  useEffect(() => {
-    const sender = isValidAddress(account, 'ethereum') ? account : convertToDvm(account);
-    const sub$$ = from(
+  const fetchGoOnAmount = useCallback((address: string) => {
+    const sender = isValidAddress(address, 'ethereum') ? address : convertToDvm(address);
+    return from(
       request(ENDPOINT, STATUS_STATISTICS, {
         results: [RecordStatus.pendingToClaim, RecordStatus.pendingToRefund],
         sender,
@@ -144,9 +150,13 @@ export function History() {
       .subscribe((res) => {
         setGoOnAmount(res.total);
       });
+  }, []);
+
+  useEffect(() => {
+    const sub$$ = fetchGoOnAmount(account);
 
     return () => sub$$.unsubscribe();
-  }, [account]);
+  }, [account, fetchGoOnAmount]);
 
   useEffect(() => {
     if (!account) {
@@ -224,13 +234,15 @@ export function History() {
                 } else {
                   fetchData();
                 }
+
+                fetchGoOnAmount(account);
               }}
             />
           ),
         }}
       >
         {['All', 'Pending', 'Success']
-          .concat(historyType === HistoryType.ethereumDarwinia ? [] : ['Refund'])
+          .concat(historyType === HistoryType.ethereumDarwinia ? [] : ['Refunded'])
           .map((label, index) => (
             <Tabs.TabPane
               tab={
@@ -294,11 +306,13 @@ export function History() {
                               <PaperClipOutlined className="hover:text-pangolin-main cursor-pointer" />
                             </SubscanLink>
                           ) : (
-                            <Tooltip
-                              title={t('When the transaction is successful, the extrinsic message will be provided')}
-                            >
-                              <PaperClipOutlined className="cursor-pointer" />
-                            </Tooltip>
+                            record.result !== RecordStatus.refunded && (
+                              <Tooltip
+                                title={t('When the transaction is successful, the extrinsic message will be provided')}
+                              >
+                                <PaperClipOutlined className="cursor-pointer" />
+                              </Tooltip>
+                            )
                           )}
                         </TokenOnChain>
                       </div>
@@ -320,7 +334,7 @@ export function History() {
                           <div className="text-helix-green">{t('Success')}</div>
                         )}
 
-                        {record.result === RecordStatus.refunded && <Refund record={record} />}
+                        {record.result === RecordStatus.refunded && <Refunded record={record} />}
                       </div>
                     </div>
                   );

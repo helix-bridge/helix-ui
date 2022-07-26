@@ -1,7 +1,8 @@
-import { Button, message, Popconfirm } from 'antd';
+import { SyncOutlined } from '@ant-design/icons';
+import { Button, message, Tooltip } from 'antd';
 import request from 'graphql-request';
 import { useCallback, useState } from 'react';
-import { from, map, of, switchMap } from 'rxjs';
+import { from, map, of, switchMap, tap } from 'rxjs';
 import { CBridgeRecordStatus, LONG_DURATION } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { useIsMounted } from 'shared/hooks';
@@ -11,10 +12,11 @@ import { requestRefund, withdraw } from '../../bridges/crabDVM-heco/utils/tx';
 import { HISTORY_RECORD_BY_ID } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { RecordStatusComponentProps } from '../../model/component';
-import { useTx } from '../../providers';
+import { useClaim, useTx } from '../../providers';
 
 export function PendingToRefund({ record }: RecordStatusComponentProps) {
   const { t } = useITranslation();
+  const { onRefundSuccess } = useClaim();
   const [loading, setLoading] = useState(false);
   const { observer } = useTx();
   const isMounted = useIsMounted();
@@ -25,6 +27,7 @@ export function PendingToRefund({ record }: RecordStatusComponentProps) {
       .pipe(
         switchMap(() => from(request(ENDPOINT, HISTORY_RECORD_BY_ID, { id: record.id }))),
         map((res) => res && res[gqlName(HISTORY_RECORD_BY_ID)]),
+        tap((res) => setReason(res.reason)),
         pollWhile(
           LONG_DURATION,
           (res: HelixHistoryRecord) =>
@@ -47,15 +50,21 @@ export function PendingToRefund({ record }: RecordStatusComponentProps) {
 
   if (reason === CBridgeRecordStatus[CBridgeRecordStatus.refundToBeConfirmed]) {
     return (
-      <Popconfirm
-        placement="bottom"
-        title={t('Click the "Confirm Refund" button to get your refund.')}
-        onConfirm={() => {
+      <Button
+        size="small"
+        disabled={loading}
+        type="primary"
+        icon={loading ? <SyncOutlined spin /> : null}
+        onClick={() => {
           setLoading(true);
 
           withdraw(record).subscribe({
             next(response) {
               observer.next(response);
+
+              if (response.status === 'finalized') {
+                onRefundSuccess({ id: record.id, hash: response.hash ?? '' });
+              }
             },
             error(err) {
               observer.error(err);
@@ -67,51 +76,43 @@ export function PendingToRefund({ record }: RecordStatusComponentProps) {
             },
           });
         }}
-        trigger="hover"
-        okText={t('Confirm Refund')}
-        cancelButtonProps={{ style: { display: 'none' } }}
       >
-        <Button size="small" disabled={loading}>
-          {t('Refund')}
-        </Button>
-      </Popconfirm>
+        {t('Refund')}
+      </Button>
     );
   }
 
   return (
-    <Popconfirm
-      placement="bottom"
-      title={
-        <div className="w-64">
-          {t(
-            'The transfer cannot be completed because the bridge rate has moved unfavorably by your slippage tolerance. Please click the button below to get a refund.'
-          )}
-        </div>
-      }
-      trigger="hover"
-      okText={t('Confirm')}
-      onConfirm={() => {
-        setLoading(true);
-
-        requestRefund(record)
-          .then((res) => {
-            const { err } = res.toObject();
-
-            if (err) {
-              message.error(err.msg);
-            } else {
-              pollingRefundState();
-            }
-          })
-          .catch((err) => {
-            message.error(err);
-          });
-      }}
-      cancelButtonProps={{ style: { display: 'none' } }}
+    <Tooltip
+      title={t(
+        'The transfer cannot be completed because the bridge rate has moved unfavorably by your slippage tolerance. Please click the button below to get a refund.'
+      )}
     >
-      <Button size="small" disabled={loading}>
+      <Button
+        size="small"
+        type="primary"
+        disabled={loading}
+        icon={loading ? <SyncOutlined spin /> : null}
+        onClick={() => {
+          setLoading(true);
+
+          requestRefund(record)
+            .then((res) => {
+              const { err } = res.toObject();
+
+              if (err) {
+                message.error(err.msg);
+              } else {
+                pollingRefundState();
+              }
+            })
+            .catch((err) => {
+              message.error(err);
+            });
+        }}
+      >
         {t('Request Refund')}
       </Button>
-    </Popconfirm>
+    </Tooltip>
   );
 }

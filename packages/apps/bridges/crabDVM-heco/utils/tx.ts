@@ -33,7 +33,7 @@ export function transfer(value: IssuingPayload | RedeemPayload): Observable<Tx> 
       from: { address: tokenAddress, amount, decimals, meta: fromChain },
       to,
     },
-    maxSlippage,
+    // maxSlippage,
     bridge,
   } = value;
   const dstChainId = parseInt(to.meta.ethereumChain.chainId, 16);
@@ -45,9 +45,8 @@ export function transfer(value: IssuingPayload | RedeemPayload): Observable<Tx> 
   return genEthereumContractTxObs(
     contractAddress,
     (contract) =>
-      contract.methods
-        .send(recipient, tokenAddress, transferAmount, dstChainId, nonce, maxSlippage)
-        .send({ from: sender }),
+      // eslint-disable-next-line no-magic-numbers
+      contract.methods.send(recipient, tokenAddress, transferAmount, dstChainId, nonce, 900).send({ from: sender }),
     bridgeAbi as AbiItem[]
   );
 }
