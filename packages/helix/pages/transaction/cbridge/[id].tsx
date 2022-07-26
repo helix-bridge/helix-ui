@@ -26,7 +26,12 @@ const Page: NextPage<{
     const bridge = getBridge<CrabDVMHecoBridgeConfig>([departure, arrival]);
     const isIssuing = bridge.isIssuing(departure, arrival);
     const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.token.toLowerCase())!;
-    const toToken = arrival.tokens.find((item) => item.cross.find(overview => overview.partner.name === departure.name && overview.partner.symbol === fromToken.symbol))!;
+
+    const toToken = arrival.tokens.find((item) =>
+      item.cross.find(
+        (overview) => overview.partner.name === departure.name && overview.partner.symbol === fromToken.symbol
+      )
+    )!;
 
     const pool = isIssuing ? bridge.config.contracts.issuing : bridge.config.contracts.redeem;
 
@@ -51,7 +56,6 @@ const Page: NextPage<{
       token: fromToken,
     };
 
-
     const transfer = [start];
 
     if (record.result === RecordStatus.success) {
@@ -61,7 +65,7 @@ const Page: NextPage<{
     }
 
     return transfer;
-  }, [record.recipient, record.sender, record.token, router.query.from, router.query.to]);
+  }, [record.recipient, record.result, record.sender, record.token, router.query.from, router.query.to]);
 
   return <Detail record={record} transfers={transfers} />;
 };
