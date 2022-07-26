@@ -68,6 +68,7 @@ export const isSubstrateSubstrate: BridgePredicateFn = isCrossFactory(
 export const isEthereumDarwinia: BridgePredicateFn = isCrossFactory(isEthereum2Darwinia, isDarwinia2Ethereum);
 export const isSubstrateDVM: BridgePredicateFn = isCrossFactory(isSubstrate2DVM, isDVM2Substrate);
 export const isParachainSubstrate: BridgePredicateFn = isCrossFactory(isParachain2Substrate, isSubstrate2Parachain);
+export const isCrabHeco: BridgePredicateFn = isCrossFactory(isCrabDVM2Heco, isHeco2CrabDVM);
 
 function getBridgeOverviews(source: NullableFields<CrossChainDirection, 'from' | 'to'>) {
   const { from, to } = source;

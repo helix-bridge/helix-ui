@@ -1,17 +1,17 @@
-import { ContainerOutlined, HddOutlined, MenuOutlined } from '@ant-design/icons';
-import { Drawer, Layout, Menu, MenuProps, Tooltip } from 'antd';
+import { HddOutlined, MenuOutlined } from '@ant-design/icons';
+import { Button, Drawer, Layout, Tooltip } from 'antd';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { PropsWithChildren, useMemo, useState } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import { Footer } from 'shared/components/Footer';
 import { Nav, Navigator } from 'shared/components/Navigator';
-import { Icon } from 'shared/components/widget/Icon';
 import { THEME } from 'shared/config/theme';
 import { readStorage } from 'shared/utils/helper';
 import { useITranslation } from '../hooks';
+import { History } from './history/History';
 import { Tools } from './Tools';
 import { ActiveAccount } from './widget/account/ActiveAccount';
+import { BaseModal } from './widget/BaseModal';
 
 const { Header, Content } = Layout;
 
@@ -25,61 +25,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
   const [theme, setTheme] = useState<THEME>(readStorage().theme ?? THEME.DARK);
   const [collapsed, setCollapsed] = useState(true);
   const router = useRouter();
-
-  const menus = useMemo<MenuProps['items']>(
-    () => [
-      {
-        label: <Link href="/">{t('Aggregator')}</Link>,
-        key: 'aggregator',
-        theme: 'dark',
-      },
-      {
-        label: <Link href="/nft">{t('NFT')}</Link>,
-        key: 'nft',
-        theme: 'dark',
-        disabled: true,
-      },
-      {
-        label: <Link href="/claim">{t('Claim')}</Link>,
-        key: 'claim',
-        icon: <ContainerOutlined style={{ verticalAlign: 0 }} />,
-      },
-      {
-        label: (
-          <span className="inline-flex items-center gap-1">
-            <span>{t('History')}</span>
-            <Icon name="down" />
-          </span>
-        ),
-        key: 'history',
-        icon: <HddOutlined style={{ verticalAlign: 0 }} />,
-        children: [
-          {
-            label: (
-              <a href="https://helixbridge.app/transaction" rel="noreferrer" target="_blank">
-                {t('History Record')}
-              </a>
-            ),
-            key: 'records',
-          },
-          {
-            label: <Link href="/history">{t('Ethereum - Darwinia Record')}</Link>,
-            key: 'ed-history',
-          },
-        ],
-      },
-    ],
-    [t]
-  );
-
-  const activeRouteKeys = useMemo(() => {
-    const current = router.pathname.split('/').filter((item) => item);
-    if (!current.length) {
-      return ['aggregator'];
-    }
-
-    return current;
-  }, [router.pathname]);
+  const [isPersonalHistoryVisible, setIsPersonalHistoryVisible] = useState<boolean>(false);
 
   return (
     <Layout className="min-h-screen overflow-scroll">
@@ -102,8 +48,6 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
 
             <Image alt="..." src="/image/beta.svg" width={35} height={18} />
           </div>
-
-          <Menu mode="horizontal" items={menus} selectedKeys={activeRouteKeys} className="bg-transparent" />
         </div>
 
         <Drawer
@@ -124,6 +68,10 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
         <div className="hidden lg:flex items-center space-x-4">
           <ActiveAccount />
 
+          <Button icon={<HddOutlined />} onClick={() => setIsPersonalHistoryVisible(true)} className="text-white">
+            {t('History')}
+          </Button>
+
           <Tools />
         </div>
       </Header>
@@ -131,6 +79,21 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
       <Content className="sm:px-16 sm:pt-4 px-4 py-1 my-24 sm:my-20">{children}</Content>
 
       <Footer onThemeChange={setTheme} />
+
+      <BaseModal
+        title={t('Transfer History')}
+        visible={isPersonalHistoryVisible}
+        onCancel={() => setIsPersonalHistoryVisible(false)}
+        footer={null}
+        width="max-content"
+        maskClosable={false}
+        destroyOnClose
+        bodyStyle={{
+          minWidth: 'max(30vw, 520px)',
+        }}
+      >
+        <History></History>
+      </BaseModal>
     </Layout>
   );
 }

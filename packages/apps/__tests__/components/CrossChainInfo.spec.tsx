@@ -88,7 +88,7 @@ describe('<CrossChainInfo />', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  it.only('should toggle extra info on click', () => {
+  it('should toggle extra info on click', () => {
     const { getByTestId } = render(
       <CrossChainInfo
         bridge={pangoroPangolinDVM}

@@ -140,7 +140,7 @@ exports[`<TxStatus /> render TxStatus: 1 1`] = `
     <span
       className="h-full"
     >
-      success
+      pendingToRefund
     </span>
   </div>
 </div>
@@ -213,12 +213,9 @@ exports[`<TxStatus /> render TxStatus: 2 1`] = `
     <span
       className="h-full"
     >
-      reverted
+      pendingToClaim
     </span>
   </div>
-  <span>
-    SpecVersionMismatch
-  </span>
 </div>
 `;
 

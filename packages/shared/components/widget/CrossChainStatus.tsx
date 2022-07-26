@@ -8,7 +8,7 @@ import {
   Loading3QuartersOutlined,
   LoadingOutlined,
 } from '@ant-design/icons';
-import { CBridgeHistoryStatus, CrossChainStatus, CrossChainStatusColor } from '../../config/constant';
+import { CBridgeRecordStatus, RecordStatus, CrossChainStatusColor } from '../../config/constant';
 
 const StatusIcons = [
   ClockCircleFilled,
@@ -37,7 +37,7 @@ export function CrossChainState({
       className={`flex items-center gap-1 px-2 rounded-xs max-w-max min-w-min h-6 text-gray-200 ${className}`}
     >
       <Icon />
-      <span className="h-full">{CrossChainStatus[value] ?? CBridgeHistoryStatus[value]}</span>
+      <span className="h-full">{RecordStatus[value] ?? CBridgeRecordStatus[value]}</span>
       {children}
     </div>
   );

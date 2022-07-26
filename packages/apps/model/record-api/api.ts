@@ -8,9 +8,3 @@ export interface RecordRequestParams {
   paginator: Paginator;
   confirmed: boolean | null;
 }
-
-export enum RecordStatus {
-  pending = 'pending',
-  success = 'success',
-  reverted = 'reverted',
-}

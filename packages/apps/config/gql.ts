@@ -1,26 +1,8 @@
 import { gql } from 'graphql-request';
 
-export const ACCOUNTS = `
-  query accounts($chain: String) {
-    accounts(chain: $chain) {
-      total
-    }
-  } 
-`;
-
-export const STATISTICS_QUERY = `
-  query queryDailyStatistics($timepast: Int!, $chain: String) {
-    queryDailyStatistics(timepast: $timepast, from: $chain) {
-      dailyCount
-      dailyVolume
-      timestamp
-    }
-  }
-`;
-
 export const HISTORY_RECORDS = gql`
-  query historyRecords($row: Int!, $page: Int!, $sender: String, $recipient: String) {
-    historyRecords(row: $row, page: $page, sender: $sender, recipient: $recipient) {
+  query historyRecords($row: Int!, $page: Int!, $sender: String, $results: [Int]) {
+    historyRecords(row: $row, page: $page, sender: $sender, results: $results) {
       total
       records {
         amount
@@ -43,6 +25,14 @@ export const HISTORY_RECORDS = gql`
         toChain
         token
       }
+    }
+  }
+`;
+
+export const STATUS_STATISTICS = gql`
+  query historyRecords($sender: String, $results: [Int!]) {
+    historyRecords(sender: $sender, results: $results) {
+      total
     }
   }
 `;

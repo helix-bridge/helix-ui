@@ -37,7 +37,7 @@ const showWarning = (plugin: string, downloadUrl: string) =>
 const connectPolkadot: ConnectFn<PolkadotConnection> = (network) =>
   !network ? EMPTY : getPolkadotConnection(network as PolkadotChainConfig);
 
-async function isNetworkConsistent(chain: EthereumChainConfig, id = ''): Promise<boolean> {
+export async function isNetworkConsistent(chain: EthereumChainConfig, id = ''): Promise<boolean> {
   id = id && Web3.utils.isHex(id) ? parseInt(id, 16).toString() : id;
   // id 1: eth mainnet 3: ropsten 4: rinkeby 5: goerli 42: kovan  43: pangolin 44: crab
   const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);

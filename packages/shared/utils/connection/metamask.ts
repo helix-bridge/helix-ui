@@ -2,7 +2,13 @@ import { DebouncedFunc, throttle } from 'lodash';
 import { catchError, combineLatest, from, map, merge, Observable, Observer, of, startWith, switchMap } from 'rxjs';
 import Web3 from 'web3';
 import { SHORT_DURATION } from '../../config/constant';
-import { ConnectionStatus, EthereumChainConfig, EthereumConnection, MetamaskNativeNetworkIds } from '../../model';
+import {
+  ConnectionStatus,
+  EthereumChainConfig,
+  EthereumConnection,
+  MetamaskNativeNetworkIds,
+  TokenWithBridgesInfo,
+} from '../../model';
 
 function isNativeMetamaskChain(chain: EthereumChainConfig): boolean {
   const ids = [
@@ -111,4 +117,25 @@ export const switchMetamaskNetwork: DebouncedFunc<(chain: EthereumChainConfig) =
 
 export function isMetamaskInstalled(): boolean {
   return typeof window.ethereum !== 'undefined' || typeof window.web3 !== 'undefined';
+}
+
+export async function addAsset(
+  token: Pick<TokenWithBridgesInfo, 'decimals' | 'symbol' | 'address' | 'logo'>
+): Promise<boolean> {
+  const { address, symbol, decimals, logo } = token;
+
+  const wasAdded: boolean = await window.ethereum.request({
+    method: 'wallet_watchAsset',
+    params: {
+      type: 'ERC20', // Initially only supports ERC20, but eventually more!
+      options: {
+        address,
+        symbol,
+        decimals,
+        image: logo,
+      },
+    },
+  });
+
+  return wasAdded;
 }
