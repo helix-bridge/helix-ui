@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react';
+import React from 'react';
 import { SubscanLink } from '../../components/widget/SubscanLink';
 import { SYSTEM_ChAIN_CONFIGURATIONS } from '../../config/network';
 import { knownDVMNetworks, knownPolkadotNetworks } from '../../config/network/category';
@@ -138,10 +139,11 @@ describe('<SubscanLink />', () => {
         test link
       </SubscanLink>
     );
+    const href = `https://${config.name === 'ethereum' ? '' : config.name + '.'}etherscan.io/tx/0x123456`;
 
     expect(getByRole('link')).toHaveAttribute(
       'href',
-      `https://${config.name === 'ethereum' ? '' : config.name + '.'}etherscan.io/tx/0x123456`
+      config.name === 'heco' ? `https://hecoinfo.com/tx/0x123456` : href
     );
   });
 

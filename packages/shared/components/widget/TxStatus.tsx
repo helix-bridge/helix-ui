@@ -1,5 +1,6 @@
 import { CheckCircleOutlined, CloseCircleOutlined, InfoCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import { Alert, AlertProps, Button, Typography } from 'antd';
+import React from 'react';
 import { Trans } from 'react-i18next';
 import { Tx } from '../../model';
 

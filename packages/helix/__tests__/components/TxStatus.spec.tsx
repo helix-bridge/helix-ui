@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 
 import { create } from 'react-test-renderer';
-import { HelixHistoryRecord, Result } from 'shared/model';
+import { HelixHistoryRecord } from 'shared/model';
 import { TxStatus } from '../../components/transaction/TxStatus';
 
 jest.mock('next-i18next', () => ({
@@ -15,8 +15,10 @@ jest.mock('next-i18next', () => ({
 describe('<TxStatus />', () => {
   it.each([
     { result: 0, reason: '' },
-    { result: 1, reason: '' },
-    { result: 2, reason: 'SpecVersionMismatch' },
+    { result: 1, reason: 'badSlippage' },
+    { result: 2, reason: 'needClaim' },
+    { result: 3, reason: '' },
+    { result: 4, reason: 'SpecVersionMismatch' },
   ])('render TxStatus: $result', ({ result, ...rest }) => {
     const component = create(<TxStatus record={{ result, ...rest } as HelixHistoryRecord} />);
 
