@@ -35,7 +35,7 @@ export async function addToMetamask(token: TokenWithBridgesInfo) {
     if (added) {
       message.success('Add success');
     } else {
-      message.error('Add failed!');
+      message.error('Add failed');
     }
   } catch {
     message.error('Some error occurred while add the token to metamask, consider add it manually');
