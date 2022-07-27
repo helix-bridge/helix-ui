@@ -72,7 +72,7 @@ export const TokenOnChain = ({
         <small className="font-light text-xs opacity-70 inline-flex items-center gap-1">
           <span>on {getDisplayName(token.meta)}</span>
           <span>{children}</span>
-          {isEthereumChainActive && (
+          {isEthereumChainActive && asHistory && (
             <Tooltip title={t('Add to metamask')}>
               <Logo
                 name="metamask.svg"

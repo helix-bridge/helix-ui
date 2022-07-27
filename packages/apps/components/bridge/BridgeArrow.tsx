@@ -21,18 +21,17 @@ export function BridgeArrow({ category, showName = true }: BridgeArrowProps) {
         };
 
   return (
-    <div className={asHistory ? 'flex justify-center mx-4 flex-1 relative' : ''}>
-      <div className={`relative hidden lg:flex justify-center text-white ${!asHistory ? 'w-56' : 'w-1/2'}`}>
+    <div className={asHistory ? 'flex justify-center items-center mx-4 flex-1 relative' : 'width: max(33%, 150px)'}>
+      <div className={`bridge-arrow hidden lg:flex justify-center text-white ${!asHistory ? 'w-56' : 'w-1/2'}`}>
         <div
           className={`${
-            !asHistory ? 'rounded-3xl' : 'rounded-full'
-          } px-2.5 bg-gray-700 flex justify-center items-center z-10`}
+            !asHistory ? 'px-2.5 rounded-3xl' : 'rounded-full  p-2'
+          } bg-gray-700 flex justify-center items-center z-10`}
+          style={{ height: 'fit-content', transform: asHistory ? 'translateY(-22px)' : 'translateY(-19px)' }}
         >
-          <Image alt="..." src={`/image/${category}-bridge.svg`} {...logoProps} />
-          {!asHistory && <strong className="capitalize ml-2">{category}</strong>}
+          <Image alt="..." src={`/image/bridges/${category}-bridge.png`} {...logoProps} />
+          {!asHistory && <strong className={`${category === 'helix' ? 'capitalize' : ''} ml-2`}>{category}</strong>}
         </div>
-
-        <Image alt="..." src="/image/bridge-to.svg" layout="fill" priority />
       </div>
 
       <div
