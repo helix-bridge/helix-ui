@@ -28,8 +28,8 @@ export function BridgeArrow({ category, showName = true }: BridgeArrowProps) {
             !asHistory ? 'rounded-3xl' : 'rounded-full'
           } px-2.5 bg-gray-700 flex justify-center items-center z-10`}
         >
-          <Image alt="..." src={`/image/${category}-bridge.svg`} {...logoProps} />
-          {!asHistory && <strong className="capitalize ml-2">{category}</strong>}
+          <Image alt="..." src={`/image/bridges/${category}-bridge.png`} {...logoProps} />
+          {!asHistory && <strong className={`${category === 'helix' ? 'capitalize' : ''} ml-2`}>{category}</strong>}
         </div>
 
         <Image alt="..." src="/image/bridge-to.svg" layout="fill" priority />
