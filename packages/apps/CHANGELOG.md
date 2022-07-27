@@ -1,3 +1,7 @@
+## [4.0.1](https://github.com/helix-bridge/helix/compare/v4.0.0-helix...v4.0.1) (2022-07-27)
+
+
+
 # [4.0.0](https://github.com/helix-bridge/helix/compare/v3.2.1-apps...v4.0.0) (2022-07-26)
 
 
