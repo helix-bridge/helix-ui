@@ -44,7 +44,7 @@ export function History() {
   const [total, setTotal] = useState(0);
   const [source, setSource] = useState<HelixHistoryRecord[]>([]);
   const [loading, setLoading] = useState(false);
-  const [paginator, setPaginator] = useState<Paginator>({ row: 10, page: 0 });
+  const [paginator, setPaginator] = useState<Paginator>({ row: 4, page: 0 });
   const { claimedList, refundedList } = useClaim();
   const [claimMeta, setClaimMeta] = useState<Omit<Darwinia2EthereumHistoryRes, 'list' | 'count'> | null>(null);
   const [goOnAmount, setGoOnAmount] = useState(0);
@@ -54,7 +54,7 @@ export function History() {
       return source.map((item) => {
         const target = claimedList.find((claimed) => claimed.id === item.id);
 
-        return target ? { ...item, targetTxHash: target.hash, result: 1 } : item;
+        return target ? { ...item, targetTxHash: target.hash, result: RecordStatus.success } : item;
       });
     }
 

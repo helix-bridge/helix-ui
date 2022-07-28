@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { useITranslation } from 'shared/hooks';
 import { HelixHistoryRecord, Network } from 'shared/model';
-import { isCrabHeco } from 'shared/utils/bridge';
+import { isCrabDVMHeco } from 'shared/utils/bridge';
 import { fromWei, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
 import { TransferStep } from '../../model/transfer';
@@ -92,7 +92,7 @@ export function Detail({ record, transfers }: DetailProps) {
         <Divider />
 
         <TransferDescription title={t('Nonce')} tip={t('A unique number of cross-chain transaction in Bridge')}>
-          {isCrabHeco(record.fromChain, record.toChain) ? record.laneId : record.nonce}
+          {isCrabDVMHeco(record.fromChain, record.toChain) ? record.laneId : record.nonce}
         </TransferDescription>
       </div>
     </>

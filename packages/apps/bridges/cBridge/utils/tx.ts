@@ -23,7 +23,7 @@ import bridgeAbi from '../config/abi/bridge.json';
 import { IssuingPayload, RedeemPayload } from '../model';
 
 const prefix = hexToBn('0x6878000000000000');
-const client = new WebClient(`https://cbridge-prod2.celer.network`, null, null);
+export const client = new WebClient(`https://cbridge-prod2.celer.network`, null, null);
 
 export function transfer(value: IssuingPayload | RedeemPayload): Observable<Tx> {
   const {

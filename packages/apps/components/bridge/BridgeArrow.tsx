@@ -21,7 +21,12 @@ export function BridgeArrow({ category, showName = true }: BridgeArrowProps) {
         };
 
   return (
-    <div className={asHistory ? 'flex justify-center items-center mx-4 flex-1 relative' : 'width: max(33%, 150px)'}>
+    <div
+      className={asHistory ? 'flex justify-center items-center mx-4 flex-1 relative' : ''}
+      style={{
+        width: asHistory ? 'auto' : 'max(33%, 150px)',
+      }}
+    >
       <div className={`bridge-arrow hidden lg:flex justify-center text-white ${!asHistory ? 'w-56' : 'w-1/2'}`}>
         <div
           className={`${

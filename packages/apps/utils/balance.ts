@@ -1,11 +1,12 @@
 import BN from 'bn.js';
 import { CrossChainDirection } from 'shared/model';
 import {
-  isCrabDVM2Heco,
+  isCrabDVMEthereum,
+  isCrabDVMHeco,
+  isCrabDVMPolygon,
   isDarwinia2Ethereum,
   isDVM2Substrate,
   isEthereum2Darwinia,
-  isHeco2CrabDVM,
   isParachain2Substrate,
   isSubstrate2DVM,
   isSubstrate2Parachain,
@@ -50,7 +51,9 @@ export async function getBalance(direction: CrossChainDirection, account: string
     return getDVMBalance(kton.address, account);
   }
 
-  if ([isSubstrateDVM2Substrate, isCrabDVM2Heco, isHeco2CrabDVM].some((fn) => fn(fromChain, toChain))) {
+  if (
+    [isSubstrateDVM2Substrate, isCrabDVMHeco, isCrabDVMEthereum, isCrabDVMPolygon].some((fn) => fn(fromChain, toChain))
+  ) {
     return getErc20Balance(from.address, account).then((res) => [res]);
   }
 

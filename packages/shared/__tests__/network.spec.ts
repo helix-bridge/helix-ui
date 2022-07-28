@@ -1,7 +1,10 @@
 /// <reference types="jest" />
 
-import { crabConfig, crabDVMConfig, darwiniaConfig, ethereumConfig, pangolinConfig } from '../config/network';
+import { chain, isEqual } from 'lodash';
+import { crabConfig, crabDVMConfig, darwiniaConfig, ethereumConfig } from '../config/network';
 import { crabParachainConfig } from '../config/network/crab-parachain';
+import { pangolinParachainConfig } from '../config/network/pangolin-parachain';
+import { Network } from '../model';
 import { crossChainGraph } from '../utils/network/graph';
 import {
   chainConfigs,
@@ -15,6 +18,10 @@ import {
 describe('network utils', () => {
   const data = [...crossChainGraph];
 
+  it('should contains chains count: ', () => {
+    expect(chainConfigs).toHaveLength(12);
+  });
+
   it('contains 2 bridges from crab', () => {
     const fromCrab = data.find((item) => item[0] === 'crab');
 
@@ -22,11 +29,11 @@ describe('network utils', () => {
     expect(fromCrab![1]).toEqual(['crab-dvm', 'crab-parachain']);
   });
 
-  it('contains 3 bridges from crab-dvm', () => {
+  it('contains 5 bridges from crab-dvm', () => {
     const fromCrabDVM = data.find((item) => item[0] === 'crab-dvm');
 
     expect(fromCrabDVM).not.toEqual(undefined);
-    expect(fromCrabDVM![1]).toEqual(['crab', 'darwinia', 'heco']);
+    expect(fromCrabDVM![1]).toEqual(['crab', 'darwinia', 'heco', 'ethereum', 'polygon']);
   });
 
   it('contains 2 bridges from darwinia', () => {
@@ -36,11 +43,11 @@ describe('network utils', () => {
     expect(fromDarwinia![1]).toEqual(['crab-dvm', 'ethereum']);
   });
 
-  it('contains 1 bridge from ethereum', () => {
+  it('contains 2 bridge from ethereum', () => {
     const fromEthereum = data.find((item) => item[0] === 'ethereum');
 
     expect(fromEthereum).not.toEqual(undefined);
-    expect(fromEthereum![1]).toEqual(['darwinia']);
+    expect(fromEthereum![1]).toEqual(['darwinia', 'crab-dvm']);
   });
 
   it('contains 3 bridges from pangolin', () => {
@@ -78,8 +85,11 @@ describe('network utils', () => {
     expect(fromHeco![1]).toEqual(['crab-dvm']);
   });
 
-  it('should have desired number of cross-chains', () => {
-    expect(chainConfigs).toHaveLength(11);
+  it('contains 1 bridge from polygon', () => {
+    const fromHeco = data.find((item) => item[0] === 'polygon');
+
+    expect(fromHeco).not.toEqual(undefined);
+    expect(fromHeco![1]).toEqual(['crab-dvm']);
   });
 
   it('can get chain config by chain name', () => {
@@ -96,6 +106,8 @@ describe('network utils', () => {
     expect(isPolkadotNetwork('darwinia')).toBe(true);
     expect(isPolkadotNetwork('pangolin')).toBe(true);
     expect(isPolkadotNetwork('pangoro')).toBe(true);
+    expect(isPolkadotNetwork('pangolin-parachain')).toBe(true);
+    expect(isPolkadotNetwork('crab-parachain')).toBe(true);
   });
 
   it('can recognize ethereum network', () => {
@@ -103,6 +115,8 @@ describe('network utils', () => {
     expect(isEthereumNetwork('ropsten')).toBe(true);
     expect(isEthereumNetwork('crab-dvm')).toBe(true);
     expect(isEthereumNetwork('pangolin-dvm')).toBe(true);
+    expect(isEthereumNetwork('heco')).toBe(true);
+    expect(isEthereumNetwork('polygon')).toBe(true);
   });
 
   it('can recognize dvm network', () => {
@@ -110,17 +124,10 @@ describe('network utils', () => {
     expect(isDVMNetwork('pangolin-dvm')).toBe(true);
   });
 
-  it('can get network config by chain name', () => {
-    expect(getChainConfig('crab')).toEqual(crabConfig);
-    expect(getChainConfig('crab-dvm')).toEqual(crabDVMConfig);
-    // expect(getChainConfig('crab-parachain')).toEqual(crabParachainConfig);
-    expect(getChainConfig('ethereum')).toEqual(ethereumConfig);
-    expect(getChainConfig('darwinia')).toEqual(darwiniaConfig);
-  });
-
   it('can convert display name', () => {
     expect(getDisplayName(crabConfig)).toEqual('Crab');
     expect(getDisplayName(crabDVMConfig)).toEqual('Crab Smart Chain');
     expect(getDisplayName(crabParachainConfig)).toEqual('Crab Parachain');
+    expect(getDisplayName(pangolinParachainConfig)).toEqual('Pangolin Parachain');
   });
 });

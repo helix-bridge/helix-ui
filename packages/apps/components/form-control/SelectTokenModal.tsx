@@ -4,8 +4,9 @@ import { chain as lodashChain } from 'lodash';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
+import { chainColors } from 'shared/config/network';
 import { useLocalSearch } from 'shared/hooks';
-import { ChainConfig, TokenInfoWithMeta, Network } from 'shared/model';
+import { ChainConfig, TokenInfoWithMeta } from 'shared/model';
 import { chainConfigs, getDisplayName, isDVMNetwork } from 'shared/utils/network';
 import { tokenSearchFactory } from '../../utils';
 import { BaseModal } from '../widget/BaseModal';
@@ -16,23 +17,6 @@ interface SelectTokenModalProps {
   onSelect: (value: TokenInfoWithMeta) => void;
   fromToken?: TokenInfoWithMeta;
 }
-
-const colors: { name: Network; color: string }[] = [
-  { name: 'crab', color: '#cd201f' },
-  { name: 'crab-dvm', color: '#B32BB6' },
-  { name: 'darwinia', color: '#FF007A' },
-  { name: 'ethereum', color: '#1C87ED' },
-  { name: 'ropsten', color: 'blue' },
-  { name: 'pangolin', color: 'purple' },
-  { name: 'pangolin-dvm', color: 'lime' },
-  { name: 'pangoro', color: 'cyan' },
-];
-
-const chainColor = (network: Network): string => {
-  const target = colors.find((item) => item.name === network);
-
-  return target?.color ?? 'processing';
-};
 
 const removeLeaderCharacters = (name: string): string => {
   // ring -> xRING kton -> xKTON CKTON -> WCKTON
@@ -150,7 +134,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
 
                 <Typography.Text>{item.name}</Typography.Text>
 
-                <Tag color={chainColor(item.meta.name)}>{getDisplayName(item.meta)}</Tag>
+                <Tag color={chainColors[item.meta.name] ?? 'processing'}>{getDisplayName(item.meta)}</Tag>
 
                 {item.meta.isTest && (
                   <Tag color="green" className="uppercase">

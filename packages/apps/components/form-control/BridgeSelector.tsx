@@ -17,7 +17,13 @@ type BridgeSelectorProps = CustomFormControlProps<Bridge> & {
 export function BridgeSelector({ direction, value, onChange }: BridgeSelectorProps) {
   const { t } = useTranslation();
   const bridges = useMemo(() => getBridges(direction as CrossChainDirection), [direction]);
-  const needClaim = direction.to?.claim;
+
+  const needClaim = useMemo(() => {
+    const overview = direction.from?.cross.find((item) => item.partner.name === direction.to?.meta.name);
+
+    return !!overview?.partner.claim;
+  }, [direction]);
+
   const { from, to } = DEFAULT_DIRECTION;
   const origin = { from: { name: from.name, type: from.type }, to: { name: to.name, type: to.type } };
   const isDefault = matches(origin);

@@ -1,3 +1,3 @@
-import { CBridge } from './CBridge';
+import { CBridge } from '../cBridge/CBridge';
 
 export const Heco2CrabDVM = CBridge;

@@ -22,7 +22,7 @@ export const pangolinParachainConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'parachain-substrate',
-          partner: { name: 'pangolin', role: 'receiver', symbol: 'PRING' },
+          partner: { name: 'pangolin', role: 'issuing', symbol: 'PRING' },
         },
       ],
       type: 'native',

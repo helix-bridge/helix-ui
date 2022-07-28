@@ -1,7 +1,9 @@
 import { HelixHistoryRecord, Network } from 'shared/model';
 import {
   BridgePredicateFn,
-  isCrabHeco,
+  isCrabDVMHeco,
+  isCrabDVMEthereum,
+  isCrabDVMPolygon,
   isParachainSubstrate,
   isSubstrateDVM,
   isSubstrateSubstrate,
@@ -14,7 +16,9 @@ export function getDetailPaths(fromChain: Network, toChain: Network, record: Hel
     [isSubstrateSubstrate, 's2s', record.id],
     [isSubstrateDVM, 's2dvm', record.id],
     [isParachainSubstrate, 's2parachain', record.id],
-    [isCrabHeco, 'cbridge', record.id],
+    [isCrabDVMHeco, 'cbridge', record.id],
+    [isCrabDVMEthereum, 'cbridge', record.id],
+    [isCrabDVMPolygon, 'cbridge', record.id],
   ];
   const result = filters.find(([predicate]) => predicate(fromChain, toChain));
 

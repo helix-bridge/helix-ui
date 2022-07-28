@@ -22,12 +22,12 @@ export const darwiniaConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'substrate-substrateDVM',
-          partner: { name: 'crab-dvm', role: 'receiver', symbol: 'xRING' },
+          partner: { name: 'crab-dvm', role: 'issuing', symbol: 'xRING' },
         },
         {
           category: 'helix',
           bridge: 'ethereum-darwinia',
-          partner: { name: 'ethereum', role: 'issuer', symbol: 'RING' },
+          partner: { name: 'ethereum', role: 'backing', symbol: 'RING', claim: true },
         },
       ],
       type: 'native',
@@ -43,12 +43,12 @@ export const darwiniaConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'substrate-substrateDVM',
-          partner: { name: 'crab-dvm', role: 'receiver', symbol: 'xKTON' },
+          partner: { name: 'crab-dvm', role: 'issuing', symbol: 'xKTON' },
         },
         {
           category: 'helix',
           bridge: 'ethereum-darwinia',
-          partner: { name: 'ethereum', role: 'issuer', symbol: 'KTON' },
+          partner: { name: 'ethereum', role: 'backing', symbol: 'KTON', claim: true },
         },
       ],
       type: 'native',

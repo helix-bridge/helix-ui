@@ -22,12 +22,12 @@ export const crabConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'substrate-DVM',
-          partner: { name: 'crab-dvm', role: 'receiver', symbol: 'CRAB' },
+          partner: { name: 'crab-dvm', role: 'issuing', symbol: 'CRAB' },
         },
         {
           category: 'helix',
           bridge: 'parachain-substrate',
-          partner: { name: 'crab-parachain', role: 'issuer', symbol: 'CRAB' },
+          partner: { name: 'crab-parachain', role: 'backing', symbol: 'CRAB' },
         },
       ],
       type: 'native',
@@ -43,7 +43,7 @@ export const crabConfig: PolkadotChainConfig = {
         // {
         //   category: 'helix',
         //   bridge: 'substrate-DVM',
-        //   partner: { name: 'crab', mode: 'dvm', role: 'receiver', symbol: 'WCKTON' },
+        //   partner: { name: 'crab', mode: 'dvm', role: 'issuing', symbol: 'WCKTON', claim: true },
         // },
       ],
       type: 'native',
