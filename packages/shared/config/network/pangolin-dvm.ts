@@ -32,7 +32,7 @@ export const pangolinDVMConfig: DVMChainConfig = {
         {
           category: 'helix',
           bridge: 'substrate-DVM',
-          partner: { name: 'pangolin', role: 'issuer', symbol: 'PRING' },
+          partner: { name: 'pangolin', role: 'backing', symbol: 'PRING' },
         },
       ],
       type: 'native',
@@ -48,7 +48,7 @@ export const pangolinDVMConfig: DVMChainConfig = {
         {
           category: 'helix',
           bridge: 'substrate-DVM',
-          partner: { name: 'pangolin', role: 'issuer', symbol: 'PKTON' },
+          partner: { name: 'pangolin', role: 'backing', symbol: 'PKTON' },
         },
       ],
       type: 'native',
@@ -65,7 +65,7 @@ export const pangolinDVMConfig: DVMChainConfig = {
         {
           category: 'helix',
           bridge: 'substrate-substrateDVM',
-          partner: { name: 'pangoro', role: 'issuer', symbol: 'oRING' },
+          partner: { name: 'pangoro', role: 'backing', symbol: 'oRING' },
         },
       ],
       type: 'mapping',

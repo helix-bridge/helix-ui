@@ -27,7 +27,7 @@ export const ropstenConfig: EthereumChainConfig = {
         {
           category: 'helix',
           bridge: 'ethereum-darwinia',
-          partner: { name: 'pangolin', role: 'receiver', symbol: 'PRING' },
+          partner: { name: 'pangolin', role: 'issuing', symbol: 'PRING' },
         },
       ],
       type: 'mapping',
@@ -44,7 +44,7 @@ export const ropstenConfig: EthereumChainConfig = {
         {
           category: 'helix',
           bridge: 'ethereum-darwinia',
-          partner: { name: 'pangolin', role: 'receiver', symbol: 'PKTON' },
+          partner: { name: 'pangolin', role: 'issuing', symbol: 'PKTON' },
         },
       ],
       type: 'mapping',

@@ -19,7 +19,22 @@ export const polygonConfig: EthereumChainConfig = {
     twitter: 'https://twitter.com/0xPolygon',
   },
   tokens: [
-    { name: 'RING', decimals: 18, cross: [], type: 'mapping', host: 'polygon', logo: '', symbol: 'RING', address: '' },
+    {
+      name: 'RING',
+      decimals: 18,
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-polygon',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'xRING' },
+        },
+      ],
+      type: 'mapping',
+      host: 'polygon',
+      logo: '',
+      symbol: 'RING',
+      address: '',
+    },
     { name: 'MATIC', decimals: 18, cross: [], type: 'native', host: 'polygon', logo: '', symbol: 'MATIC', address: '' },
   ],
   wallets: ['metamask'],

@@ -22,17 +22,17 @@ export const pangolinConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'substrate-DVM',
-          partner: { name: 'pangolin-dvm', role: 'receiver', symbol: 'PRING' },
+          partner: { name: 'pangolin-dvm', role: 'issuing', symbol: 'PRING' },
         },
         {
           category: 'helix',
           bridge: 'ethereum-darwinia',
-          partner: { name: 'ropsten', role: 'issuer', symbol: 'PRING' },
+          partner: { name: 'ropsten', role: 'backing', symbol: 'PRING' },
         },
         {
           category: 'helix',
           bridge: 'parachain-substrate',
-          partner: { name: 'pangolin-parachain', role: 'issuer', symbol: 'PRING' },
+          partner: { name: 'pangolin-parachain', role: 'backing', symbol: 'PRING' },
         },
       ],
       type: 'native',
@@ -48,12 +48,12 @@ export const pangolinConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'substrate-DVM',
-          partner: { name: 'pangolin-dvm', role: 'receiver', symbol: 'WPKTON' },
+          partner: { name: 'pangolin-dvm', role: 'issuing', symbol: 'WPKTON' },
         },
         {
           category: 'helix',
           bridge: 'ethereum-darwinia',
-          partner: { name: 'ropsten', role: 'issuer', symbol: 'PKTON' },
+          partner: { name: 'ropsten', role: 'backing', symbol: 'PKTON' },
         },
       ],
       type: 'native',

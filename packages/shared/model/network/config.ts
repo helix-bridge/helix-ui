@@ -18,9 +18,11 @@ export type BridgeName =
   | 'substrate-substrateDVM'
   | 'ethereum-darwinia'
   | 'parachain-substrate'
-  | 'crabDVM-heco';
+  | 'crabDVM-heco'
+  | 'crabDVM-ethereum'
+  | 'crabDVM-polygon';
 
-type PartnerRole = 'issuer' | 'receiver';
+type PartnerRole = 'issuing' | 'backing';
 
 interface Partner {
   name: Network;

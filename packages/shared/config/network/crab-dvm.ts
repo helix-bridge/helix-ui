@@ -32,7 +32,7 @@ export const crabDVMConfig: DVMChainConfig = {
         {
           category: 'helix',
           bridge: 'substrate-DVM',
-          partner: { name: 'crab', role: 'issuer', symbol: 'CRAB' },
+          partner: { name: 'crab', role: 'backing', symbol: 'CRAB' },
         },
       ],
       type: 'native',
@@ -48,7 +48,7 @@ export const crabDVMConfig: DVMChainConfig = {
         // {
         //   category: 'helix',
         //   bridge: 'substrate-DVM',
-        //   partner: { name: 'crab', role: 'issuer', symbol: 'CKTON' },
+        //   partner: { name: 'crab', role: 'backing', symbol: 'CKTON' },
         // },
       ],
       type: 'native',
@@ -65,12 +65,22 @@ export const crabDVMConfig: DVMChainConfig = {
         {
           category: 'helix',
           bridge: 'substrate-substrateDVM',
-          partner: { name: 'darwinia', role: 'issuer', symbol: 'RING' },
+          partner: { name: 'darwinia', role: 'backing', symbol: 'RING' },
         },
         {
           category: 'cBridge',
           bridge: 'crabDVM-heco',
-          partner: { name: 'heco', role: 'receiver', symbol: 'RING' },
+          partner: { name: 'heco', role: 'issuing', symbol: 'RING' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-ethereum',
+          partner: { name: 'ethereum', role: 'issuing', symbol: 'RING' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-polygon',
+          partner: { name: 'polygon', role: 'issuing', symbol: 'RING' },
         },
       ],
       type: 'mapping',
@@ -86,7 +96,7 @@ export const crabDVMConfig: DVMChainConfig = {
         {
           category: 'helix',
           bridge: 'substrate-substrateDVM',
-          partner: { name: 'darwinia', role: 'issuer', symbol: 'KTON' },
+          partner: { name: 'darwinia', role: 'backing', symbol: 'KTON' },
         },
       ],
       type: 'mapping',
