@@ -37,6 +37,32 @@ jobs:
         if: failure()
         run: echo "::set-output name=STATUS::err"
 
+  test-bundle:
+    name: Bundle test
+    runs-on: ubuntu-latest
+    outputs:
+      check-ok: ${{ steps.output-ok.outputs.STATUS }}
+      check-err: ${{ steps.output-err.outputs.STATUS }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: install
+        run: yarn
+      - name: build apps
+        run: yarn build:apps
+      - name: build apps test
+        run: yarn build:apps:test
+      - name: build helix
+        run: yarn build:helix
+      - name: build helix test
+        run: yarn build:helix:test
+
+      - id: output-ok
+        run: echo "::set-output name=STATUS::ok"
+      - id: output-err
+        if: failure()
+        run: echo "::set-output name=STATUS::err"
+
   test-e2e:
     name: E2ETest
     runs-on: ubuntu-latest
@@ -52,14 +78,14 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           start: yarn dev:apps:test
-          wait-on: 'http://localhost:4003'
+          wait-on: "http://localhost:4003"
           wait-on-timeout: 300
           command: yarn test:apps:e2e:ci
           record: true
           parallel: true
           browser: chrome
           cache-key: ${{ runner.os }}-hash-${{ hashFiles('yarn.lock') }}
-          group: 'Actions example'
+          group: "Actions example"
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
 
