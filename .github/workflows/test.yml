@@ -22,6 +22,14 @@ jobs:
         run: yarn test:helix:unit
       - name: test shared
         run: yarn test:shared
+      - name: build apps
+        run: yarn build:apps
+      - name: build apps test
+        run: yarn build:apps:test
+      - name: build helix
+        run: yarn build:helix
+      - name: build helix test
+        run: yarn build:helix:test
 
       - id: output-ok
         run: echo "::set-output name=STATUS::ok"

@@ -54,7 +54,7 @@ export function History() {
       return source.map((item) => {
         const target = claimedList.find((claimed) => claimed.id === item.id);
 
-        return target ? { ...item, targetTxHash: target.hash, result: 1 } : item;
+        return target ? { ...item, targetTxHash: target.hash, result: RecordStatus.success } : item;
       });
     }
 

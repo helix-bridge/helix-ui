@@ -28,12 +28,20 @@ export const fetchDarwinia2EthereumRecords = (
       res
         ? {
             ...res,
+            // eslint-disable-next-line complexity
             list: res.list.map((data) => {
               const record = camelCaseKeys(data);
               const { blockTimestamp, signatures, ringValue, ktonValue, extrinsicIndex, tx, accountId } = record;
               const ring = departure.tokens.find((item) => isRing(item.symbol))!;
               const token = +ringValue > 0 ? ring : departure.tokens.find((item) => isKton(item.symbol))!;
               const arrival = ring.cross.find((item) => item.bridge === 'ethereum-darwinia')!;
+              let result = RecordStatus.pending;
+
+              if (signatures && !tx) {
+                result = RecordStatus.pendingToClaim;
+              } else if (tx) {
+                result = RecordStatus.success;
+              }
 
               return {
                 amount: +ringValue > 0 ? ringValue : ktonValue,
@@ -50,7 +58,7 @@ export const fetchDarwinia2EthereumRecords = (
                 responseTxHash: '',
                 targetTxHash: tx,
                 reason: '',
-                result: signatures && !tx ? RecordStatus.pendingToClaim : RecordStatus.success,
+                result,
                 sender: accountId,
                 startTime: blockTimestamp,
                 toChain: arrival.partner.name,
