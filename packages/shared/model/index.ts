@@ -9,7 +9,6 @@ export * from './form-control';
 export * from './metamask';
 export * from './network';
 export * from './storage';
-export * from './substrate-substrateDVM';
 export * from './token';
 export * from './tx';
 export * from './type-operator';

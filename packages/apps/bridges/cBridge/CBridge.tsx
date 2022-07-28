@@ -31,11 +31,8 @@ import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
 import { useAccount } from '../../providers';
 import { EstimateAmtRequest, EstimateAmtResponse } from '../cBridge/ts-proto/gateway/gateway_pb';
-import { WebClient } from '../cBridge/ts-proto/gateway/GatewayServiceClientPb';
 import { IssuingPayload } from './model';
-import { getMinimalMaxSlippage, transfer, validate } from './utils';
-
-const client = new WebClient(`https://cbridge-prod2.celer.network`, null, null);
+import { getMinimalMaxSlippage, transfer, validate, client } from './utils';
 
 export function CBridge({
   allowance,

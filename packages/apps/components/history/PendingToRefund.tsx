@@ -8,7 +8,7 @@ import { ENDPOINT } from 'shared/config/env';
 import { useIsMounted } from 'shared/hooks';
 import { HelixHistoryRecord } from 'shared/model';
 import { gqlName, pollWhile } from 'shared/utils/helper';
-import { requestRefund, withdraw } from '../../bridges/crabDVM-heco/utils/tx';
+import { requestRefund, withdraw } from '../../bridges/cBridge/utils/tx';
 import { HISTORY_RECORD_BY_ID } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { RecordStatusComponentProps } from '../../model/component';
