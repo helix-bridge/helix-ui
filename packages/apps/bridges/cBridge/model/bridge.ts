@@ -1,5 +1,3 @@
-import { ContractConfig, BridgeConfig } from 'shared/model';
+import { BridgeConfig, ContractConfig } from 'shared/model';
 
-type CrabDVMHecoContractConfig = ContractConfig;
-
-export type CrabDVMHecoBridgeConfig = Required<BridgeConfig<CrabDVMHecoContractConfig>>;
+export type CBridgeBridgeConfig = Required<BridgeConfig<ContractConfig>>;

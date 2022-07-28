@@ -31,6 +31,8 @@ export function useAllowance(direction: CrossChainDirection) {
 
       const result = await getAllowance(account, spender, tokenAddress, direction.from.meta.provider);
 
+      console.log('🚀 ~ file: allowance.tsx ~ line 33 ~ result', result?.toString());
+
       setAllowance(result);
     },
     [account, direction.from.meta.provider]

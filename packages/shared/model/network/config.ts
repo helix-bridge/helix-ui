@@ -26,13 +26,9 @@ type PartnerRole = 'issuing' | 'backing';
 
 interface Partner {
   name: Network;
-  symbol: string; // token symbol
-  /**
-   * partner role beyond to the issuing <-> redeem relationship;
-   * e.g: On substrate to substrateDVM bridge, transform RING to xRING represent the issuing action, the opposite means redeem;
-   * So we mark the substrate chain as issuer and the substrateDVM chain as receiver;
-   */
+  symbol: string;
   role: PartnerRole;
+  claim?: boolean;
 }
 interface CrossOverview {
   category: BridgeCategory;
@@ -44,7 +40,6 @@ export interface TokenWithBridgesInfo extends Token {
   type: TokenType;
   cross: CrossOverview[];
   host: Network;
-  claim?: boolean;
 }
 
 interface Social {

@@ -40,7 +40,6 @@ export const ethereumConfig: EthereumChainConfig = {
       logo: 'token-ring.svg',
       symbol: 'RING',
       address: '0x9469d013805bffb7d3debe5e7839237e535ec483',
-      claim: true,
     },
     {
       name: 'KTON',
@@ -57,7 +56,6 @@ export const ethereumConfig: EthereumChainConfig = {
       logo: 'token-kton.svg',
       symbol: 'KTON',
       address: '0x9f284e1337a815fe77d2ff4ae46544645b20c5ff',
-      claim: true,
     },
   ],
   wallets: ['metamask'],

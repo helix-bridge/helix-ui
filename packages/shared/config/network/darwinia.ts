@@ -27,7 +27,7 @@ export const darwiniaConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'ethereum-darwinia',
-          partner: { name: 'ethereum', role: 'backing', symbol: 'RING' },
+          partner: { name: 'ethereum', role: 'backing', symbol: 'RING', claim: true },
         },
       ],
       type: 'native',
@@ -48,7 +48,7 @@ export const darwiniaConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'ethereum-darwinia',
-          partner: { name: 'ethereum', role: 'backing', symbol: 'KTON' },
+          partner: { name: 'ethereum', role: 'backing', symbol: 'KTON', claim: true },
         },
       ],
       type: 'native',

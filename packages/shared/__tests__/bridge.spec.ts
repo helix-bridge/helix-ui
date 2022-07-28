@@ -1,20 +1,74 @@
 /// <reference types="jest" />
 
+import { chain, isEqual } from 'lodash';
 import { crabConfig, crabDVMConfig, darwiniaConfig, ethereumConfig } from '../config/network';
 import { ChainConfig, Network, TokenWithBridgesInfo } from '../model';
 import {
+  BridgePredicateFn,
   getBridges,
+  isCrabDVM2Ethereum,
+  isCrabDVM2Heco,
+  isCrabDVM2Polygon,
+  isCrabDVMEthereum,
+  isCrabDVMHeco,
+  isCrabDVMPolygon,
   isDarwinia2Ethereum,
   isDVM2Substrate,
+  isEthereum2CrabDVM,
   isEthereum2Darwinia,
   isEthereumDarwinia,
+  isHeco2CrabDVM,
+  isPolygon2CrabDVM,
   isSubstrate2DVM,
   isSubstrate2SubstrateDVM,
   isSubstrateDVM,
   isSubstrateDVM2Substrate,
   isSubstrateSubstrate,
 } from '../utils/bridge';
-import { crossChainGraph } from '../utils/network';
+import { crossChainGraph, getChainConfig } from '../utils/network';
+
+const calcBridgesAmount = (data: [Network, Network[]][]) =>
+  chain(data)
+    .map(([from, tos]) => tos.map((to) => [from, to]))
+    .flatten()
+    .unionWith((pre, cur) => isEqual(pre, cur) || isEqual(pre.reverse(), cur))
+    .value();
+
+const testsCrosses: [[Network, Network][], BridgePredicateFn, BridgePredicateFn, BridgePredicateFn, string][] = [
+  [
+    [
+      ['crab', 'crab-dvm'],
+      ['pangolin', 'pangolin-dvm'],
+    ],
+    isSubstrate2DVM,
+    isDVM2Substrate,
+    isSubstrateDVM,
+    'substrate <-> DVM',
+  ],
+  [
+    [
+      ['pangoro', 'pangolin-dvm'],
+      ['darwinia', 'crab-dvm'],
+    ],
+    isSubstrate2SubstrateDVM,
+    isSubstrateDVM2Substrate,
+    isSubstrateSubstrate,
+    'substrate <-> substrateDVM',
+  ],
+  [
+    [
+      ['ethereum', 'darwinia'],
+      ['ropsten', 'pangolin'],
+    ],
+    isEthereum2Darwinia,
+    isDarwinia2Ethereum,
+    isEthereumDarwinia,
+    'ethereum <-> darwinia',
+  ],
+  [[['crab-dvm', 'heco']], isCrabDVM2Heco, isHeco2CrabDVM, isCrabDVMHeco, 'crabDVM <-> heco'],
+  [[['crab-dvm', 'polygon']], isCrabDVM2Polygon, isPolygon2CrabDVM, isCrabDVMPolygon, 'crabDVM <-> polygon'],
+  [[['crab-dvm', 'ethereum']], isCrabDVM2Ethereum, isEthereum2CrabDVM, isCrabDVMEthereum, 'crabDVM <-> ethereum'],
+];
 
 describe('bridge utils', () => {
   function findBySymbol(config: ChainConfig, symbol: string): TokenWithBridgesInfo {
@@ -25,7 +79,23 @@ describe('bridge utils', () => {
     .map(([departure, arrivals]) => arrivals.map((arrival) => [departure, arrival]))
     .flat();
 
+  const formatFactory = (direction: Network[]) => (item: Network[]) => item.join('->') === direction.join('->');
+
   console.log('🌉 All cross-chain directions to be tested', allDirections);
+
+  it('should support bridge count: ', () => {
+    const tests = crossChainGraph.filter((item) => getChainConfig(item[0]).isTest);
+    const testBridges = calcBridgesAmount(tests);
+    const formals = crossChainGraph.filter((item) => !getChainConfig(item[0]).isTest);
+    const formalBridges = calcBridgesAmount(formals);
+
+    expect(testBridges).toHaveLength(4);
+    expect(formalBridges).toHaveLength(7);
+  });
+
+  it('should support transfer count: ', () => {
+    expect(allDirections).toHaveLength(22);
+  });
 
   it('should get bridges correctly', () => {
     const s2DVM = {
@@ -52,90 +122,18 @@ describe('bridge utils', () => {
     expect(ethereum2Darwinia).toHaveLength(1);
   });
 
-  it('should recognize substrate <-> dvm (Smart app transfers)', () => {
-    const directions: Network[][] = [
-      ['crab', 'crab-dvm'],
-      ['pangolin', 'pangolin-dvm'],
-    ];
+  describe.each(testsCrosses)(`test cross-chain predicate fn`, (directions, isIssuing, isRedeem, isCross, name) => {
     const revertDirs = directions.map((item) => [...item].reverse());
 
-    allDirections.forEach((direction) => {
-      const [from, to] = direction;
-      const is = !!directions.find((item) => item.join('->') === direction.join('->'));
+    it.each(allDirections)(`should recognize cross-chain ${name}`, (from, to) => {
+      const formatter = formatFactory([from, to]);
+      const go = !!directions.find(formatter);
+      const back = !!revertDirs.find(formatter);
+      const directionInsensitive = !![...directions, ...revertDirs].find(formatter);
 
-      expect(isSubstrate2DVM(from, to)).toBe(is);
-    });
-
-    allDirections.forEach((direction) => {
-      const [from, to] = direction;
-      const is = !!revertDirs.find((item) => item.join('->') === direction.join('->'));
-
-      expect(isDVM2Substrate(from, to)).toBe(is);
-    });
-
-    allDirections.forEach((direction) => {
-      const [from, to] = direction;
-      const is = !![...directions, ...revertDirs].find((item) => item.join('->') === direction.join('->'));
-
-      expect(isSubstrateDVM(from, to)).toBe(is);
-    });
-  });
-
-  it('should recognize substrate <-> substrate dvm', () => {
-    const directions: Network[][] = [
-      ['pangoro', 'pangolin-dvm'],
-      ['darwinia', 'crab-dvm'],
-    ];
-    const revertDirs = directions.map((item) => [...item].reverse());
-
-    allDirections.forEach((direction) => {
-      const [from, to] = direction;
-      const is = !!directions.find((item) => item.join('->') === direction.join('->'));
-
-      expect(isSubstrate2SubstrateDVM(from, to)).toBe(is);
-    });
-
-    allDirections.forEach((direction) => {
-      const [from, to] = direction;
-      const is = !!revertDirs.find((item) => item.join('->') === direction.join('->'));
-
-      expect(isSubstrateDVM2Substrate(from, to)).toBe(is);
-    });
-
-    allDirections.forEach((direction) => {
-      const [from, to] = direction;
-      const is = !![...directions, ...revertDirs].find((item) => item.join('->') === direction.join('->'));
-
-      expect(isSubstrateSubstrate(from, to)).toBe(is);
-    });
-  });
-
-  it('should recognize ethereum <-> darwinia', () => {
-    const directions: Network[][] = [
-      ['ethereum', 'darwinia'],
-      ['ropsten', 'pangolin'],
-    ];
-    const revertDirs = directions.map((item) => [...item].reverse());
-
-    allDirections.forEach((direction) => {
-      const [from, to] = direction;
-      const is = !!directions.find((item) => item.join('->') === direction.join('->'));
-
-      expect(isEthereum2Darwinia(from, to)).toBe(is);
-    });
-
-    allDirections.forEach((direction) => {
-      const [from, to] = direction;
-      const is = !!revertDirs.find((item) => item.join('->') === direction.join('->'));
-
-      expect(isDarwinia2Ethereum(from, to)).toBe(is);
-    });
-
-    allDirections.forEach((direction) => {
-      const [from, to] = direction;
-      const is = !![...directions, ...revertDirs].find((item) => item.join('->') === direction.join('->'));
-
-      expect(isEthereumDarwinia(from, to)).toBe(is);
+      expect(isIssuing(from, to)).toBe(go);
+      expect(isRedeem(from, to)).toBe(back);
+      expect(isCross(from, to)).toBe(directionInsensitive);
     });
   });
 });

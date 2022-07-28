@@ -56,7 +56,6 @@ export const crabDVMConfig: DVMChainConfig = {
       logo: 'token-wckton.svg',
       symbol: 'WCKTON',
       address: '0x159933C635570D5042723359fbD1619dFe83D3f3',
-      claim: true,
     },
     {
       name: 'xRING',

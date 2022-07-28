@@ -27,7 +27,7 @@ export const pangolinConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'ethereum-darwinia',
-          partner: { name: 'ropsten', role: 'backing', symbol: 'PRING' },
+          partner: { name: 'ropsten', role: 'backing', symbol: 'PRING', claim: true },
         },
         {
           category: 'helix',
@@ -53,7 +53,7 @@ export const pangolinConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'ethereum-darwinia',
-          partner: { name: 'ropsten', role: 'backing', symbol: 'PKTON' },
+          partner: { name: 'ropsten', role: 'backing', symbol: 'PKTON', claim: true },
         },
       ],
       type: 'native',

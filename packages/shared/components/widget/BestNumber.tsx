@@ -7,6 +7,7 @@ import { useIsMounted } from 'shared/hooks';
 import { ChainConfig } from 'shared/model';
 import { prettyNumber } from 'shared/utils/helper';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
+import React from 'react';
 
 const duration = 6000;
 
