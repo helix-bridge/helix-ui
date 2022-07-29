@@ -1,10 +1,10 @@
 import { HddOutlined, MenuOutlined } from '@ant-design/icons';
 import { Button, Drawer, Layout, Tooltip } from 'antd';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import { PropsWithChildren, useState } from 'react';
 import { Footer } from 'shared/components/Footer';
 import { Nav, Navigator } from 'shared/components/Navigator';
+import { HELIX_DEPLOYMENT } from 'shared/config/env';
 import { THEME } from 'shared/config/theme';
 import { readStorage } from 'shared/utils/helper';
 import { useITranslation } from '../hooks';
@@ -15,16 +15,12 @@ import { BaseModal } from './widget/BaseModal';
 
 const { Header, Content } = Layout;
 
-const navigators: Nav[] = [
-  { label: 'Home', path: '/' },
-  { label: 'History', path: '/history' },
-];
+const navigators: Nav[] = [{ label: 'Docs', path: 'https://docs.helixbridge.app/', extra: true }];
 
 function AppLayout({ children }: PropsWithChildren<unknown>) {
   const { t } = useITranslation();
   const [theme, setTheme] = useState<THEME>(readStorage().theme ?? THEME.DARK);
   const [collapsed, setCollapsed] = useState(true);
-  const router = useRouter();
   const [isPersonalHistoryVisible, setIsPersonalHistoryVisible] = useState<boolean>(false);
 
   return (
@@ -41,13 +37,15 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
                 alt="helix"
                 width={90}
                 height={24}
-                onClick={() => router.push('/')}
+                onClick={() => window.open(HELIX_DEPLOYMENT, '_blank')}
                 className="cursor-pointer"
               />
             </Tooltip>
 
             <Image alt="..." src="/image/beta.svg" width={35} height={18} />
           </div>
+
+          <Navigator navigators={navigators} theme={theme} />
         </div>
 
         <Drawer

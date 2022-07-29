@@ -6,6 +6,7 @@ import { PropsWithChildren, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Footer } from 'shared/components/Footer';
 import { Nav, Navigator } from 'shared/components/Navigator';
+import { APPS_DEPLOYMENT } from 'shared/config/env';
 import { THEME } from 'shared/config/theme';
 import { readStorage } from 'shared/utils/helper';
 import { Path } from '../config';
@@ -16,7 +17,7 @@ const navigators: Nav[] = [
   { label: 'Dashboard', path: Path.root },
   { label: 'Explorer', path: Path.transaction },
   // { label: 'DAO', path: 'dao' },
-  // { label: 'Docs', path: Path.docs },
+  { label: 'Docs', path: 'https://docs.helixbridge.app/', extra: true },
 ];
 
 function AppLayout({ children }: PropsWithChildren<unknown>) {
@@ -42,6 +43,8 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
           />
         </Tooltip>
 
+        <Navigator navigators={navigators} theme={theme} />
+
         <Drawer
           placement="right"
           onClose={() => setCollapsed(true)}
@@ -58,11 +61,9 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
         </div>
 
         <div className="hidden lg:flex lg:justify-end items-center lg:flex-1 ml-2 md:ml-8 lg:ml-12">
-          <Navigator navigators={navigators} theme={theme} />
-
           <Button
             onClick={() => {
-              window.open('https://apps.helixbridge.app/', '_blank');
+              window.open(APPS_DEPLOYMENT, '_blank');
             }}
             type="primary"
             size="large"

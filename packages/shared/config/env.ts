@@ -16,4 +16,7 @@ export const SUBSTRATE_PARACHAIN_BACKING = (process.env.SUBSTRATE_PARACHAIN_BACK
 export const SUBSTRATE_PARACHAIN_BURN = (process.env.SUBSTRATE_PARACHAIN_BURN ||
   process.env.NEXT_PUBLIC_SUBSTRATE_PARACHAIN_BURN) as string;
 
+export const HELIX_DEPLOYMENT = (process.env.HELIX_DEPLOYMENT || process.env.NEXT_PUBLIC_HELIX_DEPLOYMENT) as string;
+export const APPS_DEPLOYMENT = (process.env.APPS_DEPLOYMENT || process.env.NEXT_PUBLIC_APPS_DEPLOYMENT) as string;
+
 console.log(`⛓️ Chains environment: ${CHAIN_TYPE}; 🖥️ Runtime environment: ${ENV}`);
