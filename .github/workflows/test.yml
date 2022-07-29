@@ -40,6 +40,13 @@ jobs:
   test-bundle:
     name: Bundle test
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package:
+          - apps
+          - helix
+          - apps:test
+          - helix:test
     outputs:
       check-ok: ${{ steps.output-ok.outputs.STATUS }}
       check-err: ${{ steps.output-err.outputs.STATUS }}
@@ -48,14 +55,8 @@ jobs:
         uses: actions/checkout@v2
       - name: install
         run: yarn
-      - name: build apps
-        run: yarn build:apps
-      - name: build apps test
-        run: yarn build:apps:test
-      - name: build helix
-        run: yarn build:helix
-      - name: build helix test
-        run: yarn build:helix:test
+      - name: build
+        run: yarn build:${{matrix.package}}
 
       - id: output-ok
         run: echo "::set-output name=STATUS::ok"
@@ -161,6 +162,7 @@ jobs:
             Commit: ${{ steps.test-status.outputs.COMMIT }}
             E2E: ${{ steps.test-status.outputs.E2E_STATUS }}
             Unit: ${{ steps.test-status.outputs.UNIT_STATUS }}
+            Bundle: ${{ steps.test-status.outputs.BUNDLE_STATUS }}
             Artifacts: ${{ steps.test-status.outputs.ARTIFACTS_MD }}
 
       - name: Slack Notification
