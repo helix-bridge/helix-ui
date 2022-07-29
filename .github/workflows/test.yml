@@ -6,7 +6,7 @@ on:
 
 jobs:
   test-unit:
-    name: UnitTest
+    name: Unit test
     runs-on: ubuntu-latest
     outputs:
       check-ok: ${{ steps.output-ok.outputs.STATUS }}
@@ -65,7 +65,7 @@ jobs:
         run: echo "::set-output name=STATUS::err"
 
   test-e2e:
-    name: E2ETest
+    name: E2E test
     runs-on: ubuntu-latest
     outputs:
       check-ok: ${{ steps.output-ok.outputs.STATUS }}
