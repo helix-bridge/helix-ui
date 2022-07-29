@@ -8,6 +8,9 @@ jobs:
   test-lint:
     name: ESlint check
     runs-on: ubuntu-latest
+    outputs:
+      check-ok: ${{ steps.output-ok.outputs.STATUS }}
+      check-err: ${{ steps.output-err.outputs.STATUS }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -202,6 +205,7 @@ jobs:
           SLACK_MESSAGE: |
             E2E: ${{ steps.test-status.outputs.E2E_STATUS }}
             Unit: ${{ steps.test-status.outputs.UNIT_STATUS }}
+            Bundle: ${{ steps.test-status.outputs.BUNDLE_STATUS }}
             Lint: ${{ steps.test-lint.outputs.LINT_STATUS }}
             Artifacts: ${{ steps.test-status.outputs.ARTIFACTS_LINK }}
           SLACK_TITLE: Cypress
