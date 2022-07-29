@@ -2,7 +2,7 @@
   "Add failed": "添加失败",
   "Add success": "添加成功",
   "Add to metamask": "添加到 metamask",
-  "After the transaction is confirmed, the account cannot be changed. Please do not fill in the exchange account.": "交易确认后接收地址无法更改，请勿填写交易所账号",
+  "After the transaction is confirmed, the account cannot be changed. Please do not fill in any exchange account or cold wallet address.": "交易确认后接收地址无法更改，请勿填写交易所账号",
   "Aggregator": "跨链桥",
   "All": "全部",
   "All chains": "全部",

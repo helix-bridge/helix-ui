@@ -2,7 +2,7 @@
   "Add failed": "Add failed",
   "Add success": "Add success",
   "Add to metamask": "Add to metamask",
-  "After the transaction is confirmed, the account cannot be changed. Please do not fill in the exchange account.": "After the transaction is confirmed, the account cannot be changed. Please do not fill in the exchange account.",
+  "After the transaction is confirmed, the account cannot be changed. Please do not fill in any exchange account or cold wallet address.": "After the transaction is confirmed, the account cannot be changed. Please do not fill in any exchange account or cold wallet address.",
   "Aggregator": "Aggregator",
   "All": "All",
   "All chains": "All chains",

@@ -84,12 +84,9 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
         visible={isPersonalHistoryVisible}
         onCancel={() => setIsPersonalHistoryVisible(false)}
         footer={null}
-        width="max-content"
         maskClosable={false}
+        wrapClassName="history-modal"
         destroyOnClose
-        bodyStyle={{
-          minWidth: 'max(30vw, 520px)',
-        }}
       >
         <History></History>
       </BaseModal>

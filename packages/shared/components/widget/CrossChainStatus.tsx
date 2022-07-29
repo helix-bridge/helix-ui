@@ -6,7 +6,10 @@ import {
   IssuesCloseOutlined,
   LoadingOutlined,
 } from '@ant-design/icons';
+import React from 'react';
+import { useMemo } from 'react';
 import { CBridgeRecordStatus, RecordStatus } from '../../config/constant';
+import { useITranslation } from '../../hooks';
 
 const StatusIcons = [
   ClockCircleFilled,
@@ -41,7 +44,13 @@ export function CrossChainState({
   children,
   className = '',
 }: React.PropsWithChildren<{ value: number; className?: string }>) {
+  const { t } = useITranslation();
   const Icon = StatusIcons[value];
+
+  const statusDes = useMemo(
+    () => (value < RecordStatus.success ? 'pending' : RecordStatus[value] ?? CBridgeRecordStatus[value]),
+    [value]
+  );
 
   return (
     <div
@@ -49,7 +58,7 @@ export function CrossChainState({
       className={`flex items-center gap-1 px-2 rounded-xs max-w-max min-w-min h-6 text-gray-200 ${className}`}
     >
       <Icon />
-      <span className="h-full">{RecordStatus[value] ?? CBridgeRecordStatus[value]}</span>
+      <span className="h-full">{t(statusDes)}</span>
       {children}
     </div>
   );
