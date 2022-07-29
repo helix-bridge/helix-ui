@@ -86,7 +86,7 @@ export function Navigator({ navigators, onClick, theme = THEME.DARK }: Navigator
 
   return (
     <>
-      <div className="hidden lg:flex items-center gap-8">
+      <div className="hidden lg:flex items-center gap-8 ml-8">
         {navItems.map((nav, index) =>
           Array.isArray(nav) ? (
             <Dropdown
