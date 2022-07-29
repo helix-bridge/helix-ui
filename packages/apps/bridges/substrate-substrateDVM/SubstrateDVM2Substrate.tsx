@@ -140,7 +140,7 @@ export function SubstrateDVM2Substrate({
         bridge={bridge}
         direction={direction}
         extraTip={t(
-          'After the transaction is confirmed, the account cannot be changed. Please do not fill in the exchange account.'
+          'After the transaction is confirmed, the account cannot be changed. Please do not fill in any exchange account or cold wallet address.'
         )}
       />
 

@@ -8,6 +8,7 @@ import { HELIX_DEPLOYMENT } from 'shared/config/env';
 import { THEME } from 'shared/config/theme';
 import { readStorage } from 'shared/utils/helper';
 import { useITranslation } from '../hooks';
+import { useTx } from '../providers';
 import { History } from './history/History';
 import { Tools } from './Tools';
 import { ActiveAccount } from './widget/account/ActiveAccount';
@@ -21,7 +22,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
   const { t } = useITranslation();
   const [theme, setTheme] = useState<THEME>(readStorage().theme ?? THEME.DARK);
   const [collapsed, setCollapsed] = useState(true);
-  const [isPersonalHistoryVisible, setIsPersonalHistoryVisible] = useState<boolean>(false);
+  const { isPersonalHistoryVisible, setIsPersonalHistoryVisible } = useTx();
 
   return (
     <Layout className="min-h-screen overflow-scroll">
@@ -83,12 +84,9 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
         visible={isPersonalHistoryVisible}
         onCancel={() => setIsPersonalHistoryVisible(false)}
         footer={null}
-        width="max-content"
         maskClosable={false}
+        wrapClassName="history-modal"
         destroyOnClose
-        bodyStyle={{
-          minWidth: 'max(30vw, 520px)',
-        }}
       >
         <History></History>
       </BaseModal>

@@ -140,7 +140,7 @@ exports[`<TxStatus /> render TxStatus: 1 1`] = `
     <span
       className="h-full"
     >
-      pendingToRefund
+      pending
     </span>
   </div>
 </div>
@@ -213,7 +213,7 @@ exports[`<TxStatus /> render TxStatus: 2 1`] = `
     <span
       className="h-full"
     >
-      pendingToClaim
+      pending
     </span>
   </div>
 </div>

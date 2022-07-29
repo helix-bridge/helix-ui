@@ -61,10 +61,14 @@ export function SubscanLink({
     const mapObj = isSubscan ? { scan: 'subscan', txPath: 'extrinsic' } : { scan: 'etherscan', txPath: 'tx' };
     const omitNetwork: Network[] = ['ethereum'];
 
+    const explorers: Partial<{ [key in Network]: string }> = {
+      heco: `https://hecoinfo.com/tx/${txHash}`,
+      polygon: `https://polygonscan.com/tx/${txHash}`,
+    };
+
     const href =
-      network === 'heco'
-        ? `https://hecoinfo.com/tx/${txHash}`
-        : `https://${omitNetwork.includes(network) ? '' : network + '.'}${mapObj.scan}.io/${mapObj.txPath}/${txHash}`;
+      explorers[network] ??
+      `https://${omitNetwork.includes(network) ? '' : network + '.'}${mapObj.scan}.io/${mapObj.txPath}/${txHash}`;
 
     return (
       <Link href={href} target="_blank" {...other}>

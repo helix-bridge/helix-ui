@@ -34,6 +34,8 @@ enum HistoryType {
   normal,
 }
 
+const paginatorDefault: Paginator = { row: 4, page: 0 };
+
 // eslint-disable-next-line complexity
 export function History() {
   const { t } = useITranslation();
@@ -44,7 +46,7 @@ export function History() {
   const [total, setTotal] = useState(0);
   const [source, setSource] = useState<HelixHistoryRecord[]>([]);
   const [loading, setLoading] = useState(false);
-  const [paginator, setPaginator] = useState<Paginator>({ row: 4, page: 0 });
+  const [paginator, setPaginator] = useState<Paginator>(paginatorDefault);
   const { claimedList, refundedList } = useClaim();
   const [claimMeta, setClaimMeta] = useState<Omit<Darwinia2EthereumHistoryRes, 'list' | 'count'> | null>(null);
   const [goOnAmount, setGoOnAmount] = useState(0);
@@ -219,7 +221,7 @@ export function History() {
 
           setActiveTab(res);
 
-          setPaginator({ row: 10, page: 0 });
+          setPaginator(paginatorDefault);
         }}
         tabBarExtraContent={{
           right: (

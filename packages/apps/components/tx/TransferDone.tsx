@@ -2,6 +2,7 @@ import { Typography } from 'antd';
 import { i18n, Trans } from 'next-i18next';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useMemo } from 'react';
 import { initReactI18next } from 'react-i18next';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { TxDoneComponentProps } from 'shared/model';
@@ -10,6 +11,19 @@ import { useITranslation } from '../../hooks';
 
 export function TransferDone({ tx, value }: TxDoneComponentProps) {
   const { t } = useITranslation();
+  const scan = useMemo(() => {
+    let name = 'Etherscan';
+
+    if (isPolkadotNetwork(value.direction.from.meta) || isDVMNetwork(value.direction.from.meta)) {
+      name = 'Subscan';
+    } else if (value.direction.from.meta.name === 'polygon') {
+      name = 'Polygonscan';
+    } else if (value.direction.from.meta.name === 'heco') {
+      name = 'subview';
+    }
+
+    return name;
+  }, [value.direction.from.meta]);
 
   return (
     <>
@@ -24,12 +38,7 @@ export function TransferDone({ tx, value }: TxDoneComponentProps) {
         </Typography.Paragraph>
 
         <SubscanLink txHash={tx.hash} network={value.direction.from.meta}>
-          {t('View in {{scan}} explorer', {
-            scan:
-              isPolkadotNetwork(value.direction.from.meta) || isDVMNetwork(value.direction.from.meta)
-                ? 'Subscan'
-                : 'Etherscan',
-          })}
+          {t('View in {{scan}} explorer', { scan })}
         </SubscanLink>
       </div>
     </>

@@ -11,6 +11,8 @@ export interface TxCtx {
   setCanceler: React.Dispatch<React.SetStateAction<(() => void) | null>>;
   tx: Tx | null;
   observer: Observer<Tx>;
+  isPersonalHistoryVisible: boolean;
+  setIsPersonalHistoryVisible: (is: boolean) => void;
 }
 
 export const TxContext = createContext<TxCtx | null>(null);
@@ -21,6 +23,7 @@ export const TxProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   const { t } = useITranslation();
   const [tx, setTx] = useState<Tx | null>(null);
   const [canceler, setCanceler] = useState<(() => void) | null>(null);
+  const [isPersonalHistoryVisible, setIsPersonalHistoryVisible] = useState<boolean>(false);
 
   const observer = useMemo<Observer<Tx>>(() => {
     return {
@@ -53,7 +56,9 @@ export const TxProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   }, [tx]);
 
   return (
-    <TxContext.Provider value={{ setTx, tx, observer, setCanceler }}>
+    <TxContext.Provider
+      value={{ setTx, tx, observer, setCanceler, setIsPersonalHistoryVisible, isPersonalHistoryVisible }}
+    >
       {children}
       <TxStatus
         tx={tx}
