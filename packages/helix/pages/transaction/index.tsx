@@ -46,7 +46,7 @@ function RecordAccount({ chain, account, partner }: { chain: Network; account: s
           </div>
         }
       >
-        <span className="truncate w-24 sm:w-36 md:w-48 lg:w-96">{displayAccount}</span>
+        <span className="truncate">{displayAccount}</span>
       </Tooltip>
     </div>
   );
@@ -84,7 +84,6 @@ function Page({
     {
       title: t('Time'),
       dataIndex: 'startTime',
-      width: '5%',
       render: (value: number) => (
         <Tooltip
           title={
@@ -94,7 +93,7 @@ function Page({
             </div>
           }
         >
-          <span className="whitespace-nowrap">
+          <span>
             {formatDistance(fromUnixTime(value), new Date(new Date().toUTCString()), {
               includeSeconds: true,
               addSuffix: true,
@@ -107,6 +106,7 @@ function Page({
       title: t('From'),
       dataIndex: 'fromChain',
       width: '20%',
+      ellipsis: true,
       render(chain: Network, record) {
         return <RecordAccount chain={chain} account={record.sender} partner={t('Sender')} />;
       },
@@ -115,6 +115,7 @@ function Page({
       title: '',
       key: 'direction',
       align: 'center',
+      width: '50px',
       render() {
         return <ArrowRightOutlined />;
       },
@@ -123,6 +124,7 @@ function Page({
       title: t('To'),
       dataIndex: 'toChain',
       width: '20%',
+      ellipsis: true,
       render(chain: Network, record) {
         return <RecordAccount chain={chain} account={record.recipient} partner={t('Recipient')} />;
       },
