@@ -57,6 +57,11 @@ describe('<TargetTx />', () => {
     { ...record, result: 2 },
     { ...record, result: 3 },
     { ...record, result: 4 },
+    { ...record, result: 3, bridge: 'cBridge' },
+    { ...record, result: 3, bridge: 'cBridge', targetTxHash: record.targetTxHash },
+    { ...record, result: 4, bridge: 'cBridge' },
+    { ...record, result: 4, bridge: 'cBridge', targetTxHash: record.targetTxHash },
+    { ...record, result: 4, bridge: 'unknown' },
     { ...record, targetTxHash: record.responseTxHash },
   ])('render target tx with TxStatus: $result', ({ result, ...rest }) => {
     const component = create(<TargetTx record={{ result, ...rest } as HelixHistoryRecord} />);

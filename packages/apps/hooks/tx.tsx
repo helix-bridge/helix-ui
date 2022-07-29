@@ -1,14 +1,14 @@
 import { message, ModalProps } from 'antd';
-import { useRouter } from 'next/router';
 import { FunctionComponent, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CrossChainPayload, Tx, TxDoneComponentProps } from 'shared/model';
 import { isDarwinia2Ethereum, isEthereum2Darwinia } from 'shared/utils/bridge';
 import { applyModal } from 'shared/utils/tx';
+import { useTx } from '../providers';
 
 export function useAfterTx<T extends CrossChainPayload>() {
   const { t } = useTranslation();
-  const router = useRouter();
+  const { setIsPersonalHistoryVisible } = useTx();
 
   const afterCrossChain = useCallback(
     (
@@ -40,7 +40,7 @@ export function useAfterTx<T extends CrossChainPayload>() {
                 isDarwinia2Ethereum(from.meta.name, to.meta.name) ||
                 isEthereum2Darwinia(from.meta.name, to.meta.name)
               ) {
-                router.push('/history');
+                setIsPersonalHistoryVisible(true);
               } else {
                 window.open('https://helixbridge.app/zh/transaction', '_blank');
               }
@@ -54,7 +54,7 @@ export function useAfterTx<T extends CrossChainPayload>() {
           ...rest,
         });
       },
-    [router, t]
+    [setIsPersonalHistoryVisible, t]
   );
 
   const afterApprove = useCallback(

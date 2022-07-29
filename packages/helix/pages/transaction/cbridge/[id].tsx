@@ -24,7 +24,7 @@ const Page: NextPage<{
     const departure = getChainConfig(router.query.from as Network);
     const arrival = getChainConfig(router.query.to as Network);
     const bridge = getBridge<CrabDVMHecoBridgeConfig>([departure, arrival]);
-    const isIssuing = bridge.isIssuing(departure, arrival);
+    const isRedeem = bridge.isRedeem(departure, arrival);
     const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.token.toLowerCase())!;
 
     const toToken = arrival.tokens.find((item) =>
@@ -33,25 +33,29 @@ const Page: NextPage<{
       )
     )!;
 
-    const pool = isIssuing ? bridge.config.contracts.issuing : bridge.config.contracts.redeem;
+    let { issuing: originPool, redeem: targetPool } = bridge.config.contracts;
+
+    if (isRedeem) {
+      [originPool, targetPool] = [targetPool, originPool];
+    }
 
     const start: TransferStep = {
       chain: departure,
       sender: revertAccount(record.sender, departure),
-      recipient: pool,
+      recipient: originPool,
       token: fromToken,
     };
 
     const success: TransferStep = {
       chain: arrival,
-      sender: pool,
+      sender: targetPool,
       recipient: revertAccount(record.recipient, arrival),
       token: toToken,
     };
 
     const refunded: TransferStep = {
       chain: departure,
-      sender: pool,
+      sender: originPool,
       recipient: revertAccount(record.sender, departure),
       token: fromToken,
     };

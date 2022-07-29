@@ -2,13 +2,16 @@ import Bignumber from 'bignumber.js';
 import { HelixHistoryRecord } from '../../model';
 import {
   isDVM2Substrate,
+  isEthereum2CrabDVM,
   isEthereum2Darwinia,
+  isHeco2CrabDVM,
   isParachain2Substrate,
+  isPolygon2CrabDVM,
   isSubstrateDVM,
   isSubstrateDVM2Substrate,
 } from '../bridge';
 import { fromWei, prettyNumber } from '../helper';
-import { getChainConfig, isDVMNetwork } from '../network';
+import { getChainConfig, isDVMNetwork, isEthereumNetwork } from '../network';
 
 export function getTokenNameFromHelixRecord(record: HelixHistoryRecord) {
   const chainConfig = getChainConfig(record.fromChain);
@@ -20,16 +23,19 @@ export function getTokenNameFromHelixRecord(record: HelixHistoryRecord) {
 
 export function getReceivedAmountFromHelixRecord(record: HelixHistoryRecord) {
   const { fromChain, toChain } = record;
+  const predicates = [
+    isDVM2Substrate,
+    isParachain2Substrate,
+    isEthereum2Darwinia,
+    isHeco2CrabDVM,
+    isPolygon2CrabDVM,
+    isEthereum2CrabDVM,
+  ];
 
   return fromWei(
     {
       value: record.amount,
-      decimals:
-        isDVM2Substrate(fromChain, toChain) ||
-        isParachain2Substrate(fromChain, toChain) ||
-        isEthereum2Darwinia(fromChain, toChain)
-          ? 18
-          : 9,
+      decimals: predicates.some((fn) => fn(fromChain, toChain)) ? 18 : 9,
     },
     (val) => prettyNumber(val, { ignoreZeroDecimal: true })
   );
@@ -37,7 +43,7 @@ export function getReceivedAmountFromHelixRecord(record: HelixHistoryRecord) {
 
 export function getFeeAmountFromHelixRecord(record: HelixHistoryRecord) {
   const { fromChain } = record;
-  const decimals = isDVMNetwork(fromChain) || fromChain.includes('parachain') ? 18 : 9;
+  const decimals = isEthereumNetwork(fromChain) || fromChain.includes('parachain') ? 18 : 9;
 
   return fromWei({ value: record.fee, decimals });
 }

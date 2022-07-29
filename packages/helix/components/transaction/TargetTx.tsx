@@ -7,51 +7,53 @@ import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord, Network } from 'shared/model';
 import { TransferDescription } from './TransferDescription';
 
+interface HashProps {
+  hash: string;
+  network: Network;
+}
+
+const Hash = ({ hash, network }: HashProps) => {
+  return (
+    <SubscanLink network={network} txHash={hash} className="hover:opacity-80 transition-opacity duration-200">
+      <Typography.Text copyable className="truncate">
+        {hash}
+      </Typography.Text>
+    </SubscanLink>
+  );
+};
+
 export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
   const { t } = useTranslation();
   const router = useRouter();
   const departure = router.query.from as Network;
   const arrival = router.query.to as Network;
 
+  // eslint-disable-next-line complexity
   const content = useMemo(() => {
-    if (record?.result === RecordStatus.pending) {
+    if (!record) {
+      return null;
+    }
+
+    if ([RecordStatus.pending, RecordStatus.pendingToClaim, RecordStatus.pendingToRefund].includes(record.result)) {
       return <Progress percent={50} className="max-w-xs" />;
     }
 
-    if (record?.result === RecordStatus.success) {
-      return (
-        <SubscanLink
-          network={arrival}
-          txHash={record.targetTxHash}
-          className="hover:opacity-80 transition-opacity duration-200"
-        >
-          <Typography.Text copyable className="truncate">
-            {record.targetTxHash}
-          </Typography.Text>
-        </SubscanLink>
-      );
-    }
+    if (record.bridge === 'helix') {
+      if (record.result === RecordStatus.success) {
+        return <Hash network={arrival} hash={record.targetTxHash} />;
+      }
 
-    if (record?.result === RecordStatus.refunded) {
+      if (record.result === RecordStatus.refunded) {
+        return record.responseTxHash && <Hash network={departure} hash={record.responseTxHash} />;
+      }
+    } else if (record.bridge === 'cBridge') {
       return (
-        <SubscanLink
-          network={departure}
-          txHash={record.responseTxHash!}
-          className="hover:opacity-80 transition-opacity duration-200"
-        >
-          <Typography.Text copyable className="truncate">
-            {record.responseTxHash}
-          </Typography.Text>
-        </SubscanLink>
+        <Hash network={record.result === RecordStatus.refunded ? departure : arrival} hash={record.targetTxHash} />
       );
     }
 
     return null;
   }, [arrival, departure, record]);
-
-  if (record && record.bridge === 'cBridge' && record.result === RecordStatus.refunded) {
-    return null;
-  }
 
   return (
     <TransferDescription

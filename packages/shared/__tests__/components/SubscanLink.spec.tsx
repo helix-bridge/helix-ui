@@ -3,7 +3,7 @@ import React from 'react';
 import { SubscanLink } from '../../components/widget/SubscanLink';
 import { SYSTEM_ChAIN_CONFIGURATIONS } from '../../config/network';
 import { knownDVMNetworks, knownPolkadotNetworks } from '../../config/network/category';
-import { DVMNetwork, PolkadotTypeNetwork } from '../../model';
+import { DVMNetwork, Network, PolkadotTypeNetwork } from '../../model';
 
 describe('<SubscanLink />', () => {
   const dvmConfigs = SYSTEM_ChAIN_CONFIGURATIONS.filter((item) => knownDVMNetworks.includes(item.name as DVMNetwork));
@@ -141,10 +141,13 @@ describe('<SubscanLink />', () => {
     );
     const href = `https://${config.name === 'ethereum' ? '' : config.name + '.'}etherscan.io/tx/0x123456`;
 
-    expect(getByRole('link')).toHaveAttribute(
-      'href',
-      config.name === 'heco' ? `https://hecoinfo.com/tx/0x123456` : href
-    );
+    const explorers: Partial<{ [key in Network]: string }> = {
+      heco: `https://hecoinfo.com/tx/0x123456`,
+      polygon: `https://polygonscan.com/tx/0x123456`,
+    };
+    const expected = explorers[config.name] ?? href;
+
+    expect(getByRole('link')).toHaveAttribute('href', expected);
   });
 
   it.each(polkadotConfigs)('[Subscan - $name] should contains right block address', (config) => {

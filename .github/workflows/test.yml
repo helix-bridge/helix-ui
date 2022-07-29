@@ -193,7 +193,7 @@ jobs:
             E2E: ${{ steps.test-status.outputs.E2E_STATUS }}
             Unit: ${{ steps.test-status.outputs.UNIT_STATUS }}
             Bundle: ${{ steps.test-status.outputs.BUNDLE_STATUS }}
-            Lint: ${{ steps.test-lint.outputs.LINT_STATUS }}
+            Lint: ${{ steps.test-status.outputs.LINT_STATUS }}
             Artifacts: ${{ steps.test-status.outputs.ARTIFACTS_MD }}
 
       - name: Slack Notification
@@ -206,7 +206,7 @@ jobs:
             E2E: ${{ steps.test-status.outputs.E2E_STATUS }}
             Unit: ${{ steps.test-status.outputs.UNIT_STATUS }}
             Bundle: ${{ steps.test-status.outputs.BUNDLE_STATUS }}
-            Lint: ${{ steps.test-lint.outputs.LINT_STATUS }}
+            Lint: ${{ steps.test-status.outputs.LINT_STATUS }}
             Artifacts: ${{ steps.test-status.outputs.ARTIFACTS_LINK }}
           SLACK_TITLE: Cypress
           SLACK_USERNAME: Vercel

@@ -16,17 +16,13 @@ import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { SYSTEM_ChAIN_CONFIGURATIONS } from 'shared/config/network';
 import { DailyStatistic, HelixHistoryRecord, Network } from 'shared/model';
+import { convertToDvm, gqlName, isSS58Address, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
+import { chainConfigs, getChainConfig, getDisplayName } from 'shared/utils/network';
 import {
-  convertToDvm,
-  fromWei,
-  gqlName,
-  isSS58Address,
-  isValidAddress,
-  prettyNumber,
-  revertAccount,
-} from 'shared/utils/helper';
-import { chainConfigs, getChainConfig, getDisplayName, isDVMNetwork } from 'shared/utils/network';
-import { getSentAmountFromHelixRecord, getTokenNameFromHelixRecord } from 'shared/utils/record';
+  getFeeAmountFromHelixRecord,
+  getSentAmountFromHelixRecord,
+  getTokenNameFromHelixRecord,
+} from 'shared/utils/record';
 import web3 from 'web3';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
 import { ACCOUNTS, HISTORY_RECORDS, Path, STATISTICS_QUERY, TIMEPAST } from '../../config';
@@ -132,13 +128,6 @@ function Page({
       },
     },
     {
-      title: t('Asset'),
-      dataIndex: 'token',
-      render(_: string, record) {
-        return <span>{getTokenNameFromHelixRecord(record)}</span>;
-      },
-    },
-    {
       title: t('Amount'),
       dataIndex: 'amount',
       render(_: string, record) {
@@ -149,6 +138,7 @@ function Page({
             <span className="justify-self-center max-w-full truncate">
               {prettyNumber(amount, { decimal: 2, ignoreZeroDecimal: true })}
             </span>
+            <span className="ml-2">{getTokenNameFromHelixRecord(record)}</span>
           </Tooltip>
         );
       },
@@ -157,15 +147,14 @@ function Page({
       title: t('Fee'),
       dataIndex: 'fee',
       render(value: string, record) {
-        const { fromChain } = record;
-        const decimals = isDVMNetwork(fromChain) || fromChain.includes('parachain') ? 18 : 9;
+        const amount = getFeeAmountFromHelixRecord(record);
 
         return (
-          <Tooltip title={fromWei({ value, decimals })}>
-            <span className="justify-self-center">
-              {fromWei({ value, decimals }, (val) => prettyNumber(val, { decimal: 2, ignoreZeroDecimal: true }))}{' '}
-              {record.feeToken !== 'null' && <span>{record.feeToken}</span>}
+          <Tooltip title={amount}>
+            <span className="justify-self-center max-w-full truncate">
+              {prettyNumber(amount, { decimal: 2, ignoreZeroDecimal: true })}
             </span>
+            {record.feeToken !== 'null' && <span className="ml-2">{record.feeToken}</span>}
           </Tooltip>
         );
       },
@@ -173,7 +162,9 @@ function Page({
     {
       title: t('Bridge'),
       dataIndex: 'bridge',
-      render: (value) => <span className="justify-self-center capitalize">{value}</span>,
+      render: (value) => (
+        <span className={`justify-self-center ${/^[a-z]+[A-Z]{1}/.test(value) ? '' : 'capitalize'}`}>{value}</span>
+      ),
     },
     {
       title: t('Status'),
