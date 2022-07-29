@@ -1,11 +1,11 @@
-import { useTranslation } from 'next-i18next';
 import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
 import { RecordStatus } from 'shared/config/constant';
+import { useITranslation } from 'shared/hooks';
 import { HelixHistoryRecord } from 'shared/model';
 import { TransferDescription } from './TransferDescription';
 
 export function TxStatus({ record }: { record: HelixHistoryRecord | null }) {
-  const { t } = useTranslation();
+  const { t } = useITranslation();
 
   return (
     <TransferDescription
