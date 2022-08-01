@@ -28,6 +28,11 @@ export const hecoConfig: EthereumChainConfig = {
           bridge: 'crabDVM-heco',
           partner: { name: 'crab-dvm', role: 'backing', symbol: 'xRING' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-heco',
+          partner: { name: 'ethereum', role: 'backing', symbol: 'RING' },
+        },
       ],
       type: 'mapping',
       logo: 'token-ring.svg',

@@ -1,6 +1,6 @@
 import { isEqual } from 'lodash';
 import { FunctionComponent } from 'react';
-import { BridgeCategory, BridgeName, ChainConfig, Network } from '../network';
+import { ChainConfig, Network } from '../network';
 
 /* ----------------------------------------------- bridge state ------------------------------------------------ */
 
@@ -13,6 +13,19 @@ export type Departure = Network;
 export type Arrival = Network;
 
 /* ----------------------------------------------- bridge config ------------------------------------------------ */
+
+export type BridgeCategory = 'helix' | 'cBridge';
+
+export type BridgeName =
+  | 'substrate-DVM'
+  | 'substrate-substrateDVM'
+  | 'ethereum-darwinia'
+  | 'parachain-substrate'
+  | 'crabDVM-heco'
+  | 'crabDVM-ethereum'
+  | 'ethereum-heco'
+  | 'ethereum-polygon'
+  | 'crabDVM-polygon';
 
 export interface LockEventsStorage {
   min: number;

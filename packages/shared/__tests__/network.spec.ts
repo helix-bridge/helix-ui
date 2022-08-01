@@ -43,11 +43,11 @@ describe('network utils', () => {
     expect(fromDarwinia![1]).toEqual(['crab-dvm', 'ethereum']);
   });
 
-  it('contains 2 bridge from ethereum', () => {
+  it('contains 4 bridge from ethereum', () => {
     const fromEthereum = data.find((item) => item[0] === 'ethereum');
 
     expect(fromEthereum).not.toEqual(undefined);
-    expect(fromEthereum![1]).toEqual(['darwinia', 'crab-dvm']);
+    expect(fromEthereum![1]).toEqual(['darwinia', 'crab-dvm', 'heco', 'polygon']);
   });
 
   it('contains 3 bridges from pangolin', () => {
@@ -78,18 +78,18 @@ describe('network utils', () => {
     expect(fromRopsten![1]).toEqual(['pangolin']);
   });
 
-  it('contains 1 bridge from heco', () => {
+  it('contains 2 bridge from heco', () => {
     const fromHeco = data.find((item) => item[0] === 'heco');
 
     expect(fromHeco).not.toEqual(undefined);
-    expect(fromHeco![1]).toEqual(['crab-dvm']);
+    expect(fromHeco![1]).toEqual(['crab-dvm', 'ethereum']);
   });
 
-  it('contains 1 bridge from polygon', () => {
+  it('contains 2 bridge from polygon', () => {
     const fromHeco = data.find((item) => item[0] === 'polygon');
 
     expect(fromHeco).not.toEqual(undefined);
-    expect(fromHeco![1]).toEqual(['crab-dvm']);
+    expect(fromHeco![1]).toEqual(['crab-dvm', 'ethereum']);
   });
 
   it('can get chain config by chain name', () => {

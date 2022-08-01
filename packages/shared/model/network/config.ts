@@ -1,3 +1,4 @@
+import { BridgeCategory, BridgeName } from '../bridge';
 import { AddEthereumChainParameter } from '../metamask';
 import { Token } from '../token';
 import { DVMNetwork, EthereumTypeNetwork, Network, PolkadotTypeNetwork, SupportedWallet } from './network';
@@ -10,17 +11,6 @@ export interface Logo {
 }
 
 export type TokenType = 'native' | 'mapping';
-
-export type BridgeCategory = 'helix' | 'cBridge';
-
-export type BridgeName =
-  | 'substrate-DVM'
-  | 'substrate-substrateDVM'
-  | 'ethereum-darwinia'
-  | 'parachain-substrate'
-  | 'crabDVM-heco'
-  | 'crabDVM-ethereum'
-  | 'crabDVM-polygon';
 
 type PartnerRole = 'issuing' | 'backing';
 
