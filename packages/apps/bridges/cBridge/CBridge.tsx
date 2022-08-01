@@ -182,7 +182,7 @@ export function CBridge({
     const estimateRequest = new EstimateAmtRequest();
     const srcChainId = parseInt(direction.from.meta.ethereumChain.chainId, 16);
     const dstChainId = parseInt(direction.to.meta.ethereumChain.chainId, 16);
-    const symbol = isIssuing ? direction.from.symbol.slice(1) : direction.from.symbol; // as RING
+    const symbol = direction.from.symbol.startsWith('x') ? direction.from.symbol.slice(1) : direction.from.symbol; // as RING
     const amount = toWei({ value: direction.from.amount, decimals: direction.from.decimals });
 
     estimateRequest.setSrcChainId(srcChainId);
