@@ -29,7 +29,7 @@ import {
   isSubstrate2SubstrateDVM,
   isSubstrateDVM,
   isSubstrateDVM2Substrate,
-  isSubstrateSubstrate,
+  isSubstrateSubstrateDVM,
 } from '../utils/bridge';
 import { crossChainGraph, getChainConfig } from '../utils/network';
 
@@ -58,7 +58,7 @@ const testsCrosses: [[Network, Network][], BridgePredicateFn, BridgePredicateFn,
     ],
     isSubstrate2SubstrateDVM,
     isSubstrateDVM2Substrate,
-    isSubstrateSubstrate,
+    isSubstrateSubstrateDVM,
     'substrate <-> substrateDVM',
   ],
   [
@@ -97,7 +97,7 @@ describe('bridge utils', () => {
     const formals = crossChainGraph.filter((item) => !getChainConfig(item[0]).isTest);
     const formalBridges = calcBridgesAmount(formals);
 
-    expect(testBridges).toHaveLength(4);
+    expect(testBridges).toHaveLength(5);
     expect(formalBridges).toHaveLength(9);
   });
 

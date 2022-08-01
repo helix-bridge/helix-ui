@@ -8,6 +8,7 @@ import { pangolinConfig } from './pangolin';
 import { pangolinDVMConfig } from './pangolin-dvm';
 import { pangolinParachainConfig } from './pangolin-parachain';
 import { pangoroConfig } from './pangoro';
+import { pangoroDVMConfig } from './pangoro-dvm';
 import { polygonConfig } from './polygon';
 import { ropstenConfig } from './ropsten';
 
@@ -24,4 +25,5 @@ export const SYSTEM_ChAIN_CONFIGURATIONS = [
   pangoroConfig,
   polygonConfig,
   ropstenConfig,
+  pangoroDVMConfig,
 ];

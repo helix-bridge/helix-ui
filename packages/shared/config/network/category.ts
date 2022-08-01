@@ -10,7 +10,7 @@ export const knownPolkadotNetworks: PolkadotTypeNetwork[] = [
   'crab-parachain',
 ];
 
-export const knownDVMNetworks: DVMNetwork[] = ['crab-dvm', 'pangolin-dvm'];
+export const knownDVMNetworks: DVMNetwork[] = ['crab-dvm', 'pangolin-dvm', 'pangoro-dvm'];
 
 export const knownEthereumNetworks: (DVMNetwork | EthereumTypeNetwork)[] = [
   'ethereum',

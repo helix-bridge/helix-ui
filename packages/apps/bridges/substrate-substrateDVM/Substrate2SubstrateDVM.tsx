@@ -24,7 +24,7 @@ import { useApi } from '../../providers';
 import { useBridgeStatus } from './hooks';
 import { IssuingPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getDailyLimit, getIssuingFee } from './utils';
-import { issuing, validate } from './utils/tx';
+import { issuingV2, validate } from './utils/tx';
 
 export function Substrate2SubstrateDVM({
   form,
@@ -75,7 +75,7 @@ export function Substrate2SubstrateDVM({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        issuing(data, fee!),
+        issuingV2(data, fee!),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
@@ -109,7 +109,7 @@ export function Substrate2SubstrateDVM({
   }, [direction, isMounted]);
 
   useEffect(() => {
-    const sub$$ = from(getIssuingFee(bridge)).subscribe((result) => {
+    const sub$$ = from(getIssuingFee()).subscribe((result) => {
       setFee(result);
 
       if (onFeeChange) {

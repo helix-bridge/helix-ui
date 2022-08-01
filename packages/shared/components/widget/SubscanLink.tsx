@@ -1,4 +1,5 @@
 import { Typography } from 'antd';
+import React from 'react';
 import { CSSProperties, PropsWithChildren } from 'react';
 import { ChainConfig, Network } from '../../model';
 import { isDVMNetwork, isPolkadotNetwork } from '../../utils/network';

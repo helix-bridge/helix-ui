@@ -25,7 +25,8 @@ export type BridgeName =
   | 'crabDVM-ethereum'
   | 'ethereum-heco'
   | 'ethereum-polygon'
-  | 'crabDVM-polygon';
+  | 'crabDVM-polygon'
+  | 'substrateDVM-substrateDVM';
 
 export interface LockEventsStorage {
   min: number;
