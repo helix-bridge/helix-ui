@@ -61,6 +61,14 @@ export const isCrabDVM2Polygon: BridgePredicateFn = (departure, arrival) =>
   departure === 'crab-dvm' && arrival === 'polygon';
 export const isPolygon2CrabDVM: BridgePredicateFn = (departure, arrival) => isCrabDVM2Polygon(arrival, departure);
 
+export const isEthereum2Polygon: BridgePredicateFn = (departure, arrival) =>
+  departure === 'ethereum' && arrival === 'polygon';
+export const isPolygon2Ethereum: BridgePredicateFn = (departure, arrival) => isEthereum2Polygon(arrival, departure);
+
+export const isEthereum2Heco: BridgePredicateFn = (departure, arrival) =>
+  departure === 'ethereum' && arrival === 'heco';
+export const isHeco2Ethereum: BridgePredicateFn = (departure, arrival) => isEthereum2Heco(arrival, departure);
+
 /**
  * Shorthand functions for predication without direction
  */
@@ -79,6 +87,8 @@ export const isParachainSubstrate: BridgePredicateFn = isCrossFactory(isParachai
 export const isCrabDVMHeco: BridgePredicateFn = isCrossFactory(isCrabDVM2Heco, isHeco2CrabDVM);
 export const isCrabDVMEthereum: BridgePredicateFn = isCrossFactory(isCrabDVM2Ethereum, isEthereum2CrabDVM);
 export const isCrabDVMPolygon: BridgePredicateFn = isCrossFactory(isCrabDVM2Polygon, isPolygon2CrabDVM);
+export const isEthereumHeco: BridgePredicateFn = isCrossFactory(isEthereum2Heco, isHeco2Ethereum);
+export const isEthereumPolygon: BridgePredicateFn = isCrossFactory(isEthereum2Polygon, isPolygon2Ethereum);
 
 function getBridgeOverviews(source: NullableFields<CrossChainDirection, 'from' | 'to'>) {
   const { from, to } = source;

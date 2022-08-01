@@ -28,6 +28,11 @@ export const polygonConfig: EthereumChainConfig = {
           bridge: 'crabDVM-polygon',
           partner: { name: 'crab-dvm', role: 'backing', symbol: 'xRING' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-polygon',
+          partner: { name: 'ethereum', role: 'backing', symbol: 'RING' },
+        },
       ],
       type: 'mapping',
       host: 'polygon',

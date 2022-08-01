@@ -34,6 +34,16 @@ export const ethereumConfig: EthereumChainConfig = {
           bridge: 'crabDVM-ethereum',
           partner: { name: 'crab-dvm', role: 'backing', symbol: 'xRING' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-polygon',
+          partner: { name: 'polygon', role: 'issuing', symbol: 'RING' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-heco',
+          partner: { name: 'heco', role: 'issuing', symbol: 'RING' },
+        },
       ],
       type: 'mapping',
       host: 'ethereum',

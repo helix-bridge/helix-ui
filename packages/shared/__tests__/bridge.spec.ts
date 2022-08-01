@@ -16,9 +16,15 @@ import {
   isDVM2Substrate,
   isEthereum2CrabDVM,
   isEthereum2Darwinia,
+  isEthereum2Heco,
+  isEthereum2Polygon,
   isEthereumDarwinia,
+  isEthereumHeco,
+  isEthereumPolygon,
   isHeco2CrabDVM,
+  isHeco2Ethereum,
   isPolygon2CrabDVM,
+  isPolygon2Ethereum,
   isSubstrate2DVM,
   isSubstrate2SubstrateDVM,
   isSubstrateDVM,
@@ -68,6 +74,8 @@ const testsCrosses: [[Network, Network][], BridgePredicateFn, BridgePredicateFn,
   [[['crab-dvm', 'heco']], isCrabDVM2Heco, isHeco2CrabDVM, isCrabDVMHeco, 'crabDVM <-> heco'],
   [[['crab-dvm', 'polygon']], isCrabDVM2Polygon, isPolygon2CrabDVM, isCrabDVMPolygon, 'crabDVM <-> polygon'],
   [[['crab-dvm', 'ethereum']], isCrabDVM2Ethereum, isEthereum2CrabDVM, isCrabDVMEthereum, 'crabDVM <-> ethereum'],
+  [[['ethereum', 'heco']], isEthereum2Heco, isHeco2Ethereum, isEthereumHeco, 'ethereum <-> heco'],
+  [[['ethereum', 'polygon']], isEthereum2Polygon, isPolygon2Ethereum, isEthereumPolygon, 'ethereum <-> polygon'],
 ];
 
 describe('bridge utils', () => {
@@ -90,11 +98,11 @@ describe('bridge utils', () => {
     const formalBridges = calcBridgesAmount(formals);
 
     expect(testBridges).toHaveLength(4);
-    expect(formalBridges).toHaveLength(7);
+    expect(formalBridges).toHaveLength(9);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(22);
+    expect(allDirections).toHaveLength(26);
   });
 
   it('should get bridges correctly', () => {

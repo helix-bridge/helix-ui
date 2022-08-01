@@ -7,6 +7,8 @@ import {
   isDarwinia2Ethereum,
   isDVM2Substrate,
   isEthereum2Darwinia,
+  isEthereumHeco,
+  isEthereumPolygon,
   isParachain2Substrate,
   isSubstrate2DVM,
   isSubstrate2Parachain,
@@ -52,7 +54,14 @@ export async function getBalance(direction: CrossChainDirection, account: string
   }
 
   if (
-    [isSubstrateDVM2Substrate, isCrabDVMHeco, isCrabDVMEthereum, isCrabDVMPolygon].some((fn) => fn(fromChain, toChain))
+    [
+      isSubstrateDVM2Substrate,
+      isCrabDVMHeco,
+      isCrabDVMEthereum,
+      isCrabDVMPolygon,
+      isEthereumHeco,
+      isEthereumPolygon,
+    ].some((fn) => fn(fromChain, toChain))
   ) {
     return getErc20Balance(from.address, account).then((res) => [res]);
   }
