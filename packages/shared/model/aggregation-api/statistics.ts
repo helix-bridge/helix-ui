@@ -1,6 +1,7 @@
 import { Nullable } from '../type-operator';
-import { BridgeCategory, Network } from '../network';
+import { Network } from '../network';
 import { RecordStatus } from '../../config/constant';
+import { BridgeCategory } from '../bridge';
 
 export interface DailyStatistic {
   timestamp: string;
