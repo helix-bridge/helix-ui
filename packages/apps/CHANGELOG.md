@@ -1,3 +1,19 @@
+## [4.0.2](https://github.com/helix-bridge/helix/compare/v4.0.1-helix...v4.0.2) (2022-08-02)
+
+
+### Bug Fixes
+
+* refunded target tx hash on cBridge ([#144](https://github.com/helix-bridge/helix/issues/144)) ([8e5f964](https://github.com/helix-bridge/helix/commit/8e5f9649b5ea002056f96ad7058fccca74a8b750))
+
+
+### Features
+
+* add crab dvm to  ethereum or polygon ([#141](https://github.com/helix-bridge/helix/issues/141)) ([fb45565](https://github.com/helix-bridge/helix/commit/fb455656cd88ebf27e3f4d7dfb2a0b2626063cf2))
+* add docs entrance ([#142](https://github.com/helix-bridge/helix/issues/142)) ([b81c3ca](https://github.com/helix-bridge/helix/commit/b81c3ca5cd1393ea52da8bc90a1135ba0a13caa1))
+* ethereum<>polygon and ethereum<>heco ([#146](https://github.com/helix-bridge/helix/issues/146)) ([95b14a4](https://github.com/helix-bridge/helix/commit/95b14a4f95df992c0b2e10a8c045591a13e5ceab))
+
+
+
 ## [4.0.1](https://github.com/helix-bridge/helix/compare/v4.0.0-helix...v4.0.1) (2022-07-27)
 
 
