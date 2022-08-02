@@ -14,5 +14,6 @@
   "@secondary-color": "@primary-color",
   "@select-item-selected-bg": "@background-color-base",
   "@select-item-selected-option-color": "@primary-color",
-  "@skeleton-color": "@primary-color"
+  "@skeleton-color": "@primary-color",
+  "@layout-header-background": "#151d35"
 }
