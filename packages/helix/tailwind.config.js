@@ -1,6 +1,9 @@
 module.exports = {
   darkMode: 'class', // or 'media' or 'class'
   theme: {
+    container: {
+      center: true,
+    },
     extend: {
       animation: {
         whirl: 'whirl 1s linear',
