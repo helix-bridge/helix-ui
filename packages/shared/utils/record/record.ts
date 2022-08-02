@@ -4,6 +4,8 @@ import {
   isDVM2Substrate,
   isEthereum2CrabDVM,
   isEthereum2Darwinia,
+  isEthereumHeco,
+  isEthereumPolygon,
   isHeco2CrabDVM,
   isParachain2Substrate,
   isPolygon2CrabDVM,
@@ -30,6 +32,8 @@ export function getReceivedAmountFromHelixRecord(record: HelixHistoryRecord) {
     isHeco2CrabDVM,
     isPolygon2CrabDVM,
     isEthereum2CrabDVM,
+    isEthereumHeco,
+    isEthereumPolygon,
   ];
 
   return fromWei(
