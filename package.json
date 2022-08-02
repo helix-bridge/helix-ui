@@ -63,6 +63,7 @@
     "html-webpack-plugin": "4",
     "husky": "^7.0.4",
     "lerna": "^4.0.0",
+    "lint-staged": "^13.0.3",
     "prettier": "^2.6.2",
     "stylelint": "^13.12.0",
     "stylelint-config-prettier": "^8.0.2",
@@ -79,5 +80,9 @@
     "nohoist": [
       "**/babel-loader"
     ]
+  },
+  "lint-staged": {
+    "packages/**/*.scss": "stylelint",
+    "packages/**/*.{ts,tsx}": ["eslint --fix", "prettier --write"]
   }
 }
