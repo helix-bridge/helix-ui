@@ -19,7 +19,7 @@
     "run:build:helix": "lerna run start --scope helix",
     "run:build:apps": "lerna run start --scope apps",
     "stylelint": "stylelint \"packages/**/styles/**/*.scss\" --config stylelint.config.js",
-    "eslint": "eslint packages/**/*.{ts,tsx} -c .eslintrc.js --fix",
+    "eslint": "eslint 'packages/**/*.{ts,tsx}' -c .eslintrc.js --fix",
     "lint": "npm run eslint && npm run stylelint",
     "test:shared": "cd packages/shared && yarn test",
     "test:shared:watch": "cd packages/shared && yarn test:watch",
@@ -29,7 +29,7 @@
     "test:helix:unit": "cd packages/helix && yarn test:unit",
     "test:helix:unit:watch": "cd packages/helix && yarn test:unit:watch",
     "test:unit": "yarn test:helix:unit && yarn test:apps:unit && yarn test:shared",
-    "format": "prettier  packages/**/*.{ts,tsx} --write"
+    "format": "prettier 'packages/**/*.{ts,tsx}' --write"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.0.1",
