@@ -16,7 +16,7 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
     <Layout.Footer
       className={`flex items-center justify-between z-10 px-0 py-4 container ${className}`}
       style={{
-        background: theme === THEME.LIGHT ? '#ccc' : '#020822',
+        background: theme === THEME.LIGHT ? '#ccc' : 'transparent',
       }}
     >
       <div className="md:flex md:gap-4 md:flex-wrap dark:text-gray-400">
