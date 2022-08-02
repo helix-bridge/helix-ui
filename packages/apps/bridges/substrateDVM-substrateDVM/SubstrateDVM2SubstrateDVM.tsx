@@ -4,7 +4,7 @@ import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, mergeMap, of, switchMap } from 'rxjs';
-import { LONG_DURATION } from 'shared/config/constant';
+import { FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
 import { useIsMounted } from 'shared/hooks';
 import { CrossChainComponentProps, CrossToken, DVMChainConfig, TxObservableFactory } from 'shared/model';
 import { fromWei, isRing, pollWhile, toWei } from 'shared/utils/helper';
@@ -14,7 +14,7 @@ import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../hooks';
-import { useApi } from '../../providers';
+import { useAccount, useApi } from '../../providers';
 import { IssuingPayload, SubstrateDVMSubstrateDVMBridgeConfig } from './model';
 import { getDailyLimit, getFee } from './utils';
 import { issuing, validate } from './utils/tx';
@@ -27,6 +27,7 @@ export function SubstrateDVM2SubstrateDVM({
   setBridgeState,
   onFeeChange,
   balances,
+  updateAllowancePayload,
 }: CrossChainComponentProps<
   SubstrateDVMSubstrateDVMBridgeConfig,
   CrossToken<DVMChainConfig>,
@@ -38,13 +39,14 @@ export function SubstrateDVM2SubstrateDVM({
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const bridgeState = useCheckSpecVersion(direction);
+  const { account } = useAccount();
   const [ring] = (balances ?? []) as BN[];
 
   const feeWithSymbol = useMemo(
     () =>
       fee && {
         amount: fromWei({ value: fee, decimals: direction.from.decimals }),
-        symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
+        symbol: direction.from.meta.tokens.find((item) => /^[A-Z]RING/.test(item.symbol))!.symbol,
       },
     [direction.from.decimals, direction.from.meta.tokens, fee]
   );
@@ -54,6 +56,13 @@ export function SubstrateDVM2SubstrateDVM({
   useEffect(() => {
     setBridgeState({ status: bridgeState.status, reason: bridgeState.reason });
   }, [bridgeState.status, bridgeState.reason, setBridgeState]);
+
+  useEffect(() => {
+    updateAllowancePayload({
+      spender: bridge.config.contracts.issuing,
+      tokenAddress: direction.from.address,
+    });
+  }, [bridge.config.contracts.issuing, direction.from.address, updateAllowancePayload]);
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
@@ -105,16 +114,22 @@ export function SubstrateDVM2SubstrateDVM({
     return () => sub$$.unsubscribe();
   }, [direction, onFeeChange]);
 
+  useEffect(() => {
+    form.setFieldsValue({ [FORM_CONTROL.recipient]: account });
+  }, [form, account]);
+
   return (
     <>
-      <RecipientItem
-        form={form}
-        direction={direction}
-        bridge={bridge}
-        extraTip={t(
-          'After the transaction is confirmed, the account cannot be changed. Please do not fill in any exchange account or cold wallet address.'
-        )}
-      />
+      <div className="hidden">
+        <RecipientItem
+          form={form}
+          direction={direction}
+          bridge={bridge}
+          extraTip={t(
+            'After the transaction is confirmed, the account cannot be changed. Please do not fill in any exchange account or cold wallet address.'
+          )}
+        />
+      </div>
 
       <CrossChainInfo
         bridge={bridge}
@@ -123,7 +138,7 @@ export function SubstrateDVM2SubstrateDVM({
           {
             name: t('Daily limit'),
             content: dailyLimit ? (
-              <Typography.Text>{fromWei({ value: dailyLimit, decimals: 9 })}</Typography.Text>
+              <Typography.Text>{fromWei({ value: dailyLimit })}</Typography.Text>
             ) : (
               <EyeInvisibleFilled />
             ),

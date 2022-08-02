@@ -27,6 +27,16 @@ export const pangoroDVMConfig: DVMChainConfig = {
   specVersion: 28170,
   tokens: [
     {
+      name: 'ORING',
+      decimals: 18,
+      cross: [],
+      type: 'native',
+      host: 'pangoro-dvm',
+      logo: 'token-ring.svg',
+      symbol: 'ORING',
+      address: '',
+    },
+    {
       name: 'wORING',
       decimals: 18,
       cross: [

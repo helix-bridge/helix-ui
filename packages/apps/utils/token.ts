@@ -41,3 +41,20 @@ export async function addToMetamask(token: TokenWithBridgesInfo) {
     message.error('Some error occurred while add the token to metamask, consider add it manually');
   }
 }
+
+export const asSameToken = (symbol1: string, symbol2: string): boolean => {
+  symbol1 = symbol1.toLowerCase();
+  symbol2 = symbol2.toLowerCase();
+
+  if (symbol1.length === symbol2.length) {
+    return symbol1 === symbol2;
+  } else if (symbol1.length > symbol2.length) {
+    return symbol1.slice(1) === symbol2;
+  } else {
+    return symbol2.slice(1) === symbol1;
+  }
+};
+
+export const asSameCategory = (category1: string, category2: string): boolean => {
+  return category1.split('-')[0] === category2.split('-')[0];
+};

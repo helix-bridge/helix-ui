@@ -18,21 +18,17 @@ export function issuing(value: IssuingPayload, fee: BN): Observable<Tx> {
   const { sender, recipient, direction } = value;
   const { from: departure, to } = direction;
   const bridge = getBridge([departure.meta, to.meta]);
-  const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).sub(fee).toString();
-  const gasLimit = '4000000000';
+  const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
+  const gasLimit = '1000000';
+
+  console.log('🚀 ~ file: tx.ts ~ line 22 ~ issuing ~ amount', amount, fee.toString());
 
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
     (contract) =>
       contract.methods
-        .burnAndRemoteUnlockWaitingConfirm(
-          departure.meta.specVersion,
-          gasLimit,
-          departure.address,
-          recipient,
-          toWei({ value: amount })
-        )
-        .send({ from: sender }),
+        .lockAndRemoteIssuing(departure.meta.specVersion, gasLimit, departure.address, recipient, amount)
+        .send({ from: sender, value: fee.toString() }),
     backingAbi as AbiItem[]
   );
 }
@@ -44,7 +40,7 @@ export function redeem(value: RedeemPayload): Observable<Tx> {
     direction: { from: departure, to },
   } = value;
   const receiver = Web3.utils.hexToBytes(convertToDvm(recipient));
-  const WEIGHT = '690133000';
+  const gasLimit = '1000000';
   const bridge = getBridge([departure.meta, to.meta]);
 
   return genEthereumContractTxObs(
@@ -53,7 +49,7 @@ export function redeem(value: RedeemPayload): Observable<Tx> {
       contract.methods
         .burnAndRemoteUnlock(
           departure.meta.specVersion,
-          WEIGHT,
+          gasLimit,
           departure.address,
           receiver,
           toWei({ value: departure.amount })

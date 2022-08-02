@@ -8,7 +8,7 @@ import { chainColors } from 'shared/config/network';
 import { useLocalSearch } from 'shared/hooks';
 import { ChainConfig, TokenInfoWithMeta } from 'shared/model';
 import { chainConfigs, getDisplayName, isDVMNetwork } from 'shared/utils/network';
-import { tokenSearchFactory } from '../../utils';
+import { asSameToken, tokenSearchFactory } from '../../utils';
 import { BaseModal } from '../widget/BaseModal';
 
 interface SelectTokenModalProps {
@@ -17,19 +17,6 @@ interface SelectTokenModalProps {
   onSelect: (value: TokenInfoWithMeta) => void;
   fromToken?: TokenInfoWithMeta;
 }
-
-const asSameToken = (symbol1: string, symbol2: string): boolean => {
-  symbol1 = symbol1.toLowerCase();
-  symbol2 = symbol2.toLowerCase();
-
-  if (symbol1.length === symbol2.length) {
-    return symbol1 === symbol2;
-  } else if (symbol1.length > symbol2.length) {
-    return symbol1.endsWith(symbol2);
-  } else {
-    return symbol2.endsWith(symbol1);
-  }
-};
 
 export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: SelectTokenModalProps) => {
   const { t } = useTranslation();

@@ -10,19 +10,19 @@ export async function getDailyLimit(
 ): Promise<DailyLimit | null> {
   const {
     from: { meta: departure, address: fromTokenAddress },
-    to: { meta: arrival, address: toTokenAddress },
+    to: { meta: arrival },
   } = direction;
   const bridge = getBridge([departure, arrival]);
   const web3 = entrance.web3.getInstance(bridge.departure.provider);
 
-  const { abi, tokenAddress } = bridge.isIssuing(departure, arrival)
-    ? { abi: backingAbi, tokenAddress: fromTokenAddress }
-    : { abi: burnAbi, tokenAddress: toTokenAddress };
+  const { abi, address } = bridge.isIssuing(departure, arrival)
+    ? { abi: backingAbi, address: bridge.config.contracts?.issuing }
+    : { abi: burnAbi, address: bridge.config.contracts?.redeem };
 
-  const contract = new web3.eth.Contract(abi as AbiItem[], tokenAddress);
+  const contract = new web3.eth.Contract(abi as AbiItem[], address);
 
-  const limit = await contract.methods.dailyLimit(tokenAddress).call();
-  const spentToday = await contract.methods.spentToday(tokenAddress).call();
+  const limit = await contract.methods.dailyLimit(fromTokenAddress).call();
+  const spentToday = await contract.methods.spentToday(fromTokenAddress).call();
 
   return { limit, spentToday };
 }
