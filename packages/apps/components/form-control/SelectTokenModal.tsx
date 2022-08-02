@@ -18,13 +18,17 @@ interface SelectTokenModalProps {
   fromToken?: TokenInfoWithMeta;
 }
 
-const removeLeaderCharacters = (name: string): string => {
-  // ring -> xRING kton -> xKTON CKTON -> WCKTON
-  if (name.startsWith('x') || name.startsWith('W')) {
-    return name.slice(1);
-  }
+const asSameToken = (symbol1: string, symbol2: string): boolean => {
+  symbol1 = symbol1.toLowerCase();
+  symbol2 = symbol2.toLowerCase();
 
-  return name;
+  if (symbol1.length === symbol2.length) {
+    return symbol1 === symbol2;
+  } else if (symbol1.length > symbol2.length) {
+    return symbol1.endsWith(symbol2);
+  } else {
+    return symbol2.endsWith(symbol1);
+  }
 };
 
 export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: SelectTokenModalProps) => {
@@ -47,9 +51,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
         .filter((item) => !fromToken || (!(fromToken.meta.name === item.name) && inPartners(item)))
         .map((item) =>
           item.tokens
-            .filter(
-              (token) => !fromToken || removeLeaderCharacters(token.symbol) === removeLeaderCharacters(fromToken.symbol)
-            )
+            .filter((token) => !fromToken || asSameToken(token.symbol, fromToken.symbol))
             .map((token) => ({ ...token, meta: item }))
         )
         .flatten()

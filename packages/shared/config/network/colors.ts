@@ -5,6 +5,7 @@ export const chainColors: { [key in Network]: string } = {
   'crab-parachain': '#512dbc',
   'pangolin-dvm': '#3083dd',
   'pangolin-parachain': '#4b30dd',
+  'pangoro-dvm': '#07488f',
   crab: '#cd201f',
   darwinia: '#FF007A',
   ethereum: '#1C87ED',

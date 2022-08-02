@@ -5,7 +5,6 @@ import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, mergeMap } from 'rxjs';
-import { useDarwiniaAvailableBalances } from 'shared/hooks';
 import {
   CrossChainComponentProps,
   CrossChainPayload,
@@ -39,13 +38,12 @@ export function Darwinia2Ethereum({
 >) {
   const { t } = useTranslation();
 
-  const { departureConnection, departure } = useApi();
+  const { departureConnection } = useApi();
 
   const [crossChainFee, setCrossChainFee] = useState<BN | null>(null);
   const [txFee, setTxFee] = useState<BN | null>(null);
   const fee = useMemo(() => (crossChainFee ? crossChainFee.add(txFee ?? BN_ZERO) : null), [crossChainFee, txFee]);
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
-  const getBalances = useDarwiniaAvailableBalances(departure);
   const [recipient, setRecipient] = useState<string>();
   const { account } = useAccount();
 
@@ -93,7 +91,7 @@ export function Darwinia2Ethereum({
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, balances, departureConnection, fee, feeWithSymbol, getBalances, setTxObservableFactory, t]);
+  }, [afterCrossChain, balances, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
 
   useEffect(() => {
     const sub$$ = from(getRedeemFee(bridge)).subscribe(setCrossChainFee);

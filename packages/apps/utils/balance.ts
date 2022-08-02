@@ -14,6 +14,7 @@ import {
   isSubstrate2Parachain,
   isSubstrate2SubstrateDVM,
   isSubstrateDVM2Substrate,
+  isSubstrateDVMSubstrateDVM,
 } from 'shared/utils/bridge';
 import { isKton, isRing } from 'shared/utils/helper';
 import { getDarwiniaBalance, getDVMBalance, getErc20Balance, getParachainBalance } from 'shared/utils/network/balance';
@@ -61,6 +62,7 @@ export async function getBalance(direction: CrossChainDirection, account: string
       isCrabDVMPolygon,
       isEthereumHeco,
       isEthereumPolygon,
+      isSubstrateDVMSubstrateDVM,
     ].some((fn) => fn(fromChain, toChain))
   ) {
     return getErc20Balance(from.address, account).then((res) => [res]);

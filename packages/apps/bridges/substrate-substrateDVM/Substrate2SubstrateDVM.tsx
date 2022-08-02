@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, mergeMap, of, switchMap } from 'rxjs';
 import { LONG_DURATION } from 'shared/config/constant';
-import { useDarwiniaAvailableBalances, useIsMounted } from 'shared/hooks';
+import { useIsMounted } from 'shared/hooks';
 import {
   CrossChainComponentProps,
   CrossToken,
@@ -19,12 +19,11 @@ import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
-import { useAfterTx } from '../../hooks';
+import { useAfterTx, useCheckSpecVersion } from '../../hooks';
 import { useApi } from '../../providers';
-import { useBridgeStatus } from './hooks';
 import { IssuingPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getDailyLimit, getIssuingFee } from './utils';
-import { issuingV2, validate } from './utils/tx';
+import { issuing, validate } from './utils/tx';
 
 export function Substrate2SubstrateDVM({
   form,
@@ -40,12 +39,11 @@ export function Substrate2SubstrateDVM({
   CrossToken<DVMChainConfig>
 >) {
   const { t } = useTranslation();
-  const { departureConnection, departure } = useApi();
+  const { departureConnection } = useApi();
   const [fee, setFee] = useState<BN | null>(null);
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
-  const getBalances = useDarwiniaAvailableBalances(departure);
-  const bridgeState = useBridgeStatus(direction);
+  const bridgeState = useCheckSpecVersion(direction);
   const [ring] = (balances ?? []) as BN[];
 
   const feeWithSymbol = useMemo(
@@ -75,23 +73,13 @@ export function Substrate2SubstrateDVM({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        issuingV2(data, fee!),
+        issuing(data, fee!),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [
-    afterCrossChain,
-    ring,
-    dailyLimit,
-    departureConnection,
-    fee,
-    feeWithSymbol,
-    getBalances,
-    setTxObservableFactory,
-    t,
-  ]);
+  }, [afterCrossChain, ring, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
 
   useEffect(() => {
     const sub$$ = of(null)
@@ -109,7 +97,7 @@ export function Substrate2SubstrateDVM({
   }, [direction, isMounted]);
 
   useEffect(() => {
-    const sub$$ = from(getIssuingFee()).subscribe((result) => {
+    const sub$$ = from(getIssuingFee(bridge)).subscribe((result) => {
       setFee(result);
 
       if (onFeeChange) {

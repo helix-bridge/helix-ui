@@ -1,14 +1,13 @@
-import BN from 'bn.js';
-import { CrossChainDirection, CrossToken, DVMChainConfig } from 'shared/model';
-import { AbiItem } from 'web3-utils';
+import { CrossChainDirection, CrossToken, DailyLimit, DVMChainConfig } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { entrance } from 'shared/utils/connection';
+import { AbiItem } from 'web3-utils';
 import backingAbi from '../config/s2sv2backing.json';
 import burnAbi from '../config/s2sv2burn.json';
 
-export async function getFee(
+export async function getDailyLimit(
   direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>
-): Promise<BN | null> {
+): Promise<DailyLimit | null> {
   const {
     from: { meta: departure, address: fromTokenAddress },
     to: { meta: arrival, address: toTokenAddress },
@@ -22,9 +21,8 @@ export async function getFee(
 
   const contract = new web3.eth.Contract(abi as AbiItem[], tokenAddress);
 
-  const fee = await contract.methods.fee().call();
-  console.log('🚀 ~ file: fee.ts ~ line 26 ~ fee', fee);
+  const limit = await contract.methods.dailyLimit(tokenAddress).call();
+  const spentToday = await contract.methods.spentToday(tokenAddress).call();
 
-  // return new BN(fee);
-  return fee;
+  return { limit, spentToday };
 }
