@@ -14,7 +14,7 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
 
   return (
     <Layout.Footer
-      className={`flex items-center justify-between sm:px-16 px-4 z-10 py-4 ${className}`}
+      className={`flex items-center justify-between z-10 px-0 py-4 container ${className}`}
       style={{
         background: theme === THEME.LIGHT ? '#ccc' : '#020822',
       }}
