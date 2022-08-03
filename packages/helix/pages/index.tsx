@@ -205,7 +205,7 @@ function Page({
       </Statistics>
 
       <div className="gap-4 lg:gap-6">
-        <h2 className="uppercase my-6">{t<string>('chains')}</h2>
+        <h2 className="uppercase text-xl font-normal text-white my-6">{t<string>('chains')}</h2>
 
         <div className="grid md:grid-cols-4 gap-4 lg:gap-6">
           {chainConfigs.map((item, index) => (

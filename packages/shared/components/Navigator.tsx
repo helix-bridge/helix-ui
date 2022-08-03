@@ -26,7 +26,7 @@ interface NavigatorProps {
 function NavLink({ nav, theme }: { nav: Nav; theme: THEME }) {
   const { t } = useITranslation();
   const router = useRouter();
-  const textCls = useMemo(() => (theme === 'dark' ? '' : 'text-pangolin-main'), [theme]);
+  const textCls = useMemo(() => (theme === 'dark' ? 'text-white' : 'text-pangolin-main'), [theme]);
   const active =
     nav.path === router.pathname
       ? theme === 'dark'
@@ -45,10 +45,10 @@ function NavLink({ nav, theme }: { nav: Nav; theme: THEME }) {
           // nothing
         }
       }}
-      className={`${active} ${textCls} transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap`}
+      className={`${active} transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap`}
       key={nav.label}
     >
-      {t(nav.label)}
+      <span className={`text-base font-normal ${textCls}`}>{t(nav.label)}</span>
     </div>
   );
 }
