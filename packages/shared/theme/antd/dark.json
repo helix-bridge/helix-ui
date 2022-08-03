@@ -143,7 +143,7 @@
   "@popover-background": "#1f1f1f",
   "@popover-customize-border-color": "#3a3a3a",
   "@body-background": "@black",
-  "@component-background": "#151e33",
+  "@component-background": "#151d35",
   "@control-bg": "#101625",
   "@text-color": "fade(@white, 85%)",
   "@text-color-secondary": "fade(@white, 45%)",
