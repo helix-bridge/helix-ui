@@ -101,7 +101,7 @@ export function BarChart({ data, name }: BarChartProps) {
     yAxis: {
       visible: false,
     },
-    series: [{ type: 'column', name, data }],
+    series: [{ type: 'column', name, data, color: mainColor }],
     credits: {
       enabled: false,
     },
