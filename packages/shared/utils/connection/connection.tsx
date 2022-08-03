@@ -1,7 +1,7 @@
 import { Modal } from 'antd';
 import Link from 'antd/lib/typography/Link';
 import { Trans } from 'react-i18next';
-import { EMPTY, from, mergeMap, Observable, switchMap } from 'rxjs';
+import { EMPTY, from, map, mergeMap, Observable, of, switchMap } from 'rxjs';
 import Web3 from 'web3';
 import {
   ChainConfig,
@@ -46,6 +46,22 @@ export async function isNetworkConsistent(chain: EthereumChainConfig, id = ''): 
 
   return storedId === Web3.utils.toHex(actualId);
 }
+
+export const isMetamaskChainConsistent = (network: EthereumChainConfig) => {
+  if (!isMetamaskInstalled()) {
+    showWarning(
+      'metamask',
+      'https://chrome.google.com/webstore/detail/empty-title/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=zh-CN'
+    );
+
+    return EMPTY;
+  }
+
+  return from(isNetworkConsistent(network as EthereumChainConfig)).pipe(
+    switchMap((isMatch) => (isMatch ? of(null) : switchMetamaskNetwork(network)!)),
+    map((res) => res === null)
+  );
+};
 
 const connectMetamask: ConnectFn<EthereumConnection> = (network, chainId?) => {
   if (!isMetamaskInstalled()) {
