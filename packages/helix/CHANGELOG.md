@@ -1,3 +1,13 @@
+## [4.0.3](https://github.com/helix-bridge/helix/compare/v4.0.2-helix...v4.0.3) (2022-08-03)
+
+
+### Features
+
+* allow parachain to crab ([#159](https://github.com/helix-bridge/helix/issues/159)) ([98ff04f](https://github.com/helix-bridge/helix/commit/98ff04ff3dea9338a992dd56a3ec010bb4c1d710))
+* s2s v2 transfer ([#145](https://github.com/helix-bridge/helix/issues/145)) ([ebb1e79](https://github.com/helix-bridge/helix/commit/ebb1e795859c01da62f51ff172371379ddc44851))
+
+
+
 ## [4.0.2](https://github.com/helix-bridge/helix/compare/v4.0.1-helix...v4.0.2) (2022-08-02)
 
 
