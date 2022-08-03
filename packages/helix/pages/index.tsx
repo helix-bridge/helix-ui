@@ -171,7 +171,14 @@ function Page({
 
   return (
     <div>
-      <Statistics title={t('volumes')} startTime={startTime} total={volumeTotal} rank={volumeRank} currency="$">
+      <Statistics
+        titleLeft={t('volumes by week')}
+        titleRight={t('volumes')}
+        startTime={startTime}
+        total={volumeTotal}
+        rank={volumeRank}
+        currency="$"
+      >
         {loading ? (
           <div className="block relative top-1/3 text-center">
             <Spin />
@@ -181,7 +188,13 @@ function Page({
         )}
       </Statistics>
 
-      <Statistics title="transactions" startTime={startTime} total={transactionsTotal} rank={transactionsRank}>
+      <Statistics
+        titleLeft={t('transactions by week')}
+        titleRight={t('transactions')}
+        startTime={startTime}
+        total={transactionsTotal}
+        rank={transactionsRank}
+      >
         {loading ? (
           <div className="block relative top-1/3 text-center">
             <Spin />

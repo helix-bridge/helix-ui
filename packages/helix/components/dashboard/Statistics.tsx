@@ -10,26 +10,35 @@ interface ChainStatisticOverview {
 }
 
 interface StatisticsProps {
-  title: string;
+  titleLeft: string;
+  titleRight: string;
   startTime: string;
   total: string | number;
   rank: ChainStatisticOverview[];
   currency?: '$';
 }
 
-export function Statistics({ children, startTime, total, title, rank, currency }: PropsWithChildren<StatisticsProps>) {
+export function Statistics({
+  children,
+  startTime,
+  total,
+  titleLeft,
+  titleRight,
+  rank,
+  currency,
+}: PropsWithChildren<StatisticsProps>) {
   const { t } = useTranslation('common');
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 mt-4 lg:mt-6">
       <div className="lg:col-span-8 flex-1 p-4 bg-gray-200 dark:bg-antDark">
-        <span className="uppercase">{title}</span>
+        <span className="uppercase">{titleLeft}</span>
         {children}
       </div>
 
       <div className="lg:col-span-4 bg-gray-200 dark:bg-antDark px-5 py-6">
         <div className="flex justify-between items-center">
-          <h3 className="uppercase">{title}</h3>
+          <h3 className="uppercase">{titleRight}</h3>
           <span className="text-gray-400">{startTime}</span>
         </div>
 
@@ -39,7 +48,7 @@ export function Statistics({ children, startTime, total, title, rank, currency }
             {total}
           </h2>
           <span className="text-gray-400">
-            {t('Total {{title}}', { title })}
+            {t('Total {{title}}', { titleRight })}
             {currency && <span className="uppercase ml-1">({currency})</span>}
           </span>
         </div>
@@ -47,7 +56,7 @@ export function Statistics({ children, startTime, total, title, rank, currency }
         <div className="flex flex-col gap-2 md:gap-4">
           <div className="flex justify-between">
             <span className="uppercase">{t('top {{count}} destinations', { count: rank.length })}</span>
-            <span className="uppercase">{title}</span>
+            <span className="uppercase">{titleRight}</span>
           </div>
 
           {rank.map(({ chain, total: iTotal }) => (
