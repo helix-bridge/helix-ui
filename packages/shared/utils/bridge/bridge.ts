@@ -68,6 +68,13 @@ export const isPolygon2Ethereum: BridgePredicateFn = (departure, arrival) => isE
 export const isEthereum2Heco: BridgePredicateFn = (departure, arrival) =>
   departure === 'ethereum' && arrival === 'heco';
 export const isHeco2Ethereum: BridgePredicateFn = (departure, arrival) => isEthereum2Heco(arrival, departure);
+export const isSubstrateDVM2SubstrateDVMIssuing: BridgePredicateFn = (departure, arrival) => {
+  return departure === 'pangoro-dvm' && arrival === 'pangolin-dvm';
+};
+
+export const isSubstrateDVM2SubstrateDVMBacking: BridgePredicateFn = (departure, arrival) => {
+  return arrival === 'pangoro-dvm' && departure === 'pangolin-dvm';
+};
 
 /**
  * Shorthand functions for predication without direction
@@ -77,10 +84,11 @@ const isCrossFactory =
   (departure: Network, arrival: Network) =>
     fns.some((fn) => fn(departure, arrival));
 
-export const isSubstrateSubstrate: BridgePredicateFn = isCrossFactory(
+export const isSubstrateSubstrateDVM: BridgePredicateFn = isCrossFactory(
   isSubstrate2SubstrateDVM,
   isSubstrateDVM2Substrate
 );
+
 export const isEthereumDarwinia: BridgePredicateFn = isCrossFactory(isEthereum2Darwinia, isDarwinia2Ethereum);
 export const isSubstrateDVM: BridgePredicateFn = isCrossFactory(isSubstrate2DVM, isDVM2Substrate);
 export const isParachainSubstrate: BridgePredicateFn = isCrossFactory(isParachain2Substrate, isSubstrate2Parachain);
@@ -89,6 +97,11 @@ export const isCrabDVMEthereum: BridgePredicateFn = isCrossFactory(isCrabDVM2Eth
 export const isCrabDVMPolygon: BridgePredicateFn = isCrossFactory(isCrabDVM2Polygon, isPolygon2CrabDVM);
 export const isEthereumHeco: BridgePredicateFn = isCrossFactory(isEthereum2Heco, isHeco2Ethereum);
 export const isEthereumPolygon: BridgePredicateFn = isCrossFactory(isEthereum2Polygon, isPolygon2Ethereum);
+
+export const isSubstrateDVMSubstrateDVM: BridgePredicateFn = isCrossFactory(
+  isSubstrateDVM2SubstrateDVMIssuing,
+  isSubstrateDVM2SubstrateDVMBacking
+);
 
 function getBridgeOverviews(source: NullableFields<CrossChainDirection, 'from' | 'to'>) {
   const { from, to } = source;

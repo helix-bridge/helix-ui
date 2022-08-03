@@ -7,6 +7,7 @@ import { ethereumPolygon } from './bridges/ethereum-polygon';
 import { parachainCrab, parachainPangolin } from './bridges/parachain-substrate';
 import { crabCrabDVM, pangolinPangolinDVM } from './bridges/substrate-dvm';
 import { darwiniaCrabDVM, pangoroPangolinDVM } from './bridges/substrate-substrateDVM';
+import { pangoroDVMPangolinDVM } from './bridges/substrateDVM-substrateDVM';
 import { CHAIN_TYPE } from './env';
 
 const formalBridges = [
@@ -21,7 +22,13 @@ const formalBridges = [
   ethereumPolygon,
 ];
 
-const testBridges = [pangolinPangolinDVM, pangoroPangolinDVM, ropstenPangolin, parachainPangolin];
+const testBridges = [
+  pangolinPangolinDVM,
+  pangoroPangolinDVM,
+  ropstenPangolin,
+  parachainPangolin,
+  pangoroDVMPangolinDVM,
+];
 
 export const BRIDGES = (() => {
   switch (CHAIN_TYPE) {

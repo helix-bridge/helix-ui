@@ -2,7 +2,7 @@
 
 import { HelixHistoryRecord } from '../model';
 import {
-  getTokenNameFromHelixRecord,
+  getTokenSymbolFromHelixRecord,
   getReceivedAmountFromHelixRecord,
   getFeeAmountFromHelixRecord,
   getSentAmountFromHelixRecord,
@@ -34,13 +34,13 @@ const testRecords = data as HelixHistoryRecord[];
 
 describe('record utils', () => {
   it('should get token name from helix record', () => {
-    const crab2CrabDVMSuccess = getTokenNameFromHelixRecord(testRecords[0]);
-    const crabDVM2HecoRefunded = getTokenNameFromHelixRecord(testRecords[1]);
-    const darwinia2CrabDVMSuccess = getTokenNameFromHelixRecord(testRecords[2]);
-    const crabDVM2CrabSuccess = getTokenNameFromHelixRecord(testRecords[3]);
-    const crabDVM2DarwiniaSuccess = getTokenNameFromHelixRecord(testRecords[4]);
-    const crabDVM2HecoSuccess = getTokenNameFromHelixRecord(testRecords[5]);
-    const crab2CrabParachainSuccess = getTokenNameFromHelixRecord(testRecords[6]);
+    const crab2CrabDVMSuccess = getTokenSymbolFromHelixRecord(testRecords[0]);
+    const crabDVM2HecoRefunded = getTokenSymbolFromHelixRecord(testRecords[1]);
+    const darwinia2CrabDVMSuccess = getTokenSymbolFromHelixRecord(testRecords[2]);
+    const crabDVM2CrabSuccess = getTokenSymbolFromHelixRecord(testRecords[3]);
+    const crabDVM2DarwiniaSuccess = getTokenSymbolFromHelixRecord(testRecords[4]);
+    const crabDVM2HecoSuccess = getTokenSymbolFromHelixRecord(testRecords[5]);
+    const crab2CrabParachainSuccess = getTokenSymbolFromHelixRecord(testRecords[6]);
 
     expect(crab2CrabDVMSuccess).toEqual('CRAB');
     expect(crabDVM2HecoRefunded).toEqual('xRING');

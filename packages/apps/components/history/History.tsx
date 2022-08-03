@@ -13,7 +13,7 @@ import { getChainConfig } from 'shared/utils/network';
 import {
   getReceivedAmountFromHelixRecord,
   getSentAmountFromHelixRecord,
-  getTokenNameFromHelixRecord,
+  getTokenSymbolFromHelixRecord,
 } from 'shared/utils/record';
 import { Darwinia2EthereumHistoryRes } from '../../bridges/ethereum-darwinia/model';
 import { HISTORY_RECORDS, STATUS_STATISTICS } from '../../config/gql';
@@ -21,6 +21,7 @@ import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
 import { useAccount, useApi } from '../../providers';
 import { useClaim } from '../../providers/claim';
+import { asSameCategory, asSameToken } from '../../utils';
 import { fetchDarwinia2EthereumRecords, fetchEthereum2DarwiniaRecords } from '../../utils/records';
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { TokenOnChain } from '../widget/TokenOnChain';
@@ -264,13 +265,13 @@ export function History() {
                   const { fromChain, toChain, bridge } = record;
                   const dep = getChainConfig(fromChain);
                   const arrival = getChainConfig(toChain);
-                  const symbol = getTokenNameFromHelixRecord(record);
+                  const symbol = getTokenSymbolFromHelixRecord(record);
                   const fromToken = dep.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase())!;
                   const overview = fromToken.cross.find(
-                    (item) => item.category === bridge && item.partner.name === toChain
+                    (item) => asSameCategory(item.category, bridge) && item.partner.name === toChain
                   );
-                  const toToken = arrival.tokens.find(
-                    (item) => item.symbol.toLowerCase() === overview?.partner.symbol.toLowerCase()
+                  const toToken = arrival.tokens.find((item) =>
+                    asSameToken(item.symbol, overview?.partner.symbol ?? '')
                   )!;
                   const [d2eHeight, d2dIndex] = record.requestTxHash.split('-');
                   const [e2dHeight, e2dIndex] = record.targetTxHash.split('-');

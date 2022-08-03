@@ -6,6 +6,7 @@ export interface WalletCtx {
   matched: boolean;
   walletMatched: boolean;
   chainMatched: boolean;
+  setChainMatched: (matched: boolean) => void;
 }
 
 export const WalletContext = createContext<WalletCtx | null>(null);
@@ -15,19 +16,22 @@ export const useWallet = () => useContext(WalletContext) as Exclude<WalletCtx, n
 export const WalletProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   const { departureConnection, departure } = useApi();
   const [walletMatched, setWalletMatched] = useState(true);
-
-  const chainMatched = useMemo(() => {
-    if (departureConnection.type === 'metamask') {
-      return (
-        walletMatched &&
-        (departure as EthereumChainConfig).ethereumChain &&
-        (departure as EthereumChainConfig).ethereumChain.chainId === departureConnection.chainId
-      );
-    }
-    return true;
-  }, [departure, departureConnection.chainId, departureConnection.type, walletMatched]);
+  const [chainMatched, setChainMatched] = useState(true);
 
   const matched = useMemo(() => walletMatched && chainMatched, [chainMatched, walletMatched]);
+
+  useEffect(() => {
+    if (departureConnection.type === 'metamask') {
+      const res =
+        walletMatched &&
+        (departure as EthereumChainConfig).ethereumChain &&
+        (departure as EthereumChainConfig).ethereumChain.chainId === departureConnection.chainId;
+
+      setChainMatched(res);
+    } else {
+      setChainMatched(true);
+    }
+  }, [departure, departureConnection.chainId, departureConnection.type, walletMatched]);
 
   useEffect(() => {
     const { type } = departureConnection;
@@ -46,6 +50,7 @@ export const WalletProvider = ({ children }: React.PropsWithChildren<unknown>) =
         walletMatched,
         chainMatched,
         matched,
+        setChainMatched,
       }}
     >
       {children}

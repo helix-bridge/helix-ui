@@ -6,14 +6,14 @@ import {
   isCrabDVMPolygon,
   isParachainSubstrate,
   isSubstrateDVM,
-  isSubstrateSubstrate,
+  isSubstrateSubstrateDVM,
 } from 'shared/utils/bridge';
 
 type DirectionPaths = [BridgePredicateFn, string, string];
 
 export function getDetailPaths(fromChain: Network, toChain: Network, record: HelixHistoryRecord): string[] {
   const filters: DirectionPaths[] = [
-    [isSubstrateSubstrate, 's2s', record.id],
+    [isSubstrateSubstrateDVM, 's2s', record.id],
     [isSubstrateDVM, 's2dvm', record.id],
     [isParachainSubstrate, 's2parachain', record.id],
     [isCrabDVMHeco, 'cbridge', record.id],

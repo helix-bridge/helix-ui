@@ -9,5 +9,7 @@ export * from './network-simple';
 export * from './networks';
 export * from './pangolin';
 export * from './pangoro';
+export * from './pangoro-dvm';
+export * from './pangolin-dvm';
 export * from './polygon';
 export * from './ropsten';

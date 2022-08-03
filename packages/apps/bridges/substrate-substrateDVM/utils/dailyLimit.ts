@@ -1,13 +1,8 @@
 import { abi } from 'shared/config/abi';
-import { CrossChainDirection, CrossToken, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
+import { CrossChainDirection, CrossToken, DailyLimit, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { isRing } from 'shared/utils/helper';
 import { getS2SMappingAddress } from 'shared/utils/mappingToken';
-
-interface DailyLimit {
-  limit: string;
-  spentToday: string;
-}
 
 export async function getDailyLimit(
   token: string,

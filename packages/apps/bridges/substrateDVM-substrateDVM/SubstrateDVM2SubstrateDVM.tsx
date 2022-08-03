@@ -1,32 +1,25 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
-import { hexToU8a } from '@polkadot/util';
 import { Typography } from 'antd';
 import BN from 'bn.js';
-import { upperFirst } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { from, mergeMap } from 'rxjs';
-import {
-  CrossChainComponentProps,
-  CrossToken,
-  DVMChainConfig,
-  PolkadotChainConfig,
-  TxObservableFactory,
-} from 'shared/model';
-import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { fromWei, isRing, prettyNumber, toWei } from 'shared/utils/helper';
+import { from, mergeMap, of, switchMap } from 'rxjs';
+import { FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
+import { useIsMounted } from 'shared/hooks';
+import { CrossChainComponentProps, CrossToken, DVMChainConfig, TxObservableFactory } from 'shared/model';
+import { fromWei, isRing, pollWhile, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../hooks';
-import { useApi } from '../../providers';
-import { IssuingPayload, Parachain2SubstrateBridgeConfig } from './model';
-import { getIssuingFee } from './utils';
-import { issuing, validate } from './utils/tx';
+import { useAccount, useApi } from '../../providers';
+import { IssuingPayload, SubstrateDVMSubstrateDVMBridgeConfig } from './model';
+import { getDailyLimit, getFee } from './utils';
+import { issuing, redeem, validate } from './utils/tx';
 
-export function Substrate2Parachain({
+export function SubstrateDVM2SubstrateDVM({
   form,
   setTxObservableFactory,
   direction,
@@ -34,9 +27,10 @@ export function Substrate2Parachain({
   setBridgeState,
   onFeeChange,
   balances,
+  updateAllowancePayload,
 }: CrossChainComponentProps<
-  Parachain2SubstrateBridgeConfig,
-  CrossToken<PolkadotChainConfig>,
+  SubstrateDVMSubstrateDVMBridgeConfig,
+  CrossToken<DVMChainConfig>,
   CrossToken<DVMChainConfig>
 >) {
   const { t } = useTranslation();
@@ -45,20 +39,44 @@ export function Substrate2Parachain({
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const bridgeState = useCheckSpecVersion(direction);
+  const { account } = useAccount();
   const [ring] = (balances ?? []) as BN[];
 
   const feeWithSymbol = useMemo(
     () =>
       fee && {
         amount: fromWei({ value: fee, decimals: direction.from.decimals }),
-        symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
+        symbol: direction.from.meta.tokens.find((item) => /^[A-Z]RING/.test(item.symbol))!.symbol,
       },
-    [direction.from.meta.tokens, direction.from.decimals, fee]
+    [direction.from.decimals, direction.from.meta.tokens, fee]
+  );
+
+  const isMounted = useIsMounted();
+
+  const txFn = useMemo(
+    () => (bridge.isIssuing(direction.from.meta, direction.to.meta) ? issuing : redeem),
+    [bridge, direction.from.meta, direction.to.meta]
   );
 
   useEffect(() => {
     setBridgeState({ status: bridgeState.status, reason: bridgeState.reason });
   }, [bridgeState.status, bridgeState.reason, setBridgeState]);
+
+  useEffect(() => {
+    updateAllowancePayload({
+      spender: bridge.isIssuing(direction.from.meta, direction.to.meta)
+        ? bridge.config.contracts.issuing
+        : bridge.config.contracts.redeem,
+      tokenAddress: direction.from.address,
+    });
+  }, [
+    bridge,
+    bridge.config.contracts.issuing,
+    direction.from.address,
+    direction.from.meta,
+    direction.to.meta,
+    updateAllowancePayload,
+  ]);
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
@@ -72,37 +90,31 @@ export function Substrate2Parachain({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        issuing(data, fee!),
+        txFn(data, fee!),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, ring, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
+  }, [afterCrossChain, ring, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t, txFn]);
 
   useEffect(() => {
-    const api = entrance.polkadot.getInstance(direction.to.meta.provider);
-
-    const sub$$ = from(waitUntilConnected(api))
+    const sub$$ = of(null)
       .pipe(
-        mergeMap(() => {
-          const module = `from${upperFirst(direction.from.meta.name)}Issuing`;
-
-          return from(api.query[module].secureLimitedRingAmount());
-        })
+        switchMap(() => from(getDailyLimit(direction))),
+        pollWhile(LONG_DURATION, () => isMounted)
       )
       .subscribe((result) => {
-        const data = result.toJSON() as [number, string]; // [0, hexString]
-        const num = hexToU8a(data[1]);
+        const num = result && new BN(result.limit).sub(new BN(result.spentToday));
 
-        setDailyLimit(new BN(num));
+        setDailyLimit(num);
       });
 
-    return () => sub$$.unsubscribe();
-  }, [direction]);
+    return () => sub$$?.unsubscribe();
+  }, [direction, isMounted]);
 
   useEffect(() => {
-    const sub$$ = from(getIssuingFee(bridge)).subscribe((result) => {
+    const sub$$ = from(getFee(direction)).subscribe((result) => {
       setFee(result);
 
       if (onFeeChange) {
@@ -114,18 +126,24 @@ export function Substrate2Parachain({
     });
 
     return () => sub$$.unsubscribe();
-  }, [bridge, direction.from.meta.tokens, direction.from.symbol, direction.from.decimals, onFeeChange]);
+  }, [direction, onFeeChange]);
+
+  useEffect(() => {
+    form.setFieldsValue({ [FORM_CONTROL.recipient]: account });
+  }, [form, account]);
 
   return (
     <>
-      <RecipientItem
-        form={form}
-        direction={direction}
-        bridge={bridge}
-        extraTip={t(
-          'After the transaction is confirmed, the account cannot be changed. Please do not fill in any exchange account or cold wallet address.'
-        )}
-      />
+      <div className="hidden">
+        <RecipientItem
+          form={form}
+          direction={direction}
+          bridge={bridge}
+          extraTip={t(
+            'After the transaction is confirmed, the account cannot be changed. Please do not fill in any exchange account or cold wallet address.'
+          )}
+        />
+      </div>
 
       <CrossChainInfo
         bridge={bridge}
@@ -134,11 +152,7 @@ export function Substrate2Parachain({
           {
             name: t('Daily limit'),
             content: dailyLimit ? (
-              <Typography.Text>
-                {fromWei({ value: dailyLimit, decimals: 18 }, (value) =>
-                  prettyNumber(value, { ignoreZeroDecimal: true })
-                )}
-              </Typography.Text>
+              <Typography.Text>{fromWei({ value: dailyLimit })}</Typography.Text>
             ) : (
               <EyeInvisibleFilled />
             ),

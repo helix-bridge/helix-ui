@@ -20,6 +20,7 @@ interface Partner {
   role: PartnerRole;
   claim?: boolean;
 }
+
 interface CrossOverview {
   category: BridgeCategory;
   bridge: BridgeName;

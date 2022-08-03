@@ -1,4 +1,5 @@
 import Bignumber from 'bignumber.js';
+import Web3 from 'web3';
 import { HelixHistoryRecord } from '../../model';
 import {
   isDVM2Substrate,
@@ -11,18 +12,36 @@ import {
   isPolygon2CrabDVM,
   isSubstrateDVM,
   isSubstrateDVM2Substrate,
+  isSubstrateDVMSubstrateDVM,
 } from '../bridge';
 import { fromWei, prettyNumber } from '../helper';
-import { getChainConfig, isDVMNetwork, isEthereumNetwork } from '../network';
+import { getChainConfig, isEthereumNetwork } from '../network';
 
-export function getTokenNameFromHelixRecord(record: HelixHistoryRecord) {
-  const chainConfig = getChainConfig(record.fromChain);
+export function getTokenSymbolFromHelixRecord(
+  record: HelixHistoryRecord,
+  key: keyof Pick<HelixHistoryRecord, 'feeToken' | 'token'> = 'token'
+) {
+  const { token } = record;
+  const fromChain = getChainConfig(record.fromChain);
 
-  return !record.token.startsWith('0x')
-    ? record.token
-    : `${isDVMNetwork(record.fromChain) ? 'x' : ''}${chainConfig?.isTest ? 'O' : ''}RING`;
+  let symbol = record[key];
+
+  if (Web3.utils.isAddress(token)) {
+    const target = fromChain.tokens.find((item) => item.address.toLowerCase() === token.toLowerCase());
+
+    symbol = target?.symbol ?? '';
+  }
+
+  if (!symbol) {
+    console.warn(`🚨 Can not find token with address ${token} on chain ${fromChain.name}`);
+  }
+
+  return symbol;
 }
 
+/**
+ * TODO: refactor it to calc by token config info
+ */
 export function getReceivedAmountFromHelixRecord(record: HelixHistoryRecord) {
   const { fromChain, toChain } = record;
   const predicates = [
@@ -34,6 +53,7 @@ export function getReceivedAmountFromHelixRecord(record: HelixHistoryRecord) {
     isEthereum2CrabDVM,
     isEthereumHeco,
     isEthereumPolygon,
+    isSubstrateDVMSubstrateDVM,
   ];
 
   return fromWei(
@@ -56,12 +76,12 @@ export function getSentAmountFromHelixRecord(record: HelixHistoryRecord) {
   const receive = getReceivedAmountFromHelixRecord(record);
   const receivedAmount = receive.replace(/,/g, '');
   const feeAmount = getFeeAmountFromHelixRecord(record);
+  const predicates = [isSubstrateDVM, isSubstrateDVM2Substrate, isSubstrateDVMSubstrateDVM];
 
   try {
-    const result =
-      isSubstrateDVM(record.fromChain, record.toChain) || isSubstrateDVM2Substrate(record.fromChain, record.toChain)
-        ? receivedAmount
-        : new Bignumber(receivedAmount).plus(new Bignumber(feeAmount)).toString();
+    const result = predicates.some((fn) => fn(record.fromChain, record.toChain))
+      ? receivedAmount
+      : new Bignumber(receivedAmount).plus(new Bignumber(feeAmount)).toString();
 
     if (+result < 0) {
       throw new Error(`Record ${record.id}, sendAmount: ${receivedAmount}, calculate received amount: ${result}`);

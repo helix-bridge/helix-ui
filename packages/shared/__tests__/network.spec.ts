@@ -1,7 +1,14 @@
 /// <reference types="jest" />
 
 import { chain, isEqual } from 'lodash';
-import { crabConfig, crabDVMConfig, darwiniaConfig, ethereumConfig } from '../config/network';
+import {
+  crabConfig,
+  crabDVMConfig,
+  darwiniaConfig,
+  ethereumConfig,
+  pangolinDVMConfig,
+  pangoroDVMConfig,
+} from '../config/network';
 import { crabParachainConfig } from '../config/network/crab-parachain';
 import { pangolinParachainConfig } from '../config/network/pangolin-parachain';
 import { Network } from '../model';
@@ -19,7 +26,7 @@ describe('network utils', () => {
   const data = [...crossChainGraph];
 
   it('should contains chains count: ', () => {
-    expect(chainConfigs).toHaveLength(12);
+    expect(chainConfigs).toHaveLength(13);
   });
 
   it('contains 2 bridges from crab', () => {
@@ -57,11 +64,11 @@ describe('network utils', () => {
     expect(fromPangolin![1]).toEqual(['pangolin-dvm', 'ropsten', 'pangolin-parachain']);
   });
 
-  it('contains 2 bridges from pangolin-dvm', () => {
+  it('contains 3 bridges from pangolin-dvm', () => {
     const fromPangolinDVM = data.find((item) => item[0] === 'pangolin-dvm');
 
     expect(fromPangolinDVM).not.toEqual(undefined);
-    expect(fromPangolinDVM![1]).toEqual(['pangolin', 'pangoro']);
+    expect(fromPangolinDVM![1]).toEqual(['pangolin', 'pangoro', 'pangoro-dvm']);
   });
 
   it('contains 1 bridge from pangoro', () => {
@@ -92,6 +99,13 @@ describe('network utils', () => {
     expect(fromHeco![1]).toEqual(['crab-dvm', 'ethereum']);
   });
 
+  it('contains 1 bridge from pangoro-dvm', () => {
+    const fromPangoroDVM = data.find((item) => item[0] === 'pangoro-dvm');
+
+    expect(fromPangoroDVM).not.toEqual(undefined);
+    expect(fromPangoroDVM![1]).toEqual(['pangolin-dvm']);
+  });
+
   it('can get chain config by chain name', () => {
     chainConfigs.forEach((chain) => {
       const { name } = chain;
@@ -117,16 +131,20 @@ describe('network utils', () => {
     expect(isEthereumNetwork('pangolin-dvm')).toBe(true);
     expect(isEthereumNetwork('heco')).toBe(true);
     expect(isEthereumNetwork('polygon')).toBe(true);
+    expect(isEthereumNetwork('pangoro-dvm')).toBe(true);
   });
 
   it('can recognize dvm network', () => {
     expect(isDVMNetwork('crab-dvm')).toBe(true);
     expect(isDVMNetwork('pangolin-dvm')).toBe(true);
+    expect(isDVMNetwork('pangoro-dvm')).toBe(true);
   });
 
   it('can convert display name', () => {
     expect(getDisplayName(crabConfig)).toEqual('Crab');
     expect(getDisplayName(crabDVMConfig)).toEqual('Crab Smart Chain');
+    expect(getDisplayName(pangolinDVMConfig)).toEqual('Pangolin Smart Chain');
+    expect(getDisplayName(pangoroDVMConfig)).toEqual('Pangoro Smart Chain');
     expect(getDisplayName(crabParachainConfig)).toEqual('Crab Parachain');
     expect(getDisplayName(pangolinParachainConfig)).toEqual('Pangolin Parachain');
   });

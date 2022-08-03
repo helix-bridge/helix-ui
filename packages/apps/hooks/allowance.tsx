@@ -26,12 +26,11 @@ export function useAllowance(direction: CrossChainDirection) {
         console.log(
           `⚠️ Missing parameters to  query allowance: address(${account}), spender(${spender}), tokenAddress(${tokenAddress})`
         );
+        setAllowance(null);
         return;
       }
 
       const result = await getAllowance(account, spender, tokenAddress, direction.from.meta.provider);
-
-      console.log('🚀 ~ file: allowance.tsx ~ line 33 ~ result', result?.toString());
 
       setAllowance(result);
     },
