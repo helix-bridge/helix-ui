@@ -1,4 +1,4 @@
-import { ArrowRightOutlined, ClockCircleOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
 import { Affix, Button, Input, message, Table, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import { formatDistance, fromUnixTime } from 'date-fns';
@@ -16,7 +16,15 @@ import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { SYSTEM_ChAIN_CONFIGURATIONS } from 'shared/config/network';
 import { DailyStatistic, HelixHistoryRecord, Network } from 'shared/model';
-import { convertToDvm, gqlName, isSS58Address, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
+import {
+  convertToDvm,
+  gqlName,
+  isSS58Address,
+  isValidAddress,
+  prettyNumber,
+  revertAccount,
+  toShortAddress,
+} from 'shared/utils/helper';
 import { chainConfigs, getChainConfig, getDisplayName } from 'shared/utils/network';
 import {
   getFeeAmountFromHelixRecord,
@@ -46,7 +54,7 @@ function RecordAccount({ chain, account, partner }: { chain: Network; account: s
           </div>
         }
       >
-        <span className="truncate">{displayAccount}</span>
+        <span className="truncate">{toShortAddress(displayAccount)}</span>
       </Tooltip>
     </div>
   );
@@ -82,7 +90,8 @@ function Page({
 
   const columns: ColumnType<HelixHistoryRecord>[] = [
     {
-      title: t('Time'),
+      title: <span className="pl-4">{t('Time')}</span>,
+      width: '15%',
       dataIndex: 'startTime',
       render: (value: number) => (
         <Tooltip
@@ -93,7 +102,7 @@ function Page({
             </div>
           }
         >
-          <span>
+          <span className="pl-4">
             {formatDistance(fromUnixTime(value), new Date(new Date().toUTCString()), {
               includeSeconds: true,
               addSuffix: true,
@@ -105,33 +114,22 @@ function Page({
     {
       title: t('From'),
       dataIndex: 'fromChain',
-      width: '20%',
       ellipsis: true,
       render(chain: Network, record) {
         return <RecordAccount chain={chain} account={record.sender} partner={t('Sender')} />;
       },
     },
     {
-      title: '',
-      key: 'direction',
-      align: 'center',
-      width: '50px',
-      render() {
-        return <ArrowRightOutlined />;
-      },
-    },
-    {
       title: t('To'),
       dataIndex: 'toChain',
-      width: '20%',
       ellipsis: true,
       render(chain: Network, record) {
         return <RecordAccount chain={chain} account={record.recipient} partner={t('Recipient')} />;
       },
     },
     {
-      title: t('Amount'),
-      dataIndex: 'amount',
+      title: t('Asset'),
+      width: '15%',
       render(_: string, record) {
         const amount = getSentAmountFromHelixRecord(record);
 
@@ -148,6 +146,7 @@ function Page({
     {
       title: t('Fee'),
       dataIndex: 'fee',
+      width: '12%',
       render(value: string, record) {
         const amount = getFeeAmountFromHelixRecord(record);
 
@@ -164,6 +163,7 @@ function Page({
     {
       title: t('Bridge'),
       dataIndex: 'bridge',
+      width: '10%',
       render: (value) => (
         <span className={`justify-self-center ${/^[a-z]+[A-Z]{1}/.test(value) ? '' : 'capitalize'}`}>{value}</span>
       ),
@@ -171,6 +171,7 @@ function Page({
     {
       title: t('Status'),
       dataIndex: 'result',
+      width: '10%',
       render: (value) => {
         return (
           <div className="flex gap-8 items-center">
@@ -202,14 +203,14 @@ function Page({
 
   return (
     <>
-      <div className="grid lg:grid-cols-3 gap-0 lg:gap-6 place-items-center py-2 lg:py-4">
+      <div className="grid lg:grid-cols-3 gap-0 place-items-center py-2 lg:py-6">
         <ViewBoard title={t('transactions')} count={transactionsTotal} />
         <ViewBoard title={t('unique users')} count={accountRes?.accounts?.total ?? 0} />
         <ViewBoard title={t('supported blockchains')} count={chainConfigs.length} />
       </div>
 
       <Affix offsetTop={62}>
-        <div className="pb-2 lg:pb-4 flex justify-between">
+        <div className="mt-2 pb-2 lg:pb-4 flex justify-between items-end">
           <Input
             size="large"
             suffix={<SearchOutlined />}
@@ -256,7 +257,7 @@ function Page({
               }
             }}
             disabled={loading}
-            className="flex items-center cursor-pointer"
+            className="flex items-center cursor-pointer px-0"
           >
             <span className="mr-2">{t('Latest transactions')}</span>
             <SyncOutlined />

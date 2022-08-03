@@ -184,6 +184,25 @@ $bg-dark: #151d35;
   vertical-align: middle;
 }
 
-.explorer-table .ant-table-thead > tr > th {
-  background: $bg-dark;
+.explorer-table {
+  .ant-table.ant-table-small {
+    background: rgba($bg-dark, 0.5);
+
+    .ant-table-thead > tr > th {
+      padding-top: 16px;
+      padding-bottom: 16px;
+      background: $bg-dark;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(50px);
+    }
+
+    .ant-table-tbody > tr > td {
+      padding-top: 16px;
+      padding-bottom: 16px;
+    }
+
+    .ant-table-tbody > tr.ant-table-row:hover > td {
+      background: rgba($bg-dark, 0.8);
+    }
+  }
 }
