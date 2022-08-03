@@ -108,6 +108,13 @@ export function BarChart({ data, name }: BarChartProps) {
     exporting: {
       enabled: false,
     },
+    tooltip: {
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      borderColor: mainColor,
+      style: {
+        color: 'white',
+      },
+    },
   };
 
   return (
