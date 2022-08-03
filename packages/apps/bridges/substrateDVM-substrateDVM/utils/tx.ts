@@ -3,16 +3,15 @@ import BN from 'bn.js';
 import { Observable } from 'rxjs';
 import { Tx } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
-import { convertToDvm, toWei } from 'shared/utils/helper';
+import { toWei } from 'shared/utils/helper';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
-import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 import { TxValidationMessages } from '../../../config/validation';
 import { TxValidation } from '../../../model';
 import { validationObsFactory } from '../../../utils/tx';
-import { IssuingPayload, RedeemPayload } from '../model';
 import backingAbi from '../config/s2sv2backing.json';
 import burnAbi from '../config/s2sv2burn.json';
+import { IssuingPayload, RedeemPayload } from '../model';
 
 export function issuing(value: IssuingPayload, fee: BN): Observable<Tx> {
   const { sender, recipient, direction } = value;
@@ -20,8 +19,6 @@ export function issuing(value: IssuingPayload, fee: BN): Observable<Tx> {
   const bridge = getBridge([departure.meta, to.meta]);
   const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
   const gasLimit = '1000000';
-
-  console.log('🚀 ~ file: tx.ts ~ line 22 ~ issuing ~ amount', amount, fee.toString());
 
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
@@ -33,28 +30,22 @@ export function issuing(value: IssuingPayload, fee: BN): Observable<Tx> {
   );
 }
 
-export function redeem(value: RedeemPayload): Observable<Tx> {
+export function redeem(value: RedeemPayload, fee: BN): Observable<Tx> {
   const {
     sender,
     recipient,
     direction: { from: departure, to },
   } = value;
-  const receiver = Web3.utils.hexToBytes(convertToDvm(recipient));
-  const gasLimit = '1000000';
   const bridge = getBridge([departure.meta, to.meta]);
+  const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
+  const gasLimit = '1000000';
 
   return genEthereumContractTxObs(
     bridge.config.contracts!.redeem,
     (contract) =>
       contract.methods
-        .burnAndRemoteUnlock(
-          departure.meta.specVersion,
-          gasLimit,
-          departure.address,
-          receiver,
-          toWei({ value: departure.amount })
-        )
-        .send({ from: sender }),
+        .burnAndRemoteUnlock(departure.meta.specVersion, gasLimit, departure.address, recipient, amount)
+        .send({ from: sender, value: fee.toString() }),
     burnAbi as AbiItem[]
   );
 }

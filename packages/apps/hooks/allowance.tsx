@@ -26,6 +26,7 @@ export function useAllowance(direction: CrossChainDirection) {
         console.log(
           `⚠️ Missing parameters to  query allowance: address(${account}), spender(${spender}), tokenAddress(${tokenAddress})`
         );
+        setAllowance(null);
         return;
       }
 

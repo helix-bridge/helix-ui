@@ -17,7 +17,7 @@ import { useAfterTx, useCheckSpecVersion } from '../../hooks';
 import { useAccount, useApi } from '../../providers';
 import { IssuingPayload, SubstrateDVMSubstrateDVMBridgeConfig } from './model';
 import { getDailyLimit, getFee } from './utils';
-import { issuing, validate } from './utils/tx';
+import { issuing, redeem, validate } from './utils/tx';
 
 export function SubstrateDVM2SubstrateDVM({
   form,
@@ -53,16 +53,30 @@ export function SubstrateDVM2SubstrateDVM({
 
   const isMounted = useIsMounted();
 
+  const txFn = useMemo(
+    () => (bridge.isIssuing(direction.from.meta, direction.to.meta) ? issuing : redeem),
+    [bridge, direction.from.meta, direction.to.meta]
+  );
+
   useEffect(() => {
     setBridgeState({ status: bridgeState.status, reason: bridgeState.reason });
   }, [bridgeState.status, bridgeState.reason, setBridgeState]);
 
   useEffect(() => {
     updateAllowancePayload({
-      spender: bridge.config.contracts.issuing,
+      spender: bridge.isIssuing(direction.from.meta, direction.to.meta)
+        ? bridge.config.contracts.issuing
+        : bridge.config.contracts.redeem,
       tokenAddress: direction.from.address,
     });
-  }, [bridge.config.contracts.issuing, direction.from.address, updateAllowancePayload]);
+  }, [
+    bridge,
+    bridge.config.contracts.issuing,
+    direction.from.address,
+    direction.from.meta,
+    direction.to.meta,
+    updateAllowancePayload,
+  ]);
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
@@ -76,13 +90,13 @@ export function SubstrateDVM2SubstrateDVM({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        issuing(data, fee!),
+        txFn(data, fee!),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, ring, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
+  }, [afterCrossChain, ring, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t, txFn]);
 
   useEffect(() => {
     const sub$$ = of(null)
