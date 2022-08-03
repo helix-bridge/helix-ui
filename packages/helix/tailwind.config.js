@@ -35,7 +35,7 @@ module.exports = {
         darwinia: 'linear-gradient(-45deg, #fe3876 0%, #7c30dd 71%, #3a30dd 100%)',
       }),
       backgroundColor: (_) => ({
-        antDark: '#151e33',
+        antDark: '#151d35',
         crab: '#EC3783',
         kusama: '#000',
         pangolin: '#5745DE',
