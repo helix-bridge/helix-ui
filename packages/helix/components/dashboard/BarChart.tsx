@@ -61,14 +61,16 @@ export function BarChart({ data, name }: BarChartProps) {
         width: 0,
       },
       buttonTheme: {
-        fill: isDark ? '#000' : '#ccc',
-        stroke: '#ffffff26',
+        fill: isDark ? 'none' : '#ccc',
+        stroke: mainColor,
         'stroke-width': 1,
         style: {
           color: 'white',
         },
         states: {
-          hover: {},
+          hover: {
+            fill: mainColor,
+          },
           select: {
             fill: mainColor,
             style: {
