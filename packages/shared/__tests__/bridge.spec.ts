@@ -102,7 +102,7 @@ describe('bridge utils', () => {
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(26);
+    expect(allDirections).toHaveLength(28);
   });
 
   it('should get bridges correctly', () => {
