@@ -19,8 +19,8 @@ if (typeof Highcharts === 'object') {
 export function BarChart({ data, name }: BarChartProps) {
   const charRef = useRef(null);
   const isDark = !readStorage().theme || readStorage().theme === THEME.DARK;
-  const mainColor = '#00b2ff';
-  const barColor = isDark ? '#151e33' : 'rgb(229,231,235)';
+  const mainColor = '#00B2FF';
+  const barColor = isDark ? '#151d35' : 'rgb(229,231,235)';
 
   const options = {
     chart: {
