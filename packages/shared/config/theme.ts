@@ -25,6 +25,7 @@ export const NETWORK_LIGHT_THEME: NetworkThemeConfig<{ [key in keyof typeof darw
   'crab-dvm': crab,
   'pangolin-parachain': pangolin,
   'crab-parachain': crab,
+  'pangoro-dvm': pangoro,
 };
 
 export const SKIN_THEME = {
@@ -47,6 +48,7 @@ export const NETWORK_DARK_THEME: NetworkThemeConfig<{ [key in keyof typeof darwi
   'crab-dvm': crabDark,
   'pangolin-parachain': pangolinDark,
   'crab-parachain': crabDark,
+  'pangoro-dvm': pangoroDark,
 };
 
 export enum THEME {
