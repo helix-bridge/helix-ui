@@ -43,6 +43,6 @@
   "transactions": "transactions",
   "transactions by week": "transactions by week",
   "unique users": "unique users",
-  "volumes": "volumes",
-  "volumes by week": "volumes by week"
+  "volume": "volume",
+  "volume by week": "volume by week"
 }

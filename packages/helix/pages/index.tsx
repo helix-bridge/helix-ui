@@ -172,8 +172,8 @@ function Page({
   return (
     <div>
       <Statistics
-        titleLeft={t('volumes by week')}
-        titleRight={t('volumes')}
+        titleLeft={t('volume by week')}
+        titleRight={t('volume')}
         startTime={startTime}
         total={volumeTotal}
         rank={volumeRank}
