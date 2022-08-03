@@ -78,7 +78,8 @@ export function BarChart({ data, name }: BarChartProps) {
         },
       },
       inputStyle: {
-        color: '#9ca3af',
+        display: 'none',
+        width: 0,
       },
     },
     scrollbar: {
