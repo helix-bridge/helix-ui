@@ -114,15 +114,20 @@ export function SubstrateDVM2SubstrateDVM({
   }, [direction, isMounted]);
 
   useEffect(() => {
-    const sub$$ = from(getFee(direction)).subscribe((result) => {
-      setFee(result);
+    const sub$$ = from(getFee(direction)).subscribe({
+      next(result) {
+        setFee(result);
 
-      if (onFeeChange) {
-        onFeeChange({
-          amount: isRing(direction.from.symbol) ? +fromWei({ value: result, decimals: direction.from.decimals }) : 0,
-          symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
-        });
-      }
+        if (onFeeChange) {
+          onFeeChange({
+            amount: isRing(direction.from.symbol) ? +fromWei({ value: result, decimals: direction.from.decimals }) : 0,
+            symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
+          });
+        }
+      },
+      error(error) {
+        console.warn('🚀 ~ file: SubstrateDVM2SubstrateDVM.tsx ~ line 129 ~ error ~ error', error);
+      },
     });
 
     return () => sub$$.unsubscribe();
