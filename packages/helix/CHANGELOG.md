@@ -1,3 +1,17 @@
+## [4.0.4](https://github.com/helix-bridge/helix/compare/v4.0.3-helix...v4.0.4) (2022-08-04)
+
+
+### Bug Fixes
+
+* polygon approve ([#160](https://github.com/helix-bridge/helix/issues/160)) ([37e2885](https://github.com/helix-bridge/helix/commit/37e288501ce71020cfede6ccd888b8dcc9e97c1e))
+
+
+### Features
+
+* pangolin  pangoro refund ([#162](https://github.com/helix-bridge/helix/issues/162)) ([3a85cfb](https://github.com/helix-bridge/helix/commit/3a85cfb9b869ef286d7960731aacaf1fb20f4258))
+
+
+
 ## [4.0.3](https://github.com/helix-bridge/helix/compare/v4.0.2-helix...v4.0.3) (2022-08-03)
 
 
