@@ -1,3 +1,4 @@
+import { DVMNetwork, EthereumTypeNetwork, PolkadotTypeNetwork } from '../../model';
 import { crabConfig } from './crab';
 import { crabDVMConfig } from './crab-dvm';
 import { crabParachainConfig } from './crab-parachain';
@@ -28,4 +29,24 @@ export const SYSTEM_ChAIN_CONFIGURATIONS = [
   pangoroDVMConfig,
   polygonConfig,
   ropstenConfig,
+];
+
+export const knownPolkadotNetworks: PolkadotTypeNetwork[] = [
+  'crab',
+  'darwinia',
+  'pangolin',
+  'pangoro',
+  'polkadot',
+  'pangolin-parachain',
+  'crab-parachain',
+];
+
+export const knownDVMNetworks: DVMNetwork[] = ['crab-dvm', 'pangolin-dvm', 'pangoro-dvm', 'darwinia-dvm'];
+
+export const knownEthereumNetworks: (DVMNetwork | EthereumTypeNetwork)[] = [
+  'ethereum',
+  'ropsten',
+  'heco',
+  'polygon',
+  ...knownDVMNetworks,
 ];

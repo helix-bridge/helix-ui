@@ -8,7 +8,7 @@ import { ethereumHeco } from 'shared/config/bridges/ethereum-heco';
 import { ethereumPolygon } from 'shared/config/bridges/ethereum-polygon';
 import { parachainCrab, parachainPangolin } from 'shared/config/bridges/parachain-substrate';
 import { crabCrabDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
-import { pangoroDVMPangolinDVM } from 'shared/config/bridges/substrateDVM-substrateDVM';
+import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from 'shared/config/bridges/substrateDVM-substrateDVM';
 import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
 import { CrabDVM2Ethereum, Ethereum2CrabDVM } from './crabDVM-ethereum';
 import { CrabDVM2Heco, Heco2CrabDVM } from './crabDVM-heco';
@@ -86,5 +86,8 @@ ethereumPolygon.setRedeemComponents(Polygon2Ethereum as FunctionComponent);
 /**
  * substrate dvm <-> substrate dvm
  */
+darwiniaDVMCrabDVM.setIssuingComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
+darwiniaDVMCrabDVM.setRedeemComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
+
 pangoroDVMPangolinDVM.setIssuingComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
 pangoroDVMPangolinDVM.setRedeemComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);

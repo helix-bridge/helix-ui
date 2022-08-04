@@ -1,18 +1,8 @@
 /// <reference types="jest" />
 
-import { chain, isEqual } from 'lodash';
-import {
-  crabConfig,
-  crabDVMConfig,
-  darwiniaConfig,
-  darwiniaDVMConfig,
-  ethereumConfig,
-  pangolinDVMConfig,
-  pangoroDVMConfig,
-} from '../config/network';
+import { crabConfig, crabDVMConfig, darwiniaDVMConfig, pangolinDVMConfig, pangoroDVMConfig } from '../config/network';
 import { crabParachainConfig } from '../config/network/crab-parachain';
 import { pangolinParachainConfig } from '../config/network/pangolin-parachain';
-import { Network } from '../model';
 import { crossChainGraph } from '../utils/network/graph';
 import {
   chainConfigs,

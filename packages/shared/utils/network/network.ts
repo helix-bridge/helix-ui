@@ -1,6 +1,6 @@
 import { chain as lodashChain, pick, upperFirst } from 'lodash';
 import { SYSTEM_ChAIN_CONFIGURATIONS } from '../../config/network';
-import { knownDVMNetworks, knownEthereumNetworks, knownPolkadotNetworks } from '../../config/network/category';
+import { knownDVMNetworks, knownEthereumNetworks, knownPolkadotNetworks } from '../../config/network';
 import { ChainConfig, Network, PolkadotChainConfig } from '../../model';
 import { getCustomNetworkConfig } from '../helper/storage';
 import { crossChainGraph } from './graph';
