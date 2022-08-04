@@ -68,12 +68,16 @@ export const isPolygon2Ethereum: BridgePredicateFn = (departure, arrival) => isE
 export const isEthereum2Heco: BridgePredicateFn = (departure, arrival) =>
   departure === 'ethereum' && arrival === 'heco';
 export const isHeco2Ethereum: BridgePredicateFn = (departure, arrival) => isEthereum2Heco(arrival, departure);
+
 export const isSubstrateDVM2SubstrateDVMIssuing: BridgePredicateFn = (departure, arrival) => {
-  return departure === 'pangoro-dvm' && arrival === 'pangolin-dvm';
+  return (
+    (departure === 'pangoro-dvm' && arrival === 'pangolin-dvm') ||
+    (departure === 'darwinia-dvm' && arrival === 'crab-dvm')
+  );
 };
 
 export const isSubstrateDVM2SubstrateDVMBacking: BridgePredicateFn = (departure, arrival) => {
-  return arrival === 'pangoro-dvm' && departure === 'pangolin-dvm';
+  return isSubstrateDVM2SubstrateDVMIssuing(arrival, departure);
 };
 
 /**

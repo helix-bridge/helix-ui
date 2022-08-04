@@ -5,6 +5,7 @@ import {
   crabConfig,
   crabDVMConfig,
   darwiniaConfig,
+  darwiniaDVMConfig,
   ethereumConfig,
   pangolinDVMConfig,
   pangoroDVMConfig,
@@ -26,7 +27,7 @@ describe('network utils', () => {
   const data = [...crossChainGraph];
 
   it('should contains chains count: ', () => {
-    expect(chainConfigs).toHaveLength(13);
+    expect(chainConfigs).toHaveLength(14);
   });
 
   it('contains 2 bridges from crab', () => {
@@ -36,11 +37,11 @@ describe('network utils', () => {
     expect(fromCrab![1]).toEqual(['crab-dvm', 'crab-parachain']);
   });
 
-  it('contains 5 bridges from crab-dvm', () => {
+  it('contains 6 bridges from crab-dvm', () => {
     const fromCrabDVM = data.find((item) => item[0] === 'crab-dvm');
 
     expect(fromCrabDVM).not.toEqual(undefined);
-    expect(fromCrabDVM![1]).toEqual(['crab', 'darwinia', 'heco', 'ethereum', 'polygon']);
+    expect(fromCrabDVM![1]).toEqual(['crab', 'darwinia', 'heco', 'ethereum', 'polygon', 'darwinia-dvm']);
   });
 
   it('contains 2 bridges from darwinia', () => {
@@ -48,6 +49,13 @@ describe('network utils', () => {
 
     expect(fromDarwinia).not.toEqual(undefined);
     expect(fromDarwinia![1]).toEqual(['crab-dvm', 'ethereum']);
+  });
+
+  it('contains 1 bridges from darwinia-dvm', () => {
+    const fromDarwinia = data.find((item) => item[0] === 'darwinia-dvm');
+
+    expect(fromDarwinia).not.toEqual(undefined);
+    expect(fromDarwinia![1]).toEqual(['crab-dvm']);
   });
 
   it('contains 4 bridge from ethereum', () => {
@@ -138,6 +146,7 @@ describe('network utils', () => {
     expect(isDVMNetwork('crab-dvm')).toBe(true);
     expect(isDVMNetwork('pangolin-dvm')).toBe(true);
     expect(isDVMNetwork('pangoro-dvm')).toBe(true);
+    expect(isDVMNetwork('darwinia-dvm')).toBe(true);
   });
 
   it('can convert display name', () => {
@@ -145,6 +154,7 @@ describe('network utils', () => {
     expect(getDisplayName(crabDVMConfig)).toEqual('Crab Smart Chain');
     expect(getDisplayName(pangolinDVMConfig)).toEqual('Pangolin Smart Chain');
     expect(getDisplayName(pangoroDVMConfig)).toEqual('Pangoro Smart Chain');
+    expect(getDisplayName(darwiniaDVMConfig)).toEqual('Darwinia Smart Chain');
     expect(getDisplayName(crabParachainConfig)).toEqual('Crab Parachain');
     expect(getDisplayName(pangolinParachainConfig)).toEqual('Pangolin Parachain');
   });

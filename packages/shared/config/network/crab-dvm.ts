@@ -104,6 +104,22 @@ export const crabDVMConfig: DVMChainConfig = {
       symbol: 'xKTON',
       address: '',
     },
+    {
+      name: 'xWRING',
+      decimals: 18,
+      cross: [
+        {
+          category: 'helix',
+          bridge: 'substrateDVM-substrateDVM',
+          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'wRING' },
+        },
+      ],
+      type: 'mapping',
+      host: 'crab-dvm',
+      logo: 'token-oring.svg',
+      symbol: 'xWRING',
+      address: '0x9aE08141868f75cc8f6Af5F53D32a01C2c4D12a7',
+    },
   ],
   ss58Prefix: 42,
   specVersion: 1232,
