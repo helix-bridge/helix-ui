@@ -49,7 +49,9 @@ export interface CrossChainComponentProps<
   setTxObservableFactory: React.Dispatch<React.SetStateAction<TxObservableFactory>>;
   setBridgeState: React.Dispatch<React.SetStateAction<BridgeState>>;
   onFeeChange: React.Dispatch<React.SetStateAction<{ amount: number; symbol: string } | null>>;
-  updateAllowancePayload: React.Dispatch<React.SetStateAction<{ spender: string; tokenAddress: string } | null>>;
+  updateAllowancePayload: React.Dispatch<
+    React.SetStateAction<{ spender: string; tokenAddress: string; provider?: string } | null>
+  >;
 }
 
 export interface CrossChainDirection<F = CrossToken, T = CrossToken> {
