@@ -1,4 +1,4 @@
-import { CopyrightOutlined, GithubOutlined, MailOutlined, TwitterOutlined } from '@ant-design/icons';
+import { CopyrightOutlined } from '@ant-design/icons';
 import { Divider, Layout } from 'antd';
 import { getYear } from 'date-fns';
 import { LanguageProps } from 'shared/components/widget/Language';
@@ -21,8 +21,8 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
     >
       <div className="md:flex md:gap-4 md:flex-wrap dark:text-gray-400">
         <span className="flex items-center justify-center">
-          <CopyrightOutlined />
-          <span className="ml-1 text-gray-400">
+          <CopyrightOutlined style={{ fontSize: '0.9rem' }} />
+          <span className="ml-1 text-gray-400 text-base font-medium">
             {t('{{year}} Developed by Helix Team', { year: getYear(new Date()) })}
           </span>
         </span>
@@ -35,7 +35,7 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
           rel="noreferrer"
           className="flex text-gray-400 hover:text-gray-200"
         >
-          <GithubOutlined />
+          <img alt="..." src="/image/github.svg" />
         </a>
 
         <a
@@ -44,7 +44,7 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
           rel="noreferrer"
           className="flex text-gray-400 hover:text-gray-200"
         >
-          <TwitterOutlined />
+          <img alt="..." src="/image/twitter.svg" />
         </a>
 
         <a
@@ -53,7 +53,7 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
           rel="noreferrer"
           className="flex text-gray-400 hover:text-gray-200"
         >
-          <MailOutlined />
+          <img alt="..." src="/image/mail.svg" />
         </a>
 
         <Divider

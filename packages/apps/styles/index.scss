@@ -155,6 +155,20 @@ $bg-dark: #151d35;
   }
 }
 
+.ant-radio-button-wrapper.ant-radio-button-wrapper-checked.ant-radio-button-wrapper-in-form-item.bridger-selector-item {
+  height: fit-content;
+  background: #101625;
+  border: 1px solid #343946;
+  border-radius: 2px;
+  transition: all 0.3s;
+
+  &:hover,
+  &:active {
+    opacity: 0.8;
+    border-color: #00b3ff;
+  }
+}
+
 .history-modal .ant-modal {
   width: 100vw !important;
 }

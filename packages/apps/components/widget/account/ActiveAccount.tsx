@@ -70,7 +70,7 @@ function ActiveAccountStrict() {
             )}
 
             <Button
-              className={`flex items-center justify-around px-1 overflow-hidden`}
+              className={`flex items-center justify-around px-1 overflow-hidden text-white`}
               icon={
                 matched ? (
                   <img src={`/image/${departureConnection.type}.svg`} width={18} height={18} />
@@ -118,6 +118,7 @@ function ActiveAccountStrict() {
           disabled={isConnecting}
           icon={isConnecting && <LoadingOutlined />}
           onClick={() => connectDepartureNetwork(departure)}
+          className="text-white"
         >
           {t('Connect to Wallet')}
         </Button>
@@ -134,7 +135,7 @@ function ActiveAccountStrict() {
         }}
         title={
           <div className="inline-flex items-center space-x-1">
-            <span>{t('Select active account')}</span>
+            <span className="text-white">{t('Select active account')}</span>
           </div>
         }
         footer={null}

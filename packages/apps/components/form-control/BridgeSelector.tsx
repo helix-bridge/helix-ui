@@ -95,8 +95,7 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
               >
                 <Radio.Button
                   key={index}
-                  className="w-full bg-gray-900 relative"
-                  style={{ height: 'fit-content' }}
+                  className="w-full relative bridger-selector-item"
                   value={item}
                   disabled={isDisabled(item)}
                 >

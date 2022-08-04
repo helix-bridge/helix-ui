@@ -48,7 +48,7 @@ export function RecipientItem({
   return (
     <div className="relative">
       <Form.Item
-        label={t('Recipient')}
+        label={<span className="text-white">{t('Recipient')}</span>}
         name={FORM_CONTROL.recipient}
         validateFirst
         validateTrigger="onBlur"
