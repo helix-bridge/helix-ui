@@ -68,7 +68,7 @@ export function refund(record: HelixHistoryRecord): Observable<Tx> {
   const arrival = getChainConfig(toChain) as DVMChainConfig;
   const transferId = expendId(id);
 
-  const { abi, address, method } = bridge.isIssuing(fromChain, toChain)
+  const { abi, address, method } = bridge.isRedeem(fromChain, toChain)
     ? { abi: backingAbi, address: bridge.config.contracts?.issuing, method: 'remoteIssuingFailure' }
     : { abi: burnAbi, address: bridge.config.contracts?.redeem, method: 'remoteUnlockFailure' };
 
