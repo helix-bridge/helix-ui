@@ -95,7 +95,7 @@ exports[`<CrossChainInfo /> render cross-chain and extra nodes 1`] = `
             onClick={[Function]}
           >
             <span
-              className="flex-1 bg-gray-800 h-px"
+              className="flex-1 bg-transparent h-px"
             />
             <span
               aria-label="caret-down"
@@ -117,7 +117,7 @@ exports[`<CrossChainInfo /> render cross-chain and extra nodes 1`] = `
               </svg>
             </span>
             <span
-              className="flex-1 bg-gray-800 h-px"
+              className="flex-1 bg-transparent h-px"
             />
           </div>
           <div
