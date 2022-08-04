@@ -50,7 +50,9 @@ function RecordAccount({ chain, account, partner }: { chain: Network; account: s
         title={
           <div>
             <span className="mr-2">{partner}: </span>
-            <Typography.Text copyable>{displayAccount}</Typography.Text>
+            <Typography.Text copyable={{ icon: <img alt="..." src="/image/copy.svg" /> }} className="custom-copy-icon">
+              {displayAccount}
+            </Typography.Text>
           </div>
         }
       >

@@ -13,7 +13,7 @@ export function IBreadcrumb({ txHash }: { txHash: string }) {
       <BreadcrumbItem>{t('Explorer')}</BreadcrumbItem>
       <BreadcrumbItem>{t('Transaction')}</BreadcrumbItem>
       <BreadcrumbItem>
-        <span className="w-32 md:w-72 lg:w-96 truncate text-white">{txHash}</span>
+        <span className="w-32 md:w-72 lg:w-96 truncate">{txHash}</span>
       </BreadcrumbItem>
     </Breadcrumb>
   );

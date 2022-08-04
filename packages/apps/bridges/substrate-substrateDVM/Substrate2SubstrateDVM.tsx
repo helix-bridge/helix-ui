@@ -141,7 +141,7 @@ export function Substrate2SubstrateDVM({
           {
             name: t('Daily limit'),
             content: dailyLimit ? (
-              <Typography.Text className="text-white">{fromWei({ value: dailyLimit, decimals: 9 })}</Typography.Text>
+              <Typography.Text>{fromWei({ value: dailyLimit, decimals: 9 })}</Typography.Text>
             ) : (
               <EyeInvisibleFilled />
             ),

@@ -23,7 +23,7 @@ export function SourceTx({ hash }: { hash: string | undefined }) {
           <Typography.Text
             copyable={{ icon: <img alt="..." src="/image/copy.svg" /> }}
             underline
-            className="custom-copy-icon truncate text-white"
+            className="custom-copy-icon truncate"
           >
             {hash}
           </Typography.Text>

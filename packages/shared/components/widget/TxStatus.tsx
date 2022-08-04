@@ -49,7 +49,9 @@ const getAlertProps = (tx: Tx, cancel: () => void): AlertProps => {
               The transaction has been sent, please check the transaction progress in the history or explorer.
             </Trans>
           </p>
-          <Typography.Text copyable>{tx.hash}</Typography.Text>
+          <Typography.Text copyable={{ icon: <img alt="..." src="/image/copy.svg" /> }} className="custom-copy-icon">
+            {tx.hash}
+          </Typography.Text>
         </div>
       ),
       icon: <CheckCircleOutlined />,

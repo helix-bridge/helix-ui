@@ -33,7 +33,7 @@ export function CrossChainInfo({
   const feeContent = useMemo(() => {
     if (fee) {
       return (
-        <Typography.Text className="text-white">
+        <Typography.Text>
           <Tooltip title={fee.amount} className="cursor-help">
             {prettyNumber(fee.amount, { decimal: 3, ignoreZeroDecimal: true })} {fee.symbol}
           </Tooltip>
@@ -51,15 +51,15 @@ export function CrossChainInfo({
   }, [fee, isDynamicFee, t]);
 
   return (
-    <Form.Item label={<span className="text-white">{t('Information')}</span>} className="relative">
+    <Form.Item label={t('Information')} className="relative">
       <div className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900">
         <div className="flex justify-between items-center">
-          <Typography.Text className="text-white">{t('Bridge Name')}</Typography.Text>
-          <Typography.Text className="text-white">{bridgeCategoryDisplay(bridge?.category)}</Typography.Text>
+          <Typography.Text>{t('Bridge Name')}</Typography.Text>
+          <Typography.Text>{bridgeCategoryDisplay(bridge?.category)}</Typography.Text>
         </div>
 
         <div className={`flex justify-between items-center ${hideFee ? 'hidden' : ''}`}>
-          <Typography.Text className="text-white">{t('Transaction Fee')}</Typography.Text>
+          <Typography.Text>{t('Transaction Fee')}</Typography.Text>
           {feeContent}
         </div>
 
@@ -83,7 +83,7 @@ export function CrossChainInfo({
                 data-testid={item.name}
                 className={`justify-between items-center transition-all duration-100 ${collapse ? 'hidden' : 'flex'}`}
               >
-                <Typography.Text className="text-white">{item.name}</Typography.Text>
+                <Typography.Text>{item.name}</Typography.Text>
                 {item.content}
               </div>
             ))}

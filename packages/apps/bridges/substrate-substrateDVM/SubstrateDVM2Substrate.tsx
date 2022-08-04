@@ -151,7 +151,7 @@ export function SubstrateDVM2Substrate({
           {
             name: t('Allowance'),
             content: (
-              <Typography.Text className="capitalize text-white">
+              <Typography.Text className="capitalize">
                 <span>
                   {fromWei({ value: allowance }, largeNumber, (num: string) =>
                     prettyNumber(num, { ignoreZeroDecimal: true })
@@ -164,7 +164,7 @@ export function SubstrateDVM2Substrate({
           {
             name: t('Daily limit'),
             content: dailyLimit ? (
-              <Typography.Text className="text-white">
+              <Typography.Text>
                 {dailyLimit.isZero()
                   ? t('Infinite')
                   : fromWei({ value: dailyLimit, decimals: 9 }, (val: string) =>

@@ -39,7 +39,7 @@ export function Bridge() {
         </div>
       </div>
 
-      <div className="flex justify-between text-xs text-white capitalize mt-1 px-3 whitespace-nowrap">
+      <div className="flex justify-between text-xs capitalize mt-1 px-3 whitespace-nowrap">
         {[departure, arrival].map((item) => (
           <div key={item.name}>{getDisplayName(item)}</div>
         ))}

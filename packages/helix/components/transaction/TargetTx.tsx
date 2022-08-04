@@ -18,7 +18,7 @@ const Hash = ({ hash, network }: HashProps) => {
       <Typography.Text
         copyable={{ icon: <img alt="..." src="/image/copy.svg" /> }}
         underline
-        className="truncate custom-copy-icon text-white"
+        className="truncate custom-copy-icon"
       >
         {hash}
       </Typography.Text>

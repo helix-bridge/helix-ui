@@ -38,8 +38,8 @@ export function SubscanLink({
       <Link
         href={`https://${network}.subscan.io/account/${address}`}
         target="_blank"
-        copyable={copyable}
-        className="w-full"
+        copyable={copyable ? { icon: <img alt="..." src="/image/copy.svg" /> } : false}
+        className={`w-full ${copyable ? 'custom-copy-icon' : ''}`}
       >
         {address}
       </Link>

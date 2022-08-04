@@ -19,7 +19,7 @@ export function Chain(props: ChainConfig) {
       <Logo name={logos[0].name} width={70} height={70} />
 
       <div className="flex flex-col gap-2">
-        <h6 className="capitalize text-base font-normal text-white">{chainName}</h6>
+        <h6 className="capitalize text-base font-normal">{chainName}</h6>
         <BestNumber config={props} color={'#1fe733'} />
         <div className="flex gap-2 text-lg text-gray-400 cursor-pointer">
           <GlobalOutlined

@@ -145,7 +145,7 @@ export function Parachain2Substrate({
           {
             name: t('Daily limit'),
             content: dailyLimit ? (
-              <Typography.Text className="text-white">
+              <Typography.Text>
                 {fromWei({ value: dailyLimit, decimals: 9 }, (value) =>
                   prettyNumber(value, { ignoreZeroDecimal: true })
                 )}

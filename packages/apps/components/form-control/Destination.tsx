@@ -25,7 +25,7 @@ export function Destination({
   const [visible, setVisible] = useState(false);
 
   return (
-    <Form.Item label={<span className="text-white">{title}</span>} className={'relative w-full mb-2 ' + className}>
+    <Form.Item label={title} className={'relative w-full mb-2 ' + className}>
       <>
         <InputNumber<string>
           value={value?.amount}
@@ -47,7 +47,7 @@ export function Destination({
         <div className="absolute top-0 left-auto right-0 h-20 flex justify-center items-center px-3">
           <Button
             style={{ height: 'auto' }}
-            className="flex items-center space-x-2 py-2 bg-gray-800 border-none text-white"
+            className="flex items-center space-x-2 py-2 bg-gray-800 border-none"
             onClick={() => setVisible(true)}
           >
             <div className="relative w-10 h-10">

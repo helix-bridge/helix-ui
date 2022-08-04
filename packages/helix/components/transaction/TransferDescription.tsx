@@ -9,7 +9,7 @@ export function TransferDescription({ tip, title, children }: PropsWithChildren<
         <Tooltip title={tip} className="cursor-help">
           <InfoCircleOutlined />
         </Tooltip>
-        <span className="capitalize text-white">{title}</span>
+        <span className="capitalize">{title}</span>
       </div>
 
       {children}

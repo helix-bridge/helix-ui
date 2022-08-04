@@ -32,22 +32,22 @@ export function Statistics({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 mt-4 lg:mt-6">
       <div className="lg:col-span-8 flex-1 p-4 bg-gray-200 dark:bg-antDark">
-        <span className="uppercase text-xl font-normal text-white">{titleLeft}</span>
+        <span className="uppercase text-xl font-normal">{titleLeft}</span>
         {children}
       </div>
 
       <div className="lg:col-span-4 bg-gray-200 dark:bg-antDark px-5 py-6">
         <div className="flex justify-between items-center">
-          <h3 className="uppercase text-xl font-normal text-white">{titleRight}</h3>
-          <span className="text-white text-sm font-normal opacity-50">{`Since ${startTime}`}</span>
+          <h3 className="uppercase text-xl font-normal">{titleRight}</h3>
+          <span className="text-sm font-normal opacity-50">{`Since ${startTime}`}</span>
         </div>
 
         <div className="flex flex-col gap-2 items-center justify-center mt-4 mb-2 md:mt-10 md:mb-6">
-          <h2 className="text-4xl font-normal text-white">
+          <h2 className="text-4xl font-normal">
             {currency}
             {total}
           </h2>
-          <span className="text-sm font-normal text-white opacity-50 capitalize">
+          <span className="text-sm font-normal opacity-50 capitalize">
             {t('Total {{title}}', { title: titleRight })}
           </span>
         </div>

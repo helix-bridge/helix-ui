@@ -139,7 +139,7 @@ export function Darwinia2Ethereum({
 
       <CrossChainInfo bridge={bridge} fee={feeWithSymbol}>
         <div className={`flex justify-between items-center transition-all duration-100`}>
-          <Typography.Text className="text-white">{t('Attention')}</Typography.Text>
+          <Typography.Text>{t('Attention')}</Typography.Text>
           <Tooltip
             title={t('Please perform a claim asset operation in the history section after the transfer is submitted.')}
           >

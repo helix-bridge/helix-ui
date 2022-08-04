@@ -65,7 +65,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
           <div className="hidden lg:flex items-center space-x-4">
             <ActiveAccount />
 
-            <Button icon={<HddOutlined />} onClick={() => setIsPersonalHistoryVisible(true)} className="text-white">
+            <Button icon={<HddOutlined />} onClick={() => setIsPersonalHistoryVisible(true)}>
               {t('History')}
             </Button>
 
