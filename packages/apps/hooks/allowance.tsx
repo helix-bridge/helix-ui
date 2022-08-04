@@ -1,16 +1,27 @@
 import { message } from 'antd';
 import BN from 'bn.js';
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import { EMPTY } from 'rxjs';
-import { CrossChainDirection, CrossChainPayload } from 'shared/model';
-import { getAllowance, applyModalObs, approveToken, createTxWorkflow } from 'shared/utils/tx';
 import { useITranslation } from 'shared/hooks/translation';
+import { CrossChainDirection, CrossChainPayload } from 'shared/model';
+import { applyModalObs, approveToken, createTxWorkflow, getAllowance } from 'shared/utils/tx';
 import { ApproveConfirm } from '../components/tx/ApproveConfirm';
 import { ApproveDone } from '../components/tx/ApproveSuccess';
 import { useAccount, useTx, useWallet } from '../providers';
 import { useAfterTx } from './tx';
 
 type ApproveValue = CrossChainPayload;
+
+interface ApproveOptions {
+  gas?: string;
+  gasPrice?: string;
+  provider?: string;
+}
+
+export interface AllowancePayload extends ApproveOptions {
+  spender: string;
+  tokenAddress: string;
+}
 
 export function useAllowance(direction: CrossChainDirection) {
   const { t } = useITranslation();
@@ -21,7 +32,7 @@ export function useAllowance(direction: CrossChainDirection) {
   const { matched } = useWallet();
 
   const queryAllowance = useCallback(
-    async ({ spender, tokenAddress, provider }: { spender: string; tokenAddress: string; provider?: string }) => {
+    async ({ spender, tokenAddress, provider }: AllowancePayload) => {
       if ([account, spender, tokenAddress].some((item) => !item)) {
         console.log(
           `⚠️ Missing parameters to  query allowance: address(${account}), spender(${spender}), tokenAddress(${tokenAddress})`
@@ -38,22 +49,16 @@ export function useAllowance(direction: CrossChainDirection) {
   );
 
   const approve = useCallback(
-    (payload: {
-      spender: string;
-      tokenAddress: string;
-      sendOptions?: {
-        gas: string;
-        gasPrice: string;
-        provider?: string;
-      };
-    }) => {
+    (payload: AllowancePayload) => {
       const value = { sender: account, direction };
       const { sender } = value;
       const beforeTx = applyModalObs({
         title: <h3 className="text-center mb-4">{t('Approve')}</h3>,
         content: <ApproveConfirm value={value} />,
       });
-      const txObs = approveToken({ sender, ...payload });
+      const { spender, tokenAddress, gas, gasPrice } = payload;
+      const options = gas && gasPrice ? { sendOptions: { gas, gasPrice } } : {};
+      const txObs = approveToken({ sender, spender, tokenAddress, ...options });
 
       if (!matched) {
         message.error(t('Wrong Network'));
@@ -71,10 +76,6 @@ export function useAllowance(direction: CrossChainDirection) {
     },
     [account, afterApprove, direction, matched, observer, queryAllowance, t]
   );
-
-  useEffect(() => {
-    setAllowance(null);
-  }, [direction]);
 
   return { approve, allowance, queryAllowance };
 }

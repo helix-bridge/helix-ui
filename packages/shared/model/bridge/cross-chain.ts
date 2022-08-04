@@ -2,6 +2,7 @@ import { FormInstance } from 'antd';
 import BN from 'bn.js';
 import React from 'react';
 import { Observable } from 'rxjs';
+import { AllowancePayload } from '../../../apps/hooks';
 import { ChainConfig, TokenWithBridgesInfo } from '../network';
 import { Tx } from '../tx';
 import { NullableFields } from '../type-operator';
@@ -49,9 +50,7 @@ export interface CrossChainComponentProps<
   setTxObservableFactory: React.Dispatch<React.SetStateAction<TxObservableFactory>>;
   setBridgeState: React.Dispatch<React.SetStateAction<BridgeState>>;
   onFeeChange: React.Dispatch<React.SetStateAction<{ amount: number; symbol: string } | null>>;
-  updateAllowancePayload: React.Dispatch<
-    React.SetStateAction<{ spender: string; tokenAddress: string; provider?: string } | null>
-  >;
+  updateAllowancePayload: React.Dispatch<React.SetStateAction<AllowancePayload | null>>;
 }
 
 export interface CrossChainDirection<F = CrossToken, T = CrossToken> {
