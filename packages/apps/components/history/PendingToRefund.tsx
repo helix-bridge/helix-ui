@@ -1,20 +1,22 @@
 import { SyncOutlined } from '@ant-design/icons';
 import { Button, message, Tooltip } from 'antd';
 import request from 'graphql-request';
-import { useCallback, useState } from 'react';
-import { from, map, of, switchMap, tap } from 'rxjs';
+import { useCallback, useMemo, useState } from 'react';
+import { EMPTY, from, map, of, switchMap, tap } from 'rxjs';
 import { CBridgeRecordStatus, LONG_DURATION } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { useIsMounted } from 'shared/hooks';
 import { HelixHistoryRecord } from 'shared/model';
+import { isSubstrateDVMSubstrateDVM } from 'shared/utils/bridge';
 import { gqlName, pollWhile } from 'shared/utils/helper';
 import { requestRefund, withdraw } from '../../bridges/cBridge/utils/tx';
+import { refund } from '../../bridges/substrateDVM-substrateDVM/utils';
 import { HISTORY_RECORD_BY_ID } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { RecordStatusComponentProps } from '../../model/component';
 import { useClaim, useTx } from '../../providers';
 
-export function PendingToRefund({ record }: RecordStatusComponentProps) {
+function CBrideRefund({ record }: RecordStatusComponentProps) {
   const { t } = useITranslation();
   const { onRefundSuccess } = useClaim();
   const [loading, setLoading] = useState(false);
@@ -115,4 +117,63 @@ export function PendingToRefund({ record }: RecordStatusComponentProps) {
       </Button>
     </Tooltip>
   );
+}
+
+function Refund({ record }: RecordStatusComponentProps) {
+  const { t } = useITranslation();
+  const { onRefundSuccess } = useClaim();
+  const [loading, setLoading] = useState(false);
+  const { observer } = useTx();
+
+  const refundFn = useMemo(() => {
+    const { fromChain, toChain } = record;
+    if (isSubstrateDVMSubstrateDVM(fromChain, toChain)) {
+      return refund;
+    }
+
+    return (history: HelixHistoryRecord) => {
+      console.warn(`No refund method implemented for ${history.fromChain} to ${history.toChain} transfer!`);
+      return EMPTY;
+    };
+  }, [record]);
+
+  return (
+    <Button
+      size="small"
+      disabled={loading}
+      type="primary"
+      icon={loading ? <SyncOutlined spin /> : null}
+      onClick={() => {
+        setLoading(true);
+
+        refundFn(record).subscribe({
+          next(response) {
+            observer.next(response);
+
+            if (response.status === 'finalized') {
+              onRefundSuccess({ id: record.id, hash: response.hash ?? '' });
+            }
+          },
+          error(err) {
+            observer.error(err);
+            setLoading(false);
+          },
+          complete() {
+            observer.complete();
+            setLoading(false);
+          },
+        });
+      }}
+    >
+      {t('Refund')}
+    </Button>
+  );
+}
+
+export function PendingToRefund({ record }: RecordStatusComponentProps) {
+  if (record.bridge === 'cBridge') {
+    return <CBrideRefund record={record} />;
+  }
+
+  return <Refund record={record} />;
 }
