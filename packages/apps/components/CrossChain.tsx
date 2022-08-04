@@ -17,7 +17,8 @@ import {
   CrossChainPayload,
   TxObservableFactory,
 } from 'shared/model';
-import { useAllowance } from '../hooks/allowance';
+import { isKton } from 'shared/utils/helper';
+import { AllowancePayload, useAllowance } from '../hooks/allowance';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
 import { getBalance } from '../utils';
 import { BridgeSelector } from './form-control/BridgeSelector';
@@ -44,7 +45,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const { account } = useAccount();
   const [balances, setBalances] = useState<BN[] | null>(null);
   const { allowance, approve, queryAllowance } = useAllowance(direction);
-  const [allowancePayload, setAllowancePayload] = useState<{ spender: string; tokenAddress: string } | null>(null);
+  const [allowancePayload, setAllowancePayload] = useState<AllowancePayload | null>(null);
   const { matched } = useWallet();
   const { observer } = useTx();
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
@@ -55,11 +56,11 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
     }
 
     if (Array.isArray(balances)) {
-      return allowance.gt(balances[0]);
+      return allowance.gt(balances[isKton(direction.from.symbol) ? 1 : 0]);
     }
 
     return allowance.gt(balances);
-  }, [allowance, balances]);
+  }, [allowance, balances, direction.from.symbol]);
 
   const Content = useMemo(() => {
     const { from, to } = direction;

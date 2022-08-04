@@ -16,7 +16,7 @@ import {
   EthereumChainConfig,
   TxObservableFactory,
 } from 'shared/model';
-import { isMetamaskChainConsistent, isNetworkConsistent } from 'shared/utils/connection';
+import { entrance, isMetamaskChainConsistent, isNetworkConsistent } from 'shared/utils/connection';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 
@@ -132,6 +132,7 @@ export function CBridge({
     updateAllowancePayload({
       spender: poolAddress,
       tokenAddress: direction.from.address,
+      provider: entrance.web3.defaultProvider,
     });
   }, [direction.from.address, poolAddress, updateAllowancePayload]);
 
