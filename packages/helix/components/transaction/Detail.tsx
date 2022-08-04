@@ -44,7 +44,7 @@ export function Detail({ record, transfers }: DetailProps) {
       <IBreadcrumb txHash={record.requestTxHash} />
 
       <div className="flex justify-between items-center mt-6">
-        <h3 className="uppercase text-xs md:text-lg">{t('transaction detail')}</h3>
+        <h3 className="uppercase text-xs text-white md:text-lg">{t('transaction detail')}</h3>
         <Bridge />
       </div>
 
@@ -60,13 +60,19 @@ export function Detail({ record, transfers }: DetailProps) {
         <Divider />
 
         <TransferDescription title={t('Sender')} tip={t('Address (external or contract) sending the transaction.')}>
-          <Typography.Text copyable className="truncate">
+          <Typography.Text
+            copyable={{ icon: <img alt="..." src="/image/copy.svg" /> }}
+            className="truncate custom-copy-icon text-white"
+          >
             {revertAccount(record.sender, departure)}
           </Typography.Text>
         </TransferDescription>
 
         <TransferDescription title={t('Receiver')} tip={t('Address (external or contract) receiving the transaction.')}>
-          <Typography.Text copyable className="truncate">
+          <Typography.Text
+            copyable={{ icon: <img alt="..." src="/image/copy.svg" /> }}
+            className="truncate custom-copy-icon text-white"
+          >
             {revertAccount(record.recipient, arrival)}
           </Typography.Text>
         </TransferDescription>
@@ -79,20 +85,27 @@ export function Detail({ record, transfers }: DetailProps) {
           title={t('Value')}
           tip={t('The amount to be transferred to the recipient with the cross-chain transaction.')}
         >
-          {amount} {transfers[0].token.name}
+          <span className="text-white">
+            {amount} {transfers[0].token.name}
+          </span>
         </TransferDescription>
 
         <TransferDescription
           title={t('Transaction Fee')}
           tip={'Amount paid for processing the cross-chain transaction.'}
         >
-          {fromWei({ value: record.fee, decimals: feeDecimals })} {record.feeToken === 'null' ? null : record.feeToken}
+          <span className="text-white">
+            {fromWei({ value: record.fee, decimals: feeDecimals })}{' '}
+            {record.feeToken === 'null' ? null : record.feeToken}
+          </span>
         </TransferDescription>
 
         <Divider />
 
         <TransferDescription title={t('Nonce')} tip={t('A unique number of cross-chain transaction in Bridge')}>
-          {isCrabDVMHeco(record.fromChain, record.toChain) ? record.laneId : record.nonce}
+          <span className="text-white">
+            {isCrabDVMHeco(record.fromChain, record.toChain) ? record.laneId : record.nonce}
+          </span>
         </TransferDescription>
       </div>
     </>

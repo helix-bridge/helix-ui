@@ -20,7 +20,11 @@ export function SourceTx({ hash }: { hash: string | undefined }) {
           txHash={hash}
           className="hover:opacity-80 transition-opacity duration-200"
         >
-          <Typography.Text copyable className="truncate">
+          <Typography.Text
+            copyable={{ icon: <img alt="..." src="/image/copy.svg" /> }}
+            underline
+            className="custom-copy-icon truncate text-white"
+          >
             {hash}
           </Typography.Text>
         </SubscanLink>

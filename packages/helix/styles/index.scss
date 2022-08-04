@@ -184,6 +184,11 @@ $bg-dark: #151d35;
   vertical-align: middle;
 }
 
+.ant-typography.custom-copy-icon > u {
+  display: flex;
+  align-items: center;
+}
+
 .explorer-table {
   .ant-table.ant-table-small {
     background: rgba($bg-dark, 0.5);

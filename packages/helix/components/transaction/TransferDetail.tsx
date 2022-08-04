@@ -22,25 +22,25 @@ export function TransferDetail({ transfers, amount }: { transfers: TransferStep[
           >
             <span className="flex items-center gap-2 col-span-3">
               <Logo chain={chain} width={16} height={16} className="w-5" />
-              <span className="truncate">{getDisplayName(chain)}</span>
+              <span className="truncate text-white">{getDisplayName(chain)}</span>
             </span>
 
             <span className="grid grid-cols-12 items-center gap-2 col-span-6">
               <Tooltip title={sender}>
-                <span className="text-center truncate col-span-5">{sender}</span>
+                <span className="text-center truncate col-span-5 text-white">{sender}</span>
               </Tooltip>
 
               <ArrowRightOutlined />
 
               <Tooltip title={recipient}>
-                <span className="text-center truncate col-span-5">{recipient}</span>
+                <span className="text-center truncate col-span-5 text-white">{recipient}</span>
               </Tooltip>
             </span>
 
             <span className="flex items-center gap-2 col-span-3">
-              <span>{t('For')}</span>
+              <span className="font-bold text-white text-sm">{t('For')}</span>
               <Logo name={token.logo} width={16} height={16} className="w-5" />
-              <span className="whitespace-nowrap">
+              <span className="whitespace-nowrap text-white">
                 {amount} {token.name}
               </span>
             </span>

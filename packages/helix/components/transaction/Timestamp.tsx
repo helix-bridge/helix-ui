@@ -19,14 +19,16 @@ export function Timestamp({ record }: { record: HelixHistoryRecord | null }) {
         <div className="flex items-center gap-2 whitespace-nowrap">
           {record.result ? <ClockCircleOutlined /> : <Icon name="reload" />}
 
-          <span>
+          <span className="text-white">
             {formatDistance(fromUnixTime(record.startTime), new Date(new Date().toUTCString()), {
               includeSeconds: true,
               addSuffix: true,
             })}
           </span>
 
-          <span className="hidden md:inline-block">({format(fromUnixTime(record.startTime), DATE_TIME_FORMAT)})</span>
+          <span className="hidden md:inline-block text-white">
+            ({format(fromUnixTime(record.startTime), DATE_TIME_FORMAT)})
+          </span>
 
           <Divider type="vertical" orientation="center" />
 
