@@ -1,9 +1,12 @@
 import { BN_ZERO } from '@polkadot/util';
 import BN from 'bn.js';
-import { Observable } from 'rxjs';
-import { Tx } from 'shared/model';
+import { last } from 'lodash';
+import { EMPTY, from, Observable, switchMap } from 'rxjs';
+import { CrossChainDirection, CrossToken, DVMChainConfig, HelixHistoryRecord, Tx } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
+import { isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper';
+import { getChainConfig } from 'shared/utils/network';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { AbiItem } from 'web3-utils';
 import { TxValidationMessages } from '../../../config/validation';
@@ -12,6 +15,14 @@ import { validationObsFactory } from '../../../utils/tx';
 import backingAbi from '../config/s2sv2backing.json';
 import burnAbi from '../config/s2sv2burn.json';
 import { IssuingPayload, RedeemPayload } from '../model';
+import { getFee } from './fee';
+
+const expendId = (helixId: string) => {
+  const id = last(helixId.split('-')) as string;
+  const range = 28;
+
+  return id.substring(0, 10) + id.substring(10, id.length + 1).replace('0x', '0'.repeat(range - id.length));
+};
 
 export function issuing(value: IssuingPayload, fee: BN): Observable<Tx> {
   const { sender, recipient, direction } = value;
@@ -47,6 +58,42 @@ export function redeem(value: RedeemPayload, fee: BN): Observable<Tx> {
         .burnAndRemoteUnlock(departure.meta.specVersion, gasLimit, departure.address, recipient, amount)
         .send({ from: sender, value: fee.toString() }),
     burnAbi as AbiItem[]
+  );
+}
+
+export function refund(record: HelixHistoryRecord): Observable<Tx> {
+  const { fromChain, toChain, amount, sender, id, token } = record;
+  const bridge = getBridge([fromChain, toChain]);
+  const departure = getChainConfig(fromChain) as DVMChainConfig;
+  const arrival = getChainConfig(toChain) as DVMChainConfig;
+  const transferId = expendId(id);
+
+  const { abi, address, method } = bridge.isRedeem(fromChain, toChain)
+    ? { abi: backingAbi, address: bridge.config.contracts?.issuing, method: 'remoteIssuingFailure' }
+    : { abi: burnAbi, address: bridge.config.contracts?.redeem, method: 'remoteUnlockFailure' };
+
+  return isMetamaskChainConsistent(arrival).pipe(
+    switchMap((isConsistent) =>
+      isConsistent
+        ? from(
+            getFee({ from: { meta: arrival }, to: { meta: departure } } as CrossChainDirection<
+              CrossToken<DVMChainConfig>,
+              CrossToken<DVMChainConfig>
+            >)
+          )
+        : EMPTY
+    ),
+    switchMap((value) =>
+      genEthereumContractTxObs(
+        address as string,
+        (contract) =>
+          contract.methods[method](departure.specVersion, '2000000', transferId, token, sender, amount).send({
+            from: sender,
+            value: value?.toString(),
+          }),
+        abi as AbiItem[]
+      )
+    )
   );
 }
 
