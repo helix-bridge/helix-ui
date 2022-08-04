@@ -76,7 +76,7 @@ export function refund(record: HelixHistoryRecord): Observable<Tx> {
     switchMap((isConsistent) =>
       isConsistent
         ? from(
-            getFee({ from: { meta: departure }, to: { meta: arrival } } as CrossChainDirection<
+            getFee({ from: { meta: arrival }, to: { meta: departure } } as CrossChainDirection<
               CrossToken<DVMChainConfig>,
               CrossToken<DVMChainConfig>
             >)
