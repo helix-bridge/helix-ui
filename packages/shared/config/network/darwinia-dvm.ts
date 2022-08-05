@@ -28,7 +28,13 @@ export const darwiniaDVMConfig: DVMChainConfig = {
     {
       name: 'RING',
       decimals: 18,
-      cross: [],
+      cross: [
+        {
+          category: 'helix',
+          bridge: 'substrate-DVM',
+          partner: { name: 'darwinia', role: 'backing', symbol: 'RING' },
+        },
+      ],
       type: 'native',
       host: 'darwinia',
       logo: 'token-ring.svg',
@@ -49,7 +55,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       host: 'darwinia',
       logo: 'token-ring.svg',
       symbol: 'wRING',
-      address: '0x16D8A045F0B61786810DB5d4C2035932f8A3341A',
+      address: '0x9aE08141868f75cc8f6Af5F53D32a01C2c4D12a7',
     },
   ],
   ss58Prefix: 18,

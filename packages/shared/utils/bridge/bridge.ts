@@ -17,9 +17,9 @@ export type BridgePredicateFn = (departure: Network, arrival: Network) => boolea
 export type DVMBridgeConfig = Required<BridgeConfig<ContractConfig & { proof: string }>>;
 
 export const isSubstrate2SubstrateDVM: BridgePredicateFn = (departure, arrival) => {
-  const is = departure === 'pangoro' || departure === 'darwinia';
-
-  return is && isDVMNetwork(arrival);
+  return (
+    (departure === 'pangoro' && arrival === 'pangolin-dvm') || (departure === 'darwinia' && arrival === 'crab-dvm')
+  );
 };
 
 export const isSubstrateDVM2Substrate: BridgePredicateFn = (departure, arrival) =>
@@ -34,7 +34,7 @@ export const isEthereum2Darwinia: BridgePredicateFn = (departure, arrival) => {
 export const isDarwinia2Ethereum: BridgePredicateFn = (departure, arrival) => isEthereum2Darwinia(arrival, departure);
 
 export const isSubstrate2DVM: BridgePredicateFn = (departure, arrival) => {
-  const is = departure === 'crab' || departure === 'pangolin';
+  const is = ['crab', 'pangolin', 'darwinia'].includes(departure);
 
   return is && isDVMNetwork(arrival) && arrival.startsWith(departure);
 };
@@ -154,6 +154,7 @@ export function getBridges(source: CrossChainDirection): Bridge[] {
   return BRIDGES.filter(
     (bridge) =>
       bridge.isTest === source.from.meta.isTest &&
+      (bridge.isIssuing(source.from.meta, source.to.meta) || bridge.isRedeem(source.from.meta, source.to.meta)) &&
       overviews.find((overview) => overview.category === bridge.category && overview.bridge === bridge.name)
   );
 }

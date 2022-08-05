@@ -44,6 +44,7 @@ const testsCrosses: [[Network, Network][], BridgePredicateFn, BridgePredicateFn,
   [
     [
       ['crab', 'crab-dvm'],
+      ['darwinia', 'darwinia-dvm'],
       ['pangolin', 'pangolin-dvm'],
     ],
     isSubstrate2DVM,
@@ -98,15 +99,20 @@ describe('bridge utils', () => {
     const formalBridges = calcBridgesAmount(formals);
 
     expect(testBridges).toHaveLength(5);
-    expect(formalBridges).toHaveLength(10);
+    expect(formalBridges).toHaveLength(11);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(30);
+    expect(allDirections).toHaveLength(32);
   });
 
   it('should get bridges correctly', () => {
-    const s2DVM = {
+    const crab2DVM = {
+      from: { ...findBySymbol(crabConfig, 'crab'), meta: crabConfig, amount: '' },
+      to: { ...findBySymbol(crabDVMConfig, 'crab'), meta: crabDVMConfig, amount: '' },
+    };
+
+    const darwinia2DVM = {
       from: { ...findBySymbol(crabConfig, 'crab'), meta: crabConfig, amount: '' },
       to: { ...findBySymbol(crabDVMConfig, 'crab'), meta: crabDVMConfig, amount: '' },
     };
@@ -121,11 +127,13 @@ describe('bridge utils', () => {
       to: { ...findBySymbol(darwiniaConfig, 'ring'), meta: darwiniaConfig, amount: '' },
     };
 
-    const substrate2DVM = getBridges(s2DVM);
+    const crab2CrabDVM = getBridges(crab2DVM);
+    const darwinia2DarwiniaDVM = getBridges(darwinia2DVM);
     const substrate2Substrate = getBridges(s2s);
     const ethereum2Darwinia = getBridges(e2d);
 
-    expect(substrate2DVM).toHaveLength(1);
+    expect(crab2CrabDVM).toHaveLength(1);
+    expect(darwinia2DarwiniaDVM).toHaveLength(1);
     expect(substrate2Substrate).toHaveLength(1);
     expect(ethereum2Darwinia).toHaveLength(1);
   });

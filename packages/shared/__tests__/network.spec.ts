@@ -31,42 +31,42 @@ describe('network utils', () => {
     const fromCrabDVM = data.find((item) => item[0] === 'crab-dvm');
 
     expect(fromCrabDVM).not.toEqual(undefined);
-    expect(fromCrabDVM![1]).toEqual(['crab', 'darwinia', 'heco', 'ethereum', 'polygon', 'darwinia-dvm']);
+    expect(fromCrabDVM![1]).toEqual(['crab', 'ethereum', 'heco', 'polygon', 'darwinia', 'darwinia-dvm']);
   });
 
-  it('contains 2 bridges from darwinia', () => {
+  it('contains 3 bridges from darwinia', () => {
     const fromDarwinia = data.find((item) => item[0] === 'darwinia');
 
     expect(fromDarwinia).not.toEqual(undefined);
-    expect(fromDarwinia![1]).toEqual(['crab-dvm', 'ethereum']);
+    expect(fromDarwinia![1]).toEqual(['crab-dvm', 'darwinia-dvm', 'ethereum']);
   });
 
-  it('contains 1 bridges from darwinia-dvm', () => {
+  it('contains 2 bridges from darwinia-dvm', () => {
     const fromDarwinia = data.find((item) => item[0] === 'darwinia-dvm');
 
     expect(fromDarwinia).not.toEqual(undefined);
-    expect(fromDarwinia![1]).toEqual(['crab-dvm']);
+    expect(fromDarwinia![1]).toEqual(['darwinia', 'crab-dvm']);
   });
 
   it('contains 4 bridge from ethereum', () => {
     const fromEthereum = data.find((item) => item[0] === 'ethereum');
 
     expect(fromEthereum).not.toEqual(undefined);
-    expect(fromEthereum![1]).toEqual(['darwinia', 'crab-dvm', 'heco', 'polygon']);
+    expect(fromEthereum![1]).toEqual(['crab-dvm', 'darwinia', 'heco', 'polygon']);
   });
 
   it('contains 3 bridges from pangolin', () => {
     const fromPangolin = data.find((item) => item[0] === 'pangolin');
 
     expect(fromPangolin).not.toEqual(undefined);
-    expect(fromPangolin![1]).toEqual(['pangolin-dvm', 'ropsten', 'pangolin-parachain']);
+    expect(fromPangolin![1]).toEqual(['pangolin-dvm', 'pangolin-parachain', 'ropsten']);
   });
 
   it('contains 3 bridges from pangolin-dvm', () => {
     const fromPangolinDVM = data.find((item) => item[0] === 'pangolin-dvm');
 
     expect(fromPangolinDVM).not.toEqual(undefined);
-    expect(fromPangolinDVM![1]).toEqual(['pangolin', 'pangoro', 'pangoro-dvm']);
+    expect(fromPangolinDVM![1]).toEqual(['pangolin', 'pangoro-dvm', 'pangoro']);
   });
 
   it('contains 1 bridge from pangoro', () => {

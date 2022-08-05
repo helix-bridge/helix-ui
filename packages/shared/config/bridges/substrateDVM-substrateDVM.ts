@@ -12,6 +12,8 @@ const darwiniaDVMcrabDVMConfig: SubstrateDVMSubstrateDVMBridgeConfig = {
 export const darwiniaDVMCrabDVM = new Bridge(darwiniaDVMConfig, crabDVMConfig, darwiniaDVMcrabDVMConfig, {
   name: 'substrateDVM-substrateDVM',
   category: 'helix',
+  disableIssuing: true,
+  disableRedeem: true,
 });
 
 const pangoroDVMpangolinDVMConfig: SubstrateDVMSubstrateDVMBridgeConfig = {

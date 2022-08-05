@@ -4,7 +4,7 @@ import Web3 from 'web3';
 import { abi } from '../../../config/abi';
 import { entrance } from '../../connection';
 
-export async function getBalance(ktonAddress: string, account: string): Promise<[BN, BN]> {
+export async function getBalance(account: string, ktonAddress?: string): Promise<[BN, BN]> {
   let ring = '0';
   let kton = '0';
 
@@ -25,9 +25,11 @@ export async function getBalance(ktonAddress: string, account: string): Promise<
   }
 
   try {
-    const ktonContract = new web3.eth.Contract(abi.ktonABI, ktonAddress, { gas: 55000 });
+    if (ktonAddress) {
+      const ktonContract = new web3.eth.Contract(abi.ktonABI, ktonAddress, { gas: 55000 });
 
-    kton = await ktonContract.methods.balanceOf(account).call();
+      kton = await ktonContract.methods.balanceOf(account).call();
+    }
   } catch (error) {
     console.error(
       '%c [ get kton balance in ethereum error ]',
