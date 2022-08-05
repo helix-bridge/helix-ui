@@ -38,7 +38,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
         .filter((item) => !fromToken || (!(fromToken.meta.name === item.name) && inPartners(item)))
         .map((item) =>
           item.tokens
-            .filter((token) => !fromToken || asSameToken(token.symbol, fromToken.symbol))
+            .filter((token) => (!fromToken || asSameToken(token.symbol, fromToken.symbol)) && !!token.cross.length)
             .map((token) => ({ ...token, meta: item }))
         )
         .flatten()

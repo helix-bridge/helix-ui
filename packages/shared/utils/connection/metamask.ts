@@ -1,6 +1,5 @@
 import { DebouncedFunc, throttle } from 'lodash';
 import { catchError, combineLatest, from, map, merge, Observable, Observer, of, startWith, switchMap } from 'rxjs';
-import Web3 from 'web3';
 import { SHORT_DURATION } from '../../config/constant';
 import {
   ConnectionStatus,
@@ -72,11 +71,9 @@ export const getMetamaskConnection: () => Observable<EthereumConnection> = () =>
   );
 
 export async function switchEthereumChain(chain: EthereumChainConfig): Promise<null> {
-  const chainId = Web3.utils.toHex(+chain.ethereumChain.chainId);
-
   const res: null = await window.ethereum.request({
     method: 'wallet_switchEthereumChain',
-    params: [{ chainId }],
+    params: [{ chainId: chain.ethereumChain.chainId }],
   });
 
   return res;
@@ -86,12 +83,9 @@ export async function switchEthereumChain(chain: EthereumChainConfig): Promise<n
  * @description add chain in metamask
  */
 async function addEthereumChain(chain: EthereumChainConfig): Promise<null> {
-  // TODO check the chaiId field, store in decimal in configuration but may be required hexadecimal in metamask side.
-  const chainId = Web3.utils.toHex(+chain.ethereumChain.chainId);
-
   const result = await window.ethereum.request({
     method: 'wallet_addEthereumChain',
-    params: [{ ...chain.ethereumChain, chainId }],
+    params: [chain.ethereumChain],
   });
 
   return result;

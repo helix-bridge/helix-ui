@@ -9,7 +9,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       decimals: 18,
       symbol: 'RING',
     },
-    rpcUrls: ['https://darwinia-rpc.darwinia.network/'],
+    rpcUrls: ['https://rpc.darwinia.network/'],
   },
   isTest: false,
   name: 'darwinia-dvm',
