@@ -1,3 +1,12 @@
+## [4.0.5](https://github.com/helix-bridge/helix/compare/v4.0.4-helix...v4.0.5) (2022-08-06)
+
+
+### Features
+
+* support darwinia <> dvm ([#163](https://github.com/helix-bridge/helix/issues/163)) ([543c4f0](https://github.com/helix-bridge/helix/commit/543c4f070534cc3eac37856c561ddd9bd936490e))
+
+
+
 ## [4.0.4](https://github.com/helix-bridge/helix/compare/v4.0.3-helix...v4.0.4) (2022-08-04)
 
 
