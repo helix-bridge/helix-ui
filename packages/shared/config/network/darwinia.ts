@@ -29,6 +29,11 @@ export const darwiniaConfig: PolkadotChainConfig = {
           bridge: 'ethereum-darwinia',
           partner: { name: 'ethereum', role: 'backing', symbol: 'RING', claim: true },
         },
+        {
+          category: 'helix',
+          bridge: 'substrate-DVM',
+          partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'RING' },
+        },
       ],
       type: 'native',
       host: 'darwinia',

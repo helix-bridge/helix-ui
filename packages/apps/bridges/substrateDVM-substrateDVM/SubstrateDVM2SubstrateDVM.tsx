@@ -46,7 +46,7 @@ export function SubstrateDVM2SubstrateDVM({
     () =>
       fee && {
         amount: fromWei({ value: fee, decimals: direction.from.decimals }),
-        symbol: direction.from.meta.tokens.find((item) => /^[A-Z]RING/.test(item.symbol))!.symbol,
+        symbol: direction.from.meta.tokens.find((item) => /^[A-Z]?RING|CRAB/.test(item.symbol))!.symbol,
       },
     [direction.from.decimals, direction.from.meta.tokens, fee]
   );

@@ -5,29 +5,31 @@ import { ethereumDarwinia, ropstenPangolin } from './bridges/ethereum-darwinia';
 import { ethereumHeco } from './bridges/ethereum-heco';
 import { ethereumPolygon } from './bridges/ethereum-polygon';
 import { parachainCrab, parachainPangolin } from './bridges/parachain-substrate';
-import { crabCrabDVM, pangolinPangolinDVM } from './bridges/substrate-dvm';
+import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from './bridges/substrate-dvm';
 import { darwiniaCrabDVM, pangoroPangolinDVM } from './bridges/substrate-substrateDVM';
-import { pangoroDVMPangolinDVM } from './bridges/substrateDVM-substrateDVM';
+import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from './bridges/substrateDVM-substrateDVM';
 import { CHAIN_TYPE } from './env';
 
 const formalBridges = [
   crabCrabDVM,
-  darwiniaCrabDVM,
-  ethereumDarwinia,
-  parachainCrab,
-  crabDVMHeco,
   crabDVMEthereum,
+  crabDVMHeco,
   crabDVMPolygon,
+  darwiniaCrabDVM,
+  darwiniaDarwiniaDVM,
+  darwiniaDVMCrabDVM,
+  ethereumDarwinia,
   ethereumHeco,
   ethereumPolygon,
+  parachainCrab,
 ];
 
 const testBridges = [
   pangolinPangolinDVM,
-  pangoroPangolinDVM,
-  ropstenPangolin,
-  parachainPangolin,
   pangoroDVMPangolinDVM,
+  pangoroPangolinDVM,
+  parachainPangolin,
+  ropstenPangolin,
 ];
 
 export const BRIDGES = (() => {

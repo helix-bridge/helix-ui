@@ -10,7 +10,7 @@ export function ApproveDone({ value, tx }: TxDoneComponentProps) {
     <>
       <Typography.Text>{t('Approve Success {{account}}', { account: value.sender })}</Typography.Text>
       <SubscanLink txHash={tx.hash} network={value.direction.from.meta} className="ml-4">
-        {t('View in {{scan}} explorer', { scan: 'Etherscan' })}
+        {t('View in explorer')}
       </SubscanLink>
     </>
   );

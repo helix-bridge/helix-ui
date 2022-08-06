@@ -49,9 +49,9 @@ export async function getBalance(direction: CrossChainDirection, account: string
   }
 
   if (isDVM2Substrate(fromChain, toChain)) {
-    const kton = from.meta.tokens.find((item) => item.type === 'native' && isKton(item.symbol))!;
+    const kton = from.meta.tokens.find((item) => item.type === 'native' && isKton(item.symbol));
 
-    return getDVMBalance(kton.address, account);
+    return getDVMBalance(account, kton?.address);
   }
 
   if (

@@ -8,6 +8,7 @@ export const chainColors: { [key in Network]: string } = {
   'pangoro-dvm': '#07488f',
   crab: '#cd201f',
   darwinia: '#FF007A',
+  'darwinia-dvm': '#FF007A',
   ethereum: '#1C87ED',
   heco: '#05933a',
   pangolin: '#4b30dd',

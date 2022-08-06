@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 import React from 'react';
 import { SubscanLink } from '../../components/widget/SubscanLink';
 import { SYSTEM_ChAIN_CONFIGURATIONS } from '../../config/network';
-import { knownDVMNetworks, knownPolkadotNetworks } from '../../config/network/category';
+import { knownDVMNetworks, knownPolkadotNetworks } from '../../config/network';
 import { DVMNetwork, Network, PolkadotTypeNetwork } from '../../model';
 
 describe('<SubscanLink />', () => {
@@ -101,7 +101,7 @@ describe('<SubscanLink />', () => {
       </SubscanLink>
     );
 
-    expect(getByRole('link')).toHaveAttribute('href', `https://${config.name}.subscan.io/extrinsic/0x123456`);
+    expect(getByRole('link')).toHaveAttribute('href', `https://${config.name}.subscan.io/tx/0x123456`);
   });
 
   it.each(dvmConfigs)('[DVM - $name] should contains right extrinsic link by tx hash for dvm chains', (config) => {
@@ -111,10 +111,7 @@ describe('<SubscanLink />', () => {
       </SubscanLink>
     );
 
-    expect(getByRole('link')).toHaveAttribute(
-      'href',
-      `https://${config.name.split('-')[0]}.subscan.io/extrinsic/0x123456`
-    );
+    expect(getByRole('link')).toHaveAttribute('href', `https://${config.name.split('-')[0]}.subscan.io/tx/0x123456`);
   });
 
   it.each(knownDVMNetworks)(
@@ -126,10 +123,7 @@ describe('<SubscanLink />', () => {
         </SubscanLink>
       );
 
-      expect(getByRole('link')).toHaveAttribute(
-        'href',
-        `https://${network.split('-')[0]}.subscan.io/extrinsic/0x123456`
-      );
+      expect(getByRole('link')).toHaveAttribute('href', `https://${network.split('-')[0]}.subscan.io/tx/0x123456`);
     }
   );
 
