@@ -30,14 +30,14 @@ export function Detail({ record, transfers }: DetailProps) {
 
   const amount = useMemo(() => {
     const symbol = getTokenSymbolFromHelixRecord(record);
-    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol);
+    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase());
 
     return fromWei({ value: record?.amount ?? 0, decimals: token?.decimals ?? 9 }, prettyNumber);
   }, [departure.tokens, record]);
 
   const feeDecimals = useMemo(() => {
     const symbol = getTokenSymbolFromHelixRecord(record, 'feeToken');
-    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol);
+    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase());
 
     return token?.decimals ?? 9;
   }, [departure.tokens, record]);

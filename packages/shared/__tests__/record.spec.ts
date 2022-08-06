@@ -8,6 +8,7 @@ import {
   getSentAmountFromHelixRecord,
 } from '../utils/record/record';
 import data from './fixture/records.json';
+import darwiniaDVMRecords from './fixture/darwinia-dvm.json';
 
 /**
  * transfer overview:
@@ -41,6 +42,8 @@ describe('record utils', () => {
     const crabDVM2DarwiniaSuccess = getTokenSymbolFromHelixRecord(testRecords[4]);
     const crabDVM2HecoSuccess = getTokenSymbolFromHelixRecord(testRecords[5]);
     const crab2CrabParachainSuccess = getTokenSymbolFromHelixRecord(testRecords[6]);
+    const darwinia2dvmSuccess = getTokenSymbolFromHelixRecord(darwiniaDVMRecords[0]);
+    const dvm2DarwiniaSuccess = getTokenSymbolFromHelixRecord(darwiniaDVMRecords[1]);
 
     expect(crab2CrabDVMSuccess).toEqual('CRAB');
     expect(crabDVM2HecoRefunded).toEqual('xRING');
@@ -49,6 +52,8 @@ describe('record utils', () => {
     expect(crabDVM2DarwiniaSuccess).toEqual('xRING');
     expect(crabDVM2HecoSuccess).toEqual('xRING');
     expect(crab2CrabParachainSuccess).toEqual('CRAB');
+    expect(darwinia2dvmSuccess).toEqual('RING');
+    expect(dvm2DarwiniaSuccess).toEqual('RING');
   });
 
   it('should get received amount from helix record', () => {

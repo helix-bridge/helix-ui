@@ -38,8 +38,8 @@ const Page: NextPage<{
     const bridge = getBridge<ParachainSubstrateBridgeConfig>([departure, arrival]);
     const isIssuing = bridge.isIssuing(departure, arrival);
     const symbol = getTokenSymbolFromHelixRecord(record);
-    const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol)!;
-    const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === symbol)!;
+    const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase())!;
+    const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase())!;
 
     const issueStart: TransferStep = {
       chain: departure,

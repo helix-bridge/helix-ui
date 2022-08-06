@@ -27,7 +27,7 @@ const Page: NextPage<{
     const bridge = getBridge<CrabDVMHecoBridgeConfig>([departure, arrival]);
     const isRedeem = bridge.isRedeem(departure, arrival);
     const symbol = getTokenSymbolFromHelixRecord(record);
-    const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol)!;
+    const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase())!;
 
     const toToken = arrival.tokens.find((item) =>
       item.cross.find(
