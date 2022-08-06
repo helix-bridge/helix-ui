@@ -27,38 +27,61 @@ const Page: NextPage<{
     const bridge = getBridge<SubstrateDVMBridgeConfig>([departure, arrival]);
     const isIssuing = bridge.isIssuing(departure, arrival);
     const symbol = getTokenSymbolFromHelixRecord(record);
-    const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol)!;
-    const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === symbol)!;
+    const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase())!;
+    const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase())!;
 
-    const issuingTransfer: TransferStep[] = [
-      {
-        chain: departure,
-        sender: revertAccount(record.sender, departure),
-        recipient: toToken.address,
-        token: fromToken,
-      },
-      {
-        chain: arrival,
-        sender: toToken.address,
-        recipient: revertAccount(record.recipient, arrival),
-        token: toToken,
-      },
-    ];
+    let issuingTransfer: TransferStep[];
+    let redeemTransfer: TransferStep[];
 
-    const redeemTransfer: TransferStep[] = [
-      {
-        chain: departure,
-        sender: revertAccount(record.sender, departure),
-        recipient: SUBSTRATE_DVM_WITHDRAW,
-        token: fromToken,
-      },
-      {
-        chain: arrival,
-        sender: SUBSTRATE_DVM_WITHDRAW,
-        recipient: revertAccount(record.recipient, arrival),
-        token: toToken,
-      },
-    ];
+    if (departure.name.includes('darwinia')) {
+      issuingTransfer = [
+        {
+          chain: departure,
+          sender: revertAccount(record.sender, departure),
+          recipient: revertAccount(record.recipient, arrival),
+          token: fromToken,
+        },
+      ];
+
+      redeemTransfer = [
+        {
+          chain: departure,
+          sender: revertAccount(record.sender, departure),
+          recipient: revertAccount(record.recipient, arrival),
+          token: fromToken,
+        },
+      ];
+    } else {
+      issuingTransfer = [
+        {
+          chain: departure,
+          sender: revertAccount(record.sender, departure),
+          recipient: toToken.address,
+          token: fromToken,
+        },
+        {
+          chain: arrival,
+          sender: toToken.address,
+          recipient: revertAccount(record.recipient, arrival),
+          token: toToken,
+        },
+      ];
+
+      redeemTransfer = [
+        {
+          chain: departure,
+          sender: revertAccount(record.sender, departure),
+          recipient: SUBSTRATE_DVM_WITHDRAW,
+          token: fromToken,
+        },
+        {
+          chain: arrival,
+          sender: SUBSTRATE_DVM_WITHDRAW,
+          recipient: revertAccount(record.recipient, arrival),
+          token: toToken,
+        },
+      ];
+    }
 
     return isIssuing ? issuingTransfer : redeemTransfer;
   }, [record, router.query.from, router.query.to]);
