@@ -55,7 +55,7 @@ export const pangolinDVMConfig: DVMChainConfig = {
       host: 'pangolin-dvm',
       logo: 'token-kton.svg',
       symbol: 'WPKTON',
-      address: '0x8809f9b3ACEF1dA309f49b5Ab97A4C0faA64E6Ae',
+      address: '0x0000000000000000000000000000000000000402',
     },
     {
       name: 'xORING',
