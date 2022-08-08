@@ -29,7 +29,7 @@ import { chainConfigs, getChainConfig, getDisplayName } from 'shared/utils/netwo
 import {
   getFeeAmountFromHelixRecord,
   getSentAmountFromHelixRecord,
-  getTokenNameFromHelixRecord,
+  getTokenSymbolFromHelixRecord,
 } from 'shared/utils/record';
 import web3 from 'web3';
 import { ViewBoard } from '../../components/transaction/ViewBoard';
@@ -140,7 +140,7 @@ function Page({
             <span className="justify-self-center max-w-full truncate">
               {prettyNumber(amount, { decimal: 2, ignoreZeroDecimal: true })}
             </span>
-            <span className="ml-2">{getTokenNameFromHelixRecord(record)}</span>
+            <span className="ml-2">{getTokenSymbolFromHelixRecord(record)}</span>
           </Tooltip>
         );
       },

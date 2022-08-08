@@ -5,7 +5,6 @@ import { upperFirst } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, mergeMap } from 'rxjs';
-import { useDarwiniaAvailableBalances } from 'shared/hooks';
 import {
   CrossChainComponentProps,
   CrossToken,
@@ -40,11 +39,10 @@ export function Parachain2Substrate({
   CrossToken<DVMChainConfig>
 >) {
   const { t } = useTranslation();
-  const { departureConnection, departure } = useApi();
+  const { departureConnection } = useApi();
   const [fee, setFee] = useState<BN | null>(null);
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
-  const getBalances = useDarwiniaAvailableBalances(departure);
   const bridgeState = useCheckSpecVersion(direction);
   const [ring] = (balances ?? []) as BN[];
 
@@ -79,17 +77,7 @@ export function Parachain2Substrate({
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [
-    afterCrossChain,
-    ring,
-    dailyLimit,
-    departureConnection,
-    fee,
-    feeWithSymbol,
-    getBalances,
-    setTxObservableFactory,
-    t,
-  ]);
+  }, [afterCrossChain, ring, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
 
   useEffect(() => {
     const api = entrance.polkadot.getInstance(direction.to.meta.provider);

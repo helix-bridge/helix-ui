@@ -6,6 +6,7 @@ import { CrabDVMHecoBridgeConfig, HelixHistoryRecord, Network } from 'shared/mod
 import { getBridge } from 'shared/utils/bridge';
 import { revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
+import { getTokenSymbolFromHelixRecord } from 'shared/utils/record';
 import { Detail } from '../../../components/transaction/Detail';
 import { TransferStep } from '../../../model/transfer';
 import { getServerSideRecordProps } from '../../../utils/getServerSideRecordProps';
@@ -25,7 +26,8 @@ const Page: NextPage<{
     const arrival = getChainConfig(router.query.to as Network);
     const bridge = getBridge<CrabDVMHecoBridgeConfig>([departure, arrival]);
     const isRedeem = bridge.isRedeem(departure, arrival);
-    const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.token.toLowerCase())!;
+    const symbol = getTokenSymbolFromHelixRecord(record);
+    const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase())!;
 
     const toToken = arrival.tokens.find((item) =>
       item.cross.find(
@@ -69,7 +71,7 @@ const Page: NextPage<{
     }
 
     return transfer;
-  }, [record.recipient, record.result, record.sender, record.token, router.query.from, router.query.to]);
+  }, [record, router.query.from, router.query.to]);
 
   return <Detail record={record} transfers={transfers} />;
 };

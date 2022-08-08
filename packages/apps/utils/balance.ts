@@ -14,6 +14,7 @@ import {
   isSubstrate2Parachain,
   isSubstrate2SubstrateDVM,
   isSubstrateDVM2Substrate,
+  isSubstrateDVMSubstrateDVM,
 } from 'shared/utils/bridge';
 import { isKton, isRing } from 'shared/utils/helper';
 import { getDarwiniaBalance, getDVMBalance, getErc20Balance, getParachainBalance } from 'shared/utils/network/balance';
@@ -48,9 +49,9 @@ export async function getBalance(direction: CrossChainDirection, account: string
   }
 
   if (isDVM2Substrate(fromChain, toChain)) {
-    const kton = from.meta.tokens.find((item) => item.type === 'native' && isKton(item.symbol))!;
+    const kton = from.meta.tokens.find((item) => item.type === 'native' && isKton(item.symbol));
 
-    return getDVMBalance(kton.address, account);
+    return getDVMBalance(account, kton?.address);
   }
 
   if (
@@ -61,6 +62,7 @@ export async function getBalance(direction: CrossChainDirection, account: string
       isCrabDVMPolygon,
       isEthereumHeco,
       isEthereumPolygon,
+      isSubstrateDVMSubstrateDVM,
     ].some((fn) => fn(fromChain, toChain))
   ) {
     return getErc20Balance(from.address, account).then((res) => [res]);

@@ -7,6 +7,7 @@ import { isCrabDVMHeco } from 'shared/utils/bridge';
 import { fromWei, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
 import { Icon } from 'shared/components/widget/Icon';
+import { getTokenSymbolFromHelixRecord } from 'shared/utils/record';
 import { TransferStep } from '../../model/transfer';
 import { IBreadcrumb } from './Breadcrumb';
 import { Bridge } from './Bridge';
@@ -29,16 +30,18 @@ export function Detail({ record, transfers }: DetailProps) {
   const arrival = getChainConfig(router.query.to as Network);
 
   const amount = useMemo(() => {
-    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === record.token.toLowerCase());
+    const symbol = getTokenSymbolFromHelixRecord(record);
+    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase());
 
     return fromWei({ value: record?.amount ?? 0, decimals: token?.decimals ?? 9 }, prettyNumber);
-  }, [departure.tokens, record?.amount, record.token]);
+  }, [departure.tokens, record]);
 
   const feeDecimals = useMemo(() => {
-    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === record.feeToken.toLowerCase());
+    const symbol = getTokenSymbolFromHelixRecord(record, 'feeToken');
+    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase());
 
     return token?.decimals ?? 9;
-  }, [departure.tokens, record.feeToken]);
+  }, [departure.tokens, record]);
 
   return (
     <>

@@ -21,9 +21,8 @@ import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
-import { useAfterTx } from '../../hooks';
+import { useAfterTx, useCheckSpecVersion } from '../../hooks';
 import { useAccount } from '../../providers';
-import { useBridgeStatus } from './hooks';
 import { RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getRedeemFee } from './utils';
 import { redeem, validate } from './utils/tx';
@@ -44,7 +43,7 @@ export function SubstrateDVM2Substrate({
   CrossToken<PolkadotChainConfig>
 >) {
   const { t } = useTranslation();
-  const bridgeState = useBridgeStatus(direction);
+  const bridgeState = useCheckSpecVersion(direction);
   const [fee, setFee] = useState<BN | null>(null);
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();

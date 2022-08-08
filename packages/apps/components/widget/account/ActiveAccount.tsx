@@ -118,6 +118,7 @@ function ActiveAccountStrict() {
           disabled={isConnecting}
           icon={isConnecting && <LoadingOutlined />}
           onClick={() => connectDepartureNetwork(departure)}
+          className={chainMatched ? '' : 'text-red-500 border-red-500'}
         >
           {t('Connect to Wallet')}
         </Button>

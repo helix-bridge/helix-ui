@@ -73,8 +73,24 @@ export const pangolinDVMConfig: DVMChainConfig = {
       symbol: 'xORING',
       address: '0xb142658BD18c560D8ea74a31C07297CeCfeCF949',
     },
+    {
+      name: 'xWORING',
+      decimals: 18,
+      cross: [
+        {
+          category: 'helix',
+          bridge: 'substrateDVM-substrateDVM',
+          partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'wORING' },
+        },
+      ],
+      type: 'mapping',
+      host: 'pangolin-dvm',
+      logo: 'token-ring.svg',
+      symbol: 'xWORING',
+      address: '0xba01cfcad99c17dad9a859bd881dc99851faecf5',
+    },
   ],
   ss58Prefix: 42,
-  specVersion: 28170,
+  specVersion: 28180,
   wallets: ['metamask'],
 };

@@ -9,6 +9,7 @@ import { HelixHistoryRecord, Network, ParachainSubstrateBridgeConfig } from 'sha
 import { getBridge } from 'shared/utils/bridge';
 import { revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
+import { getTokenSymbolFromHelixRecord } from 'shared/utils/record';
 import { Detail } from '../../../components/transaction/Detail';
 import { useUpdatableRecord } from '../../../hooks';
 import { TransferStep } from '../../../model/transfer';
@@ -36,8 +37,9 @@ const Page: NextPage<{
     const arrival = getChainConfig(router.query.to as Network);
     const bridge = getBridge<ParachainSubstrateBridgeConfig>([departure, arrival]);
     const isIssuing = bridge.isIssuing(departure, arrival);
-    const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.token.toLowerCase())!;
-    const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === record.token.toLowerCase())!;
+    const symbol = getTokenSymbolFromHelixRecord(record);
+    const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase())!;
+    const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase())!;
 
     const issueStart: TransferStep = {
       chain: departure,

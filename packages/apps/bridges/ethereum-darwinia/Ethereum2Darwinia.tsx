@@ -104,10 +104,8 @@ export function Ethereum2Darwinia({
   }, [bridge, direction.from.meta.tokens, direction.from.symbol, onFeeChange]);
 
   useEffect(() => {
-    const token = direction.from.meta.tokens.find((item) => isRing(item.symbol))!;
-
-    updateAllowancePayload({ spender: bridge.config.contracts.issuing, tokenAddress: token.address });
-  }, [bridge.config.contracts.issuing, direction.from.meta.tokens, updateAllowancePayload]);
+    updateAllowancePayload({ spender: bridge.config.contracts.issuing, tokenAddress: direction.from.address });
+  }, [bridge.config.contracts.issuing, direction.from.address, direction.from.meta.tokens, updateAllowancePayload]);
 
   return (
     <>
@@ -127,25 +125,21 @@ export function Ethereum2Darwinia({
       <CrossChainInfo
         bridge={bridge}
         fee={feeWithSymbol}
-        extra={
-          isRing(direction.from.symbol)
-            ? [
-                {
-                  name: t('Allowance'),
-                  content: (
-                    <Typography.Text className="capitalize">
-                      <span>
-                        {fromWei({ value: allowance }, largeNumber, (num: string) =>
-                          prettyNumber(num, { ignoreZeroDecimal: true })
-                        )}
-                      </span>
-                      <span className="capitalize ml-1">{direction.from.symbol}</span>
-                    </Typography.Text>
-                  ),
-                },
-              ]
-            : undefined
-        }
+        extra={[
+          {
+            name: t('Allowance'),
+            content: (
+              <Typography.Text className="capitalize">
+                <span>
+                  {fromWei({ value: allowance }, largeNumber, (num: string) =>
+                    prettyNumber(num, { ignoreZeroDecimal: true })
+                  )}
+                </span>
+                <span className="capitalize ml-1">{direction.from.symbol}</span>
+              </Typography.Text>
+            ),
+          },
+        ]}
       ></CrossChainInfo>
     </>
   );

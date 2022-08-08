@@ -8,7 +8,7 @@ import { chainColors } from 'shared/config/network';
 import { useLocalSearch } from 'shared/hooks';
 import { ChainConfig, TokenInfoWithMeta } from 'shared/model';
 import { chainConfigs, getDisplayName, isDVMNetwork } from 'shared/utils/network';
-import { tokenSearchFactory } from '../../utils';
+import { asSameToken, tokenSearchFactory } from '../../utils';
 import { BaseModal } from '../widget/BaseModal';
 
 interface SelectTokenModalProps {
@@ -17,15 +17,6 @@ interface SelectTokenModalProps {
   onSelect: (value: TokenInfoWithMeta) => void;
   fromToken?: TokenInfoWithMeta;
 }
-
-const removeLeaderCharacters = (name: string): string => {
-  // ring -> xRING kton -> xKTON CKTON -> WCKTON
-  if (name.startsWith('x') || name.startsWith('W')) {
-    return name.slice(1);
-  }
-
-  return name;
-};
 
 export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: SelectTokenModalProps) => {
   const { t } = useTranslation();
@@ -47,9 +38,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
         .filter((item) => !fromToken || (!(fromToken.meta.name === item.name) && inPartners(item)))
         .map((item) =>
           item.tokens
-            .filter(
-              (token) => !fromToken || removeLeaderCharacters(token.symbol) === removeLeaderCharacters(fromToken.symbol)
-            )
+            .filter((token) => (!fromToken || asSameToken(token.symbol, fromToken.symbol)) && !!token.cross.length)
             .map((token) => ({ ...token, meta: item }))
         )
         .flatten()

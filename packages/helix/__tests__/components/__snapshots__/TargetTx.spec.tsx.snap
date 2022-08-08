@@ -544,7 +544,7 @@ exports[`<TargetTx /> render target tx with TxStatus: 4 1`] = `
   </div>
   <a
     className="ant-typography hover:opacity-80 transition-opacity duration-200"
-    href="https://darwinia.subscan.io/extrinsic/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
+    href="https://darwinia.subscan.io/tx/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
     onClick={null}
     rel="noopener noreferrer"
     style={

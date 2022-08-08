@@ -7,7 +7,7 @@ export type PolkadotTypeNetwork =
   | 'pangolin-parachain'
   | 'crab-parachain';
 
-export type DVMNetwork = 'pangolin-dvm' | 'crab-dvm';
+export type DVMNetwork = 'pangolin-dvm' | 'crab-dvm' | 'pangoro-dvm' | 'darwinia-dvm';
 
 export type EthereumTypeNetwork = 'ethereum' | 'ropsten' | 'polygon' | 'heco' | DVMNetwork;
 

@@ -2,12 +2,13 @@
 
 import { HelixHistoryRecord } from '../model';
 import {
-  getTokenNameFromHelixRecord,
+  getTokenSymbolFromHelixRecord,
   getReceivedAmountFromHelixRecord,
   getFeeAmountFromHelixRecord,
   getSentAmountFromHelixRecord,
 } from '../utils/record/record';
 import data from './fixture/records.json';
+import darwiniaDVMRecords from './fixture/darwinia-dvm.json';
 
 /**
  * transfer overview:
@@ -21,12 +22,12 @@ import data from './fixture/records.json';
  * | crab-dvm | darwinia | crab | > 0 |  receiveAmount |
  * | darwinia | ethereum | ring | > 0 |  receiveAmount + fee |
  * | ethereum | darwinia | ring | > 0 |  receiveAmount + fee |
- * | crab | crab-parachain | crab | > 0 | receiveAmount + fee | 
- * | crab-parachain | crab | crab | > 0 | receiveAmount + fee | 
+ * | crab | crab-parachain | crab | > 0 | receiveAmount + fee |
+ * | crab-parachain | crab | crab | > 0 | receiveAmount + fee |
  * | crab-dvm | heco | xRing | > 0 |  receiveAmount + fee |
  * | heco | crab-dvm | ring | > 0 |  receiveAmount + fee |
  * ```
- * 
+ *
  * TODO: missing crab-parachain -> crab records
  */
 
@@ -34,13 +35,15 @@ const testRecords = data as HelixHistoryRecord[];
 
 describe('record utils', () => {
   it('should get token name from helix record', () => {
-    const crab2CrabDVMSuccess = getTokenNameFromHelixRecord(testRecords[0]);
-    const crabDVM2HecoRefunded = getTokenNameFromHelixRecord(testRecords[1]);
-    const darwinia2CrabDVMSuccess = getTokenNameFromHelixRecord(testRecords[2]);
-    const crabDVM2CrabSuccess = getTokenNameFromHelixRecord(testRecords[3]);
-    const crabDVM2DarwiniaSuccess = getTokenNameFromHelixRecord(testRecords[4]);
-    const crabDVM2HecoSuccess = getTokenNameFromHelixRecord(testRecords[5]);
-    const crab2CrabParachainSuccess = getTokenNameFromHelixRecord(testRecords[6]);
+    const crab2CrabDVMSuccess = getTokenSymbolFromHelixRecord(testRecords[0]);
+    const crabDVM2HecoRefunded = getTokenSymbolFromHelixRecord(testRecords[1]);
+    const darwinia2CrabDVMSuccess = getTokenSymbolFromHelixRecord(testRecords[2]);
+    const crabDVM2CrabSuccess = getTokenSymbolFromHelixRecord(testRecords[3]);
+    const crabDVM2DarwiniaSuccess = getTokenSymbolFromHelixRecord(testRecords[4]);
+    const crabDVM2HecoSuccess = getTokenSymbolFromHelixRecord(testRecords[5]);
+    const crab2CrabParachainSuccess = getTokenSymbolFromHelixRecord(testRecords[6]);
+    const darwinia2dvmSuccess = getTokenSymbolFromHelixRecord(darwiniaDVMRecords[0]);
+    const dvm2DarwiniaSuccess = getTokenSymbolFromHelixRecord(darwiniaDVMRecords[1]);
 
     expect(crab2CrabDVMSuccess).toEqual('CRAB');
     expect(crabDVM2HecoRefunded).toEqual('xRING');
@@ -49,6 +52,8 @@ describe('record utils', () => {
     expect(crabDVM2DarwiniaSuccess).toEqual('xRING');
     expect(crabDVM2HecoSuccess).toEqual('xRING');
     expect(crab2CrabParachainSuccess).toEqual('CRAB');
+    expect(darwinia2dvmSuccess).toEqual('RING');
+    expect(dvm2DarwiniaSuccess).toEqual('RING');
   });
 
   it('should get received amount from helix record', () => {

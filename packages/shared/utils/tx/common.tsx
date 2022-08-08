@@ -4,6 +4,7 @@ import { Modal, ModalFuncProps, ModalProps } from 'antd';
 import BN from 'bn.js';
 import { noop } from 'lodash';
 import { i18n } from 'next-i18next';
+import React from 'react';
 import { initReactI18next, Trans } from 'react-i18next';
 import { EMPTY, Observable, Observer, switchMap, tap, finalize } from 'rxjs';
 import Web3 from 'web3';

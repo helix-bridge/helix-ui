@@ -17,9 +17,9 @@ export type BridgePredicateFn = (departure: Network, arrival: Network) => boolea
 export type DVMBridgeConfig = Required<BridgeConfig<ContractConfig & { proof: string }>>;
 
 export const isSubstrate2SubstrateDVM: BridgePredicateFn = (departure, arrival) => {
-  const is = departure === 'pangoro' || departure === 'darwinia';
-
-  return is && isDVMNetwork(arrival);
+  return (
+    (departure === 'pangoro' && arrival === 'pangolin-dvm') || (departure === 'darwinia' && arrival === 'crab-dvm')
+  );
 };
 
 export const isSubstrateDVM2Substrate: BridgePredicateFn = (departure, arrival) =>
@@ -34,7 +34,7 @@ export const isEthereum2Darwinia: BridgePredicateFn = (departure, arrival) => {
 export const isDarwinia2Ethereum: BridgePredicateFn = (departure, arrival) => isEthereum2Darwinia(arrival, departure);
 
 export const isSubstrate2DVM: BridgePredicateFn = (departure, arrival) => {
-  const is = departure === 'crab' || departure === 'pangolin';
+  const is = ['crab', 'pangolin', 'darwinia'].includes(departure);
 
   return is && isDVMNetwork(arrival) && arrival.startsWith(departure);
 };
@@ -69,6 +69,17 @@ export const isEthereum2Heco: BridgePredicateFn = (departure, arrival) =>
   departure === 'ethereum' && arrival === 'heco';
 export const isHeco2Ethereum: BridgePredicateFn = (departure, arrival) => isEthereum2Heco(arrival, departure);
 
+export const isSubstrateDVM2SubstrateDVMIssuing: BridgePredicateFn = (departure, arrival) => {
+  return (
+    (departure === 'pangoro-dvm' && arrival === 'pangolin-dvm') ||
+    (departure === 'darwinia-dvm' && arrival === 'crab-dvm')
+  );
+};
+
+export const isSubstrateDVM2SubstrateDVMBacking: BridgePredicateFn = (departure, arrival) => {
+  return isSubstrateDVM2SubstrateDVMIssuing(arrival, departure);
+};
+
 /**
  * Shorthand functions for predication without direction
  */
@@ -77,10 +88,11 @@ const isCrossFactory =
   (departure: Network, arrival: Network) =>
     fns.some((fn) => fn(departure, arrival));
 
-export const isSubstrateSubstrate: BridgePredicateFn = isCrossFactory(
+export const isSubstrateSubstrateDVM: BridgePredicateFn = isCrossFactory(
   isSubstrate2SubstrateDVM,
   isSubstrateDVM2Substrate
 );
+
 export const isEthereumDarwinia: BridgePredicateFn = isCrossFactory(isEthereum2Darwinia, isDarwinia2Ethereum);
 export const isSubstrateDVM: BridgePredicateFn = isCrossFactory(isSubstrate2DVM, isDVM2Substrate);
 export const isParachainSubstrate: BridgePredicateFn = isCrossFactory(isParachain2Substrate, isSubstrate2Parachain);
@@ -89,6 +101,11 @@ export const isCrabDVMEthereum: BridgePredicateFn = isCrossFactory(isCrabDVM2Eth
 export const isCrabDVMPolygon: BridgePredicateFn = isCrossFactory(isCrabDVM2Polygon, isPolygon2CrabDVM);
 export const isEthereumHeco: BridgePredicateFn = isCrossFactory(isEthereum2Heco, isHeco2Ethereum);
 export const isEthereumPolygon: BridgePredicateFn = isCrossFactory(isEthereum2Polygon, isPolygon2Ethereum);
+
+export const isSubstrateDVMSubstrateDVM: BridgePredicateFn = isCrossFactory(
+  isSubstrateDVM2SubstrateDVMIssuing,
+  isSubstrateDVM2SubstrateDVMBacking
+);
 
 function getBridgeOverviews(source: NullableFields<CrossChainDirection, 'from' | 'to'>) {
   const { from, to } = source;
@@ -137,6 +154,7 @@ export function getBridges(source: CrossChainDirection): Bridge[] {
   return BRIDGES.filter(
     (bridge) =>
       bridge.isTest === source.from.meta.isTest &&
+      (bridge.isIssuing(source.from.meta, source.to.meta) || bridge.isRedeem(source.from.meta, source.to.meta)) &&
       overviews.find((overview) => overview.category === bridge.category && overview.bridge === bridge.name)
   );
 }

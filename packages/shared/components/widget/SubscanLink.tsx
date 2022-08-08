@@ -1,4 +1,5 @@
 import { Typography } from 'antd';
+import React from 'react';
 import { CSSProperties, PropsWithChildren } from 'react';
 import { ChainConfig, Network } from '../../model';
 import { isDVMNetwork, isPolkadotNetwork } from '../../utils/network';
@@ -58,7 +59,6 @@ export function SubscanLink({
 
   if (txHash) {
     const isSubscan = isPolkadotNetwork(network) || isDVMNetwork(network);
-    const mapObj = isSubscan ? { scan: 'subscan', txPath: 'extrinsic' } : { scan: 'etherscan', txPath: 'tx' };
     const omitNetwork: Network[] = ['ethereum'];
 
     const explorers: Partial<{ [key in Network]: string }> = {
@@ -68,7 +68,9 @@ export function SubscanLink({
 
     const href =
       explorers[network] ??
-      `https://${omitNetwork.includes(network) ? '' : network + '.'}${mapObj.scan}.io/${mapObj.txPath}/${txHash}`;
+      `https://${omitNetwork.includes(network) ? '' : network + '.'}${
+        isSubscan ? 'subscan' : 'etherscan'
+      }.io/tx/${txHash}`;
 
     return (
       <Link href={href} target="_blank" {...other}>

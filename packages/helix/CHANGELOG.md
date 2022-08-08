@@ -1,3 +1,52 @@
+## [4.0.5](https://github.com/helix-bridge/helix/compare/v4.0.4-helix...v4.0.5) (2022-08-06)
+
+
+### Features
+
+* support darwinia <> dvm ([#163](https://github.com/helix-bridge/helix/issues/163)) ([543c4f0](https://github.com/helix-bridge/helix/commit/543c4f070534cc3eac37856c561ddd9bd936490e))
+
+
+
+## [4.0.4](https://github.com/helix-bridge/helix/compare/v4.0.3-helix...v4.0.4) (2022-08-04)
+
+
+### Bug Fixes
+
+* polygon approve ([#160](https://github.com/helix-bridge/helix/issues/160)) ([37e2885](https://github.com/helix-bridge/helix/commit/37e288501ce71020cfede6ccd888b8dcc9e97c1e))
+
+
+### Features
+
+* pangolin  pangoro refund ([#162](https://github.com/helix-bridge/helix/issues/162)) ([3a85cfb](https://github.com/helix-bridge/helix/commit/3a85cfb9b869ef286d7960731aacaf1fb20f4258))
+
+
+
+## [4.0.3](https://github.com/helix-bridge/helix/compare/v4.0.2-helix...v4.0.3) (2022-08-03)
+
+
+### Features
+
+* allow parachain to crab ([#159](https://github.com/helix-bridge/helix/issues/159)) ([98ff04f](https://github.com/helix-bridge/helix/commit/98ff04ff3dea9338a992dd56a3ec010bb4c1d710))
+* s2s v2 transfer ([#145](https://github.com/helix-bridge/helix/issues/145)) ([ebb1e79](https://github.com/helix-bridge/helix/commit/ebb1e795859c01da62f51ff172371379ddc44851))
+
+
+
+## [4.0.2](https://github.com/helix-bridge/helix/compare/v4.0.1-helix...v4.0.2) (2022-08-02)
+
+
+### Bug Fixes
+
+* refunded target tx hash on cBridge ([#144](https://github.com/helix-bridge/helix/issues/144)) ([8e5f964](https://github.com/helix-bridge/helix/commit/8e5f9649b5ea002056f96ad7058fccca74a8b750))
+
+
+### Features
+
+* add crab dvm to  ethereum or polygon ([#141](https://github.com/helix-bridge/helix/issues/141)) ([fb45565](https://github.com/helix-bridge/helix/commit/fb455656cd88ebf27e3f4d7dfb2a0b2626063cf2))
+* add docs entrance ([#142](https://github.com/helix-bridge/helix/issues/142)) ([b81c3ca](https://github.com/helix-bridge/helix/commit/b81c3ca5cd1393ea52da8bc90a1135ba0a13caa1))
+* ethereum<>polygon and ethereum<>heco ([#146](https://github.com/helix-bridge/helix/issues/146)) ([95b14a4](https://github.com/helix-bridge/helix/commit/95b14a4f95df992c0b2e10a8c045591a13e5ceab))
+
+
+
 # [](https://github.com/helix-bridge/helix/compare/v4.0.0-helix...v) (2022-07-27)
 
 

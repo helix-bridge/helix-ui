@@ -1,9 +1,10 @@
-import { Button, Typography } from 'antd';
+import { Button, message, Typography } from 'antd';
 import BN from 'bn.js';
+import { isNaN } from 'lodash';
 import { i18n, Trans, useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { initReactI18next } from 'react-i18next';
-import { from, mergeMap } from 'rxjs';
+import { from, mergeMap, of, switchMap } from 'rxjs';
 import { Logo } from 'shared/components/widget/Logo';
 import { FORM_CONTROL } from 'shared/config/constant';
 import {
@@ -15,6 +16,7 @@ import {
   EthereumChainConfig,
   TxObservableFactory,
 } from 'shared/model';
+import { entrance, isMetamaskChainConsistent, isNetworkConsistent } from 'shared/utils/connection';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 
@@ -29,7 +31,7 @@ import { TransferConfirm } from '../../components/tx/TransferConfirm';
 import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../hooks';
-import { useAccount } from '../../providers';
+import { useAccount, useWallet } from '../../providers';
 import { EstimateAmtRequest, EstimateAmtResponse } from '../cBridge/ts-proto/gateway/gateway_pb';
 import { IssuingPayload } from './model';
 import { getMinimalMaxSlippage, transfer, validate, client } from './utils';
@@ -50,6 +52,7 @@ export function CBridge({
   const [estimateResult, setEstimateResult] = useState<EstimateAmtResponse.AsObject | null>(null);
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE * UI_SLIPPAGE_SCALE);
   const [minimalMaxSlippage, setMinimalMaxSlippage] = useState<number | null>(null);
+  const { setChainMatched } = useWallet();
 
   const feeWithSymbol = useMemo(
     () =>
@@ -103,9 +106,24 @@ export function CBridge({
   const poolAddress = isIssuing ? bridge.config.contracts.issuing : bridge.config.contracts.redeem;
 
   useEffect(() => {
-    const sub$$ = from(getMinimalMaxSlippage(poolAddress)).subscribe((result) => {
-      setMinimalMaxSlippage(+result);
-    });
+    const sub$$ = from(isMetamaskChainConsistent(direction.from.meta))
+      .pipe(switchMap((isConsistent) => (isConsistent ? from(getMinimalMaxSlippage(poolAddress)) : of(NaN))))
+      .subscribe({
+        next: (result) => {
+          if (!isNaN(result)) {
+            setMinimalMaxSlippage(+result);
+            setChainMatched(true);
+          } else {
+            setChainMatched(false);
+          }
+        },
+        error: (error) => {
+          message.error(
+            `The active metamask chain is not consistent with required, you must switch it to ${direction.from.host} in metamask`
+          );
+          setChainMatched(false);
+        },
+      });
 
     return () => sub$$.unsubscribe();
   }, [poolAddress]);
@@ -114,6 +132,7 @@ export function CBridge({
     updateAllowancePayload({
       spender: poolAddress,
       tokenAddress: direction.from.address,
+      provider: entrance.web3.defaultProvider,
     });
   }, [direction.from.address, poolAddress, updateAllowancePayload]);
 
