@@ -9,7 +9,17 @@ export type PolkadotTypeNetwork =
 
 export type DVMNetwork = 'pangolin-dvm' | 'crab-dvm' | 'pangoro-dvm' | 'darwinia-dvm';
 
-export type EthereumTypeNetwork = 'ethereum' | 'ropsten' | 'polygon' | 'heco' | DVMNetwork;
+export type EthereumTypeNetwork =
+  | 'ethereum'
+  | 'ropsten'
+  | 'polygon'
+  | 'heco'
+  | 'BNB Chain'
+  | 'avalanche'
+  | 'arbitrum'
+  | 'optimism'
+  | 'astar'
+  | DVMNetwork;
 
 export type Network = PolkadotTypeNetwork | EthereumTypeNetwork | DVMNetwork;
 

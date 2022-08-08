@@ -10,7 +10,10 @@ export const polygonConfig: EthereumChainConfig = {
     rpcUrls: ['https://polygon-rpc.com/'],
   },
   isTest: false,
-  logos: [{ name: 'polygon.png', type: 'main' }],
+  logos: [
+    { name: 'polygon.png', type: 'main' },
+    { name: 'polygon2.png', type: 'assist' },
+  ],
   name: 'polygon',
   provider: 'wss://ws-mainnet.matic.network',
   social: {
