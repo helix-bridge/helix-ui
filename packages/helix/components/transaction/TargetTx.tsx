@@ -1,8 +1,9 @@
-import { Progress, Typography } from 'antd';
+import { Progress } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
+import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord, Network } from 'shared/model';
 import { TransferDescription } from './TransferDescription';
@@ -15,13 +16,7 @@ interface HashProps {
 const Hash = ({ hash, network }: HashProps) => {
   return (
     <SubscanLink network={network} txHash={hash} className="hover:opacity-80 transition-opacity duration-200">
-      <Typography.Text
-        copyable={{ icon: <img alt="..." src="/image/copy.svg" /> }}
-        underline
-        className="truncate custom-copy-icon"
-      >
-        {hash}
-      </Typography.Text>
+      <TextWithCopy underline>{hash}</TextWithCopy>
     </SubscanLink>
   );
 };

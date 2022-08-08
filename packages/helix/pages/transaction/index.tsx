@@ -1,5 +1,5 @@
 import { ClockCircleOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Affix, Button, Input, message, Table, Tooltip, Typography } from 'antd';
+import { Affix, Button, Input, message, Table, Tooltip } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import { formatDistance, fromUnixTime } from 'date-fns';
 import format from 'date-fns-tz/format';
@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, map } from 'rxjs';
 import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
+import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { Logo } from 'shared/components/widget/Logo';
 import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
@@ -50,9 +51,7 @@ function RecordAccount({ chain, account, partner }: { chain: Network; account: s
         title={
           <div>
             <span className="mr-2">{partner}: </span>
-            <Typography.Text copyable={{ icon: <img alt="..." src="/image/copy.svg" /> }} className="custom-copy-icon">
-              {displayAccount}
-            </Typography.Text>
+            <TextWithCopy>{displayAccount}</TextWithCopy>
           </div>
         }
       >

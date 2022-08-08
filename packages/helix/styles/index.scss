@@ -184,9 +184,14 @@ $bg-dark: #151d35;
   vertical-align: middle;
 }
 
-.ant-typography.custom-copy-icon > u {
+.ant-typography.custom-copy-icon {
   display: flex;
   align-items: center;
+
+  & > u {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .explorer-table {
