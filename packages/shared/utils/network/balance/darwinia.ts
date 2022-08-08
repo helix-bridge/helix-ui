@@ -1,6 +1,4 @@
 import { AccountInfo } from '@darwinia/types';
-import '@polkadot/api-augment';
-import { PalletBalancesBalanceLock } from '@polkadot/types/lookup';
 import { BN, bnMax, BN_ZERO } from '@polkadot/util';
 import { entrance, waitUntilConnected } from '../../connection';
 
@@ -36,8 +34,11 @@ export async function getBalance(provider: string, account: string): Promise<[BN
       data: { free, freeKton },
     } = await api.query.system.account<AccountInfo>(account);
 
-    const locks = await api.query.balances.locks<PalletBalancesBalanceLock[]>(account);
-    const ktonLocks = (await api.query.kton?.locks<PalletBalancesBalanceLock[]>(account)) ?? [];
+    // !FIXME: The type should be PalletBalancesBalanceLock; If we specify the type exactly, we need to import the @polkadot/api also, and it will broke the build process.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const locks = await api.query.balances.locks<any[]>(account);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ktonLocks = (await api.query.kton?.locks<any[]>(account)) ?? [];
 
     let maxLock = BN_ZERO;
     let maxKtonLock = BN_ZERO;
