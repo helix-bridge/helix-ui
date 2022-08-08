@@ -33,6 +33,11 @@ export const hecoConfig: EthereumChainConfig = {
           bridge: 'ethereum-heco',
           partner: { name: 'ethereum', role: 'backing', symbol: 'RING' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'heco-polygon',
+          partner: { name: 'polygon', role: 'issuing', symbol: 'RING' },
+        },
       ],
       type: 'mapping',
       logo: 'token-ring.svg',

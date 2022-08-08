@@ -69,6 +69,9 @@ export const isEthereum2Heco: BridgePredicateFn = (departure, arrival) =>
   departure === 'ethereum' && arrival === 'heco';
 export const isHeco2Ethereum: BridgePredicateFn = (departure, arrival) => isEthereum2Heco(arrival, departure);
 
+export const isHeco2Polygon: BridgePredicateFn = (departure, arrival) => departure === 'heco' && arrival === 'polygon';
+export const isPolygon2Heco: BridgePredicateFn = (departure, arrival) => isHeco2Polygon(arrival, departure);
+
 export const isSubstrateDVM2SubstrateDVMIssuing: BridgePredicateFn = (departure, arrival) => {
   return (
     (departure === 'pangoro-dvm' && arrival === 'pangolin-dvm') ||
@@ -101,6 +104,7 @@ export const isCrabDVMEthereum: BridgePredicateFn = isCrossFactory(isCrabDVM2Eth
 export const isCrabDVMPolygon: BridgePredicateFn = isCrossFactory(isCrabDVM2Polygon, isPolygon2CrabDVM);
 export const isEthereumHeco: BridgePredicateFn = isCrossFactory(isEthereum2Heco, isHeco2Ethereum);
 export const isEthereumPolygon: BridgePredicateFn = isCrossFactory(isEthereum2Polygon, isPolygon2Ethereum);
+export const isHecoPolygon: BridgePredicateFn = isCrossFactory(isHeco2Polygon, isPolygon2Heco);
 
 export const isSubstrateDVMSubstrateDVM: BridgePredicateFn = isCrossFactory(
   isSubstrateDVM2SubstrateDVMIssuing,

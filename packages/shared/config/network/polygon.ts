@@ -36,6 +36,11 @@ export const polygonConfig: EthereumChainConfig = {
           bridge: 'ethereum-polygon',
           partner: { name: 'ethereum', role: 'backing', symbol: 'RING' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'heco-polygon',
+          partner: { name: 'heco', role: 'backing', symbol: 'RING' },
+        },
       ],
       type: 'mapping',
       host: 'polygon',

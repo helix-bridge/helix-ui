@@ -99,11 +99,11 @@ describe('bridge utils', () => {
     const formalBridges = calcBridgesAmount(formals);
 
     expect(testBridges).toHaveLength(5);
-    expect(formalBridges).toHaveLength(11);
+    expect(formalBridges).toHaveLength(12);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(32);
+    expect(allDirections).toHaveLength(34);
   });
 
   it('should get bridges correctly', () => {

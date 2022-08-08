@@ -83,18 +83,18 @@ describe('network utils', () => {
     expect(fromRopsten![1]).toEqual(['pangolin']);
   });
 
-  it('contains 2 bridge from heco', () => {
+  it('contains 3 bridge from heco', () => {
     const fromHeco = data.find((item) => item[0] === 'heco');
 
     expect(fromHeco).not.toEqual(undefined);
-    expect(fromHeco![1]).toEqual(['crab-dvm', 'ethereum']);
+    expect(fromHeco![1]).toEqual(['crab-dvm', 'ethereum', 'polygon']);
   });
 
-  it('contains 2 bridge from polygon', () => {
+  it('contains 3 bridge from polygon', () => {
     const fromHeco = data.find((item) => item[0] === 'polygon');
 
     expect(fromHeco).not.toEqual(undefined);
-    expect(fromHeco![1]).toEqual(['crab-dvm', 'ethereum']);
+    expect(fromHeco![1]).toEqual(['crab-dvm', 'ethereum', 'heco']);
   });
 
   it('contains 1 bridge from pangoro-dvm', () => {

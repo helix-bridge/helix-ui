@@ -6,6 +6,7 @@ import { crabDVMPolygon } from 'shared/config/bridges/crabDVM-polygon';
 import { ethereumDarwinia, ropstenPangolin } from 'shared/config/bridges/ethereum-darwinia';
 import { ethereumHeco } from 'shared/config/bridges/ethereum-heco';
 import { ethereumPolygon } from 'shared/config/bridges/ethereum-polygon';
+import { hecoPolygon } from 'shared/config/bridges/heco-polygon';
 import { parachainCrab, parachainPangolin } from 'shared/config/bridges/parachain-substrate';
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
 import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from 'shared/config/bridges/substrateDVM-substrateDVM';
@@ -16,6 +17,7 @@ import { CrabDVM2Polygon, Polygon2CrabDVM } from './crabDVM-polygon';
 import { Darwinia2Ethereum, Ethereum2Darwinia } from './ethereum-darwinia';
 import { Ethereum2Heco, Heco2Ethereum } from './ethereum-heco';
 import { Ethereum2Polygon, Polygon2Ethereum } from './ethereum-polygon';
+import { Heco2Polygon, Polygon2Heco } from './heco-polygon';
 import { Parachain2Substrate, Substrate2Parachain } from './parachain-substrate';
 import { DVM2Substrate, Substrate2DVM } from './substrate-dvm';
 import { Substrate2SubstrateDVM, SubstrateDVM2Substrate } from './substrate-substrateDVM';
@@ -84,6 +86,9 @@ ethereumHeco.setRedeemComponents(Heco2Ethereum as FunctionComponent);
 
 ethereumPolygon.setIssuingComponents(Ethereum2Polygon as FunctionComponent);
 ethereumPolygon.setRedeemComponents(Polygon2Ethereum as FunctionComponent);
+
+hecoPolygon.setIssuingComponents(Heco2Polygon as FunctionComponent);
+hecoPolygon.setRedeemComponents(Polygon2Heco as FunctionComponent);
 
 /**
  * substrate dvm <-> substrate dvm
