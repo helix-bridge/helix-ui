@@ -38,6 +38,7 @@
   "Value": "Value",
   "chains": "chains",
   "supported blockchains": "supported blockchains",
+  "Since {{time}}": "Since {{time}}",
   "top {{count}} destination": "top {{count}} destination",
   "transaction detail": "transaction detail",
   "transactions": "transactions",

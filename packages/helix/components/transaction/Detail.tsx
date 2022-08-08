@@ -6,6 +6,7 @@ import { HelixHistoryRecord, Network } from 'shared/model';
 import { isCrabDVMHeco } from 'shared/utils/bridge';
 import { fromWei, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
+import { Icon } from 'shared/components/widget/Icon';
 import { TransferStep } from '../../model/transfer';
 import { IBreadcrumb } from './Breadcrumb';
 import { Bridge } from './Bridge';
@@ -60,10 +61,7 @@ export function Detail({ record, transfers }: DetailProps) {
         <Divider />
 
         <TransferDescription title={t('Sender')} tip={t('Address (external or contract) sending the transaction.')}>
-          <Typography.Text
-            copyable={{ icon: <img alt="..." src="/image/copy.svg" /> }}
-            className="truncate custom-copy-icon"
-          >
+          <Typography.Text copyable={{ icon: <Icon name="copy" /> }} className="truncate custom-copy-icon">
             {revertAccount(record.sender, departure)}
           </Typography.Text>
         </TransferDescription>

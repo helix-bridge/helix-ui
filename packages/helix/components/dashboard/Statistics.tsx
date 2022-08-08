@@ -39,7 +39,7 @@ export function Statistics({
       <div className="lg:col-span-4 bg-gray-200 dark:bg-antDark px-5 py-6">
         <div className="flex justify-between items-center">
           <h3 className="uppercase text-xl font-normal">{titleRight}</h3>
-          <span className="text-sm font-normal opacity-50">{`Since ${startTime}`}</span>
+          <span className="text-sm font-normal opacity-50">{t('Since {{time}}', { time: startTime })}</span>
         </div>
 
         <div className="flex flex-col gap-2 items-center justify-center mt-4 mb-2 md:mt-10 md:mb-6">
