@@ -40,11 +40,11 @@ export const crabConfig: PolkadotChainConfig = {
       name: 'CKTON',
       decimals: 9,
       cross: [
-        // {
-        //   category: 'helix',
-        //   bridge: 'substrate-DVM',
-        //   partner: { name: 'crab', mode: 'dvm', role: 'issuing', symbol: 'WCKTON', claim: true },
-        // },
+        {
+          category: 'helix',
+          bridge: 'substrate-DVM',
+          partner: { name: 'crab-dvm', role: 'issuing', symbol: 'WCKTON' },
+        },
       ],
       type: 'native',
       host: 'crab',

@@ -1,7 +1,7 @@
 import { TypeRegistry } from '@polkadot/types';
 import { u8aToHex } from '@polkadot/util';
 import BN from 'bn.js';
-import { EMPTY, Observable, from as rxFrom, switchMap, mergeMap } from 'rxjs';
+import { EMPTY, from as rxFrom, mergeMap, Observable, switchMap } from 'rxjs';
 import { abi } from 'shared/config/abi';
 import { SUBSTRATE_DVM_WITHDRAW } from 'shared/config/env';
 import { Tx } from 'shared/model';
@@ -36,17 +36,16 @@ export function redeem(value: WithdrawPayload): Observable<Tx> {
     sender,
     direction: { from, to },
   } = value;
-  const amount = toWei({ value: from.amount, decimals: 18 });
   const accountId = registry.createType('AccountId', convertToSS58(recipient, to.meta.ss58Prefix)).toHex();
 
   if (accountId === '0x0000000000000000000000000000000000000000000000000000000000000000') {
     return EMPTY;
   }
 
-  if (isRing(from.symbol)) {
-    const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-    const api = entrance.polkadot.getInstance(from.meta.provider);
+  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
+  const api = entrance.polkadot.getInstance(from.meta.provider);
 
+  if (isRing(from.symbol)) {
     return rxFrom(waitUntilConnected(api)).pipe(
       mergeMap(async () => api.tx.balances.transfer(recipient, toWei({ value: from.amount, decimals: 9 }))),
       switchMap((extrinsic) =>
@@ -68,10 +67,21 @@ export function redeem(value: WithdrawPayload): Observable<Tx> {
 
   const withdrawalAddress = convertToDvm(recipient);
 
-  return genEthereumContractTxObs(
-    from.address,
-    (contract) => contract.methods.withdraw(withdrawalAddress, amount).send({ from: sender }),
-    abi.ktonABI
+  return rxFrom(waitUntilConnected(api)).pipe(
+    mergeMap(async () => api.tx.balances.transfer(recipient, toWei({ value: from.amount, decimals: 9 }))),
+    switchMap((extrinsic) =>
+      rxFrom(
+        web3.eth.estimateGas({ from: sender, to: SUBSTRATE_DVM_WITHDRAW, data: u8aToHex(extrinsic.method.toU8a()) })
+      ).pipe(
+        switchMap((gas) =>
+          genEthereumContractTxObs(
+            from.address,
+            (contract) => contract.methods.withdraw(withdrawalAddress, toWei(from)).send({ from: sender, gas }),
+            abi.ktonABI
+          )
+        )
+      )
+    )
   );
 }
 

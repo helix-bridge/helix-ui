@@ -1,4 +1,4 @@
-import { AppstoreOutlined, SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined } from '@ant-design/icons';
 import { Input, Radio, Tag, Typography } from 'antd';
 import { chain as lodashChain } from 'lodash';
 import { useTranslation } from 'next-i18next';
@@ -7,7 +7,7 @@ import { Logo } from 'shared/components/widget/Logo';
 import { chainColors } from 'shared/config/network';
 import { useLocalSearch } from 'shared/hooks';
 import { ChainConfig, TokenInfoWithMeta } from 'shared/model';
-import { chainConfigs, getDisplayName, isDVMNetwork } from 'shared/utils/network';
+import { chainConfigs, getDisplayName } from 'shared/utils/network';
 import { asSameToken, tokenSearchFactory } from '../../utils';
 import { BaseModal } from '../widget/BaseModal';
 
@@ -101,13 +101,9 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
       </Radio.Group>
 
       <div className="max-h-96 overflow-auto flex flex-col gap-2">
-        {/* eslint-disable-next-line complexity */}
         {tokens.map((item, index) => {
           const isS2SKton = /^[x]?[O]?KTON/.test(item.symbol) && !item.address;
-          const isAppsFeature =
-            ['CKTON', 'PKTON', 'WCKTON', 'WPKTON'].some((name) => item.symbol.includes(name)) &&
-            isDVMNetwork(item.meta);
-          const disabled = isS2SKton || isAppsFeature;
+          const disabled = isS2SKton;
 
           return (
             <button
@@ -131,19 +127,6 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
                   </Tag>
                 )}
               </div>
-
-              {isAppsFeature && (
-                <span
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    window.open('https://apps.darwinia.network/', '_blank');
-                  }}
-                  className="inline-flex items-center gap-2 cursor-pointer"
-                >
-                  <AppstoreOutlined />
-                  {t('Go To Apps')}
-                </span>
-              )}
             </button>
           );
         })}
