@@ -50,7 +50,7 @@ exports[`<SourceTx /> render SourceTx 1`] = `
     target="_blank"
   >
     <span
-      className="ant-typography custom-copy-icon truncate"
+      className="ant-typography truncate custom-copy-icon undefined"
       onClick={null}
       style={
         Object {
@@ -80,10 +80,14 @@ exports[`<SourceTx /> render SourceTx 1`] = `
           }
           tabIndex={0}
         >
-          <img
-            alt="..."
-            src="/image/copy.svg"
-          />
+          <svg
+            className="icon w-4 h-4 text-white text-base"
+            onClick={[Function]}
+          >
+            <use
+              xlinkHref="#dwa-copy1"
+            />
+          </svg>
         </div>
       </u>
     </span>
