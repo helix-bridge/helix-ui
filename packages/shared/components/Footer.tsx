@@ -1,4 +1,4 @@
-import { CopyrightOutlined } from '@ant-design/icons';
+import { CopyrightOutlined, MailOutlined, GithubOutlined, TwitterOutlined } from '@ant-design/icons';
 import { Divider, Layout } from 'antd';
 import { getYear } from 'date-fns';
 import { LanguageProps } from 'shared/components/widget/Language';
@@ -35,7 +35,7 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
           rel="noreferrer"
           className="flex text-gray-400 hover:text-gray-200"
         >
-          <img alt="..." src="/image/github.svg" />
+          <GithubOutlined style={{ fontSize: '1.25rem' }} />
         </a>
 
         <a
@@ -44,7 +44,7 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
           rel="noreferrer"
           className="flex text-gray-400 hover:text-gray-200"
         >
-          <img alt="..." src="/image/twitter.svg" />
+          <TwitterOutlined style={{ fontSize: '1.25rem' }} />
         </a>
 
         <a
@@ -53,7 +53,7 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
           rel="noreferrer"
           className="flex text-gray-400 hover:text-gray-200"
         >
-          <img alt="..." src="/image/mail.svg" />
+          <MailOutlined style={{ fontSize: '1.25rem' }} />
         </a>
 
         <Divider
