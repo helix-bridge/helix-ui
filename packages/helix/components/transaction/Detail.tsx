@@ -1,4 +1,4 @@
-import { Divider, Typography } from 'antd';
+import { Divider } from 'antd';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { useITranslation } from 'shared/hooks';
@@ -6,6 +6,7 @@ import { HelixHistoryRecord, Network } from 'shared/model';
 import { isCrabDVMHeco } from 'shared/utils/bridge';
 import { fromWei, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
+import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { getTokenSymbolFromHelixRecord } from 'shared/utils/record';
 import { TransferStep } from '../../model/transfer';
 import { IBreadcrumb } from './Breadcrumb';
@@ -63,15 +64,11 @@ export function Detail({ record, transfers }: DetailProps) {
         <Divider />
 
         <TransferDescription title={t('Sender')} tip={t('Address (external or contract) sending the transaction.')}>
-          <Typography.Text copyable className="truncate">
-            {revertAccount(record.sender, departure)}
-          </Typography.Text>
+          <TextWithCopy>{revertAccount(record.sender, departure)}</TextWithCopy>
         </TransferDescription>
 
         <TransferDescription title={t('Receiver')} tip={t('Address (external or contract) receiving the transaction.')}>
-          <Typography.Text copyable className="truncate">
-            {revertAccount(record.recipient, arrival)}
-          </Typography.Text>
+          <TextWithCopy>{revertAccount(record.recipient, arrival)}</TextWithCopy>
         </TransferDescription>
 
         {!!transfers.length && <TransferDetail transfers={transfers} amount={amount} />}

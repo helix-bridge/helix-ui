@@ -1,7 +1,7 @@
-import { Typography } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
+import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { Network } from 'shared/model';
 import { TransferDescription } from './TransferDescription';
 
@@ -20,9 +20,7 @@ export function SourceTx({ hash }: { hash: string | undefined }) {
           txHash={hash}
           className="hover:opacity-80 transition-opacity duration-200"
         >
-          <Typography.Text copyable className="truncate">
-            {hash}
-          </Typography.Text>
+          <TextWithCopy underline>{hash}</TextWithCopy>
         </SubscanLink>
       )}
     </TransferDescription>

@@ -19,8 +19,8 @@ if (typeof Highcharts === 'object') {
 export function BarChart({ data, name }: BarChartProps) {
   const charRef = useRef(null);
   const isDark = !readStorage().theme || readStorage().theme === THEME.DARK;
-  const mainColor = '#00b2ff';
-  const barColor = isDark ? '#151e33' : 'rgb(229,231,235)';
+  const mainColor = '#00B2FF';
+  const barColor = isDark ? '#151d35' : 'rgb(229,231,235)';
 
   const options = {
     chart: {
@@ -61,14 +61,16 @@ export function BarChart({ data, name }: BarChartProps) {
         width: 0,
       },
       buttonTheme: {
-        fill: isDark ? '#000' : '#ccc',
-        stroke: '#ffffff26',
+        fill: isDark ? 'none' : '#ccc',
+        stroke: mainColor,
         'stroke-width': 1,
         style: {
           color: 'white',
         },
         states: {
-          hover: {},
+          hover: {
+            fill: mainColor,
+          },
           select: {
             fill: mainColor,
             style: {
@@ -78,7 +80,8 @@ export function BarChart({ data, name }: BarChartProps) {
         },
       },
       inputStyle: {
-        color: '#9ca3af',
+        display: 'none',
+        width: 0,
       },
     },
     scrollbar: {
@@ -98,12 +101,19 @@ export function BarChart({ data, name }: BarChartProps) {
     yAxis: {
       visible: false,
     },
-    series: [{ type: 'column', name, data }],
+    series: [{ type: 'column', name, data, color: mainColor }],
     credits: {
       enabled: false,
     },
     exporting: {
       enabled: false,
+    },
+    tooltip: {
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      borderColor: mainColor,
+      style: {
+        color: 'white',
+      },
     },
   };
 

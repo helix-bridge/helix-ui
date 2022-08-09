@@ -171,7 +171,14 @@ function Page({
 
   return (
     <div>
-      <Statistics title={t('volumes')} startTime={startTime} total={volumeTotal} rank={volumeRank} currency="$">
+      <Statistics
+        titleLeft={t('volume by week')}
+        titleRight={t('volume')}
+        startTime={startTime}
+        total={volumeTotal}
+        rank={volumeRank}
+        currency="$"
+      >
         {loading ? (
           <div className="block relative top-1/3 text-center">
             <Spin />
@@ -181,7 +188,13 @@ function Page({
         )}
       </Statistics>
 
-      <Statistics title="transactions" startTime={startTime} total={transactionsTotal} rank={transactionsRank}>
+      <Statistics
+        titleLeft={t('transactions by week')}
+        titleRight={t('transactions')}
+        startTime={startTime}
+        total={transactionsTotal}
+        rank={transactionsRank}
+      >
         {loading ? (
           <div className="block relative top-1/3 text-center">
             <Spin />
@@ -192,7 +205,7 @@ function Page({
       </Statistics>
 
       <div className="gap-4 lg:gap-6">
-        <h2 className="uppercase my-6">{t<string>('chains')}</h2>
+        <h2 className="uppercase text-xl font-normal my-6">{t<string>('chains')}</h2>
 
         <div className="grid md:grid-cols-4 gap-4 lg:gap-6">
           {chainConfigs.map((item, index) => (

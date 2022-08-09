@@ -48,9 +48,7 @@ exports[`<Timestamp /> render Timestamp with processing 1`] = `
         xlinkHref="#dwa-reload"
       />
     </svg>
-    <span>
-      in about 5 hours
-    </span>
+    in about 5 hours
     <span
       className="hidden md:inline-block"
     >
@@ -163,9 +161,7 @@ exports[`<Timestamp /> render Timestamp with success 1`] = `
         />
       </svg>
     </span>
-    <span>
-      in about 5 hours
-    </span>
+    in about 5 hours
     <span
       className="hidden md:inline-block"
     >

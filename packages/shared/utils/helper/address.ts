@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { TypeRegistry } from '@polkadot/types';
 import type { Codec, DetectCodec } from '@polkadot/types/types';
+import type { AccountId, AccountIndex, Address } from '@polkadot/types/interfaces';
 import { hexToU8a, numberToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { isNull } from 'lodash';
@@ -88,4 +89,11 @@ export function revertAccount(account: string, config: ChainConfig): string {
   }
 
   return account;
+}
+
+export function toShortAddress(_address?: AccountId | AccountIndex | Address | string | null | Uint8Array): string {
+  const address = (_address || '').toString();
+
+  // eslint-disable-next-line no-magic-numbers
+  return address.length > 13 ? `${address.slice(0, 6)}…${address.slice(-4)}` : address;
 }

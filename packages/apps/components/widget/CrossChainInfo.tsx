@@ -70,11 +70,11 @@ export function CrossChainInfo({
               data-testid="toggle-btn"
               onClick={() => setCollapse(!collapse)}
             >
-              <span className="flex-1 bg-gray-800 h-px" />
+              <span className="flex-1 bg-transparent h-px" />
               <CaretDownOutlined
                 className={`text-gray-700 transform transition-all duration-300 ${collapse ? '' : 'rotate-180'}`}
               />
-              <span className="flex-1 bg-gray-800 h-px" />
+              <span className="flex-1 bg-transparent h-px" />
             </div>
 
             {extra.map((item) => (

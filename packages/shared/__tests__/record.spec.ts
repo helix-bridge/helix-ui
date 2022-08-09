@@ -22,12 +22,12 @@ import darwiniaDVMRecords from './fixture/darwinia-dvm.json';
  * | crab-dvm | darwinia | crab | > 0 |  receiveAmount |
  * | darwinia | ethereum | ring | > 0 |  receiveAmount + fee |
  * | ethereum | darwinia | ring | > 0 |  receiveAmount + fee |
- * | crab | crab-parachain | crab | > 0 | receiveAmount + fee | 
- * | crab-parachain | crab | crab | > 0 | receiveAmount + fee | 
+ * | crab | crab-parachain | crab | > 0 | receiveAmount + fee |
+ * | crab-parachain | crab | crab | > 0 | receiveAmount + fee |
  * | crab-dvm | heco | xRing | > 0 |  receiveAmount + fee |
  * | heco | crab-dvm | ring | > 0 |  receiveAmount + fee |
  * ```
- * 
+ *
  * TODO: missing crab-parachain -> crab records
  */
 

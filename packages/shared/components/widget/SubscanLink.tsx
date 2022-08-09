@@ -3,6 +3,7 @@ import React from 'react';
 import { CSSProperties, PropsWithChildren } from 'react';
 import { ChainConfig, Network } from '../../model';
 import { isDVMNetwork, isPolkadotNetwork } from '../../utils/network';
+import { Icon } from './Icon';
 
 const { Link } = Typography;
 
@@ -39,8 +40,9 @@ export function SubscanLink({
       <Link
         href={`https://${network}.subscan.io/account/${address}`}
         target="_blank"
-        copyable={copyable}
-        className="w-full"
+        copyable={copyable ? { icon: <Icon name="copy1" className="text-base text-white" /> } : false}
+        className={`w-full ${copyable ? 'custom-copy-icon' : ''}`}
+        underline
       >
         {address}
       </Link>

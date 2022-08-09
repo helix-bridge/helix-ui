@@ -1,8 +1,9 @@
 import { CheckCircleOutlined, CloseCircleOutlined, InfoCircleOutlined, SyncOutlined } from '@ant-design/icons';
-import { Alert, AlertProps, Button, Typography } from 'antd';
+import { Alert, AlertProps, Button } from 'antd';
 import React from 'react';
 import { Trans } from 'react-i18next';
 import { Tx } from '../../model';
+import { TextWithCopy } from './TextWithCopy';
 
 interface TxStatusProps extends Partial<AlertProps> {
   tx: Tx | null;
@@ -49,7 +50,7 @@ const getAlertProps = (tx: Tx, cancel: () => void): AlertProps => {
               The transaction has been sent, please check the transaction progress in the history or explorer.
             </Trans>
           </p>
-          <Typography.Text copyable>{tx.hash}</Typography.Text>
+          <TextWithCopy>{tx.hash}</TextWithCopy>
         </div>
       ),
       icon: <CheckCircleOutlined />,

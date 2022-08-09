@@ -1,4 +1,4 @@
-import { CopyrightOutlined, GithubOutlined, MailOutlined, TwitterOutlined } from '@ant-design/icons';
+import { CopyrightOutlined, MailOutlined, GithubOutlined, TwitterOutlined } from '@ant-design/icons';
 import { Divider, Layout } from 'antd';
 import { getYear } from 'date-fns';
 import { LanguageProps } from 'shared/components/widget/Language';
@@ -14,15 +14,15 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
 
   return (
     <Layout.Footer
-      className={`flex items-center justify-between sm:px-16 px-4 z-10 py-4 ${className}`}
+      className={`flex items-center justify-between z-10 px-0 py-4 container ${className}`}
       style={{
-        background: theme === THEME.LIGHT ? '#ccc' : '#020822',
+        background: theme === THEME.LIGHT ? '#ccc' : 'transparent',
       }}
     >
       <div className="md:flex md:gap-4 md:flex-wrap dark:text-gray-400">
         <span className="flex items-center justify-center">
-          <CopyrightOutlined />
-          <span className="ml-1 text-gray-400">
+          <CopyrightOutlined style={{ fontSize: '0.9rem' }} />
+          <span className="ml-1 text-gray-400 text-base font-medium">
             {t('{{year}} Developed by Helix Team', { year: getYear(new Date()) })}
           </span>
         </span>
@@ -35,7 +35,7 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
           rel="noreferrer"
           className="flex text-gray-400 hover:text-gray-200"
         >
-          <GithubOutlined />
+          <GithubOutlined style={{ fontSize: '1.25rem' }} />
         </a>
 
         <a
@@ -44,7 +44,7 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
           rel="noreferrer"
           className="flex text-gray-400 hover:text-gray-200"
         >
-          <TwitterOutlined />
+          <TwitterOutlined style={{ fontSize: '1.25rem' }} />
         </a>
 
         <a
@@ -53,7 +53,7 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
           rel="noreferrer"
           className="flex text-gray-400 hover:text-gray-200"
         >
-          <MailOutlined />
+          <MailOutlined style={{ fontSize: '1.25rem' }} />
         </a>
 
         <Divider

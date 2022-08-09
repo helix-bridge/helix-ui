@@ -50,7 +50,7 @@ exports[`<SourceTx /> render SourceTx 1`] = `
     target="_blank"
   >
     <span
-      className="ant-typography truncate"
+      className="ant-typography truncate custom-copy-icon undefined"
       onClick={null}
       style={
         Object {
@@ -58,47 +58,38 @@ exports[`<SourceTx /> render SourceTx 1`] = `
         }
       }
     >
-      0xa9673370dce7f48b306fb96b90c42fa2a13986f1e618eb2996eaeb5abce88643
-      <div
-        aria-label="Copy"
-        className="ant-typography-copy"
-        onClick={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
-        onMouseEnter={[Function]}
-        onMouseLeave={[Function]}
-        role="button"
-        style={
-          Object {
-            "background": "transparent",
-            "border": 0,
-            "display": "inline-block",
-            "lineHeight": "inherit",
-            "padding": 0,
+      <u>
+        0xa9673370dce7f48b306fb96b90c42fa2a13986f1e618eb2996eaeb5abce88643
+        <div
+          aria-label="Copy"
+          className="ant-typography-copy"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
+          role="button"
+          style={
+            Object {
+              "background": "transparent",
+              "border": 0,
+              "display": "inline-block",
+              "lineHeight": "inherit",
+              "padding": 0,
+            }
           }
-        }
-        tabIndex={0}
-      >
-        <span
-          aria-label="copy"
-          className="anticon anticon-copy"
-          role="img"
+          tabIndex={0}
         >
           <svg
-            aria-hidden="true"
-            data-icon="copy"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
+            className="icon w-4 h-4 text-white text-base"
+            onClick={[Function]}
           >
-            <path
-              d="M832 64H296c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h496v688c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V96c0-17.7-14.3-32-32-32zM704 192H192c-17.7 0-32 14.3-32 32v530.7c0 8.5 3.4 16.6 9.4 22.6l173.3 173.3c2.2 2.2 4.7 4 7.4 5.5v1.9h4.2c3.5 1.3 7.2 2 11 2H704c17.7 0 32-14.3 32-32V224c0-17.7-14.3-32-32-32zM350 856.2L263.9 770H350v86.2zM664 888H414V746c0-22.1-17.9-40-40-40H232V264h432v624z"
+            <use
+              xlinkHref="#dwa-copy1"
             />
           </svg>
-        </span>
-      </div>
+        </div>
+      </u>
     </span>
   </a>
 </div>

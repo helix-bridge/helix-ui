@@ -1,4 +1,5 @@
 {
+  "@project-component-bg": "#151D35",
   "@border-radius-base": "4px",
   "@btn-default-bg": "linear-gradient(#ffffff, #ffffff) padding-box,\n  linear-gradient(to right, #5745de, #ec3783) border-box",
   "@btn-default-border": "2px solid transparent",
@@ -14,5 +15,10 @@
   "@secondary-color": "@primary-color",
   "@select-item-selected-bg": "@background-color-base",
   "@select-item-selected-option-color": "@primary-color",
-  "@skeleton-color": "@primary-color"
+  "@skeleton-color": "@primary-color",
+  "@component-background": "@project-component-bg",
+  "@layout-header-background": "@project-component-bg",
+  "@layout-body-background": "linear-gradient(180deg, #02061F 0%, #1C1837 100%)",
+  "@modal-mask-bg": "fade(#01041D, 80%)",
+  "@text-color": "#ffffff"
 }

@@ -140,7 +140,7 @@ describe('network utils', () => {
   });
 
   it('can convert display name', () => {
-    expect(getDisplayName(crabConfig)).toEqual('Crab');
+    expect(getDisplayName(crabConfig)).toEqual('Crab Chain');
     expect(getDisplayName(crabDVMConfig)).toEqual('Crab Smart Chain');
     expect(getDisplayName(pangolinDVMConfig)).toEqual('Pangolin Smart Chain');
     expect(getDisplayName(pangoroDVMConfig)).toEqual('Pangoro Smart Chain');

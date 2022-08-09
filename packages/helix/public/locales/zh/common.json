@@ -38,9 +38,12 @@
   "Value": "Value",
   "chains": "chains",
   "supported blockchains": "supported blockchains",
-  "top {{count}} destinations": "top {{count}} destinations",
+  "Since {{time}}": "Since {{time}}",
+  "top {{count}} destination": "top {{count}} destination",
   "transaction detail": "transaction detail",
   "transactions": "transactions",
+  "transactions by week": "transactions by week",
   "unique users": "unique users",
-  "volumes": "volumes"
+  "volume": "volume",
+  "volume by week": "volume by week"
 }

@@ -1,5 +1,5 @@
-import { ArrowRightOutlined, ClockCircleOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Affix, Button, Input, Layout, message, Table, Tooltip, Typography } from 'antd';
+import { ClockCircleOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
+import { Affix, Button, Input, message, Table, Tooltip } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import { formatDistance, fromUnixTime } from 'date-fns';
 import format from 'date-fns-tz/format';
@@ -11,12 +11,21 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, map } from 'rxjs';
 import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
+import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { Logo } from 'shared/components/widget/Logo';
 import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { SYSTEM_ChAIN_CONFIGURATIONS } from 'shared/config/network';
 import { DailyStatistic, HelixHistoryRecord, Network } from 'shared/model';
-import { convertToDvm, gqlName, isSS58Address, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
+import {
+  convertToDvm,
+  gqlName,
+  isSS58Address,
+  isValidAddress,
+  prettyNumber,
+  revertAccount,
+  toShortAddress,
+} from 'shared/utils/helper';
 import { chainConfigs, getChainConfig, getDisplayName } from 'shared/utils/network';
 import {
   getFeeAmountFromHelixRecord,
@@ -42,11 +51,11 @@ function RecordAccount({ chain, account, partner }: { chain: Network; account: s
         title={
           <div>
             <span className="mr-2">{partner}: </span>
-            <Typography.Text copyable>{displayAccount}</Typography.Text>
+            <TextWithCopy>{displayAccount}</TextWithCopy>
           </div>
         }
       >
-        <span className="truncate">{displayAccount}</span>
+        <span className="truncate">{toShortAddress(displayAccount)}</span>
       </Tooltip>
     </div>
   );
@@ -82,7 +91,8 @@ function Page({
 
   const columns: ColumnType<HelixHistoryRecord>[] = [
     {
-      title: t('Time'),
+      title: <span className="pl-4">{t('Time')}</span>,
+      width: '15%',
       dataIndex: 'startTime',
       render: (value: number) => (
         <Tooltip
@@ -93,7 +103,7 @@ function Page({
             </div>
           }
         >
-          <span>
+          <span className="pl-4">
             {formatDistance(fromUnixTime(value), new Date(new Date().toUTCString()), {
               includeSeconds: true,
               addSuffix: true,
@@ -105,33 +115,22 @@ function Page({
     {
       title: t('From'),
       dataIndex: 'fromChain',
-      width: '20%',
       ellipsis: true,
       render(chain: Network, record) {
         return <RecordAccount chain={chain} account={record.sender} partner={t('Sender')} />;
       },
     },
     {
-      title: '',
-      key: 'direction',
-      align: 'center',
-      width: '50px',
-      render() {
-        return <ArrowRightOutlined />;
-      },
-    },
-    {
       title: t('To'),
       dataIndex: 'toChain',
-      width: '20%',
       ellipsis: true,
       render(chain: Network, record) {
         return <RecordAccount chain={chain} account={record.recipient} partner={t('Recipient')} />;
       },
     },
     {
-      title: t('Amount'),
-      dataIndex: 'amount',
+      title: t('Asset'),
+      width: '15%',
       render(_: string, record) {
         const amount = getSentAmountFromHelixRecord(record);
 
@@ -148,6 +147,7 @@ function Page({
     {
       title: t('Fee'),
       dataIndex: 'fee',
+      width: '12%',
       render(value: string, record) {
         const amount = getFeeAmountFromHelixRecord(record);
 
@@ -164,6 +164,7 @@ function Page({
     {
       title: t('Bridge'),
       dataIndex: 'bridge',
+      width: '10%',
       render: (value) => (
         <span className={`justify-self-center ${/^[a-z]+[A-Z]{1}/.test(value) ? '' : 'capitalize'}`}>{value}</span>
       ),
@@ -171,6 +172,7 @@ function Page({
     {
       title: t('Status'),
       dataIndex: 'result',
+      width: '10%',
       render: (value) => {
         return (
           <div className="flex gap-8 items-center">
@@ -202,68 +204,66 @@ function Page({
 
   return (
     <>
-      <div className="grid lg:grid-cols-3 gap-0 lg:gap-6 place-items-center py-2 lg:py-4">
+      <div className="grid lg:grid-cols-3 gap-0 place-items-center py-2 lg:py-6">
         <ViewBoard title={t('transactions')} count={transactionsTotal} />
         <ViewBoard title={t('unique users')} count={accountRes?.accounts?.total ?? 0} />
         <ViewBoard title={t('supported blockchains')} count={chainConfigs.length} />
       </div>
 
       <Affix offsetTop={62}>
-        <Layout className="pb-2 lg:pb-4">
-          <div className="flex justify-between">
-            <Input
-              size="large"
-              suffix={<SearchOutlined />}
-              allowClear
-              // eslint-disable-next-line complexity
-              onChange={(event) => {
-                const value = event.target.value;
+        <div className="mt-2 pb-2 lg:pb-4 flex justify-between items-end">
+          <Input
+            size="large"
+            suffix={<SearchOutlined />}
+            allowClear
+            // eslint-disable-next-line complexity
+            onChange={(event) => {
+              const value = event.target.value;
 
-                if (value && !web3.utils.isAddress(value) && !isSS58Address(value)) {
-                  setIsValidSender(false);
-                  return;
-                }
+              if (value && !web3.utils.isAddress(value) && !isSS58Address(value)) {
+                setIsValidSender(false);
+                return;
+              }
 
-                try {
-                  const address = isValidAddress(value, 'ethereum') ? value : convertToDvm(value);
+              try {
+                const address = isValidAddress(value, 'ethereum') ? value : convertToDvm(value);
 
-                  setAccount(address);
-                  setPage(1);
-                  setIsValidSender(true);
-                } catch {
-                  setIsValidSender(false);
-                }
-              }}
-              placeholder={t('Search by address')}
-              className={`max-w-md ${isValidSender ? '' : 'border-red-400'}`}
-            />
+                setAccount(address);
+                setPage(1);
+                setIsValidSender(true);
+              } catch {
+                setIsValidSender(false);
+              }
+            }}
+            placeholder={t('Search by address')}
+            className={`max-w-md ${isValidSender ? '' : 'border-red-400'}`}
+          />
 
-            <Button
-              type="link"
-              onClick={() => {
-                if (page === 1) {
-                  setLoading(true);
-                  from(
-                    request(ENDPOINT, HISTORY_RECORDS, { page: 0, row: pageSize, sender: account, recipient: account })
-                  )
-                    .pipe(map((res) => res && res[gqlName(HISTORY_RECORDS)]))
-                    .subscribe((result) => {
-                      setTotal(result.total);
-                      setSource(result.records);
-                      setLoading(false);
-                    });
-                } else {
-                  setPage(1);
-                }
-              }}
-              disabled={loading}
-              className="flex items-center cursor-pointer"
-            >
-              <span className="mr-2">{t('Latest transactions')}</span>
-              <SyncOutlined />
-            </Button>
-          </div>
-        </Layout>
+          <Button
+            type="link"
+            onClick={() => {
+              if (page === 1) {
+                setLoading(true);
+                from(
+                  request(ENDPOINT, HISTORY_RECORDS, { page: 0, row: pageSize, sender: account, recipient: account })
+                )
+                  .pipe(map((res) => res && res[gqlName(HISTORY_RECORDS)]))
+                  .subscribe((result) => {
+                    setTotal(result.total);
+                    setSource(result.records);
+                    setLoading(false);
+                  });
+              } else {
+                setPage(1);
+              }
+            }}
+            disabled={loading}
+            className="flex items-center cursor-pointer px-0"
+          >
+            <span className="mr-2">{t('Latest transactions')}</span>
+            <SyncOutlined />
+          </Button>
+        </div>
       </Affix>
 
       <Table

@@ -264,7 +264,7 @@ exports[`<Bridge /> render bridge 1`] = `
     className="flex justify-between text-xs capitalize mt-1 px-3 whitespace-nowrap"
   >
     <div>
-      Darwinia
+      Darwinia Chain
     </div>
     <div>
       Crab Smart Chain

@@ -6,16 +6,24 @@ Array [
     className="hidden lg:flex items-center gap-8 ml-8"
   >
     <div
-      className="  transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap"
+      className=" transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap"
       onClick={[Function]}
     >
-      Home
+      <span
+        className="text-base font-normal text-white"
+      >
+        Home
+      </span>
     </div>
     <div
-      className="  transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap"
+      className=" transition-all duration-300 ease-in-out opacity-100 hover:opacity-80 cursor-pointer whitespace-nowrap"
       onClick={[Function]}
     >
-      History
+      <span
+        className="text-base font-normal text-white"
+      >
+        History
+      </span>
     </div>
   </div>,
   <ul
