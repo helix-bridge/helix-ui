@@ -13,3 +13,4 @@ export * from './substrate-dvm';
 export * from './substrate-substrateDVM';
 export * from './substrateDVM-substrateDVM';
 export * from './supports';
+export * from './bnb-astar';

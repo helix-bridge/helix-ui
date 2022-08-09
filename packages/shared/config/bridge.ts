@@ -1,4 +1,5 @@
 import { bnbArbitrum } from './bridges/bnb-arbitrum';
+import { bnbAstar } from './bridges/bnb-astar';
 import { crabDVMEthereum } from './bridges/crabDVM-ethereum';
 import { crabDVMHeco } from './bridges/crabDVM-heco';
 import { crabDVMPolygon } from './bridges/crabDVM-polygon';
@@ -26,6 +27,7 @@ const formalBridges = [
   parachainCrab,
   hecoPolygon,
   bnbArbitrum,
+  bnbAstar,
 ];
 
 const testBridges = [

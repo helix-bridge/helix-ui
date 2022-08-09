@@ -22,7 +22,13 @@ export const astarConfig: EthereumChainConfig = {
     {
       name: 'USDT',
       decimals: 18,
-      cross: [],
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'bnb-astar',
+          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDT' },
+        },
+      ],
       type: 'mapping',
       host: 'astar',
       logo: 'token-usdt.svg',
@@ -32,7 +38,13 @@ export const astarConfig: EthereumChainConfig = {
     {
       name: 'USDC',
       decimals: 18,
-      cross: [],
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'bnb-astar',
+          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDC' },
+        },
+      ],
       type: 'mapping',
       host: 'astar',
       logo: 'token-usdc.svg',

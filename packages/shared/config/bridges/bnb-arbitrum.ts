@@ -1,4 +1,4 @@
-import { bnbChainConfig, arbitrumConfig } from 'shared/config/network';
+import { bnbConfig, arbitrumConfig } from 'shared/config/network';
 import { Bridge } from 'shared/model';
 import { BnbArbitrumBridgeConfig } from 'shared/model';
 
@@ -9,7 +9,7 @@ const bnbArbitrumConfig: BnbArbitrumBridgeConfig = {
   },
 };
 
-export const bnbArbitrum = new Bridge(bnbChainConfig, arbitrumConfig, bnbArbitrumConfig, {
+export const bnbArbitrum = new Bridge(bnbConfig, arbitrumConfig, bnbArbitrumConfig, {
   name: 'bnb-arbitrum',
   category: 'cBridge',
 });

@@ -72,3 +72,7 @@ export const isSubstrateDVM2SubstrateDVMIssuing = or(
 );
 export const isSubstrateDVM2SubstrateDVMBacking = revert(isSubstrateDVM2SubstrateDVMIssuing);
 export const isSubstrateDVMSubstrateDVM = or(isSubstrateDVM2SubstrateDVMIssuing, isSubstrateDVM2SubstrateDVMBacking);
+
+export const isBnb2Astar = predicate('BNB Chain', 'astar');
+export const isAstar2Bnb = predicate('astar', 'BNB Chain');
+export const isBnbAstar = or(isBnb2Astar, isAstar2Bnb);

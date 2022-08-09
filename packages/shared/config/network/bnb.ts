@@ -1,6 +1,6 @@
 import { EthereumChainConfig } from '../../model';
 
-export const bnbChainConfig: EthereumChainConfig = {
+export const bnbConfig: EthereumChainConfig = {
   ethereumChain: {
     chainId: '0x38',
     chainName: 'BNB Chain',
@@ -28,6 +28,11 @@ export const bnbChainConfig: EthereumChainConfig = {
           bridge: 'bnb-arbitrum',
           partner: { name: 'arbitrum', role: 'issuing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'bnb-astar',
+          partner: { name: 'astar', role: 'issuing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'BNB Chain',
@@ -43,6 +48,11 @@ export const bnbChainConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'bnb-arbitrum',
           partner: { name: 'arbitrum', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'bnb-astar',
+          partner: { name: 'astar', role: 'issuing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',
