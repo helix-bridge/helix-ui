@@ -9,3 +9,4 @@ export * from './ethereum-heco';
 export * from './ethereum-polygon';
 export * from './substrateDVM-substrateDVM';
 export * from './heco-polygon';
+export * from './bnb-arbitrum';

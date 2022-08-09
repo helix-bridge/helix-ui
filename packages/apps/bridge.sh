@@ -148,6 +148,20 @@ function initHooks() {
     echo "export default void 0;" >>$1'/index.ts'
 }
 
+function register() { 
+    BAC=$(cat ./bridges/register.tsx)
+    echo "
+        import { ${origin}${to} } from 'shared/config/bridges/${origin}-${target}';
+        import { ${1}, ${2} } from './${origin}-${target}';" >'./bridges/register.tsx'
+
+    echo "$BAC" >>'./bridges/register.tsx'
+    
+    echo "
+        ${origin}${to}.setIssuingComponents($1 as FunctionComponent);
+        ${origin}${to}.setRedeemComponents($2 as FunctionComponent);
+    " >>'./bridges/register.tsx'
+}
+
 function init() {
     local departure=${from}"2"${to}
     local arrival=${to}"2"${from}
@@ -179,6 +193,8 @@ function init() {
 
     indexFile $departure $index
     indexFile $arrival $index
+    
+    register $departure $arrival $path
 
     echo "\033[32mCreate success!\033[0m"
 }
@@ -188,5 +204,9 @@ checkExist
 init
 
 ../../node_modules/prettier/bin-prettier.js ./bridges/${origin}'-'${target}/**/*.{ts,tsx} --write
+../../node_modules/prettier/bin-prettier.js ./bridges/register.tsx --write
+# ../../node_modules/.bin/eslint -c ../../.eslintrc.js --fix
 ../../node_modules/prettier/bin-prettier.js ../shared/config/**/*.ts --write
 ../../node_modules/prettier/bin-prettier.js ../shared/model/**/*.ts --write
+cd ../../
+yarn lint --fix

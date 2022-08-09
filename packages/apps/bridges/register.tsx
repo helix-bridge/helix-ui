@@ -1,3 +1,4 @@
+import { bnbArbitrum } from 'shared/config/bridges/bnb-arbitrum';
 import { FunctionComponent } from 'react';
 import { darwiniaCrabDVM, pangoroPangolinDVM } from 'shared/config/bridge';
 import { crabDVMEthereum } from 'shared/config/bridges/crabDVM-ethereum';
@@ -11,6 +12,7 @@ import { parachainCrab, parachainPangolin } from 'shared/config/bridges/parachai
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
 import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from 'shared/config/bridges/substrateDVM-substrateDVM';
 import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
+import { Bnb2Arbitrum, Arbitrum2Bnb } from './bnb-arbitrum';
 import { CrabDVM2Ethereum, Ethereum2CrabDVM } from './crabDVM-ethereum';
 import { CrabDVM2Heco, Heco2CrabDVM } from './crabDVM-heco';
 import { CrabDVM2Polygon, Polygon2CrabDVM } from './crabDVM-polygon';
@@ -98,3 +100,6 @@ darwiniaDVMCrabDVM.setRedeemComponents(SubstrateDVM2SubstrateDVM as FunctionComp
 
 pangoroDVMPangolinDVM.setIssuingComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
 pangoroDVMPangolinDVM.setRedeemComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
+
+bnbArbitrum.setIssuingComponents(Bnb2Arbitrum as FunctionComponent);
+bnbArbitrum.setRedeemComponents(Arbitrum2Bnb as FunctionComponent);

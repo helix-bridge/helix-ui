@@ -2,6 +2,7 @@ import BN from 'bn.js';
 import { CrossChainDirection } from 'shared/model';
 import {
   isCrabDVMEthereum,
+  isBNBChainArbitrum,
   isCrabDVMHeco,
   isCrabDVMPolygon,
   isDarwinia2Ethereum,
@@ -63,6 +64,7 @@ export async function getBalance(direction: CrossChainDirection, account: string
       isEthereumHeco,
       isEthereumPolygon,
       isSubstrateDVMSubstrateDVM,
+      isBNBChainArbitrum,
     ].some((fn) => fn(fromChain, toChain))
   ) {
     return getErc20Balance(from.address, account).then((res) => [res]);

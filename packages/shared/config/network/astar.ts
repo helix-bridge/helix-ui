@@ -27,7 +27,7 @@ export const astarConfig: EthereumChainConfig = {
       host: 'astar',
       logo: 'token-usdt.svg',
       symbol: 'USDT',
-      address: '',
+      address: '0x3795C36e7D12A8c252A20C5a7B455f7c57b60283',
     },
     {
       name: 'USDC',
@@ -37,7 +37,7 @@ export const astarConfig: EthereumChainConfig = {
       host: 'astar',
       logo: 'token-usdc.svg',
       symbol: 'USDC',
-      address: '',
+      address: '0x6a2d262D56735DbA19Dd70682B39F6bE9a931D98',
     },
     {
       name: 'busd',
@@ -47,7 +47,7 @@ export const astarConfig: EthereumChainConfig = {
       host: 'astar',
       logo: 'token-busd.png',
       symbol: 'BUSD',
-      address: '',
+      address: '0x4Bf769b05E832FCdc9053fFFBC78Ca889aCb5E1E',
     },
   ],
   wallets: ['metamask'],

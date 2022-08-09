@@ -17,7 +17,7 @@ describe('network utils', () => {
   const data = [...crossChainGraph];
 
   it('should contains chains count: ', () => {
-    expect(chainConfigs).toHaveLength(14);
+    expect(chainConfigs).toHaveLength(16);
   });
 
   it('contains 2 bridges from crab', () => {

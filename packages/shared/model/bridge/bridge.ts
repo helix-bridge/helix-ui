@@ -27,6 +27,7 @@ export type BridgeName =
   | 'ethereum-polygon'
   | 'crabDVM-polygon'
   | 'substrateDVM-substrateDVM'
+  | 'bnb-arbitrum'
   | 'heco-polygon';
 
 export interface LockEventsStorage {

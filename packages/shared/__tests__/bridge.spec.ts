@@ -6,6 +6,9 @@ import { ChainConfig, Network, TokenWithBridgesInfo } from '../model';
 import {
   BridgePredicateFn,
   getBridges,
+  isArbitrum2BNBChain,
+  isBNBChain2Arbitrum,
+  isBNBChainArbitrum,
   isCrabDVM2Ethereum,
   isCrabDVM2Heco,
   isCrabDVM2Polygon,
@@ -77,6 +80,7 @@ const testsCrosses: [[Network, Network][], BridgePredicateFn, BridgePredicateFn,
   [[['crab-dvm', 'ethereum']], isCrabDVM2Ethereum, isEthereum2CrabDVM, isCrabDVMEthereum, 'crabDVM <-> ethereum'],
   [[['ethereum', 'heco']], isEthereum2Heco, isHeco2Ethereum, isEthereumHeco, 'ethereum <-> heco'],
   [[['ethereum', 'polygon']], isEthereum2Polygon, isPolygon2Ethereum, isEthereumPolygon, 'ethereum <-> polygon'],
+  [[['BNB Chain', 'arbitrum']], isBNBChain2Arbitrum, isArbitrum2BNBChain, isBNBChainArbitrum, 'BNB Chain <-> arbitrum'],
 ];
 
 describe('bridge utils', () => {
@@ -99,13 +103,14 @@ describe('bridge utils', () => {
     const formalBridges = calcBridgesAmount(formals);
 
     expect(testBridges).toHaveLength(5);
-    expect(formalBridges).toHaveLength(12);
+    expect(formalBridges).toHaveLength(13);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(34);
+    expect(allDirections).toHaveLength(36);
   });
 
+  // TODO: fix it to check all bridges
   it('should get bridges correctly', () => {
     const crab2DVM = {
       from: { ...findBySymbol(crabConfig, 'crab'), meta: crabConfig, amount: '' },
