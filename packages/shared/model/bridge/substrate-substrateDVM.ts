@@ -1,4 +1,4 @@
-import { BridgeConfig, ContractConfig } from '../bridge/bridge';
+import { BridgeConfig, ContractConfig } from './bridge';
 
 interface SubstrateSubstrateDVMContractConfig extends ContractConfig {
   genesis: '0x0000000000000000000000000000000000000000';

@@ -1,4 +1,4 @@
-import { BridgeConfig, ContractConfig } from '../bridge/bridge';
+import { BridgeConfig, ContractConfig } from './bridge';
 
 type ParachainSubstrateContractConfig = ContractConfig;
 

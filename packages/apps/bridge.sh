@@ -61,8 +61,8 @@ function initModel() {
         export type ${name}BridgeConfig = Required<BridgeConfig<${name}ContractConfig>>;
     " >>$1'/bridge.ts'
 
-    cp $1'/bridge.ts' '../shared/model/bridges/'${origin}'-'${target}'.ts'
-    echo "export * from './${origin}-${target}';" >> '../shared/model/bridges/index.ts'
+    cp $1'/bridge.ts' '../shared/model/bridge/'${origin}'-'${target}'.ts'
+    echo "export * from './${origin}-${target}';" >> '../shared/model/bridge/index.ts'
 
     echo "
         import { Bridge, CrossChainPayload, CrossToken, ChainConfig } from 'shared/model';
@@ -205,7 +205,6 @@ init
 
 ../../node_modules/prettier/bin-prettier.js ./bridges/${origin}'-'${target}/**/*.{ts,tsx} --write
 ../../node_modules/prettier/bin-prettier.js ./bridges/register.tsx --write
-# ../../node_modules/.bin/eslint -c ../../.eslintrc.js --fix
 ../../node_modules/prettier/bin-prettier.js ../shared/config/**/*.ts --write
 ../../node_modules/prettier/bin-prettier.js ../shared/model/**/*.ts --write
 cd ../../
