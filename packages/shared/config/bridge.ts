@@ -1,5 +1,6 @@
 import { arbitrumAstar } from './bridges/arbitrum-astar';
 import { arbitrumAvalanche } from './bridges/arbitrum-avalanche';
+import { arbitrumOptimism } from './bridges/arbitrum-optimism';
 import { bnbArbitrum } from './bridges/bnb-arbitrum';
 import { bnbAstar } from './bridges/bnb-astar';
 import { bnbAvalanche } from './bridges/bnb-avalanche';
@@ -36,6 +37,7 @@ const formalBridges = [
   bnbOptimism,
   arbitrumAstar,
   arbitrumAvalanche,
+  arbitrumOptimism,
 ];
 
 const testBridges = [

@@ -28,6 +28,11 @@ export const optimismConfig: EthereumChainConfig = {
           bridge: 'bnb-optimism',
           partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'arbitrum-optimism',
+          partner: { name: 'arbitrum', role: 'backing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'optimism',
@@ -43,6 +48,11 @@ export const optimismConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'bnb-optimism',
           partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'arbitrum-optimism',
+          partner: { name: 'arbitrum', role: 'backing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',
