@@ -28,6 +28,11 @@ export const arbitrumConfig: EthereumChainConfig = {
           bridge: 'bnb-arbitrum',
           partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'arbitrum-astar',
+          partner: { name: 'astar', role: 'issuing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'BNB Chain',
@@ -43,6 +48,11 @@ export const arbitrumConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'bnb-arbitrum',
           partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'arbitrum-astar',
+          partner: { name: 'astar', role: 'issuing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',

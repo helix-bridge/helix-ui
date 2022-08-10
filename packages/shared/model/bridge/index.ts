@@ -16,3 +16,4 @@ export * from './supports';
 export * from './bnb-astar';
 export * from './bnb-avalanche';
 export * from './bnb-optimism';
+export * from './arbitrum-astar';
