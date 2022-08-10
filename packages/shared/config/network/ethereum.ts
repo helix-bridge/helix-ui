@@ -91,6 +91,11 @@ export const ethereumConfig: EthereumChainConfig = {
           bridge: 'ethereum-polygon',
           partner: { name: 'polygon', role: 'issuing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-arbitrum',
+          partner: { name: 'arbitrum', role: 'issuing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'ethereum',
@@ -121,6 +126,11 @@ export const ethereumConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'ethereum-polygon',
           partner: { name: 'polygon', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-arbitrum',
+          partner: { name: 'arbitrum', role: 'issuing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',
