@@ -43,6 +43,11 @@ export const arbitrumConfig: EthereumChainConfig = {
           bridge: 'ethereum-arbitrum',
           partner: { name: 'ethereum', role: 'backing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'arbitrum-polygon',
+          partner: { name: 'polygon', role: 'issuing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'BNB Chain',
@@ -78,6 +83,11 @@ export const arbitrumConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'ethereum-arbitrum',
           partner: { name: 'ethereum', role: 'backing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'arbitrum-polygon',
+          partner: { name: 'polygon', role: 'issuing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',

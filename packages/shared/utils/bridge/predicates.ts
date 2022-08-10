@@ -147,3 +147,7 @@ export const isBnbPolygon = or(isBnb2Polygon, isPolygon2Bnb);
 export const isAvalanche2Polygon = predicate('avalanche', 'polygon');
 export const isPolygon2Avalanche = predicate('polygon', 'avalanche');
 export const isAvalanchePolygon = or(isAvalanche2Polygon, isPolygon2Avalanche);
+
+export const isArbitrum2Polygon = predicate('arbitrum', 'polygon');
+export const isPolygon2Arbitrum = predicate('polygon', 'arbitrum');
+export const isArbitrumPolygon = or(isArbitrum2Polygon, isPolygon2Arbitrum);

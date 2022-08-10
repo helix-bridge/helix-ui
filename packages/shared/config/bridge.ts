@@ -1,6 +1,7 @@
 import { arbitrumAstar } from './bridges/arbitrum-astar';
 import { arbitrumAvalanche } from './bridges/arbitrum-avalanche';
 import { arbitrumOptimism } from './bridges/arbitrum-optimism';
+import { arbitrumPolygon } from './bridges/arbitrum-polygon';
 import { astarAvalanche } from './bridges/astar-avalanche';
 import { astarOptimism } from './bridges/astar-optimism';
 import { avalancheOptimism } from './bridges/avalanche-optimism';
@@ -60,6 +61,7 @@ const formalBridges = [
   ethereumOptimism,
   bnbPolygon,
   avalanchePolygon,
+  arbitrumPolygon,
 ];
 
 const testBridges = [

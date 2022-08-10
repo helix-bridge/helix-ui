@@ -1,3 +1,4 @@
+import { arbitrumPolygon } from 'shared/config/bridges/arbitrum-polygon';
 import { avalanchePolygon } from 'shared/config/bridges/avalanche-polygon';
 import { bnbPolygon } from 'shared/config/bridges/bnb-polygon';
 import { ethereumOptimism } from 'shared/config/bridges/ethereum-optimism';
@@ -29,6 +30,7 @@ import { parachainCrab, parachainPangolin } from 'shared/config/bridges/parachai
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
 import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from 'shared/config/bridges/substrateDVM-substrateDVM';
 import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
+import { Arbitrum2Polygon, Polygon2Arbitrum } from './arbitrum-polygon';
 import { Avalanche2Polygon, Polygon2Avalanche } from './avalanche-polygon';
 import { Bnb2Polygon, Polygon2Bnb } from './bnb-polygon';
 import { Ethereum2Optimism, Optimism2Ethereum } from './ethereum-optimism';
@@ -188,3 +190,6 @@ bnbPolygon.setRedeemComponents(Polygon2Bnb as FunctionComponent);
 
 avalanchePolygon.setIssuingComponents(Avalanche2Polygon as FunctionComponent);
 avalanchePolygon.setRedeemComponents(Polygon2Avalanche as FunctionComponent);
+
+arbitrumPolygon.setIssuingComponents(Arbitrum2Polygon as FunctionComponent);
+arbitrumPolygon.setRedeemComponents(Polygon2Arbitrum as FunctionComponent);
