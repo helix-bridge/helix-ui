@@ -72,6 +72,11 @@ export const polygonConfig: EthereumChainConfig = {
           bridge: 'arbitrum-polygon',
           partner: { name: 'arbitrum', role: 'backing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'polygon-optimism',
+          partner: { name: 'optimism', role: 'issuing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'optimism',
@@ -107,6 +112,11 @@ export const polygonConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'arbitrum-polygon',
           partner: { name: 'arbitrum', role: 'backing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'polygon-optimism',
+          partner: { name: 'optimism', role: 'issuing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',

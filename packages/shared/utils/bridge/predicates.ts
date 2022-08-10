@@ -151,3 +151,7 @@ export const isAvalanchePolygon = or(isAvalanche2Polygon, isPolygon2Avalanche);
 export const isArbitrum2Polygon = predicate('arbitrum', 'polygon');
 export const isPolygon2Arbitrum = predicate('polygon', 'arbitrum');
 export const isArbitrumPolygon = or(isArbitrum2Polygon, isPolygon2Arbitrum);
+
+export const isPolygon2Optimism = predicate('polygon', 'optimism');
+export const isOptimism2Polygon = predicate('optimism', 'polygon');
+export const isPolygonOptimism = or(isPolygon2Optimism, isOptimism2Polygon);

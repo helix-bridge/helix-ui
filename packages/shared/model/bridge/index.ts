@@ -31,3 +31,4 @@ export * from './ethereum-optimism';
 export * from './bnb-polygon';
 export * from './avalanche-polygon';
 export * from './arbitrum-polygon';
+export * from './polygon-optimism';

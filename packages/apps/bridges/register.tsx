@@ -1,3 +1,4 @@
+import { polygonOptimism } from 'shared/config/bridges/polygon-optimism';
 import { arbitrumPolygon } from 'shared/config/bridges/arbitrum-polygon';
 import { avalanchePolygon } from 'shared/config/bridges/avalanche-polygon';
 import { bnbPolygon } from 'shared/config/bridges/bnb-polygon';
@@ -30,6 +31,7 @@ import { parachainCrab, parachainPangolin } from 'shared/config/bridges/parachai
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
 import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from 'shared/config/bridges/substrateDVM-substrateDVM';
 import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
+import { Polygon2Optimism, Optimism2Polygon } from './polygon-optimism';
 import { Arbitrum2Polygon, Polygon2Arbitrum } from './arbitrum-polygon';
 import { Avalanche2Polygon, Polygon2Avalanche } from './avalanche-polygon';
 import { Bnb2Polygon, Polygon2Bnb } from './bnb-polygon';
@@ -193,3 +195,6 @@ avalanchePolygon.setRedeemComponents(Polygon2Avalanche as FunctionComponent);
 
 arbitrumPolygon.setIssuingComponents(Arbitrum2Polygon as FunctionComponent);
 arbitrumPolygon.setRedeemComponents(Polygon2Arbitrum as FunctionComponent);
+
+polygonOptimism.setIssuingComponents(Polygon2Optimism as FunctionComponent);
+polygonOptimism.setRedeemComponents(Optimism2Polygon as FunctionComponent);
