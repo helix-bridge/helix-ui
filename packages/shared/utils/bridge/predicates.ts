@@ -96,3 +96,7 @@ export const isArbitrumAvalanche = or(isArbitrum2Avalanche, isAvalanche2Arbitrum
 export const isArbitrum2Optimism = predicate('arbitrum', 'optimism');
 export const isOptimism2Arbitrum = predicate('optimism', 'arbitrum');
 export const isArbitrumOptimism = or(isArbitrum2Optimism, isOptimism2Arbitrum);
+
+export const isAstar2Avalanche = predicate('astar', 'avalanche');
+export const isAvalanche2Astar = predicate('avalanche', 'astar');
+export const isAstarAvalanche = or(isAstar2Avalanche, isAvalanche2Astar);
