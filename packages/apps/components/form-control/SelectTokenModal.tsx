@@ -4,7 +4,7 @@ import { chain as lodashChain } from 'lodash';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
-import { chainColors } from 'shared/config/network';
+import { chainColors } from 'shared/config/theme';
 import { useLocalSearch } from 'shared/hooks';
 import { ChainConfig, TokenInfoWithMeta } from 'shared/model';
 import { chainConfigs, getDisplayName, isDVMNetwork } from 'shared/utils/network';
