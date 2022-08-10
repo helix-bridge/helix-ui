@@ -30,11 +30,6 @@ export const arbitrumConfig: EthereumChainConfig = {
         },
         {
           category: 'cBridge',
-          bridge: 'arbitrum-astar',
-          partner: { name: 'astar', role: 'issuing', symbol: 'USDT' },
-        },
-        {
-          category: 'cBridge',
           bridge: 'arbitrum-avalanche',
           partner: { name: 'avalanche', role: 'issuing', symbol: 'USDT' },
         },

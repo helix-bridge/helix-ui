@@ -40,11 +40,6 @@ export const astarConfig: EthereumChainConfig = {
         },
         {
           category: 'cBridge',
-          bridge: 'astar-optimism',
-          partner: { name: 'optimism', role: 'issuing', symbol: 'USDT' },
-        },
-        {
-          category: 'cBridge',
           bridge: 'ethereum-astar',
           partner: { name: 'ethereum', role: 'backing', symbol: 'USDT' },
         },
@@ -63,11 +58,6 @@ export const astarConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'bnb-astar',
           partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDC' },
-        },
-        {
-          category: 'cBridge',
-          bridge: 'arbitrum-astar',
-          partner: { name: 'arbitrum', role: 'backing', symbol: 'USDC' },
         },
         {
           category: 'cBridge',
