@@ -97,9 +97,15 @@ export const astarConfig: EthereumChainConfig = {
       address: '0x6a2d262D56735DbA19Dd70682B39F6bE9a931D98',
     },
     {
-      name: 'busd',
+      name: 'BUSD',
       decimals: 18,
-      cross: [],
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'bnb-astar',
+          partner: { name: 'BNB Chain', role: 'backing', symbol: 'BUSD' },
+        },
+      ],
       type: 'mapping',
       host: 'astar',
       logo: 'token-busd.png',

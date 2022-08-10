@@ -100,6 +100,11 @@ export const bnbConfig: EthereumChainConfig = {
           bridge: 'ethereum-bnb',
           partner: { name: 'ethereum', role: 'backing', symbol: 'BUSD' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'bnb-astar',
+          partner: { name: 'astar', role: 'issuing', symbol: 'BUSD' },
+        },
       ],
       type: 'mapping',
       host: 'BNB Chain',
