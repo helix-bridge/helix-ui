@@ -14,4 +14,5 @@ export type BridgeName =
   | 'bnb-astar'
   | 'bnb-avalanche'
   | 'bnb-optimism'
-  | 'arbitrum-astar';
+  | 'arbitrum-astar'
+  | 'arbitrum-avalanche';

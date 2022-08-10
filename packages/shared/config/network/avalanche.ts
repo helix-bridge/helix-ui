@@ -28,6 +28,11 @@ export const avalancheConfig: EthereumChainConfig = {
           bridge: 'bnb-avalanche',
           partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'arbitrum-avalanche',
+          partner: { name: 'arbitrum', role: 'issuing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'avalanche',
@@ -43,6 +48,11 @@ export const avalancheConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'bnb-avalanche',
           partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'arbitrum-avalanche',
+          partner: { name: 'arbitrum', role: 'backing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',
