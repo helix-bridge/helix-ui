@@ -1,3 +1,4 @@
+import { ethereumOptimism } from 'shared/config/bridges/ethereum-optimism';
 import { ethereumArbitrum } from 'shared/config/bridges/ethereum-arbitrum';
 import { ethereumAvalanche } from 'shared/config/bridges/ethereum-avalanche';
 import { ethereumBnb } from 'shared/config/bridges/ethereum-bnb';
@@ -26,6 +27,7 @@ import { parachainCrab, parachainPangolin } from 'shared/config/bridges/parachai
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
 import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from 'shared/config/bridges/substrateDVM-substrateDVM';
 import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
+import { Ethereum2Optimism, Optimism2Ethereum } from './ethereum-optimism';
 import { Ethereum2Arbitrum, Arbitrum2Ethereum } from './ethereum-arbitrum';
 import { Ethereum2Avalanche, Avalanche2Ethereum } from './ethereum-avalanche';
 import { Ethereum2Bnb, Bnb2Ethereum } from './ethereum-bnb';
@@ -173,3 +175,6 @@ ethereumAvalanche.setRedeemComponents(Avalanche2Ethereum as FunctionComponent);
 
 ethereumArbitrum.setIssuingComponents(Ethereum2Arbitrum as FunctionComponent);
 ethereumArbitrum.setRedeemComponents(Arbitrum2Ethereum as FunctionComponent);
+
+ethereumOptimism.setIssuingComponents(Ethereum2Optimism as FunctionComponent);
+ethereumOptimism.setRedeemComponents(Optimism2Ethereum as FunctionComponent);

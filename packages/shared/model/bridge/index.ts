@@ -27,3 +27,4 @@ export * from './ethereum-astar';
 export * from './ethereum-bnb';
 export * from './ethereum-avalanche';
 export * from './ethereum-arbitrum';
+export * from './ethereum-optimism';

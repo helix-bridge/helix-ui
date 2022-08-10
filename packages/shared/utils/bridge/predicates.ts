@@ -135,3 +135,7 @@ export const isEthereumAvalanche = or(isEthereum2Avalanche, isAvalanche2Ethereum
 export const isEthereum2Arbitrum = predicate('ethereum', 'arbitrum');
 export const isArbitrum2Ethereum = predicate('arbitrum', 'ethereum');
 export const isEthereumArbitrum = or(isEthereum2Arbitrum, isArbitrum2Ethereum);
+
+export const isEthereum2Optimism = predicate('ethereum', 'optimism');
+export const isOptimism2Ethereum = predicate('optimism', 'ethereum');
+export const isEthereumOptimism = or(isEthereum2Optimism, isOptimism2Ethereum);

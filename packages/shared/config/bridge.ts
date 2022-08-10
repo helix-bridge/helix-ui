@@ -18,6 +18,7 @@ import { ethereumBnb } from './bridges/ethereum-bnb';
 import { ethereumDarwinia, ropstenPangolin } from './bridges/ethereum-darwinia';
 import { ethereumHeco } from './bridges/ethereum-heco';
 import { ethereumPolygon } from './bridges/ethereum-polygon';
+import { ethereumOptimism } from './bridges/ethereum-optimism';
 import { hecoPolygon } from './bridges/heco-polygon';
 import { parachainCrab, parachainPangolin } from './bridges/parachain-substrate';
 import { polygonAstar } from './bridges/polygon-astar';
@@ -54,6 +55,7 @@ const formalBridges = [
   ethereumBnb,
   ethereumAvalanche,
   ethereumArbitrum,
+  ethereumOptimism,
 ];
 
 const testBridges = [

@@ -96,6 +96,11 @@ export const ethereumConfig: EthereumChainConfig = {
           bridge: 'ethereum-arbitrum',
           partner: { name: 'arbitrum', role: 'issuing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-optimism',
+          partner: { name: 'optimism', role: 'issuing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'ethereum',
@@ -131,6 +136,11 @@ export const ethereumConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'ethereum-arbitrum',
           partner: { name: 'arbitrum', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-optimism',
+          partner: { name: 'optimism', role: 'issuing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',
