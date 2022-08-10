@@ -20,88 +20,124 @@ describe('network utils', () => {
     expect(chainConfigs).toHaveLength(19);
   });
 
-  it('contains 2 bridges from crab', () => {
-    const fromCrab = data.find((item) => item[0] === 'crab');
+  it('crab contains 2 leafs', () => {
+    const group = data.find((item) => item[0] === 'crab');
 
-    expect(fromCrab).not.toEqual(undefined);
-    expect(fromCrab![1]).toEqual(['crab-dvm', 'crab-parachain']);
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['crab-dvm', 'crab-parachain']);
   });
 
-  it('contains 6 bridges from crab-dvm', () => {
-    const fromCrabDVM = data.find((item) => item[0] === 'crab-dvm');
+  it('crab-dvm contains 6 leafs', () => {
+    const group = data.find((item) => item[0] === 'crab-dvm');
 
-    expect(fromCrabDVM).not.toEqual(undefined);
-    expect(fromCrabDVM![1]).toEqual(['crab', 'ethereum', 'heco', 'polygon', 'darwinia', 'darwinia-dvm']);
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['crab', 'ethereum', 'heco', 'polygon', 'darwinia', 'darwinia-dvm']);
   });
 
-  it('contains 3 bridges from darwinia', () => {
-    const fromDarwinia = data.find((item) => item[0] === 'darwinia');
+  it('darwinia contains 3 leafs', () => {
+    const group = data.find((item) => item[0] === 'darwinia');
 
-    expect(fromDarwinia).not.toEqual(undefined);
-    expect(fromDarwinia![1]).toEqual(['crab-dvm', 'darwinia-dvm', 'ethereum']);
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['crab-dvm', 'darwinia-dvm', 'ethereum']);
   });
 
-  it('contains 2 bridges from darwinia-dvm', () => {
-    const fromDarwinia = data.find((item) => item[0] === 'darwinia-dvm');
+  it('darwinia-dvm contains 2 leafs', () => {
+    const group = data.find((item) => item[0] === 'darwinia-dvm');
 
-    expect(fromDarwinia).not.toEqual(undefined);
-    expect(fromDarwinia![1]).toEqual(['darwinia', 'crab-dvm']);
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['darwinia', 'crab-dvm']);
   });
 
-  it('contains 4 bridge from ethereum', () => {
-    const fromEthereum = data.find((item) => item[0] === 'ethereum');
+  it('ethereum contains 4 leafs', () => {
+    const group = data.find((item) => item[0] === 'ethereum');
 
-    expect(fromEthereum).not.toEqual(undefined);
-    expect(fromEthereum![1]).toEqual(['crab-dvm', 'darwinia', 'heco', 'polygon']);
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['crab-dvm', 'darwinia', 'heco', 'polygon']);
   });
 
-  it('contains 3 bridges from pangolin', () => {
-    const fromPangolin = data.find((item) => item[0] === 'pangolin');
+  it('heco contains 3 leafs', () => {
+    const group = data.find((item) => item[0] === 'heco');
 
-    expect(fromPangolin).not.toEqual(undefined);
-    expect(fromPangolin![1]).toEqual(['pangolin-dvm', 'pangolin-parachain', 'ropsten']);
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['crab-dvm', 'ethereum', 'polygon']);
   });
 
-  it('contains 3 bridges from pangolin-dvm', () => {
-    const fromPangolinDVM = data.find((item) => item[0] === 'pangolin-dvm');
+  it('BNB Chain contains 4 leafs', () => {
+    const group = data.find((item) => item[0] === 'BNB Chain');
 
-    expect(fromPangolinDVM).not.toEqual(undefined);
-    expect(fromPangolinDVM![1]).toEqual(['pangolin', 'pangoro-dvm', 'pangoro']);
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['arbitrum', 'astar', 'avalanche', 'optimism']);
   });
 
-  it('contains 1 bridge from pangoro', () => {
-    const fromPangoro = data.find((item) => item[0] === 'pangoro');
+  it('arbitrum contains 4 leafs', () => {
+    const group = data.find((item) => item[0] === 'arbitrum');
 
-    expect(fromPangoro).not.toEqual(undefined);
-    expect(fromPangoro![1]).toEqual(['pangolin-dvm']);
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['astar', 'avalanche', 'optimism', 'BNB Chain']);
+  });
+  it('astar contains 4 leafs', () => {
+    const group = data.find((item) => item[0] === 'astar');
+
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['arbitrum', 'avalanche', 'optimism', 'BNB Chain']);
   });
 
-  it('contains 1 bridge from ropsten', () => {
-    const fromRopsten = data.find((item) => item[0] === 'ropsten');
+  it('avalanche contains 4 leafs', () => {
+    const group = data.find((item) => item[0] === 'avalanche');
 
-    expect(fromRopsten).not.toEqual(undefined);
-    expect(fromRopsten![1]).toEqual(['pangolin']);
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['arbitrum', 'astar', 'optimism', 'BNB Chain']);
   });
 
-  it('contains 3 bridge from heco', () => {
-    const fromHeco = data.find((item) => item[0] === 'heco');
+  it('optimism contains 4 leafs', () => {
+    const group = data.find((item) => item[0] === 'optimism');
 
-    expect(fromHeco).not.toEqual(undefined);
-    expect(fromHeco![1]).toEqual(['crab-dvm', 'ethereum', 'polygon']);
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['arbitrum', 'astar', 'avalanche', 'BNB Chain']);
+  });
+  
+  // ------------------------------------test networks---------------------------------------
+
+  it('pangolin contains 3 leafs', () => {
+    const group = data.find((item) => item[0] === 'pangolin');
+
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['pangolin-dvm', 'pangolin-parachain', 'ropsten']);
   });
 
-  it('contains 3 bridge from polygon', () => {
-    const fromHeco = data.find((item) => item[0] === 'polygon');
+  it('pangolin-dvm contains 3 leafs', () => {
+    const group = data.find((item) => item[0] === 'pangolin-dvm');
 
-    expect(fromHeco).not.toEqual(undefined);
-    expect(fromHeco![1]).toEqual(['crab-dvm', 'ethereum', 'heco']);
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['pangolin', 'pangoro-dvm', 'pangoro']);
   });
 
-  it('contains 1 bridge from pangoro-dvm', () => {
-    const fromPangoroDVM = data.find((item) => item[0] === 'pangoro-dvm');
+  it('pangoro contains 1 leaf', () => {
+    const group = data.find((item) => item[0] === 'pangoro');
 
-    expect(fromPangoroDVM).not.toEqual(undefined);
-    expect(fromPangoroDVM![1]).toEqual(['pangolin-dvm']);
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['pangolin-dvm']);
+  });
+
+  it('ropsten contains 1 leaf', () => {
+    const group = data.find((item) => item[0] === 'ropsten');
+
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['pangolin']);
+  });
+
+  it('polygon contains 3 leaf', () => {
+    const group = data.find((item) => item[0] === 'polygon');
+
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['crab-dvm', 'ethereum', 'heco']);
+  });
+
+  it('pangoro-dvm contains 1 leaf', () => {
+    const group = data.find((item) => item[0] === 'pangoro-dvm');
+
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['pangolin-dvm']);
   });
 
   it('can get chain config by chain name', () => {

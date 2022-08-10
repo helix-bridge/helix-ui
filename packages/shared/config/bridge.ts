@@ -22,6 +22,16 @@ import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from './bridges/substrateDV
 import { CHAIN_TYPE } from './env';
 
 const formalBridges = [
+  arbitrumAstar,
+  arbitrumAvalanche,
+  arbitrumOptimism,
+  astarAvalanche,
+  astarOptimism,
+  avalancheOptimism,
+  bnbArbitrum,
+  bnbAstar,
+  bnbAvalanche,
+  bnbOptimism,
   crabCrabDVM,
   crabDVMEthereum,
   crabDVMHeco,
@@ -32,18 +42,8 @@ const formalBridges = [
   ethereumDarwinia,
   ethereumHeco,
   ethereumPolygon,
-  parachainCrab,
   hecoPolygon,
-  bnbArbitrum,
-  bnbAstar,
-  bnbAvalanche,
-  bnbOptimism,
-  arbitrumAstar,
-  arbitrumAvalanche,
-  arbitrumOptimism,
-  astarAvalanche,
-  astarOptimism,
-  avalancheOptimism,
+  parachainCrab,
 ];
 
 const testBridges = [
