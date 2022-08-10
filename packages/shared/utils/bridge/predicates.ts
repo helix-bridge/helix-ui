@@ -139,3 +139,7 @@ export const isEthereumArbitrum = or(isEthereum2Arbitrum, isArbitrum2Ethereum);
 export const isEthereum2Optimism = predicate('ethereum', 'optimism');
 export const isOptimism2Ethereum = predicate('optimism', 'ethereum');
 export const isEthereumOptimism = or(isEthereum2Optimism, isOptimism2Ethereum);
+
+export const isBnb2Polygon = predicate('BNB Chain', 'polygon');
+export const isPolygon2Bnb = predicate('polygon', 'BNB Chain');
+export const isBnbPolygon = or(isBnb2Polygon, isPolygon2Bnb);

@@ -48,6 +48,11 @@ export const bnbConfig: EthereumChainConfig = {
           bridge: 'ethereum-bnb',
           partner: { name: 'ethereum', role: 'backing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'bnb-polygon',
+          partner: { name: 'polygon', role: 'issuing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'BNB Chain',
@@ -83,6 +88,11 @@ export const bnbConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'ethereum-bnb',
           partner: { name: 'ethereum', role: 'backing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'bnb-polygon',
+          partner: { name: 'polygon', role: 'issuing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',
