@@ -119,3 +119,7 @@ export const isAvalancheOptimism = or(isAvalanche2Optimism, isOptimism2Avalanche
 export const isPolygon2Astar = predicate('polygon', 'astar');
 export const isAstar2Polygon = predicate('astar', 'polygon');
 export const isPolygonAstar = or(isPolygon2Astar, isAstar2Polygon);
+
+export const isEthereum2Astar = predicate('ethereum', 'astar');
+export const isAstar2Ethereum = predicate('astar', 'ethereum');
+export const isEthereumAstar = or(isEthereum2Astar, isAstar2Ethereum);

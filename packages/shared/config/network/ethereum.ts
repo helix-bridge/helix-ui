@@ -67,6 +67,38 @@ export const ethereumConfig: EthereumChainConfig = {
       symbol: 'KTON',
       address: '0x9f284e1337a815fe77d2ff4ae46544645b20c5ff',
     },
+    {
+      name: 'USDT',
+      decimals: 18,
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-astar',
+          partner: { name: 'astar', role: 'issuing', symbol: 'USDT' },
+        },
+      ],
+      type: 'mapping',
+      host: 'ethereum',
+      logo: 'token-usdt.svg',
+      symbol: 'USDT',
+      address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+    },
+    {
+      name: 'USDC',
+      decimals: 18,
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-astar',
+          partner: { name: 'astar', role: 'issuing', symbol: 'USDC' },
+        },
+      ],
+      type: 'mapping',
+      host: 'ethereum',
+      logo: 'token-usdc.svg',
+      symbol: 'USDC',
+      address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    },
   ],
   wallets: ['metamask'],
 };

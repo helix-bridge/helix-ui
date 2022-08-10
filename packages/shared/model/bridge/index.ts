@@ -23,3 +23,4 @@ export * from './astar-avalanche';
 export * from './astar-optimism';
 export * from './avalanche-optimism';
 export * from './polygon-astar';
+export * from './ethereum-astar';

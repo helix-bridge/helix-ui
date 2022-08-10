@@ -1,3 +1,4 @@
+import { ethereumAstar } from 'shared/config/bridges/ethereum-astar';
 import { polygonAstar } from 'shared/config/bridges/polygon-astar';
 import { avalancheOptimism } from 'shared/config/bridges/avalanche-optimism';
 import { astarOptimism } from 'shared/config/bridges/astar-optimism';
@@ -22,6 +23,7 @@ import { parachainCrab, parachainPangolin } from 'shared/config/bridges/parachai
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
 import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from 'shared/config/bridges/substrateDVM-substrateDVM';
 import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
+import { Ethereum2Astar, Astar2Ethereum } from './ethereum-astar';
 import { Polygon2Astar, Astar2Polygon } from './polygon-astar';
 import { Avalanche2Optimism, Optimism2Avalanche } from './avalanche-optimism';
 import { Astar2Optimism, Optimism2Astar } from './astar-optimism';
@@ -153,3 +155,6 @@ avalancheOptimism.setRedeemComponents(Optimism2Avalanche as FunctionComponent);
 
 polygonAstar.setIssuingComponents(Polygon2Astar as FunctionComponent);
 polygonAstar.setRedeemComponents(Astar2Polygon as FunctionComponent);
+
+ethereumAstar.setIssuingComponents(Ethereum2Astar as FunctionComponent);
+ethereumAstar.setRedeemComponents(Astar2Ethereum as FunctionComponent);

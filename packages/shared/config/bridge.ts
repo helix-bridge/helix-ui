@@ -1,5 +1,6 @@
 import { arbitrumAstar } from './bridges/arbitrum-astar';
 import { arbitrumAvalanche } from './bridges/arbitrum-avalanche';
+import { ethereumAstar } from './bridges/ethereum-astar';
 import { arbitrumOptimism } from './bridges/arbitrum-optimism';
 import { astarAvalanche } from './bridges/astar-avalanche';
 import { astarOptimism } from './bridges/astar-optimism';
@@ -46,6 +47,7 @@ const formalBridges = [
   hecoPolygon,
   parachainCrab,
   polygonAstar,
+  ethereumAstar,
 ];
 
 const testBridges = [
