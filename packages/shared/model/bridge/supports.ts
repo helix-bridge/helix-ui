@@ -21,4 +21,5 @@ export type BridgeName =
   | 'astar-optimism'
   | 'avalanche-optimism'
   | 'polygon-astar'
-  | 'ethereum-astar';
+  | 'ethereum-astar'
+  | 'ethereum-bnb';

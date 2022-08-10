@@ -43,6 +43,11 @@ export const bnbConfig: EthereumChainConfig = {
           bridge: 'bnb-optimism',
           partner: { name: 'optimism', role: 'issuing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-bnb',
+          partner: { name: 'ethereum', role: 'backing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'BNB Chain',
@@ -74,6 +79,11 @@ export const bnbConfig: EthereumChainConfig = {
           bridge: 'bnb-avalanche',
           partner: { name: 'optimism', role: 'issuing', symbol: 'USDC' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-bnb',
+          partner: { name: 'ethereum', role: 'backing', symbol: 'USDC' },
+        },
       ],
       type: 'mapping',
       host: 'BNB Chain',
@@ -84,7 +94,13 @@ export const bnbConfig: EthereumChainConfig = {
     {
       name: 'BUSD',
       decimals: 18,
-      cross: [],
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-bnb',
+          partner: { name: 'ethereum', role: 'backing', symbol: 'BUSD' },
+        },
+      ],
       type: 'mapping',
       host: 'BNB Chain',
       logo: 'token-busd.png',

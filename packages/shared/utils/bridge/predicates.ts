@@ -123,3 +123,7 @@ export const isPolygonAstar = or(isPolygon2Astar, isAstar2Polygon);
 export const isEthereum2Astar = predicate('ethereum', 'astar');
 export const isAstar2Ethereum = predicate('astar', 'ethereum');
 export const isEthereumAstar = or(isEthereum2Astar, isAstar2Ethereum);
+
+export const isEthereum2Bnb = predicate('ethereum', 'BNB Chain');
+export const isBnb2Ethereum = predicate('BNB Chain', 'ethereum');
+export const isEthereumBnb = or(isEthereum2Bnb, isBnb2Ethereum);
