@@ -22,7 +22,13 @@ export const avalancheConfig: EthereumChainConfig = {
     {
       name: 'USDT',
       decimals: 18,
-      cross: [],
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'bnb-avalanche',
+          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDT' },
+        },
+      ],
       type: 'mapping',
       host: 'avalanche',
       logo: 'token-usdt.svg',
@@ -32,7 +38,13 @@ export const avalancheConfig: EthereumChainConfig = {
     {
       name: 'USDC',
       decimals: 18,
-      cross: [],
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'bnb-avalanche',
+          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDC' },
+        },
+      ],
       type: 'mapping',
       host: 'avalanche',
       logo: 'token-usdc.svg',

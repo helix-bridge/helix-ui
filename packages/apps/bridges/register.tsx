@@ -1,3 +1,4 @@
+import { bnbAvalanche } from 'shared/config/bridges/bnb-avalanche';
 import { bnbAstar } from 'shared/config/bridges/bnb-astar';
 import { bnbArbitrum } from 'shared/config/bridges/bnb-arbitrum';
 import { FunctionComponent } from 'react';
@@ -13,6 +14,7 @@ import { parachainCrab, parachainPangolin } from 'shared/config/bridges/parachai
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
 import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from 'shared/config/bridges/substrateDVM-substrateDVM';
 import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
+import { Bnb2Avalanche, Avalanche2Bnb } from './bnb-avalanche';
 import { Bnb2Astar, Astar2Bnb } from './bnb-astar';
 import { Bnb2Arbitrum, Arbitrum2Bnb } from './bnb-arbitrum';
 import { CrabDVM2Ethereum, Ethereum2CrabDVM } from './crabDVM-ethereum';
@@ -108,3 +110,6 @@ bnbArbitrum.setRedeemComponents(Arbitrum2Bnb as FunctionComponent);
 
 bnbAstar.setIssuingComponents(Bnb2Astar as FunctionComponent);
 bnbAstar.setRedeemComponents(Astar2Bnb as FunctionComponent);
+
+bnbAvalanche.setIssuingComponents(Bnb2Avalanche as FunctionComponent);
+bnbAvalanche.setRedeemComponents(Avalanche2Bnb as FunctionComponent);

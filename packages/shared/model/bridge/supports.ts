@@ -11,4 +11,5 @@ export type BridgeName =
   | 'substrateDVM-substrateDVM'
   | 'bnb-arbitrum'
   | 'heco-polygon'
-  | 'bnb-astar';
+  | 'bnb-astar'
+  | 'bnb-avalanche';

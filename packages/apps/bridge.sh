@@ -261,6 +261,6 @@ init
 ../../node_modules/prettier/bin-prettier.js ./bridges/register.tsx --write
 ../../node_modules/prettier/bin-prettier.js ../shared/config/**/*.ts --write
 ../../node_modules/prettier/bin-prettier.js ../shared/model/**/*.ts --write
-../../node_modules/prettier/bin-prettier.js ../shared/utils/birdge/predicates.ts --write
+../../node_modules/prettier/bin-prettier.js ../shared/utils/bridge/predicates.ts --write
 cd ../../
 yarn eslint
