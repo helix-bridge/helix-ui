@@ -1,3 +1,4 @@
+import { avalancheOptimism } from 'shared/config/bridges/avalanche-optimism';
 import { astarOptimism } from 'shared/config/bridges/astar-optimism';
 import { astarAvalanche } from 'shared/config/bridges/astar-avalanche';
 import { arbitrumOptimism } from 'shared/config/bridges/arbitrum-optimism';
@@ -20,6 +21,7 @@ import { parachainCrab, parachainPangolin } from 'shared/config/bridges/parachai
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
 import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from 'shared/config/bridges/substrateDVM-substrateDVM';
 import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
+import { Avalanche2Optimism, Optimism2Avalanche } from './avalanche-optimism';
 import { Astar2Optimism, Optimism2Astar } from './astar-optimism';
 import { Astar2Avalanche, Avalanche2Astar } from './astar-avalanche';
 import { Arbitrum2Optimism, Optimism2Arbitrum } from './arbitrum-optimism';
@@ -143,3 +145,6 @@ astarAvalanche.setRedeemComponents(Avalanche2Astar as FunctionComponent);
 
 astarOptimism.setIssuingComponents(Astar2Optimism as FunctionComponent);
 astarOptimism.setRedeemComponents(Optimism2Astar as FunctionComponent);
+
+avalancheOptimism.setIssuingComponents(Avalanche2Optimism as FunctionComponent);
+avalancheOptimism.setRedeemComponents(Optimism2Avalanche as FunctionComponent);

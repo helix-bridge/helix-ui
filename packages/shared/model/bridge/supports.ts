@@ -18,4 +18,5 @@ export type BridgeName =
   | 'arbitrum-avalanche'
   | 'arbitrum-optimism'
   | 'astar-avalanche'
-  | 'astar-optimism';
+  | 'astar-optimism'
+  | 'avalanche-optimism';
