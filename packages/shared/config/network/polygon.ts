@@ -62,6 +62,11 @@ export const polygonConfig: EthereumChainConfig = {
           bridge: 'bnb-polygon',
           partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'avalanche-polygon',
+          partner: { name: 'avalanche', role: 'backing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'optimism',
@@ -87,6 +92,11 @@ export const polygonConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'bnb-polygon',
           partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'avalanche-polygon',
+          partner: { name: 'avalanche', role: 'backing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',
