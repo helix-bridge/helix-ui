@@ -1,4 +1,5 @@
 import { Network } from '../../model';
+import { getBridge } from './bridge';
 
 export type BridgePredicateFn = (departure: Network, arrival: Network) => boolean;
 
@@ -12,6 +13,12 @@ const or =
   (...fns: BridgePredicateFn[]) =>
   (departure: Network, arrival: Network) =>
     fns.some((fn) => fn(departure, arrival));
+
+export const isCBridge: BridgePredicateFn = (departure, arrival) => {
+  const bridge = getBridge([departure, arrival]);
+
+  return bridge.category === 'cBridge';
+};
 
 /* -----------------------------generated auto------------------------------------- */
 
@@ -108,3 +115,7 @@ export const isAstarOptimism = or(isAstar2Optimism, isOptimism2Astar);
 export const isAvalanche2Optimism = predicate('avalanche', 'optimism');
 export const isOptimism2Avalanche = predicate('optimism', 'avalanche');
 export const isAvalancheOptimism = or(isAvalanche2Optimism, isOptimism2Avalanche);
+
+export const isPolygon2Astar = predicate('polygon', 'astar');
+export const isAstar2Polygon = predicate('astar', 'polygon');
+export const isPolygonAstar = or(isPolygon2Astar, isAstar2Polygon);

@@ -1,30 +1,15 @@
 import BN from 'bn.js';
 import { CrossChainDirection } from 'shared/model';
 import {
-  isCrabDVMEthereum,
-  isBNBChainArbitrum,
-  isCrabDVMHeco,
-  isCrabDVMPolygon,
+  isCBridge,
   isDarwinia2Ethereum,
   isDVM2Substrate,
   isEthereum2Darwinia,
-  isEthereumHeco,
-  isEthereumPolygon,
   isParachain2Substrate,
   isSubstrate2DVM,
   isSubstrate2Parachain,
   isSubstrate2SubstrateDVM,
   isSubstrateDVM2Substrate,
-  isSubstrateDVMSubstrateDVM,
-  isBnbAstar,
-  isBnbAvalanche,
-  isBnbOptimism,
-  isArbitrumAstar,
-  isArbitrumAvalanche,
-  isArbitrumOptimism,
-  isAstarAvalanche,
-  isAstarOptimism,
-  isAvalancheOptimism,
 } from 'shared/utils/bridge';
 import { isKton, isRing } from 'shared/utils/helper';
 import { getDarwiniaBalance, getDVMBalance, getErc20Balance, getParachainBalance } from 'shared/utils/network/balance';
@@ -64,27 +49,7 @@ export async function getBalance(direction: CrossChainDirection, account: string
     return getDVMBalance(account, kton?.address);
   }
 
-  if (
-    [
-      isSubstrateDVM2Substrate,
-      isCrabDVMHeco,
-      isCrabDVMEthereum,
-      isCrabDVMPolygon,
-      isEthereumHeco,
-      isEthereumPolygon,
-      isSubstrateDVMSubstrateDVM,
-      isBNBChainArbitrum,
-      isBnbAstar,
-      isBnbAvalanche,
-      isBnbOptimism,
-      isArbitrumAstar,
-      isArbitrumAvalanche,
-      isArbitrumOptimism,
-      isAstarAvalanche,
-      isAstarOptimism,
-      isAvalancheOptimism,
-    ].some((fn) => fn(fromChain, toChain))
-  ) {
+  if ([isSubstrateDVM2Substrate, isCBridge].some((fn) => fn(fromChain, toChain))) {
     return getErc20Balance(from.address, account).then((res) => [res]);
   }
 

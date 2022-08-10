@@ -16,6 +16,7 @@ import { ethereumHeco } from './bridges/ethereum-heco';
 import { ethereumPolygon } from './bridges/ethereum-polygon';
 import { hecoPolygon } from './bridges/heco-polygon';
 import { parachainCrab, parachainPangolin } from './bridges/parachain-substrate';
+import { polygonAstar } from './bridges/polygon-astar';
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from './bridges/substrate-dvm';
 import { darwiniaCrabDVM, pangoroPangolinDVM } from './bridges/substrate-substrateDVM';
 import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from './bridges/substrateDVM-substrateDVM';
@@ -44,6 +45,7 @@ const formalBridges = [
   ethereumPolygon,
   hecoPolygon,
   parachainCrab,
+  polygonAstar,
 ];
 
 const testBridges = [

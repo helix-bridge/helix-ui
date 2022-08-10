@@ -74,6 +74,11 @@ export const astarConfig: EthereumChainConfig = {
           bridge: 'astar-optimism',
           partner: { name: 'optimism', role: 'issuing', symbol: 'USDC' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'polygon-astar',
+          partner: { name: 'polygon', role: 'backing', symbol: 'USDC' },
+        },
       ],
       type: 'mapping',
       host: 'astar',
