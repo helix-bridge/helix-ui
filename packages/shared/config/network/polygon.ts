@@ -51,7 +51,13 @@ export const polygonConfig: EthereumChainConfig = {
     {
       name: 'USDT',
       decimals: 18,
-      cross: [],
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-polygon',
+          partner: { name: 'ethereum', role: 'backing', symbol: 'USDT' },
+        },
+      ],
       type: 'mapping',
       host: 'optimism',
       logo: 'token-usdt.svg',
@@ -66,6 +72,11 @@ export const polygonConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'polygon-astar',
           partner: { name: 'astar', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-polygon',
+          partner: { name: 'ethereum', role: 'backing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',
