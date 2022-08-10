@@ -20,3 +20,4 @@ export * from './arbitrum-astar';
 export * from './arbitrum-avalanche';
 export * from './arbitrum-optimism';
 export * from './astar-avalanche';
+export * from './astar-optimism';
