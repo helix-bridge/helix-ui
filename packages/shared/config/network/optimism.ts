@@ -22,7 +22,13 @@ export const optimismConfig: EthereumChainConfig = {
     {
       name: 'USDT',
       decimals: 18,
-      cross: [],
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'bnb-optimism',
+          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDT' },
+        },
+      ],
       type: 'mapping',
       host: 'optimism',
       logo: 'token-usdt.svg',
@@ -32,7 +38,13 @@ export const optimismConfig: EthereumChainConfig = {
     {
       name: 'USDC',
       decimals: 18,
-      cross: [],
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'bnb-optimism',
+          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDC' },
+        },
+      ],
       type: 'mapping',
       host: 'optimism',
       logo: 'token-usdc.svg',

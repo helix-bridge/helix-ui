@@ -15,3 +15,4 @@ export * from './substrateDVM-substrateDVM';
 export * from './supports';
 export * from './bnb-astar';
 export * from './bnb-avalanche';
+export * from './bnb-optimism';

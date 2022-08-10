@@ -1,3 +1,4 @@
+import { bnbOptimism } from 'shared/config/bridges/bnb-optimism';
 import { bnbAvalanche } from 'shared/config/bridges/bnb-avalanche';
 import { bnbAstar } from 'shared/config/bridges/bnb-astar';
 import { bnbArbitrum } from 'shared/config/bridges/bnb-arbitrum';
@@ -14,6 +15,7 @@ import { parachainCrab, parachainPangolin } from 'shared/config/bridges/parachai
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
 import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from 'shared/config/bridges/substrateDVM-substrateDVM';
 import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
+import { Bnb2Optimism, Optimism2Bnb } from './bnb-optimism';
 import { Bnb2Avalanche, Avalanche2Bnb } from './bnb-avalanche';
 import { Bnb2Astar, Astar2Bnb } from './bnb-astar';
 import { Bnb2Arbitrum, Arbitrum2Bnb } from './bnb-arbitrum';
@@ -113,3 +115,6 @@ bnbAstar.setRedeemComponents(Astar2Bnb as FunctionComponent);
 
 bnbAvalanche.setIssuingComponents(Bnb2Avalanche as FunctionComponent);
 bnbAvalanche.setRedeemComponents(Avalanche2Bnb as FunctionComponent);
+
+bnbOptimism.setIssuingComponents(Bnb2Optimism as FunctionComponent);
+bnbOptimism.setRedeemComponents(Optimism2Bnb as FunctionComponent);
