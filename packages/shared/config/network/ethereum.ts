@@ -81,6 +81,11 @@ export const ethereumConfig: EthereumChainConfig = {
           bridge: 'ethereum-bnb',
           partner: { name: 'BNB Chain', role: 'issuing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-avalanche',
+          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'ethereum',
@@ -101,6 +106,11 @@ export const ethereumConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'ethereum-bnb',
           partner: { name: 'BNB Chain', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-avalanche',
+          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',

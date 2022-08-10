@@ -43,6 +43,11 @@ export const avalancheConfig: EthereumChainConfig = {
           bridge: 'avalanche-optimism',
           partner: { name: 'optimism', role: 'issuing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-avalanche',
+          partner: { name: 'ethereum', role: 'backing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'avalanche',
@@ -73,6 +78,11 @@ export const avalancheConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'avalanche-optimism',
           partner: { name: 'optimism', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-avalanche',
+          partner: { name: 'ethereum', role: 'backing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',
