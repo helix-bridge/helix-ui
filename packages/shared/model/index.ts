@@ -1,7 +1,6 @@
 export * from './account';
 export * from './aggregation-api';
 export * from './bridge';
-export * from './bridges';
 export * from './camelCaseKeys';
 export * from './common';
 export * from './connection';

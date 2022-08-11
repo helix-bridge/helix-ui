@@ -6,6 +6,32 @@ import { ChainConfig, Network, TokenWithBridgesInfo } from '../model';
 import {
   BridgePredicateFn,
   getBridges,
+  isArbitrum2Astar,
+  isArbitrum2Avalanche,
+  isArbitrum2BNBChain,
+  isArbitrum2Optimism,
+  isArbitrumAstar,
+  isArbitrumAvalanche,
+  isArbitrumOptimism,
+  isAstar2Arbitrum,
+  isAstar2Avalanche,
+  isAstar2Bnb,
+  isAstar2Optimism,
+  isAstarAvalanche,
+  isAstarOptimism,
+  isAvalanche2Arbitrum,
+  isAvalanche2Astar,
+  isAvalanche2Bnb,
+  isAvalanche2Optimism,
+  isAvalancheOptimism,
+  isBnb2Astar,
+  isBnb2Avalanche,
+  isBnb2Optimism,
+  isBnbAstar,
+  isBnbAvalanche,
+  isBNBChain2Arbitrum,
+  isBNBChainArbitrum,
+  isBnbOptimism,
   isCrabDVM2Ethereum,
   isCrabDVM2Heco,
   isCrabDVM2Polygon,
@@ -23,6 +49,10 @@ import {
   isEthereumPolygon,
   isHeco2CrabDVM,
   isHeco2Ethereum,
+  isOptimism2Arbitrum,
+  isOptimism2Astar,
+  isOptimism2Avalanche,
+  isOptimism2Bnb,
   isPolygon2CrabDVM,
   isPolygon2Ethereum,
   isSubstrate2DVM,
@@ -77,6 +107,16 @@ const testsCrosses: [[Network, Network][], BridgePredicateFn, BridgePredicateFn,
   [[['crab-dvm', 'ethereum']], isCrabDVM2Ethereum, isEthereum2CrabDVM, isCrabDVMEthereum, 'crabDVM <-> ethereum'],
   [[['ethereum', 'heco']], isEthereum2Heco, isHeco2Ethereum, isEthereumHeco, 'ethereum <-> heco'],
   [[['ethereum', 'polygon']], isEthereum2Polygon, isPolygon2Ethereum, isEthereumPolygon, 'ethereum <-> polygon'],
+  [[['BNB Chain', 'arbitrum']], isBNBChain2Arbitrum, isArbitrum2BNBChain, isBNBChainArbitrum, 'BNB Chain <-> arbitrum'],
+  [[['BNB Chain', 'astar']], isBnb2Astar, isAstar2Bnb, isBnbAstar, 'BNB Chain <-> astar'],
+  [[['BNB Chain', 'avalanche']], isBnb2Avalanche, isAvalanche2Bnb, isBnbAvalanche, 'BNB Chain <-> avalanche'],
+  [[['BNB Chain', 'optimism']], isBnb2Optimism, isOptimism2Bnb, isBnbOptimism, 'BNB Chain <-> optimism'],
+  [[['arbitrum', 'astar']], isArbitrum2Astar, isAstar2Arbitrum, isArbitrumAstar, 'arbitrum <-> astar'],
+  [[['arbitrum', 'avalanche']], isArbitrum2Avalanche, isAvalanche2Arbitrum, isArbitrumAvalanche, 'arbitrum <-> avalanche'],
+  [[['arbitrum', 'optimism']], isArbitrum2Optimism, isOptimism2Arbitrum, isArbitrumOptimism, 'arbitrum <-> optimism'],
+  [[['astar', 'avalanche']], isAstar2Avalanche, isAvalanche2Astar, isAstarAvalanche, 'astar <-> avalanche'],
+  [[['astar', 'optimism']], isAstar2Optimism, isOptimism2Astar, isAstarOptimism, 'astar <-> optimism'],
+  [[['avalanche', 'optimism']], isAvalanche2Optimism, isOptimism2Avalanche, isAvalancheOptimism, 'avalanche <-> optimism'],
 ];
 
 describe('bridge utils', () => {
@@ -99,13 +139,14 @@ describe('bridge utils', () => {
     const formalBridges = calcBridgesAmount(formals);
 
     expect(testBridges).toHaveLength(5);
-    expect(formalBridges).toHaveLength(11);
+    expect(formalBridges).toHaveLength(32);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(32);
+    expect(allDirections).toHaveLength(74);
   });
 
+  // TODO: fix it to check all bridges
   it('should get bridges correctly', () => {
     const crab2DVM = {
       from: { ...findBySymbol(crabConfig, 'crab'), meta: crabConfig, amount: '' },

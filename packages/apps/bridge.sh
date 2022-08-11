@@ -21,6 +21,29 @@ target=$REPLY
 validate $target
 to=$(echo ${target:0:1} | tr a-z A-Z)${target:1}
 
+options=("helix" "cBridge")
+
+echo "Select the bridge category index"
+
+select category in "${options[@]}"; do
+    case $category in
+    helix)
+        echo "The bridge category set to helix"
+        break
+        ;;
+    cBridge)
+        echo "The bridge category set to cBridge"
+        break
+        ;;
+    quit)
+        break
+        ;;
+    *)
+        echo "Invalid option $REPLY"
+        ;;
+    esac
+done
+
 function checkExist() {
     local departure=${from}"2"${to}
     local arrival=${to}"2"${from}
@@ -39,11 +62,19 @@ function indexFile() {
 }
 
 function component() {
-    echo "
-        export function $1() {
-            return <span>$1</span>;
-        }
-    " >>$2'/'$1'.tsx'
+    if [ "$category" = "cBridge" ]; then
+        echo "
+            import { CBridge } from '../cBridge/CBridge';
+
+            export const $1 = CBridge;
+        " >>$2'/'$1'.tsx'
+    else 
+        echo "
+            export function $1() {
+                return <span>$1</span>;
+            }
+        " >>$2'/'$1'.tsx'
+    fi
 }
 
 function indexEmpty() {
@@ -61,8 +92,8 @@ function initModel() {
         export type ${name}BridgeConfig = Required<BridgeConfig<${name}ContractConfig>>;
     " >>$1'/bridge.ts'
 
-    cp $1'/bridge.ts' '../shared/model/bridges/'${origin}'-'${target}'.ts'
-    echo "export * from './${origin}-${target}';" >> '../shared/model/bridges/index.ts'
+    cp $1'/bridge.ts' '../shared/model/bridge/'${origin}'-'${target}'.ts'
+    echo "export * from './${origin}-${target}';" >>'../shared/model/bridge/index.ts'
 
     echo "
         import { Bridge, CrossChainPayload, CrossToken, ChainConfig } from 'shared/model';
@@ -88,7 +119,6 @@ function initModel() {
 }
 
 function initConfig() {
-    # TODO: allow select category
     echo "
         import { ${origin}Config, ${target}Config } from 'shared/config/network';
         import { Bridge } from 'shared/model';
@@ -103,7 +133,7 @@ function initConfig() {
 
         export const ${origin}${to} = new Bridge(${origin}Config, ${target}Config, ${origin}${to}Config, {
             name: '${origin}-${target}',
-            category: 'helix',
+            category: '${category}',
         });
     " >>$1'/'${origin}'-'${target}'.ts'
 }
@@ -148,6 +178,38 @@ function initHooks() {
     echo "export default void 0;" >>$1'/index.ts'
 }
 
+function register() {
+    local BAC=$(cat ./bridges/register.tsx)
+
+    echo "
+        import { ${origin}${to} } from 'shared/config/bridges/${origin}-${target}';
+        import { ${1}, ${2} } from './${origin}-${target}';" >'./bridges/register.tsx'
+
+    echo "$BAC" >>'./bridges/register.tsx'
+
+    echo "
+        ${origin}${to}.setIssuingComponents($1 as FunctionComponent);
+        ${origin}${to}.setRedeemComponents($2 as FunctionComponent);
+    " >>'./bridges/register.tsx'
+}
+
+function updateSupports() {
+    local BRGS=$(sed -r 's/(.*);/\1/' ../shared/model/bridge/supports.ts)
+
+    echo "
+    $BRGS
+    | '${origin}-${target}';
+   " >'../shared/model/bridge/supports.ts'
+}
+
+function updatePredicateFns() {
+    echo "
+        export const is${departure} = predicate('${origin}', '${target}');
+        export const is${arrival} = predicate('${target}', '${origin}');
+        export const is${from}${to} = or(is${departure}, is${arrival});
+    " >> '../shared/utils/bridge/predicates.ts'
+}
+
 function init() {
     local departure=${from}"2"${to}
     local arrival=${to}"2"${from}
@@ -159,26 +221,34 @@ function init() {
 
     mkdir $path
 
+    if [ "$category" != "cBridge" ]; then
+        mkdir $path'/config'
+
+        mkdir $path'/utils'
+        initUitls $path'/utils'
+
+        mkdir $path'/hooks'
+        initHooks $path'/hooks'
+
+        mkdir $path'/providers'
+        indexEmpty $path'/providers'
+    fi
+
     mkdir $path'/model'
     initModel $path'/model' $departure $arrival
 
-    mkdir $path'/config'
     initConfig $shared'/config/bridges' $departure $arrival
-
-    mkdir $path'/utils'
-    initUitls $path'/utils'
-
-    mkdir $path'/hooks'
-    initHooks $path'/hooks'
-
-    mkdir $path'/providers'
-    indexEmpty $path'/providers'
 
     component $departure $path
     component $arrival $path
 
     indexFile $departure $index
     indexFile $arrival $index
+
+    register $departure $arrival $path
+
+    updateSupports
+    updatePredicateFns $departure $arrival
 
     echo "\033[32mCreate success!\033[0m"
 }
@@ -188,5 +258,9 @@ checkExist
 init
 
 ../../node_modules/prettier/bin-prettier.js ./bridges/${origin}'-'${target}/**/*.{ts,tsx} --write
+../../node_modules/prettier/bin-prettier.js ./bridges/register.tsx --write
 ../../node_modules/prettier/bin-prettier.js ../shared/config/**/*.ts --write
 ../../node_modules/prettier/bin-prettier.js ../shared/model/**/*.ts --write
+../../node_modules/prettier/bin-prettier.js ../shared/utils/bridge/predicates.ts --write
+cd ../../
+yarn eslint

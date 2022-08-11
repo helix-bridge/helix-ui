@@ -1,4 +1,4 @@
-import { NetworkThemeConfig } from '../model';
+import { Network, NetworkThemeConfig } from '../model';
 import dark from '../theme/antd/dark.json';
 import light from '../theme/antd/light.json';
 import vars from '../theme/antd/vars.json';
@@ -12,21 +12,26 @@ import pangolin from '../theme/network/pangolin.json';
 import pangoro from '../theme/network/pangoro.json';
 
 export const NETWORK_LIGHT_THEME: NetworkThemeConfig<{ [key in keyof typeof darwinia]: string }> = {
+  'BNB Chain': pangolin,
+  'crab-dvm': crab,
+  'crab-parachain': crab,
+  'darwinia-dvm': darwinia,
+  'pangolin-dvm': pangolin,
+  'pangolin-parachain': pangolin,
+  'pangoro-dvm': pangoro,
+  arbitrum: pangolin,
+  astar: pangolin,
+  avalanche: pangolin,
   crab,
   darwinia,
+  ethereum: pangolin,
+  heco: pangolin,
+  optimism: pangolin,
   pangolin,
   pangoro,
-  ethereum: pangolin,
-  ropsten: pangolin,
-  heco: pangolin,
-  polygon: pangolin,
   polkadot: pangolin,
-  'pangolin-dvm': pangolin,
-  'crab-dvm': crab,
-  'pangolin-parachain': pangolin,
-  'crab-parachain': crab,
-  'pangoro-dvm': pangoro,
-  'darwinia-dvm': darwinia,
+  polygon: pangolin,
+  ropsten: pangolin,
 };
 
 export const SKIN_THEME = {
@@ -36,24 +41,52 @@ export const SKIN_THEME = {
 };
 
 export const NETWORK_DARK_THEME: NetworkThemeConfig<{ [key in keyof typeof darwiniaDark]: string }> = {
+  'BNB Chain': pangolinDark,
+  'crab-dvm': crabDark,
+  'crab-parachain': crabDark,
+  'darwinia-dvm': darwiniaDark,
+  'pangolin-dvm': pangolinDark,
+  'pangolin-parachain': pangolinDark,
+  'pangoro-dvm': pangoroDark,
+  arbitrum: pangolinDark,
+  astar: pangolinDark,
+  avalanche: pangolinDark,
   crab: crabDark,
   darwinia: darwiniaDark,
+  ethereum: pangolinDark,
+  heco: pangolinDark,
+  optimism: pangolinDark,
   pangolin: pangolinDark,
   pangoro: pangoroDark,
-  ethereum: pangolinDark,
-  ropsten: pangolinDark,
-  heco: pangolinDark,
-  polygon: pangolinDark,
   polkadot: pangoroDark,
-  'pangolin-dvm': pangolinDark,
-  'crab-dvm': crabDark,
-  'pangolin-parachain': pangolinDark,
-  'crab-parachain': crabDark,
-  'pangoro-dvm': pangoroDark,
-  'darwinia-dvm': darwiniaDark,
+  polygon: pangolinDark,
+  ropsten: pangolinDark,
 };
 
 export enum THEME {
   LIGHT = 'light',
   DARK = 'dark',
 }
+
+export const chainColors: { [key in Network]: string } = {
+  'BNB Chain': '#f1b90e',
+  'crab-dvm': '#B32BB6',
+  'crab-parachain': '#512dbc',
+  'darwinia-dvm': '#FF007A',
+  'pangolin-dvm': '#3083dd',
+  'pangolin-parachain': '#4b30dd',
+  'pangoro-dvm': '#07488f',
+  arbitrum: '#2c384b',
+  astar: '#1b8ff8',
+  avalanche: '#e74140',
+  crab: '#cd201f',
+  darwinia: '#FF007A',
+  ethereum: '#1C87ED',
+  heco: '#05933a',
+  optimism: '#fe0421',
+  pangolin: '#4b30dd',
+  pangoro: '#07488f',
+  polkadot: '#f19135',
+  polygon: '#8447f3',
+  ropsten: '#c6c6c6',
+};

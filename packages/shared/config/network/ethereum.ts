@@ -67,6 +67,104 @@ export const ethereumConfig: EthereumChainConfig = {
       symbol: 'KTON',
       address: '0x9f284e1337a815fe77d2ff4ae46544645b20c5ff',
     },
+    {
+      name: 'USDT',
+      decimals: 18,
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-astar',
+          partner: { name: 'astar', role: 'issuing', symbol: 'USDT' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-bnb',
+          partner: { name: 'BNB Chain', role: 'issuing', symbol: 'USDT' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-avalanche',
+          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDT' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-polygon',
+          partner: { name: 'polygon', role: 'issuing', symbol: 'USDT' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-arbitrum',
+          partner: { name: 'arbitrum', role: 'issuing', symbol: 'USDT' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-optimism',
+          partner: { name: 'optimism', role: 'issuing', symbol: 'USDT' },
+        },
+      ],
+      type: 'mapping',
+      host: 'ethereum',
+      logo: 'token-usdt.svg',
+      symbol: 'USDT',
+      address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+    },
+    {
+      name: 'USDC',
+      decimals: 18,
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-astar',
+          partner: { name: 'astar', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-bnb',
+          partner: { name: 'BNB Chain', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-avalanche',
+          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-polygon',
+          partner: { name: 'polygon', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-arbitrum',
+          partner: { name: 'arbitrum', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-optimism',
+          partner: { name: 'optimism', role: 'issuing', symbol: 'USDC' },
+        },
+      ],
+      type: 'mapping',
+      host: 'ethereum',
+      logo: 'token-usdc.svg',
+      symbol: 'USDC',
+      address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    },
+    {
+      name: 'BUSD',
+      decimals: 18,
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'ethereum-bnb',
+          partner: { name: 'BNB Chain', role: 'issuing', symbol: 'BUSD' },
+        },
+      ],
+      type: 'mapping',
+      host: 'ethereum',
+      logo: 'token-busd.png',
+      symbol: 'BUSD',
+      address: '',
+    },
   ],
   wallets: ['metamask'],
 };

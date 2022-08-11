@@ -1,5 +1,6 @@
 /// <reference types="jest" />
 
+import React from 'react';
 import { create } from 'react-test-renderer';
 import { Navigator } from '../../components/Navigator';
 import { THEME } from '../../config/theme';

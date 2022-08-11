@@ -42,8 +42,8 @@ describe('record utils', () => {
     const crabDVM2DarwiniaSuccess = getTokenSymbolFromHelixRecord(testRecords[4]);
     const crabDVM2HecoSuccess = getTokenSymbolFromHelixRecord(testRecords[5]);
     const crab2CrabParachainSuccess = getTokenSymbolFromHelixRecord(testRecords[6]);
-    const darwinia2dvmSuccess = getTokenSymbolFromHelixRecord(darwiniaDVMRecords[0]);
-    const dvm2DarwiniaSuccess = getTokenSymbolFromHelixRecord(darwiniaDVMRecords[1]);
+    const darwinia2dvmSuccess = getTokenSymbolFromHelixRecord(<HelixHistoryRecord>darwiniaDVMRecords[0]);
+    const dvm2DarwiniaSuccess = getTokenSymbolFromHelixRecord(<HelixHistoryRecord>darwiniaDVMRecords[1]);
 
     expect(crab2CrabDVMSuccess).toEqual('CRAB');
     expect(crabDVM2HecoRefunded).toEqual('xRING');

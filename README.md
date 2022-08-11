@@ -1,34 +1,58 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Helix Bridge
 
-## Getting Started
+## DEPLOYMENTS
 
-First, run the development server:
+### Production
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+helix: https://helixbridge.app
+helix test: https://helix-ui-test.vercel.app
+helix apps: https://apps.helixbridge.app
+helix apps test: https://helix-apps-test.vercel.app
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Staging
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+helix: https://helix-ui-stg.vercel.app
+helix test: https://helix-ui-test-stg.vercel.app/
+apps: https://helix-apps-stg.vercel.app/
+apps test: https://helix-apps-test-stg.vercel.app/
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## HOW TO ADD A BRIDGE
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+### Step-1: Check network
 
-## Learn More
+`shared/config/network/` Add network configuration if needed:
 
-To learn more about Next.js, take a look at the following resources:
+1. `shared/model/network.ts` Update network type
+1. `shared/config/network/` Add network configuration
+1. `shared/config/theme.ts` Update theme configuration
+1. `shared/config/network/networks.ts` Add network
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Make sure the token exists on the network configuration:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+1. add the token config if not exist
+1. update the cross field for the token if exist
 
-## Deploy on Vercel
+### Step-2: Generate bridge
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Go to `package/apps/` and run `yarn init:bridge`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. `shared/model/bridge` Update types
+1. `shared/config/bridges` Update bridge configuration
+1. `shared/config/bridge.ts` Add bridge
+
+### Step-3: Add balance query
+
+`apps/utils/balance.ts` Update getBalance function
+
+### Step-4: Unit test
+
+Run `yarn test:shared` under the project root, fix the failed test suits.
+
+### Step-5: Complete bridge development
+
+Under the `packages/apps/bridges` folder, you will find a new bridge folder which created by the script
+
+1. [YOUR BRIDGE]/utils/fee.ts Add the method to get fee here
+1. [YOUR BRIDGE]/utils/tx.ts Add the transfer methods, param validation functions and so on.
+1. [YOUR BRIDGE]/: Complete the react component
+

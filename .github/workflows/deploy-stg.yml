@@ -3,6 +3,10 @@ name: Deploy staging
 on:
   push:
     branches: [main, master]
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+    branches:
+      - main
 
 jobs:
   deploy-package:
