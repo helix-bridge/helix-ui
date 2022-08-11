@@ -12,6 +12,7 @@ export const optimismConfig: EthereumChainConfig = {
   isTest: false,
   logos: [{ name: 'optimism.png', type: 'main' }],
   name: 'optimism',
+  fullName: 'Optimism',
   provider: 'wss://ws-mainnet.optimism.io',
   social: {
     portal: 'https://www.optimism.io/',
@@ -25,8 +26,8 @@ export const optimismConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'cBridge',
-          bridge: 'bnb-optimism',
-          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDT' },
+          bridge: 'bsc-optimism',
+          partner: { name: 'bsc', role: 'backing', symbol: 'USDT' },
         },
         {
           category: 'cBridge',
@@ -56,8 +57,8 @@ export const optimismConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'cBridge',
-          bridge: 'bnb-optimism',
-          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDC' },
+          bridge: 'bsc-optimism',
+          partner: { name: 'bsc', role: 'backing', symbol: 'USDC' },
         },
         {
           category: 'cBridge',

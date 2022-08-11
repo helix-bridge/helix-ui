@@ -3,38 +3,28 @@ import { Affix, Button, Input, message, Table, Tooltip } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import { formatDistance, fromUnixTime } from 'date-fns';
 import format from 'date-fns-tz/format';
-import { useQuery } from 'graphql-hooks';
 import request from 'graphql-request';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, map } from 'rxjs';
 import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
-import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { Logo } from 'shared/components/widget/Logo';
+import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { SYSTEM_ChAIN_CONFIGURATIONS } from 'shared/config/network';
 import { DailyStatistic, HelixHistoryRecord, Network } from 'shared/model';
-import {
-  convertToDvm,
-  gqlName,
-  isSS58Address,
-  isValidAddress,
-  prettyNumber,
-  revertAccount,
-  toShortAddress,
-} from 'shared/utils/helper';
-import { chainConfigs, getChainConfig, getDisplayName } from 'shared/utils/network';
+import { convertToDvm, gqlName, isSS58Address, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
+import { getChainConfig, getDisplayName } from 'shared/utils/network';
 import {
   getFeeAmountFromHelixRecord,
   getSentAmountFromHelixRecord,
   getTokenSymbolFromHelixRecord,
 } from 'shared/utils/record';
 import web3 from 'web3';
-import { ViewBoard } from '../../components/transaction/ViewBoard';
-import { ACCOUNTS, HISTORY_RECORDS, Path, STATISTICS_QUERY, TIMEPAST } from '../../config';
+import { HISTORY_RECORDS, Path } from '../../config';
 import { getDetailPaths } from '../../utils';
 
 function RecordAccount({ chain, account, partner }: { chain: Network; account: string; partner: string }) {
@@ -55,7 +45,7 @@ function RecordAccount({ chain, account, partner }: { chain: Network; account: s
           </div>
         }
       >
-        <span className="truncate">{toShortAddress(displayAccount)}</span>
+        <span className="truncate">{displayAccount}</span>
       </Tooltip>
     </div>
   );
@@ -63,28 +53,13 @@ function RecordAccount({ chain, account, partner }: { chain: Network; account: s
 
 const PAGE_SIZE = 20;
 
-function Page({
-  records,
-  count,
-  dailyStatistics,
-}: {
-  records: HelixHistoryRecord[];
-  count: number;
-  dailyStatistics: DailyStatistic[];
-}) {
+function Page({ records, count }: { records: HelixHistoryRecord[]; count: number; dailyStatistics: DailyStatistic[] }) {
   const { t } = useTranslation('common');
   const router = useRouter();
   const [isValidSender, setIsValidSender] = useState(true);
-  const { data: accountRes } = useQuery<{ accounts: { total: number } }>(ACCOUNTS);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(count);
   const [pageSize, setPageSize] = useState(PAGE_SIZE);
-
-  const transactionsTotal = useMemo(
-    () => (dailyStatistics || []).reduce((acc, cur) => acc + Number(cur.dailyCount), 0) ?? '-',
-    [dailyStatistics]
-  );
-
   const [account, setAccount] = useState<string | undefined>();
   const [source, setSource] = useState<HelixHistoryRecord[]>(records);
   const [loading, setLoading] = useState(false);
@@ -204,12 +179,6 @@ function Page({
 
   return (
     <>
-      <div className="grid lg:grid-cols-3 gap-0 place-items-center py-2 lg:py-6">
-        <ViewBoard title={t('transactions')} count={transactionsTotal} />
-        <ViewBoard title={t('unique users')} count={accountRes?.accounts?.total ?? 0} />
-        <ViewBoard title={t('supported blockchains')} count={chainConfigs.length} />
-      </div>
-
       <Affix offsetTop={62}>
         <div className="mt-2 pb-2 lg:pb-4 flex justify-between items-end">
           <Input
@@ -312,15 +281,10 @@ export async function getStaticProps() {
     page: 0,
   }).then((res) => res && res[gqlName(HISTORY_RECORDS)]);
 
-  const dailyStatistics = await request(ENDPOINT, STATISTICS_QUERY, { timepast: TIMEPAST }).then(
-    (res) => res[gqlName(STATISTICS_QUERY)]
-  );
-
   return {
     props: {
       ...translations,
       records,
-      dailyStatistics,
       count: total,
     },
     revalidate: 10,

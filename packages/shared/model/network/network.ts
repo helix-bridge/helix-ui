@@ -14,7 +14,7 @@ export type EthereumTypeNetwork =
   | 'ropsten'
   | 'polygon'
   | 'heco'
-  | 'BNB Chain'
+  | 'bsc'
   | 'avalanche'
   | 'arbitrum'
   | 'optimism'

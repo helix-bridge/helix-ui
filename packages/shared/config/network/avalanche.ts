@@ -12,6 +12,7 @@ export const avalancheConfig: EthereumChainConfig = {
   isTest: false,
   logos: [{ name: 'avalanche.png', type: 'main' }],
   name: 'avalanche',
+  fullName: 'Avalanche',
   provider: 'wss://api.avax.network/ext/bc/C/ws',
   social: {
     portal: 'https://www.avax.network/',
@@ -25,8 +26,8 @@ export const avalancheConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'cBridge',
-          bridge: 'bnb-avalanche',
-          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDT' },
+          bridge: 'bsc-avalanche',
+          partner: { name: 'bsc', role: 'backing', symbol: 'USDT' },
         },
         {
           category: 'cBridge',
@@ -66,8 +67,8 @@ export const avalancheConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'cBridge',
-          bridge: 'bnb-avalanche',
-          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDC' },
+          bridge: 'bsc-avalanche',
+          partner: { name: 'bsc', role: 'backing', symbol: 'USDC' },
         },
         {
           category: 'cBridge',

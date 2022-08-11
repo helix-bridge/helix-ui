@@ -12,6 +12,7 @@ export const ethereumConfig: EthereumChainConfig = {
   isTest: false,
   logos: [{ name: 'ethereum.png', type: 'main' }],
   name: 'ethereum',
+  fullName: 'Ethereum',
   provider: 'wss://mainnet.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
   social: {
     portal: 'https://ethereum.org/en/',
@@ -78,8 +79,8 @@ export const ethereumConfig: EthereumChainConfig = {
         },
         {
           category: 'cBridge',
-          bridge: 'ethereum-bnb',
-          partner: { name: 'BNB Chain', role: 'issuing', symbol: 'USDT' },
+          bridge: 'ethereum-bsc',
+          partner: { name: 'bsc', role: 'issuing', symbol: 'USDT' },
         },
         {
           category: 'cBridge',
@@ -119,8 +120,8 @@ export const ethereumConfig: EthereumChainConfig = {
         },
         {
           category: 'cBridge',
-          bridge: 'ethereum-bnb',
-          partner: { name: 'BNB Chain', role: 'issuing', symbol: 'USDC' },
+          bridge: 'ethereum-bsc',
+          partner: { name: 'bsc', role: 'issuing', symbol: 'USDC' },
         },
         {
           category: 'cBridge',
@@ -155,8 +156,8 @@ export const ethereumConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'cBridge',
-          bridge: 'ethereum-bnb',
-          partner: { name: 'BNB Chain', role: 'issuing', symbol: 'BUSD' },
+          bridge: 'ethereum-bsc',
+          partner: { name: 'bsc', role: 'issuing', symbol: 'BUSD' },
         },
       ],
       type: 'mapping',

@@ -69,5 +69,5 @@ export function getDisplayName(config: ChainConfig | null): string {
     return config.name.split('-').map(upperFirst).join(' ');
   }
 
-  return `${upperFirst(config.name)} Chain`;
+  return config.fullName ?? `${upperFirst(config.name)} Chain`;
 }

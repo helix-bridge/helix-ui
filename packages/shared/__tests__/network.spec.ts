@@ -52,7 +52,7 @@ describe('network utils', () => {
     const group = data.find((item) => item[0] === 'ethereum');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['crab-dvm', 'darwinia', 'heco', 'polygon', 'astar', 'BNB Chain', 'avalanche', 'arbitrum', 'optimism']);
+    expect(group![1]).toEqual(['crab-dvm', 'darwinia', 'heco', 'polygon', 'astar', 'bsc', 'avalanche', 'arbitrum', 'optimism']);
   });
 
   it('heco contains 3 leafs', () => {
@@ -62,8 +62,8 @@ describe('network utils', () => {
     expect(group![1]).toEqual(['crab-dvm', 'ethereum', 'polygon']);
   });
 
-  it('BNB Chain contains 6 leafs', () => {
-    const group = data.find((item) => item[0] === 'BNB Chain');
+  it('bsc contains 6 leafs', () => {
+    const group = data.find((item) => item[0] === 'bsc');
 
     expect(group).not.toEqual(undefined);
     expect(group![1]).toEqual(['arbitrum', 'astar', 'avalanche', 'optimism', 'ethereum', 'polygon']);
@@ -73,35 +73,35 @@ describe('network utils', () => {
     const group = data.find((item) => item[0] === 'arbitrum');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['astar', 'avalanche', 'optimism', 'BNB Chain', 'ethereum', 'polygon']);
+    expect(group![1]).toEqual(['astar', 'avalanche', 'optimism', 'bsc', 'ethereum', 'polygon']);
   });
 
   it('astar contains 6 leafs', () => {
     const group = data.find((item) => item[0] === 'astar');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['arbitrum', 'avalanche', 'optimism', 'BNB Chain', 'polygon', 'ethereum']);
+    expect(group![1]).toEqual(['arbitrum', 'avalanche', 'optimism', 'bsc', 'polygon', 'ethereum']);
   });
 
   it('avalanche contains 6 leafs', () => {
     const group = data.find((item) => item[0] === 'avalanche');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['arbitrum', 'astar', 'optimism', 'BNB Chain', 'ethereum', 'polygon']);
+    expect(group![1]).toEqual(['arbitrum', 'astar', 'optimism', 'bsc', 'ethereum', 'polygon']);
   });
 
   it('optimism contains 6 leafs', () => {
     const group = data.find((item) => item[0] === 'optimism');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['arbitrum', 'astar', 'avalanche', 'BNB Chain', 'ethereum', 'polygon']);
+    expect(group![1]).toEqual(['arbitrum', 'astar', 'avalanche', 'bsc', 'ethereum', 'polygon']);
   });
 
   it('polygon contains 8 leaf', () => {
     const group = data.find((item) => item[0] === 'polygon');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['crab-dvm', 'ethereum', 'heco', 'astar', 'BNB Chain', 'avalanche', 'arbitrum', 'optimism']);
+    expect(group![1]).toEqual(['crab-dvm', 'ethereum', 'heco', 'astar', 'bsc', 'avalanche', 'arbitrum', 'optimism']);
   });
   
   // ------------------------------------test networks---------------------------------------

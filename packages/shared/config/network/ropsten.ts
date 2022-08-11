@@ -12,6 +12,7 @@ export const ropstenConfig: EthereumChainConfig = {
   logos: [{ name: 'ropsten.png', type: 'main' }],
   isTest: true,
   name: 'ropsten',
+  fullName: 'Ropsten',
   provider: 'wss://ropsten.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
   social: {
     portal: 'https://ethereum.org/en/',

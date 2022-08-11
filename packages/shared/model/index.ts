@@ -1,5 +1,5 @@
 export * from './account';
-export * from './aggregation-api';
+export * from './helix-indexer';
 export * from './bridge';
 export * from './camelCaseKeys';
 export * from './common';

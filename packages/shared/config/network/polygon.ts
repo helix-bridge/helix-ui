@@ -15,6 +15,7 @@ export const polygonConfig: EthereumChainConfig = {
     { name: 'polygon2.png', type: 'assist' },
   ],
   name: 'polygon',
+  fullName: 'Polygon(Matic)',
   provider: 'wss://ws-mainnet.matic.network',
   social: {
     portal: 'https://polygon.technology/',
@@ -59,8 +60,8 @@ export const polygonConfig: EthereumChainConfig = {
         },
         {
           category: 'cBridge',
-          bridge: 'bnb-polygon',
-          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDT' },
+          bridge: 'bsc-polygon',
+          partner: { name: 'bsc', role: 'backing', symbol: 'USDT' },
         },
         {
           category: 'cBridge',
@@ -100,8 +101,8 @@ export const polygonConfig: EthereumChainConfig = {
         },
         {
           category: 'cBridge',
-          bridge: 'bnb-polygon',
-          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDC' },
+          bridge: 'bsc-polygon',
+          partner: { name: 'bsc', role: 'backing', symbol: 'USDC' },
         },
         {
           category: 'cBridge',
