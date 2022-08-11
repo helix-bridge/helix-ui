@@ -18,11 +18,7 @@ import { SYSTEM_ChAIN_CONFIGURATIONS } from 'shared/config/network';
 import { DailyStatistic, HelixHistoryRecord, Network } from 'shared/model';
 import { convertToDvm, gqlName, isSS58Address, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { getChainConfig, getDisplayName } from 'shared/utils/network';
-import {
-  getFeeAmountFromHelixRecord,
-  getSentAmountFromHelixRecord,
-  getTokenSymbolFromHelixRecord,
-} from 'shared/utils/record';
+import { getFeeAmountFromHelixRecord, getSentAmountFromHelixRecord } from 'shared/utils/record';
 import web3 from 'web3';
 import { HISTORY_RECORDS, Path } from '../../config';
 import { getDetailPaths } from '../../utils';
@@ -114,7 +110,7 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
             <span className="justify-self-center max-w-full truncate">
               {prettyNumber(amount, { decimal: 2, ignoreZeroDecimal: true })}
             </span>
-            <span className="ml-2">{getTokenSymbolFromHelixRecord(record)}</span>
+            <span className="ml-2">{record.sendToken}</span>
           </Tooltip>
         );
       },

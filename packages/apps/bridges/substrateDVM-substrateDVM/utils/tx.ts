@@ -62,7 +62,7 @@ export function redeem(value: RedeemPayload, fee: BN): Observable<Tx> {
 }
 
 export function refund(record: HelixHistoryRecord): Observable<Tx> {
-  const { fromChain, toChain, sendAmount: amount, sender, id, token } = record;
+  const { fromChain, toChain, sendAmount: amount, sender, id, sendToken: token } = record;
   const bridge = getBridge([fromChain, toChain]);
   const departure = getChainConfig(fromChain) as DVMChainConfig;
   const arrival = getChainConfig(toChain) as DVMChainConfig;
