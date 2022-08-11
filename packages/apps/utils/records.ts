@@ -35,6 +35,7 @@ export const fetchDarwinia2EthereumRecords = (
               const ring = departure.tokens.find((item) => isRing(item.symbol))!;
               const token = +ringValue > 0 ? ring : departure.tokens.find((item) => isKton(item.symbol))!;
               const arrival = ring.cross.find((item) => item.bridge === 'ethereum-darwinia')!;
+              const amount = +ringValue > 0 ? ringValue : ktonValue;
               let result = RecordStatus.pending;
 
               if (signatures && !tx) {
@@ -44,25 +45,25 @@ export const fetchDarwinia2EthereumRecords = (
               }
 
               return {
-                amount: +ringValue > 0 ? ringValue : ktonValue,
+                sendAmount: amount,
+                recvAmount: amount,
                 bridge: 'helix',
                 endTime: blockTimestamp,
                 fee: '',
                 feeToken: ring.symbol,
                 fromChain: departure.name,
                 id: extrinsicIndex,
-                laneId: '',
                 nonce: '',
                 recipient: '',
                 requestTxHash: extrinsicIndex,
-                responseTxHash: '',
-                targetTxHash: tx,
+                responseTxHash: tx,
                 reason: '',
                 result,
                 sender: accountId,
                 startTime: blockTimestamp,
                 toChain: arrival.partner.name,
                 token: token.symbol,
+                messageNonce: '',
                 ...record,
               };
             }),
@@ -93,7 +94,7 @@ export const fetchEthereum2DarwiniaRecords = (
             ...res,
             list: res.list.map((item) => {
               const record = camelCaseKeys(item);
-              const { blockTimestamp, tx, darwiniaTx, currency } = record;
+              const { blockTimestamp, tx, darwiniaTx, currency, amount } = record;
               const ring = departure.tokens.find((tk) => isRing(tk.symbol))!;
               const isRingTransfer = isRing(currency);
               const token = departure.tokens.find((tk) => (isRingTransfer ? isRing(tk.symbol) : isKton(tk.symbol)))!;
@@ -106,18 +107,18 @@ export const fetchEthereum2DarwiniaRecords = (
                 feeToken: ring.symbol,
                 fromChain: departure.name,
                 id: 'e2d-' + blockTimestamp,
-                laneId: '',
                 nonce: '',
                 recipient: '',
                 requestTxHash: tx,
-                responseTxHash: '',
-                targetTxHash: darwiniaTx,
+                responseTxHash: darwiniaTx,
                 reason: '',
                 result: tx && darwiniaTx ? RecordStatus.success : RecordStatus.pending,
                 sender: '',
                 startTime: blockTimestamp,
                 toChain: arrival.partner.name,
                 token: token.symbol,
+                sendAmount: amount,
+                recvAmount: amount,
                 ...record,
               };
             }),

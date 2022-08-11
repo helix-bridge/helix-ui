@@ -29,14 +29,14 @@ jest.mock('next/router', () => ({
 
 describe('<TargetTx />', () => {
   const record: HelixHistoryRecord = {
-    amount: '645000000000',
+    sendAmount: '645000000000',
+    recvAmount: '645000000000',
     bridge: 'helix',
     endTime: 1656565938,
     fee: '55000000000',
     feeToken: 'RING',
     fromChain: 'darwinia',
     id: 'darwinia2crabdvm-lock-0x000000000x21e',
-    laneId: '0x00000000',
     nonce: '542',
     recipient: '0xceff98a045a3732f3e26247a29ba5e7d52fe84b2',
     requestTxHash: '0xd1937e6d0891d4396b9fefe6411594e97b4f564d00101b9f9d1f1aabeb819fa0',
@@ -46,8 +46,8 @@ describe('<TargetTx />', () => {
     startTime: 1656565854,
     toChain: 'crab-dvm',
     token: '0x6d6f646c64612f6272696e670000000000000000',
-    targetTxHash: '',
     reason: '',
+    messageNonce: '',
   };
 
   it.each([
@@ -58,9 +58,7 @@ describe('<TargetTx />', () => {
     { ...record, result: 3 },
     { ...record, result: 4 },
     { ...record, result: 3, bridge: 'cBridge' },
-    { ...record, result: 3, bridge: 'cBridge', targetTxHash: record.targetTxHash },
     { ...record, result: 4, bridge: 'cBridge' },
-    { ...record, result: 4, bridge: 'cBridge', targetTxHash: record.targetTxHash },
     { ...record, result: 4, bridge: 'unknown' },
     { ...record, targetTxHash: record.responseTxHash },
   ])('render target tx with TxStatus: $result', ({ result, ...rest }) => {

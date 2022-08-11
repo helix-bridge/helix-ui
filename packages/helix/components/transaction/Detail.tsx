@@ -33,7 +33,7 @@ export function Detail({ record, transfers }: DetailProps) {
     const symbol = getTokenSymbolFromHelixRecord(record);
     const token = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase());
 
-    return fromWei({ value: record?.amount ?? 0, decimals: token?.decimals ?? 9 }, prettyNumber);
+    return fromWei({ value: record.sendAmount ?? 0, decimals: token?.decimals ?? 9 }, prettyNumber);
   }, [departure.tokens, record]);
 
   const feeDecimals = useMemo(() => {
@@ -92,7 +92,7 @@ export function Detail({ record, transfers }: DetailProps) {
         <Divider />
 
         <TransferDescription title={t('Nonce')} tip={t('A unique number of cross-chain transaction in Bridge')}>
-          {isCrabDVMHeco(record.fromChain, record.toChain) ? record.laneId : record.nonce}
+          {isCrabDVMHeco(record.fromChain, record.toChain) ? record.messageNonce : record.nonce}
         </TransferDescription>
       </div>
     </>

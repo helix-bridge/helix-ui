@@ -16,11 +16,12 @@ export interface HelixHistoryRecord {
   recipient: string;
   recvAmount: string;
   requestTxHash: string;
-  responseTxHash?: Nullable<string>;
+  responseTxHash: string;
   result: RecordStatus;
   sendAmount: string;
   sender: string;
   startTime: number;
   toChain: Network;
-  token: string;
+  sendToken: string;
+  recvToken: string;
 }

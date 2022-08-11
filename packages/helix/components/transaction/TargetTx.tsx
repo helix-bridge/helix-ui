@@ -39,7 +39,7 @@ export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
 
     if (record.bridge === 'helix') {
       if (record.result === RecordStatus.success) {
-        return <Hash network={arrival} hash={record.targetTxHash} />;
+        return <Hash network={arrival} hash={record.responseTxHash} />;
       }
 
       if (record.result === RecordStatus.refunded) {
@@ -47,7 +47,7 @@ export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
       }
     } else if (record.bridge === 'cBridge') {
       return (
-        <Hash network={record.result === RecordStatus.refunded ? departure : arrival} hash={record.targetTxHash} />
+        <Hash network={record.result === RecordStatus.refunded ? departure : arrival} hash={record.responseTxHash} />
       );
     }
 
