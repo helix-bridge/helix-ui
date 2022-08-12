@@ -299,7 +299,8 @@ export function History() {
                           asHistory
                           className="justify-end"
                         >
-                          {record.responseTxHash || (e2dHeight && e2dIndex) ? (
+                          {(record.responseTxHash || (e2dHeight && e2dIndex)) &&
+                          record.result === RecordStatus.success ? (
                             <SubscanLink
                               network={arrival}
                               txHash={record.responseTxHash}
@@ -308,7 +309,7 @@ export function History() {
                               <PaperClipOutlined className="hover:text-pangolin-main cursor-pointer" />
                             </SubscanLink>
                           ) : (
-                            record.result !== RecordStatus.refunded && (
+                            record.result === RecordStatus.pending && (
                               <Tooltip
                                 title={t('When the transaction is successful, the extrinsic message will be provided')}
                               >
