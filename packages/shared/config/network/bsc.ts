@@ -12,7 +12,7 @@ export const bscConfig: EthereumChainConfig = {
   isTest: false,
   logos: [{ name: 'bsc.png', type: 'main' }],
   name: 'bsc',
-  fullName: 'Binance Smart Chain',
+  fullName: 'BNB Chain',
   // provider: 'wss://dex.binance.org/api/ws',
   provider: 'https://bsc-mainnet.nodereal.io/v1/64a9df0874fb4a93b9d0a3849de012d3',
   social: {
