@@ -52,7 +52,7 @@ export function Statistics({
           </span>
         </div>
 
-        <div className="flex flex-col gap-2 md:gap-4">
+        <div className="flex flex-col gap-2 md:gap-4 max-h-40 overflow-y-scroll no-scrollbar">
           <div className="flex justify-between">
             <span className="uppercase text-sm font-normal text-gray-200">
               {t('top {{count}} destination', { count: rank.length })}

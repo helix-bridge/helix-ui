@@ -4,6 +4,7 @@ import { ColumnType } from 'antd/lib/table';
 import { formatDistance, fromUnixTime } from 'date-fns';
 import format from 'date-fns-tz/format';
 import request from 'graphql-request';
+import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -15,7 +16,7 @@ import { Logo } from 'shared/components/widget/Logo';
 import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { SYSTEM_ChAIN_CONFIGURATIONS } from 'shared/config/network';
-import { DailyStatistic, HelixHistoryRecord, Network } from 'shared/model';
+import { HelixHistoryRecord, Network } from 'shared/model';
 import { convertToDvm, gqlName, isSS58Address, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { getChainConfig, getDisplayName } from 'shared/utils/network';
 import { getFeeAmountFromHelixRecord, getSentAmountFromHelixRecord } from 'shared/utils/record';
@@ -50,16 +51,16 @@ function RecordAccount({ chain, account }: { chain: Network; account: string }) 
 
 const PAGE_SIZE = 20;
 
-function Page({ records, count }: { records: HelixHistoryRecord[]; count: number; dailyStatistics: DailyStatistic[] }) {
+function Page() {
   const { t } = useTranslation('common');
   const router = useRouter();
   const [isValidSender, setIsValidSender] = useState(true);
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(count);
+  const [total, setTotal] = useState(0);
   const [pageSize, setPageSize] = useState(PAGE_SIZE);
   const [account, setAccount] = useState<string | undefined>();
-  const [source, setSource] = useState<HelixHistoryRecord[]>(records);
-  const [loading, setLoading] = useState(false);
+  const [source, setSource] = useState<HelixHistoryRecord[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const columns: ColumnType<HelixHistoryRecord>[] = [
     {
@@ -168,6 +169,7 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
       .subscribe((result) => {
         setTotal(result.total);
         setSource(result.records);
+        setLoading(false);
       });
 
     return () => sub$$.unsubscribe();
@@ -269,22 +271,15 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
   );
 }
 
-export async function getStaticProps() {
-  const translations = await serverSideTranslations('en', ['common']);
-
-  const { records, total } = await request(ENDPOINT, HISTORY_RECORDS, {
-    row: PAGE_SIZE,
-    page: 0,
-  }).then((res) => res && res[gqlName(HISTORY_RECORDS)]);
+export const getServerSideProps = async ({ locale, res }: GetServerSidePropsContext) => {
+  const translations = await serverSideTranslations(locale ?? 'en', ['common']);
+  res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=100');
 
   return {
     props: {
       ...translations,
-      records,
-      count: total,
     },
-    revalidate: 10,
   };
-}
+};
 
 export default Page;

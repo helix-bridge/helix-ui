@@ -3,6 +3,7 @@ import Bignumber from 'bignumber.js';
 import { format, secondsToMilliseconds, subMilliseconds } from 'date-fns';
 import request from 'graphql-request';
 import { last, orderBy } from 'lodash';
+import { GetServerSidePropsContext } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useEffect, useMemo, useState } from 'react';
@@ -55,18 +56,12 @@ const queryStatistics = async () => {
   };
 };
 
-function Page({
-  chainStatistics: chainData,
-  dailyStatistics: dailyData,
-}: {
-  chainStatistics: ChainStatistic[];
-  dailyStatistics: DailyStatistic[];
-}) {
+function Page() {
   const { t } = useTranslation('common');
   const [loading] = useState(false);
   const [prices, setPrices] = useState(initialPrices);
-  const [chainStatistics, setChainStatistics] = useState<ChainStatistic[]>(chainData);
-  const [dailyStatistics, setDailyStatistics] = useState<DailyStatistic[]>(dailyData);
+  const [chainStatistics, setChainStatistics] = useState<ChainStatistic[]>([]);
+  const [dailyStatistics, setDailyStatistics] = useState<DailyStatistic[]>([]);
 
   const { volume, transactions, transactionsTotal } = useMemo(() => {
     if (!dailyStatistics) {
@@ -133,15 +128,19 @@ function Page({
     const vTotal = volumes.reduce((acc, cur) => acc.plus(cur.total), new Bignumber(0));
 
     return {
-      volumeRank: volumes.map(({ chain, total }) => ({
-        chain,
-        total: prettyNumber(total),
-      })),
+      volumeRank: volumes
+        .map(({ chain, total }) => ({
+          chain,
+          total: prettyNumber(total),
+        }))
+        .filter((item) => +item.total > 0),
       volumeTotal: prettyNumber(vTotal),
-      transactionsRank: calcRank('transactions').map(({ chain, total }) => ({
-        chain,
-        total: prettyNumber(total.toString(), { decimal: 0 }),
-      })),
+      transactionsRank: calcRank('transactions')
+        .map(({ chain, total }) => ({
+          chain,
+          total: prettyNumber(total.toString(), { decimal: 0 }),
+        }))
+        .filter((item) => +item.total > 0),
     };
   }, [prices, chainStatistics]);
 
@@ -217,16 +216,14 @@ function Page({
   );
 }
 
-export const getStaticProps = async ({ locale }: { locale: string }) => {
-  const translations = await serverSideTranslations(locale, ['common']);
-  const statistics = await queryStatistics();
+export const getServerSideProps = async ({ locale, res }: GetServerSidePropsContext) => {
+  const translations = await serverSideTranslations(locale ?? 'en', ['common']);
+  res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=100');
 
   return {
     props: {
       ...translations,
-      ...statistics,
     },
-    revalidate: 10,
   };
 };
 
