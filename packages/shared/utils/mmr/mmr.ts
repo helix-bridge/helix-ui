@@ -42,7 +42,7 @@ const MMR_QUERY = `
 async function getMMRProofBySubql(api: ApiPromise, blockNumber: number, mmrBlockNumber: number) {
   const chain = (await api.rpc.system.chain()).toString().toLowerCase() as Extract<Network, 'pangolin' | 'darwinia'>;
   const config = getChainConfig(chain) as PolkadotChainConfig;
-  const fetchProofs = proofsFactory(`https://api.subquery.network/sq/darwinia-network/${config.name}-mmr`);
+  const fetchProofs = proofsFactory(`https://api.subquery.network/sq/darwinia-network/subql-mmr-${config.name}`);
   const proof = await genProof(blockNumber, mmrBlockNumber, fetchProofs);
   const encodeProof = proof.proof.map((item) => remove0x(item.replace(/(^\s*)|(\s*$)/g, ''))).join('');
   const size = new TypeRegistry().createType('u64', proof.mmrSize.toString()) as unknown as BigInt;
