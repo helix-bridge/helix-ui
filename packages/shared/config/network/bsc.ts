@@ -55,6 +55,11 @@ export const bscConfig: EthereumChainConfig = {
           bridge: 'bsc-polygon',
           partner: { name: 'polygon', role: 'issuing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-bsc',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'bsc',
@@ -95,6 +100,11 @@ export const bscConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'bsc-polygon',
           partner: { name: 'polygon', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-bsc',
+          partner: { name: 'bsc', role: 'backing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',

@@ -155,3 +155,23 @@ export const isArbitrumPolygon = or(isArbitrum2Polygon, isPolygon2Arbitrum);
 export const isPolygon2Optimism = predicate('polygon', 'optimism');
 export const isOptimism2Polygon = predicate('optimism', 'polygon');
 export const isPolygonOptimism = or(isPolygon2Optimism, isOptimism2Polygon);
+
+export const isCrabDVM2Bsc = predicate('crabDVM', 'bsc');
+export const isBsc2CrabDVM = predicate('bsc', 'crabDVM');
+export const isCrabDVMBsc = or(isCrabDVM2Bsc, isBsc2CrabDVM);
+
+export const isCrabDVM2Arbitrum = predicate('crabDVM', 'arbitrum');
+export const isArbitrum2CrabDVM = predicate('arbitrum', 'crabDVM');
+export const isCrabDVMArbitrum = or(isCrabDVM2Arbitrum, isArbitrum2CrabDVM);
+
+export const isCrabDVM2Astar = predicate('crabDVM', 'astar');
+export const isAstar2CrabDVM = predicate('astar', 'crabDVM');
+export const isCrabDVMAstar = or(isCrabDVM2Astar, isAstar2CrabDVM);
+
+export const isCrabDVM2Avalanche = predicate('crabDVM', 'avalanche');
+export const isAvalanche2CrabDVM = predicate('avalanche', 'crabDVM');
+export const isCrabDVMAvalanche = or(isCrabDVM2Avalanche, isAvalanche2CrabDVM);
+
+export const isCrabDVM2Optimism = predicate('crabDVM', 'optimism');
+export const isOptimism2CrabDVM = predicate('optimism', 'crabDVM');
+export const isCrabDVMOptimism = or(isCrabDVM2Optimism, isOptimism2CrabDVM);

@@ -1,3 +1,8 @@
+import { crabDVMOptimism } from 'shared/config/bridges/crabDVM-optimism';
+import { crabDVMAvalanche } from 'shared/config/bridges/crabDVM-avalanche';
+import { crabDVMAstar } from 'shared/config/bridges/crabDVM-astar';
+import { crabDVMArbitrum } from 'shared/config/bridges/crabDVM-arbitrum';
+import { crabDVMBsc } from 'shared/config/bridges/crabDVM-bsc';
 import { FunctionComponent } from 'react';
 import { darwiniaCrabDVM, pangoroPangolinDVM } from 'shared/config/bridge';
 import { arbitrumAstar } from 'shared/config/bridges/arbitrum-astar';
@@ -31,6 +36,11 @@ import { polygonOptimism } from 'shared/config/bridges/polygon-optimism';
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
 import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from 'shared/config/bridges/substrateDVM-substrateDVM';
 import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
+import { CrabDVM2Optimism, Optimism2CrabDVM } from './crabDVM-optimism';
+import { CrabDVM2Avalanche, Avalanche2CrabDVM } from './crabDVM-avalanche';
+import { CrabDVM2Astar, Astar2CrabDVM } from './crabDVM-astar';
+import { CrabDVM2Arbitrum, Arbitrum2CrabDVM } from './crabDVM-arbitrum';
+import { CrabDVM2Bsc, Bsc2CrabDVM } from './crabDVM-bsc';
 import { Arbitrum2Astar, Astar2Arbitrum } from './arbitrum-astar';
 import { Arbitrum2Avalanche, Avalanche2Arbitrum } from './arbitrum-avalanche';
 import { Arbitrum2Optimism, Optimism2Arbitrum } from './arbitrum-optimism';
@@ -198,3 +208,18 @@ arbitrumPolygon.setRedeemComponents(Polygon2Arbitrum as FunctionComponent);
 
 polygonOptimism.setIssuingComponents(Polygon2Optimism as FunctionComponent);
 polygonOptimism.setRedeemComponents(Optimism2Polygon as FunctionComponent);
+
+crabDVMBsc.setIssuingComponents(CrabDVM2Bsc as FunctionComponent);
+crabDVMBsc.setRedeemComponents(Bsc2CrabDVM as FunctionComponent);
+
+crabDVMArbitrum.setIssuingComponents(CrabDVM2Arbitrum as FunctionComponent);
+crabDVMArbitrum.setRedeemComponents(Arbitrum2CrabDVM as FunctionComponent);
+
+crabDVMAstar.setIssuingComponents(CrabDVM2Astar as FunctionComponent);
+crabDVMAstar.setRedeemComponents(Astar2CrabDVM as FunctionComponent);
+
+crabDVMAvalanche.setIssuingComponents(CrabDVM2Avalanche as FunctionComponent);
+crabDVMAvalanche.setRedeemComponents(Avalanche2CrabDVM as FunctionComponent);
+
+crabDVMOptimism.setIssuingComponents(CrabDVM2Optimism as FunctionComponent);
+crabDVMOptimism.setRedeemComponents(Optimism2CrabDVM as FunctionComponent);

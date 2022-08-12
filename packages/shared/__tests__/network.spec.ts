@@ -12,9 +12,11 @@ import {
   isEthereumNetwork,
   isPolkadotNetwork,
 } from '../utils/network/network';
+import { sortBy } from 'lodash';
 
 describe('network utils', () => {
   const data = [...crossChainGraph];
+  const sort = (ary: string[]) => sortBy(ary, (cur) => cur.charCodeAt(0));
 
   it('should contains chains count: ', () => {
     expect(chainConfigs).toHaveLength(19);
@@ -27,11 +29,24 @@ describe('network utils', () => {
     expect(group![1]).toEqual(['crab-dvm', 'crab-parachain']);
   });
 
-  it('crab-dvm contains 6 leafs', () => {
+  it('crab-dvm contains 11 leafs', () => {
     const group = data.find((item) => item[0] === 'crab-dvm');
+    const expected = sort([
+      'crab',
+      'ethereum',
+      'heco',
+      'polygon',
+      'darwinia',
+      'darwinia-dvm',
+      'arbitrum',
+      'astar',
+      'avalanche',
+      'bsc',
+      'optimism',
+    ]);
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['crab', 'ethereum', 'heco', 'polygon', 'darwinia', 'darwinia-dvm']);
+    expect(sort(group![1])).toEqual(expected);
   });
 
   it('darwinia contains 3 leafs', () => {
@@ -52,7 +67,17 @@ describe('network utils', () => {
     const group = data.find((item) => item[0] === 'ethereum');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['crab-dvm', 'darwinia', 'heco', 'polygon', 'astar', 'bsc', 'avalanche', 'arbitrum', 'optimism']);
+    expect(group![1]).toEqual([
+      'crab-dvm',
+      'darwinia',
+      'heco',
+      'polygon',
+      'astar',
+      'bsc',
+      'avalanche',
+      'arbitrum',
+      'optimism',
+    ]);
   });
 
   it('heco contains 3 leafs', () => {
@@ -62,39 +87,39 @@ describe('network utils', () => {
     expect(group![1]).toEqual(['crab-dvm', 'ethereum', 'polygon']);
   });
 
-  it('bsc contains 6 leafs', () => {
+  it('bsc contains 7 leafs', () => {
     const group = data.find((item) => item[0] === 'bsc');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['arbitrum', 'astar', 'avalanche', 'optimism', 'ethereum', 'polygon']);
+    expect(group![1]).toEqual(['arbitrum', 'astar', 'avalanche', 'optimism', 'ethereum', 'polygon', 'crab-dvm']);
   });
 
-  it('arbitrum contains 6 leafs', () => {
+  it('arbitrum contains 7 leafs', () => {
     const group = data.find((item) => item[0] === 'arbitrum');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['astar', 'avalanche', 'optimism', 'bsc', 'ethereum', 'polygon']);
+    expect(group![1]).toEqual(['astar', 'avalanche', 'optimism', 'bsc', 'ethereum', 'polygon', 'crab-dvm']);
   });
 
-  it('astar contains 6 leafs', () => {
+  it('astar contains 7 leafs', () => {
     const group = data.find((item) => item[0] === 'astar');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['arbitrum', 'avalanche', 'optimism', 'bsc', 'polygon', 'ethereum']);
+    expect(group![1]).toEqual(['arbitrum', 'avalanche', 'optimism', 'bsc', 'polygon', 'ethereum', 'crab-dvm']);
   });
 
-  it('avalanche contains 6 leafs', () => {
+  it('avalanche contains 7 leafs', () => {
     const group = data.find((item) => item[0] === 'avalanche');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['arbitrum', 'astar', 'optimism', 'bsc', 'ethereum', 'polygon']);
+    expect(group![1]).toEqual(['arbitrum', 'astar', 'optimism', 'bsc', 'ethereum', 'polygon', 'crab-dvm']);
   });
 
-  it('optimism contains 6 leafs', () => {
+  it('optimism contains 7 leafs', () => {
     const group = data.find((item) => item[0] === 'optimism');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['arbitrum', 'astar', 'avalanche', 'bsc', 'ethereum', 'polygon']);
+    expect(group![1]).toEqual(['arbitrum', 'astar', 'avalanche', 'bsc', 'ethereum', 'polygon', 'crab-dvm']);
   });
 
   it('polygon contains 8 leaf', () => {
@@ -103,7 +128,7 @@ describe('network utils', () => {
     expect(group).not.toEqual(undefined);
     expect(group![1]).toEqual(['crab-dvm', 'ethereum', 'heco', 'astar', 'bsc', 'avalanche', 'arbitrum', 'optimism']);
   });
-  
+
   // ------------------------------------test networks---------------------------------------
 
   it('pangolin contains 3 leafs', () => {

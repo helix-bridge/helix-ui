@@ -44,6 +44,11 @@ export const astarConfig: EthereumChainConfig = {
           bridge: 'ethereum-astar',
           partner: { name: 'ethereum', role: 'backing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-astar',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'astar',
@@ -79,6 +84,11 @@ export const astarConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'ethereum-astar',
           partner: { name: 'ethereum', role: 'backing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-astar',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',

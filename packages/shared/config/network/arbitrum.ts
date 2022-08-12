@@ -50,6 +50,11 @@ export const arbitrumConfig: EthereumChainConfig = {
           bridge: 'arbitrum-polygon',
           partner: { name: 'polygon', role: 'issuing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-arbitrum',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'bsc',
@@ -90,6 +95,11 @@ export const arbitrumConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'arbitrum-polygon',
           partner: { name: 'polygon', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-arbitrum',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',

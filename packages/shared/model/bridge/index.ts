@@ -32,3 +32,8 @@ export * from './bsc-polygon';
 export * from './avalanche-polygon';
 export * from './arbitrum-polygon';
 export * from './polygon-optimism';
+export * from './crabDVM-bsc';
+export * from './crabDVM-arbitrum';
+export * from './crabDVM-astar';
+export * from './crabDVM-avalanche';
+export * from './crabDVM-optimism';

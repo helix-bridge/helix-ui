@@ -29,4 +29,9 @@ export type BridgeName =
   | 'bsc-polygon'
   | 'avalanche-polygon'
   | 'arbitrum-polygon'
-  | 'polygon-optimism';
+  | 'polygon-optimism'
+  | 'crabDVM-bsc'
+  | 'crabDVM-arbitrum'
+  | 'crabDVM-astar'
+  | 'crabDVM-avalanche'
+  | 'crabDVM-optimism';

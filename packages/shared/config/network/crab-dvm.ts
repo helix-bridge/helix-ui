@@ -120,6 +120,88 @@ export const crabDVMConfig: DVMChainConfig = {
       symbol: 'xWRING',
       address: '0x16D8A045F0B61786810DB5d4C2035932f8A3341A',
     },
+    {
+      name: 'USDT',
+      decimals: 18,
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-bsc',
+          partner: { name: 'bsc', role: 'issuing', symbol: 'USDT' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-avalanche',
+          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDT' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-optimism',
+          partner: { name: 'optimism', role: 'issuing', symbol: 'USDT' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-arbitrum',
+          partner: { name: 'arbitrum', role: 'issuing', symbol: 'USDT' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-astar',
+          partner: { name: 'astar', role: 'issuing', symbol: 'USDT' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-ethereum',
+          partner: { name: 'ethereum', role: 'issuing', symbol: 'USDT' },
+        },
+      ],
+      type: 'mapping',
+      host: 'crab-dvm',
+      logo: 'token-usdt.svg',
+      symbol: 'USDT',
+      address: '0x6a2d262D56735DbA19Dd70682B39F6bE9a931D98',
+    },
+    {
+      name: 'USDC',
+      decimals: 18,
+      cross: [
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-bsc',
+          partner: { name: 'bsc', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-avalanche',
+          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-optimism',
+          partner: { name: 'optimism', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-arbitrum',
+          partner: { name: 'arbitrum', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-astar',
+          partner: { name: 'astar', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-ethereum',
+          partner: { name: 'ethereum', role: 'issuing', symbol: 'USDC' },
+        },
+      ],
+      type: 'mapping',
+      host: 'crab-dvm',
+      logo: 'token-usdc.svg',
+      symbol: 'USDC',
+      address: '0x81ECac0D6Be0550A00FF064a4f9dd2400585FE9c',
+    },
   ],
   ss58Prefix: 42,
   specVersion: 1232,

@@ -112,11 +112,23 @@ const testsCrosses: [[Network, Network][], BridgePredicateFn, BridgePredicateFn,
   [[['bsc', 'avalanche']], isBSC2Avalanche, isAvalanche2BSC, isBSCAvalanche, 'bsc <-> avalanche'],
   [[['bsc', 'optimism']], isBSC2Optimism, isOptimism2BSC, isBSCOptimism, 'bsc <-> optimism'],
   [[['arbitrum', 'astar']], isArbitrum2Astar, isAstar2Arbitrum, isArbitrumAstar, 'arbitrum <-> astar'],
-  [[['arbitrum', 'avalanche']], isArbitrum2Avalanche, isAvalanche2Arbitrum, isArbitrumAvalanche, 'arbitrum <-> avalanche'],
+  [
+    [['arbitrum', 'avalanche']],
+    isArbitrum2Avalanche,
+    isAvalanche2Arbitrum,
+    isArbitrumAvalanche,
+    'arbitrum <-> avalanche',
+  ],
   [[['arbitrum', 'optimism']], isArbitrum2Optimism, isOptimism2Arbitrum, isArbitrumOptimism, 'arbitrum <-> optimism'],
   [[['astar', 'avalanche']], isAstar2Avalanche, isAvalanche2Astar, isAstarAvalanche, 'astar <-> avalanche'],
   [[['astar', 'optimism']], isAstar2Optimism, isOptimism2Astar, isAstarOptimism, 'astar <-> optimism'],
-  [[['avalanche', 'optimism']], isAvalanche2Optimism, isOptimism2Avalanche, isAvalancheOptimism, 'avalanche <-> optimism'],
+  [
+    [['avalanche', 'optimism']],
+    isAvalanche2Optimism,
+    isOptimism2Avalanche,
+    isAvalancheOptimism,
+    'avalanche <-> optimism',
+  ],
 ];
 
 describe('bridge utils', () => {
@@ -139,11 +151,11 @@ describe('bridge utils', () => {
     const formalBridges = calcBridgesAmount(formals);
 
     expect(testBridges).toHaveLength(5);
-    expect(formalBridges).toHaveLength(32);
+    expect(formalBridges).toHaveLength(37);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(74);
+    expect(allDirections).toHaveLength(84);
   });
 
   // TODO: fix it to check all bridges
