@@ -81,17 +81,25 @@ class Web3Entrance extends Entrance<Web3> {
       return new Web3(window.ethereum);
     }
 
-    const provider = new Web3.providers.WebsocketProvider(url, {
-      clientConfig: {
-        keepalive: true,
-        keepaliveInterval: 60000,
-      },
-      reconnect: {
-        auto: true,
-        delay: 2500,
-        onTimeout: true,
-      },
-    });
+    let provider = null;
+
+    if (url.startsWith('wss')) {
+      provider = new Web3.providers.WebsocketProvider(url, {
+        clientConfig: {
+          keepalive: true,
+          keepaliveInterval: 60000,
+        },
+        reconnect: {
+          auto: true,
+          delay: 2500,
+          onTimeout: true,
+        },
+      });
+    } else if (url.startsWith('https')) {
+      provider = new Web3.providers.HttpProvider(url);
+    } else {
+      throw new Error('Need a http or ws provider');
+    }
 
     return new Web3(provider);
   }

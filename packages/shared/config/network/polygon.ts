@@ -51,7 +51,7 @@ export const polygonConfig: EthereumChainConfig = {
     },
     {
       name: 'USDT',
-      decimals: 18, // todo: to be confirmed
+      decimals: 6,
       cross: [
         {
           category: 'cBridge',
@@ -87,7 +87,7 @@ export const polygonConfig: EthereumChainConfig = {
     },
     {
       name: 'USDC',
-      decimals: 18,
+      decimals: 6,
       cross: [
         {
           category: 'cBridge',

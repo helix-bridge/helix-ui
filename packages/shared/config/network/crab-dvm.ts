@@ -43,7 +43,7 @@ export const crabDVMConfig: DVMChainConfig = {
     },
     {
       name: 'WCKTON',
-      decimals: 18, // todo: to be confirmed
+      decimals: 18,
       cross: [
         {
           category: 'helix',

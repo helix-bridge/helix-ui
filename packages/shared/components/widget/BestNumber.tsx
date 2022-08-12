@@ -9,7 +9,7 @@ import { prettyNumber } from 'shared/utils/helper';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import React from 'react';
 
-const duration = 6000;
+const DURATION = 6000;
 
 interface BestNumberProps {
   onChange?: (num: string) => void;
@@ -47,7 +47,7 @@ function Component({ config, color = '', onChange = (num) => void num }: BestNum
 
       sub$$ = from(waitUntilConnected(api))
         .pipe(
-          mergeMap(() => timer(0, duration)),
+          mergeMap(() => timer(0, DURATION)),
           takeWhile(() => isMounted && api.isConnected),
           switchMap(() => from(api.derive.chain.bestNumber())),
           startWith(null)
@@ -58,7 +58,7 @@ function Component({ config, color = '', onChange = (num) => void num }: BestNum
     if (config.wallets.includes('metamask')) {
       const web3 = entrance.web3.getInstance(config.provider);
 
-      sub$$ = timer(0, duration)
+      sub$$ = timer(0, DURATION)
         .pipe(
           takeWhile(() => isMounted),
           switchMap(() => from(web3.eth.getBlockNumber())),
