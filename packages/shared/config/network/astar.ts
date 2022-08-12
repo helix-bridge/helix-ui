@@ -99,7 +99,7 @@ export const astarConfig: EthereumChainConfig = {
       ],
       type: 'mapping',
       host: 'astar',
-      logo: 'token-busd.png',
+      logo: 'token-busd.svg',
       symbol: 'BUSD',
       address: '0x4Bf769b05E832FCdc9053fFFBC78Ca889aCb5E1E',
     },

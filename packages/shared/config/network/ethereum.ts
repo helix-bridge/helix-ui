@@ -162,7 +162,7 @@ export const ethereumConfig: EthereumChainConfig = {
       ],
       type: 'mapping',
       host: 'ethereum',
-      logo: 'token-busd.png',
+      logo: 'token-busd.svg',
       symbol: 'BUSD',
       address: '',
     },

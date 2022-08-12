@@ -30,7 +30,7 @@ export const fetchDarwinia2EthereumRecords = (
             ...res,
             // eslint-disable-next-line complexity
             list: res.list.map((data) => {
-              const record = camelCaseKeys(data);
+              const record = camelCaseKeys(data) as unknown as ICamelCaseKeys<Darwinia2EthereumRecord>;
               const { blockTimestamp, signatures, ringValue, ktonValue, extrinsicIndex, tx, accountId } = record;
               const ring = departure.tokens.find((item) => isRing(item.symbol))!;
               const token = +ringValue > 0 ? ring : departure.tokens.find((item) => isKton(item.symbol))!;
@@ -94,7 +94,7 @@ export const fetchEthereum2DarwiniaRecords = (
         ? {
             ...res,
             list: res.list.map((item) => {
-              const record = camelCaseKeys(item);
+              const record = camelCaseKeys(item) as unknown as ICamelCaseKeys<Ethereum2DarwiniaRedeemRecord>;
               const { blockTimestamp, tx, darwiniaTx, currency, amount } = record;
               const ring = departure.tokens.find((tk) => isRing(tk.symbol))!;
               const isRingTransfer = isRing(currency);
@@ -121,6 +121,7 @@ export const fetchEthereum2DarwiniaRecords = (
                 recvToken: arrival.partner.symbol,
                 sendAmount: amount,
                 recvAmount: amount,
+                messageNonce: '',
                 ...record,
               };
             }),

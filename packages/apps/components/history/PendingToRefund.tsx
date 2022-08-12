@@ -9,6 +9,7 @@ import { useIsMounted } from 'shared/hooks';
 import { HelixHistoryRecord } from 'shared/model';
 import { isSubstrateDVMSubstrateDVM } from 'shared/utils/bridge';
 import { gqlName, pollWhile } from 'shared/utils/helper';
+import { isCBridgeRecord } from 'shared/utils/record';
 import { requestRefund, withdraw } from '../../bridges/cBridge/utils/tx';
 import { refund } from '../../bridges/substrateDVM-substrateDVM/utils';
 import { HISTORY_RECORD_BY_ID } from '../../config/gql';
@@ -171,7 +172,7 @@ function Refund({ record }: RecordStatusComponentProps) {
 }
 
 export function PendingToRefund({ record }: RecordStatusComponentProps) {
-  if (record.bridge === 'cBridge') {
+  if (isCBridgeRecord(record)) {
     return <CBrideRefund record={record} />;
   }
 

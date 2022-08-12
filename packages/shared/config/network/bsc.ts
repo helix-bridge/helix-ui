@@ -120,7 +120,7 @@ export const bscConfig: EthereumChainConfig = {
       ],
       type: 'mapping',
       host: 'bsc',
-      logo: 'token-busd.png',
+      logo: 'token-busd.svg',
       symbol: 'BUSD',
       address: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
     },

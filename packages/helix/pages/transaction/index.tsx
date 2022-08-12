@@ -1,5 +1,5 @@
 import { ClockCircleOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Affix, Button, Input, message, Table, Tooltip } from 'antd';
+import { Affix, Button, Input, message, Table, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import { formatDistance, fromUnixTime } from 'date-fns';
 import format from 'date-fns-tz/format';
@@ -10,8 +10,8 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, map } from 'rxjs';
 import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
+import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
-import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { SYSTEM_ChAIN_CONFIGURATIONS } from 'shared/config/network';
@@ -23,7 +23,7 @@ import web3 from 'web3';
 import { HISTORY_RECORDS, Path } from '../../config';
 import { getDetailPaths } from '../../utils';
 
-function RecordAccount({ chain, account, partner }: { chain: Network; account: string; partner: string }) {
+function RecordAccount({ chain, account }: { chain: Network; account: string }) {
   const chainConfig = getChainConfig(chain, SYSTEM_ChAIN_CONFIGURATIONS);
   const displayAccount = revertAccount(account, chainConfig);
 
@@ -35,10 +35,11 @@ function RecordAccount({ chain, account, partner }: { chain: Network; account: s
       </span>
       <Tooltip
         title={
-          <div>
-            <span className="mr-2">{partner}: </span>
-            <TextWithCopy>{displayAccount}</TextWithCopy>
-          </div>
+          <Typography.Text
+            copyable={{ icon: <Icon name="copy1" className="text-white text-base transform translate-y-1" /> }}
+          >
+            {displayAccount}
+          </Typography.Text>
         }
       >
         <span className="truncate">{displayAccount}</span>
@@ -63,7 +64,6 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
   const columns: ColumnType<HelixHistoryRecord>[] = [
     {
       title: <span className="pl-4">{t('Time')}</span>,
-      width: '15%',
       dataIndex: 'startTime',
       render: (value: number) => (
         <Tooltip
@@ -86,22 +86,23 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
     {
       title: t('From'),
       dataIndex: 'fromChain',
+      width: '22%',
       ellipsis: true,
       render(chain: Network, record) {
-        return <RecordAccount chain={chain} account={record.sender} partner={t('Sender')} />;
+        return <RecordAccount chain={chain} account={record.sender} />;
       },
     },
     {
       title: t('To'),
       dataIndex: 'toChain',
+      width: '22%',
       ellipsis: true,
       render(chain: Network, record) {
-        return <RecordAccount chain={chain} account={record.recipient} partner={t('Recipient')} />;
+        return <RecordAccount chain={chain} account={record.recipient} />;
       },
     },
     {
       title: t('Asset'),
-      width: '15%',
       render(_: string, record) {
         const amount = getSentAmountFromHelixRecord(record);
 
@@ -118,7 +119,6 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
     {
       title: t('Fee'),
       dataIndex: 'fee',
-      width: '12%',
       render(value: string, record) {
         const amount = getFeeAmountFromHelixRecord(record);
 
@@ -135,15 +135,15 @@ function Page({ records, count }: { records: HelixHistoryRecord[]; count: number
     {
       title: t('Bridge'),
       dataIndex: 'bridge',
-      width: '10%',
       render: (value) => (
-        <span className={`justify-self-center ${/^[a-z]+[A-Z]{1}/.test(value) ? '' : 'capitalize'}`}>{value}</span>
+        <span className={`justify-self-center ${/^[a-z]+[A-Z]{1}/.test(value) ? '' : 'capitalize'}`}>
+          {value.split('-')[0]}
+        </span>
       ),
     },
     {
       title: t('Status'),
       dataIndex: 'result',
-      width: '10%',
       render: (value) => {
         return (
           <div className="flex gap-8 items-center">

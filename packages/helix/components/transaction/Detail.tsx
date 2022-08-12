@@ -35,7 +35,7 @@ export function Detail({ record, transfers }: DetailProps) {
   }, [departure.tokens, record]);
 
   const feeDecimals = useMemo(() => {
-    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase());
+    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === record.feeToken.toLowerCase());
 
     return token?.decimals ?? 9;
   }, [departure.tokens, record]);

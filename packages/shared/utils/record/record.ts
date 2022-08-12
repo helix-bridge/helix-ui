@@ -49,3 +49,11 @@ export function getSentAmountFromHelixRecord(record: HelixHistoryRecord) {
     prettyNumber(val, { ignoreZeroDecimal: true })
   );
 }
+
+export function isHelixRecord(record: HelixHistoryRecord): boolean {
+  return record.bridge.toLowerCase().startsWith('helix');
+}
+
+export function isCBridgeRecord(record: HelixHistoryRecord): boolean {
+  return record.bridge.toLowerCase().startsWith('cbridge');
+}
