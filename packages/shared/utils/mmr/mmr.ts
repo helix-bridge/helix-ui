@@ -53,14 +53,14 @@ async function getMMRProofBySubql(api: ApiPromise, blockNumber: number, mmrBlock
 function proofsFactory(url: string) {
   return (ids: number[]): Promise<string[]> => {
     const obs = ajax
-      .post<{ data: { nodeEntities: { nodes: { hash: string; id: string }[] } } }>(
+      .post<{ data: { mMRNodeEntities: { nodes: { hash: string; id: string }[] } } }>(
         url,
         { query: MMR_QUERY, variables: { ids: ids.map((item) => item.toString()) } },
         { 'Content-Type': 'application/json', accept: 'application/json' }
       )
       .pipe(
         map((res) => {
-          const nodes = res.response.data.nodeEntities.nodes;
+          const nodes = res.response.data.mMRNodeEntities.nodes;
 
           return ids.reduce((acc: string[], id: number) => {
             const target = nodes.find((node) => +node.id === id);
