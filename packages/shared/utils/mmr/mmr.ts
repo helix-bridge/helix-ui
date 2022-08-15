@@ -42,7 +42,7 @@ const MMR_QUERY = `
 async function getMMRProofBySubql(api: ApiPromise, blockNumber: number, mmrBlockNumber: number) {
   const chain = (await api.rpc.system.chain()).toString().toLowerCase() as Extract<Network, 'pangolin' | 'darwinia'>;
   const config = getChainConfig(chain) as PolkadotChainConfig;
-  const fetchProofs = proofsFactory(`https://api.subquery.network/sq/darwinia-network/${config.name}-mmr`);
+  const fetchProofs = proofsFactory(`https://api.subquery.network/sq/darwinia-network/subql-mmr-${config.name}`);
   const proof = await genProof(blockNumber, mmrBlockNumber, fetchProofs);
   const encodeProof = proof.proof.map((item) => remove0x(item.replace(/(^\s*)|(\s*$)/g, ''))).join('');
   const size = new TypeRegistry().createType('u64', proof.mmrSize.toString()) as unknown as BigInt;
@@ -53,14 +53,14 @@ async function getMMRProofBySubql(api: ApiPromise, blockNumber: number, mmrBlock
 function proofsFactory(url: string) {
   return (ids: number[]): Promise<string[]> => {
     const obs = ajax
-      .post<{ data: { nodeEntities: { nodes: { hash: string; id: string }[] } } }>(
+      .post<{ data: { mMRNodeEntities: { nodes: { hash: string; id: string }[] } } }>(
         url,
         { query: MMR_QUERY, variables: { ids: ids.map((item) => item.toString()) } },
         { 'Content-Type': 'application/json', accept: 'application/json' }
       )
       .pipe(
         map((res) => {
-          const nodes = res.response.data.nodeEntities.nodes;
+          const nodes = res.response.data.mMRNodeEntities.nodes;
 
           return ids.reduce((acc: string[], id: number) => {
             const target = nodes.find((node) => +node.id === id);

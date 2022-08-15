@@ -12,7 +12,7 @@ import pangolin from '../theme/network/pangolin.json';
 import pangoro from '../theme/network/pangoro.json';
 
 export const NETWORK_LIGHT_THEME: NetworkThemeConfig<{ [key in keyof typeof darwinia]: string }> = {
-  'BNB Chain': pangolin,
+  bsc: pangolin,
   'crab-dvm': crab,
   'crab-parachain': crab,
   'darwinia-dvm': darwinia,
@@ -41,7 +41,7 @@ export const SKIN_THEME = {
 };
 
 export const NETWORK_DARK_THEME: NetworkThemeConfig<{ [key in keyof typeof darwiniaDark]: string }> = {
-  'BNB Chain': pangolinDark,
+  bsc: pangolinDark,
   'crab-dvm': crabDark,
   'crab-parachain': crabDark,
   'darwinia-dvm': darwiniaDark,
@@ -69,7 +69,7 @@ export enum THEME {
 }
 
 export const chainColors: { [key in Network]: string } = {
-  'BNB Chain': '#f1b90e',
+  bsc: '#f1b90e',
   'crab-dvm': '#B32BB6',
   'crab-parachain': '#512dbc',
   'darwinia-dvm': '#FF007A',

@@ -2,7 +2,7 @@ import { DVMNetwork, EthereumTypeNetwork, PolkadotTypeNetwork } from '../../mode
 import { arbitrumConfig } from './arbitrum';
 import { astarConfig } from './astar';
 import { avalancheConfig } from './avalanche';
-import { bnbConfig } from './bnb';
+import { bscConfig } from './bsc';
 import { crabConfig } from './crab';
 import { crabDVMConfig } from './crab-dvm';
 import { crabParachainConfig } from './crab-parachain';
@@ -23,7 +23,7 @@ export const SYSTEM_ChAIN_CONFIGURATIONS = [
   arbitrumConfig,
   astarConfig,
   avalancheConfig,
-  bnbConfig,
+  bscConfig,
   crabConfig,
   crabDVMConfig,
   crabParachainConfig,
@@ -61,7 +61,7 @@ export const knownEthereumNetworks: (DVMNetwork | EthereumTypeNetwork)[] = [
   'arbitrum',
   'astar',
   'avalanche',
-  'BNB Chain',
+  'bsc',
   'optimism',
   ...knownDVMNetworks,
 ];

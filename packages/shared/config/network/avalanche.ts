@@ -12,7 +12,8 @@ export const avalancheConfig: EthereumChainConfig = {
   isTest: false,
   logos: [{ name: 'avalanche.png', type: 'main' }],
   name: 'avalanche',
-  provider: 'wss://api.avax.network/ext/bc/C/ws',
+  fullName: 'Avalanche',
+  provider: 'https://api.avax.network/ext/bc/C/rpc',
   social: {
     portal: 'https://www.avax.network/',
     github: 'https://github.com/ava-labs',
@@ -25,8 +26,8 @@ export const avalancheConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'cBridge',
-          bridge: 'bnb-avalanche',
-          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDT' },
+          bridge: 'bsc-avalanche',
+          partner: { name: 'bsc', role: 'backing', symbol: 'USDT' },
         },
         {
           category: 'cBridge',
@@ -53,6 +54,11 @@ export const avalancheConfig: EthereumChainConfig = {
           bridge: 'avalanche-polygon',
           partner: { name: 'polygon', role: 'issuing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-avalanche',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'avalanche',
@@ -66,8 +72,8 @@ export const avalancheConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'cBridge',
-          bridge: 'bnb-avalanche',
-          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDC' },
+          bridge: 'bsc-avalanche',
+          partner: { name: 'bsc', role: 'backing', symbol: 'USDC' },
         },
         {
           category: 'cBridge',
@@ -93,6 +99,11 @@ export const avalancheConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'avalanche-polygon',
           partner: { name: 'polygon', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-avalanche',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',

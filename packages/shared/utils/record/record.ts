@@ -1,68 +1,37 @@
-import Bignumber from 'bignumber.js';
 import Web3 from 'web3';
-import { HelixHistoryRecord } from '../../model';
-import {
-  isDVM2Substrate,
-  isEthereum2CrabDVM,
-  isEthereum2Darwinia,
-  isEthereumHeco,
-  isEthereumPolygon,
-  isHeco2CrabDVM,
-  isParachain2Substrate,
-  isPolygon2CrabDVM,
-  isSubstrateDVM,
-  isSubstrateDVM2Substrate,
-  isSubstrateDVMSubstrateDVM,
-} from '../bridge';
+import { RecordStatus } from '../../config/constant';
+import { HelixHistoryRecord, TokenWithBridgesInfo } from '../../model';
 import { fromWei, prettyNumber } from '../helper';
 import { getChainConfig, isEthereumNetwork } from '../network';
 
-export function getTokenSymbolFromHelixRecord(
+export function getTokenConfigFromHelixRecord(
   record: HelixHistoryRecord,
-  key: keyof Pick<HelixHistoryRecord, 'feeToken' | 'token'> = 'token'
-) {
-  const { token } = record;
-  const fromChain = getChainConfig(record.fromChain);
-
-  let symbol = record[key];
-
-  if (Web3.utils.isAddress(token)) {
-    const target = fromChain.tokens.find((item) => item.address.toLowerCase() === token.toLowerCase());
-
-    symbol = target?.symbol ?? '';
-  }
+  key: keyof Pick<HelixHistoryRecord, 'feeToken' | 'sendToken' | 'recvToken'> = 'sendToken'
+): TokenWithBridgesInfo | null {
+  const chain = getChainConfig(record[key === 'recvToken' ? 'toChain' : 'fromChain']);
+  const symbol = record[key];
 
   if (!symbol) {
-    console.warn(`🚨 Can not find token with address ${token} on chain ${fromChain.name}`);
+    return null;
   }
 
-  return symbol;
+  return chain.tokens.find((item) =>
+    Web3.utils.isAddress(symbol) ? item.address.toLowerCase() === symbol.toLowerCase() : item.symbol === symbol
+  )!;
 }
 
-/**
- * TODO: refactor it to calc by token config info
- */
 export function getReceivedAmountFromHelixRecord(record: HelixHistoryRecord) {
-  const { fromChain, toChain } = record;
-  const predicates = [
-    isDVM2Substrate,
-    isParachain2Substrate,
-    isEthereum2Darwinia,
-    isHeco2CrabDVM,
-    isPolygon2CrabDVM,
-    isEthereum2CrabDVM,
-    isEthereumHeco,
-    isEthereumPolygon,
-    isSubstrateDVMSubstrateDVM,
-  ];
+  const { result } = record;
+  const fromToken = getTokenConfigFromHelixRecord(record)!;
+  const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
 
-  return fromWei(
-    {
-      value: record.amount,
-      decimals: predicates.some((fn) => fn(fromChain, toChain)) ? 18 : 9,
-    },
-    (val) => prettyNumber(val, { ignoreZeroDecimal: true })
-  );
+  let decimals = toToken?.decimals;
+
+  if (result === RecordStatus.refunded) {
+    decimals = fromToken.decimals;
+  }
+
+  return fromWei({ value: record.recvAmount, decimals }, (val) => prettyNumber(val, { ignoreZeroDecimal: true }));
 }
 
 export function getFeeAmountFromHelixRecord(record: HelixHistoryRecord) {
@@ -73,24 +42,18 @@ export function getFeeAmountFromHelixRecord(record: HelixHistoryRecord) {
 }
 
 export function getSentAmountFromHelixRecord(record: HelixHistoryRecord) {
-  const receive = getReceivedAmountFromHelixRecord(record);
-  const receivedAmount = receive.replace(/,/g, '');
-  const feeAmount = getFeeAmountFromHelixRecord(record);
-  const predicates = [isSubstrateDVM, isSubstrateDVM2Substrate, isSubstrateDVMSubstrateDVM];
+  const { fromChain, sendToken, sendAmount } = record;
+  const fromToken = getChainConfig(fromChain)!.tokens.find((item) => item.symbol === sendToken);
 
-  try {
-    const result = predicates.some((fn) => fn(record.fromChain, record.toChain))
-      ? receivedAmount
-      : new Bignumber(receivedAmount).plus(new Bignumber(feeAmount)).toString();
+  return fromWei({ value: sendAmount, decimals: fromToken?.decimals }, (val) =>
+    prettyNumber(val, { ignoreZeroDecimal: true })
+  );
+}
 
-    if (+result < 0) {
-      throw new Error(`Record ${record.id}, sendAmount: ${receivedAmount}, calculate received amount: ${result}`);
-    }
+export function isHelixRecord(record: HelixHistoryRecord): boolean {
+  return record.bridge.toLowerCase().startsWith('helix');
+}
 
-    return prettyNumber(result, { ignoreZeroDecimal: true });
-  } catch (err) {
-    console.error((err as unknown as Error).message);
-
-    return 'NaN';
-  }
+export function isCBridgeRecord(record: HelixHistoryRecord): boolean {
+  return record.bridge.toLowerCase().startsWith('cbridge');
 }

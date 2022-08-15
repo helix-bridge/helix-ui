@@ -47,6 +47,7 @@ export interface ChainConfig {
   social: Social;
   tokens: TokenWithBridgesInfo[];
   wallets: SupportedWallet[];
+  fullName?: string;
 }
 
 export interface EthereumChainConfig extends ChainConfig {

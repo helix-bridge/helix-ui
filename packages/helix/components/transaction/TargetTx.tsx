@@ -6,6 +6,7 @@ import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord, Network } from 'shared/model';
+import { isCBridgeRecord, isHelixRecord } from 'shared/utils/record';
 import { TransferDescription } from './TransferDescription';
 
 interface HashProps {
@@ -37,17 +38,17 @@ export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
       return <Progress percent={50} className="max-w-xs" />;
     }
 
-    if (record.bridge === 'helix') {
+    if (isHelixRecord(record)) {
       if (record.result === RecordStatus.success) {
-        return <Hash network={arrival} hash={record.targetTxHash} />;
+        return <Hash network={arrival} hash={record.responseTxHash} />;
       }
 
       if (record.result === RecordStatus.refunded) {
         return record.responseTxHash && <Hash network={departure} hash={record.responseTxHash} />;
       }
-    } else if (record.bridge === 'cBridge') {
+    } else if (isCBridgeRecord(record)) {
       return (
-        <Hash network={record.result === RecordStatus.refunded ? departure : arrival} hash={record.targetTxHash} />
+        <Hash network={record.result === RecordStatus.refunded ? departure : arrival} hash={record.responseTxHash} />
       );
     }
 

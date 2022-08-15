@@ -12,7 +12,8 @@ export const optimismConfig: EthereumChainConfig = {
   isTest: false,
   logos: [{ name: 'optimism.png', type: 'main' }],
   name: 'optimism',
-  provider: 'wss://ws-mainnet.optimism.io',
+  fullName: 'Optimism',
+  provider: 'wss://optimism-mainnet.public.blastapi.io',
   social: {
     portal: 'https://www.optimism.io/',
     github: 'https://github.com/ethereum-optimism',
@@ -25,8 +26,8 @@ export const optimismConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'cBridge',
-          bridge: 'bnb-optimism',
-          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDT' },
+          bridge: 'bsc-optimism',
+          partner: { name: 'bsc', role: 'backing', symbol: 'USDT' },
         },
         {
           category: 'cBridge',
@@ -43,6 +44,11 @@ export const optimismConfig: EthereumChainConfig = {
           bridge: 'polygon-optimism',
           partner: { name: 'polygon', role: 'backing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-optimism',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'optimism',
@@ -56,8 +62,8 @@ export const optimismConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'cBridge',
-          bridge: 'bnb-optimism',
-          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDC' },
+          bridge: 'bsc-optimism',
+          partner: { name: 'bsc', role: 'backing', symbol: 'USDC' },
         },
         {
           category: 'cBridge',
@@ -78,6 +84,11 @@ export const optimismConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'polygon-optimism',
           partner: { name: 'polygon', role: 'backing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-optimism',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',

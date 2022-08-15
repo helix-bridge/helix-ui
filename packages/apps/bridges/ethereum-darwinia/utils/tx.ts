@@ -146,11 +146,18 @@ export function claimToken({
   );
 }
 
-type ITxValidation = RequiredPartial<TxValidation, 'balance' | 'amount' | 'fee'> & { ringBalance: BN };
+type ITxValidation = RequiredPartial<TxValidation, 'balance' | 'amount' | 'fee'> & { ringBalance: BN; isRING: boolean };
 
-const genValidations = ({ balance, amount, fee, ringBalance, allowance }: ITxValidation): [boolean, string][] => [
+const genValidations = ({
+  balance,
+  amount,
+  fee,
+  ringBalance,
+  allowance,
+  isRING,
+}: ITxValidation): [boolean, string][] => [
   [ringBalance.lt(fee), TxValidationMessages.balanceLessThanFee],
-  [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
+  [isRING ? balance.lt(amount.add(fee)) : balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
   [!!allowance && allowance.lt(amount), TxValidationMessages.allowanceLessThanAmount],
   [!!fee && fee?.lt(BN_ZERO), TxValidationMessages.invalidFee],
 ];

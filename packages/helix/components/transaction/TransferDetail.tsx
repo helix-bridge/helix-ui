@@ -18,7 +18,7 @@ export function TransferDetail({ transfers, amount }: { transfers: TransferStep[
         {transfers.map(({ chain, sender, recipient, token }, index) => (
           <div
             key={[token.name, token.host, index].join('-')}
-            className="w-full md:w-2/3 2xl:w-1/2 grid grid-cols-12 items-center"
+            className="w-full md:w-2/3 grid grid-cols-12 items-center"
           >
             <span className="flex items-center gap-2 col-span-3">
               <Logo chain={chain} width={16} height={16} className="w-5 h-5" />

@@ -207,12 +207,21 @@ $bg-dark: #151d35;
     }
 
     .ant-table-tbody > tr > td {
-      padding-top: 16px;
-      padding-bottom: 16px;
+      padding-top: 10px;
+      padding-bottom: 10px;
     }
 
     .ant-table-tbody > tr.ant-table-row:hover > td {
       background: rgba($bg-dark, 0.8);
     }
   }
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
 }

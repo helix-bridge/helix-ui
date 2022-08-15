@@ -6,18 +6,23 @@ import { astarAvalanche } from './bridges/astar-avalanche';
 import { astarOptimism } from './bridges/astar-optimism';
 import { avalancheOptimism } from './bridges/avalanche-optimism';
 import { avalanchePolygon } from './bridges/avalanche-polygon';
-import { bnbArbitrum } from './bridges/bnb-arbitrum';
-import { bnbAstar } from './bridges/bnb-astar';
-import { bnbAvalanche } from './bridges/bnb-avalanche';
-import { bnbOptimism } from './bridges/bnb-optimism';
-import { bnbPolygon } from './bridges/bnb-polygon';
+import { bscArbitrum } from './bridges/bsc-arbitrum';
+import { bscAstar } from './bridges/bsc-astar';
+import { bscAvalanche } from './bridges/bsc-avalanche';
+import { bscOptimism } from './bridges/bsc-optimism';
+import { bscPolygon } from './bridges/bsc-polygon';
+import { crabDVMArbitrum } from './bridges/crabDVM-arbitrum';
+import { crabDVMAstar } from './bridges/crabDVM-astar';
+import { crabDVMAvalanche } from './bridges/crabDVM-avalanche';
+import { crabDVMBsc } from './bridges/crabDVM-bsc';
 import { crabDVMEthereum } from './bridges/crabDVM-ethereum';
 import { crabDVMHeco } from './bridges/crabDVM-heco';
+import { crabDVMOptimism } from './bridges/crabDVM-optimism';
 import { crabDVMPolygon } from './bridges/crabDVM-polygon';
 import { ethereumArbitrum } from './bridges/ethereum-arbitrum';
 import { ethereumAstar } from './bridges/ethereum-astar';
 import { ethereumAvalanche } from './bridges/ethereum-avalanche';
-import { ethereumBnb } from './bridges/ethereum-bnb';
+import { ethereumBSC } from './bridges/ethereum-bsc';
 import { ethereumDarwinia, ropstenPangolin } from './bridges/ethereum-darwinia';
 import { ethereumHeco } from './bridges/ethereum-heco';
 import { ethereumOptimism } from './bridges/ethereum-optimism';
@@ -38,10 +43,10 @@ const formalBridges = [
   astarAvalanche,
   astarOptimism,
   avalancheOptimism,
-  bnbArbitrum,
-  bnbAstar,
-  bnbAvalanche,
-  bnbOptimism,
+  bscArbitrum,
+  bscAstar,
+  bscAvalanche,
+  bscOptimism,
   crabCrabDVM,
   crabDVMEthereum,
   crabDVMHeco,
@@ -56,14 +61,19 @@ const formalBridges = [
   parachainCrab,
   polygonAstar,
   ethereumAstar,
-  ethereumBnb,
+  ethereumBSC,
   ethereumAvalanche,
   ethereumArbitrum,
   ethereumOptimism,
-  bnbPolygon,
+  bscPolygon,
   avalanchePolygon,
   arbitrumPolygon,
   polygonOptimism,
+  crabDVMBsc,
+  crabDVMArbitrum,
+  crabDVMAstar,
+  crabDVMAvalanche,
+  crabDVMOptimism,
 ];
 
 const testBridges = [

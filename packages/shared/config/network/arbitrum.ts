@@ -12,7 +12,9 @@ export const arbitrumConfig: EthereumChainConfig = {
   isTest: false,
   logos: [{ name: 'arbitrum.png', type: 'main' }],
   name: 'arbitrum',
-  provider: 'wss://arbitrum.getblock.io/mainnet',
+  fullName: 'Arbitrum One',
+  // provider: 'wss://arb1.arbitrum.io/feed', // binary message
+  provider: 'https://arb1.arbitrum.io/rpc',
   social: {
     portal: 'https://arbitrum.io/',
     github: 'https://github.com/OffchainLabs',
@@ -25,8 +27,8 @@ export const arbitrumConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'cBridge',
-          bridge: 'bnb-arbitrum',
-          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDT' },
+          bridge: 'bsc-arbitrum',
+          partner: { name: 'bsc', role: 'backing', symbol: 'USDT' },
         },
         {
           category: 'cBridge',
@@ -48,9 +50,14 @@ export const arbitrumConfig: EthereumChainConfig = {
           bridge: 'arbitrum-polygon',
           partner: { name: 'polygon', role: 'issuing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-arbitrum',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
-      host: 'BNB Chain',
+      host: 'bsc',
       logo: 'token-usdt.svg',
       symbol: 'USDT',
       address: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
@@ -61,8 +68,8 @@ export const arbitrumConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'cBridge',
-          bridge: 'bnb-arbitrum',
-          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDC' },
+          bridge: 'bsc-arbitrum',
+          partner: { name: 'bsc', role: 'backing', symbol: 'USDC' },
         },
         {
           category: 'cBridge',
@@ -89,9 +96,14 @@ export const arbitrumConfig: EthereumChainConfig = {
           bridge: 'arbitrum-polygon',
           partner: { name: 'polygon', role: 'issuing', symbol: 'USDC' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-arbitrum',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDC' },
+        },
       ],
       type: 'mapping',
-      host: 'BNB Chain',
+      host: 'bsc',
       logo: 'token-usdc.svg',
       symbol: 'USDC',
       address: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',

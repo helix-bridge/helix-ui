@@ -13,7 +13,7 @@ import { getChainConfig } from 'shared/utils/network';
 import {
   getReceivedAmountFromHelixRecord,
   getSentAmountFromHelixRecord,
-  getTokenSymbolFromHelixRecord,
+  getTokenConfigFromHelixRecord,
 } from 'shared/utils/record';
 import { Darwinia2EthereumHistoryRes } from '../../bridges/ethereum-darwinia/model';
 import { HISTORY_RECORDS, STATUS_STATISTICS } from '../../config/gql';
@@ -265,8 +265,7 @@ export function History() {
                   const { fromChain, toChain, bridge } = record;
                   const dep = getChainConfig(fromChain);
                   const arrival = getChainConfig(toChain);
-                  const symbol = getTokenSymbolFromHelixRecord(record);
-                  const fromToken = dep.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase())!;
+                  const fromToken = getTokenConfigFromHelixRecord(record)!;
                   const overview = fromToken.cross.find(
                     (item) => asSameCategory(item.category, bridge) && item.partner.name === toChain
                   );
@@ -274,7 +273,7 @@ export function History() {
                     asSameToken(item.symbol, overview?.partner.symbol ?? '')
                   )!;
                   const [d2eHeight, d2dIndex] = record.requestTxHash.split('-');
-                  const [e2dHeight, e2dIndex] = record.targetTxHash.split('-');
+                  const [e2dHeight, e2dIndex] = record.responseTxHash.split('-');
 
                   return (
                     <div className="flex justify-between items-center " key={record.id}>
@@ -300,16 +299,17 @@ export function History() {
                           asHistory
                           className="justify-end"
                         >
-                          {record.targetTxHash || (e2dHeight && e2dIndex) ? (
+                          {(record.responseTxHash || (e2dHeight && e2dIndex)) &&
+                          record.result === RecordStatus.success ? (
                             <SubscanLink
                               network={arrival}
-                              txHash={record.targetTxHash}
+                              txHash={record.responseTxHash}
                               extrinsic={e2dHeight && e2dIndex ? { height: e2dHeight, index: e2dIndex } : undefined}
                             >
                               <PaperClipOutlined className="hover:text-pangolin-main cursor-pointer" />
                             </SubscanLink>
                           ) : (
-                            record.result !== RecordStatus.refunded && (
+                            record.result === RecordStatus.pending && (
                               <Tooltip
                                 title={t('When the transaction is successful, the extrinsic message will be provided')}
                               >

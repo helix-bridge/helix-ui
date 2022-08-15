@@ -12,6 +12,7 @@ export const hecoConfig: EthereumChainConfig = {
   isTest: false,
   logos: [{ name: 'heco.png', type: 'main' }],
   name: 'heco',
+  fullName: 'Heco',
   provider: 'wss://ws-mainnet.hecochain.com',
   social: {
     portal: 'https://www.hecochain.com/en-us/',

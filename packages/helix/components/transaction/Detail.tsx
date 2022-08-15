@@ -1,13 +1,12 @@
 import { Divider } from 'antd';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
+import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { useITranslation } from 'shared/hooks';
 import { HelixHistoryRecord, Network } from 'shared/model';
 import { isCrabDVMHeco } from 'shared/utils/bridge';
 import { fromWei, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
-import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
-import { getTokenSymbolFromHelixRecord } from 'shared/utils/record';
 import { TransferStep } from '../../model/transfer';
 import { IBreadcrumb } from './Breadcrumb';
 import { Bridge } from './Bridge';
@@ -30,15 +29,13 @@ export function Detail({ record, transfers }: DetailProps) {
   const arrival = getChainConfig(router.query.to as Network);
 
   const amount = useMemo(() => {
-    const symbol = getTokenSymbolFromHelixRecord(record);
-    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase());
+    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase());
 
-    return fromWei({ value: record?.amount ?? 0, decimals: token?.decimals ?? 9 }, prettyNumber);
+    return fromWei({ value: record.sendAmount ?? 0, decimals: token?.decimals ?? 9 }, prettyNumber);
   }, [departure.tokens, record]);
 
   const feeDecimals = useMemo(() => {
-    const symbol = getTokenSymbolFromHelixRecord(record, 'feeToken');
-    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase());
+    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === record.feeToken.toLowerCase());
 
     return token?.decimals ?? 9;
   }, [departure.tokens, record]);
@@ -92,7 +89,7 @@ export function Detail({ record, transfers }: DetailProps) {
         <Divider />
 
         <TransferDescription title={t('Nonce')} tip={t('A unique number of cross-chain transaction in Bridge')}>
-          {isCrabDVMHeco(record.fromChain, record.toChain) ? record.laneId : record.nonce}
+          {isCrabDVMHeco(record.fromChain, record.toChain) ? record.messageNonce : record.nonce}
         </TransferDescription>
       </div>
     </>

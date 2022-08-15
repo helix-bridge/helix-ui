@@ -52,8 +52,10 @@ export function Ethereum2Darwinia({
 
   useEffect(() => {
     const fn = () => (value: IssuingPayload) => {
+      const isRING = isRing(direction.from.symbol);
       const validateObs = validate([fee, balances, ring, allowance], {
-        balance: isRing(direction.from.symbol) ? ring : kton,
+        isRING,
+        balance: isRING ? ring : kton,
         amount: new BN(toWei({ value: direction.from.amount })),
         fee,
         ringBalance: ring,

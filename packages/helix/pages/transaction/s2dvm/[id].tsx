@@ -6,7 +6,6 @@ import { HelixHistoryRecord, Network, SubstrateDVMBridgeConfig } from 'shared/mo
 import { getBridge } from 'shared/utils/bridge';
 import { revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
-import { getTokenSymbolFromHelixRecord } from 'shared/utils/record';
 import { Detail } from '../../../components/transaction/Detail';
 import { TransferStep } from '../../../model/transfer';
 import { getServerSideRecordProps } from '../../../utils/getServerSideRecordProps';
@@ -26,9 +25,8 @@ const Page: NextPage<{
     const arrival = getChainConfig(router.query.to as Network);
     const bridge = getBridge<SubstrateDVMBridgeConfig>([departure, arrival]);
     const isIssuing = bridge.isIssuing(departure, arrival);
-    const symbol = getTokenSymbolFromHelixRecord(record);
-    const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase())!;
-    const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase())!;
+    const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase())!;
+    const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === record.recvToken.toLowerCase())!;
 
     let issuingTransfer: TransferStep[];
     let redeemTransfer: TransferStep[];

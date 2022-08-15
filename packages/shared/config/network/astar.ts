@@ -12,6 +12,7 @@ export const astarConfig: EthereumChainConfig = {
   isTest: false,
   logos: [{ name: 'astar.png', type: 'main' }],
   name: 'astar',
+  fullName: 'Astar',
   provider: 'wss://astar.api.onfinality.io/public-ws',
   social: {
     portal: 'https://astar.network/',
@@ -25,8 +26,8 @@ export const astarConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'cBridge',
-          bridge: 'bnb-astar',
-          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDT' },
+          bridge: 'bsc-astar',
+          partner: { name: 'bsc', role: 'backing', symbol: 'USDT' },
         },
         {
           category: 'cBridge',
@@ -43,6 +44,11 @@ export const astarConfig: EthereumChainConfig = {
           bridge: 'ethereum-astar',
           partner: { name: 'ethereum', role: 'backing', symbol: 'USDT' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-astar',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDT' },
+        },
       ],
       type: 'mapping',
       host: 'astar',
@@ -56,8 +62,8 @@ export const astarConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'cBridge',
-          bridge: 'bnb-astar',
-          partner: { name: 'BNB Chain', role: 'backing', symbol: 'USDC' },
+          bridge: 'bsc-astar',
+          partner: { name: 'bsc', role: 'backing', symbol: 'USDC' },
         },
         {
           category: 'cBridge',
@@ -79,6 +85,11 @@ export const astarConfig: EthereumChainConfig = {
           bridge: 'ethereum-astar',
           partner: { name: 'ethereum', role: 'backing', symbol: 'USDC' },
         },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-astar',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDC' },
+        },
       ],
       type: 'mapping',
       host: 'astar',
@@ -92,8 +103,8 @@ export const astarConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'cBridge',
-          bridge: 'bnb-astar',
-          partner: { name: 'BNB Chain', role: 'backing', symbol: 'BUSD' },
+          bridge: 'bsc-astar',
+          partner: { name: 'bsc', role: 'backing', symbol: 'BUSD' },
         },
       ],
       type: 'mapping',

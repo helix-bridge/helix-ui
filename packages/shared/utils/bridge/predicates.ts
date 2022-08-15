@@ -69,9 +69,9 @@ export const isHeco2Polygon = predicate('heco', 'polygon');
 export const isPolygon2Heco = revert(isHeco2Polygon);
 export const isHecoPolygon = or(isHeco2Polygon, isPolygon2Heco);
 
-export const isBNBChain2Arbitrum = predicate('BNB Chain', 'arbitrum');
-export const isArbitrum2BNBChain = revert(isBNBChain2Arbitrum);
-export const isBNBChainArbitrum = or(isBNBChain2Arbitrum, isArbitrum2BNBChain);
+export const isBSC2Arbitrum = predicate('bsc', 'arbitrum');
+export const isArbitrum2BSC = revert(isBSC2Arbitrum);
+export const isBSCArbitrum = or(isBSC2Arbitrum, isArbitrum2BSC);
 
 export const isSubstrateDVM2SubstrateDVMIssuing = or(
   predicate('pangoro-dvm', 'pangolin-dvm'),
@@ -80,17 +80,17 @@ export const isSubstrateDVM2SubstrateDVMIssuing = or(
 export const isSubstrateDVM2SubstrateDVMBacking = revert(isSubstrateDVM2SubstrateDVMIssuing);
 export const isSubstrateDVMSubstrateDVM = or(isSubstrateDVM2SubstrateDVMIssuing, isSubstrateDVM2SubstrateDVMBacking);
 
-export const isBnb2Astar = predicate('BNB Chain', 'astar');
-export const isAstar2Bnb = predicate('astar', 'BNB Chain');
-export const isBnbAstar = or(isBnb2Astar, isAstar2Bnb);
+export const isBSC2Astar = predicate('bsc', 'astar');
+export const isAstar2BSC = predicate('astar', 'bsc');
+export const isBSCAstar = or(isBSC2Astar, isAstar2BSC);
 
-export const isBnb2Avalanche = predicate('BNB Chain', 'avalanche');
-export const isAvalanche2Bnb = predicate('avalanche', 'BNB Chain');
-export const isBnbAvalanche = or(isBnb2Avalanche, isAvalanche2Bnb);
+export const isBSC2Avalanche = predicate('bsc', 'avalanche');
+export const isAvalanche2BSC = predicate('avalanche', 'bsc');
+export const isBSCAvalanche = or(isBSC2Avalanche, isAvalanche2BSC);
 
-export const isBnb2Optimism = predicate('BNB Chain', 'optimism');
-export const isOptimism2Bnb = predicate('optimism', 'BNB Chain');
-export const isBnbOptimism = or(isBnb2Optimism, isOptimism2Bnb);
+export const isBSC2Optimism = predicate('bsc', 'optimism');
+export const isOptimism2BSC = predicate('optimism', 'bsc');
+export const isBSCOptimism = or(isBSC2Optimism, isOptimism2BSC);
 
 export const isArbitrum2Astar = predicate('arbitrum', 'astar');
 export const isAstar2Arbitrum = predicate('astar', 'arbitrum');
@@ -124,9 +124,9 @@ export const isEthereum2Astar = predicate('ethereum', 'astar');
 export const isAstar2Ethereum = predicate('astar', 'ethereum');
 export const isEthereumAstar = or(isEthereum2Astar, isAstar2Ethereum);
 
-export const isEthereum2Bnb = predicate('ethereum', 'BNB Chain');
-export const isBnb2Ethereum = predicate('BNB Chain', 'ethereum');
-export const isEthereumBnb = or(isEthereum2Bnb, isBnb2Ethereum);
+export const isEthereum2BSc = predicate('ethereum', 'bsc');
+export const isBSC2Ethereum = predicate('bsc', 'ethereum');
+export const isEthereumBSC = or(isEthereum2BSc, isBSC2Ethereum);
 
 export const isEthereum2Avalanche = predicate('ethereum', 'avalanche');
 export const isAvalanche2Ethereum = predicate('avalanche', 'ethereum');
@@ -140,9 +140,9 @@ export const isEthereum2Optimism = predicate('ethereum', 'optimism');
 export const isOptimism2Ethereum = predicate('optimism', 'ethereum');
 export const isEthereumOptimism = or(isEthereum2Optimism, isOptimism2Ethereum);
 
-export const isBnb2Polygon = predicate('BNB Chain', 'polygon');
-export const isPolygon2Bnb = predicate('polygon', 'BNB Chain');
-export const isBnbPolygon = or(isBnb2Polygon, isPolygon2Bnb);
+export const isBSC2Polygon = predicate('bsc', 'polygon');
+export const isPolygon2BSC = predicate('polygon', 'bsc');
+export const isBSCPolygon = or(isBSC2Polygon, isPolygon2BSC);
 
 export const isAvalanche2Polygon = predicate('avalanche', 'polygon');
 export const isPolygon2Avalanche = predicate('polygon', 'avalanche');
@@ -155,3 +155,23 @@ export const isArbitrumPolygon = or(isArbitrum2Polygon, isPolygon2Arbitrum);
 export const isPolygon2Optimism = predicate('polygon', 'optimism');
 export const isOptimism2Polygon = predicate('optimism', 'polygon');
 export const isPolygonOptimism = or(isPolygon2Optimism, isOptimism2Polygon);
+
+export const isCrabDVM2Bsc = predicate('crab-dvm', 'bsc');
+export const isBsc2CrabDVM = predicate('bsc', 'crab-dvm');
+export const isCrabDVMBsc = or(isCrabDVM2Bsc, isBsc2CrabDVM);
+
+export const isCrabDVM2Arbitrum = predicate('crab-dvm', 'arbitrum');
+export const isArbitrum2CrabDVM = predicate('arbitrum', 'crab-dvm');
+export const isCrabDVMArbitrum = or(isCrabDVM2Arbitrum, isArbitrum2CrabDVM);
+
+export const isCrabDVM2Astar = predicate('crab-dvm', 'astar');
+export const isAstar2CrabDVM = predicate('astar', 'crab-dvm');
+export const isCrabDVMAstar = or(isCrabDVM2Astar, isAstar2CrabDVM);
+
+export const isCrabDVM2Avalanche = predicate('crab-dvm', 'avalanche');
+export const isAvalanche2CrabDVM = predicate('avalanche', 'crab-dvm');
+export const isCrabDVMAvalanche = or(isCrabDVM2Avalanche, isAvalanche2CrabDVM);
+
+export const isCrabDVM2Optimism = predicate('crab-dvm', 'optimism');
+export const isOptimism2CrabDVM = predicate('optimism', 'crab-dvm');
+export const isCrabDVMOptimism = or(isCrabDVM2Optimism, isOptimism2CrabDVM);
