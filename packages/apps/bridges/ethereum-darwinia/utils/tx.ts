@@ -55,8 +55,7 @@ export const issuing: TxFn<IssuingPayload> = ({ sender, direction, recipient, br
  */
 export function redeem({ sender, recipient, direction }: RedeemPayload): Observable<Tx> {
   const {
-    from: { symbol, decimals },
-    to: { amount },
+    from: { symbol, amount, decimals },
   } = direction;
   const num = toWei({ value: amount, decimals });
   const api = entrance.polkadot.getInstance(direction.from.meta.provider);
@@ -147,11 +146,18 @@ export function claimToken({
   );
 }
 
-type ITxValidation = RequiredPartial<TxValidation, 'balance' | 'amount' | 'fee'> & { ringBalance: BN };
+type ITxValidation = RequiredPartial<TxValidation, 'balance' | 'amount' | 'fee'> & { ringBalance: BN; isRING: boolean };
 
-const genValidations = ({ balance, amount, fee, ringBalance, allowance }: ITxValidation): [boolean, string][] => [
+const genValidations = ({
+  balance,
+  amount,
+  fee,
+  ringBalance,
+  allowance,
+  isRING,
+}: ITxValidation): [boolean, string][] => [
   [ringBalance.lt(fee), TxValidationMessages.balanceLessThanFee],
-  [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
+  [isRING ? balance.lt(amount.add(fee)) : balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
   [!!allowance && allowance.lt(amount), TxValidationMessages.allowanceLessThanAmount],
   [!!fee && fee?.lt(BN_ZERO), TxValidationMessages.invalidFee],
 ];

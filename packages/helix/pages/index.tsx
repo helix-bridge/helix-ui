@@ -12,7 +12,7 @@ import { DATE_FORMAT } from 'shared/config/constant';
 import { ENDPOINT, isFormalChain, isTestChain } from 'shared/config/env';
 import { SYSTEM_ChAIN_CONFIGURATIONS } from 'shared/config/network';
 import { ChainConfig, DailyStatistic } from 'shared/model';
-import { fromWei, gqlName, prettyNumber, rxGet } from 'shared/utils/helper';
+import { gqlName, prettyNumber, rxGet } from 'shared/utils/helper';
 import { chainConfigs } from 'shared/utils/network';
 import { BarChart, Statistic } from '../components/dashboard/BarChart';
 import { Chain } from '../components/dashboard/Chain';
@@ -70,10 +70,7 @@ function Page() {
 
     return {
       volume: dailyStatistics
-        .map(({ timestamp, dailyVolume }) => [
-          secondsToMilliseconds(+timestamp),
-          +fromWei({ value: dailyVolume, decimals: 9 }),
-        ])
+        .map(({ timestamp, dailyVolume }) => [secondsToMilliseconds(+timestamp), +dailyVolume])
         .reverse() as Statistic[],
       transactions: dailyStatistics
         .map(({ timestamp, dailyCount }) => [secondsToMilliseconds(+timestamp), +dailyCount])
@@ -121,8 +118,7 @@ function Page() {
 
     const volumes = calcRank('volume').map(({ chain, total }) => ({
       chain,
-      // Great than the actual total because of fromWei does not support float number;
-      total: fromWei({ value: Math.ceil(total.toNumber()), decimals: 9 }),
+      total: Math.ceil(total.toNumber()),
     }));
 
     const vTotal = volumes.reduce((acc, cur) => acc.plus(cur.total), new Bignumber(0));

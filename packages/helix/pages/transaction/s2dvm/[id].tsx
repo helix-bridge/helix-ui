@@ -26,7 +26,7 @@ const Page: NextPage<{
     const bridge = getBridge<SubstrateDVMBridgeConfig>([departure, arrival]);
     const isIssuing = bridge.isIssuing(departure, arrival);
     const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase())!;
-    const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase())!;
+    const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === record.recvToken.toLowerCase())!;
 
     let issuingTransfer: TransferStep[];
     let redeemTransfer: TransferStep[];
