@@ -55,7 +55,8 @@ export const issuing: TxFn<IssuingPayload> = ({ sender, direction, recipient, br
  */
 export function redeem({ sender, recipient, direction }: RedeemPayload): Observable<Tx> {
   const {
-    from: { symbol, amount, decimals },
+    from: { symbol, decimals },
+    to: { amount },
   } = direction;
   const num = toWei({ value: amount, decimals });
   const api = entrance.polkadot.getInstance(direction.from.meta.provider);
