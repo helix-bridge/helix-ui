@@ -5,6 +5,7 @@ export type PolkadotTypeNetwork =
   | 'pangoro'
   | 'polkadot'
   | 'pangolin-parachain'
+  | 'karura-parachain'
   | 'crab-parachain';
 
 export type DVMNetwork = 'pangolin-dvm' | 'crab-dvm' | 'pangoro-dvm' | 'darwinia-dvm';

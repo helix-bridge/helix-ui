@@ -1,16 +1,16 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 import { SubscanLink } from '../../components/widget/SubscanLink';
-import { SYSTEM_ChAIN_CONFIGURATIONS } from '../../config/network';
+import { SYSTEM_CHAIN_CONFIGURATIONS } from '../../config/network';
 import { knownDVMNetworks, knownPolkadotNetworks } from '../../config/network';
 import { DVMNetwork, Network, PolkadotTypeNetwork } from '../../model';
 
 describe('<SubscanLink />', () => {
-  const dvmConfigs = SYSTEM_ChAIN_CONFIGURATIONS.filter((item) => knownDVMNetworks.includes(item.name as DVMNetwork));
-  const polkadotConfigs = SYSTEM_ChAIN_CONFIGURATIONS.filter((item) =>
+  const dvmConfigs = SYSTEM_CHAIN_CONFIGURATIONS.filter((item) => knownDVMNetworks.includes(item.name as DVMNetwork));
+  const polkadotConfigs = SYSTEM_CHAIN_CONFIGURATIONS.filter((item) =>
     knownPolkadotNetworks.includes(item.name as PolkadotTypeNetwork)
   );
-  const ethereumConfigs = SYSTEM_ChAIN_CONFIGURATIONS.filter(
+  const ethereumConfigs = SYSTEM_CHAIN_CONFIGURATIONS.filter(
     (item) =>
       !knownDVMNetworks.includes(item.name as DVMNetwork) &&
       !knownPolkadotNetworks.includes(item.name as PolkadotTypeNetwork)

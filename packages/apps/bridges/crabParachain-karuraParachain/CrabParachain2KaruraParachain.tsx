@@ -1,20 +1,15 @@
-import { EyeInvisibleFilled } from '@ant-design/icons';
-import { hexToU8a } from '@polkadot/util';
-import { Typography } from 'antd';
 import BN from 'bn.js';
-import { upperFirst } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, mergeMap } from 'rxjs';
 import {
+  CrabParachainKaruraParachainBridgeConfig,
   CrossChainComponentProps,
   CrossToken,
-  DVMChainConfig,
   PolkadotChainConfig,
   TxObservableFactory,
 } from 'shared/model';
-import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { fromWei, isRing, prettyNumber, toWei } from 'shared/utils/helper';
+import { fromWei, isRing, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
@@ -22,11 +17,11 @@ import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../hooks';
 import { useApi } from '../../providers';
-import { IssuingPayload, ParachainSubstrateBridgeConfig } from './model';
+import { IssuingPayload } from './model';
 import { getIssuingFee } from './utils';
 import { issuing, validate } from './utils/tx';
 
-export function Substrate2Parachain({
+export function CrabParachain2KaruraParachain({
   form,
   setTxObservableFactory,
   direction,
@@ -35,25 +30,25 @@ export function Substrate2Parachain({
   onFeeChange,
   balances,
 }: CrossChainComponentProps<
-  ParachainSubstrateBridgeConfig,
+  CrabParachainKaruraParachainBridgeConfig,
   CrossToken<PolkadotChainConfig>,
-  CrossToken<DVMChainConfig>
+  CrossToken<PolkadotChainConfig>
 >) {
   const { t } = useTranslation();
   const { departureConnection } = useApi();
   const [fee, setFee] = useState<BN | null>(null);
-  const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const bridgeState = useCheckSpecVersion(direction);
   const [ring] = (balances ?? []) as BN[];
+  const symbol = direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol;
 
   const feeWithSymbol = useMemo(
     () =>
       fee && {
         amount: fromWei({ value: fee, decimals: direction.from.decimals }),
-        symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
+        symbol,
       },
-    [direction.from.meta.tokens, direction.from.decimals, fee]
+    [direction.from.decimals, fee, symbol]
   );
 
   useEffect(() => {
@@ -62,44 +57,23 @@ export function Substrate2Parachain({
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
-      const validateObs = validate([fee, dailyLimit, ring], {
+      const validateObs = validate([ring], {
         balance: ring,
         amount: new BN(toWei(data.direction.from)),
-        dailyLimit,
       });
+      const pallet = 5;
 
       return createTxWorkflow(
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        issuing(data, fee!),
+        issuing(data, pallet),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, ring, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
-
-  useEffect(() => {
-    const api = entrance.polkadot.getInstance(direction.to.meta.provider);
-
-    const sub$$ = from(waitUntilConnected(api))
-      .pipe(
-        mergeMap(() => {
-          const module = `from${upperFirst(direction.from.meta.name)}Issuing`;
-
-          return from(api.query[module].secureLimitedRingAmount());
-        })
-      )
-      .subscribe((result) => {
-        const data = result.toJSON() as [number, string]; // [0, hexString]
-        const num = hexToU8a(data[1]);
-
-        setDailyLimit(new BN(num));
-      });
-
-    return () => sub$$.unsubscribe();
-  }, [direction]);
+  }, [afterCrossChain, ring, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
 
   useEffect(() => {
     const sub$$ = from(getIssuingFee(bridge)).subscribe((result) => {
@@ -107,14 +81,14 @@ export function Substrate2Parachain({
 
       if (onFeeChange) {
         onFeeChange({
-          amount: isRing(direction.from.symbol) ? +fromWei({ value: result, decimals: direction.from.decimals }) : 0,
-          symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
+          amount: +fromWei({ value: result, decimals: direction.from.decimals }),
+          symbol,
         });
       }
     });
 
     return () => sub$$.unsubscribe();
-  }, [bridge, direction.from.meta.tokens, direction.from.symbol, direction.from.decimals, onFeeChange]);
+  }, [bridge, direction.from.decimals, onFeeChange, symbol]);
 
   return (
     <>
@@ -127,24 +101,7 @@ export function Substrate2Parachain({
         )}
       />
 
-      <CrossChainInfo
-        bridge={bridge}
-        fee={feeWithSymbol}
-        extra={[
-          {
-            name: t('Daily limit'),
-            content: dailyLimit ? (
-              <Typography.Text>
-                {fromWei({ value: dailyLimit, decimals: 18 }, (value) =>
-                  prettyNumber(value, { ignoreZeroDecimal: true })
-                )}
-              </Typography.Text>
-            ) : (
-              <EyeInvisibleFilled />
-            ),
-          },
-        ]}
-      ></CrossChainInfo>
+      <CrossChainInfo bridge={bridge} fee={feeWithSymbol}></CrossChainInfo>
     </>
   );
 }

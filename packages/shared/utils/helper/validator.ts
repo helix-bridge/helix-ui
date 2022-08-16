@@ -39,11 +39,8 @@ export const isValidAddressStrict = (address: string, network: Network): boolean
   return false;
 };
 
-// eslint-disable-next-line complexity
 export const isSS58Address = (address: string, ss58Prefix?: number) => {
-  const len = 48;
-
-  if (!address || address.length < len) {
+  if (!address) {
     return false;
   }
 

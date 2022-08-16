@@ -19,7 +19,7 @@ describe('network utils', () => {
   const sort = (ary: string[]) => sortBy(ary, (cur) => cur.charCodeAt(0));
 
   it('should contains chains count: ', () => {
-    expect(chainConfigs).toHaveLength(19);
+    expect(chainConfigs).toHaveLength(20);
   });
 
   it('crab contains 2 leafs', () => {

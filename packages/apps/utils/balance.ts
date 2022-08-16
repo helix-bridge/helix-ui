@@ -2,6 +2,7 @@ import BN from 'bn.js';
 import { CrossChainDirection } from 'shared/model';
 import {
   isCBridge,
+  isCrabParachainKaruraParachain,
   isDarwinia2Ethereum,
   isDVM2Substrate,
   isEthereum2Darwinia,
@@ -53,7 +54,7 @@ export async function getBalance(direction: CrossChainDirection, account: string
     return getErc20Balance(from.address, account).then((res) => [res]);
   }
 
-  if (isParachain2Substrate(fromChain, toChain)) {
+  if ([isParachain2Substrate, isCrabParachainKaruraParachain].some((fn) => fn(fromChain, toChain))) {
     return getParachainBalance(from.meta.provider, account).then((res) => [res]);
   }
 

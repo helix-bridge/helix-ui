@@ -4,4 +4,5 @@ export enum TxValidationMessages {
   allowanceLessThanAmount = 'Insufficient allowance',
   dailyLimitLessThanAmount = 'Insufficient daily limit',
   invalidFee = 'Invalid fee',
+  mustBeAnInteger = 'Transfer Amount must be integer',
 }

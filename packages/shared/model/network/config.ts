@@ -67,3 +67,7 @@ export interface DVMChainConfig extends ChainConfig {
   ss58Prefix: number;
   specVersion: number;
 }
+
+export interface ParachainChainConfig extends PolkadotChainConfig {
+  paraId: number;
+}

@@ -158,12 +158,12 @@ function initUitls() {
 
 
         export async function getRedeemFee(bridge: Bridge): Promise<BN | null> {
-           console.log('Unfinished getRedeemFee for birdge', bridge);
+           console.log('Unfinished getRedeemFee for bridge', bridge);
            return  new BN(0); 
         }
 
         export async function getIssuingFee(bridge: Bridge): Promise<BN | null> {
-           console.log('Unfinished getIssuing for birdge', bridge);
+           console.log('Unfinished getIssuing for bridge', bridge);
            return  new BN(0); 
         }
     " >>$1'/fee.ts'
