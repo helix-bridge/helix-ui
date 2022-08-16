@@ -29,8 +29,8 @@ export type ClaimNetworkPrefix = 'Darwinia' | 'Pangolin';
  * subql subql-darwinia-mmr subql-pangolin-mmr
  */
 const MMR_QUERY = `
-  query nodeEntities($ids: [String!]) {
-    nodeEntities(filter: { id: { in: $ids } }) {
+  query mMRNodeEntities($ids: [String!]) {
+    mMRNodeEntities(filter: { id: { in: $ids } }) {
       nodes {
         id
         hash
