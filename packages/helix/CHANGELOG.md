@@ -1,3 +1,18 @@
+# [4.1.0](https://github.com/helix-bridge/helix/compare/v4.0.6-helix...v4.1.0) (2022-08-16)
+
+
+### Bug Fixes
+
+* use available balance instead of total balance ([#165](https://github.com/helix-bridge/helix/issues/165)) ([e7890ae](https://github.com/helix-bridge/helix/commit/e7890aeace7c4369d4a15dbaf276fe1a11bb4258))
+
+
+### Features
+
+* support kton transfer on substrate<>dvm ([#166](https://github.com/helix-bridge/helix/issues/166)) ([972ac09](https://github.com/helix-bridge/helix/commit/972ac09a7dba2eb57df03c46ba9c58549d4ebbf6))
+* support stable coin transfer by cBridge ([#167](https://github.com/helix-bridge/helix/issues/167)) ([ab9d462](https://github.com/helix-bridge/helix/commit/ab9d462020a8bfc9ad484b9b48800dd9e2762aca))
+
+
+
 ## [4.0.5](https://github.com/helix-bridge/helix/compare/v4.0.4-helix...v4.0.5) (2022-08-06)
 
 
