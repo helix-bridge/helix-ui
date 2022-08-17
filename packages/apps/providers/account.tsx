@@ -1,7 +1,6 @@
-import React, { createContext, useEffect, useMemo, useState } from 'react';
-import { useContext } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { IAccountMeta, SupportedWallet } from 'shared/model';
-import { isSameAddress, readStorage, updateStorage } from 'shared/utils/helper';
+import { isSameAddress, readStorage } from 'shared/utils/helper';
 import { useApi } from './api';
 
 export interface AccountCtx {
@@ -31,10 +30,6 @@ export const AccountProvider = ({ children }: React.PropsWithChildren<unknown>) 
 
     setAccount(acc ?? '');
   }, [departureConnection.accounts, departureConnection.type]);
-
-  useEffect(() => {
-    updateStorage({ [departureConnection.type]: account });
-  }, [account, departureConnection.type]);
 
   return (
     <AccountContext.Provider
