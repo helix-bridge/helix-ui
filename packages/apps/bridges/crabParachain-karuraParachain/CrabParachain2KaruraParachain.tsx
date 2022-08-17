@@ -18,7 +18,7 @@ import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../hooks';
 import { useApi } from '../../providers';
 import { IssuingPayload } from './model';
-import { getFee } from './utils';
+import { getIssuingFee } from './utils';
 import { issuing, validate } from './utils/tx';
 
 export function CrabParachain2KaruraParachain({
@@ -61,13 +61,12 @@ export function CrabParachain2KaruraParachain({
         balance,
         amount: new BN(toWei(data.direction.from)),
       });
-      const pallet = 5;
 
       return createTxWorkflow(
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        issuing(data, pallet),
+        issuing(data),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
@@ -76,7 +75,7 @@ export function CrabParachain2KaruraParachain({
   }, [afterCrossChain, balance, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
 
   useEffect(() => {
-    const sub$$ = from(getFee(direction)).subscribe((result) => {
+    const sub$$ = from(getIssuingFee(bridge)).subscribe((result) => {
       setFee(result);
 
       if (onFeeChange) {
@@ -88,7 +87,7 @@ export function CrabParachain2KaruraParachain({
     });
 
     return () => sub$$.unsubscribe();
-  }, [direction, onFeeChange, symbol]);
+  }, [bridge, direction.from.decimals, onFeeChange, symbol]);
 
   return (
     <>
