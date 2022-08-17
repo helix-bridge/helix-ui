@@ -18,7 +18,7 @@ import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../hooks';
 import { useApi } from '../../providers';
 import { IssuingPayload } from './model';
-import { getIssuingFee } from './utils';
+import { getFee } from './utils';
 import { issuing, validate } from './utils/tx';
 
 export function CrabParachain2KaruraParachain({
@@ -39,7 +39,7 @@ export function CrabParachain2KaruraParachain({
   const [fee, setFee] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const bridgeState = useCheckSpecVersion(direction);
-  const [ring] = (balances ?? []) as BN[];
+  const [balance] = (balances ?? []) as BN[];
   const symbol = direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol;
 
   const feeWithSymbol = useMemo(
@@ -57,8 +57,8 @@ export function CrabParachain2KaruraParachain({
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
-      const validateObs = validate([ring], {
-        balance: ring,
+      const validateObs = validate([balance], {
+        balance,
         amount: new BN(toWei(data.direction.from)),
       });
       const pallet = 5;
@@ -73,10 +73,10 @@ export function CrabParachain2KaruraParachain({
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, ring, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
+  }, [afterCrossChain, balance, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
 
   useEffect(() => {
-    const sub$$ = from(getIssuingFee(bridge)).subscribe((result) => {
+    const sub$$ = from(getFee(direction)).subscribe((result) => {
       setFee(result);
 
       if (onFeeChange) {
@@ -88,7 +88,7 @@ export function CrabParachain2KaruraParachain({
     });
 
     return () => sub$$.unsubscribe();
-  }, [bridge, direction.from.decimals, onFeeChange, symbol]);
+  }, [direction, onFeeChange, symbol]);
 
   return (
     <>

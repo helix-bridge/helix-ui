@@ -1,4 +1,4 @@
-import { EMPTY, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { RequiredPartial, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm, toWei } from 'shared/utils/helper';
@@ -6,7 +6,7 @@ import { signAndSendExtrinsic } from 'shared/utils/tx';
 import { TxValidationMessages } from '../../../config/validation';
 import { TxValidation } from '../../../model';
 import { validationObsFactory } from '../../../utils/tx';
-import { IssuingPayload, RedeemPayload } from '../model';
+import { IssuingPayload } from '../model';
 
 export function issuing(payload: IssuingPayload, palletInstance: number): Observable<Tx> {
   const {
@@ -69,10 +69,7 @@ export function issuing(payload: IssuingPayload, palletInstance: number): Observ
   return signAndSendExtrinsic(api, sender, extrinsic);
 }
 
-export function redeem(payload: RedeemPayload): Observable<Tx> {
-  console.log('🚀 ~ file: tx.ts ~ line 14 ~ redeem ~ payload', payload);
-  return EMPTY;
-}
+export const redeem = issuing;
 
 const genValidations = ({
   balance,

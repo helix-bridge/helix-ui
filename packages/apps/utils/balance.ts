@@ -55,7 +55,7 @@ export async function getBalance(direction: CrossChainDirection, account: string
   }
 
   if ([isParachain2Substrate, isCrabParachainKaruraParachain].some((fn) => fn(fromChain, toChain))) {
-    return getParachainBalance(from.meta.provider, account).then((res) => [res]);
+    return getParachainBalance(from, account).then((res) => [res]);
   }
 
   console.warn(`🚨 Can not find a method to fetch balance of ${from.symbol} for ${fromChain} to ${toChain} transfer `);
