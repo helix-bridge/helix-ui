@@ -1,4 +1,3 @@
-import { TypeRegistry } from '@polkadot/types';
 import { EMPTY, Observable } from 'rxjs';
 import { RequiredPartial, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
@@ -17,27 +16,26 @@ export function issuing(payload: IssuingPayload, palletInstance: number): Observ
   } = payload;
   const timestamp = Date.now().toString();
   const amount = toWei(departure).slice(0, -timestamp.length) + timestamp;
-  const registry = new TypeRegistry();
   const api = entrance.polkadot.getInstance(departure.meta.provider);
 
-  const dest = registry.createType('XcmVersionedMultiLocation', {
-    V1: registry.createType('XcmV1MultiLocation', {
+  const dest = api.createType('XcmVersionedMultiLocation', {
+    V1: api.createType('XcmV1MultiLocation', {
       parents: 1,
-      interior: registry.createType('XcmV1MultilocationJunctions', {
-        X1: registry.createType('XcmV1Junction', {
-          Parachain: registry.createType('Compact<u32>', arrival.meta.paraId),
+      interior: api.createType('XcmV1MultilocationJunctions', {
+        X1: api.createType('XcmV1Junction', {
+          Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
         }),
       }),
     }),
   });
 
-  const beneficiary = registry.createType('XcmVersionedMultiLocation', {
-    V1: registry.createType('XcmV1MultiLocation', {
+  const beneficiary = api.createType('XcmVersionedMultiLocation', {
+    V1: api.createType('XcmV1MultiLocation', {
       parents: 0,
-      interior: registry.createType('XcmV1MultilocationJunctions', {
-        X1: registry.createType('XcmV1Junction', {
+      interior: api.createType('XcmV1MultilocationJunctions', {
+        X1: api.createType('XcmV1Junction', {
           AccountId32: {
-            network: registry.createType('NetworkId', 'Any'),
+            network: api.createType('NetworkId', 'Any'),
             id: convertToDvm(recipient),
           },
         }),
@@ -45,21 +43,21 @@ export function issuing(payload: IssuingPayload, palletInstance: number): Observ
     }),
   });
 
-  const assets = registry.createType('XcmVersionedMultiAssets', {
+  const assets = api.createType('XcmVersionedMultiAssets', {
     V1: [
-      registry.createType('XcmV1MultiAsset', {
-        id: registry.createType('XcmV1MultiassetAssetId', {
-          Concrete: registry.createType('XcmV1MultiLocation', {
+      api.createType('XcmV1MultiAsset', {
+        id: api.createType('XcmV1MultiassetAssetId', {
+          Concrete: api.createType('XcmV1MultiLocation', {
             parents: 0,
-            interior: registry.createType('XcmV1MultilocationJunctions', {
-              X1: registry.createType('XcmV1Junction', {
+            interior: api.createType('XcmV1MultilocationJunctions', {
+              X1: api.createType('XcmV1Junction', {
                 PalletInstance: palletInstance,
               }),
             }),
           }),
         }),
-        fun: registry.createType('XcmV1MultiassetFungibility', {
-          Fungible: registry.createType('Compact<u128>', amount),
+        fun: api.createType('XcmV1MultiassetFungibility', {
+          Fungible: api.createType('Compact<u128>', amount),
         }),
       }),
     ],
