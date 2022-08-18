@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { RequiredPartial, Tx } from 'shared/model';
+import { CrossToken, ParachainChainConfig, RequiredPartial, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm, fromWei, toWei } from 'shared/utils/helper';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
@@ -8,14 +8,19 @@ import { TxValidation } from '../../../model';
 import { validationObsFactory } from '../../../utils/tx';
 import { IssuingPayload } from '../model';
 
+const patchAmount = (departure: CrossToken<ParachainChainConfig>) => {
+  const pos = -3;
+  const timestamp = Date.now().toString().slice(0, pos);
+  return toWei(departure).slice(0, -timestamp.length) + timestamp;
+};
+
 export function issuing(payload: IssuingPayload): Observable<Tx> {
   const {
     direction: { from: departure, to: arrival },
     sender,
     recipient,
   } = payload;
-  const timestamp = Date.now().toString();
-  const amount = toWei(departure).slice(0, -timestamp.length) + timestamp;
+  const amount = patchAmount(departure);
   const api = entrance.polkadot.getInstance(departure.meta.provider);
   const palletInstance = 5;
 
@@ -76,8 +81,7 @@ export function redeem(payload: IssuingPayload): Observable<Tx> {
     sender,
     recipient,
   } = payload;
-  const timestamp = Date.now().toString();
-  const amount = toWei(departure).slice(0, -timestamp.length) + timestamp;
+  const amount = patchAmount(departure);
   const api = entrance.polkadot.getInstance(departure.meta.provider);
 
   const currencyId = api.createType('AcalaPrimitivesCurrencyCurrencyId', {

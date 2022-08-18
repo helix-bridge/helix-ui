@@ -10,6 +10,7 @@ import {
   getDisplayName,
   isDVMNetwork,
   isEthereumNetwork,
+  isParachainNetwork,
   isPolkadotNetwork,
 } from '../utils/network/network';
 import { sortBy } from 'lodash';
@@ -182,6 +183,13 @@ describe('network utils', () => {
     expect(isPolkadotNetwork('pangoro')).toBe(true);
     expect(isPolkadotNetwork('pangolin-parachain')).toBe(true);
     expect(isPolkadotNetwork('crab-parachain')).toBe(true);
+    expect(isPolkadotNetwork('karura-parachain')).toBe(true);
+  });
+
+  it('can recognize parachain network', () => {
+    expect(isParachainNetwork('pangolin-parachain')).toBe(true);
+    expect(isParachainNetwork('crab-parachain')).toBe(true);
+    expect(isParachainNetwork('karura-parachain')).toBe(true);
   });
 
   it('can recognize ethereum network', () => {

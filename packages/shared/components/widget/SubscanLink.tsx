@@ -2,7 +2,7 @@ import { Typography } from 'antd';
 import React from 'react';
 import { CSSProperties, PropsWithChildren } from 'react';
 import { ChainConfig, Network } from '../../model';
-import { isDVMNetwork, isPolkadotNetwork } from '../../utils/network';
+import { isDVMNetwork, isParachainNetwork, isPolkadotNetwork } from '../../utils/network';
 import { Icon } from './Icon';
 
 const { Link } = Typography;
@@ -30,8 +30,9 @@ export function SubscanLink({
   ...other
 }: SubscanLinkProps) {
   let network: Network = typeof networkOrChainConfig === 'object' ? networkOrChainConfig.name : networkOrChainConfig;
+  const isSubscan = isPolkadotNetwork(network) || isDVMNetwork(network);
 
-  if (isDVMNetwork(networkOrChainConfig)) {
+  if (isDVMNetwork(networkOrChainConfig) || isParachainNetwork(networkOrChainConfig)) {
     network = network.split('-')[0] as Network;
   }
 
@@ -60,7 +61,6 @@ export function SubscanLink({
   }
 
   if (txHash) {
-    const isSubscan = isPolkadotNetwork(network) || isDVMNetwork(network);
     const omitNetwork: Network[] = ['ethereum'];
 
     const explorers: Partial<{ [key in Network]: string }> = {

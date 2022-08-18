@@ -1,4 +1,4 @@
-import { DVMNetwork, EthereumTypeNetwork, PolkadotTypeNetwork } from '../../model';
+import { DVMNetwork, EthereumTypeNetwork, ParachainNetwork, PolkadotTypeNetwork } from '../../model';
 import { arbitrumConfig } from './arbitrum';
 import { astarConfig } from './astar';
 import { avalancheConfig } from './avalanche';
@@ -43,15 +43,15 @@ export const SYSTEM_CHAIN_CONFIGURATIONS = [
   ropstenConfig,
 ];
 
+export const knownParachainNetworks: ParachainNetwork[] = ['pangolin-parachain', 'crab-parachain', 'karura-parachain'];
+
 export const knownPolkadotNetworks: PolkadotTypeNetwork[] = [
   'crab',
   'darwinia',
   'pangolin',
   'pangoro',
   'polkadot',
-  'pangolin-parachain',
-  'crab-parachain',
-  'karura-parachain',
+  ...knownParachainNetworks,
 ];
 
 export const knownDVMNetworks: DVMNetwork[] = ['crab-dvm', 'pangolin-dvm', 'pangoro-dvm', 'darwinia-dvm'];
