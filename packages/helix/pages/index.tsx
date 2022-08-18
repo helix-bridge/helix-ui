@@ -10,7 +10,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Subscription } from 'rxjs';
 import { DATE_FORMAT } from 'shared/config/constant';
 import { ENDPOINT, isFormalChain, isTestChain } from 'shared/config/env';
-import { SYSTEM_ChAIN_CONFIGURATIONS } from 'shared/config/network';
+import { SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
 import { ChainConfig, DailyStatistic } from 'shared/model';
 import { gqlName, prettyNumber, rxGet } from 'shared/utils/helper';
 import { chainConfigs } from 'shared/utils/network';
@@ -32,7 +32,7 @@ interface ChainStatistic {
 // @see response of: https://api.coingecko.com/api/v3/coins/list
 type CoinIds = 'darwinia-crab-network' | 'darwinia-network-native-token';
 
-const configs = SYSTEM_ChAIN_CONFIGURATIONS.filter((config) => config.isTest === isTestChain);
+const configs = SYSTEM_CHAIN_CONFIGURATIONS.filter((config) => config.isTest === isTestChain);
 
 const initialPrices = Object.fromEntries(configs.map((item) => [item.name, { usd: 1 }]));
 

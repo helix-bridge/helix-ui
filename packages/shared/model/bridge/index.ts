@@ -37,3 +37,4 @@ export * from './crabDVM-arbitrum';
 export * from './crabDVM-astar';
 export * from './crabDVM-avalanche';
 export * from './crabDVM-optimism';
+export * from './crabParachain-karuraParachain';

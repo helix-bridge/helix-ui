@@ -1,6 +1,6 @@
-import { PolkadotChainConfig } from '../../model';
+import { ParachainChainConfig } from '../../model';
 
-export const crabParachainConfig: PolkadotChainConfig = {
+export const crabParachainConfig: ParachainChainConfig = {
   isTest: false,
   logos: [
     { name: 'crab.png', type: 'main' },
@@ -24,6 +24,11 @@ export const crabParachainConfig: PolkadotChainConfig = {
           bridge: 'parachain-substrate',
           partner: { name: 'crab', role: 'issuing', symbol: 'CRAB' },
         },
+        {
+          category: 'helix',
+          bridge: 'crabParachain-karuraParachain',
+          partner: { name: 'karura-parachain', role: 'issuing', symbol: 'CRAB' },
+        },
       ],
       type: 'native',
       host: 'crab-parachain',
@@ -34,5 +39,6 @@ export const crabParachainConfig: PolkadotChainConfig = {
   ],
   ss58Prefix: 42,
   specVersion: 5310,
+  paraId: 2105,
   wallets: ['polkadot'],
 };

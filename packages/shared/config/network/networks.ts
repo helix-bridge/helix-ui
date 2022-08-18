@@ -1,4 +1,4 @@
-import { DVMNetwork, EthereumTypeNetwork, PolkadotTypeNetwork } from '../../model';
+import { DVMNetwork, EthereumTypeNetwork, ParachainNetwork, PolkadotTypeNetwork } from '../../model';
 import { arbitrumConfig } from './arbitrum';
 import { astarConfig } from './astar';
 import { avalancheConfig } from './avalanche';
@@ -10,6 +10,7 @@ import { darwiniaConfig } from './darwinia';
 import { darwiniaDVMConfig } from './darwinia-dvm';
 import { ethereumConfig } from './ethereum';
 import { hecoConfig } from './heco';
+import { karuraParachainConfig } from './karura-parachain';
 import { optimismConfig } from './optimism';
 import { pangolinConfig } from './pangolin';
 import { pangolinDVMConfig } from './pangolin-dvm';
@@ -19,7 +20,7 @@ import { pangoroDVMConfig } from './pangoro-dvm';
 import { polygonConfig } from './polygon';
 import { ropstenConfig } from './ropsten';
 
-export const SYSTEM_ChAIN_CONFIGURATIONS = [
+export const SYSTEM_CHAIN_CONFIGURATIONS = [
   arbitrumConfig,
   astarConfig,
   avalancheConfig,
@@ -31,6 +32,7 @@ export const SYSTEM_ChAIN_CONFIGURATIONS = [
   darwiniaDVMConfig,
   ethereumConfig,
   hecoConfig,
+  karuraParachainConfig,
   optimismConfig,
   pangolinConfig,
   pangolinDVMConfig,
@@ -41,14 +43,15 @@ export const SYSTEM_ChAIN_CONFIGURATIONS = [
   ropstenConfig,
 ];
 
+export const knownParachainNetworks: ParachainNetwork[] = ['pangolin-parachain', 'crab-parachain', 'karura-parachain'];
+
 export const knownPolkadotNetworks: PolkadotTypeNetwork[] = [
   'crab',
   'darwinia',
   'pangolin',
   'pangoro',
   'polkadot',
-  'pangolin-parachain',
-  'crab-parachain',
+  ...knownParachainNetworks,
 ];
 
 export const knownDVMNetworks: DVMNetwork[] = ['crab-dvm', 'pangolin-dvm', 'pangoro-dvm', 'darwinia-dvm'];

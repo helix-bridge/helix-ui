@@ -175,3 +175,7 @@ export const isCrabDVMAvalanche = or(isCrabDVM2Avalanche, isAvalanche2CrabDVM);
 export const isCrabDVM2Optimism = predicate('crab-dvm', 'optimism');
 export const isOptimism2CrabDVM = predicate('optimism', 'crab-dvm');
 export const isCrabDVMOptimism = or(isCrabDVM2Optimism, isOptimism2CrabDVM);
+
+export const isCrabParachain2KaruraParachain = predicate('crab-parachain', 'karura-parachain');
+export const isKaruraParachain2CrabParachain = predicate('karura-parachain', 'crab-parachain');
+export const isCrabParachainKaruraParachain = or(isCrabParachain2KaruraParachain, isKaruraParachain2CrabParachain);

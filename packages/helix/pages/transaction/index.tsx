@@ -15,7 +15,7 @@ import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
 import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
-import { SYSTEM_ChAIN_CONFIGURATIONS } from 'shared/config/network';
+import { SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
 import { HelixHistoryRecord, Network } from 'shared/model';
 import { convertToDvm, gqlName, isSS58Address, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { getChainConfig, getDisplayName } from 'shared/utils/network';
@@ -25,7 +25,7 @@ import { HISTORY_RECORDS, Path } from '../../config';
 import { getDetailPaths } from '../../utils';
 
 function RecordAccount({ chain, account }: { chain: Network; account: string }) {
-  const chainConfig = getChainConfig(chain, SYSTEM_ChAIN_CONFIGURATIONS);
+  const chainConfig = getChainConfig(chain, SYSTEM_CHAIN_CONFIGURATIONS);
   const displayAccount = revertAccount(account, chainConfig);
 
   return (

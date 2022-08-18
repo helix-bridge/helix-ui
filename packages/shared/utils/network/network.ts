@@ -1,5 +1,5 @@
 import { chain as lodashChain, pick, upperFirst } from 'lodash';
-import { SYSTEM_ChAIN_CONFIGURATIONS } from '../../config/network';
+import { knownParachainNetworks, SYSTEM_CHAIN_CONFIGURATIONS } from '../../config/network';
 import { knownDVMNetworks, knownEthereumNetworks, knownPolkadotNetworks } from '../../config/network';
 import { ChainConfig, Network, PolkadotChainConfig } from '../../model';
 import { getCustomNetworkConfig } from '../helper/storage';
@@ -11,7 +11,7 @@ export const chainConfigs = lodashChain(crossChainGraph)
   .flatten()
   .unionWith((pre, next) => pre === next)
   .map((vertices) => {
-    let config = SYSTEM_ChAIN_CONFIGURATIONS.find((item) => vertices === item.name);
+    let config = SYSTEM_CHAIN_CONFIGURATIONS.find((item) => vertices === item.name);
 
     if (!config) {
       throw new Error(`Can not find ${vertices} network configuration`);
@@ -41,6 +41,8 @@ export const isPolkadotNetwork = isSpecifyNetwork(knownPolkadotNetworks);
 export const isDVMNetwork = isSpecifyNetwork(knownDVMNetworks);
 
 export const isEthereumNetwork = isSpecifyNetwork(knownEthereumNetworks);
+
+export const isParachainNetwork = isSpecifyNetwork(knownParachainNetworks);
 
 export function getChainConfig(name: Network | null | undefined, source = chainConfigs): ChainConfig {
   if (!name) {

@@ -36,7 +36,7 @@ Make sure the token exists on the network configuration:
 
 Go to `package/apps/` and run `yarn init:bridge`
 
-1. `shared/model/bridge` Update types
+1. `shared/model/bridge/` Update the generated type if needed 
 1. `shared/config/bridges` Update bridge configuration
 1. `shared/config/bridge.ts` Add bridge
 

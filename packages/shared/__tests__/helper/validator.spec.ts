@@ -6,6 +6,7 @@ describe('validator utils', () => {
   const substrateAddress = '5FA7CzAgT5fNDFRdb4UWSZX3b9HJsPuR7F5BF4YotSpKxAA2';
   const darwiniaAddress = '2rGH1BB1E6fvTqiVrHMwNw8r5VrFYznvafn2Uf7amvYdCZ9f';
   const ethereumAddress = '0x245B4775082C144C22a4874B0fBa8c70c510c5AE';
+  const karuraAddress = 'rPgRFkyPBveuFfrnxZhbvUbceRK1AVihGEiKpga9NbkPGkg';
 
   it('should predicate ring correctly', () => {
     expect(isRing('crab')).toBe(true);
@@ -38,6 +39,7 @@ describe('validator utils', () => {
     expect(isValidAddress(substrateAddress, 'ethereum')).toBe(false);
     expect(isValidAddress(ethereumAddress, 'ethereum')).toBe(true);
     expect(isValidAddress(ethereumAddress, 'darwinia')).toBe(false);
+    expect(isValidAddress(karuraAddress, 'karura-parachain')).toBe(true);
   });
 
   it('should predicate address with ss58Prefix checking', () => {
@@ -49,17 +51,20 @@ describe('validator utils', () => {
     expect(isValidAddressStrict(substrateAddress, 'ethereum')).toBe(false);
     expect(isValidAddressStrict(ethereumAddress, 'ethereum')).toBe(true);
     expect(isValidAddressStrict(ethereumAddress, 'darwinia')).toBe(false);
+    expect(isValidAddressStrict(karuraAddress, 'karura-parachain')).toBe(true);
   });
 
   it('should predicate polkadot address ', () => {
     expect(isSS58Address(darwiniaAddress)).toBe(true);
     expect(isSS58Address(substrateAddress)).toBe(true);
     expect(isSS58Address(ethereumAddress)).toBe(false);
+    expect(isSS58Address(karuraAddress)).toBe(true);
   });
 
   it('should recognize the address with different ss58Prefix', () => {
     expect(isSameAddress(darwiniaAddress, substrateAddress)).toBe(true);
     expect(isSameAddress(darwiniaAddress, ethereumAddress)).toBe(false);
     expect(isSameAddress(substrateAddress, ethereumAddress)).toBe(false);
+    expect(isSameAddress(darwiniaAddress, karuraAddress)).toBe(true);
   });
 });

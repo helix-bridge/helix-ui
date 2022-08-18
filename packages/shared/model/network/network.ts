@@ -1,11 +1,6 @@
-export type PolkadotTypeNetwork =
-  | 'pangolin'
-  | 'crab'
-  | 'darwinia'
-  | 'pangoro'
-  | 'polkadot'
-  | 'pangolin-parachain'
-  | 'crab-parachain';
+export type ParachainNetwork = 'pangolin-parachain' | 'karura-parachain' | 'crab-parachain';
+
+export type PolkadotTypeNetwork = 'pangolin' | 'crab' | 'darwinia' | 'pangoro' | 'polkadot' | ParachainNetwork;
 
 export type DVMNetwork = 'pangolin-dvm' | 'crab-dvm' | 'pangoro-dvm' | 'darwinia-dvm';
 
@@ -21,6 +16,6 @@ export type EthereumTypeNetwork =
   | 'astar'
   | DVMNetwork;
 
-export type Network = PolkadotTypeNetwork | EthereumTypeNetwork | DVMNetwork;
+export type Network = PolkadotTypeNetwork | EthereumTypeNetwork | DVMNetwork | ParachainNetwork;
 
 export type SupportedWallet = 'metamask' | 'polkadot';

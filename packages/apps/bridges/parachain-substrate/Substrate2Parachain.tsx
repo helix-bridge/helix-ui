@@ -22,7 +22,7 @@ import { TransferDone } from '../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../hooks';
 import { useApi } from '../../providers';
-import { IssuingPayload, Parachain2SubstrateBridgeConfig } from './model';
+import { IssuingPayload, ParachainSubstrateBridgeConfig } from './model';
 import { getIssuingFee } from './utils';
 import { issuing, validate } from './utils/tx';
 
@@ -35,7 +35,7 @@ export function Substrate2Parachain({
   onFeeChange,
   balances,
 }: CrossChainComponentProps<
-  Parachain2SubstrateBridgeConfig,
+  ParachainSubstrateBridgeConfig,
   CrossToken<PolkadotChainConfig>,
   CrossToken<DVMChainConfig>
 >) {
