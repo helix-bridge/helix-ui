@@ -425,7 +425,7 @@ exports[`<TargetTx /> render target tx with TxStatus: 3 1`] = `
   <a
     className="ant-typography hover:opacity-80 transition-opacity duration-200"
     href="https://crab.subscan.io/tx/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
-    onClick={null}
+    onClick={[Function]}
     rel="noopener noreferrer"
     style={
       Object {
@@ -520,7 +520,7 @@ exports[`<TargetTx /> render target tx with TxStatus: 3 2`] = `
   <a
     className="ant-typography hover:opacity-80 transition-opacity duration-200"
     href="https://crab.subscan.io/tx/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
-    onClick={null}
+    onClick={[Function]}
     rel="noopener noreferrer"
     style={
       Object {
@@ -615,7 +615,7 @@ exports[`<TargetTx /> render target tx with TxStatus: 4 1`] = `
   <a
     className="ant-typography hover:opacity-80 transition-opacity duration-200"
     href="https://darwinia.subscan.io/tx/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
-    onClick={null}
+    onClick={[Function]}
     rel="noopener noreferrer"
     style={
       Object {
@@ -710,7 +710,7 @@ exports[`<TargetTx /> render target tx with TxStatus: 4 2`] = `
   <a
     className="ant-typography hover:opacity-80 transition-opacity duration-200"
     href="https://darwinia.subscan.io/tx/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
-    onClick={null}
+    onClick={[Function]}
     rel="noopener noreferrer"
     style={
       Object {
@@ -845,7 +845,7 @@ exports[`<TargetTx /> should render null if refunded 1`] = `
   <a
     className="ant-typography hover:opacity-80 transition-opacity duration-200"
     href="https://darwinia.subscan.io/tx/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
-    onClick={null}
+    onClick={[Function]}
     rel="noopener noreferrer"
     style={
       Object {

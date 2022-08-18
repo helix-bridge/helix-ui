@@ -40,7 +40,7 @@ exports[`<SourceTx /> render SourceTx 1`] = `
   <a
     className="ant-typography hover:opacity-80 transition-opacity duration-200"
     href="https://undefined.etherscan.io/tx/0xa9673370dce7f48b306fb96b90c42fa2a13986f1e618eb2996eaeb5abce88643"
-    onClick={null}
+    onClick={[Function]}
     rel="noopener noreferrer"
     style={
       Object {
