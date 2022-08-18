@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './loading.scss';
+
 $radius-base: 4px;
 $bg-dark: #151d35;
 
