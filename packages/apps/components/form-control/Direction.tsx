@@ -1,5 +1,5 @@
-import { PauseCircleOutlined } from '@ant-design/icons';
-import { Spin, Tooltip } from 'antd';
+import { PauseCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 import BN from 'bn.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,7 @@ import { Icon } from 'shared/components/widget/Icon';
 import { BridgeStatus, CrossChainDirection, CustomFormControlProps, HashInfo } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { fromWei, isKton, isRing, largeNumber, prettyNumber, updateStorage } from 'shared/utils/helper';
+import { CountLoading } from '../widget/CountLoading';
 import { Destination } from './Destination';
 
 type DirectionProps = CustomFormControlProps<CrossChainDirection> & {
@@ -14,7 +15,10 @@ type DirectionProps = CustomFormControlProps<CrossChainDirection> & {
   fee: { amount: number; symbol: string } | null;
   balance: BN | BN[] | null;
   isBalanceLoading: boolean;
+  onRefresh?: () => void;
 };
+
+const MILLION = 1e6;
 
 const calcToAmount = (payment: string, paymentFee: number | null) => {
   if (paymentFee === null) {
@@ -32,6 +36,7 @@ export function Direction({
   initial,
   onChange,
   balance,
+  onRefresh,
   isBalanceLoading = false,
   fee = { amount: 0, symbol: '' },
 }: DirectionProps) {
@@ -116,28 +121,53 @@ export function Direction({
 
       {isBalanceLoading && (
         <div className="absolute right-0 top-28 cursor-pointer space-x-2 text-xs">
-          <Spin spinning size="small" />
+          <CountLoading />
         </div>
       )}
 
       {iBalance && !isBalanceLoading && (
-        <Tooltip
-          title={
-            // eslint-disable-next-line no-magic-numbers
-            iBalance.gt(new BN(1_000_000))
-              ? fromWei({ value: iBalance, decimals: data.from.decimals }, prettyNumber)
-              : ''
-          }
-          className="absolute right-0 top-28 cursor-pointer space-x-2 text-xs"
-        >
-          {fromWei(
-            { value: iBalance, decimals: data.from.decimals },
-            // eslint-disable-next-line no-magic-numbers
-            (val: string) => (+val > 1e6 ? largeNumber(val) : val),
-            (val: string) => prettyNumber(val, { ignoreZeroDecimal: true, decimal: 3 })
-          )}
-          <span className="ml-2">{data.from.symbol}</span>
-        </Tooltip>
+        <span className="absolute right-0 top-28 cursor-pointer space-x-2 text-xs flex items-center">
+          <Tooltip
+            title={
+              iBalance.gt(new BN(MILLION))
+                ? fromWei({ value: iBalance, decimals: data.from.decimals }, prettyNumber)
+                : ''
+            }
+          >
+            <span
+              onClick={() => {
+                const { from } = data;
+                const amount = fromWei({ value: iBalance, decimals: data.from.decimals });
+
+                if (amount !== from.amount) {
+                  triggerChange({
+                    from: { ...from, amount },
+                    to: {
+                      ...data.to,
+                      amount: fee && fee.symbol === from.symbol ? calcToAmount(amount, fee.amount) : amount,
+                    },
+                  });
+                }
+              }}
+            >
+              {fromWei(
+                { value: iBalance, decimals: data.from.decimals },
+                (val: string) => (+val > MILLION ? largeNumber(val) : val),
+                (val: string) => prettyNumber(val, { ignoreZeroDecimal: true, decimal: 3 })
+              )}
+              <span className="ml-2">{data.from.symbol}</span>
+            </span>
+          </Tooltip>
+
+          <ReloadOutlined
+            onClick={() => {
+              if (onRefresh) {
+                onRefresh();
+              }
+            }}
+            className="hover:text-blue-400 transform transition-all duration-300"
+          />
+        </span>
       )}
 
       {bridgetStatus === 'pending' ? (

@@ -124,6 +124,14 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
               balance={balances}
               isBalanceLoading={isBalanceLoading}
               initial={direction}
+              onRefresh={() => {
+                setIsBalanceLoading(true);
+
+                fromRx(getBalance(direction, account)).subscribe((result) => {
+                  setBalances(result);
+                  setIsBalanceLoading(false);
+                });
+              }}
               onChange={(value) => {
                 if (isDirectionChanged(direction, value)) {
                   setBridge(null);
