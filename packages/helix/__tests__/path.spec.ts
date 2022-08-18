@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 
 import { HelixHistoryRecord } from 'shared/model';
-import { getDetailPaths } from '../utils';
+import { getDetailPaths } from 'shared/utils/record';
 
 describe('paths', () => {
   const record: HelixHistoryRecord = { id: '0x123' } as HelixHistoryRecord;
@@ -27,8 +27,8 @@ describe('paths', () => {
     expect(getDetailPaths('crab-parachain', 'crab', record)).toEqual(['s2parachain', '0x123']);
   });
 
-  it('can not find paths', () => { 
+  it('can not find paths', () => {
     expect(getDetailPaths('darwinia', 'ethereum', record)).toEqual([]);
     expect(getDetailPaths('pangolin', 'ropsten', record)).toEqual([]);
-  })
+  });
 });

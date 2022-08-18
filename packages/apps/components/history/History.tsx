@@ -1,16 +1,17 @@
 import { LoadingOutlined, PaperClipOutlined, ReloadOutlined, SwapOutlined } from '@ant-design/icons';
-import { Badge, Button, Empty, Pagination, Radio, Result, Spin, Tabs, Tooltip } from 'antd';
+import { Badge, Button, Empty, message, Pagination, Radio, Result, Spin, Tabs, Tooltip } from 'antd';
 import { format } from 'date-fns';
 import request from 'graphql-request';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { EMPTY, from, map } from 'rxjs';
 import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { DATE_TIME_FORMAT, RecordStatus } from 'shared/config/constant';
-import { ENDPOINT } from 'shared/config/env';
+import { ENDPOINT, HELIX_DEPLOYMENT } from 'shared/config/env';
 import { HelixHistoryRecord } from 'shared/model';
 import { convertToDvm, gqlName, isValidAddress } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
 import {
+  getDetailPaths,
   getReceivedAmountFromHelixRecord,
   getSentAmountFromHelixRecord,
   getTokenConfigFromHelixRecord,
@@ -250,7 +251,7 @@ export function History() {
             <Tabs.TabPane
               tab={
                 label === 'Pending' ? (
-                  <Badge count={goOnAmount} offset={[10, 0]} color="red">
+                  <Badge count={goOnAmount} offset={[10, 0]} color="blue">
                     <span>{t(label)}</span>
                   </Badge>
                 ) : (
@@ -320,7 +321,22 @@ export function History() {
                         </TokenOnChain>
                       </div>
 
-                      <div className="text-right pl-4 pr-6 py-4  border border-gray-800 mb-4 bg-gray-900 rounded-xs">
+                      <div
+                        onClick={() => {
+                          const paths = getDetailPaths(fromChain, toChain, record);
+                          const query = new URLSearchParams({
+                            from: record.fromChain,
+                            to: record.toChain,
+                          }).toString();
+
+                          if (paths.length) {
+                            window.open(`${HELIX_DEPLOYMENT}/transaction/${paths.join('/')}?${query}`, '_blank');
+                          } else {
+                            message.error(`Can not find the detail page for ${fromChain} to ${toChain}`);
+                          }
+                        }}
+                        className="text-right pl-4 pr-6 py-4  border border-gray-800 mb-4 bg-gray-900 rounded-xs cursor-pointer"
+                      >
                         <div className="mb-2 whitespace-nowrap text-xs">
                           {format(record.startTime * 1000, DATE_TIME_FORMAT)}
                         </div>
@@ -331,7 +347,9 @@ export function History() {
                           <PendingToClaim record={record} claimMeta={claimMeta} />
                         )}
 
-                        {record.result === RecordStatus.pendingToRefund && <PendingToRefund record={record} />}
+                        {record.result === RecordStatus.pendingToRefund && (
+                          <PendingToRefund record={record} onSuccess={() => fetchGoOnAmount(account)} />
+                        )}
 
                         {record.result === RecordStatus.success && (
                           <div className="text-helix-green">{t('Success')}</div>

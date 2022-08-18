@@ -17,7 +17,11 @@ import { useITranslation } from '../../hooks';
 import { RecordStatusComponentProps } from '../../model/component';
 import { useClaim, useTx } from '../../providers';
 
-function CBrideRefund({ record }: RecordStatusComponentProps) {
+interface RefundComponentProps extends RecordStatusComponentProps {
+  onSuccess?: () => void;
+}
+
+function CBrideRefund({ record, onSuccess }: RefundComponentProps) {
   const { t } = useITranslation();
   const { onRefundSuccess } = useClaim();
   const [loading, setLoading] = useState(false);
@@ -67,6 +71,10 @@ function CBrideRefund({ record }: RecordStatusComponentProps) {
 
               if (response.status === 'finalized') {
                 onRefundSuccess({ id: record.id, hash: response.hash ?? '' });
+
+                if (onSuccess) {
+                  onSuccess();
+                }
               }
             },
             error(err) {
@@ -114,13 +122,13 @@ function CBrideRefund({ record }: RecordStatusComponentProps) {
             });
         }}
       >
-        {t('Request Refund')}
+        {loading ? t('Waiting for Response') : t('Request Refund')}
       </Button>
     </Tooltip>
   );
 }
 
-function Refund({ record }: RecordStatusComponentProps) {
+function Refund({ record, onSuccess }: RefundComponentProps) {
   const { t } = useITranslation();
   const { onRefundSuccess } = useClaim();
   const [loading, setLoading] = useState(false);
@@ -153,6 +161,10 @@ function Refund({ record }: RecordStatusComponentProps) {
 
             if (response.status === 'finalized') {
               onRefundSuccess({ id: record.id, hash: response.hash ?? '' });
+
+              if (onSuccess) {
+                onSuccess();
+              }
             }
           },
           error(err) {
@@ -171,10 +183,10 @@ function Refund({ record }: RecordStatusComponentProps) {
   );
 }
 
-export function PendingToRefund({ record }: RecordStatusComponentProps) {
+export function PendingToRefund({ record, onSuccess }: RefundComponentProps) {
   if (isCBridgeRecord(record)) {
-    return <CBrideRefund record={record} />;
+    return <CBrideRefund record={record} onSuccess={onSuccess} />;
   }
 
-  return <Refund record={record} />;
+  return <Refund record={record} onSuccess={onSuccess} />;
 }

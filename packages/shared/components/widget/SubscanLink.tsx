@@ -44,6 +44,7 @@ export function SubscanLink({
         copyable={copyable ? { icon: <Icon name="copy1" className="text-base text-white" /> } : false}
         className={`w-full ${copyable ? 'custom-copy-icon' : ''}`}
         underline
+        onClick={(event) => event.stopPropagation()}
       >
         {address}
       </Link>
@@ -54,7 +55,12 @@ export function SubscanLink({
     const { height, index } = extrinsic;
 
     return (
-      <Link href={`https://${network}.subscan.io/extrinsic/${height}-${index}`} target="_blank" {...other}>
+      <Link
+        href={`https://${network}.subscan.io/extrinsic/${height}-${index}`}
+        target="_blank"
+        {...other}
+        onClick={(event) => event.stopPropagation()}
+      >
         {children}
       </Link>
     );
@@ -75,7 +81,7 @@ export function SubscanLink({
       }.io/tx/${txHash}`;
 
     return (
-      <Link href={href} target="_blank" {...other}>
+      <Link href={href} target="_blank" {...other} onClick={(event) => event.stopPropagation()}>
         {children}
       </Link>
     );
@@ -83,7 +89,12 @@ export function SubscanLink({
 
   if (block) {
     return (
-      <Link href={`https://${network}.subscan.io/block/${block}`} target="_blank" {...other}>
+      <Link
+        href={`https://${network}.subscan.io/block/${block}`}
+        target="_blank"
+        {...other}
+        onClick={(event) => event.stopPropagation()}
+      >
         {children || block}
       </Link>
     );
