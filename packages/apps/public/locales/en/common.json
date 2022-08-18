@@ -91,6 +91,7 @@
   "Transfer amount is required": "Transfer amount is required",
   "Type or select the recipient address": "Type or select the recipient address",
   "View in explorer": "View in explorer",
+  "Waiting for Response": "Waiting for Response",
   "Waiting for approve, you need to approve this transaction in your wallet": "Waiting for approve, you need to approve this transaction in your wallet",
   "Wallet provider offline": "Wallet provider offline",
   "When the transaction is successful, the extrinsic message will be provided": "When the transaction is successful, the extrinsic message will be provided",

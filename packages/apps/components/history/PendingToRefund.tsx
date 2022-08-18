@@ -114,7 +114,7 @@ function CBrideRefund({ record }: RecordStatusComponentProps) {
             });
         }}
       >
-        {t('Request Refund')}
+        {loading ? t('Waiting for Response') : t('Request Refund')}
       </Button>
     </Tooltip>
   );
