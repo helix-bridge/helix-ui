@@ -1,4 +1,4 @@
-import { HddOutlined, MenuOutlined } from '@ant-design/icons';
+import { HddOutlined, MenuOutlined, WarningFilled } from '@ant-design/icons';
 import { Button, Drawer, Layout, Tooltip } from 'antd';
 import Image from 'next/image';
 import { PropsWithChildren, useState } from 'react';
@@ -13,6 +13,7 @@ import { History } from './history/History';
 import { Tools } from './Tools';
 import { ActiveAccount } from './widget/account/ActiveAccount';
 import { BaseModal } from './widget/BaseModal';
+import { DisclaimerModal } from './widget/DisclaimerModal';
 
 const { Header, Content } = Layout;
 
@@ -23,6 +24,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
   const [theme, setTheme] = useState<THEME>(readStorage().theme ?? THEME.DARK);
   const [collapsed, setCollapsed] = useState(true);
   const { isPersonalHistoryVisible, setIsPersonalHistoryVisible } = useTx();
+  const [visible, setVisible] = useState(false);
 
   return (
     <Layout className="min-h-screen overflow-scroll">
@@ -42,6 +44,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
               </Tooltip>
 
               <Image alt="..." src="/image/beta.svg" width={35} height={18} />
+              <WarningFilled onClick={() => setVisible(true)} className="text-yellow-400" />
             </div>
 
             <Navigator navigators={navigators} theme={theme} />
@@ -89,6 +92,8 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
       >
         <History></History>
       </BaseModal>
+
+      <DisclaimerModal visible={visible} onCancel={() => setVisible(false)} onOk={() => setVisible(false)} />
     </Layout>
   );
 }
