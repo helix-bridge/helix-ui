@@ -251,7 +251,7 @@ export function History() {
             <Tabs.TabPane
               tab={
                 label === 'Pending' ? (
-                  <Badge count={goOnAmount} offset={[10, 0]} color="red">
+                  <Badge count={goOnAmount} offset={[10, 0]} color="blue">
                     <span>{t(label)}</span>
                   </Badge>
                 ) : (
@@ -347,7 +347,9 @@ export function History() {
                           <PendingToClaim record={record} claimMeta={claimMeta} />
                         )}
 
-                        {record.result === RecordStatus.pendingToRefund && <PendingToRefund record={record} />}
+                        {record.result === RecordStatus.pendingToRefund && (
+                          <PendingToRefund record={record} onSuccess={() => fetchGoOnAmount(account)} />
+                        )}
 
                         {record.result === RecordStatus.success && (
                           <div className="text-helix-green">{t('Success')}</div>
