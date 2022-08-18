@@ -9,6 +9,7 @@ import { CrabParachainKaruraParachainBridgeConfig, HelixHistoryRecord, Network }
 import { getBridge } from 'shared/utils/bridge';
 import { revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
+import { getReceivedAmountFromHelixRecord, getSentAmountFromHelixRecord } from 'shared/utils/record';
 import { Detail } from '../../../components/transaction/Detail';
 import { TransferStep } from '../../../model/transfer';
 import { getServerSideRecordProps } from '../../../utils/getServerSideRecordProps';
@@ -35,24 +36,29 @@ const Page: NextPage<{
     const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase())!;
     const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase())!;
     const relayer = bridge.isIssuing(departure, arrival) ? PARACHAIN_PARACHAIN_BACKING : PARACHAIN_PARACHAIN_ISSUING;
+    const sendAmount = getSentAmountFromHelixRecord(record);
+    const recvAmount = getReceivedAmountFromHelixRecord(record);
 
     const start: TransferStep = {
       chain: departure,
       sender: revertAccount(record.sender, departure),
       recipient: relayer,
       token: fromToken,
+      amount: sendAmount,
     };
     const success: TransferStep = {
       chain: arrival,
       sender: relayer,
       recipient: revertAccount(record.recipient, arrival),
       token: toToken,
+      amount: recvAmount,
     };
     const fail: TransferStep = {
       chain: arrival,
       sender: relayer,
       recipient: revertAccount(record.sender, departure),
       token: fromToken,
+      amount: sendAmount,
     };
 
     if (record.result === RecordStatus.pending) {
