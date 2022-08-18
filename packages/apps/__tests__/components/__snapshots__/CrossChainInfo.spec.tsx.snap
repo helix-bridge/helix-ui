@@ -52,7 +52,7 @@ exports[`<CrossChainInfo /> render cross-chain and extra nodes 1`] = `
                 }
               }
             >
-              helix
+              Helix
             </span>
           </div>
           <div
@@ -247,7 +247,7 @@ exports[`<CrossChainInfo /> render cross-chain item 1`] = `
                 }
               }
             >
-              helix
+              Helix
             </span>
           </div>
           <div
@@ -343,7 +343,7 @@ exports[`<CrossChainInfo /> render cross-chain with children 1`] = `
                 }
               }
             >
-              helix
+              Helix
             </span>
           </div>
           <div
@@ -442,7 +442,7 @@ exports[`<CrossChainInfo /> render cross-chain with dynamic fee 1`] = `
                 }
               }
             >
-              helix
+              Helix
             </span>
           </div>
           <div
