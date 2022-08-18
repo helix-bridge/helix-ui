@@ -6,6 +6,7 @@ import { CrabDVMHecoBridgeConfig, HelixHistoryRecord, Network } from 'shared/mod
 import { getBridge } from 'shared/utils/bridge';
 import { revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
+import { getReceivedAmountFromHelixRecord, getSentAmountFromHelixRecord } from 'shared/utils/record';
 import { Detail } from '../../../components/transaction/Detail';
 import { TransferStep } from '../../../model/transfer';
 import { getServerSideRecordProps } from '../../../utils/getServerSideRecordProps';
@@ -25,13 +26,10 @@ const Page: NextPage<{
     const arrival = getChainConfig(router.query.to as Network);
     const bridge = getBridge<CrabDVMHecoBridgeConfig>([departure, arrival]);
     const isRedeem = bridge.isRedeem(departure, arrival);
-    const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase())!;
-
-    const toToken = arrival.tokens.find((item) =>
-      item.cross.find(
-        (overview) => overview.partner.name === departure.name && overview.partner.symbol === fromToken.symbol
-      )
-    )!;
+    const fromToken = departure.tokens.find((item) => item.symbol === record.sendToken)!;
+    const toToken = arrival.tokens.find((item) => item.symbol === record.recvToken)!;
+    const sendAmount = getSentAmountFromHelixRecord(record);
+    const recvAmount = getReceivedAmountFromHelixRecord(record);
 
     let { issuing: originPool, redeem: targetPool } = bridge.config.contracts;
 
@@ -44,6 +42,7 @@ const Page: NextPage<{
       sender: revertAccount(record.sender, departure),
       recipient: originPool,
       token: fromToken,
+      amount: sendAmount,
     };
 
     const success: TransferStep = {
@@ -51,6 +50,7 @@ const Page: NextPage<{
       sender: targetPool,
       recipient: revertAccount(record.recipient, arrival),
       token: toToken,
+      amount: recvAmount,
     };
 
     const refunded: TransferStep = {
@@ -58,6 +58,7 @@ const Page: NextPage<{
       sender: originPool,
       recipient: revertAccount(record.sender, departure),
       token: fromToken,
+      amount: sendAmount,
     };
 
     const transfer = [start];

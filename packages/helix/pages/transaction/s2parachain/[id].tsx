@@ -9,6 +9,7 @@ import { HelixHistoryRecord, Network, ParachainSubstrateBridgeConfig } from 'sha
 import { getBridge } from 'shared/utils/bridge';
 import { revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
+import { getReceivedAmountFromHelixRecord, getSentAmountFromHelixRecord } from 'shared/utils/record';
 import { Detail } from '../../../components/transaction/Detail';
 import { useUpdatableRecord } from '../../../hooks';
 import { TransferStep } from '../../../model/transfer';
@@ -36,26 +37,31 @@ const Page: NextPage<{
     const arrival = getChainConfig(router.query.to as Network);
     const bridge = getBridge<ParachainSubstrateBridgeConfig>([departure, arrival]);
     const isIssuing = bridge.isIssuing(departure, arrival);
-    const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase())!;
-    const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase())!;
+    const fromToken = departure.tokens.find((item) => item.symbol === record.sendToken)!;
+    const toToken = arrival.tokens.find((item) => item.symbol === record.recvToken)!;
+    const sendAmount = getSentAmountFromHelixRecord(record);
+    const recvAmount = getReceivedAmountFromHelixRecord(record);
 
     const issueStart: TransferStep = {
       chain: departure,
       sender: revertAccount(record.sender, departure),
       recipient: SUBSTRATE_PARACHAIN_BACKING,
       token: fromToken,
+      amount: sendAmount,
     };
     const issueSuccess: TransferStep = {
       chain: arrival,
       sender: GENESIS_ADDRESS,
       recipient: revertAccount(record.recipient, arrival),
       token: toToken,
+      amount: recvAmount,
     };
     const issueFail: TransferStep = {
       chain: arrival,
       sender: SUBSTRATE_PARACHAIN_BACKING,
       recipient: revertAccount(record.sender, departure),
       token: fromToken,
+      amount: sendAmount,
     };
 
     const redeemStart: TransferStep = {
@@ -63,24 +69,28 @@ const Page: NextPage<{
       sender: revertAccount(record.sender, departure),
       recipient: SUBSTRATE_PARACHAIN_BACKING,
       token: fromToken,
+      amount: sendAmount,
     };
     const redeemDispatch: TransferStep = {
       chain: arrival,
       sender: SUBSTRATE_PARACHAIN_BACKING,
       recipient: revertAccount(record.recipient, arrival),
       token: toToken,
+      amount: recvAmount,
     };
     const redeemSuccess: TransferStep = {
       chain: departure,
       sender: revertAccount(record.sender, departure),
       recipient: GENESIS_ADDRESS,
       token: toToken,
+      amount: recvAmount,
     };
     const redeemFail: TransferStep = {
       chain: departure,
       sender: SUBSTRATE_PARACHAIN_BACKING,
       recipient: revertAccount(record.sender, departure),
       token: fromToken,
+      amount: sendAmount,
     };
 
     if (record.result === RecordStatus.pending) {

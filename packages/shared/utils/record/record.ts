@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import { RecordStatus } from '../../config/constant';
 import { HelixHistoryRecord, TokenWithBridgesInfo } from '../../model';
 import { fromWei, prettyNumber } from '../helper';
-import { getChainConfig, isEthereumNetwork } from '../network';
+import { getChainConfig, isPolkadotNetwork } from '../network';
 
 export function getTokenConfigFromHelixRecord(
   record: HelixHistoryRecord,
@@ -35,8 +35,14 @@ export function getReceivedAmountFromHelixRecord(record: HelixHistoryRecord) {
 }
 
 export function getFeeAmountFromHelixRecord(record: HelixHistoryRecord) {
-  const { fromChain } = record;
-  const decimals = isEthereumNetwork(fromChain) || fromChain.includes('parachain') ? 18 : 9;
+  const { fromChain, feeToken } = record;
+  const fromConfig = getChainConfig(fromChain);
+  const token = fromConfig.tokens.find((item) => item.symbol === feeToken)!;
+  let decimals = token?.decimals;
+
+  if (!decimals) {
+    decimals = isPolkadotNetwork(fromChain) && !fromChain.includes('parachain') ? 9 : 18;
+  }
 
   return fromWei({ value: record.fee, decimals });
 }

@@ -6,7 +6,7 @@ import { getDisplayName } from 'shared/utils/network';
 import { TransferStep } from '../../model/transfer';
 import { TransferDescription } from './TransferDescription';
 
-export function TransferDetail({ transfers, amount }: { transfers: TransferStep[]; amount: string }) {
+export function TransferDetail({ transfers }: { transfers: TransferStep[] }) {
   const { t } = useTranslation();
 
   return (
@@ -15,7 +15,7 @@ export function TransferDetail({ transfers, amount }: { transfers: TransferStep[
       tip={t('List of tokens transferred in this cross-chain transaction.')}
     >
       <div className="flex flex-col flex-1 gap-2">
-        {transfers.map(({ chain, sender, recipient, token }, index) => (
+        {transfers.map(({ chain, sender, recipient, token, amount }, index) => (
           <div
             key={[token.name, token.host, index].join('-')}
             className="w-full md:w-2/3 grid grid-cols-12 items-center"

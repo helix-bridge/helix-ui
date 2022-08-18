@@ -5,4 +5,5 @@ export interface TransferStep {
   sender: string;
   recipient: string;
   token: TokenWithBridgesInfo;
+  amount: string;
 }

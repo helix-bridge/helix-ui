@@ -68,7 +68,7 @@ export function Detail({ record, transfers }: DetailProps) {
           <TextWithCopy>{revertAccount(record.recipient, arrival)}</TextWithCopy>
         </TransferDescription>
 
-        {!!transfers.length && <TransferDetail transfers={transfers} amount={amount} />}
+        {!!transfers.length && <TransferDetail transfers={transfers} />}
 
         <Divider />
 
