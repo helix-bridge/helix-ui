@@ -63,6 +63,7 @@
   "Refund": "退款",
   "Refunded": "已退款",
   "Request Refund": "发起恳求",
+  "RING or KTON allowance is insufficient, approve more first!": "RING 或 KTON 限额不足，请增加限额",
   "Select Token": "选择 token",
   "Select active account": "选择账号",
   "Slippage Tolerance": "滑点值",
