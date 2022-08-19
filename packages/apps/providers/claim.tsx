@@ -8,6 +8,7 @@ import { ICamelCaseKeys, HelixHistoryRecord, ConnectionStatus } from 'shared/mod
 import { getBridge } from 'shared/utils/bridge';
 import { connect, entrance } from 'shared/utils/connection';
 import { getChainConfig } from 'shared/utils/network';
+import { getAllowance } from 'shared/utils/tx';
 import {
   Darwinia2EthereumRecord,
   Darwinia2EthereumHistoryRes,
@@ -77,11 +78,18 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
         .pipe(
           filter(({ status }) => status === ConnectionStatus.success),
           take(1),
-          switchMap((_) => {
+          switchMap((connection) => {
             const ringBN = new BN(ring);
             const ktonBN = new BN(kton);
             const bridge = getBridge<EthereumDarwiniaBridgeConfig>([departure, arrival]);
             const [{ address: ringAddress }, { address: ktonAddress }] = arrival.tokens; // FIXME: Token order on ethereum and ropsten must be 0 for ring, 1 for kton;
+            const activeAccount = connection.accounts[0]?.address;
+            let tokenAddress = ringBN.gt(BN_ZERO) ? ringAddress : '';
+
+            if (ktonBN.gt(BN_ZERO)) {
+              tokenAddress = ktonAddress;
+            }
+
             const isRingSufficient = iif(
               () => ringBN.gt(BN_ZERO),
               isSufficient(bridge.config, ringAddress, ringBN),
@@ -92,10 +100,17 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
               isSufficient(bridge.config, ktonAddress, ktonBN),
               of(true)
             );
+            const isAllowanceSufficient = iif(
+              () => !activeAccount || !tokenAddress,
+              of(false),
+              from(getAllowance(activeAccount, bridge.config.contracts.issuing, tokenAddress, arrival.provider)).pipe(
+                map((allowance) => !!allowance && allowance.gte(tokenAddress === ringAddress ? ringBN : ktonBN))
+              )
+            );
 
-            return zip(isRingSufficient, isKtonSufficient);
+            return zip(isRingSufficient, isKtonSufficient, isAllowanceSufficient);
           }),
-          tap(([isRingSuf, isKtonSuf]) => {
+          tap(([isRingSuf, isKtonSuf, isAllowanceSufficient]) => {
             if (!isRingSuf) {
               message.warn(t('{{token}} daily limit reached!', { token: 'ring' }));
             }
@@ -103,9 +118,13 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
             if (!isKtonSuf) {
               message.warn(t('{{token}} daily limit reached!', { token: 'kton' }));
             }
+
+            if (!isAllowanceSufficient) {
+              message.warn(t('RING or KTON allowance is insufficient, approve more first!'));
+            }
           }),
-          switchMap(([isRingSuf, isKtonSuf]) =>
-            isRingSuf && isKtonSuf
+          switchMap(([isRingSuf, isKtonSuf, isAllowanceSuf]) =>
+            isRingSuf && isKtonSuf && isAllowanceSuf
               ? claimToken({
                   direction: { from: departure!, to: arrival! },
                   mmrIndex,
