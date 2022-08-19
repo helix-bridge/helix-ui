@@ -1,4 +1,4 @@
-import { chain as lodashChain, pick, upperFirst } from 'lodash';
+import { chain as lodashChain, memoize, pick, upperFirst } from 'lodash';
 import { knownParachainNetworks, SYSTEM_CHAIN_CONFIGURATIONS } from '../../config/network';
 import { knownDVMNetworks, knownEthereumNetworks, knownPolkadotNetworks } from '../../config/network';
 import { ChainConfig, Network, PolkadotChainConfig } from '../../model';
@@ -44,7 +44,7 @@ export const isEthereumNetwork = isSpecifyNetwork(knownEthereumNetworks);
 
 export const isParachainNetwork = isSpecifyNetwork(knownParachainNetworks);
 
-export function getChainConfig(name: Network | null | undefined, source = chainConfigs): ChainConfig {
+function getConfig(name: Network | null | undefined, source = chainConfigs): ChainConfig {
   if (!name) {
     throw new Error(`You must pass a 'name' parameter to find the chain config`);
   }
@@ -57,6 +57,8 @@ export function getChainConfig(name: Network | null | undefined, source = chainC
 
   return result;
 }
+
+export const getChainConfig = memoize(getConfig, (name) => name);
 
 export function getDisplayName(config: ChainConfig | null): string {
   if (!config) {
