@@ -17,7 +17,7 @@ export type StorageInfo = HashInfo & {
   theme?: THEME;
   config?: Partial<{ [key in Network]: ChainConfig }>;
   custom?: Network[];
-  warning?: boolean;
+  hideWarning?: boolean;
 } & {
   [key in SupportedWallet]?: string;
 };
