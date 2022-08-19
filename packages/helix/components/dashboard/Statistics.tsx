@@ -1,12 +1,14 @@
+import { SwapOutlined } from '@ant-design/icons';
+import { PropsWithChildren } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Logo } from 'shared/components/widget/Logo';
 import { ChainConfig } from 'shared/model';
 import { getDisplayName } from 'shared/utils/network';
-import { PropsWithChildren } from 'react';
-import { useTranslation } from 'react-i18next';
 
-interface ChainStatisticOverview {
-  chain: ChainConfig;
-  total: string;
+interface StatisticOverview {
+  fromChain: ChainConfig;
+  toChain: ChainConfig;
+  total: number;
 }
 
 interface StatisticsProps {
@@ -14,7 +16,7 @@ interface StatisticsProps {
   titleRight: string;
   startTime: string;
   total: string | number;
-  rank: ChainStatisticOverview[];
+  rank: StatisticOverview[];
   currency?: '$';
 }
 
@@ -42,7 +44,7 @@ export function Statistics({
           <span className="text-sm font-normal opacity-50">{t('Since {{time}}', { time: startTime })}</span>
         </div>
 
-        <div className="flex flex-col gap-2 items-center justify-center mt-4 mb-2 md:mt-10 md:mb-6">
+        <div className="flex flex-col gap-2 items-center justify-center m-2 md:m-4">
           <h2 className="text-4xl font-normal">
             {currency}
             {total}
@@ -60,14 +62,24 @@ export function Statistics({
             <span className="uppercase text-sm font-normal text-gray-200">{titleRight}</span>
           </div>
 
-          {rank.map(({ chain, total: iTotal }) => (
-            <div key={chain.name} className="flex justify-between">
-              <div className="flex items-center gap-2">
-                <Logo chain={chain} width={24} height={24} />
-                <span className="capitalize text-sm font-normal text-gray-200">{getDisplayName(chain)}</span>
-              </div>
+          {rank.map(({ fromChain, toChain, total: iTotal }) => (
+            <div key={fromChain.name + '_' + toChain.name} className="flex justify-between items-center">
+              <div className="flex-1 flex justify-between items-center capitalize text-xs font-normal text-gray-200">
+                <div className="flex gap-1 items-center w-1/3">
+                  <Logo chain={fromChain} width={16} height={16} />
+                  <span>{getDisplayName(fromChain)}</span>
+                </div>
 
-              <span className="uppercase text-sm font-normal text-gray-200">
+                <SwapOutlined className="mr-4" />
+
+                <div className="flex-1 flex gap-1 items-center">
+                  <Logo chain={toChain} width={16} height={16} />
+                  <span>{getDisplayName(toChain)}</span>
+                </div>
+              </div>
+              {/* <Bridge from={fromChain} to={toChain} /> */}
+
+              <span className="uppercase text-sm font-normal text-gray-200 w-1/12 text-right">
                 {currency}
                 {iTotal}
               </span>

@@ -1,5 +1,5 @@
 import { ClockCircleOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Affix, Button, Input, message, Table, Tooltip, Typography } from 'antd';
+import { Button, Input, message, Table, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import { formatDistance, fromUnixTime } from 'date-fns';
 import format from 'date-fns-tz/format';
@@ -176,61 +176,57 @@ function Page() {
 
   return (
     <>
-      <Affix offsetTop={62}>
-        <div className="mt-2 pb-2 lg:pb-4 flex justify-between items-end">
-          <Input
-            size="large"
-            suffix={<SearchOutlined />}
-            allowClear
-            // eslint-disable-next-line complexity
-            onChange={(event) => {
-              const value = event.target.value;
+      <div className="mt-2 lg:mt-4 pb-2 lg:pb-4 flex justify-between items-end">
+        <Input
+          size="large"
+          suffix={<SearchOutlined />}
+          allowClear
+          // eslint-disable-next-line complexity
+          onChange={(event) => {
+            const value = event.target.value;
 
-              if (value && !web3.utils.isAddress(value) && !isSS58Address(value)) {
-                setIsValidSender(false);
-                return;
-              }
+            if (value && !web3.utils.isAddress(value) && !isSS58Address(value)) {
+              setIsValidSender(false);
+              return;
+            }
 
-              try {
-                const address = isValidAddress(value, 'ethereum') ? value : convertToDvm(value);
+            try {
+              const address = isValidAddress(value, 'ethereum') ? value : convertToDvm(value);
 
-                setAccount(address);
-                setPage(1);
-                setIsValidSender(true);
-              } catch {
-                setIsValidSender(false);
-              }
-            }}
-            placeholder={t('Search by address')}
-            className={`max-w-md ${isValidSender ? '' : 'border-red-400'}`}
-          />
+              setAccount(address);
+              setPage(1);
+              setIsValidSender(true);
+            } catch {
+              setIsValidSender(false);
+            }
+          }}
+          placeholder={t('Search by address')}
+          className={`max-w-md ${isValidSender ? '' : 'border-red-400'}`}
+        />
 
-          <Button
-            type="link"
-            onClick={() => {
-              if (page === 1) {
-                setLoading(true);
-                from(
-                  request(ENDPOINT, HISTORY_RECORDS, { page: 0, row: pageSize, sender: account, recipient: account })
-                )
-                  .pipe(map((res) => res && res[gqlName(HISTORY_RECORDS)]))
-                  .subscribe((result) => {
-                    setTotal(result.total);
-                    setSource(result.records);
-                    setLoading(false);
-                  });
-              } else {
-                setPage(1);
-              }
-            }}
-            disabled={loading}
-            className="flex items-center cursor-pointer px-0"
-          >
-            <span className="mr-2">{t('Latest transactions')}</span>
-            <SyncOutlined />
-          </Button>
-        </div>
-      </Affix>
+        <Button
+          type="link"
+          onClick={() => {
+            if (page === 1) {
+              setLoading(true);
+              from(request(ENDPOINT, HISTORY_RECORDS, { page: 0, row: pageSize, sender: account, recipient: account }))
+                .pipe(map((res) => res && res[gqlName(HISTORY_RECORDS)]))
+                .subscribe((result) => {
+                  setTotal(result.total);
+                  setSource(result.records);
+                  setLoading(false);
+                });
+            } else {
+              setPage(1);
+            }
+          }}
+          disabled={loading}
+          className="flex items-center cursor-pointer px-0"
+        >
+          <span className="mr-2">{t('Latest transactions')}</span>
+          <SyncOutlined />
+        </Button>
+      </div>
 
       <Table
         rowKey="id"
