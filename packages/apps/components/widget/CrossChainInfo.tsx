@@ -28,7 +28,7 @@ export function CrossChainInfo({
   isDynamicFee = false,
 }: PropsWithChildren<CrossChainInfoProps>) {
   const { t } = useITranslation();
-  const [collapse, setCollapse] = useState(true);
+  const [collapse /* , setCollapse */] = useState(false);
 
   const feeContent = useMemo(() => {
     if (fee) {
@@ -66,9 +66,9 @@ export function CrossChainInfo({
         {extra && (
           <>
             <div
-              className="flex items-center gap-2 cursor-pointer"
+              className="hidden items-center gap-2 cursor-pointer"
               data-testid="toggle-btn"
-              onClick={() => setCollapse(!collapse)}
+              // onClick={() => setCollapse(!collapse)}
             >
               <span className="flex-1 bg-transparent h-px" />
               <CaretDownOutlined
