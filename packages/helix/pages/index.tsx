@@ -78,13 +78,7 @@ function Page() {
 
   return (
     <div>
-      <Statistics
-        titleLeft={t('transactions by week')}
-        titleRight={t('transactions')}
-        startTime={startTime}
-        total={transactionsTotal}
-        rank={transactionsRank}
-      >
+      <Statistics title={t('transactions')} startTime={startTime} total={transactionsTotal} rank={transactionsRank}>
         {loading ? (
           <div className="block relative top-1/3 text-center">
             <Spin />
