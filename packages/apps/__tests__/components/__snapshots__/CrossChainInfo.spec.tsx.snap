@@ -90,16 +90,15 @@ exports[`<CrossChainInfo /> render cross-chain and extra nodes 1`] = `
             </span>
           </div>
           <div
-            className="flex items-center gap-2 cursor-pointer"
+            className="hidden items-center gap-2 cursor-pointer"
             data-testid="toggle-btn"
-            onClick={[Function]}
           >
             <span
               className="flex-1 bg-transparent h-px"
             />
             <span
               aria-label="caret-down"
-              className="anticon anticon-caret-down text-gray-700 transform transition-all duration-300 "
+              className="anticon anticon-caret-down text-gray-700 transform transition-all duration-300 rotate-180"
               role="img"
             >
               <svg
@@ -121,7 +120,7 @@ exports[`<CrossChainInfo /> render cross-chain and extra nodes 1`] = `
             />
           </div>
           <div
-            className="justify-between items-center transition-all duration-100 hidden"
+            className="justify-between items-center transition-all duration-100 flex"
             data-testid="Allowance"
           >
             <span
@@ -155,7 +154,7 @@ exports[`<CrossChainInfo /> render cross-chain and extra nodes 1`] = `
             </span>
           </div>
           <div
-            className="justify-between items-center transition-all duration-100 hidden"
+            className="justify-between items-center transition-all duration-100 flex"
             data-testid="Daily limit"
           >
             <span
