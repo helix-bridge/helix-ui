@@ -215,7 +215,7 @@
   "@link-active-color": "@primary-7",
   "@table-header-bg": "#020822",
   "@table-body-sort-bg": "fade(@white, 1%)",
-  "@table-row-hover-bg": "#262626",
+  "@table-row-hover-bg": "rgba(21, 29, 53, 0.8)",
   "@table-header-sort-bg": "#262626",
   "@table-header-filter-active-bg": "#434343",
   "@table-header-sort-active-bg": "#303030",
