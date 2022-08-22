@@ -94,8 +94,13 @@ export function BarChart({ data, name }: BarChartProps) {
       text: '',
     },
     xAxis: {
+      lineWidth: 0,
+      tickLength: 0,
       labels: {
         format: '{value:%m-%d}',
+        style: {
+          color: '#fff',
+        },
       },
     },
     yAxis: {
