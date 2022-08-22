@@ -205,7 +205,7 @@
   "@cascader-bg": "transparent",
   "@cascader-menu-bg": "@popover-background",
   "@cascader-menu-border-color-split": "@border-color-split",
-  "@tooltip-bg": "#434343",
+  "@tooltip-bg": "#151D35",
   "@menu-dark-inline-submenu-bg": "@component-background",
   "@menu-dark-bg": "@popover-background",
   "@menu-popup-bg": "@popover-background",
