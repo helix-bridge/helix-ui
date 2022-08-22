@@ -1,5 +1,5 @@
 import { Button, Form, InputNumber, InputNumberProps } from 'antd';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
 import { CrossToken, TokenInfoWithMeta } from 'shared/model';
@@ -10,6 +10,7 @@ interface DestinationProps {
   className?: string;
   onChange?: (value: CrossToken) => void;
   title?: string;
+  balance?: ReactNode;
   value: CrossToken;
   fromToken?: TokenInfoWithMeta;
 }
@@ -17,6 +18,7 @@ interface DestinationProps {
 export function Destination({
   title,
   value,
+  balance,
   onChange,
   className,
   disabled,
@@ -25,7 +27,15 @@ export function Destination({
   const [visible, setVisible] = useState(false);
 
   return (
-    <Form.Item label={title} className={'relative w-full mb-2 ' + className}>
+    <Form.Item
+      label={
+        <div className="flex items-center justify-between">
+          <span>{title}</span>
+          {balance}
+        </div>
+      }
+      className={'relative w-full mb-2 ' + className}
+    >
       <>
         <InputNumber<string>
           value={value?.amount}
