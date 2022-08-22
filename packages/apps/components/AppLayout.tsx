@@ -10,7 +10,7 @@ import { readStorage } from 'shared/utils/helper';
 import { useITranslation } from '../hooks';
 import { useTx } from '../providers';
 import { History } from './history/History';
-import { Tools } from './Tools';
+// import { Tools } from './Tools';
 import { ActiveAccount } from './widget/account/ActiveAccount';
 import { BaseModal } from './widget/BaseModal';
 import { DisclaimerModal } from './widget/DisclaimerModal';
@@ -72,7 +72,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
               {t('History')}
             </Button>
 
-            <Tools />
+            {/* <Tools /> */}
           </div>
         </div>
       </Header>
