@@ -68,7 +68,7 @@ export function Destination({
               </span>
             </div>
 
-            <div className="flex flex-col items-start space-y-px w-16 text-left">
+            <div className="flex flex-col items-start space-y-px w-24 text-left">
               <strong className="font-medium text-sm truncate w-full">{value.symbol}</strong>
               <small
                 className="font-light text-xs opacity-60 w-full capitalize truncate"
