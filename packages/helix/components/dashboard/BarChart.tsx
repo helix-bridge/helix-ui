@@ -88,7 +88,7 @@ export function BarChart({ data, name }: BarChartProps) {
       enabled: false,
     },
     navigator: {
-      height: 24,
+      enabled: false,
     },
     title: {
       text: '',
