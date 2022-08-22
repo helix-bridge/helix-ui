@@ -88,7 +88,7 @@ export const bscConfig: EthereumChainConfig = {
         },
         {
           category: 'cBridge',
-          bridge: 'bsc-avalanche',
+          bridge: 'bsc-optimism',
           partner: { name: 'optimism', role: 'issuing', symbol: 'USDC' },
         },
         {
@@ -104,7 +104,7 @@ export const bscConfig: EthereumChainConfig = {
         {
           category: 'cBridge',
           bridge: 'crabDVM-bsc',
-          partner: { name: 'bsc', role: 'backing', symbol: 'USDC' },
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',
