@@ -21,6 +21,7 @@ export function Tools() {
           ]}
         />
       }
+      overlayStyle={{ border: '1px solid #444A5D', boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)', borderRadius: '4px' }}
       onVisibleChange={(isVisible) => {
         setVisible(isVisible);
       }}
