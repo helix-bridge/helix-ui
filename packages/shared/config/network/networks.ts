@@ -1,4 +1,10 @@
-import { DVMNetwork, EthereumTypeNetwork, ParachainNetwork, PolkadotTypeNetwork } from '../../model';
+import {
+  DVMNetwork,
+  EthereumTypeNetwork,
+  ParachainEthereumCompatibleNetwork,
+  ParachainNetwork,
+  PolkadotTypeNetwork,
+} from '../../model';
 import { arbitrumConfig } from './arbitrum';
 import { astarConfig } from './astar';
 import { avalancheConfig } from './avalanche';
@@ -11,6 +17,7 @@ import { darwiniaDVMConfig } from './darwinia-dvm';
 import { ethereumConfig } from './ethereum';
 import { hecoConfig } from './heco';
 import { karuraConfig } from './karura';
+import { moonriverConfig } from './moonriver';
 import { optimismConfig } from './optimism';
 import { pangolinConfig } from './pangolin';
 import { pangolinDVMConfig } from './pangolin-dvm';
@@ -33,6 +40,7 @@ export const SYSTEM_CHAIN_CONFIGURATIONS = [
   ethereumConfig,
   hecoConfig,
   karuraConfig,
+  moonriverConfig,
   optimismConfig,
   pangolinConfig,
   pangolinDVMConfig,
@@ -43,7 +51,12 @@ export const SYSTEM_CHAIN_CONFIGURATIONS = [
   ropstenConfig,
 ];
 
-export const knownParachainNetworks: ParachainNetwork[] = ['pangolin-parachain', 'crab-parachain', 'karura'];
+export const knownParachainNetworks: ParachainNetwork[] = [
+  'pangolin-parachain',
+  'crab-parachain',
+  'karura',
+  'moonriver',
+];
 
 export const knownPolkadotNetworks: PolkadotTypeNetwork[] = [
   'crab',
@@ -51,10 +64,12 @@ export const knownPolkadotNetworks: PolkadotTypeNetwork[] = [
   'pangolin',
   'pangoro',
   'polkadot',
-  ...knownParachainNetworks,
+  ...(knownParachainNetworks.filter((item) => item !== 'moonriver') as PolkadotTypeNetwork[]),
 ];
 
 export const knownDVMNetworks: DVMNetwork[] = ['crab-dvm', 'pangolin-dvm', 'pangoro-dvm', 'darwinia-dvm'];
+
+export const knownParachainEthereumCompatibleNetworks: ParachainEthereumCompatibleNetwork[] = ['moonriver'];
 
 export const knownEthereumNetworks: (DVMNetwork | EthereumTypeNetwork)[] = [
   'ethereum',
@@ -67,4 +82,5 @@ export const knownEthereumNetworks: (DVMNetwork | EthereumTypeNetwork)[] = [
   'bsc',
   'optimism',
   ...knownDVMNetworks,
+  ...knownParachainEthereumCompatibleNetworks,
 ];

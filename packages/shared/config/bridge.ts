@@ -20,6 +20,7 @@ import { crabDVMHeco } from './bridges/crabDVM-heco';
 import { crabDVMOptimism } from './bridges/crabDVM-optimism';
 import { crabDVMPolygon } from './bridges/crabDVM-polygon';
 import { crabParachainKarura } from './bridges/crabParachain-karura';
+import { crabParachainMoonriver } from './bridges/crabParachain-moonriver';
 import { ethereumArbitrum } from './bridges/ethereum-arbitrum';
 import { ethereumAstar } from './bridges/ethereum-astar';
 import { ethereumAvalanche } from './bridges/ethereum-avalanche';
@@ -76,6 +77,7 @@ const formalBridges = [
   crabDVMAvalanche,
   crabDVMOptimism,
   crabParachainKarura,
+  crabParachainMoonriver,
 ];
 
 const testBridges = [

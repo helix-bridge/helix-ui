@@ -66,10 +66,7 @@ describe('<SubscanLink />', () => {
       </SubscanLink>
     );
 
-    expect(getByRole('link')).toHaveAttribute(
-      'href',
-      `https://${config.name.split('-')[0]}.subscan.io/account/0x123456`
-    );
+    expect(getByRole('link')).toHaveAttribute('href', `https://${config.name}.subscan.io/account/0x123456`);
     expect(queryByText(/0x123456/i)).toBeInTheDocument();
   });
 
@@ -126,10 +123,7 @@ describe('<SubscanLink />', () => {
         </SubscanLink>
       );
 
-      expect(getByRole('link')).toHaveAttribute(
-        'href',
-        `https://${network.split('-')[0]}.subscan.io/extrinsic/10389-3`
-      );
+      expect(getByRole('link')).toHaveAttribute('href', `https://${network}.subscan.io/extrinsic/10389-3`);
     }
   );
 
@@ -177,7 +171,11 @@ describe('<SubscanLink />', () => {
         </SubscanLink>
       );
 
-      expect(getByRole('link')).toHaveAttribute('href', `https://${config.name.split('-')[0]}.subscan.io/tx/0x123456`);
+      if (config.name === 'moonriver') {
+        expect(getByRole('link')).toHaveAttribute('href', `https://moonriver.moonscan.io/tx/0x123456`);
+      } else {
+        expect(getByRole('link')).toHaveAttribute('href', `https://${config.name}.subscan.io/tx/0x123456`);
+      }
     }
   );
 
@@ -192,6 +190,7 @@ describe('<SubscanLink />', () => {
     const explorers: Partial<{ [key in Network]: string }> = {
       heco: `https://hecoinfo.com/tx/0x123456`,
       polygon: `https://polygonscan.com/tx/0x123456`,
+      moonriver: `https://moonriver.moonscan.io/tx/0x123456`,
     };
     const expected = explorers[config.name] ?? href;
 
@@ -240,7 +239,7 @@ describe('<SubscanLink />', () => {
       </SubscanLink>
     );
 
-    expect(getByRole('link')).toHaveAttribute('href', `https://${config.name.split('-')[0]}.subscan.io/block/0x123456`);
+    expect(getByRole('link')).toHaveAttribute('href', `https://${config.name}.subscan.io/block/0x123456`);
     expect(queryByText(/test link/i)).toBeInTheDocument();
   });
 
@@ -270,7 +269,7 @@ describe('<SubscanLink />', () => {
   it.each(parachainConfigs)('[Parachain - $name] should display the block address default', (config) => {
     const { getByRole, queryByText } = render(<SubscanLink network={config} block="0x123456"></SubscanLink>);
 
-    expect(getByRole('link')).toHaveAttribute('href', `https://${config.name.split('-')[0]}.subscan.io/block/0x123456`);
+    expect(getByRole('link')).toHaveAttribute('href', `https://${config.name}.subscan.io/block/0x123456`);
     expect(queryByText(/0x123456/i)).toBeInTheDocument();
   });
 });

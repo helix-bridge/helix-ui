@@ -1,3 +1,4 @@
+import { crabParachainMoonriver } from 'shared/config/bridges/crabParachain-moonriver';
 import { FunctionComponent } from 'react';
 import { darwiniaCrabDVM, pangoroPangolinDVM } from 'shared/config/bridge';
 import { arbitrumAstar } from 'shared/config/bridges/arbitrum-astar';
@@ -37,6 +38,7 @@ import { polygonOptimism } from 'shared/config/bridges/polygon-optimism';
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
 import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from 'shared/config/bridges/substrateDVM-substrateDVM';
 import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
+import { CrabParachain2Moonriver, Moonriver2CrabParachain } from './crabParachain-moonriver';
 import { Arbitrum2Astar, Astar2Arbitrum } from './arbitrum-astar';
 import { Arbitrum2Avalanche, Avalanche2Arbitrum } from './arbitrum-avalanche';
 import { Arbitrum2Optimism, Optimism2Arbitrum } from './arbitrum-optimism';
@@ -228,3 +230,6 @@ crabDVMOptimism.setRedeemComponents(Optimism2CrabDVM as FunctionComponent);
 
 crabParachainKarura.setIssuingComponents(CrabParachain2Karura as FunctionComponent);
 crabParachainKarura.setRedeemComponents(Karura2CrabParachain as FunctionComponent);
+
+crabParachainMoonriver.setIssuingComponents(CrabParachain2Moonriver as FunctionComponent);
+crabParachainMoonriver.setRedeemComponents(Moonriver2CrabParachain as FunctionComponent);

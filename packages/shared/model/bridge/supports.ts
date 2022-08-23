@@ -35,4 +35,5 @@ export type BridgeName =
   | 'crabDVM-astar'
   | 'crabDVM-avalanche'
   | 'crabDVM-optimism'
-  | 'crabParachain-karura';
+  | 'crabParachain-karura'
+  | 'crabParachain-moonriver';

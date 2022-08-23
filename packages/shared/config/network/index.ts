@@ -11,6 +11,7 @@ export * from './descriptions';
 export * from './ethereum';
 export * from './heco';
 export * from './karura';
+export * from './moonriver';
 export * from './network-simple';
 export * from './networks';
 export * from './optimism';

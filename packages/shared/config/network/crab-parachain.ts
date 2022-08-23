@@ -29,6 +29,11 @@ export const crabParachainConfig: ParachainChainConfig = {
           bridge: 'crabParachain-karura',
           partner: { name: 'karura', role: 'issuing', symbol: 'CRAB' },
         },
+        {
+          category: 'XCM',
+          bridge: 'crabParachain-moonriver',
+          partner: { name: 'moonriver', role: 'issuing', symbol: 'CRAB' },
+        },
       ],
       type: 'native',
       host: 'crab-parachain',
