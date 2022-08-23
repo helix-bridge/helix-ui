@@ -4,19 +4,19 @@ import { matches } from 'lodash';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo } from 'react';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
-import { Bridge, CrossChainDirection, CrossToken, CustomFormControlProps, NullableFields } from 'shared/model';
+import { Bridge, CrossChainDirection, CrossToken, CustomFormControlProps } from 'shared/model';
 import { getBridges } from 'shared/utils/bridge';
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { BridgeState } from '../bridge/BridgeState';
 import { TokenOnChain } from '../widget/TokenOnChain';
 
 type BridgeSelectorProps = CustomFormControlProps<Bridge> & {
-  direction: NullableFields<CrossChainDirection, 'from' | 'to'>;
+  direction: CrossChainDirection;
 };
 
 export function BridgeSelector({ direction, value, onChange }: BridgeSelectorProps) {
   const { t } = useTranslation();
-  const bridges = useMemo(() => getBridges(direction as CrossChainDirection), [direction]);
+  const bridges = useMemo(() => getBridges(direction), [direction]);
 
   const needClaim = useMemo(() => {
     const overview = direction.from?.cross.find((item) => item.partner.name === direction.to?.meta.name);

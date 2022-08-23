@@ -1,6 +1,7 @@
-import { CopyrightOutlined, MailOutlined, GithubOutlined, TwitterOutlined } from '@ant-design/icons';
+import { CopyrightOutlined, GithubOutlined, MailOutlined, TwitterOutlined } from '@ant-design/icons';
 import { Divider, Layout } from 'antd';
 import { getYear } from 'date-fns';
+import React from 'react';
 import { LanguageProps } from 'shared/components/widget/Language';
 import { ThemeSwitch, ThemeSwitchProps } from 'shared/components/widget/ThemeSwitch';
 import { THEME } from 'shared/config/theme';

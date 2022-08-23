@@ -217,5 +217,6 @@ describe('network utils', () => {
     expect(getDisplayName(darwiniaDVMConfig)).toEqual('Darwinia Smart Chain');
     expect(getDisplayName(crabParachainConfig)).toEqual('Crab Parachain');
     expect(getDisplayName(pangolinParachainConfig)).toEqual('Pangolin Parachain');
+    expect(getDisplayName(null)).toEqual('unknown');
   });
 });
