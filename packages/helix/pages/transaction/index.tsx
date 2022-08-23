@@ -136,7 +136,11 @@ function Page() {
       title: t('Bridge'),
       dataIndex: 'bridge',
       render: (value) => (
-        <span className={`justify-self-center ${/^[a-z]+[A-Z]{1}/.test(value) ? '' : 'capitalize'}`}>
+        <span
+          className={`justify-self-center ${
+            /^[a-z]+[A-Z]{1}/.test(value) ? '' : /xcm/i.test(value) ? 'uppercase' : 'capitalize'
+          }`}
+        >
           {value.split('-')[0]}
         </span>
       ),

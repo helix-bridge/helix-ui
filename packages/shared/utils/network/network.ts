@@ -49,7 +49,7 @@ function getConfig(name: Network | null | undefined, source = chainConfigs): Cha
     throw new Error(`You must pass a 'name' parameter to find the chain config`);
   }
 
-  const result = source.find((item) => item.name === name);
+  const result = source.find((item) => item.name === name || item.alias?.includes(name));
 
   if (!result) {
     throw new Error(`Can not find the chain config by ${name}`);

@@ -11,6 +11,6 @@ const crabParachainKaruraConfig: CrabParachainKaruraBridgeConfig = {
 
 export const crabParachainKarura = new Bridge(crabParachainConfig, karuraConfig, crabParachainKaruraConfig, {
   name: 'crabParachain-karura',
-  category: 'helix',
+  category: 'XCM',
   activeArrivalConnection: true,
 });

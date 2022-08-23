@@ -25,7 +25,7 @@ export const crabParachainConfig: ParachainChainConfig = {
           partner: { name: 'crab', role: 'issuing', symbol: 'CRAB' },
         },
         {
-          category: 'helix',
+          category: 'XCM',
           bridge: 'crabParachain-karura',
           partner: { name: 'karura', role: 'issuing', symbol: 'CRAB' },
         },
@@ -41,4 +41,5 @@ export const crabParachainConfig: ParachainChainConfig = {
   specVersion: 5310,
   paraId: 2105,
   wallets: ['polkadot'],
+  alias: ['crabparachain'],
 };

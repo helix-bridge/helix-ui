@@ -27,7 +27,7 @@ export const karuraConfig: ParachainChainConfig = {
       decimals: 18,
       cross: [
         {
-          category: 'helix',
+          category: 'XCM',
           bridge: 'crabParachain-karura',
           partner: { name: 'crab-parachain', role: 'backing', symbol: 'CRAB' },
         },

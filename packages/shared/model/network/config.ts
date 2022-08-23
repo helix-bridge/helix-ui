@@ -48,6 +48,7 @@ export interface ChainConfig {
   tokens: TokenWithBridgesInfo[];
   wallets: SupportedWallet[];
   fullName?: string;
+  alias?: string[];
 }
 
 export interface EthereumChainConfig extends ChainConfig {

@@ -1,4 +1,4 @@
-import { Network } from '../../model';
+import { BridgeCategory, Network } from '../../model';
 import { getBridge } from './bridge';
 
 export type BridgePredicateFn = (departure: Network, arrival: Network) => boolean;
@@ -14,11 +14,15 @@ const or =
   (departure: Network, arrival: Network) =>
     fns.some((fn) => fn(departure, arrival));
 
-export const isCBridge: BridgePredicateFn = (departure, arrival) => {
+const isBridge = (category: BridgeCategory) => (departure: Network, arrival: Network) => {
   const bridge = getBridge([departure, arrival]);
 
-  return bridge.category === 'cBridge';
+  return bridge.category === category;
 };
+
+export const isCBridge: BridgePredicateFn = isBridge('cBridge');
+
+export const isXCM: BridgePredicateFn = isBridge('XCM');
 
 /* -----------------------------generated auto------------------------------------- */
 
