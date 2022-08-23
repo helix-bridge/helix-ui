@@ -1,6 +1,18 @@
 /// <reference types="jest" />
 
-import { crabConfig, crabDVMConfig, darwiniaDVMConfig, pangolinDVMConfig, pangoroDVMConfig } from '../config/network';
+import {
+  arbitrumConfig,
+  astarConfig,
+  avalancheConfig,
+  bscConfig,
+  crabConfig,
+  crabDVMConfig,
+  darwiniaDVMConfig,
+  karuraConfig,
+  optimismConfig,
+  pangolinDVMConfig,
+  pangoroDVMConfig,
+} from '../config/network';
 import { crabParachainConfig } from '../config/network/crab-parachain';
 import { pangolinParachainConfig } from '../config/network/pangolin-parachain';
 import { crossChainGraph } from '../utils/network/graph';
@@ -183,13 +195,13 @@ describe('network utils', () => {
     expect(isPolkadotNetwork('pangoro')).toBe(true);
     expect(isPolkadotNetwork('pangolin-parachain')).toBe(true);
     expect(isPolkadotNetwork('crab-parachain')).toBe(true);
-    expect(isPolkadotNetwork('karura-parachain')).toBe(true);
+    expect(isPolkadotNetwork('karura')).toBe(true);
   });
 
   it('can recognize parachain network', () => {
     expect(isParachainNetwork('pangolin-parachain')).toBe(true);
     expect(isParachainNetwork('crab-parachain')).toBe(true);
-    expect(isParachainNetwork('karura-parachain')).toBe(true);
+    expect(isParachainNetwork('karura')).toBe(true);
   });
 
   it('can recognize ethereum network', () => {
@@ -217,6 +229,12 @@ describe('network utils', () => {
     expect(getDisplayName(darwiniaDVMConfig)).toEqual('Darwinia Smart Chain');
     expect(getDisplayName(crabParachainConfig)).toEqual('Crab Parachain');
     expect(getDisplayName(pangolinParachainConfig)).toEqual('Pangolin Parachain');
+    expect(getDisplayName(karuraConfig)).toEqual('Karura');
+    expect(getDisplayName(astarConfig)).toEqual('Astar');
+    expect(getDisplayName(arbitrumConfig)).toEqual('Arbitrum One');
+    expect(getDisplayName(avalancheConfig)).toEqual('Avalanche');
+    expect(getDisplayName(bscConfig)).toEqual('BNB Chain');
+    expect(getDisplayName(optimismConfig)).toEqual('Optimism');
     expect(getDisplayName(null)).toEqual('unknown');
   });
 });

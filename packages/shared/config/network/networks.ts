@@ -10,7 +10,7 @@ import { darwiniaConfig } from './darwinia';
 import { darwiniaDVMConfig } from './darwinia-dvm';
 import { ethereumConfig } from './ethereum';
 import { hecoConfig } from './heco';
-import { karuraParachainConfig } from './karura-parachain';
+import { karuraConfig } from './karura';
 import { optimismConfig } from './optimism';
 import { pangolinConfig } from './pangolin';
 import { pangolinDVMConfig } from './pangolin-dvm';
@@ -32,7 +32,7 @@ export const SYSTEM_CHAIN_CONFIGURATIONS = [
   darwiniaDVMConfig,
   ethereumConfig,
   hecoConfig,
-  karuraParachainConfig,
+  karuraConfig,
   optimismConfig,
   pangolinConfig,
   pangolinDVMConfig,
@@ -43,7 +43,7 @@ export const SYSTEM_CHAIN_CONFIGURATIONS = [
   ropstenConfig,
 ];
 
-export const knownParachainNetworks: ParachainNetwork[] = ['pangolin-parachain', 'crab-parachain', 'karura-parachain'];
+export const knownParachainNetworks: ParachainNetwork[] = ['pangolin-parachain', 'crab-parachain', 'karura'];
 
 export const knownPolkadotNetworks: PolkadotTypeNetwork[] = [
   'crab',

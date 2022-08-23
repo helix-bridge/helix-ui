@@ -26,8 +26,8 @@ export const crabParachainConfig: ParachainChainConfig = {
         },
         {
           category: 'helix',
-          bridge: 'crabParachain-karuraParachain',
-          partner: { name: 'karura-parachain', role: 'issuing', symbol: 'CRAB' },
+          bridge: 'crabParachain-karura',
+          partner: { name: 'karura', role: 'issuing', symbol: 'CRAB' },
         },
       ],
       type: 'native',

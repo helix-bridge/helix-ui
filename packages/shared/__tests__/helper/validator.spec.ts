@@ -39,7 +39,7 @@ describe('validator utils', () => {
     expect(isValidAddress(substrateAddress, 'ethereum')).toBe(false);
     expect(isValidAddress(ethereumAddress, 'ethereum')).toBe(true);
     expect(isValidAddress(ethereumAddress, 'darwinia')).toBe(false);
-    expect(isValidAddress(karuraAddress, 'karura-parachain')).toBe(true);
+    expect(isValidAddress(karuraAddress, 'karura')).toBe(true);
   });
 
   it('should predicate address with ss58Prefix checking', () => {
@@ -51,7 +51,7 @@ describe('validator utils', () => {
     expect(isValidAddressStrict(substrateAddress, 'ethereum')).toBe(false);
     expect(isValidAddressStrict(ethereumAddress, 'ethereum')).toBe(true);
     expect(isValidAddressStrict(ethereumAddress, 'darwinia')).toBe(false);
-    expect(isValidAddressStrict(karuraAddress, 'karura-parachain')).toBe(true);
+    expect(isValidAddressStrict(karuraAddress, 'karura')).toBe(true);
   });
 
   it('should predicate polkadot address ', () => {

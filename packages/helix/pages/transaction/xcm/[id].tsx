@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { RecordStatus } from 'shared/config/constant';
 import { PARACHAIN_PARACHAIN_BACKING, PARACHAIN_PARACHAIN_ISSUING } from 'shared/config/env';
 import { useITranslation } from 'shared/hooks';
-import { CrabParachainKaruraParachainBridgeConfig, HelixHistoryRecord, Network } from 'shared/model';
+import { CrabParachainKaruraBridgeConfig, HelixHistoryRecord, Network } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
@@ -32,7 +32,7 @@ const Page: NextPage<{
 
     const departure = getChainConfig(router.query.from as Network);
     const arrival = getChainConfig(router.query.to as Network);
-    const bridge = getBridge<CrabParachainKaruraParachainBridgeConfig>([departure, arrival]);
+    const bridge = getBridge<CrabParachainKaruraBridgeConfig>([departure, arrival]);
     const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase())!;
     const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase())!;
     const relayer = bridge.isIssuing(departure, arrival) ? PARACHAIN_PARACHAIN_BACKING : PARACHAIN_PARACHAIN_ISSUING;
