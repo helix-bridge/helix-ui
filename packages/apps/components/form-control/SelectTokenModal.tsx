@@ -102,7 +102,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
 
       <div className="max-h-96 overflow-auto flex flex-col gap-2">
         {tokens.map((item, index) => {
-          const isS2SKton = /^[x]?[O]?KTON/.test(item.symbol) && !item.address;
+          const isS2SKton = /[WC]?KTON/.test(item.symbol);
           const disabled = isS2SKton;
 
           return (
@@ -126,6 +126,8 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
                     {t('test')}
                   </Tag>
                 )}
+
+                {disabled && <span className="text-gray-500 text-xs">{t('COMING SOON')}</span>}
               </div>
             </button>
           );
