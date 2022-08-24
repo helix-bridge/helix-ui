@@ -70,7 +70,7 @@ export const ethereumConfig: EthereumChainConfig = {
     },
     {
       name: 'USDT',
-      decimals: 18,
+      decimals: 6,
       cross: [
         {
           category: 'cBridge',
@@ -116,7 +116,7 @@ export const ethereumConfig: EthereumChainConfig = {
     },
     {
       name: 'USDC',
-      decimals: 18,
+      decimals: 6,
       cross: [
         {
           category: 'cBridge',
@@ -174,7 +174,7 @@ export const ethereumConfig: EthereumChainConfig = {
       host: 'ethereum',
       logo: 'token-busd.png',
       symbol: 'BUSD',
-      address: '',
+      address: '0x4Fabb145d64652a948d72533023f6E7A623C7C53',
     },
   ],
   wallets: ['metamask'],
