@@ -46,5 +46,4 @@ export const crabParachainConfig: ParachainChainConfig = {
   specVersion: 5310,
   paraId: 2105,
   wallets: ['polkadot'],
-  alias: ['crabparachain'],
 };
