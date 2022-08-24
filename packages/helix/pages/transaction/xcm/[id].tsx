@@ -1,14 +1,13 @@
-import { Result } from 'antd';
 import { GetServerSidePropsContext, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { RecordStatus } from 'shared/config/constant';
-import { useITranslation } from 'shared/hooks';
 import { HelixHistoryRecord, Network } from 'shared/model';
 import { revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
 import { getReceivedAmountFromHelixRecord, getSentAmountFromHelixRecord } from 'shared/utils/record';
 import { Detail } from '../../../components/transaction/Detail';
+import { useUpdatableRecord } from '../../../hooks';
 import { TransferStep } from '../../../model/transfer';
 import { getServerSideRecordProps } from '../../../utils/getServerSideRecordProps';
 
@@ -18,14 +17,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ id
 
 const Page: NextPage<{
   id: string;
-  data: HelixHistoryRecord;
-}> = ({ data: record }) => {
-  const { t } = useITranslation();
+}> = ({ id }) => {
   const router = useRouter();
+  const { record } = useUpdatableRecord(id);
 
   const transfers = useMemo(() => {
     if (!record) {
-      return null;
+      return [];
     }
 
     const departure = getChainConfig(router.query.from as Network);
@@ -65,11 +63,7 @@ const Page: NextPage<{
     return [start, record.result === RecordStatus.success ? success : fail];
   }, [record, router.query.from, router.query.to]);
 
-  return transfers ? (
-    <Detail record={record} transfers={transfers} />
-  ) : (
-    <Result status="error" title={t('Record not found')} />
-  );
+  return <Detail record={record} transfers={transfers} />;
 };
 
 export default Page;
