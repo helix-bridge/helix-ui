@@ -23,8 +23,8 @@ import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import {
   DEFAULT_SLIPPAGE,
-  SLIPPAGE_SCALE,
   SlippageItem,
+  SLIPPAGE_SCALE,
   UI_SLIPPAGE_SCALE,
 } from '../../../components/form-control/Slippage';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
@@ -32,9 +32,9 @@ import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
 import { useAccount, useWallet } from '../../../providers';
-import { EstimateAmtRequest, EstimateAmtResponse } from './ts-proto/gateway/gateway_pb';
 import { IssuingPayload } from './model';
-import { getMinimalMaxSlippage, transfer, validate, client } from './utils';
+import { EstimateAmtRequest, EstimateAmtResponse } from './ts-proto/gateway/gateway_pb';
+import { client, getMinimalMaxSlippage, transfer, validate } from './utils';
 
 export function CBridge({
   allowance,
@@ -129,12 +129,25 @@ export function CBridge({
   }, [direction.from.host, direction.from.meta, poolAddress, setChainMatched]);
 
   useEffect(() => {
-    updateAllowancePayload({
-      spender: poolAddress,
-      tokenAddress: direction.from.address,
-      provider: entrance.web3.defaultProvider,
+    let promise = Promise.resolve({});
+
+    if (direction.from.host === 'polygon') {
+      const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
+
+      promise = web3.eth.getGasPrice().then((res) => ({
+        gasPrice: new BN(res).add(new BN(res).div(new BN(10))).toString(),
+      }));
+    }
+
+    promise.then((options) => {
+      updateAllowancePayload({
+        spender: poolAddress,
+        tokenAddress: direction.from.address,
+        provider: entrance.web3.defaultProvider,
+        ...options,
+      });
     });
-  }, [direction.from.address, poolAddress, updateAllowancePayload]);
+  }, [direction.from.address, direction.from.host, poolAddress, updateAllowancePayload]);
 
   useEffect(() => {
     form.setFieldsValue({ [FORM_CONTROL.recipient]: account });
