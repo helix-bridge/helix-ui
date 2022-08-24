@@ -91,13 +91,7 @@ export const crabDVMConfig: DVMChainConfig = {
     {
       name: 'xKTON',
       decimals: 9,
-      cross: [
-        {
-          category: 'helix',
-          bridge: 'substrate-substrateDVM',
-          partner: { name: 'darwinia', role: 'backing', symbol: 'KTON' },
-        },
-      ],
+      cross: [],
       type: 'mapping',
       host: 'crab-dvm',
       logo: 'token-okton.svg',

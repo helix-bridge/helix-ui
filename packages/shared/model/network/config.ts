@@ -1,7 +1,14 @@
 import { BridgeCategory, BridgeName } from '../bridge';
 import { AddEthereumChainParameter } from '../metamask';
 import { Token } from '../token';
-import { DVMNetwork, EthereumTypeNetwork, Network, PolkadotTypeNetwork, SupportedWallet } from './network';
+import {
+  DVMNetwork,
+  EthereumTypeNetwork,
+  Network,
+  ParachainEthereumCompatibleNetwork,
+  PolkadotTypeNetwork,
+  SupportedWallet,
+} from './network';
 
 export type LogoType = 'main' | 'minor' | 'assist';
 
@@ -70,4 +77,10 @@ export interface DVMChainConfig extends ChainConfig {
 
 export interface ParachainChainConfig extends PolkadotChainConfig {
   paraId: number;
+}
+
+export interface ParachainEthereumCompatibleChainConfig
+  extends Omit<ParachainChainConfig, 'name'>,
+    EthereumChainConfig {
+  name: ParachainEthereumCompatibleNetwork;
 }

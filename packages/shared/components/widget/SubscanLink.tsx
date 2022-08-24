@@ -1,8 +1,7 @@
 import { Typography } from 'antd';
-import React from 'react';
 import { CSSProperties, PropsWithChildren } from 'react';
 import { ChainConfig, Network } from '../../model';
-import { isDVMNetwork, isParachainNetwork, isPolkadotNetwork } from '../../utils/network';
+import { isDVMNetwork, isPolkadotNetwork } from '../../utils/network';
 import { Icon } from './Icon';
 
 const { Link } = Typography;
@@ -32,7 +31,7 @@ export function SubscanLink({
   let network: Network = typeof networkOrChainConfig === 'object' ? networkOrChainConfig.name : networkOrChainConfig;
   const isSubscan = isPolkadotNetwork(network) || isDVMNetwork(network);
 
-  if (isDVMNetwork(networkOrChainConfig) || isParachainNetwork(networkOrChainConfig)) {
+  if (isDVMNetwork(networkOrChainConfig)) {
     network = network.split('-')[0] as Network;
   }
 
@@ -72,6 +71,7 @@ export function SubscanLink({
     const explorers: Partial<{ [key in Network]: string }> = {
       heco: `https://hecoinfo.com/tx/${txHash}`,
       polygon: `https://polygonscan.com/tx/${txHash}`,
+      moonriver: `https://moonriver.moonscan.io/tx/${txHash}`,
     };
 
     const href =

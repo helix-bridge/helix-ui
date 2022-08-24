@@ -10,15 +10,16 @@ interface BridgeArrowProps {
 // eslint-disable-next-line complexity
 export function BridgeArrow({ category, showName = true }: BridgeArrowProps) {
   const asHistory = !showName;
-  const logoProps = asSameCategory(category, 'helix')
-    ? {
-        width: 28,
-        height: 28,
-      }
-    : {
-        width: 44,
-        height: 28,
-      };
+  const logoProps =
+    asSameCategory(category, 'helix') || asSameCategory(category, 'XCM')
+      ? {
+          width: 28,
+          height: 28,
+        }
+      : {
+          width: 44,
+          height: 28,
+        };
 
   return (
     <div

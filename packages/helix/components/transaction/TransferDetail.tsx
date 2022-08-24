@@ -18,9 +18,9 @@ export function TransferDetail({ transfers }: { transfers: TransferStep[] }) {
         {transfers.map(({ chain, sender, recipient, token, amount }, index) => (
           <div
             key={[token.name, token.host, index].join('-')}
-            className="w-full md:w-2/3 grid grid-cols-12 items-center"
+            className="w-full 2xl:w-3/4 grid grid-cols-12 items-center"
           >
-            <span className="flex items-center gap-2 col-span-3">
+            <span className="flex items-center gap-2 col-span-2">
               <Logo chain={chain} width={16} height={16} className="w-5 h-5" />
               <span className="truncate">{getDisplayName(chain)}</span>
             </span>
@@ -37,11 +37,12 @@ export function TransferDetail({ transfers }: { transfers: TransferStep[] }) {
               </Tooltip>
             </span>
 
-            <span className="flex items-center gap-2 col-span-3">
+            <span className="flex items-center gap-2 col-span-3 2xl:col-span-4">
               <span className="font-bold text-sm">{t('For')}</span>
               <Logo name={token.logo} width={16} height={16} className="w-5 h-5" />
               <span className="whitespace-nowrap">
-                {amount} {token.name}
+                <span>{amount}</span>
+                <span className="ml-2">{token.name}</span>
               </span>
             </span>
           </div>
