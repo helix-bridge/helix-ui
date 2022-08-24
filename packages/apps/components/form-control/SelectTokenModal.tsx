@@ -102,7 +102,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
 
       <div className="max-h-96 overflow-auto flex flex-col gap-2">
         {tokens.map((item, index) => {
-          const isS2SKton = /[WC]?KTON/.test(item.symbol);
+          const isS2SKton = /[WC]{1}KTON/.test(item.symbol);
           const disabled = isS2SKton;
 
           return (
