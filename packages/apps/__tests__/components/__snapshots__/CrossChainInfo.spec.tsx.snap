@@ -90,36 +90,6 @@ exports[`<CrossChainInfo /> render cross-chain and extra nodes 1`] = `
             </span>
           </div>
           <div
-            className="hidden items-center gap-2 cursor-pointer"
-            data-testid="toggle-btn"
-          >
-            <span
-              className="flex-1 bg-transparent h-px"
-            />
-            <span
-              aria-label="caret-down"
-              className="anticon anticon-caret-down text-gray-700 transform transition-all duration-300 rotate-180"
-              role="img"
-            >
-              <svg
-                aria-hidden="true"
-                data-icon="caret-down"
-                fill="currentColor"
-                focusable="false"
-                height="1em"
-                viewBox="0 0 1024 1024"
-                width="1em"
-              >
-                <path
-                  d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"
-                />
-              </svg>
-            </span>
-            <span
-              className="flex-1 bg-transparent h-px"
-            />
-          </div>
-          <div
             className="justify-between items-center transition-all duration-100 flex"
             data-testid="Allowance"
           >
