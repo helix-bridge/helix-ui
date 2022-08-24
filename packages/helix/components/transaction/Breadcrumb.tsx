@@ -2,7 +2,7 @@ import { Breadcrumb } from 'antd';
 import BreadcrumbItem from 'antd/lib/breadcrumb/BreadcrumbItem';
 import { useTranslation } from 'next-i18next';
 
-export function IBreadcrumb({ txHash }: { txHash: string }) {
+export function IBreadcrumb({ txHash }: { txHash?: string }) {
   const { t } = useTranslation();
 
   return (
