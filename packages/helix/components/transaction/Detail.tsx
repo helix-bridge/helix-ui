@@ -18,10 +18,11 @@ import { TransferDetail } from './TransferDetail';
 import { TxStatus } from './TxStatus';
 
 interface DetailProps {
-  record: HelixHistoryRecord;
+  record: HelixHistoryRecord | null;
   transfers: TransferStep[];
 }
 
+// eslint-disable-next-line complexity
 export function Detail({ record, transfers }: DetailProps) {
   const { t } = useITranslation();
   const router = useRouter();
@@ -29,20 +30,20 @@ export function Detail({ record, transfers }: DetailProps) {
   const arrival = getChainConfig(router.query.to as Network);
 
   const amount = useMemo(() => {
-    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase());
+    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === record?.sendToken.toLowerCase());
 
-    return fromWei({ value: record.sendAmount ?? 0, decimals: token?.decimals ?? 9 }, prettyNumber);
+    return fromWei({ value: record?.sendAmount ?? 0, decimals: token?.decimals ?? 9 }, prettyNumber);
   }, [departure.tokens, record]);
 
   const feeDecimals = useMemo(() => {
-    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === record.feeToken.toLowerCase());
+    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === record?.feeToken.toLowerCase());
 
     return token?.decimals ?? 9;
   }, [departure.tokens, record]);
 
   return (
     <>
-      <IBreadcrumb txHash={record.requestTxHash} />
+      <IBreadcrumb txHash={record?.requestTxHash} />
 
       <div className="flex justify-between items-center mt-6">
         <h3 className="uppercase text-xs md:text-lg">{t('transaction detail')}</h3>
@@ -50,7 +51,7 @@ export function Detail({ record, transfers }: DetailProps) {
       </div>
 
       <div className="px-8 py-3 mt-6 bg-gray-200 dark:bg-antDark">
-        <SourceTx hash={record.requestTxHash} />
+        <SourceTx hash={record?.requestTxHash} />
 
         <TargetTx record={record} />
 
@@ -61,11 +62,11 @@ export function Detail({ record, transfers }: DetailProps) {
         <Divider />
 
         <TransferDescription title={t('Sender')} tip={t('Address (external or contract) sending the transaction.')}>
-          <TextWithCopy>{revertAccount(record.sender, departure)}</TextWithCopy>
+          {record && <TextWithCopy>{revertAccount(record.sender, departure)}</TextWithCopy>}
         </TransferDescription>
 
         <TransferDescription title={t('Receiver')} tip={t('Address (external or contract) receiving the transaction.')}>
-          <TextWithCopy>{revertAccount(record.recipient, arrival)}</TextWithCopy>
+          {record && <TextWithCopy>{revertAccount(record.recipient, arrival)}</TextWithCopy>}
         </TransferDescription>
 
         {!!transfers.length && <TransferDetail transfers={transfers} />}
@@ -76,20 +77,21 @@ export function Detail({ record, transfers }: DetailProps) {
           title={t('Value')}
           tip={t('The amount to be transferred to the recipient with the cross-chain transaction.')}
         >
-          {amount} {transfers[0].token.name}
+          {amount} {transfers[0]?.token.name}
         </TransferDescription>
 
         <TransferDescription
           title={t('Transaction Fee')}
           tip={'Amount paid for processing the cross-chain transaction.'}
         >
-          {fromWei({ value: record.fee, decimals: feeDecimals })} {record.feeToken === 'null' ? null : record.feeToken}
+          {record && fromWei({ value: record.fee, decimals: feeDecimals })}{' '}
+          {record && (record.feeToken === 'null' ? null : record.feeToken)}
         </TransferDescription>
 
         <Divider />
 
         <TransferDescription title={t('Nonce')} tip={t('A unique number of cross-chain transaction in Bridge')}>
-          {isCrabDVMHeco(record.fromChain, record.toChain) ? record.messageNonce : record.nonce}
+          {record && (isCrabDVMHeco(record.fromChain, record.toChain) ? record.messageNonce : record.nonce)}
         </TransferDescription>
       </div>
     </>

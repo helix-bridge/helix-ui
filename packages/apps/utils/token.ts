@@ -56,5 +56,8 @@ export const asSameToken = (symbol1: string, symbol2: string): boolean => {
 };
 
 export const asSameCategory = (category1: string, category2: string): boolean => {
-  return category1.split('-')[0] === category2.split('-')[0];
+  const c1 = category1.split('-')[0];
+  const c2 = category2.split('-')[0];
+
+  return c1 === c2 || c1.toLowerCase() === c2.toLowerCase();
 };

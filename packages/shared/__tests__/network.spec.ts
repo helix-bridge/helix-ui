@@ -1,6 +1,20 @@
 /// <reference types="jest" />
 
-import { crabConfig, crabDVMConfig, darwiniaDVMConfig, pangolinDVMConfig, pangoroDVMConfig } from '../config/network';
+import { sortBy } from 'lodash';
+import {
+  arbitrumConfig,
+  astarConfig,
+  avalancheConfig,
+  bscConfig,
+  crabConfig,
+  crabDVMConfig,
+  darwiniaDVMConfig,
+  karuraConfig,
+  moonriverConfig,
+  optimismConfig,
+  pangolinDVMConfig,
+  pangoroDVMConfig,
+} from '../config/network';
 import { crabParachainConfig } from '../config/network/crab-parachain';
 import { pangolinParachainConfig } from '../config/network/pangolin-parachain';
 import { crossChainGraph } from '../utils/network/graph';
@@ -13,14 +27,13 @@ import {
   isParachainNetwork,
   isPolkadotNetwork,
 } from '../utils/network/network';
-import { sortBy } from 'lodash';
 
 describe('network utils', () => {
   const data = [...crossChainGraph];
   const sort = (ary: string[]) => sortBy(ary, (cur) => cur.charCodeAt(0));
 
   it('should contains chains count: ', () => {
-    expect(chainConfigs).toHaveLength(20);
+    expect(chainConfigs).toHaveLength(21);
   });
 
   it('crab contains 2 leafs', () => {
@@ -45,6 +58,14 @@ describe('network utils', () => {
       'bsc',
       'optimism',
     ]);
+
+    expect(group).not.toEqual(undefined);
+    expect(sort(group![1])).toEqual(expected);
+  });
+
+  it('crab-parachain contains 3 leafs', () => {
+    const group = data.find((item) => item[0] === 'crab-parachain');
+    const expected = sort(['crab', 'karura', 'moonriver']);
 
     expect(group).not.toEqual(undefined);
     expect(sort(group![1])).toEqual(expected);
@@ -130,6 +151,20 @@ describe('network utils', () => {
     expect(group![1]).toEqual(['crab-dvm', 'ethereum', 'heco', 'astar', 'bsc', 'avalanche', 'arbitrum', 'optimism']);
   });
 
+  it('karura contains 1 leaf', () => {
+    const group = data.find((item) => item[0] === 'karura');
+
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['crab-parachain']);
+  });
+
+  it('moonriver contains 1 leaf', () => {
+    const group = data.find((item) => item[0] === 'moonriver');
+
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['crab-parachain']);
+  });
+
   // ------------------------------------test networks---------------------------------------
 
   it('pangolin contains 3 leafs', () => {
@@ -183,13 +218,15 @@ describe('network utils', () => {
     expect(isPolkadotNetwork('pangoro')).toBe(true);
     expect(isPolkadotNetwork('pangolin-parachain')).toBe(true);
     expect(isPolkadotNetwork('crab-parachain')).toBe(true);
-    expect(isPolkadotNetwork('karura-parachain')).toBe(true);
+    expect(isPolkadotNetwork('karura')).toBe(true);
+    expect(isPolkadotNetwork('moonriver')).toBe(false);
   });
 
   it('can recognize parachain network', () => {
     expect(isParachainNetwork('pangolin-parachain')).toBe(true);
     expect(isParachainNetwork('crab-parachain')).toBe(true);
-    expect(isParachainNetwork('karura-parachain')).toBe(true);
+    expect(isParachainNetwork('karura')).toBe(true);
+    expect(isParachainNetwork('moonriver')).toBe(true);
   });
 
   it('can recognize ethereum network', () => {
@@ -200,6 +237,7 @@ describe('network utils', () => {
     expect(isEthereumNetwork('heco')).toBe(true);
     expect(isEthereumNetwork('polygon')).toBe(true);
     expect(isEthereumNetwork('pangoro-dvm')).toBe(true);
+    expect(isEthereumNetwork('moonriver')).toBe(true);
   });
 
   it('can recognize dvm network', () => {
@@ -217,5 +255,13 @@ describe('network utils', () => {
     expect(getDisplayName(darwiniaDVMConfig)).toEqual('Darwinia Smart Chain');
     expect(getDisplayName(crabParachainConfig)).toEqual('Crab Parachain');
     expect(getDisplayName(pangolinParachainConfig)).toEqual('Pangolin Parachain');
+    expect(getDisplayName(karuraConfig)).toEqual('Karura');
+    expect(getDisplayName(astarConfig)).toEqual('Astar');
+    expect(getDisplayName(arbitrumConfig)).toEqual('Arbitrum One');
+    expect(getDisplayName(avalancheConfig)).toEqual('Avalanche');
+    expect(getDisplayName(bscConfig)).toEqual('BNB Chain');
+    expect(getDisplayName(optimismConfig)).toEqual('Optimism');
+    expect(getDisplayName(moonriverConfig)).toEqual('Moonriver');
+    expect(getDisplayName(null)).toEqual('unknown');
   });
 });

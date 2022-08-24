@@ -3,6 +3,7 @@ import { AntdIconProps } from '@ant-design/icons/lib/components/AntdIcon';
 import { Dropdown, Menu, Typography } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import React from 'react';
 import { useMemo } from 'react';
 import { isDev } from 'shared/config/env';
 import { THEME } from 'shared/config/theme';
@@ -65,7 +66,7 @@ function RouteLink({ path, label }: Nav) {
   );
 }
 
-const getActiveNav = (path: string, navigators: Nav[]) => {
+export const getActiveNav = (path: string, navigators: Nav[]) => {
   return navigators
     .filter((item) => path === item.path)
     .map((item) => navigators.find((nav) => nav.path.startsWith(item.path)))
@@ -115,7 +116,7 @@ export function Navigator({ navigators, onClick, theme = THEME.DARK }: Navigator
         theme={theme}
         mode="inline"
         defaultSelectedKeys={selectedNavMenu}
-        items={navigators.map(({ Icon, path, label, className }) => ({
+        items={navItems.map(({ Icon, path, label, className }) => ({
           key: path,
           label: <Link href={path}>{t(label)}</Link>,
           icon: Icon ? <Icon /> : null,

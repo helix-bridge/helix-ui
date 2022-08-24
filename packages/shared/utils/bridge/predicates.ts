@@ -1,4 +1,4 @@
-import { Network } from '../../model';
+import { BridgeCategory, Network } from '../../model';
 import { getBridge } from './bridge';
 
 export type BridgePredicateFn = (departure: Network, arrival: Network) => boolean;
@@ -14,11 +14,15 @@ const or =
   (departure: Network, arrival: Network) =>
     fns.some((fn) => fn(departure, arrival));
 
-export const isCBridge: BridgePredicateFn = (departure, arrival) => {
+const isBridge = (category: BridgeCategory) => (departure: Network, arrival: Network) => {
   const bridge = getBridge([departure, arrival]);
 
-  return bridge.category === 'cBridge';
+  return bridge.category === category;
 };
+
+export const isCBridge: BridgePredicateFn = isBridge('cBridge');
+
+export const isXCM: BridgePredicateFn = isBridge('XCM');
 
 /* -----------------------------generated auto------------------------------------- */
 
@@ -176,6 +180,10 @@ export const isCrabDVM2Optimism = predicate('crab-dvm', 'optimism');
 export const isOptimism2CrabDVM = predicate('optimism', 'crab-dvm');
 export const isCrabDVMOptimism = or(isCrabDVM2Optimism, isOptimism2CrabDVM);
 
-export const isCrabParachain2KaruraParachain = predicate('crab-parachain', 'karura-parachain');
-export const isKaruraParachain2CrabParachain = predicate('karura-parachain', 'crab-parachain');
-export const isCrabParachainKaruraParachain = or(isCrabParachain2KaruraParachain, isKaruraParachain2CrabParachain);
+export const isCrabParachain2Karura = predicate('crab-parachain', 'karura');
+export const isKarura2CrabParachain = predicate('karura', 'crab-parachain');
+export const isCrabParachainKarura = or(isCrabParachain2Karura, isKarura2CrabParachain);
+
+export const isCrabParachain2Moonriver = predicate('crab-parachain', 'moonriver');
+export const isMoonriver2CrabParachain = predicate('moonriver', 'crab-parachain');
+export const isCrabParachainMoonriver = or(isCrabParachain2Moonriver, isMoonriver2CrabParachain);

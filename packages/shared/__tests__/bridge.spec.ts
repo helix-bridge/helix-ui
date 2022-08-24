@@ -1,10 +1,11 @@
 /// <reference types="jest" />
 
 import { chain, isEqual } from 'lodash';
-import { crabConfig, crabDVMConfig, darwiniaConfig, ethereumConfig } from '../config/network';
-import { ChainConfig, Network, TokenWithBridgesInfo } from '../model';
+import { unknownUnavailable } from '../config/bridges/unknown-unavailable';
+import { Bridge, Network } from '../model';
 import {
   BridgePredicateFn,
+  getBridge,
   getBridges,
   isArbitrum2Astar,
   isArbitrum2Avalanche,
@@ -24,13 +25,13 @@ import {
   isAvalanche2BSC,
   isAvalanche2Optimism,
   isAvalancheOptimism,
+  isBSC2Arbitrum,
   isBSC2Astar,
   isBSC2Avalanche,
   isBSC2Optimism,
+  isBSCArbitrum,
   isBSCAstar,
   isBSCAvalanche,
-  isBSC2Arbitrum,
-  isBSCArbitrum,
   isBSCOptimism,
   isCrabDVM2Ethereum,
   isCrabDVM2Heco,
@@ -61,7 +62,7 @@ import {
   isSubstrateDVM2Substrate,
   isSubstrateSubstrateDVM,
 } from '../utils/bridge';
-import { crossChainGraph, getChainConfig } from '../utils/network';
+import { chainConfigs, crossChainGraph, getChainConfig } from '../utils/network';
 
 const calcBridgesAmount = (data: [Network, Network[]][]) =>
   chain(data)
@@ -131,17 +132,13 @@ const testsCrosses: [[Network, Network][], BridgePredicateFn, BridgePredicateFn,
   ],
 ];
 
+const allDirections = crossChainGraph
+  .map(([departure, arrivals]) => arrivals.map((arrival) => [departure, arrival]))
+  .flat();
+
+const formatFactory = (direction: Network[]) => (item: Network[]) => item.join('->') === direction.join('->');
+
 describe('bridge utils', () => {
-  function findBySymbol(config: ChainConfig, symbol: string): TokenWithBridgesInfo {
-    return config.tokens.find((item) => item.symbol.toLowerCase() === symbol.toLowerCase())!;
-  }
-
-  const allDirections = crossChainGraph
-    .map(([departure, arrivals]) => arrivals.map((arrival) => [departure, arrival]))
-    .flat();
-
-  const formatFactory = (direction: Network[]) => (item: Network[]) => item.join('->') === direction.join('->');
-
   console.log('🌉 All cross-chain directions to be tested', allDirections);
 
   it('should support bridge count: ', () => {
@@ -151,44 +148,43 @@ describe('bridge utils', () => {
     const formalBridges = calcBridgesAmount(formals);
 
     expect(testBridges).toHaveLength(5);
-    expect(formalBridges).toHaveLength(38);
+    expect(formalBridges).toHaveLength(39);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(86);
+    expect(allDirections).toHaveLength(88);
   });
 
-  // TODO: fix it to check all bridges
-  it('should get bridges correctly', () => {
-    const crab2DVM = {
-      from: { ...findBySymbol(crabConfig, 'crab'), meta: crabConfig, amount: '' },
-      to: { ...findBySymbol(crabDVMConfig, 'crab'), meta: crabDVMConfig, amount: '' },
-    };
+  describe.each(chainConfigs)("$name network's ", ({ name, tokens, ...other }) => {
+    describe.each(tokens.filter((item) => !!item.cross.length))(
+      '$name token',
+      ({ cross, name: tokenName, ...rest }) => {
+        const from = { ...rest, name: tokenName, cross, meta: { name, tokens, ...other }, amount: '' };
 
-    const darwinia2DVM = {
-      from: { ...findBySymbol(crabConfig, 'crab'), meta: crabConfig, amount: '' },
-      to: { ...findBySymbol(crabDVMConfig, 'crab'), meta: crabDVMConfig, amount: '' },
-    };
+        const bridgeStatistics = cross.reduce((acc, cur) => {
+          const target = acc.find((item) => item.toNetwork === cur.partner.name);
 
-    const s2s = {
-      from: { ...findBySymbol(darwiniaConfig, 'ring'), meta: darwiniaConfig, amount: '' },
-      to: { ...findBySymbol(crabDVMConfig, 'xRing'), meta: crabDVMConfig, amount: '' },
-    };
+          if (!target) {
+            acc.push({ toNetwork: cur.partner.name, toSymbol: cur.partner.symbol, count: 1 });
+          } else {
+            target.count += 1;
+          }
 
-    const e2d = {
-      from: { ...findBySymbol(ethereumConfig, 'ring'), meta: ethereumConfig, amount: '' },
-      to: { ...findBySymbol(darwiniaConfig, 'ring'), meta: darwiniaConfig, amount: '' },
-    };
+          return acc;
+        }, [] as { toNetwork: string; toSymbol: string; count: number }[]);
 
-    const crab2CrabDVM = getBridges(crab2DVM);
-    const darwinia2DarwiniaDVM = getBridges(darwinia2DVM);
-    const substrate2Substrate = getBridges(s2s);
-    const ethereum2Darwinia = getBridges(e2d);
+        it.each(bridgeStatistics)(
+          "to $toNetwork's $toSymbol should have $count bridges",
+          ({ toNetwork, toSymbol, count }) => {
+            const meta = getChainConfig(toNetwork as Network);
+            const to = { ...meta.tokens.find((item) => item.symbol === toSymbol)!, meta, amount: '' };
 
-    expect(crab2CrabDVM).toHaveLength(1);
-    expect(darwinia2DarwiniaDVM).toHaveLength(1);
-    expect(substrate2Substrate).toHaveLength(1);
-    expect(ethereum2Darwinia).toHaveLength(1);
+            expect(getBridges({ from, to })).toHaveLength(count);
+            expect(getBridge({ from, to })).toBeInstanceOf(Bridge);
+          }
+        );
+      }
+    );
   });
 
   describe.each(testsCrosses)(`test cross-chain predicate fn`, (directions, isIssuing, isRedeem, isCross, name) => {
@@ -205,4 +201,23 @@ describe('bridge utils', () => {
       expect(isCross(from, to)).toBe(directionInsensitive);
     });
   });
+
+  it.each(allDirections.map(([departure, arrival]) => ({ departure, arrival })))(
+    'could find bridge by $departure and $arrival',
+    ({ departure, arrival }) => {
+      const byNetwork = getBridge([departure, arrival] as [Network, Network]);
+      const byConfig = getBridge([getChainConfig(departure as Network), getChainConfig(arrival as Network)]);
+      const mixes = getBridge([getChainConfig(departure as Network), arrival as Network]);
+      const mixes2 = getBridge([departure as Network, getChainConfig(arrival as Network)]);
+
+      expect(byNetwork).toBeInstanceOf(Bridge);
+      expect(byNetwork).not.toEqual(unknownUnavailable);
+      expect(byConfig).toBeInstanceOf(Bridge);
+      expect(byConfig).not.toEqual(unknownUnavailable);
+      expect(mixes).toBeInstanceOf(Bridge);
+      expect(mixes).not.toEqual(unknownUnavailable);
+      expect(mixes2).toBeInstanceOf(Bridge);
+      expect(mixes2).not.toEqual(unknownUnavailable);
+    }
+  );
 });

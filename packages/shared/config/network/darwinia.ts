@@ -47,11 +47,6 @@ export const darwiniaConfig: PolkadotChainConfig = {
       cross: [
         {
           category: 'helix',
-          bridge: 'substrate-substrateDVM',
-          partner: { name: 'crab-dvm', role: 'issuing', symbol: 'xKTON' },
-        },
-        {
-          category: 'helix',
           bridge: 'ethereum-darwinia',
           partner: { name: 'ethereum', role: 'backing', symbol: 'KTON', claim: true },
         },

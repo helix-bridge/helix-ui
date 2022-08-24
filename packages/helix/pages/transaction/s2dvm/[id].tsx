@@ -9,6 +9,7 @@ import { revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
 import { getSentAmountFromHelixRecord } from 'shared/utils/record';
 import { Detail } from '../../../components/transaction/Detail';
+import { useUpdatableRecord } from '../../../hooks';
 import { TransferStep } from '../../../model/transfer';
 import { getServerSideRecordProps } from '../../../utils/getServerSideRecordProps';
 
@@ -20,11 +21,15 @@ const precompileDeprecatedAt = new Date('2022-08-15');
 
 const Page: NextPage<{
   id: string;
-  data: HelixHistoryRecord;
-}> = ({ data: record }) => {
+}> = ({ id }) => {
   const router = useRouter();
+  const { record } = useUpdatableRecord(id);
 
   const transfers = useMemo(() => {
+    if (!record) {
+      return [];
+    }
+
     const departure = getChainConfig(router.query.from as Network);
     const arrival = getChainConfig(router.query.to as Network);
     const bridge = getBridge<SubstrateDVMBridgeConfig>([departure, arrival]);

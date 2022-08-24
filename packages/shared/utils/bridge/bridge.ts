@@ -1,24 +1,8 @@
 import { isEqual } from 'lodash';
 import { BRIDGES } from '../../config/bridge';
 import { unknownUnavailable } from '../../config/bridges/unknown-unavailable';
-import { Bridge, BridgeConfig, ChainConfig, CrossChainDirection, Network, NullableFields } from '../../model';
+import { Bridge, BridgeConfig, ChainConfig, CrossChainDirection, Network } from '../../model';
 import { getChainConfig } from '../network/network';
-
-function getBridgeOverviews(source: NullableFields<CrossChainDirection, 'from' | 'to'>) {
-  const { from, to } = source;
-
-  if (!from || !to) {
-    return [];
-  }
-
-  const { cross: bridges } = from;
-
-  return bridges.filter((bridge) => {
-    const { partner } = bridge;
-
-    return partner.symbol.toLowerCase() === to.symbol.toLowerCase() && isEqual(partner.name, to.meta.name);
-  });
-}
 
 export function getBridge<T extends BridgeConfig>(
   source: CrossChainDirection | [Network | ChainConfig, Network | ChainConfig]
@@ -46,7 +30,16 @@ export function getBridge<T extends BridgeConfig>(
 }
 
 export function getBridges(source: CrossChainDirection): Bridge[] {
-  const overviews = getBridgeOverviews(source);
+  const {
+    from: { cross },
+    to,
+  } = source;
+
+  const overviews = cross.filter((bridge) => {
+    const { partner } = bridge;
+
+    return partner.symbol.toLowerCase() === to.symbol.toLowerCase() && isEqual(partner.name, to.meta.name);
+  });
 
   return BRIDGES.filter(
     (bridge) =>
