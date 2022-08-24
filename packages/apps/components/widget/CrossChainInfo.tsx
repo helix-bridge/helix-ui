@@ -1,6 +1,6 @@
-import { CaretDownOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Form, Spin, Tooltip, Typography } from 'antd';
-import { PropsWithChildren, ReactNode, useMemo, useState } from 'react';
+import { PropsWithChildren, ReactNode, useMemo } from 'react';
 import { Bridge } from 'shared/model';
 import { prettyNumber } from 'shared/utils/helper';
 import { useITranslation } from '../../hooks';
@@ -28,7 +28,6 @@ export function CrossChainInfo({
   isDynamicFee = false,
 }: PropsWithChildren<CrossChainInfoProps>) {
   const { t } = useITranslation();
-  const [collapse /* , setCollapse */] = useState(false);
 
   const feeContent = useMemo(() => {
     if (fee) {
@@ -65,23 +64,11 @@ export function CrossChainInfo({
 
         {extra && (
           <>
-            <div
-              className="hidden items-center gap-2 cursor-pointer"
-              data-testid="toggle-btn"
-              // onClick={() => setCollapse(!collapse)}
-            >
-              <span className="flex-1 bg-transparent h-px" />
-              <CaretDownOutlined
-                className={`text-gray-700 transform transition-all duration-300 ${collapse ? '' : 'rotate-180'}`}
-              />
-              <span className="flex-1 bg-transparent h-px" />
-            </div>
-
             {extra.map((item) => (
               <div
                 key={item.name}
                 data-testid={item.name}
-                className={`justify-between items-center transition-all duration-100 ${collapse ? 'hidden' : 'flex'}`}
+                className={`justify-between items-center transition-all duration-100 flex`}
               >
                 <Typography.Text>{item.name}</Typography.Text>
                 {item.content}
