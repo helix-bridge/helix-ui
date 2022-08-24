@@ -23,7 +23,6 @@ export function issuing(payload: IssuingPayload): Observable<Tx> {
   const amount = patchAmount(departure);
   const api = entrance.polkadot.getInstance(departure.meta.provider);
   const palletInstance = 5;
-  const accountKey = recipient.startsWith('0x') ? 'AccountKey20' : 'AccountId32';
 
   const dest = api.createType('XcmVersionedMultiLocation', {
     V1: api.createType('XcmV1MultiLocation', {
@@ -41,9 +40,9 @@ export function issuing(payload: IssuingPayload): Observable<Tx> {
       parents: 0,
       interior: api.createType('XcmV1MultilocationJunctions', {
         X1: api.createType('XcmV1Junction', {
-          [accountKey]: {
+          AccountId32: {
             network: api.createType('NetworkId', 'Any'),
-            id: recipient.startsWith('0x') ? recipient : convertToDvm(recipient),
+            id: convertToDvm(recipient),
           },
         }),
       }),

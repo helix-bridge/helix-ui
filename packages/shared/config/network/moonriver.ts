@@ -46,7 +46,7 @@ export const moonriverConfig: ParachainEthereumCompatibleChainConfig = {
       host: 'moonriver',
       logo: 'token-crab.svg',
       symbol: 'CRAB',
-      address: '',
+      address: '0xFFFffFfF8283448b3cB519Ca4732F2ddDC6A6165',
     },
   ],
   ss58Prefix: 8,

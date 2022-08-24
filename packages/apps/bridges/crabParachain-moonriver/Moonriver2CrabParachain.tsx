@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, mergeMap } from 'rxjs';
 import { CrossChainComponentProps, CrossToken, PolkadotChainConfig, TxObservableFactory } from 'shared/model';
-import { fromWei, toWei } from 'shared/utils/helper';
+import { fromWei, isRing, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../components/tx/TransferConfirm';
@@ -34,7 +34,7 @@ export function Moonriver2CrabParachain({
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const bridgeState = useCheckSpecVersion(direction);
   const [balance] = (balances ?? []) as BN[];
-  const symbol = direction.from.meta.tokens.find((item) => item.type === 'native')!.symbol;
+  const symbol = direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol;
 
   const feeWithSymbol = useMemo(
     () =>

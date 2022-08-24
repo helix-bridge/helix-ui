@@ -3,10 +3,8 @@ import { GetServerSidePropsContext, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { RecordStatus } from 'shared/config/constant';
-import { PARACHAIN_PARACHAIN_BACKING, PARACHAIN_PARACHAIN_ISSUING } from 'shared/config/env';
 import { useITranslation } from 'shared/hooks';
-import { CrabParachainKaruraBridgeConfig, HelixHistoryRecord, Network } from 'shared/model';
-import { getBridge } from 'shared/utils/bridge';
+import { HelixHistoryRecord, Network } from 'shared/model';
 import { revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
 import { getReceivedAmountFromHelixRecord, getSentAmountFromHelixRecord } from 'shared/utils/record';
@@ -32,10 +30,9 @@ const Page: NextPage<{
 
     const departure = getChainConfig(router.query.from as Network);
     const arrival = getChainConfig(router.query.to as Network);
-    const bridge = getBridge<CrabParachainKaruraBridgeConfig>([departure, arrival]);
     const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase())!;
     const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase())!;
-    const relayer = bridge.isIssuing(departure, arrival) ? PARACHAIN_PARACHAIN_BACKING : PARACHAIN_PARACHAIN_ISSUING;
+    const relayer = '0x0000000000000000000000000000000000000000';
     const sendAmount = getSentAmountFromHelixRecord(record);
     const recvAmount = getReceivedAmountFromHelixRecord(record);
 

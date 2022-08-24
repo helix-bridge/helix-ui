@@ -6,7 +6,7 @@ import { SubscanLink } from 'shared/components/widget/SubscanLink';
 import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord, Network } from 'shared/model';
-import { isCBridgeRecord, isHelixRecord } from 'shared/utils/record';
+import { isCBridgeRecord, isHelixRecord, isXCMRecord } from 'shared/utils/record';
 import { TransferDescription } from './TransferDescription';
 
 interface HashProps {
@@ -15,8 +15,16 @@ interface HashProps {
 }
 
 const Hash = ({ hash, network }: HashProps) => {
+  const txHash = hash.includes('-') ? undefined : hash;
+  const extrinsic = hash.includes('-') ? hash.split('-') : undefined;
+
   return (
-    <SubscanLink network={network} txHash={hash} className="hover:opacity-80 transition-opacity duration-200">
+    <SubscanLink
+      network={network}
+      txHash={txHash}
+      extrinsic={extrinsic && { height: extrinsic[0], index: extrinsic[1] }}
+      className="hover:opacity-80 transition-opacity duration-200"
+    >
       <TextWithCopy underline>{hash}</TextWithCopy>
     </SubscanLink>
   );
@@ -50,6 +58,8 @@ export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
       return (
         <Hash network={record.result === RecordStatus.refunded ? departure : arrival} hash={record.responseTxHash} />
       );
+    } else if (isXCMRecord(record)) {
+      return <Hash network={arrival} hash={record.responseTxHash} />;
     }
 
     return null;

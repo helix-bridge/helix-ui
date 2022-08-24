@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
 import { BridgeStatus, CrossChainDirection, CustomFormControlProps, HashInfo } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
-import { fromWei, isKton, isRing, largeNumber, prettyNumber, updateStorage } from 'shared/utils/helper';
+import { fromWei, isKton, largeNumber, prettyNumber, updateStorage } from 'shared/utils/helper';
 import { CountLoading } from '../widget/CountLoading';
 import { Destination } from './Destination';
 
@@ -57,15 +57,11 @@ export function Direction({
     if (Array.isArray(balance)) {
       const [ring, kton] = balance;
 
-      if (isRing(data.from.symbol)) {
-        return ring;
-      }
-
       if (isKton(data.from.symbol)) {
         return kton;
       }
 
-      return null;
+      return ring;
     }
 
     return balance;
