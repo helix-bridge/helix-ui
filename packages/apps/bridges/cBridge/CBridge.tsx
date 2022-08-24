@@ -59,7 +59,7 @@ export function CBridge({
       estimateResult && {
         amount: fromWei({
           value: new BN(estimateResult.baseFee).add(new BN(estimateResult.percFee)),
-          decimals: direction.to.decimals,
+          decimals: direction.from.decimals,
         }),
         symbol: direction.from.symbol,
       },
