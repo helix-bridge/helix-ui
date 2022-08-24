@@ -8,6 +8,7 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useEffect, useMemo, useState } from 'react';
 import { ENDPOINT } from 'shared/config/env';
+import { DATE_FORMAT } from 'shared/config/constant';
 import { DailyStatistic, Network } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { gqlName, prettyNumber } from 'shared/utils/helper';
@@ -43,7 +44,7 @@ function Page() {
       ? subMilliseconds(Date.now(), secondsToMilliseconds(TIMEPAST)).getTime()
       : secondsToMilliseconds(+last(dailyStatistics)!.timestamp);
 
-    return format(date, 'LLL dd, yyyy') + ' (+UTC)';
+    return format(date, DATE_FORMAT) + ' (+UTC)';
   }, [dailyStatistics]);
 
   const transactionsRank = useMemo(() => {
