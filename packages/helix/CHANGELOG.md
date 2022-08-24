@@ -1,3 +1,23 @@
+# [4.2.0](https://github.com/helix-bridge/helix/compare/v4.1.1-apps...v4.2.0) (2022-08-24)
+
+
+### Bug Fixes
+
+* **#148:** detail page directable ([#174](https://github.com/helix-bridge/helix/issues/174)) ([0d6fcfe](https://github.com/helix-bridge/helix/commit/0d6fcfe2c765b6b26606cef35d3fa9e2538bfca3)), closes [#148](https://github.com/helix-bridge/helix/issues/148) [#148](https://github.com/helix-bridge/helix/issues/148) [#136](https://github.com/helix-bridge/helix/issues/136) [#130](https://github.com/helix-bridge/helix/issues/130)
+* **#150:** transfer detail ([#173](https://github.com/helix-bridge/helix/issues/173)) ([f84c0f0](https://github.com/helix-bridge/helix/commit/f84c0f020655b5e7c66e79250f76a45442051cb8)), closes [#150](https://github.com/helix-bridge/helix/issues/150)
+* **#183:** fee precision on cBridge ([#184](https://github.com/helix-bridge/helix/issues/184)) ([814c361](https://github.com/helix-bridge/helix/commit/814c361f531a10ebc242c11b7e40f78a7a7d0314)), closes [#183](https://github.com/helix-bridge/helix/issues/183)
+* memory latest selected polkadot account ([#172](https://github.com/helix-bridge/helix/issues/172)) ([3f8bee7](https://github.com/helix-bridge/helix/commit/3f8bee7b777297382dca5c519dbcdd61b2d0cc18))
+
+
+### Features
+
+* **#88:** refresh balance ([#175](https://github.com/helix-bridge/helix/issues/175)) ([23472a4](https://github.com/helix-bridge/helix/commit/23472a4971eea29f9215ace46ad8aecc379c7ebf)), closes [#88](https://github.com/helix-bridge/helix/issues/88)
+* bridge transaction statistics ([#178](https://github.com/helix-bridge/helix/issues/178)) ([24a80f5](https://github.com/helix-bridge/helix/commit/24a80f51bd0b077fcf1b48d5e03cc8893543e128))
+* support crab-parachain<>moonriver ([#181](https://github.com/helix-bridge/helix/issues/181)) ([067379a](https://github.com/helix-bridge/helix/commit/067379a1c6f7fe74f0720112d0c6845997baeb6c))
+* support crab-parachain<>karura-parachain ([#170](https://github.com/helix-bridge/helix/issues/170)) ([67214ed](https://github.com/helix-bridge/helix/commit/67214ed66c289d92aa9cdb3009016ad4b7e26a45))
+
+
+
 # [4.1.0](https://github.com/helix-bridge/helix/compare/v4.0.6-helix...v4.1.0) (2022-08-16)
 
 
