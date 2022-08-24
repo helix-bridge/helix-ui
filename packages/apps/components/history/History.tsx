@@ -16,7 +16,7 @@ import {
   getSentAmountFromHelixRecord,
   getTokenConfigFromHelixRecord,
 } from 'shared/utils/record';
-import { Darwinia2EthereumHistoryRes } from '../../bridges/ethereum-darwinia/model';
+import { Darwinia2EthereumHistoryRes } from '../../bridges/helix/ethereum-darwinia/model';
 import { HISTORY_RECORDS, STATUS_STATISTICS } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';

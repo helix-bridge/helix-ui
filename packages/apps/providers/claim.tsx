@@ -13,8 +13,8 @@ import {
   Darwinia2EthereumRecord,
   Darwinia2EthereumHistoryRes,
   EthereumDarwiniaBridgeConfig,
-} from '../bridges/ethereum-darwinia/model';
-import { claimToken } from '../bridges/ethereum-darwinia/utils';
+} from '../bridges/helix/ethereum-darwinia/model';
+import { claimToken } from '../bridges/helix/ethereum-darwinia/utils';
 import { useITranslation } from '../hooks';
 import { useTx } from './tx';
 
