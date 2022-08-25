@@ -148,11 +148,11 @@ describe('bridge utils', () => {
     const formalBridges = calcBridgesAmount(formals);
 
     expect(testBridges).toHaveLength(5);
-    expect(formalBridges).toHaveLength(39);
+    expect(formalBridges).toHaveLength(35);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(88);
+    expect(allDirections).toHaveLength(80);
   });
 
   describe.each(chainConfigs)("$name network's ", ({ name, tokens, ...other }) => {

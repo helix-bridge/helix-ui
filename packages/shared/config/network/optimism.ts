@@ -46,8 +46,8 @@ export const optimismConfig: EthereumChainConfig = {
         },
         {
           category: 'cBridge',
-          bridge: 'crabDVM-optimism',
-          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDT' },
+          bridge: 'ethereum-optimism',
+          partner: { name: 'ethereum', role: 'backing', symbol: 'USDT' },
         },
       ],
       type: 'mapping',
@@ -87,8 +87,8 @@ export const optimismConfig: EthereumChainConfig = {
         },
         {
           category: 'cBridge',
-          bridge: 'crabDVM-optimism',
-          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDC' },
+          bridge: 'ethereum-optimism',
+          partner: { name: 'ethereum', role: 'backing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',

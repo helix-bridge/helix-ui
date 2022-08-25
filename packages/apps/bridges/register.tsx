@@ -14,13 +14,9 @@ import { bscAstar } from 'shared/config/bridges/bsc-astar';
 import { bscAvalanche } from 'shared/config/bridges/bsc-avalanche';
 import { bscOptimism } from 'shared/config/bridges/bsc-optimism';
 import { bscPolygon } from 'shared/config/bridges/bsc-polygon';
-import { crabDVMArbitrum } from 'shared/config/bridges/crabDVM-arbitrum';
 import { crabDVMAstar } from 'shared/config/bridges/crabDVM-astar';
-import { crabDVMAvalanche } from 'shared/config/bridges/crabDVM-avalanche';
-import { crabDVMBsc } from 'shared/config/bridges/crabDVM-bsc';
 import { crabDVMEthereum } from 'shared/config/bridges/crabDVM-ethereum';
 import { crabDVMHeco } from 'shared/config/bridges/crabDVM-heco';
-import { crabDVMOptimism } from 'shared/config/bridges/crabDVM-optimism';
 import { crabDVMPolygon } from 'shared/config/bridges/crabDVM-polygon';
 import { crabParachainKarura } from 'shared/config/bridges/crabParachain-karura';
 import { ethereumArbitrum } from 'shared/config/bridges/ethereum-arbitrum';
@@ -52,13 +48,9 @@ import { Astar2BSC, BSC2Astar } from './celer/bsc-astar';
 import { Avalanche2BSC, BSC2Avalanche } from './celer/bsc-avalanche';
 import { BSC2Optimism, Optimism2BSC } from './celer/bsc-optimism';
 import { BSC2Polygon, Polygon2BSC } from './celer/bsc-polygon';
-import { Arbitrum2CrabDVM, CrabDVM2Arbitrum } from './celer/crabDVM-arbitrum';
 import { Astar2CrabDVM, CrabDVM2Astar } from './celer/crabDVM-astar';
-import { Avalanche2CrabDVM, CrabDVM2Avalanche } from './celer/crabDVM-avalanche';
-import { Bsc2CrabDVM, CrabDVM2Bsc } from './celer/crabDVM-bsc';
 import { CrabDVM2Ethereum, Ethereum2CrabDVM } from './celer/crabDVM-ethereum';
 import { CrabDVM2Heco, Heco2CrabDVM } from './celer/crabDVM-heco';
-import { CrabDVM2Optimism, Optimism2CrabDVM } from './celer/crabDVM-optimism';
 import { CrabDVM2Polygon, Polygon2CrabDVM } from './celer/crabDVM-polygon';
 import { CrabParachain2Karura, Karura2CrabParachain } from './xcm/crabParachain-karura';
 import { Arbitrum2Ethereum, Ethereum2Arbitrum } from './celer/ethereum-arbitrum';
@@ -213,20 +205,8 @@ arbitrumPolygon.setRedeemComponents(Polygon2Arbitrum as FunctionComponent);
 polygonOptimism.setIssuingComponents(Polygon2Optimism as FunctionComponent);
 polygonOptimism.setRedeemComponents(Optimism2Polygon as FunctionComponent);
 
-crabDVMBsc.setIssuingComponents(CrabDVM2Bsc as FunctionComponent);
-crabDVMBsc.setRedeemComponents(Bsc2CrabDVM as FunctionComponent);
-
-crabDVMArbitrum.setIssuingComponents(CrabDVM2Arbitrum as FunctionComponent);
-crabDVMArbitrum.setRedeemComponents(Arbitrum2CrabDVM as FunctionComponent);
-
 crabDVMAstar.setIssuingComponents(CrabDVM2Astar as FunctionComponent);
 crabDVMAstar.setRedeemComponents(Astar2CrabDVM as FunctionComponent);
-
-crabDVMAvalanche.setIssuingComponents(CrabDVM2Avalanche as FunctionComponent);
-crabDVMAvalanche.setRedeemComponents(Avalanche2CrabDVM as FunctionComponent);
-
-crabDVMOptimism.setIssuingComponents(CrabDVM2Optimism as FunctionComponent);
-crabDVMOptimism.setRedeemComponents(Optimism2CrabDVM as FunctionComponent);
 
 crabParachainKarura.setIssuingComponents(CrabParachain2Karura as FunctionComponent);
 crabParachainKarura.setRedeemComponents(Karura2CrabParachain as FunctionComponent);

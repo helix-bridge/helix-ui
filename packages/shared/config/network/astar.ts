@@ -26,21 +26,6 @@ export const astarConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'cBridge',
-          bridge: 'bsc-astar',
-          partner: { name: 'bsc', role: 'backing', symbol: 'USDT' },
-        },
-        {
-          category: 'cBridge',
-          bridge: 'arbitrum-astar',
-          partner: { name: 'arbitrum', role: 'backing', symbol: 'USDT' },
-        },
-        {
-          category: 'cBridge',
-          bridge: 'astar-avalanche',
-          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDT' },
-        },
-        {
-          category: 'cBridge',
           bridge: 'ethereum-astar',
           partner: { name: 'ethereum', role: 'backing', symbol: 'USDT' },
         },
@@ -89,6 +74,11 @@ export const astarConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'crabDVM-astar',
           partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDC' },
+        },
+        {
+          category: 'cBridge',
+          bridge: 'arbitrum-astar',
+          partner: { name: 'arbitrum', role: 'backing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',

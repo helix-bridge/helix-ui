@@ -32,11 +32,6 @@ export const bscConfig: EthereumChainConfig = {
         },
         {
           category: 'cBridge',
-          bridge: 'bsc-astar',
-          partner: { name: 'astar', role: 'issuing', symbol: 'USDT' },
-        },
-        {
-          category: 'cBridge',
           bridge: 'bsc-avalanche',
           partner: { name: 'avalanche', role: 'issuing', symbol: 'USDT' },
         },
@@ -54,11 +49,6 @@ export const bscConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'bsc-polygon',
           partner: { name: 'polygon', role: 'issuing', symbol: 'USDT' },
-        },
-        {
-          category: 'cBridge',
-          bridge: 'crabDVM-bsc',
-          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDT' },
         },
       ],
       type: 'mapping',
@@ -100,11 +90,6 @@ export const bscConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'bsc-polygon',
           partner: { name: 'polygon', role: 'issuing', symbol: 'USDC' },
-        },
-        {
-          category: 'cBridge',
-          bridge: 'crabDVM-bsc',
-          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',

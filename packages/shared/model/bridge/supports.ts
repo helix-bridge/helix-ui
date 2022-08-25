@@ -30,10 +30,6 @@ export type BridgeName =
   | 'avalanche-polygon'
   | 'arbitrum-polygon'
   | 'polygon-optimism'
-  | 'crabDVM-bsc'
-  | 'crabDVM-arbitrum'
   | 'crabDVM-astar'
-  | 'crabDVM-avalanche'
-  | 'crabDVM-optimism'
   | 'crabParachain-karura'
   | 'crabParachain-moonriver';
