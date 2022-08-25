@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 import { HelixHistoryRecord, ICamelCaseKeys } from 'shared/model';
-import { Darwinia2EthereumHistoryRes, Darwinia2EthereumRecord } from '../../bridges/ethereum-darwinia/model';
+import { Darwinia2EthereumHistoryRes, Darwinia2EthereumRecord } from '../../bridges/helix/ethereum-darwinia/model';
 import { useITranslation } from '../../hooks';
 import { RecordStatusComponentProps } from '../../model/component';
 import { useClaim } from '../../providers/claim';

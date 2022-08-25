@@ -57,7 +57,7 @@ export function useAllowance(direction: CrossChainDirection) {
         content: <ApproveConfirm value={value} />,
       });
       const { spender, tokenAddress, gas, gasPrice } = payload;
-      const options = gas && gasPrice ? { sendOptions: { gas, gasPrice } } : {};
+      const options = gas || gasPrice ? { sendOptions: { gas, gasPrice } } : {};
       const txObs = approveToken({ sender, spender, tokenAddress, ...options });
 
       if (!matched) {

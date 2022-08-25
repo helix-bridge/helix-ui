@@ -23,7 +23,7 @@ export const arbitrumConfig: EthereumChainConfig = {
   tokens: [
     {
       name: 'USDT',
-      decimals: 18,
+      decimals: 6,
       cross: [
         {
           category: 'cBridge',
@@ -64,7 +64,7 @@ export const arbitrumConfig: EthereumChainConfig = {
     },
     {
       name: 'USDC',
-      decimals: 18,
+      decimals: 6,
       cross: [
         {
           category: 'cBridge',

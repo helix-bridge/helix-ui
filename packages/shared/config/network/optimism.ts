@@ -22,7 +22,7 @@ export const optimismConfig: EthereumChainConfig = {
   tokens: [
     {
       name: 'USDT',
-      decimals: 18,
+      decimals: 6,
       cross: [
         {
           category: 'cBridge',
@@ -58,7 +58,7 @@ export const optimismConfig: EthereumChainConfig = {
     },
     {
       name: 'USDC',
-      decimals: 18,
+      decimals: 6,
       cross: [
         {
           category: 'cBridge',

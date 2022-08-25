@@ -2,7 +2,7 @@ import { ApiPromise } from '@polkadot/api';
 import { TypeRegistry } from '@polkadot/types';
 import { Modal, ModalFuncProps, ModalProps } from 'antd';
 import BN from 'bn.js';
-import { noop } from 'lodash';
+import { noop, omitBy } from 'lodash';
 import { i18n } from 'next-i18next';
 import React from 'react';
 import { initReactI18next, Trans } from 'react-i18next';
@@ -176,7 +176,7 @@ export const approveToken: TxFn<
   RequiredPartial<CrossChainPayload, 'sender'> & {
     tokenAddress?: string;
     spender?: string;
-    sendOptions?: { gas: string; gasPrice: string };
+    sendOptions?: { gas?: string; gasPrice?: string };
   }
 > = ({ sender, tokenAddress, spender, sendOptions }) => {
   if (!tokenAddress) {
@@ -188,7 +188,7 @@ export const approveToken: TxFn<
   }
 
   const hardCodeAmount = '100000000000000000000000000';
-  const params = sendOptions ? { from: sender, ...sendOptions } : { from: sender };
+  const params = sendOptions ? { from: sender, ...omitBy(sendOptions, (value) => !value) } : { from: sender };
 
   return genEthereumContractTxObs(tokenAddress, (contract) =>
     contract.methods.approve(spender, Web3.utils.toWei(hardCodeAmount)).send(params)

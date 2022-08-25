@@ -11,7 +11,7 @@ import {
   Darwinia2EthereumRecord,
   Ethereum2DarwiniaRedeemHistoryRes,
   Ethereum2DarwiniaRedeemRecord,
-} from '../bridges/ethereum-darwinia/model';
+} from '../bridges/helix/ethereum-darwinia/model';
 import { RecordRequestParams } from '../model';
 
 const E2D_ENDPOINT = isFormalChain ? 'https://helix-api.darwinia.network' : 'https://api.darwinia.network.l2me.com';
