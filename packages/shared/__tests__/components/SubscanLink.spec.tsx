@@ -59,16 +59,19 @@ describe('<SubscanLink />', () => {
     expect(queryByText(/0x123456/i)).toBeInTheDocument();
   });
 
-  it.each(parachainConfigs)('[Parachain - %s] should contains right account address by network name', (config) => {
-    const { getByRole, queryByText } = render(
-      <SubscanLink network={config} address="0x123456">
-        test link
-      </SubscanLink>
-    );
+  it.each(parachainConfigs)(
+    '[Parachain - $name] should contains right account address by network name',
+    ({ name, ...rest }) => {
+      const { getByRole, queryByText } = render(
+        <SubscanLink network={{ name, ...rest }} address="0x123456">
+          test link
+        </SubscanLink>
+      );
 
-    expect(getByRole('link')).toHaveAttribute('href', `https://${config.name}.subscan.io/account/0x123456`);
-    expect(queryByText(/0x123456/i)).toBeInTheDocument();
-  });
+      expect(getByRole('link')).toHaveAttribute('href', `https://${name}.subscan.io/account/0x123456`);
+      expect(queryByText(/0x123456/i)).toBeInTheDocument();
+    }
+  );
 
   /*--------------------------------------------------by extrinsic-------------------------------------------------------*/
 
