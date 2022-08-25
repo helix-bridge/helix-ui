@@ -1,5 +1,5 @@
 import { Button, Form, InputNumber, InputNumberProps } from 'antd';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
 import { CrossToken, TokenInfoWithMeta } from 'shared/model';
@@ -9,7 +9,7 @@ import { SelectTokenModal } from './SelectTokenModal';
 interface DestinationProps {
   className?: string;
   onChange?: (value: CrossToken) => void;
-  title?: ReactNode;
+  title?: string;
   value: CrossToken;
   fromToken?: TokenInfoWithMeta;
 }

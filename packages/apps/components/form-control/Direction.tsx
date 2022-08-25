@@ -102,59 +102,7 @@ export function Direction({
   return (
     <div className={`relative flex justify-between items-center flex-col`}>
       <Destination
-        title={
-          <div className="flex items-center justify-between">
-            <span>{t('From')}</span>
-            {isBalanceLoading ? (
-              <div className="cursor-pointer space-x-2 text-xs h-5">
-                <CountLoading />
-              </div>
-            ) : iBalance ? (
-              <span className="cursor-pointer space-x-2 text-xs flex items-center h-5">
-                <Tooltip
-                  title={
-                    iBalance.gt(new BN(MILLION))
-                      ? fromWei({ value: iBalance, decimals: data.from.decimals }, prettyNumber)
-                      : ''
-                  }
-                >
-                  <span
-                    onClick={() => {
-                      const { from } = data;
-                      const amount = fromWei({ value: iBalance, decimals: data.from.decimals });
-
-                      if (amount !== from.amount) {
-                        triggerChange({
-                          from: { ...from, amount },
-                          to: {
-                            ...data.to,
-                            amount: fee && fee.symbol === from.symbol ? calcToAmount(amount, fee.amount) : amount,
-                          },
-                        });
-                      }
-                    }}
-                  >
-                    {fromWei(
-                      { value: iBalance, decimals: data.from.decimals },
-                      (val: string) => (+val > MILLION ? largeNumber(val) : val),
-                      (val: string) => prettyNumber(val, { ignoreZeroDecimal: true, decimal: 3 })
-                    )}
-                    <span className="ml-2">{data.from.symbol}</span>
-                  </span>
-                </Tooltip>
-
-                <ReloadOutlined
-                  onClick={() => {
-                    if (onRefresh) {
-                      onRefresh();
-                    }
-                  }}
-                  className="hover:text-blue-400 transform transition-all duration-300"
-                />
-              </span>
-            ) : null}
-          </div>
-        }
+        title={t('From')}
         value={data.from}
         onChange={(from) => {
           triggerChange({
@@ -165,8 +113,58 @@ export function Direction({
             },
           });
         }}
-        className="form-item-destination"
       />
+
+      {isBalanceLoading && (
+        <div className="absolute right-0 top-1 cursor-pointer space-x-2 text-xs">
+          <CountLoading />
+        </div>
+      )}
+
+      {iBalance && !isBalanceLoading && (
+        <span className="absolute right-0 top-1 cursor-pointer space-x-2 text-xs flex items-center">
+          <Tooltip
+            title={
+              iBalance.gt(new BN(MILLION))
+                ? fromWei({ value: iBalance, decimals: data.from.decimals }, prettyNumber)
+                : ''
+            }
+          >
+            <span
+              onClick={() => {
+                const { from } = data;
+                const amount = fromWei({ value: iBalance, decimals: data.from.decimals });
+
+                if (amount !== from.amount) {
+                  triggerChange({
+                    from: { ...from, amount },
+                    to: {
+                      ...data.to,
+                      amount: fee && fee.symbol === from.symbol ? calcToAmount(amount, fee.amount) : amount,
+                    },
+                  });
+                }
+              }}
+            >
+              {fromWei(
+                { value: iBalance, decimals: data.from.decimals },
+                (val: string) => (+val > MILLION ? largeNumber(val) : val),
+                (val: string) => prettyNumber(val, { ignoreZeroDecimal: true, decimal: 3 })
+              )}
+              <span className="ml-2">{data.from.symbol}</span>
+            </span>
+          </Tooltip>
+
+          <ReloadOutlined
+            onClick={() => {
+              if (onRefresh) {
+                onRefresh();
+              }
+            }}
+            className="hover:text-blue-400 transform transition-all duration-300"
+          />
+        </span>
+      )}
 
       {bridgetStatus === 'pending' ? (
         <PauseCircleOutlined className="w-10 h-10 mx-auto" />
