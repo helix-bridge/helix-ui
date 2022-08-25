@@ -71,72 +71,9 @@ const calcBridgesAmount = (data: [Network, Network[]][]) =>
     .unionWith((pre, cur) => isEqual(pre, cur) || isEqual(pre.reverse(), cur))
     .value();
 
-const testsCrosses: [[Network, Network][], BridgePredicateFn, BridgePredicateFn, BridgePredicateFn, string][] = [
-  [
-    [
-      ['crab', 'crab-dvm'],
-      ['darwinia', 'darwinia-dvm'],
-      ['pangolin', 'pangolin-dvm'],
-    ],
-    isSubstrate2DVM,
-    isDVM2Substrate,
-    isSubstrateDVM,
-    'substrate <-> DVM',
-  ],
-  [
-    [
-      ['pangoro', 'pangolin-dvm'],
-      ['darwinia', 'crab-dvm'],
-    ],
-    isSubstrate2SubstrateDVM,
-    isSubstrateDVM2Substrate,
-    isSubstrateSubstrateDVM,
-    'substrate <-> substrateDVM',
-  ],
-  [
-    [
-      ['ethereum', 'darwinia'],
-      ['ropsten', 'pangolin'],
-    ],
-    isEthereum2Darwinia,
-    isDarwinia2Ethereum,
-    isEthereumDarwinia,
-    'ethereum <-> darwinia',
-  ],
-  [[['crab-dvm', 'heco']], isCrabDVM2Heco, isHeco2CrabDVM, isCrabDVMHeco, 'crabDVM <-> heco'],
-  [[['crab-dvm', 'polygon']], isCrabDVM2Polygon, isPolygon2CrabDVM, isCrabDVMPolygon, 'crabDVM <-> polygon'],
-  [[['crab-dvm', 'ethereum']], isCrabDVM2Ethereum, isEthereum2CrabDVM, isCrabDVMEthereum, 'crabDVM <-> ethereum'],
-  [[['ethereum', 'heco']], isEthereum2Heco, isHeco2Ethereum, isEthereumHeco, 'ethereum <-> heco'],
-  [[['ethereum', 'polygon']], isEthereum2Polygon, isPolygon2Ethereum, isEthereumPolygon, 'ethereum <-> polygon'],
-  [[['bsc', 'arbitrum']], isBSC2Arbitrum, isArbitrum2BSC, isBSCArbitrum, 'bsc <-> arbitrum'],
-  [[['bsc', 'astar']], isBSC2Astar, isAstar2BSC, isBSCAstar, 'bsc <-> astar'],
-  [[['bsc', 'avalanche']], isBSC2Avalanche, isAvalanche2BSC, isBSCAvalanche, 'bsc <-> avalanche'],
-  [[['bsc', 'optimism']], isBSC2Optimism, isOptimism2BSC, isBSCOptimism, 'bsc <-> optimism'],
-  [[['arbitrum', 'astar']], isArbitrum2Astar, isAstar2Arbitrum, isArbitrumAstar, 'arbitrum <-> astar'],
-  [
-    [['arbitrum', 'avalanche']],
-    isArbitrum2Avalanche,
-    isAvalanche2Arbitrum,
-    isArbitrumAvalanche,
-    'arbitrum <-> avalanche',
-  ],
-  [[['arbitrum', 'optimism']], isArbitrum2Optimism, isOptimism2Arbitrum, isArbitrumOptimism, 'arbitrum <-> optimism'],
-  [[['astar', 'avalanche']], isAstar2Avalanche, isAvalanche2Astar, isAstarAvalanche, 'astar <-> avalanche'],
-  [[['astar', 'optimism']], isAstar2Optimism, isOptimism2Astar, isAstarOptimism, 'astar <-> optimism'],
-  [
-    [['avalanche', 'optimism']],
-    isAvalanche2Optimism,
-    isOptimism2Avalanche,
-    isAvalancheOptimism,
-    'avalanche <-> optimism',
-  ],
-];
-
 const allDirections = crossChainGraph
   .map(([departure, arrivals]) => arrivals.map((arrival) => [departure, arrival]))
   .flat();
-
-const formatFactory = (direction: Network[]) => (item: Network[]) => item.join('->') === direction.join('->');
 
 describe('bridge utils', () => {
   console.log('🌉 All cross-chain directions to be tested', allDirections);
@@ -185,21 +122,6 @@ describe('bridge utils', () => {
         );
       }
     );
-  });
-
-  describe.each(testsCrosses)(`test cross-chain predicate fn`, (directions, isIssuing, isRedeem, isCross, name) => {
-    const revertDirs = directions.map((item) => [...item].reverse());
-
-    it.each(allDirections)(`should recognize cross-chain ${name}`, (from, to) => {
-      const formatter = formatFactory([from, to]);
-      const go = !!directions.find(formatter);
-      const back = !!revertDirs.find(formatter);
-      const directionInsensitive = !![...directions, ...revertDirs].find(formatter);
-
-      expect(isIssuing(from, to)).toBe(go);
-      expect(isRedeem(from, to)).toBe(back);
-      expect(isCross(from, to)).toBe(directionInsensitive);
-    });
   });
 
   it.each(allDirections.map(([departure, arrival]) => ({ departure, arrival })))(
