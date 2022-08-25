@@ -11,8 +11,8 @@
     "start:test": "NODE_ENV=test next start",
     "test:e2e": "cross-env CYPRESS_REMOTE_DEBUGGING_PORT=9222 TEST_TYPE=e2e cypress open",
     "test:e2e:ci": "cross-env CHOKIDAR_USEPOLLING=1 CYPRESS_REMOTE_DEBUGGING_PORT=9222 TEST_TYPE=e2e cypress run --browser=chrome --headed",
-    "test:unit": "cross-env CHAIN_TYPE=all jest --config=jest.config.js --coverage",
-    "test:unit:watch": "cross-env CHAIN_TYPE=all jest --watch",
+    "test:unit": "cross-env CHAIN_TYPE=all jest --config=jest.config.js --coverage --verbose",
+    "test:unit:watch": "cross-env CHAIN_TYPE=all jest --watch --verbose",
     "init:bridge": "./bridge.sh",
     "i18next:scanner": "i18next-scanner --config i18next-scanner.config.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
