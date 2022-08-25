@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import request from 'graphql-request';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { EMPTY, from, map } from 'rxjs';
-import { SubscanLink } from 'shared/components/widget/SubscanLink';
+import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
 import { DATE_TIME_FORMAT, RecordStatus } from 'shared/config/constant';
 import { ENDPOINT, HELIX_DEPLOYMENT } from 'shared/config/env';
 import { HelixHistoryRecord } from 'shared/model';
@@ -284,13 +284,13 @@ export function History() {
                           isFrom
                           asHistory
                         >
-                          <SubscanLink
+                          <ExplorerLink
                             network={dep}
                             txHash={record.requestTxHash}
                             extrinsic={d2eHeight && d2dIndex ? { height: d2eHeight, index: d2dIndex } : undefined}
                           >
                             <PaperClipOutlined className="hover:text-pangolin-main cursor-pointer" />
-                          </SubscanLink>
+                          </ExplorerLink>
                         </TokenOnChain>
 
                         <BridgeArrow category={record.bridge} showName={false} />
@@ -302,13 +302,13 @@ export function History() {
                         >
                           {(record.responseTxHash || (e2dHeight && e2dIndex)) &&
                           record.result === RecordStatus.success ? (
-                            <SubscanLink
+                            <ExplorerLink
                               network={arrival}
                               txHash={record.responseTxHash}
                               extrinsic={e2dHeight && e2dIndex ? { height: e2dHeight, index: e2dIndex } : undefined}
                             >
                               <PaperClipOutlined className="hover:text-pangolin-main cursor-pointer" />
-                            </SubscanLink>
+                            </ExplorerLink>
                           ) : (
                             record.result === RecordStatus.pending && (
                               <Tooltip

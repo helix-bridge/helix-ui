@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { initReactI18next } from 'react-i18next';
-import { SubscanLink } from 'shared/components/widget/SubscanLink';
+import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
 import { TxDoneComponentProps } from 'shared/model';
 import { isDVMNetwork, isPolkadotNetwork } from 'shared/utils/network';
 import { useITranslation } from '../../hooks';
@@ -37,9 +37,9 @@ export function TransferDone({ tx, value }: TxDoneComponentProps) {
           </Trans>
         </Typography.Paragraph>
 
-        <SubscanLink txHash={tx.hash} network={value.direction.from.meta}>
+        <ExplorerLink txHash={tx.hash} network={value.direction.from.meta}>
           {t('View in {{scan}} explorer', { scan })}
-        </SubscanLink>
+        </ExplorerLink>
       </div>
     </>
   );
