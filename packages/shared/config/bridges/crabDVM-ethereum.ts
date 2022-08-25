@@ -6,7 +6,7 @@ const crabDVMEthereumConfig: CrabDVMEthereumBridgeConfig = {
   contracts: {
     issuing: '0x841ce48F9446C8E281D3F1444cB859b4A6D0738C',
     redeem: '0x5427FEFA711Eff984124bFBB1AB6fbf5E3DA1820',
-    stablecoinIssuing: '0xBB7684Cc5408F4DD0921E5c2Cadd547b8f1AD573',
+    stablecoinIssuing: '0x3b53D2C7B44d40BE05Fa5E2309FFeB6eB2492d88',
     stablecoinRedeem: '0xB37D31b2A74029B5951a2778F959282E2D518595',
   },
 };

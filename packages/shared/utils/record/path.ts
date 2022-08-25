@@ -3,7 +3,7 @@ import {
   BridgePredicateFn,
   isSubstrateSubstrateDVM,
   isSubstrateDVM,
-  isParachainSubstrate,
+  isSubstrateSubstrateParachain,
   isCBridge,
   isXCM,
 } from '../bridge';
@@ -14,7 +14,7 @@ export function getDetailPaths(fromChain: Network, toChain: Network, record: Hel
   const filters: DirectionPaths[] = [
     [isSubstrateSubstrateDVM, 's2s', record.id],
     [isSubstrateDVM, 's2dvm', record.id],
-    [isParachainSubstrate, 's2parachain', record.id],
+    [isSubstrateSubstrateParachain, 's2parachain', record.id],
     [isCBridge, 'cbridge', record.id],
     [isXCM, 'xcm', record.id],
   ];

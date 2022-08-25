@@ -9,9 +9,9 @@ const predicate: (from: Network, to: Network) => BridgePredicateFn = (from, to) 
 const revert: (fn: BridgePredicateFn) => BridgePredicateFn = (fn: BridgePredicateFn) => (departure, arrival) =>
   fn(arrival, departure);
 
-const or =
-  (...fns: BridgePredicateFn[]) =>
-  (departure: Network, arrival: Network) =>
+const or: (...fns: BridgePredicateFn[]) => (dep: Network, arr: Network) => boolean =
+  (...fns) =>
+  (departure, arrival) =>
     fns.some((fn) => fn(departure, arrival));
 
 const isBridge = (category: BridgeCategory) => (departure: Network, arrival: Network) => {
@@ -42,12 +42,12 @@ export const isSubstrate2DVM = or(
 export const isDVM2Substrate = revert(isSubstrate2DVM);
 export const isSubstrateDVM = or(isSubstrate2DVM, isDVM2Substrate);
 
-export const isParachain2Substrate = or(
+export const isSubstrateParachain2Substrate = or(
   predicate('crab-parachain', 'crab'),
   predicate('pangolin-parachain', 'pangolin')
 );
-export const isSubstrate2Parachain = revert(isParachain2Substrate);
-export const isParachainSubstrate = or(isParachain2Substrate, isSubstrate2Parachain);
+export const isSubstrate2SubstrateParachain = revert(isSubstrateParachain2Substrate);
+export const isSubstrateSubstrateParachain = or(isSubstrateParachain2Substrate, isSubstrate2SubstrateParachain);
 
 export const isCrabDVM2Heco = predicate('crab-dvm', 'heco');
 export const isHeco2CrabDVM = revert(isCrabDVM2Heco);

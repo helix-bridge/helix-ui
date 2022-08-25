@@ -32,7 +32,7 @@ export const avalancheConfig: EthereumChainConfig = {
         {
           category: 'cBridge',
           bridge: 'arbitrum-avalanche',
-          partner: { name: 'arbitrum', role: 'issuing', symbol: 'USDT' },
+          partner: { name: 'arbitrum', role: 'backing', symbol: 'USDT' },
         },
         {
           category: 'cBridge',

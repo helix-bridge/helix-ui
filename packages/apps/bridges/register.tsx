@@ -28,7 +28,7 @@ import { ethereumHeco } from 'shared/config/bridges/ethereum-heco';
 import { ethereumOptimism } from 'shared/config/bridges/ethereum-optimism';
 import { ethereumPolygon } from 'shared/config/bridges/ethereum-polygon';
 import { hecoPolygon } from 'shared/config/bridges/heco-polygon';
-import { parachainCrab, parachainPangolin } from 'shared/config/bridges/parachain-substrate';
+import { crabCrabParachain, pangolinPangolinParachain } from 'shared/config/bridges/substrate-substrateParachain';
 import { polygonAstar } from 'shared/config/bridges/polygon-astar';
 import { polygonOptimism } from 'shared/config/bridges/polygon-optimism';
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
@@ -62,7 +62,7 @@ import { Ethereum2Heco, Heco2Ethereum } from './celer/ethereum-heco';
 import { Ethereum2Optimism, Optimism2Ethereum } from './celer/ethereum-optimism';
 import { Ethereum2Polygon, Polygon2Ethereum } from './celer/ethereum-polygon';
 import { Heco2Polygon, Polygon2Heco } from './celer/heco-polygon';
-import { Parachain2Substrate, Substrate2Parachain } from './helix/parachain-substrate';
+import { Parachain2Substrate, Substrate2Parachain } from './helix/substrate-substrateParachain';
 import { Astar2Polygon, Polygon2Astar } from './celer/polygon-astar';
 import { Optimism2Polygon, Polygon2Optimism } from './celer/polygon-optimism';
 import { DVM2Substrate, Substrate2DVM } from './helix/substrate-dvm';
@@ -109,10 +109,10 @@ pangolinPangolinDVM.setRedeemComponents(DVM2Substrate as FunctionComponent);
  * crab <-> crab parachain
  * pangolin <-> pangolin parachain
  */
-parachainCrab.setIssuingComponents(Substrate2Parachain as FunctionComponent);
-parachainCrab.setRedeemComponents(Parachain2Substrate as FunctionComponent);
-parachainPangolin.setIssuingComponents(Substrate2Parachain as FunctionComponent);
-parachainPangolin.setRedeemComponents(Parachain2Substrate as FunctionComponent);
+crabCrabParachain.setIssuingComponents(Substrate2Parachain as FunctionComponent);
+crabCrabParachain.setRedeemComponents(Parachain2Substrate as FunctionComponent);
+pangolinPangolinParachain.setIssuingComponents(Substrate2Parachain as FunctionComponent);
+pangolinPangolinParachain.setRedeemComponents(Parachain2Substrate as FunctionComponent);
 
 /**
  * cBridge

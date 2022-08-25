@@ -1,6 +1,6 @@
 /// <reference types="jest" />
 
-import { gqlName } from '../../utils/helper';
+import { gqlName, toMiddleSplitNaming } from '../../utils/helper';
 
 describe('common utils', () => {
   it('can extract gql name', () => {
@@ -21,5 +21,15 @@ describe('common utils', () => {
 
     expect(gqlName(historyRecords)).toEqual('historyRecords');
     expect(gqlName(unlockRecord)).toEqual('unlockRecord');
+  });
+
+  it('can transfer camelCase to middle-split-naming', () => {
+    expect(toMiddleSplitNaming('crabDVM')).toEqual('crab-dvm');
+    expect(toMiddleSplitNaming('CrabDVM')).toEqual('crab-dvm');
+
+    expect(toMiddleSplitNaming('crabParachain')).toEqual('crab-parachain');
+    expect(toMiddleSplitNaming('CrabParachain')).toEqual('crab-parachain');
+
+    expect(toMiddleSplitNaming('DVM')).toEqual('dvm');
   });
 });

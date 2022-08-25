@@ -2,7 +2,7 @@ export type BridgeName =
   | 'substrate-DVM'
   | 'substrate-substrateDVM'
   | 'ethereum-darwinia'
-  | 'parachain-substrate'
+  | 'substrate-substrateParachain'
   | 'crabDVM-heco'
   | 'crabDVM-ethereum'
   | 'ethereum-heco'
