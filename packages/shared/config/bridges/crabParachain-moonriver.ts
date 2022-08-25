@@ -5,7 +5,7 @@ import { CrabParachainMoonriverBridgeConfig } from 'shared/model';
 const crabParachainMoonriverConfig: CrabParachainMoonriverBridgeConfig = {
   contracts: {
     issuing: '',
-    redeem: '0x0000000000000000000000000000000000000000',
+    redeem: '0x0000000000000000000000000000000000000804',
   },
 };
 

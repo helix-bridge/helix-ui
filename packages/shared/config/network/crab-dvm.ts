@@ -116,7 +116,7 @@ export const crabDVMConfig: DVMChainConfig = {
     },
     {
       name: 'USDT',
-      decimals: 18,
+      decimals: 6,
       cross: [
         {
           category: 'cBridge',
@@ -157,7 +157,7 @@ export const crabDVMConfig: DVMChainConfig = {
     },
     {
       name: 'USDC',
-      decimals: 18,
+      decimals: 6,
       cross: [
         {
           category: 'cBridge',

@@ -16,6 +16,7 @@ import {
   EthereumChainConfig,
   TxObservableFactory,
 } from 'shared/model';
+import { isEthereum2CrabDVM } from 'shared/utils/bridge';
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
@@ -59,11 +60,11 @@ export function CBridge({
       estimateResult && {
         amount: fromWei({
           value: new BN(estimateResult.baseFee).add(new BN(estimateResult.percFee)),
-          decimals: direction.from.decimals,
+          decimals: direction.to.decimals,
         }),
         symbol: direction.from.symbol,
       },
-    [direction.from.decimals, direction.from.symbol, estimateResult]
+    [direction.to.decimals, direction.from.symbol, estimateResult]
   );
 
   const extraInfo = useMemo(() => {
@@ -200,6 +201,7 @@ export function CBridge({
     setTxObservableFactory,
   ]);
 
+  // eslint-disable-next-line complexity
   useEffect(() => {
     if (!direction.from.amount || !account) {
       setEstimateResult(null);
@@ -216,6 +218,8 @@ export function CBridge({
     const dstChainId = parseInt(direction.to.meta.ethereumChain.chainId, 16);
     const symbol = direction.from.symbol.startsWith('x') ? direction.from.symbol.slice(1) : direction.from.symbol; // as RING
     const amount = toWei({ value: direction.from.amount, decimals: direction.from.decimals });
+    const fns = [isEthereum2CrabDVM];
+    const tokens = ['USDC', 'USDT', 'BUSD'];
 
     estimateRequest.setSrcChainId(srcChainId);
     estimateRequest.setDstChainId(dstChainId);
@@ -223,6 +227,10 @@ export function CBridge({
     estimateRequest.setUsrAddr(account);
     estimateRequest.setSlippageTolerance(slippage);
     estimateRequest.setAmt(amount);
+
+    if (fns.some((fn) => fn(direction.from.host, direction.to.host)) && tokens.includes(symbol)) {
+      estimateRequest.setIsPegged(true);
+    }
 
     const sub$$ = from(client.estimateAmt(estimateRequest, null)).subscribe({
       next(res) {
@@ -234,7 +242,7 @@ export function CBridge({
 
         if (onFeeChange) {
           onFeeChange({
-            amount: +fromWei({ value: feeTotal, decimals: direction.from.decimals }),
+            amount: +fromWei({ value: feeTotal, decimals: direction.to.decimals }),
             symbol: direction.from.symbol,
           });
         }
@@ -248,7 +256,7 @@ export function CBridge({
   }, [
     account,
     direction.from.amount,
-    direction.from.decimals,
+    direction.to.decimals,
     direction.from.meta.ethereumChain.chainId,
     direction.from.symbol,
     direction.to.meta.ethereumChain.chainId,
@@ -256,6 +264,9 @@ export function CBridge({
     onFeeChange,
     slippage,
     isIssuing,
+    direction.from.decimals,
+    direction.from.host,
+    direction.to.host,
   ]);
 
   return (
