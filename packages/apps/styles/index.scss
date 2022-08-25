@@ -157,8 +157,11 @@ $bg-dark: #151d35;
   }
 }
 
+.bridger-selector-item {
+  height: fit-content !important;
+}
+
 .ant-radio-button-wrapper.ant-radio-button-wrapper-checked.ant-radio-button-wrapper-in-form-item.bridger-selector-item {
-  height: fit-content;
   background: #101625;
   border: 1px solid #343946;
   border-radius: 2px;

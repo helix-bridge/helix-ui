@@ -28,6 +28,11 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
   const origin = { from: { name: from.name, type: from.type }, to: { name: to.name, type: to.type } };
   const isDefault = matches(origin);
 
+  const isCBridgeStableCoin = useCallback(
+    (bridge: Bridge) => bridge.category === 'cBridge' && ['USDT', 'USDC', 'BUSD'].includes(direction.from.symbol),
+    [direction.from.symbol]
+  );
+
   const isDisabled = useCallback<(bridge: Bridge) => boolean>(
     // eslint-disable-next-line complexity
     (bridge: Bridge) => {
@@ -35,10 +40,11 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
         !!direction.from &&
         !!direction.to &&
         ((bridge.disableIssuing && bridge.isIssuing(direction.from.meta, direction.to.meta)) ||
-          (bridge.disableRedeem && bridge.isRedeem(direction.from.meta, direction.to.meta)))
+          (bridge.disableRedeem && bridge.isRedeem(direction.from.meta, direction.to.meta)) ||
+          isCBridgeStableCoin(bridge))
       );
     },
-    [direction.from, direction.to]
+    [direction.from, direction.to, isCBridgeStableCoin]
   );
 
   useEffect(() => {
@@ -102,7 +108,9 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
                   <div className={`relative flex justify-between items-center pr-3 py-3 ${needClaim ? 'pt-8' : ''}`}>
                     <TokenOnChain token={direction.from as CrossToken} isFrom />
 
-                    <BridgeArrow category={item?.category ?? 'helix'} />
+                    <BridgeArrow category={item?.category ?? 'helix'}>
+                      {isDisabled(item) ? <span>{t('COMING SOON')}</span> : null}
+                    </BridgeArrow>
 
                     <TokenOnChain token={direction.to as CrossToken} />
                   </div>

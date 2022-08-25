@@ -1,5 +1,6 @@
 import { ArrowRightOutlined } from '@ant-design/icons';
 import Image from 'next/image';
+import { PropsWithChildren } from 'react';
 import { BridgeCategory } from 'shared/model';
 import { asSameCategory } from '../../utils';
 
@@ -8,7 +9,7 @@ interface BridgeArrowProps {
   showName?: boolean;
 }
 // eslint-disable-next-line complexity
-export function BridgeArrow({ category, showName = true }: BridgeArrowProps) {
+export function BridgeArrow({ category, children, showName = true }: PropsWithChildren<BridgeArrowProps>) {
   const asHistory = !showName;
   const logoProps =
     asSameCategory(category, 'helix') || asSameCategory(category, 'XCM')
@@ -35,11 +36,15 @@ export function BridgeArrow({ category, showName = true }: BridgeArrowProps) {
           } bg-gray-700 flex justify-center items-center z-10`}
           style={{ height: 'fit-content', transform: asHistory ? 'translateY(-22px)' : 'translateY(-19px)' }}
         >
-          <Image alt="..." src={`/image/bridges/${category.split('-')[0]}-bridge.png`} {...logoProps} />
-          {!asHistory && (
-            <strong className={`${asSameCategory(category, 'helix') ? 'capitalize' : ''} ml-2`}>
-              {category.split('-')[0]}
-            </strong>
+          {children || (
+            <>
+              <Image alt="..." src={`/image/bridges/${category.split('-')[0]}-bridge.png`} {...logoProps} />
+              {!asHistory && (
+                <strong className={`${asSameCategory(category, 'helix') ? 'capitalize' : ''} ml-2`}>
+                  {category.split('-')[0]}
+                </strong>
+              )}
+            </>
           )}
         </div>
       </div>
