@@ -12,35 +12,26 @@ interface StatisticOverview {
 }
 
 interface StatisticsProps {
-  titleLeft: string;
-  titleRight: string;
+  title: string;
   startTime: string;
   total: string | number;
   rank: StatisticOverview[];
   currency?: '$';
 }
 
-export function Statistics({
-  children,
-  startTime,
-  total,
-  titleLeft,
-  titleRight,
-  rank,
-  currency,
-}: PropsWithChildren<StatisticsProps>) {
+export function Statistics({ children, startTime, total, title, rank, currency }: PropsWithChildren<StatisticsProps>) {
   const { t } = useTranslation('common');
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 mt-4 lg:mt-6">
       <div className="lg:col-span-8 flex-1 p-4 bg-gray-200 dark:bg-antDark">
-        <span className="uppercase text-xl font-normal">{titleLeft}</span>
+        <span className="uppercase text-xl font-normal">{title}</span>
         {children}
       </div>
 
       <div className="lg:col-span-4 bg-gray-200 dark:bg-antDark px-5 py-6">
         <div className="flex justify-between items-center">
-          <h3 className="uppercase text-xl font-normal">{titleRight}</h3>
+          <h3 className="uppercase text-xl font-normal">{title}</h3>
           <span className="text-sm font-normal opacity-50">{t('Since {{time}}', { time: startTime })}</span>
         </div>
 
@@ -49,9 +40,7 @@ export function Statistics({
             {currency}
             {total}
           </h2>
-          <span className="text-sm font-normal opacity-50 capitalize">
-            {t('Total {{title}}', { title: titleRight })}
-          </span>
+          <span className="text-sm font-normal opacity-50 capitalize">{t('Total {{title}}', { title })}</span>
         </div>
 
         <div className="flex flex-col gap-2 md:gap-4 max-h-40 overflow-y-scroll no-scrollbar">
@@ -59,7 +48,7 @@ export function Statistics({
             <span className="uppercase text-sm font-normal text-gray-200">
               {t('top {{count}} destination', { count: rank.length })}
             </span>
-            <span className="uppercase text-sm font-normal text-gray-200">{titleRight}</span>
+            <span className="uppercase text-sm font-normal text-gray-200">{title}</span>
           </div>
 
           {rank.map(({ fromChain, toChain, total: iTotal }) => (

@@ -73,7 +73,7 @@ export enum THEME {
 }
 
 export const chainColors: { [key in Network]: string } = {
-  'crab-dvm': '#B32BB6',
+  'crab-dvm': '#512dbc',
   'crab-parachain': '#512dbc',
   'darwinia-dvm': '#FF007A',
   'pangolin-dvm': '#3083dd',
@@ -83,7 +83,7 @@ export const chainColors: { [key in Network]: string } = {
   astar: '#1b8ff8',
   avalanche: '#e74140',
   bsc: '#ff4c3b',
-  crab: '#cd201f',
+  crab: '#512dbc',
   darwinia: '#FF007A',
   ethereum: '#1C87ED',
   heco: '#05933a',

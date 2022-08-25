@@ -2,7 +2,6 @@
 
 import { Typography } from 'antd';
 import { create } from 'react-test-renderer';
-import { render, fireEvent } from '@testing-library/react';
 import { pangoroPangolinDVM } from 'shared/config/bridges/substrate-substrateDVM';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 
@@ -86,40 +85,5 @@ describe('<CrossChainInfo />', () => {
     let tree = component.toJSON();
 
     expect(tree).toMatchSnapshot();
-  });
-
-  it('should toggle extra info on click', () => {
-    const { getByTestId } = render(
-      <CrossChainInfo
-        bridge={pangoroPangolinDVM}
-        fee={{ amount: '8', symbol: 'RING' }}
-        extra={[
-          {
-            name: 'Allowance',
-            content: (
-              <Typography.Text className="capitalize">
-                <span>10000000</span>
-                <span className="capitalize ml-1">PRING</span>
-              </Typography.Text>
-            ),
-          },
-          {
-            name: 'Daily limit',
-            content: (
-              <Typography.Text className="capitalize">
-                <span>100000000</span>
-                <span className="capitalize ml-1">PRING</span>
-              </Typography.Text>
-            ),
-          },
-        ]}
-      ></CrossChainInfo>
-    );
-
-    expect(getByTestId('Allowance')).toHaveClass('hidden');
-
-    fireEvent.click(getByTestId('toggle-btn'));
-
-    expect(getByTestId('Allowance')).not.toHaveClass('hidden');
   });
 });

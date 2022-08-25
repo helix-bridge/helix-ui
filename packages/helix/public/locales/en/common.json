@@ -42,8 +42,6 @@
   "top {{count}} destination": "top {{count}} destination",
   "transaction detail": "transaction detail",
   "transactions": "transactions",
-  "transactions by week": "transactions by week",
   "unique users": "unique users",
-  "volume": "volume",
-  "volume by week": "volume by week"
+  "volume": "volume"
 }

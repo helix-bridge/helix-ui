@@ -88,14 +88,19 @@ export function BarChart({ data, name }: BarChartProps) {
       enabled: false,
     },
     navigator: {
-      height: 24,
+      enabled: false,
     },
     title: {
       text: '',
     },
     xAxis: {
+      lineWidth: 0,
+      tickLength: 0,
       labels: {
         format: '{value:%m-%d}',
+        style: {
+          color: '#fff',
+        },
       },
     },
     yAxis: {
