@@ -4,8 +4,8 @@ import { ArbitrumAvalancheBridgeConfig } from 'shared/model';
 
 const arbitrumAvalancheConfig: ArbitrumAvalancheBridgeConfig = {
   contracts: {
-    issuing: '0x1619DE6B6B20eD217a58d00f37B9d47C7663feca',
-    redeem: '0xef3c714c9425a8F3697A9C969Dc1af30ba82e5d4',
+    backing: '0x1619DE6B6B20eD217a58d00f37B9d47C7663feca',
+    issuing: '0xef3c714c9425a8F3697A9C969Dc1af30ba82e5d4',
   },
 };
 

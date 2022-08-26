@@ -1,5 +1,7 @@
 import { ContractConfig, BridgeConfig } from 'shared/model';
 
-type EthereumAvalancheContractConfig = ContractConfig;
+interface EthereumAvalancheContractConfig extends ContractConfig {
+  stablecoinBacking: string;
+}
 
 export type EthereumAvalancheBridgeConfig = Required<BridgeConfig<EthereumAvalancheContractConfig>>;

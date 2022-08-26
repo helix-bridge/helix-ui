@@ -9,9 +9,9 @@ const predicate: (from: Network, to: Network) => BridgePredicateFn = (from, to) 
 const revert: (fn: BridgePredicateFn) => BridgePredicateFn = (fn: BridgePredicateFn) => (departure, arrival) =>
   fn(arrival, departure);
 
-const or =
-  (...fns: BridgePredicateFn[]) =>
-  (departure: Network, arrival: Network) =>
+const or: (...fns: BridgePredicateFn[]) => (dep: Network, arr: Network) => boolean =
+  (...fns) =>
+  (departure, arrival) =>
     fns.some((fn) => fn(departure, arrival));
 
 const isBridge = (category: BridgeCategory) => (departure: Network, arrival: Network) => {
@@ -42,12 +42,12 @@ export const isSubstrate2DVM = or(
 export const isDVM2Substrate = revert(isSubstrate2DVM);
 export const isSubstrateDVM = or(isSubstrate2DVM, isDVM2Substrate);
 
-export const isParachain2Substrate = or(
+export const isSubstrateParachain2Substrate = or(
   predicate('crab-parachain', 'crab'),
   predicate('pangolin-parachain', 'pangolin')
 );
-export const isSubstrate2Parachain = revert(isParachain2Substrate);
-export const isParachainSubstrate = or(isParachain2Substrate, isSubstrate2Parachain);
+export const isSubstrate2SubstrateParachain = revert(isSubstrateParachain2Substrate);
+export const isSubstrateSubstrateParachain = or(isSubstrateParachain2Substrate, isSubstrate2SubstrateParachain);
 
 export const isCrabDVM2Heco = predicate('crab-dvm', 'heco');
 export const isHeco2CrabDVM = revert(isCrabDVM2Heco);
@@ -160,25 +160,9 @@ export const isPolygon2Optimism = predicate('polygon', 'optimism');
 export const isOptimism2Polygon = predicate('optimism', 'polygon');
 export const isPolygonOptimism = or(isPolygon2Optimism, isOptimism2Polygon);
 
-export const isCrabDVM2Bsc = predicate('crab-dvm', 'bsc');
-export const isBsc2CrabDVM = predicate('bsc', 'crab-dvm');
-export const isCrabDVMBsc = or(isCrabDVM2Bsc, isBsc2CrabDVM);
-
-export const isCrabDVM2Arbitrum = predicate('crab-dvm', 'arbitrum');
-export const isArbitrum2CrabDVM = predicate('arbitrum', 'crab-dvm');
-export const isCrabDVMArbitrum = or(isCrabDVM2Arbitrum, isArbitrum2CrabDVM);
-
 export const isCrabDVM2Astar = predicate('crab-dvm', 'astar');
 export const isAstar2CrabDVM = predicate('astar', 'crab-dvm');
 export const isCrabDVMAstar = or(isCrabDVM2Astar, isAstar2CrabDVM);
-
-export const isCrabDVM2Avalanche = predicate('crab-dvm', 'avalanche');
-export const isAvalanche2CrabDVM = predicate('avalanche', 'crab-dvm');
-export const isCrabDVMAvalanche = or(isCrabDVM2Avalanche, isAvalanche2CrabDVM);
-
-export const isCrabDVM2Optimism = predicate('crab-dvm', 'optimism');
-export const isOptimism2CrabDVM = predicate('optimism', 'crab-dvm');
-export const isCrabDVMOptimism = or(isCrabDVM2Optimism, isOptimism2CrabDVM);
 
 export const isCrabParachain2Karura = predicate('crab-parachain', 'karura');
 export const isKarura2CrabParachain = predicate('karura', 'crab-parachain');

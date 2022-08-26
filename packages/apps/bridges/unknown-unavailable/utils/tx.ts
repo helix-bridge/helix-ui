@@ -1,7 +1,7 @@
 import { EMPTY, Observable } from 'rxjs';
 import { Tx } from 'shared/model';
 
-export function issuing(): Observable<Tx> {
+export function issue(): Observable<Tx> {
   return EMPTY;
 }
 

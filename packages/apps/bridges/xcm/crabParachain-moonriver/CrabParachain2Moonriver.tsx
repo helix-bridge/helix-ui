@@ -19,7 +19,7 @@ import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { useApi } from '../../../providers';
 import { IssuingPayload } from './model';
 import { getIssuingFee } from './utils';
-import { issuing, validate } from './utils/tx';
+import { issue, validate } from './utils/tx';
 
 export function CrabParachain2Moonriver({
   form,
@@ -66,7 +66,7 @@ export function CrabParachain2Moonriver({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        issuing(data),
+        issue(data),
         afterCrossChain(TransferDone, { payload: data })
       );
     };

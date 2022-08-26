@@ -21,7 +21,7 @@ export const avalancheConfig: EthereumChainConfig = {
   },
   tokens: [
     {
-      name: 'USDT',
+      name: 'USDT.e',
       decimals: 6,
       cross: [
         {
@@ -32,12 +32,7 @@ export const avalancheConfig: EthereumChainConfig = {
         {
           category: 'cBridge',
           bridge: 'arbitrum-avalanche',
-          partner: { name: 'arbitrum', role: 'issuing', symbol: 'USDT' },
-        },
-        {
-          category: 'cBridge',
-          bridge: 'astar-avalanche',
-          partner: { name: 'astar', role: 'backing', symbol: 'USDT' },
+          partner: { name: 'arbitrum', role: 'backing', symbol: 'USDT' },
         },
         {
           category: 'cBridge',
@@ -54,11 +49,6 @@ export const avalancheConfig: EthereumChainConfig = {
           bridge: 'avalanche-polygon',
           partner: { name: 'polygon', role: 'issuing', symbol: 'USDT' },
         },
-        {
-          category: 'cBridge',
-          bridge: 'crabDVM-avalanche',
-          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDT' },
-        },
       ],
       type: 'mapping',
       host: 'avalanche',
@@ -67,7 +57,7 @@ export const avalancheConfig: EthereumChainConfig = {
       address: '0xc7198437980c041c805A1EDcbA50c1Ce5db95118',
     },
     {
-      name: 'USDC',
+      name: 'USDC.e',
       decimals: 6,
       cross: [
         {
@@ -99,11 +89,6 @@ export const avalancheConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'avalanche-polygon',
           partner: { name: 'polygon', role: 'issuing', symbol: 'USDC' },
-        },
-        {
-          category: 'cBridge',
-          bridge: 'crabDVM-avalanche',
-          partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDC' },
         },
       ],
       type: 'mapping',

@@ -17,7 +17,7 @@ const patchAmount = (departure: CrossToken<ParachainChainConfig>) => {
   return toWei(departure).slice(0, -timestamp.length) + timestamp;
 };
 
-export function issuing(payload: IssuingPayload): Observable<Tx> {
+export function issue(payload: IssuingPayload): Observable<Tx> {
   const {
     direction: { from: departure, to: arrival },
     sender,
@@ -90,7 +90,7 @@ export function redeem(payload: IssuingPayload): Observable<Tx> {
   const weight = 4_000_000_000;
 
   return genEthereumContractTxObs(
-    bridge.config.contracts!.redeem,
+    bridge.config.contracts!.issuing,
     (contract) => contract.methods.transfer(departure.address, amount, destination, weight).send({ from: sender }),
     abi as AbiItem[]
   );

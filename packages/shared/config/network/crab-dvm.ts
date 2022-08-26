@@ -120,26 +120,6 @@ export const crabDVMConfig: DVMChainConfig = {
       cross: [
         {
           category: 'cBridge',
-          bridge: 'crabDVM-bsc',
-          partner: { name: 'bsc', role: 'issuing', symbol: 'USDT' },
-        },
-        {
-          category: 'cBridge',
-          bridge: 'crabDVM-avalanche',
-          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDT' },
-        },
-        {
-          category: 'cBridge',
-          bridge: 'crabDVM-optimism',
-          partner: { name: 'optimism', role: 'issuing', symbol: 'USDT' },
-        },
-        {
-          category: 'cBridge',
-          bridge: 'crabDVM-arbitrum',
-          partner: { name: 'arbitrum', role: 'issuing', symbol: 'USDT' },
-        },
-        {
-          category: 'cBridge',
           bridge: 'crabDVM-astar',
           partner: { name: 'astar', role: 'issuing', symbol: 'USDT' },
         },
@@ -159,26 +139,6 @@ export const crabDVMConfig: DVMChainConfig = {
       name: 'USDC',
       decimals: 6,
       cross: [
-        {
-          category: 'cBridge',
-          bridge: 'crabDVM-bsc',
-          partner: { name: 'bsc', role: 'issuing', symbol: 'USDC' },
-        },
-        {
-          category: 'cBridge',
-          bridge: 'crabDVM-avalanche',
-          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDC' },
-        },
-        {
-          category: 'cBridge',
-          bridge: 'crabDVM-optimism',
-          partner: { name: 'optimism', role: 'issuing', symbol: 'USDC' },
-        },
-        {
-          category: 'cBridge',
-          bridge: 'crabDVM-arbitrum',
-          partner: { name: 'arbitrum', role: 'issuing', symbol: 'USDC' },
-        },
         {
           category: 'cBridge',
           bridge: 'crabDVM-astar',

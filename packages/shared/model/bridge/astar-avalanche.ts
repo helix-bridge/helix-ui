@@ -1,5 +1,7 @@
 import { ContractConfig, BridgeConfig } from 'shared/model';
 
-type AstarAvalancheContractConfig = ContractConfig;
+interface AstarAvalancheContractConfig extends ContractConfig {
+  stablecoinBacking: string;
+}
 
 export type AstarAvalancheBridgeConfig = Required<BridgeConfig<AstarAvalancheContractConfig>>;

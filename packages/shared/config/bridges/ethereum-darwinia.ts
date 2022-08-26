@@ -4,8 +4,8 @@ import { darwiniaConfig, ethereumConfig, pangolinConfig, ropstenConfig } from '.
 const ethereumDarwiniaConfig: EthereumDarwiniaBridgeConfig = {
   contracts: {
     fee: '0x6B0940772516B69088904564A56d09CFe6Bb3D85',
-    issuing: '0xea7938985898af7fd945b03b7bc2e405e744e913',
-    redeem: '0x5f44dd8e59f56aa04fe54e95cc690560ae706b18',
+    backing: '0xea7938985898af7fd945b03b7bc2e405e744e913',
+    issuing: '0x5f44dd8e59f56aa04fe54e95cc690560ae706b18',
   },
   lockEvents: [
     {
@@ -33,8 +33,8 @@ export const ethereumDarwinia = new Bridge(ethereumConfig, darwiniaConfig, ether
 const ropstenDVMChainConfig: EthereumDarwiniaBridgeConfig = {
   contracts: {
     fee: '0x6982702995b053A21389219c1BFc0b188eB5a372',
-    issuing: '0x49262B932E439271d05634c32978294C7Ea15d0C',
-    redeem: '0x98fAE9274562FE131e2CF5771ebFB0bB232aFd25',
+    backing: '0x49262B932E439271d05634c32978294C7Ea15d0C',
+    issuing: '0x98fAE9274562FE131e2CF5771ebFB0bB232aFd25',
   },
   lockEvents: [
     {

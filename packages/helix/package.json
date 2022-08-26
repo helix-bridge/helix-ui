@@ -11,8 +11,8 @@
     "i18next:scanner": "i18next-scanner --config i18next-scanner.config.js",
     "start:test": "NODE_ENV=test next start -p 4001",
     "start": "next start -p 4001",
-    "test:unit:watch": "cross-env TZ=UTC CHAIN_TYPE=all jest --watch",
-    "test:unit": "cross-env TZ=UTC CHAIN_TYPE=all jest --config=jest.config.js --coverage"
+    "test:unit:watch": "cross-env TZ=UTC CHAIN_TYPE=all jest --watch --verbose",
+    "test:unit": "cross-env TZ=UTC CHAIN_TYPE=all jest --config=jest.config.js --coverage --verbose"
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",

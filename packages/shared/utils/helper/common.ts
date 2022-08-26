@@ -12,3 +12,10 @@ export function unixTimeToLocal(time: number) {
 
   return fromUnixTime(time - timezoneOffSet).toLocaleString();
 }
+
+export function toMiddleSplitNaming(str: string): string {
+  return str
+    .split(/(?<![A-Z])(?=[A-Z])/)
+    .map((item) => item.toLowerCase())
+    .join('-');
+}

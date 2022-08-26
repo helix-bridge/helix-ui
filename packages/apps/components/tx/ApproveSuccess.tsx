@@ -1,5 +1,5 @@
 import { Typography } from 'antd';
-import { SubscanLink } from 'shared/components/widget/SubscanLink';
+import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
 import { TxDoneComponentProps } from 'shared/model';
 import { useITranslation } from '../../hooks';
 
@@ -9,9 +9,9 @@ export function ApproveDone({ value, tx }: TxDoneComponentProps) {
   return (
     <>
       <Typography.Text>{t('Approve Success {{account}}', { account: value.sender })}</Typography.Text>
-      <SubscanLink txHash={tx.hash} network={value.direction.from.meta} className="ml-4">
+      <ExplorerLink txHash={tx.hash} network={value.direction.from.meta} className="ml-4">
         {t('View in explorer')}
-      </SubscanLink>
+      </ExplorerLink>
     </>
   );
 }

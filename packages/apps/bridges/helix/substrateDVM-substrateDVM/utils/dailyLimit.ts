@@ -15,9 +15,9 @@ export async function getDailyLimit(
   const bridge = getBridge([departure, arrival]);
   const web3 = entrance.web3.getInstance(departure.provider);
 
-  const { abi, address } = bridge.isIssuing(departure, arrival)
-    ? { abi: backingAbi, address: bridge.config.contracts?.issuing }
-    : { abi: burnAbi, address: bridge.config.contracts?.redeem };
+  const { abi, address } = bridge.isIssue(departure, arrival)
+    ? { abi: backingAbi, address: bridge.config.contracts?.backing }
+    : { abi: burnAbi, address: bridge.config.contracts?.issuing };
 
   const contract = new web3.eth.Contract(abi as AbiItem[], address);
 

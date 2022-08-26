@@ -34,7 +34,7 @@ const Page: NextPage<{ id: string }> = ({ id }) => {
     const sendAmount = getSentAmountFromHelixRecord(record);
     const recvAmount = getReceivedAmountFromHelixRecord(record);
 
-    let { issuing: originPool, redeem: targetPool } = bridge.config.contracts;
+    let { backing: originPool, issuing: targetPool } = bridge.config.contracts;
 
     if (isRedeem) {
       [originPool, targetPool] = [targetPool, originPool];

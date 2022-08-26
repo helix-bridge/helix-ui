@@ -34,7 +34,7 @@ interface ClaimInfo {
  * @description darwinia <- ethereum
  * Because of the ring was released in advance on ethereum, so the action is issuing, but follow the Protocol Overview, it should be redeem.
  */
-export const issuing: TxFn<IssuingPayload> = ({ sender, direction, recipient, bridge }) => {
+export const issue: TxFn<IssuingPayload> = ({ sender, direction, recipient, bridge }) => {
   const {
     from: { address },
     to,
@@ -45,7 +45,7 @@ export const issuing: TxFn<IssuingPayload> = ({ sender, direction, recipient, br
 
   return genEthereumContractTxObs(address, (contract) =>
     contract.methods
-      .transferFrom(sender, bridge.config.contracts.issuing, toWei({ value: to.amount }), recipient)
+      .transferFrom(sender, bridge.config.contracts.backing, toWei({ value: to.amount }), recipient)
       .send(options)
   );
 };
@@ -142,7 +142,7 @@ export function claimToken({
             })
           );
     }),
-    switchMap((txFn) => genEthereumContractTxObs(bridge.config.contracts.redeem || '', txFn, abi.tokenIssuingABI))
+    switchMap((txFn) => genEthereumContractTxObs(bridge.config.contracts.issuing || '', txFn, abi.tokenIssuingABI))
   );
 }
 

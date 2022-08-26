@@ -31,21 +31,19 @@ const Page: NextPage<{
     const departure = getChainConfig(router.query.from as Network);
     const arrival = getChainConfig(router.query.to as Network);
     const bridge = getBridge<SubstrateSubstrateDVMBridgeConfig>([departure, arrival]);
-    const isIssuing = bridge.isIssuing(departure, arrival);
+    const isIssuing = bridge.isIssue(departure, arrival);
     const fromToken = departure.tokens.find((token) => token.symbol === record.sendToken)!;
     const toToken = arrival.tokens.find((token) => token.symbol === record.recvToken)!;
     const sendAmount = getSentAmountFromHelixRecord(record);
     const recvAmount = getReceivedAmountFromHelixRecord(record);
 
-    const {
-      contracts: { issuing: issuingRecipient, redeem: redeemRecipient, genesis },
-    } = bridge.config;
+    const { backing, issuing, genesis } = bridge.config.contracts;
 
     // issuing steps
     const issueStart: TransferStep = {
       chain: departure,
       sender: revertAccount(record.sender, departure),
-      recipient: issuingRecipient,
+      recipient: backing,
       token: fromToken,
       amount: sendAmount,
     };
@@ -58,7 +56,7 @@ const Page: NextPage<{
     };
     const issueFail: TransferStep = {
       chain: departure,
-      sender: issuingRecipient,
+      sender: backing,
       recipient: revertAccount(record.sender, departure),
       token: fromToken,
       amount: sendAmount,
@@ -68,27 +66,27 @@ const Page: NextPage<{
     const redeemStart: TransferStep = {
       chain: departure,
       sender: revertAccount(record.sender, departure),
-      recipient: redeemRecipient,
+      recipient: issuing,
       token: fromToken,
       amount: sendAmount,
     };
     const redeemDispatch: TransferStep = {
       chain: arrival,
-      sender: issuingRecipient,
+      sender: backing,
       recipient: revertAccount(record.recipient, arrival),
       token: toToken,
       amount: recvAmount,
     };
     const redeemSuccess: TransferStep = {
       chain: departure,
-      sender: redeemRecipient,
+      sender: issuing,
       recipient: genesis,
       token: fromToken,
       amount: recvAmount,
     };
     const redeemFail: TransferStep = {
       chain: departure,
-      sender: redeemRecipient,
+      sender: issuing,
       recipient: revertAccount(record.sender, departure),
       token: fromToken,
       amount: sendAmount,

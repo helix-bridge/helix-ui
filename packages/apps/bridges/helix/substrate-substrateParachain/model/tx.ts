@@ -1,14 +1,14 @@
 import { Bridge, CrossChainPayload, CrossToken, PolkadotChainConfig } from 'shared/model';
-import { ParachainSubstrateBridgeConfig } from './bridge';
+import { SubstrateSubstrateParachainBridgeConfig } from './bridge';
 
 export type IssuingPayload = CrossChainPayload<
-  Bridge<ParachainSubstrateBridgeConfig>,
+  Bridge<SubstrateSubstrateParachainBridgeConfig>,
   CrossToken<PolkadotChainConfig>,
   CrossToken<PolkadotChainConfig>
 >;
 
 export type RedeemPayload = CrossChainPayload<
-  Bridge<ParachainSubstrateBridgeConfig>,
+  Bridge<SubstrateSubstrateParachainBridgeConfig>,
   CrossToken<PolkadotChainConfig>,
   CrossToken<PolkadotChainConfig>
 >;

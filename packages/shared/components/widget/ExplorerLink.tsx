@@ -1,12 +1,12 @@
 import { Typography } from 'antd';
-import { CSSProperties, PropsWithChildren } from 'react';
+import React, { CSSProperties, PropsWithChildren } from 'react';
 import { ChainConfig, Network } from '../../model';
 import { isDVMNetwork, isPolkadotNetwork } from '../../utils/network';
 import { Icon } from './Icon';
 
 const { Link } = Typography;
 
-interface SubscanLinkProps extends PropsWithChildren<unknown> {
+interface ExplorerLinkProps extends PropsWithChildren<unknown> {
   address?: string;
   block?: string;
   className?: string;
@@ -18,7 +18,7 @@ interface SubscanLinkProps extends PropsWithChildren<unknown> {
 }
 
 // eslint-disable-next-line complexity
-export function SubscanLink({
+export function ExplorerLink({
   network: networkOrChainConfig,
   address,
   extrinsic,
@@ -27,7 +27,7 @@ export function SubscanLink({
   block,
   txHash,
   ...other
-}: SubscanLinkProps) {
+}: ExplorerLinkProps) {
   let network: Network = typeof networkOrChainConfig === 'object' ? networkOrChainConfig.name : networkOrChainConfig;
   const isSubscan = isPolkadotNetwork(network) || isDVMNetwork(network);
 

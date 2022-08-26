@@ -23,7 +23,7 @@ import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { useApi } from '../../../providers';
 import { IssuingPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getDailyLimit, getIssuingFee } from './utils';
-import { issuing, validate } from './utils/tx';
+import { issue, validate } from './utils/tx';
 
 export function Substrate2SubstrateDVM({
   form,
@@ -73,7 +73,7 @@ export function Substrate2SubstrateDVM({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        issuing(data, fee!),
+        issue(data, fee!),
         afterCrossChain(TransferDone, { payload: data })
       );
     };

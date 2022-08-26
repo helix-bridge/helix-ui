@@ -8,9 +8,9 @@ import {
   isDVM2Substrate,
   isEthereum2Darwinia,
   isMoonriver2CrabParachain,
-  isParachain2Substrate,
+  isSubstrateParachain2Substrate,
   isSubstrate2DVM,
-  isSubstrate2Parachain,
+  isSubstrate2SubstrateParachain,
   isSubstrate2SubstrateDVM,
   isSubstrateDVM2Substrate,
 } from 'shared/utils/bridge';
@@ -28,7 +28,7 @@ export async function getBalance(direction: CrossChainDirection, account: string
   }
 
   if (
-    [isDarwinia2Ethereum, isSubstrate2DVM, isSubstrate2SubstrateDVM, isSubstrate2Parachain].some((fn) =>
+    [isDarwinia2Ethereum, isSubstrate2DVM, isSubstrate2SubstrateDVM, isSubstrate2SubstrateParachain].some((fn) =>
       fn(fromChain, toChain)
     )
   ) {
@@ -56,7 +56,11 @@ export async function getBalance(direction: CrossChainDirection, account: string
     return getErc20Balance(from.address, account).then((res) => [res]);
   }
 
-  if ([isParachain2Substrate, isCrabParachainKarura, isCrabParachain2Moonriver].some((fn) => fn(fromChain, toChain))) {
+  if (
+    [isSubstrateParachain2Substrate, isCrabParachainKarura, isCrabParachain2Moonriver].some((fn) =>
+      fn(fromChain, toChain)
+    )
+  ) {
     return getParachainBalance(from, account).then((res) => [res]);
   }
 

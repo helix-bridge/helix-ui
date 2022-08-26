@@ -18,7 +18,7 @@ import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
 import { useApi } from '../../../providers';
 import { SubstrateDVMBridgeConfig, TransferPayload } from './model';
-import { issuing, validate } from './utils';
+import { issue, validate } from './utils';
 
 export function Substrate2DVM({
   form,
@@ -42,7 +42,7 @@ export function Substrate2DVM({
 
       return createTxWorkflow(
         validateObs.pipe(mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={null} /> }))),
-        issuing(data),
+        issue(data),
         afterCrossChain(TransferDone, { payload: data })
       );
     };

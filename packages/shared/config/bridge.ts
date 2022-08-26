@@ -11,13 +11,9 @@ import { bscAstar } from './bridges/bsc-astar';
 import { bscAvalanche } from './bridges/bsc-avalanche';
 import { bscOptimism } from './bridges/bsc-optimism';
 import { bscPolygon } from './bridges/bsc-polygon';
-import { crabDVMArbitrum } from './bridges/crabDVM-arbitrum';
 import { crabDVMAstar } from './bridges/crabDVM-astar';
-import { crabDVMAvalanche } from './bridges/crabDVM-avalanche';
-import { crabDVMBsc } from './bridges/crabDVM-bsc';
 import { crabDVMEthereum } from './bridges/crabDVM-ethereum';
 import { crabDVMHeco } from './bridges/crabDVM-heco';
-import { crabDVMOptimism } from './bridges/crabDVM-optimism';
 import { crabDVMPolygon } from './bridges/crabDVM-polygon';
 import { crabParachainKarura } from './bridges/crabParachain-karura';
 import { crabParachainMoonriver } from './bridges/crabParachain-moonriver';
@@ -30,7 +26,7 @@ import { ethereumHeco } from './bridges/ethereum-heco';
 import { ethereumOptimism } from './bridges/ethereum-optimism';
 import { ethereumPolygon } from './bridges/ethereum-polygon';
 import { hecoPolygon } from './bridges/heco-polygon';
-import { parachainCrab, parachainPangolin } from './bridges/parachain-substrate';
+import { crabCrabParachain, pangolinPangolinParachain } from './bridges/substrate-substrateParachain';
 import { polygonAstar } from './bridges/polygon-astar';
 import { polygonOptimism } from './bridges/polygon-optimism';
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from './bridges/substrate-dvm';
@@ -60,7 +56,7 @@ const formalBridges = [
   ethereumHeco,
   ethereumPolygon,
   hecoPolygon,
-  parachainCrab,
+  crabCrabParachain,
   polygonAstar,
   ethereumAstar,
   ethereumBSC,
@@ -71,11 +67,7 @@ const formalBridges = [
   avalanchePolygon,
   arbitrumPolygon,
   polygonOptimism,
-  crabDVMBsc,
-  crabDVMArbitrum,
   crabDVMAstar,
-  crabDVMAvalanche,
-  crabDVMOptimism,
   crabParachainKarura,
   crabParachainMoonriver,
 ];
@@ -84,7 +76,7 @@ const testBridges = [
   pangolinPangolinDVM,
   pangoroDVMPangolinDVM,
   pangoroPangolinDVM,
-  parachainPangolin,
+  pangolinPangolinParachain,
   ropstenPangolin,
 ];
 

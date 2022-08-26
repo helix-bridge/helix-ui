@@ -1,5 +1,8 @@
 import { ContractConfig, BridgeConfig } from 'shared/model';
 
-type EthereumAstarContractConfig = ContractConfig;
+interface EthereumAstarContractConfig extends ContractConfig {
+  stablecoinIssuing: string;
+  stablecoinBacking: string;
+}
 
 export type EthereumAstarBridgeConfig = Required<BridgeConfig<EthereumAstarContractConfig>>;

@@ -59,7 +59,7 @@ export function Destination({
             </div>
 
             <div className="flex flex-col items-start space-y-px w-24 text-left">
-              <strong className="font-medium text-sm truncate w-full">{value.symbol}</strong>
+              <strong className="font-medium text-sm truncate w-full">{value.name}</strong>
               <small
                 className="font-light text-xs opacity-60 w-full capitalize truncate"
                 title={getDisplayName(value.meta)}

@@ -33,7 +33,7 @@ const Page: NextPage<{
     const departure = getChainConfig(router.query.from as Network);
     const arrival = getChainConfig(router.query.to as Network);
     const bridge = getBridge<SubstrateDVMBridgeConfig>([departure, arrival]);
-    const isIssuing = bridge.isIssuing(departure, arrival);
+    const isIssuing = bridge.isIssue(departure, arrival);
     const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase())!;
     const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === record.recvToken.toLowerCase())!;
     const amount = getSentAmountFromHelixRecord(record);
