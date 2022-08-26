@@ -116,13 +116,13 @@ export function Direction({
       />
 
       {isBalanceLoading && (
-        <div className="absolute right-0 top-28 cursor-pointer space-x-2 text-xs">
+        <div className="absolute right-0 top-1 cursor-pointer space-x-2 text-xs">
           <CountLoading />
         </div>
       )}
 
       {iBalance && !isBalanceLoading && (
-        <span className="absolute right-0 top-28 cursor-pointer space-x-2 text-xs flex items-center">
+        <span className="absolute right-0 top-1 cursor-pointer space-x-2 text-xs flex items-center">
           <Tooltip
             title={
               iBalance.gt(new BN(MILLION))

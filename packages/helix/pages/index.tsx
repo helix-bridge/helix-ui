@@ -7,8 +7,8 @@ import { GetServerSidePropsContext } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useEffect, useMemo, useState } from 'react';
-import { DATE_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
+import { DATE_FORMAT } from 'shared/config/constant';
 import { DailyStatistic, Network } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { gqlName, prettyNumber } from 'shared/utils/helper';
@@ -41,7 +41,7 @@ function Page() {
 
   const startTime = useMemo(() => {
     const date = !dailyStatistics?.length
-      ? subMilliseconds(new Date(), secondsToMilliseconds(TIMEPAST)).getTime()
+      ? subMilliseconds(Date.now(), secondsToMilliseconds(TIMEPAST)).getTime()
       : secondsToMilliseconds(+last(dailyStatistics)!.timestamp);
 
     return format(date, DATE_FORMAT) + ' (+UTC)';
@@ -78,13 +78,7 @@ function Page() {
 
   return (
     <div>
-      <Statistics
-        titleLeft={t('transactions by week')}
-        titleRight={t('transactions')}
-        startTime={startTime}
-        total={transactionsTotal}
-        rank={transactionsRank}
-      >
+      <Statistics title={t('transactions')} startTime={startTime} total={transactionsTotal} rank={transactionsRank}>
         {loading ? (
           <div className="block relative top-1/3 text-center">
             <Spin />
