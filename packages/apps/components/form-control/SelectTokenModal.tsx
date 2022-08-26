@@ -8,7 +8,7 @@ import { chainColors } from 'shared/config/theme';
 import { useLocalSearch } from 'shared/hooks';
 import { ChainConfig, TokenInfoWithMeta } from 'shared/model';
 import { chainConfigs, getDisplayName } from 'shared/utils/network';
-import { asSameToken, tokenSearchFactory } from '../../utils';
+import { isTransferableTokenPair, tokenSearchFactory } from '../../utils';
 import { BaseModal } from '../widget/BaseModal';
 
 interface SelectTokenModalProps {
@@ -38,7 +38,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
         .filter((item) => !fromToken || (!(fromToken.meta.name === item.name) && inPartners(item)))
         .map((item) =>
           item.tokens
-            .filter((token) => (!fromToken || asSameToken(token.symbol, fromToken.symbol)) && !!token.cross.length)
+            .filter((token) => (!fromToken || isTransferableTokenPair(token, fromToken)) && !!token.cross.length)
             .map((token) => ({ ...token, meta: item }))
         )
         .flatten()

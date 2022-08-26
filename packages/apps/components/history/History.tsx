@@ -22,7 +22,7 @@ import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
 import { useAccount, useApi } from '../../providers';
 import { useClaim } from '../../providers/claim';
-import { asSameCategory, asSameToken } from '../../utils';
+import { isTransferableTokenPair } from '../../utils';
 import { fetchDarwinia2EthereumRecords, fetchEthereum2DarwiniaRecords } from '../../utils/records';
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { TokenOnChain } from '../widget/TokenOnChain';
@@ -263,16 +263,11 @@ export function History() {
               <Spin spinning={loading} className="mt-12 mx-auto w-full">
                 {/*  eslint-disable-next-line complexity*/}
                 {records.map((record) => {
-                  const { fromChain, toChain, bridge } = record;
+                  const { fromChain, toChain } = record;
                   const dep = getChainConfig(fromChain);
                   const arrival = getChainConfig(toChain);
                   const fromToken = getTokenConfigFromHelixRecord(record)!;
-                  const overview = fromToken.cross.find(
-                    (item) => asSameCategory(item.category, bridge) && item.partner.name === toChain
-                  );
-                  const toToken = arrival.tokens.find((item) =>
-                    asSameToken(item.symbol, overview?.partner.symbol ?? '')
-                  )!;
+                  const toToken = arrival.tokens.find((item) => isTransferableTokenPair(item, fromToken))!;
                   const [d2eHeight, d2dIndex] = record.requestTxHash.split('-');
                   const [e2dHeight, e2dIndex] = record.responseTxHash.split('-');
 

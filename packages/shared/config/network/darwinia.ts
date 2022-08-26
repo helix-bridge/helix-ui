@@ -22,7 +22,7 @@ export const darwiniaConfig: PolkadotChainConfig = {
         {
           category: 'helix',
           bridge: 'substrate-substrateDVM',
-          partner: { name: 'crab-dvm', role: 'issuing', symbol: 'xRING' },
+          partner: { name: 'crab-dvm', role: 'issuing', symbol: 'xRING(Classic)' },
         },
         {
           category: 'helix',

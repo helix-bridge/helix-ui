@@ -28,7 +28,7 @@ interface Partner {
   claim?: boolean;
 }
 
-interface CrossOverview {
+export interface CrossOverview {
   category: BridgeCategory;
   bridge: BridgeName;
   partner: Partner;
