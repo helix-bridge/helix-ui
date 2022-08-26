@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { TokenWithBridgesInfo } from 'shared/model';
+import { CrossOverview, TokenWithBridgesInfo } from 'shared/model';
 import { addAsset } from 'shared/utils/connection';
 import Web3 from 'web3';
 
@@ -42,17 +42,16 @@ export async function addToMetamask(token: TokenWithBridgesInfo) {
   }
 }
 
-export const asSameToken = (symbol1: string, symbol2: string): boolean => {
-  symbol1 = symbol1.toLowerCase();
-  symbol2 = symbol2.toLowerCase();
+export const isTransferableTokenPair = (token1: TokenWithBridgesInfo, token2: TokenWithBridgesInfo): boolean => {
+  const check = (token: TokenWithBridgesInfo) => (item: CrossOverview) =>
+    item.partner.name === token.host && item.partner.symbol === token.symbol;
 
-  if (symbol1.length === symbol2.length) {
-    return symbol1 === symbol2;
-  } else if (symbol1.length > symbol2.length) {
-    return symbol1.slice(1) === symbol2;
-  } else {
-    return symbol2.slice(1) === symbol1;
-  }
+  const inToken1 = check(token1);
+  const inToken2 = check(token2);
+  const overviewList1 = token1.cross.filter(inToken2);
+  const overviewList2 = token2.cross.filter(inToken1);
+
+  return !!overviewList1.length && !!overviewList2.length;
 };
 
 export const asSameCategory = (category1: string, category2: string): boolean => {

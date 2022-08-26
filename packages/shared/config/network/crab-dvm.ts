@@ -62,11 +62,6 @@ export const crabDVMConfig: DVMChainConfig = {
       decimals: 9,
       cross: [
         {
-          category: 'helix',
-          bridge: 'substrate-substrateDVM',
-          partner: { name: 'darwinia', role: 'backing', symbol: 'RING' },
-        },
-        {
           category: 'cBridge',
           bridge: 'crabDVM-heco',
           partner: { name: 'heco', role: 'issuing', symbol: 'RING' },
@@ -86,6 +81,22 @@ export const crabDVMConfig: DVMChainConfig = {
       host: 'crab-dvm',
       logo: 'token-oring.svg',
       symbol: 'xRING',
+      address: '0x7399Ea6C9d35124d893B8d9808930e9d3F211501',
+    },
+    {
+      name: 'xRING(Classic)',
+      decimals: 9,
+      cross: [
+        {
+          category: 'helix',
+          bridge: 'substrate-substrateDVM',
+          partner: { name: 'darwinia', role: 'backing', symbol: 'RING' },
+        },
+      ],
+      type: 'mapping',
+      host: 'crab-dvm',
+      logo: 'token-oring.svg',
+      symbol: 'xRING(Classic)',
       address: '0x7399Ea6C9d35124d893B8d9808930e9d3F211501',
     },
     {
