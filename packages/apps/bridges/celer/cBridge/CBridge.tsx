@@ -239,14 +239,16 @@ export function CBridge({
     const sub$$ = from(client.estimateAmt(estimateRequest, null)).subscribe({
       next(res) {
         const result = res.toObject();
-        const { percFee, baseFee } = result;
-        const feeTotal = new BN(baseFee).add(new BN(percFee));
+        const { estimatedReceiveAmt } = result;
+        const fee =
+          Number(direction.from.amount) -
+          Number(fromWei({ value: estimatedReceiveAmt, decimals: direction.to.decimals }));
 
         setEstimateResult(result);
 
         if (onFeeChange) {
           onFeeChange({
-            amount: +fromWei({ value: feeTotal, decimals: direction.to.decimals }),
+            amount: fee,
             symbol: direction.from.symbol,
           });
         }
