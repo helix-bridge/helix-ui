@@ -36,7 +36,7 @@ interface ClaimCtx {
 
 function isSufficient(config: EthereumDarwiniaBridgeConfig, tokenAddress: string, amount: BN): Observable<boolean> {
   const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-  const contract = new web3.eth.Contract(abi.tokenIssuingABI, config.contracts.redeem);
+  const contract = new web3.eth.Contract(abi.tokenIssuingABI, config.contracts.issuing);
   const limit = from(contract.methods.dailyLimit(tokenAddress).call() as Promise<string>);
   const toadySpent = from(contract.methods.spentToday(tokenAddress).call() as Promise<string>);
 
@@ -103,7 +103,7 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
             const isAllowanceSufficient = iif(
               () => !activeAccount || !tokenAddress,
               of(false),
-              from(getAllowance(activeAccount, bridge.config.contracts.issuing, tokenAddress, arrival.provider)).pipe(
+              from(getAllowance(activeAccount, bridge.config.contracts.backing, tokenAddress, arrival.provider)).pipe(
                 map((allowance) => !!allowance && allowance.gte(tokenAddress === ringAddress ? ringBN : ktonBN))
               )
             );

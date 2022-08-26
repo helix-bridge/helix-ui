@@ -13,7 +13,7 @@ import { validationObsFactory } from '../../../../utils/tx';
 import { IssuingPayload, RedeemPayload } from '../model';
 import { getFee } from './fee';
 
-export function issuing(value: IssuingPayload, fee: BN): Observable<Tx> {
+export function issue(value: IssuingPayload, fee: BN): Observable<Tx> {
   const { sender, recipient, direction } = value;
   const { from: departure, to } = direction;
   const api = entrance.polkadot.getInstance(direction.from.meta.provider);

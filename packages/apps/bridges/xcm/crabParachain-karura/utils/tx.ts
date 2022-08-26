@@ -14,7 +14,7 @@ const patchAmount = (departure: CrossToken<ParachainChainConfig>) => {
   return toWei(departure).slice(0, -timestamp.length) + timestamp;
 };
 
-export function issuing(payload: IssuingPayload): Observable<Tx> {
+export function issue(payload: IssuingPayload): Observable<Tx> {
   const {
     direction: { from: departure, to: arrival },
     sender,

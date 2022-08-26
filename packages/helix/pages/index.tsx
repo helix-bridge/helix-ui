@@ -51,7 +51,7 @@ function Page() {
     return chain(dailyStatistics)
       .reduce((acc, cur) => {
         const bridge = getBridge([cur.fromChain as Network, cur.toChain as Network]);
-        const key = bridge.issuing.join('_');
+        const key = bridge.issue.join('_');
 
         acc[key] = (acc[key] ?? 0) + Number(cur.dailyCount);
 

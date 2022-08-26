@@ -1,7 +1,7 @@
 import { ContractConfig, BridgeConfig } from 'shared/model';
 
 interface BSCAstarContractConfig extends ContractConfig {
-  stablecoinRedeem: string;
+  stablecoinIssuing: string;
 }
 
 export type BSCAstarBridgeConfig = Required<BridgeConfig<BSCAstarContractConfig>>;

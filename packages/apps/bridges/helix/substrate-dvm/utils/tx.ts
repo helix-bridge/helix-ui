@@ -12,7 +12,7 @@ import { TxValidation } from '../../../../model';
 import { validationObsFactory } from '../../../../utils/tx';
 import { TransferPayload, WithdrawPayload } from '../model';
 
-export function issuing(value: TransferPayload): Observable<Tx> {
+export function issue(value: TransferPayload): Observable<Tx> {
   const {
     sender,
     recipient,

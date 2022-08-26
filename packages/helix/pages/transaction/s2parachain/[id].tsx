@@ -32,7 +32,7 @@ const Page: NextPage<{
     const departure = getChainConfig(router.query.from as Network);
     const arrival = getChainConfig(router.query.to as Network);
     const bridge = getBridge<SubstrateSubstrateParachainBridgeConfig>([departure, arrival]);
-    const isIssuing = bridge.isIssuing(departure, arrival);
+    const isIssuing = bridge.isIssue(departure, arrival);
     const fromToken = departure.tokens.find((item) => item.symbol === record.sendToken)!;
     const toToken = arrival.tokens.find((item) => item.symbol === record.recvToken)!;
     const sendAmount = getSentAmountFromHelixRecord(record);

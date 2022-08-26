@@ -15,7 +15,7 @@ export function getBridge<T extends BridgeConfig>(
         return conf.name;
       });
 
-  const bridge = BRIDGES.find((item) => isEqual(item.issuing, direction) || isEqual(item.redeem, direction));
+  const bridge = BRIDGES.find((item) => isEqual(item.issue, direction) || isEqual(item.redeem, direction));
 
   if (!bridge) {
     console.log(
@@ -44,7 +44,7 @@ export function getBridges(source: CrossChainDirection): Bridge[] {
   return BRIDGES.filter(
     (bridge) =>
       bridge.isTest === source.from.meta.isTest &&
-      (bridge.isIssuing(source.from.meta, source.to.meta) || bridge.isRedeem(source.from.meta, source.to.meta)) &&
+      (bridge.isIssue(source.from.meta, source.to.meta) || bridge.isRedeem(source.from.meta, source.to.meta)) &&
       overviews.find((overview) => overview.category === bridge.category && overview.bridge === bridge.name)
   );
 }

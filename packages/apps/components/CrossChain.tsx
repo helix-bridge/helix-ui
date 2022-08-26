@@ -66,8 +66,8 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
     const { from, to } = direction;
 
     if (bridge) {
-      const Comp = bridge.isIssuing(from.meta, to.meta)
-        ? bridge.IssuingCrossChainComponent
+      const Comp = bridge.isIssue(from.meta, to.meta)
+        ? bridge.IssueCrossChainComponent
         : (bridge.RedeemCrossChainComponent as FunctionComponent<CrossChainComponentProps>);
 
       return Comp ?? null;

@@ -13,7 +13,7 @@ export const crossChainGraph = BRIDGES.reduce(
       }
     };
 
-    check(bridge.issuing);
+    check(bridge.issue);
     check(bridge.redeem);
 
     return acc;

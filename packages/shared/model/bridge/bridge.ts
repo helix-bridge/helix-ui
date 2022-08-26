@@ -24,8 +24,8 @@ export interface LockEventsStorage {
 }
 
 export interface ContractConfig {
+  backing: string;
   issuing: string;
-  redeem: string;
 }
 
 export interface BridgeConfig<C = ContractConfig> {
@@ -49,7 +49,7 @@ export class Bridge<C = BridgeConfig> {
 
   readonly arrival: ChainConfig;
 
-  readonly issuing: [Departure, Arrival];
+  readonly issue: [Departure, Arrival];
 
   readonly redeem: [Arrival, Departure];
 
@@ -84,7 +84,7 @@ export class Bridge<C = BridgeConfig> {
     this.name = options.name;
     this.departure = departure;
     this.arrival = arrival;
-    this.issuing = [dep, arr];
+    this.issue = [dep, arr];
     this.redeem = [arr, dep];
     this._config = config;
     this.status = options.status ?? 'available';
@@ -99,17 +99,17 @@ export class Bridge<C = BridgeConfig> {
     return this._config;
   }
 
-  setIssuingComponents(crossComp: FunctionComponent): void {
-    this.crossChain.set(this.issuing, crossComp);
+  setIssueComponents(crossComp: FunctionComponent): void {
+    this.crossChain.set(this.issue, crossComp);
   }
 
   setRedeemComponents(crossComp: FunctionComponent) {
     this.crossChain.set(this.redeem, crossComp);
   }
 
-  isIssuing(dep: Departure | ChainConfig, arr: Departure | ChainConfig): boolean {
+  isIssue(dep: Departure | ChainConfig, arr: Departure | ChainConfig): boolean {
     return isEqual(
-      this.issuing,
+      this.issue,
       [dep, arr].map((item) => (typeof item === 'object' ? item.name : item))
     );
   }
@@ -121,8 +121,8 @@ export class Bridge<C = BridgeConfig> {
     );
   }
 
-  get IssuingCrossChainComponent() {
-    return this.crossChain.get(this.issuing);
+  get IssueCrossChainComponent() {
+    return this.crossChain.get(this.issue);
   }
 
   get RedeemCrossChainComponent() {

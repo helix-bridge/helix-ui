@@ -126,8 +126,8 @@ function initConfig() {
 
         const ${origin}${to}Config: ${from}${to}BridgeConfig = { 
             contracts: {
-                issuing: '',
-                redeem: ''
+                backing: '',
+                issuing: ''
             } 
         };
 
@@ -143,7 +143,7 @@ function initUitls() {
         import { Observable, EMPTY } from 'rxjs';
         import { Tx } from 'shared/model';
 
-        export function issuing(): Observable<Tx> {
+        export function issue(): Observable<Tx> {
             return EMPTY;
         }
 

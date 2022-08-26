@@ -4,8 +4,8 @@ import { CrabParachainKaruraBridgeConfig } from 'shared/model';
 
 const crabParachainKaruraConfig: CrabParachainKaruraBridgeConfig = {
   contracts: {
+    backing: '',
     issuing: '',
-    redeem: '',
   },
 };
 

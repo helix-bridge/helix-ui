@@ -5,8 +5,8 @@ import { pangolinParachainConfig } from '../network/pangolin-parachain';
 
 const crabCrabParachainConfig: SubstrateSubstrateParachainBridgeConfig = {
   contracts: {
+    backing: '',
     issuing: '',
-    redeem: '',
   },
 };
 
@@ -23,8 +23,8 @@ export const crabCrabParachain = new Bridge<SubstrateSubstrateParachainBridgeCon
 
 const pangolinPangolinParachainConfig: SubstrateSubstrateParachainBridgeConfig = {
   contracts: {
+    backing: '',
     issuing: '',
-    redeem: '',
   },
 };
 

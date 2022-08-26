@@ -4,8 +4,8 @@ import { EthereumHecoBridgeConfig } from 'shared/model';
 
 const ethereumHecoConfig: EthereumHecoBridgeConfig = {
   contracts: {
-    issuing: '0x5427FEFA711Eff984124bFBB1AB6fbf5E3DA1820',
-    redeem: '0xbb7684cc5408f4dd0921e5c2cadd547b8f1ad573',
+    backing: '0x5427FEFA711Eff984124bFBB1AB6fbf5E3DA1820',
+    issuing: '0xbb7684cc5408f4dd0921e5c2cadd547b8f1ad573',
   },
 };
 

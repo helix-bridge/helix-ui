@@ -1,7 +1,7 @@
 import { ContractConfig, BridgeConfig } from 'shared/model';
 
 interface EthereumPolygonContractConfig extends ContractConfig {
-  stablecoinIssuing: string;
+  stablecoinBacking: string;
 }
 
 export type EthereumPolygonBridgeConfig = Required<BridgeConfig<EthereumPolygonContractConfig>>;

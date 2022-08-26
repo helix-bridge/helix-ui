@@ -70,16 +70,16 @@ import { Substrate2SubstrateDVM, SubstrateDVM2Substrate } from './helix/substrat
 import { SubstrateDVM2SubstrateDVM } from './helix/substrateDVM-substrateDVM';
 import { Unavailable2Unknown, Unknown2Unavailable } from './unknown-unavailable';
 
-unknownUnavailable.setIssuingComponents(Unknown2Unavailable as FunctionComponent);
+unknownUnavailable.setIssueComponents(Unknown2Unavailable as FunctionComponent);
 unknownUnavailable.setRedeemComponents(Unavailable2Unknown as FunctionComponent);
 
 /**
  * ethereum <-> darwinia
  * ropsten <-> pangolin
  */
-ethereumDarwinia.setIssuingComponents(Ethereum2Darwinia as FunctionComponent);
+ethereumDarwinia.setIssueComponents(Ethereum2Darwinia as FunctionComponent);
 ethereumDarwinia.setRedeemComponents(Darwinia2Ethereum as FunctionComponent);
-ropstenPangolin.setIssuingComponents(Ethereum2Darwinia as FunctionComponent);
+ropstenPangolin.setIssueComponents(Ethereum2Darwinia as FunctionComponent);
 ropstenPangolin.setRedeemComponents(Darwinia2Ethereum as FunctionComponent);
 
 /**
@@ -87,9 +87,9 @@ ropstenPangolin.setRedeemComponents(Darwinia2Ethereum as FunctionComponent);
  * darwinia <-> crab dvm
  * pangoro <-> pangolin dvm
  */
-darwiniaCrabDVM.setIssuingComponents(Substrate2SubstrateDVM as FunctionComponent);
+darwiniaCrabDVM.setIssueComponents(Substrate2SubstrateDVM as FunctionComponent);
 darwiniaCrabDVM.setRedeemComponents(SubstrateDVM2Substrate as FunctionComponent);
-pangoroPangolinDVM.setIssuingComponents(Substrate2SubstrateDVM as FunctionComponent);
+pangoroPangolinDVM.setIssueComponents(Substrate2SubstrateDVM as FunctionComponent);
 pangoroPangolinDVM.setRedeemComponents(SubstrateDVM2Substrate as FunctionComponent);
 
 /**
@@ -97,11 +97,11 @@ pangoroPangolinDVM.setRedeemComponents(SubstrateDVM2Substrate as FunctionCompone
  * crab <-> crab dvm
  * pangolin <-> pangolin dvm
  */
-crabCrabDVM.setIssuingComponents(Substrate2DVM as FunctionComponent);
+crabCrabDVM.setIssueComponents(Substrate2DVM as FunctionComponent);
 crabCrabDVM.setRedeemComponents(DVM2Substrate as FunctionComponent);
-darwiniaDarwiniaDVM.setIssuingComponents(Substrate2DVM as FunctionComponent);
+darwiniaDarwiniaDVM.setIssueComponents(Substrate2DVM as FunctionComponent);
 darwiniaDarwiniaDVM.setRedeemComponents(DVM2Substrate as FunctionComponent);
-pangolinPangolinDVM.setIssuingComponents(Substrate2DVM as FunctionComponent);
+pangolinPangolinDVM.setIssueComponents(Substrate2DVM as FunctionComponent);
 pangolinPangolinDVM.setRedeemComponents(DVM2Substrate as FunctionComponent);
 
 /**
@@ -109,107 +109,107 @@ pangolinPangolinDVM.setRedeemComponents(DVM2Substrate as FunctionComponent);
  * crab <-> crab parachain
  * pangolin <-> pangolin parachain
  */
-crabCrabParachain.setIssuingComponents(Substrate2Parachain as FunctionComponent);
+crabCrabParachain.setIssueComponents(Substrate2Parachain as FunctionComponent);
 crabCrabParachain.setRedeemComponents(Parachain2Substrate as FunctionComponent);
-pangolinPangolinParachain.setIssuingComponents(Substrate2Parachain as FunctionComponent);
+pangolinPangolinParachain.setIssueComponents(Substrate2Parachain as FunctionComponent);
 pangolinPangolinParachain.setRedeemComponents(Parachain2Substrate as FunctionComponent);
 
 /**
  * cBridge
  * crab dvm <-> heco
  */
-crabDVMHeco.setIssuingComponents(CrabDVM2Heco as FunctionComponent);
+crabDVMHeco.setIssueComponents(CrabDVM2Heco as FunctionComponent);
 crabDVMHeco.setRedeemComponents(Heco2CrabDVM as FunctionComponent);
 
-crabDVMEthereum.setIssuingComponents(CrabDVM2Ethereum as FunctionComponent);
+crabDVMEthereum.setIssueComponents(CrabDVM2Ethereum as FunctionComponent);
 crabDVMEthereum.setRedeemComponents(Ethereum2CrabDVM as FunctionComponent);
 
-crabDVMPolygon.setIssuingComponents(CrabDVM2Polygon as FunctionComponent);
+crabDVMPolygon.setIssueComponents(CrabDVM2Polygon as FunctionComponent);
 crabDVMPolygon.setRedeemComponents(Polygon2CrabDVM as FunctionComponent);
 
-ethereumHeco.setIssuingComponents(Ethereum2Heco as FunctionComponent);
+ethereumHeco.setIssueComponents(Ethereum2Heco as FunctionComponent);
 ethereumHeco.setRedeemComponents(Heco2Ethereum as FunctionComponent);
 
-ethereumPolygon.setIssuingComponents(Ethereum2Polygon as FunctionComponent);
+ethereumPolygon.setIssueComponents(Ethereum2Polygon as FunctionComponent);
 ethereumPolygon.setRedeemComponents(Polygon2Ethereum as FunctionComponent);
 
-hecoPolygon.setIssuingComponents(Heco2Polygon as FunctionComponent);
+hecoPolygon.setIssueComponents(Heco2Polygon as FunctionComponent);
 hecoPolygon.setRedeemComponents(Polygon2Heco as FunctionComponent);
 
 /**
  * substrate dvm <-> substrate dvm
  */
-darwiniaDVMCrabDVM.setIssuingComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
+darwiniaDVMCrabDVM.setIssueComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
 darwiniaDVMCrabDVM.setRedeemComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
 
-pangoroDVMPangolinDVM.setIssuingComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
+pangoroDVMPangolinDVM.setIssueComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
 pangoroDVMPangolinDVM.setRedeemComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
 
-bscArbitrum.setIssuingComponents(BSC2Arbitrum as FunctionComponent);
+bscArbitrum.setIssueComponents(BSC2Arbitrum as FunctionComponent);
 bscArbitrum.setRedeemComponents(Arbitrum2BSC as FunctionComponent);
 
-bscAstar.setIssuingComponents(BSC2Astar as FunctionComponent);
+bscAstar.setIssueComponents(BSC2Astar as FunctionComponent);
 bscAstar.setRedeemComponents(Astar2BSC as FunctionComponent);
 
-bscAvalanche.setIssuingComponents(BSC2Avalanche as FunctionComponent);
+bscAvalanche.setIssueComponents(BSC2Avalanche as FunctionComponent);
 bscAvalanche.setRedeemComponents(Avalanche2BSC as FunctionComponent);
 
-bscOptimism.setIssuingComponents(BSC2Optimism as FunctionComponent);
+bscOptimism.setIssueComponents(BSC2Optimism as FunctionComponent);
 bscOptimism.setRedeemComponents(Optimism2BSC as FunctionComponent);
 
-arbitrumAstar.setIssuingComponents(Arbitrum2Astar as FunctionComponent);
+arbitrumAstar.setIssueComponents(Arbitrum2Astar as FunctionComponent);
 arbitrumAstar.setRedeemComponents(Astar2Arbitrum as FunctionComponent);
 
-arbitrumAvalanche.setIssuingComponents(Arbitrum2Avalanche as FunctionComponent);
+arbitrumAvalanche.setIssueComponents(Arbitrum2Avalanche as FunctionComponent);
 arbitrumAvalanche.setRedeemComponents(Avalanche2Arbitrum as FunctionComponent);
 
-arbitrumOptimism.setIssuingComponents(Arbitrum2Optimism as FunctionComponent);
+arbitrumOptimism.setIssueComponents(Arbitrum2Optimism as FunctionComponent);
 arbitrumOptimism.setRedeemComponents(Optimism2Arbitrum as FunctionComponent);
 
-astarAvalanche.setIssuingComponents(Astar2Avalanche as FunctionComponent);
+astarAvalanche.setIssueComponents(Astar2Avalanche as FunctionComponent);
 astarAvalanche.setRedeemComponents(Avalanche2Astar as FunctionComponent);
 
-astarOptimism.setIssuingComponents(Astar2Optimism as FunctionComponent);
+astarOptimism.setIssueComponents(Astar2Optimism as FunctionComponent);
 astarOptimism.setRedeemComponents(Optimism2Astar as FunctionComponent);
 
-avalancheOptimism.setIssuingComponents(Avalanche2Optimism as FunctionComponent);
+avalancheOptimism.setIssueComponents(Avalanche2Optimism as FunctionComponent);
 avalancheOptimism.setRedeemComponents(Optimism2Avalanche as FunctionComponent);
 
-polygonAstar.setIssuingComponents(Polygon2Astar as FunctionComponent);
+polygonAstar.setIssueComponents(Polygon2Astar as FunctionComponent);
 polygonAstar.setRedeemComponents(Astar2Polygon as FunctionComponent);
 
-ethereumAstar.setIssuingComponents(Ethereum2Astar as FunctionComponent);
+ethereumAstar.setIssueComponents(Ethereum2Astar as FunctionComponent);
 ethereumAstar.setRedeemComponents(Astar2Ethereum as FunctionComponent);
 
-ethereumBSC.setIssuingComponents(Ethereum2BSC as FunctionComponent);
+ethereumBSC.setIssueComponents(Ethereum2BSC as FunctionComponent);
 ethereumBSC.setRedeemComponents(BSC2Ethereum as FunctionComponent);
 
-ethereumAvalanche.setIssuingComponents(Ethereum2Avalanche as FunctionComponent);
+ethereumAvalanche.setIssueComponents(Ethereum2Avalanche as FunctionComponent);
 ethereumAvalanche.setRedeemComponents(Avalanche2Ethereum as FunctionComponent);
 
-ethereumArbitrum.setIssuingComponents(Ethereum2Arbitrum as FunctionComponent);
+ethereumArbitrum.setIssueComponents(Ethereum2Arbitrum as FunctionComponent);
 ethereumArbitrum.setRedeemComponents(Arbitrum2Ethereum as FunctionComponent);
 
-ethereumOptimism.setIssuingComponents(Ethereum2Optimism as FunctionComponent);
+ethereumOptimism.setIssueComponents(Ethereum2Optimism as FunctionComponent);
 ethereumOptimism.setRedeemComponents(Optimism2Ethereum as FunctionComponent);
 
-bscPolygon.setIssuingComponents(BSC2Polygon as FunctionComponent);
+bscPolygon.setIssueComponents(BSC2Polygon as FunctionComponent);
 bscPolygon.setRedeemComponents(Polygon2BSC as FunctionComponent);
 
-avalanchePolygon.setIssuingComponents(Avalanche2Polygon as FunctionComponent);
+avalanchePolygon.setIssueComponents(Avalanche2Polygon as FunctionComponent);
 avalanchePolygon.setRedeemComponents(Polygon2Avalanche as FunctionComponent);
 
-arbitrumPolygon.setIssuingComponents(Arbitrum2Polygon as FunctionComponent);
+arbitrumPolygon.setIssueComponents(Arbitrum2Polygon as FunctionComponent);
 arbitrumPolygon.setRedeemComponents(Polygon2Arbitrum as FunctionComponent);
 
-polygonOptimism.setIssuingComponents(Polygon2Optimism as FunctionComponent);
+polygonOptimism.setIssueComponents(Polygon2Optimism as FunctionComponent);
 polygonOptimism.setRedeemComponents(Optimism2Polygon as FunctionComponent);
 
-crabDVMAstar.setIssuingComponents(CrabDVM2Astar as FunctionComponent);
+crabDVMAstar.setIssueComponents(CrabDVM2Astar as FunctionComponent);
 crabDVMAstar.setRedeemComponents(Astar2CrabDVM as FunctionComponent);
 
-crabParachainKarura.setIssuingComponents(CrabParachain2Karura as FunctionComponent);
+crabParachainKarura.setIssueComponents(CrabParachain2Karura as FunctionComponent);
 crabParachainKarura.setRedeemComponents(Karura2CrabParachain as FunctionComponent);
 
-crabParachainMoonriver.setIssuingComponents(CrabParachain2Moonriver as FunctionComponent);
+crabParachainMoonriver.setIssueComponents(CrabParachain2Moonriver as FunctionComponent);
 crabParachainMoonriver.setRedeemComponents(Moonriver2CrabParachain as FunctionComponent);

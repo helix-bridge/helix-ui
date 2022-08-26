@@ -22,7 +22,7 @@ export function redeem(value: IssuingPayload, fee: BN): Observable<Tx> {
   return signAndSendExtrinsic(api, sender, extrinsic);
 }
 
-export function issuing(value: RedeemPayload, fee: BN): Observable<Tx> {
+export function issue(value: RedeemPayload, fee: BN): Observable<Tx> {
   const { sender, recipient, direction } = value;
   const { from: departure, to } = direction;
   const api = entrance.polkadot.getInstance(direction.from.meta.provider);

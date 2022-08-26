@@ -107,8 +107,9 @@ export function CBridge({
     t,
   ]);
 
-  const isIssuing = bridge.isIssuing(direction.from.meta, direction.to.meta);
-  const poolAddress = isIssuing ? bridge.config.contracts.issuing : bridge.config.contracts.redeem;
+  const poolAddress = bridge.isIssue(direction.from.meta, direction.to.meta)
+    ? bridge.config.contracts.backing
+    : bridge.config.contracts.issuing;
 
   useEffect(() => {
     const sub$$ = from(isMetamaskChainConsistent(direction.from.meta))

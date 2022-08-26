@@ -39,9 +39,9 @@ export function burn(value: IssuingPayload | RedeemPayload): Observable<Tx> {
   const nonce = new BN(Date.now()).add(prefix).toString();
   const transferAmount = toWei({ value: amount, decimals });
   const { contracts } = bridge.config;
-  const contractAddress = bridge.isIssuing(fromChain, to.meta)
-    ? contracts.stablecoinIssuing
-    : contracts.stablecoinRedeem;
+  const contractAddress = bridge.isIssue(fromChain, to.meta)
+    ? contracts.stablecoinBacking
+    : contracts.stablecoinIssuing;
 
   if (!contractAddress) {
     console.warn(
@@ -71,9 +71,9 @@ export function deposit(value: IssuingPayload | RedeemPayload): Observable<Tx> {
   const nonce = new BN(Date.now()).add(prefix).toString();
   const transferAmount = toWei({ value: amount, decimals });
   const { contracts } = bridge.config;
-  const contractAddress = bridge.isIssuing(fromChain, to.meta)
-    ? contracts.stablecoinIssuing
-    : contracts.stablecoinRedeem;
+  const contractAddress = bridge.isIssue(fromChain, to.meta)
+    ? contracts.stablecoinBacking
+    : contracts.stablecoinIssuing;
 
   if (!contractAddress) {
     console.warn(
@@ -108,7 +108,7 @@ export function transfer(value: IssuingPayload | RedeemPayload): Observable<Tx> 
   const nonce = new BN(Date.now()).add(prefix).toString();
   const transferAmount = toWei({ value: amount, decimals });
   const { contracts } = bridge.config;
-  const contractAddress = bridge.isIssuing(fromChain, to.meta) ? contracts.issuing : contracts.redeem;
+  const contractAddress = bridge.isIssue(fromChain, to.meta) ? contracts.backing : contracts.issuing;
 
   return genEthereumContractTxObs(
     contractAddress,
@@ -126,7 +126,7 @@ export function withdraw(record: HelixHistoryRecord): Observable<Tx> {
   const transferId = last(id.split('-')) as string;
   const bridge = getBridge([fromChain, toChain]);
   const { contracts } = bridge.config;
-  const contractAddress = bridge.isIssuing(fromChain, toChain) ? contracts?.issuing : contracts?.redeem;
+  const contractAddress = bridge.isIssue(fromChain, toChain) ? contracts?.backing : contracts?.issuing;
 
   request.setTransferId(transferId);
 

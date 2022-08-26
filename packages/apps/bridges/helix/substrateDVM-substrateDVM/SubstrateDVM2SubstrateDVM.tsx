@@ -17,7 +17,7 @@ import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { useAccount, useApi } from '../../../providers';
 import { IssuingPayload, SubstrateDVMSubstrateDVMBridgeConfig } from './model';
 import { getDailyLimit, getFee } from './utils';
-import { issuing, redeem, validate } from './utils/tx';
+import { issue, redeem, validate } from './utils/tx';
 
 export function SubstrateDVM2SubstrateDVM({
   form,
@@ -54,7 +54,7 @@ export function SubstrateDVM2SubstrateDVM({
   const isMounted = useIsMounted();
 
   const txFn = useMemo(
-    () => (bridge.isIssuing(direction.from.meta, direction.to.meta) ? issuing : redeem),
+    () => (bridge.isIssue(direction.from.meta, direction.to.meta) ? issue : redeem),
     [bridge, direction.from.meta, direction.to.meta]
   );
 
@@ -64,14 +64,14 @@ export function SubstrateDVM2SubstrateDVM({
 
   useEffect(() => {
     updateAllowancePayload({
-      spender: bridge.isIssuing(direction.from.meta, direction.to.meta)
-        ? bridge.config.contracts.issuing
-        : bridge.config.contracts.redeem,
+      spender: bridge.isIssue(direction.from.meta, direction.to.meta)
+        ? bridge.config.contracts.backing
+        : bridge.config.contracts.issuing,
       tokenAddress: direction.from.address,
     });
   }, [
     bridge,
-    bridge.config.contracts.issuing,
+    bridge.config.contracts.backing,
     direction.from.address,
     direction.from.meta,
     direction.to.meta,

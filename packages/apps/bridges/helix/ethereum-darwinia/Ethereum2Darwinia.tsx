@@ -19,7 +19,7 @@ import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useITranslation } from '../../../hooks';
 import { EthereumDarwiniaBridgeConfig, IssuingPayload } from './model';
-import { getIssuingFee, issuing, validate } from './utils';
+import { getIssuingFee, issue, validate } from './utils';
 
 export function Ethereum2Darwinia({
   allowance,
@@ -70,7 +70,7 @@ export function Ethereum2Darwinia({
             })
           )
         ),
-        issuing(value),
+        issue(value),
         afterCrossChain(TransferDone, { payload: value })
       );
     };
@@ -106,8 +106,8 @@ export function Ethereum2Darwinia({
   }, [bridge, direction.from.meta.tokens, direction.from.symbol, onFeeChange]);
 
   useEffect(() => {
-    updateAllowancePayload({ spender: bridge.config.contracts.issuing, tokenAddress: direction.from.address });
-  }, [bridge.config.contracts.issuing, direction.from.address, direction.from.meta.tokens, updateAllowancePayload]);
+    updateAllowancePayload({ spender: bridge.config.contracts.backing, tokenAddress: direction.from.address });
+  }, [bridge.config.contracts.backing, direction.from.address, direction.from.meta.tokens, updateAllowancePayload]);
 
   return (
     <>

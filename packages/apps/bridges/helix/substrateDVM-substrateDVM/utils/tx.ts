@@ -24,7 +24,7 @@ const expendId = (helixId: string) => {
   return id.substring(0, 10) + id.substring(10, id.length + 1).replace('0x', '0'.repeat(range - id.length));
 };
 
-export function issuing(value: IssuingPayload, fee: BN): Observable<Tx> {
+export function issue(value: IssuingPayload, fee: BN): Observable<Tx> {
   const { sender, recipient, direction } = value;
   const { from: departure, to } = direction;
   const bridge = getBridge([departure.meta, to.meta]);
@@ -32,7 +32,7 @@ export function issuing(value: IssuingPayload, fee: BN): Observable<Tx> {
   const gasLimit = '1000000';
 
   return genEthereumContractTxObs(
-    bridge.config.contracts!.issuing,
+    bridge.config.contracts!.backing,
     (contract) =>
       contract.methods
         .lockAndRemoteIssuing(departure.meta.specVersion, gasLimit, departure.address, recipient, amount)
@@ -52,7 +52,7 @@ export function redeem(value: RedeemPayload, fee: BN): Observable<Tx> {
   const gasLimit = '1000000';
 
   return genEthereumContractTxObs(
-    bridge.config.contracts!.redeem,
+    bridge.config.contracts!.issuing,
     (contract) =>
       contract.methods
         .burnAndRemoteUnlock(departure.meta.specVersion, gasLimit, departure.address, recipient, amount)
@@ -69,8 +69,8 @@ export function refund(record: HelixHistoryRecord): Observable<Tx> {
   const transferId = expendId(id);
 
   const { abi, address, method } = bridge.isRedeem(fromChain, toChain)
-    ? { abi: backingAbi, address: bridge.config.contracts?.issuing, method: 'remoteIssuingFailure' }
-    : { abi: burnAbi, address: bridge.config.contracts?.redeem, method: 'remoteUnlockFailure' };
+    ? { abi: backingAbi, address: bridge.config.contracts?.backing, method: 'remoteIssuingFailure' }
+    : { abi: burnAbi, address: bridge.config.contracts?.issuing, method: 'remoteUnlockFailure' };
 
   return isMetamaskChainConsistent(arrival).pipe(
     switchMap((isConsistent) =>
