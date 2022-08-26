@@ -12,11 +12,9 @@ import {
   CrossChainComponentProps,
   CrossChainPayload,
   CrossToken,
-  DVMChainConfig,
   EthereumChainConfig,
   TxObservableFactory,
 } from 'shared/model';
-import { isEthereum2CrabDVM } from 'shared/utils/bridge';
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
@@ -33,9 +31,10 @@ import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
 import { useAccount, useWallet } from '../../../providers';
+import { useTransfer } from './hooks/transfer';
 import { IssuingPayload } from './model';
 import { EstimateAmtRequest, EstimateAmtResponse } from './ts-proto/gateway/gateway_pb';
-import { client, getMinimalMaxSlippage, transfer, validate } from './utils';
+import { client, getMinimalMaxSlippage, validate } from './utils';
 
 export function CBridge({
   allowance,
@@ -46,7 +45,11 @@ export function CBridge({
   onFeeChange,
   setTxObservableFactory,
   updateAllowancePayload,
-}: CrossChainComponentProps<CrabDVMHecoBridgeConfig, CrossToken<EthereumChainConfig>, CrossToken<DVMChainConfig>>) {
+}: CrossChainComponentProps<
+  CrabDVMHecoBridgeConfig,
+  CrossToken<EthereumChainConfig>,
+  CrossToken<EthereumChainConfig>
+>) {
   const { t } = useTranslation();
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
   const { account } = useAccount();
@@ -54,6 +57,7 @@ export function CBridge({
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE * UI_SLIPPAGE_SCALE);
   const [minimalMaxSlippage, setMinimalMaxSlippage] = useState<number | null>(null);
   const { setChainMatched } = useWallet();
+  const { isPegged, sendTx } = useTransfer(direction);
 
   const feeWithSymbol = useMemo(
     () =>
@@ -184,7 +188,7 @@ export function CBridge({
         )
       );
 
-      const txObs = transfer(payload);
+      const txObs = sendTx(payload);
 
       return createTxWorkflow(beforeTx, txObs, afterCrossChain(TransferDone, { payload }));
     };
@@ -198,6 +202,7 @@ export function CBridge({
     direction.to.decimals,
     estimateResult,
     feeWithSymbol,
+    sendTx,
     setTxObservableFactory,
   ]);
 
@@ -218,8 +223,6 @@ export function CBridge({
     const dstChainId = parseInt(direction.to.meta.ethereumChain.chainId, 16);
     const symbol = direction.from.symbol.startsWith('x') ? direction.from.symbol.slice(1) : direction.from.symbol; // as RING
     const amount = toWei({ value: direction.from.amount, decimals: direction.from.decimals });
-    const fns = [isEthereum2CrabDVM];
-    const tokens = ['USDC', 'USDT', 'BUSD'];
 
     estimateRequest.setSrcChainId(srcChainId);
     estimateRequest.setDstChainId(dstChainId);
@@ -228,7 +231,7 @@ export function CBridge({
     estimateRequest.setSlippageTolerance(slippage);
     estimateRequest.setAmt(amount);
 
-    if (fns.some((fn) => fn(direction.from.host, direction.to.host)) && tokens.includes(symbol)) {
+    if (isPegged) {
       estimateRequest.setIsPegged(true);
     }
 
@@ -260,13 +263,10 @@ export function CBridge({
     direction.from.meta.ethereumChain.chainId,
     direction.from.symbol,
     direction.to.meta.ethereumChain.chainId,
-    form,
     onFeeChange,
     slippage,
-    isIssuing,
     direction.from.decimals,
-    direction.from.host,
-    direction.to.host,
+    isPegged,
   ]);
 
   return (
@@ -275,7 +275,9 @@ export function CBridge({
         <RecipientItem form={form} bridge={bridge} direction={direction} />
       </div>
 
-      <SlippageItem onChange={(value) => setSlippage(value)} form={form} bridge={bridge} direction={direction} />
+      {!isPegged && (
+        <SlippageItem onChange={(value) => setSlippage(value)} form={form} bridge={bridge} direction={direction} />
+      )}
 
       {minimalMaxSlippage && minimalMaxSlippage > slippage && (
         <div className="mb-3">

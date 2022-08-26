@@ -21,7 +21,7 @@ export const avalancheConfig: EthereumChainConfig = {
   },
   tokens: [
     {
-      name: 'USDT',
+      name: 'USDT.e',
       decimals: 6,
       cross: [
         {
@@ -57,7 +57,7 @@ export const avalancheConfig: EthereumChainConfig = {
       address: '0xc7198437980c041c805A1EDcbA50c1Ce5db95118',
     },
     {
-      name: 'USDC',
+      name: 'USDC.e',
       decimals: 6,
       cross: [
         {

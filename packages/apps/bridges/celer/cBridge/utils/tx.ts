@@ -1,7 +1,7 @@
 import { BN, hexToBn } from '@polkadot/util';
 import { base64, getAddress, hexlify } from 'ethers/lib/utils';
 import { last } from 'lodash';
-import { from, Observable, switchMap } from 'rxjs';
+import { EMPTY, from, Observable, switchMap } from 'rxjs';
 import { HelixHistoryRecord, Tx } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { entrance } from 'shared/utils/connection';
@@ -14,6 +14,7 @@ import { TxValidation } from '../../../../model';
 import { validationObsFactory } from '../../../../utils/tx';
 import transferAbi from '../config/abi/bridge.json';
 import burnAbi from '../config/abi/burn.json';
+import depositAbi from '../config/abi/deposit.json';
 import { IssuingPayload, RedeemPayload } from '../model';
 import { WebClient } from '../ts-proto/gateway/GatewayServiceClientPb';
 import { GetTransferStatusRequest, WithdrawLiquidityRequest, WithdrawMethodType } from '../ts-proto/gateway/gateway_pb';
@@ -38,12 +39,54 @@ export function burn(value: IssuingPayload | RedeemPayload): Observable<Tx> {
   const nonce = new BN(Date.now()).add(prefix).toString();
   const transferAmount = toWei({ value: amount, decimals });
   const { contracts } = bridge.config;
-  const contractAddress = bridge.isIssuing(fromChain, to.meta) ? contracts.issuing : contracts.redeem;
+  const contractAddress = bridge.isIssuing(fromChain, to.meta)
+    ? contracts.stablecoinIssuing
+    : contracts.stablecoinRedeem;
+
+  if (!contractAddress) {
+    console.warn(
+      `🚨 Transfer from ${value.direction.from.symbol} on ${fromChain.name} to ${value.direction.to.symbol} on ${to.host} terminated because of ${contractAddress} is an invalid contract address`
+    );
+    return EMPTY;
+  }
 
   return genEthereumContractTxObs(
     contractAddress,
     (contract) => contract.methods.burn(tokenAddress, transferAmount, recipient, nonce).send({ from: sender }),
     burnAbi as AbiItem[]
+  );
+}
+
+export function deposit(value: IssuingPayload | RedeemPayload): Observable<Tx> {
+  const {
+    sender,
+    recipient,
+    direction: {
+      from: { address: tokenAddress, amount, decimals, meta: fromChain },
+      to,
+    },
+    bridge,
+  } = value;
+  const mintChainId = parseInt(to.meta.ethereumChain.chainId, 16);
+  const nonce = new BN(Date.now()).add(prefix).toString();
+  const transferAmount = toWei({ value: amount, decimals });
+  const { contracts } = bridge.config;
+  const contractAddress = bridge.isIssuing(fromChain, to.meta)
+    ? contracts.stablecoinIssuing
+    : contracts.stablecoinRedeem;
+
+  if (!contractAddress) {
+    console.warn(
+      `🚨 Transfer from ${value.direction.from.symbol} on ${fromChain.name} to ${value.direction.to.symbol} on ${to.host} terminated because of ${contractAddress} is an invalid contract address`
+    );
+    return EMPTY;
+  }
+
+  return genEthereumContractTxObs(
+    contractAddress,
+    (contract) =>
+      contract.methods.deposit(tokenAddress, transferAmount, mintChainId, recipient, nonce).send({ from: sender }),
+    depositAbi as AbiItem[]
   );
 }
 

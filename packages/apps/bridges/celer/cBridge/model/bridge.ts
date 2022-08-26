@@ -1,3 +1,8 @@
 import { BridgeConfig, ContractConfig } from 'shared/model';
 
-export type CBridgeBridgeConfig = Required<BridgeConfig<ContractConfig>>;
+interface CBridgeContractConfig extends ContractConfig {
+  stablecoinIssuing?: string;
+  stablecoinRedeem?: string;
+}
+
+export type CBridgeBridgeConfig = Required<BridgeConfig<CBridgeContractConfig>>;
