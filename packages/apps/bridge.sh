@@ -9,21 +9,28 @@ function validate() {
     fi
 }
 
-read -p "Pleash enter an origin chain name: "
+function validateFloder() {
+    if [ -d './bridges/'$2'/'$1 ]; then
+        echo "bridge $1 of $2 exist"
+        exit 1
+    fi
+}
+
+read -p "Origin chain(backing chain): "
 
 origin=$REPLY
 validate $origin
 from=$(echo ${origin:0:1} | tr a-z A-Z)${origin:1}
 
-read -p "Pleash enter an target chain name: "
+read -p "Target chain(issuing chain): "
 
 target=$REPLY
 validate $target
 to=$(echo ${target:0:1} | tr a-z A-Z)${target:1}
 
-options=("helix" "cBridge")
+options=("helix" "cBridge" "XCM")
 
-echo "Select the bridge category index"
+echo "Input the bridge category index"
 
 select category in "${options[@]}"; do
     case $category in
@@ -35,6 +42,10 @@ select category in "${options[@]}"; do
         echo "The bridge category set to cBridge"
         break
         ;;
+    XCM)
+        echo "The bridge category set to XCM"
+        break
+        ;;
     quit)
         break
         ;;
@@ -44,12 +55,24 @@ select category in "${options[@]}"; do
     esac
 done
 
+subdir="helix"
+
+if [ $category = "cBridge" ]; then
+    subdir="celer"
+elif [ $category = "XCM" ]; then
+    subdir="xcm"
+else
+    subdir="helix"
+fi
+
+validateFloder $origin'-'$target $subdir
+
 function checkExist() {
     local departure=${from}"2"${to}
     local arrival=${to}"2"${from}
-    local dir=$origin'-'$target
+    local dir=$category'/'$origin'-'$target
 
-    for cur in $(ls ./bridges/); do
+    for cur in $(ls ./bridges/$subdir'/'); do
         if [ $cur = $dir ]; then
             echo "\033[31mCreate Failed!\033[0m Bridge $origin <-> $target exist"
             exit 1
@@ -188,7 +211,7 @@ function register() {
     echo "$BAC" >>'./bridges/register.tsx'
 
     echo "
-        ${origin}${to}.setIssuingComponents($1 as FunctionComponent);
+        ${origin}${to}.setIssueComponents($1 as FunctionComponent);
         ${origin}${to}.setRedeemComponents($2 as FunctionComponent);
     " >>'./bridges/register.tsx'
 }
@@ -214,7 +237,7 @@ function init() {
     local departure=${from}"2"${to}
     local arrival=${to}"2"${from}
 
-    local dir=$origin'-'$target
+    local dir=$subdir'/'$origin'-'$target
     local path='./bridges/'$dir
     local index=$path'/index.ts'
     local shared='../shared'
@@ -257,7 +280,7 @@ checkExist
 
 init
 
-../../node_modules/prettier/bin-prettier.js ./bridges/${origin}'-'${target}/**/*.{ts,tsx} --write
+../../node_modules/prettier/bin-prettier.js ./bridges/${subdir}/${origin}'-'${target}/**/*.{ts,tsx} --write
 ../../node_modules/prettier/bin-prettier.js ./bridges/register.tsx --write
 ../../node_modules/prettier/bin-prettier.js ../shared/config/**/*.ts --write
 ../../node_modules/prettier/bin-prettier.js ../shared/model/**/*.ts --write
