@@ -4,16 +4,16 @@ import { pangoroDVMConfig, pangolinDVMConfig, darwiniaDVMConfig, crabDVMConfig }
 
 const darwiniaDVMcrabDVMConfig: SubstrateDVMSubstrateDVMBridgeConfig = {
   contracts: {
-    backing: '0x286C8df631D74F5dcE04424c0d6558Bc87F90045',
-    issuing: '0x1eA414A1B969CF50402FC8BB4C02888D581804cD',
+    backing: '0x1d28f50ee65E5C830e218550D751F8bAA3ae0009',
+    issuing: '0x5E3aF26C8ca071302D00A0f8CcC05E401D22843f',
   },
 };
 
 export const darwiniaDVMCrabDVM = new Bridge(darwiniaDVMConfig, crabDVMConfig, darwiniaDVMcrabDVMConfig, {
   name: 'substrateDVM-substrateDVM',
   category: 'helix',
-  disableIssuing: true,
-  disableRedeem: true,
+  disableIssuing: false,
+  disableRedeem: false,
 });
 
 const pangoroDVMpangolinDVMConfig: SubstrateDVMSubstrateDVMBridgeConfig = {

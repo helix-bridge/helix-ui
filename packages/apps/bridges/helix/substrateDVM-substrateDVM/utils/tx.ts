@@ -35,7 +35,7 @@ export function issue(value: IssuingPayload, fee: BN): Observable<Tx> {
     bridge.config.contracts!.backing,
     (contract) =>
       contract.methods
-        .lockAndRemoteIssuing(departure.meta.specVersion, gasLimit, departure.address, recipient, amount)
+        .lockAndRemoteIssuing(to.meta.specVersion, gasLimit, departure.address, recipient, amount)
         .send({ from: sender, value: fee.toString() }),
     backingAbi as AbiItem[]
   );
@@ -55,7 +55,7 @@ export function redeem(value: RedeemPayload, fee: BN): Observable<Tx> {
     bridge.config.contracts!.issuing,
     (contract) =>
       contract.methods
-        .burnAndRemoteUnlock(departure.meta.specVersion, gasLimit, departure.address, recipient, amount)
+        .burnAndRemoteUnlock(to.meta.specVersion, gasLimit, departure.address, recipient, amount)
         .send({ from: sender, value: fee.toString() }),
     burnAbi as AbiItem[]
   );
