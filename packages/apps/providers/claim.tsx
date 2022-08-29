@@ -110,7 +110,7 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
 
             return zip(isRingSufficient, isKtonSufficient, isAllowanceSufficient);
           }),
-          tap(([isRingSuf, isKtonSuf, isAllowanceSufficient]) => {
+          tap(([isRingSuf, isKtonSuf]) => {
             if (!isRingSuf) {
               message.warn(t('{{token}} daily limit reached!', { token: 'ring' }));
             }
@@ -118,13 +118,9 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
             if (!isKtonSuf) {
               message.warn(t('{{token}} daily limit reached!', { token: 'kton' }));
             }
-
-            if (!isAllowanceSufficient) {
-              message.warn(t('RING or KTON allowance is insufficient, approve more first!'));
-            }
           }),
-          switchMap(([isRingSuf, isKtonSuf, isAllowanceSuf]) =>
-            isRingSuf && isKtonSuf && isAllowanceSuf
+          switchMap(([isRingSuf, isKtonSuf]) =>
+            isRingSuf && isKtonSuf
               ? claimToken({
                   direction: { from: departure!, to: arrival! },
                   mmrIndex,
