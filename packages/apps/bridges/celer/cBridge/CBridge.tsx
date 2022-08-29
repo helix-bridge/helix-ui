@@ -1,4 +1,4 @@
-import { Button, message, Typography } from 'antd';
+import { Button, message, Tooltip, Typography } from 'antd';
 import BN from 'bn.js';
 import { isNaN } from 'lodash';
 import { i18n, Trans, useTranslation } from 'next-i18next';
@@ -89,9 +89,12 @@ export function CBridge({
             <span>≈</span>
 
             <div className="flex item-center gap-1">
-              <span>
-                {estimateResult.bridgeRate} {direction.to.symbol} on
-              </span>
+              <Tooltip title={estimateResult.bridgeRate}>
+                <span className="truncate cursor-pointer" style={{ maxWidth: '3em' }}>
+                  {estimateResult.bridgeRate}
+                </span>
+              </Tooltip>
+              <span> {direction.to.symbol} on </span>
               <Logo name={direction.to.meta.logos[0].name} width={22} height={22} />
             </div>
           </div>

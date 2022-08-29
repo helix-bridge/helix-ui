@@ -14,6 +14,4 @@ const crabDVMAstarConfig: CrabDVMAstarBridgeConfig = {
 export const crabDVMAstar = new Bridge(crabDVMConfig, astarConfig, crabDVMAstarConfig, {
   name: 'crabDVM-astar',
   category: 'cBridge',
-  disableIssuing: true,
-  disableRedeem: true,
 });

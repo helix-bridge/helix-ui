@@ -94,7 +94,7 @@ exports[`<CrossChainInfo /> render cross-chain and extra nodes 1`] = `
             data-testid="Allowance"
           >
             <span
-              className="ant-typography"
+              className="ant-typography whitespace-nowrap"
               onClick={null}
               style={
                 Object {
@@ -128,7 +128,7 @@ exports[`<CrossChainInfo /> render cross-chain and extra nodes 1`] = `
             data-testid="Daily limit"
           >
             <span
-              className="ant-typography"
+              className="ant-typography whitespace-nowrap"
               onClick={null}
               style={
                 Object {

@@ -7,7 +7,11 @@ import { HelixHistoryRecord, Network, SubstrateSubstrateParachainBridgeConfig } 
 import { getBridge } from 'shared/utils/bridge';
 import { revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
-import { getReceivedAmountFromHelixRecord, getSentAmountFromHelixRecord } from 'shared/utils/record';
+import {
+  getReceivedAmountFromHelixRecord,
+  getSentAmountFromHelixRecord,
+  getTokenConfigFromHelixRecord,
+} from 'shared/utils/record';
 import { Detail } from '../../../components/transaction/Detail';
 import { useUpdatableRecord } from '../../../hooks';
 import { TransferStep } from '../../../model/transfer';
@@ -33,8 +37,8 @@ const Page: NextPage<{
     const arrival = getChainConfig(router.query.to as Network);
     const bridge = getBridge<SubstrateSubstrateParachainBridgeConfig>([departure, arrival]);
     const isIssuing = bridge.isIssue(departure, arrival);
-    const fromToken = departure.tokens.find((item) => item.symbol === record.sendToken)!;
-    const toToken = arrival.tokens.find((item) => item.symbol === record.recvToken)!;
+    const fromToken = getTokenConfigFromHelixRecord(record);
+    const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
     const sendAmount = getSentAmountFromHelixRecord(record);
     const recvAmount = getReceivedAmountFromHelixRecord(record);
 

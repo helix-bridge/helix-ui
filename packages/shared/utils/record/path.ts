@@ -6,6 +6,7 @@ import {
   isSubstrateSubstrateParachain,
   isCBridge,
   isXCM,
+  isSubstrateDVMSubstrateDVM,
 } from '../bridge';
 
 type DirectionPaths = [BridgePredicateFn, string, string];
@@ -17,6 +18,7 @@ export function getDetailPaths(fromChain: Network, toChain: Network, record: Hel
     [isSubstrateSubstrateParachain, 's2parachain', record.id],
     [isCBridge, 'cbridge', record.id],
     [isXCM, 'xcm', record.id],
+    [isSubstrateDVMSubstrateDVM, 's2sv2', record.id],
   ];
 
   const result = filters.find(([predicate]) => predicate(fromChain as Network, toChain as Network));
