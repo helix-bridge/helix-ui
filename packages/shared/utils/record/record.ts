@@ -15,9 +15,25 @@ export function getTokenConfigFromHelixRecord(
     return null;
   }
 
-  return chain.tokens.find((item) =>
-    Web3.utils.isAddress(symbol) ? item.address.toLowerCase() === symbol.toLowerCase() : item.symbol === symbol
-  )!;
+  return chain.tokens.find((item) => {
+    if (Web3.utils.isAddress(symbol)) {
+      return item.address.toLowerCase() === symbol.toLowerCase();
+    }
+    const isSameSymbol = item.symbol === symbol;
+
+    if (!isSameSymbol) {
+      const isSameSymbolCaseInsensitive = item.symbol.toLowerCase() === symbol.toLowerCase();
+
+      if (isSameSymbolCaseInsensitive) {
+        console.warn(
+          `⚠️ Token symbol(${symbol}) from ${record.id} is not consistent with the symbol(${item.symbol}) stored in ${chain.name} configuration!`
+        );
+        return true;
+      }
+    }
+
+    return isSameSymbol;
+  })!;
 }
 
 export function getReceivedAmountFromHelixRecord(record: HelixHistoryRecord) {
