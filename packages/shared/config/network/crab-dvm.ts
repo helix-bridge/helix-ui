@@ -112,7 +112,7 @@ export const crabDVMConfig: DVMChainConfig = {
       host: 'crab-dvm',
       logo: 'token-oring.svg',
       symbol: 'xWRING',
-      address: '0xccFd19aA2A321e46CE62ad7740C58a79e4276f79',
+      address: '0x273131F7CB50ac002BDd08cA721988731F7e1092',
     },
     {
       name: 'USDT',
