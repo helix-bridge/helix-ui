@@ -7,13 +7,9 @@ import { getChainConfig, isPolkadotNetwork } from '../network';
 export function getTokenConfigFromHelixRecord(
   record: HelixHistoryRecord,
   key: keyof Pick<HelixHistoryRecord, 'feeToken' | 'sendToken' | 'recvToken'> = 'sendToken'
-): TokenWithBridgesInfo | null {
+): TokenWithBridgesInfo {
   const chain = getChainConfig(record[key === 'recvToken' ? 'toChain' : 'fromChain']);
   const symbol = record[key];
-
-  if (!symbol) {
-    return null;
-  }
 
   return chain.tokens.find((item) => {
     if (Web3.utils.isAddress(symbol)) {

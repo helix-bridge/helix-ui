@@ -70,7 +70,7 @@ export function CrossChainInfo({
                 data-testid={item.name}
                 className={`justify-between items-center transition-all duration-100 flex`}
               >
-                <Typography.Text>{item.name}</Typography.Text>
+                <Typography.Text className="whitespace-nowrap">{item.name}</Typography.Text>
                 {item.content}
               </div>
             ))}

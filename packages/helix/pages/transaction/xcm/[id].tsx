@@ -5,7 +5,11 @@ import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord, Network } from 'shared/model';
 import { revertAccount } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
-import { getReceivedAmountFromHelixRecord, getSentAmountFromHelixRecord } from 'shared/utils/record';
+import {
+  getReceivedAmountFromHelixRecord,
+  getSentAmountFromHelixRecord,
+  getTokenConfigFromHelixRecord,
+} from 'shared/utils/record';
 import { Detail } from '../../../components/transaction/Detail';
 import { useUpdatableRecord } from '../../../hooks';
 import { TransferStep } from '../../../model/transfer';
@@ -28,8 +32,8 @@ const Page: NextPage<{
 
     const departure = getChainConfig(router.query.from as Network);
     const arrival = getChainConfig(router.query.to as Network);
-    const fromToken = departure.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase())!;
-    const toToken = arrival.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase())!;
+    const fromToken = getTokenConfigFromHelixRecord(record);
+    const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
     const relayer = '0x0000000000000000000000000000000000000000';
     const sendAmount = getSentAmountFromHelixRecord(record);
     const recvAmount = getReceivedAmountFromHelixRecord(record);

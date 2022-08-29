@@ -135,6 +135,7 @@ function Page() {
     {
       title: t('Bridge'),
       dataIndex: 'bridge',
+      width: 70,
       render: (value) => (
         <span
           className={`justify-self-center ${
