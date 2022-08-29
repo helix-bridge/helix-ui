@@ -71,18 +71,18 @@ export function refund(record: HelixHistoryRecord): Observable<Tx> {
     : { abi: burnAbi, address: bridge.config.contracts?.issuing, method: 'remoteUnlockFailure' };
 
   return isMetamaskChainConsistent(arrival).pipe(
-    switchMap((isConsistent) => {
-      return isConsistent
+    switchMap((isConsistent) =>
+      isConsistent
         ? from(
             getFee({ from: { meta: arrival }, to: { meta: departure } } as CrossChainDirection<
               CrossToken<DVMChainConfig>,
               CrossToken<DVMChainConfig>
             >)
           )
-        : EMPTY;
-    }),
-    switchMap((value) => {
-      return genEthereumContractTxObs(
+        : EMPTY
+    ),
+    switchMap((value) =>
+      genEthereumContractTxObs(
         address as string,
         (contract) =>
           contract.methods[method](departure.specVersion, '2000000', transferId, tokenAddress, sender, amount).send({
@@ -90,8 +90,8 @@ export function refund(record: HelixHistoryRecord): Observable<Tx> {
             value: value?.toString(),
           }),
         abi as AbiItem[]
-      );
-    })
+      )
+    )
   );
 }
 
