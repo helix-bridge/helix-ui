@@ -4,8 +4,8 @@ import { pangoroDVMConfig, pangolinDVMConfig, darwiniaDVMConfig, crabDVMConfig }
 
 const darwiniaDVMcrabDVMConfig: SubstrateDVMSubstrateDVMBridgeConfig = {
   contracts: {
-    backing: '0x1d28f50ee65E5C830e218550D751F8bAA3ae0009',
-    issuing: '0x5E3aF26C8ca071302D00A0f8CcC05E401D22843f',
+    backing: '0xF3c1444CD449bD66Ef6DA7CA6c3E7884840A3995',
+    issuing: '0x8738A64392b71617aF4C685d0E827855c741fDF7',
   },
 };
 

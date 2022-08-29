@@ -55,7 +55,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       host: 'darwinia-dvm',
       logo: 'token-ring.svg',
       symbol: 'wRING',
-      address: '0x2428D100051Bf6f04253FD36AC21061FFCc87509',
+      address: '0xE7578598Aac020abFB918f33A20faD5B71d670b4',
     },
   ],
   ss58Prefix: 18,
