@@ -3,7 +3,7 @@ import { CrossChainDirection, CrossToken, EthereumChainConfig } from 'shared/mod
 import {
   isAstar2Ethereum,
   isBSCAstar,
-  isCrabDVM2Astar,
+  isCrabDVMAstar,
   isCrabDVMEthereum,
   isEthereum2Astar,
   isEthereum2CrabDVM,
@@ -20,7 +20,7 @@ export function useTransfer(
   }, [direction.from.symbol]);
 
   const isPegged = useMemo(() => {
-    const peggedFns = [isCrabDVMEthereum, isEthereum2Astar, isAstar2Ethereum, isCrabDVM2Astar, isBSCAstar];
+    const peggedFns = [isCrabDVMEthereum, isEthereum2Astar, isAstar2Ethereum, isCrabDVMAstar, isBSCAstar];
 
     return isStablecoin && peggedFns.some((fn) => fn(direction.from.host, direction.to.host));
   }, [direction.from.host, direction.to.host, isStablecoin]);

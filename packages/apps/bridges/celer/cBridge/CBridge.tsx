@@ -90,7 +90,9 @@ export function CBridge({
 
             <div className="flex item-center gap-1">
               <Tooltip title={estimateResult.bridgeRate}>
-                <span className="w-12 truncate cursor-pointer">{estimateResult.bridgeRate}</span>
+                <span className="truncate cursor-pointer" style={{ maxWidth: '3em' }}>
+                  {estimateResult.bridgeRate}
+                </span>
               </Tooltip>
               <span> {direction.to.symbol} on </span>
               <Logo name={direction.to.meta.logos[0].name} width={22} height={22} />
