@@ -25,6 +25,7 @@ export const HISTORY_RECORDS = gql`
         toChain
         sendToken
         recvToken
+        sendTokenAddress
       }
     }
   }
@@ -61,6 +62,7 @@ export const HISTORY_RECORD_BY_ID = gql`
       toChain
       sendToken
       recvToken
+      sendTokenAddress
     }
   }
 `;

@@ -24,4 +24,5 @@ export interface HelixHistoryRecord {
   toChain: Network;
   sendToken: string;
   recvToken: string;
+  sendTokenAddress: string;
 }
