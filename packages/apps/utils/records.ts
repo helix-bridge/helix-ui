@@ -4,7 +4,7 @@ import { catchError, filter, map, Observable, of } from 'rxjs';
 import { RecordStatus } from 'shared/config/constant';
 import { isFormalChain } from 'shared/config/env';
 import { ChainConfig, HelixHistoryRecord, ICamelCaseKeys } from 'shared/model';
-import { apiUrl, isKton, isRing, rxGet } from 'shared/utils/helper';
+import { apiUrl, fromWei, isKton, isRing, rxGet, toWei } from 'shared/utils/helper';
 import { buf2hex } from 'shared/utils/tx';
 import {
   Darwinia2EthereumHistoryRes,
@@ -35,7 +35,8 @@ export const fetchDarwinia2EthereumRecords = (
               const ring = departure.tokens.find((item) => isRing(item.symbol))!;
               const token = +ringValue > 0 ? ring : departure.tokens.find((item) => isKton(item.symbol))!;
               const arrival = ring.cross.find((item) => item.bridge === 'ethereum-darwinia')!;
-              const amount = +ringValue > 0 ? ringValue : ktonValue;
+              const originAmount = +ringValue > 0 ? ringValue : ktonValue;
+              const amount = toWei({ value: fromWei({ value: originAmount, decimals: 9 }) });
               let result = RecordStatus.pending;
 
               if (signatures && !tx) {
@@ -45,7 +46,7 @@ export const fetchDarwinia2EthereumRecords = (
               }
 
               return {
-                sendAmount: amount,
+                sendAmount: originAmount,
                 recvAmount: amount,
                 bridge: 'helix',
                 endTime: blockTimestamp,
@@ -95,11 +96,12 @@ export const fetchEthereum2DarwiniaRecords = (
             ...res,
             list: res.list.map((item) => {
               const record = camelCaseKeys(item) as unknown as ICamelCaseKeys<Ethereum2DarwiniaRedeemRecord>;
-              const { blockTimestamp, tx, darwiniaTx, currency, amount } = record;
+              const { blockTimestamp, tx, darwiniaTx, currency, amount: originAmount } = record;
               const ring = departure.tokens.find((tk) => isRing(tk.symbol))!;
               const isRingTransfer = isRing(currency);
               const token = departure.tokens.find((tk) => (isRingTransfer ? isRing(tk.symbol) : isKton(tk.symbol)))!;
               const arrival = ring.cross.find((overview) => overview.bridge === 'ethereum-darwinia')!;
+              const amount = toWei({ value: fromWei({ value: originAmount }), decimals: 9 });
 
               return {
                 bridge: 'helix',
@@ -119,7 +121,7 @@ export const fetchEthereum2DarwiniaRecords = (
                 toChain: arrival.partner.name,
                 sendToken: token.symbol,
                 recvToken: arrival.partner.symbol,
-                sendAmount: amount,
+                sendAmount: originAmount,
                 recvAmount: amount,
                 messageNonce: '',
                 ...record,
