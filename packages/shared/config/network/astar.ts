@@ -53,7 +53,7 @@ export const astarConfig: EthereumChainConfig = {
         {
           category: 'cBridge',
           bridge: 'astar-avalanche',
-          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDC' },
+          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDC.e' },
         },
         {
           category: 'cBridge',
