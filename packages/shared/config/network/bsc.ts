@@ -33,7 +33,7 @@ export const bscConfig: EthereumChainConfig = {
         {
           category: 'cBridge',
           bridge: 'bsc-avalanche',
-          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDT' },
+          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDT.e' },
         },
         {
           category: 'cBridge',
@@ -74,7 +74,7 @@ export const bscConfig: EthereumChainConfig = {
         {
           category: 'cBridge',
           bridge: 'bsc-avalanche',
-          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDC' },
+          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDC.e' },
         },
         {
           category: 'cBridge',

@@ -37,7 +37,7 @@ export const optimismConfig: EthereumChainConfig = {
         {
           category: 'cBridge',
           bridge: 'avalanche-optimism',
-          partner: { name: 'avalanche', role: 'backing', symbol: 'USDT' },
+          partner: { name: 'avalanche', role: 'backing', symbol: 'USDT.e' },
         },
         {
           category: 'cBridge',
@@ -78,7 +78,7 @@ export const optimismConfig: EthereumChainConfig = {
         {
           category: 'cBridge',
           bridge: 'avalanche-optimism',
-          partner: { name: 'avalanche', role: 'backing', symbol: 'USDC' },
+          partner: { name: 'avalanche', role: 'backing', symbol: 'USDC.e' },
         },
         {
           category: 'cBridge',

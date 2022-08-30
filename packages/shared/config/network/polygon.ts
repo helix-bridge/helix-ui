@@ -66,7 +66,7 @@ export const polygonConfig: EthereumChainConfig = {
         {
           category: 'cBridge',
           bridge: 'avalanche-polygon',
-          partner: { name: 'avalanche', role: 'backing', symbol: 'USDT' },
+          partner: { name: 'avalanche', role: 'backing', symbol: 'USDT.e' },
         },
         {
           category: 'cBridge',
@@ -107,7 +107,7 @@ export const polygonConfig: EthereumChainConfig = {
         {
           category: 'cBridge',
           bridge: 'avalanche-polygon',
-          partner: { name: 'avalanche', role: 'backing', symbol: 'USDC' },
+          partner: { name: 'avalanche', role: 'backing', symbol: 'USDC.e' },
         },
         {
           category: 'cBridge',
