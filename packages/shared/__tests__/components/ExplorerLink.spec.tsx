@@ -194,6 +194,11 @@ describe('<ExplorerLink />', () => {
       heco: `https://hecoinfo.com/tx/0x123456`,
       polygon: `https://polygonscan.com/tx/0x123456`,
       moonriver: `https://moonriver.moonscan.io/tx/0x123456`,
+      arbitrum: `https://arbiscan.io/tx/0x123456`,
+      optimism: `https://optimistic.etherscan.io/tx/0x123456`,
+      avalanche: `https://snowtrace.io/tx/0x123456`,
+      bsc: `https://bscscan.com/tx/0x123456`,
+      astar: `https://astar.subscan.io/tx/0x123456`,
     };
     const expected = explorers[config.name] ?? href;
 

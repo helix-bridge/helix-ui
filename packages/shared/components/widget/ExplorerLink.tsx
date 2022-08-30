@@ -29,7 +29,7 @@ export function ExplorerLink({
   ...other
 }: ExplorerLinkProps) {
   let network: Network = typeof networkOrChainConfig === 'object' ? networkOrChainConfig.name : networkOrChainConfig;
-  const isSubscan = isPolkadotNetwork(network) || isDVMNetwork(network);
+  const isSubscan = isPolkadotNetwork(network) || isDVMNetwork(network) || network === 'astar';
 
   if (isDVMNetwork(networkOrChainConfig)) {
     network = network.split('-')[0] as Network;
@@ -72,6 +72,10 @@ export function ExplorerLink({
       heco: `https://hecoinfo.com/tx/${txHash}`,
       polygon: `https://polygonscan.com/tx/${txHash}`,
       moonriver: `https://moonriver.moonscan.io/tx/${txHash}`,
+      arbitrum: `https://arbiscan.io/tx/${txHash}`,
+      optimism: `https://optimistic.etherscan.io/tx/${txHash}`,
+      avalanche: `https://snowtrace.io/tx/${txHash}`,
+      bsc: `https://bscscan.com/tx/${txHash}`,
     };
 
     const href =
