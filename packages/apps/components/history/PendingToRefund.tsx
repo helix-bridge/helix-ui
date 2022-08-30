@@ -152,7 +152,8 @@ function Refund({ record, onSuccess }: RefundComponentProps) {
       disabled={loading}
       type="primary"
       icon={loading ? <SyncOutlined spin /> : null}
-      onClick={() => {
+      onClick={(event) => {
+        event.stopPropagation();
         setLoading(true);
 
         refundFn(record).subscribe({

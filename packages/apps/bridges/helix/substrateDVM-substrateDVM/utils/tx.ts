@@ -17,11 +17,9 @@ import burnAbi from '../config/s2sv2burn.json';
 import { IssuingPayload, RedeemPayload } from '../model';
 import { getFee } from './fee';
 
-const expendId = (helixId: string) => {
+const trimLaneId = (helixId: string) => {
   const id = last(helixId.split('-')) as string;
-  const range = 28;
-
-  return id.substring(0, 10) + id.substring(10, id.length + 1).replace('0x', '0'.repeat(range - id.length));
+  return id.substring(10, id.length + 1);
 };
 
 export function issue(value: IssuingPayload, fee: BN): Observable<Tx> {
@@ -62,11 +60,11 @@ export function redeem(value: RedeemPayload, fee: BN): Observable<Tx> {
 }
 
 export function refund(record: HelixHistoryRecord): Observable<Tx> {
-  const { fromChain, toChain, sendAmount: amount, sender, id, sendToken: token } = record;
+  const { fromChain, toChain, sendAmount: amount, sender, id, sendTokenAddress: tokenAddress } = record;
   const bridge = getBridge([fromChain, toChain]);
   const departure = getChainConfig(fromChain) as DVMChainConfig;
   const arrival = getChainConfig(toChain) as DVMChainConfig;
-  const transferId = expendId(id);
+  const transferId = trimLaneId(id);
 
   const { abi, address, method } = bridge.isRedeem(fromChain, toChain)
     ? { abi: backingAbi, address: bridge.config.contracts?.backing, method: 'remoteIssuingFailure' }
@@ -87,7 +85,7 @@ export function refund(record: HelixHistoryRecord): Observable<Tx> {
       genEthereumContractTxObs(
         address as string,
         (contract) =>
-          contract.methods[method](departure.specVersion, '2000000', transferId, token, sender, amount).send({
+          contract.methods[method](departure.specVersion, '2000000', transferId, tokenAddress, sender, amount).send({
             from: sender,
             value: value?.toString(),
           }),
