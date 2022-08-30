@@ -85,7 +85,7 @@ export const ethereumConfig: EthereumChainConfig = {
         {
           category: 'cBridge',
           bridge: 'ethereum-avalanche',
-          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDT' },
+          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDT.e' },
         },
         {
           category: 'cBridge',
@@ -131,7 +131,7 @@ export const ethereumConfig: EthereumChainConfig = {
         {
           category: 'cBridge',
           bridge: 'ethereum-avalanche',
-          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDC' },
+          partner: { name: 'avalanche', role: 'issuing', symbol: 'USDC.e' },
         },
         {
           category: 'cBridge',
