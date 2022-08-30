@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
 import { CrossChainDirection, CrossToken, EthereumChainConfig } from 'shared/model';
 import {
-  isAstar2Ethereum,
   isBSCAstar,
   isCrabDVMAstar,
   isCrabDVMEthereum,
-  isEthereum2Astar,
   isEthereum2CrabDVM,
+  isEthereumAstar,
 } from 'shared/utils/bridge';
 import { burn, deposit, transfer } from '../utils';
 
@@ -20,7 +19,7 @@ export function useTransfer(
   }, [direction.from.symbol]);
 
   const isPegged = useMemo(() => {
-    const peggedFns = [isCrabDVMEthereum, isEthereum2Astar, isAstar2Ethereum, isCrabDVMAstar, isBSCAstar];
+    const peggedFns = [isCrabDVMEthereum, isEthereumAstar, isCrabDVMAstar, isBSCAstar];
 
     return isStablecoin && peggedFns.some((fn) => fn(direction.from.host, direction.to.host));
   }, [direction.from.host, direction.to.host, isStablecoin]);

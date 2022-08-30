@@ -225,7 +225,9 @@ export function CBridge({
     const estimateRequest = new EstimateAmtRequest();
     const srcChainId = parseInt(direction.from.meta.ethereumChain.chainId, 16);
     const dstChainId = parseInt(direction.to.meta.ethereumChain.chainId, 16);
-    const symbol = direction.from.symbol.startsWith('x') ? direction.from.symbol.slice(1) : direction.from.symbol; // as RING
+    const symbol = direction.from.symbol.startsWith('x')
+      ? direction.from.symbol.slice(1)
+      : direction.from.symbol.split('.')[0]; // as RING for avalanche the token symbol has suffix .e, remove it here
     const amount = toWei({ value: direction.from.amount, decimals: direction.from.decimals });
 
     estimateRequest.setSrcChainId(srcChainId);
@@ -314,13 +316,13 @@ export function CBridge({
           {
             name: t('Allowance'),
             content: (
-              <Typography.Text className="capitalize">
+              <Typography.Text>
                 <span>
                   {fromWei({ value: allowance }, largeNumber, (num: string) =>
                     prettyNumber(num, { ignoreZeroDecimal: true })
                   )}
                 </span>
-                <span className="capitalize ml-1">{direction.from.symbol}</span>
+                <span className="ml-1">{direction.from.symbol}</span>
               </Typography.Text>
             ),
           },
