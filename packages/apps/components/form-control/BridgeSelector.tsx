@@ -28,10 +28,10 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
   const origin = { from: { name: from.name, type: from.type }, to: { name: to.name, type: to.type } };
   const isDefault = matches(origin);
 
-  // const isCBridgeStableCoin = useCallback(
-  //   (bridge: Bridge) => bridge.category === 'cBridge' && ['USDT', 'USDC', 'BUSD'].includes(direction.from.symbol),
-  //   [direction.from.symbol]
-  // );
+  const isCBridgeStableCoin = useCallback(
+    (bridge: Bridge) => bridge.category === 'cBridge' && ['USDT', 'USDC', 'BUSD'].includes(direction.from.symbol),
+    [direction.from.symbol]
+  );
 
   const isDisabled = useCallback<(bridge: Bridge) => boolean>(
     // eslint-disable-next-line complexity
@@ -40,10 +40,11 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
         !!direction.from &&
         !!direction.to &&
         ((bridge.disableIssuing && bridge.isIssue(direction.from.meta, direction.to.meta)) ||
-          (bridge.disableRedeem && bridge.isRedeem(direction.from.meta, direction.to.meta)))
+          (bridge.disableRedeem && bridge.isRedeem(direction.from.meta, direction.to.meta)) ||
+          isCBridgeStableCoin(bridge))
       );
     },
-    [direction.from, direction.to]
+    [direction.from, direction.to, isCBridgeStableCoin]
   );
 
   useEffect(() => {
