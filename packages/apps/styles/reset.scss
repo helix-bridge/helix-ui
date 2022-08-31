@@ -1,0 +1,28 @@
+.anticon {
+  vertical-align: 0 !important;
+}
+
+.ant-typography .anticon-copy {
+  vertical-align: middle;
+}
+
+.ant-tooltip {
+  .ant-tooltip-content {
+    border: 1px solid #444a5d;
+    border-radius: 4px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+
+    .ant-tooltip-arrow {
+      display: none;
+    }
+  }
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}

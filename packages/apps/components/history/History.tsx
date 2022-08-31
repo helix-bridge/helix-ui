@@ -17,7 +17,7 @@ import {
   getTokenConfigFromHelixRecord,
 } from 'shared/utils/record';
 import { Darwinia2EthereumHistoryRes } from '../../bridges/helix/ethereum-darwinia/model';
-import { HISTORY_RECORDS, STATUS_STATISTICS } from '../../config/gql';
+import { HISTORY_RECORDS_IN_RESULTS, STATUS_STATISTICS } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
 import { useAccount, useApi } from '../../providers';
@@ -93,8 +93,8 @@ export function History() {
 
     setLoading(true);
 
-    return from(request(ENDPOINT, HISTORY_RECORDS, args))
-      .pipe(map((res) => res && res[gqlName(HISTORY_RECORDS)]))
+    return from(request(ENDPOINT, HISTORY_RECORDS_IN_RESULTS, args))
+      .pipe(map((res) => res && res[gqlName(HISTORY_RECORDS_IN_RESULTS)]))
       .subscribe({
         next(response) {
           setTotal(response.total);
