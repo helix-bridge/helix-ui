@@ -14,9 +14,8 @@ export const isTestChain = CHAIN_TYPE === 'test';
  */
 export const isDev = ENV === 'development';
 export const isProd = !isDev;
-export const isStgDeployment = DEPLOYMENT_ENV === 'stg';
-export const isDevDeployment = DEPLOYMENT_ENV === 'develop';
-export const isProdDeployment = !!DEPLOYMENT_ENV && DEPLOYMENT_ENV !== 'stg' && DEPLOYMENT_ENV !== 'develop';
+export const isStgDeployment = DEPLOYMENT_ENV === 'staging';
+export const isProdDeployment = DEPLOYMENT_ENV === 'production';
 
 export const SUBSTRATE_DVM_WITHDRAW = (process.env.SUBSTRATE_DVM_WITHDRAW ||
   process.env.NEXT_PUBLIC_SUBSTRATE_DVM_WITHDRAW) as string;
