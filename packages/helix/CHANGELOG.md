@@ -1,3 +1,22 @@
+## [4.2.3](https://github.com/helix-bridge/helix/compare/v4.2.2-apps...v4.2.3) (2022-08-31)
+
+
+### Bug Fixes
+
+* **#203:** avalanche stablecoin symbol rename ([#208](https://github.com/helix-bridge/helix/issues/208)) ([c86cf39](https://github.com/helix-bridge/helix/commit/c86cf3901835ae3e261ee394f3be3d99b48c16f4)), closes [#203](https://github.com/helix-bridge/helix/issues/203) [#203](https://github.com/helix-bridge/helix/issues/203)
+* **#204:** ethereum<>darwinia records amount patch ([#207](https://github.com/helix-bridge/helix/issues/207)) ([8d5d158](https://github.com/helix-bridge/helix/commit/8d5d1583b8a82dfc1a9a6581eef573dd87ca89b6)), closes [#204](https://github.com/helix-bridge/helix/issues/204) [#204](https://github.com/helix-bridge/helix/issues/204)
+* avalanche symbol name for estimate amount ([#209](https://github.com/helix-bridge/helix/issues/209)) ([08417ff](https://github.com/helix-bridge/helix/commit/08417ffb8217307b93778f07cc7b34e54fd72ea2))
+* explorer link by tx hash ([#213](https://github.com/helix-bridge/helix/issues/213)) ([43e337b](https://github.com/helix-bridge/helix/commit/43e337bf7e1bebda82eac40ce4037dc91fe237aa))
+* s2s refund ([#205](https://github.com/helix-bridge/helix/issues/205)) ([1513fe7](https://github.com/helix-bridge/helix/commit/1513fe7507d50a27a63341364137ce5302756597))
+
+
+### Features
+
+* add deployment env ([#216](https://github.com/helix-bridge/helix/issues/216)) ([eef8f3c](https://github.com/helix-bridge/helix/commit/eef8f3c4a9f752bd645203e37c99fbde34ffe4f5))
+* darwinia dvm <> crab dvm support s2s v2 ([#194](https://github.com/helix-bridge/helix/issues/194)) ([cbd9bf2](https://github.com/helix-bridge/helix/commit/cbd9bf21bb6feeb2fd9776e23b9622c253b2ac8c))
+
+
+
 # [4.2.0](https://github.com/helix-bridge/helix/compare/v4.1.1-apps...v4.2.0) (2022-08-24)
 
 
