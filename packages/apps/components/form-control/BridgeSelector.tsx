@@ -4,7 +4,6 @@ import { matches } from 'lodash';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo } from 'react';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
-import { isProdDeployment } from 'shared/config/env';
 import { Bridge, CrossChainDirection, CrossToken, CustomFormControlProps } from 'shared/model';
 import { getBridges } from 'shared/utils/bridge';
 import { BridgeArrow } from '../bridge/BridgeArrow';
@@ -42,7 +41,7 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
         !!direction.to &&
         ((bridge.disableIssuing && bridge.isIssue(direction.from.meta, direction.to.meta)) ||
           (bridge.disableRedeem && bridge.isRedeem(direction.from.meta, direction.to.meta)) ||
-          (isProdDeployment && isCBridgeStableCoin(bridge)))
+          isCBridgeStableCoin(bridge))
       );
     },
     [direction.from, direction.to, isCBridgeStableCoin]
