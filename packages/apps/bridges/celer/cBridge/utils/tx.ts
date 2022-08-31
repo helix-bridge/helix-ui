@@ -13,8 +13,8 @@ import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
 import { validationObsFactory } from '../../../../utils/tx';
 import transferAbi from '../config/abi/bridge.json';
-import burnAbi from '../config/abi/burn.json';
-import depositAbi from '../config/abi/deposit.json';
+import burnAbi from '../config/abi/PeggedTokenBridgeV2.json';
+import depositAbi from '../config/abi/OriginalTokenVaultV2.json';
 import { IssuingPayload, RedeemPayload } from '../model';
 import { WebClient } from '../ts-proto/gateway/GatewayServiceClientPb';
 import { GetTransferStatusRequest, WithdrawLiquidityRequest, WithdrawMethodType } from '../ts-proto/gateway/gateway_pb';
@@ -36,6 +36,7 @@ export function burn(value: IssuingPayload | RedeemPayload): Observable<Tx> {
     },
     bridge,
   } = value;
+  const toChainId = parseInt(to.meta.ethereumChain.chainId, 16);
   const nonce = new BN(Date.now()).add(prefix).toString();
   const transferAmount = toWei({ value: amount, decimals });
   const { contracts } = bridge.config;
@@ -52,7 +53,8 @@ export function burn(value: IssuingPayload | RedeemPayload): Observable<Tx> {
 
   return genEthereumContractTxObs(
     contractAddress,
-    (contract) => contract.methods.burn(tokenAddress, transferAmount, recipient, nonce).send({ from: sender }),
+    (contract) =>
+      contract.methods.burn(tokenAddress, transferAmount, toChainId, recipient, nonce).send({ from: sender }),
     burnAbi as AbiItem[]
   );
 }
