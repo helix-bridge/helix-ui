@@ -3,4 +3,5 @@ export enum Path {
   register = '/register',
   transaction = '/transaction',
   docs = 'docs',
+  apps = '/apps',
 }

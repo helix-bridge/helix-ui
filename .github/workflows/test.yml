@@ -38,8 +38,6 @@ jobs:
         run: yarn
       - name: test apps
         run: yarn test:apps:unit
-      - name: test helix
-        run: yarn test:helix:unit
       - name: test shared
         run: yarn test:shared
 
@@ -56,9 +54,7 @@ jobs:
       matrix:
         package:
           - apps
-          - helix
           - apps:test
-          - helix:test
     outputs:
       check-ok: ${{ steps.output-ok.outputs.STATUS }}
       check-err: ${{ steps.output-err.outputs.STATUS }}

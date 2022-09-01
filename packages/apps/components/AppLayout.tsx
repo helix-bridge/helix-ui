@@ -1,12 +1,13 @@
 import { HddOutlined, MenuOutlined, WarningFilled } from '@ant-design/icons';
 import { Button, Drawer, Layout, Tooltip } from 'antd';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { PropsWithChildren, useState } from 'react';
 import { Footer } from 'shared/components/Footer';
 import { Nav, Navigator } from 'shared/components/Navigator';
-import { HELIX_DEPLOYMENT } from 'shared/config/env';
 import { THEME } from 'shared/config/theme';
 import { readStorage } from 'shared/utils/helper';
+import { Path } from '../config';
 import { useITranslation } from '../hooks';
 import { useTx } from '../providers';
 import { History } from './history/History';
@@ -16,7 +17,12 @@ import { DisclaimerModal } from './widget/DisclaimerModal';
 
 const { Header, Content } = Layout;
 
-const navigators: Nav[] = [{ label: 'Docs', path: 'https://docs.helixbridge.app/', extra: true }];
+const navigators: Nav[] = [
+  { label: 'Dashboard', path: Path.root },
+  { label: 'Explorer', path: Path.transaction },
+  // { label: 'DAO', path: 'dao' },
+  { label: 'Docs', path: 'https://docs.helixbridge.app/', extra: true },
+];
 
 function AppLayout({ children }: PropsWithChildren<unknown>) {
   const { t } = useITranslation();
@@ -24,6 +30,8 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
   const [collapsed, setCollapsed] = useState(true);
   const { isPersonalHistoryVisible, setIsPersonalHistoryVisible } = useTx();
   const [visible, setVisible] = useState(false);
+  const router = useRouter();
+  const isApps = router.pathname === Path.apps;
 
   return (
     <Layout className="min-h-screen overflow-scroll">
@@ -37,13 +45,17 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
                   alt="helix"
                   width={90}
                   height={24}
-                  onClick={() => window.open(HELIX_DEPLOYMENT, '_blank')}
+                  onClick={() => router.push('/')}
                   className="cursor-pointer"
                 />
               </Tooltip>
 
-              <Image alt="..." src="/image/beta.svg" width={35} height={18} />
-              <WarningFilled onClick={() => setVisible(true)} className="text-yellow-400" />
+              {isApps && (
+                <>
+                  <Image alt="..." src="/image/beta.svg" width={35} height={18} />
+                  <WarningFilled onClick={() => setVisible(true)} className="text-yellow-400" />
+                </>
+              )}
             </div>
 
             <Navigator navigators={navigators} theme={theme} />
@@ -64,13 +76,30 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
             <MenuOutlined className="text-xl" />
           </div>
 
-          <div className="hidden lg:flex items-center space-x-4">
-            <ActiveAccount />
+          <>
+            {isApps ? (
+              <div className="hidden lg:flex items-center space-x-4">
+                <ActiveAccount />
 
-            <Button icon={<HddOutlined />} onClick={() => setIsPersonalHistoryVisible(true)}>
-              {t('History')}
-            </Button>
-          </div>
+                <Button icon={<HddOutlined />} onClick={() => setIsPersonalHistoryVisible(true)}>
+                  {t('History')}
+                </Button>
+              </div>
+            ) : (
+              <div className="hidden lg:flex lg:justify-end items-center lg:flex-1 ml-2 md:ml-8 lg:ml-12">
+                <Button
+                  onClick={() => {
+                    router.push(Path.apps);
+                  }}
+                  type="primary"
+                  size="large"
+                  className="ml-8"
+                >
+                  {t('Launch App')}
+                </Button>
+              </div>
+            )}
+          </>
         </div>
       </Header>
 
