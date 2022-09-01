@@ -30,7 +30,7 @@ import { crabCrabParachain, pangolinPangolinParachain } from './bridges/substrat
 import { polygonAstar } from './bridges/polygon-astar';
 import { polygonOptimism } from './bridges/polygon-optimism';
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from './bridges/substrate-dvm';
-import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from './bridges/substrateDVM-substrateDVM';
+import { darwiniaDVMCrabDVM, darwiniaDVMDarwiniaDVM, pangoroDVMPangolinDVM } from './bridges/substrateDVM-substrateDVM';
 import { CHAIN_TYPE } from './env';
 
 const formalBridges = [
@@ -50,6 +50,7 @@ const formalBridges = [
   crabDVMPolygon,
   darwiniaDarwiniaDVM,
   darwiniaDVMCrabDVM,
+  darwiniaDVMDarwiniaDVM,
   ethereumDarwinia,
   ethereumHeco,
   ethereumPolygon,

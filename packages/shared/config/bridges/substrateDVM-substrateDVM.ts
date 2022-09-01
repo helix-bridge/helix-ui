@@ -1,6 +1,5 @@
-import { Bridge } from 'shared/model';
-import { SubstrateDVMSubstrateDVMBridgeConfig } from 'shared/model';
-import { pangoroDVMConfig, pangolinDVMConfig, darwiniaDVMConfig, crabDVMConfig } from '../network';
+import { Bridge, SubstrateDVMSubstrateDVMBridgeConfig } from 'shared/model';
+import { crabDVMConfig, darwiniaDVMConfig, pangolinDVMConfig, pangoroDVMConfig } from '../network';
 
 const darwiniaDVMcrabDVMConfig: SubstrateDVMSubstrateDVMBridgeConfig = {
   contracts: {
@@ -10,6 +9,18 @@ const darwiniaDVMcrabDVMConfig: SubstrateDVMSubstrateDVMBridgeConfig = {
 };
 
 export const darwiniaDVMCrabDVM = new Bridge(darwiniaDVMConfig, crabDVMConfig, darwiniaDVMcrabDVMConfig, {
+  name: 'substrateDVM-substrateDVM',
+  category: 'helix',
+});
+
+export const darwiniaDVMDarwiniaDVMConfig: SubstrateDVMSubstrateDVMBridgeConfig = {
+  contracts: {
+    backing: '',
+    issuing: '',
+  },
+};
+
+export const darwiniaDVMDarwiniaDVM = new Bridge(darwiniaDVMConfig, darwiniaDVMConfig, darwiniaDVMDarwiniaDVMConfig, {
   name: 'substrateDVM-substrateDVM',
   category: 'helix',
 });

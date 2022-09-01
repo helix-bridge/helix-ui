@@ -1,6 +1,6 @@
 /// <reference types="jest" />
 
-import { sortBy } from 'lodash';
+import { sortBy, uniq } from 'lodash';
 import {
   arbitrumConfig,
   astarConfig,
@@ -66,11 +66,11 @@ describe('network utils', () => {
     expect(group![1]).toEqual(['darwinia-dvm', 'ethereum']);
   });
 
-  it('darwinia-dvm contains 2 leafs', () => {
+  it('darwinia-dvm contains 3 leafs', () => {
     const group = data.find((item) => item[0] === 'darwinia-dvm');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['darwinia', 'crab-dvm']);
+    expect(uniq(group![1])).toEqual(['darwinia', 'crab-dvm', 'darwinia-dvm']);
   });
 
   it('ethereum contains 9 leafs', () => {

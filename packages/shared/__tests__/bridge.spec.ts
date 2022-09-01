@@ -35,11 +35,11 @@ describe('bridge utils', () => {
     const formalBridges = calcBridgesAmount(formals);
 
     expect(testBridges).toHaveLength(4);
-    expect(formalBridges).toHaveLength(34);
+    expect(formalBridges).toHaveLength(35);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(76);
+    expect(allDirections).toHaveLength(78);
   });
 
   it.each(allDirections.map(([departure, arrival]) => ({ departure, arrival })))(
