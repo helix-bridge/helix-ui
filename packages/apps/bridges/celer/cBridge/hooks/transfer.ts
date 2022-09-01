@@ -14,15 +14,19 @@ export function useTransfer(
 
   const isPegged = useMemo(() => {
     const peggedFns = [isCrabDVMEthereum, isEthereumAstar, isCrabDVMAstar];
+
     if (!isStablecoin) {
       return false;
     }
+
     if (peggedFns.some((fn) => fn(direction.from.host, direction.to.host))) {
       return true;
     }
+
     if (isBSCAstar(direction.from.host, direction.to.host) && direction.from.symbol === 'BUSD') {
       return true;
     }
+
     return false;
   }, [direction.from.symbol, direction.from.host, direction.to.host, isStablecoin]);
 
