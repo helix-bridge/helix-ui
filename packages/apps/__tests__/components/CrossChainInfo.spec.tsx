@@ -2,7 +2,7 @@
 
 import { Typography } from 'antd';
 import { create } from 'react-test-renderer';
-import { pangoroPangolinDVM } from 'shared/config/bridges/substrate-substrateDVM';
+import { darwiniaDarwiniaDVM } from 'shared/config/bridges/substrate-dvm';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 
 jest.mock('react-i18next', () => ({
@@ -27,7 +27,7 @@ describe('<CrossChainInfo />', () => {
   });
 
   it('render cross-chain item', () => {
-    const component = create(<CrossChainInfo bridge={pangoroPangolinDVM} fee={{ amount: '8', symbol: 'PRING' }} />);
+    const component = create(<CrossChainInfo bridge={darwiniaDarwiniaDVM} fee={{ amount: '8', symbol: 'RING' }} />);
 
     let tree = component.toJSON();
 
@@ -36,7 +36,7 @@ describe('<CrossChainInfo />', () => {
 
   it('render cross-chain with children', () => {
     const component = create(
-      <CrossChainInfo bridge={pangoroPangolinDVM} fee={{ amount: '8', symbol: 'RING' }}>
+      <CrossChainInfo bridge={darwiniaDarwiniaDVM} fee={{ amount: '8', symbol: 'RING' }}>
         <span>can receive children node</span>
       </CrossChainInfo>
     );
@@ -49,7 +49,7 @@ describe('<CrossChainInfo />', () => {
   it('render cross-chain and extra nodes', () => {
     const component = create(
       <CrossChainInfo
-        bridge={pangoroPangolinDVM}
+        bridge={darwiniaDarwiniaDVM}
         fee={{ amount: '8', symbol: 'RING' }}
         extra={[
           {
@@ -80,7 +80,7 @@ describe('<CrossChainInfo />', () => {
   });
 
   it('render cross-chain with dynamic fee', () => {
-    const component = create(<CrossChainInfo bridge={pangoroPangolinDVM} isDynamicFee />);
+    const component = create(<CrossChainInfo bridge={darwiniaDarwiniaDVM} isDynamicFee />);
 
     let tree = component.toJSON();
 

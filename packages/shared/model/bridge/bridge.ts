@@ -57,7 +57,7 @@ export class Bridge<C = BridgeConfig> {
 
   readonly isTest: boolean;
 
-  readonly disableIssuing: boolean;
+  readonly disableIssue: boolean;
 
   readonly disableRedeem: boolean;
 
@@ -74,7 +74,7 @@ export class Bridge<C = BridgeConfig> {
       category: BridgeCategory;
       status?: BridgeStatus;
       activeArrivalConnection?: boolean;
-      disableIssuing?: boolean;
+      disableIssue?: boolean;
       disableRedeem?: boolean;
     }
   ) {
@@ -91,7 +91,7 @@ export class Bridge<C = BridgeConfig> {
     this.activeArrivalConnection = options.activeArrivalConnection ?? false;
     this.category = options.category;
     this.isTest = departure.isTest;
-    this.disableIssuing = options.disableIssuing ?? false;
+    this.disableIssue = options.disableIssue ?? false;
     this.disableRedeem = options.disableRedeem ?? false;
   }
 

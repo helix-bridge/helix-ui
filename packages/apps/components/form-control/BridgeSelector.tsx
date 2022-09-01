@@ -4,6 +4,7 @@ import { matches } from 'lodash';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo } from 'react';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
+import { isProdDeployment } from 'shared/config/env';
 import { Bridge, CrossChainDirection, CrossToken, CustomFormControlProps } from 'shared/model';
 import { getBridges } from 'shared/utils/bridge';
 import { BridgeArrow } from '../bridge/BridgeArrow';
@@ -28,10 +29,10 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
   const origin = { from: { name: from.name, type: from.type }, to: { name: to.name, type: to.type } };
   const isDefault = matches(origin);
 
-  // const isCBridgeStableCoin = useCallback(
-  //   (bridge: Bridge) => bridge.category === 'cBridge' && ['USDT', 'USDC', 'BUSD'].includes(direction.from.symbol),
-  //   [direction.from.symbol]
-  // );
+  const isCBridgeStableCoin = useCallback(
+    (bridge: Bridge) => bridge.category === 'cBridge' && ['USDT', 'USDC', 'BUSD'].includes(direction.from.symbol),
+    [direction.from.symbol]
+  );
 
   const isDisabled = useCallback<(bridge: Bridge) => boolean>(
     // eslint-disable-next-line complexity
@@ -39,11 +40,12 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
       return (
         !!direction.from &&
         !!direction.to &&
-        ((bridge.disableIssuing && bridge.isIssue(direction.from.meta, direction.to.meta)) ||
-          (bridge.disableRedeem && bridge.isRedeem(direction.from.meta, direction.to.meta)))
+        ((bridge.disableIssue && bridge.isIssue(direction.from.meta, direction.to.meta)) ||
+          (bridge.disableRedeem && bridge.isRedeem(direction.from.meta, direction.to.meta)) ||
+          (isProdDeployment && isCBridgeStableCoin(bridge)))
       );
     },
-    [direction.from, direction.to]
+    [direction.from, direction.to, isCBridgeStableCoin]
   );
 
   useEffect(() => {
