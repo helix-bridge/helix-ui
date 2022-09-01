@@ -1,12 +1,6 @@
 import { useMemo } from 'react';
 import { CrossChainDirection, CrossToken, EthereumChainConfig } from 'shared/model';
-import {
-  isBSCAstar,
-  isCrabDVMAstar,
-  isCrabDVMEthereum,
-  isEthereum2CrabDVM,
-  isEthereumAstar,
-} from 'shared/utils/bridge';
+import { isBSCAstar, isCrabDVMAstar, isCrabDVMEthereum, isEthereumAstar } from 'shared/utils/bridge';
 import { burn, deposit, transfer } from '../utils';
 
 export function useTransfer(
@@ -19,22 +13,30 @@ export function useTransfer(
   }, [direction.from.symbol]);
 
   const isPegged = useMemo(() => {
-    const peggedFns = [isCrabDVMEthereum, isEthereumAstar, isCrabDVMAstar, isBSCAstar];
-
-    return isStablecoin && peggedFns.some((fn) => fn(direction.from.host, direction.to.host));
-  }, [direction.from.host, direction.to.host, isStablecoin]);
+    const peggedFns = [isCrabDVMEthereum, isEthereumAstar, isCrabDVMAstar];
+    if (!isStablecoin) {
+      return false;
+    }
+    if (peggedFns.some((fn) => fn(direction.from.host, direction.to.host))) {
+      return true;
+    }
+    if (isBSCAstar(direction.from.host, direction.to.host) && direction.from.symbol === 'BUSD') {
+      return true;
+    }
+    return false;
+  }, [direction.from.symbol, direction.from.host, direction.to.host, isStablecoin]);
 
   const sendTx = useMemo(() => {
-    if (isStablecoin) {
-      if (direction.from.host === 'crab-dvm' || direction.from.host === 'astar') {
+    if (isStablecoin && isPegged) {
+      if (direction.from.host === 'astar' || direction.from.host === 'crab-dvm') {
         return burn;
-      } else if (isEthereum2CrabDVM(direction.from.host, direction.to.host)) {
+      } else {
         return deposit;
       }
     }
 
     return transfer;
-  }, [direction.from.host, direction.to.host, isStablecoin]);
+  }, [direction.from.host, isStablecoin, isPegged]);
 
   return { isPegged, sendTx };
 }
