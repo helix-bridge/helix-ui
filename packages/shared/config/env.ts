@@ -29,4 +29,6 @@ export const SUBSTRATE_PARACHAIN_ISSUING = (process.env.SUBSTRATE_PARACHAIN_ISSU
 export const HELIX_DEPLOYMENT = (process.env.HELIX_DEPLOYMENT || process.env.NEXT_PUBLIC_HELIX_DEPLOYMENT) as string;
 export const APPS_DEPLOYMENT = (process.env.APPS_DEPLOYMENT || process.env.NEXT_PUBLIC_APPS_DEPLOYMENT) as string;
 
-console.log(`⛓️ Chains environment: ${CHAIN_TYPE}; 🖥️ Runtime environment: ${ENV}`);
+console.log(
+  `⛓️ Chains environment: ${CHAIN_TYPE}; 🖥️ Runtime environment: ${ENV}; 🙈Deployment environment: ${DEPLOYMENT_ENV}`
+);
