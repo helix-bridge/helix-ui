@@ -1,7 +1,7 @@
 import { ContractConfig, BridgeConfig } from 'shared/model';
 
 interface PolygonAstarContractConfig extends ContractConfig {
-  stableRedeem: string;
+  stablecoinRedeem: string;
 }
 
 export type PolygonAstarBridgeConfig = Required<BridgeConfig<PolygonAstarContractConfig>>;
