@@ -40,7 +40,7 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
       return (
         !!direction.from &&
         !!direction.to &&
-        ((bridge.disableIssuing && bridge.isIssue(direction.from.meta, direction.to.meta)) ||
+        ((bridge.disableIssue && bridge.isIssue(direction.from.meta, direction.to.meta)) ||
           (bridge.disableRedeem && bridge.isRedeem(direction.from.meta, direction.to.meta)) ||
           (isProdDeployment && isCBridgeStableCoin(bridge)))
       );
