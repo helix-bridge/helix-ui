@@ -1,6 +1,5 @@
 import { crabParachainMoonriver } from 'shared/config/bridges/crabParachain-moonriver';
 import { FunctionComponent } from 'react';
-import { darwiniaCrabDVM, pangoroPangolinDVM } from 'shared/config/bridge';
 import { arbitrumAstar } from 'shared/config/bridges/arbitrum-astar';
 import { arbitrumAvalanche } from 'shared/config/bridges/arbitrum-avalanche';
 import { arbitrumOptimism } from 'shared/config/bridges/arbitrum-optimism';
@@ -66,7 +65,6 @@ import { Parachain2Substrate, Substrate2Parachain } from './helix/substrate-subs
 import { Astar2Polygon, Polygon2Astar } from './celer/polygon-astar';
 import { Optimism2Polygon, Polygon2Optimism } from './celer/polygon-optimism';
 import { DVM2Substrate, Substrate2DVM } from './helix/substrate-dvm';
-import { Substrate2SubstrateDVM, SubstrateDVM2Substrate } from './helix/substrate-substrateDVM';
 import { SubstrateDVM2SubstrateDVM } from './helix/substrateDVM-substrateDVM';
 import { Unavailable2Unknown, Unknown2Unavailable } from './unknown-unavailable';
 
@@ -81,16 +79,6 @@ ethereumDarwinia.setIssueComponents(Ethereum2Darwinia as FunctionComponent);
 ethereumDarwinia.setRedeemComponents(Darwinia2Ethereum as FunctionComponent);
 ropstenPangolin.setIssueComponents(Ethereum2Darwinia as FunctionComponent);
 ropstenPangolin.setRedeemComponents(Darwinia2Ethereum as FunctionComponent);
-
-/**
- * substrate <-> substrate dvm
- * darwinia <-> crab dvm
- * pangoro <-> pangolin dvm
- */
-darwiniaCrabDVM.setIssueComponents(Substrate2SubstrateDVM as FunctionComponent);
-darwiniaCrabDVM.setRedeemComponents(SubstrateDVM2Substrate as FunctionComponent);
-pangoroPangolinDVM.setIssueComponents(Substrate2SubstrateDVM as FunctionComponent);
-pangoroPangolinDVM.setRedeemComponents(SubstrateDVM2Substrate as FunctionComponent);
 
 /**
  * substrate <-> dvm

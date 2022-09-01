@@ -34,12 +34,12 @@ describe('bridge utils', () => {
     const formals = crossChainGraph.filter((item) => !getChainConfig(item[0]).isTest);
     const formalBridges = calcBridgesAmount(formals);
 
-    expect(testBridges).toHaveLength(5);
-    expect(formalBridges).toHaveLength(35);
+    expect(testBridges).toHaveLength(4);
+    expect(formalBridges).toHaveLength(34);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(80);
+    expect(allDirections).toHaveLength(76);
   });
 
   it.each(allDirections.map(([departure, arrival]) => ({ departure, arrival })))(
