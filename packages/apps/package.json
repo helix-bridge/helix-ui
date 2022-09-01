@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
-    "@darwinia/types": "^2.8.6",
+    "@darwinia/types": "2.7.5",
     "@fontsource/ibm-plex-sans": "^4.5.7",
     "@metamask/jazzicon": "^2.0.0",
     "@polkadot/api": "^9.2.2",
