@@ -18,6 +18,16 @@ import {
 import { isKton, isRing } from 'shared/utils/helper';
 import { getDarwiniaBalance, getDVMBalance, getErc20Balance, getParachainBalance } from 'shared/utils/network/balance';
 
+function isDeposit({ from }: CrossChainDirection): boolean {
+  const overview = from.cross.find((item) => item.partner.name === from.host);
+
+  if (!overview) {
+    throw new Error('Configuration item is wrong');
+  }
+
+  return overview.partner.role === 'issuing';
+}
+
 // eslint-disable-next-line complexity
 export async function getBalance(direction: CrossChainDirection, account: string): Promise<BN[] | null> {
   const { from, to } = direction;
@@ -58,6 +68,10 @@ export async function getBalance(direction: CrossChainDirection, account: string
       fn(fromChain, toChain)
     )
   ) {
+    if (direction.from.host === direction.to.host && isDeposit(direction)) {
+      return getDVMBalance(account);
+    }
+
     return getErc20Balance(from.address, account).then((res) => [res]);
   }
 

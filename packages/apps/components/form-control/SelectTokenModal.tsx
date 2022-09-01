@@ -21,21 +21,10 @@ interface SelectTokenModalProps {
 export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: SelectTokenModalProps) => {
   const { t } = useTranslation();
 
-  const inPartners = useCallback(
-    (target: ChainConfig) => {
-      if (!fromToken) {
-        return true;
-      }
-
-      return !!fromToken.cross.find((cross) => cross.partner.name === target.name);
-    },
-    [fromToken]
-  );
-
   const allTokens = useMemo(
     () =>
       lodashChain(chainConfigs)
-        .filter((item) => !fromToken || (!(fromToken.meta.name === item.name) && inPartners(item)))
+        .filter((item) => !fromToken || !!fromToken.cross.find((cross) => cross.partner.name === item.name))
         .map((item) =>
           item.tokens
             .filter((token) => (!fromToken || isTransferableTokenPair(token, fromToken)) && !!token.cross.length)
@@ -43,7 +32,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
         )
         .flatten()
         .value(),
-    [fromToken, inPartners]
+    [fromToken]
   );
 
   const allChains = useMemo(

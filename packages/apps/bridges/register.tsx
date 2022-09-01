@@ -31,7 +31,11 @@ import { crabCrabParachain, pangolinPangolinParachain } from 'shared/config/brid
 import { polygonAstar } from 'shared/config/bridges/polygon-astar';
 import { polygonOptimism } from 'shared/config/bridges/polygon-optimism';
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
-import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from 'shared/config/bridges/substrateDVM-substrateDVM';
+import {
+  darwiniaDVMCrabDVM,
+  darwiniaDVMDarwiniaDVM,
+  pangoroDVMPangolinDVM,
+} from 'shared/config/bridges/substrateDVM-substrateDVM';
 import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
 import { CrabParachain2Moonriver, Moonriver2CrabParachain } from './xcm/crabParachain-moonriver';
 import { Arbitrum2Astar, Astar2Arbitrum } from './celer/arbitrum-astar';
@@ -65,7 +69,7 @@ import { Parachain2Substrate, Substrate2Parachain } from './helix/substrate-subs
 import { Astar2Polygon, Polygon2Astar } from './celer/polygon-astar';
 import { Optimism2Polygon, Polygon2Optimism } from './celer/polygon-optimism';
 import { DVM2Substrate, Substrate2DVM } from './helix/substrate-dvm';
-import { SubstrateDVM2SubstrateDVM } from './helix/substrateDVM-substrateDVM';
+import { SubstrateDVM2SubstrateDVM, SubstrateDVMInner } from './helix/substrateDVM-substrateDVM';
 import { Unavailable2Unknown, Unknown2Unavailable } from './unknown-unavailable';
 
 unknownUnavailable.setIssueComponents(Unknown2Unavailable as FunctionComponent);
@@ -129,6 +133,9 @@ hecoPolygon.setRedeemComponents(Polygon2Heco as FunctionComponent);
  */
 darwiniaDVMCrabDVM.setIssueComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
 darwiniaDVMCrabDVM.setRedeemComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
+
+darwiniaDVMDarwiniaDVM.setIssueComponents(SubstrateDVMInner as FunctionComponent);
+darwiniaDVMDarwiniaDVM.setRedeemComponents(SubstrateDVMInner as FunctionComponent);
 
 pangoroDVMPangolinDVM.setIssueComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
 pangoroDVMPangolinDVM.setRedeemComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);

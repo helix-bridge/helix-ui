@@ -15,8 +15,8 @@ export const darwiniaDVMCrabDVM = new Bridge(darwiniaDVMConfig, crabDVMConfig, d
 
 export const darwiniaDVMDarwiniaDVMConfig: SubstrateDVMSubstrateDVMBridgeConfig = {
   contracts: {
-    backing: '',
-    issuing: '',
+    backing: '0xE7578598Aac020abFB918f33A20faD5B71d670b4',
+    issuing: '0xE7578598Aac020abFB918f33A20faD5B71d670b4',
   },
 };
 
