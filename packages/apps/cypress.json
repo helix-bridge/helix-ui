@@ -1,5 +1,5 @@
 {
-  "baseUrl": "http://localhost:4003",
+  "baseUrl": "http://localhost:4003/apps",
   "chromeWebSecurity": true,
   "component": {
     "componentFolder": "src",
