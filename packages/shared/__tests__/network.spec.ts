@@ -33,7 +33,7 @@ describe('network utils', () => {
   const sort = (ary: string[]) => sortBy(ary, (cur) => cur.charCodeAt(0));
 
   it('should contains chains count: ', () => {
-    expect(chainConfigs).toHaveLength(20);
+    expect(chainConfigs).toHaveLength(21);
   });
 
   it('crab contains 2 leafs', () => {
@@ -43,9 +43,9 @@ describe('network utils', () => {
     expect(group![1]).toEqual(['crab-dvm', 'crab-parachain']);
   });
 
-  it('crab-dvm contains 6 leafs', () => {
+  it('crab-dvm contains 7 leafs', () => {
     const group = data.find((item) => item[0] === 'crab-dvm');
-    const expected = sort(['crab', 'ethereum', 'heco', 'polygon', 'darwinia-dvm', 'astar']);
+    const expected = sort(['crab', 'ethereum', 'heco', 'polygon', 'darwinia', 'darwinia-dvm', 'astar']);
 
     expect(group).not.toEqual(undefined);
     expect(sort(group![1])).toEqual(expected);
@@ -59,11 +59,11 @@ describe('network utils', () => {
     expect(sort(group![1])).toEqual(expected);
   });
 
-  it('darwinia contains 2 leafs', () => {
+  it('darwinia contains 3 leafs', () => {
     const group = data.find((item) => item[0] === 'darwinia');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['darwinia-dvm', 'ethereum']);
+    expect(group![1]).toEqual(['darwinia-dvm', 'crab-dvm', 'ethereum']);
   });
 
   it('darwinia-dvm contains 3 leafs', () => {
@@ -162,11 +162,18 @@ describe('network utils', () => {
     expect(group![1]).toEqual(['pangolin-dvm', 'pangolin-parachain', 'ropsten']);
   });
 
-  it('pangolin-dvm contains 2 leafs', () => {
+  it('pangolin-dvm contains 3 leafs', () => {
     const group = data.find((item) => item[0] === 'pangolin-dvm');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['pangolin', 'pangoro-dvm']);
+    expect(group![1]).toEqual(['pangolin', 'pangoro-dvm', 'pangoro']);
+  });
+
+  it('pangoro contains 1 leaf', () => {
+    const group = data.find((item) => item[0] === 'pangoro');
+
+    expect(group).not.toEqual(undefined);
+    expect(group![1]).toEqual(['pangolin-dvm']);
   });
 
   it('ropsten contains 1 leaf', () => {

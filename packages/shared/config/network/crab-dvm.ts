@@ -62,6 +62,11 @@ export const crabDVMConfig: DVMChainConfig = {
       decimals: 9,
       cross: [
         {
+          category: 'helix',
+          bridge: 'substrate-substrateDVM',
+          partner: { name: 'darwinia', role: 'backing', symbol: 'RING' },
+        },
+        {
           category: 'cBridge',
           bridge: 'crabDVM-heco',
           partner: { name: 'heco', role: 'issuing', symbol: 'RING' },

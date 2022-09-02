@@ -58,6 +58,22 @@ export const pangolinDVMConfig: DVMChainConfig = {
       address: '0x0000000000000000000000000000000000000402',
     },
     {
+      name: 'xORING',
+      decimals: 9,
+      cross: [
+        {
+          category: 'helix',
+          bridge: 'substrate-substrateDVM',
+          partner: { name: 'pangoro', role: 'backing', symbol: 'ORING' },
+        },
+      ],
+      type: 'mapping',
+      host: 'pangolin-dvm',
+      logo: 'token-ring.svg',
+      symbol: 'xORING',
+      address: '0xb142658BD18c560D8ea74a31C07297CeCfeCF949',
+    },
+    {
       name: 'xWORING',
       decimals: 18,
       cross: [
