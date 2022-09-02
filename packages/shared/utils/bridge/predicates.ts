@@ -79,7 +79,8 @@ export const isBSCArbitrum = or(isBSC2Arbitrum, isArbitrum2BSC);
 
 export const isSubstrateDVM2SubstrateDVMIssuing = or(
   predicate('pangoro-dvm', 'pangolin-dvm'),
-  predicate('darwinia-dvm', 'crab-dvm')
+  predicate('darwinia-dvm', 'crab-dvm'),
+  predicate('darwinia-dvm', 'darwinia-dvm')
 );
 export const isSubstrateDVM2SubstrateDVMBacking = revert(isSubstrateDVM2SubstrateDVMIssuing);
 export const isSubstrateDVMSubstrateDVM = or(isSubstrateDVM2SubstrateDVMIssuing, isSubstrateDVM2SubstrateDVMBacking);

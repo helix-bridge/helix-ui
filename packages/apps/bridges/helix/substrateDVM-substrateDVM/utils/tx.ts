@@ -2,6 +2,7 @@ import { BN_ZERO } from '@polkadot/util';
 import BN from 'bn.js';
 import { last } from 'lodash';
 import { EMPTY, from, Observable, switchMap } from 'rxjs';
+import { abi as abiCollection } from 'shared/config/abi';
 import { CrossChainDirection, CrossToken, DVMChainConfig, HelixHistoryRecord, Tx } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { isMetamaskChainConsistent } from 'shared/utils/connection';
@@ -95,7 +96,37 @@ export function refund(record: HelixHistoryRecord): Observable<Tx> {
   );
 }
 
-export const genValidations = ({ balance, amount, dailyLimit, allowance, fee }: TxValidation): [boolean, string][] => [
+export function deposit(value: IssuingPayload): Observable<Tx> {
+  const {
+    sender,
+    direction: { from: departure, to },
+  } = value;
+  const bridge = getBridge([departure.meta, to.meta]);
+  const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
+
+  return genEthereumContractTxObs(
+    bridge.config.contracts!.issuing,
+    (contract) => contract.methods.deposit().send({ from: sender, value: amount.toString() }),
+    abiCollection.bankErc20ABI as AbiItem[]
+  );
+}
+
+export function withdraw(value: RedeemPayload): Observable<Tx> {
+  const {
+    sender,
+    direction: { from: departure, to },
+  } = value;
+  const bridge = getBridge([departure.meta, to.meta]);
+  const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
+
+  return genEthereumContractTxObs(
+    bridge.config.contracts!.issuing,
+    (contract) => contract.methods.withdraw(amount.toString()).send({ from: sender }),
+    abiCollection.bankErc20ABI as AbiItem[]
+  );
+}
+
+const genValidations = ({ balance, amount, dailyLimit, allowance, fee }: TxValidation): [boolean, string][] => [
   [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
   [!!dailyLimit && dailyLimit.lt(amount), TxValidationMessages.dailyLimitLessThanAmount],
   [!!allowance && allowance?.lt(amount), TxValidationMessages.allowanceLessThanAmount],

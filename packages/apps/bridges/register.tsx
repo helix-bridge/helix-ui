@@ -1,4 +1,3 @@
-import { crabParachainMoonriver } from 'shared/config/bridges/crabParachain-moonriver';
 import { FunctionComponent } from 'react';
 import { arbitrumAstar } from 'shared/config/bridges/arbitrum-astar';
 import { arbitrumAvalanche } from 'shared/config/bridges/arbitrum-avalanche';
@@ -18,6 +17,7 @@ import { crabDVMEthereum } from 'shared/config/bridges/crabDVM-ethereum';
 import { crabDVMHeco } from 'shared/config/bridges/crabDVM-heco';
 import { crabDVMPolygon } from 'shared/config/bridges/crabDVM-polygon';
 import { crabParachainKarura } from 'shared/config/bridges/crabParachain-karura';
+import { crabParachainMoonriver } from 'shared/config/bridges/crabParachain-moonriver';
 import { ethereumArbitrum } from 'shared/config/bridges/ethereum-arbitrum';
 import { ethereumAstar } from 'shared/config/bridges/ethereum-astar';
 import { ethereumAvalanche } from 'shared/config/bridges/ethereum-avalanche';
@@ -27,13 +27,17 @@ import { ethereumHeco } from 'shared/config/bridges/ethereum-heco';
 import { ethereumOptimism } from 'shared/config/bridges/ethereum-optimism';
 import { ethereumPolygon } from 'shared/config/bridges/ethereum-polygon';
 import { hecoPolygon } from 'shared/config/bridges/heco-polygon';
-import { crabCrabParachain, pangolinPangolinParachain } from 'shared/config/bridges/substrate-substrateParachain';
 import { polygonAstar } from 'shared/config/bridges/polygon-astar';
 import { polygonOptimism } from 'shared/config/bridges/polygon-optimism';
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from 'shared/config/bridges/substrate-dvm';
-import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from 'shared/config/bridges/substrateDVM-substrateDVM';
+import { darwiniaCrabDVM, pangoroPangolinDVM } from 'shared/config/bridges/substrate-substrateDVM';
+import { crabCrabParachain, pangolinPangolinParachain } from 'shared/config/bridges/substrate-substrateParachain';
+import {
+  darwiniaDVMCrabDVM,
+  darwiniaDVMDarwiniaDVM,
+  pangoroDVMPangolinDVM,
+} from 'shared/config/bridges/substrateDVM-substrateDVM';
 import { unknownUnavailable } from 'shared/config/bridges/unknown-unavailable';
-import { CrabParachain2Moonriver, Moonriver2CrabParachain } from './xcm/crabParachain-moonriver';
 import { Arbitrum2Astar, Astar2Arbitrum } from './celer/arbitrum-astar';
 import { Arbitrum2Avalanche, Avalanche2Arbitrum } from './celer/arbitrum-avalanche';
 import { Arbitrum2Optimism, Optimism2Arbitrum } from './celer/arbitrum-optimism';
@@ -51,22 +55,24 @@ import { Astar2CrabDVM, CrabDVM2Astar } from './celer/crabDVM-astar';
 import { CrabDVM2Ethereum, Ethereum2CrabDVM } from './celer/crabDVM-ethereum';
 import { CrabDVM2Heco, Heco2CrabDVM } from './celer/crabDVM-heco';
 import { CrabDVM2Polygon, Polygon2CrabDVM } from './celer/crabDVM-polygon';
-import { CrabParachain2Karura, Karura2CrabParachain } from './xcm/crabParachain-karura';
 import { Arbitrum2Ethereum, Ethereum2Arbitrum } from './celer/ethereum-arbitrum';
 import { Astar2Ethereum, Ethereum2Astar } from './celer/ethereum-astar';
 import { Avalanche2Ethereum, Ethereum2Avalanche } from './celer/ethereum-avalanche';
 import { BSC2Ethereum, Ethereum2BSC } from './celer/ethereum-bsc';
-import { Darwinia2Ethereum, Ethereum2Darwinia } from './helix/ethereum-darwinia';
 import { Ethereum2Heco, Heco2Ethereum } from './celer/ethereum-heco';
 import { Ethereum2Optimism, Optimism2Ethereum } from './celer/ethereum-optimism';
 import { Ethereum2Polygon, Polygon2Ethereum } from './celer/ethereum-polygon';
 import { Heco2Polygon, Polygon2Heco } from './celer/heco-polygon';
-import { Parachain2Substrate, Substrate2Parachain } from './helix/substrate-substrateParachain';
 import { Astar2Polygon, Polygon2Astar } from './celer/polygon-astar';
 import { Optimism2Polygon, Polygon2Optimism } from './celer/polygon-optimism';
+import { Darwinia2Ethereum, Ethereum2Darwinia } from './helix/ethereum-darwinia';
 import { DVM2Substrate, Substrate2DVM } from './helix/substrate-dvm';
-import { SubstrateDVM2SubstrateDVM } from './helix/substrateDVM-substrateDVM';
+import { Substrate2SubstrateDVM, SubstrateDVM2Substrate } from './helix/substrate-substrateDVM';
+import { Parachain2Substrate, Substrate2Parachain } from './helix/substrate-substrateParachain';
+import { SubstrateDVM2SubstrateDVM, SubstrateDVMInner } from './helix/substrateDVM-substrateDVM';
 import { Unavailable2Unknown, Unknown2Unavailable } from './unknown-unavailable';
+import { CrabParachain2Karura, Karura2CrabParachain } from './xcm/crabParachain-karura';
+import { CrabParachain2Moonriver, Moonriver2CrabParachain } from './xcm/crabParachain-moonriver';
 
 unknownUnavailable.setIssueComponents(Unknown2Unavailable as FunctionComponent);
 unknownUnavailable.setRedeemComponents(Unavailable2Unknown as FunctionComponent);
@@ -79,6 +85,16 @@ ethereumDarwinia.setIssueComponents(Ethereum2Darwinia as FunctionComponent);
 ethereumDarwinia.setRedeemComponents(Darwinia2Ethereum as FunctionComponent);
 ropstenPangolin.setIssueComponents(Ethereum2Darwinia as FunctionComponent);
 ropstenPangolin.setRedeemComponents(Darwinia2Ethereum as FunctionComponent);
+
+/**
+ * substrate <-> substrate dvm
+ * darwinia <-> crab dvm
+ * pangoro <-> pangolin dvm
+ */
+darwiniaCrabDVM.setIssueComponents(Substrate2SubstrateDVM as FunctionComponent);
+darwiniaCrabDVM.setRedeemComponents(SubstrateDVM2Substrate as FunctionComponent);
+pangoroPangolinDVM.setIssueComponents(Substrate2SubstrateDVM as FunctionComponent);
+pangoroPangolinDVM.setRedeemComponents(SubstrateDVM2Substrate as FunctionComponent);
 
 /**
  * substrate <-> dvm
@@ -129,6 +145,9 @@ hecoPolygon.setRedeemComponents(Polygon2Heco as FunctionComponent);
  */
 darwiniaDVMCrabDVM.setIssueComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
 darwiniaDVMCrabDVM.setRedeemComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
+
+darwiniaDVMDarwiniaDVM.setIssueComponents(SubstrateDVMInner as FunctionComponent);
+darwiniaDVMDarwiniaDVM.setRedeemComponents(SubstrateDVMInner as FunctionComponent);
 
 pangoroDVMPangolinDVM.setIssueComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);
 pangoroDVMPangolinDVM.setRedeemComponents(SubstrateDVM2SubstrateDVM as FunctionComponent);

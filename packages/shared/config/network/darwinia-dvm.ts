@@ -34,6 +34,11 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           bridge: 'substrate-DVM',
           partner: { name: 'darwinia', role: 'backing', symbol: 'RING' },
         },
+        {
+          category: 'helix',
+          bridge: 'substrateDVM-substrateDVM',
+          partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'wRING' },
+        },
       ],
       type: 'native',
       host: 'darwinia-dvm',
@@ -49,6 +54,11 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'substrateDVM-substrateDVM',
           partner: { name: 'crab-dvm', role: 'issuing', symbol: 'xWRING' },
+        },
+        {
+          category: 'helix',
+          bridge: 'substrateDVM-substrateDVM',
+          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
         },
       ],
       type: 'native',

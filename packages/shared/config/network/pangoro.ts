@@ -19,7 +19,13 @@ export const pangoroConfig: PolkadotChainConfig = {
     {
       name: 'ORING',
       decimals: 9,
-      cross: [],
+      cross: [
+        {
+          category: 'helix',
+          bridge: 'substrate-substrateDVM',
+          partner: { name: 'pangolin-dvm', role: 'issuing', symbol: 'xORING' },
+        },
+      ],
       type: 'native',
       host: 'pangoro',
       logo: 'token-ring.svg',
