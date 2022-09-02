@@ -57,7 +57,7 @@ export function CBridge({
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE * UI_SLIPPAGE_SCALE);
   const [minimalMaxSlippage, setMinimalMaxSlippage] = useState<number | null>(null);
   const { setChainMatched } = useWallet();
-  const { isPegged, sendTx } = useTransfer(direction);
+  const { isPegged, sendTx, poolAddress } = useTransfer(direction);
 
   const feeWithSymbol = useMemo(
     () =>
@@ -109,10 +109,6 @@ export function CBridge({
     estimateResult,
     t,
   ]);
-
-  const poolAddress = bridge.isIssue(direction.from.meta, direction.to.meta)
-    ? bridge.config.contracts.backing
-    : bridge.config.contracts.issuing;
 
   useEffect(() => {
     const sub$$ = from(isMetamaskChainConsistent(direction.from.meta))
