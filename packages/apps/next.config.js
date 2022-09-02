@@ -7,6 +7,9 @@ const darkVars = require('../shared/theme/antd/dark.json');
 const projectVars = require('../shared/theme/antd/vars.json');
 const crabVariables = require('../shared/theme/network/dark/crab.json');
 const proVariables = require('../shared/theme/network/dark/pro.json');
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
 
 const envVariables = process.env.CHAIN_TYPE === 'test' ? crabVariables : proVariables;
 
@@ -17,7 +20,7 @@ const circularDependencyPlugin = new CircularDependencyPlugin({
   cwd: process.cwd(),
 });
 
-module.exports = withPlugins([withAntdLess, circularDependencyPlugin], {
+module.exports = withPlugins([withAntdLess, circularDependencyPlugin, withBundleAnalyzer], {
   experimental: {
     externalDir: true,
   },

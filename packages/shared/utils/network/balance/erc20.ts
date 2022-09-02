@@ -1,5 +1,5 @@
 import BN from 'bn.js';
-import Web3 from 'web3';
+import { toBN } from 'web3-utils';
 import { abi } from '../../../config/abi';
 import { entrance } from '../../connection';
 
@@ -9,7 +9,7 @@ export async function getBalance(tokenAddress: string, account: string): Promise
     const contract = new web3.eth.Contract(abi.tokenABI, tokenAddress);
     const balance = await contract.methods.balanceOf(account).call();
 
-    return Web3.utils.toBN(balance);
+    return toBN(balance);
   } catch (err) {
     console.info(
       `%c [ get token(${tokenAddress}) balance error. account: ${account} ]-52`,
@@ -18,5 +18,5 @@ export async function getBalance(tokenAddress: string, account: string): Promise
     );
   }
 
-  return Web3.utils.toBN(0);
+  return toBN(0);
 }

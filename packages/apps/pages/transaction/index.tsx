@@ -20,7 +20,7 @@ import { HelixHistoryRecord, Network } from 'shared/model';
 import { convertToDvm, gqlName, isSS58Address, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { getChainConfig, getDisplayName } from 'shared/utils/network';
 import { getDetailPaths, getFeeAmountFromHelixRecord, getSentAmountFromHelixRecord } from 'shared/utils/record';
-import web3 from 'web3';
+import { isAddress } from 'web3-utils';
 import { HISTORY_RECORDS, Path } from '../../config';
 
 function RecordAccount({ chain, account }: { chain: Network; account: string }) {
@@ -160,7 +160,7 @@ function Page() {
   ];
 
   useEffect(() => {
-    const acc = account && web3.utils.isAddress(account) ? account.toLowerCase() : account;
+    const acc = account && isAddress(account) ? account.toLowerCase() : account;
     const args = {
       page: page - 1,
       row: pageSize,
@@ -190,7 +190,7 @@ function Page() {
           onChange={(event) => {
             const value = event.target.value;
 
-            if (value && !web3.utils.isAddress(value) && !isSS58Address(value)) {
+            if (value && !isAddress(value) && !isSS58Address(value)) {
               setIsValidSender(false);
               return;
             }
