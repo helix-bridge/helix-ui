@@ -32,6 +32,7 @@ export interface CrossOverview {
   category: BridgeCategory;
   bridge: BridgeName;
   partner: Partner;
+  deprecated?: boolean;
 }
 
 export interface TokenWithBridgesInfo extends Token {

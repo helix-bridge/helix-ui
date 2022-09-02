@@ -1,4 +1,3 @@
-import { BN_ZERO } from '@polkadot/util';
 import BN from 'bn.js';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,9 +11,9 @@ import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
-import { useAccount, useApi } from '../../../providers';
+import { useAccount } from '../../../providers';
 import { IssuingPayload, SubstrateDVMSubstrateDVMBridgeConfig } from './model';
-import { issue, redeem, validate } from './utils/tx';
+import { deposit, validate, withdraw } from './utils/tx';
 
 export function SubstrateDVMInner({
   form,
@@ -30,11 +29,9 @@ export function SubstrateDVMInner({
   CrossToken<DVMChainConfig>
 >) {
   const { t } = useTranslation();
-  const { departureConnection } = useApi();
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const { account } = useAccount();
   const [ring] = (balances ?? []) as BN[];
-  const fee = BN_ZERO;
 
   const feeWithSymbol = useMemo(
     () => ({
@@ -47,7 +44,7 @@ export function SubstrateDVMInner({
   const txFn = useMemo(() => {
     const overview = direction.from.cross.find((item) => item.partner.name === direction.from.host);
 
-    return overview?.partner.role === 'issuing' ? issue : redeem;
+    return overview?.partner.role === 'issuing' ? deposit : withdraw;
   }, [direction.from.cross, direction.from.host]);
 
   useEffect(() => {
@@ -61,7 +58,7 @@ export function SubstrateDVMInner({
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
-      const validateObs = validate([fee, ring], {
+      const validateObs = validate([ring], {
         balance: ring,
         amount: new BN(toWei(data.direction.from)),
       });
@@ -70,13 +67,13 @@ export function SubstrateDVMInner({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        txFn(data, fee!),
+        txFn(data),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, ring, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t, txFn]);
+  }, [afterCrossChain, feeWithSymbol, ring, setTxObservableFactory, txFn]);
 
   useEffect(() => {
     if (onFeeChange) {

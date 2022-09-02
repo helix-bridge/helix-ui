@@ -24,6 +24,7 @@ export const pangoroConfig: PolkadotChainConfig = {
           category: 'helix',
           bridge: 'substrate-substrateDVM',
           partner: { name: 'pangolin-dvm', role: 'issuing', symbol: 'xORING' },
+          deprecated: true,
         },
       ],
       type: 'native',

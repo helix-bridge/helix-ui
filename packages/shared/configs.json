@@ -1,0 +1,1655 @@
+[
+  {
+    "ethereumChain": {
+      "chainId": "0xa4b1",
+      "chainName": "Arbitrum",
+      "nativeCurrency": { "decimals": 18 },
+      "rpcUrls": ["https://arb1.arbitrum.io/rpc"]
+    },
+    "isTest": false,
+    "logos": [{ "name": "arbitrum.png", "type": "main" }],
+    "name": "arbitrum",
+    "fullName": "Arbitrum One",
+    "provider": "https://arb1.arbitrum.io/rpc",
+    "social": {
+      "portal": "https://arbitrum.io/",
+      "github": "https://github.com/OffchainLabs",
+      "twitter": "https://twitter.com/arbitrum"
+    },
+    "tokens": [
+      {
+        "name": "USDT",
+        "decimals": 6,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "bsc-arbitrum",
+            "partner": { "name": "bsc", "role": "backing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "arbitrum-avalanche",
+            "partner": { "name": "avalanche", "role": "issuing", "symbol": "USDT.e" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "arbitrum-optimism",
+            "partner": { "name": "optimism", "role": "issuing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-arbitrum",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "arbitrum-polygon",
+            "partner": { "name": "polygon", "role": "issuing", "symbol": "USDT" }
+          }
+        ],
+        "type": "mapping",
+        "host": "arbitrum",
+        "logo": "token-usdt.svg",
+        "symbol": "USDT",
+        "address": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9"
+      },
+      {
+        "name": "USDC",
+        "decimals": 6,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "bsc-arbitrum",
+            "partner": { "name": "bsc", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "arbitrum-astar",
+            "partner": { "name": "astar", "role": "issuing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "arbitrum-avalanche",
+            "partner": { "name": "avalanche", "role": "issuing", "symbol": "USDC.e" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "arbitrum-optimism",
+            "partner": { "name": "optimism", "role": "issuing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-arbitrum",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "arbitrum-polygon",
+            "partner": { "name": "polygon", "role": "issuing", "symbol": "USDC" }
+          }
+        ],
+        "type": "mapping",
+        "host": "arbitrum",
+        "logo": "token-usdc.svg",
+        "symbol": "USDC",
+        "address": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8"
+      }
+    ],
+    "wallets": ["metamask"]
+  },
+  {
+    "ethereumChain": {
+      "chainId": "0x250",
+      "chainName": "Astar",
+      "nativeCurrency": { "decimals": 18 },
+      "rpcUrls": ["https://astar.api.onfinality.io/public"]
+    },
+    "isTest": false,
+    "logos": [{ "name": "astar.png", "type": "main" }],
+    "name": "astar",
+    "fullName": "Astar",
+    "provider": "wss://astar.api.onfinality.io/public-ws",
+    "social": {
+      "portal": "https://astar.network/",
+      "github": "https://github.com/AstarNetwork",
+      "twitter": "https://twitter.com/astarNetwork"
+    },
+    "tokens": [
+      {
+        "name": "USDT",
+        "decimals": 6,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-astar",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "crabDVM-astar",
+            "partner": { "name": "crab-dvm", "role": "backing", "symbol": "USDT" }
+          }
+        ],
+        "type": "mapping",
+        "host": "astar",
+        "logo": "token-usdt.svg",
+        "symbol": "USDT",
+        "address": "0x3795C36e7D12A8c252A20C5a7B455f7c57b60283"
+      },
+      {
+        "name": "USDC",
+        "decimals": 6,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "bsc-astar",
+            "partner": { "name": "bsc", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "astar-avalanche",
+            "partner": { "name": "avalanche", "role": "issuing", "symbol": "USDC.e" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "astar-optimism",
+            "partner": { "name": "optimism", "role": "issuing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "polygon-astar",
+            "partner": { "name": "polygon", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-astar",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "crabDVM-astar",
+            "partner": { "name": "crab-dvm", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "arbitrum-astar",
+            "partner": { "name": "arbitrum", "role": "backing", "symbol": "USDC" }
+          }
+        ],
+        "type": "mapping",
+        "host": "astar",
+        "logo": "token-usdc.svg",
+        "symbol": "USDC",
+        "address": "0x6a2d262D56735DbA19Dd70682B39F6bE9a931D98"
+      },
+      {
+        "name": "BUSD",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "bsc-astar",
+            "partner": { "name": "bsc", "role": "backing", "symbol": "BUSD" }
+          }
+        ],
+        "type": "mapping",
+        "host": "astar",
+        "logo": "token-busd.png",
+        "symbol": "BUSD",
+        "address": "0x4Bf769b05E832FCdc9053fFFBC78Ca889aCb5E1E"
+      }
+    ],
+    "wallets": ["metamask"]
+  },
+  {
+    "ethereumChain": {
+      "chainId": "0xa86a",
+      "chainName": "Avalanche",
+      "nativeCurrency": { "decimals": 18 },
+      "rpcUrls": ["https://api.avax.network/ext/bc/C/rpc"]
+    },
+    "isTest": false,
+    "logos": [{ "name": "avalanche.png", "type": "main" }],
+    "name": "avalanche",
+    "fullName": "Avalanche",
+    "provider": "https://api.avax.network/ext/bc/C/rpc",
+    "social": {
+      "portal": "https://www.avax.network/",
+      "github": "https://github.com/ava-labs",
+      "twitter": "https://twitter.com/avalancheavax"
+    },
+    "tokens": [
+      {
+        "name": "USDT.e",
+        "decimals": 6,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "bsc-avalanche",
+            "partner": { "name": "bsc", "role": "backing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "arbitrum-avalanche",
+            "partner": { "name": "arbitrum", "role": "backing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "avalanche-optimism",
+            "partner": { "name": "optimism", "role": "issuing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-avalanche",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "avalanche-polygon",
+            "partner": { "name": "polygon", "role": "issuing", "symbol": "USDT" }
+          }
+        ],
+        "type": "mapping",
+        "host": "avalanche",
+        "logo": "token-usdt.svg",
+        "symbol": "USDT.e",
+        "address": "0xc7198437980c041c805A1EDcbA50c1Ce5db95118"
+      },
+      {
+        "name": "USDC.e",
+        "decimals": 6,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "bsc-avalanche",
+            "partner": { "name": "bsc", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "arbitrum-avalanche",
+            "partner": { "name": "arbitrum", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "astar-avalanche",
+            "partner": { "name": "astar", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "avalanche-optimism",
+            "partner": { "name": "optimism", "role": "issuing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-avalanche",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "avalanche-polygon",
+            "partner": { "name": "polygon", "role": "issuing", "symbol": "USDC" }
+          }
+        ],
+        "type": "mapping",
+        "host": "avalanche",
+        "logo": "token-usdc.svg",
+        "symbol": "USDC.e",
+        "address": "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664"
+      }
+    ],
+    "wallets": ["metamask"]
+  },
+  {
+    "ethereumChain": {
+      "chainId": "0x38",
+      "chainName": "bsc",
+      "nativeCurrency": { "decimals": 18 },
+      "rpcUrls": ["https://github.com/bsc-chain"]
+    },
+    "isTest": false,
+    "logos": [{ "name": "bsc.png", "type": "main" }],
+    "name": "bsc",
+    "fullName": "BNB Chain",
+    "provider": "https://bsc-mainnet.nodereal.io/v1/64a9df0874fb4a93b9d0a3849de012d3",
+    "social": {
+      "portal": "https://www.bnbchain.org/",
+      "github": "https://github.com/bsc-chain",
+      "twitter": "https://twitter.com/BNBChain"
+    },
+    "tokens": [
+      {
+        "name": "USDT",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "bsc-arbitrum",
+            "partner": { "name": "arbitrum", "role": "issuing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "bsc-avalanche",
+            "partner": { "name": "avalanche", "role": "issuing", "symbol": "USDT.e" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "bsc-optimism",
+            "partner": { "name": "optimism", "role": "issuing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-bsc",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "bsc-polygon",
+            "partner": { "name": "polygon", "role": "issuing", "symbol": "USDT" }
+          }
+        ],
+        "type": "mapping",
+        "host": "bsc",
+        "logo": "token-usdt.svg",
+        "symbol": "USDT",
+        "address": "0x55d398326f99059fF775485246999027B3197955"
+      },
+      {
+        "name": "USDC",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "bsc-arbitrum",
+            "partner": { "name": "arbitrum", "role": "issuing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "bsc-astar",
+            "partner": { "name": "astar", "role": "issuing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "bsc-avalanche",
+            "partner": { "name": "avalanche", "role": "issuing", "symbol": "USDC.e" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "bsc-optimism",
+            "partner": { "name": "optimism", "role": "issuing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-bsc",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "bsc-polygon",
+            "partner": { "name": "polygon", "role": "issuing", "symbol": "USDC" }
+          }
+        ],
+        "type": "mapping",
+        "host": "bsc",
+        "logo": "token-usdc.svg",
+        "symbol": "USDC",
+        "address": "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d"
+      },
+      {
+        "name": "BUSD",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-bsc",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "BUSD" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "bsc-astar",
+            "partner": { "name": "astar", "role": "issuing", "symbol": "BUSD" }
+          }
+        ],
+        "type": "mapping",
+        "host": "bsc",
+        "logo": "token-busd.png",
+        "symbol": "BUSD",
+        "address": "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56"
+      }
+    ],
+    "wallets": ["metamask"]
+  },
+  {
+    "isTest": false,
+    "logos": [
+      { "name": "crab.png", "type": "main" },
+      { "name": "crab.svg", "type": "minor" },
+      { "name": "crab-logo.svg", "type": "assist" }
+    ],
+    "name": "crab",
+    "provider": "wss://darwinia-crab.api.onfinality.io/public-ws",
+    "social": {
+      "portal": "https://crab.network/",
+      "github": "https://github.com/darwinia-network/darwinia/tree/main/runtime/crab",
+      "twitter": "https://twitter.com/DarwiniaNetwork"
+    },
+    "tokens": [
+      {
+        "name": "CRAB",
+        "decimals": 9,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "substrate-DVM",
+            "partner": { "name": "crab-dvm", "role": "issuing", "symbol": "CRAB" }
+          },
+          {
+            "category": "helix",
+            "bridge": "substrate-substrateParachain",
+            "partner": { "name": "crab-parachain", "role": "issuing", "symbol": "CRAB" }
+          }
+        ],
+        "type": "native",
+        "host": "crab",
+        "logo": "token-crab.svg",
+        "symbol": "CRAB",
+        "address": ""
+      },
+      {
+        "name": "CKTON",
+        "decimals": 9,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "substrate-DVM",
+            "partner": { "name": "crab-dvm", "role": "issuing", "symbol": "WCKTON" }
+          }
+        ],
+        "type": "native",
+        "host": "crab",
+        "logo": "token-ckton.svg",
+        "symbol": "CKTON",
+        "address": ""
+      }
+    ],
+    "ss58Prefix": 42,
+    "specVersion": 1232,
+    "wallets": ["polkadot"]
+  },
+  {
+    "ethereumChain": {
+      "blockExplorerUrls": ["https://crab.subscan.io/"],
+      "chainId": "0x2c",
+      "chainName": "crab",
+      "nativeCurrency": { "decimals": 18, "symbol": "CRAB" },
+      "rpcUrls": ["https://crab-rpc.darwinia.network/"]
+    },
+    "isTest": false,
+    "logos": [
+      { "name": "crab-smart.png", "type": "main" },
+      { "name": "crab.svg", "type": "minor" },
+      { "name": "crab-logo.svg", "type": "assist" }
+    ],
+    "name": "crab-dvm",
+    "provider": "wss://darwinia-crab.api.onfinality.io/public-ws",
+    "social": {
+      "portal": "https://crab.network/",
+      "github": "https://github.com/darwinia-network/darwinia/tree/main/runtime/crab",
+      "twitter": "https://twitter.com/DarwiniaNetwork"
+    },
+    "tokens": [
+      {
+        "name": "CRAB",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "substrate-DVM",
+            "partner": { "name": "crab", "role": "backing", "symbol": "CRAB" }
+          }
+        ],
+        "type": "native",
+        "host": "crab-dvm",
+        "logo": "token-wcrab.svg",
+        "symbol": "CRAB",
+        "address": "0x588abe3F7EE935137102C5e2B8042788935f4CB0"
+      },
+      {
+        "name": "WCKTON",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "substrate-DVM",
+            "partner": { "name": "crab", "role": "backing", "symbol": "CKTON" }
+          }
+        ],
+        "type": "native",
+        "host": "crab-dvm",
+        "logo": "token-wckton.svg",
+        "symbol": "WCKTON",
+        "address": "0x0000000000000000000000000000000000000402"
+      },
+      {
+        "name": "xRING(Classic)",
+        "decimals": 9,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "crabDVM-heco",
+            "partner": { "name": "heco", "role": "issuing", "symbol": "RING" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "crabDVM-ethereum",
+            "partner": { "name": "ethereum", "role": "issuing", "symbol": "RING" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "crabDVM-polygon",
+            "partner": { "name": "polygon", "role": "issuing", "symbol": "RING" }
+          }
+        ],
+        "type": "mapping",
+        "host": "crab-dvm",
+        "logo": "token-oring.svg",
+        "symbol": "xRING",
+        "address": "0x7399Ea6C9d35124d893B8d9808930e9d3F211501"
+      },
+      {
+        "name": "xKTON",
+        "decimals": 9,
+        "cross": [],
+        "type": "mapping",
+        "host": "crab-dvm",
+        "logo": "token-okton.svg",
+        "symbol": "xKTON",
+        "address": ""
+      },
+      {
+        "name": "xWRING",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "substrateDVM-substrateDVM",
+            "partner": { "name": "darwinia-dvm", "role": "backing", "symbol": "wRING" }
+          }
+        ],
+        "type": "mapping",
+        "host": "crab-dvm",
+        "logo": "token-oring.svg",
+        "symbol": "xWRING",
+        "address": "0x273131F7CB50ac002BDd08cA721988731F7e1092"
+      },
+      {
+        "name": "USDT",
+        "decimals": 6,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "crabDVM-astar",
+            "partner": { "name": "astar", "role": "issuing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "crabDVM-ethereum",
+            "partner": { "name": "ethereum", "role": "issuing", "symbol": "USDT" }
+          }
+        ],
+        "type": "mapping",
+        "host": "crab-dvm",
+        "logo": "token-usdt.svg",
+        "symbol": "USDT",
+        "address": "0x6a2d262D56735DbA19Dd70682B39F6bE9a931D98"
+      },
+      {
+        "name": "USDC",
+        "decimals": 6,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "crabDVM-astar",
+            "partner": { "name": "astar", "role": "issuing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "crabDVM-ethereum",
+            "partner": { "name": "ethereum", "role": "issuing", "symbol": "USDC" }
+          }
+        ],
+        "type": "mapping",
+        "host": "crab-dvm",
+        "logo": "token-usdc.svg",
+        "symbol": "USDC",
+        "address": "0x81ECac0D6Be0550A00FF064a4f9dd2400585FE9c"
+      }
+    ],
+    "ss58Prefix": 42,
+    "specVersion": 1232,
+    "wallets": ["metamask"]
+  },
+  {
+    "isTest": false,
+    "logos": [
+      { "name": "crab.png", "type": "main" },
+      { "name": "crab.svg", "type": "minor" },
+      { "name": "crab-logo.svg", "type": "assist" }
+    ],
+    "name": "crab-parachain",
+    "provider": "wss://crab-parachain-rpc.darwinia.network",
+    "social": {
+      "portal": "https://crab.network/",
+      "github": "https://github.com/darwinia-network/darwinia/tree/main/runtime/crab",
+      "twitter": "https://twitter.com/DarwiniaNetwork"
+    },
+    "tokens": [
+      {
+        "name": "CRAB",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "substrate-substrateParachain",
+            "partner": { "name": "crab", "role": "backing", "symbol": "CRAB" }
+          },
+          {
+            "category": "XCM",
+            "bridge": "crabParachain-karura",
+            "partner": { "name": "karura", "role": "issuing", "symbol": "CRAB" }
+          },
+          {
+            "category": "XCM",
+            "bridge": "crabParachain-moonriver",
+            "partner": { "name": "moonriver", "role": "issuing", "symbol": "CRAB" }
+          }
+        ],
+        "type": "native",
+        "host": "crab-parachain",
+        "logo": "token-crab.svg",
+        "symbol": "CRAB",
+        "address": ""
+      }
+    ],
+    "ss58Prefix": 42,
+    "specVersion": 5310,
+    "paraId": 2105,
+    "wallets": ["polkadot"]
+  },
+  {
+    "isTest": false,
+    "name": "darwinia",
+    "logos": [
+      { "name": "darwinia.png", "type": "main" },
+      { "name": "darwinia.svg", "type": "minor" },
+      { "name": "darwinia-logo.svg", "type": "assist" }
+    ],
+    "provider": "wss://rpc.darwinia.network",
+    "social": {
+      "portal": "https://darwinia.network/",
+      "github": "https://github.com/darwinia-network",
+      "twitter": "https://twitter.com/DarwiniaNetwork"
+    },
+    "tokens": [
+      {
+        "name": "RING",
+        "decimals": 9,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "ethereum-darwinia",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "RING", "claim": true }
+          },
+          {
+            "category": "helix",
+            "bridge": "substrate-DVM",
+            "partner": { "name": "darwinia-dvm", "role": "issuing", "symbol": "RING" }
+          }
+        ],
+        "type": "native",
+        "host": "darwinia",
+        "logo": "token-ring.svg",
+        "symbol": "RING",
+        "address": "0x9469d013805bffb7d3debe5e7839237e535ec483"
+      },
+      {
+        "name": "KTON",
+        "decimals": 9,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "ethereum-darwinia",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "KTON", "claim": true }
+          }
+        ],
+        "type": "native",
+        "host": "darwinia",
+        "logo": "token-kton.svg",
+        "symbol": "KTON",
+        "address": "0x9f284e1337a815fe77d2ff4ae46544645b20c5ff"
+      }
+    ],
+    "ss58Prefix": 18,
+    "specVersion": 1230,
+    "wallets": ["polkadot"]
+  },
+  {
+    "ethereumChain": {
+      "blockExplorerUrls": ["https://darwinia.subscan.io/"],
+      "chainId": "0x2e",
+      "chainName": "darwinia",
+      "nativeCurrency": { "decimals": 18, "symbol": "RING" },
+      "rpcUrls": ["https://rpc.darwinia.network/"]
+    },
+    "isTest": false,
+    "name": "darwinia-dvm",
+    "logos": [
+      { "name": "darwinia.png", "type": "main" },
+      { "name": "darwinia.svg", "type": "minor" },
+      { "name": "darwinia-logo.svg", "type": "assist" }
+    ],
+    "provider": "wss://rpc.darwinia.network",
+    "social": {
+      "portal": "https://darwinia.network/",
+      "github": "https://github.com/darwinia-network",
+      "twitter": "https://twitter.com/DarwiniaNetwork"
+    },
+    "tokens": [
+      {
+        "name": "RING",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "substrate-DVM",
+            "partner": { "name": "darwinia", "role": "backing", "symbol": "RING" }
+          },
+          {
+            "category": "helix",
+            "bridge": "substrateDVM-substrateDVM",
+            "partner": { "name": "darwinia-dvm", "role": "issuing", "symbol": "wRING" }
+          }
+        ],
+        "type": "native",
+        "host": "darwinia-dvm",
+        "logo": "token-ring.svg",
+        "symbol": "RING",
+        "address": ""
+      },
+      {
+        "name": "wRING",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "substrateDVM-substrateDVM",
+            "partner": { "name": "crab-dvm", "role": "issuing", "symbol": "xWRING" }
+          },
+          {
+            "category": "helix",
+            "bridge": "substrateDVM-substrateDVM",
+            "partner": { "name": "darwinia-dvm", "role": "backing", "symbol": "RING" }
+          }
+        ],
+        "type": "native",
+        "host": "darwinia-dvm",
+        "logo": "token-ring.svg",
+        "symbol": "wRING",
+        "address": "0xE7578598Aac020abFB918f33A20faD5B71d670b4"
+      }
+    ],
+    "ss58Prefix": 18,
+    "specVersion": 1230,
+    "wallets": ["metamask"]
+  },
+  {
+    "ethereumChain": { "chainId": "0x1", "chainName": "", "nativeCurrency": { "decimals": 18 }, "rpcUrls": [] },
+    "isTest": false,
+    "logos": [{ "name": "ethereum.png", "type": "main" }],
+    "name": "ethereum",
+    "fullName": "Ethereum",
+    "provider": "wss://mainnet.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409",
+    "social": {
+      "portal": "https://ethereum.org/en/",
+      "github": "https://github.com/ethereum/ethereum-org-website",
+      "twitter": "https://twitter.com/ethdotorg"
+    },
+    "tokens": [
+      {
+        "name": "RING",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "ethereum-darwinia",
+            "partner": { "name": "darwinia", "role": "issuing", "symbol": "RING" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "crabDVM-ethereum",
+            "partner": { "name": "crab-dvm", "role": "backing", "symbol": "xRING" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-polygon",
+            "partner": { "name": "polygon", "role": "issuing", "symbol": "RING" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-heco",
+            "partner": { "name": "heco", "role": "issuing", "symbol": "RING" }
+          }
+        ],
+        "type": "mapping",
+        "host": "ethereum",
+        "logo": "token-ring.svg",
+        "symbol": "RING",
+        "address": "0x9469d013805bffb7d3debe5e7839237e535ec483"
+      },
+      {
+        "name": "KTON",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "ethereum-darwinia",
+            "partner": { "name": "darwinia", "role": "issuing", "symbol": "KTON" }
+          }
+        ],
+        "type": "mapping",
+        "host": "ethereum",
+        "logo": "token-kton.svg",
+        "symbol": "KTON",
+        "address": "0x9f284e1337a815fe77d2ff4ae46544645b20c5ff"
+      },
+      {
+        "name": "USDT",
+        "decimals": 6,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-astar",
+            "partner": { "name": "astar", "role": "issuing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-bsc",
+            "partner": { "name": "bsc", "role": "issuing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-avalanche",
+            "partner": { "name": "avalanche", "role": "issuing", "symbol": "USDT.e" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-polygon",
+            "partner": { "name": "polygon", "role": "issuing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-arbitrum",
+            "partner": { "name": "arbitrum", "role": "issuing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-optimism",
+            "partner": { "name": "optimism", "role": "issuing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "crabDVM-ethereum",
+            "partner": { "name": "crab-dvm", "role": "backing", "symbol": "USDT" }
+          }
+        ],
+        "type": "mapping",
+        "host": "ethereum",
+        "logo": "token-usdt.svg",
+        "symbol": "USDT",
+        "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+      },
+      {
+        "name": "USDC",
+        "decimals": 6,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-astar",
+            "partner": { "name": "astar", "role": "issuing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-bsc",
+            "partner": { "name": "bsc", "role": "issuing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-avalanche",
+            "partner": { "name": "avalanche", "role": "issuing", "symbol": "USDC.e" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-polygon",
+            "partner": { "name": "polygon", "role": "issuing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-arbitrum",
+            "partner": { "name": "arbitrum", "role": "issuing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-optimism",
+            "partner": { "name": "optimism", "role": "issuing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "crabDVM-ethereum",
+            "partner": { "name": "crab-dvm", "role": "backing", "symbol": "USDC" }
+          }
+        ],
+        "type": "mapping",
+        "host": "ethereum",
+        "logo": "token-usdc.svg",
+        "symbol": "USDC",
+        "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+      },
+      {
+        "name": "BUSD",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-bsc",
+            "partner": { "name": "bsc", "role": "issuing", "symbol": "BUSD" }
+          }
+        ],
+        "type": "mapping",
+        "host": "ethereum",
+        "logo": "token-busd.png",
+        "symbol": "BUSD",
+        "address": "0x4Fabb145d64652a948d72533023f6E7A623C7C53"
+      }
+    ],
+    "wallets": ["metamask"]
+  },
+  {
+    "ethereumChain": {
+      "chainId": "0x80",
+      "chainName": "heco-mainnet",
+      "nativeCurrency": { "decimals": 18 },
+      "rpcUrls": ["https://http-mainnet.hecochain.com"]
+    },
+    "isTest": false,
+    "logos": [{ "name": "heco.png", "type": "main" }],
+    "name": "heco",
+    "fullName": "Heco",
+    "provider": "wss://ws-mainnet.hecochain.com",
+    "social": {
+      "portal": "https://www.hecochain.com/en-us/",
+      "github": "https://github.com/stars-labs/",
+      "twitter": "https://twitter.com/HECO_Chain"
+    },
+    "tokens": [
+      {
+        "name": "RING",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "crabDVM-heco",
+            "partner": { "name": "crab-dvm", "role": "backing", "symbol": "xRING" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-heco",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "RING" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "heco-polygon",
+            "partner": { "name": "polygon", "role": "issuing", "symbol": "RING" }
+          }
+        ],
+        "type": "mapping",
+        "logo": "token-ring.svg",
+        "host": "heco",
+        "symbol": "RING",
+        "address": "0x15e65456310ecb216B51EfBd8a1dBf753353DcF9"
+      }
+    ],
+    "wallets": ["metamask"]
+  },
+  {
+    "isTest": false,
+    "logos": [{ "name": "karura.svg", "type": "main" }],
+    "name": "karura",
+    "fullName": "Karura",
+    "provider": "wss://karura.api.onfinality.io/public-ws",
+    "social": { "portal": "https://acala.network/karura/join-karura", "github": "", "twitter": "" },
+    "tokens": [
+      {
+        "name": "KAR",
+        "decimals": 18,
+        "cross": [],
+        "type": "native",
+        "host": "karura",
+        "logo": "token-karura.svg",
+        "symbol": "KAR",
+        "address": ""
+      },
+      {
+        "name": "CRAB",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "XCM",
+            "bridge": "crabParachain-karura",
+            "partner": { "name": "crab-parachain", "role": "backing", "symbol": "CRAB" }
+          }
+        ],
+        "type": "mapping",
+        "host": "karura",
+        "logo": "token-crab.svg",
+        "symbol": "CRAB",
+        "address": "13"
+      }
+    ],
+    "ss58Prefix": 8,
+    "specVersion": 2091,
+    "paraId": 2000,
+    "wallets": ["polkadot"]
+  },
+  {
+    "ethereumChain": {
+      "blockExplorerUrls": ["https://moonriver.moonscan.io/"],
+      "chainId": "0x505",
+      "chainName": "Moonriver",
+      "nativeCurrency": { "decimals": 18, "symbol": "MOVR" },
+      "rpcUrls": ["https://rpc.api.moonriver.moonbeam.network"]
+    },
+    "isTest": false,
+    "logos": [{ "name": "moonriver.svg", "type": "main" }],
+    "name": "moonriver",
+    "fullName": "Moonriver",
+    "provider": "wss://wss.api.moonriver.moonbeam.network",
+    "social": {
+      "portal": "https://moonbeam.network/networks/moonriver/",
+      "github": "https://github.com/PureStake/moonbeam",
+      "twitter": "https://twitter.com/moonbeamnetwork"
+    },
+    "tokens": [
+      {
+        "name": "MOVR",
+        "decimals": 18,
+        "cross": [],
+        "type": "native",
+        "host": "moonriver",
+        "logo": "token-movr.png",
+        "symbol": "MOVR",
+        "address": ""
+      },
+      {
+        "name": "CRAB",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "XCM",
+            "bridge": "crabParachain-moonriver",
+            "partner": { "name": "crab-parachain", "role": "backing", "symbol": "CRAB" }
+          }
+        ],
+        "type": "mapping",
+        "host": "moonriver",
+        "logo": "token-crab.svg",
+        "symbol": "CRAB",
+        "address": "0xFFFffFfF8283448b3cB519Ca4732F2ddDC6A6165"
+      }
+    ],
+    "ss58Prefix": 8,
+    "specVersion": 1701,
+    "paraId": 2023,
+    "wallets": ["metamask"]
+  },
+  {
+    "ethereumChain": {
+      "chainId": "0xa",
+      "chainName": "Optimism",
+      "nativeCurrency": { "decimals": 18 },
+      "rpcUrls": ["https://mainnet.optimism.io/"]
+    },
+    "isTest": false,
+    "logos": [{ "name": "optimism.png", "type": "main" }],
+    "name": "optimism",
+    "fullName": "Optimism",
+    "provider": "wss://optimism-mainnet.public.blastapi.io",
+    "social": {
+      "portal": "https://www.optimism.io/",
+      "github": "https://github.com/ethereum-optimism",
+      "twitter": "https://twitter.com/optimismFND"
+    },
+    "tokens": [
+      {
+        "name": "USDT",
+        "decimals": 6,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "bsc-optimism",
+            "partner": { "name": "bsc", "role": "backing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "arbitrum-optimism",
+            "partner": { "name": "arbitrum", "role": "backing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "avalanche-optimism",
+            "partner": { "name": "avalanche", "role": "backing", "symbol": "USDT.e" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "polygon-optimism",
+            "partner": { "name": "polygon", "role": "backing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-optimism",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "USDT" }
+          }
+        ],
+        "type": "mapping",
+        "host": "optimism",
+        "logo": "token-usdt.svg",
+        "symbol": "USDT",
+        "address": "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58"
+      },
+      {
+        "name": "USDC",
+        "decimals": 6,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "bsc-optimism",
+            "partner": { "name": "bsc", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "arbitrum-optimism",
+            "partner": { "name": "arbitrum", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "astar-optimism",
+            "partner": { "name": "astar", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "avalanche-optimism",
+            "partner": { "name": "avalanche", "role": "backing", "symbol": "USDC.e" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "polygon-optimism",
+            "partner": { "name": "polygon", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-optimism",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "USDC" }
+          }
+        ],
+        "type": "mapping",
+        "host": "optimism",
+        "logo": "token-usdc.svg",
+        "symbol": "USDC",
+        "address": "0x7F5c764cBc14f9669B88837ca1490cCa17c31607"
+      }
+    ],
+    "wallets": ["metamask"]
+  },
+  {
+    "isTest": true,
+    "logos": [
+      { "name": "pangolin.png", "type": "main" },
+      { "name": "pangolin.svg", "type": "minor" },
+      { "name": "pangolin-logo.svg", "type": "assist" }
+    ],
+    "name": "pangolin",
+    "provider": "wss://pangolin-rpc.darwinia.network",
+    "social": {
+      "portal": "https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangolin-rpc.darwinia.network#/explorer",
+      "github": "https://github.com/darwinia-network",
+      "twitter": "https://twitter.com/DarwiniaNetwork"
+    },
+    "tokens": [
+      {
+        "name": "PRING",
+        "decimals": 9,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "substrate-DVM",
+            "partner": { "name": "pangolin-dvm", "role": "issuing", "symbol": "PRING" }
+          },
+          {
+            "category": "helix",
+            "bridge": "ethereum-darwinia",
+            "partner": { "name": "ropsten", "role": "backing", "symbol": "PRING", "claim": true }
+          },
+          {
+            "category": "helix",
+            "bridge": "substrate-substrateParachain",
+            "partner": { "name": "pangolin-parachain", "role": "issuing", "symbol": "PRING" }
+          }
+        ],
+        "type": "native",
+        "host": "pangolin",
+        "logo": "token-ring.svg",
+        "symbol": "PRING",
+        "address": ""
+      },
+      {
+        "name": "PKTON",
+        "decimals": 9,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "substrate-DVM",
+            "partner": { "name": "pangolin-dvm", "role": "issuing", "symbol": "WPKTON" }
+          },
+          {
+            "category": "helix",
+            "bridge": "ethereum-darwinia",
+            "partner": { "name": "ropsten", "role": "backing", "symbol": "PKTON", "claim": true }
+          }
+        ],
+        "type": "native",
+        "host": "pangolin",
+        "logo": "token-kton.svg",
+        "symbol": "PKTON",
+        "address": ""
+      }
+    ],
+    "ss58Prefix": 42,
+    "specVersion": 29030,
+    "wallets": ["polkadot"]
+  },
+  {
+    "ethereumChain": {
+      "blockExplorerUrls": ["https://pangolin.subscan.io/"],
+      "chainId": "0x2b",
+      "chainName": "pangolin",
+      "nativeCurrency": { "decimals": 18, "symbol": "PRING" },
+      "rpcUrls": ["https://pangolin-rpc.darwinia.network/"]
+    },
+    "isTest": true,
+    "logos": [
+      { "name": "pangolin-smart.png", "type": "main" },
+      { "name": "pangolin-2.png", "type": "minor" },
+      { "name": "pangolin-logo.svg", "type": "assist" }
+    ],
+    "name": "pangolin-dvm",
+    "provider": "wss://pangolin-rpc.darwinia.network",
+    "social": {
+      "portal": "https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangolin-rpc.darwinia.network#/explorer",
+      "github": "https://github.com/darwinia-network",
+      "twitter": "https://twitter.com/DarwiniaNetwork"
+    },
+    "tokens": [
+      {
+        "name": "PRING",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "substrate-DVM",
+            "partner": { "name": "pangolin", "role": "backing", "symbol": "PRING" }
+          }
+        ],
+        "type": "native",
+        "host": "pangolin-dvm",
+        "logo": "token-ring.svg",
+        "symbol": "PRING",
+        "address": "0xc52287b259b2431ba0f61BC7EBD0eD793B0b7044"
+      },
+      {
+        "name": "WPKTON",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "substrate-DVM",
+            "partner": { "name": "pangolin", "role": "backing", "symbol": "PKTON" }
+          }
+        ],
+        "type": "native",
+        "host": "pangolin-dvm",
+        "logo": "token-kton.svg",
+        "symbol": "WPKTON",
+        "address": "0x0000000000000000000000000000000000000402"
+      },
+      {
+        "name": "xORING",
+        "decimals": 9,
+        "cross": [],
+        "type": "mapping",
+        "host": "pangolin-dvm",
+        "logo": "token-ring.svg",
+        "symbol": "xORING",
+        "address": "0xb142658BD18c560D8ea74a31C07297CeCfeCF949"
+      },
+      {
+        "name": "xWORING",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "substrateDVM-substrateDVM",
+            "partner": { "name": "pangoro-dvm", "role": "backing", "symbol": "wORING" }
+          }
+        ],
+        "type": "mapping",
+        "host": "pangolin-dvm",
+        "logo": "token-ring.svg",
+        "symbol": "xWORING",
+        "address": "0xba01cfcad99c17dad9a859bd881dc99851faecf5"
+      }
+    ],
+    "ss58Prefix": 42,
+    "specVersion": 29030,
+    "wallets": ["metamask"]
+  },
+  {
+    "isTest": true,
+    "logos": [
+      { "name": "pangolin.png", "type": "main" },
+      { "name": "pangolin.svg", "type": "minor" },
+      { "name": "pangolin-logo.svg", "type": "assist" }
+    ],
+    "name": "pangolin-parachain",
+    "provider": "wss://pangolin-parachain-rpc.darwinia.network",
+    "social": {
+      "portal": "https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangolin-rpc.darwinia.network#/explorer",
+      "github": "https://github.com/darwinia-network",
+      "twitter": "https://twitter.com/DarwiniaNetwork"
+    },
+    "tokens": [
+      {
+        "name": "PRING",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "substrate-substrateParachain",
+            "partner": { "name": "pangolin", "role": "backing", "symbol": "PRING" }
+          }
+        ],
+        "type": "native",
+        "host": "pangolin-parachain",
+        "logo": "token-ring.svg",
+        "symbol": "PRING",
+        "address": ""
+      }
+    ],
+    "ss58Prefix": 42,
+    "specVersion": 5300,
+    "wallets": ["polkadot"]
+  },
+  {
+    "isTest": true,
+    "logos": [
+      { "name": "pangoro.png", "type": "main" },
+      { "name": "pangoro.png", "type": "minor" }
+    ],
+    "name": "pangoro",
+    "provider": "wss://pangoro-rpc.darwinia.network",
+    "social": {
+      "portal": "https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangoro-rpc.darwinia.network#/explorer",
+      "github": "https://github.com/darwinia-network",
+      "twitter": "https://twitter.com/DarwiniaNetwork"
+    },
+    "ss58Prefix": 18,
+    "specVersion": 29030,
+    "tokens": [
+      {
+        "name": "ORING",
+        "decimals": 9,
+        "cross": [],
+        "type": "native",
+        "host": "pangoro",
+        "logo": "token-ring.svg",
+        "symbol": "ORING",
+        "address": ""
+      }
+    ],
+    "wallets": ["polkadot"]
+  },
+  {
+    "ethereumChain": {
+      "blockExplorerUrls": ["https://pangoro.subscan.io/"],
+      "chainId": "0x2d",
+      "chainName": "pangoro",
+      "nativeCurrency": { "decimals": 18, "symbol": "ORING" },
+      "rpcUrls": ["https://pangoro-rpc.darwinia.network/"]
+    },
+    "isTest": true,
+    "logos": [
+      { "name": "pangoro.png", "type": "main" },
+      { "name": "pangoro.png", "type": "minor" }
+    ],
+    "name": "pangoro-dvm",
+    "provider": "wss://pangoro-rpc.darwinia.network",
+    "social": {
+      "portal": "https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangoro-rpc.darwinia.network#/explorer",
+      "github": "https://github.com/darwinia-network",
+      "twitter": "https://twitter.com/DarwiniaNetwork"
+    },
+    "ss58Prefix": 18,
+    "specVersion": 29030,
+    "tokens": [
+      {
+        "name": "ORING",
+        "decimals": 18,
+        "cross": [],
+        "type": "native",
+        "host": "pangoro-dvm",
+        "logo": "token-ring.svg",
+        "symbol": "ORING",
+        "address": ""
+      },
+      {
+        "name": "wORING",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "substrateDVM-substrateDVM",
+            "partner": { "name": "pangolin-dvm", "role": "issuing", "symbol": "xWORING" }
+          }
+        ],
+        "type": "mapping",
+        "host": "pangoro-dvm",
+        "logo": "token-ring.svg",
+        "symbol": "wORING",
+        "address": "0x78f3B1ae818c304Bbec76e244B67dEdC70506006"
+      }
+    ],
+    "wallets": ["metamask"]
+  },
+  {
+    "ethereumChain": {
+      "chainId": "0x89",
+      "chainName": "Polygon",
+      "nativeCurrency": { "decimals": 18 },
+      "rpcUrls": ["https://polygon-rpc.com/"]
+    },
+    "isTest": false,
+    "logos": [
+      { "name": "polygon.png", "type": "main" },
+      { "name": "polygon2.png", "type": "assist" }
+    ],
+    "name": "polygon",
+    "fullName": "Polygon(Matic)",
+    "provider": "wss://ws-mainnet.matic.network",
+    "social": {
+      "portal": "https://polygon.technology/",
+      "github": "https://github.com/maticnetwork/",
+      "twitter": "https://twitter.com/0xPolygon"
+    },
+    "tokens": [
+      {
+        "name": "RING",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "crabDVM-polygon",
+            "partner": { "name": "crab-dvm", "role": "backing", "symbol": "xRING" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-polygon",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "RING" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "heco-polygon",
+            "partner": { "name": "heco", "role": "backing", "symbol": "RING" }
+          }
+        ],
+        "type": "mapping",
+        "host": "polygon",
+        "logo": "token-ring.svg",
+        "symbol": "RING",
+        "address": "0x9C1C23E60B72Bc88a043bf64aFdb16A02540Ae8f"
+      },
+      {
+        "name": "USDT",
+        "decimals": 6,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-polygon",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "bsc-polygon",
+            "partner": { "name": "bsc", "role": "backing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "avalanche-polygon",
+            "partner": { "name": "avalanche", "role": "backing", "symbol": "USDT.e" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "arbitrum-polygon",
+            "partner": { "name": "arbitrum", "role": "backing", "symbol": "USDT" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "polygon-optimism",
+            "partner": { "name": "optimism", "role": "issuing", "symbol": "USDT" }
+          }
+        ],
+        "type": "mapping",
+        "host": "polygon",
+        "logo": "token-usdt.svg",
+        "symbol": "USDT",
+        "address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F"
+      },
+      {
+        "name": "USDC",
+        "decimals": 6,
+        "cross": [
+          {
+            "category": "cBridge",
+            "bridge": "polygon-astar",
+            "partner": { "name": "astar", "role": "issuing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "ethereum-polygon",
+            "partner": { "name": "ethereum", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "bsc-polygon",
+            "partner": { "name": "bsc", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "avalanche-polygon",
+            "partner": { "name": "avalanche", "role": "backing", "symbol": "USDC.e" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "arbitrum-polygon",
+            "partner": { "name": "arbitrum", "role": "backing", "symbol": "USDC" }
+          },
+          {
+            "category": "cBridge",
+            "bridge": "polygon-optimism",
+            "partner": { "name": "optimism", "role": "issuing", "symbol": "USDC" }
+          }
+        ],
+        "type": "mapping",
+        "host": "polygon",
+        "logo": "token-usdc.svg",
+        "symbol": "USDC",
+        "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
+      }
+    ],
+    "wallets": ["metamask"]
+  },
+  {
+    "ethereumChain": { "chainId": "0x3", "chainName": "", "nativeCurrency": { "decimals": 18 }, "rpcUrls": [] },
+    "logos": [{ "name": "ropsten.png", "type": "main" }],
+    "isTest": true,
+    "name": "ropsten",
+    "fullName": "Ropsten",
+    "provider": "wss://ropsten.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409",
+    "social": {
+      "portal": "https://ethereum.org/en/",
+      "github": "https://github.com/ethereum/ropsten",
+      "twitter": "https://twitter.com/ethdotorg"
+    },
+    "tokens": [
+      {
+        "name": "PRING",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "ethereum-darwinia",
+            "partner": { "name": "pangolin", "role": "issuing", "symbol": "PRING" }
+          }
+        ],
+        "type": "mapping",
+        "host": "ropsten",
+        "logo": "token-ring.svg",
+        "symbol": "PRING",
+        "address": "0xb52FBE2B925ab79a821b261C82c5Ba0814AAA5e0"
+      },
+      {
+        "name": "PKTON",
+        "decimals": 18,
+        "cross": [
+          {
+            "category": "helix",
+            "bridge": "ethereum-darwinia",
+            "partner": { "name": "pangolin", "role": "issuing", "symbol": "PKTON" }
+          }
+        ],
+        "type": "mapping",
+        "host": "ropsten",
+        "logo": "token-kton.svg",
+        "symbol": "PKTON",
+        "address": "0x1994100c58753793D52c6f457f189aa3ce9cEe94"
+      }
+    ],
+    "wallets": ["metamask"]
+  }
+]

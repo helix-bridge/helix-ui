@@ -8,6 +8,7 @@ import {
   bscConfig,
   crabConfig,
   crabDVMConfig,
+  darwiniaConfig,
   darwiniaDVMConfig,
   karuraConfig,
   moonriverConfig,
@@ -17,6 +18,7 @@ import {
 } from '../config/network';
 import { crabParachainConfig } from '../config/network/crab-parachain';
 import { pangolinParachainConfig } from '../config/network/pangolin-parachain';
+import { Network } from '../model';
 import { crossChainGraph } from '../utils/network/graph';
 import {
   chainConfigs,
@@ -31,6 +33,12 @@ import {
 describe('network utils', () => {
   const data = [...crossChainGraph];
   const sort = (ary: string[]) => sortBy(ary, (cur) => cur.charCodeAt(0));
+  const getOverview = (departure: Network, arrival: Network) =>
+    chainConfigs
+      .find((item) => item.name === departure)
+      ?.tokens.map((token) => token.cross)
+      .flat()
+      .find((item) => item.partner.name === arrival);
 
   it('should contains chains count: ', () => {
     expect(chainConfigs).toHaveLength(21);
@@ -43,12 +51,15 @@ describe('network utils', () => {
     expect(group![1]).toEqual(['crab-dvm', 'crab-parachain']);
   });
 
-  it('crab-dvm contains 7 leafs', () => {
+  it('crab-dvm contains 7 leafs and substrate-substrateDVM deprecated', () => {
     const group = data.find((item) => item[0] === 'crab-dvm');
     const expected = sort(['crab', 'ethereum', 'heco', 'polygon', 'darwinia', 'darwinia-dvm', 'astar']);
 
     expect(group).not.toEqual(undefined);
     expect(sort(group![1])).toEqual(expected);
+
+    const overview = getOverview('crab-dvm', 'darwinia');
+    expect(overview).toEqual(undefined);
   });
 
   it('crab-parachain contains 3 leafs', () => {
@@ -59,11 +70,15 @@ describe('network utils', () => {
     expect(sort(group![1])).toEqual(expected);
   });
 
-  it('darwinia contains 3 leafs', () => {
+  it('darwinia contains 3 leafs and substrate-substrateDVM deprecated', () => {
     const group = data.find((item) => item[0] === 'darwinia');
 
     expect(group).not.toEqual(undefined);
     expect(group![1]).toEqual(['darwinia-dvm', 'crab-dvm', 'ethereum']);
+
+    const overview = getOverview('darwinia', 'crab-dvm');
+
+    expect(overview).toEqual(undefined);
   });
 
   it('darwinia-dvm contains 3 leafs', () => {
@@ -162,18 +177,26 @@ describe('network utils', () => {
     expect(group![1]).toEqual(['pangolin-dvm', 'pangolin-parachain', 'ropsten']);
   });
 
-  it('pangolin-dvm contains 3 leafs', () => {
+  it('pangolin-dvm contains 3 leafs and substrate-substrateDVM deprecated', () => {
     const group = data.find((item) => item[0] === 'pangolin-dvm');
 
     expect(group).not.toEqual(undefined);
     expect(group![1]).toEqual(['pangolin', 'pangoro-dvm', 'pangoro']);
+
+    const overview = getOverview('pangolin-dvm', 'pangoro');
+
+    expect(overview).toEqual(undefined);
   });
 
-  it('pangoro contains 1 leaf', () => {
+  it('pangoro contains 1 leaf and substrate-substrateDVM deprecated', () => {
     const group = data.find((item) => item[0] === 'pangoro');
 
     expect(group).not.toEqual(undefined);
     expect(group![1]).toEqual(['pangolin-dvm']);
+
+    const overview = getOverview('pangoro', 'pangolin-dvm');
+
+    expect(overview).toEqual(undefined);
   });
 
   it('ropsten contains 1 leaf', () => {

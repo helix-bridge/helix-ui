@@ -21,6 +21,9 @@ const calcBridgesAmount = (data: [Network, Network[]][]) =>
     .unionWith((pre, cur) => isEqual(pre, cur) || isEqual(pre.reverse(), cur))
     .value();
 
+// exclude the config that not contains transferable tokens;
+const configs = chainConfigs.filter((item) => !!item.tokens.filter((token) => !!token.cross.length).length);
+
 const allDirections = crossChainGraph
   .map(([departure, arrivals]) => arrivals.map((arrival) => [departure, arrival]))
   .flat();
@@ -65,7 +68,7 @@ describe('bridge utils', () => {
 /**
  * Test whether the token transfer configuration of the bridge is correct;
  */
-describe.each(chainConfigs)("$name network's ", ({ name, tokens, ...other }) => {
+describe.each(configs)("$name network's ", ({ name, tokens, ...other }) => {
   describe.each(tokens.filter((item) => !!item.cross.length))('$name token', ({ cross, name: tokenName, ...rest }) => {
     const from = { ...rest, name: tokenName, cross, meta: { name, tokens, ...other }, amount: '' };
 

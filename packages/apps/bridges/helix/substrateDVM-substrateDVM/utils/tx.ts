@@ -2,7 +2,6 @@ import { BN_ZERO } from '@polkadot/util';
 import BN from 'bn.js';
 import { last } from 'lodash';
 import { EMPTY, from, Observable, switchMap } from 'rxjs';
-import { abi as abiCollection } from 'shared/config/abi';
 import { CrossChainDirection, CrossToken, DVMChainConfig, HelixHistoryRecord, Tx } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { isMetamaskChainConsistent } from 'shared/utils/connection';
@@ -15,6 +14,7 @@ import { TxValidation } from '../../../../model';
 import { validationObsFactory } from '../../../../utils/tx';
 import backingAbi from '../config/s2sv2backing.json';
 import burnAbi from '../config/s2sv2burn.json';
+import wringABI from '../config/wring.json';
 import { IssuingPayload, RedeemPayload } from '../model';
 import { getFee } from './fee';
 
@@ -107,7 +107,7 @@ export function deposit(value: IssuingPayload): Observable<Tx> {
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
     (contract) => contract.methods.deposit().send({ from: sender, value: amount.toString() }),
-    abiCollection.bankErc20ABI as AbiItem[]
+    wringABI as AbiItem[]
   );
 }
 
@@ -122,7 +122,7 @@ export function withdraw(value: RedeemPayload): Observable<Tx> {
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
     (contract) => contract.methods.withdraw(amount.toString()).send({ from: sender }),
-    abiCollection.bankErc20ABI as AbiItem[]
+    wringABI as AbiItem[]
   );
 }
 
