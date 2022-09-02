@@ -1,6 +1,6 @@
 import { BN_ZERO } from '@polkadot/util';
 import BN from 'bn.js';
-import Web3 from 'web3';
+import { isAddress } from 'web3-utils';
 import { abi } from '../../../config/abi';
 import { entrance } from '../../connection';
 
@@ -8,7 +8,7 @@ export async function getBalance(account: string, ktonAddress?: string): Promise
   let ring = '0';
   let kton = '0';
 
-  if (!Web3.utils.isAddress(account)) {
+  if (!isAddress(account)) {
     return [BN_ZERO, BN_ZERO];
   }
 

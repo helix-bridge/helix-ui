@@ -6,7 +6,7 @@ import { Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { convertToDvm, fromWei, toWei } from 'shared/utils/helper';
 import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
-import Web3 from 'web3';
+import { hexToBytes, toHex } from 'web3-utils';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
 import { validationObsFactory } from '../../../../utils/tx';
@@ -31,7 +31,7 @@ export function redeem(value: RedeemPayload, mappingAddress: string, specVersion
     recipient,
     direction: { from: departure, to },
   } = value;
-  const receiver = Web3.utils.hexToBytes(convertToDvm(recipient));
+  const receiver = hexToBytes(convertToDvm(recipient));
   const WEIGHT = '690133000';
   const api = entrance.polkadot.getInstance(departure.meta.provider);
 
@@ -40,7 +40,7 @@ export function redeem(value: RedeemPayload, mappingAddress: string, specVersion
     map((res) => {
       const num = fromWei({ value: res, decimals: 9 });
 
-      return Web3.utils.toHex(toWei({ value: num }));
+      return toHex(toWei({ value: num }));
     })
   );
 

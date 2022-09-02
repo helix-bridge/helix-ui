@@ -1,6 +1,6 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
-import Web3 from 'web3';
+import { isAddress } from 'web3-utils';
 import { Network, PolkadotChainConfig } from '../../model';
 import { chainConfigs, isPolkadotNetwork } from '../network/network';
 import { canConvertToEth, convertToEth, convertToSS58, dvmAddressToAccountId } from './address';
@@ -8,7 +8,7 @@ import { canConvertToEth, convertToEth, convertToSS58, dvmAddressToAccountId } f
 // eslint-disable-next-line complexity
 export const isValidAddress = (address: string, network: Network): boolean => {
   if (network === 'ethereum') {
-    const isDvm = Web3.utils.isAddress(address);
+    const isDvm = isAddress(address);
     const isSS58 = isSS58Address(address);
 
     return isDvm || (isSS58 && canConvertToEth(address));
@@ -23,7 +23,7 @@ export const isValidAddress = (address: string, network: Network): boolean => {
 
 export const isValidAddressStrict = (address: string, network: Network): boolean => {
   if (network === 'ethereum') {
-    return Web3.utils.isAddress(address);
+    return isAddress(address);
   }
 
   if (network === 'polkadot') {
@@ -68,7 +68,7 @@ export const isSameAddress = (from: string, to: string): boolean => {
   let toAddress: string | null = to;
   let fromAddress: string = from;
 
-  if (Web3.utils.isAddress(from)) {
+  if (isAddress(from)) {
     try {
       toAddress = convertToEth(to);
     } catch (err) {
@@ -81,7 +81,7 @@ export const isSameAddress = (from: string, to: string): boolean => {
   }
 
   if (isSS58Address(from)) {
-    if (Web3.utils.isAddress(to)) {
+    if (isAddress(to)) {
       toAddress = dvmAddressToAccountId(to).toHuman() as string;
     }
 

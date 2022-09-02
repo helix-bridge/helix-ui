@@ -4,14 +4,14 @@ import type { Codec, DetectCodec } from '@polkadot/types/types';
 import { hexToU8a, numberToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { isNull } from 'lodash';
-import Web3 from 'web3';
+import { isAddress } from 'web3-utils';
 import { ChainConfig, PolkadotChainConfig } from '../../model';
 import { isDVMNetwork, isPolkadotNetwork } from '../network';
 
 export const registry = new TypeRegistry();
 
 export function dvmAddressToAccountId(address: string | null | undefined): DetectCodec<Codec, string> {
-  if (!address || !Web3.utils.isAddress(address)) {
+  if (!address || !isAddress(address)) {
     return registry.createType('AccountId', '');
   }
 

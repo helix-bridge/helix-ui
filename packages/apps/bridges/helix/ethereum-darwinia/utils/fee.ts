@@ -2,7 +2,7 @@ import BN from 'bn.js';
 import { abi } from 'shared/config/abi';
 import { Bridge } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import Web3 from 'web3';
+import { toBN } from 'web3-utils';
 import { EthereumDarwiniaBridgeConfig } from '../model';
 
 export async function getRedeemFee(bridge: Bridge<EthereumDarwiniaBridgeConfig>): Promise<BN | null> {
@@ -12,7 +12,7 @@ export async function getRedeemFee(bridge: Bridge<EthereumDarwiniaBridgeConfig>)
 
   const fee = api.consts.ethereumBacking.advancedFee.toString();
 
-  return Web3.utils.toBN(fee || 0);
+  return toBN(fee || 0);
 }
 
 export async function getRedeemTxFee(

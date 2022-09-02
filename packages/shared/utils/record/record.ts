@@ -1,4 +1,4 @@
-import Web3 from 'web3';
+import { isAddress } from 'web3-utils';
 import { RecordStatus } from '../../config/constant';
 import { HelixHistoryRecord, TokenWithBridgesInfo } from '../../model';
 import { fromWei, prettyNumber } from '../helper';
@@ -12,7 +12,7 @@ export function getTokenConfigFromHelixRecord(
   const symbol = record[key];
 
   return chain.tokens.find((item) => {
-    if (Web3.utils.isAddress(symbol)) {
+    if (isAddress(symbol)) {
       return item.address.toLowerCase() === symbol.toLowerCase();
     }
     const isSameSymbol = item.symbol === symbol;

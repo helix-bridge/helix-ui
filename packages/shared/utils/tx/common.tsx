@@ -7,10 +7,9 @@ import { i18n } from 'next-i18next';
 import React from 'react';
 import { initReactI18next, Trans } from 'react-i18next';
 import { EMPTY, Observable, Observer, switchMap, tap, finalize } from 'rxjs';
-import Web3 from 'web3';
 import { PromiEvent, TransactionConfig, TransactionReceipt } from 'web3-core';
 import { Contract } from 'web3-eth-contract';
-import { AbiItem } from 'web3-utils';
+import { AbiItem, toWei, toBN } from 'web3-utils';
 import { Icon } from '../../components/widget/Icon';
 import { abi } from '../../config/abi';
 import { CrossChainPayload, RequiredPartial, Tx, TxFn } from '../../model';
@@ -191,7 +190,7 @@ export const approveToken: TxFn<
   const params = sendOptions ? { from: sender, ...omitBy(sendOptions, (value) => !value) } : { from: sender };
 
   return genEthereumContractTxObs(tokenAddress, (contract) =>
-    contract.methods.approve(spender, Web3.utils.toWei(hardCodeAmount)).send(params)
+    contract.methods.approve(spender, toWei(hardCodeAmount)).send(params)
   );
 };
 
@@ -207,7 +206,7 @@ export async function getAllowance(
   try {
     const allowanceAmount = await erc20Contract.methods.allowance(sender, spender).call();
 
-    return Web3.utils.toBN(allowanceAmount);
+    return toBN(allowanceAmount);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.log('⚠ ~ file: allowance.ts getIssuingAllowance ~ error', error.message);

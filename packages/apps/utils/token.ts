@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import { CrossOverview, TokenWithBridgesInfo } from 'shared/model';
 import { addAsset } from 'shared/utils/connection';
-import Web3 from 'web3';
+import { isAddress } from 'web3-utils';
 
 export function tokenSearchFactory<T extends { address: string; name: string }>(tokens: T[]) {
   const symbols = tokens.map((token) => token.name.toLowerCase());
@@ -9,7 +9,7 @@ export function tokenSearchFactory<T extends { address: string; name: string }>(
 
   return (value: string) => {
     if (value) {
-      if (Web3.utils.isAddress(value)) {
+      if (isAddress(value)) {
         return tokens.filter((token) => token.address === value);
       } else if (symbols.some((symbol) => symbol.includes(value.toLowerCase()))) {
         return tokens.filter((token) => token.name.toLowerCase().includes(value.toLowerCase()));

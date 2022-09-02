@@ -1,7 +1,7 @@
 import { Unit, unitMap, Units } from 'web3-utils';
 import BN from 'bn.js';
 import { isEmpty, isNull, isNumber, isString, isUndefined } from 'lodash';
-import Web3 from 'web3';
+import { fromWei as fw, toWei as tw } from 'web3-utils';
 import Bignumber from 'bignumber.js';
 
 export type WeiValue = string | BN | number | null | undefined | Bignumber;
@@ -96,10 +96,7 @@ export function fromWei(
   const unit = getUnit(decimals);
   const data = value || amount || balance;
 
-  return [toStr, (val: string) => Web3.utils.fromWei(val || '0', unit), ...fns].reduce(
-    (acc, fn) => fn(acc as string),
-    data
-  ) as string;
+  return [toStr, (val: string) => fw(val || '0', unit), ...fns].reduce((acc, fn) => fn(acc as string), data) as string;
 }
 
 export function toWei(
@@ -109,10 +106,7 @@ export function toWei(
   const unit = getUnit(decimals);
   const data = value || amount || balance;
 
-  return [toStr, (val: string) => Web3.utils.toWei(val || '0', unit), ...fns].reduce(
-    (acc, fn) => fn(acc as string),
-    data
-  ) as string;
+  return [toStr, (val: string) => tw(val || '0', unit), ...fns].reduce((acc, fn) => fn(acc as string), data) as string;
 }
 
 const completeDecimal = (value: string, bits: number): string => {
