@@ -21,6 +21,11 @@ export const chainConfigs = lodashChain(crossChainGraph)
       if (customConfigs[config.name]) {
         config = { ...config, ...pick(customConfigs[config.name], Object.keys(config)) } as PolkadotChainConfig;
       }
+
+      config.tokens = config?.tokens.map((token) => ({
+        ...token,
+        cross: token.cross.filter((item) => !item.deprecated),
+      }));
     }
 
     return config;
