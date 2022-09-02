@@ -3,8 +3,11 @@
 import { chainConfigs, getChainConfig } from 'shared/utils/network';
 import { isTransferableTokenPair } from '../utils';
 
+// exclude the config that not contains transferable tokens;
+const configs = chainConfigs.filter((item) => !!item.tokens.filter((token) => !!token.cross.length).length);
+
 describe('token utils', () => {
-  describe.each(chainConfigs)('$name network', ({ name, tokens, ...rest }) => {
+  describe.each(configs)('$name network', ({ name, tokens, ...rest }) => {
     describe.each(tokens.filter((item) => !!item.cross.length))('$name ', ({ name, cross, ...other }) => {
       it.each(cross)(
         'can cross through $bridge of $category to $partner.symbol on $partner.name',
