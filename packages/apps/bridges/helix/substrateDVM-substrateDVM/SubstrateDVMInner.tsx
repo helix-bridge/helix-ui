@@ -22,7 +22,6 @@ export function SubstrateDVMInner({
   bridge,
   onFeeChange,
   balances,
-  updateAllowancePayload,
 }: CrossChainComponentProps<
   SubstrateDVMSubstrateDVMBridgeConfig,
   CrossToken<DVMChainConfig>,
@@ -46,15 +45,6 @@ export function SubstrateDVMInner({
 
     return overview?.partner.role === 'issuing' ? deposit : withdraw;
   }, [direction.from.cross, direction.from.host]);
-
-  useEffect(() => {
-    if (direction.from.address) {
-      updateAllowancePayload({
-        spender: bridge.config.contracts.backing,
-        tokenAddress: direction.from.address,
-      });
-    }
-  }, [bridge.config.contracts.backing, direction.from.address, updateAllowancePayload]);
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
