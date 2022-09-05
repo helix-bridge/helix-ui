@@ -1,6 +1,7 @@
 import { BN_ZERO } from '@polkadot/util';
 import BN from 'bn.js';
-import { isAddress } from 'web3-utils';
+import { Contract } from 'ethers';
+import { isAddress } from 'ethers/lib/utils';
 import { abi } from '../../../config/abi';
 import { entrance } from '../../connection';
 
@@ -15,7 +16,7 @@ export async function getBalance(account: string, ktonAddress?: string): Promise
   const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
 
   try {
-    ring = await web3.eth.getBalance(account);
+    ring = await web3.getBalance(account).then((res) => res.toString());
   } catch (error) {
     console.error(
       '%c [ get ring balance in ethereum error ]',
@@ -26,7 +27,7 @@ export async function getBalance(account: string, ktonAddress?: string): Promise
 
   try {
     if (ktonAddress) {
-      const ktonContract = new web3.eth.Contract(abi.ktonABI, ktonAddress, { gas: 55000 });
+      const ktonContract = new Contract(ktonAddress, abi.ktonABI);
 
       kton = await ktonContract.methods.balanceOf(account).call();
     }

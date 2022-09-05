@@ -17,7 +17,7 @@ const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
 });
 
 // eslint-disable-next-line complexity
-export function ActiveAccount() {
+export default function ActiveAccount() {
   const { departureConnection, departure, connectDepartureNetwork, isConnecting } = useApi();
   const { t } = useTranslation();
   const { account, setAccount } = useAccount();

@@ -1,17 +1,18 @@
 import { BN_ZERO } from '@polkadot/util';
 import { message } from 'antd';
 import BN from 'bn.js';
+import { Contract } from 'ethers';
 import { createContext, useCallback, useContext, useState } from 'react';
-import { filter, take, switchMap, iif, of, zip, tap, EMPTY, from, map, Observable, Subscription } from 'rxjs';
+import { EMPTY, filter, from, iif, map, Observable, of, Subscription, switchMap, take, tap, zip } from 'rxjs';
 import { abi } from 'shared/config/abi';
-import { ICamelCaseKeys, HelixHistoryRecord, ConnectionStatus } from 'shared/model';
+import { ConnectionStatus, HelixHistoryRecord, ICamelCaseKeys } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
-import { connect, entrance } from 'shared/utils/connection';
+import { connect } from 'shared/utils/connection';
 import { getChainConfig } from 'shared/utils/network';
 import { getAllowance } from 'shared/utils/tx';
 import {
-  Darwinia2EthereumRecord,
   Darwinia2EthereumHistoryRes,
+  Darwinia2EthereumRecord,
   EthereumDarwiniaBridgeConfig,
 } from '../bridges/helix/ethereum-darwinia/model';
 import { claimToken } from '../bridges/helix/ethereum-darwinia/utils';
@@ -35,8 +36,7 @@ interface ClaimCtx {
 }
 
 function isSufficient(config: EthereumDarwiniaBridgeConfig, tokenAddress: string, amount: BN): Observable<boolean> {
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-  const contract = new web3.eth.Contract(abi.tokenIssuingABI, config.contracts.issuing);
+  const contract = new Contract(config.contracts.issuing, abi.tokenIssuingABI);
   const limit = from(contract.methods.dailyLimit(tokenAddress).call() as Promise<string>);
   const toadySpent = from(contract.methods.spentToday(tokenAddress).call() as Promise<string>);
 

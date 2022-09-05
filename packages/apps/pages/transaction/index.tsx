@@ -3,6 +3,7 @@ import { Button, Input, message, Table, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import { formatDistance, fromUnixTime } from 'date-fns';
 import format from 'date-fns-tz/format';
+import { isAddress } from 'ethers/lib/utils';
 import request from 'graphql-request';
 import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -20,7 +21,6 @@ import { HelixHistoryRecord, Network } from 'shared/model';
 import { convertToDvm, gqlName, isSS58Address, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
 import { getChainConfig, getDisplayName } from 'shared/utils/network';
 import { getDetailPaths, getFeeAmountFromHelixRecord, getSentAmountFromHelixRecord } from 'shared/utils/record';
-import { isAddress } from 'web3-utils';
 import { HISTORY_RECORDS, Path } from '../../config';
 
 function RecordAccount({ chain, account }: { chain: Network; account: string }) {

@@ -1,5 +1,6 @@
 import { HddOutlined, MenuOutlined, WarningFilled } from '@ant-design/icons';
 import { Button, Drawer, Layout, Tooltip } from 'antd';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { PropsWithChildren, useState } from 'react';
@@ -11,11 +12,12 @@ import { Path } from '../config';
 import { useITranslation } from '../hooks';
 import { useTx } from '../providers';
 import { History } from './history/History';
-import { ActiveAccount } from './widget/account/ActiveAccount';
 import { BaseModal } from './widget/BaseModal';
 import { DisclaimerModal } from './widget/DisclaimerModal';
 
 const { Header, Content } = Layout;
+
+const ActiveAccount = dynamic(() => import('./widget/account/ActiveAccount'), { ssr: false });
 
 const navigators: Nav[] = [
   { label: 'Dashboard', path: Path.root },

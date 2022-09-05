@@ -1,20 +1,18 @@
 import { BN, hexToBn } from '@polkadot/util';
+import { Contract } from 'ethers';
 import { base64, getAddress, hexlify } from 'ethers/lib/utils';
 import { last } from 'lodash';
 import { EMPTY, from, Observable, switchMap } from 'rxjs';
 import { HelixHistoryRecord, Tx } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
-import { entrance } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
-import { Contract } from 'web3-eth-contract';
-import { AbiItem } from 'web3-utils';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
 import { validationObsFactory } from '../../../../utils/tx';
 import transferAbi from '../config/abi/bridge.json';
-import burnAbi from '../config/abi/PeggedTokenBridgeV2.json';
 import depositAbi from '../config/abi/OriginalTokenVaultV2.json';
+import burnAbi from '../config/abi/PeggedTokenBridgeV2.json';
 import { IssuingPayload, RedeemPayload } from '../model';
 import { WebClient } from '../ts-proto/gateway/GatewayServiceClientPb';
 import { GetTransferStatusRequest, WithdrawLiquidityRequest, WithdrawMethodType } from '../ts-proto/gateway/gateway_pb';
@@ -55,7 +53,7 @@ export function burn(value: IssuingPayload | RedeemPayload): Observable<Tx> {
     contractAddress,
     (contract) =>
       contract.methods.burn(tokenAddress, transferAmount, toChainId, recipient, nonce).send({ from: sender }),
-    burnAbi as AbiItem[]
+    burnAbi
   );
 }
 
@@ -88,7 +86,7 @@ export function deposit(value: IssuingPayload | RedeemPayload): Observable<Tx> {
     contractAddress,
     (contract) =>
       contract.methods.deposit(tokenAddress, transferAmount, mintChainId, recipient, nonce).send({ from: sender }),
-    depositAbi as AbiItem[]
+    depositAbi
   );
 }
 
@@ -118,7 +116,7 @@ export function transfer(value: IssuingPayload | RedeemPayload): Observable<Tx> 
       contract.methods
         .send(recipient, tokenAddress, transferAmount, dstChainId, nonce, maxSlippage)
         .send({ from: sender }),
-    transferAbi as AbiItem[]
+    transferAbi
   );
 }
 
@@ -154,7 +152,7 @@ export function withdraw(record: HelixHistoryRecord): Observable<Tx> {
       return genEthereumContractTxObs(
         contractAddress as string,
         (contract) => contract.methods.withdraw(wd, sigs, signers, powers).send({ from: sender }),
-        transferAbi as AbiItem[]
+        transferAbi
       );
     })
   );
@@ -188,8 +186,7 @@ export const genValidations = ({ balance, amount, allowance }: TxValidation): [b
 export const validate = validationObsFactory(genValidations);
 
 export const getMinimalMaxSlippage = async (contractAddress: string) => {
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-  const contract = new web3.eth.Contract(transferAbi as AbiItem[], contractAddress) as unknown as Contract;
+  const contract = new Contract(contractAddress, transferAbi);
   const result = await contract.methods.minimalMaxSlippage().call();
 
   return result;

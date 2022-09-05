@@ -1,19 +1,19 @@
+import { TransactionRequest } from '@ethersproject/abstract-provider';
 import { ApiPromise } from '@polkadot/api';
 import { TypeRegistry } from '@polkadot/types';
 import { Modal, ModalFuncProps, ModalProps } from 'antd';
 import BN from 'bn.js';
+import { Contract, Signer } from 'ethers';
+import { Deferrable } from 'ethers/lib/utils';
 import { noop, omitBy } from 'lodash';
 import { i18n } from 'next-i18next';
-import React from 'react';
 import { initReactI18next, Trans } from 'react-i18next';
-import { EMPTY, Observable, Observer, switchMap, tap, finalize } from 'rxjs';
-import { PromiEvent, TransactionConfig, TransactionReceipt } from 'web3-core';
-import { Contract } from 'web3-eth-contract';
-import { AbiItem, toWei, toBN } from 'web3-utils';
+import { EMPTY, finalize, Observable, Observer, switchMap, tap } from 'rxjs';
 import { Icon } from '../../components/widget/Icon';
 import { abi } from '../../config/abi';
 import { CrossChainPayload, RequiredPartial, Tx, TxFn } from '../../model';
 import { entrance, waitUntilConnected } from '../connection';
+import { toWei } from '../helper';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ModalSpyFn<T = any> = (observer: Observer<T>, closeFn: () => void) => void;
@@ -124,25 +124,28 @@ export function createTxWorkflow(
  */
 export function genEthereumContractTxObs(
   contractAddress: string,
-  fn: (contract: Contract) => PromiEvent<unknown>,
-  contractAbi: AbiItem | AbiItem[] = abi.tokenABI
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fn: (contract: Contract) => any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  contractAbi: any = abi.tokenABI
 ): Observable<Tx> {
   return new Observable((observer) => {
     try {
-      const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-      const contract = new web3.eth.Contract(contractAbi, contractAddress) as unknown as Contract;
+      const contract = new Contract(contractAddress, contractAbi);
 
       observer.next({ status: 'signing' });
 
-      fn(contract)
+      fn(contract);
+
+      contract
         .on('transactionHash', (hash: string) => {
           observer.next({ status: 'queued', hash });
         })
-        .on('receipt', ({ transactionHash }: TransactionReceipt) => {
+        .on('receipt', ({ transactionHash }) => {
           observer.next({ status: 'finalized', hash: transactionHash });
           observer.complete();
         })
-        .catch((error: { code: number; message: string }) => {
+        .on('error', (error: { code: number; message: string }) => {
           observer.error({ status: 'error', error: error.message });
         });
     } catch (error) {
@@ -152,18 +155,19 @@ export function genEthereumContractTxObs(
   });
 }
 
-export function genEthereumTransactionObs(params: TransactionConfig): Observable<Tx> {
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
+export function genEthereumTransactionObs(params: Deferrable<TransactionRequest>): Observable<Tx> {
+  const provider = entrance.web3.getInstance(entrance.web3.defaultProvider);
+  const signer = provider.getSigner();
 
   return new Observable((observer) => {
-    const tx = web3.eth.sendTransaction(params);
+    signer.sendTransaction(params).then((res) => {
+      observer.next({ status: 'finalized', hash: res.hash });
+      observer.complete();
+    });
 
-    tx.on('transactionHash', (hash) => {
-      observer.next({ status: 'queued', hash });
-    })
-      .on('receipt', ({ transactionHash }: TransactionReceipt) => {
-        observer.next({ status: 'finalized', hash: transactionHash });
-        observer.complete();
+    provider
+      .on('transactionHash', (hash) => {
+        observer.next({ status: 'queued', hash });
       })
       .on('error', (error) => {
         observer.error({ status: 'error', error: error.message });
@@ -190,7 +194,7 @@ export const approveToken: TxFn<
   const params = sendOptions ? { from: sender, ...omitBy(sendOptions, (value) => !value) } : { from: sender };
 
   return genEthereumContractTxObs(tokenAddress, (contract) =>
-    contract.methods.approve(spender, toWei(hardCodeAmount)).send(params)
+    contract.methods.approve(spender, toWei({ value: hardCodeAmount })).send(params)
   );
 };
 
@@ -200,13 +204,13 @@ export async function getAllowance(
   tokenAddress: string,
   provider: string
 ): Promise<BN | null> {
-  const web3 = entrance.web3.getInstance(provider);
-  const erc20Contract = new web3.eth.Contract(abi.tokenABI, tokenAddress);
+  const signer = entrance.web3.getInstance(provider).getSigner() as unknown as Signer;
+  const erc20Contract = new Contract(tokenAddress, abi.tokenABI, signer);
 
   try {
     const allowanceAmount = await erc20Contract.methods.allowance(sender, spender).call();
 
-    return toBN(allowanceAmount);
+    return new BN(allowanceAmount);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.log('⚠ ~ file: allowance.ts getIssuingAllowance ~ error', error.message);

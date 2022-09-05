@@ -1,7 +1,7 @@
 import { message } from 'antd';
+import { isAddress } from 'ethers/lib/utils';
 import { CrossOverview, TokenWithBridgesInfo } from 'shared/model';
 import { addAsset } from 'shared/utils/connection';
-import { isAddress } from 'web3-utils';
 
 export function tokenSearchFactory<T extends { address: string; name: string }>(tokens: T[]) {
   const symbols = tokens.map((token) => token.name.toLowerCase());

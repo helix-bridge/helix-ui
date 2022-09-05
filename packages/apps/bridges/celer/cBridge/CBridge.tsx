@@ -148,8 +148,8 @@ export function CBridge({
     if (direction.from.host === 'polygon') {
       const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
 
-      promise = web3.eth.getGasPrice().then((res) => ({
-        gasPrice: new BN(res).add(new BN(res).div(new BN(10))).toString(),
+      promise = web3.getGasPrice().then((res) => ({
+        gasPrice: new BN(res.toString()).add(new BN(res.toString()).div(new BN(10))).toString(),
       }));
     }
 

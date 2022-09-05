@@ -1,9 +1,9 @@
+import { isHex, stringToHex } from '@polkadot/util';
 import { Modal } from 'antd';
 import Link from 'antd/lib/typography/Link';
 import React from 'react';
 import { Trans } from 'react-i18next';
 import { EMPTY, from, map, mergeMap, Observable, of, switchMap } from 'rxjs';
-import { toHex, isHex } from 'web3-utils';
 import {
   ChainConfig,
   Connection,
@@ -42,10 +42,10 @@ export async function isNetworkConsistent(chain: EthereumChainConfig, id = ''): 
   id = id && isHex(id) ? parseInt(id, 16).toString() : id;
   // id 1: eth mainnet 3: ropsten 4: rinkeby 5: goerli 42: kovan  43: pangolin 44: crab
   const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-  const actualId: string | number = id ? await Promise.resolve(id) : await web3.eth.net.getId();
+  const actualId: string | number = id ? await Promise.resolve(id) : await web3.getNetwork().then((res) => res.chainId);
   const storedId = chain.ethereumChain.chainId;
 
-  return storedId === toHex(actualId);
+  return storedId === stringToHex(String(actualId));
 }
 
 export const isMetamaskChainConsistent = (network: EthereumChainConfig) => {

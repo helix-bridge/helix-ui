@@ -1,6 +1,7 @@
 import { BN_ZERO } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/util-crypto';
 import BN from 'bn.js';
+import { Contract } from 'ethers';
 import { upperFirst } from 'lodash';
 import { filter, from, map, Observable, switchMap, take, zip } from 'rxjs';
 import { abi } from 'shared/config/abi';
@@ -10,7 +11,6 @@ import { connect, entrance } from 'shared/utils/connection';
 import { encodeBlockHeader, isKton, isRing, toWei } from 'shared/utils/helper';
 import { ClaimNetworkPrefix, encodeMMRRootMessage, getMMR } from 'shared/utils/mmr';
 import { buf2hex, genEthereumContractTxObs, getMPTProof, signAndSendExtrinsic } from 'shared/utils/tx';
-import { Contract } from 'web3-eth-contract';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
 import { validationObsFactory } from '../../../../utils/tx';

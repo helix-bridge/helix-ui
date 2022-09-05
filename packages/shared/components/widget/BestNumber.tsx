@@ -61,7 +61,7 @@ function Component({ config, color = '', onChange = (num) => void num }: BestNum
       sub$$ = timer(0, DURATION)
         .pipe(
           takeWhile(() => isMounted),
-          switchMap(() => from(web3.eth.getBlockNumber())),
+          switchMap(() => from(web3.getBlockNumber())),
           retry({ count: 10, delay: MIDDLE_DURATION }),
           startWith(null)
         )

@@ -3,8 +3,8 @@ import { TypeRegistry } from '@polkadot/types';
 import type { Codec, DetectCodec } from '@polkadot/types/types';
 import { hexToU8a, numberToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
+import { isAddress } from 'ethers/lib/utils';
 import { isNull } from 'lodash';
-import { isAddress } from 'web3-utils';
 import { ChainConfig, PolkadotChainConfig } from '../../model';
 import { isDVMNetwork, isPolkadotNetwork } from '../network';
 

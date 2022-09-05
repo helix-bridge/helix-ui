@@ -1,6 +1,6 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
-import { isAddress } from 'web3-utils';
+import { isAddress } from 'ethers/lib/utils';
 import { Network, PolkadotChainConfig } from '../../model';
 import { chainConfigs, isPolkadotNetwork } from '../network/network';
 import { canConvertToEth, convertToEth, convertToSS58, dvmAddressToAccountId } from './address';

@@ -1,4 +1,4 @@
-import { isAddress } from 'web3-utils';
+import { isAddress } from 'ethers/lib/utils';
 import { RecordStatus } from '../../config/constant';
 import { HelixHistoryRecord, TokenWithBridgesInfo } from '../../model';
 import { fromWei, prettyNumber } from '../helper';

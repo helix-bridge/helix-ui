@@ -8,7 +8,6 @@ import { isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
-import { AbiItem } from 'web3-utils';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
 import { validationObsFactory } from '../../../../utils/tx';
@@ -36,7 +35,7 @@ export function issue(value: IssuingPayload, fee: BN): Observable<Tx> {
       contract.methods
         .lockAndRemoteIssuing(to.meta.specVersion, gasLimit, departure.address, recipient, amount)
         .send({ from: sender, value: fee.toString() }),
-    backingAbi as AbiItem[]
+    backingAbi
   );
 }
 
@@ -56,7 +55,7 @@ export function redeem(value: RedeemPayload, fee: BN): Observable<Tx> {
       contract.methods
         .burnAndRemoteUnlock(to.meta.specVersion, gasLimit, departure.address, recipient, amount)
         .send({ from: sender, value: fee.toString() }),
-    burnAbi as AbiItem[]
+    burnAbi
   );
 }
 
@@ -90,7 +89,7 @@ export function refund(record: HelixHistoryRecord): Observable<Tx> {
             from: sender,
             value: value?.toString(),
           }),
-        abi as AbiItem[]
+        abi
       )
     )
   );
@@ -107,7 +106,7 @@ export function deposit(value: IssuingPayload): Observable<Tx> {
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
     (contract) => contract.methods.deposit().send({ from: sender, value: amount.toString() }),
-    wringABI as AbiItem[]
+    wringABI
   );
 }
 
@@ -122,7 +121,7 @@ export function withdraw(value: RedeemPayload): Observable<Tx> {
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
     (contract) => contract.methods.withdraw(amount.toString()).send({ from: sender }),
-    wringABI as AbiItem[]
+    wringABI
   );
 }
 

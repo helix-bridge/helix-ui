@@ -53,7 +53,7 @@ export function redeem(value: WithdrawPayload): Observable<Tx> {
     }),
     switchMap((extrinsic) =>
       rxFrom(
-        web3.eth.estimateGas({
+        web3.estimateGas({
           from: sender,
           to: SUBSTRATE_DVM_WITHDRAW,
           data: u8aToHex(extrinsic.method.toU8a()),
@@ -64,7 +64,7 @@ export function redeem(value: WithdrawPayload): Observable<Tx> {
             from: sender,
             to: SUBSTRATE_DVM_WITHDRAW,
             data: u8aToHex(extrinsic.method.toU8a()),
-            gas,
+            gasLimit: gas.toString(),
           })
         )
       )

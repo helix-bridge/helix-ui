@@ -1,4 +1,4 @@
-import { BN_ZERO } from '@polkadot/util';
+import { BN_ZERO, hexToU8a, stringToHex } from '@polkadot/util';
 import BN from 'bn.js';
 import { from, map, Observable, switchMap } from 'rxjs';
 import { abi } from 'shared/config/abi';
@@ -6,7 +6,6 @@ import { Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { convertToDvm, fromWei, toWei } from 'shared/utils/helper';
 import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
-import { hexToBytes, toHex } from 'web3-utils';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
 import { validationObsFactory } from '../../../../utils/tx';
@@ -31,7 +30,7 @@ export function redeem(value: RedeemPayload, mappingAddress: string, specVersion
     recipient,
     direction: { from: departure, to },
   } = value;
-  const receiver = hexToBytes(convertToDvm(recipient));
+  const receiver = hexToU8a(convertToDvm(recipient));
   const WEIGHT = '690133000';
   const api = entrance.polkadot.getInstance(departure.meta.provider);
 
@@ -40,7 +39,7 @@ export function redeem(value: RedeemPayload, mappingAddress: string, specVersion
     map((res) => {
       const num = fromWei({ value: res, decimals: 9 });
 
-      return toHex(toWei({ value: num }));
+      return stringToHex(toWei({ value: num }));
     })
   );
 
