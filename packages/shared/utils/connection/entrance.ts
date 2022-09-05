@@ -1,5 +1,5 @@
 import { typesBundleForPolkadotApps } from '@darwinia/types/mix';
-import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers';
+import { JsonRpcProvider, Web3Provider, WebSocketProvider } from '@ethersproject/providers';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { SHORT_DURATION } from '../../config/constant';
 
@@ -77,23 +77,15 @@ class Web3Entrance extends Entrance<JsonRpcProvider> {
   defaultProvider = 'ethereum';
 
   init(url: string) {
-    if (url === this.defaultProvider) {
-      return new Web3Provider(window.ethereum);
-    } else {
+    if (url.startsWith('wss')) {
+      return new WebSocketProvider(url);
+    }
+
+    if (url.startsWith('https')) {
       return new JsonRpcProvider(url);
     }
 
-    // let provider = null;
-
-    // if (url.startsWith('wss')) {
-    //   provider = new JsonRpcProvider(url);
-    // } else if (url.startsWith('https')) {
-    //   provider = new JsonRpcProvider(url);
-    // } else {
-    //   throw new Error('Need a http or ws provider');
-    // }
-
-    // return new Web3Provider(provider);
+    return new Web3Provider(window.ethereum);
   }
 
   afterInit() {

@@ -81,10 +81,12 @@ export function fromWei(
 ): string {
   const data = value || amount || balance;
 
-  return [toStr, (val: string) => fw(val || '0', decimals).toString(), ...fns].reduce(
-    (acc, fn) => fn(acc as string),
-    data
-  ) as string;
+  return [
+    toStr,
+    (val: string) => fw(val || '0', decimals).toString(),
+    ...fns,
+    (v: string) => (v.endsWith('.0') ? v.split('.')[0] : v),
+  ].reduce((acc, fn) => fn(acc as string), data) as string;
 }
 
 export function toWei(

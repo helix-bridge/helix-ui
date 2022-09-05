@@ -72,7 +72,6 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
         <meta charSet="utf-8" />
         <title>Helix</title>
         <meta key="description" name="description" content="helix bridge" />
-        <script src="/icon/iconfont.js"></script>
       </Head>
       <ClientContext.Provider value={client}>
         <ErrorBoundary>

@@ -38,6 +38,7 @@ export function Bridge({ from, to, size = 'default' }: BridgeProps) {
             clipPath: 'polygon(85% 0%, 100% 50%, 85% 100%, 0% 100%, 15% 50%, 0% 0%)',
           }}
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={`/image/bridges/${bridge.category}.png`}
             className={size === 'small' ? 'w-5 md:w-14' : `w-10 md:w-28`}

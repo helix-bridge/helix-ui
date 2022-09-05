@@ -62,6 +62,7 @@ export default function ActiveAccount() {
               className={`flex items-center justify-around px-1 overflow-hidden`}
               icon={
                 matched ? (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img src={`/image/${departureConnection.type}.svg`} width={18} height={18} />
                 ) : (
                   <CloseCircleOutlined />
