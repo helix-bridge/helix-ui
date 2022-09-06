@@ -57,7 +57,7 @@ export function CBridge({
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE * UI_SLIPPAGE_SCALE);
   const [minimalMaxSlippage, setMinimalMaxSlippage] = useState<number | null>(null);
   const { setChainMatched } = useWallet();
-  const { isPegged, sendTx } = useTransfer(direction);
+  const { isPegged, sendTx, poolAddress } = useTransfer(direction);
 
   const feeWithSymbol = useMemo(
     () =>
@@ -110,13 +110,17 @@ export function CBridge({
     t,
   ]);
 
-  const poolAddress = bridge.isIssue(direction.from.meta, direction.to.meta)
-    ? bridge.config.contracts.backing
-    : bridge.config.contracts.issuing;
-
   useEffect(() => {
     const sub$$ = from(isMetamaskChainConsistent(direction.from.meta))
-      .pipe(switchMap((isConsistent) => (isConsistent ? from(getMinimalMaxSlippage(poolAddress)) : of(NaN))))
+      .pipe(
+        switchMap((isConsistent) => {
+          if (isConsistent) {
+            return isPegged ? of(0) : from(getMinimalMaxSlippage(poolAddress));
+          }
+
+          return of(NaN);
+        })
+      )
       .subscribe({
         next: (result) => {
           if (!isNaN(result)) {
@@ -126,16 +130,17 @@ export function CBridge({
             setChainMatched(false);
           }
         },
-        error: (_) => {
+        error: (error) => {
           message.error(
             `The active metamask chain is not consistent with required, you must switch it to ${direction.from.host} in metamask`
           );
+          console.warn('🚀 ~ file: CBridge.tsx ~ line 126 ~ useEffect ~ error', error);
           setChainMatched(false);
         },
       });
 
     return () => sub$$.unsubscribe();
-  }, [direction.from.host, direction.from.meta, poolAddress, setChainMatched]);
+  }, [direction.from.host, direction.from.meta, isPegged, poolAddress, setChainMatched]);
 
   useEffect(() => {
     let promise = Promise.resolve({});
