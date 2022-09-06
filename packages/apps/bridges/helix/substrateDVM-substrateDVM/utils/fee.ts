@@ -14,14 +14,13 @@ export async function getFee(
     to: { meta: arrival },
   } = direction;
   const bridge = getBridge([departure, arrival]);
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
+  const web3 = entrance.web3.getInstance(direction.from.meta.provider);
 
   const { abi, address } = bridge.isIssue(departure, arrival)
     ? { abi: backingAbi, address: bridge.config.contracts?.backing }
     : { abi: burnAbi, address: bridge.config.contracts?.issuing };
 
   const contract = new web3.eth.Contract(abi as AbiItem[], address);
-
   const fee = await contract.methods.fee().call();
 
   return new BN(fee);
