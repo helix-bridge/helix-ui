@@ -112,7 +112,15 @@ export function CBridge({
 
   useEffect(() => {
     const sub$$ = from(isMetamaskChainConsistent(direction.from.meta))
-      .pipe(switchMap((isConsistent) => (isConsistent ? from(getMinimalMaxSlippage(poolAddress)) : of(NaN))))
+      .pipe(
+        switchMap((isConsistent) => {
+          if (isConsistent) {
+            return isPegged ? of(0) : from(getMinimalMaxSlippage(poolAddress));
+          }
+
+          return of(NaN);
+        })
+      )
       .subscribe({
         next: (result) => {
           if (!isNaN(result)) {
@@ -122,16 +130,17 @@ export function CBridge({
             setChainMatched(false);
           }
         },
-        error: (_) => {
+        error: (error) => {
           message.error(
             `The active metamask chain is not consistent with required, you must switch it to ${direction.from.host} in metamask`
           );
+          console.warn('🚀 ~ file: CBridge.tsx ~ line 126 ~ useEffect ~ error', error);
           setChainMatched(false);
         },
       });
 
     return () => sub$$.unsubscribe();
-  }, [direction.from.host, direction.from.meta, poolAddress, setChainMatched]);
+  }, [direction.from.host, direction.from.meta, isPegged, poolAddress, setChainMatched]);
 
   useEffect(() => {
     let promise = Promise.resolve({});
