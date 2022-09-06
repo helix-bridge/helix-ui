@@ -39,15 +39,17 @@ export const issue: TxFn<IssuingPayload> = ({ sender, direction, recipient, brid
     from: { address },
     to,
   } = direction;
-  const options = to.meta.isTest ? { from: sender, gasPrice: '500000000000' } : { from: sender };
-
   recipient = buf2hex(decodeAddress(recipient, false, (to.meta as PolkadotChainConfig).ss58Prefix).buffer);
 
-  return genEthereumContractTxObs(address, (contract) =>
-    contract.methods
-      .transferFrom(sender, bridge.config.contracts.backing, toWei({ value: to.amount }), recipient)
-      .send(options)
-  );
+  return genEthereumContractTxObs(address, (contract) => {
+    return contract['transferFrom(address,address,uint256,bytes)'](
+      sender,
+      bridge.config.contracts.backing,
+      toWei({ value: to.amount }),
+      recipient,
+      to.meta.isTest ? { gasPrice: '512000000000' } : undefined
+    );
+  });
 };
 
 /**

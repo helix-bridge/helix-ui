@@ -1,11 +1,12 @@
 import BN from 'bn.js';
-import { Contract } from 'ethers';
+import { BigNumber, Contract } from 'ethers';
 import { abi } from '../../../config/abi';
+import { entrance } from '../../connection';
 
 export async function getBalance(tokenAddress: string, account: string): Promise<BN> {
   try {
-    const contract = new Contract(tokenAddress, abi.tokenABI);
-    const balance = await contract.methods.balanceOf(account).call();
+    const contract = new Contract(tokenAddress, abi.tokenABI, entrance.web3.getInstance(entrance.web3.defaultProvider));
+    const balance = await contract.balanceOf(account).then((res: BigNumber) => res.toString());
 
     return new BN(balance);
   } catch (err) {

@@ -20,8 +20,8 @@ export async function getDailyLimit(
     return null;
   }
 
-  const limit = await contract.methods.dailyLimit(tokenAddress).call();
-  const spentToday = await contract.methods.spentToday(tokenAddress).call();
+  const limit = await contract.dailyLimit(tokenAddress).call();
+  const spentToday = await contract.spentToday(tokenAddress).call();
 
   return { limit, spentToday };
 }

@@ -20,7 +20,7 @@ export async function getFee(
 
   const contract = new Contract(address as string, abi);
 
-  const fee = await contract.methods.fee().call();
+  const fee = await contract.fee().call();
 
   return new BN(fee);
 }

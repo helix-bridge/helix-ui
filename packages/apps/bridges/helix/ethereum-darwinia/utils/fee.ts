@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import BN from 'bn.js';
 import { Contract } from 'ethers';
 import { abi } from 'shared/config/abi';
@@ -34,11 +35,15 @@ export async function getRedeemTxFee(
 }
 
 export async function getIssuingFee(bridge: Bridge<EthereumDarwiniaBridgeConfig>): Promise<BN | null> {
-  const contract = new Contract(bridge.config.contracts.fee, abi.registryABI);
+  const contract = new Contract(
+    bridge.config.contracts.fee,
+    abi.registryABI,
+    entrance.web3.getInstance(entrance.web3.defaultProvider)
+  );
   try {
-    const fee: number = await contract.methods
+    const fee = await contract
       .uintOf('0x55494e545f4252494447455f4645450000000000000000000000000000000000')
-      .call();
+      .then((res: BigNumber) => res.toString());
 
     return new BN(fee);
   } catch {

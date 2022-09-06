@@ -105,7 +105,7 @@ export function deposit(value: IssuingPayload): Observable<Tx> {
 
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
-    (contract) => contract.methods.deposit().send({ from: sender, value: amount.toString() }),
+    (contract) => contract.deposit().send({ from: sender, value: amount.toString() }),
     wringABI
   );
 }
@@ -120,7 +120,7 @@ export function withdraw(value: RedeemPayload): Observable<Tx> {
 
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
-    (contract) => contract.methods.withdraw(amount.toString()).send({ from: sender }),
+    (contract) => contract.withdraw(amount.toString()).send({ from: sender }),
     wringABI
   );
 }

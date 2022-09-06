@@ -51,8 +51,7 @@ export function burn(value: IssuingPayload | RedeemPayload): Observable<Tx> {
 
   return genEthereumContractTxObs(
     contractAddress,
-    (contract) =>
-      contract.methods.burn(tokenAddress, transferAmount, toChainId, recipient, nonce).send({ from: sender }),
+    (contract) => contract.burn(tokenAddress, transferAmount, toChainId, recipient, nonce).send({ from: sender }),
     burnAbi
   );
 }
@@ -84,8 +83,7 @@ export function deposit(value: IssuingPayload | RedeemPayload): Observable<Tx> {
 
   return genEthereumContractTxObs(
     contractAddress,
-    (contract) =>
-      contract.methods.deposit(tokenAddress, transferAmount, mintChainId, recipient, nonce).send({ from: sender }),
+    (contract) => contract.deposit(tokenAddress, transferAmount, mintChainId, recipient, nonce).send({ from: sender }),
     depositAbi
   );
 }
@@ -151,7 +149,7 @@ export function withdraw(record: HelixHistoryRecord): Observable<Tx> {
 
       return genEthereumContractTxObs(
         contractAddress as string,
-        (contract) => contract.methods.withdraw(wd, sigs, signers, powers).send({ from: sender }),
+        (contract) => contract.withdraw(wd, sigs, signers, powers).send({ from: sender }),
         transferAbi
       );
     })
@@ -187,7 +185,7 @@ export const validate = validationObsFactory(genValidations);
 
 export const getMinimalMaxSlippage = async (contractAddress: string) => {
   const contract = new Contract(contractAddress, transferAbi);
-  const result = await contract.methods.minimalMaxSlippage().call();
+  const result = await contract.minimalMaxSlippage().call();
 
   return result;
 };

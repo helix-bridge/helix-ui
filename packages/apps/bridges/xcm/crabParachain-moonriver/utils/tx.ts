@@ -90,7 +90,7 @@ export function redeem(payload: IssuingPayload): Observable<Tx> {
 
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
-    (contract) => contract.methods.transfer(departure.address, amount, destination, weight).send({ from: sender }),
+    (contract) => contract.transfer(departure.address, amount, destination, weight).send({ from: sender }),
     abi
   );
 }

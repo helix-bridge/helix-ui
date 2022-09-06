@@ -29,7 +29,7 @@ export async function getBalance(account: string, ktonAddress?: string): Promise
     if (ktonAddress) {
       const ktonContract = new Contract(ktonAddress, abi.ktonABI);
 
-      kton = await ktonContract.methods.balanceOf(account).call();
+      kton = await ktonContract.balanceOf(account).call();
     }
   } catch (error) {
     console.error(

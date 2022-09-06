@@ -21,7 +21,7 @@ abstract class Entrance<T> {
   }
 
   getInstance(url: string): T {
-    const exist = this.checkExist(url);
+    const exist = url === 'ethereum' ? null : this.checkExist(url);
 
     if (exist) {
       return exist[url];
@@ -29,7 +29,10 @@ abstract class Entrance<T> {
 
     const instance = this.init(url);
 
-    this.apiList.push({ [url]: instance });
+    if (url !== 'ethereum') {
+      this.apiList.push({ [url]: instance });
+    }
+
     this.afterInit(instance);
 
     console.log(`🌎 ~ ${this.name} api list`, this.apiList.map((item) => Object.keys(item)).flat());

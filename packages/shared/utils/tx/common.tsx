@@ -1,9 +1,9 @@
-import { TransactionRequest } from '@ethersproject/abstract-provider';
+import { TransactionRequest, TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider';
 import { ApiPromise } from '@polkadot/api';
 import { TypeRegistry } from '@polkadot/types';
 import { Modal, ModalFuncProps, ModalProps } from 'antd';
 import BN from 'bn.js';
-import { Contract, Signer } from 'ethers';
+import { BigNumber, Contract } from 'ethers';
 import { Deferrable } from 'ethers/lib/utils';
 import { noop, omitBy } from 'lodash';
 import { i18n } from 'next-i18next';
@@ -124,28 +124,28 @@ export function createTxWorkflow(
  */
 export function genEthereumContractTxObs(
   contractAddress: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fn: (contract: Contract) => any,
+  fn: (contract: Contract) => Promise<TransactionResponse>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   contractAbi: any = abi.tokenABI
 ): Observable<Tx> {
   return new Observable((observer) => {
     try {
-      const contract = new Contract(contractAddress, contractAbi);
+      const signer = entrance.web3.getInstance(entrance.web3.defaultProvider).getSigner();
+      const contract = new Contract(contractAddress, contractAbi, signer);
 
       observer.next({ status: 'signing' });
 
-      fn(contract);
+      fn(contract)
+        .then((tx: TransactionResponse) => {
+          observer.next({ status: 'queued', hash: tx.hash });
 
-      contract
-        .on('transactionHash', (hash: string) => {
-          observer.next({ status: 'queued', hash });
+          return tx.wait();
         })
-        .on('receipt', ({ transactionHash }) => {
-          observer.next({ status: 'finalized', hash: transactionHash });
+        .then((receipt: TransactionReceipt) => {
+          observer.next({ status: 'finalized', hash: receipt.transactionHash });
           observer.complete();
         })
-        .on('error', (error: { code: number; message: string }) => {
+        .catch((error: { code: number; message: string }) => {
           observer.error({ status: 'error', error: error.message });
         });
     } catch (error) {
@@ -194,7 +194,7 @@ export const approveToken: TxFn<
   const params = sendOptions ? { from: sender, ...omitBy(sendOptions, (value) => !value) } : { from: sender };
 
   return genEthereumContractTxObs(tokenAddress, (contract) =>
-    contract.methods.approve(spender, toWei({ value: hardCodeAmount })).send(params)
+    contract.approve(spender, toWei({ value: hardCodeAmount })).send(params)
   );
 };
 
@@ -204,11 +204,10 @@ export async function getAllowance(
   tokenAddress: string,
   provider: string
 ): Promise<BN | null> {
-  const signer = entrance.web3.getInstance(provider).getSigner() as unknown as Signer;
-  const erc20Contract = new Contract(tokenAddress, abi.tokenABI, signer);
+  const contract = new Contract(tokenAddress, abi.tokenABI, entrance.web3.getInstance(provider));
 
   try {
-    const allowanceAmount = await erc20Contract.methods.allowance(sender, spender).call();
+    const allowanceAmount = await contract.allowance(sender, spender).then((res: BigNumber) => res.toString());
 
     return new BN(allowanceAmount);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

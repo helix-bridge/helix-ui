@@ -19,8 +19,8 @@ export async function getDailyLimit(
 
   const contract = new Contract(address as string, abi);
 
-  const limit = await contract.methods.dailyLimit(fromTokenAddress).call();
-  const spentToday = await contract.methods.spentToday(fromTokenAddress).call();
+  const limit = await contract.dailyLimit(fromTokenAddress).call();
+  const spentToday = await contract.spentToday(fromTokenAddress).call();
 
   return { limit, spentToday };
 }
