@@ -1,3 +1,21 @@
+## [4.2.6](https://github.com/helix-bridge/helix/compare/v4.2.5-apps...v4.2.4) (2022-09-06)
+
+
+### Bug Fixes
+
+* cBridge burn deposit address ([#228](https://github.com/helix-bridge/helix/issues/228)) ([7222a4c](https://github.com/helix-bridge/helix/commit/7222a4ce7d1e40b0b74cc9d1a94bfd3c792799ff))
+* slippage not needed on pegged tx ([#231](https://github.com/helix-bridge/helix/issues/231)) ([c641665](https://github.com/helix-bridge/helix/commit/c6416656ced2c78fcd7e41bf07f201d7e088e3be))
+* wrong field name of polygon_astar ([#221](https://github.com/helix-bridge/helix/issues/221)) ([12bb4f3](https://github.com/helix-bridge/helix/commit/12bb4f3f92bb4e59fdd4d5992199119bbb954bd0))
+
+
+### Features
+
+* outdate bridge could be remove safely ([#225](https://github.com/helix-bridge/helix/issues/225)) ([3e5e6c4](https://github.com/helix-bridge/helix/commit/3e5e6c46ede68190b8c5afe79385e48a37b7b5e0))
+* remove s2s v1 ([#222](https://github.com/helix-bridge/helix/issues/222)) ([ea4f85a](https://github.com/helix-bridge/helix/commit/ea4f85aed26527df66ca58446e6fc24830a7d88a))
+* ring<>wring on darwinia ([#223](https://github.com/helix-bridge/helix/issues/223)) ([1d6859a](https://github.com/helix-bridge/helix/commit/1d6859a5f7d4ac09b235e50915623c528d43cbe9))
+
+
+
 ## [4.2.3](https://github.com/helix-bridge/helix/compare/v4.2.2-apps...v4.2.3) (2022-08-31)
 
 
