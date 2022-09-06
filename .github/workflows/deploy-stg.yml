@@ -35,7 +35,6 @@ jobs:
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy helix (test)
-        if: steps.changed-files.outputs.any_changed == 'true'
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
