@@ -5,6 +5,7 @@ import { last } from 'lodash';
 import { EMPTY, from, Observable, switchMap } from 'rxjs';
 import { HelixHistoryRecord, Tx } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
+import { entrance } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { TxValidationMessages } from '../../../../config/validation';
@@ -184,8 +185,8 @@ export const genValidations = ({ balance, amount, allowance }: TxValidation): [b
 export const validate = validationObsFactory(genValidations);
 
 export const getMinimalMaxSlippage = async (contractAddress: string) => {
-  const contract = new Contract(contractAddress, transferAbi);
-  const result = await contract.minimalMaxSlippage().call();
+  const contract = new Contract(contractAddress, transferAbi, entrance.web3.getInstance(entrance.web3.defaultProvider));
+  const result = await contract.minimalMaxSlippage();
 
   return result;
 };

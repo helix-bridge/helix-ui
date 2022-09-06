@@ -107,16 +107,15 @@ export function claimToken({
             map(
               ([mmrProof, eventsProofStr, account]) =>
                 (contract: Contract) =>
-                  contract.methods
-                    .verifyProof(
-                      '0x' + MMRRoot,
-                      best,
-                      header.toHex(),
-                      mmrProof.peaks,
-                      mmrProof.siblings,
-                      eventsProofStr
-                    )
-                    .send({ from: account })
+                  contract.verifyProof(
+                    '0x' + MMRRoot,
+                    best,
+                    header.toHex(),
+                    mmrProof.peaks,
+                    mmrProof.siblings,
+                    eventsProofStr,
+                    { from: account }
+                  )
             )
           )
         : zip([from(getMMR(api, blockNumber, mmrIndex, blockHash)), eventsProofObs, accountObs]).pipe(
@@ -129,18 +128,17 @@ export function claimToken({
               });
 
               return (contract: Contract) =>
-                contract.methods
-                  .appendRootAndVerifyProof(
-                    mmrRootMessage.toHex(),
-                    mmrSignatures.split(','),
-                    mmrRoot,
-                    mmrIndex,
-                    header.toHex(),
-                    mmrProof.peaks,
-                    mmrProof.siblings,
-                    eventsProofStr
-                  )
-                  .send({ from: account });
+                contract.appendRootAndVerifyProof(
+                  mmrRootMessage.toHex(),
+                  mmrSignatures.split(','),
+                  mmrRoot,
+                  mmrIndex,
+                  header.toHex(),
+                  mmrProof.peaks,
+                  mmrProof.siblings,
+                  eventsProofStr,
+                  { from: account }
+                );
             })
           );
     }),

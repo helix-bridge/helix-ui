@@ -1,13 +1,13 @@
 import { BN_ZERO } from '@polkadot/util';
 import { message } from 'antd';
 import BN from 'bn.js';
-import { Contract } from 'ethers';
+import { BigNumber, Contract } from 'ethers';
 import { createContext, useCallback, useContext, useState } from 'react';
 import { EMPTY, filter, from, iif, map, Observable, of, Subscription, switchMap, take, tap, zip } from 'rxjs';
 import { abi } from 'shared/config/abi';
 import { ConnectionStatus, HelixHistoryRecord, ICamelCaseKeys } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
-import { connect } from 'shared/utils/connection';
+import { connect, entrance } from 'shared/utils/connection';
 import { getChainConfig } from 'shared/utils/network';
 import { getAllowance } from 'shared/utils/tx';
 import {
@@ -36,11 +36,15 @@ interface ClaimCtx {
 }
 
 function isSufficient(config: EthereumDarwiniaBridgeConfig, tokenAddress: string, amount: BN): Observable<boolean> {
-  const contract = new Contract(config.contracts.issuing, abi.tokenIssuingABI);
-  const limit = from(contract.dailyLimit(tokenAddress).call() as Promise<string>);
-  const toadySpent = from(contract.spentToday(tokenAddress).call() as Promise<string>);
+  const contract = new Contract(
+    config.contracts.issuing,
+    abi.tokenIssuingABI,
+    entrance.web3.getInstance(entrance.web3.defaultProvider)
+  );
+  const limit = from(contract.dailyLimit(tokenAddress) as Promise<BigNumber>);
+  const toadySpent = from(contract.spentToday(tokenAddress) as Promise<BigNumber>);
 
-  return zip([limit, toadySpent]).pipe(map(([total, spent]) => new BN(total).sub(new BN(spent)).gte(amount)));
+  return zip([limit, toadySpent]).pipe(map(([total, spent]) => total.sub(spent).gte(amount.toString())));
 }
 
 export const ClaimContext = createContext<ClaimCtx | null>(null);

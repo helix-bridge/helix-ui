@@ -1,6 +1,7 @@
 import { Contract } from 'ethers';
 import { CrossChainDirection, CrossToken, DailyLimit, DVMChainConfig } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
+import { entrance } from 'shared/utils/connection';
 import backingAbi from '../config/s2sv2backing.json';
 import burnAbi from '../config/s2sv2burn.json';
 
@@ -17,10 +18,10 @@ export async function getDailyLimit(
     ? { abi: backingAbi, address: bridge.config.contracts?.backing }
     : { abi: burnAbi, address: bridge.config.contracts?.issuing };
 
-  const contract = new Contract(address as string, abi);
+  const contract = new Contract(address as string, abi, entrance.web3.getInstance(entrance.web3.defaultProvider));
 
-  const limit = await contract.dailyLimit(fromTokenAddress).call();
-  const spentToday = await contract.spentToday(fromTokenAddress).call();
+  const limit = await contract.dailyLimit(fromTokenAddress);
+  const spentToday = await contract.spentToday(fromTokenAddress);
 
   return { limit, spentToday };
 }

@@ -1,7 +1,8 @@
 import BN from 'bn.js';
+import { Contract } from 'ethers';
 import { CrossChainDirection, CrossToken, DVMChainConfig } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
-import { Contract } from 'ethers';
+import { entrance } from 'shared/utils/connection';
 import backingAbi from '../config/s2sv2backing.json';
 import burnAbi from '../config/s2sv2burn.json';
 
@@ -18,9 +19,9 @@ export async function getFee(
     ? { abi: backingAbi, address: bridge.config.contracts?.backing }
     : { abi: burnAbi, address: bridge.config.contracts?.issuing };
 
-  const contract = new Contract(address as string, abi);
+  const contract = new Contract(address as string, abi, entrance.web3.getInstance(entrance.web3.defaultProvider));
 
-  const fee = await contract.fee().call();
+  const fee = await contract.fee();
 
   return new BN(fee);
 }

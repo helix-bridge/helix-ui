@@ -27,9 +27,13 @@ export async function getBalance(account: string, ktonAddress?: string): Promise
 
   try {
     if (ktonAddress) {
-      const ktonContract = new Contract(ktonAddress, abi.ktonABI);
+      const ktonContract = new Contract(
+        ktonAddress,
+        abi.ktonABI,
+        entrance.web3.getInstance(entrance.web3.defaultProvider)
+      );
 
-      kton = await ktonContract.balanceOf(account).call();
+      kton = await ktonContract.balanceOf(account);
     }
   } catch (error) {
     console.error(

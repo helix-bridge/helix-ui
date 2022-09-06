@@ -1,6 +1,7 @@
 import { Contract } from 'ethers';
 import { abi } from 'shared/config/abi';
 import { CrossChainDirection, CrossToken, DailyLimit, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
+import { entrance } from 'shared/utils/connection';
 import { isRing } from 'shared/utils/helper';
 import { getS2SMappingAddress } from 'shared/utils/mappingToken';
 
@@ -12,7 +13,11 @@ export async function getDailyLimit(
     to: { meta: arrival },
   } = direction;
   const mappingAddress = await getS2SMappingAddress(arrival.provider);
-  const contract = new Contract(mappingAddress, abi.S2SMappingTokenABI);
+  const contract = new Contract(
+    mappingAddress,
+    abi.S2SMappingTokenABI,
+    entrance.web3.getInstance(entrance.web3.defaultProvider)
+  );
   const ringAddress = token;
   const tokenAddress = isRing(direction.from.symbol) ? ringAddress : '';
 
@@ -20,8 +25,8 @@ export async function getDailyLimit(
     return null;
   }
 
-  const limit = await contract.dailyLimit(tokenAddress).call();
-  const spentToday = await contract.spentToday(tokenAddress).call();
+  const limit = await contract.dailyLimit(tokenAddress);
+  const spentToday = await contract.spentToday(tokenAddress);
 
   return { limit, spentToday };
 }
