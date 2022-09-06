@@ -52,7 +52,7 @@ export function burn(value: IssuingPayload | RedeemPayload): Observable<Tx> {
 
   return genEthereumContractTxObs(
     contractAddress,
-    (contract) => contract.burn(tokenAddress, transferAmount, toChainId, recipient, nonce).send({ from: sender }),
+    (contract) => contract.burn(tokenAddress, transferAmount, toChainId, recipient, nonce, { from: sender }),
     burnAbi
   );
 }
@@ -84,7 +84,7 @@ export function deposit(value: IssuingPayload | RedeemPayload): Observable<Tx> {
 
   return genEthereumContractTxObs(
     contractAddress,
-    (contract) => contract.deposit(tokenAddress, transferAmount, mintChainId, recipient, nonce).send({ from: sender }),
+    (contract) => contract.deposit(tokenAddress, transferAmount, mintChainId, recipient, nonce, { from: sender }),
     depositAbi
   );
 }
@@ -112,9 +112,7 @@ export function transfer(value: IssuingPayload | RedeemPayload): Observable<Tx> 
   return genEthereumContractTxObs(
     contractAddress,
     (contract) =>
-      contract.methods
-        .send(recipient, tokenAddress, transferAmount, dstChainId, nonce, maxSlippage)
-        .send({ from: sender }),
+      contract.methods.send(recipient, tokenAddress, transferAmount, dstChainId, nonce, maxSlippage, { from: sender }),
     transferAbi
   );
 }
@@ -150,7 +148,7 @@ export function withdraw(record: HelixHistoryRecord): Observable<Tx> {
 
       return genEthereumContractTxObs(
         contractAddress as string,
-        (contract) => contract.withdraw(wd, sigs, signers, powers).send({ from: sender }),
+        (contract) => contract.withdraw(wd, sigs, signers, powers, { from: sender }),
         transferAbi
       );
     })

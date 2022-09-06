@@ -32,9 +32,10 @@ export function issue(value: IssuingPayload, fee: BN): Observable<Tx> {
   return genEthereumContractTxObs(
     bridge.config.contracts!.backing,
     (contract) =>
-      contract.methods
-        .lockAndRemoteIssuing(to.meta.specVersion, gasLimit, departure.address, recipient, amount)
-        .send({ from: sender, value: fee.toString() }),
+      contract.methods.lockAndRemoteIssuing(to.meta.specVersion, gasLimit, departure.address, recipient, amount, {
+        from: sender,
+        value: fee.toString(),
+      }),
     backingAbi
   );
 }
@@ -52,9 +53,10 @@ export function redeem(value: RedeemPayload, fee: BN): Observable<Tx> {
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
     (contract) =>
-      contract.methods
-        .burnAndRemoteUnlock(to.meta.specVersion, gasLimit, departure.address, recipient, amount)
-        .send({ from: sender, value: fee.toString() }),
+      contract.methods.burnAndRemoteUnlock(to.meta.specVersion, gasLimit, departure.address, recipient, amount, {
+        from: sender,
+        value: fee.toString(),
+      }),
     burnAbi
   );
 }
@@ -85,7 +87,7 @@ export function refund(record: HelixHistoryRecord): Observable<Tx> {
       genEthereumContractTxObs(
         address as string,
         (contract) =>
-          contract.methods[method](departure.specVersion, '2000000', transferId, tokenAddress, sender, amount).send({
+          contract[method](departure.specVersion, '2000000', transferId, tokenAddress, sender, amount).send({
             from: sender,
             value: value?.toString(),
           }),
@@ -105,7 +107,7 @@ export function deposit(value: IssuingPayload): Observable<Tx> {
 
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
-    (contract) => contract.deposit().send({ from: sender, value: amount.toString() }),
+    (contract) => contract.deposit({ from: sender, value: amount.toString() }),
     wringABI
   );
 }
@@ -120,7 +122,7 @@ export function withdraw(value: RedeemPayload): Observable<Tx> {
 
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
-    (contract) => contract.withdraw(amount.toString()).send({ from: sender }),
+    (contract) => contract.withdraw(amount.toString(), { from: sender }),
     wringABI
   );
 }

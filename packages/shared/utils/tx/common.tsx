@@ -194,7 +194,7 @@ export const approveToken: TxFn<
   const params = sendOptions ? { from: sender, ...omitBy(sendOptions, (value) => !value) } : { from: sender };
 
   return genEthereumContractTxObs(tokenAddress, (contract) =>
-    contract.approve(spender, toWei({ value: hardCodeAmount })).send(params)
+    contract.approve(spender, toWei({ value: hardCodeAmount }), params)
   );
 };
 

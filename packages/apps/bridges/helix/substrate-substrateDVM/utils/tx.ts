@@ -48,15 +48,14 @@ export function redeem(value: RedeemPayload, mappingAddress: string, specVersion
       genEthereumContractTxObs(
         mappingAddress,
         (contract) =>
-          contract.methods
-            .burnAndRemoteUnlockWaitingConfirm(
-              specVersion,
-              WEIGHT,
-              departure.address,
-              receiver,
-              toWei({ value: departure.amount, decimals: departure.decimals })
-            )
-            .send({ from: sender, value: val }),
+          contract.methods.burnAndRemoteUnlockWaitingConfirm(
+            specVersion,
+            WEIGHT,
+            departure.address,
+            receiver,
+            toWei({ value: departure.amount, decimals: departure.decimals }),
+            { from: sender, value: val }
+          ),
         abi.S2SMappingTokenABI
       )
     )
