@@ -42,7 +42,7 @@ export const crabDVMConfig: DVMChainConfig = {
       address: '0x588abe3F7EE935137102C5e2B8042788935f4CB0',
     },
     {
-      name: 'WCKTON',
+      name: 'CKTON',
       decimals: 18,
       cross: [
         {
