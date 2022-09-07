@@ -91,6 +91,10 @@ class Web3Entrance extends Entrance<JsonRpcProvider> {
     return new Web3Provider(window.ethereum);
   }
 
+  get currentProvider() {
+    return this.getInstance(this.defaultProvider);
+  }
+
   afterInit() {
     // nothing to do
   }

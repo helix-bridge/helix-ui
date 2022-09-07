@@ -41,7 +41,7 @@ export function redeem(value: WithdrawPayload): Observable<Tx> {
     return EMPTY;
   }
 
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
+  const web3 = entrance.web3.currentProvider;
   const api = entrance.polkadot.getInstance(from.meta.provider);
 
   return rxFrom(waitUntilConnected(api)).pipe(

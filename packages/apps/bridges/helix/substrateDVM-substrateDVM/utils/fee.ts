@@ -19,7 +19,7 @@ export async function getFee(
     ? { abi: backingAbi, address: bridge.config.contracts?.backing }
     : { abi: burnAbi, address: bridge.config.contracts?.issuing };
 
-  const contract = new Contract(address as string, abi, entrance.web3.getInstance(entrance.web3.defaultProvider));
+  const contract = new Contract(address as string, abi, entrance.web3.currentProvider);
 
   const fee = await contract.fee();
 

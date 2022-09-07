@@ -36,11 +36,7 @@ interface ClaimCtx {
 }
 
 function isSufficient(config: EthereumDarwiniaBridgeConfig, tokenAddress: string, amount: BN): Observable<boolean> {
-  const contract = new Contract(
-    config.contracts.issuing,
-    abi.tokenIssuingABI,
-    entrance.web3.getInstance(entrance.web3.defaultProvider)
-  );
+  const contract = new Contract(config.contracts.issuing, abi.tokenIssuingABI, entrance.web3.currentProvider);
   const limit = from(contract.dailyLimit(tokenAddress) as Promise<BigNumber>);
   const toadySpent = from(contract.spentToday(tokenAddress) as Promise<BigNumber>);
 

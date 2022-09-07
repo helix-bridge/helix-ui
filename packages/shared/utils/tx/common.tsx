@@ -130,7 +130,7 @@ export function genEthereumContractTxObs(
 ): Observable<Tx> {
   return new Observable((observer) => {
     try {
-      const signer = entrance.web3.getInstance(entrance.web3.defaultProvider).getSigner();
+      const signer = entrance.web3.currentProvider.getSigner();
       const contract = new Contract(contractAddress, contractAbi, signer);
 
       observer.next({ status: 'signing' });
@@ -156,7 +156,7 @@ export function genEthereumContractTxObs(
 }
 
 export function genEthereumTransactionObs(params: Deferrable<TransactionRequest>): Observable<Tx> {
-  const provider = entrance.web3.getInstance(entrance.web3.defaultProvider);
+  const provider = entrance.web3.currentProvider;
   const signer = provider.getSigner();
 
   return new Observable((observer) => {

@@ -13,11 +13,7 @@ export async function getDailyLimit(
     to: { meta: arrival },
   } = direction;
   const mappingAddress = await getS2SMappingAddress(arrival.provider);
-  const contract = new Contract(
-    mappingAddress,
-    abi.S2SMappingTokenABI,
-    entrance.web3.getInstance(entrance.web3.defaultProvider)
-  );
+  const contract = new Contract(mappingAddress, abi.S2SMappingTokenABI, entrance.web3.currentProvider);
   const ringAddress = token;
   const tokenAddress = isRing(direction.from.symbol) ? ringAddress : '';
 

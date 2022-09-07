@@ -41,7 +41,7 @@ const connectPolkadot: ConnectFn<PolkadotConnection> = (network) =>
 export async function isNetworkConsistent(chain: EthereumChainConfig, id = ''): Promise<boolean> {
   id = id && isHex(id) ? parseInt(id, 16).toString() : id;
   // id 1: eth mainnet 3: ropsten 4: rinkeby 5: goerli 42: kovan  43: pangolin 44: crab
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
+  const web3 = entrance.web3.currentProvider;
   const actualId: string | number = id ? await Promise.resolve(id) : await web3.getNetwork().then((res) => res.chainId);
   const storedId = chain.ethereumChain.chainId;
 

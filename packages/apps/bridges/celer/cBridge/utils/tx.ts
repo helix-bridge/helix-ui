@@ -183,7 +183,7 @@ export const genValidations = ({ balance, amount, allowance }: TxValidation): [b
 export const validate = validationObsFactory(genValidations);
 
 export const getMinimalMaxSlippage = async (contractAddress: string) => {
-  const contract = new Contract(contractAddress, transferAbi, entrance.web3.getInstance(entrance.web3.defaultProvider));
+  const contract = new Contract(contractAddress, transferAbi, entrance.web3.currentProvider);
   const result = await contract.minimalMaxSlippage();
 
   return result;

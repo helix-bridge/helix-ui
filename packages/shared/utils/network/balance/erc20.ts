@@ -5,7 +5,7 @@ import { entrance } from '../../connection';
 
 export async function getBalance(tokenAddress: string, account: string): Promise<BN> {
   try {
-    const contract = new Contract(tokenAddress, abi.tokenABI, entrance.web3.getInstance(entrance.web3.defaultProvider));
+    const contract = new Contract(tokenAddress, abi.tokenABI, entrance.web3.currentProvider);
     const balance = await contract.balanceOf(account).then((res: BigNumber) => res.toString());
 
     return new BN(balance);

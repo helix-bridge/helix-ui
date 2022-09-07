@@ -26,7 +26,6 @@ export const SUBSTRATE_PARACHAIN_BACKING = (process.env.SUBSTRATE_PARACHAIN_BACK
 export const SUBSTRATE_PARACHAIN_ISSUING = (process.env.SUBSTRATE_PARACHAIN_ISSUING ||
   process.env.NEXT_PUBLIC_SUBSTRATE_PARACHAIN_ISSUING) as string;
 
-export const HELIX_DEPLOYMENT = (process.env.HELIX_DEPLOYMENT || process.env.NEXT_PUBLIC_HELIX_DEPLOYMENT) as string;
 export const APPS_DEPLOYMENT = (process.env.APPS_DEPLOYMENT || process.env.NEXT_PUBLIC_APPS_DEPLOYMENT) as string;
 
 console.log(

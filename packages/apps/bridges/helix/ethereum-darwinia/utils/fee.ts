@@ -35,11 +35,7 @@ export async function getRedeemTxFee(
 }
 
 export async function getIssuingFee(bridge: Bridge<EthereumDarwiniaBridgeConfig>): Promise<BN | null> {
-  const contract = new Contract(
-    bridge.config.contracts.fee,
-    abi.registryABI,
-    entrance.web3.getInstance(entrance.web3.defaultProvider)
-  );
+  const contract = new Contract(bridge.config.contracts.fee, abi.registryABI, entrance.web3.currentProvider);
   try {
     const fee = await contract
       .uintOf('0x55494e545f4252494447455f4645450000000000000000000000000000000000')
