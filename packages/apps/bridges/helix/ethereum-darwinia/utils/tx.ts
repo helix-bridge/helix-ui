@@ -1,5 +1,5 @@
 import { BN_ZERO } from '@polkadot/util';
-import { decodeAddress } from '@polkadot/util-crypto';
+import { decodeAddress } from '@polkadot/keyring';
 import BN from 'bn.js';
 import { Contract } from 'ethers';
 import { upperFirst } from 'lodash';

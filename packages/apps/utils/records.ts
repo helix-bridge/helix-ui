@@ -1,4 +1,4 @@
-import { decodeAddress } from '@polkadot/util-crypto';
+import { decodeAddress } from '@polkadot/keyring';
 import camelCaseKeys from 'camelcase-keys';
 import { catchError, filter, map, Observable, of } from 'rxjs';
 import { RecordStatus } from 'shared/config/constant';

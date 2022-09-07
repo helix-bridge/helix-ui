@@ -2,7 +2,7 @@
 import { TypeRegistry } from '@polkadot/types';
 import type { Codec, DetectCodec } from '@polkadot/types/types';
 import { hexToU8a, numberToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
-import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
+import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { isAddress } from 'ethers/lib/utils';
 import { isNull } from 'lodash';
 import { ChainConfig, PolkadotChainConfig } from '../../model';
