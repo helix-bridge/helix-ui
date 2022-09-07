@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { EMPTY, from, map } from 'rxjs';
 import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
 import { DATE_TIME_FORMAT, RecordStatus } from 'shared/config/constant';
-import { ENDPOINT, HELIX_DEPLOYMENT } from 'shared/config/env';
+import { ENDPOINT } from 'shared/config/env';
 import { HelixHistoryRecord } from 'shared/model';
 import { convertToDvm, gqlName, isValidAddress } from 'shared/utils/helper';
 import { getChainConfig } from 'shared/utils/network';
@@ -325,7 +325,7 @@ export function History() {
                           }).toString();
 
                           if (paths.length) {
-                            window.open(`${HELIX_DEPLOYMENT}/transaction/${paths.join('/')}?${query}`, '_blank');
+                            window.open(`transaction/${paths.join('/')}?${query}`, '_blank');
                           } else {
                             message.error(`Can not find the detail page for ${fromChain} to ${toChain}`);
                           }
