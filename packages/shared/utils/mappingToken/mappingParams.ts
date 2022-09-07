@@ -6,8 +6,8 @@ const s2sMappingAddress: (rpc: string) => Promise<string> = async (rpc: string) 
 
   await waitUntilConnected(api);
 
-  const module = rpc.includes('pangolin') ? api.query.substrate2SubstrateIssuing : api.query.fromDarwiniaIssuing;
-  const mappingAddress = (await module.mappingFactoryAddress()).toString();
+  const section = rpc.includes('pangolin') ? api.query.substrate2SubstrateIssuing : api.query.fromDarwiniaIssuing;
+  const mappingAddress = (await section.mappingFactoryAddress()).toString();
 
   return mappingAddress;
 };

@@ -43,11 +43,7 @@ exports[`<Timestamp /> render Timestamp with processing 1`] = `
     <svg
       className="icon w-4 h-4 "
       onClick={[Function]}
-    >
-      <use
-        xlinkHref="#dwa-reload"
-      />
-    </svg>
+    />
     in about 5 hours
     <span
       className="hidden md:inline-block"
@@ -63,11 +59,7 @@ exports[`<Timestamp /> render Timestamp with processing 1`] = `
     <svg
       className="icon w-4 h-4 text-gray-400 text-base"
       onClick={[Function]}
-    >
-      <use
-        xlinkHref="#dwa-clock-fill"
-      />
-    </svg>
+    />
     <div
       className="w-32"
     >
@@ -176,11 +168,7 @@ exports[`<Timestamp /> render Timestamp with success 1`] = `
     <svg
       className="icon w-4 h-4 text-gray-400 text-base"
       onClick={[Function]}
-    >
-      <use
-        xlinkHref="#dwa-clock-fill"
-      />
-    </svg>
+    />
     <span
       className="text-gray-400"
     >

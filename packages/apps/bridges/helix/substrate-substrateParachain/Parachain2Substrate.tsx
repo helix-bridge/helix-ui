@@ -85,9 +85,9 @@ export function Parachain2Substrate({
     const sub$$ = from(waitUntilConnected(api))
       .pipe(
         mergeMap(() => {
-          const module = `to${direction.from.meta.name.split('-').map(upperFirst).join('')}Backing`;
+          const section = `to${direction.from.meta.name.split('-').map(upperFirst).join('')}Backing`;
 
-          return from(api.query[module].secureLimitedRingAmount());
+          return from(api.query[section].secureLimitedRingAmount());
         })
       )
       .subscribe((result) => {

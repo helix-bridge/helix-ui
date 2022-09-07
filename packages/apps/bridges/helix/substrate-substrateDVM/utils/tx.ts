@@ -18,8 +18,8 @@ export function issue(value: IssuingPayload, fee: BN): Observable<Tx> {
   const api = entrance.polkadot.getInstance(direction.from.meta.provider);
   const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).sub(fee).toString();
   const WEIGHT = '4000000000';
-  const module = departure.meta.isTest ? 'substrate2SubstrateBacking' : 'toCrabBacking';
-  const extrinsic = api.tx[module].lockAndRemoteIssue(String(to.meta.specVersion), WEIGHT, amount, fee, recipient);
+  const section = departure.meta.isTest ? 'substrate2SubstrateBacking' : 'toCrabBacking';
+  const extrinsic = api.tx[section].lockAndRemoteIssue(String(to.meta.specVersion), WEIGHT, amount, fee, recipient);
 
   return signAndSendExtrinsic(api, sender, extrinsic);
 }

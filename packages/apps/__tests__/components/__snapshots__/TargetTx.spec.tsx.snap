@@ -468,11 +468,7 @@ exports[`<TargetTx /> render target tx with TxStatus: 3 1`] = `
           <svg
             className="icon w-4 h-4 text-white text-base"
             onClick={[Function]}
-          >
-            <use
-              xlinkHref="#dwa-copy1"
-            />
-          </svg>
+          />
         </div>
       </u>
     </span>
@@ -563,11 +559,7 @@ exports[`<TargetTx /> render target tx with TxStatus: 3 2`] = `
           <svg
             className="icon w-4 h-4 text-white text-base"
             onClick={[Function]}
-          >
-            <use
-              xlinkHref="#dwa-copy1"
-            />
-          </svg>
+          />
         </div>
       </u>
     </span>
@@ -658,11 +650,7 @@ exports[`<TargetTx /> render target tx with TxStatus: 4 1`] = `
           <svg
             className="icon w-4 h-4 text-white text-base"
             onClick={[Function]}
-          >
-            <use
-              xlinkHref="#dwa-copy1"
-            />
-          </svg>
+          />
         </div>
       </u>
     </span>
@@ -753,11 +741,7 @@ exports[`<TargetTx /> render target tx with TxStatus: 4 2`] = `
           <svg
             className="icon w-4 h-4 text-white text-base"
             onClick={[Function]}
-          >
-            <use
-              xlinkHref="#dwa-copy1"
-            />
-          </svg>
+          />
         </div>
       </u>
     </span>
@@ -888,11 +872,7 @@ exports[`<TargetTx /> should render null if refunded 1`] = `
           <svg
             className="icon w-4 h-4 text-white text-base"
             onClick={[Function]}
-          >
-            <use
-              xlinkHref="#dwa-copy1"
-            />
-          </svg>
+          />
         </div>
       </u>
     </span>

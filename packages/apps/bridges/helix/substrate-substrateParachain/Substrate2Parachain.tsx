@@ -86,9 +86,9 @@ export function Substrate2Parachain({
     const sub$$ = from(waitUntilConnected(api))
       .pipe(
         mergeMap(() => {
-          const module = `from${upperFirst(direction.from.meta.name)}Issuing`;
+          const section = `from${upperFirst(direction.from.meta.name)}Issuing`;
 
-          return from(api.query[module].secureLimitedRingAmount());
+          return from(api.query[section].secureLimitedRingAmount());
         })
       )
       .subscribe((result) => {

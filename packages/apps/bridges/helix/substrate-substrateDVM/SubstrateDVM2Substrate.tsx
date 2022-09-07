@@ -99,8 +99,8 @@ export function SubstrateDVM2Substrate({
     const sub$$ = from(waitUntilConnected(api))
       .pipe(
         mergeMap(() => {
-          const module = arrival.meta.isTest ? 'substrate2SubstrateBacking' : 'toCrabBacking';
-          return from(api.query[module].secureLimitedRingAmount());
+          const section = arrival.meta.isTest ? 'substrate2SubstrateBacking' : 'toCrabBacking';
+          return from(api.query[section].secureLimitedRingAmount());
         })
       )
       .subscribe((result) => {
