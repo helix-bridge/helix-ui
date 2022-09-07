@@ -10,7 +10,7 @@ import GlobalLoading from 'shared/components/widget/GlobalLoading';
 import { ENDPOINT } from 'shared/config/env';
 import '../bridges/register';
 import AppLayout from '../components/AppLayout';
-import { AccountProvider, ApiProvider, ClaimProvider, GqlProvider, TxProvider, WalletProvider } from '../providers';
+import { PersonalProvider } from '../providers';
 import '../styles/index.scss';
 
 const client = new GraphQLClient({
@@ -53,18 +53,6 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
     };
   }, [router.events]);
 
-  useEffect(() => {
-    window.less = {
-      async: true,
-      env: 'production',
-    };
-
-    const script = document.createElement('script');
-
-    script.src = 'https://cdn.bootcdn.net/ajax/libs/less.js/2.7.2/less.min.js';
-    document.body.appendChild(script);
-  }, []);
-
   return (
     <>
       <GlobalLoading isRouteChanging={state.isRouteChanging} key={state.loadingKey} />
@@ -75,21 +63,11 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
       </Head>
       <ClientContext.Provider value={client}>
         <ErrorBoundary>
-          <ApiProvider>
-            <WalletProvider>
-              <AccountProvider>
-                <TxProvider>
-                  <GqlProvider>
-                    <ClaimProvider>
-                      <AppLayout>
-                        <Component {...pageProps} />
-                      </AppLayout>
-                    </ClaimProvider>
-                  </GqlProvider>
-                </TxProvider>
-              </AccountProvider>
-            </WalletProvider>
-          </ApiProvider>
+          <PersonalProvider>
+            <AppLayout>
+              <Component {...pageProps} />
+            </AppLayout>
+          </PersonalProvider>
         </ErrorBoundary>
       </ClientContext.Provider>
     </>

@@ -1,14 +1,33 @@
+import { HddOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { CrossChainDirection } from 'shared/model';
 import { getDirectionFromSettings, readStorage, updateStorage } from 'shared/utils/helper';
 import { CrossChain } from '../components/CrossChain';
+import { History } from '../components/history/History';
+import { BaseModal } from '../components/widget/BaseModal';
 import { DisclaimerModal } from '../components/widget/DisclaimerModal';
+import { useITranslation } from '../hooks';
+import {
+  AccountProvider,
+  ApiProvider,
+  ClaimProvider,
+  GqlProvider,
+  TxProvider,
+  usePersonal,
+  WalletProvider,
+} from '../providers';
+
+const ActiveAccount = dynamic(() => import('../components/widget/account/ActiveAccount'), { ssr: false });
 
 function Page() {
+  const { t } = useITranslation();
   const [dir, setDir] = useState<CrossChainDirection>(DEFAULT_DIRECTION);
   const [visible, setVisible] = useState(false);
+  const { isPersonalHistoryVisible, setIsPersonalHistoryVisible } = usePersonal();
 
   useEffect(() => {
     const loc = getDirectionFromSettings();
@@ -20,17 +39,50 @@ function Page() {
   }, []);
 
   return (
-    <>
-      <CrossChain dir={dir} />
-      <DisclaimerModal
-        visible={visible}
-        onCancel={() => setVisible(false)}
-        onOk={() => {
-          setVisible(false);
-          updateStorage({ hideWarning: true });
-        }}
-      />
-    </>
+    <ApiProvider>
+      <WalletProvider>
+        <AccountProvider>
+          <TxProvider>
+            <GqlProvider>
+              <ClaimProvider>
+                <div>
+                  <div id="app-header-container" className="hidden lg:flex items-center space-x-4 fixed top-4 z-50">
+                    <ActiveAccount />
+
+                    <Button icon={<HddOutlined />} onClick={() => setIsPersonalHistoryVisible(true)}>
+                      {t('History')}
+                    </Button>
+                  </div>
+
+                  <CrossChain dir={dir} />
+
+                  <DisclaimerModal
+                    visible={visible}
+                    onCancel={() => setVisible(false)}
+                    onOk={() => {
+                      setVisible(false);
+                      updateStorage({ hideWarning: true });
+                    }}
+                  />
+
+                  <BaseModal
+                    title={t('Transfer History')}
+                    visible={isPersonalHistoryVisible}
+                    onCancel={() => setIsPersonalHistoryVisible(false)}
+                    footer={null}
+                    maskClosable={false}
+                    wrapClassName="history-modal"
+                    destroyOnClose
+                  >
+                    <History></History>
+                  </BaseModal>
+                </div>
+              </ClaimProvider>
+            </GqlProvider>
+          </TxProvider>
+        </AccountProvider>
+      </WalletProvider>
+    </ApiProvider>
   );
 }
 

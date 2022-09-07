@@ -1,6 +1,5 @@
-import { HddOutlined, MenuOutlined, WarningFilled } from '@ant-design/icons';
+import { MenuOutlined, WarningFilled } from '@ant-design/icons';
 import { Button, Drawer, Layout, Tooltip } from 'antd';
-import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { PropsWithChildren, useState } from 'react';
@@ -10,14 +9,9 @@ import { THEME } from 'shared/config/theme';
 import { readStorage } from 'shared/utils/helper';
 import { Path } from '../config';
 import { useITranslation } from '../hooks';
-import { useTx } from '../providers';
-import { History } from './history/History';
-import { BaseModal } from './widget/BaseModal';
 import { DisclaimerModal } from './widget/DisclaimerModal';
 
 const { Header, Content } = Layout;
-
-const ActiveAccount = dynamic(() => import('./widget/account/ActiveAccount'), { ssr: false });
 
 const navigators: Nav[] = [
   { label: 'Dashboard', path: Path.root },
@@ -30,7 +24,6 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
   const { t } = useITranslation();
   const [theme, setTheme] = useState<THEME>(readStorage().theme ?? THEME.DARK);
   const [collapsed, setCollapsed] = useState(true);
-  const { isPersonalHistoryVisible, setIsPersonalHistoryVisible } = useTx();
   const [visible, setVisible] = useState(false);
   const router = useRouter();
   const isApps = router.pathname === Path.apps;
@@ -78,48 +71,26 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
             <MenuOutlined className="text-xl" />
           </div>
 
-          <>
-            {isApps ? (
-              <div className="hidden lg:flex items-center space-x-4">
-                <ActiveAccount />
-
-                <Button icon={<HddOutlined />} onClick={() => setIsPersonalHistoryVisible(true)}>
-                  {t('History')}
-                </Button>
-              </div>
-            ) : (
-              <div className="hidden lg:flex lg:justify-end items-center lg:flex-1 ml-2 md:ml-8 lg:ml-12">
-                <Button
-                  onClick={() => {
-                    router.push(Path.apps);
-                  }}
-                  type="primary"
-                  size="large"
-                  className="ml-8"
-                >
-                  {t('Launch App')}
-                </Button>
-              </div>
-            )}
-          </>
+          {!isApps && (
+            <div className="hidden lg:flex lg:justify-end items-center lg:flex-1 ml-2 md:ml-8 lg:ml-12">
+              <Button
+                onClick={() => {
+                  router.push(Path.apps);
+                }}
+                type="primary"
+                size="large"
+                className="ml-8"
+              >
+                {t('Launch App')}
+              </Button>
+            </div>
+          )}
         </div>
       </Header>
 
       <Content className="sm:pt-4 py-1 my-24 sm:my-20 container">{children}</Content>
 
       <Footer onThemeChange={setTheme} />
-
-      <BaseModal
-        title={t('Transfer History')}
-        visible={isPersonalHistoryVisible}
-        onCancel={() => setIsPersonalHistoryVisible(false)}
-        footer={null}
-        maskClosable={false}
-        wrapClassName="history-modal"
-        destroyOnClose
-      >
-        <History></History>
-      </BaseModal>
 
       <DisclaimerModal visible={visible} onCancel={() => setVisible(false)} onOk={() => setVisible(false)} />
     </Layout>

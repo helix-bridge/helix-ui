@@ -1,17 +1,15 @@
 import { CopyrightOutlined, GithubOutlined, MailOutlined, TwitterOutlined } from '@ant-design/icons';
 import { Divider, Layout } from 'antd';
 import { getYear } from 'date-fns';
-import React from 'react';
 import { LanguageProps } from 'shared/components/widget/Language';
-import { ThemeSwitch, ThemeSwitchProps } from 'shared/components/widget/ThemeSwitch';
+import { ThemeSwitchProps } from 'shared/components/widget/ThemeSwitch';
 import { THEME } from 'shared/config/theme';
 import { useITranslation } from '../hooks';
 
 type FooterProps = LanguageProps & { className?: string } & ThemeSwitchProps;
 
-export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
+export function Footer({ theme, className = '' }: FooterProps) {
   const { t } = useITranslation();
-  // const color = theme === THEME.LIGHT ? '#0d101d' : undefined;
 
   return (
     <Layout.Footer
@@ -66,13 +64,6 @@ export function Footer({ theme, onThemeChange, className = '' }: FooterProps) {
             marginTop: '0.25em',
             display: 'none',
           }}
-        />
-
-        <ThemeSwitch
-          defaultTheme={THEME.DARK}
-          onThemeChange={onThemeChange}
-          mode="btn"
-          className="text-gray-400 hover:text-gray-200 cursor-pointer transition-colors duration-150 hidden"
         />
       </div>
     </Layout.Footer>

@@ -3,11 +3,11 @@ import { FunctionComponent, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CrossChainPayload, Tx, TxDoneComponentProps } from 'shared/model';
 import { applyModal } from 'shared/utils/tx';
-import { useTx } from '../providers';
+import { usePersonal } from '../providers';
 
 export function useAfterTx<T extends CrossChainPayload>() {
   const { t } = useTranslation();
-  const { setIsPersonalHistoryVisible } = useTx();
+  const { setIsPersonalHistoryVisible } = usePersonal();
 
   const afterCrossChain = useCallback(
     (
