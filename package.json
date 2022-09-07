@@ -77,5 +77,8 @@
   "lint-staged": {
     "packages/**/*.scss": "stylelint",
     "packages/**/*.{ts,tsx}": ["eslint --fix", "prettier --write"]
+  },
+  "resolutions": {
+    "ethereumjs-abi": "https://registry.npmjs.org/ethereumjs-abi/-/ethereumjs-abi-0.6.8.tgz"
   }
 }

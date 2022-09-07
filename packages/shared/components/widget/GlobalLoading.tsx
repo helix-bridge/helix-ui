@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNProgress } from '@tanem/react-nprogress';
 
 const GlobalLoading = ({ isRouteChanging }: { isRouteChanging: boolean }) => {
