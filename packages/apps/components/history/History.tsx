@@ -9,7 +9,7 @@ import { DATE_TIME_FORMAT, RecordStatus } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { HelixHistoryRecord } from 'shared/model';
 import { convertToDvm, gqlName, isValidAddress } from 'shared/utils/helper';
-import { getChainConfig } from 'shared/utils/network';
+import { getOriginChainConfig } from 'shared/utils/network';
 import {
   getDetailPaths,
   getReceivedAmountFromHelixRecord,
@@ -264,8 +264,8 @@ export function History() {
                 {/*  eslint-disable-next-line complexity*/}
                 {records.map((record) => {
                   const { fromChain, toChain } = record;
-                  const dep = getChainConfig(fromChain);
-                  const arrival = getChainConfig(toChain);
+                  const dep = getOriginChainConfig(fromChain);
+                  const arrival = getOriginChainConfig(toChain);
                   const fromToken = getTokenConfigFromHelixRecord(record)!;
                   const toToken = arrival.tokens.find((item) => isTransferableTokenPair(item, fromToken))!;
                   const [d2eHeight, d2dIndex] = record.requestTxHash.split('-');
