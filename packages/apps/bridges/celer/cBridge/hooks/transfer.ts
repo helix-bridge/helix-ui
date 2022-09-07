@@ -45,11 +45,11 @@ export function useTransfer(
     if (isStablecoin && isPegged) {
       const data = {
         sendTx: ['astar', 'crab-dvm'].includes(direction.from.host) ? burn : deposit,
-        poolAddress: isIssue ? stablecoinBacking : stablecoinIssuing,
+        poolAddress: isIssue ? stablecoinBacking! : stablecoinIssuing!,
       };
 
       if (direction.from.symbol === 'BUSD' && direction.from.host === 'astar') {
-        data.poolAddress = busdIssuing;
+        data.poolAddress = busdIssuing!;
       }
 
       return data;
