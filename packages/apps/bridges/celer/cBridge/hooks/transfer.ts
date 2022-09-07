@@ -1,5 +1,11 @@
 import { useMemo } from 'react';
-import { CrabDVMEthereumBridgeConfig, CrossChainDirection, CrossToken, EthereumChainConfig } from 'shared/model';
+import {
+  BridgeConfig,
+  CBridgeContractConfig,
+  CrossChainDirection,
+  CrossToken,
+  EthereumChainConfig,
+} from 'shared/model';
 import { getBridge, isBSCAstar, isCrabDVMAstar, isCrabDVMEthereum, isEthereumAstar } from 'shared/utils/bridge';
 import { burn, deposit, transfer } from '../utils';
 
@@ -32,15 +38,21 @@ export function useTransfer(
 
   // eslint-disable-next-line complexity
   const info = useMemo(() => {
-    const bridge = getBridge<CrabDVMEthereumBridgeConfig>(direction);
+    const bridge = getBridge<Required<BridgeConfig<CBridgeContractConfig>>>(direction);
     const isIssue = bridge.isIssue(direction.from.meta, direction.to.meta);
-    const { backing, issuing, stablecoinBacking, stablecoinIssuing } = bridge.config.contracts;
+    const { backing, issuing, stablecoinBacking, stablecoinIssuing, busdIssuing } = bridge.config.contracts;
 
     if (isStablecoin && isPegged) {
-      return {
+      const data = {
         sendTx: ['astar', 'crab-dvm'].includes(direction.from.host) ? burn : deposit,
         poolAddress: isIssue ? stablecoinBacking : stablecoinIssuing,
       };
+
+      if (direction.from.symbol === 'BUSD' && direction.from.host === 'astar') {
+        data.poolAddress = busdIssuing;
+      }
+
+      return data;
     }
 
     return { sendTx: transfer, poolAddress: isIssue ? backing : issuing };
