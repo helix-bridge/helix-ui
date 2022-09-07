@@ -8,7 +8,6 @@ import {
   bscConfig,
   crabConfig,
   crabDVMConfig,
-  darwiniaConfig,
   darwiniaDVMConfig,
   karuraConfig,
   moonriverConfig,
@@ -24,6 +23,7 @@ import {
   chainConfigs,
   getChainConfig,
   getDisplayName,
+  getOriginChainConfig,
   isDVMNetwork,
   isEthereumNetwork,
   isParachainNetwork,
@@ -220,6 +220,14 @@ describe('network utils', () => {
 
       expect(chain).toEqual(compared);
     });
+  });
+
+  it('can get origin chain config that contains deprecated bridges', () => {
+    const result = getOriginChainConfig('crab-dvm');
+    const target = result.tokens.find((it) => it.symbol === 'xRING');
+
+    expect(target?.cross.length).toEqual(4);
+    expect(target?.cross.find((item) => item.bridge === 'substrate-substrateDVM')).not.toBeUndefined();
   });
 
   it('can recognize polkadot network', () => {

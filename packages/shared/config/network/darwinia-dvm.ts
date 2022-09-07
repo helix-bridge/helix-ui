@@ -47,7 +47,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       address: '',
     },
     {
-      name: 'wRING',
+      name: 'WRING',
       decimals: 18,
       cross: [
         {

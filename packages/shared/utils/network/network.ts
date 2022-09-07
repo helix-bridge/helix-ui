@@ -1,4 +1,4 @@
-import { chain as lodashChain, memoize, pick, upperFirst } from 'lodash';
+import { chain as lodashChain, cloneDeep, memoize, pick, upperFirst } from 'lodash';
 import { knownParachainNetworks, SYSTEM_CHAIN_CONFIGURATIONS } from '../../config/network';
 import { knownDVMNetworks, knownEthereumNetworks, knownPolkadotNetworks } from '../../config/network';
 import { ChainConfig, Network, PolkadotChainConfig } from '../../model';
@@ -11,7 +11,8 @@ export const chainConfigs = lodashChain(crossChainGraph)
   .flatten()
   .unionWith((pre, next) => pre === next)
   .map((vertices) => {
-    let config = SYSTEM_CHAIN_CONFIGURATIONS.find((item) => vertices === item.name);
+    const result = SYSTEM_CHAIN_CONFIGURATIONS.find((item) => vertices === item.name);
+    let config = cloneDeep(result);
 
     if (!config) {
       throw new Error(`Can not find ${vertices} network configuration`);
@@ -64,6 +65,10 @@ function getConfig(name: Network | null | undefined, source = chainConfigs): Cha
 }
 
 export const getChainConfig = memoize(getConfig, (name) => name);
+export const getOriginChainConfig = memoize(
+  (name: Network | null | undefined) => getConfig(name, SYSTEM_CHAIN_CONFIGURATIONS),
+  (name) => name
+);
 
 export function getDisplayName(config: ChainConfig | null): string {
   if (!config) {
