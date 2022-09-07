@@ -1,6 +1,15 @@
-import { chain as lodashChain, cloneDeep, memoize, pick, upperFirst } from 'lodash';
-import { knownParachainNetworks, SYSTEM_CHAIN_CONFIGURATIONS } from '../../config/network';
-import { knownDVMNetworks, knownEthereumNetworks, knownPolkadotNetworks } from '../../config/network';
+import { chain as lodashChain } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
+import memoize from 'lodash/memoize';
+import pick from 'lodash/pick';
+import upperFirst from 'lodash/upperFirst';
+import {
+  knownDVMNetworks,
+  knownEthereumNetworks,
+  knownParachainNetworks,
+  knownPolkadotNetworks,
+  SYSTEM_CHAIN_CONFIGURATIONS,
+} from '../../config/network';
 import { ChainConfig, Network, PolkadotChainConfig } from '../../model';
 import { getCustomNetworkConfig } from '../helper/storage';
 import { crossChainGraph } from './graph';

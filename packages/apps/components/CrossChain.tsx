@@ -2,8 +2,10 @@ import { InfoCircleOutlined, WarningFilled } from '@ant-design/icons';
 import { Col, Form, Input, message, Row, Tooltip } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import BN from 'bn.js';
-import { isEqual, omit } from 'lodash';
-import { FunctionComponent, useEffect, useMemo, useState } from 'react';
+import isEqual from 'lodash/isEqual';
+import omit from 'lodash/omit';
+import dynamic from 'next/dynamic';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EMPTY, from as fromRx, iif, of, tap } from 'rxjs';
 import { FORM_CONTROL } from 'shared/config/constant';
@@ -66,11 +68,12 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
     const { from, to } = direction;
 
     if (bridge) {
-      const Comp = bridge.isIssue(from.meta, to.meta)
+      const comp = bridge.isIssue(from.meta, to.meta)
         ? bridge.IssueCrossChainComponent
-        : (bridge.RedeemCrossChainComponent as FunctionComponent<CrossChainComponentProps>);
+        : bridge.RedeemCrossChainComponent;
 
-      return Comp ?? null;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return dynamic<CrossChainComponentProps>(() => import('../bridges').then((res) => (res as any)[comp])) ?? null;
     }
 
     return null;

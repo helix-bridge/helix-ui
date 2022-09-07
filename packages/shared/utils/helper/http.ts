@@ -1,4 +1,5 @@
-import { isNull, isUndefined } from 'lodash';
+import isNull from 'lodash/isNull';
+import isUndefined from 'lodash/isUndefined';
 import { map, Observable } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 

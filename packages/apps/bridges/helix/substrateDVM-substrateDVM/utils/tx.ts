@@ -1,6 +1,6 @@
 import { BN_ZERO } from '@polkadot/util';
 import BN from 'bn.js';
-import { last } from 'lodash';
+import last from 'lodash/last';
 import { EMPTY, from, Observable, switchMap } from 'rxjs';
 import { CrossChainDirection, CrossToken, DVMChainConfig, HelixHistoryRecord, Tx } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';

@@ -1,7 +1,11 @@
 import { formatFixed as fw, parseFixed as tw } from '@ethersproject/bignumber';
 import Bignumber from 'bignumber.js';
 import BN from 'bn.js';
-import { isEmpty, isNull, isNumber, isString, isUndefined } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
+import isNull from 'lodash/isNull';
+import isNumber from 'lodash/isNumber';
+import isString from 'lodash/isString';
+import isUndefined from 'lodash/isUndefined';
 
 export type WeiValue = string | BN | number | null | undefined | Bignumber;
 export interface PrettyNumberOptions {

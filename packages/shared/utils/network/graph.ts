@@ -1,4 +1,4 @@
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
 import { BRIDGES } from '../../config/bridge';
 import { Arrival, Bridge, BridgeConfig, ContractConfig, Departure } from '../../model';
 

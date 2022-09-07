@@ -1,6 +1,6 @@
 import { ApiOutlined } from '@ant-design/icons';
 import { AutoComplete, Button, Form, Input, Tooltip } from 'antd';
-import { upperFirst } from 'lodash';
+import upperFirst from 'lodash/upperFirst';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IdentAccountAddress } from 'shared/components/widget/IdentAccountAddress';

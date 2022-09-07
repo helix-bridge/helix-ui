@@ -1,7 +1,7 @@
 import { BN, hexToBn } from '@polkadot/util';
 import { Contract } from 'ethers';
 import { base64, getAddress, hexlify } from 'ethers/lib/utils';
-import { last } from 'lodash';
+import last from 'lodash/last';
 import { EMPTY, from, Observable, switchMap } from 'rxjs';
 import { HelixHistoryRecord, Tx } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';

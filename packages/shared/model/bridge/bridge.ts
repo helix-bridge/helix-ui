@@ -1,5 +1,5 @@
-import { isEqual } from 'lodash';
-import { FunctionComponent } from 'react';
+import isEqual from 'lodash/isEqual';
+import upperFirst from 'lodash/upperFirst';
 import { ChainConfig, Network } from '../network';
 import { BridgeName } from './supports';
 
@@ -30,6 +30,17 @@ export interface ContractConfig {
 
 export interface BridgeConfig<C = ContractConfig> {
   contracts?: C;
+}
+
+interface BridgeOptions {
+  name: BridgeName;
+  category: BridgeCategory;
+  status?: BridgeStatus;
+  activeArrivalConnection?: boolean;
+  disableIssue?: boolean;
+  disableRedeem?: boolean;
+  issueCompName?: string;
+  redeemCompName?: string;
 }
 
 /* ----------------------------------------------- bridge  ------------------------------------------------ */
@@ -63,24 +74,15 @@ export class Bridge<C = BridgeConfig> {
 
   private _config: C;
 
-  private crossChain: Map<Departure[], FunctionComponent> = new Map();
+  private options: BridgeOptions;
 
-  constructor(
-    departure: ChainConfig,
-    arrival: ChainConfig,
-    config: C,
-    options: {
-      name: BridgeName;
-      category: BridgeCategory;
-      status?: BridgeStatus;
-      activeArrivalConnection?: boolean;
-      disableIssue?: boolean;
-      disableRedeem?: boolean;
-    }
-  ) {
+  private crossChain: Map<Departure[], string> = new Map();
+
+  constructor(departure: ChainConfig, arrival: ChainConfig, config: C, options: BridgeOptions) {
     const dep = departure.name;
     const arr = arrival.name;
 
+    this.options = options;
     this.name = options.name;
     this.departure = departure;
     this.arrival = arrival;
@@ -99,11 +101,11 @@ export class Bridge<C = BridgeConfig> {
     return this._config;
   }
 
-  setIssueComponents(crossComp: FunctionComponent): void {
+  setIssueComponents(crossComp: string): void {
     this.crossChain.set(this.issue, crossComp);
   }
 
-  setRedeemComponents(crossComp: FunctionComponent) {
+  setRedeemComponents(crossComp: string) {
     this.crossChain.set(this.redeem, crossComp);
   }
 
@@ -121,11 +123,22 @@ export class Bridge<C = BridgeConfig> {
     );
   }
 
-  get IssueCrossChainComponent() {
-    return this.crossChain.get(this.issue);
+  get IssueCrossChainComponent(): string {
+    return (
+      this.options.issueCompName ||
+      this.name.split('-').map(upperFirst).join('2') ||
+      this.issue.map((item) => item.split('-').map(upperFirst).join('')).join('2')
+    );
   }
 
-  get RedeemCrossChainComponent() {
-    return this.crossChain.get(this.redeem);
+  get RedeemCrossChainComponent(): string {
+    return (
+      this.options.redeemCompName ||
+      this.name.split('-').map(upperFirst).reverse().join('2') ||
+      this.issue
+        .map((item) => item.split('-').map(upperFirst).join(''))
+        .reverse()
+        .join('2')
+    );
   }
 }

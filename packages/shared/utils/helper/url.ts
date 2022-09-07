@@ -1,4 +1,5 @@
-import { isEqual, mapKeys } from 'lodash';
+import isEqual from 'lodash/isEqual';
+import mapKeys from 'lodash/mapKeys';
 import { DEFAULT_DIRECTION } from '../../config/constant';
 import {
   CrossChainDirection,

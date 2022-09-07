@@ -2,7 +2,7 @@ import { EyeInvisibleFilled } from '@ant-design/icons';
 import { hexToU8a } from '@polkadot/util';
 import { Typography } from 'antd';
 import BN from 'bn.js';
-import { upperFirst } from 'lodash';
+import upperFirst from 'lodash/upperFirst';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, mergeMap } from 'rxjs';

@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
-import { once } from 'lodash';
+import once from 'lodash/once';
 import {
   BehaviorSubject,
   combineLatest,

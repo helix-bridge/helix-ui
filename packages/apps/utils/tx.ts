@@ -1,4 +1,5 @@
-import { isBoolean, isString } from 'lodash';
+import isBoolean from 'lodash/isBoolean';
+import isString from 'lodash/isString';
 import { EMPTY, Observable, of, switchMap, throwError } from 'rxjs';
 import { NullableFields, Tx } from 'shared/model';
 

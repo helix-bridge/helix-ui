@@ -1,7 +1,7 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
 import { Typography } from 'antd';
 import BN from 'bn.js';
-import { upperFirst } from 'lodash';
+import upperFirst from 'lodash/upperFirst';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, mergeMap } from 'rxjs';

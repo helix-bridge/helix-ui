@@ -1,4 +1,5 @@
-import { DebouncedFunc, throttle } from 'lodash';
+import type { DebouncedFunc } from 'lodash';
+import throttle from 'lodash/throttle';
 import { catchError, combineLatest, from, map, merge, Observable, Observer, of, startWith, switchMap } from 'rxjs';
 import { SHORT_DURATION } from '../../config/constant';
 import {

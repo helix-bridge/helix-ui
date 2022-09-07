@@ -8,7 +8,6 @@ import { useRouter } from 'next/router';
 import { FunctionComponent, useEffect, useState } from 'react';
 import GlobalLoading from 'shared/components/widget/GlobalLoading';
 import { ENDPOINT } from 'shared/config/env';
-import '../bridges/register';
 import AppLayout from '../components/AppLayout';
 import { PersonalProvider } from '../providers';
 import '../styles/index.scss';

@@ -2,7 +2,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/keyring';
 import BN from 'bn.js';
 import { Contract } from 'ethers';
-import { upperFirst } from 'lodash';
+import upperFirst from 'lodash/upperFirst';
 import { filter, from, map, Observable, switchMap, take, zip } from 'rxjs';
 import { abi } from 'shared/config/abi';
 import { ChainConfig, LockEventsStorage, PolkadotChainConfig, RequiredPartial, Tx, TxFn } from 'shared/model';

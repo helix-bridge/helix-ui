@@ -1,5 +1,6 @@
-import { isUndefined, negate } from 'lodash';
-import { leaf_index_to_pos, leaf_index_to_mmr_size, get_peaks, gen_proof_for_peak, bag_rhs_peaks } from './util';
+import isUndefined from 'lodash/isUndefined';
+import negate from 'lodash/negate';
+import { bag_rhs_peaks, gen_proof_for_peak, get_peaks, leaf_index_to_mmr_size, leaf_index_to_pos } from './util';
 
 interface RpcMMRProof {
   mmrSize: number;

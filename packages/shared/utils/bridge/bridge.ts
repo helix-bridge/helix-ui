@@ -1,4 +1,4 @@
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
 import { BRIDGES } from '../../config/bridge';
 import { unknownUnavailable } from '../../config/bridges/unknown-unavailable';
 import { Bridge, BridgeConfig, ChainConfig, CrossChainDirection, Network } from '../../model';

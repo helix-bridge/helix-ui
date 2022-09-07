@@ -1,6 +1,6 @@
 import { Codec } from '@polkadot/types-codec/types';
 import BN from 'bn.js';
-import { last } from 'lodash';
+import last from 'lodash/last';
 import { Bridge, ChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { isDVMNetwork } from 'shared/utils/network';

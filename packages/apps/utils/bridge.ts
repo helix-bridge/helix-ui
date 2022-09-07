@@ -1,4 +1,4 @@
-import { upperFirst } from 'lodash';
+import upperFirst from 'lodash/upperFirst';
 import { BridgeCategory } from 'shared/model';
 
 export function bridgeCategoryDisplay(category: BridgeCategory) {

@@ -12,4 +12,6 @@ const bscAvalancheConfig: BSCAvalancheBridgeConfig = {
 export const bscAvalanche = new Bridge(bscConfig, avalancheConfig, bscAvalancheConfig, {
   name: 'bsc-avalanche',
   category: 'cBridge',
+  issueCompName: 'BSC2Avalanche',
+  redeemCompName: 'Avalanche2BSC',
 });

@@ -12,4 +12,6 @@ const bscOptimismConfig: BSCOptimismBridgeConfig = {
 export const bscOptimism = new Bridge(bscConfig, optimismConfig, bscOptimismConfig, {
   name: 'bsc-optimism',
   category: 'cBridge',
+  issueCompName: 'BSC2Optimism',
+  redeemCompName: 'Optimism2BSC',
 });

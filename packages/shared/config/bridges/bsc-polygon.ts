@@ -12,4 +12,6 @@ const bscPolygonConfig: BSCPolygonBridgeConfig = {
 export const bscPolygon = new Bridge(bscConfig, polygonConfig, bscPolygonConfig, {
   name: 'bsc-polygon',
   category: 'cBridge',
+  issueCompName: 'BSC2Polygon',
+  redeemCompName: 'Polygon2BSC',
 });

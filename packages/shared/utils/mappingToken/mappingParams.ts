@@ -1,4 +1,4 @@
-import { memoize } from 'lodash';
+import memoize from 'lodash/memoize';
 import { entrance, waitUntilConnected } from '../connection';
 
 const s2sMappingAddress: (rpc: string) => Promise<string> = async (rpc: string) => {

@@ -1,4 +1,4 @@
-import { negate } from 'lodash';
+import negate from 'lodash/negate';
 import { createContext, useCallback, useContext, useReducer, useState } from 'react';
 import { EMPTY, iif, of, Subscription } from 'rxjs';
 import { isDev } from 'shared/config/env';

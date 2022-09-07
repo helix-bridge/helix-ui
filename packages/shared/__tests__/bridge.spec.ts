@@ -1,6 +1,7 @@
 /// <reference types="jest" />
 
-import { chain, isEqual } from 'lodash';
+import chain from 'lodash/chain';
+import isEqual from 'lodash/isEqual';
 import { unknownUnavailable } from '../config/bridges/unknown-unavailable';
 import { Bridge, ChainConfig, CrossToken, Network } from '../model';
 import { getBridge, getBridges } from '../utils/bridge';

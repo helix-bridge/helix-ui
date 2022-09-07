@@ -5,5 +5,10 @@ export const unknownUnavailable = new Bridge(
   pangoroConfig,
   crabConfig,
   {},
-  { category: 'helix', name: 'substrate-DVM' }
+  {
+    category: 'helix',
+    name: 'substrate-DVM',
+    issueCompName: 'Unknown2Unavailable',
+    redeemCompName: 'Unavailable2Unknown',
+  }
 );

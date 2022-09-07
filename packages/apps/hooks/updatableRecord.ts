@@ -1,5 +1,5 @@
 import request from 'graphql-request';
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
 import { useEffect, useState } from 'react';
 import { distinctUntilChanged, from, map, of, switchMap } from 'rxjs';
 import { MIDDLE_DURATION, RecordStatus } from 'shared/config/constant';

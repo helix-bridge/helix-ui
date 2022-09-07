@@ -1,6 +1,6 @@
 import { Button, message, Tooltip, Typography } from 'antd';
 import BN from 'bn.js';
-import { isNaN } from 'lodash';
+import isNaN from 'lodash/isNaN';
 import { i18n, Trans, useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { initReactI18next } from 'react-i18next';

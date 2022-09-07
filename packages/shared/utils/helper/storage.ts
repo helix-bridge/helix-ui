@@ -1,4 +1,5 @@
-import { pickBy, uniq } from 'lodash';
+import pickBy from 'lodash/pickBy';
+import uniq from 'lodash/uniq';
 import store from 'store';
 import { ChainConfig, Network, StorageInfo } from '../../model';
 
