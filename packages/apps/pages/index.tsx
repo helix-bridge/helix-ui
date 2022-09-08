@@ -2,8 +2,8 @@ import { Spin } from 'antd';
 import Bignumber from 'bignumber.js';
 import { format, secondsToMilliseconds, subMilliseconds } from 'date-fns';
 import request from 'graphql-request';
-import chain from 'lodash/chain';
 import last from 'lodash/last';
+import orderBy from 'lodash/orderBy';
 import { GetServerSidePropsContext } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -49,8 +49,8 @@ function Page() {
   }, [dailyStatistics]);
 
   const transactionsRank = useMemo(() => {
-    return chain(dailyStatistics)
-      .reduce((acc, cur) => {
+    const data = Object.entries(
+      dailyStatistics.reduce((acc, cur) => {
         const bridge = getBridge([cur.fromChain as Network, cur.toChain as Network]);
         const key = bridge.issue.join('_');
 
@@ -58,15 +58,14 @@ function Page() {
 
         return acc;
       }, {} as { [key: string]: number })
-      .entries()
-      .map((item) => {
-        const [fromChain, toChain] = item[0].split('_') as [Network, Network];
-        const total = item[1];
+    ).map((item) => {
+      const [fromChain, toChain] = item[0].split('_') as [Network, Network];
+      const total = item[1];
 
-        return { fromChain: getChainConfig(fromChain), toChain: getChainConfig(toChain), total };
-      })
-      .orderBy(['total'], ['desc'])
-      .value();
+      return { fromChain: getChainConfig(fromChain), toChain: getChainConfig(toChain), total };
+    });
+
+    return orderBy(data, ['total'], ['desc']);
   }, [dailyStatistics]);
 
   useEffect(() => {

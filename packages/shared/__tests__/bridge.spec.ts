@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 
-import chain from 'lodash/chain';
 import isEqual from 'lodash/isEqual';
+import unionWith from 'lodash/unionWith';
 import { unknownUnavailable } from '../config/bridges/unknown-unavailable';
 import { Bridge, ChainConfig, CrossToken, Network } from '../model';
 import { getBridge, getBridges } from '../utils/bridge';
@@ -16,11 +16,10 @@ import {
 } from '../utils/network';
 
 const calcBridgesAmount = (data: [Network, Network[]][]) =>
-  chain(data)
-    .map(([from, tos]) => tos.map((to) => [from, to]))
-    .flatten()
-    .unionWith((pre, cur) => isEqual(pre, cur) || isEqual(pre.reverse(), cur))
-    .value();
+  unionWith(
+    data.map(([from, tos]) => tos.map((to) => [from, to])).flat(),
+    (pre, cur) => isEqual(pre, cur) || isEqual(pre.reverse(), cur)
+  );
 
 // exclude the config that not contains transferable tokens;
 const configs = chainConfigs.filter((item) => !!item.tokens.filter((token) => !!token.cross.length).length);

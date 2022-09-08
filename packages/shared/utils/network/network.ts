@@ -1,4 +1,5 @@
-import { chain as lodashChain } from 'lodash';
+import unionWith from 'lodash/unionWith';
+import sortBy from 'lodash/sortBy';
 import cloneDeep from 'lodash/cloneDeep';
 import memoize from 'lodash/memoize';
 import pick from 'lodash/pick';
@@ -14,12 +15,14 @@ import { ChainConfig, Network, PolkadotChainConfig } from '../../model';
 import { getCustomNetworkConfig } from '../helper/storage';
 import { crossChainGraph } from './graph';
 
-export const chainConfigs = lodashChain(crossChainGraph)
-  .map(([departure, arrivals]) => [departure, ...arrivals])
-  .filter((item) => item.length > 1)
-  .flatten()
-  .unionWith((pre, next) => pre === next)
-  .map((vertices) => {
+export const chainConfigs = (() => {
+  const data = unionWith(
+    crossChainGraph
+      .map(([departure, arrivals]) => [departure, ...arrivals])
+      .filter((item) => item.length > 1)
+      .flat(),
+    (pre, next) => pre === next
+  ).map((vertices) => {
     const result = SYSTEM_CHAIN_CONFIGURATIONS.find((item) => vertices === item.name);
     let config = cloneDeep(result);
 
@@ -39,9 +42,10 @@ export const chainConfigs = lodashChain(crossChainGraph)
     }
 
     return config;
-  })
-  .sortBy((item) => item.name)
-  .valueOf();
+  });
+
+  return sortBy(data, (item) => item.name);
+})();
 
 const isSpecifyNetwork = (known: Network[]) => (network: ChainConfig | Network | null | undefined) => {
   if (!network) {

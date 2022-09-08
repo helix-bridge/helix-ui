@@ -1,6 +1,6 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Input, Radio, Tag, Typography } from 'antd';
-import { chain as lodashChain } from 'lodash';
+import uniqWith from 'lodash/uniqWith';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
@@ -23,24 +23,23 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
 
   const allTokens = useMemo(
     () =>
-      lodashChain(chainConfigs)
+      chainConfigs
         .filter((item) => !fromToken || !!fromToken.cross.find((cross) => cross.partner.name === item.name))
         .map((item) =>
           item.tokens
             .filter((token) => (!fromToken || isTransferableTokenPair(token, fromToken)) && !!token.cross.length)
             .map((token) => ({ ...token, meta: item }))
         )
-        .flatten()
-        .value(),
+        .flat(),
     [fromToken]
   );
 
   const allChains = useMemo(
     () =>
-      lodashChain(allTokens)
-        .map((item) => item.meta)
-        .uniqWith((pre, cure) => pre.name === cure.name)
-        .value(),
+      uniqWith(
+        allTokens.map((item) => item.meta),
+        (pre, cure) => pre.name === cure.name
+      ),
     [allTokens]
   );
 
