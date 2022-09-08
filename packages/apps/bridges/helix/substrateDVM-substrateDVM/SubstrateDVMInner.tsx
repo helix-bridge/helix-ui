@@ -1,7 +1,7 @@
 import BN from 'bn.js';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { mergeMap } from 'rxjs';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { CrossChainComponentProps, CrossToken, DVMChainConfig, TxObservableFactory } from 'shared/model';
 import { isRing, toWei } from 'shared/utils/helper';

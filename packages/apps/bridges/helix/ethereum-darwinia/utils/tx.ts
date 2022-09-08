@@ -1,8 +1,14 @@
-import { BN_ZERO, BN } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/keyring';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { Contract } from 'ethers';
 import upperFirst from 'lodash/upperFirst';
-import { filter, from, map, Observable, switchMap, take, zip } from 'rxjs';
+import type { Observable } from 'rxjs/internal/Observable';
+import { from } from 'rxjs/internal/observable/from';
+import { zip } from 'rxjs/internal/observable/zip';
+import { filter } from 'rxjs/internal/operators/filter';
+import { map } from 'rxjs/internal/operators/map';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { take } from 'rxjs/internal/operators/take';
 import { abi } from 'shared/config/abi';
 import { ChainConfig, LockEventsStorage, PolkadotChainConfig, RequiredPartial, Tx, TxFn } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';

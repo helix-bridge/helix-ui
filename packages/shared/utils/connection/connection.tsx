@@ -2,7 +2,13 @@ import { isHex, stringToHex } from '@polkadot/util';
 import { Modal } from 'antd';
 import Link from 'antd/lib/typography/Link';
 import { Trans } from 'react-i18next';
-import { EMPTY, from, map, mergeMap, Observable, of, switchMap } from 'rxjs';
+import type { Observable } from 'rxjs/internal/Observable';
+import { EMPTY } from 'rxjs/internal/observable/empty';
+import { from } from 'rxjs/internal/observable/from';
+import { of } from 'rxjs/internal/observable/of';
+import { map } from 'rxjs/internal/operators/map';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import {
   ChainConfig,
   Connection,

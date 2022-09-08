@@ -1,7 +1,11 @@
 import request from 'graphql-request';
 import isEqual from 'lodash/isEqual';
 import { useEffect, useState } from 'react';
-import { distinctUntilChanged, from, map, of, switchMap } from 'rxjs';
+import { from } from 'rxjs/internal/observable/from';
+import { of } from 'rxjs/internal/observable/of';
+import { distinctUntilChanged } from 'rxjs/internal/operators/distinctUntilChanged';
+import { map } from 'rxjs/internal/operators/map';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { MIDDLE_DURATION, RecordStatus } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { useIsMounted } from 'shared/hooks';
@@ -17,6 +21,7 @@ export function useUpdatableRecord(id: string) {
     const sub$$ = of(null)
       .pipe(
         switchMap(() => from(request(ENDPOINT, HISTORY_RECORD_BY_ID, { id }))),
+
         map((res) => res[gqlName(HISTORY_RECORD_BY_ID)]),
         pollWhile<HelixHistoryRecord>(MIDDLE_DURATION, (res) => isMounted && res.result === RecordStatus.pending, 100),
         distinctUntilChanged((pre, cur) => isEqual(pre, cur))

@@ -1,4 +1,5 @@
-import { EMPTY, Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { EMPTY } from 'rxjs/internal/observable/empty';
 import { Tx } from 'shared/model';
 
 export function issue(): Observable<Tx> {

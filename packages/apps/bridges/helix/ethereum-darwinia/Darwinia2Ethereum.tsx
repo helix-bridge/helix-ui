@@ -3,7 +3,8 @@ import { BN_ZERO, BN } from '@polkadot/util';
 import { Tag, Tooltip, Typography } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { from, mergeMap } from 'rxjs';
+import { from } from 'rxjs/internal/observable/from';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import {
   CrossChainComponentProps,
   CrossChainPayload,

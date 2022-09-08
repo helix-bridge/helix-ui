@@ -3,7 +3,10 @@ import { Typography } from 'antd';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { from, mergeMap, of, switchMap } from 'rxjs';
+import { from } from 'rxjs/internal/observable/from';
+import { of } from 'rxjs/internal/observable/of';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { LONG_DURATION } from 'shared/config/constant';
 import { useIsMounted } from 'shared/hooks';
 import {

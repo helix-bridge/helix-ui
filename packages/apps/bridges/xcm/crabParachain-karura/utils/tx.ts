@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 import { CrossToken, ParachainChainConfig, RequiredPartial, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm, fromWei, toWei } from 'shared/utils/helper';

@@ -1,6 +1,10 @@
 import { u8aToHex } from '@polkadot/util';
 import BN from 'bn.js';
-import { EMPTY, from as rxFrom, mergeMap, Observable, switchMap } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { EMPTY } from 'rxjs/internal/observable/empty';
+import { from as rxFrom } from 'rxjs/internal/observable/from';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { SUBSTRATE_DVM_WITHDRAW } from 'shared/config/env';
 import { Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';

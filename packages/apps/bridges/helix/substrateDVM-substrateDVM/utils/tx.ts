@@ -1,7 +1,10 @@
 import { BN_ZERO } from '@polkadot/util';
 import BN from 'bn.js';
 import last from 'lodash/last';
-import { EMPTY, from, Observable, switchMap } from 'rxjs';
+import type { Observable } from 'rxjs/internal/Observable';
+import { EMPTY } from 'rxjs/internal/observable/empty';
+import { from } from 'rxjs/internal/observable/from';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { CrossChainDirection, CrossToken, DVMChainConfig, HelixHistoryRecord, Tx } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
 import { isMetamaskChainConsistent } from 'shared/utils/connection';

@@ -1,7 +1,8 @@
 import type { ApiPromise } from '@polkadot/api';
 import { hexToU8a } from '@polkadot/util';
-import { lastValueFrom, map } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
+import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
+import { map } from 'rxjs/internal/operators/map';
 import { Network, PolkadotChainConfig } from '../../model';
 import { waitUntilConnected } from '../connection';
 import { remove0x, typeRegistryFactory } from '../helper';

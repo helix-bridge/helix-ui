@@ -1,5 +1,8 @@
 import { BN_ZERO, hexToU8a, stringToHex, BN } from '@polkadot/util';
-import { from, map, Observable, switchMap } from 'rxjs';
+import type { Observable } from 'rxjs/internal/Observable';
+import { from } from 'rxjs/internal/observable/from';
+import { map } from 'rxjs/internal/operators/map';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { abi } from 'shared/config/abi';
 import { Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';

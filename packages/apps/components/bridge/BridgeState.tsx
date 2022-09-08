@@ -1,7 +1,7 @@
 import { Alert } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
-import { map } from 'rxjs';
-import { ajax } from 'rxjs/ajax';
+import { ajax } from 'rxjs/internal/ajax/ajax';
+import { map } from 'rxjs/internal/operators/map';
 import { isDev } from 'shared/config/env';
 
 interface IncidentResponse {

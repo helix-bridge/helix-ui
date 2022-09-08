@@ -5,7 +5,8 @@ import BN from 'bn.js';
 import upperFirst from 'lodash/upperFirst';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { from, mergeMap } from 'rxjs';
+import { from } from 'rxjs/internal/observable/from';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import {
   CrossChainComponentProps,
   CrossToken,

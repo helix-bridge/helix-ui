@@ -4,7 +4,10 @@ import isNaN from 'lodash/isNaN';
 import { i18n, Trans, useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { initReactI18next } from 'react-i18next';
-import { from, mergeMap, of, switchMap } from 'rxjs';
+import { from } from 'rxjs/internal/observable/from';
+import { of } from 'rxjs/internal/observable/of';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { Logo } from 'shared/components/widget/Logo';
 import { FORM_CONTROL } from 'shared/config/constant';
 import {

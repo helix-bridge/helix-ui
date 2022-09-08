@@ -7,7 +7,11 @@ import omit from 'lodash/omit';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { EMPTY, from as fromRx, iif, of, tap } from 'rxjs';
+import { EMPTY } from 'rxjs/internal/observable/empty';
+import { from as fromRx } from 'rxjs/internal/observable/from';
+import { iif } from 'rxjs/internal/observable/iif';
+import { of } from 'rxjs/internal/observable/of';
+import { tap } from 'rxjs/internal/operators/tap';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
 import {

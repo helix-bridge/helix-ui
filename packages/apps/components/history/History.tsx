@@ -3,7 +3,9 @@ import { Badge, Button, Empty, message, Pagination, Radio, Result, Spin, Tabs, T
 import { format } from 'date-fns';
 import request from 'graphql-request';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { EMPTY, from, map } from 'rxjs';
+import { EMPTY } from 'rxjs/internal/observable/empty';
+import { from } from 'rxjs/internal/observable/from';
+import { map } from 'rxjs/internal/operators/map';
 import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
 import { DATE_TIME_FORMAT, RecordStatus } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';

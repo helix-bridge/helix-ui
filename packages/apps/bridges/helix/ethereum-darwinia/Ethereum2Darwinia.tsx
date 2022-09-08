@@ -1,7 +1,8 @@
 import { Typography } from 'antd';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
-import { from, mergeMap } from 'rxjs';
+import { from } from 'rxjs/internal/observable/from';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import {
   Bridge,
   CrossChainComponentProps,

@@ -1,7 +1,7 @@
 import { FormInstance } from 'antd';
 import BN from 'bn.js';
 import React from 'react';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 import { AllowancePayload } from '../../../apps/hooks';
 import { ChainConfig, TokenWithBridgesInfo } from '../network';
 import { Tx } from '../tx';

@@ -1,13 +1,19 @@
 import type { BlockNumber } from '@polkadot/types/interfaces/runtime';
 import { Spin, Tooltip } from 'antd';
 import { memo, useEffect, useMemo, useState } from 'react';
-import { from, mergeMap, retry, startWith, Subscription, switchMap, takeWhile, timer } from 'rxjs';
+import { from } from 'rxjs/internal/observable/from';
+import { timer } from 'rxjs/internal/observable/timer';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
+import { retry } from 'rxjs/internal/operators/retry';
+import { startWith } from 'rxjs/internal/operators/startWith';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { takeWhile } from 'rxjs/internal/operators/takeWhile';
+import { Subscription } from 'rxjs/internal/Subscription';
 import { MIDDLE_DURATION } from 'shared/config/constant';
 import { useIsMounted } from 'shared/hooks';
 import { ChainConfig } from 'shared/model';
-import { prettyNumber } from 'shared/utils/helper';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import React from 'react';
+import { prettyNumber } from 'shared/utils/helper';
 
 const DURATION = 6000;
 

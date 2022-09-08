@@ -1,6 +1,10 @@
 import { decodeAddress } from '@polkadot/keyring';
 import camelCaseKeys from 'camelcase-keys';
-import { catchError, filter, map, Observable, of } from 'rxjs';
+import type { Observable } from 'rxjs/internal/Observable';
+import { of } from 'rxjs/internal/observable/of';
+import { catchError } from 'rxjs/internal/operators/catchError';
+import { filter } from 'rxjs/internal/operators/filter';
+import { map } from 'rxjs/internal/operators/map';
 import { RecordStatus } from 'shared/config/constant';
 import { isFormalChain } from 'shared/config/env';
 import { ChainConfig, HelixHistoryRecord, ICamelCaseKeys } from 'shared/model';

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { Observable, takeWhile } from 'rxjs';
+import type { Observable } from 'rxjs/internal/Observable';
+import { takeWhile } from 'rxjs/internal/operators/takeWhile';
 
 export function useIsMounted() {
   const ref = useRef(true);

@@ -4,7 +4,9 @@ import Typography from 'antd/lib/typography';
 import BN from 'bn.js';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
-import { from, mergeMap, switchMap } from 'rxjs';
+import { from } from 'rxjs/internal/observable/from';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import {
   CrossChainComponentProps,
   CrossChainPayload,

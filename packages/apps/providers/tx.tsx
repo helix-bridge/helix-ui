@@ -1,6 +1,8 @@
 import { notification } from 'antd';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { delay, Observer, of } from 'rxjs';
+import { of } from 'rxjs/internal/observable/of';
+import { delay } from 'rxjs/internal/operators/delay';
+import type { Observer } from 'rxjs/internal/types';
 import { TxStatus } from 'shared/components/widget/TxStatus';
 import { LONG_DURATION } from 'shared/config/constant';
 import { RequiredPartial, Tx } from 'shared/model';

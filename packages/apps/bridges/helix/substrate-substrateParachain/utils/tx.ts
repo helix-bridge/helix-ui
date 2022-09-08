@@ -1,6 +1,6 @@
 import BN from 'bn.js';
 import upperFirst from 'lodash/upperFirst';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 import { RequiredPartial, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper';

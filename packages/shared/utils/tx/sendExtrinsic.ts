@@ -1,6 +1,10 @@
 import type { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { from, switchMap, Observable, Observer, tap } from 'rxjs';
+import { Observable } from 'rxjs/internal/Observable';
+import { from } from 'rxjs/internal/observable/from';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { tap } from 'rxjs/internal/operators/tap';
+import type { Observer } from 'rxjs/internal/types';
 import { Tx } from '../../model';
 import { waitUntilConnected } from '../connection';
 
