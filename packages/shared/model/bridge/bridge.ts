@@ -28,6 +28,12 @@ export interface ContractConfig {
   issuing: string;
 }
 
+export interface CBridgeContractConfig extends ContractConfig {
+  stablecoinIssuing?: string;
+  stablecoinBacking?: string;
+  busdIssuing?: string;
+}
+
 export interface BridgeConfig<C = ContractConfig> {
   contracts?: C;
 }
