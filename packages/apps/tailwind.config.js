@@ -1,7 +1,6 @@
 const path = require('path');
 
 module.exports = {
-  darkMode: 'class', // or 'media' or 'class'
   theme: {
     container: {
       center: true,
@@ -95,4 +94,8 @@ module.exports = {
     './bridges/**/*.{js,ts,jsx,tsx}',
     path.join(__dirname, '../shared/components/', '**/*.tsx'),
   ],
+  important: "#helix",
+  corePlugins: {
+    preflight: false,
+  }
 };

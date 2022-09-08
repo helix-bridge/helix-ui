@@ -35,9 +35,7 @@ function RecordAccount({ chain, account }: { chain: Network; account: string }) 
       </span>
       <Tooltip
         title={
-          <Typography.Text
-            copyable={{ icon: <Icon name="copy1" className="text-white text-base transform translate-y-1" /> }}
-          >
+          <Typography.Text copyable={{ icon: <Icon name="copy1" className="text-white text-base translate-y-1" /> }}>
             {displayAccount}
           </Typography.Text>
         }

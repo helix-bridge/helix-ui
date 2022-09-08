@@ -5,7 +5,7 @@ import iconfont from './icon/iconfont';
 export function Icon({
   onClick,
   name,
-  className = '',
+  className = 'w-4 h-4',
 }: {
   name: HelixIcons;
   onClick?: () => void;
@@ -25,5 +25,5 @@ export function Icon({
     }
   }, [name]);
 
-  return <svg className={`icon w-4 h-4 ${className}`} onClick={() => onClick && onClick()} ref={svgXML}></svg>;
+  return <svg className={`icon ${className}`} onClick={() => onClick && onClick()} ref={svgXML}></svg>;
 }

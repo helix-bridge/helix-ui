@@ -1,3 +1,4 @@
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -11,7 +12,7 @@ $bg-dark: #151d35;
   overflow: hidden;
 }
 
-.radio-list {
+#helix .radio-list {
   display: flex;
   align-items: center;
   padding: 2rem 10px;

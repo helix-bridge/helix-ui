@@ -38,7 +38,7 @@ export function TransferDetail({ transfers }: { transfers: TransferStep[] }) {
             </span>
 
             <span className="flex items-center gap-2 col-span-3 2xl:col-span-4">
-              <span className="font-bold text-sm">{t('For')}</span>
+              <span className="font-bold text-sm whitespace-nowrap">{t('For')}</span>
               <Logo name={token.logo} width={16} height={16} className="w-5 h-5" />
               <span className="whitespace-nowrap">
                 <span>{amount}</span>

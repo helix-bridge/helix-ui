@@ -50,9 +50,7 @@ const getAlertProps = (tx: Tx, cancel: () => void): AlertProps => {
               The transaction has been sent, please check the transaction progress in the history or explorer.
             </Trans>
           </p>
-          <Typography.Text
-            copyable={{ icon: <Icon name="copy1" className="text-white text-base transform translate-y-1" /> }}
-          >
+          <Typography.Text copyable={{ icon: <Icon name="copy1" className="text-white text-base translate-y-1" /> }}>
             {tx.hash}
           </Typography.Text>
         </div>

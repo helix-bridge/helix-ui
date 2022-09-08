@@ -50,7 +50,7 @@ export const SelectAccountModal: React.FC<Props> = ({
             <Radio.Button
               value={item.address}
               key={item.address}
-              className={`radio-list transform transition-all duration-300 hover:scale-105`}
+              className={`radio-list transition-all duration-300 hover:scale-105`}
             >
               <>
                 <Identicon

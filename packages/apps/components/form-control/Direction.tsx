@@ -161,7 +161,7 @@ export function Direction({
                 onRefresh();
               }
             }}
-            className="hover:text-blue-400 transform transition-all duration-300"
+            className="hover:text-blue-400 transition-all duration-300"
           />
         </span>
       )}

@@ -44,7 +44,7 @@ export const SelectWalletModal: React.FC<Props> = ({ visible, defaultValue, titl
               value={item.name}
               key={item.name}
               disabled={disable}
-              className={`radio-list ${disable ? '' : 'transform transition-all duration-300 hover:scale-105'}`}
+              className={`radio-list ${disable ? '' : 'transition-all duration-300 hover:scale-105'}`}
             >
               <Logo name={item.logo} width={36} height={36} />
               <span className="ml-4 capitalize">{item.name}</span>
