@@ -1,10 +1,10 @@
 import { TransactionRequest, TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider';
-import { ApiPromise } from '@polkadot/api';
-import { TypeRegistry } from '@polkadot/types';
+import type { ApiPromise } from '@polkadot/api';
 import { Modal, ModalFuncProps, ModalProps } from 'antd';
 import BN from 'bn.js';
-import { BigNumber, Contract } from 'ethers';
-import { Deferrable } from 'ethers/lib/utils';
+import { Contract } from 'ethers';
+import type { BigNumber } from 'ethers';
+import type { Deferrable } from 'ethers/lib/utils';
 import noop from 'lodash/noop';
 import omitBy from 'lodash/omitBy';
 import { i18n } from 'next-i18next';
@@ -14,7 +14,7 @@ import { Icon } from '../../components/widget/Icon';
 import { abi } from '../../config/abi';
 import { CrossChainPayload, RequiredPartial, Tx, TxFn } from '../../model';
 import { entrance, waitUntilConnected } from '../connection';
-import { toWei } from '../helper';
+import { toWei, typeRegistryFactory } from '../helper';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ModalSpyFn<T = any> = (observer: Observer<T>, closeFn: () => void) => void;
@@ -229,6 +229,7 @@ export async function getMPTProof(
   await waitUntilConnected(api);
 
   const proof = await api.rpc.state.getReadProof([proofAddress], hash);
+  const TypeRegistry = await typeRegistryFactory();
   const registry = new TypeRegistry();
 
   return registry.createType('Vec<Bytes>', proof.proof.toJSON());

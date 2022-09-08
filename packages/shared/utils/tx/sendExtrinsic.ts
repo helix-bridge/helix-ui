@@ -1,4 +1,4 @@
-import { ApiPromise, SubmittableResult } from '@polkadot/api';
+import type { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { from, switchMap, Observable, Observer, tap } from 'rxjs';
 import { Tx } from '../../model';

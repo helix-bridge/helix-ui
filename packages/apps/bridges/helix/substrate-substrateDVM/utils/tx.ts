@@ -1,5 +1,4 @@
-import { BN_ZERO, hexToU8a, stringToHex } from '@polkadot/util';
-import BN from 'bn.js';
+import { BN_ZERO, hexToU8a, stringToHex, BN } from '@polkadot/util';
 import { from, map, Observable, switchMap } from 'rxjs';
 import { abi } from 'shared/config/abi';
 import { Tx } from 'shared/model';

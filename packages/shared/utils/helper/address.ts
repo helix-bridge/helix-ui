@@ -1,13 +1,13 @@
-/* eslint-disable no-magic-numbers */
-import { TypeRegistry } from '@polkadot/types';
-import type { Codec, DetectCodec } from '@polkadot/types/types';
-import { hexToU8a, numberToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
+import type { Codec, DetectCodec } from '@polkadot/types/types';
+import { TypeRegistry } from '@polkadot/types';
+import { hexToU8a, numberToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import { isAddress } from 'ethers/lib/utils';
 import isNull from 'lodash/isNull';
 import { ChainConfig, PolkadotChainConfig } from '../../model';
 import { isDVMNetwork, isPolkadotNetwork } from '../network';
 
+// TODO: optimize
 export const registry = new TypeRegistry();
 
 export function dvmAddressToAccountId(address: string | null | undefined): DetectCodec<Codec, string> {
@@ -15,6 +15,7 @@ export function dvmAddressToAccountId(address: string | null | undefined): Detec
     return registry.createType('AccountId', '');
   }
 
+  /* eslint-disable */
   const data = new Uint8Array(32);
 
   data.set(stringToU8a('dvm:'));
@@ -23,6 +24,7 @@ export function dvmAddressToAccountId(address: string | null | undefined): Detec
   const checksum = data.reduce((pre: number, current: number): number => pre ^ current);
 
   data.set(numberToU8a(checksum), 31);
+  /* eslint-enable */
 
   const accountId = registry.createType('AccountId', data);
 

@@ -1,6 +1,6 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
 import { hexToU8a } from '@polkadot/util';
-import { Typography } from 'antd';
+import Typography from 'antd/lib/typography';
 import BN from 'bn.js';
 import upperFirst from 'lodash/upperFirst';
 import { useEffect, useMemo, useState } from 'react';

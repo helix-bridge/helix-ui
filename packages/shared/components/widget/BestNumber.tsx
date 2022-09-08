@@ -1,4 +1,4 @@
-import { BlockNumber } from '@polkadot/types/interfaces/runtime';
+import type { BlockNumber } from '@polkadot/types/interfaces/runtime';
 import { Spin, Tooltip } from 'antd';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { from, mergeMap, retry, startWith, Subscription, switchMap, takeWhile, timer } from 'rxjs';

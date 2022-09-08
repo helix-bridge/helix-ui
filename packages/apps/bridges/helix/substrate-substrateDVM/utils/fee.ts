@@ -1,4 +1,4 @@
-import { Codec } from '@polkadot/types-codec/types';
+import type { Codec } from '@polkadot/types-codec/types';
 import BN from 'bn.js';
 import last from 'lodash/last';
 import { Bridge, ChainConfig } from 'shared/model';

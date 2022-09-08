@@ -1,7 +1,6 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { BN_ZERO } from '@polkadot/util';
+import { BN_ZERO, BN } from '@polkadot/util';
 import { Tag, Tooltip, Typography } from 'antd';
-import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from, mergeMap } from 'rxjs';

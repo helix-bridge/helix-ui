@@ -1,7 +1,8 @@
-import { TypeRegistry } from '@polkadot/types';
+import { typeRegistryFactory } from './huge';
 
-export function encodeBlockHeader(blockHeaderStr: string) {
+export async function encodeBlockHeader(blockHeaderStr: string) {
   const blockHeaderObj = JSON.parse(blockHeaderStr);
+  const TypeRegistry = await typeRegistryFactory();
   const registry = new TypeRegistry();
 
   return registry.createType('Header', {

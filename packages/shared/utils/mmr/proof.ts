@@ -1,5 +1,6 @@
 import isUndefined from 'lodash/isUndefined';
 import negate from 'lodash/negate';
+import type { TypeRegistry } from '@polkadot/types/create/registry';
 import { bag_rhs_peaks, gen_proof_for_peak, get_peaks, leaf_index_to_mmr_size, leaf_index_to_pos } from './util';
 
 interface RpcMMRProof {
@@ -11,7 +12,8 @@ interface RpcMMRProof {
 async function gen_proof(
   leaf_index: number,
   last_leaf_index: number,
-  query: (peak_pos: number[]) => Promise<string[]>
+  query: (peak_pos: number[]) => Promise<string[]>,
+  Registry: typeof TypeRegistry
 ): Promise<RpcMMRProof> {
   const leaf_pos = leaf_index_to_pos(leaf_index);
   const mmr_size = leaf_index_to_mmr_size(last_leaf_index);
@@ -50,7 +52,7 @@ async function gen_proof(
     const index = proof.length - bagging_track;
     const rhs_peaks = proof.slice(index);
 
-    proof = [...proof.slice(0, index), bag_rhs_peaks(rhs_peaks)];
+    proof = [...proof.slice(0, index), bag_rhs_peaks(rhs_peaks, new Registry())];
   }
 
   return { mmrSize: mmr_size, proof: proof.filter(negate(isUndefined)) };

@@ -1,6 +1,5 @@
-import { BN_ZERO } from '@polkadot/util';
+import { BN_ZERO, BN } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/keyring';
-import BN from 'bn.js';
 import { Contract } from 'ethers';
 import upperFirst from 'lodash/upperFirst';
 import { filter, from, map, Observable, switchMap, take, zip } from 'rxjs';
@@ -89,7 +88,7 @@ export function claimToken({
   const bridge = getBridge<EthereumDarwiniaBridgeConfig>([direction.from, direction.to]);
   const networkPrefix = upperFirst(departure.name) as ClaimNetworkPrefix;
   const apiObs = from(entrance.polkadot.getInstance(departure.provider).isReady);
-  const header = encodeBlockHeader(blockHeaderStr);
+  const headerObs = encodeBlockHeader(blockHeaderStr);
   const storageKey = getD2ELockEventsStorageKey(blockNumber, bridge.config.lockEvents);
 
   const accountObs = connect(arrival).pipe(
@@ -98,14 +97,23 @@ export function claimToken({
     take(1)
   );
 
+  const mmrRootMessageObs = from(
+    encodeMMRRootMessage({
+      prefix: networkPrefix,
+      methodID: '0x479fbdf9',
+      index: mmrIndex,
+      root: mmrRoot,
+    })
+  );
+
   return apiObs.pipe(
     switchMap((api) => {
       const eventsProofObs = from(getMPTProof(api, blockHash, storageKey)).pipe(map((str) => str.toHex()));
 
       return MMRRoot && best && best > blockNumber
-        ? zip([from(getMMR(api, blockNumber, best, blockHash)), eventsProofObs, accountObs]).pipe(
+        ? zip([from(getMMR(api, blockNumber, best, blockHash)), eventsProofObs, accountObs, headerObs]).pipe(
             map(
-              ([mmrProof, eventsProofStr, account]) =>
+              ([mmrProof, eventsProofStr, account, header]) =>
                 (contract: Contract) =>
                   contract.verifyProof(
                     '0x' + MMRRoot,
@@ -118,15 +126,14 @@ export function claimToken({
                   )
             )
           )
-        : zip([from(getMMR(api, blockNumber, mmrIndex, blockHash)), eventsProofObs, accountObs]).pipe(
-            map(([mmrProof, eventsProofStr, account]) => {
-              const mmrRootMessage = encodeMMRRootMessage({
-                prefix: networkPrefix,
-                methodID: '0x479fbdf9',
-                index: mmrIndex,
-                root: mmrRoot,
-              });
-
+        : zip([
+            from(getMMR(api, blockNumber, mmrIndex, blockHash)),
+            eventsProofObs,
+            accountObs,
+            headerObs,
+            mmrRootMessageObs,
+          ]).pipe(
+            map(([mmrProof, eventsProofStr, account, header, mmrRootMessage]) => {
               return (contract: Contract) =>
                 contract.appendRootAndVerifyProof(
                   mmrRootMessage.toHex(),

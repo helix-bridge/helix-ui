@@ -1,6 +1,6 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
 import { BN_ZERO } from '@polkadot/util';
-import { Typography } from 'antd';
+import Typography from 'antd/lib/typography';
 import BN from 'bn.js';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';

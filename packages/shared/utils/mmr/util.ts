@@ -1,19 +1,12 @@
 /* eslint-disable no-bitwise */
 /* eslint-disable complexity */
 /* eslint-disable no-magic-numbers */
-import { Raw, Tuple, TypeRegistry } from '@polkadot/types';
+import { Raw, Tuple } from '@polkadot/types';
+import type { TypeRegistry } from '@polkadot/types/create/registry';
 import { hexToU8a } from '@polkadot/util';
 import { blake2AsHex } from '@polkadot/util-crypto';
 
-// export function merge(left: string, right: string): string {
-//   const res = blake2b(Uint8Array.from(Buffer.from(left + right, 'hex')), undefined, 32);
-
-//   return Buffer.from(res).toString('hex');
-// }
-
-const registry = new TypeRegistry();
-
-function merge(left: string, right: string): string {
+function merge(left: string, right: string, registry: TypeRegistry): string {
   const res = new Tuple(registry, [Raw, Raw], [new Raw(registry, hexToU8a(left)), new Raw(registry, hexToU8a(right))]);
 
   return blake2AsHex(res.toU8a());
@@ -146,11 +139,11 @@ export function gen_proof_for_peak(leaf_pos: number, peak_pos: number): number[]
   return proof;
 }
 
-export function bag_rhs_peaks(rhs_peaks: string[]): string {
+export function bag_rhs_peaks(rhs_peaks: string[], registry: TypeRegistry): string {
   while (rhs_peaks.length > 1) {
     const right_peak = rhs_peaks.pop() as string;
     const left_peak = rhs_peaks.pop() as string;
-    rhs_peaks.push(merge(right_peak, left_peak));
+    rhs_peaks.push(merge(right_peak, left_peak, registry));
   }
 
   return rhs_peaks.pop() as string;

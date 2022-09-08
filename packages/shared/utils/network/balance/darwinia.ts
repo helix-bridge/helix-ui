@@ -1,4 +1,4 @@
-import { AccountInfo } from '@darwinia/types';
+import type { AccountInfo } from '@darwinia/types';
 import { BN, bnMax, BN_ZERO } from '@polkadot/util';
 import { entrance, waitUntilConnected } from '../../connection';
 

@@ -1,11 +1,10 @@
-import { ApiPromise } from '@polkadot/api';
-import { TypeRegistry } from '@polkadot/types';
+import type { ApiPromise } from '@polkadot/api';
 import { hexToU8a } from '@polkadot/util';
 import { lastValueFrom, map } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 import { Network, PolkadotChainConfig } from '../../model';
 import { waitUntilConnected } from '../connection';
-import { remove0x } from '../helper';
+import { remove0x, typeRegistryFactory } from '../helper';
 import { convert, updateInstance } from '../mmrConvert/ckb_next';
 import { getChainConfig } from '../network';
 import { genProof } from './proof';
@@ -43,7 +42,8 @@ async function getMMRProofBySubql(api: ApiPromise, blockNumber: number, mmrBlock
   const chain = (await api.rpc.system.chain()).toString().toLowerCase() as Extract<Network, 'pangolin' | 'darwinia'>;
   const config = getChainConfig(chain) as PolkadotChainConfig;
   const fetchProofs = proofsFactory(`https://api.subquery.network/sq/darwinia-network/subql-mmr-${config.name}`);
-  const proof = await genProof(blockNumber, mmrBlockNumber, fetchProofs);
+  const TypeRegistry = await typeRegistryFactory();
+  const proof = await genProof(blockNumber, mmrBlockNumber, fetchProofs, TypeRegistry);
   const encodeProof = proof.proof.map((item) => remove0x(item.replace(/(^\s*)|(\s*$)/g, ''))).join('');
   const size = new TypeRegistry().createType('u64', proof.mmrSize.toString()) as unknown as bigint;
 
@@ -74,7 +74,8 @@ function proofsFactory(url: string) {
   };
 }
 
-export function encodeMMRRootMessage(root: EncodeMMRoot) {
+export async function encodeMMRRootMessage(root: EncodeMMRoot) {
+  const TypeRegistry = await typeRegistryFactory();
   const registry = new TypeRegistry();
 
   return registry.createType(

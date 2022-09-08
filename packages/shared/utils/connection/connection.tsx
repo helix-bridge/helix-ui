@@ -1,7 +1,6 @@
 import { isHex, stringToHex } from '@polkadot/util';
 import { Modal } from 'antd';
 import Link from 'antd/lib/typography/Link';
-import React from 'react';
 import { Trans } from 'react-i18next';
 import { EMPTY, from, map, mergeMap, Observable, of, switchMap } from 'rxjs';
 import {

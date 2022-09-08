@@ -4,6 +4,7 @@ export * from './block';
 export * from './common';
 export * from './http';
 export * from './operator';
+export * from './huge';
 export * from './storage';
 export * from './url';
 export * from './validator';
