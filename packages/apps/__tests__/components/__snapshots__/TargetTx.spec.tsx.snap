@@ -466,7 +466,7 @@ exports[`<TargetTx /> render target tx with TxStatus: 3 1`] = `
           tabIndex={0}
         >
           <svg
-            className="icon w-4 h-4 text-white text-base"
+            className="icon text-white text-base"
             onClick={[Function]}
           />
         </div>
@@ -557,7 +557,7 @@ exports[`<TargetTx /> render target tx with TxStatus: 3 2`] = `
           tabIndex={0}
         >
           <svg
-            className="icon w-4 h-4 text-white text-base"
+            className="icon text-white text-base"
             onClick={[Function]}
           />
         </div>
@@ -648,7 +648,7 @@ exports[`<TargetTx /> render target tx with TxStatus: 4 1`] = `
           tabIndex={0}
         >
           <svg
-            className="icon w-4 h-4 text-white text-base"
+            className="icon text-white text-base"
             onClick={[Function]}
           />
         </div>
@@ -739,7 +739,7 @@ exports[`<TargetTx /> render target tx with TxStatus: 4 2`] = `
           tabIndex={0}
         >
           <svg
-            className="icon w-4 h-4 text-white text-base"
+            className="icon text-white text-base"
             onClick={[Function]}
           />
         </div>
@@ -870,7 +870,7 @@ exports[`<TargetTx /> should render null if refunded 1`] = `
           tabIndex={0}
         >
           <svg
-            className="icon w-4 h-4 text-white text-base"
+            className="icon text-white text-base"
             onClick={[Function]}
           />
         </div>

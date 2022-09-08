@@ -41,7 +41,7 @@ exports[`<Timestamp /> render Timestamp with processing 1`] = `
     className="flex items-center gap-2 whitespace-nowrap"
   >
     <svg
-      className="icon w-4 h-4 "
+      className="icon w-4 h-4"
       onClick={[Function]}
     />
     in about 5 hours
@@ -57,7 +57,7 @@ exports[`<Timestamp /> render Timestamp with processing 1`] = `
       role="separator"
     />
     <svg
-      className="icon w-4 h-4 text-gray-400 text-base"
+      className="icon text-gray-400 text-base"
       onClick={[Function]}
     />
     <div
@@ -166,7 +166,7 @@ exports[`<Timestamp /> render Timestamp with success 1`] = `
       role="separator"
     />
     <svg
-      className="icon w-4 h-4 text-gray-400 text-base"
+      className="icon text-gray-400 text-base"
       onClick={[Function]}
     />
     <span

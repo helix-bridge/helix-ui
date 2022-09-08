@@ -31,6 +31,8 @@
   "Confirmed within {{des}}": "在 {{des}} 内确认",
   "Connect to Wallet": "连接钱包",
   "Current Chain Environment {{type}}": "当前链环境 {{type}}",
+  "Dashboard": "仪表板",
+  "Docs": "文档",
   "Daily limit": "每日限额",
   "Date & time of cross-chain transaction inclusion, including length of time for confirmation.": "跨链交易包含的日期和时间，包括确认的时间",
   "Ethereum - Darwinia Record": "Ethereum - Darwinia 记录",

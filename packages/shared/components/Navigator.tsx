@@ -3,7 +3,6 @@ import { AntdIconProps } from '@ant-design/icons/lib/components/AntdIcon';
 import { Dropdown, Menu, Typography } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React from 'react';
 import { useMemo } from 'react';
 import { isDev } from 'shared/config/env';
 import { THEME } from 'shared/config/theme';

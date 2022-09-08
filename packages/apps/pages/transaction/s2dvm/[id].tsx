@@ -1,5 +1,5 @@
 import { isAfter } from 'date-fns';
-import { GetServerSidePropsContext, NextPage } from 'next';
+import type { GetServerSidePropsContext, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { SUBSTRATE_DVM_WITHDRAW } from 'shared/config/env';

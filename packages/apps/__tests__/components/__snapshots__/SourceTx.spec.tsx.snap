@@ -81,7 +81,7 @@ exports[`<SourceTx /> render SourceTx 1`] = `
           tabIndex={0}
         >
           <svg
-            className="icon w-4 h-4 text-white text-base"
+            className="icon text-white text-base"
             onClick={[Function]}
           />
         </div>
