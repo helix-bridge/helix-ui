@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   darkMode: 'class', // or 'media' or 'class'
   theme: {
@@ -53,12 +55,12 @@ module.exports = {
         'mock-bottom-border-light': '0px 10px 1px -8px rgba(255,255,255,.85)',
       },
       colors: (_) => ({
-        helix: { 
-          green: "#52C41A",
-          red: "#FF4D4F",
-          blue: "#00B2FF",
-          yellow: "#FAAD14"
-        }, 
+        helix: {
+          green: '#52C41A',
+          red: '#FF4D4F',
+          blue: '#00B2FF',
+          yellow: '#FAAD14',
+        },
         crab: {
           main: '#EC3783',
         },
@@ -87,14 +89,10 @@ module.exports = {
       emptyContent: false,
     }),
   ],
-  variants: {
-    extend: {
-      backgroundColor: ['before', 'after'],
-      backgroundOpacity: ['before', 'after'],
-    },
-  },
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
+    './pages/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+    './bridges/**/*.{js,ts,jsx,tsx}',
+    path.join(__dirname, '../shared/components/', '**/*.tsx'),
   ],
 };
