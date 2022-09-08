@@ -8,24 +8,25 @@ describe('DVM to main net', () => {
     cy.activeMetamask();
   });
 
-  after(() => { 
+  after(() => {
     cy.changeMetamaskNetwork('ropsten');
-  })
+  });
 
   beforeEach(() => {
     cy.visit(Cypress.config().baseUrl);
     cy.agreeAndContinue();
   });
-  
+
   it('Just to accept metamask access', () => {
     cy.selectFromToken('Ropsten', 'PRING');
     cy.get('.ant-btn-default').contains('Connect to Wallet').click();
     cy.acceptMetamaskAccess(); // allow metamask connect;
   });
 
-  it('should launch ring tx', () => {
+  // pangolin has been reset
+  it.skip('should launch ring tx', () => {
     const chain = { networkName: 'pangolin', networkId: 43, isTestnet: true };
- 
+
     cy.selectFromToken('Pangolin Smart Chain', 'PRING');
     cy.selectToToken('Pangolin', 'PRING');
 
