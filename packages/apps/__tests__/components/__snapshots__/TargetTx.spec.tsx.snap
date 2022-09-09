@@ -85,6 +85,12 @@ exports[`<TargetTx /> render target tx with TxStatus: 0 1`] = `
     >
       <div
         className="ant-progress-inner"
+        style={
+          Object {
+            "backgroundColor": undefined,
+            "borderRadius": undefined,
+          }
+        }
       >
         <div
           className="ant-progress-bg"
@@ -154,6 +160,12 @@ exports[`<TargetTx /> render target tx with TxStatus: 1 1`] = `
     >
       <div
         className="ant-progress-inner"
+        style={
+          Object {
+            "backgroundColor": undefined,
+            "borderRadius": undefined,
+          }
+        }
       >
         <div
           className="ant-progress-bg"
@@ -223,6 +235,12 @@ exports[`<TargetTx /> render target tx with TxStatus: 1 2`] = `
     >
       <div
         className="ant-progress-inner"
+        style={
+          Object {
+            "backgroundColor": undefined,
+            "borderRadius": undefined,
+          }
+        }
       >
         <div
           className="ant-progress-bg"
@@ -292,6 +310,12 @@ exports[`<TargetTx /> render target tx with TxStatus: 1 3`] = `
     >
       <div
         className="ant-progress-inner"
+        style={
+          Object {
+            "backgroundColor": undefined,
+            "borderRadius": undefined,
+          }
+        }
       >
         <div
           className="ant-progress-bg"
@@ -361,6 +385,12 @@ exports[`<TargetTx /> render target tx with TxStatus: 2 1`] = `
     >
       <div
         className="ant-progress-inner"
+        style={
+          Object {
+            "backgroundColor": undefined,
+            "borderRadius": undefined,
+          }
+        }
       >
         <div
           className="ant-progress-bg"
@@ -422,57 +452,23 @@ exports[`<TargetTx /> render target tx with TxStatus: 3 1`] = `
       Target Tx Hash
     </span>
   </div>
-  <a
-    className="ant-typography hover:opacity-80 transition-opacity duration-200"
-    href="https://crab.subscan.io/tx/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
-    onClick={[Function]}
-    rel="noopener noreferrer"
-    style={
-      Object {
-        "WebkitLineClamp": undefined,
-      }
-    }
-    target="_blank"
+  <span
+    className="space-x-2"
   >
-    <span
-      className="ant-typography truncate custom-copy-icon undefined"
-      onClick={null}
-      style={
-        Object {
-          "WebkitLineClamp": undefined,
-        }
-      }
+    <a
+      className="text-white hover:opacity-80 transition-opacity duration-200 underline"
+      href="https://crab.subscan.io/tx/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
+      onClick={[Function]}
+      rel="noreferrer"
+      target="_blank"
     >
-      <u>
-        0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668
-        <div
-          aria-label="Copy"
-          className="ant-typography-copy"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          role="button"
-          style={
-            Object {
-              "background": "transparent",
-              "border": 0,
-              "display": "inline-block",
-              "lineHeight": "inherit",
-              "padding": 0,
-            }
-          }
-          tabIndex={0}
-        >
-          <svg
-            className="icon text-white text-base"
-            onClick={[Function]}
-          />
-        </div>
-      </u>
-    </span>
-  </a>
+      0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668
+    </a>
+    <svg
+      className="icon text-base w-4 h-4 cursor-pointer "
+      onClick={[Function]}
+    />
+  </span>
 </div>
 `;
 
@@ -513,57 +509,23 @@ exports[`<TargetTx /> render target tx with TxStatus: 3 2`] = `
       Target Tx Hash
     </span>
   </div>
-  <a
-    className="ant-typography hover:opacity-80 transition-opacity duration-200"
-    href="https://crab.subscan.io/tx/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
-    onClick={[Function]}
-    rel="noopener noreferrer"
-    style={
-      Object {
-        "WebkitLineClamp": undefined,
-      }
-    }
-    target="_blank"
+  <span
+    className="space-x-2"
   >
-    <span
-      className="ant-typography truncate custom-copy-icon undefined"
-      onClick={null}
-      style={
-        Object {
-          "WebkitLineClamp": undefined,
-        }
-      }
+    <a
+      className="text-white hover:opacity-80 transition-opacity duration-200 underline"
+      href="https://crab.subscan.io/tx/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
+      onClick={[Function]}
+      rel="noreferrer"
+      target="_blank"
     >
-      <u>
-        0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668
-        <div
-          aria-label="Copy"
-          className="ant-typography-copy"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          role="button"
-          style={
-            Object {
-              "background": "transparent",
-              "border": 0,
-              "display": "inline-block",
-              "lineHeight": "inherit",
-              "padding": 0,
-            }
-          }
-          tabIndex={0}
-        >
-          <svg
-            className="icon text-white text-base"
-            onClick={[Function]}
-          />
-        </div>
-      </u>
-    </span>
-  </a>
+      0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668
+    </a>
+    <svg
+      className="icon text-base w-4 h-4 cursor-pointer "
+      onClick={[Function]}
+    />
+  </span>
 </div>
 `;
 
@@ -604,57 +566,23 @@ exports[`<TargetTx /> render target tx with TxStatus: 4 1`] = `
       Target Tx Hash
     </span>
   </div>
-  <a
-    className="ant-typography hover:opacity-80 transition-opacity duration-200"
-    href="https://darwinia.subscan.io/tx/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
-    onClick={[Function]}
-    rel="noopener noreferrer"
-    style={
-      Object {
-        "WebkitLineClamp": undefined,
-      }
-    }
-    target="_blank"
+  <span
+    className="space-x-2"
   >
-    <span
-      className="ant-typography truncate custom-copy-icon undefined"
-      onClick={null}
-      style={
-        Object {
-          "WebkitLineClamp": undefined,
-        }
-      }
+    <a
+      className="text-white hover:opacity-80 transition-opacity duration-200 underline"
+      href="https://darwinia.subscan.io/tx/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
+      onClick={[Function]}
+      rel="noreferrer"
+      target="_blank"
     >
-      <u>
-        0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668
-        <div
-          aria-label="Copy"
-          className="ant-typography-copy"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          role="button"
-          style={
-            Object {
-              "background": "transparent",
-              "border": 0,
-              "display": "inline-block",
-              "lineHeight": "inherit",
-              "padding": 0,
-            }
-          }
-          tabIndex={0}
-        >
-          <svg
-            className="icon text-white text-base"
-            onClick={[Function]}
-          />
-        </div>
-      </u>
-    </span>
-  </a>
+      0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668
+    </a>
+    <svg
+      className="icon text-base w-4 h-4 cursor-pointer "
+      onClick={[Function]}
+    />
+  </span>
 </div>
 `;
 
@@ -695,57 +623,23 @@ exports[`<TargetTx /> render target tx with TxStatus: 4 2`] = `
       Target Tx Hash
     </span>
   </div>
-  <a
-    className="ant-typography hover:opacity-80 transition-opacity duration-200"
-    href="https://darwinia.subscan.io/tx/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
-    onClick={[Function]}
-    rel="noopener noreferrer"
-    style={
-      Object {
-        "WebkitLineClamp": undefined,
-      }
-    }
-    target="_blank"
+  <span
+    className="space-x-2"
   >
-    <span
-      className="ant-typography truncate custom-copy-icon undefined"
-      onClick={null}
-      style={
-        Object {
-          "WebkitLineClamp": undefined,
-        }
-      }
+    <a
+      className="text-white hover:opacity-80 transition-opacity duration-200 underline"
+      href="https://darwinia.subscan.io/tx/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
+      onClick={[Function]}
+      rel="noreferrer"
+      target="_blank"
     >
-      <u>
-        0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668
-        <div
-          aria-label="Copy"
-          className="ant-typography-copy"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          role="button"
-          style={
-            Object {
-              "background": "transparent",
-              "border": 0,
-              "display": "inline-block",
-              "lineHeight": "inherit",
-              "padding": 0,
-            }
-          }
-          tabIndex={0}
-        >
-          <svg
-            className="icon text-white text-base"
-            onClick={[Function]}
-          />
-        </div>
-      </u>
-    </span>
-  </a>
+      0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668
+    </a>
+    <svg
+      className="icon text-base w-4 h-4 cursor-pointer "
+      onClick={[Function]}
+    />
+  </span>
 </div>
 `;
 
@@ -826,56 +720,22 @@ exports[`<TargetTx /> should render null if refunded 1`] = `
       Target Tx Hash
     </span>
   </div>
-  <a
-    className="ant-typography hover:opacity-80 transition-opacity duration-200"
-    href="https://darwinia.subscan.io/tx/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
-    onClick={[Function]}
-    rel="noopener noreferrer"
-    style={
-      Object {
-        "WebkitLineClamp": undefined,
-      }
-    }
-    target="_blank"
+  <span
+    className="space-x-2"
   >
-    <span
-      className="ant-typography truncate custom-copy-icon undefined"
-      onClick={null}
-      style={
-        Object {
-          "WebkitLineClamp": undefined,
-        }
-      }
+    <a
+      className="text-white hover:opacity-80 transition-opacity duration-200 underline"
+      href="https://darwinia.subscan.io/tx/0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668"
+      onClick={[Function]}
+      rel="noreferrer"
+      target="_blank"
     >
-      <u>
-        0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668
-        <div
-          aria-label="Copy"
-          className="ant-typography-copy"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          role="button"
-          style={
-            Object {
-              "background": "transparent",
-              "border": 0,
-              "display": "inline-block",
-              "lineHeight": "inherit",
-              "padding": 0,
-            }
-          }
-          tabIndex={0}
-        >
-          <svg
-            className="icon text-white text-base"
-            onClick={[Function]}
-          />
-        </div>
-      </u>
-    </span>
-  </a>
+      0x9bde128fdae638facd2c9a3758d14111d8324194b67d4060b8ecad896a79a668
+    </a>
+    <svg
+      className="icon text-base w-4 h-4 cursor-pointer "
+      onClick={[Function]}
+    />
+  </span>
 </div>
 `;

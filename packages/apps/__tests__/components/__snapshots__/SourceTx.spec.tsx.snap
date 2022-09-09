@@ -37,56 +37,22 @@ exports[`<SourceTx /> render SourceTx 1`] = `
       Source Tx Hash
     </span>
   </div>
-  <a
-    className="ant-typography hover:opacity-80 transition-opacity duration-200"
-    href="https://undefined.etherscan.io/tx/0xa9673370dce7f48b306fb96b90c42fa2a13986f1e618eb2996eaeb5abce88643"
-    onClick={[Function]}
-    rel="noopener noreferrer"
-    style={
-      Object {
-        "WebkitLineClamp": undefined,
-      }
-    }
-    target="_blank"
+  <span
+    className="space-x-2"
   >
-    <span
-      className="ant-typography truncate custom-copy-icon undefined"
-      onClick={null}
-      style={
-        Object {
-          "WebkitLineClamp": undefined,
-        }
-      }
+    <a
+      className="text-white hover:opacity-80 transition-opacity duration-200 underline"
+      href="https://undefined.etherscan.io/tx/0xa9673370dce7f48b306fb96b90c42fa2a13986f1e618eb2996eaeb5abce88643"
+      onClick={[Function]}
+      rel="noreferrer"
+      target="_blank"
     >
-      <u>
-        0xa9673370dce7f48b306fb96b90c42fa2a13986f1e618eb2996eaeb5abce88643
-        <div
-          aria-label="Copy"
-          className="ant-typography-copy"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          role="button"
-          style={
-            Object {
-              "background": "transparent",
-              "border": 0,
-              "display": "inline-block",
-              "lineHeight": "inherit",
-              "padding": 0,
-            }
-          }
-          tabIndex={0}
-        >
-          <svg
-            className="icon text-white text-base"
-            onClick={[Function]}
-          />
-        </div>
-      </u>
-    </span>
-  </a>
+      0xa9673370dce7f48b306fb96b90c42fa2a13986f1e618eb2996eaeb5abce88643
+    </a>
+    <svg
+      className="icon text-base w-4 h-4 cursor-pointer "
+      onClick={[Function]}
+    />
+  </span>
 </div>
 `;

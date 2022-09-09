@@ -2,9 +2,9 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Form, Spin, Tooltip } from 'antd';
 import { PropsWithChildren, ReactNode, useMemo } from 'react';
 import { Bridge } from 'shared/model';
-import { prettyNumber } from 'shared/utils/helper';
-import { useITranslation } from '../../hooks';
-import { bridgeCategoryDisplay } from '../../utils';
+import { prettyNumber } from 'shared/utils/helper/balance';
+import { useITranslation } from 'shared/hooks/translation';
+import { bridgeCategoryDisplay } from '../../utils/bridge';
 
 type AmountInfo = {
   amount: string;

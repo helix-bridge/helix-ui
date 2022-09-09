@@ -2,82 +2,52 @@
 
 exports[`<CrossChainInfo /> render cross-chain and extra nodes 1`] = `
 <div
-  className="ant-row ant-form-item relative"
-  style={Object {}}
+  className="ant-form-item relative"
 >
   <div
-    className="ant-col ant-form-item-label"
-    style={Object {}}
-  >
-    <label
-      className=""
-      title="Information"
-    >
-      Information
-    </label>
-  </div>
-  <div
-    className="ant-col ant-form-item-control"
+    className="ant-row ant-form-item-row"
     style={Object {}}
   >
     <div
-      className="ant-form-item-control-input"
+      className="ant-col ant-form-item-label"
+      style={Object {}}
+    >
+      <label
+        className=""
+        title="Information"
+      >
+        Information
+      </label>
+    </div>
+    <div
+      className="ant-col ant-form-item-control"
+      style={Object {}}
     >
       <div
-        className="ant-form-item-control-input-content"
+        className="ant-form-item-control-input"
       >
         <div
-          className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900"
+          className="ant-form-item-control-input-content"
         >
           <div
-            className="flex justify-between items-center"
+            className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900"
           >
-            <span
-              className="ant-typography"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
+            <div
+              className="flex justify-between items-center"
             >
-              Bridge Name
-            </span>
-            <span
-              className="ant-typography"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
+              <span>
+                Bridge Name
+              </span>
+              <span>
+                Helix
+              </span>
+            </div>
+            <div
+              className="flex justify-between items-center "
             >
-              Helix
-            </span>
-          </div>
-          <div
-            className="flex justify-between items-center "
-          >
-            <span
-              className="ant-typography"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
-            >
-              Transaction Fee
-            </span>
-            <span
-              className="ant-typography"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
-            >
+              <span>
+                Transaction Fee
+              </span>
               <span
                 className="cursor-help"
                 onMouseEnter={[Function]}
@@ -87,75 +57,63 @@ exports[`<CrossChainInfo /> render cross-chain and extra nodes 1`] = `
                  
                 RING
               </span>
-            </span>
-          </div>
-          <div
-            className="justify-between items-center transition-all duration-100 flex"
-            data-testid="Allowance"
-          >
-            <span
-              className="ant-typography whitespace-nowrap"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
+            </div>
+            <div
+              className="justify-between items-center transition-all duration-100 flex"
+              data-testid="Allowance"
             >
-              Allowance
-            </span>
-            <span
-              className="ant-typography capitalize"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
-            >
-              <span>
-                10000000
+              <span
+                className="whitespace-nowrap"
+              >
+                Allowance
               </span>
               <span
-                className="capitalize ml-1"
+                className="ant-typography capitalize"
+                onClick={null}
+                style={
+                  Object {
+                    "WebkitLineClamp": undefined,
+                  }
+                }
               >
-                PRING
+                <span>
+                  10000000
+                </span>
+                <span
+                  className="capitalize ml-1"
+                >
+                  PRING
+                </span>
               </span>
-            </span>
-          </div>
-          <div
-            className="justify-between items-center transition-all duration-100 flex"
-            data-testid="Daily limit"
-          >
-            <span
-              className="ant-typography whitespace-nowrap"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
+            </div>
+            <div
+              className="justify-between items-center transition-all duration-100 flex"
+              data-testid="Daily limit"
             >
-              Daily limit
-            </span>
-            <span
-              className="ant-typography capitalize"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
-            >
-              <span>
-                100000000
+              <span
+                className="whitespace-nowrap"
+              >
+                Daily limit
               </span>
               <span
-                className="capitalize ml-1"
+                className="ant-typography capitalize"
+                onClick={null}
+                style={
+                  Object {
+                    "WebkitLineClamp": undefined,
+                  }
+                }
               >
-                PRING
+                <span>
+                  100000000
+                </span>
+                <span
+                  className="capitalize ml-1"
+                >
+                  PRING
+                </span>
               </span>
-            </span>
+            </div>
           </div>
         </div>
       </div>
@@ -166,82 +124,52 @@ exports[`<CrossChainInfo /> render cross-chain and extra nodes 1`] = `
 
 exports[`<CrossChainInfo /> render cross-chain item 1`] = `
 <div
-  className="ant-row ant-form-item relative"
-  style={Object {}}
+  className="ant-form-item relative"
 >
   <div
-    className="ant-col ant-form-item-label"
-    style={Object {}}
-  >
-    <label
-      className=""
-      title="Information"
-    >
-      Information
-    </label>
-  </div>
-  <div
-    className="ant-col ant-form-item-control"
+    className="ant-row ant-form-item-row"
     style={Object {}}
   >
     <div
-      className="ant-form-item-control-input"
+      className="ant-col ant-form-item-label"
+      style={Object {}}
+    >
+      <label
+        className=""
+        title="Information"
+      >
+        Information
+      </label>
+    </div>
+    <div
+      className="ant-col ant-form-item-control"
+      style={Object {}}
     >
       <div
-        className="ant-form-item-control-input-content"
+        className="ant-form-item-control-input"
       >
         <div
-          className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900"
+          className="ant-form-item-control-input-content"
         >
           <div
-            className="flex justify-between items-center"
+            className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900"
           >
-            <span
-              className="ant-typography"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
+            <div
+              className="flex justify-between items-center"
             >
-              Bridge Name
-            </span>
-            <span
-              className="ant-typography"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
+              <span>
+                Bridge Name
+              </span>
+              <span>
+                Helix
+              </span>
+            </div>
+            <div
+              className="flex justify-between items-center "
             >
-              Helix
-            </span>
-          </div>
-          <div
-            className="flex justify-between items-center "
-          >
-            <span
-              className="ant-typography"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
-            >
-              Transaction Fee
-            </span>
-            <span
-              className="ant-typography"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
-            >
+              <span>
+                Transaction Fee
+              </span>
               <span
                 className="cursor-help"
                 onMouseEnter={[Function]}
@@ -251,7 +179,7 @@ exports[`<CrossChainInfo /> render cross-chain item 1`] = `
                  
                 RING
               </span>
-            </span>
+            </div>
           </div>
         </div>
       </div>
@@ -262,82 +190,52 @@ exports[`<CrossChainInfo /> render cross-chain item 1`] = `
 
 exports[`<CrossChainInfo /> render cross-chain with children 1`] = `
 <div
-  className="ant-row ant-form-item relative"
-  style={Object {}}
+  className="ant-form-item relative"
 >
   <div
-    className="ant-col ant-form-item-label"
-    style={Object {}}
-  >
-    <label
-      className=""
-      title="Information"
-    >
-      Information
-    </label>
-  </div>
-  <div
-    className="ant-col ant-form-item-control"
+    className="ant-row ant-form-item-row"
     style={Object {}}
   >
     <div
-      className="ant-form-item-control-input"
+      className="ant-col ant-form-item-label"
+      style={Object {}}
+    >
+      <label
+        className=""
+        title="Information"
+      >
+        Information
+      </label>
+    </div>
+    <div
+      className="ant-col ant-form-item-control"
+      style={Object {}}
     >
       <div
-        className="ant-form-item-control-input-content"
+        className="ant-form-item-control-input"
       >
         <div
-          className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900"
+          className="ant-form-item-control-input-content"
         >
           <div
-            className="flex justify-between items-center"
+            className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900"
           >
-            <span
-              className="ant-typography"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
+            <div
+              className="flex justify-between items-center"
             >
-              Bridge Name
-            </span>
-            <span
-              className="ant-typography"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
+              <span>
+                Bridge Name
+              </span>
+              <span>
+                Helix
+              </span>
+            </div>
+            <div
+              className="flex justify-between items-center "
             >
-              Helix
-            </span>
-          </div>
-          <div
-            className="flex justify-between items-center "
-          >
-            <span
-              className="ant-typography"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
-            >
-              Transaction Fee
-            </span>
-            <span
-              className="ant-typography"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
-            >
+              <span>
+                Transaction Fee
+              </span>
               <span
                 className="cursor-help"
                 onMouseEnter={[Function]}
@@ -347,11 +245,11 @@ exports[`<CrossChainInfo /> render cross-chain with children 1`] = `
                  
                 RING
               </span>
+            </div>
+            <span>
+              can receive children node
             </span>
           </div>
-          <span>
-            can receive children node
-          </span>
         </div>
       </div>
     </div>
@@ -361,97 +259,77 @@ exports[`<CrossChainInfo /> render cross-chain with children 1`] = `
 
 exports[`<CrossChainInfo /> render cross-chain with dynamic fee 1`] = `
 <div
-  className="ant-row ant-form-item relative"
-  style={Object {}}
+  className="ant-form-item relative"
 >
   <div
-    className="ant-col ant-form-item-label"
-    style={Object {}}
-  >
-    <label
-      className=""
-      title="Information"
-    >
-      Information
-    </label>
-  </div>
-  <div
-    className="ant-col ant-form-item-control"
+    className="ant-row ant-form-item-row"
     style={Object {}}
   >
     <div
-      className="ant-form-item-control-input"
+      className="ant-col ant-form-item-label"
+      style={Object {}}
+    >
+      <label
+        className=""
+        title="Information"
+      >
+        Information
+      </label>
+    </div>
+    <div
+      className="ant-col ant-form-item-control"
+      style={Object {}}
     >
       <div
-        className="ant-form-item-control-input-content"
+        className="ant-form-item-control-input"
       >
         <div
-          className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900"
+          className="ant-form-item-control-input-content"
         >
           <div
-            className="flex justify-between items-center"
+            className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900"
           >
-            <span
-              className="ant-typography"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
+            <div
+              className="flex justify-between items-center"
             >
-              Bridge Name
-            </span>
-            <span
-              className="ant-typography"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
+              <span>
+                Bridge Name
+              </span>
+              <span>
+                Helix
+              </span>
+            </div>
+            <div
+              className="flex justify-between items-center "
             >
-              Helix
-            </span>
-          </div>
-          <div
-            className="flex justify-between items-center "
-          >
-            <span
-              className="ant-typography"
-              onClick={null}
-              style={
-                Object {
-                  "WebkitLineClamp": undefined,
-                }
-              }
-            >
-              Transaction Fee
-            </span>
-            <span
-              aria-label="question-circle"
-              className="anticon anticon-question-circle cursor-pointer"
-              onMouseEnter={[Function]}
-              onMouseLeave={[Function]}
-              role="img"
-            >
-              <svg
-                aria-hidden="true"
-                data-icon="question-circle"
-                fill="currentColor"
-                focusable="false"
-                height="1em"
-                viewBox="64 64 896 896"
-                width="1em"
+              <span>
+                Transaction Fee
+              </span>
+              <span
+                aria-label="question-circle"
+                className="anticon anticon-question-circle cursor-pointer"
+                onMouseEnter={[Function]}
+                onMouseLeave={[Function]}
+                role="img"
               >
-                <path
-                  d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
-                />
-                <path
-                  d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
-                />
-              </svg>
-            </span>
+                <svg
+                  aria-hidden="true"
+                  data-icon="question-circle"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+                  />
+                  <path
+                    d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
+                  />
+                </svg>
+              </span>
+            </div>
           </div>
         </div>
       </div>

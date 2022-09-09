@@ -15,7 +15,7 @@ import {
   isSubstrateDVM2Substrate,
   isSubstrateDVMSubstrateDVM,
 } from 'shared/utils/bridge';
-import { isKton, isRing } from 'shared/utils/helper';
+import { isKton, isRing } from 'shared/utils/helper/validator';
 import { getDarwiniaBalance, getDVMBalance, getErc20Balance, getParachainBalance } from 'shared/utils/network/balance';
 
 function isDeposit({ from }: CrossChainDirection): boolean {

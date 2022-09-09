@@ -5,7 +5,7 @@ import unionWith from 'lodash/unionWith';
 import { unknownUnavailable } from '../config/bridges/unknown-unavailable';
 import { Bridge, ChainConfig, CrossToken, Network } from '../model';
 import { getBridge, getBridges } from '../utils/bridge';
-import { toMiddleSplitNaming } from '../utils/helper';
+import { toMiddleSplitNaming } from '../utils/helper/common';
 import {
   chainConfigs,
   crossChainGraph,

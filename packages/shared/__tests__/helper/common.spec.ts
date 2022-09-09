@@ -1,6 +1,6 @@
 /// <reference types="jest" />
 
-import { gqlName, toMiddleSplitNaming } from '../../utils/helper';
+import { gqlName, toMiddleSplitNaming } from '../../utils/helper/common';
 
 describe('common utils', () => {
   it('can extract gql name', () => {

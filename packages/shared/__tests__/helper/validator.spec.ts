@@ -1,6 +1,13 @@
 /// <reference types="jest" />
 
-import { isKton, isRing, isSameAddress, isSS58Address, isValidAddress, isValidAddressStrict } from '../../utils/helper';
+import {
+  isKton,
+  isRing,
+  isSameAddress,
+  isSS58Address,
+  isValidAddress,
+  isValidAddressStrict,
+} from '../../utils/helper/validator';
 
 describe('validator utils', () => {
   const substrateAddress = '5FA7CzAgT5fNDFRdb4UWSZX3b9HJsPuR7F5BF4YotSpKxAA2';

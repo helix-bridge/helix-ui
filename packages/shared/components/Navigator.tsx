@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { isDev } from 'shared/config/env';
 import { THEME } from 'shared/config/theme';
-import { useITranslation } from '../hooks';
+import { useITranslation } from '../hooks/translation';
 
 export interface Nav {
   label: string;

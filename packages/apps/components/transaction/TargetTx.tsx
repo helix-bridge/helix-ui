@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
 import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord, Network } from 'shared/model';
-import { isCBridgeRecord, isHelixRecord, isXCMRecord } from 'shared/utils/record';
+import { isCBridgeRecord, isHelixRecord, isXCMRecord } from 'shared/utils/record/record';
 import { TransferDescription } from './TransferDescription';
 
 interface HashProps {

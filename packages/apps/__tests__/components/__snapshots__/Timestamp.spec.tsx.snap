@@ -71,6 +71,12 @@ exports[`<Timestamp /> render Timestamp with processing 1`] = `
         >
           <div
             className="ant-progress-inner"
+            style={
+              Object {
+                "backgroundColor": undefined,
+                "borderRadius": undefined,
+              }
+            }
           >
             <div
               className="ant-progress-bg"

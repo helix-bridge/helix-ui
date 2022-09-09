@@ -1,6 +1,6 @@
 import type { ApiPromise } from '@polkadot/api';
 import { IAccountMeta } from './account';
-import { PolkadotTypeNetwork, SupportedWallet } from './network';
+import { PolkadotTypeNetwork, SupportedWallet } from './network/network';
 
 /**
  * pending: initial state, indicate that the connection never launched.

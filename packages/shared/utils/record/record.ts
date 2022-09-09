@@ -1,7 +1,7 @@
 import { isAddress } from 'ethers/lib/utils';
 import { RecordStatus } from '../../config/constant';
 import { HelixHistoryRecord, TokenWithBridgesInfo } from '../../model';
-import { fromWei, prettyNumber } from '../helper';
+import { fromWei, prettyNumber } from '../helper/balance';
 import { getOriginChainConfig, isPolkadotNetwork } from '../network';
 
 export function getTokenConfigFromHelixRecord(

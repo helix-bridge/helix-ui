@@ -56,7 +56,7 @@ export function ExplorerLink({
           rel="noreferrer"
           onClick={(event) => event.stopPropagation()}
         >
-          {children || address}
+          {address}
         </a>
       </Wrapper>
     );

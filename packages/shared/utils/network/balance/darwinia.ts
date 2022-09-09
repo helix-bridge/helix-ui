@@ -1,6 +1,7 @@
 import type { AccountInfo } from '@darwinia/types';
 import { BN, bnMax, BN_ZERO } from '@polkadot/util';
-import { entrance, waitUntilConnected } from '../../connection';
+import { waitUntilConnected } from '../../connection/polkadot';
+import { entrance } from '../../connection/entrance';
 
 // eslint-disable-next-line complexity, @typescript-eslint/no-explicit-any
 const calcMax = (lockItem: any, current: BN) => {
