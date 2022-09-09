@@ -35,7 +35,7 @@ export const SelectAccountModal: React.FC<Props> = ({
     <BaseModal
       title={title}
       destroyOnClose
-      visible={visible}
+      open={visible}
       maskClosable={false}
       onCancel={onCancel}
       bodyStyle={{

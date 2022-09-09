@@ -58,7 +58,7 @@ function Page() {
 
                 <BaseModal
                   title={t('Transfer History')}
-                  visible={isPersonalHistoryVisible}
+                  open={isPersonalHistoryVisible}
                   onCancel={() => setIsPersonalHistoryVisible(false)}
                   footer={null}
                   maskClosable={false}

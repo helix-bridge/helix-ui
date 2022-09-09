@@ -26,7 +26,7 @@ export const SelectWalletModal: React.FC<Props> = ({ visible, defaultValue, titl
     <BaseModal
       title={title}
       destroyOnClose
-      visible={visible}
+      open={visible}
       maskClosable={false}
       onCancel={onCancel}
       bodyStyle={{

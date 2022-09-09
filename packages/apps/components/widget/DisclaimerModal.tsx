@@ -4,7 +4,7 @@ import BaseModal from './BaseModal';
 
 const Component = ({ visible, onCancel, onOk }: { visible: boolean; onCancel: () => void; onOk: () => void }) => (
   <BaseModal
-    visible={visible}
+    open={visible}
     title={<span>Disclaimer</span>}
     footer={
       <Button type="primary" className="mb-8" onClick={onOk}>

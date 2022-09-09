@@ -60,7 +60,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
             placement="right"
             onClose={() => setCollapsed(true)}
             closable={false}
-            visible={!collapsed}
+            open={!collapsed}
             bodyStyle={{ padding: 0 }}
             className="block lg:hidden"
           >

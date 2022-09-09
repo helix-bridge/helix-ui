@@ -1,5 +1,4 @@
 import { Spin } from 'antd';
-import Bignumber from 'bignumber.js';
 import { format, secondsToMilliseconds, subMilliseconds } from 'date-fns';
 import { useQuery } from 'graphql-hooks';
 import last from 'lodash/last';
@@ -41,7 +40,7 @@ function Page() {
         .map(({ timestamp, dailyCount }) => [secondsToMilliseconds(+timestamp), +dailyCount])
         .reverse() as Statistic[],
       transactionsTotal: prettyNumber(
-        dailyStatistics.reduce((acc, cur) => acc.plus(new Bignumber(cur.dailyCount)), new Bignumber(0)),
+        dailyStatistics.reduce((acc, cur) => acc + Number(cur.dailyCount), 0),
         { decimal: 0 }
       ),
     };
