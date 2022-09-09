@@ -41,7 +41,7 @@ enum HistoryType {
 const paginatorDefault: Paginator = { row: 4, page: 0 };
 
 // eslint-disable-next-line complexity
-export function History() {
+export default function History() {
   const { t } = useITranslation();
   const [activeTab, setActiveTab] = useState<number>(-1);
   const { account } = useAccount();

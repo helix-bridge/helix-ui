@@ -1,5 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Input, Radio, Tag, Typography } from 'antd';
+import { Input, Radio, Tag } from 'antd';
 import uniqWith from 'lodash/uniqWith';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useState } from 'react';
@@ -9,7 +9,7 @@ import { useLocalSearch } from 'shared/hooks';
 import { ChainConfig, TokenInfoWithMeta } from 'shared/model';
 import { chainConfigs, getDisplayName } from 'shared/utils/network';
 import { isTransferableTokenPair, tokenSearchFactory } from '../../utils';
-import { BaseModal } from '../widget/BaseModal';
+import BaseModal from '../widget/BaseModal';
 
 interface SelectTokenModalProps {
   visible: boolean;
@@ -104,7 +104,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
               <div className="flex items-center space-x-2">
                 <Logo name={item.logo} width={36} height={36} />
 
-                <Typography.Text>{item.name}</Typography.Text>
+                <span>{item.name}</span>
 
                 <Tag color={chainColors[item.meta.name] ?? 'processing'}>{getDisplayName(item.meta)}</Tag>
 

@@ -1,7 +1,6 @@
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
-import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { Network } from 'shared/model';
 import { TransferDescription } from './TransferDescription';
 
@@ -18,10 +17,9 @@ export function SourceTx({ hash }: { hash: string | undefined }) {
         <ExplorerLink
           network={router.query.from as Network}
           txHash={hash}
-          className="hover:opacity-80 transition-opacity duration-200"
-        >
-          <TextWithCopy underline>{hash}</TextWithCopy>
-        </ExplorerLink>
+          className="hover:opacity-80 transition-opacity duration-200 underline"
+          copyable
+        ></ExplorerLink>
       )}
     </TransferDescription>
   );

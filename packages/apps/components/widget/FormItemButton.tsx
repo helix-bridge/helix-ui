@@ -1,4 +1,5 @@
-import { Button, ButtonProps, Form } from 'antd';
+import { Button, Form } from 'antd';
+import type { ButtonProps } from 'antd';
 
 export function FormItemButton({ children, className, ...others }: ButtonProps) {
   return (

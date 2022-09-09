@@ -20,5 +20,6 @@
   "@layout-header-background": "@project-component-bg",
   "@layout-body-background": "linear-gradient(180deg, #02061F 0%, #1C1837 100%)",
   "@modal-mask-bg": "fade(#01041D, 80%)",
-  "@text-color": "#ffffff"
+  "@text-color": "#ffffff",
+  "@tooltip-max-width": "initial"
 }

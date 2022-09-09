@@ -3,7 +3,7 @@ import React from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { SupportedWallet } from 'shared/model';
 import { useApi } from '../../../providers';
-import { BaseModal } from '../BaseModal';
+import BaseModal from '../BaseModal';
 
 type Props = {
   visible: boolean;

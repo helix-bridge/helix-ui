@@ -1,6 +1,5 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
 import { BN_ZERO } from '@polkadot/util';
-import Typography from 'antd/lib/typography';
 import BN from 'bn.js';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
@@ -152,26 +151,26 @@ export function SubstrateDVM2Substrate({
           {
             name: t('Allowance'),
             content: (
-              <Typography.Text className="capitalize">
+              <span className="capitalize">
                 <span>
                   {fromWei({ value: allowance }, largeNumber, (num: string) =>
                     prettyNumber(num, { ignoreZeroDecimal: true })
                   )}
                 </span>
                 <span className="capitalize ml-1">{direction.from.symbol}</span>
-              </Typography.Text>
+              </span>
             ),
           },
           {
             name: t('Daily limit'),
             content: dailyLimit ? (
-              <Typography.Text>
+              <span>
                 {dailyLimit.isZero()
                   ? t('Infinite')
                   : fromWei({ value: dailyLimit, decimals: 9 }, (val: string) =>
                       prettyNumber(val, { ignoreZeroDecimal: true })
                     )}
-              </Typography.Text>
+              </span>
             ) : (
               <EyeInvisibleFilled />
             ),

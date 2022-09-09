@@ -1,10 +1,7 @@
-import { Typography } from 'antd';
-import React, { CSSProperties, PropsWithChildren } from 'react';
+import { CSSProperties, PropsWithChildren } from 'react';
 import { ChainConfig, Network } from '../../model';
 import { isDVMNetwork, isPolkadotNetwork } from '../../utils/network';
-import { Icon } from './Icon';
-
-const { Link } = Typography;
+import { Copy, CopyProps } from './TextWithCopy';
 
 interface ExplorerLinkProps extends PropsWithChildren<unknown> {
   address?: string;
@@ -17,6 +14,17 @@ interface ExplorerLinkProps extends PropsWithChildren<unknown> {
   txHash?: string;
 }
 
+function Wrapper({ children, content, copyable }: PropsWithChildren<CopyProps & { copyable?: boolean }>) {
+  return copyable ? (
+    <span className="space-x-2">
+      {children}
+      <Copy content={content} />
+    </span>
+  ) : (
+    <>{children}</>
+  );
+}
+
 // eslint-disable-next-line complexity
 export function ExplorerLink({
   network: networkOrChainConfig,
@@ -26,10 +34,12 @@ export function ExplorerLink({
   copyable,
   block,
   txHash,
+  className,
   ...other
 }: ExplorerLinkProps) {
   let network: Network = typeof networkOrChainConfig === 'object' ? networkOrChainConfig.name : networkOrChainConfig;
   const isSubscan = isPolkadotNetwork(network) || isDVMNetwork(network) || network === 'astar';
+  const cls = `text-white ${className}`;
 
   if (isDVMNetwork(networkOrChainConfig)) {
     network = network.split('-')[0] as Network;
@@ -37,31 +47,38 @@ export function ExplorerLink({
 
   if (address) {
     return (
-      <Link
-        href={`https://${network}.subscan.io/account/${address}`}
-        target="_blank"
-        copyable={copyable ? { icon: <Icon name="copy1" className="text-base text-white" /> } : false}
-        className={`w-full ${copyable ? 'custom-copy-icon' : ''}`}
-        underline
-        onClick={(event) => event.stopPropagation()}
-      >
-        {address}
-      </Link>
+      <Wrapper content={address} copyable={!!copyable}>
+        <a
+          href={`https://${network}.subscan.io/account/${address}`}
+          target="_blank"
+          className={cls}
+          {...other}
+          rel="noreferrer"
+          onClick={(event) => event.stopPropagation()}
+        >
+          {children || address}
+        </a>
+      </Wrapper>
     );
   }
 
   if (extrinsic) {
     const { height, index } = extrinsic;
+    const content = `${height}-${index}`;
 
     return (
-      <Link
-        href={`https://${network}.subscan.io/extrinsic/${height}-${index}`}
-        target="_blank"
-        {...other}
-        onClick={(event) => event.stopPropagation()}
-      >
-        {children}
-      </Link>
+      <Wrapper content={content} copyable={copyable}>
+        <a
+          href={`https://${network}.subscan.io/extrinsic/${content}`}
+          target="_blank"
+          {...other}
+          className={cls}
+          rel="noreferrer"
+          onClick={(event) => event.stopPropagation()}
+        >
+          {children || content}
+        </a>
+      </Wrapper>
     );
   }
 
@@ -85,22 +102,35 @@ export function ExplorerLink({
       }.io/tx/${txHash}`;
 
     return (
-      <Link href={href} target="_blank" {...other} onClick={(event) => event.stopPropagation()}>
-        {children}
-      </Link>
+      <Wrapper content={txHash} copyable>
+        <a
+          href={href}
+          target="_blank"
+          {...other}
+          onClick={(event) => event.stopPropagation()}
+          className={cls}
+          rel="noreferrer"
+        >
+          {children || txHash}
+        </a>
+      </Wrapper>
     );
   }
 
   if (block) {
     return (
-      <Link
-        href={`https://${network}.subscan.io/block/${block}`}
-        target="_blank"
-        {...other}
-        onClick={(event) => event.stopPropagation()}
-      >
-        {children || block}
-      </Link>
+      <Wrapper content={block} copyable={copyable}>
+        <a
+          href={`https://${network}.subscan.io/block/${block}`}
+          target="_blank"
+          {...other}
+          className={cls}
+          onClick={(event) => event.stopPropagation()}
+          rel="noreferrer"
+        >
+          {children || block}
+        </a>
+      </Wrapper>
     );
   }
 

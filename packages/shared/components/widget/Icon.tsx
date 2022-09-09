@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { HelixIcons } from '../../model/icon';
 import iconfont from './icon/iconfont';
 
@@ -8,7 +8,7 @@ export function Icon({
   className = 'w-4 h-4',
 }: {
   name: HelixIcons;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent) => void;
   className?: string;
 }) {
   const svgXML = useRef<SVGSVGElement>(null);
@@ -25,5 +25,5 @@ export function Icon({
     }
   }, [name]);
 
-  return <svg className={`icon ${className}`} onClick={() => onClick && onClick()} ref={svgXML}></svg>;
+  return <svg className={`icon ${className}`} onClick={(event) => onClick && onClick(event)} ref={svgXML}></svg>;
 }

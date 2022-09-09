@@ -50,16 +50,6 @@ $bg-dark: #151d35;
   }
 }
 
-.ant-typography.custom-copy-icon {
-  display: flex;
-  align-items: center;
-
-  & > u {
-    display: flex;
-    align-items: center;
-  }
-}
-
 .explorer-table {
   .ant-table.ant-table-small {
     background: rgba($bg-dark, 0.5);

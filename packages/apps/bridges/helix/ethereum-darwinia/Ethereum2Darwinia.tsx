@@ -1,4 +1,3 @@
-import { Typography } from 'antd';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
 import { from } from 'rxjs/internal/observable/from';
@@ -132,14 +131,14 @@ export function Ethereum2Darwinia({
           {
             name: t('Allowance'),
             content: (
-              <Typography.Text className="capitalize">
+              <span className="capitalize">
                 <span>
                   {fromWei({ value: allowance }, largeNumber, (num: string) =>
                     prettyNumber(num, { ignoreZeroDecimal: true })
                   )}
                 </span>
                 <span className="capitalize ml-1">{direction.from.symbol}</span>
-              </Typography.Text>
+              </span>
             ),
           },
         ]}

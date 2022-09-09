@@ -1,6 +1,6 @@
 import { DownOutlined } from '@ant-design/icons';
 import { AntdIconProps } from '@ant-design/icons/lib/components/AntdIcon';
-import { Dropdown, Menu, Typography } from 'antd';
+import { Dropdown, Menu } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
@@ -57,9 +57,9 @@ function RouteLink({ path, label }: Nav) {
   const { t } = useITranslation();
 
   return path.includes('http') ? (
-    <Typography.Link href={path} target="_blank">
+    <a href={path} target="_blank" rel="noreferrer">
       {t(label)}
-    </Typography.Link>
+    </a>
   ) : (
     <Link href={path}>{t(label)}</Link>
   );

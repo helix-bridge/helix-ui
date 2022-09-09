@@ -7,8 +7,6 @@ import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { CrossChainDirection } from 'shared/model';
 import { getDirectionFromSettings, readStorage, updateStorage } from 'shared/utils/helper';
 import { CrossChain } from '../components/CrossChain';
-import { History } from '../components/history/History';
-import { BaseModal } from '../components/widget/BaseModal';
 import { DisclaimerModal } from '../components/widget/DisclaimerModal';
 import { useITranslation } from '../hooks';
 import {
@@ -22,6 +20,8 @@ import {
 } from '../providers';
 
 const ActiveAccount = dynamic(() => import('../components/widget/account/ActiveAccount'), { ssr: false });
+const History = dynamic(() => import('../components/history/History'), { ssr: false });
+const BaseModal = dynamic(() => import('../components/widget/BaseModal'), { ssr: false });
 
 function Page() {
   const { t } = useITranslation();

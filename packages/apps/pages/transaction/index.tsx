@@ -1,5 +1,5 @@
 import { ClockCircleOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Button, Input, message, Table, Tooltip, Typography } from 'antd';
+import { Button, Input, message, Table, Tooltip } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import { formatDistance, fromUnixTime } from 'date-fns';
 import format from 'date-fns-tz/format';
@@ -13,8 +13,8 @@ import { useTranslation } from 'react-i18next';
 import { from } from 'rxjs/internal/observable/from';
 import { map } from 'rxjs/internal/operators/map';
 import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
-import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
+import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
@@ -34,13 +34,8 @@ function RecordAccount({ chain, account }: { chain: Network; account: string }) 
         <Logo name={chainConfig.logos[0].name} width={16} height={16} />
         <span className="capitalize">{getDisplayName(chainConfig)}</span>
       </span>
-      <Tooltip
-        title={
-          <Typography.Text copyable={{ icon: <Icon name="copy1" className="text-white text-base translate-y-1" /> }}>
-            {displayAccount}
-          </Typography.Text>
-        }
-      >
+
+      <Tooltip title={<TextWithCopy>{displayAccount}</TextWithCopy>}>
         <span className="truncate">{displayAccount}</span>
       </Tooltip>
     </div>

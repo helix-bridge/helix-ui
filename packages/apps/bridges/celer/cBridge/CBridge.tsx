@@ -1,4 +1,4 @@
-import { Button, message, Tooltip, Typography } from 'antd';
+import { Button, message, Tooltip } from 'antd';
 import BN from 'bn.js';
 import isNaN from 'lodash/isNaN';
 import { i18n, Trans, useTranslation } from 'next-i18next';
@@ -322,14 +322,14 @@ export function CBridge({
           {
             name: t('Allowance'),
             content: (
-              <Typography.Text>
+              <span>
                 <span>
                   {fromWei({ value: allowance }, largeNumber, (num: string) =>
                     prettyNumber(num, { ignoreZeroDecimal: true })
                   )}
                 </span>
                 <span className="ml-1">{direction.from.symbol}</span>
-              </Typography.Text>
+              </span>
             ),
           },
           ...extraInfo,

@@ -1,6 +1,6 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { BN_ZERO, BN } from '@polkadot/util';
-import { Tag, Tooltip, Typography } from 'antd';
+import { Tag, Tooltip } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from } from 'rxjs/internal/observable/from';
@@ -148,7 +148,7 @@ export function Darwinia2Ethereum({
 
       <CrossChainInfo bridge={bridge} fee={feeWithSymbol}>
         <div className={`flex justify-between items-center transition-all duration-100`}>
-          <Typography.Text>{t('Attention')}</Typography.Text>
+          <span>{t('Attention')}</span>
           <Tooltip
             title={t('Please perform a claim asset operation in the history section after the transfer is submitted.')}
           >

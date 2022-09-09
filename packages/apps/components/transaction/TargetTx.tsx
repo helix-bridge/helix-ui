@@ -3,7 +3,6 @@ import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
-import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord, Network } from 'shared/model';
 import { isCBridgeRecord, isHelixRecord, isXCMRecord } from 'shared/utils/record';
@@ -22,11 +21,10 @@ const Hash = ({ hash, network }: HashProps) => {
     <ExplorerLink
       network={network}
       txHash={txHash}
+      copyable
       extrinsic={extrinsic && { height: extrinsic[0], index: extrinsic[1] }}
-      className="hover:opacity-80 transition-opacity duration-200"
-    >
-      <TextWithCopy underline>{hash}</TextWithCopy>
-    </ExplorerLink>
+      className="hover:opacity-80 transition-opacity duration-200 underline"
+    ></ExplorerLink>
   );
 };
 

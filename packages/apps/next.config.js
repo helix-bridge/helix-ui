@@ -25,7 +25,7 @@ module.exports = withPlugins([withAntdLess, circularDependencyPlugin, withBundle
     externalDir: true,
   },
   i18n,
-  // lessVarsFilePath: antdVarsPath, // optional
+  lessVarsFilePath: path.join(__dirname, '../shared/theme/antd/index.less'), // optional
   // lessVarsFilePathAppendToEndOfContent: false, // optional
   // optional https://github.com/webpack-contrib/css-loader#object
   modifyVars: {
@@ -46,7 +46,7 @@ module.exports = withPlugins([withAntdLess, circularDependencyPlugin, withBundle
 
   // for Next.js ONLY
   nextjs: {
-    localIdentNameFollowDev: true, // default false, for easy to debug on PROD mode
+    localIdentNameFollowDev: false, // default false, for easy to debug on PROD mode
   },
 
   webpack(config) {

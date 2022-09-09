@@ -1,5 +1,5 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Form, Spin, Tooltip, Typography } from 'antd';
+import { Form, Spin, Tooltip } from 'antd';
 import { PropsWithChildren, ReactNode, useMemo } from 'react';
 import { Bridge } from 'shared/model';
 import { prettyNumber } from 'shared/utils/helper';
@@ -32,11 +32,9 @@ export function CrossChainInfo({
   const feeContent = useMemo(() => {
     if (fee) {
       return (
-        <Typography.Text>
-          <Tooltip title={fee.amount} className="cursor-help">
-            {prettyNumber(fee.amount, { decimal: 3, ignoreZeroDecimal: true })} {fee.symbol}
-          </Tooltip>
-        </Typography.Text>
+        <Tooltip title={fee.amount} className="cursor-help">
+          {prettyNumber(fee.amount, { decimal: 3, ignoreZeroDecimal: true })} {fee.symbol}
+        </Tooltip>
       );
     }
 
@@ -53,12 +51,12 @@ export function CrossChainInfo({
     <Form.Item label={t('Information')} className="relative">
       <div className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900">
         <div className="flex justify-between items-center">
-          <Typography.Text>{t('Bridge Name')}</Typography.Text>
-          <Typography.Text>{bridgeCategoryDisplay(bridge?.category)}</Typography.Text>
+          <span>{t('Bridge Name')}</span>
+          <span>{bridgeCategoryDisplay(bridge?.category)}</span>
         </div>
 
         <div className={`flex justify-between items-center ${hideFee ? 'hidden' : ''}`}>
-          <Typography.Text>{t('Transaction Fee')}</Typography.Text>
+          <span>{t('Transaction Fee')}</span>
           {feeContent}
         </div>
 
@@ -70,7 +68,7 @@ export function CrossChainInfo({
                 data-testid={item.name}
                 className={`justify-between items-center transition-all duration-100 flex`}
               >
-                <Typography.Text className="whitespace-nowrap">{item.name}</Typography.Text>
+                <span className="whitespace-nowrap">{item.name}</span>
                 {item.content}
               </div>
             ))}

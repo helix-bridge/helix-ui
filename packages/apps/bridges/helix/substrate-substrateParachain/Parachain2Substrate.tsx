@@ -1,5 +1,4 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
-import { Typography } from 'antd';
 import BN from 'bn.js';
 import upperFirst from 'lodash/upperFirst';
 import { useEffect, useMemo, useState } from 'react';
@@ -134,11 +133,11 @@ export function Parachain2Substrate({
           {
             name: t('Daily limit'),
             content: dailyLimit ? (
-              <Typography.Text>
+              <span>
                 {fromWei({ value: dailyLimit, decimals: 9 }, (value) =>
                   prettyNumber(value, { ignoreZeroDecimal: true })
                 )}
-              </Typography.Text>
+              </span>
             ) : (
               <EyeInvisibleFilled />
             ),

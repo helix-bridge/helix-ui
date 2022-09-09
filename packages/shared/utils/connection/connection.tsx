@@ -1,6 +1,5 @@
 import { isHex, stringToHex } from '@polkadot/util';
 import { Modal } from 'antd';
-import Link from 'antd/lib/typography/Link';
 import { Trans } from 'react-i18next';
 import type { Observable } from 'rxjs/internal/Observable';
 import { EMPTY } from 'rxjs/internal/observable/empty';
@@ -31,10 +30,10 @@ const showWarning = (plugin: string, downloadUrl: string) =>
     content: (
       <Trans i18nKey="MissingPlugin">
         We need {{ plugin }} plugin to continue. Please
-        <Link href={downloadUrl} target="_blank">
+        <a href={downloadUrl} target="_blank" rel="noreferrer">
           install
-        </Link>
-        or <Link>enable</Link> it first.
+        </a>
+        or <a>enable</a> it first.
       </Trans>
     ),
     okText: <Trans>OK</Trans>,

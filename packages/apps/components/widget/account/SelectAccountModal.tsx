@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { IAccountMeta } from 'shared/model';
-import { BaseModal } from '../BaseModal';
+import BaseModal from '../BaseModal';
 
 type Props = {
   visible: boolean;

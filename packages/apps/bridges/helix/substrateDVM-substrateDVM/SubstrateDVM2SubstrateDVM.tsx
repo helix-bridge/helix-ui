@@ -1,5 +1,4 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
-import { Typography } from 'antd';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -159,11 +158,7 @@ export function SubstrateDVM2SubstrateDVM({
         extra={[
           {
             name: t('Daily limit'),
-            content: dailyLimit ? (
-              <Typography.Text>{fromWei({ value: dailyLimit })}</Typography.Text>
-            ) : (
-              <EyeInvisibleFilled />
-            ),
+            content: dailyLimit ? <span>{fromWei({ value: dailyLimit })}</span> : <EyeInvisibleFilled />,
           },
         ]}
       ></CrossChainInfo>
