@@ -10,7 +10,9 @@ import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
 import { DATE_TIME_FORMAT, RecordStatus } from 'shared/config/constant';
 import { ENDPOINT } from 'shared/config/env';
 import { HelixHistoryRecord } from 'shared/model';
-import { convertToDvm, gqlName, isValidAddress } from 'shared/utils/helper';
+import { convertToDvm } from 'shared/utils/helper/address';
+import { isValidAddress } from 'shared/utils/helper/validator';
+import { gqlName } from 'shared/utils/helper/common';
 import { getOriginChainConfig } from 'shared/utils/network';
 import {
   getDetailPaths,
@@ -24,7 +26,7 @@ import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
 import { useAccount, useApi } from '../../providers';
 import { useClaim } from '../../providers/claim';
-import { isTransferableTokenPair } from '../../utils';
+import { isTransferableTokenPair } from '../../utils/validate';
 import { fetchDarwinia2EthereumRecords, fetchEthereum2DarwiniaRecords } from '../../utils/records';
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { TokenOnChain } from '../widget/TokenOnChain';

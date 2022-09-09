@@ -8,7 +8,8 @@ import { chainColors } from 'shared/config/theme';
 import { useLocalSearch } from 'shared/hooks';
 import { ChainConfig, TokenInfoWithMeta } from 'shared/model';
 import { chainConfigs, getDisplayName } from 'shared/utils/network';
-import { isTransferableTokenPair, tokenSearchFactory } from '../../utils';
+import { tokenSearchFactory } from '../../utils/token';
+import { isTransferableTokenPair } from '../../utils/validate';
 import BaseModal from '../widget/BaseModal';
 
 interface SelectTokenModalProps {

@@ -49,7 +49,7 @@ const getAlertProps = (tx: Tx, cancel: () => void): AlertProps => {
               The transaction has been sent, please check the transaction progress in the history or explorer.
             </Trans>
           </p>
-          <TextWithCopy>{tx.hash}</TextWithCopy>
+          <TextWithCopy>{tx.hash ?? ''}</TextWithCopy>
         </div>
       ),
       icon: <CheckCircleOutlined />,
