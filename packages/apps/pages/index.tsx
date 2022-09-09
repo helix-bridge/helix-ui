@@ -1,14 +1,13 @@
 import { Spin } from 'antd';
 import Bignumber from 'bignumber.js';
 import { format, secondsToMilliseconds, subMilliseconds } from 'date-fns';
-import request from 'graphql-request';
+import { useQuery } from 'graphql-hooks';
 import last from 'lodash/last';
 import orderBy from 'lodash/orderBy';
 import { GetServerSidePropsContext } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useEffect, useMemo, useState } from 'react';
-import { ENDPOINT } from 'shared/config/env';
+import { useMemo, useState } from 'react';
 import { DATE_FORMAT } from 'shared/config/constant';
 import { DailyStatistic, Network } from 'shared/model';
 import { getBridge } from 'shared/utils/bridge';
@@ -22,7 +21,15 @@ import { STATISTICS_QUERY, TIMEPAST } from '../config';
 function Page() {
   const { t } = useTranslation('common');
   const [loading] = useState(false);
-  const [dailyStatistics, setDailyStatistics] = useState<DailyStatistic[]>([]);
+
+  const { data: response } = useQuery(STATISTICS_QUERY, {
+    variables: { timepast: TIMEPAST },
+  });
+
+  const dailyStatistics = useMemo(
+    () => (response ? (response[gqlName(STATISTICS_QUERY)] as DailyStatistic[]) : []),
+    [response]
+  );
 
   const { transactions, transactionsTotal } = useMemo(() => {
     if (!dailyStatistics) {
@@ -50,7 +57,7 @@ function Page() {
 
   const transactionsRank = useMemo(() => {
     const data = Object.entries(
-      dailyStatistics.reduce((acc, cur) => {
+      dailyStatistics?.reduce((acc, cur) => {
         const bridge = getBridge([cur.fromChain as Network, cur.toChain as Network]);
         const key = bridge.issue.join('_');
 
@@ -67,14 +74,6 @@ function Page() {
 
     return orderBy(data, ['total'], ['desc']);
   }, [dailyStatistics]);
-
-  useEffect(() => {
-    request(ENDPOINT, STATISTICS_QUERY, { timepast: TIMEPAST }).then((res) => {
-      const data = res[gqlName(STATISTICS_QUERY)] as DailyStatistic[];
-
-      setDailyStatistics(data);
-    });
-  }, []);
 
   return (
     <div>

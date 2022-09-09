@@ -9,15 +9,7 @@ import { getDirectionFromSettings, readStorage, updateStorage } from 'shared/uti
 import { CrossChain } from '../components/CrossChain';
 import { DisclaimerModal } from '../components/widget/DisclaimerModal';
 import { useITranslation } from '../hooks';
-import {
-  AccountProvider,
-  ApiProvider,
-  ClaimProvider,
-  GqlProvider,
-  TxProvider,
-  usePersonal,
-  WalletProvider,
-} from '../providers';
+import { AccountProvider, ApiProvider, ClaimProvider, TxProvider, usePersonal, WalletProvider } from '../providers';
 
 const ActiveAccount = dynamic(() => import('../components/widget/account/ActiveAccount'), { ssr: false });
 const History = dynamic(() => import('../components/history/History'), { ssr: false });
@@ -43,42 +35,40 @@ function Page() {
       <WalletProvider>
         <AccountProvider>
           <TxProvider>
-            <GqlProvider>
-              <ClaimProvider>
-                <div>
-                  <div id="app-header-container" className="hidden lg:flex items-center space-x-4 fixed top-4 z-50">
-                    <ActiveAccount />
+            <ClaimProvider>
+              <div>
+                <div id="app-header-container" className="hidden lg:flex items-center space-x-4 fixed top-4 z-50">
+                  <ActiveAccount />
 
-                    <Button icon={<HddOutlined />} onClick={() => setIsPersonalHistoryVisible(true)}>
-                      {t('History')}
-                    </Button>
-                  </div>
-
-                  <CrossChain dir={dir} />
-
-                  <DisclaimerModal
-                    visible={visible}
-                    onCancel={() => setVisible(false)}
-                    onOk={() => {
-                      setVisible(false);
-                      updateStorage({ hideWarning: true });
-                    }}
-                  />
-
-                  <BaseModal
-                    title={t('Transfer History')}
-                    visible={isPersonalHistoryVisible}
-                    onCancel={() => setIsPersonalHistoryVisible(false)}
-                    footer={null}
-                    maskClosable={false}
-                    wrapClassName="history-modal"
-                    destroyOnClose
-                  >
-                    <History></History>
-                  </BaseModal>
+                  <Button icon={<HddOutlined />} onClick={() => setIsPersonalHistoryVisible(true)}>
+                    {t('History')}
+                  </Button>
                 </div>
-              </ClaimProvider>
-            </GqlProvider>
+
+                <CrossChain dir={dir} />
+
+                <DisclaimerModal
+                  visible={visible}
+                  onCancel={() => setVisible(false)}
+                  onOk={() => {
+                    setVisible(false);
+                    updateStorage({ hideWarning: true });
+                  }}
+                />
+
+                <BaseModal
+                  title={t('Transfer History')}
+                  visible={isPersonalHistoryVisible}
+                  onCancel={() => setIsPersonalHistoryVisible(false)}
+                  footer={null}
+                  maskClosable={false}
+                  wrapClassName="history-modal"
+                  destroyOnClose
+                >
+                  <History></History>
+                </BaseModal>
+              </div>
+            </ClaimProvider>
           </TxProvider>
         </AccountProvider>
       </WalletProvider>
