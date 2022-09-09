@@ -234,7 +234,7 @@ Cypress.Commands.add('selectFromToken', (chain, symbol) => {
     .first()
     .click()
     .then(() => cy.get('.ant-radio-group label').contains(chain).click())
-    .then(() => cy.get('button').contains(symbol).click());
+    .then(() => cy.get('button span').contains(symbol).click());
 });
 
 Cypress.Commands.add('selectToToken', (chain, symbol) => {
@@ -243,7 +243,7 @@ Cypress.Commands.add('selectToToken', (chain, symbol) => {
     .eq(1)
     .click()
     .then(() => cy.get('.helix-modal:nth-child(2) .ant-radio-group label').contains(chain).last().click())
-    .then(() => cy.get('.helix-modal:nth-child(2) button').contains(symbol).click());
+    .then(() => cy.get('.helix-modal:nth-child(2) button span').contains(symbol).click());
 });
 
 Cypress.Commands.add('connectToWallet', () => {
