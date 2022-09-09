@@ -1,5 +1,6 @@
 import BN from 'bn.js';
-import { BigNumber, Contract } from 'ethers';
+import { Contract } from 'ethers';
+import type { BigNumber } from 'ethers';
 import { abi } from '../../../config/abi';
 import { entrance } from '../../connection';
 

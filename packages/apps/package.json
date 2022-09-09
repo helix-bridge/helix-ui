@@ -29,8 +29,6 @@
     "@polkadot/util": "^10.1.7",
     "@polkadot/util-crypto": "^10.1.7",
     "antd": "4.23.0",
-    "bignumber.js": "^9.0.2",
-    "bn.js": "^5.2.0",
     "camelcase-keys": "^7.0.2",
     "date-fns": "^2.22.1",
     "date-fns-tz": "^1.1.6",

@@ -1,7 +1,8 @@
 import { BN_ZERO } from '@polkadot/util';
 import { message } from 'antd';
 import BN from 'bn.js';
-import { BigNumber, Contract } from 'ethers';
+import { Contract } from 'ethers';
+import type { BigNumber } from 'ethers';
 import { createContext, useCallback, useContext, useState } from 'react';
 import type { Observable } from 'rxjs/internal/Observable';
 import { EMPTY } from 'rxjs/internal/observable/empty';

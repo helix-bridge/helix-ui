@@ -1,6 +1,6 @@
-import BigNumber from 'bignumber.js';
 import BN from 'bn.js';
 import { Contract } from 'ethers';
+import type { BigNumber } from 'ethers';
 import { abi } from 'shared/config/abi';
 import { Bridge } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
