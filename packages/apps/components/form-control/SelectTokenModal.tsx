@@ -90,8 +90,9 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
       </Radio.Group>
 
       <div className="max-h-96 overflow-auto flex flex-col gap-2">
+        {/* eslint-disable-next-line complexity */}
         {tokens.map((item, index) => {
-          const disabled = false;
+          const disabled = item.host === 'crab-dvm' && item.name === 'xRING(Classic)';
 
           return (
             <button
