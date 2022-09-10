@@ -8,8 +8,8 @@ interface Props {
 
 export const TextWithCopy = ({ children, className = '' }: Props) => {
   return (
-    <span className={`inline-flex items-center space-x-2 text-white  ${className}`}>
-      <span>{children}</span>
+    <span className={`inline-flex items-center space-x-2 text-white ${className}`}>
+      <span className="w-full">{children}</span>
       <Copy content={children} />
     </span>
   );

@@ -3,16 +3,13 @@ import mapKeys from 'lodash/mapKeys';
 import { DEFAULT_DIRECTION } from '../../config/constant';
 import {
   CrossChainDirection,
-  CrossToken,
   HashInfo,
   HistoryRouteParam,
-  Network,
   NullableCrossChainDirection,
   StorageInfo,
   ValueOf,
   WithNull,
 } from '../../model';
-import { getChainConfig } from '../network';
 import { readStorage } from './storage';
 
 interface HashShort {
@@ -134,55 +131,6 @@ export const validateDirection: (dir: NullableCrossChainDirection) => CrossChain
   }
 
   return { from: from ?? DEFAULT_DIRECTION.from, to: to ?? DEFAULT_DIRECTION.to };
-};
-
-/**
- * TODO: Find the correct CrossChainDirection by the information from the hash or localStorage settings
- */
-// eslint-disable-next-line complexity
-export const getDirectionFromSettingsWeak: () => CrossChainDirection = () => {
-  const fToken = getInitialSetting<Network>('from', null);
-  const tToken = getInitialSetting<Network>('to', null);
-
-  const from = fToken && getChainConfig(fToken);
-  const to = tToken && getChainConfig(tToken);
-
-  let fromToken: CrossToken | null = null;
-  let toToken: CrossToken | null = null;
-
-  if (from) {
-    const token = from.tokens.find((item) => item.symbol === fToken)!;
-
-    fromToken = { ...token, amount: '', meta: from };
-  }
-
-  if (to) {
-    const token = to.tokens.find((item) => item.symbol === tToken)!;
-
-    toToken = { ...token, amount: '', meta: to };
-  }
-
-  if (fromToken && !toToken) {
-    const config = getChainConfig(fromToken.cross[0].partner.name);
-
-    toToken = {
-      ...config.tokens.find((item) => item.symbol === fromToken?.cross[0].partner.symbol)!,
-      amount: '',
-      meta: config,
-    };
-  }
-
-  if (!fromToken && toToken) {
-    const config = getChainConfig(toToken.cross[0].partner.name);
-
-    fromToken = {
-      ...config.tokens.find((item) => item.symbol === toToken?.cross[0].partner.symbol)!,
-      amount: '',
-      meta: config,
-    };
-  }
-
-  return validateDirection({ from: fromToken, to: toToken });
 };
 
 export const getDirectionFromSettings: () => CrossChainDirection = () => {

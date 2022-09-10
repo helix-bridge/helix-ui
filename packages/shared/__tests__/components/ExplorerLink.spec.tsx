@@ -4,7 +4,7 @@ import { ExplorerLink } from '../../components/widget/ExplorerLink';
 import { knownParachainNetworks, SYSTEM_CHAIN_CONFIGURATIONS } from '../../config/network';
 import { knownDVMNetworks, knownPolkadotNetworks } from '../../config/network';
 import { DVMNetwork, Network, ParachainNetwork, PolkadotTypeNetwork } from '../../model';
-import { isParachainNetwork, isPolkadotNetwork } from '../../utils/network';
+import { isParachainNetwork, isPolkadotNetwork } from '../../utils/network/network';
 
 describe('<ExplorerLink />', () => {
   const dvmConfigs = SYSTEM_CHAIN_CONFIGURATIONS.filter((item) => knownDVMNetworks.includes(item.name as DVMNetwork));

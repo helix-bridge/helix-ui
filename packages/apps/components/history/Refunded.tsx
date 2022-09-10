@@ -1,8 +1,8 @@
 import { PaperClipOutlined } from '@ant-design/icons';
 import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
-import { getChainConfig } from 'shared/utils/network';
 import { useITranslation } from '../../hooks';
 import { RecordStatusComponentProps } from '../../model/component';
+import { getChainConfig } from '../../utils/network';
 
 export function Refunded({ record }: RecordStatusComponentProps) {
   const { t } = useITranslation();

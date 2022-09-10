@@ -15,7 +15,8 @@ import {
   TxObservableFactory,
 } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { fromWei, isRing, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
+import { fromWei, toWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
+import { isRing } from 'shared/utils/helper/validator';
 import { getS2SMappingAddress } from 'shared/utils/mappingToken';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';

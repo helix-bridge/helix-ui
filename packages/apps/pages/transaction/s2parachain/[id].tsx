@@ -3,15 +3,16 @@ import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { GENESIS_ADDRESS, RecordStatus } from 'shared/config/constant';
 import { SUBSTRATE_PARACHAIN_BACKING } from 'shared/config/env';
-import { HelixHistoryRecord, Network, SubstrateSubstrateParachainBridgeConfig } from 'shared/model';
-import { getBridge } from 'shared/utils/bridge';
-import { revertAccount } from 'shared/utils/helper';
-import { getChainConfig } from 'shared/utils/network';
+import { HelixHistoryRecord, Network } from 'shared/model';
+import { revertAccount } from 'shared/utils/helper/address';
 import {
   getReceivedAmountFromHelixRecord,
   getSentAmountFromHelixRecord,
   getTokenConfigFromHelixRecord,
-} from 'shared/utils/record';
+} from 'utils/record';
+import { getBridge } from 'utils/bridge';
+import { getChainConfig } from 'utils/network';
+import { SubstrateSubstrateParachainBridgeConfig } from '../../../bridges/helix/substrate-substrateParachain/model';
 import { Detail } from '../../../components/transaction/Detail';
 import { useUpdatableRecord } from '../../../hooks';
 import { TransferStep } from '../../../model/transfer';

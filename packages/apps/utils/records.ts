@@ -8,7 +8,10 @@ import { map } from 'rxjs/internal/operators/map';
 import { RecordStatus } from 'shared/config/constant';
 import { isFormalChain } from 'shared/config/env';
 import { ChainConfig, HelixHistoryRecord, ICamelCaseKeys } from 'shared/model';
-import { apiUrl, fromWei, isKton, isRing, rxGet, toWei } from 'shared/utils/helper';
+import { toWei, fromWei } from 'shared/utils/helper/balance';
+import { rxGet } from 'shared/utils/helper/http';
+import { apiUrl } from 'shared/utils/helper/url';
+import { isRing, isKton } from 'shared/utils/helper/validator';
 import { buf2hex } from 'shared/utils/tx';
 import {
   Darwinia2EthereumHistoryRes,

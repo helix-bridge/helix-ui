@@ -11,13 +11,15 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { take } from 'rxjs/internal/operators/take';
 import { abi } from 'shared/config/abi';
 import { ChainConfig, LockEventsStorage, PolkadotChainConfig, RequiredPartial, Tx, TxFn } from 'shared/model';
-import { getBridge } from 'shared/utils/bridge';
 import { connect, entrance } from 'shared/utils/connection';
-import { encodeBlockHeader, isKton, isRing, toWei } from 'shared/utils/helper';
-import { ClaimNetworkPrefix, encodeMMRRootMessage, getMMR } from 'shared/utils/mmr';
+import { toWei } from 'shared/utils/helper/balance';
+import { encodeBlockHeader } from 'shared/utils/helper/block';
+import { isKton, isRing } from 'shared/utils/helper/validator';
 import { buf2hex, genEthereumContractTxObs, getMPTProof, signAndSendExtrinsic } from 'shared/utils/tx';
+import { getBridge } from 'utils/bridge';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
+import { ClaimNetworkPrefix, encodeMMRRootMessage, getMMR } from '../../../../utils/mmr';
 import { validationObsFactory } from '../../../../utils/tx';
 import { EthereumDarwiniaBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 

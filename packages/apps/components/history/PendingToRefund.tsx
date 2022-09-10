@@ -11,15 +11,16 @@ import { tap } from 'rxjs/internal/operators/tap';
 import { CBridgeRecordStatus, LONG_DURATION } from 'shared/config/constant';
 import { useIsMounted } from 'shared/hooks';
 import { HelixHistoryRecord } from 'shared/model';
-import { isSubstrateDVMSubstrateDVM } from 'shared/utils/bridge';
-import { gqlName, pollWhile } from 'shared/utils/helper';
-import { isCBridgeRecord } from 'shared/utils/record';
+import { gqlName } from 'shared/utils/helper/common';
+import { pollWhile } from 'shared/utils/helper/operator';
+import { isSubstrateDVMSubstrateDVM } from 'utils/bridge';
 import { requestRefund, withdraw } from '../../bridges/celer/cBridge/utils/tx';
 import { refund } from '../../bridges/helix/substrateDVM-substrateDVM/utils';
 import { HISTORY_RECORD_BY_ID } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { RecordStatusComponentProps } from '../../model/component';
 import { useClaim, useTx } from '../../providers';
+import { isCBridgeRecord } from '../../utils/record';
 
 interface RefundComponentProps extends RecordStatusComponentProps {
   onSuccess?: () => void;

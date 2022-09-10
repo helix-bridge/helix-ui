@@ -11,15 +11,14 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { Logo } from 'shared/components/widget/Logo';
 import { FORM_CONTROL } from 'shared/config/constant';
 import {
-  CrabDVMHecoBridgeConfig,
   CrossChainComponentProps,
-  CrossChainPayload,
   CrossToken,
   EthereumChainConfig,
+  CrossChainPayload,
   TxObservableFactory,
 } from 'shared/model';
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
-import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
+import { fromWei, toWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
@@ -34,6 +33,7 @@ import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
 import { useAccount, useWallet } from '../../../providers';
+import { CrabDVMHecoBridgeConfig } from '../crabDVM-heco/model';
 import { useTransfer } from './hooks/transfer';
 import { IssuingPayload } from './model';
 import { EstimateAmtRequest, EstimateAmtResponse } from './ts-proto/gateway/gateway_pb';

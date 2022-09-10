@@ -6,7 +6,7 @@ import { PropsWithChildren, useState } from 'react';
 import { Footer } from 'shared/components/Footer';
 import { Nav, Navigator } from 'shared/components/Navigator';
 import { THEME } from 'shared/config/theme';
-import { readStorage } from 'shared/utils/helper';
+import { readStorage } from 'shared/utils/helper/storage';
 import { Path } from '../config';
 import { useITranslation } from '../hooks';
 import { DisclaimerModal } from './widget/DisclaimerModal';

@@ -13,7 +13,7 @@ import { MIDDLE_DURATION } from 'shared/config/constant';
 import { useIsMounted } from 'shared/hooks';
 import { ChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { prettyNumber } from 'shared/utils/helper';
+import { prettyNumber } from 'shared/utils/helper/balance';
 
 const DURATION = 6000;
 

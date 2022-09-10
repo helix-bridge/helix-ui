@@ -1,9 +1,10 @@
 import type { Observable } from 'rxjs';
 import { CrossToken, ParachainChainConfig, RequiredPartial, Tx } from 'shared/model';
-import { getBridge } from 'shared/utils/bridge';
 import { entrance } from 'shared/utils/connection';
-import { convertToDvm, fromWei, toWei } from 'shared/utils/helper';
+import { convertToDvm } from 'shared/utils/helper/address';
+import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
+import { getBridge } from 'utils/bridge';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
 import { validationObsFactory } from '../../../../utils/tx';

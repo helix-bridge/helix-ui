@@ -2,15 +2,16 @@ import type { GetServerSidePropsContext, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { RecordStatus } from 'shared/config/constant';
-import { HelixHistoryRecord, Network, SubstrateDVMSubstrateDVMBridgeConfig } from 'shared/model';
-import { getBridge } from 'shared/utils/bridge';
-import { revertAccount } from 'shared/utils/helper';
-import { getChainConfig } from 'shared/utils/network';
+import { HelixHistoryRecord, Network } from 'shared/model';
+import { revertAccount } from 'shared/utils/helper/address';
 import {
   getReceivedAmountFromHelixRecord,
   getSentAmountFromHelixRecord,
   getTokenConfigFromHelixRecord,
-} from 'shared/utils/record';
+} from 'utils/record';
+import { getBridge } from 'utils/bridge';
+import { getChainConfig } from 'utils/network';
+import { SubstrateDVMSubstrateDVMBridgeConfig } from '../../../bridges/helix/substrateDVM-substrateDVM/model';
 import { Detail } from '../../../components/transaction/Detail';
 import { ZERO_ADDRESS } from '../../../config';
 import { useUpdatableRecord } from '../../../hooks';

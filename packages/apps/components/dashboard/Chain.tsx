@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { BestNumber } from 'shared/components/widget/BestNumber';
 import { Logo } from 'shared/components/widget/Logo';
 import { ChainConfig } from 'shared/model';
-import { getDisplayName } from 'shared/utils/network';
+import { getDisplayName } from 'utils/network';
 
 export function Chain(props: ChainConfig) {
   const open = useCallback((url: string) => {

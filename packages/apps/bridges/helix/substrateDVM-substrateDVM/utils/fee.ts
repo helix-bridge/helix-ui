@@ -1,7 +1,7 @@
 import BN from 'bn.js';
 import { Contract } from 'ethers';
 import { CrossChainDirection, CrossToken, DVMChainConfig } from 'shared/model';
-import { getBridge } from 'shared/utils/bridge';
+import { getBridge } from 'utils/bridge';
 import { entrance } from 'shared/utils/connection';
 import backingAbi from '../config/s2sv2backing.json';
 import burnAbi from '../config/s2sv2burn.json';

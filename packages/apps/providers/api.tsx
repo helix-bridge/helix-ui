@@ -17,8 +17,9 @@ import {
   PolkadotConnection,
 } from 'shared/model';
 import { connect } from 'shared/utils/connection';
-import { convertToSS58, getDirectionFromSettings } from 'shared/utils/helper';
-import { isEthereumNetwork } from 'shared/utils/network';
+import { convertToSS58 } from 'shared/utils/helper/address';
+import { getDirectionFromSettings } from 'shared/utils/helper/url';
+import { isEthereumNetwork } from 'shared/utils/network/network';
 
 interface StoreState {
   departureConnection: Connection;

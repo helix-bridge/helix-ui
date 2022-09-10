@@ -1,6 +1,6 @@
 import { CSSProperties, PropsWithChildren } from 'react';
 import { ChainConfig, Network } from '../../model';
-import { isDVMNetwork, isPolkadotNetwork } from '../../utils/network';
+import { isDVMNetwork, isPolkadotNetwork } from '../../utils/network/network';
 import { Copy, CopyProps } from './TextWithCopy';
 
 interface ExplorerLinkProps extends PropsWithChildren<unknown> {
@@ -34,12 +34,10 @@ export function ExplorerLink({
   copyable,
   block,
   txHash,
-  className,
   ...other
 }: ExplorerLinkProps) {
   let network: Network = typeof networkOrChainConfig === 'object' ? networkOrChainConfig.name : networkOrChainConfig;
   const isSubscan = isPolkadotNetwork(network) || isDVMNetwork(network) || network === 'astar';
-  const cls = `text-white ${className}`;
 
   if (isDVMNetwork(networkOrChainConfig)) {
     network = network.split('-')[0] as Network;
@@ -51,7 +49,6 @@ export function ExplorerLink({
         <a
           href={`https://${network}.subscan.io/account/${address}`}
           target="_blank"
-          className={cls}
           {...other}
           rel="noreferrer"
           onClick={(event) => event.stopPropagation()}
@@ -72,7 +69,6 @@ export function ExplorerLink({
           href={`https://${network}.subscan.io/extrinsic/${content}`}
           target="_blank"
           {...other}
-          className={cls}
           rel="noreferrer"
           onClick={(event) => event.stopPropagation()}
         >
@@ -102,15 +98,8 @@ export function ExplorerLink({
       }.io/tx/${txHash}`;
 
     return (
-      <Wrapper content={txHash} copyable>
-        <a
-          href={href}
-          target="_blank"
-          {...other}
-          onClick={(event) => event.stopPropagation()}
-          className={cls}
-          rel="noreferrer"
-        >
+      <Wrapper content={txHash} copyable={copyable}>
+        <a href={href} target="_blank" {...other} onClick={(event) => event.stopPropagation()} rel="noreferrer">
           {children || txHash}
         </a>
       </Wrapper>
@@ -124,7 +113,6 @@ export function ExplorerLink({
           href={`https://${network}.subscan.io/block/${block}`}
           target="_blank"
           {...other}
-          className={cls}
           onClick={(event) => event.stopPropagation()}
           rel="noreferrer"
         >

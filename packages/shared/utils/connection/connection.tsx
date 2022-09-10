@@ -17,7 +17,6 @@ import {
   PolkadotConnection,
   SupportedWallet,
 } from '../../model';
-import { chainConfigs } from '../network';
 import { entrance } from './entrance';
 import { getMetamaskConnection, isMetamaskInstalled, switchMetamaskNetwork } from './metamask';
 import { getPolkadotConnection } from './polkadot';
@@ -104,22 +103,3 @@ export const connect: ConnectFn<Connection> = (chain, wallet) => {
 
   return walletConnections[wallet ?? chain.wallets[0]](chain, wallet);
 };
-
-export function convertConnectionToChainConfig(connection: Connection): ChainConfig | null {
-  const { type, chainId } = connection;
-
-  if (type === 'unknown') {
-    return null;
-  }
-
-  const config = chainConfigs.find((item) => {
-    const typeMatch = item.wallets.includes(type);
-    const value = (item as EthereumChainConfig).ethereumChain
-      ? (item as EthereumChainConfig).ethereumChain.chainId
-      : item.name;
-
-    return typeMatch && value === chainId;
-  });
-
-  return config ?? null;
-}

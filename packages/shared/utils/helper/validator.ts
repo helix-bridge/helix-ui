@@ -1,8 +1,8 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
 import { isAddress } from 'ethers/lib/utils';
-import { Network, PolkadotChainConfig } from '../../model';
-import { chainConfigs, isPolkadotNetwork } from '../network/network';
+import { Network } from '../../model';
+import { isPolkadotNetwork } from '../network/network';
 import { canConvertToEth, convertToEth, convertToSS58, dvmAddressToAccountId } from './address';
 
 // eslint-disable-next-line complexity
@@ -16,24 +16,6 @@ export const isValidAddress = (address: string, network: Network): boolean => {
 
   if (isPolkadotNetwork(network)) {
     return isSS58Address(address);
-  }
-
-  return false;
-};
-
-export const isValidAddressStrict = (address: string, network: Network): boolean => {
-  if (network === 'ethereum') {
-    return isAddress(address);
-  }
-
-  if (network === 'polkadot') {
-    return isSS58Address(address, 0);
-  }
-
-  if (isPolkadotNetwork(network)) {
-    const target = chainConfigs.find((item) => item.name === network) as PolkadotChainConfig;
-
-    return isSS58Address(address, target.ss58Prefix);
   }
 
   return false;

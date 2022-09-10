@@ -13,7 +13,8 @@ import {
   PolkadotChainConfig,
   TxObservableFactory,
 } from 'shared/model';
-import { fromWei, isRing, toWei } from 'shared/utils/helper';
+import { fromWei, toWei } from 'shared/utils/helper/balance';
+import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';

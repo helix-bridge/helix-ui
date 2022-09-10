@@ -3,7 +3,7 @@ import upperFirst from 'lodash/upperFirst';
 import type { Observable } from 'rxjs';
 import { RequiredPartial, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
-import { toWei } from 'shared/utils/helper';
+import { toWei } from 'shared/utils/helper/balance';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';

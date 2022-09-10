@@ -2,8 +2,8 @@ import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { ChainConfig, Network } from 'shared/model';
-import { getBridge } from 'shared/utils/bridge';
-import { getChainConfig, getDisplayName } from 'shared/utils/network';
+import { getBridge } from '../../utils/bridge';
+import { getChainConfig, getDisplayName } from '../../utils/network';
 
 interface BridgeProps {
   from?: ChainConfig;

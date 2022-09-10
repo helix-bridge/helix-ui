@@ -115,7 +115,6 @@ function initModel() {
         export type ${name}BridgeConfig = Required<BridgeConfig<${name}ContractConfig>>;
     " >>$1'/bridge.ts'
 
-    cp $1'/bridge.ts' '../shared/model/bridge/'${origin}'-'${target}'.ts'
     echo "export * from './${origin}-${target}';" >>'../shared/model/bridge/index.ts'
 
     echo "

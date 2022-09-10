@@ -19,7 +19,8 @@ import { Icon } from '../../components/widget/Icon';
 import { abi } from '../../config/abi';
 import { CrossChainPayload, RequiredPartial, Tx, TxFn } from '../../model';
 import { entrance, waitUntilConnected } from '../connection';
-import { toWei, typeRegistryFactory } from '../helper';
+import { toWei } from '../helper/balance';
+import { typeRegistryFactory } from '../helper/huge';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ModalSpyFn<T = any> = (observer: Observer<T>, closeFn: () => void) => void;

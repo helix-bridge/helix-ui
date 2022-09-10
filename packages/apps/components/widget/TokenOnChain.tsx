@@ -3,8 +3,8 @@ import { PropsWithChildren, useEffect, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { CrossToken, EthereumChainConfig } from 'shared/model';
 import { isNetworkConsistent } from 'shared/utils/connection';
-import { prettyNumber } from 'shared/utils/helper';
-import { getDisplayName } from 'shared/utils/network';
+import { prettyNumber } from 'shared/utils/helper/balance';
+import { getDisplayName } from 'utils/network';
 import { useITranslation } from '../../hooks';
 import { addToMetamask } from '../../utils';
 

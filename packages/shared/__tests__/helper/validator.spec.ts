@@ -1,13 +1,6 @@
 /// <reference types="jest" />
 
-import {
-  isKton,
-  isRing,
-  isSameAddress,
-  isSS58Address,
-  isValidAddress,
-  isValidAddressStrict,
-} from '../../utils/helper/validator';
+import { isKton, isRing, isSameAddress, isSS58Address, isValidAddress } from '../../utils/helper/validator';
 
 describe('validator utils', () => {
   const substrateAddress = '5FA7CzAgT5fNDFRdb4UWSZX3b9HJsPuR7F5BF4YotSpKxAA2';
@@ -47,18 +40,6 @@ describe('validator utils', () => {
     expect(isValidAddress(ethereumAddress, 'ethereum')).toBe(true);
     expect(isValidAddress(ethereumAddress, 'darwinia')).toBe(false);
     expect(isValidAddress(karuraAddress, 'karura')).toBe(true);
-  });
-
-  it('should predicate address with ss58Prefix checking', () => {
-    expect(isValidAddressStrict(darwiniaAddress, 'darwinia')).toBe(true);
-    expect(isValidAddressStrict(darwiniaAddress, 'crab')).toBe(false);
-    expect(isValidAddressStrict(darwiniaAddress, 'ethereum')).toBe(false);
-    expect(isValidAddressStrict(substrateAddress, 'darwinia')).toBe(false);
-    expect(isValidAddressStrict(substrateAddress, 'crab')).toBe(true);
-    expect(isValidAddressStrict(substrateAddress, 'ethereum')).toBe(false);
-    expect(isValidAddressStrict(ethereumAddress, 'ethereum')).toBe(true);
-    expect(isValidAddressStrict(ethereumAddress, 'darwinia')).toBe(false);
-    expect(isValidAddressStrict(karuraAddress, 'karura')).toBe(true);
   });
 
   it('should predicate polkadot address ', () => {

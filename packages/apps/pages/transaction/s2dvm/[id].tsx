@@ -3,15 +3,16 @@ import type { GetServerSidePropsContext, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { SUBSTRATE_DVM_WITHDRAW } from 'shared/config/env';
-import { HelixHistoryRecord, Network, SubstrateDVMBridgeConfig } from 'shared/model';
-import { getBridge } from 'shared/utils/bridge';
-import { revertAccount } from 'shared/utils/helper';
-import { getChainConfig } from 'shared/utils/network';
-import { getSentAmountFromHelixRecord, getTokenConfigFromHelixRecord } from 'shared/utils/record';
+import { HelixHistoryRecord, Network } from 'shared/model';
+import { getBridge } from 'utils/bridge';
+import { revertAccount } from 'shared/utils/helper/address';
+import { getChainConfig } from 'utils/network';
+import { getSentAmountFromHelixRecord, getTokenConfigFromHelixRecord } from 'utils/record';
 import { Detail } from '../../../components/transaction/Detail';
 import { useUpdatableRecord } from '../../../hooks';
 import { TransferStep } from '../../../model/transfer';
 import { getServerSideRecordProps } from '../../../utils/getServerSideRecordProps';
+import { SubstrateDVMBridgeConfig } from '../../../bridges/helix/substrate-dvm/model';
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ id: string }, HelixHistoryRecord>) {
   return getServerSideRecordProps(context);

@@ -1,5 +1,7 @@
 import BN from 'bn.js';
 import { CrossChainDirection } from 'shared/model';
+import { isKton, isRing } from 'shared/utils/helper/validator';
+import { getDarwiniaBalance, getDVMBalance, getErc20Balance, getParachainBalance } from 'shared/utils/network/balance';
 import {
   isCBridge,
   isCrabParachain2Moonriver,
@@ -14,9 +16,7 @@ import {
   isSubstrate2SubstrateDVM,
   isSubstrateDVM2Substrate,
   isSubstrateDVMSubstrateDVM,
-} from 'shared/utils/bridge';
-import { isKton, isRing } from 'shared/utils/helper/validator';
-import { getDarwiniaBalance, getDVMBalance, getErc20Balance, getParachainBalance } from 'shared/utils/network/balance';
+} from './bridge';
 
 function isDeposit({ from }: CrossChainDirection): boolean {
   const overview = from.cross.find((item) => item.partner.name === from.host);

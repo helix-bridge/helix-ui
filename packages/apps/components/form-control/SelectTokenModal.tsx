@@ -7,7 +7,7 @@ import { Logo } from 'shared/components/widget/Logo';
 import { chainColors } from 'shared/config/theme';
 import { useLocalSearch } from 'shared/hooks';
 import { ChainConfig, TokenInfoWithMeta } from 'shared/model';
-import { chainConfigs, getDisplayName } from 'shared/utils/network';
+import { chainConfigs, getDisplayName } from 'utils/network';
 import { tokenSearchFactory } from '../../utils/token';
 import { isTransferableTokenPair } from '../../utils/validate';
 import BaseModal from '../widget/BaseModal';

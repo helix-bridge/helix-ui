@@ -23,7 +23,7 @@ import {
   CrossChainPayload,
   TxObservableFactory,
 } from 'shared/model';
-import { isKton } from 'shared/utils/helper';
+import { isKton } from 'shared/utils/helper/validator';
 import { AllowancePayload, useAllowance } from '../hooks/allowance';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
 import { getBalance } from '../utils';

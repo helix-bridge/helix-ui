@@ -18,9 +18,9 @@ import { tap } from 'rxjs/internal/operators/tap';
 import type { Subscription } from 'rxjs/internal/Subscription';
 import { abi } from 'shared/config/abi';
 import { ConnectionStatus, HelixHistoryRecord, ICamelCaseKeys } from 'shared/model';
-import { getBridge } from 'shared/utils/bridge';
+import { getBridge } from 'utils/bridge';
 import { connect, entrance } from 'shared/utils/connection';
-import { getChainConfig } from 'shared/utils/network';
+import { getChainConfig } from 'utils/network';
 import { getAllowance } from 'shared/utils/tx';
 import {
   Darwinia2EthereumHistoryRes,

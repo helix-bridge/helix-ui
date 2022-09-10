@@ -1,7 +1,7 @@
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
-import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
 import { Network } from 'shared/model';
+import { Hash } from './Hash';
 import { TransferDescription } from './TransferDescription';
 
 export function SourceTx({ hash }: { hash: string | undefined }) {
@@ -13,14 +13,7 @@ export function SourceTx({ hash }: { hash: string | undefined }) {
       title={t('Source Tx Hash')}
       tip={t('Unique character string (TxID) assigned to every verified transaction on the Source Chain.')}
     >
-      {hash && (
-        <ExplorerLink
-          network={router.query.from as Network}
-          txHash={hash}
-          className="hover:opacity-80 transition-opacity duration-200 underline"
-          copyable
-        ></ExplorerLink>
-      )}
+      {hash && <Hash network={router.query.from as Network} hash={hash} />}
     </TransferDescription>
   );
 }

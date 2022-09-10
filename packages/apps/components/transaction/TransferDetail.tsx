@@ -2,7 +2,7 @@ import { ArrowRightOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { Logo } from 'shared/components/widget/Logo';
-import { getDisplayName } from 'shared/utils/network';
+import { getDisplayName } from 'utils/network';
 import { TransferStep } from '../../model/transfer';
 import { TransferDescription } from './TransferDescription';
 

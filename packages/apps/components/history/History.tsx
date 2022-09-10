@@ -12,13 +12,13 @@ import { HelixHistoryRecord } from 'shared/model';
 import { convertToDvm } from 'shared/utils/helper/address';
 import { gqlName } from 'shared/utils/helper/common';
 import { isValidAddress } from 'shared/utils/helper/validator';
-import { getOriginChainConfig } from 'shared/utils/network';
+import { getOriginChainConfig } from 'utils/network';
 import {
   getDetailPaths,
   getReceivedAmountFromHelixRecord,
   getSentAmountFromHelixRecord,
   getTokenConfigFromHelixRecord,
-} from 'shared/utils/record';
+} from 'utils/record';
 import { Darwinia2EthereumHistoryRes } from '../../bridges/helix/ethereum-darwinia/model';
 import { HISTORY_RECORDS_IN_RESULTS, STATUS_STATISTICS } from '../../config/gql';
 import { useITranslation } from '../../hooks';

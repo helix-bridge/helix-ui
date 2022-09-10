@@ -5,7 +5,7 @@ import { hexToU8a, numberToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import { isAddress } from 'ethers/lib/utils';
 import isNull from 'lodash/isNull';
 import { ChainConfig, PolkadotChainConfig } from '../../model';
-import { isDVMNetwork, isPolkadotNetwork } from '../network';
+import { isDVMNetwork, isPolkadotNetwork } from '../network/network';
 
 // TODO: optimize
 export const registry = new TypeRegistry();

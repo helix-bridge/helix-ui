@@ -9,7 +9,8 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { MIDDLE_DURATION, RecordStatus } from 'shared/config/constant';
 import { useIsMounted } from 'shared/hooks';
 import { HelixHistoryRecord } from 'shared/model';
-import { gqlName, pollWhile } from 'shared/utils/helper';
+import { gqlName } from 'shared/utils/helper/common';
+import { pollWhile } from 'shared/utils/helper/operator';
 import { HISTORY_RECORD_BY_ID } from '../config';
 
 export function useUpdatableRecord(id: string) {

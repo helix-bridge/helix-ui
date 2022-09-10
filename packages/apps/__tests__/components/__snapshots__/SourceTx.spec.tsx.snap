@@ -41,7 +41,7 @@ exports[`<SourceTx /> render SourceTx 1`] = `
     className="space-x-2"
   >
     <a
-      className="text-white hover:opacity-80 transition-opacity duration-200 underline"
+      className="hover:opacity-80 transition-opacity duration-200 underline text-white"
       href="https://undefined.etherscan.io/tx/0xa9673370dce7f48b306fb96b90c42fa2a13986f1e618eb2996eaeb5abce88643"
       onClick={[Function]}
       rel="noreferrer"

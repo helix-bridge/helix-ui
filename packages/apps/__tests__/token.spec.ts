@@ -1,6 +1,6 @@
 /// <reference types="jest" />
 
-import { chainConfigs, getChainConfig } from 'shared/utils/network';
+import { chainConfigs, getChainConfig } from '../utils/network';
 import { isTransferableTokenPair } from '../utils/validate';
 
 // exclude the config that not contains transferable tokens;

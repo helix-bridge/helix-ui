@@ -16,10 +16,14 @@ import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
 import { HelixHistoryRecord, Network } from 'shared/model';
-import { convertToDvm, gqlName, isSS58Address, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
-import { getChainConfig, getDisplayName } from 'shared/utils/network';
-import { getDetailPaths, getFeeAmountFromHelixRecord, getSentAmountFromHelixRecord } from 'shared/utils/record';
+import { revertAccount, convertToDvm } from 'shared/utils/helper/address';
+import { prettyNumber } from 'shared/utils/helper/balance';
+import { gqlName } from 'shared/utils/helper/common';
+import { isSS58Address, isValidAddress } from 'shared/utils/helper/validator';
+import { getChainConfig, getDisplayName } from 'utils/network';
+import { getFeeAmountFromHelixRecord, getSentAmountFromHelixRecord } from 'utils/record';
 import { HISTORY_RECORDS, Path } from '../../config';
+import { getDetailPaths } from '../../utils/record';
 
 function RecordAccount({ chain, account }: { chain: Network; account: string }) {
   const chainConfig = getChainConfig(chain, SYSTEM_CHAIN_CONFIGURATIONS);

@@ -3,7 +3,7 @@ import { Tooltip } from 'antd';
 import BN from 'bn.js';
 import { useCallback, useEffect, useState } from 'react';
 import { CrossChainDirection, CrossChainPayload } from 'shared/model';
-import { toWei } from 'shared/utils/helper';
+import { toWei } from 'shared/utils/helper/balance';
 import { applyModalObs, approveToken, createTxWorkflow, getAllowance } from 'shared/utils/tx';
 import { useAfterTx, useITranslation } from '../../hooks';
 import { useAccount, useTx } from '../../providers';

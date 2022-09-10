@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
 import { CrossToken, TokenInfoWithMeta } from 'shared/model';
-import { getDisplayName } from 'shared/utils/network';
+import { getDisplayName } from 'utils/network';
 import { SelectTokenModal } from './SelectTokenModal';
 
 interface DestinationProps {

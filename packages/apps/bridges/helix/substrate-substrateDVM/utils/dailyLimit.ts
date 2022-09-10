@@ -2,7 +2,7 @@ import { Contract } from 'ethers';
 import { abi } from 'shared/config/abi';
 import { CrossChainDirection, CrossToken, DailyLimit, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
-import { isRing } from 'shared/utils/helper';
+import { isRing } from 'shared/utils/helper/validator';
 import { getS2SMappingAddress } from 'shared/utils/mappingToken';
 
 export async function getDailyLimit(
