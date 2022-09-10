@@ -1,16 +1,18 @@
 import { BN_ZERO } from '@polkadot/util';
 import BN from 'bn.js';
-import { last } from 'lodash';
-import { EMPTY, from, Observable, switchMap } from 'rxjs';
+import last from 'lodash/last';
+import type { Observable } from 'rxjs/internal/Observable';
+import { EMPTY } from 'rxjs/internal/observable/empty';
+import { from } from 'rxjs/internal/observable/from';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { CrossChainDirection, CrossToken, DVMChainConfig, HelixHistoryRecord, Tx } from 'shared/model';
-import { getBridge } from 'shared/utils/bridge';
 import { isMetamaskChainConsistent } from 'shared/utils/connection';
-import { toWei } from 'shared/utils/helper';
-import { getChainConfig } from 'shared/utils/network';
+import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
-import { AbiItem } from 'web3-utils';
+import { getBridge } from 'utils/bridge';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
+import { getChainConfig } from '../../../../utils/network';
 import { validationObsFactory } from '../../../../utils/tx';
 import backingAbi from '../config/s2sv2backing.json';
 import burnAbi from '../config/s2sv2burn.json';
@@ -33,10 +35,11 @@ export function issue(value: IssuingPayload, fee: BN): Observable<Tx> {
   return genEthereumContractTxObs(
     bridge.config.contracts!.backing,
     (contract) =>
-      contract.methods
-        .lockAndRemoteIssuing(to.meta.specVersion, gasLimit, departure.address, recipient, amount)
-        .send({ from: sender, value: fee.toString() }),
-    backingAbi as AbiItem[]
+      contract.methods.lockAndRemoteIssuing(to.meta.specVersion, gasLimit, departure.address, recipient, amount, {
+        from: sender,
+        value: fee.toString(),
+      }),
+    backingAbi
   );
 }
 
@@ -53,10 +56,11 @@ export function redeem(value: RedeemPayload, fee: BN): Observable<Tx> {
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
     (contract) =>
-      contract.methods
-        .burnAndRemoteUnlock(to.meta.specVersion, gasLimit, departure.address, recipient, amount)
-        .send({ from: sender, value: fee.toString() }),
-    burnAbi as AbiItem[]
+      contract.methods.burnAndRemoteUnlock(to.meta.specVersion, gasLimit, departure.address, recipient, amount, {
+        from: sender,
+        value: fee.toString(),
+      }),
+    burnAbi
   );
 }
 
@@ -86,11 +90,11 @@ export function refund(record: HelixHistoryRecord): Observable<Tx> {
       genEthereumContractTxObs(
         address as string,
         (contract) =>
-          contract.methods[method](departure.specVersion, '2000000', transferId, tokenAddress, sender, amount).send({
+          contract[method](departure.specVersion, '2000000', transferId, tokenAddress, sender, amount).send({
             from: sender,
             value: value?.toString(),
           }),
-        abi as AbiItem[]
+        abi
       )
     )
   );
@@ -106,8 +110,8 @@ export function deposit(value: IssuingPayload): Observable<Tx> {
 
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
-    (contract) => contract.methods.deposit().send({ from: sender, value: amount.toString() }),
-    wringABI as AbiItem[]
+    (contract) => contract.deposit({ from: sender, value: amount.toString() }),
+    wringABI
   );
 }
 
@@ -121,8 +125,8 @@ export function withdraw(value: RedeemPayload): Observable<Tx> {
 
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
-    (contract) => contract.methods.withdraw(amount.toString()).send({ from: sender }),
-    wringABI as AbiItem[]
+    (contract) => contract.withdraw(amount.toString(), { from: sender }),
+    wringABI
   );
 }
 

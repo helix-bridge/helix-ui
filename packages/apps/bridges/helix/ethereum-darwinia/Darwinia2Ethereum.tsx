@@ -1,10 +1,10 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { BN_ZERO } from '@polkadot/util';
-import { Tag, Tooltip, Typography } from 'antd';
-import BN from 'bn.js';
+import { BN_ZERO, BN } from '@polkadot/util';
+import { Tag, Tooltip } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { from, mergeMap } from 'rxjs';
+import { from } from 'rxjs/internal/observable/from';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import {
   CrossChainComponentProps,
   CrossChainPayload,
@@ -13,7 +13,8 @@ import {
   PolkadotChainConfig,
   TxObservableFactory,
 } from 'shared/model';
-import { fromWei, isRing, toWei } from 'shared/utils/helper';
+import { fromWei, toWei } from 'shared/utils/helper/balance';
+import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
@@ -148,7 +149,7 @@ export function Darwinia2Ethereum({
 
       <CrossChainInfo bridge={bridge} fee={feeWithSymbol}>
         <div className={`flex justify-between items-center transition-all duration-100`}>
-          <Typography.Text>{t('Attention')}</Typography.Text>
+          <span>{t('Attention')}</span>
           <Tooltip
             title={t('Please perform a claim asset operation in the history section after the transfer is submitted.')}
           >

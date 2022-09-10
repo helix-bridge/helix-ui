@@ -1,18 +1,18 @@
 import { Spin } from 'antd';
-import Bignumber from 'bignumber.js';
 import { format, secondsToMilliseconds, subMilliseconds } from 'date-fns';
-import request from 'graphql-request';
-import { chain, last } from 'lodash';
+import { useQuery } from 'graphql-hooks';
+import last from 'lodash/last';
+import orderBy from 'lodash/orderBy';
 import { GetServerSidePropsContext } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useEffect, useMemo, useState } from 'react';
-import { ENDPOINT } from 'shared/config/env';
+import { useMemo, useState } from 'react';
 import { DATE_FORMAT } from 'shared/config/constant';
 import { DailyStatistic, Network } from 'shared/model';
-import { getBridge } from 'shared/utils/bridge';
-import { gqlName, prettyNumber } from 'shared/utils/helper';
-import { chainConfigs, getChainConfig } from 'shared/utils/network';
+import { prettyNumber } from 'shared/utils/helper/balance';
+import { gqlName } from 'shared/utils/helper/common';
+import { getBridge } from 'utils/bridge';
+import { chainConfigs, getChainConfig } from 'utils/network';
 import { BarChart, Statistic } from '../components/dashboard/BarChart';
 import { Chain } from '../components/dashboard/Chain';
 import { Statistics } from '../components/dashboard/Statistics';
@@ -21,7 +21,15 @@ import { STATISTICS_QUERY, TIMEPAST } from '../config';
 function Page() {
   const { t } = useTranslation('common');
   const [loading] = useState(false);
-  const [dailyStatistics, setDailyStatistics] = useState<DailyStatistic[]>([]);
+
+  const { data: response } = useQuery(STATISTICS_QUERY, {
+    variables: { timepast: TIMEPAST },
+  });
+
+  const dailyStatistics = useMemo(
+    () => (response ? (response[gqlName(STATISTICS_QUERY)] as DailyStatistic[]) : []),
+    [response]
+  );
 
   const { transactions, transactionsTotal } = useMemo(() => {
     if (!dailyStatistics) {
@@ -33,7 +41,7 @@ function Page() {
         .map(({ timestamp, dailyCount }) => [secondsToMilliseconds(+timestamp), +dailyCount])
         .reverse() as Statistic[],
       transactionsTotal: prettyNumber(
-        dailyStatistics.reduce((acc, cur) => acc.plus(new Bignumber(cur.dailyCount)), new Bignumber(0)),
+        dailyStatistics.reduce((acc, cur) => acc + Number(cur.dailyCount), 0),
         { decimal: 0 }
       ),
     };
@@ -48,8 +56,8 @@ function Page() {
   }, [dailyStatistics]);
 
   const transactionsRank = useMemo(() => {
-    return chain(dailyStatistics)
-      .reduce((acc, cur) => {
+    const data = Object.entries(
+      dailyStatistics?.reduce((acc, cur) => {
         const bridge = getBridge([cur.fromChain as Network, cur.toChain as Network]);
         const key = bridge.issue.join('_');
 
@@ -57,24 +65,15 @@ function Page() {
 
         return acc;
       }, {} as { [key: string]: number })
-      .entries()
-      .map((item) => {
-        const [fromChain, toChain] = item[0].split('_') as [Network, Network];
-        const total = item[1];
+    ).map((item) => {
+      const [fromChain, toChain] = item[0].split('_') as [Network, Network];
+      const total = item[1];
 
-        return { fromChain: getChainConfig(fromChain), toChain: getChainConfig(toChain), total };
-      })
-      .orderBy(['total'], ['desc'])
-      .value();
-  }, [dailyStatistics]);
-
-  useEffect(() => {
-    request(ENDPOINT, STATISTICS_QUERY, { timepast: TIMEPAST }).then((res) => {
-      const data = res[gqlName(STATISTICS_QUERY)] as DailyStatistic[];
-
-      setDailyStatistics(data);
+      return { fromChain: getChainConfig(fromChain), toChain: getChainConfig(toChain), total };
     });
-  }, []);
+
+    return orderBy(data, ['total'], ['desc']);
+  }, [dailyStatistics]);
 
   return (
     <div>

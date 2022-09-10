@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 import { RecordRequestParams } from './record-api';
 
 interface SimpleBlock {

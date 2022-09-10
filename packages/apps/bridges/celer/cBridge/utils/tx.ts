@@ -1,20 +1,22 @@
 import { BN, hexToBn } from '@polkadot/util';
+import { Contract } from 'ethers';
 import { base64, getAddress, hexlify } from 'ethers/lib/utils';
-import { last } from 'lodash';
-import { EMPTY, from, Observable, switchMap } from 'rxjs';
+import last from 'lodash/last';
+import type { Observable } from 'rxjs/internal/Observable';
+import { EMPTY } from 'rxjs/internal/observable/empty';
+import { from } from 'rxjs/internal/observable/from';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { HelixHistoryRecord, Tx } from 'shared/model';
-import { getBridge } from 'shared/utils/bridge';
+import { getBridge } from 'utils/bridge';
 import { entrance } from 'shared/utils/connection';
-import { toWei } from 'shared/utils/helper';
+import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
-import { Contract } from 'web3-eth-contract';
-import { AbiItem } from 'web3-utils';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
 import { validationObsFactory } from '../../../../utils/tx';
 import transferAbi from '../config/abi/bridge.json';
-import burnAbi from '../config/abi/PeggedTokenBridgeV2.json';
 import depositAbi from '../config/abi/OriginalTokenVaultV2.json';
+import burnAbi from '../config/abi/PeggedTokenBridgeV2.json';
 import { IssuingPayload, RedeemPayload } from '../model';
 import { WebClient } from '../ts-proto/gateway/GatewayServiceClientPb';
 import { GetTransferStatusRequest, WithdrawLiquidityRequest, WithdrawMethodType } from '../ts-proto/gateway/gateway_pb';
@@ -53,9 +55,8 @@ export function burn(value: IssuingPayload | RedeemPayload): Observable<Tx> {
 
   return genEthereumContractTxObs(
     contractAddress,
-    (contract) =>
-      contract.methods.burn(tokenAddress, transferAmount, toChainId, recipient, nonce).send({ from: sender }),
-    burnAbi as AbiItem[]
+    (contract) => contract.burn(tokenAddress, transferAmount, toChainId, recipient, nonce, { from: sender }),
+    burnAbi
   );
 }
 
@@ -86,9 +87,8 @@ export function deposit(value: IssuingPayload | RedeemPayload): Observable<Tx> {
 
   return genEthereumContractTxObs(
     contractAddress,
-    (contract) =>
-      contract.methods.deposit(tokenAddress, transferAmount, mintChainId, recipient, nonce).send({ from: sender }),
-    depositAbi as AbiItem[]
+    (contract) => contract.deposit(tokenAddress, transferAmount, mintChainId, recipient, nonce, { from: sender }),
+    depositAbi
   );
 }
 
@@ -115,10 +115,8 @@ export function transfer(value: IssuingPayload | RedeemPayload): Observable<Tx> 
   return genEthereumContractTxObs(
     contractAddress,
     (contract) =>
-      contract.methods
-        .send(recipient, tokenAddress, transferAmount, dstChainId, nonce, maxSlippage)
-        .send({ from: sender }),
-    transferAbi as AbiItem[]
+      contract.methods.send(recipient, tokenAddress, transferAmount, dstChainId, nonce, maxSlippage, { from: sender }),
+    transferAbi
   );
 }
 
@@ -153,8 +151,8 @@ export function withdraw(record: HelixHistoryRecord): Observable<Tx> {
 
       return genEthereumContractTxObs(
         contractAddress as string,
-        (contract) => contract.methods.withdraw(wd, sigs, signers, powers).send({ from: sender }),
-        transferAbi as AbiItem[]
+        (contract) => contract.withdraw(wd, sigs, signers, powers, { from: sender }),
+        transferAbi
       );
     })
   );
@@ -188,9 +186,8 @@ export const genValidations = ({ balance, amount, allowance }: TxValidation): [b
 export const validate = validationObsFactory(genValidations);
 
 export const getMinimalMaxSlippage = async (contractAddress: string) => {
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-  const contract = new web3.eth.Contract(transferAbi as AbiItem[], contractAddress) as unknown as Contract;
-  const result = await contract.methods.minimalMaxSlippage().call();
+  const contract = new Contract(contractAddress, transferAbi, entrance.web3.currentProvider);
+  const result = await contract.minimalMaxSlippage();
 
   return result;
 };

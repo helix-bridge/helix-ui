@@ -1,15 +1,15 @@
-import { GetServerSidePropsContext, NextPage } from 'next';
+import type { GetServerSidePropsContext, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord, Network } from 'shared/model';
-import { revertAccount } from 'shared/utils/helper';
-import { getChainConfig } from 'shared/utils/network';
+import { revertAccount } from 'shared/utils/helper/address';
+import { getChainConfig } from 'utils/network';
 import {
   getReceivedAmountFromHelixRecord,
   getSentAmountFromHelixRecord,
   getTokenConfigFromHelixRecord,
-} from 'shared/utils/record';
+} from 'utils/record';
 import { Detail } from '../../../components/transaction/Detail';
 import { ZERO_ADDRESS } from '../../../config';
 import { useUpdatableRecord } from '../../../hooks';

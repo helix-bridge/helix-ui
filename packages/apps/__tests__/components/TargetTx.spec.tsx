@@ -47,6 +47,7 @@ describe('<TargetTx />', () => {
     toChain: 'crab-dvm',
     sendToken: 'xRING',
     recvToken: 'xORING',
+    sendTokenAddress: '',
     reason: '',
     messageNonce: '',
   };

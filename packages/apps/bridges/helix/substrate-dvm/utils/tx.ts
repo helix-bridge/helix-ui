@@ -1,11 +1,17 @@
-import { TypeRegistry } from '@polkadot/types';
 import { u8aToHex } from '@polkadot/util';
 import BN from 'bn.js';
-import { EMPTY, from as rxFrom, mergeMap, Observable, switchMap } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { EMPTY } from 'rxjs/internal/observable/empty';
+import { from as rxFrom } from 'rxjs/internal/observable/from';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { SUBSTRATE_DVM_WITHDRAW } from 'shared/config/env';
 import { Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { convertToSS58, dvmAddressToAccountId, isRing, toWei } from 'shared/utils/helper';
+import { dvmAddressToAccountId, convertToSS58 } from 'shared/utils/helper/address';
+import { toWei } from 'shared/utils/helper/balance';
+import { typeRegistryFactory } from 'shared/utils/helper/huge';
+import { isRing } from 'shared/utils/helper/validator';
 import { genEthereumTransactionObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
@@ -29,46 +35,51 @@ export function issue(value: TransferPayload): Observable<Tx> {
 }
 
 export function redeem(value: WithdrawPayload): Observable<Tx> {
-  const registry = new TypeRegistry();
   const {
     recipient,
     sender,
     direction: { from, to },
   } = value;
-  const accountId = registry.createType('AccountId', convertToSS58(recipient, to.meta.ss58Prefix)).toHex();
 
-  if (accountId === '0x0000000000000000000000000000000000000000000000000000000000000000') {
-    return EMPTY;
-  }
+  return rxFrom(typeRegistryFactory()).pipe(
+    mergeMap((TypeRegistry) => {
+      const registry = new TypeRegistry();
+      const accountId = registry.createType('AccountId', convertToSS58(recipient, to.meta.ss58Prefix)).toHex();
 
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-  const api = entrance.polkadot.getInstance(from.meta.provider);
+      if (accountId === '0x0000000000000000000000000000000000000000000000000000000000000000') {
+        return EMPTY;
+      }
 
-  return rxFrom(waitUntilConnected(api)).pipe(
-    mergeMap(async () => {
-      const amount = toWei({ value: from.amount, decimals: 9 });
-      const transfer = isRing(from.symbol) ? api.tx.balances.transfer : api.tx.kton.transfer;
+      const web3 = entrance.web3.currentProvider;
+      const api = entrance.polkadot.getInstance(from.meta.provider);
 
-      return transfer(recipient, amount);
-    }),
-    switchMap((extrinsic) =>
-      rxFrom(
-        web3.eth.estimateGas({
-          from: sender,
-          to: SUBSTRATE_DVM_WITHDRAW,
-          data: u8aToHex(extrinsic.method.toU8a()),
-        })
-      ).pipe(
-        switchMap((gas) =>
-          genEthereumTransactionObs({
-            from: sender,
-            to: SUBSTRATE_DVM_WITHDRAW,
-            data: u8aToHex(extrinsic.method.toU8a()),
-            gas,
-          })
+      return rxFrom(waitUntilConnected(api)).pipe(
+        mergeMap(async () => {
+          const amount = toWei({ value: from.amount, decimals: 9 });
+          const transfer = isRing(from.symbol) ? api.tx.balances.transfer : api.tx.kton.transfer;
+
+          return transfer(recipient, amount);
+        }),
+        switchMap((extrinsic) =>
+          rxFrom(
+            web3.estimateGas({
+              from: sender,
+              to: SUBSTRATE_DVM_WITHDRAW,
+              data: u8aToHex(extrinsic.method.toU8a()),
+            })
+          ).pipe(
+            switchMap((gas) =>
+              genEthereumTransactionObs({
+                from: sender,
+                to: SUBSTRATE_DVM_WITHDRAW,
+                data: u8aToHex(extrinsic.method.toU8a()),
+                gasLimit: gas.toString(),
+              })
+            )
+          )
         )
-      )
-    )
+      );
+    })
   );
 }
 

@@ -1,4 +1,10 @@
-import { last, mergeMap, MonoTypeOperatorFunction, scan, takeWhile, tap, timer } from 'rxjs';
+import { timer } from 'rxjs/internal/observable/timer';
+import { last } from 'rxjs/internal/operators/last';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
+import { scan } from 'rxjs/internal/operators/scan';
+import { takeWhile } from 'rxjs/internal/operators/takeWhile';
+import { tap } from 'rxjs/internal/operators/tap';
+import type { MonoTypeOperatorFunction } from 'rxjs/internal/types';
 
 function attemptsGuardFactory(maxAttempts: number) {
   return (attemptsCount: number) => {

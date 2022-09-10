@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { IAccountMeta } from 'shared/model';
-import { BaseModal } from '../BaseModal';
+import BaseModal from '../BaseModal';
 
 type Props = {
   visible: boolean;
@@ -35,7 +35,7 @@ export const SelectAccountModal: React.FC<Props> = ({
     <BaseModal
       title={title}
       destroyOnClose
-      visible={visible}
+      open={visible}
       maskClosable={false}
       onCancel={onCancel}
       bodyStyle={{
@@ -50,7 +50,7 @@ export const SelectAccountModal: React.FC<Props> = ({
             <Radio.Button
               value={item.address}
               key={item.address}
-              className={`radio-list transform transition-all duration-300 hover:scale-105`}
+              className={`radio-list transition-all duration-300 hover:scale-105`}
             >
               <>
                 <Identicon

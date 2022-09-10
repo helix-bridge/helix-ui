@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 
-import { chainConfigs, getChainConfig } from 'shared/utils/network';
-import { isTransferableTokenPair } from '../utils';
+import { chainConfigs, getChainConfig } from '../utils/network';
+import { isTransferableTokenPair } from '../utils/validate';
 
 // exclude the config that not contains transferable tokens;
 const configs = chainConfigs.filter((item) => !!item.tokens.filter((token) => !!token.cross.length).length);

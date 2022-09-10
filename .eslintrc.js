@@ -9,6 +9,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
     'plugin:prettier/recommended',
+    'plugin:@next/next/recommended',
   ],
   parser: '@typescript-eslint/parser',
   overrides: [
@@ -78,6 +79,8 @@ module.exports = {
     // react
     'react/display-name': 'off',
     'react/prop-types': 'off',
+    'react/no-unknown-property': ['error', { ignore: ['jsx'] }],
+    "@next/next/no-html-link-for-pages": ["error", "packages/apps/pages/"],
     // eslint common rules
     'arrow-parens': ['error', 'always'],
     'comma-dangle': [

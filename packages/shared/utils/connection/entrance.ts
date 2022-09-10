@@ -1,6 +1,6 @@
 import { typesBundleForPolkadotApps } from '@darwinia/types/mix';
+import { JsonRpcProvider, Web3Provider, WebSocketProvider } from '@ethersproject/providers';
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import Web3 from 'web3';
 import { SHORT_DURATION } from '../../config/constant';
 
 interface ApiGuy<T> {
@@ -21,7 +21,7 @@ abstract class Entrance<T> {
   }
 
   getInstance(url: string): T {
-    const exist = this.checkExist(url);
+    const exist = url === 'ethereum' ? null : this.checkExist(url);
 
     if (exist) {
       return exist[url];
@@ -29,7 +29,10 @@ abstract class Entrance<T> {
 
     const instance = this.init(url);
 
-    this.apiList.push({ [url]: instance });
+    if (url !== 'ethereum') {
+      this.apiList.push({ [url]: instance });
+    }
+
     this.afterInit(instance);
 
     console.log(`🌎 ~ ${this.name} api list`, this.apiList.map((item) => Object.keys(item)).flat());
@@ -69,39 +72,27 @@ class PolkadotEntrance extends Entrance<ApiPromise> {
   }
 }
 
-class Web3Entrance extends Entrance<Web3> {
+class Web3Entrance extends Entrance<JsonRpcProvider> {
   name = 'web3';
 
-  apiList: ApiGuy<Web3>[] = [];
+  apiList: ApiGuy<JsonRpcProvider>[] = [];
 
   defaultProvider = 'ethereum';
 
   init(url: string) {
-    if (url === this.defaultProvider) {
-      return new Web3(window.ethereum);
-    }
-
-    let provider = null;
-
     if (url.startsWith('wss')) {
-      provider = new Web3.providers.WebsocketProvider(url, {
-        clientConfig: {
-          keepalive: true,
-          keepaliveInterval: 60000,
-        },
-        reconnect: {
-          auto: true,
-          delay: 2500,
-          onTimeout: true,
-        },
-      });
-    } else if (url.startsWith('https')) {
-      provider = new Web3.providers.HttpProvider(url);
-    } else {
-      throw new Error('Need a http or ws provider');
+      return new WebSocketProvider(url);
     }
 
-    return new Web3(provider);
+    if (url.startsWith('https')) {
+      return new JsonRpcProvider(url);
+    }
+
+    return new Web3Provider(window.ethereum);
+  }
+
+  get currentProvider() {
+    return this.getInstance(this.defaultProvider);
   }
 
   afterInit() {

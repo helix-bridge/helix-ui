@@ -17,7 +17,10 @@ export function PendingToClaim({
       disabled={isClaiming}
       size="small"
       type="primary"
-      onClick={() => claim(record as ICamelCaseKeys<Darwinia2EthereumRecord & HelixHistoryRecord>, claimMeta!)}
+      onClick={(event) => {
+        event.stopPropagation();
+        claim(record as ICamelCaseKeys<Darwinia2EthereumRecord & HelixHistoryRecord>, claimMeta!);
+      }}
     >
       {t('Claim')}
     </Button>

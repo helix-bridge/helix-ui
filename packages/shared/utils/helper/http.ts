@@ -1,6 +1,8 @@
-import { isNull, isUndefined } from 'lodash';
-import { map, Observable } from 'rxjs';
+import isNull from 'lodash/isNull';
+import isUndefined from 'lodash/isUndefined';
 import { ajax } from 'rxjs/ajax';
+import type { Observable } from 'rxjs/internal/Observable';
+import { map } from 'rxjs/internal/operators/map';
 
 export interface RecordsQueryRequest {
   url: string;

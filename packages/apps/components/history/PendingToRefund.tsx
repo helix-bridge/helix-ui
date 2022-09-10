@@ -1,21 +1,26 @@
 import { SyncOutlined } from '@ant-design/icons';
 import { Button, message, Tooltip } from 'antd';
-import request from 'graphql-request';
+import { useManualQuery } from 'graphql-hooks';
 import { useCallback, useMemo, useState } from 'react';
-import { EMPTY, from, map, of, switchMap, tap } from 'rxjs';
+import { EMPTY } from 'rxjs/internal/observable/empty';
+import { from } from 'rxjs/internal/observable/from';
+import { of } from 'rxjs/internal/observable/of';
+import { map } from 'rxjs/internal/operators/map';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { tap } from 'rxjs/internal/operators/tap';
 import { CBridgeRecordStatus, LONG_DURATION } from 'shared/config/constant';
-import { ENDPOINT } from 'shared/config/env';
 import { useIsMounted } from 'shared/hooks';
 import { HelixHistoryRecord } from 'shared/model';
-import { isSubstrateDVMSubstrateDVM } from 'shared/utils/bridge';
-import { gqlName, pollWhile } from 'shared/utils/helper';
-import { isCBridgeRecord } from 'shared/utils/record';
+import { gqlName } from 'shared/utils/helper/common';
+import { pollWhile } from 'shared/utils/helper/operator';
+import { isSubstrateDVMSubstrateDVM } from 'utils/bridge';
 import { requestRefund, withdraw } from '../../bridges/celer/cBridge/utils/tx';
 import { refund } from '../../bridges/helix/substrateDVM-substrateDVM/utils';
 import { HISTORY_RECORD_BY_ID } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { RecordStatusComponentProps } from '../../model/component';
 import { useClaim, useTx } from '../../providers';
+import { isCBridgeRecord } from '../../utils/record';
 
 interface RefundComponentProps extends RecordStatusComponentProps {
   onSuccess?: () => void;
@@ -28,12 +33,13 @@ function CBrideRefund({ record, onSuccess }: RefundComponentProps) {
   const { observer } = useTx();
   const isMounted = useIsMounted();
   const [reason, setReason] = useState(record.reason);
+  const [request] = useManualQuery(HISTORY_RECORD_BY_ID, { variables: { id: record.id } });
 
   const pollingRefundState = useCallback(() => {
     of(null)
       .pipe(
-        switchMap(() => from(request(ENDPOINT, HISTORY_RECORD_BY_ID, { id: record.id }))),
-        map((res) => res && res[gqlName(HISTORY_RECORD_BY_ID)]),
+        switchMap(() => from(request())),
+        map(({ data }) => data && data[gqlName(HISTORY_RECORD_BY_ID)]),
         tap((res) => setReason(res.reason)),
         pollWhile(
           LONG_DURATION,
@@ -53,7 +59,7 @@ function CBrideRefund({ record, onSuccess }: RefundComponentProps) {
           setLoading(false);
         },
       });
-  }, [isMounted, record.id]);
+  }, [isMounted, request]);
 
   if (reason === CBridgeRecordStatus[CBridgeRecordStatus.refundToBeConfirmed]) {
     return (

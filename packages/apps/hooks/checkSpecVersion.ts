@@ -1,7 +1,7 @@
 import { BridgeState, CrossChainDirection, CrossToken, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { useEffect, useState } from 'react';
-import { from } from 'rxjs';
+import { from } from 'rxjs/internal/observable/from';
 
 export function useCheckSpecVersion(
   direction: CrossChainDirection<

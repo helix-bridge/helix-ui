@@ -2,33 +2,11 @@ import { Progress } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
-import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
-import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord, Network } from 'shared/model';
-import { isCBridgeRecord, isHelixRecord, isXCMRecord } from 'shared/utils/record';
+import { isCBridgeRecord, isHelixRecord, isXCMRecord } from '../../utils/record/record';
+import { Hash } from './Hash';
 import { TransferDescription } from './TransferDescription';
-
-interface HashProps {
-  hash: string;
-  network: Network;
-}
-
-const Hash = ({ hash, network }: HashProps) => {
-  const txHash = hash.includes('-') ? undefined : hash;
-  const extrinsic = hash.includes('-') ? hash.split('-') : undefined;
-
-  return (
-    <ExplorerLink
-      network={network}
-      txHash={txHash}
-      extrinsic={extrinsic && { height: extrinsic[0], index: extrinsic[1] }}
-      className="hover:opacity-80 transition-opacity duration-200"
-    >
-      <TextWithCopy underline>{hash}</TextWithCopy>
-    </ExplorerLink>
-  );
-};
 
 export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
   const { t } = useTranslation();

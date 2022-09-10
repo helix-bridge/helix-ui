@@ -1,38 +1,11 @@
-import { chain as lodashChain, cloneDeep, memoize, pick, upperFirst } from 'lodash';
-import { knownParachainNetworks, SYSTEM_CHAIN_CONFIGURATIONS } from '../../config/network';
-import { knownDVMNetworks, knownEthereumNetworks, knownPolkadotNetworks } from '../../config/network';
-import { ChainConfig, Network, PolkadotChainConfig } from '../../model';
-import { getCustomNetworkConfig } from '../helper/storage';
-import { crossChainGraph } from './graph';
-
-export const chainConfigs = lodashChain(crossChainGraph)
-  .map(([departure, arrivals]) => [departure, ...arrivals])
-  .filter((item) => item.length > 1)
-  .flatten()
-  .unionWith((pre, next) => pre === next)
-  .map((vertices) => {
-    const result = SYSTEM_CHAIN_CONFIGURATIONS.find((item) => vertices === item.name);
-    let config = cloneDeep(result);
-
-    if (!config) {
-      throw new Error(`Can not find ${vertices} network configuration`);
-    } else {
-      const customConfigs = getCustomNetworkConfig();
-
-      if (customConfigs[config.name]) {
-        config = { ...config, ...pick(customConfigs[config.name], Object.keys(config)) } as PolkadotChainConfig;
-      }
-
-      config.tokens = config?.tokens.map((token) => ({
-        ...token,
-        cross: token.cross.filter((item) => !item.deprecated),
-      }));
-    }
-
-    return config;
-  })
-  .sortBy((item) => item.name)
-  .valueOf();
+import upperFirst from 'lodash/upperFirst';
+import {
+  knownDVMNetworks,
+  knownEthereumNetworks,
+  knownParachainNetworks,
+  knownPolkadotNetworks,
+} from 'shared/config/network';
+import { ChainConfig, Network } from 'shared/model';
 
 const isSpecifyNetwork = (known: Network[]) => (network: ChainConfig | Network | null | undefined) => {
   if (!network) {
@@ -49,26 +22,6 @@ export const isDVMNetwork = isSpecifyNetwork(knownDVMNetworks);
 export const isEthereumNetwork = isSpecifyNetwork(knownEthereumNetworks);
 
 export const isParachainNetwork = isSpecifyNetwork(knownParachainNetworks);
-
-function getConfig(name: Network | null | undefined, source = chainConfigs): ChainConfig {
-  if (!name) {
-    throw new Error(`You must pass a 'name' parameter to find the chain config`);
-  }
-
-  const result = source.find((item) => item.name === name);
-
-  if (!result) {
-    throw new Error(`Can not find the chain config by ${name}`);
-  }
-
-  return result;
-}
-
-export const getChainConfig = memoize(getConfig, (name) => name);
-export const getOriginChainConfig = memoize(
-  (name: Network | null | undefined) => getConfig(name, SYSTEM_CHAIN_CONFIGURATIONS),
-  (name) => name
-);
 
 export function getDisplayName(config: ChainConfig | null): string {
   if (!config) {

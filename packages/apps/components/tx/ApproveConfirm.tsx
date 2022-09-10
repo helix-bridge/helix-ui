@@ -1,4 +1,3 @@
-import { Typography } from 'antd';
 import { CrossChainPayload } from 'shared/model';
 import { useITranslation } from '../../hooks';
 
@@ -14,7 +13,7 @@ export function ApproveConfirm({ value }: { value: Pick<CrossChainPayload, 'dire
           </span>
           :
         </h4>
-        <Typography.Text>{value.sender}</Typography.Text>
+        <span>{value.sender}</span>
       </div>
     </div>
   );

@@ -1,16 +1,14 @@
-import { ApiPromise } from '@polkadot/api';
-import { once } from 'lodash';
-import {
-  BehaviorSubject,
-  combineLatest,
-  concatMap,
-  distinctUntilKeyChanged,
-  from,
-  map,
-  Observable,
-  startWith,
-  switchMap,
-} from 'rxjs';
+import type { ApiPromise } from '@polkadot/api';
+import once from 'lodash/once';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import type { Observable } from 'rxjs/internal/Observable';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import { from } from 'rxjs/internal/observable/from';
+import { concatMap } from 'rxjs/internal/operators/concatMap';
+import { distinctUntilKeyChanged } from 'rxjs/internal/operators/distinctUntilKeyChanged';
+import { map } from 'rxjs/internal/operators/map';
+import { startWith } from 'rxjs/internal/operators/startWith';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { ConnectionStatus, PolkadotChainConfig, PolkadotChainSimpleToken, PolkadotConnection } from '../../model';
 import { entrance } from './entrance';
 

@@ -6,7 +6,7 @@ import {
   CrossToken,
   EthereumChainConfig,
 } from 'shared/model';
-import { getBridge, isBSCAstar, isCrabDVMAstar, isCrabDVMEthereum, isEthereumAstar } from 'shared/utils/bridge';
+import { getBridge, isBSCAstar, isCrabDVMAstar, isCrabDVMEthereum, isEthereumAstar } from 'utils/bridge';
 import { burn, deposit, transfer } from '../utils';
 
 export function useTransfer(

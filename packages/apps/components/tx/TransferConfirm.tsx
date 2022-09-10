@@ -1,12 +1,13 @@
 import { ArrowDownOutlined } from '@ant-design/icons';
-import { Alert, Typography } from 'antd';
+import { Alert } from 'antd';
 import { i18n } from 'next-i18next';
 import { PropsWithChildren, useMemo } from 'react';
 import { initReactI18next, useTranslation } from 'react-i18next';
 import { Logo } from 'shared/components/widget/Logo';
 import { Bridge, CrossToken, PolkadotChainConfig, TxConfirmComponentProps } from 'shared/model';
-import { convertToSS58 } from 'shared/utils/helper';
-import { getDisplayName, isPolkadotNetwork } from 'shared/utils/network';
+import { convertToSS58 } from 'shared/utils/helper/address';
+import { isPolkadotNetwork } from 'shared/utils/network/network';
+import { getDisplayName } from 'utils/network';
 
 type Fee = Pick<CrossToken, 'symbol' | 'amount'>;
 
@@ -34,16 +35,14 @@ export function TransferConfirm<T extends Bridge = Bridge>({
             <div className="flex items-center space-x-3">
               <Logo name={from.meta.logos[0].name} width={36} height={36} />
               <div className="flex flex-col">
-                <Typography.Text strong>{getDisplayName(from.meta)}</Typography.Text>
-                <Typography.Text className="opacity-50">{t('Source Chain')}</Typography.Text>
+                <span className="font-bold">{getDisplayName(from.meta)}</span>
+                <span className="opacity-50">{t('Source Chain')}</span>
               </div>
             </div>
 
             <div className="flex flex-col items-end">
-              <Typography.Text strong type="danger">
-                -{from.amount}
-              </Typography.Text>
-              <Typography.Text strong>{from.symbol}</Typography.Text>
+              <span className="font-bold text-red-500">-{from.amount}</span>
+              <span className="font-bold">{from.symbol}</span>
             </div>
           </div>
 
@@ -51,16 +50,14 @@ export function TransferConfirm<T extends Bridge = Bridge>({
             <div className="flex items-center space-x-3">
               <Logo name={to.meta.logos[0].name} width={36} height={36} />
               <div className="flex flex-col">
-                <Typography.Text strong>{getDisplayName(to.meta)}</Typography.Text>
-                <Typography.Text className="opacity-50">{t('Target Chain')}</Typography.Text>
+                <span className="font-bold">{getDisplayName(to.meta)}</span>
+                <span className="opacity-50">{t('Target Chain')}</span>
               </div>
             </div>
 
             <div className="flex flex-col items-end">
-              <Typography.Text strong type="success">
-                +{to.amount}
-              </Typography.Text>
-              <Typography.Text strong>{to.symbol}</Typography.Text>
+              <span className="font-bold text-green-400">+{to.amount}</span>
+              <span className="font-bold">{to.symbol}</span>
             </div>
           </div>
 
@@ -70,25 +67,25 @@ export function TransferConfirm<T extends Bridge = Bridge>({
         </div>
 
         <div className="mt-5 mb-3">
-          <Typography.Text>{t('Information')}</Typography.Text>
+          <span>{t('Information')}</span>
 
           <div className="flex flex-col space-y-2 mt-1 p-3 bg-gray-900 border border-gray-800">
             <div className="flex items-center justify-between overflow-hidden">
-              <Typography.Text className="opacity-60">{t('From')}</Typography.Text>
+              <span className="opacity-60">{t('From')}</span>
               <span className="truncate text-right w-11/12">{sender}</span>
             </div>
 
             <div className="flex items-center justify-between overflow-hidden">
-              <Typography.Text className="opacity-60">{t('To')}</Typography.Text>
+              <span className="opacity-60">{t('To')}</span>
               <span className="truncate text-right w-11/12">{value.recipient}</span>
             </div>
 
             {fee && (
               <div className="flex items-center justify-between overflow-hidden">
-                <Typography.Text className="opacity-60">{t('Fee')}</Typography.Text>
-                <Typography.Text>
+                <span className="opacity-60">{t('Fee')}</span>
+                <span>
                   {fee.amount} {fee.symbol}
-                </Typography.Text>
+                </span>
               </div>
             )}
           </div>

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { IAccountMeta, SupportedWallet } from 'shared/model';
-import { isSameAddress, readStorage } from 'shared/utils/helper';
+import { readStorage } from 'shared/utils/helper/storage';
+import { isSameAddress } from 'shared/utils/helper/validator';
 import { useApi } from './api';
 
 export interface AccountCtx {

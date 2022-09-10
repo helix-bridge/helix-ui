@@ -1,7 +1,8 @@
-import { Codec } from '@polkadot/types-codec/types';
-import { hexToU8a } from '@polkadot/util';
-import BN from 'bn.js';
-import { last, lowerFirst, upperFirst } from 'lodash';
+import type { Codec } from '@polkadot/types-codec/types';
+import { hexToU8a, BN } from '@polkadot/util';
+import last from 'lodash/last';
+import lowerFirst from 'lodash/lowerFirst';
+import upperFirst from 'lodash/upperFirst';
 import { Bridge, ChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 

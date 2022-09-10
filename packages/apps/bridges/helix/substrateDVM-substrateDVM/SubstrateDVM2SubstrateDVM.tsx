@@ -1,13 +1,17 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
-import { Typography } from 'antd';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { from, mergeMap, of, switchMap } from 'rxjs';
+import { from } from 'rxjs/internal/observable/from';
+import { of } from 'rxjs/internal/observable/of';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
 import { useIsMounted } from 'shared/hooks';
 import { CrossChainComponentProps, CrossToken, DVMChainConfig, TxObservableFactory } from 'shared/model';
-import { fromWei, isRing, pollWhile, toWei } from 'shared/utils/helper';
+import { fromWei, toWei } from 'shared/utils/helper/balance';
+import { pollWhile } from 'shared/utils/helper/operator';
+import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
@@ -156,11 +160,7 @@ export function SubstrateDVM2SubstrateDVM({
         extra={[
           {
             name: t('Daily limit'),
-            content: dailyLimit ? (
-              <Typography.Text>{fromWei({ value: dailyLimit })}</Typography.Text>
-            ) : (
-              <EyeInvisibleFilled />
-            ),
+            content: dailyLimit ? <span>{fromWei({ value: dailyLimit })}</span> : <EyeInvisibleFilled />,
           },
         ]}
       ></CrossChainInfo>

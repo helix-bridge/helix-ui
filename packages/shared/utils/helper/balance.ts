@@ -1,26 +1,16 @@
-import { Unit, unitMap, Units } from 'web3-utils';
-import BN from 'bn.js';
-import { isEmpty, isNull, isNumber, isString, isUndefined } from 'lodash';
-import Web3 from 'web3';
+import { formatFixed as fw, parseFixed as tw } from '@ethersproject/bignumber';
 import Bignumber from 'bignumber.js';
+import BN from 'bn.js';
+import isEmpty from 'lodash/isEmpty';
+import isNull from 'lodash/isNull';
+import isNumber from 'lodash/isNumber';
+import isString from 'lodash/isString';
+import isUndefined from 'lodash/isUndefined';
 
 export type WeiValue = string | BN | number | null | undefined | Bignumber;
 export interface PrettyNumberOptions {
   decimal?: number;
   ignoreZeroDecimal?: boolean;
-}
-
-export const ETH_UNITS = unitMap as unknown as Units;
-
-export function getUnit(num: number): Unit {
-  const str = Math.pow(10, num).toString();
-  try {
-    const [key] = Object.entries(ETH_UNITS).find(([_, value]) => value === str) as [Unit, string];
-
-    return key;
-  } catch (err) {
-    return 'ether';
-  }
 }
 
 // eslint-disable-next-line complexity
@@ -93,23 +83,23 @@ export function fromWei(
   { value, amount, balance, decimals = DEFAULT_DECIMALS }: WeiArgs,
   ...fns: ((value: string) => string)[]
 ): string {
-  const unit = getUnit(decimals);
   const data = value || amount || balance;
 
-  return [toStr, (val: string) => Web3.utils.fromWei(val || '0', unit), ...fns].reduce(
-    (acc, fn) => fn(acc as string),
-    data
-  ) as string;
+  return [
+    toStr,
+    (val: string) => fw(val || '0', decimals).toString(),
+    ...fns,
+    (v: string) => (v.endsWith('.0') ? v.split('.')[0] : v),
+  ].reduce((acc, fn) => fn(acc as string), data) as string;
 }
 
 export function toWei(
   { value, amount, balance, decimals = DEFAULT_DECIMALS }: WeiArgs,
   ...fns: ((value: string) => string)[]
 ): string {
-  const unit = getUnit(decimals);
   const data = value || amount || balance;
 
-  return [toStr, (val: string) => Web3.utils.toWei(val || '0', unit), ...fns].reduce(
+  return [toStr, (val: string) => tw(val || '0', decimals).toString(), ...fns].reduce(
     (acc, fn) => fn(acc as string),
     data
   ) as string;

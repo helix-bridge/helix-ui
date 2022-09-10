@@ -1,5 +1,6 @@
 import { GlobalOutlined } from '@ant-design/icons';
-import { Button, ButtonProps, Dropdown, Menu } from 'antd';
+import { Button, Dropdown, Menu } from 'antd';
+import type { ButtonProps } from 'antd';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NETWORK_LIGHT_THEME, THEME } from '../../config/theme';

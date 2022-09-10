@@ -1,14 +1,14 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
-import Web3 from 'web3';
-import { Network, PolkadotChainConfig } from '../../model';
-import { chainConfigs, isPolkadotNetwork } from '../network/network';
+import { isAddress } from 'ethers/lib/utils';
+import { Network } from '../../model';
+import { isPolkadotNetwork } from '../network/network';
 import { canConvertToEth, convertToEth, convertToSS58, dvmAddressToAccountId } from './address';
 
 // eslint-disable-next-line complexity
 export const isValidAddress = (address: string, network: Network): boolean => {
   if (network === 'ethereum') {
-    const isDvm = Web3.utils.isAddress(address);
+    const isDvm = isAddress(address);
     const isSS58 = isSS58Address(address);
 
     return isDvm || (isSS58 && canConvertToEth(address));
@@ -16,24 +16,6 @@ export const isValidAddress = (address: string, network: Network): boolean => {
 
   if (isPolkadotNetwork(network)) {
     return isSS58Address(address);
-  }
-
-  return false;
-};
-
-export const isValidAddressStrict = (address: string, network: Network): boolean => {
-  if (network === 'ethereum') {
-    return Web3.utils.isAddress(address);
-  }
-
-  if (network === 'polkadot') {
-    return isSS58Address(address, 0);
-  }
-
-  if (isPolkadotNetwork(network)) {
-    const target = chainConfigs.find((item) => item.name === network) as PolkadotChainConfig;
-
-    return isSS58Address(address, target.ss58Prefix);
   }
 
   return false;
@@ -68,7 +50,7 @@ export const isSameAddress = (from: string, to: string): boolean => {
   let toAddress: string | null = to;
   let fromAddress: string = from;
 
-  if (Web3.utils.isAddress(from)) {
+  if (isAddress(from)) {
     try {
       toAddress = convertToEth(to);
     } catch (err) {
@@ -81,7 +63,7 @@ export const isSameAddress = (from: string, to: string): boolean => {
   }
 
   if (isSS58Address(from)) {
-    if (Web3.utils.isAddress(to)) {
+    if (isAddress(to)) {
       toAddress = dvmAddressToAccountId(to).toHuman() as string;
     }
 

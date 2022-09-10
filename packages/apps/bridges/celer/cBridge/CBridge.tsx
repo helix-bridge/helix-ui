@@ -1,22 +1,24 @@
-import { Button, message, Tooltip, Typography } from 'antd';
+import { Button, message, Tooltip } from 'antd';
 import BN from 'bn.js';
-import { isNaN } from 'lodash';
+import isNaN from 'lodash/isNaN';
 import { i18n, Trans, useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { initReactI18next } from 'react-i18next';
-import { from, mergeMap, of, switchMap } from 'rxjs';
+import { from } from 'rxjs/internal/observable/from';
+import { of } from 'rxjs/internal/observable/of';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { Logo } from 'shared/components/widget/Logo';
 import { FORM_CONTROL } from 'shared/config/constant';
 import {
-  CrabDVMHecoBridgeConfig,
   CrossChainComponentProps,
-  CrossChainPayload,
   CrossToken,
   EthereumChainConfig,
+  CrossChainPayload,
   TxObservableFactory,
 } from 'shared/model';
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
-import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
+import { fromWei, toWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
@@ -31,6 +33,7 @@ import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
 import { useAccount, useWallet } from '../../../providers';
+import { CrabDVMHecoBridgeConfig } from '../crabDVM-heco/model';
 import { useTransfer } from './hooks/transfer';
 import { IssuingPayload } from './model';
 import { EstimateAmtRequest, EstimateAmtResponse } from './ts-proto/gateway/gateway_pb';
@@ -146,10 +149,8 @@ export function CBridge({
     let promise = Promise.resolve({});
 
     if (direction.from.host === 'polygon') {
-      const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-
-      promise = web3.eth.getGasPrice().then((res) => ({
-        gasPrice: new BN(res).add(new BN(res).div(new BN(10))).toString(),
+      promise = entrance.web3.currentProvider.getGasPrice().then((res) => ({
+        gasPrice: new BN(res.toString()).add(new BN(res.toString()).div(new BN(10))).toString(),
       }));
     }
 
@@ -321,14 +322,14 @@ export function CBridge({
           {
             name: t('Allowance'),
             content: (
-              <Typography.Text>
+              <span>
                 <span>
                   {fromWei({ value: allowance }, largeNumber, (num: string) =>
                     prettyNumber(num, { ignoreZeroDecimal: true })
                   )}
                 </span>
                 <span className="ml-1">{direction.from.symbol}</span>
-              </Typography.Text>
+              </span>
             ),
           },
           ...extraInfo,

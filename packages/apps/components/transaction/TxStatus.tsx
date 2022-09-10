@@ -1,6 +1,6 @@
 import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
 import { RecordStatus } from 'shared/config/constant';
-import { useITranslation } from 'shared/hooks';
+import { useITranslation } from 'shared/hooks/translation';
 import { HelixHistoryRecord } from 'shared/model';
 import { TransferDescription } from './TransferDescription';
 

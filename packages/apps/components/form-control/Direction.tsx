@@ -5,8 +5,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
 import { BridgeStatus, CrossChainDirection, CustomFormControlProps, HashInfo } from 'shared/model';
-import { getBridge } from 'shared/utils/bridge';
-import { fromWei, isKton, largeNumber, prettyNumber, updateStorage } from 'shared/utils/helper';
+import { fromWei, prettyNumber, largeNumber } from 'shared/utils/helper/balance';
+import { updateStorage } from 'shared/utils/helper/storage';
+import { isKton } from 'shared/utils/helper/validator';
+import { getBridge } from 'utils/bridge';
 import { CountLoading } from '../widget/CountLoading';
 import { Destination } from './Destination';
 
@@ -161,7 +163,7 @@ export function Direction({
                 onRefresh();
               }
             }}
-            className="hover:text-blue-400 transform transition-all duration-300"
+            className="hover:text-blue-400 transition-all duration-300"
           />
         </span>
       )}

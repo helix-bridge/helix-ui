@@ -1,15 +1,16 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Input, Radio, Tag, Typography } from 'antd';
-import { chain as lodashChain } from 'lodash';
+import { Input, Radio, Tag } from 'antd';
+import uniqWith from 'lodash/uniqWith';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { chainColors } from 'shared/config/theme';
 import { useLocalSearch } from 'shared/hooks';
 import { ChainConfig, TokenInfoWithMeta } from 'shared/model';
-import { chainConfigs, getDisplayName } from 'shared/utils/network';
-import { isTransferableTokenPair, tokenSearchFactory } from '../../utils';
-import { BaseModal } from '../widget/BaseModal';
+import { chainConfigs, getDisplayName } from 'utils/network';
+import { tokenSearchFactory } from '../../utils/token';
+import { isTransferableTokenPair } from '../../utils/validate';
+import BaseModal from '../widget/BaseModal';
 
 interface SelectTokenModalProps {
   visible: boolean;
@@ -23,24 +24,23 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
 
   const allTokens = useMemo(
     () =>
-      lodashChain(chainConfigs)
+      chainConfigs
         .filter((item) => !fromToken || !!fromToken.cross.find((cross) => cross.partner.name === item.name))
         .map((item) =>
           item.tokens
             .filter((token) => (!fromToken || isTransferableTokenPair(token, fromToken)) && !!token.cross.length)
             .map((token) => ({ ...token, meta: item }))
         )
-        .flatten()
-        .value(),
+        .flat(),
     [fromToken]
   );
 
   const allChains = useMemo(
     () =>
-      lodashChain(allTokens)
-        .map((item) => item.meta)
-        .uniqWith((pre, cure) => pre.name === cure.name)
-        .value(),
+      uniqWith(
+        allTokens.map((item) => item.meta),
+        (pre, cure) => pre.name === cure.name
+      ),
     [allTokens]
   );
 
@@ -55,7 +55,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
   );
 
   return (
-    <BaseModal title={t('Select Token')} visible={visible} footer={null} width={540} onCancel={onCancel}>
+    <BaseModal title={t('Select Token')} open={visible} footer={null} width={540} onCancel={onCancel}>
       <Input
         suffix={<SearchOutlined />}
         size="large"
@@ -106,7 +106,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
               <div className="flex items-center space-x-2">
                 <Logo name={item.logo} width={36} height={36} />
 
-                <Typography.Text>{item.name}</Typography.Text>
+                <span>{item.name}</span>
 
                 <Tag color={chainColors[item.meta.name] ?? 'processing'}>{getDisplayName(item.meta)}</Tag>
 

@@ -1,14 +1,16 @@
 import { ApiOutlined } from '@ant-design/icons';
 import { AutoComplete, Button, Form, Input, Tooltip } from 'antd';
-import { upperFirst } from 'lodash';
+import upperFirst from 'lodash/upperFirst';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IdentAccountAddress } from 'shared/components/widget/IdentAccountAddress';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { ConnectionStatus, CrossChainComponentProps, PolkadotChainConfig } from 'shared/model';
-import { convertToSS58, isValidAddressStrict } from 'shared/utils/helper';
-import { getDisplayName, isPolkadotNetwork } from 'shared/utils/network';
+import { convertToSS58 } from 'shared/utils/helper/address';
+import { isPolkadotNetwork } from 'shared/utils/network/network';
 import { useApi } from '../../providers';
+import { getDisplayName } from '../../utils/network';
+import { isValidAddressStrict } from '../../utils/validate';
 
 // eslint-disable-next-line complexity
 export function RecipientItem({

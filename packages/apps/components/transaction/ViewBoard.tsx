@@ -1,4 +1,4 @@
-import { prettyNumber } from 'shared/utils/helper';
+import { prettyNumber } from 'shared/utils/helper/balance';
 
 interface ViewBoardProps {
   title: string;

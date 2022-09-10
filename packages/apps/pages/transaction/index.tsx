@@ -1,27 +1,29 @@
 import { ClockCircleOutlined, SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Button, Input, message, Table, Tooltip, Typography } from 'antd';
-import { ColumnType } from 'antd/lib/table';
+import { Button, Input, message, Table, Tooltip } from 'antd';
+import type { ColumnType } from 'antd/lib/table';
 import { formatDistance, fromUnixTime } from 'date-fns';
 import format from 'date-fns-tz/format';
-import request from 'graphql-request';
+import { isAddress } from 'ethers/lib/utils';
+import { useQuery } from 'graphql-hooks';
 import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { from, map } from 'rxjs';
 import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
-import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
+import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { DATE_TIME_FORMAT } from 'shared/config/constant';
-import { ENDPOINT } from 'shared/config/env';
 import { SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
 import { HelixHistoryRecord, Network } from 'shared/model';
-import { convertToDvm, gqlName, isSS58Address, isValidAddress, prettyNumber, revertAccount } from 'shared/utils/helper';
-import { getChainConfig, getDisplayName } from 'shared/utils/network';
-import { getDetailPaths, getFeeAmountFromHelixRecord, getSentAmountFromHelixRecord } from 'shared/utils/record';
-import web3 from 'web3';
+import { revertAccount, convertToDvm } from 'shared/utils/helper/address';
+import { prettyNumber } from 'shared/utils/helper/balance';
+import { gqlName } from 'shared/utils/helper/common';
+import { isSS58Address, isValidAddress } from 'shared/utils/helper/validator';
+import { getChainConfig, getDisplayName } from 'utils/network';
+import { getFeeAmountFromHelixRecord, getSentAmountFromHelixRecord } from 'utils/record';
 import { HISTORY_RECORDS, Path } from '../../config';
+import { getDetailPaths } from '../../utils/record';
 
 function RecordAccount({ chain, account }: { chain: Network; account: string }) {
   const chainConfig = getChainConfig(chain, SYSTEM_CHAIN_CONFIGURATIONS);
@@ -33,15 +35,8 @@ function RecordAccount({ chain, account }: { chain: Network; account: string }) 
         <Logo name={chainConfig.logos[0].name} width={16} height={16} />
         <span className="capitalize">{getDisplayName(chainConfig)}</span>
       </span>
-      <Tooltip
-        title={
-          <Typography.Text
-            copyable={{ icon: <Icon name="copy1" className="text-white text-base transform translate-y-1" /> }}
-          >
-            {displayAccount}
-          </Typography.Text>
-        }
-      >
+
+      <Tooltip title={<TextWithCopy>{displayAccount}</TextWithCopy>}>
         <span className="truncate">{displayAccount}</span>
       </Tooltip>
     </div>
@@ -50,16 +45,29 @@ function RecordAccount({ chain, account }: { chain: Network; account: string }) 
 
 const PAGE_SIZE = 20;
 
+// eslint-disable-next-line complexity
 function Page() {
   const { t } = useTranslation('common');
   const router = useRouter();
   const [isValidSender, setIsValidSender] = useState(true);
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
   const [pageSize, setPageSize] = useState(PAGE_SIZE);
   const [account, setAccount] = useState<string | undefined>();
-  const [source, setSource] = useState<HelixHistoryRecord[]>([]);
-  const [loading, setLoading] = useState(true);
+  const acc = account && isAddress(account) ? account.toLowerCase() : account;
+
+  const {
+    loading,
+    data = { [gqlName(HISTORY_RECORDS)]: { total: 0, records: [] } },
+    refetch,
+  } = useQuery(HISTORY_RECORDS, {
+    variables: {
+      page: page - 1,
+      row: pageSize,
+      sender: acc,
+      recipient: acc,
+    },
+  });
+  const source = data[gqlName(HISTORY_RECORDS)];
 
   const columns: ColumnType<HelixHistoryRecord>[] = [
     {
@@ -159,26 +167,6 @@ function Page() {
     },
   ];
 
-  useEffect(() => {
-    const acc = account && web3.utils.isAddress(account) ? account.toLowerCase() : account;
-    const args = {
-      page: page - 1,
-      row: pageSize,
-      sender: acc,
-      recipient: acc,
-    };
-
-    const sub$$ = from(request(ENDPOINT, HISTORY_RECORDS, args))
-      .pipe(map((res) => res && res[gqlName(HISTORY_RECORDS)]))
-      .subscribe((result) => {
-        setTotal(result.total);
-        setSource(result.records);
-        setLoading(false);
-      });
-
-    return () => sub$$.unsubscribe();
-  }, [account, page, pageSize]);
-
   return (
     <>
       <div className="mt-2 lg:mt-4 pb-2 lg:pb-4 flex justify-between items-end">
@@ -190,7 +178,7 @@ function Page() {
           onChange={(event) => {
             const value = event.target.value;
 
-            if (value && !web3.utils.isAddress(value) && !isSS58Address(value)) {
+            if (value && !isAddress(value) && !isSS58Address(value)) {
               setIsValidSender(false);
               return;
             }
@@ -213,14 +201,7 @@ function Page() {
           type="link"
           onClick={() => {
             if (page === 1) {
-              setLoading(true);
-              from(request(ENDPOINT, HISTORY_RECORDS, { page: 0, row: pageSize, sender: account, recipient: account }))
-                .pipe(map((res) => res && res[gqlName(HISTORY_RECORDS)]))
-                .subscribe((result) => {
-                  setTotal(result.total);
-                  setSource(result.records);
-                  setLoading(false);
-                });
+              refetch({ page: 0, row: pageSize, sender: account, recipient: account });
             } else {
               setPage(1);
             }
@@ -236,7 +217,7 @@ function Page() {
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={source}
+        dataSource={source?.records ?? []}
         size="small"
         loading={loading}
         onRow={(record) => ({
@@ -257,7 +238,7 @@ function Page() {
             }
           },
         })}
-        pagination={{ pageSize, total, current: page, size: 'default' }}
+        pagination={{ pageSize, total: source?.total ?? 0, current: page, size: 'default' }}
         onChange={({ current, pageSize: size }) => {
           setPage(current ?? 1);
           setPageSize(size ?? PAGE_SIZE);

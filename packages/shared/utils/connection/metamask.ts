@@ -1,5 +1,15 @@
-import { DebouncedFunc, throttle } from 'lodash';
-import { catchError, combineLatest, from, map, merge, Observable, Observer, of, startWith, switchMap } from 'rxjs';
+import type { DebouncedFunc } from 'lodash';
+import throttle from 'lodash/throttle';
+import { Observable } from 'rxjs/internal/Observable';
+import { combineLatest } from 'rxjs/internal/observable/combineLatest';
+import { from } from 'rxjs/internal/observable/from';
+import { merge } from 'rxjs/internal/observable/merge';
+import { of } from 'rxjs/internal/observable/of';
+import { catchError } from 'rxjs/internal/operators/catchError';
+import { map } from 'rxjs/internal/operators/map';
+import { startWith } from 'rxjs/internal/operators/startWith';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import type { Observer } from 'rxjs/internal/types';
 import { SHORT_DURATION } from '../../config/constant';
 import {
   ConnectionStatus,

@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import BN from 'bn.js';
 import { useCallback, useState } from 'react';
-import { EMPTY } from 'rxjs';
+import { EMPTY } from 'rxjs/internal/observable/empty';
 import { useITranslation } from 'shared/hooks/translation';
 import { CrossChainDirection, CrossChainPayload } from 'shared/model';
 import { applyModalObs, approveToken, createTxWorkflow, getAllowance } from 'shared/utils/tx';

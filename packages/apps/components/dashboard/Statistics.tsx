@@ -3,7 +3,7 @@ import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Logo } from 'shared/components/widget/Logo';
 import { ChainConfig } from 'shared/model';
-import { getDisplayName } from 'shared/utils/network';
+import { getDisplayName } from 'utils/network';
 
 interface StatisticOverview {
   fromChain: ChainConfig;

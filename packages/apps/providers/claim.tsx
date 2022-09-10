@@ -1,17 +1,30 @@
 import { BN_ZERO } from '@polkadot/util';
 import { message } from 'antd';
 import BN from 'bn.js';
+import { Contract } from 'ethers';
+import type { BigNumber } from 'ethers';
 import { createContext, useCallback, useContext, useState } from 'react';
-import { filter, take, switchMap, iif, of, zip, tap, EMPTY, from, map, Observable, Subscription } from 'rxjs';
+import type { Observable } from 'rxjs/internal/Observable';
+import { EMPTY } from 'rxjs/internal/observable/empty';
+import { from } from 'rxjs/internal/observable/from';
+import { iif } from 'rxjs/internal/observable/iif';
+import { of } from 'rxjs/internal/observable/of';
+import { zip } from 'rxjs/internal/observable/zip';
+import { filter } from 'rxjs/internal/operators/filter';
+import { map } from 'rxjs/internal/operators/map';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { take } from 'rxjs/internal/operators/take';
+import { tap } from 'rxjs/internal/operators/tap';
+import type { Subscription } from 'rxjs/internal/Subscription';
 import { abi } from 'shared/config/abi';
-import { ICamelCaseKeys, HelixHistoryRecord, ConnectionStatus } from 'shared/model';
-import { getBridge } from 'shared/utils/bridge';
+import { ConnectionStatus, HelixHistoryRecord, ICamelCaseKeys } from 'shared/model';
+import { getBridge } from 'utils/bridge';
 import { connect, entrance } from 'shared/utils/connection';
-import { getChainConfig } from 'shared/utils/network';
+import { getChainConfig } from 'utils/network';
 import { getAllowance } from 'shared/utils/tx';
 import {
-  Darwinia2EthereumRecord,
   Darwinia2EthereumHistoryRes,
+  Darwinia2EthereumRecord,
   EthereumDarwiniaBridgeConfig,
 } from '../bridges/helix/ethereum-darwinia/model';
 import { claimToken } from '../bridges/helix/ethereum-darwinia/utils';
@@ -35,12 +48,11 @@ interface ClaimCtx {
 }
 
 function isSufficient(config: EthereumDarwiniaBridgeConfig, tokenAddress: string, amount: BN): Observable<boolean> {
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-  const contract = new web3.eth.Contract(abi.tokenIssuingABI, config.contracts.issuing);
-  const limit = from(contract.methods.dailyLimit(tokenAddress).call() as Promise<string>);
-  const toadySpent = from(contract.methods.spentToday(tokenAddress).call() as Promise<string>);
+  const contract = new Contract(config.contracts.issuing, abi.tokenIssuingABI, entrance.web3.currentProvider);
+  const limit = from(contract.dailyLimit(tokenAddress) as Promise<BigNumber>);
+  const toadySpent = from(contract.spentToday(tokenAddress) as Promise<BigNumber>);
 
-  return zip([limit, toadySpent]).pipe(map(([total, spent]) => new BN(total).sub(new BN(spent)).gte(amount)));
+  return zip([limit, toadySpent]).pipe(map(([total, spent]) => total.sub(spent).gte(amount.toString())));
 }
 
 export const ClaimContext = createContext<ClaimCtx | null>(null);

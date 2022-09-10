@@ -1,7 +1,7 @@
-import { Typography } from 'antd';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
-import { from, mergeMap } from 'rxjs';
+import { from } from 'rxjs/internal/observable/from';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import {
   Bridge,
   CrossChainComponentProps,
@@ -11,7 +11,8 @@ import {
   PolkadotChainConfig,
   TxObservableFactory,
 } from 'shared/model';
-import { fromWei, isRing, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
+import { fromWei, toWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
+import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
@@ -131,14 +132,14 @@ export function Ethereum2Darwinia({
           {
             name: t('Allowance'),
             content: (
-              <Typography.Text className="capitalize">
+              <span className="capitalize">
                 <span>
                   {fromWei({ value: allowance }, largeNumber, (num: string) =>
                     prettyNumber(num, { ignoreZeroDecimal: true })
                   )}
                 </span>
                 <span className="capitalize ml-1">{direction.from.symbol}</span>
-              </Typography.Text>
+              </span>
             ),
           },
         ]}

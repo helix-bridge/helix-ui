@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
 import { ConnectionStatus, EthereumChainConfig, SupportedWallet } from 'shared/model';
 import { switchEthereumChain } from 'shared/utils/connection';
-import { updateStorage } from 'shared/utils/helper';
-import { isPolkadotNetwork } from 'shared/utils/network';
+import { updateStorage } from 'shared/utils/helper/storage';
+import { isPolkadotNetwork } from 'shared/utils/network/network';
 import { useAccount, useApi, useWallet } from '../../../providers';
 import { SelectAccountModal } from './SelectAccountModal';
 import { SelectWalletModal } from './SelectWalletModal';
@@ -17,7 +17,7 @@ const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
 });
 
 // eslint-disable-next-line complexity
-export function ActiveAccount() {
+export default function ActiveAccount() {
   const { departureConnection, departure, connectDepartureNetwork, isConnecting } = useApi();
   const { t } = useTranslation();
   const { account, setAccount } = useAccount();
@@ -62,6 +62,7 @@ export function ActiveAccount() {
               className={`flex items-center justify-around px-1 overflow-hidden`}
               icon={
                 matched ? (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img src={`/image/${departureConnection.type}.svg`} width={18} height={18} />
                 ) : (
                   <CloseCircleOutlined />

@@ -3,7 +3,7 @@ import React from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { SupportedWallet } from 'shared/model';
 import { useApi } from '../../../providers';
-import { BaseModal } from '../BaseModal';
+import BaseModal from '../BaseModal';
 
 type Props = {
   visible: boolean;
@@ -26,7 +26,7 @@ export const SelectWalletModal: React.FC<Props> = ({ visible, defaultValue, titl
     <BaseModal
       title={title}
       destroyOnClose
-      visible={visible}
+      open={visible}
       maskClosable={false}
       onCancel={onCancel}
       bodyStyle={{
@@ -44,7 +44,7 @@ export const SelectWalletModal: React.FC<Props> = ({ visible, defaultValue, titl
               value={item.name}
               key={item.name}
               disabled={disable}
-              className={`radio-list ${disable ? '' : 'transform transition-all duration-300 hover:scale-105'}`}
+              className={`radio-list ${disable ? '' : 'transition-all duration-300 hover:scale-105'}`}
             >
               <Logo name={item.logo} width={36} height={36} />
               <span className="ml-4 capitalize">{item.name}</span>

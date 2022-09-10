@@ -1,15 +1,15 @@
 import BN from 'bn.js';
-import Web3 from 'web3';
+import { Contract } from 'ethers';
+import type { BigNumber } from 'ethers';
 import { abi } from '../../../config/abi';
 import { entrance } from '../../connection';
 
 export async function getBalance(tokenAddress: string, account: string): Promise<BN> {
   try {
-    const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-    const contract = new web3.eth.Contract(abi.tokenABI, tokenAddress);
-    const balance = await contract.methods.balanceOf(account).call();
+    const contract = new Contract(tokenAddress, abi.tokenABI, entrance.web3.currentProvider);
+    const balance = await contract.balanceOf(account).then((res: BigNumber) => res.toString());
 
-    return Web3.utils.toBN(balance);
+    return new BN(balance);
   } catch (err) {
     console.info(
       `%c [ get token(${tokenAddress}) balance error. account: ${account} ]-52`,
@@ -18,5 +18,5 @@ export async function getBalance(tokenAddress: string, account: string): Promise
     );
   }
 
-  return Web3.utils.toBN(0);
+  return new BN(0);
 }

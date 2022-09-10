@@ -1,11 +1,11 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
 import { hexToU8a } from '@polkadot/util';
-import { Typography } from 'antd';
 import BN from 'bn.js';
-import { upperFirst } from 'lodash';
+import upperFirst from 'lodash/upperFirst';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { from, mergeMap } from 'rxjs';
+import { from } from 'rxjs/internal/observable/from';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import {
   CrossChainComponentProps,
   CrossToken,
@@ -14,7 +14,8 @@ import {
   TxObservableFactory,
 } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { fromWei, isRing, prettyNumber, toWei } from 'shared/utils/helper';
+import { fromWei, toWei, prettyNumber } from 'shared/utils/helper/balance';
+import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
@@ -86,9 +87,9 @@ export function Substrate2Parachain({
     const sub$$ = from(waitUntilConnected(api))
       .pipe(
         mergeMap(() => {
-          const module = `from${upperFirst(direction.from.meta.name)}Issuing`;
+          const section = `from${upperFirst(direction.from.meta.name)}Issuing`;
 
-          return from(api.query[module].secureLimitedRingAmount());
+          return from(api.query[section].secureLimitedRingAmount());
         })
       )
       .subscribe((result) => {
@@ -134,11 +135,11 @@ export function Substrate2Parachain({
           {
             name: t('Daily limit'),
             content: dailyLimit ? (
-              <Typography.Text>
+              <span>
                 {fromWei({ value: dailyLimit, decimals: 18 }, (value) =>
                   prettyNumber(value, { ignoreZeroDecimal: true })
                 )}
-              </Typography.Text>
+              </span>
             ) : (
               <EyeInvisibleFilled />
             ),

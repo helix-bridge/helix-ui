@@ -29,6 +29,7 @@
     "@commitlint/config-conventional": "^12.0.1",
     "@cypress/react": "^5.9.2",
     "@cypress/webpack-dev-server": "^1.4.0",
+    "@next/eslint-plugin-next": "12.2.5",
     "@testing-library/cypress": "^8.0.1",
     "@types/jest": "^27.4.1",
     "@types/lodash": "^4.14.181",
@@ -76,5 +77,8 @@
   "lint-staged": {
     "packages/**/*.scss": "stylelint",
     "packages/**/*.{ts,tsx}": ["eslint --fix", "prettier --write"]
+  },
+  "resolutions": {
+    "ethereumjs-abi": "https://registry.npmjs.org/ethereumjs-abi/-/ethereumjs-abi-0.6.8.tgz"
   }
 }

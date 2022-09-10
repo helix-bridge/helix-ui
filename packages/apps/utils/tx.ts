@@ -1,5 +1,10 @@
-import { isBoolean, isString } from 'lodash';
-import { EMPTY, Observable, of, switchMap, throwError } from 'rxjs';
+import isBoolean from 'lodash/isBoolean';
+import isString from 'lodash/isString';
+import { Observable } from 'rxjs/internal/Observable';
+import { EMPTY } from 'rxjs/internal/observable/empty';
+import { of } from 'rxjs/internal/observable/of';
+import { throwError } from 'rxjs/internal/observable/throwError';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { NullableFields, Tx } from 'shared/model';
 
 type GenValidationFn<T> = (params: T) => [boolean, string][];

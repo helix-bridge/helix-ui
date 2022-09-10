@@ -1,6 +1,5 @@
 import { AccountData, AccountInfo } from '@darwinia/types';
-import { BN_ZERO } from '@polkadot/util';
-import BN from 'bn.js';
+import { BN_ZERO, BN } from '@polkadot/util';
 import { ChainConfig, CrossToken } from '../../../model';
 import { entrance, waitUntilConnected } from '../../connection';
 

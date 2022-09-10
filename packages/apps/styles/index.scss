@@ -12,7 +12,7 @@ $bg-dark: #151d35;
   overflow: hidden;
 }
 
-.radio-list {
+#helix .radio-list {
   display: flex;
   align-items: center;
   padding: 2rem 10px;
@@ -47,16 +47,6 @@ $bg-dark: #151d35;
 
   .ant-input-number-input-wrap {
     width: 70%;
-  }
-}
-
-.ant-typography.custom-copy-icon {
-  display: flex;
-  align-items: center;
-
-  & > u {
-    display: flex;
-    align-items: center;
   }
 }
 
@@ -130,3 +120,4 @@ $bg-dark: #151d35;
 @import './loading.scss';
 @import './reset.scss';
 @import './modal.scss';
+@import './apps.scss';

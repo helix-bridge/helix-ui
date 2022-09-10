@@ -1,5 +1,3 @@
-import { gql } from 'graphql-request';
-
 export const ACCOUNTS = `
   query accounts($chain: String) {
     accounts(chain: $chain) {
@@ -21,7 +19,7 @@ export const STATISTICS_QUERY = `
   }
 `;
 
-export const HISTORY_RECORDS = gql`
+export const HISTORY_RECORDS = `
   query historyRecords($row: Int!, $page: Int!, $sender: String, $recipient: String) {
     historyRecords(row: $row, page: $page, sender: $sender, recipient: $recipient) {
       total
@@ -51,7 +49,7 @@ export const HISTORY_RECORDS = gql`
   }
 `;
 
-export const HISTORY_RECORDS_IN_RESULTS = gql`
+export const HISTORY_RECORDS_IN_RESULTS = `
   query historyRecords($row: Int!, $page: Int!, $sender: String, $results: [Int]) {
     historyRecords(row: $row, page: $page, sender: $sender, results: $results) {
       total
@@ -82,7 +80,7 @@ export const HISTORY_RECORDS_IN_RESULTS = gql`
   }
 `;
 
-export const HISTORY_RECORD_BY_ID = gql`
+export const HISTORY_RECORD_BY_ID = `
   query historyRecordById($id: String!) {
     historyRecordById(id: $id) {
       sendAmount
@@ -110,7 +108,7 @@ export const HISTORY_RECORD_BY_ID = gql`
   }
 `;
 
-export const STATUS_STATISTICS = gql`
+export const STATUS_STATISTICS = `
   query historyRecords($sender: String, $results: [Int!]) {
     historyRecords(sender: $sender, results: $results) {
       total

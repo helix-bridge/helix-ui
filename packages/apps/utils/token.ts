@@ -1,7 +1,7 @@
 import { message } from 'antd';
-import { CrossOverview, TokenWithBridgesInfo } from 'shared/model';
-import { addAsset } from 'shared/utils/connection';
-import Web3 from 'web3';
+import { isAddress } from 'ethers/lib/utils';
+import { TokenWithBridgesInfo } from 'shared/model';
+import { addAsset } from 'shared/utils/connection/metamask';
 
 export function tokenSearchFactory<T extends { address: string; name: string }>(tokens: T[]) {
   const symbols = tokens.map((token) => token.name.toLowerCase());
@@ -9,7 +9,7 @@ export function tokenSearchFactory<T extends { address: string; name: string }>(
 
   return (value: string) => {
     if (value) {
-      if (Web3.utils.isAddress(value)) {
+      if (isAddress(value)) {
         return tokens.filter((token) => token.address === value);
       } else if (symbols.some((symbol) => symbol.includes(value.toLowerCase()))) {
         return tokens.filter((token) => token.name.toLowerCase().includes(value.toLowerCase()));
@@ -41,18 +41,6 @@ export async function addToMetamask(token: TokenWithBridgesInfo) {
     message.error('Some error occurred while add the token to metamask, consider add it manually');
   }
 }
-
-export const isTransferableTokenPair = (token1: TokenWithBridgesInfo, token2: TokenWithBridgesInfo): boolean => {
-  const check = (token: TokenWithBridgesInfo) => (item: CrossOverview) =>
-    item.partner.name === token.host && item.partner.symbol === token.symbol;
-
-  const inToken1 = check(token1);
-  const inToken2 = check(token2);
-  const overviewList1 = token1.cross.filter(inToken2);
-  const overviewList2 = token2.cross.filter(inToken1);
-
-  return !!overviewList1.length && !!overviewList2.length;
-};
 
 export const asSameCategory = (category1: string, category2: string): boolean => {
   const c1 = category1.split('-')[0];

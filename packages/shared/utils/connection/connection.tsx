@@ -1,8 +1,13 @@
+import { isHex, stringToHex } from '@polkadot/util';
 import { Modal } from 'antd';
-import Link from 'antd/lib/typography/Link';
 import { Trans } from 'react-i18next';
-import { EMPTY, from, map, mergeMap, Observable, of, switchMap } from 'rxjs';
-import Web3 from 'web3';
+import type { Observable } from 'rxjs/internal/Observable';
+import { EMPTY } from 'rxjs/internal/observable/empty';
+import { from } from 'rxjs/internal/observable/from';
+import { of } from 'rxjs/internal/observable/of';
+import { map } from 'rxjs/internal/operators/map';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import {
   ChainConfig,
   Connection,
@@ -12,7 +17,6 @@ import {
   PolkadotConnection,
   SupportedWallet,
 } from '../../model';
-import { chainConfigs } from '../network';
 import { entrance } from './entrance';
 import { getMetamaskConnection, isMetamaskInstalled, switchMetamaskNetwork } from './metamask';
 import { getPolkadotConnection } from './polkadot';
@@ -25,10 +29,10 @@ const showWarning = (plugin: string, downloadUrl: string) =>
     content: (
       <Trans i18nKey="MissingPlugin">
         We need {{ plugin }} plugin to continue. Please
-        <Link href={downloadUrl} target="_blank">
+        <a href={downloadUrl} target="_blank" rel="noreferrer">
           install
-        </Link>
-        or <Link>enable</Link> it first.
+        </a>
+        or <a>enable</a> it first.
       </Trans>
     ),
     okText: <Trans>OK</Trans>,
@@ -38,13 +42,13 @@ const connectPolkadot: ConnectFn<PolkadotConnection> = (network) =>
   !network ? EMPTY : getPolkadotConnection(network as PolkadotChainConfig);
 
 export async function isNetworkConsistent(chain: EthereumChainConfig, id = ''): Promise<boolean> {
-  id = id && Web3.utils.isHex(id) ? parseInt(id, 16).toString() : id;
+  id = id && isHex(id) ? parseInt(id, 16).toString() : id;
   // id 1: eth mainnet 3: ropsten 4: rinkeby 5: goerli 42: kovan  43: pangolin 44: crab
-  const web3 = entrance.web3.getInstance(entrance.web3.defaultProvider);
-  const actualId: string | number = id ? await Promise.resolve(id) : await web3.eth.net.getId();
+  const web3 = entrance.web3.currentProvider;
+  const actualId: string | number = id ? await Promise.resolve(id) : await web3.getNetwork().then((res) => res.chainId);
   const storedId = chain.ethereumChain.chainId;
 
-  return storedId === Web3.utils.toHex(actualId);
+  return storedId === stringToHex(String(actualId));
 }
 
 export const isMetamaskChainConsistent = (network: EthereumChainConfig) => {
@@ -99,22 +103,3 @@ export const connect: ConnectFn<Connection> = (chain, wallet) => {
 
   return walletConnections[wallet ?? chain.wallets[0]](chain, wallet);
 };
-
-export function convertConnectionToChainConfig(connection: Connection): ChainConfig | null {
-  const { type, chainId } = connection;
-
-  if (type === 'unknown') {
-    return null;
-  }
-
-  const config = chainConfigs.find((item) => {
-    const typeMatch = item.wallets.includes(type);
-    const value = (item as EthereumChainConfig).ethereumChain
-      ? (item as EthereumChainConfig).ethereumChain.chainId
-      : item.name;
-
-    return typeMatch && value === chainId;
-  });
-
-  return config ?? null;
-}

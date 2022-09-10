@@ -1,10 +1,11 @@
 import { EyeInvisibleFilled } from '@ant-design/icons';
 import { BN_ZERO } from '@polkadot/util';
-import { Typography } from 'antd';
 import BN from 'bn.js';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
-import { from, mergeMap, switchMap } from 'rxjs';
+import { from } from 'rxjs/internal/observable/from';
+import { mergeMap } from 'rxjs/internal/operators/mergeMap';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import {
   CrossChainComponentProps,
   CrossChainPayload,
@@ -14,7 +15,8 @@ import {
   TxObservableFactory,
 } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { fromWei, isRing, largeNumber, prettyNumber, toWei } from 'shared/utils/helper';
+import { fromWei, toWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
+import { isRing } from 'shared/utils/helper/validator';
 import { getS2SMappingAddress } from 'shared/utils/mappingToken';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
@@ -99,8 +101,8 @@ export function SubstrateDVM2Substrate({
     const sub$$ = from(waitUntilConnected(api))
       .pipe(
         mergeMap(() => {
-          const module = arrival.meta.isTest ? 'substrate2SubstrateBacking' : 'toCrabBacking';
-          return from(api.query[module].secureLimitedRingAmount());
+          const section = arrival.meta.isTest ? 'substrate2SubstrateBacking' : 'toCrabBacking';
+          return from(api.query[section].secureLimitedRingAmount());
         })
       )
       .subscribe((result) => {
@@ -150,26 +152,26 @@ export function SubstrateDVM2Substrate({
           {
             name: t('Allowance'),
             content: (
-              <Typography.Text className="capitalize">
+              <span className="capitalize">
                 <span>
                   {fromWei({ value: allowance }, largeNumber, (num: string) =>
                     prettyNumber(num, { ignoreZeroDecimal: true })
                   )}
                 </span>
                 <span className="capitalize ml-1">{direction.from.symbol}</span>
-              </Typography.Text>
+              </span>
             ),
           },
           {
             name: t('Daily limit'),
             content: dailyLimit ? (
-              <Typography.Text>
+              <span>
                 {dailyLimit.isZero()
                   ? t('Infinite')
                   : fromWei({ value: dailyLimit, decimals: 9 }, (val: string) =>
                       prettyNumber(val, { ignoreZeroDecimal: true })
                     )}
-              </Typography.Text>
+              </span>
             ) : (
               <EyeInvisibleFilled />
             ),

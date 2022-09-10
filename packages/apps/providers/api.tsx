@@ -1,6 +1,9 @@
-import { negate } from 'lodash';
+import negate from 'lodash/negate';
 import { createContext, useCallback, useContext, useReducer, useState } from 'react';
-import { EMPTY, iif, of, Subscription } from 'rxjs';
+import { EMPTY } from 'rxjs/internal/observable/empty';
+import { iif } from 'rxjs/internal/observable/iif';
+import { of } from 'rxjs/internal/observable/of';
+import type { Subscription } from 'rxjs/internal/Subscription';
 import { isDev } from 'shared/config/env';
 import {
   Action,
@@ -14,8 +17,9 @@ import {
   PolkadotConnection,
 } from 'shared/model';
 import { connect } from 'shared/utils/connection';
-import { convertToSS58, getDirectionFromSettings } from 'shared/utils/helper';
-import { isEthereumNetwork } from 'shared/utils/network';
+import { convertToSS58 } from 'shared/utils/helper/address';
+import { getDirectionFromSettings } from 'shared/utils/helper/url';
+import { isEthereumNetwork } from 'shared/utils/network/network';
 
 interface StoreState {
   departureConnection: Connection;

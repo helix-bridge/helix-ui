@@ -1,18 +1,25 @@
-import { BN_ZERO } from '@polkadot/util';
-import { decodeAddress } from '@polkadot/util-crypto';
-import BN from 'bn.js';
-import { upperFirst } from 'lodash';
-import { filter, from, map, Observable, switchMap, take, zip } from 'rxjs';
+import { decodeAddress } from '@polkadot/keyring';
+import { BN, BN_ZERO } from '@polkadot/util';
+import { Contract } from 'ethers';
+import upperFirst from 'lodash/upperFirst';
+import type { Observable } from 'rxjs/internal/Observable';
+import { from } from 'rxjs/internal/observable/from';
+import { zip } from 'rxjs/internal/observable/zip';
+import { filter } from 'rxjs/internal/operators/filter';
+import { map } from 'rxjs/internal/operators/map';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { take } from 'rxjs/internal/operators/take';
 import { abi } from 'shared/config/abi';
 import { ChainConfig, LockEventsStorage, PolkadotChainConfig, RequiredPartial, Tx, TxFn } from 'shared/model';
-import { getBridge } from 'shared/utils/bridge';
 import { connect, entrance } from 'shared/utils/connection';
-import { encodeBlockHeader, isKton, isRing, toWei } from 'shared/utils/helper';
-import { ClaimNetworkPrefix, encodeMMRRootMessage, getMMR } from 'shared/utils/mmr';
+import { toWei } from 'shared/utils/helper/balance';
+import { encodeBlockHeader } from 'shared/utils/helper/block';
+import { isKton, isRing } from 'shared/utils/helper/validator';
 import { buf2hex, genEthereumContractTxObs, getMPTProof, signAndSendExtrinsic } from 'shared/utils/tx';
-import { Contract } from 'web3-eth-contract';
+import { getBridge } from 'utils/bridge';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
+import { ClaimNetworkPrefix, encodeMMRRootMessage, getMMR } from '../../../../utils/mmr';
 import { validationObsFactory } from '../../../../utils/tx';
 import { EthereumDarwiniaBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 
@@ -39,15 +46,17 @@ export const issue: TxFn<IssuingPayload> = ({ sender, direction, recipient, brid
     from: { address },
     to,
   } = direction;
-  const options = to.meta.isTest ? { from: sender, gasPrice: '500000000000' } : { from: sender };
-
   recipient = buf2hex(decodeAddress(recipient, false, (to.meta as PolkadotChainConfig).ss58Prefix).buffer);
 
-  return genEthereumContractTxObs(address, (contract) =>
-    contract.methods
-      .transferFrom(sender, bridge.config.contracts.backing, toWei({ value: to.amount }), recipient)
-      .send(options)
-  );
+  return genEthereumContractTxObs(address, (contract) => {
+    return contract['transferFrom(address,address,uint256,bytes)'](
+      sender,
+      bridge.config.contracts.backing,
+      toWei({ value: to.amount }),
+      recipient,
+      to.meta.isTest ? { gasPrice: '512000000000' } : undefined
+    );
+  });
 };
 
 /**
@@ -87,7 +96,7 @@ export function claimToken({
   const bridge = getBridge<EthereumDarwiniaBridgeConfig>([direction.from, direction.to]);
   const networkPrefix = upperFirst(departure.name) as ClaimNetworkPrefix;
   const apiObs = from(entrance.polkadot.getInstance(departure.provider).isReady);
-  const header = encodeBlockHeader(blockHeaderStr);
+  const headerObs = encodeBlockHeader(blockHeaderStr);
   const storageKey = getD2ELockEventsStorageKey(blockNumber, bridge.config.lockEvents);
 
   const accountObs = connect(arrival).pipe(
@@ -96,49 +105,55 @@ export function claimToken({
     take(1)
   );
 
+  const mmrRootMessageObs = from(
+    encodeMMRRootMessage({
+      prefix: networkPrefix,
+      methodID: '0x479fbdf9',
+      index: mmrIndex,
+      root: mmrRoot,
+    })
+  );
+
   return apiObs.pipe(
     switchMap((api) => {
       const eventsProofObs = from(getMPTProof(api, blockHash, storageKey)).pipe(map((str) => str.toHex()));
 
       return MMRRoot && best && best > blockNumber
-        ? zip([from(getMMR(api, blockNumber, best, blockHash)), eventsProofObs, accountObs]).pipe(
+        ? zip([from(getMMR(api, blockNumber, best, blockHash)), eventsProofObs, accountObs, headerObs]).pipe(
             map(
-              ([mmrProof, eventsProofStr, account]) =>
+              ([mmrProof, eventsProofStr, account, header]) =>
                 (contract: Contract) =>
-                  contract.methods
-                    .verifyProof(
-                      '0x' + MMRRoot,
-                      best,
-                      header.toHex(),
-                      mmrProof.peaks,
-                      mmrProof.siblings,
-                      eventsProofStr
-                    )
-                    .send({ from: account })
-            )
-          )
-        : zip([from(getMMR(api, blockNumber, mmrIndex, blockHash)), eventsProofObs, accountObs]).pipe(
-            map(([mmrProof, eventsProofStr, account]) => {
-              const mmrRootMessage = encodeMMRRootMessage({
-                prefix: networkPrefix,
-                methodID: '0x479fbdf9',
-                index: mmrIndex,
-                root: mmrRoot,
-              });
-
-              return (contract: Contract) =>
-                contract.methods
-                  .appendRootAndVerifyProof(
-                    mmrRootMessage.toHex(),
-                    mmrSignatures.split(','),
-                    mmrRoot,
-                    mmrIndex,
+                  contract.verifyProof(
+                    '0x' + MMRRoot,
+                    best,
                     header.toHex(),
                     mmrProof.peaks,
                     mmrProof.siblings,
-                    eventsProofStr
+                    eventsProofStr,
+                    { from: account }
                   )
-                  .send({ from: account });
+            )
+          )
+        : zip([
+            from(getMMR(api, blockNumber, mmrIndex, blockHash)),
+            eventsProofObs,
+            accountObs,
+            headerObs,
+            mmrRootMessageObs,
+          ]).pipe(
+            map(([mmrProof, eventsProofStr, account, header, mmrRootMessage]) => {
+              return (contract: Contract) =>
+                contract.appendRootAndVerifyProof(
+                  mmrRootMessage.toHex(),
+                  mmrSignatures.split(','),
+                  mmrRoot,
+                  mmrIndex,
+                  header.toHex(),
+                  mmrProof.peaks,
+                  mmrProof.siblings,
+                  eventsProofStr,
+                  { from: account }
+                );
             })
           );
     }),

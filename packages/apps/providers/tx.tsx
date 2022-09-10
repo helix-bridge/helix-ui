@@ -1,6 +1,8 @@
 import { notification } from 'antd';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { delay, Observer, of } from 'rxjs';
+import { of } from 'rxjs/internal/observable/of';
+import { delay } from 'rxjs/internal/operators/delay';
+import type { Observer } from 'rxjs/internal/types';
 import { TxStatus } from 'shared/components/widget/TxStatus';
 import { LONG_DURATION } from 'shared/config/constant';
 import { RequiredPartial, Tx } from 'shared/model';
@@ -11,8 +13,6 @@ export interface TxCtx {
   setCanceler: React.Dispatch<React.SetStateAction<(() => void) | null>>;
   tx: Tx | null;
   observer: Observer<Tx>;
-  isPersonalHistoryVisible: boolean;
-  setIsPersonalHistoryVisible: (is: boolean) => void;
 }
 
 export const TxContext = createContext<TxCtx | null>(null);
@@ -23,7 +23,6 @@ export const TxProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   const { t } = useITranslation();
   const [tx, setTx] = useState<Tx | null>(null);
   const [canceler, setCanceler] = useState<(() => void) | null>(null);
-  const [isPersonalHistoryVisible, setIsPersonalHistoryVisible] = useState<boolean>(false);
 
   const observer = useMemo<Observer<Tx>>(() => {
     return {
@@ -56,9 +55,7 @@ export const TxProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   }, [tx]);
 
   return (
-    <TxContext.Provider
-      value={{ setTx, tx, observer, setCanceler, setIsPersonalHistoryVisible, isPersonalHistoryVisible }}
-    >
+    <TxContext.Provider value={{ setTx, tx, observer, setCanceler }}>
       {children}
       <TxStatus
         tx={tx}

@@ -9,7 +9,7 @@ import {
 import React from 'react';
 import { useMemo } from 'react';
 import { CBridgeRecordStatus, RecordStatus } from '../../config/constant';
-import { useITranslation } from '../../hooks';
+import { useITranslation } from '../../hooks/translation';
 
 const StatusIcons = [
   ClockCircleFilled,

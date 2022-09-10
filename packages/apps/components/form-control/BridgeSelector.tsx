@@ -1,12 +1,12 @@
 import { FrownOutlined, MehOutlined } from '@ant-design/icons';
 import { Badge, Radio, Result, Space, Tooltip } from 'antd';
-import { matches } from 'lodash';
+import matches from 'lodash/matches';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo } from 'react';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { isProdDeployment } from 'shared/config/env';
 import { Bridge, CrossChainDirection, CrossToken, CustomFormControlProps } from 'shared/model';
-import { getBridges } from 'shared/utils/bridge';
+import { getBridges } from 'utils/bridge';
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { BridgeState } from '../bridge/BridgeState';
 import { TokenOnChain } from '../widget/TokenOnChain';
