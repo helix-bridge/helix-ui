@@ -91,7 +91,7 @@ function component() {
 
             export const $1 = CBridge;
         " >>$2'/'$1'.tsx'
-    else 
+    else
         echo "
             export function $1() {
                 return <span>$1</span>;
@@ -114,8 +114,6 @@ function initModel() {
 
         export type ${name}BridgeConfig = Required<BridgeConfig<${name}ContractConfig>>;
     " >>$1'/bridge.ts'
-
-    echo "export * from './${origin}-${target}';" >>'../shared/model/bridge/index.ts'
 
     echo "
         import { Bridge, CrossChainPayload, CrossToken, ChainConfig } from 'shared/model';
@@ -144,7 +142,7 @@ function initConfig() {
     echo "
         import { ${origin}Config, ${target}Config } from 'shared/config/network';
         import { Bridge } from 'shared/model';
-        import { ${from}${to}BridgeConfig } from 'shared/model';
+        import { ${from}${to}BridgeConfig } from '../model';
 
         const ${origin}${to}Config: ${from}${to}BridgeConfig = { 
             contracts: {
@@ -157,7 +155,11 @@ function initConfig() {
             name: '${origin}-${target}',
             category: '${category}',
         });
-    " >>$1'/'${origin}'-'${target}'.ts'
+    " >>$1'/bridge.ts'
+
+    echo "
+        export * from './bridge';
+    " >>$1'/index.ts'
 }
 
 function initUitls() {
@@ -200,21 +202,6 @@ function initHooks() {
     echo "export default void 0;" >>$1'/index.ts'
 }
 
-function register() {
-    local BAC=$(cat ./bridges/register.tsx)
-
-    echo "
-        import { ${origin}${to} } from 'shared/config/bridges/${origin}-${target}';
-        import { ${1}, ${2} } from './${origin}-${target}';" >'./bridges/register.tsx'
-
-    echo "$BAC" >>'./bridges/register.tsx'
-
-    echo "
-        ${origin}${to}.setIssueComponents($1 as FunctionComponent);
-        ${origin}${to}.setRedeemComponents($2 as FunctionComponent);
-    " >>'./bridges/register.tsx'
-}
-
 function updateSupports() {
     local BRGS=$(sed -r 's/(.*);/\1/' ../shared/model/bridge/supports.ts)
 
@@ -229,7 +216,7 @@ function updatePredicateFns() {
         export const is${departure} = predicate('${origin}', '${target}');
         export const is${arrival} = predicate('${target}', '${origin}');
         export const is${from}${to} = or(is${departure}, is${arrival});
-    " >> '../shared/utils/bridge/predicates.ts'
+    " >>'./utils/bridge/predicates.ts'
 }
 
 function init() {
@@ -239,7 +226,6 @@ function init() {
     local dir=$subdir'/'$origin'-'$target
     local path='./bridges/'$dir
     local index=$path'/index.ts'
-    local shared='../shared'
 
     mkdir $path
 
@@ -259,15 +245,14 @@ function init() {
     mkdir $path'/model'
     initModel $path'/model' $departure $arrival
 
-    initConfig $shared'/config/bridges' $departure $arrival
+    mkdir $path'/config'
+    initConfig $path'/config' $departure $arrival
 
     component $departure $path
     component $arrival $path
 
     indexFile $departure $index
     indexFile $arrival $index
-
-    register $departure $arrival $path
 
     updateSupports
     updatePredicateFns $departure $arrival
@@ -280,9 +265,8 @@ checkExist
 init
 
 ../../node_modules/prettier/bin-prettier.js ./bridges/${subdir}/${origin}'-'${target}/**/*.{ts,tsx} --write
-../../node_modules/prettier/bin-prettier.js ./bridges/register.tsx --write
 ../../node_modules/prettier/bin-prettier.js ../shared/config/**/*.ts --write
 ../../node_modules/prettier/bin-prettier.js ../shared/model/**/*.ts --write
-../../node_modules/prettier/bin-prettier.js ../shared/utils/bridge/predicates.ts --write
+../../node_modules/prettier/bin-prettier.js ./utils/bridge/predicates.ts --write
 cd ../../
 yarn eslint
