@@ -3,7 +3,7 @@ import { ParachainChainConfig } from '../../model';
 export const crabParachainConfig: ParachainChainConfig = {
   isTest: false,
   logos: [
-    { name: 'crab.png', type: 'main' },
+    { name: 'crab-parachain.svg', type: 'main' },
     { name: 'crab.svg', type: 'minor' },
     { name: 'crab-logo.svg', type: 'assist' },
   ],

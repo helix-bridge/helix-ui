@@ -19,6 +19,7 @@
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "dependencies": {
+    "@amcharts/amcharts5": "^5.2.21",
     "@ant-design/icons": "^4.6.2",
     "@darwinia/types": "2.7.5",
     "@fontsource/ibm-plex-sans": "^4.5.7",

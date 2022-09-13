@@ -6,17 +6,19 @@ import orderBy from 'lodash/orderBy';
 import { GetServerSidePropsContext } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
 import { DATE_FORMAT } from 'shared/config/constant';
 import { DailyStatistic, Network } from 'shared/model';
 import { prettyNumber } from 'shared/utils/helper/balance';
 import { gqlName } from 'shared/utils/helper/common';
 import { getBridge } from 'utils/bridge';
-import { chainConfigs, getChainConfig } from 'utils/network';
+import { getChainConfig } from 'utils/network';
 import { BarChart, Statistic } from '../components/dashboard/BarChart';
-import { Chain } from '../components/dashboard/Chain';
 import { Statistics } from '../components/dashboard/Statistics';
 import { STATISTICS_QUERY, TIMEPAST } from '../config';
+
+const NetworkGraph = dynamic(() => import('../components/NetworkGraph'), { ssr: false });
 
 function Page() {
   const { t } = useTranslation('common');
@@ -88,13 +90,9 @@ function Page() {
       </Statistics>
 
       <div className="gap-4 lg:gap-6">
-        <h2 className="uppercase text-xl font-normal my-6">{t<string>('chains')}</h2>
+        <h2 className="uppercase text-xl font-normal my-6">{t<string>('Bridges')}</h2>
 
-        <div className="grid md:grid-cols-4 gap-4 lg:gap-6">
-          {chainConfigs.map((item, index) => (
-            <Chain {...item} key={index} />
-          ))}
-        </div>
+        <NetworkGraph />
       </div>
     </div>
   );

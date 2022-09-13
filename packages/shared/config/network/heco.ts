@@ -10,7 +10,7 @@ export const hecoConfig: EthereumChainConfig = {
     rpcUrls: ['https://http-mainnet.hecochain.com'],
   },
   isTest: false,
-  logos: [{ name: 'heco.png', type: 'main' }],
+  logos: [{ name: 'heco-circle.svg', type: 'main' }],
   name: 'heco',
   fullName: 'Heco',
   provider: 'wss://ws-mainnet.hecochain.com',

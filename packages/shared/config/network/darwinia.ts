@@ -4,9 +4,9 @@ export const darwiniaConfig: PolkadotChainConfig = {
   isTest: false,
   name: 'darwinia',
   logos: [
-    { name: 'darwinia.png', type: 'main' },
+    { name: 'darwinia-circle.svg', type: 'main' },
     { name: 'darwinia.svg', type: 'minor' },
-    { name: 'darwinia-logo.svg', type: 'assist' },
+    // { name: 'darwinia-logo.svg', type: 'assist' },
   ],
   provider: 'wss://rpc.darwinia.network',
   social: {

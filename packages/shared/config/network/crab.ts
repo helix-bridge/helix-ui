@@ -3,7 +3,7 @@ import { PolkadotChainConfig } from '../../model';
 export const crabConfig: PolkadotChainConfig = {
   isTest: false,
   logos: [
-    { name: 'crab.png', type: 'main' },
+    { name: 'crab-circle.svg', type: 'main' },
     { name: 'crab.svg', type: 'minor' },
     { name: 'crab-logo.svg', type: 'assist' },
   ],

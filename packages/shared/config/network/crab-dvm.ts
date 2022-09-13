@@ -13,7 +13,7 @@ export const crabDVMConfig: DVMChainConfig = {
   },
   isTest: false,
   logos: [
-    { name: 'crab-smart.png', type: 'main' },
+    { name: 'crab-smart.svg', type: 'main' },
     { name: 'crab.svg', type: 'minor' },
     { name: 'crab-logo.svg', type: 'assist' },
   ],

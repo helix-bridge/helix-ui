@@ -14,7 +14,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
   isTest: false,
   name: 'darwinia-dvm',
   logos: [
-    { name: 'darwinia.png', type: 'main' },
+    { name: 'darwinia-dvm.svg', type: 'main' },
     { name: 'darwinia.svg', type: 'minor' },
     { name: 'darwinia-logo.svg', type: 'assist' },
   ],

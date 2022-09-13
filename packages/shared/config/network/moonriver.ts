@@ -12,7 +12,7 @@ export const moonriverConfig: ParachainEthereumCompatibleChainConfig = {
     rpcUrls: ['https://rpc.api.moonriver.moonbeam.network'],
   },
   isTest: false,
-  logos: [{ name: 'moonriver.svg', type: 'main' }],
+  logos: [{ name: 'moonriver-circle.svg', type: 'main' }],
   name: 'moonriver',
   fullName: 'Moonriver',
   provider: 'wss://wss.api.moonriver.moonbeam.network',
