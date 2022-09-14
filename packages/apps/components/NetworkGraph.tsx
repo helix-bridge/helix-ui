@@ -20,7 +20,7 @@ const source = configs.map((item) => {
       size: 25,
     })),
     image: `/image/${item.logos[0].name}`,
-    size: 55,
+    size: 85,
   };
 });
 
@@ -50,16 +50,15 @@ function NetworkGraph() {
         downDepth: 1,
         initialDepth: 0,
         topDepth: 1,
-        minRadius: 10,
-        maxRadius: 25,
+        minRadius: 40,
+        maxRadius: 40,
         valueField: 'value',
         categoryField: 'name',
         childDataField: 'children',
         idField: 'name',
         linkWithStrength: 0.3,
         linkWithField: 'linkWith',
-        nodePadding: 60,
-        manyBodyStrength: -5,
+        nodePadding: 30,
       })
     );
 
@@ -67,14 +66,10 @@ function NetworkGraph() {
     root.setThemes([am5themes_Responsive.new(root)]);
 
     series.circles.template.set('forceHidden', true);
-    // series.outerCircles.template.set('forceHidden', true);
 
     series.nodes.template.setup = (target) => {
-      console.log('🚀 ~ file: NetworkGraph.tsx ~ line 68 ~ useLayoutEffect ~ target', target);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       target.events.on('dataitemchanged', (event: any) => {
-        console.log('🚀 ~ file: NetworkGraph.tsx ~ line 84 ~ target.events.on ~ event', event);
-
         target.children.push(
           am5.Picture.new(root, {
             width: event?.target?.dataItem?.dataContext?.size,
