@@ -21,6 +21,7 @@
   "dependencies": {
     "@amcharts/amcharts5": "^5.2.21",
     "@ant-design/icons": "^4.6.2",
+    "@antv/g6": "^4.7.3",
     "@darwinia/types": "2.7.5",
     "@fontsource/ibm-plex-sans": "^4.5.7",
     "@polkadot/api": "^9.3.3",

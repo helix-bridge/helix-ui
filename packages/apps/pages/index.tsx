@@ -18,7 +18,7 @@ import { BarChart, Statistic } from '../components/dashboard/BarChart';
 import { Statistics } from '../components/dashboard/Statistics';
 import { STATISTICS_QUERY, TIMEPAST } from '../config';
 
-const NetworkGraph = dynamic(() => import('../components/NetworkGraph'), { ssr: false });
+const NetworkGraph = dynamic(() => import('../components/NetworkG6'), { ssr: false });
 
 function Page() {
   const { t } = useTranslation('common');

@@ -1,9 +1,10 @@
 import isEqual from 'lodash/isEqual';
+import unionWith from 'lodash/unionWith';
 import upperFirst from 'lodash/upperFirst';
 import { Bridge, BridgeCategory, BridgeConfig, ChainConfig, CrossChainDirection, Network } from 'shared/model';
 import { unknownUnavailable } from '../../bridges/unknown-unavailable/config/bridge';
 import { BRIDGES } from '../../config/bridge';
-import { getChainConfig } from '../network';
+import { crossChainGraph, getChainConfig } from '../network';
 
 export function getBridge<T extends BridgeConfig>(
   source: CrossChainDirection | [Network | ChainConfig, Network | ChainConfig]
@@ -53,3 +54,12 @@ export function getBridges(source: CrossChainDirection): Bridge[] {
 export function bridgeCategoryDisplay(category: BridgeCategory) {
   return /^[a-z]+$/.test(category) ? upperFirst(category) : category;
 }
+
+const calcBridgesAmount = (data: [Network, Network[]][]) =>
+  unionWith(
+    data.map(([from, tos]) => tos.map((to) => [from, to])).flat(),
+    (pre, cur) => isEqual(pre, cur) || isEqual(pre.reverse(), cur)
+  );
+
+export const formalBridges = calcBridgesAmount(crossChainGraph.filter((item) => !getChainConfig(item[0]).isTest));
+export const testBridges = calcBridgesAmount(crossChainGraph.filter((item) => getChainConfig(item[0]).isTest));
