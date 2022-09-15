@@ -51,10 +51,9 @@ export const issue: TxFn<IssuingPayload> = ({ sender, direction, recipient, brid
   return genEthereumContractTxObs(address, (contract) => {
     return contract['transferFrom(address,address,uint256,bytes)'](
       sender,
-      bridge.config.contracts.backing,
-      toWei({ value: to.amount }),
       recipient,
-      to.meta.isTest ? { gasPrice: '512000000000' } : undefined
+      toWei({ value: to.amount }),
+      bridge.config.contracts.backing
     );
   });
 };
