@@ -12,4 +12,6 @@ const hecoPolygonConfig: HecoPolygonBridgeConfig = {
 export const hecoPolygon = new Bridge(hecoConfig, polygonConfig, hecoPolygonConfig, {
   name: 'heco-polygon',
   category: 'cBridge',
+  disableIssue: true,
+  disableRedeem: true,
 });
