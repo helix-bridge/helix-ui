@@ -92,7 +92,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
       <div className="max-h-96 overflow-auto flex flex-col gap-2">
         {/* eslint-disable-next-line complexity */}
         {tokens.map((item, index) => {
-          const disabled = item.host === 'crab-dvm' && item.name === 'xRING(Classic)';
+          const disabled = (item.host === 'crab-dvm' && item.name === 'xRING(Classic)') || item.host === 'ethereum';
 
           return (
             <button
