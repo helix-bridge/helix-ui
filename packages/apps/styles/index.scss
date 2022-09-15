@@ -117,6 +117,31 @@ $bg-dark: #151d35;
   }
 }
 
+.token-transfer {
+  $size: 8px;
+  $horizontal: -4px;
+  $vertical: -4px;
+
+  &::before,
+  &::after {
+    content: '';
+    width: $size;
+    height: $size;
+    bottom: $vertical;
+    clip-path: polygon(100% 50%, 0 0, 0 100%);
+    position: absolute;
+  }
+
+  &::before {
+    right: $horizontal;
+  }
+
+  &::after {
+    left: $horizontal;
+    transform: rotate(180deg);
+  }
+}
+
 @import './loading.scss';
 @import './reset.scss';
 @import './modal.scss';

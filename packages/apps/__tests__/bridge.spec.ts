@@ -1,19 +1,11 @@
 /// <reference types="jest" />
 
-import isEqual from 'lodash/isEqual';
-import unionWith from 'lodash/unionWith';
 import { Bridge, ChainConfig, CrossToken, Network } from 'shared/model';
 import { toMiddleSplitNaming } from 'shared/utils/helper/common';
-import { isPolkadotNetwork, isDVMNetwork, isParachainNetwork } from 'shared/utils/network/network';
+import { isDVMNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
 import { unknownUnavailable } from '../bridges/unknown-unavailable/config';
-import { bridgeCategoryDisplay, getBridge, getBridges } from '../utils/bridge';
+import { bridgeCategoryDisplay, formalBridges, getBridge, getBridges, testBridges } from '../utils/bridge';
 import { chainConfigs, crossChainGraph, getChainConfig } from '../utils/network';
-
-const calcBridgesAmount = (data: [Network, Network[]][]) =>
-  unionWith(
-    data.map(([from, tos]) => tos.map((to) => [from, to])).flat(),
-    (pre, cur) => isEqual(pre, cur) || isEqual(pre.reverse(), cur)
-  );
 
 // exclude the config that not contains transferable tokens;
 const configs = chainConfigs.filter((item) => !!item.tokens.filter((token) => !!token.cross.length).length);
@@ -26,11 +18,6 @@ describe('bridge utils', () => {
   console.log('🌉 All cross-chain directions to be tested', allDirections);
 
   it('should support bridge count: ', () => {
-    const tests = crossChainGraph.filter((item) => getChainConfig(item[0]).isTest);
-    const testBridges = calcBridgesAmount(tests);
-    const formals = crossChainGraph.filter((item) => !getChainConfig(item[0]).isTest);
-    const formalBridges = calcBridgesAmount(formals);
-
     expect(testBridges).toHaveLength(5);
     expect(formalBridges).toHaveLength(36);
   });

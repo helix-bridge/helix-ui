@@ -62,9 +62,14 @@ export const getOriginChainConfig = memoize(
   (name) => name
 );
 
-export function getDisplayName(config: ChainConfig | null): string {
+// eslint-disable-next-line complexity
+export function getDisplayName(config: ChainConfig | null | Network): string {
   if (!config) {
     return 'unknown';
+  }
+
+  if (typeof config === 'string') {
+    config = getChainConfig(config);
   }
 
   if (isDVMNetwork(config.name)) {
