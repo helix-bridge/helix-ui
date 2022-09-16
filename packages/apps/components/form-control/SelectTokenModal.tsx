@@ -7,7 +7,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { chainColors } from 'shared/config/theme';
 import { useLocalSearch } from 'shared/hooks';
-import { ChainConfig, TokenInfoWithMeta } from 'shared/model';
+import { ChainConfig, TokenInfoWithMeta, TokenWithBridgesInfo } from 'shared/model';
 import { isEthereumNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
 import { chainConfigs, getDisplayName } from 'utils/network';
 import { tokenSearchFactory } from '../../utils/token';
@@ -20,6 +20,10 @@ interface SelectTokenModalProps {
   onSelect: (value: TokenInfoWithMeta) => void;
   fromToken?: TokenInfoWithMeta;
 }
+
+const isDisable = (token: TokenWithBridgesInfo) => {
+  return (token.host === 'crab-dvm' && token.name === 'xRING(Classic)') || token.host === 'ethereum';
+};
 
 export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: SelectTokenModalProps) => {
   const { t } = useTranslation();
@@ -86,16 +90,26 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
               </div>
 
               <div className="flex items-center gap-1">
-                {option.tokens.map((token) => (
-                  <Tooltip key={option.name + '_' + token.name} title={token.name}>
-                    <Logo
-                      width={12}
-                      height={12}
-                      name={token.logo}
-                      onClick={() => onSelect({ ...token, meta: option })}
-                    />
-                  </Tooltip>
-                ))}
+                {option.tokens.map((token) => {
+                  const disable = isDisable(token);
+
+                  return (
+                    <Tooltip key={option.name + '_' + token.name} title={token.name}>
+                      <Logo
+                        width={12}
+                        height={12}
+                        name={token.logo}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          if (!disable) {
+                            onSelect({ ...token, meta: option });
+                          }
+                        }}
+                        className={disable ? 'cursor-not-allowed' : 'cursor-pointer'}
+                      />
+                    </Tooltip>
+                  );
+                })}
               </div>
             </div>
           ),
@@ -125,7 +139,7 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
       <div className="max-h-96 overflow-auto flex flex-col gap-2">
         {/* eslint-disable-next-line complexity */}
         {tokens.map((item, index) => {
-          const disabled = (item.host === 'crab-dvm' && item.name === 'xRING(Classic)') || item.host === 'ethereum';
+          const disabled = isDisable(item);
 
           return (
             <button
