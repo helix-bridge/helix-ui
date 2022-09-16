@@ -1,16 +1,15 @@
-import BN from 'bn.js';
 import { Contract } from 'ethers';
-import { CrossChainDirection, CrossToken, EthereumChainConfig } from 'shared/model';
+import { CrossChainDirection, CrossToken, DailyLimit, EthereumChainConfig } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
-import { getBridge } from '../../../../utils';
+import { getBridge } from 'utils/bridge';
 import backingAbi from '../config/backing.json';
 import mappingTokenAbi from '../config/mappingTokenFactory.json';
 
-export async function getFee(
+export async function getDailyLimit(
   direction: CrossChainDirection<CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>
-): Promise<BN | null> {
+): Promise<DailyLimit | null> {
   const {
-    from: { meta: departure },
+    from: { meta: departure, address: fromTokenAddress },
     to: { meta: arrival },
   } = direction;
   const bridge = getBridge([departure, arrival]);
@@ -21,7 +20,9 @@ export async function getFee(
 
   const contract = new Contract(address as string, abi, entrance.web3.currentProvider);
 
-  const fee = await contract.currentFee();
+  const limit = await contract.dailyLimit(fromTokenAddress);
+  const spentToday = await contract.spentToday(fromTokenAddress);
+  console.log('🚀 ~ file: dailyLimit.ts ~ line 24 ~ limit', limit.toString(), spentToday.toString());
 
-  return new BN(fee.toString());
+  return { limit: limit.toString(), spentToday: spentToday.toString() };
 }
