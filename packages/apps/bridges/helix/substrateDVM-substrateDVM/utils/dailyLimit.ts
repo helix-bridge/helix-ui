@@ -1,4 +1,4 @@
-import { Contract } from 'ethers';
+import { BigNumber, Contract } from 'ethers';
 import { CrossChainDirection, CrossToken, DailyLimit, DVMChainConfig } from 'shared/model';
 import { getBridge } from 'utils/bridge';
 import { entrance } from 'shared/utils/connection';
@@ -20,8 +20,8 @@ export async function getDailyLimit(
 
   const contract = new Contract(address as string, abi, entrance.web3.currentProvider);
 
-  const limit = await contract.dailyLimit(fromTokenAddress);
-  const spentToday = await contract.spentToday(fromTokenAddress);
+  const limit: BigNumber = await contract.dailyLimit(fromTokenAddress);
+  const spentToday: BigNumber = await contract.spentToday(fromTokenAddress);
 
-  return { limit, spentToday };
+  return { limit: limit.toString(), spentToday: spentToday.toString() };
 }

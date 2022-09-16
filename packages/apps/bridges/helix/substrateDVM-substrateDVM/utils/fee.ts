@@ -23,5 +23,5 @@ export async function getFee(
 
   const fee = await contract.fee();
 
-  return new BN(fee);
+  return new BN(fee.toString());
 }
