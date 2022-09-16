@@ -5,7 +5,6 @@ import type { Observable } from 'rxjs/internal/Observable';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { from } from 'rxjs/internal/observable/from';
 import { of } from 'rxjs/internal/observable/of';
-import { map } from 'rxjs/internal/operators/map';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import {
@@ -51,40 +50,28 @@ export async function isNetworkConsistent(chain: EthereumChainConfig, id = ''): 
   return storedId === stringToHex(String(actualId));
 }
 
-export const isMetamaskChainConsistent = (network: EthereumChainConfig) => {
-  if (!isMetamaskInstalled()) {
-    showWarning(
-      'metamask',
-      'https://chrome.google.com/webstore/detail/empty-title/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=zh-CN'
+export function metamaskGuard<T>(fn: () => Observable<T>) {
+  return (network: ChainConfig, chainId?: string) => {
+    if (!isMetamaskInstalled()) {
+      showWarning(
+        'metamask',
+        'https://chrome.google.com/webstore/detail/empty-title/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=zh-CN'
+      );
+
+      return EMPTY;
+    }
+
+    return from(isNetworkConsistent(network as EthereumChainConfig, chainId)).pipe(
+      switchMap((isMatch) => {
+        return isMatch ? fn() : switchMetamaskNetwork(network as EthereumChainConfig)!.pipe(mergeMap(() => fn()));
+      })
     );
+  };
+}
 
-    return EMPTY;
-  }
+export const isMetamaskChainConsistent = metamaskGuard(() => of(true));
 
-  return from(isNetworkConsistent(network as EthereumChainConfig)).pipe(
-    switchMap((isMatch) => (isMatch ? of(null) : switchMetamaskNetwork(network)!)),
-    map((res) => res === null)
-  );
-};
-
-const connectMetamask: ConnectFn<EthereumConnection> = (network, chainId?) => {
-  if (!isMetamaskInstalled()) {
-    showWarning(
-      'metamask',
-      'https://chrome.google.com/webstore/detail/empty-title/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=zh-CN'
-    );
-
-    return EMPTY;
-  }
-
-  return from(isNetworkConsistent(network as EthereumChainConfig, chainId)).pipe(
-    switchMap((isMatch) =>
-      isMatch
-        ? getMetamaskConnection()
-        : switchMetamaskNetwork(network as EthereumChainConfig)!.pipe(mergeMap(() => getMetamaskConnection()))
-    )
-  );
-};
+const connectMetamask: ConnectFn<EthereumConnection> = metamaskGuard(getMetamaskConnection);
 
 const walletConnections: {
   [key in SupportedWallet]: ConnectFn<Connection>;

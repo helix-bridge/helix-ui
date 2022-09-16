@@ -21,16 +21,18 @@ export const WalletProvider = ({ children }: React.PropsWithChildren<unknown>) =
   const matched = useMemo(() => walletMatched && chainMatched, [chainMatched, walletMatched]);
 
   useEffect(() => {
+    let match = false;
+
     if (departureConnection.type === 'metamask') {
-      const res =
+      match =
         walletMatched &&
         (departure as EthereumChainConfig).ethereumChain &&
         (departure as EthereumChainConfig).ethereumChain.chainId === departureConnection.chainId;
-
-      setChainMatched(res);
-    } else {
-      setChainMatched(true);
+    } else if (['polkadot', 'unknown'].includes(departureConnection.type)) {
+      match = true;
     }
+
+    setChainMatched(match);
   }, [departure, departureConnection.chainId, departureConnection.type, walletMatched]);
 
   useEffect(() => {

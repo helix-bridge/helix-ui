@@ -3,12 +3,12 @@ import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from } from 'rxjs/internal/observable/from';
-import { of } from 'rxjs/internal/observable/of';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
 import { useIsMounted } from 'shared/hooks';
 import { CrossChainComponentProps, CrossToken, DVMChainConfig, TxObservableFactory } from 'shared/model';
+import { isMetamaskChainConsistent } from 'shared/utils/connection';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { pollWhile } from 'shared/utils/helper/operator';
 import { isRing } from 'shared/utils/helper/validator';
@@ -103,39 +103,51 @@ export function SubstrateDVM2SubstrateDVM({
   }, [afterCrossChain, ring, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t, txFn]);
 
   useEffect(() => {
-    const sub$$ = of(null)
+    const sub$$ = isMetamaskChainConsistent(direction.from.meta)
+      .pipe(
+        switchMap(() => from(getFee(direction))),
+        pollWhile(LONG_DURATION, () => isMounted)
+      )
+      .subscribe({
+        next(result) {
+          setFee(result);
+
+          if (onFeeChange) {
+            onFeeChange({
+              amount: isRing(direction.from.symbol)
+                ? +fromWei({ value: result, decimals: direction.from.decimals })
+                : 0,
+              symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
+            });
+          }
+        },
+        error(error) {
+          console.warn('🚀 ~ file: SubstrateDVM2SubstrateDVM.tsx ~ line 129 ~ error ~ error', error);
+        },
+      });
+
+    return () => sub$$?.unsubscribe();
+  }, [direction, isMounted, onFeeChange]);
+
+  useEffect(() => {
+    const sub$$ = isMetamaskChainConsistent(direction.from.meta)
       .pipe(
         switchMap(() => from(getDailyLimit(direction))),
         pollWhile(LONG_DURATION, () => isMounted)
       )
-      .subscribe((result) => {
-        const num = result && new BN(result.limit).sub(new BN(result.spentToday));
+      .subscribe({
+        next(result) {
+          const num = result && new BN(result.limit).sub(new BN(result.spentToday));
 
-        setDailyLimit(num);
+          setDailyLimit(num);
+        },
+        error(error) {
+          console.warn('🚀 ~ file: SubstrateDVM2SubstrateDVM.tsx ~ line 118 ~ error ~ error', error);
+        },
       });
 
     return () => sub$$?.unsubscribe();
   }, [direction, isMounted]);
-
-  useEffect(() => {
-    const sub$$ = from(getFee(direction)).subscribe({
-      next(result) {
-        setFee(result);
-
-        if (onFeeChange) {
-          onFeeChange({
-            amount: isRing(direction.from.symbol) ? +fromWei({ value: result, decimals: direction.from.decimals }) : 0,
-            symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
-          });
-        }
-      },
-      error(error) {
-        console.warn('🚀 ~ file: SubstrateDVM2SubstrateDVM.tsx ~ line 129 ~ error ~ error', error);
-      },
-    });
-
-    return () => sub$$.unsubscribe();
-  }, [direction, onFeeChange]);
 
   useEffect(() => {
     form.setFieldsValue({ [FORM_CONTROL.recipient]: account });

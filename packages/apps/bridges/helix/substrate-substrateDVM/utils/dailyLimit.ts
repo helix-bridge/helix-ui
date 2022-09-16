@@ -1,4 +1,4 @@
-import { Contract } from 'ethers';
+import { BigNumber, Contract } from 'ethers';
 import { abi } from 'shared/config/abi';
 import { CrossChainDirection, CrossToken, DailyLimit, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
@@ -21,8 +21,8 @@ export async function getDailyLimit(
     return null;
   }
 
-  const limit = await contract.dailyLimit(tokenAddress);
-  const spentToday = await contract.spentToday(tokenAddress);
+  const limit: BigNumber = await contract.dailyLimit(tokenAddress);
+  const spentToday: BigNumber = await contract.spentToday(tokenAddress);
 
-  return { limit, spentToday };
+  return { limit: limit.toString(), spentToday: spentToday.toString() };
 }
