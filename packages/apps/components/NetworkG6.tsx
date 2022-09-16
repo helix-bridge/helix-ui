@@ -142,6 +142,7 @@ function NetworkG6() {
         default: ['drag-node'],
       },
       layout: {
+        begin: [spacing, spacing],
         type: 'force',
         preventOverlap: true,
       },
@@ -150,14 +151,13 @@ function NetworkG6() {
         size: 18,
         style: {
           cursor: 'pointer',
-          border: '1px solid red',
         },
       },
       defaultEdge: {
         style: {
           cursor: 'pointer',
           stroke: '#9ca3af',
-          lineAppendWidth: 1,
+          lineAppendWidth: 3,
         },
       },
       nodeStateStyles: {
@@ -204,6 +204,14 @@ function NetworkG6() {
 
     graph.on('node:drag', (e) => {
       refreshDraggedNodePosition(e);
+    });
+
+    graph.on('node:dragend', (event) => {
+      const model = event.item?.get('model');
+      if (model) {
+        model.fx = null;
+        model.fy = null;
+      }
     });
 
     graph.on('node:mouseenter', (event) => {

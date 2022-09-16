@@ -16,7 +16,6 @@ export function tokenSearchFactory<T extends { address: string; name: string }>(
       } else {
         if (!exist) {
           exist = true;
-          message.error('You might input an invalid token address or a token which not exist', () => (exist = false));
         }
       }
     }

@@ -1,12 +1,14 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Input, Radio, Tag } from 'antd';
+import { AutoComplete, Input, Tag, Tooltip } from 'antd';
 import uniqWith from 'lodash/uniqWith';
+import upperFirst from 'lodash/upperFirst';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { chainColors } from 'shared/config/theme';
 import { useLocalSearch } from 'shared/hooks';
-import { ChainConfig, TokenInfoWithMeta } from 'shared/model';
+import { ChainConfig, TokenInfoWithMeta, TokenWithBridgesInfo } from 'shared/model';
+import { isEthereumNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
 import { chainConfigs, getDisplayName } from 'utils/network';
 import { tokenSearchFactory } from '../../utils/token';
 import { isTransferableTokenPair } from '../../utils/validate';
@@ -18,6 +20,10 @@ interface SelectTokenModalProps {
   onSelect: (value: TokenInfoWithMeta) => void;
   fromToken?: TokenInfoWithMeta;
 }
+
+const isDisable = (token: TokenWithBridgesInfo) => {
+  return (token.host === 'crab-dvm' && token.name === 'xRING(Classic)') || token.host === 'ethereum';
+};
 
 export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: SelectTokenModalProps) => {
   const { t } = useTranslation();
@@ -47,52 +53,93 @@ export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: Sel
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const searchFn = useCallback(tokenSearchFactory(allTokens), [allTokens]);
   const { data, setSearch } = useLocalSearch(searchFn);
-  const [chain, setChain] = useState<ChainConfig | 'all'>('all');
+  const [chain, setChain] = useState<ChainConfig | null>(null);
 
   const tokens = useMemo(
-    () => (chain === 'all' ? data : data.filter((item) => getDisplayName(item.meta) === getDisplayName(chain))),
+    () => (!chain ? data : data.filter((item) => getDisplayName(item.meta) === getDisplayName(chain))),
     [chain, data]
   );
 
+  const options = useMemo(() => {
+    const groupedChains = allChains.reduce<{ [key: string]: ChainConfig[] }>(
+      (acc, cur) => {
+        if (isParachainNetwork(cur)) {
+          acc.parachain.push(cur);
+        } else if (isPolkadotNetwork(cur)) {
+          acc.polkadot.push(cur);
+        } else if (isEthereumNetwork(cur)) {
+          acc.ethereum.push(cur);
+        }
+
+        return acc;
+      },
+      { ethereum: [], polkadot: [], parachain: [] }
+    );
+
+    return Object.entries(groupedChains)
+      .filter((item) => item[1].length)
+      .map((item) => ({
+        label: upperFirst(item[0]),
+        options: item[1].map((option) => ({
+          value: option.name,
+          label: (
+            <div key={option.name} className="flex justify-between">
+              <div className="flex items-center gap-1">
+                <Logo width={14} height={14} name={option.logos[0].name} />
+                <span>{getDisplayName(option)}</span>
+              </div>
+
+              <div className="flex items-center gap-1">
+                {option.tokens.map((token) => {
+                  const disable = isDisable(token);
+
+                  return (
+                    <Tooltip key={option.name + '_' + token.name} title={token.name}>
+                      <Logo
+                        width={12}
+                        height={12}
+                        name={token.logo}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          if (!disable) {
+                            onSelect({ ...token, meta: option });
+                          }
+                        }}
+                        className={disable ? 'cursor-not-allowed' : 'cursor-pointer'}
+                      />
+                    </Tooltip>
+                  );
+                })}
+              </div>
+            </div>
+          ),
+        })),
+      }));
+  }, [allChains, onSelect]);
+
   return (
     <BaseModal title={t('Select Token')} open={visible} footer={null} width={540} onCancel={onCancel}>
-      <Input
-        suffix={<SearchOutlined />}
-        size="large"
-        placeholder="Search Symbol or Paste Contract Address"
-        onChange={(event) => {
-          setSearch(event.target.value);
+      <AutoComplete
+        options={options}
+        className="w-full mb-4"
+        onChange={(value) => {
+          if (allChains.find((item) => item.name === value)) {
+            setChain(value);
+            setSearch('');
+          } else {
+            setChain(null);
+            setSearch(value);
+          }
         }}
-      />
-
-      <Radio.Group
-        defaultValue={chain}
-        buttonStyle="solid"
-        className="mt-2 mb-3"
-        size="small"
-        onChange={(event) => {
-          setChain(event.target.value as ChainConfig);
-        }}
+        allowClear
       >
-        <Radio.Button value="all" className="mt-2 mr-2 capitalize" style={{ borderRadius: 0 }}>
-          {t('All chains')}
-        </Radio.Button>
-
-        {allChains.map((item, index) => {
-          const name = getDisplayName(item);
-
-          return (
-            <Radio.Button key={index} value={item} className="mt-2 mr-2 capitalize" style={{ borderRadius: 0 }}>
-              {name}
-            </Radio.Button>
-          );
-        })}
-      </Radio.Group>
+        <Input size="large" placeholder={t('Search symbol, address or chain')} suffix={<SearchOutlined />} />
+      </AutoComplete>
 
       <div className="max-h-96 overflow-auto flex flex-col gap-2">
         {/* eslint-disable-next-line complexity */}
         {tokens.map((item, index) => {
-          const disabled = (item.host === 'crab-dvm' && item.name === 'xRING(Classic)') || item.host === 'ethereum';
+          const disabled = isDisable(item);
 
           return (
             <button
