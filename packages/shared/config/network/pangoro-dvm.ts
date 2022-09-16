@@ -37,6 +37,22 @@ export const pangoroDVMConfig: DVMChainConfig = {
       address: '',
     },
     {
+      name: 'WRING',
+      decimals: 18,
+      cross: [
+        {
+          bridge: 'substrateDVM-ethereum',
+          category: 'helix',
+          partner: { name: 'goerli', role: 'issuing', symbol: 'RING' },
+        },
+      ],
+      type: 'mapping',
+      host: 'pangoro-dvm',
+      logo: 'token-ring.svg',
+      symbol: 'WRING',
+      address: '0x69e392E057B5994da2b0E9661039970Ac4c26b8c',
+    },
+    {
       name: 'wORING',
       decimals: 18,
       cross: [

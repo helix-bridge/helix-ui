@@ -22,6 +22,7 @@ export type EthereumTypeNetwork =
   | 'arbitrum'
   | 'optimism'
   | 'astar'
+  | 'goerli'
   | ParachainEthereumCompatibleNetwork
   | DVMNetwork;
 

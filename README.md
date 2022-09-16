@@ -36,23 +36,25 @@ Make sure the token exists on the network configuration:
 
 Go to `package/apps/` and run `yarn init:bridge`
 
-1. `shared/model/bridge/` Update the generated type if needed 
-1. `shared/config/bridges` Update bridge configuration
-1. `shared/config/bridge.ts` Add bridge
+Update files below under the apps project:
+
+1. `bridges/[BRIDGE_TYPE]/[YOU_BRIDGE]/model/bridge.ts` Update the generated type if needed
+1. `bridges/[BRIDGE_TYPE]/[YOU_BRIDGE]/config/bridge.ts` Update bridge configuration
+1. `config/bridge.ts` Add bridge
+1. `utils/bridge/predicates.ts` Check the predicate function generated
 
 ### Step-3: Add balance query
 
-`apps/utils/balance.ts` Update getBalance function
+`utils/balance.ts` Update getBalance function
 
 ### Step-4: Unit test
 
-Run `yarn test:shared` under the project root, fix the failed test suits.
+Run `yarn test:apps` under the project root, fix the failed test suits.
 
 ### Step-5: Complete bridge development
 
-Under the `packages/apps/bridges` folder, you will find a new bridge folder which created by the script
+Under the `bridges/[BRIDGE_TYPE]` folder, you will find a new bridge folder which created by the script
 
 1. [YOUR BRIDGE]/utils/fee.ts Add the method to get fee here
 1. [YOUR BRIDGE]/utils/tx.ts Add the transfer methods, param validation functions and so on.
 1. [YOUR BRIDGE]/: Complete the react component
-

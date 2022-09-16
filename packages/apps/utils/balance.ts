@@ -16,6 +16,7 @@ import {
   isSubstrate2SubstrateDVM,
   isSubstrateDVM2Substrate,
   isSubstrateDVMSubstrateDVM,
+  isSubstrateDVMEthereum,
 } from './bridge';
 
 function isDeposit({ from }: CrossChainDirection): boolean {
@@ -64,9 +65,13 @@ export async function getBalance(direction: CrossChainDirection, account: string
   }
 
   if (
-    [isSubstrateDVMSubstrateDVM, isSubstrateDVM2Substrate, isCBridge, isMoonriver2CrabParachain].some((fn) =>
-      fn(fromChain, toChain)
-    )
+    [
+      isSubstrateDVMSubstrateDVM,
+      isSubstrateDVM2Substrate,
+      isCBridge,
+      isMoonriver2CrabParachain,
+      isSubstrateDVMEthereum,
+    ].some((fn) => fn(fromChain, toChain))
   ) {
     if (direction.from.host === direction.to.host && isDeposit(direction)) {
       return getDVMBalance(account);

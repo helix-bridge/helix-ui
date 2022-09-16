@@ -34,6 +34,7 @@ export const NETWORK_LIGHT_THEME: NetworkThemeConfig<{ [key in keyof typeof darw
   polkadot: pangolin,
   polygon: pangolin,
   ropsten: pangolin,
+  goerli: pangolin,
 };
 
 export const SKIN_THEME = {
@@ -65,6 +66,7 @@ export const NETWORK_DARK_THEME: NetworkThemeConfig<{ [key in keyof typeof darwi
   polkadot: pangoroDark,
   polygon: pangolinDark,
   ropsten: pangolinDark,
+  goerli: pangolinDark,
 };
 
 export enum THEME {
@@ -95,4 +97,5 @@ export const chainColors: { [key in Network]: string } = {
   polkadot: '#f19135',
   polygon: '#8447f3',
   ropsten: '#c6c6c6',
+  goerli: '#c6c6c6',
 };
