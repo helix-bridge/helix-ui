@@ -13,4 +13,6 @@ const ethereumPolygonConfig: EthereumPolygonBridgeConfig = {
 export const ethereumPolygon = new Bridge(ethereumConfig, polygonConfig, ethereumPolygonConfig, {
   name: 'ethereum-polygon',
   category: 'cBridge',
+  disableIssue: true,
+  disableRedeem: true,
 });

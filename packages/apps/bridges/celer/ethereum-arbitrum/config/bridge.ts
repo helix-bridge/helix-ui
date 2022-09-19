@@ -13,4 +13,6 @@ const ethereumArbitrumConfig: EthereumArbitrumBridgeConfig = {
 export const ethereumArbitrum = new Bridge(ethereumConfig, arbitrumConfig, ethereumArbitrumConfig, {
   name: 'ethereum-arbitrum',
   category: 'cBridge',
+  disableIssue: true,
+  disableRedeem: true,
 });

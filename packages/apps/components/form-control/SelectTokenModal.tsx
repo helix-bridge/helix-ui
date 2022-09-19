@@ -22,7 +22,7 @@ interface SelectTokenModalProps {
 }
 
 const isDisable = (token: TokenWithBridgesInfo) => {
-  return (token.host === 'crab-dvm' && token.name === 'xRING(Classic)') || token.host === 'ethereum';
+  return token.host === 'crab-dvm' && token.name === 'xRING(Classic)';
 };
 
 export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: SelectTokenModalProps) => {

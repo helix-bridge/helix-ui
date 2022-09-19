@@ -14,4 +14,6 @@ const ethereumAstarConfig: EthereumAstarBridgeConfig = {
 export const ethereumAstar = new Bridge(ethereumConfig, astarConfig, ethereumAstarConfig, {
   name: 'ethereum-astar',
   category: 'cBridge',
+  disableIssue: true,
+  disableRedeem: true,
 });

@@ -13,4 +13,6 @@ const ethereumAvalancheConfig: EthereumAvalancheBridgeConfig = {
 export const ethereumAvalanche = new Bridge(ethereumConfig, avalancheConfig, ethereumAvalancheConfig, {
   name: 'ethereum-avalanche',
   category: 'cBridge',
+  disableIssue: true,
+  disableRedeem: true,
 });

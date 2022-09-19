@@ -15,4 +15,6 @@ export const ethereumBSC = new Bridge(ethereumConfig, bscConfig, ethereumBSCConf
   category: 'cBridge',
   issueCompName: 'Ethereum2BSC',
   redeemCompName: 'BSC2Ethereum',
+  disableIssue: true,
+  disableRedeem: true,
 });
