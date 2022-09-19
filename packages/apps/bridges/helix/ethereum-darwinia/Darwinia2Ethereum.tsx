@@ -71,13 +71,22 @@ export function Darwinia2Ethereum({
       } = data;
 
       const [ringBalance, ktonBalance] = balances ?? [];
+      let availableMaxRing = new BN(0);
+
+      if (ringBalance && fee) {
+        const max = ringBalance.sub(fee);
+
+        if (max.gt(new BN(0))) {
+          availableMaxRing = max;
+        }
+      }
 
       const validateObs = validate([fee, balances], {
         isRING: isRing(symbol),
         balance: isRing(symbol) ? ringBalance : ktonBalance,
         amount: new BN(toWei({ value: amount, decimals })),
         fee,
-        ringBalance,
+        ringBalance: availableMaxRing,
       });
 
       const beforeTransfer = validateObs.pipe(
