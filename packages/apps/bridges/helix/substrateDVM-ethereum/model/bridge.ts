@@ -1,5 +1,7 @@
 import { ContractConfig, BridgeConfig } from 'shared/model';
 
-type SubstrateDVMEthereumContractConfig = ContractConfig;
+interface SubstrateDVMEthereumContractConfig extends ContractConfig {
+  guard: string;
+}
 
 export type SubstrateDVMEthereumBridgeConfig = Required<BridgeConfig<SubstrateDVMEthereumContractConfig>>;

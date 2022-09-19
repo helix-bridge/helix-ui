@@ -61,6 +61,7 @@ export const HISTORY_RECORDS_IN_RESULTS = `
         fee
         feeToken
         fromChain
+        guardSignatures
         id
         nonce
         messageNonce
@@ -75,6 +76,7 @@ export const HISTORY_RECORDS_IN_RESULTS = `
         sendToken
         recvToken
         sendTokenAddress
+        recvTokenAddress
       }
     }
   }

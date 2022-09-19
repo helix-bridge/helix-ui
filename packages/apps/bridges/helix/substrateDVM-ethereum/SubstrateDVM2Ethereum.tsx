@@ -130,10 +130,8 @@ export function SubstrateDVM2Ethereum({
         pollWhile(LONG_DURATION, () => isMounted)
       )
       .subscribe({
-        next(result) {
-          const num = result && new BN(result.limit).sub(new BN(result.spentToday));
-
-          setDailyLimit(num);
+        next(limit) {
+          setDailyLimit(limit);
         },
         error(error) {
           console.warn('🚀 ~ file: SubstrateDVM2Ethereum.tsx ~ line 136 ~ error ~ error', error);

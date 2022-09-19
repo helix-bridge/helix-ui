@@ -1,5 +1,6 @@
+import { BN } from '@polkadot/util';
 import { Contract } from 'ethers';
-import { CrossChainDirection, CrossToken, DailyLimit, EthereumChainConfig } from 'shared/model';
+import { CrossChainDirection, CrossToken, EthereumChainConfig } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { getBridge } from 'utils/bridge';
 import backingAbi from '../config/backing.json';
@@ -7,7 +8,7 @@ import mappingTokenAbi from '../config/mappingTokenFactory.json';
 
 export async function getDailyLimit(
   direction: CrossChainDirection<CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>
-): Promise<DailyLimit | null> {
+): Promise<BN | null> {
   const {
     from: { meta: departure, address: fromTokenAddress },
     to: { meta: arrival },
@@ -20,9 +21,7 @@ export async function getDailyLimit(
 
   const contract = new Contract(address as string, abi, entrance.web3.currentProvider);
 
-  const limit = await contract.dailyLimit(fromTokenAddress);
-  const spentToday = await contract.spentToday(fromTokenAddress);
-  console.log('🚀 ~ file: dailyLimit.ts ~ line 24 ~ limit', limit.toString(), spentToday.toString());
+  const limit = await contract.calcMaxWithdraw(fromTokenAddress);
 
-  return { limit: limit.toString(), spentToday: spentToday.toString() };
+  return new BN(limit.toString());
 }

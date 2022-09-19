@@ -27,7 +27,7 @@ export const goerliConfig: EthereumChainConfig = {
         {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
-          partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'WRING' },
+          partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'ORING' },
         },
       ],
       type: 'mapping',

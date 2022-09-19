@@ -205,11 +205,11 @@ describe('network utils', () => {
     expect(group![1]).toEqual(['pangoro-dvm']);
   });
 
-  it('pangoro-dvm contains 2 leafs', () => {
+  it('pangoro-dvm contains 3 leafs', () => {
     const group = data.find((item) => item[0] === 'pangoro-dvm');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['pangolin-dvm', 'goerli']);
+    expect(uniq(group![1])).toEqual(['pangolin-dvm', 'goerli', 'pangoro-dvm']);
   });
 
   it('can get chain config by chain name', () => {

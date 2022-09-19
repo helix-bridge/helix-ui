@@ -29,21 +29,32 @@ export const pangoroDVMConfig: DVMChainConfig = {
     {
       name: 'ORING',
       decimals: 18,
-      cross: [],
+      cross: [
+        {
+          category: 'helix',
+          bridge: 'substrateDVM-substrateDVM',
+          partner: { name: 'pangoro-dvm', role: 'issuing', symbol: 'WRING' },
+        },
+        {
+          bridge: 'substrateDVM-ethereum',
+          category: 'helix',
+          partner: { name: 'goerli', role: 'issuing', symbol: 'RING' },
+        },
+      ],
       type: 'native',
       host: 'pangoro-dvm',
       logo: 'token-ring.svg',
       symbol: 'ORING',
-      address: '',
+      address: '0x69e392E057B5994da2b0E9661039970Ac4c26b8c',
     },
     {
       name: 'WRING',
       decimals: 18,
       cross: [
         {
-          bridge: 'substrateDVM-ethereum',
           category: 'helix',
-          partner: { name: 'goerli', role: 'issuing', symbol: 'RING' },
+          bridge: 'substrateDVM-substrateDVM',
+          partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'ORING' },
         },
       ],
       type: 'mapping',
