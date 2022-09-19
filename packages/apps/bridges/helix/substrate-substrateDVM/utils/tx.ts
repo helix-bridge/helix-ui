@@ -51,7 +51,7 @@ export function redeem(value: RedeemPayload, mappingAddress: string, specVersion
       genEthereumContractTxObs(
         mappingAddress,
         (contract) =>
-          contract.methods.burnAndRemoteUnlockWaitingConfirm(
+          contract.burnAndRemoteUnlockWaitingConfirm(
             specVersion,
             WEIGHT,
             departure.address,

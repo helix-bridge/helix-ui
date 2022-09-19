@@ -35,7 +35,7 @@ export function issue(value: IssuingPayload, fee: BN): Observable<Tx> {
   return genEthereumContractTxObs(
     bridge.config.contracts!.backing,
     (contract) =>
-      contract.methods.lockAndRemoteIssuing(to.meta.specVersion, gasLimit, departure.address, recipient, amount, {
+      contract.lockAndRemoteIssuing(to.meta.specVersion, gasLimit, departure.address, recipient, amount, {
         from: sender,
         value: fee.toString(),
       }),
@@ -56,7 +56,7 @@ export function redeem(value: RedeemPayload, fee: BN): Observable<Tx> {
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
     (contract) =>
-      contract.methods.burnAndRemoteUnlock(to.meta.specVersion, gasLimit, departure.address, recipient, amount, {
+      contract.burnAndRemoteUnlock(to.meta.specVersion, gasLimit, departure.address, recipient, amount, {
         from: sender,
         value: fee.toString(),
       }),

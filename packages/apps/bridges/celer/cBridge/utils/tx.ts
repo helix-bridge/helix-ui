@@ -115,7 +115,7 @@ export function transfer(value: IssuingPayload | RedeemPayload): Observable<Tx> 
   return genEthereumContractTxObs(
     contractAddress,
     (contract) =>
-      contract.methods.send(recipient, tokenAddress, transferAmount, dstChainId, nonce, maxSlippage, { from: sender }),
+      contract.send(recipient, tokenAddress, transferAmount, dstChainId, nonce, maxSlippage, { from: sender }),
     transferAbi
   );
 }

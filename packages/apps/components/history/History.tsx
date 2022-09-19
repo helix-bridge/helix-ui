@@ -93,7 +93,7 @@ export default function History() {
     const sender = isValidAddress(account, 'ethereum') ? account : convertToDvm(account);
     const variables = {
       ...paginator,
-      sender,
+      sender: sender.toLowerCase(),
       results: results === null ? undefined : results,
     };
 
