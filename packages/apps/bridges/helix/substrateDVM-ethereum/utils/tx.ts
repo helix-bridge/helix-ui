@@ -59,9 +59,18 @@ const genValidations = ({ balance, amount, dailyLimit, allowance, fee }: TxValid
 export const validate = validationObsFactory(genValidations);
 
 export const claim = (record: HelixHistoryRecord) => {
-  const { endTime, recvTokenAddress, recvAmount, guardSignatures, recipient, fromChain, toChain, sender } = record;
-  const id = last(record.id.split('-'));
-  const signatures = last(guardSignatures?.split('-'));
+  const {
+    messageNonce,
+    endTime,
+    recvTokenAddress,
+    recvAmount,
+    guardSignatures,
+    recipient,
+    fromChain,
+    toChain,
+    sender,
+  } = record;
+  const signatures = guardSignatures?.split('-').slice(1);
   const bridge = getBridge<SubstrateDVMEthereumBridgeConfig>([fromChain, toChain]);
 
   return isMetamaskChainConsistent(getChainConfig(toChain)).pipe(
@@ -69,7 +78,7 @@ export const claim = (record: HelixHistoryRecord) => {
       genEthereumContractTxObs(
         bridge.config.contracts!.guard,
         (contract) =>
-          contract.claim(id, endTime, recvTokenAddress, recipient, recvAmount, [signatures], { from: sender }),
+          contract.claim(messageNonce, endTime, recvTokenAddress, recipient, recvAmount, signatures, { from: sender }),
         guardAbi
       )
     )

@@ -4,9 +4,9 @@ import { SubstrateDVMEthereumBridgeConfig } from '../model';
 
 const pangoroDVMGoerliConfig: SubstrateDVMEthereumBridgeConfig = {
   contracts: {
-    backing: '0x7F9096beb4bAd82a63f4275d53c7E8EA03aC1C99',
-    issuing: '0xe35b898A65c9868336bf34321373E1DA9401eB9d',
-    guard: '0xd9C81baff337387F9c6C83507e85CEA0635618FE',
+    backing: '0x41073C282621590b731B69D7DEA9dE5557C22823',
+    issuing: '0x1AECF62B14aC33929e74fc7939FA490b3B3E3563',
+    guard: '0x6aa0e15E88A8EF584304Bb52c3E9C6fA16d3EAc5',
   },
 };
 

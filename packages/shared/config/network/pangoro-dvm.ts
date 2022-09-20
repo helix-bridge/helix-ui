@@ -33,7 +33,7 @@ export const pangoroDVMConfig: DVMChainConfig = {
         {
           category: 'helix',
           bridge: 'substrateDVM-substrateDVM',
-          partner: { name: 'pangoro-dvm', role: 'issuing', symbol: 'WRING' },
+          partner: { name: 'pangoro-dvm', role: 'issuing', symbol: 'WORING' },
         },
         {
           bridge: 'substrateDVM-ethereum',
@@ -45,10 +45,10 @@ export const pangoroDVMConfig: DVMChainConfig = {
       host: 'pangoro-dvm',
       logo: 'token-ring.svg',
       symbol: 'ORING',
-      address: '0xF5c874cb3C541aE8C8f5C810BA78E98449A17913',
+      address: '0x1977213Bb561d6e3bB07A9F22BCE758A14D7C693',
     },
     {
-      name: 'WRING',
+      name: 'WORING',
       decimals: 18,
       cross: [
         {
@@ -60,8 +60,8 @@ export const pangoroDVMConfig: DVMChainConfig = {
       type: 'mapping',
       host: 'pangoro-dvm',
       logo: 'token-ring.svg',
-      symbol: 'WRING',
-      address: '0xF5c874cb3C541aE8C8f5C810BA78E98449A17913',
+      symbol: 'WORING',
+      address: '0x1977213Bb561d6e3bB07A9F22BCE758A14D7C693',
     },
     {
       name: 'wORING',

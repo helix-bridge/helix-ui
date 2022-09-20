@@ -67,7 +67,7 @@ exports[`<TxStatus /> render TxStatus: 0 1`] = `
     <span
       className="h-full"
     >
-      pending
+      Pending
     </span>
   </div>
 </div>
@@ -140,7 +140,7 @@ exports[`<TxStatus /> render TxStatus: 1 1`] = `
     <span
       className="h-full"
     >
-      pending
+      Pending To Refund
     </span>
   </div>
 </div>
@@ -213,7 +213,7 @@ exports[`<TxStatus /> render TxStatus: 2 1`] = `
     <span
       className="h-full"
     >
-      pending
+      Pending To Claim
     </span>
   </div>
 </div>
@@ -286,7 +286,7 @@ exports[`<TxStatus /> render TxStatus: 3 1`] = `
     <span
       className="h-full"
     >
-      success
+      Success
     </span>
   </div>
 </div>
@@ -359,7 +359,7 @@ exports[`<TxStatus /> render TxStatus: 4 1`] = `
     <span
       className="h-full"
     >
-      refunded
+      Refunded
     </span>
   </div>
   <span>
@@ -435,7 +435,7 @@ exports[`<TxStatus /> should render pending status default 1`] = `
     <span
       className="h-full"
     >
-      pending
+      Pending
     </span>
   </div>
 </div>
