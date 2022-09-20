@@ -13,8 +13,9 @@ import { useIsMounted } from 'shared/hooks';
 import { HelixHistoryRecord } from 'shared/model';
 import { gqlName } from 'shared/utils/helper/common';
 import { pollWhile } from 'shared/utils/helper/operator';
-import { isSubstrateDVMSubstrateDVM } from 'utils/bridge';
+import { isSubstrateDVMEthereum, isSubstrateDVMSubstrateDVM } from 'utils/bridge';
 import { requestRefund, withdraw } from '../../bridges/celer/cBridge/utils/tx';
+import { refund as substrateDVMEthereumRefund } from '../../bridges/helix/substrateDVM-ethereum/utils';
 import { refund } from '../../bridges/helix/substrateDVM-substrateDVM/utils';
 import { HISTORY_RECORD_BY_ID } from '../../config/gql';
 import { useITranslation } from '../../hooks';
@@ -144,6 +145,10 @@ function Refund({ record, onSuccess }: RefundComponentProps) {
     const { fromChain, toChain } = record;
     if (isSubstrateDVMSubstrateDVM(fromChain, toChain)) {
       return refund;
+    }
+
+    if (isSubstrateDVMEthereum(fromChain, toChain)) {
+      return substrateDVMEthereumRefund;
     }
 
     return (history: HelixHistoryRecord) => {

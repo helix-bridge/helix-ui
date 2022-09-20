@@ -17,14 +17,14 @@ export const pangoroDVMConfig: DVMChainConfig = {
     { name: 'pangoro.png', type: 'minor' },
   ],
   name: 'pangoro-dvm',
-  provider: 'wss://pangoro-rpc.darwinia.network',
+  provider: 'https://pangoro-rpc.darwinia.network',
   social: {
     portal: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangoro-rpc.darwinia.network#/explorer',
     github: 'https://github.com/darwinia-network',
     twitter: 'https://twitter.com/DarwiniaNetwork',
   },
   ss58Prefix: 18,
-  specVersion: 29030,
+  specVersion: 29050,
   tokens: [
     {
       name: 'ORING',
@@ -38,14 +38,14 @@ export const pangoroDVMConfig: DVMChainConfig = {
         {
           bridge: 'substrateDVM-ethereum',
           category: 'helix',
-          partner: { name: 'goerli', role: 'issuing', symbol: 'RING' },
+          partner: { name: 'goerli', role: 'issuing', symbol: 'ORING', claim: true },
         },
       ],
       type: 'native',
       host: 'pangoro-dvm',
       logo: 'token-ring.svg',
       symbol: 'ORING',
-      address: '0x69e392E057B5994da2b0E9661039970Ac4c26b8c',
+      address: '0xF5c874cb3C541aE8C8f5C810BA78E98449A17913',
     },
     {
       name: 'WRING',
@@ -54,14 +54,14 @@ export const pangoroDVMConfig: DVMChainConfig = {
         {
           category: 'helix',
           bridge: 'substrateDVM-substrateDVM',
-          partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'ORING' },
+          partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'ORING', claim: true },
         },
       ],
       type: 'mapping',
       host: 'pangoro-dvm',
       logo: 'token-ring.svg',
       symbol: 'WRING',
-      address: '0x69e392E057B5994da2b0E9661039970Ac4c26b8c',
+      address: '0xF5c874cb3C541aE8C8f5C810BA78E98449A17913',
     },
     {
       name: 'wORING',

@@ -1,16 +1,19 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import last from 'lodash/last';
-import { Observable } from 'rxjs';
+import { from, Observable, switchMap } from 'rxjs';
 import { HelixHistoryRecord, Tx } from 'shared/model';
+import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
-import { getBridge, validationObsFactory } from '../../../../utils';
+import { getBridge, isSubstrateDVM2Ethereum, validationObsFactory } from '../../../../utils';
+import { getChainConfig } from '../../../../utils/network';
 import backingAbi from '../config/backing.json';
 import guardAbi from '../config/guard.json';
 import mappingTokenAbi from '../config/mappingTokenFactory.json';
 import { IssuingPayload, RedeemPayload, SubstrateDVMEthereumBridgeConfig } from '../model';
+import { getFee } from './fee';
 
 export function issue(value: IssuingPayload, fee: BN): Observable<Tx> {
   const { sender, recipient, direction } = value;
@@ -21,9 +24,9 @@ export function issue(value: IssuingPayload, fee: BN): Observable<Tx> {
   return genEthereumContractTxObs(
     bridge.config.contracts!.backing,
     (contract) =>
-      contract.lockAndRemoteIssuingNative(recipient, amount.toString(), {
+      contract.lockAndRemoteIssuingNative(recipient, amount.sub(fee).toString(), {
         from: sender,
-        value: amount.add(fee).toString(),
+        value: amount.toString(),
       }),
     backingAbi
   );
@@ -34,13 +37,14 @@ export function redeem(value: RedeemPayload, fee: BN): Observable<Tx> {
   const { from: departure, to } = direction;
   const bridge = getBridge([departure.meta, to.meta]);
   const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
+  console.log('🚀 ~ file: tx.ts ~ line 40 ~ redeem ~ amount', amount.toString(), fee.toString());
 
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
     (contract) =>
       contract.burnAndRemoteUnlockNative(recipient, amount.toString(), {
         from: sender,
-        value: amount.add(fee).toString(),
+        value: fee.toString(),
       }),
     mappingTokenAbi
   );
@@ -61,9 +65,45 @@ export const claim = (record: HelixHistoryRecord) => {
   const signatures = last(guardSignatures?.split('-'));
   const bridge = getBridge<SubstrateDVMEthereumBridgeConfig>([fromChain, toChain]);
 
-  return genEthereumContractTxObs(
-    bridge.config.contracts!.guard,
-    (contract) => contract.claim(id, endTime, recvTokenAddress, recipient, recvAmount, [signatures], { from: sender }),
-    guardAbi
+  return isMetamaskChainConsistent(getChainConfig(toChain)).pipe(
+    switchMap(() =>
+      genEthereumContractTxObs(
+        bridge.config.contracts!.guard,
+        (contract) =>
+          contract.claim(id, endTime, recvTokenAddress, recipient, recvAmount, [signatures], { from: sender }),
+        guardAbi
+      )
+    )
+  );
+};
+
+export const refund = (record: HelixHistoryRecord) => {
+  const { sender, sendTokenAddress, sendAmount, fromChain, toChain } = record;
+  const id = last(record.id.split('-'));
+  const bridge = getBridge<SubstrateDVMEthereumBridgeConfig>([fromChain, toChain]);
+  const fromChainConfig = getChainConfig(toChain);
+  const toChainConfig = getChainConfig(fromChain);
+
+  const { contractAddress, abi, method } = isSubstrateDVM2Ethereum(fromChain, toChain)
+    ? { contractAddress: bridge.config.contracts!.issuing, abi: mappingTokenAbi, method: 'remoteUnlockFailure' }
+    : { contractAddress: bridge.config.contracts!.backing, abi: backingAbi, method: 'remoteIssuingFailure' };
+
+  return from(
+    getFee(
+      { from: { meta: fromChainConfig }, to: { meta: toChainConfig } },
+      entrance.web3.getInstance(fromChainConfig.provider)
+    )
+  ).pipe(
+    switchMap((fee) =>
+      genEthereumContractTxObs(
+        contractAddress,
+        (contract) =>
+          contract[method](id, sendTokenAddress, sender, sendAmount, {
+            from: sender,
+            value: fee?.toString(),
+          }),
+        abi
+      )
+    )
   );
 };

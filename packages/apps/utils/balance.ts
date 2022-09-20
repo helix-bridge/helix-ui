@@ -89,7 +89,5 @@ export async function getBalance(direction: CrossChainDirection, account: string
     return getParachainBalance(from, account).then((res) => [res]);
   }
 
-  console.warn(`🚨 Can not find a method to fetch balance of ${from.symbol} for ${fromChain} to ${toChain} transfer `);
-
   return null;
 }

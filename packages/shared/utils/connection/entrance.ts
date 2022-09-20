@@ -1,6 +1,6 @@
 import { typesBundleForPolkadotApps } from '@darwinia/types/mix';
 import { JsonRpcProvider, Web3Provider, WebSocketProvider } from '@ethersproject/providers';
-import { ApiPromise, WsProvider } from '@polkadot/api';
+import { ApiPromise, HttpProvider, WsProvider } from '@polkadot/api';
 import { SHORT_DURATION } from '../../config/constant';
 
 interface ApiGuy<T> {
@@ -55,7 +55,15 @@ class PolkadotEntrance extends Entrance<ApiPromise> {
   apiList: ApiGuy<ApiPromise>[] = [];
 
   init(url: string) {
-    const provider = new WsProvider(url, SHORT_DURATION);
+    let provider;
+
+    if (url.startsWith('wss')) {
+      provider = new WsProvider(url, SHORT_DURATION);
+    }
+
+    if (url.startsWith('https')) {
+      provider = new HttpProvider(url);
+    }
 
     return new ApiPromise({
       provider,

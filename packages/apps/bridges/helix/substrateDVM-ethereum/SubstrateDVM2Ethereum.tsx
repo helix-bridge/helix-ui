@@ -18,10 +18,10 @@ import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
-import { useAccount, useApi } from '../../../providers';
+import { useAccount } from '../../../providers';
 import { IssuingPayload, SubstrateDVMEthereumBridgeConfig } from './model';
 import { getDailyLimit, getFee } from './utils';
-import { issue, redeem, validate } from './utils/tx';
+import { issue, validate } from './utils/tx';
 
 export function SubstrateDVM2Ethereum({
   form,
@@ -37,7 +37,6 @@ export function SubstrateDVM2Ethereum({
   CrossToken<EthereumChainConfig>
 >) {
   const { t } = useTranslation();
-  const { departureConnection } = useApi();
   const [fee, setFee] = useState<BN | null>(null);
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
@@ -55,26 +54,12 @@ export function SubstrateDVM2Ethereum({
 
   const isMounted = useIsMounted();
 
-  const txFn = useMemo(
-    () => (bridge.isIssue(direction.from.meta, direction.to.meta) ? issue : redeem),
-    [bridge, direction.from.meta, direction.to.meta]
-  );
-
   useEffect(() => {
     updateAllowancePayload({
-      spender: bridge.isIssue(direction.from.meta, direction.to.meta)
-        ? bridge.config.contracts.backing
-        : bridge.config.contracts.issuing,
+      spender: bridge.config.contracts.backing,
       tokenAddress: direction.from.address,
     });
-  }, [
-    bridge,
-    bridge.config.contracts.backing,
-    direction.from.address,
-    direction.from.meta,
-    direction.to.meta,
-    updateAllowancePayload,
-  ]);
+  }, [bridge.config.contracts.backing, direction.from.address, updateAllowancePayload]);
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
@@ -86,15 +71,15 @@ export function SubstrateDVM2Ethereum({
 
       return createTxWorkflow(
         validateObs.pipe(
-          mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
+          mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} needClaim /> }))
         ),
-        txFn(data, fee!),
+        issue(data, fee!),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, ring, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t, txFn]);
+  }, [afterCrossChain, dailyLimit, fee, feeWithSymbol, ring, setTxObservableFactory]);
 
   useEffect(() => {
     const sub$$ = isMetamaskChainConsistent(direction.from.meta)

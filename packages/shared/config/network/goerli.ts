@@ -13,7 +13,7 @@ export const goerliConfig: EthereumChainConfig = {
   isTest: true,
   name: 'goerli',
   fullName: 'goerli',
-  provider: 'https://goerli.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
+  provider: 'wss://goerli.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
   social: {
     portal: 'https://ethereum.org/en/',
     github: 'https://github.com/ethereum',
@@ -21,7 +21,17 @@ export const goerliConfig: EthereumChainConfig = {
   },
   tokens: [
     {
-      name: 'RING',
+      name: 'GoerliETH',
+      decimals: 18,
+      cross: [],
+      type: 'native',
+      host: 'goerli',
+      logo: 'token-ethereum.svg',
+      symbol: 'GoerliETH',
+      address: '',
+    },
+    {
+      name: 'ORING',
       decimals: 18,
       cross: [
         {
@@ -33,8 +43,8 @@ export const goerliConfig: EthereumChainConfig = {
       type: 'mapping',
       host: 'goerli',
       logo: 'token-ring.svg',
-      symbol: 'RING',
-      address: '0x69e392E057B5994da2b0E9661039970Ac4c26b8c',
+      symbol: 'ORING',
+      address: '0xD08a544fc3baa1dBB34F310c4A941E88D82bc8Fe',
     },
   ],
   wallets: ['metamask'],
