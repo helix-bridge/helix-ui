@@ -32,4 +32,5 @@ export type BridgeName =
   | 'polygon-optimism'
   | 'crabDVM-astar'
   | 'crabParachain-karura'
-  | 'crabParachain-moonriver';
+  | 'crabParachain-moonriver'
+  | 'substrateDVM-ethereum';

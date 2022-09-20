@@ -39,3 +39,17 @@ export const pangoroDVMPangolinDVM = new Bridge(pangoroDVMConfig, pangolinDVMCon
   name: 'substrateDVM-substrateDVM',
   category: 'helix',
 });
+
+export const pangoroDVMPangoroDVMConfig: SubstrateDVMSubstrateDVMBridgeConfig = {
+  contracts: {
+    backing: '0x1977213Bb561d6e3bB07A9F22BCE758A14D7C693',
+    issuing: '0x1977213Bb561d6e3bB07A9F22BCE758A14D7C693',
+  },
+};
+
+export const pangoroDVMPangoroDVM = new Bridge(pangoroDVMConfig, pangoroDVMConfig, pangoroDVMPangoroDVMConfig, {
+  name: 'substrateDVM-substrateDVM',
+  category: 'helix',
+  issueCompName: 'SubstrateDVMInner',
+  redeemCompName: 'SubstrateDVMInner',
+});

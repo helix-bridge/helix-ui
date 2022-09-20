@@ -15,6 +15,7 @@ import { crabParachainConfig } from './crab-parachain';
 import { darwiniaConfig } from './darwinia';
 import { darwiniaDVMConfig } from './darwinia-dvm';
 import { ethereumConfig } from './ethereum';
+import { goerliConfig } from './goerli';
 import { hecoConfig } from './heco';
 import { karuraConfig } from './karura';
 import { moonriverConfig } from './moonriver';
@@ -49,6 +50,7 @@ export const SYSTEM_CHAIN_CONFIGURATIONS = [
   pangoroDVMConfig,
   polygonConfig,
   ropstenConfig,
+  goerliConfig,
 ];
 
 export const knownParachainNetworks: ParachainNetwork[] = [
@@ -74,6 +76,7 @@ export const knownParachainEthereumCompatibleNetworks: ParachainEthereumCompatib
 export const knownEthereumNetworks: (DVMNetwork | EthereumTypeNetwork)[] = [
   'ethereum',
   'ropsten',
+  'goerli',
   'heco',
   'polygon',
   'arbitrum',

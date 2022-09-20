@@ -219,6 +219,12 @@ function updatePredicateFns() {
     " >>'./utils/bridge/predicates.ts'
 }
 
+function updateBridgesIndexer() {
+    echo "
+        export { $1, $2 } from './'$3;
+    " >> './bridges/index.ts'
+}
+
 function init() {
     local departure=${from}"2"${to}
     local arrival=${to}"2"${from}
@@ -253,6 +259,8 @@ function init() {
 
     indexFile $departure $index
     indexFile $arrival $index
+
+    updateBridgesIndexer $departure $arrival $dir
 
     updateSupports
     updatePredicateFns $departure $arrival

@@ -1,8 +1,8 @@
 import { BN_ZERO } from '@polkadot/util';
 import { message } from 'antd';
 import BN from 'bn.js';
-import { Contract } from 'ethers';
 import type { BigNumber } from 'ethers';
+import { Contract } from 'ethers';
 import { createContext, useCallback, useContext, useState } from 'react';
 import type { Observable } from 'rxjs/internal/Observable';
 import { EMPTY } from 'rxjs/internal/observable/empty';
@@ -17,17 +17,18 @@ import { take } from 'rxjs/internal/operators/take';
 import { tap } from 'rxjs/internal/operators/tap';
 import type { Subscription } from 'rxjs/internal/Subscription';
 import { abi } from 'shared/config/abi';
-import { ConnectionStatus, HelixHistoryRecord, ICamelCaseKeys } from 'shared/model';
-import { getBridge } from 'utils/bridge';
+import { ConnectionStatus, HelixHistoryRecord, ICamelCaseKeys, Tx } from 'shared/model';
 import { connect, entrance } from 'shared/utils/connection';
-import { getChainConfig } from 'utils/network';
 import { getAllowance } from 'shared/utils/tx';
+import { getBridge } from 'utils/bridge';
+import { getChainConfig } from 'utils/network';
 import {
   Darwinia2EthereumHistoryRes,
   Darwinia2EthereumRecord,
   EthereumDarwiniaBridgeConfig,
 } from '../bridges/helix/ethereum-darwinia/model';
 import { claimToken } from '../bridges/helix/ethereum-darwinia/utils';
+import { claim as substrateDVM2EthereumClaim } from '../bridges/helix/substrateDVM-ethereum/utils/tx';
 import { useITranslation } from '../hooks';
 import { useTx } from './tx';
 
@@ -38,10 +39,11 @@ interface Claimed {
 
 interface ClaimCtx {
   isClaiming: boolean;
-  claim: (
+  d2eClaim: (
     record: ICamelCaseKeys<Darwinia2EthereumRecord & HelixHistoryRecord>,
     meta: Omit<Darwinia2EthereumHistoryRes, 'list' | 'count'>
   ) => Subscription;
+  eth2Claim: (record: HelixHistoryRecord) => Subscription;
   claimedList: Claimed[];
   refundedList: Claimed[];
   onRefundSuccess: (data: Claimed) => void;
@@ -64,7 +66,31 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
   const [claimedList, setClaimedList] = useState<Claimed[]>([]);
   const [refundedList, setRefundedList] = useState<Claimed[]>([]);
 
-  const claim = useCallback(
+  const genObserver = useCallback(
+    (record: HelixHistoryRecord) => {
+      return {
+        ...observer,
+        next: (state: Tx) => {
+          if (state.status === 'finalized' && state.hash) {
+            setClaimedList((pre) => [...pre, { id: record.id, hash: state.hash! }]);
+          }
+          observer.next(state);
+        },
+        error: (err: unknown) => {
+          observer.next({ status: 'error', error: new Error('Some error occurred during contract call') });
+          console.error('🚀 ~ file: claim.tsx ~ line 80 ~ ClaimProvider ~ err', err);
+          setIsClaiming(false);
+        },
+        complete: () => {
+          observer.complete();
+          setIsClaiming(false);
+        },
+      };
+    },
+    [observer]
+  );
+
+  const d2eClaim = useCallback(
     (
       record: ICamelCaseKeys<Darwinia2EthereumRecord & HelixHistoryRecord>,
       meta: Omit<Darwinia2EthereumHistoryRes, 'list' | 'count'>
@@ -146,32 +172,22 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
               : EMPTY
           )
         )
-        .subscribe({
-          ...observer,
-          next: (state) => {
-            if (state.status === 'finalized' && state.hash) {
-              setClaimedList((pre) => [...pre, { id: record.id, hash: state.hash! }]);
-            }
-            observer.next(state);
-          },
-          error: (err) => {
-            observer.next({ status: 'error', error: err });
-            setIsClaiming(false);
-          },
-          complete: () => {
-            observer.complete();
-            setIsClaiming(false);
-          },
-        });
+        .subscribe(genObserver(record));
     },
-    [observer, setTx, t]
+    [genObserver, setTx, t]
+  );
+
+  const eth2Claim = useCallback(
+    (record: HelixHistoryRecord) => substrateDVM2EthereumClaim(record).subscribe(genObserver(record)),
+    [genObserver]
   );
 
   return (
     <ClaimContext.Provider
       value={{
         claimedList,
-        claim,
+        d2eClaim,
+        eth2Claim,
         isClaiming,
         refundedList,
         onRefundSuccess: (data) => setRefundedList((pre) => [...pre, data]),

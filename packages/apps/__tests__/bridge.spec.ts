@@ -18,12 +18,12 @@ describe('bridge utils', () => {
   console.log('🌉 All cross-chain directions to be tested', allDirections);
 
   it('should support bridge count: ', () => {
-    expect(testBridges).toHaveLength(5);
+    expect(testBridges).toHaveLength(7);
     expect(formalBridges).toHaveLength(36);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(82);
+    expect(allDirections).toHaveLength(86);
   });
 
   it('Should correct bridge category name', () => {
@@ -114,6 +114,12 @@ describe.each(configs)("$name network's ", ({ name, tokens, ...other }) => {
           expect(from.host).toEqual(partner.role === 'backing' ? 'pangolin' : 'ropsten');
         } else {
           expect(from.host).toEqual(partner.role === 'backing' ? issuing : backing);
+        }
+      } else if (bridge === 'substrateDVM-ethereum') {
+        if (other.isTest) {
+          expect(from.host).toEqual(partner.role === 'backing' ? 'goerli' : 'pangoro-dvm');
+        } else {
+          expect(from.host).toEqual(partner.role === 'backing' ? 'ethereum' : 'darwinia-dvm');
         }
       } else if (partner.role === 'backing') {
         if (issuing === 'substrate') {

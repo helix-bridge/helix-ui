@@ -9,6 +9,7 @@ export interface HelixHistoryRecord {
   fee: string;
   feeToken: string;
   fromChain: Network;
+  guardSignatures?: string;
   id: string;
   messageNonce: string;
   nonce: string;
@@ -25,4 +26,5 @@ export interface HelixHistoryRecord {
   sendToken: string;
   recvToken: string;
   sendTokenAddress: string;
+  recvTokenAddress: string;
 }

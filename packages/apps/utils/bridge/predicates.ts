@@ -79,6 +79,7 @@ export const isBSCArbitrum = or(isBSC2Arbitrum, isArbitrum2BSC);
 
 export const isSubstrateDVM2SubstrateDVMIssuing = or(
   predicate('pangoro-dvm', 'pangolin-dvm'),
+  predicate('pangoro-dvm', 'pangoro-dvm'),
   predicate('darwinia-dvm', 'crab-dvm'),
   predicate('darwinia-dvm', 'darwinia-dvm')
 );
@@ -172,3 +173,7 @@ export const isCrabParachainKarura = or(isCrabParachain2Karura, isKarura2CrabPar
 export const isCrabParachain2Moonriver = predicate('crab-parachain', 'moonriver');
 export const isMoonriver2CrabParachain = predicate('moonriver', 'crab-parachain');
 export const isCrabParachainMoonriver = or(isCrabParachain2Moonriver, isMoonriver2CrabParachain);
+
+export const isSubstrateDVM2Ethereum = or(predicate('darwinia-dvm', 'ethereum'), predicate('pangoro-dvm', 'goerli'));
+export const isEthereum2SubstrateDVM = or(predicate('ethereum', 'darwinia-dvm'), predicate('goerli', 'pangoro-dvm'));
+export const isSubstrateDVMEthereum = or(isSubstrateDVM2Ethereum, isEthereum2SubstrateDVM);

@@ -21,3 +21,4 @@ export * from './pangoro';
 export * from './pangoro-dvm';
 export * from './polygon';
 export * from './ropsten';
+export * from './goerli';

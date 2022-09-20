@@ -33,7 +33,8 @@ export function CrossChainInfo({
     if (fee) {
       return (
         <Tooltip title={fee.amount} className="cursor-help">
-          {prettyNumber(fee.amount, { decimal: 3, ignoreZeroDecimal: true })} {fee.symbol}
+          {Number(fee.amount) < 1 ? fee.amount : prettyNumber(fee.amount, { decimal: 3, ignoreZeroDecimal: true })}{' '}
+          {fee.symbol}
         </Tooltip>
       );
     }

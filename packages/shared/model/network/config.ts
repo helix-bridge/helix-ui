@@ -69,9 +69,8 @@ export interface PolkadotChainConfig extends ChainConfig {
   specVersion: number;
 }
 
-export interface DVMChainConfig extends ChainConfig {
+export interface DVMChainConfig extends EthereumChainConfig {
   name: DVMNetwork;
-  ethereumChain: AddEthereumChainParameter;
   ss58Prefix: number;
   specVersion: number;
 }

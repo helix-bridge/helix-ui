@@ -9,13 +9,15 @@ import {
   isDarwinia2Ethereum,
   isDVM2Substrate,
   isEthereum2Darwinia,
+  isEthereum2SubstrateDVM,
   isMoonriver2CrabParachain,
-  isSubstrateParachain2Substrate,
   isSubstrate2DVM,
-  isSubstrate2SubstrateParachain,
   isSubstrate2SubstrateDVM,
+  isSubstrate2SubstrateParachain,
+  isSubstrateDVM2Ethereum,
   isSubstrateDVM2Substrate,
   isSubstrateDVMSubstrateDVM,
+  isSubstrateParachain2Substrate,
 } from './bridge';
 
 function isDeposit({ from }: CrossChainDirection): boolean {
@@ -57,16 +59,20 @@ export async function getBalance(direction: CrossChainDirection, account: string
     return [ring, kton];
   }
 
-  if (isDVM2Substrate(fromChain, toChain)) {
+  if ([isDVM2Substrate, isSubstrateDVM2Ethereum].some((fn) => fn(fromChain, toChain))) {
     const kton = from.meta.tokens.find((item) => item.type === 'native' && isKton(item.symbol));
 
     return getDVMBalance(account, kton?.address);
   }
 
   if (
-    [isSubstrateDVMSubstrateDVM, isSubstrateDVM2Substrate, isCBridge, isMoonriver2CrabParachain].some((fn) =>
-      fn(fromChain, toChain)
-    )
+    [
+      isSubstrateDVMSubstrateDVM,
+      isSubstrateDVM2Substrate,
+      isCBridge,
+      isMoonriver2CrabParachain,
+      isEthereum2SubstrateDVM,
+    ].some((fn) => fn(fromChain, toChain))
   ) {
     if (direction.from.host === direction.to.host && isDeposit(direction)) {
       return getDVMBalance(account);
@@ -82,8 +88,6 @@ export async function getBalance(direction: CrossChainDirection, account: string
   ) {
     return getParachainBalance(from, account).then((res) => [res]);
   }
-
-  console.warn(`🚨 Can not find a method to fetch balance of ${from.symbol} for ${fromChain} to ${toChain} transfer `);
 
   return null;
 }

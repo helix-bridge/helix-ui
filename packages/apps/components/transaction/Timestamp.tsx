@@ -17,7 +17,7 @@ export function Timestamp({ record }: { record: HelixHistoryRecord | null }) {
     >
       {record && (
         <div className="flex items-center gap-2 whitespace-nowrap">
-          {record.result ? <ClockCircleOutlined /> : <Icon name="reload" />}
+          {record.result ? <ClockCircleOutlined /> : <Icon name="reload" className="w-4 h-4" />}
 
           {formatDistance(fromUnixTime(record.startTime), new Date(new Date().toUTCString()), {
             includeSeconds: true,
@@ -28,7 +28,7 @@ export function Timestamp({ record }: { record: HelixHistoryRecord | null }) {
 
           <Divider type="vertical" orientation="center" />
 
-          <Icon name="clock-fill" className="text-gray-400 text-base" />
+          <Icon name="clock-fill" className="text-gray-400 text-base w-4 h-4" />
 
           {record.startTime && record.endTime ? (
             <span className="text-gray-400">

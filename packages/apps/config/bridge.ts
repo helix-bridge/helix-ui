@@ -33,10 +33,12 @@ import {
   crabCrabParachain,
   pangolinPangolinParachain,
 } from '../bridges/helix/substrate-substrateParachain/config/bridge';
+import { pangoroDVMGoerli } from '../bridges/helix/substrateDVM-ethereum/config';
 import {
   darwiniaDVMCrabDVM,
   darwiniaDVMDarwiniaDVM,
   pangoroDVMPangolinDVM,
+  pangoroDVMPangoroDVM,
 } from '../bridges/helix/substrateDVM-substrateDVM/config/bridge';
 import { crabParachainKarura } from '../bridges/xcm/crabParachain-karura/config';
 import { crabParachainMoonriver } from '../bridges/xcm/crabParachain-moonriver/config/bridge';
@@ -86,6 +88,8 @@ const testBridges = [
   pangoroPangolinDVM,
   pangolinPangolinParachain,
   ropstenPangolin,
+  pangoroDVMGoerli,
+  pangoroDVMPangoroDVM,
 ];
 
 export const BRIDGES = (() => {
