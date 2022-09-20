@@ -2,7 +2,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import last from 'lodash/last';
 import { from, Observable, switchMap } from 'rxjs';
 import { HelixHistoryRecord, Tx } from 'shared/model';
-import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
+import { isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { TxValidationMessages } from '../../../../config/validation';
@@ -37,7 +37,6 @@ export function redeem(value: RedeemPayload, fee: BN): Observable<Tx> {
   const { from: departure, to } = direction;
   const bridge = getBridge([departure.meta, to.meta]);
   const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
-  console.log('🚀 ~ file: tx.ts ~ line 40 ~ redeem ~ amount', amount.toString(), fee.toString());
 
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
@@ -88,14 +87,10 @@ export const refund = (record: HelixHistoryRecord) => {
     ? { contractAddress: bridge.config.contracts!.issuing, abi: mappingTokenAbi, method: 'remoteUnlockFailure' }
     : { contractAddress: bridge.config.contracts!.backing, abi: backingAbi, method: 'remoteIssuingFailure' };
 
-  return from(
-    getFee(
-      { from: { meta: fromChainConfig }, to: { meta: toChainConfig } },
-      entrance.web3.getInstance(fromChainConfig.provider)
-    )
-  ).pipe(
-    switchMap((fee) =>
-      genEthereumContractTxObs(
+  return isMetamaskChainConsistent(getChainConfig(toChain)).pipe(
+    switchMap(() => from(getFee({ from: { meta: fromChainConfig }, to: { meta: toChainConfig } }))),
+    switchMap((fee) => {
+      return genEthereumContractTxObs(
         contractAddress,
         (contract) =>
           contract[method](id, sendTokenAddress, sender, sendAmount, {
@@ -103,7 +98,7 @@ export const refund = (record: HelixHistoryRecord) => {
             value: fee?.toString(),
           }),
         abi
-      )
-    )
+      );
+    })
   );
 };

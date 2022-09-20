@@ -7,8 +7,7 @@ import backingAbi from '../config/backing.json';
 import mappingTokenAbi from '../config/mappingTokenFactory.json';
 
 export async function getFee(
-  direction: CrossChainDirection<Pick<CrossToken<ChainConfig>, 'meta'>, Pick<CrossToken<ChainConfig>, 'meta'>>,
-  provider = entrance.web3.currentProvider
+  direction: CrossChainDirection<Pick<CrossToken<ChainConfig>, 'meta'>, Pick<CrossToken<ChainConfig>, 'meta'>>
 ): Promise<BN | null> {
   const {
     from: { meta: departure },
@@ -20,7 +19,7 @@ export async function getFee(
     ? { abi: backingAbi, address: bridge.config.contracts?.backing }
     : { abi: mappingTokenAbi, address: bridge.config.contracts?.issuing };
 
-  const contract = new Contract(address as string, abi, provider);
+  const contract = new Contract(address as string, abi, entrance.web3.currentProvider);
 
   const fee = await contract.currentFee();
 

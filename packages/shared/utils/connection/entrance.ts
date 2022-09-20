@@ -35,7 +35,7 @@ abstract class Entrance<T> {
 
     this.afterInit(instance);
 
-    console.log(`🌎 ~ ${this.name} api list`, this.apiList.map((item) => Object.keys(item)).flat());
+    // console.log(`🌎 ~ ${this.name} api list`, this.apiList.map((item) => Object.keys(item)).flat());
     return instance;
   }
 

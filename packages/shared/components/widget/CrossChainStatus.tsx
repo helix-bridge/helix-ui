@@ -6,8 +6,9 @@ import {
   IssuesCloseOutlined,
   LoadingOutlined,
 } from '@ant-design/icons';
-import React from 'react';
-import { useMemo } from 'react';
+import upperFirst from 'lodash/upperFirst';
+import React, { useMemo } from 'react';
+import { toMiddleSplitNaming } from 'shared/utils/helper/common';
 import { CBridgeRecordStatus, RecordStatus } from '../../config/constant';
 import { useITranslation } from '../../hooks/translation';
 
@@ -48,7 +49,11 @@ export function CrossChainState({
   const Icon = StatusIcons[value];
 
   const statusDes = useMemo(
-    () => (value < RecordStatus.success ? 'pending' : RecordStatus[value] ?? CBridgeRecordStatus[value]),
+    () =>
+      toMiddleSplitNaming(RecordStatus[value] ?? CBridgeRecordStatus[value])
+        .split('-')
+        .map(upperFirst)
+        .join(' '),
     [value]
   );
 
