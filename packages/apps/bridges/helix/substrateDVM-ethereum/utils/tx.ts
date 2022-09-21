@@ -9,6 +9,7 @@ import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
 import { getBridge, isSubstrateDVM2Ethereum, validationObsFactory } from '../../../../utils';
 import { getChainConfig } from '../../../../utils/network';
+import { getTokenConfigFromHelixRecord } from '../../../../utils/record/record';
 import backingAbi from '../config/backing.json';
 import guardAbi from '../config/guard.json';
 import mappingTokenAbi from '../config/mappingTokenFactory.json';
@@ -20,14 +21,20 @@ export function issue(value: IssuingPayload, fee: BN): Observable<Tx> {
   const { from: departure, to } = direction;
   const bridge = getBridge([departure.meta, to.meta]);
   const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
+  const params = [
+    departure.address,
+    recipient,
+    departure.type === 'native' ? amount.sub(fee).toString() : amount.toString(),
+    { from: sender, value: amount.toString() },
+  ];
+  const { method, args } =
+    departure.type === 'native'
+      ? { method: 'lockAndRemoteIssuingNative', args: params.slice(1) }
+      : { method: 'lockAndRemoteIssuing', args: params };
 
   return genEthereumContractTxObs(
     bridge.config.contracts!.backing,
-    (contract) =>
-      contract.lockAndRemoteIssuingNative(recipient, amount.sub(fee).toString(), {
-        from: sender,
-        value: amount.toString(),
-      }),
+    (contract) => contract[method].apply(null, args),
     backingAbi
   );
 }
@@ -37,14 +44,15 @@ export function redeem(value: RedeemPayload, fee: BN): Observable<Tx> {
   const { from: departure, to } = direction;
   const bridge = getBridge([departure.meta, to.meta]);
   const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
+  const params = [departure.address, recipient, amount.toString(), { from: sender, value: fee.toString() }];
+  const { method, args } =
+    to.type === 'native'
+      ? { method: 'burnAndRemoteUnlockNative', args: params.slice(1) }
+      : { method: 'burnAndRemoteUnlock', args: params };
 
   return genEthereumContractTxObs(
     bridge.config.contracts!.issuing,
-    (contract) =>
-      contract.burnAndRemoteUnlockNative(recipient, amount.toString(), {
-        from: sender,
-        value: fee.toString(),
-      }),
+    (contract) => contract[method].apply(null, args),
     mappingTokenAbi
   );
 }
@@ -91,9 +99,14 @@ export const refund = (record: HelixHistoryRecord) => {
   const bridge = getBridge<SubstrateDVMEthereumBridgeConfig>([fromChain, toChain]);
   const fromChainConfig = getChainConfig(toChain);
   const toChainConfig = getChainConfig(fromChain);
+  const sendToken = getTokenConfigFromHelixRecord(record);
 
   const { contractAddress, abi, method } = isSubstrateDVM2Ethereum(fromChain, toChain)
-    ? { contractAddress: bridge.config.contracts!.issuing, abi: mappingTokenAbi, method: 'remoteUnlockFailure' }
+    ? {
+        contractAddress: bridge.config.contracts!.issuing,
+        abi: mappingTokenAbi,
+        method: sendToken.type === 'native' ? 'remoteUnlockFailureNative' : 'remoteUnlockFailure',
+      }
     : { contractAddress: bridge.config.contracts!.backing, abi: backingAbi, method: 'remoteIssuingFailure' };
 
   return isMetamaskChainConsistent(getChainConfig(toChain)).pipe(

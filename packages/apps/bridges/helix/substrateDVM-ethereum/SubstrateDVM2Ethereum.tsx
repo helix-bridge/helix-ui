@@ -8,7 +8,7 @@ import { useIsMounted } from 'shared/hooks';
 import { CrossChainComponentProps, CrossToken, EthereumChainConfig, TxObservableFactory } from 'shared/model';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { pollWhile } from 'shared/utils/helper/operator';
-import { isRing } from 'shared/utils/helper/validator';
+import { isNativeRing, isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
@@ -46,7 +46,7 @@ export function SubstrateDVM2Ethereum({
     () =>
       fee && {
         amount: fromWei({ value: fee, decimals: direction.from.decimals }),
-        symbol: direction.from.meta.tokens.find((item) => /^[A-Z]?RING|CRAB/.test(item.symbol))!.symbol,
+        symbol: direction.from.meta.tokens.find(isNativeRing)!.symbol,
       },
     [direction.from.decimals, direction.from.meta.tokens, fee]
   );
@@ -54,11 +54,19 @@ export function SubstrateDVM2Ethereum({
   const isMounted = useIsMounted();
 
   useEffect(() => {
-    updateAllowancePayload({
-      spender: bridge.config.contracts.backing,
-      tokenAddress: direction.from.address || getWrappedToken(direction.from.meta).address,
-    });
-  }, [bridge.config.contracts.backing, direction.from.address, direction.from.meta, updateAllowancePayload]);
+    if (direction.from.type === 'mapping') {
+      updateAllowancePayload({
+        spender: bridge.config.contracts.backing,
+        tokenAddress: direction.from.address || getWrappedToken(direction.from.meta).address,
+      });
+    }
+  }, [
+    bridge.config.contracts.backing,
+    direction.from.address,
+    direction.from.meta,
+    direction.from.type,
+    updateAllowancePayload,
+  ]);
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
@@ -92,7 +100,7 @@ export function SubstrateDVM2Ethereum({
               amount: isRing(direction.from.symbol)
                 ? +fromWei({ value: result, decimals: direction.from.decimals })
                 : 0,
-              symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
+              symbol: direction.from.meta.tokens.find(isNativeRing)!.symbol,
             });
           }
         },

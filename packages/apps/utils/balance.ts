@@ -1,7 +1,13 @@
 import BN from 'bn.js';
 import { CrossChainDirection } from 'shared/model';
 import { isKton, isRing } from 'shared/utils/helper/validator';
-import { getDarwiniaBalance, getDVMBalance, getErc20Balance, getParachainBalance } from 'shared/utils/network/balance';
+import {
+  getDarwiniaBalance,
+  getDVMBalance,
+  getErc20Balance,
+  getEthereumNativeBalance,
+  getParachainBalance,
+} from 'shared/utils/network/balance';
 import {
   isCBridge,
   isCrabParachain2Moonriver,
@@ -59,10 +65,18 @@ export async function getBalance(direction: CrossChainDirection, account: string
     return [ring, kton];
   }
 
-  if ([isDVM2Substrate, isSubstrateDVM2Ethereum].some((fn) => fn(fromChain, toChain))) {
+  if (isDVM2Substrate(fromChain, toChain)) {
     const kton = from.meta.tokens.find((item) => item.type === 'native' && isKton(item.symbol));
 
     return getDVMBalance(account, from.meta.provider, kton?.address);
+  }
+
+  if (isSubstrateDVM2Ethereum(fromChain, toChain)) {
+    if (from.type === 'native') {
+      return getEthereumNativeBalance(account, from.meta.provider).then((res) => [res]);
+    } else {
+      return getErc20Balance(from.address, account, from.meta.provider).then((res) => [res]);
+    }
   }
 
   if (
