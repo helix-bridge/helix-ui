@@ -53,7 +53,7 @@ export async function getBalance(direction: CrossChainDirection, account: string
       from.meta.tokens
         .filter((item) => isRing(item.symbol) || isKton(item.symbol))
         .sort((cur) => (isRing(cur.symbol) ? -1 : 1))
-        .map((item) => getErc20Balance(item.address, account))
+        .map((item) => getErc20Balance(item.address, account, from.meta.provider))
     );
 
     return [ring, kton];
@@ -62,7 +62,7 @@ export async function getBalance(direction: CrossChainDirection, account: string
   if ([isDVM2Substrate, isSubstrateDVM2Ethereum].some((fn) => fn(fromChain, toChain))) {
     const kton = from.meta.tokens.find((item) => item.type === 'native' && isKton(item.symbol));
 
-    return getDVMBalance(account, kton?.address);
+    return getDVMBalance(account, from.meta.provider, kton?.address);
   }
 
   if (
@@ -75,10 +75,10 @@ export async function getBalance(direction: CrossChainDirection, account: string
     ].some((fn) => fn(fromChain, toChain))
   ) {
     if (direction.from.host === direction.to.host && isDeposit(direction)) {
-      return getDVMBalance(account);
+      return getDVMBalance(account, from.meta.provider);
     }
 
-    return getErc20Balance(from.address, account).then((res) => [res]);
+    return getErc20Balance(from.address, account, from.meta.provider).then((res) => [res]);
   }
 
   if (

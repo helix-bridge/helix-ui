@@ -11,7 +11,6 @@ import { EMPTY } from 'rxjs/internal/observable/empty';
 import { from as fromRx } from 'rxjs/internal/observable/from';
 import { iif } from 'rxjs/internal/observable/iif';
 import { of } from 'rxjs/internal/observable/of';
-import { tap } from 'rxjs/internal/operators/tap';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
 import {
@@ -93,11 +92,8 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   }, [account, form]);
 
   useEffect(() => {
-    const sub$$ = iif(
-      () => !!account && matched,
-      fromRx(getBalance(direction, account)).pipe(tap(() => setIsBalanceLoading(true))),
-      of(null)
-    ).subscribe((result) => {
+    setIsBalanceLoading(true);
+    const sub$$ = iif(() => !!account, fromRx(getBalance(direction, account)), of(null)).subscribe((result) => {
       console.log(
         '💰 ~ balances',
         result?.map((item) => item.toString())
@@ -107,7 +103,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
     });
 
     return () => sub$$.unsubscribe();
-  }, [account, direction, matched]);
+  }, [account, direction]);
 
   useEffect(() => {
     if (allowancePayload) {
@@ -212,12 +208,9 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
                       ...observer,
                       complete() {
                         observer.complete();
+                        setIsBalanceLoading(true);
 
-                        iif(
-                          () => !!account && matched,
-                          fromRx(getBalance(direction, account)).pipe(tap(() => setIsBalanceLoading(true))),
-                          of(null)
-                        ).subscribe((result) => {
+                        iif(() => !!account, fromRx(getBalance(direction, account)), of(null)).subscribe((result) => {
                           setBalances(result);
                           setIsBalanceLoading(false);
                         });

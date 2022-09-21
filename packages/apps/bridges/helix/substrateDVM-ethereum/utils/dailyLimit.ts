@@ -1,8 +1,9 @@
 import { BN } from '@polkadot/util';
 import { Contract } from 'ethers';
-import { ChainConfig, CrossChainDirection, CrossToken, EthereumChainConfig } from 'shared/model';
+import { CrossChainDirection, CrossToken, EthereumChainConfig } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { getBridge } from 'utils/bridge';
+import { getWrappedToken } from '../../../../utils/network';
 import backingAbi from '../config/backing.json';
 import mappingTokenAbi from '../config/mappingTokenFactory.json';
 
@@ -24,11 +25,4 @@ export async function getDailyLimit(
   const limit = await contract.calcMaxWithdraw(type === 'native' ? getWrappedToken(arrival).address : tokenAddress);
 
   return new BN(limit.toString());
-}
-
-function getWrappedToken(config: ChainConfig) {
-  const native = config.tokens.find((item) => item.type === 'native');
-  const cross = native?.cross.find((item) => item.partner.name === native.host);
-
-  return config.tokens.find((item) => item.symbol === cross?.partner.symbol)!;
 }

@@ -17,6 +17,7 @@ import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
 import { useAccount } from '../../../providers';
+import { getWrappedToken } from '../../../utils/network';
 import { IssuingPayload, SubstrateDVMEthereumBridgeConfig } from './model';
 import { getDailyLimit, getFee } from './utils';
 import { issue, validate } from './utils/tx';
@@ -55,9 +56,9 @@ export function SubstrateDVM2Ethereum({
   useEffect(() => {
     updateAllowancePayload({
       spender: bridge.config.contracts.backing,
-      tokenAddress: direction.from.address,
+      tokenAddress: direction.from.address || getWrappedToken(direction.from.meta).address,
     });
-  }, [bridge.config.contracts.backing, direction.from.address, updateAllowancePayload]);
+  }, [bridge.config.contracts.backing, direction.from.address, direction.from.meta, updateAllowancePayload]);
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {

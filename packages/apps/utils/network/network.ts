@@ -82,3 +82,10 @@ export function getDisplayName(config: ChainConfig | null | Network): string {
 
   return config.fullName ?? `${upperFirst(config.name)} Chain`;
 }
+
+export function getWrappedToken(config: ChainConfig) {
+  const native = config.tokens.find((item) => item.type === 'native');
+  const cross = native?.cross.find((item) => item.partner.name === native.host);
+
+  return config.tokens.find((item) => item.symbol === cross?.partner.symbol)!;
+}
