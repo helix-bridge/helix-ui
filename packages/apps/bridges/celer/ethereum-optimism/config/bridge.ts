@@ -13,6 +13,4 @@ const ethereumOptimismConfig: EthereumOptimismBridgeConfig = {
 export const ethereumOptimism = new Bridge(ethereumConfig, optimismConfig, ethereumOptimismConfig, {
   name: 'ethereum-optimism',
   category: 'cBridge',
-  disableIssue: true,
-  disableRedeem: true,
 });

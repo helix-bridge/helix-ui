@@ -9,7 +9,7 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { HelixHistoryRecord, Tx } from 'shared/model';
 import { getBridge } from 'utils/bridge';
 import { entrance } from 'shared/utils/connection';
-import { toWei } from 'shared/utils/helper/balance';
+import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
@@ -178,10 +178,15 @@ export async function requestRefund(record: HelixHistoryRecord) {
   return response;
 }
 
-export const genValidations = ({ balance, amount, allowance }: TxValidation): [boolean, string][] => [
-  [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
-  [!!allowance && allowance?.lt(amount), TxValidationMessages.allowanceLessThanAmount],
-];
+export const genValidations = ({ balance, amount, allowance, decimals }: TxValidation): [boolean, string][] => {
+  const minAmount = 20;
+
+  return [
+    [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
+    [!!allowance && allowance?.lt(amount), TxValidationMessages.allowanceLessThanAmount],
+    [+fromWei({ value: amount, decimals }) < minAmount, `Transfer amount must greater than or equal to ${minAmount}`],
+  ];
+};
 
 export const validate = validationObsFactory(genValidations);
 

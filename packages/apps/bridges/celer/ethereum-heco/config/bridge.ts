@@ -12,6 +12,4 @@ const ethereumHecoConfig: EthereumHecoBridgeConfig = {
 export const ethereumHeco = new Bridge(ethereumConfig, hecoConfig, ethereumHecoConfig, {
   name: 'ethereum-heco',
   category: 'cBridge',
-  disableIssue: true,
-  disableRedeem: true,
 });

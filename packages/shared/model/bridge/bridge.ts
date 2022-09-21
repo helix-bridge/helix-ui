@@ -107,6 +107,10 @@ export class Bridge<C = BridgeConfig> {
     return this._config;
   }
 
+  private toComponentName(name: string) {
+    return name === 'bsc' ? name.toUpperCase() : upperFirst(name);
+  }
+
   setIssueComponents(crossComp: string): void {
     this.crossChain.set(this.issue, crossComp);
   }
@@ -132,17 +136,17 @@ export class Bridge<C = BridgeConfig> {
   get IssueCrossChainComponent(): string {
     return (
       this.options.issueCompName ||
-      this.name.split('-').map(upperFirst).join('2') ||
-      this.issue.map((item) => item.split('-').map(upperFirst).join('')).join('2')
+      this.name.split('-').map(this.toComponentName).join('2') ||
+      this.issue.map((item) => item.split('-').map(this.toComponentName).join('')).join('2')
     );
   }
 
   get RedeemCrossChainComponent(): string {
     return (
       this.options.redeemCompName ||
-      this.name.split('-').map(upperFirst).reverse().join('2') ||
+      this.name.split('-').map(this.toComponentName).reverse().join('2') ||
       this.issue
-        .map((item) => item.split('-').map(upperFirst).join(''))
+        .map((item) => item.split('-').map(this.toComponentName).join(''))
         .reverse()
         .join('2')
     );
