@@ -13,7 +13,7 @@ export const goerliConfig: EthereumChainConfig = {
   isTest: true,
   name: 'goerli',
   fullName: 'goerli',
-  provider: 'wss://goerli.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
+  provider: 'https://goerli.infura.io/v3/5350449ccd2349afa007061e62ee1409',
   social: {
     portal: 'https://ethereum.org/en/',
     github: 'https://github.com/ethereum',
@@ -38,6 +38,11 @@ export const goerliConfig: EthereumChainConfig = {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'ORING' },
+        },
+        {
+          category: 'helix',
+          bridge: 'substrateDVM-ethereum',
+          partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'WORING' },
         },
       ],
       type: 'mapping',

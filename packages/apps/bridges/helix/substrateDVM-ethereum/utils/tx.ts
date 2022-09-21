@@ -97,7 +97,7 @@ export const refund = (record: HelixHistoryRecord) => {
     : { contractAddress: bridge.config.contracts!.backing, abi: backingAbi, method: 'remoteIssuingFailure' };
 
   return isMetamaskChainConsistent(getChainConfig(toChain)).pipe(
-    switchMap(() => from(getFee({ from: { meta: fromChainConfig }, to: { meta: toChainConfig } }))),
+    switchMap(() => from(getFee({ from: { meta: fromChainConfig }, to: { meta: toChainConfig } }, true))),
     switchMap((fee) => {
       return genEthereumContractTxObs(
         contractAddress,

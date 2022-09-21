@@ -1,10 +1,8 @@
-import { EyeInvisibleFilled } from '@ant-design/icons';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
-import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
 import { useIsMounted } from 'shared/hooks';
 import {
@@ -14,7 +12,6 @@ import {
   EthereumChainConfig,
   TxObservableFactory,
 } from 'shared/model';
-import { isMetamaskChainConsistent } from 'shared/utils/connection';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { pollWhile } from 'shared/utils/helper/operator';
 import { isRing } from 'shared/utils/helper/validator';
@@ -22,6 +19,7 @@ import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
+import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { useAccount } from '../../../providers';
@@ -94,11 +92,8 @@ export function Ethereum2SubstrateDVM({
   }, [afterCrossChain, dailyLimit, fee, feeWithSymbol, ring, setTxObservableFactory]);
 
   useEffect(() => {
-    const sub$$ = isMetamaskChainConsistent(direction.from.meta)
-      .pipe(
-        switchMap(() => from(getFee(direction))),
-        pollWhile(LONG_DURATION, () => isMounted)
-      )
+    const sub$$ = from(getFee(direction))
+      .pipe(pollWhile(LONG_DURATION, () => isMounted))
       .subscribe({
         next(result) {
           setFee(result);
@@ -121,11 +116,8 @@ export function Ethereum2SubstrateDVM({
   }, [direction, isMounted, onFeeChange]);
 
   useEffect(() => {
-    const sub$$ = isMetamaskChainConsistent(direction.from.meta)
-      .pipe(
-        switchMap(() => from(getDailyLimit(direction))),
-        pollWhile(LONG_DURATION, () => isMounted)
-      )
+    const sub$$ = from(getDailyLimit(direction))
+      .pipe(pollWhile(LONG_DURATION, () => isMounted))
       .subscribe({
         next(limit) {
           setDailyLimit(limit);
@@ -161,7 +153,7 @@ export function Ethereum2SubstrateDVM({
         extra={[
           {
             name: t('Daily limit'),
-            content: dailyLimit ? <span>{fromWei({ value: dailyLimit })}</span> : <EyeInvisibleFilled />,
+            content: dailyLimit ? <span>{fromWei({ value: dailyLimit })}</span> : <CountLoading />,
           },
         ]}
       ></CrossChainInfo>

@@ -8,7 +8,7 @@ export const crabConfig: PolkadotChainConfig = {
     { name: 'crab-logo.svg', type: 'assist' },
   ],
   name: 'crab',
-  provider: 'wss://darwinia-crab.api.onfinality.io/public-ws',
+  provider: 'wss://crab-rpc.darwinia.network',
   social: {
     portal: 'https://crab.network/',
     github: 'https://github.com/darwinia-network/darwinia/tree/main/runtime/crab',

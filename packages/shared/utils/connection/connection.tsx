@@ -1,4 +1,4 @@
-import { isHex, stringToHex } from '@polkadot/util';
+import { isHex } from '@polkadot/util';
 import { Modal } from 'antd';
 import { Trans } from 'react-i18next';
 import type { Observable } from 'rxjs/internal/Observable';
@@ -47,7 +47,7 @@ export async function isNetworkConsistent(chain: EthereumChainConfig, id = ''): 
   const actualId: string | number = id ? await Promise.resolve(id) : await web3.getNetwork().then((res) => res.chainId);
   const storedId = chain.ethereumChain.chainId;
 
-  return storedId === stringToHex(String(actualId));
+  return parseInt(storedId, 16) === actualId;
 }
 
 export function metamaskGuard<T>(fn: () => Observable<T>) {

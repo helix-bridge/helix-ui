@@ -1,4 +1,3 @@
-import { EyeInvisibleFilled } from '@ant-design/icons';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +15,7 @@ import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
+import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { useAccount, useApi } from '../../../providers';
@@ -172,7 +172,7 @@ export function SubstrateDVM2SubstrateDVM({
         extra={[
           {
             name: t('Daily limit'),
-            content: dailyLimit ? <span>{fromWei({ value: dailyLimit })}</span> : <EyeInvisibleFilled />,
+            content: dailyLimit ? <span>{fromWei({ value: dailyLimit })}</span> : <CountLoading />,
           },
         ]}
       ></CrossChainInfo>

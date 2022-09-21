@@ -1,10 +1,11 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Form, Spin, Tooltip } from 'antd';
+import { Form, Tooltip } from 'antd';
 import { PropsWithChildren, ReactNode, useMemo } from 'react';
+import { useITranslation } from 'shared/hooks/translation';
 import { Bridge } from 'shared/model';
 import { prettyNumber } from 'shared/utils/helper/balance';
-import { useITranslation } from 'shared/hooks/translation';
 import { bridgeCategoryDisplay } from '../../utils/bridge';
+import { CountLoading } from './CountLoading';
 
 type AmountInfo = {
   amount: string;
@@ -44,7 +45,7 @@ export function CrossChainInfo({
         <QuestionCircleOutlined className="cursor-pointer" />
       </Tooltip>
     ) : (
-      <Spin spinning size="small"></Spin>
+      <CountLoading />
     );
   }, [fee, isDynamicFee, t]);
 

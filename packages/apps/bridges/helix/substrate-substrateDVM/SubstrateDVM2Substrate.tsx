@@ -1,4 +1,3 @@
-import { EyeInvisibleFilled } from '@ant-design/icons';
 import { BN_ZERO } from '@polkadot/util';
 import BN from 'bn.js';
 import { useTranslation } from 'next-i18next';
@@ -15,13 +14,14 @@ import {
   TxObservableFactory,
 } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { fromWei, toWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
+import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
 import { getS2SMappingAddress } from 'shared/utils/mappingToken';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
+import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { useAccount } from '../../../providers';
@@ -173,7 +173,7 @@ export function SubstrateDVM2Substrate({
                     )}
               </span>
             ) : (
-              <EyeInvisibleFilled />
+              <CountLoading />
             ),
           },
         ]}

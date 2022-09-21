@@ -59,7 +59,7 @@ describe.each(configs)("$name network's ", ({ name, tokens, ...other }) => {
     const from = { ...rest, name: tokenName, cross, meta: { name, tokens, ...other }, amount: '' };
 
     const bridgeCountStatistics = cross.reduce((acc, cur) => {
-      const target = acc.find((item) => item.toNetwork === cur.partner.name);
+      const target = acc.find((item) => item.toNetwork === cur.partner.name && item.toSymbol == cur.partner.symbol);
 
       if (!target) {
         acc.push({ toNetwork: cur.partner.name, toSymbol: cur.partner.symbol, count: 1 });
