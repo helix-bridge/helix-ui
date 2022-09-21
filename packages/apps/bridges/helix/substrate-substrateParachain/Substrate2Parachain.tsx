@@ -1,4 +1,3 @@
-import { EyeInvisibleFilled } from '@ant-design/icons';
 import { hexToU8a } from '@polkadot/util';
 import BN from 'bn.js';
 import upperFirst from 'lodash/upperFirst';
@@ -14,12 +13,13 @@ import {
   TxObservableFactory,
 } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { fromWei, toWei, prettyNumber } from 'shared/utils/helper/balance';
+import { fromWei, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
+import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { useApi } from '../../../providers';
@@ -141,7 +141,7 @@ export function Substrate2Parachain({
                 )}
               </span>
             ) : (
-              <EyeInvisibleFilled />
+              <CountLoading />
             ),
           },
         ]}

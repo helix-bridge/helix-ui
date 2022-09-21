@@ -19,7 +19,7 @@ import {
   TokenWithBridgesInfo,
 } from '../../model';
 
-function isNativeMetamaskChain(chain: EthereumChainConfig): boolean {
+export function isNativeMetamaskChain(chain: EthereumChainConfig): boolean {
   const ids = [
     MetamaskNativeNetworkIds.ethereum,
     MetamaskNativeNetworkIds.ropsten,
@@ -28,7 +28,7 @@ function isNativeMetamaskChain(chain: EthereumChainConfig): boolean {
     MetamaskNativeNetworkIds.kovan,
   ];
 
-  return ids.includes(+chain.ethereumChain.chainId);
+  return ids.includes(parseInt(chain.ethereumChain.chainId, 16));
 }
 
 export const getMetamaskConnection: () => Observable<EthereumConnection> = () =>
@@ -81,12 +81,22 @@ export const getMetamaskConnection: () => Observable<EthereumConnection> = () =>
   );
 
 export async function switchEthereumChain(chain: EthereumChainConfig): Promise<null> {
-  const res: null = await window.ethereum.request({
-    method: 'wallet_switchEthereumChain',
-    params: [{ chainId: chain.ethereumChain.chainId }],
-  });
+  try {
+    const res: null = await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: chain.ethereumChain.chainId }],
+    });
 
-  return res;
+    return res;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (switchError: any) {
+    // eslint-disable-next-line no-magic-numbers
+    if (switchError.code === 4902) {
+      return addEthereumChain(chain);
+    } else {
+      throw switchError;
+    }
+  }
 }
 
 /**
@@ -104,10 +114,7 @@ async function addEthereumChain(chain: EthereumChainConfig): Promise<null> {
 export const switchMetamaskNetwork: DebouncedFunc<(chain: EthereumChainConfig) => Observable<null>> = throttle(
   (chain) => {
     return new Observable((observer: Observer<null>) => {
-      const isNative = isNativeMetamaskChain(chain);
-      const action = isNative ? switchEthereumChain : addEthereumChain;
-
-      action(chain)
+      switchEthereumChain(chain)
         .then((res) => {
           observer.next(res);
         })

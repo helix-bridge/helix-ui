@@ -18,7 +18,7 @@ export const crabDVMConfig: DVMChainConfig = {
     { name: 'crab-logo.svg', type: 'assist' },
   ],
   name: 'crab-dvm',
-  provider: 'wss://darwinia-crab.api.onfinality.io/public-ws',
+  provider: 'wss://crab-rpc.darwinia.network',
   social: {
     portal: 'https://crab.network/',
     github: 'https://github.com/darwinia-network/darwinia/tree/main/runtime/crab',

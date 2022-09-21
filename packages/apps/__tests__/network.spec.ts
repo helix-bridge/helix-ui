@@ -20,7 +20,13 @@ import { crabParachainConfig } from 'shared/config/network/crab-parachain';
 import { pangolinParachainConfig } from 'shared/config/network/pangolin-parachain';
 import { Network } from 'shared/model';
 import { crossChainGraph } from '../utils/network/graph';
-import { chainConfigs, getChainConfig, getDisplayName, getOriginChainConfig } from '../utils/network/network';
+import {
+  chainConfigs,
+  getChainConfig,
+  getDisplayName,
+  getOriginChainConfig,
+  getWrappedToken,
+} from '../utils/network/network';
 
 describe('network utils', () => {
   const data = [...crossChainGraph];
@@ -245,5 +251,12 @@ describe('network utils', () => {
     expect(getDisplayName(optimismConfig)).toEqual('Optimism');
     expect(getDisplayName(moonriverConfig)).toEqual('Moonriver');
     expect(getDisplayName(null)).toEqual('unknown');
+  });
+
+  it('can get wrapped token', () => {
+    expect(getWrappedToken(pangoroDVMConfig)).toEqual(pangoroDVMConfig.tokens.find((item) => item.symbol === 'WORING'));
+    expect(getWrappedToken(darwiniaDVMConfig)).toEqual(
+      darwiniaDVMConfig.tokens.find((item) => item.symbol === 'wRING')
+    );
   });
 });

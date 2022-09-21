@@ -5,7 +5,7 @@ import { isAddress } from 'ethers/lib/utils';
 import { abi } from '../../../config/abi';
 import { entrance } from '../../connection';
 
-export async function getBalance(account: string, ktonAddress?: string): Promise<[BN, BN]> {
+export async function getBalance(account: string, provider: string, ktonAddress?: string): Promise<[BN, BN]> {
   let ring = '0';
   let kton = '0';
 
@@ -13,10 +13,10 @@ export async function getBalance(account: string, ktonAddress?: string): Promise
     return [BN_ZERO, BN_ZERO];
   }
 
-  const provider = entrance.web3.currentProvider;
+  const pro = entrance.web3.getInstance(provider);
 
   try {
-    ring = await provider.getBalance(account).then((res) => res.toString());
+    ring = await pro.getBalance(account).then((res) => res.toString());
   } catch (error) {
     console.error(
       '%c [ get ring balance in ethereum error ]',
@@ -27,7 +27,7 @@ export async function getBalance(account: string, ktonAddress?: string): Promise
 
   try {
     if (ktonAddress) {
-      const contract = new Contract(ktonAddress, abi.ktonABI, entrance.web3.currentProvider);
+      const contract = new Contract(ktonAddress, abi.ktonABI, pro);
 
       kton = await contract.balanceOf(account);
     }

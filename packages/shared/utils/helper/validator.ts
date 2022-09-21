@@ -1,7 +1,7 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
 import { isAddress } from 'ethers/lib/utils';
-import { Network } from '../../model';
+import { Network, TokenWithBridgesInfo } from '../../model';
 import { isPolkadotNetwork } from '../network/network';
 import { canConvertToEth, convertToEth, convertToSS58, dvmAddressToAccountId } from './address';
 
@@ -77,5 +77,7 @@ export const isSameAddress = (from: string, to: string): boolean => {
 };
 
 export const isRing = (name: string | null | undefined) => /ring/i.test(String(name)) || /crab/i.test(String(name));
+
+export const isNativeRing = (config: TokenWithBridgesInfo) => isRing(config.name) && config.type === 'native';
 
 export const isKton = (name: string | null | undefined) => /kton/i.test(String(name));

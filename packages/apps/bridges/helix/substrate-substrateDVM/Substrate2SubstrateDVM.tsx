@@ -1,4 +1,3 @@
-import { EyeInvisibleFilled } from '@ant-design/icons';
 import BN from 'bn.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,12 +15,13 @@ import {
   TxObservableFactory,
 } from 'shared/model';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
-import { isRing } from 'shared/utils/helper/validator';
 import { pollWhile } from 'shared/utils/helper/operator';
+import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
+import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { useApi } from '../../../providers';
@@ -132,7 +132,7 @@ export function Substrate2SubstrateDVM({
         extra={[
           {
             name: t('Daily limit'),
-            content: dailyLimit ? <span>{fromWei({ value: dailyLimit, decimals: 9 })}</span> : <EyeInvisibleFilled />,
+            content: dailyLimit ? <span>{fromWei({ value: dailyLimit, decimals: 9 })}</span> : <CountLoading />,
           },
         ]}
       ></CrossChainInfo>
