@@ -6,4 +6,5 @@ export interface TxValidation {
   dailyLimit?: BN;
   allowance?: BN;
   fee?: BN;
+  decimals?: number;
 }
