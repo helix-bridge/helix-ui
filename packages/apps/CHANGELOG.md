@@ -1,3 +1,13 @@
+# [4.3.0](https://github.com/helix-bridge/helix/compare/v4.2.12-apps...v4.3.0) (2022-09-21)
+
+
+### Features
+
+* eth2: pangoro-dvm<>goerli ([#254](https://github.com/helix-bridge/helix/issues/254)) ([8c8f00a](https://github.com/helix-bridge/helix/commit/8c8f00a12a29117d3729c0eb69aec12c028d5842))
+* eth2: pangoro-dvm<>goerli wrapped eth2 token transfer ([#256](https://github.com/helix-bridge/helix/issues/256)) ([c7c4e0a](https://github.com/helix-bridge/helix/commit/c7c4e0a35300223a614db78239af8a530e7ee3be))
+
+
+
 ## [4.2.6](https://github.com/helix-bridge/helix/compare/v4.2.5-apps...v4.2.4) (2022-09-06)
 
 

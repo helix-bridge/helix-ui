@@ -1,6 +1,6 @@
 {
   "name": "apps",
-  "version": "4.2.6",
+  "version": "4.3.0",
   "private": true,
   "scripts": {
     "analyze": "cross-env ANALYZE=true next build",
@@ -16,7 +16,7 @@
     "test:unit:watch": "cross-env TZ=UTC CHAIN_TYPE=all jest --watch --verbose",
     "init:bridge": "./bridge.sh",
     "i18next:scanner": "i18next-scanner --config i18next-scanner.config.js",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -u"
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
