@@ -15,26 +15,20 @@ export function Chain(props: ChainConfig) {
   const { portal, twitter, github } = social;
 
   return (
-    <div className="flex items-center px-6 py-8 gap-6 bg-gray-200 dark:bg-antDark">
+    <div className="flex items-center px-6 py-8 gap-6 bg-antDark">
       <Logo name={logos[0].name} width={70} height={70} />
 
       <div className="flex flex-col gap-2">
         <h6 className="capitalize text-base font-normal">{chainName}</h6>
         <BestNumber config={props} color={'#1fe733'} />
         <div className="flex gap-2 text-lg text-gray-400 cursor-pointer">
-          <GlobalOutlined
-            onClick={() => open(portal)}
-            className="hover:text-gray-600 dark:hover:text-gray-200 transition-colors duration-200"
-          />
+          <GlobalOutlined onClick={() => open(portal)} className="hover:text-gray-200 transition-colors duration-200" />
 
-          <GithubOutlined
-            onClick={() => open(github)}
-            className="hover:text-gray-600 dark:hover:text-gray-200 transition-colors duration-200"
-          />
+          <GithubOutlined onClick={() => open(github)} className="hover:text-gray-200 transition-colors duration-200" />
 
           <TwitterCircleFilled
             onClick={() => open(twitter)}
-            className="hover:text-gray-600 dark:hover:text-gray-200 transition-colors duration-200"
+            className="hover:text-gray-200 transition-colors duration-200"
           />
         </div>
       </div>

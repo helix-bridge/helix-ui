@@ -18,7 +18,7 @@ export function Footer({ theme, className = '' }: FooterProps) {
         background: theme === THEME.LIGHT ? '#ccc' : 'transparent',
       }}
     >
-      <div className="md:flex md:gap-4 md:flex-wrap dark:text-gray-400">
+      <div className="md:flex md:gap-4 md:flex-wrap text-gray-400">
         <span className="flex items-center justify-center">
           <CopyrightOutlined style={{ fontSize: '0.9rem' }} />
           <span className="ml-1 text-gray-400 text-base font-medium">

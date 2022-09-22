@@ -120,7 +120,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
       validateMessages={validateMessages[i18n.language as 'en' | 'zh-CN' | 'zh']}
     >
       <Row>
-        <Col xs={24} sm={8} className={`mb-4 sm:mb-0 dark:bg-antDark p-5`}>
+        <Col xs={24} sm={8} className={`mb-4 sm:mb-0 bg-antDark p-5`}>
           <Form.Item name={FORM_CONTROL.direction} className="mb-0">
             <Direction
               fee={fee}
@@ -233,7 +233,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
           )}
         </Col>
 
-        <Col xs={24} sm={{ span: 15, offset: 1 }} className="dark:bg-antDark">
+        <Col xs={24} sm={{ span: 15, offset: 1 }} className="bg-antDark">
           <Form.Item
             name={FORM_CONTROL.bridge}
             rules={[
