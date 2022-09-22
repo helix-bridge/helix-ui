@@ -7,7 +7,7 @@ export const pangoroConfig: PolkadotChainConfig = {
     { name: 'pangoro.png', type: 'minor' },
   ],
   name: 'pangoro',
-  provider: 'wss://pangoro-rpc.darwinia.network',
+  provider: 'https://pangoro-rpc.darwinia.network',
   social: {
     portal: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangoro-rpc.darwinia.network#/explorer',
     github: 'https://github.com/darwinia-network',

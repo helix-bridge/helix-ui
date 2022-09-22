@@ -13,7 +13,6 @@ export const arbitrumConfig: EthereumChainConfig = {
   logos: [{ name: 'arbitrum.png', type: 'main' }],
   name: 'arbitrum',
   fullName: 'Arbitrum One',
-  // provider: 'wss://arb1.arbitrum.io/feed', // binary message
   provider: 'https://arb1.arbitrum.io/rpc',
   social: {
     portal: 'https://arbitrum.io/',

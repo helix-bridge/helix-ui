@@ -7,15 +7,17 @@ export const gqlName = (query: string) =>
     .slice(0, -1) as string;
 
 export function unixTimeToLocal(time: number) {
-  // eslint-disable-next-line no-magic-numbers
   const timezoneOffSet = new Date().getTimezoneOffset() * 60;
 
   return fromUnixTime(time - timezoneOffSet).toLocaleString();
 }
 
-export function toMiddleSplitNaming(str: string): string {
-  return str
-    .split(/(?<![A-Z])(?=[A-Z])/)
-    .map((item) => item.toLowerCase())
-    .join('-');
-}
+export const toMiddleSplitNaming = (str: string) => {
+  const result = str.replace(/[A-Z]+/g, (letter) => `-${letter.toLowerCase()}`);
+
+  if (result.startsWith('-')) {
+    return result.slice(1);
+  }
+
+  return result;
+};

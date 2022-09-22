@@ -16,7 +16,7 @@ export const polygonConfig: EthereumChainConfig = {
   ],
   name: 'polygon',
   fullName: 'Polygon(Matic)',
-  provider: 'wss://ws-mainnet.matic.network',
+  provider: 'https://polygon-rpc.com/',
   social: {
     portal: 'https://polygon.technology/',
     github: 'https://github.com/maticnetwork/',
