@@ -339,11 +339,11 @@ function NetworkG6() {
     <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 mt-4 lg:mt-6">
       <div
         id="networks-g6"
-        className="lg:col-span-8 flex-1 p-4 bg-gray-200 dark:bg-antDark"
+        className="lg:col-span-8 flex-1 p-4 bg-antDark"
         style={{ width: '100%', height: 500 }}
       ></div>
 
-      <div className="lg:col-span-4 bg-gray-200 dark:bg-antDark px-5 py-6">
+      <div className="lg:col-span-4 bg-antDark px-5 py-6">
         <h3 className="uppercase text-xl font-normal">{t('Bridge Overview')}</h3>
 
         <div className="flex flex-col gap-2 items-center justify-center m-2 md:m-4">

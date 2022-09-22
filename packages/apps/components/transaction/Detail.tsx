@@ -51,7 +51,7 @@ export function Detail({ record, transfers }: DetailProps) {
         <Bridge />
       </div>
 
-      <div className="px-8 py-3 mt-6 bg-gray-200 dark:bg-antDark">
+      <div className="px-8 py-3 mt-6 bg-antDark">
         <SourceTx hash={record?.requestTxHash} />
 
         <TargetTx record={record} />
