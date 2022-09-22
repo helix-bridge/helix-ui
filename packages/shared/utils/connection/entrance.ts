@@ -29,7 +29,7 @@ abstract class Entrance<T> {
 
     const instance = this.init(url);
 
-    if (url !== 'ethereum') {
+    if (url.startsWith('wss')) {
       this.apiList.push({ [url]: instance });
     }
 
