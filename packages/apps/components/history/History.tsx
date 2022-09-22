@@ -5,8 +5,8 @@ import { useManualQuery } from 'graphql-hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { from } from 'rxjs/internal/observable/from';
-import { map } from 'rxjs/internal/operators/map';
 import { filter } from 'rxjs/internal/operators/filter';
+import { map } from 'rxjs/internal/operators/map';
 import { tap } from 'rxjs/operators';
 import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
 import { DATE_TIME_FORMAT, RecordStatus } from 'shared/config/constant';
@@ -27,6 +27,7 @@ import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
 import { useAccount, useApi } from '../../providers';
 import { useClaim } from '../../providers/claim';
+import { isEthereumDarwinia } from '../../utils';
 import { fetchDarwinia2EthereumRecords, fetchEthereum2DarwiniaRecords } from '../../utils/records';
 import { isTransferableTokenPair } from '../../utils/validate';
 import { BridgeArrow } from '../bridge/BridgeArrow';
@@ -353,11 +354,15 @@ export default function History() {
 
                             if (paths.length) {
                               window.open(`transaction/${paths.join('/')}?${query}`, '_blank');
-                            } else {
+                            }
+
+                            if (!isEthereumDarwinia(fromChain, toChain)) {
                               message.error(`Can not find the detail page for ${fromChain} to ${toChain}`);
                             }
                           }}
-                          className="text-right pl-4 pr-6 py-4  border border-gray-800 mb-4 bg-gray-900 rounded-xs cursor-pointer"
+                          className={`text-right pl-4 pr-6 py-4  border border-gray-800 mb-4 bg-gray-900 rounded-xs ${
+                            !isEthereumDarwinia(fromChain, toChain) ? 'cursor-pointer' : ''
+                          }`}
                         >
                           <div className="mb-2 whitespace-nowrap text-xs">
                             {format(record.startTime * 1000, DATE_TIME_FORMAT)}
