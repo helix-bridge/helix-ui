@@ -43,19 +43,21 @@ const CrossChainStatusColor = [
 export function CrossChainState({
   value,
   children,
+  detailedState = false,
   className = '',
-}: React.PropsWithChildren<{ value: number; className?: string }>) {
+}: React.PropsWithChildren<{ value: number; className?: string; detailedState?: boolean }>) {
   const { t } = useITranslation();
   const Icon = StatusIcons[value];
 
-  const statusDes = useMemo(
-    () =>
-      toMiddleSplitNaming(RecordStatus[value] ?? CBridgeRecordStatus[value])
-        .split('-')
-        .map(upperFirst)
-        .join(' '),
-    [value]
-  );
+  const statusDes = useMemo(() => {
+    const state = RecordStatus[value] ?? CBridgeRecordStatus[value];
+
+    return detailedState
+      ? toMiddleSplitNaming(state).split('-').map(upperFirst).join(' ')
+      : value < RecordStatus.success
+      ? 'pending'
+      : state;
+  }, [value, detailedState]);
 
   return (
     <div

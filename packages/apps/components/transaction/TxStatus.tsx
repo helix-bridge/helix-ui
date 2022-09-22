@@ -12,7 +12,11 @@ export function TxStatus({ record }: { record: HelixHistoryRecord | null }) {
       title={t('Status')}
       tip={t('The status of the cross-chain transaction: Success, Pending, or Reverted.')}
     >
-      <CrossChainState value={record?.result ?? RecordStatus.pending} className="relative"></CrossChainState>
+      <CrossChainState
+        value={record?.result ?? RecordStatus.pending}
+        className="relative"
+        detailedState
+      ></CrossChainState>
 
       {record?.result === RecordStatus.refunded && <span>{record.reason}</span>}
     </TransferDescription>
