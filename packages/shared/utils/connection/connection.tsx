@@ -1,6 +1,7 @@
 import { isHex } from '@polkadot/util';
+import { initReactI18next } from 'react-i18next';
 import { Modal } from 'antd';
-import { Trans } from 'react-i18next';
+import { Trans, i18n } from 'next-i18next';
 import type { Observable } from 'rxjs/internal/Observable';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { from } from 'rxjs/internal/observable/from';
@@ -18,27 +19,41 @@ import {
 } from '../../model';
 import { entrance } from './entrance';
 import { getMetamaskConnection, isMetamaskInstalled, switchMetamaskNetwork } from './metamask';
-import { getPolkadotConnection } from './polkadot';
+import { getPolkadotConnection, isPolkadotInstalled } from './polkadot';
 
 type ConnectFn<T extends Connection> = (network: ChainConfig, extension?: SupportedWallet) => Observable<T>;
 
 const showWarning = (plugin: string, downloadUrl: string) =>
   Modal.warn({
-    title: <Trans>Missing Wallet Plugin</Trans>,
+    title: <Trans i18n={i18n?.use(initReactI18next)}>Missing Wallet Plugin</Trans>,
     content: (
-      <Trans i18nKey="MissingPlugin">
+      <Trans i18nKey="MissingPlugin" i18n={i18n?.use(initReactI18next)}>
         We need {{ plugin }} plugin to continue. Please
-        <a href={downloadUrl} target="_blank" rel="noreferrer">
+        <a href={downloadUrl} target="_blank" rel="noreferrer" style={{ margin: '0 0.5em' }}>
           install
         </a>
-        or <a>enable</a> it first.
+        or enable it first.
       </Trans>
     ),
-    okText: <Trans>OK</Trans>,
+    okText: <Trans i18n={i18n?.use(initReactI18next)}>OK</Trans>,
   });
 
-const connectPolkadot: ConnectFn<PolkadotConnection> = (network) =>
-  !network ? EMPTY : getPolkadotConnection(network as PolkadotChainConfig);
+const connectPolkadot: ConnectFn<PolkadotConnection> = (network) => {
+  if (!network) {
+    return EMPTY;
+  }
+
+  return from(isPolkadotInstalled()).pipe(
+    switchMap((enable) => {
+      if (enable) {
+        return getPolkadotConnection(network as PolkadotChainConfig);
+      } else {
+        showWarning('polkadot', 'https://polkadot.js.org/extension/');
+        return EMPTY;
+      }
+    })
+  );
+};
 
 export async function isNetworkConsistent(chain: EthereumChainConfig, id = ''): Promise<boolean> {
   id = id && isHex(id) ? parseInt(id, 16).toString() : id;
