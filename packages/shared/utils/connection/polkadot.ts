@@ -42,6 +42,14 @@ export async function getPolkadotChainProperties(api: ApiPromise): Promise<Polka
   );
 }
 
+export async function isPolkadotInstalled(extension = 'apps'): Promise<boolean> {
+  const extensions = await import('@polkadot/extension-dapp').then(({ web3Enable }) =>
+    web3Enable(`'polkadot-js/${extension}`)
+  );
+
+  return !!extensions.length;
+}
+
 export const getPolkadotConnection: (network: PolkadotChainConfig) => Observable<PolkadotConnection> = (network) => {
   const bundle = import('@polkadot/extension-dapp').then(({ web3Enable, web3Accounts }) => ({
     web3Enable,
