@@ -20,11 +20,6 @@ export function getBridge<T extends BridgeConfig>(
   const bridge = BRIDGES.find((item) => isEqual(item.issue, direction) || isEqual(item.redeem, direction));
 
   if (!bridge) {
-    console.log(
-      '🚨 ~ file: bridge.ts ~ line 95 ~ Error',
-      `Bridge from ${direction[0]} to ${direction[1]} is not exist`
-    );
-
     return unknownUnavailable as Bridge<T>;
   }
 

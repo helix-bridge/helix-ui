@@ -5,6 +5,7 @@ export interface TxValidation {
   amount: BN;
   dailyLimit?: BN;
   allowance?: BN;
+  feeTokenBalance?: BN;
   fee?: BN;
   decimals?: number;
 }

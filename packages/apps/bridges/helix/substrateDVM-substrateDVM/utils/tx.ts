@@ -130,11 +130,20 @@ export function withdraw(value: RedeemPayload): Observable<Tx> {
   );
 }
 
-const genValidations = ({ balance, amount, dailyLimit, allowance, fee }: TxValidation): [boolean, string][] => [
+// eslint-disable-next-line complexity
+const genValidations = ({
+  balance,
+  amount,
+  dailyLimit,
+  allowance,
+  fee,
+  feeTokenBalance,
+}: TxValidation): [boolean, string][] => [
   [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
   [!!dailyLimit && dailyLimit.lt(amount), TxValidationMessages.dailyLimitLessThanAmount],
   [!!allowance && allowance?.lt(amount), TxValidationMessages.allowanceLessThanAmount],
-  [!!fee && fee?.lt(BN_ZERO), TxValidationMessages.invalidFee],
+  [!!fee && fee.lt(BN_ZERO), TxValidationMessages.invalidFee],
+  [!!feeTokenBalance && feeTokenBalance.lt(fee!), TxValidationMessages.balanceLessThanFee],
 ];
 
 export const validate = validationObsFactory(genValidations);

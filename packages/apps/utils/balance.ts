@@ -79,14 +79,17 @@ export async function getBalance(direction: CrossChainDirection, account: string
     }
   }
 
+  if (isSubstrateDVMSubstrateDVM(fromChain, toChain)) {
+    return Promise.all([
+      getErc20Balance(from.address, account, from.meta.provider),
+      getEthereumNativeBalance(account, from.meta.provider),
+    ]);
+  }
+
   if (
-    [
-      isSubstrateDVMSubstrateDVM,
-      isSubstrateDVM2Substrate,
-      isCBridge,
-      isMoonriver2CrabParachain,
-      isEthereum2SubstrateDVM,
-    ].some((fn) => fn(fromChain, toChain))
+    [isSubstrateDVM2Substrate, isCBridge, isMoonriver2CrabParachain, isEthereum2SubstrateDVM].some((fn) =>
+      fn(fromChain, toChain)
+    )
   ) {
     if (direction.from.host === direction.to.host && isDeposit(direction)) {
       return getDVMBalance(account, from.meta.provider);

@@ -44,7 +44,7 @@ export function SubstrateDVM2SubstrateDVM({
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const bridgeState = useCheckSpecVersion(direction);
   const { account } = useAccount();
-  const [ring] = (balances ?? []) as BN[];
+  const [wRING, native] = (balances ?? []) as BN[];
 
   const feeWithSymbol = useMemo(
     () =>
@@ -84,10 +84,11 @@ export function SubstrateDVM2SubstrateDVM({
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
-      const validateObs = validate([fee, dailyLimit, ring], {
-        balance: ring,
+      const validateObs = validate([fee, dailyLimit, wRING, native], {
+        balance: wRING,
         amount: new BN(toWei(data.direction.from)),
         dailyLimit,
+        feeTokenBalance: native,
       });
 
       return createTxWorkflow(
@@ -100,7 +101,18 @@ export function SubstrateDVM2SubstrateDVM({
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, ring, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t, txFn]);
+  }, [
+    afterCrossChain,
+    wRING,
+    dailyLimit,
+    departureConnection,
+    fee,
+    feeWithSymbol,
+    setTxObservableFactory,
+    t,
+    txFn,
+    native,
+  ]);
 
   useEffect(() => {
     const sub$$ = isMetamaskChainConsistent(direction.from.meta)
