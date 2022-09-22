@@ -170,7 +170,7 @@ const genValidations = ({
   allowance,
   isRING,
 }: ITxValidation): [boolean, string][] => [
-  [ringBalance.lt(fee), TxValidationMessages.balanceLessThanFee],
+  [ringBalance.lt(new BN(0)), TxValidationMessages.balanceLessThanFee],
   [isRING ? balance.lt(amount.add(fee)) : balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
   [!!allowance && allowance.lt(amount), TxValidationMessages.allowanceLessThanAmount],
   [!!fee && fee?.lt(BN_ZERO), TxValidationMessages.invalidFee],
