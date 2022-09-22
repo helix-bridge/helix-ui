@@ -152,8 +152,8 @@ export function genEthereumContractTxObs(
           observer.next({ status: 'finalized', hash: receipt.transactionHash });
           observer.complete();
         })
-        .catch((error: { code: number; message: string }) => {
-          observer.error({ status: 'error', error: error.message });
+        .catch((error: { code: number; message: string; data?: { data: string; message: string } }) => {
+          observer.error({ status: 'error', error: error.message + '\n' + error.data?.message ?? '' });
         });
     } catch (error) {
       console.warn('%c contract tx observable error', 'font-size:13px; background:pink; color:#bf2c9f;', error);

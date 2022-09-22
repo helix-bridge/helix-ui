@@ -5,7 +5,7 @@ export const karuraConfig: ParachainChainConfig = {
   logos: [{ name: 'karura.svg', type: 'main' }],
   name: 'karura',
   fullName: 'Karura',
-  provider: 'https://eth-rpc-karura.aca-api.network',
+  provider: 'wss://karura.api.onfinality.io/public-ws',
   social: {
     portal: 'https://acala.network/karura/join-karura',
     github: '',

@@ -8,7 +8,7 @@ export const darwiniaConfig: PolkadotChainConfig = {
     { name: 'darwinia.svg', type: 'minor' },
     // { name: 'darwinia-logo.svg', type: 'assist' },
   ],
-  provider: 'https://rpc.darwinia.network',
+  provider: 'wss://rpc.darwinia.network',
   social: {
     portal: 'https://darwinia.network/',
     github: 'https://github.com/darwinia-network',
