@@ -13,7 +13,7 @@ export const hecoConfig: EthereumChainConfig = {
   logos: [{ name: 'heco-circle.svg', type: 'main' }],
   name: 'heco',
   fullName: 'Heco',
-  provider: 'wss://ws-mainnet.hecochain.com',
+  provider: 'https://http-mainnet.hecochain.com',
   social: {
     portal: 'https://www.hecochain.com/en-us/',
     github: 'https://github.com/stars-labs/',

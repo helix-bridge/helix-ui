@@ -15,7 +15,6 @@ interface InjectedAccountWithMeta {
 
 export type IAccountMeta = WithOptional<InjectedAccountWithMeta, 'meta'>;
 
-// eslint-disable-next-line no-magic-numbers
 export type Erc20RegisterStatus = 0 | 1 | 2;
 
 export interface PolkadotChainSimpleToken {

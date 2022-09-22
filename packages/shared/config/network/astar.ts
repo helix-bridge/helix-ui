@@ -13,7 +13,7 @@ export const astarConfig: EthereumChainConfig = {
   logos: [{ name: 'astar.png', type: 'main' }],
   name: 'astar',
   fullName: 'Astar',
-  provider: 'wss://astar.api.onfinality.io/public-ws',
+  provider: ' https://astar-rpc.dwellir.com',
   social: {
     portal: 'https://astar.network/',
     github: 'https://github.com/AstarNetwork',

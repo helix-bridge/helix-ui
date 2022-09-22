@@ -15,7 +15,7 @@ export const moonriverConfig: ParachainEthereumCompatibleChainConfig = {
   logos: [{ name: 'moonriver-circle.svg', type: 'main' }],
   name: 'moonriver',
   fullName: 'Moonriver',
-  provider: 'wss://wss.api.moonriver.moonbeam.network',
+  provider: 'https://moonriver-rpc.dwellir.com',
   social: {
     portal: 'https://moonbeam.network/networks/moonriver/',
     github: 'https://github.com/PureStake/moonbeam',

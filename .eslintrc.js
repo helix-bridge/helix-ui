@@ -140,7 +140,7 @@ module.exports = {
     'no-magic-numbers': [
       'error',
       {
-        ignore: [0, 1, -1, 2, 9, 10, 18, 100, 1000],
+        ignore: [0, 1, -1, 2, 9, 10, 18, 100, 1000, 60, 24, 3600, 6, 7, 12, 30],
       },
     ],
     'no-new-wrappers': 'error',

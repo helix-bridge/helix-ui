@@ -8,7 +8,7 @@ export const pangolinConfig: PolkadotChainConfig = {
     { name: 'pangolin-logo.svg', type: 'assist' },
   ],
   name: 'pangolin',
-  provider: 'wss://pangolin-rpc.darwinia.network',
+  provider: 'https://pangolin-rpc.darwinia.network',
   social: {
     portal: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangolin-rpc.darwinia.network#/explorer',
     github: 'https://github.com/darwinia-network',
