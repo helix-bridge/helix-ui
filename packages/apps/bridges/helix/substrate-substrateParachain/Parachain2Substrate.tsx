@@ -72,7 +72,7 @@ export function Parachain2Substrate({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        redeem(data, fee!),
+        () => redeem(data, fee!),
         afterCrossChain(TransferDone, { payload: data })
       );
     };

@@ -5,6 +5,7 @@ import BN from 'bn.js';
 import type { BigNumber } from 'ethers';
 import { Contract } from 'ethers';
 import type { Deferrable } from 'ethers/lib/utils';
+import isFunction from 'lodash/isFunction';
 import noop from 'lodash/noop';
 import omitBy from 'lodash/omitBy';
 import { i18n } from 'next-i18next';
@@ -100,17 +101,21 @@ export function applyModalObs<T = boolean>(
 
 export type AfterTxCreator = (tx: Tx) => () => void;
 
+type ExecObsCreator = () => Observable<Tx>;
+
 export function createTxWorkflow(
   before: Observable<boolean>,
-  txObs: Observable<Tx>,
+  txObs: Observable<Tx> | ExecObsCreator,
   after: AfterTxCreator
 ): Observable<Tx> {
   let finish: () => void = noop;
 
   return before.pipe(
-    switchMap((confirmed) =>
-      confirmed
-        ? txObs.pipe(
+    switchMap((confirmed) => {
+      const obs = isFunction(txObs) ? txObs() : txObs;
+
+      return confirmed
+        ? obs.pipe(
             tap((tx) => {
               if (tx.status === 'finalized') {
                 finish = after(tx);
@@ -118,8 +123,8 @@ export function createTxWorkflow(
             }),
             finalize(() => finish())
           )
-        : EMPTY
-    )
+        : EMPTY;
+    })
   );
 }
 

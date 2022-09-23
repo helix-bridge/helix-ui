@@ -80,7 +80,7 @@ export function SubstrateDVM2Ethereum({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} needClaim /> }))
         ),
-        issue(data, fee!),
+        () => issue(data, fee!),
         afterCrossChain(TransferDone, { payload: data })
       );
     };

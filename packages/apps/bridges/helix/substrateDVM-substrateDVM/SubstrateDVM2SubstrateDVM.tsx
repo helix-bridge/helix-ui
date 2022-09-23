@@ -95,7 +95,7 @@ export function SubstrateDVM2SubstrateDVM({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        txFn(data, fee!),
+        () => txFn(data, fee!),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
