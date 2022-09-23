@@ -70,11 +70,12 @@ export function Darwinia2Ethereum({
         },
       } = data;
 
-      const [ringBalance, ktonBalance] = balances ?? [];
+      const [balance, ktonBalance] = balances ?? [];
+      const ringBalance = balance.sub(new BN(toWei({ value: 1, decimals })));
 
       const validateObs = validate([fee, balances], {
         isRING: isRing(symbol),
-        balance: isRing(symbol) ? ringBalance.sub(new BN(toWei({ value: 1, decimals }))) : ktonBalance,
+        balance: isRing(symbol) ? ringBalance : ktonBalance,
         amount: new BN(toWei({ value: amount, decimals })),
         fee,
         ringBalance,
