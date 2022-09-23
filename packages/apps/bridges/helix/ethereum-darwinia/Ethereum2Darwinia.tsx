@@ -107,7 +107,9 @@ export function Ethereum2Darwinia({
   }, [bridge, direction.from.meta.tokens, direction.from.symbol, onFeeChange]);
 
   useEffect(() => {
-    updateAllowancePayload({ spender: bridge.config.contracts.backing, tokenAddress: direction.from.address });
+    const ringConfig = direction.from.meta.tokens.find((item) => isRing(item.name))!;
+
+    updateAllowancePayload({ spender: bridge.config.contracts.backing, tokenAddress: ringConfig.address });
   }, [bridge.config.contracts.backing, direction.from.address, direction.from.meta.tokens, updateAllowancePayload]);
 
   return (
