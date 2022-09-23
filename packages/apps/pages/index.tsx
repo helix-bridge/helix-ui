@@ -119,7 +119,7 @@ function Page() {
           <div key={bridge.category} className="bg-antDark p-8">
             <div className="flex items-center gap-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`/image/bridges/${bridge.category}-bridge.png`} className={`w-8 md:w-12`} />
+              <img src={`/image/bridges/${bridge.category.toLowerCase()}-bridge.png`} className={`w-8 md:w-12`} />
               <div>
                 <h4 className="text-xl">{bridgeCategoryDisplay(bridge.category)}</h4>
                 <div className="flex items-center gap-2">

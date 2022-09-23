@@ -40,7 +40,7 @@ export function Bridge({ from, to, size = 'default' }: BridgeProps) {
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={`/image/bridges/${bridge.category}.png`}
+            src={`/image/bridges/${bridge.category.toLowerCase()}.png`}
             className={size === 'small' ? 'w-5 md:w-14' : `w-10 md:w-28`}
           />
         </div>
