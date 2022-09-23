@@ -83,7 +83,7 @@ export function Ethereum2SubstrateDVM({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        redeem(data, fee!),
+        () => redeem(data, fee!),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
