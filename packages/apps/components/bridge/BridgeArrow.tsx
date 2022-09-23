@@ -38,7 +38,11 @@ export function BridgeArrow({ category, children, showName = true }: PropsWithCh
         >
           {children || (
             <>
-              <Image alt="..." src={`/image/bridges/${category.split('-')[0]}-bridge.png`} {...logoProps} />
+              <Image
+                alt="..."
+                src={`/image/bridges/${category.split('-')[0].toLowerCase()}-bridge.png`}
+                {...logoProps}
+              />
               {!asHistory && (
                 <strong className={`${asSameCategory(category, 'helix') ? 'capitalize' : ''} ml-2`}>
                   {category.split('-')[0]}
