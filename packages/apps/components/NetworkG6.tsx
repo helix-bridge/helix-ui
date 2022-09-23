@@ -3,8 +3,6 @@ import { groupBy } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { CrossOverview, Network, TokenWithBridgesInfo } from 'shared/model';
-import { useITranslation } from '../hooks';
-import { formalBridges } from '../utils';
 import { chainConfigs, crossChainGraph, getChainConfig, getDisplayName } from '../utils/network';
 
 interface Overview extends CrossOverview {
@@ -123,9 +121,25 @@ const edges = crossChainGraph
   })
   .filter((item) => item.value);
 
+const getGroupedOverview = (network: Network) => {
+  const config = getChainConfig(network);
+  const tokens: Overview[] = config.tokens
+    .map((token) =>
+      token.cross.map((cross) => ({
+        ...cross,
+        source: { name: token.host, symbol: token.symbol, logo: token.logo },
+      }))
+    )
+    .flat()
+    .filter((token) => token.source.name !== token.partner.name);
+
+  return groupBy(tokens, (token) => `${token.source.name}_${token.partner.name}`);
+};
+
+const defaultOverview = getGroupedOverview('darwinia');
+
 function NetworkG6() {
-  const { t } = useITranslation();
-  const [data, setData] = useState<{ [key: string]: Overview[] }>({});
+  const [data, setData] = useState<{ [key: string]: Overview[] }>(defaultOverview);
 
   useEffect(() => {
     const container = document.querySelector('#networks-g6');
@@ -283,18 +297,8 @@ function NetworkG6() {
     graph.on('node:click', (evt) => {
       const item = evt.item;
       const model = item?.getModel();
-      const config = getChainConfig(model!.id as Network);
-      const tokens: Overview[] = config.tokens
-        .map((token) =>
-          token.cross.map((cross) => ({
-            ...cross,
-            source: { name: token.host, symbol: token.symbol, logo: token.logo },
-          }))
-        )
-        .flat()
-        .filter((token) => token.source.name !== token.partner.name);
 
-      setData(groupBy(tokens, (token) => `${token.source.name}_${token.partner.name}`));
+      setData(getGroupedOverview(model!.id as Network));
     });
 
     graph.on('edge:click', (evt) => {
@@ -336,24 +340,15 @@ function NetworkG6() {
   }, []);
 
   return (
-    <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 mt-4 lg:mt-6">
+    <div className="w-full grid grid-cols-1 lg:grid-cols-12 mt-4 lg:mt-6">
       <div
         id="networks-g6"
-        className="lg:col-span-8 flex-1 p-4 bg-antDark"
+        className="lg:col-span-9 flex-1 p-6 bg-antDark"
         style={{ width: '100%', height: 500 }}
       ></div>
 
-      <div className="lg:col-span-4 bg-antDark px-5 py-6">
-        <h3 className="uppercase text-xl font-normal">{t('Bridge Overview')}</h3>
-
-        <div className="flex flex-col gap-2 items-center justify-center m-2 md:m-4">
-          <h2 className="text-4xl font-normal">{formalBridges?.length}</h2>
-          <span className="text-sm font-normal opacity-50 capitalize">
-            {t('Total {{title}}', { title: 'bridges' })}
-          </span>
-        </div>
-
-        <div style={{ height: 296 }} className="overflow-scroll">
+      <div style={{ height: 500 }} className="lg:col-span-3 bg-antDark px-5 p-6 ">
+        <div className="overflow-scroll h-full">
           {Object.entries(data).map(([group, crosses]) => {
             const [from, to] = group.split('_') as Network[];
 
@@ -369,13 +364,13 @@ function NetworkG6() {
                   const token = config.tokens.find((item) => item.symbol === cross.partner.symbol);
 
                   return (
-                    <div key={cross.bridge + '_' + index} className="grid grid-cols-7 text-xs mb-2">
+                    <div key={cross.bridge + '_' + index} className="grid grid-cols-5 text-xs mb-2">
                       <div className="flex items-center gap-2 col-span-2">
                         <Logo name={cross.source.logo} width={16} height={16} />
                         <span>{cross.source.symbol}</span>
                       </div>
-                      <div className="col-span-3 flex items-center">
-                        <div className="bg-gray-500 w-full h-px relative token-transfer after:bg-gray-500 before:bg-gray-500"></div>
+                      <div className="col-span-1 flex items-center">
+                        <div className="bg-gray-500 w-full h-0.5 relative token-transfer after:bg-gray-500 before:bg-gray-500"></div>
                       </div>
                       <div className="flex flex-row-reverse items-center gap-2 col-span-2">
                         <Logo name={token?.logo} width={16} height={16} />

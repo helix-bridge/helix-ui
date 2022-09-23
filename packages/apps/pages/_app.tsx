@@ -52,8 +52,13 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
     };
   }, [router.events]);
 
+  const style =
+    router.pathname === '/'
+      ? { background: 'linear-gradient(to bottom, #000 0%, #17123e 6%, #17123e 14%, #000 100%)' }
+      : {};
+
   return (
-    <>
+    <div style={style}>
       <GlobalLoading isRouteChanging={state.isRouteChanging} key={state.loadingKey} />
       <Head>
         <meta charSet="utf-8" />
@@ -69,7 +74,7 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
           </PersonalProvider>
         </ErrorBoundary>
       </ClientContext.Provider>
-    </>
+    </div>
   );
 }
 

@@ -41,7 +41,7 @@ export interface TokenWithBridgesInfo extends Token {
   host: Network;
 }
 
-interface Social {
+export interface Social {
   github: string;
   portal: string;
   twitter: string;

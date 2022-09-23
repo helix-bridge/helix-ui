@@ -20,6 +20,7 @@ const navigators: Nav[] = [
   { label: 'Docs', path: 'https://docs.helixbridge.app/', extra: true },
 ];
 
+// eslint-disable-next-line complexity
 function AppLayout({ children }: PropsWithChildren<unknown>) {
   const { t } = useITranslation();
   const [theme, setTheme] = useState<THEME>(readStorage().theme ?? THEME.DARK);
@@ -27,10 +28,18 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
   const [visible, setVisible] = useState(false);
   const router = useRouter();
   const isApps = router.pathname === Path.apps;
+  const isHome = router.pathname === '/';
 
   return (
-    <Layout className="min-h-screen overflow-scroll">
-      <Header className="fixed left-0 right-0 top-0 z-40 border-b" style={{ marginTop: -1, borderColor: '#113b5d' }}>
+    <Layout className={`min-h-screen overflow-scroll ${isHome ? 'welcome' : ''}`}>
+      <Header
+        className="fixed left-0 right-0 top-0 z-40 border-b"
+        style={{
+          marginTop: -1,
+          borderColor: '#113b5d',
+          backgroundColor: isHome ? '#151d3582' : '#151d35',
+        }}
+      >
         <div className="container flex items-center justify-between">
           <div className="flex items-center gap-5">
             <div className="flex items-center gap-2">
