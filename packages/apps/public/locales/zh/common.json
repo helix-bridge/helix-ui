@@ -127,6 +127,7 @@
   "Unique character string (TxID) assigned to every verified transaction on the Target Chain.": "分配给目标链上每个已验证交易的唯一字符串 (TxID)",
   "Value": "Value",
   "View in explorer": "在浏览器中查看",
+  "View in {{scan}} explorer": "在 {{scan}} 浏览器中查看",
   "Waiting for Response": "等待处理",
   "Waiting for approve, you need to approve this transaction in your wallet": "等待授权，您需要在钱包中授权此操作",
   "Wallet provider offline": "钱包连接已掉线",

@@ -127,6 +127,7 @@
   "Unique character string (TxID) assigned to every verified transaction on the Target Chain.": "Unique character string (TxID) assigned to every verified transaction on the Target Chain.",
   "Value": "Value",
   "View in explorer": "View in explorer",
+  "View in {{scan}} explorer": "View in {{scan}} explorer",
   "Waiting for Response": "Waiting for Response",
   "Waiting for approve, you need to approve this transaction in your wallet": "Waiting for approve, you need to approve this transaction in your wallet",
   "Wallet provider offline": "Wallet provider offline",
