@@ -107,7 +107,7 @@ const nodes = configs.map((config) => ({
 const edges = crossChainGraph
   .map(([from, tos]) => tos.map((to) => [getChainConfig(from), getChainConfig(to)]))
   .flat()
-  .filter((item) => item.every((it) => !it.isTest))
+  .filter((item) => item.every((it) => isTestChain === it.isTest))
   .map(([source, target]) => {
     const value: number = source.tokens.reduce((acc, token) => {
       return acc + token.cross.filter((item) => item.partner.name === target.name).length;
