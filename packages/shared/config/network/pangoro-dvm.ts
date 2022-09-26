@@ -66,7 +66,7 @@ export const pangoroDVMConfig: DVMChainConfig = {
       host: 'pangoro-dvm',
       logo: 'token-ring.svg',
       symbol: 'WORING',
-      address: '0x1977213Bb561d6e3bB07A9F22BCE758A14D7C693',
+      address: '0x46f01081e800BF47e43e7bAa6D98d45F6a0251E4',
     },
     {
       name: 'wORING',
