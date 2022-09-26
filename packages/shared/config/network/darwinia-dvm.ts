@@ -37,7 +37,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
         {
           category: 'helix',
           bridge: 'substrateDVM-substrateDVM',
-          partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'wRING' },
+          partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'WRING' },
         },
       ],
       type: 'native',
@@ -64,7 +64,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       type: 'mapping',
       host: 'darwinia-dvm',
       logo: 'token-ring.svg',
-      symbol: 'wRING',
+      symbol: 'WRING',
       address: '0xE7578598Aac020abFB918f33A20faD5B71d670b4',
     },
   ],
