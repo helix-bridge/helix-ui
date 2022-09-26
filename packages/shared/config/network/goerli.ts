@@ -49,7 +49,7 @@ export const goerliConfig: EthereumChainConfig = {
       host: 'goerli',
       logo: 'token-ring.svg',
       symbol: 'ORING',
-      address: '0xB7A9115C0a1D2baBc764957C506c34843eeE8893',
+      address: '0x046D07d53926318d1F06c2c2A0F26a4de83E26c4',
     },
   ],
   wallets: ['metamask'],

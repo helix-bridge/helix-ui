@@ -155,7 +155,7 @@ function Page() {
 
             <hr className="opacity-20 my-4" />
 
-            <div className="flex flex-nowrap items-center gap-2 w-full overflow-x-scroll mb-4">
+            <div className="flex flex-nowrap items-center gap-2 mb-4 no-scrollbar">
               {bridge.supportChains.map((chain) => (
                 <Logo name={chain.logos[0].name} width={24} height={24} key={chain.name} />
               ))}

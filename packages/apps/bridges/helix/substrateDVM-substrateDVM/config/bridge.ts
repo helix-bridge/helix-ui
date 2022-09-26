@@ -42,8 +42,8 @@ export const pangoroDVMPangolinDVM = new Bridge(pangoroDVMConfig, pangolinDVMCon
 
 export const pangoroDVMPangoroDVMConfig: SubstrateDVMSubstrateDVMBridgeConfig = {
   contracts: {
-    backing: '0x1977213Bb561d6e3bB07A9F22BCE758A14D7C693',
-    issuing: '0x1977213Bb561d6e3bB07A9F22BCE758A14D7C693',
+    backing: '0x46f01081e800BF47e43e7bAa6D98d45F6a0251E4',
+    issuing: '0x46f01081e800BF47e43e7bAa6D98d45F6a0251E4',
   },
 };
 

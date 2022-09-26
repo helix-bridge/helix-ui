@@ -61,7 +61,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
         },
       ],
-      type: 'native',
+      type: 'mapping',
       host: 'darwinia-dvm',
       logo: 'token-ring.svg',
       symbol: 'wRING',

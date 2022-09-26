@@ -1,4 +1,5 @@
 import { PauseCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import { BN_ZERO } from '@polkadot/util';
 import { Tooltip } from 'antd';
 import BN from 'bn.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -8,14 +9,14 @@ import { BridgeStatus, CrossChainDirection, CustomFormControlProps, HashInfo } f
 import { fromWei, prettyNumber, largeNumber } from 'shared/utils/helper/balance';
 import { updateStorage } from 'shared/utils/helper/storage';
 import { isKton } from 'shared/utils/helper/validator';
-import { getBridge } from 'utils/bridge';
+import { getBridge, isEthereumDarwinia, isSubstrateDVMSubstrateDVM } from 'utils/bridge';
 import { CountLoading } from '../widget/CountLoading';
 import { Destination } from './Destination';
 
 type DirectionProps = CustomFormControlProps<CrossChainDirection> & {
   initial: CrossChainDirection;
   fee: { amount: number; symbol: string } | null;
-  balance: BN | BN[] | null;
+  balances: BN[] | null;
   isBalanceLoading: boolean;
   onRefresh?: () => void;
 };
@@ -37,7 +38,7 @@ export function Direction({
   value,
   initial,
   onChange,
-  balance,
+  balances,
   onRefresh,
   isBalanceLoading = false,
   fee = { amount: 0, symbol: '' },
@@ -55,19 +56,26 @@ export function Direction({
     [onChange]
   );
 
+  // eslint-disable-next-line complexity
   const iBalance = useMemo(() => {
-    if (Array.isArray(balance)) {
-      const [ring, kton] = balance;
-
-      if (isKton(data.from.symbol)) {
-        return kton;
-      }
-
-      return ring;
+    if (!balances) {
+      return BN_ZERO;
     }
 
-    return balance;
-  }, [balance, data.from.symbol]);
+    if (isEthereumDarwinia(data.from.host, data.to.host)) {
+      const [ring, kton] = balances as BN[];
+
+      return isKton(data.from.symbol) ? kton : ring;
+    }
+
+    if (isSubstrateDVMSubstrateDVM(data.from.host, data.to.host)) {
+      const [erc20, native] = balances;
+
+      return data.from.type === 'native' ? native : erc20;
+    }
+
+    return balances[0];
+  }, [balances, data.from.host, data.from.symbol, data.from.type, data.to.host]);
 
   useEffect(() => {
     const { from, to } = data;

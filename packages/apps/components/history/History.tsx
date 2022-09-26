@@ -70,7 +70,7 @@ export default function History() {
 
     return source.map((record) => {
       if (refundedList.find((item) => item.id === record.id)) {
-        record.result = RecordStatus.refunded;
+        record.result = RecordStatus.pendingToConfirmRefund;
       }
 
       return record;
@@ -380,6 +380,10 @@ export default function History() {
 
                           {record.result === RecordStatus.success && (
                             <div className="text-helix-green">{t('Success')}</div>
+                          )}
+
+                          {record.result === RecordStatus.pendingToConfirmRefund && (
+                            <div className="text-helix-blue">{t('Refund Processing')}</div>
                           )}
 
                           {record.result === RecordStatus.refunded && <Refunded record={record} />}

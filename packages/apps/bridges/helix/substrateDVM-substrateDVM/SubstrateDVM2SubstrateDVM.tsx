@@ -89,6 +89,7 @@ export function SubstrateDVM2SubstrateDVM({
         amount: new BN(toWei(data.direction.from)),
         dailyLimit,
         feeTokenBalance: native,
+        fee,
       });
 
       return createTxWorkflow(
