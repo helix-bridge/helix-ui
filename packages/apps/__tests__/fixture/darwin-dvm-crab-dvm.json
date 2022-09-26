@@ -18,8 +18,8 @@
     "sender": "0xd2c7008400f54aa70af01cf8c747a4473246593e",
     "startTime": 1661679858,
     "toChain": "crab-dvm",
-    "sendToken": "wRING",
-    "recvToken": "xwRING"
+    "sendToken": "WRING",
+    "recvToken": "xWRING"
   },
   {
     "sendAmount": "101300000000000000",
@@ -40,7 +40,7 @@
     "sender": "0xd2c7008400f54aa70af01cf8c747a4473246593e",
     "startTime": 1661680194,
     "toChain": "darwinia-dvm",
-    "sendToken": "xwRING",
-    "recvToken": "wRING"
+    "sendToken": "xWRING",
+    "recvToken": "WRING"
   }
 ]

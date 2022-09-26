@@ -49,7 +49,7 @@ describe('record utils', () => {
     const darwinDVMCrabDVMSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>darwinDVMCrabDVMRecords[0]);
     const crabDVM2DarwiniaDVMSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>darwinDVMCrabDVMRecords[1]);
 
-    expect(darwinDVMCrabDVMSuccess?.symbol).toEqual('wRING');
+    expect(darwinDVMCrabDVMSuccess?.symbol).toEqual('WRING');
     expect(crabDVM2DarwiniaDVMSuccess?.symbol).toEqual('xWRING');
   });
 
