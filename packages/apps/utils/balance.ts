@@ -1,5 +1,5 @@
 import BN from 'bn.js';
-import { CrossChainDirection } from 'shared/model';
+import { CrossChainDirection, TokenInfoWithMeta } from 'shared/model';
 import { isKton, isRing } from 'shared/utils/helper/validator';
 import {
   getDarwiniaBalance,
@@ -26,7 +26,7 @@ import {
   isSubstrateParachain2Substrate,
 } from './bridge';
 
-function isDeposit({ from }: CrossChainDirection): boolean {
+function isDeposit({ from }: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>): boolean {
   const overview = from.cross.find((item) => item.partner.name === from.host);
 
   if (!overview) {
@@ -37,7 +37,10 @@ function isDeposit({ from }: CrossChainDirection): boolean {
 }
 
 // eslint-disable-next-line complexity
-export async function getBalance(direction: CrossChainDirection, account: string): Promise<BN[] | null> {
+export async function getBalance(
+  direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>,
+  account: string
+): Promise<BN[] | null> {
   const { from, to } = direction;
   const fromChain = from.meta.name;
   const toChain = to.meta.name;
