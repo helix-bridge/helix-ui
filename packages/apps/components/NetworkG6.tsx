@@ -70,7 +70,7 @@ const tooltip = new Tooltip({
 
         return `
           <div class="flex flex-col gap-1">
-            <b>${config.name}</b>
+            <b>${getDisplayName(config.name)}</b>
             <div class="flex items-center gap-1">
               <b> Tokens: </b>
               ${config.tokens

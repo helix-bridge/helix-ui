@@ -256,7 +256,7 @@ describe('network utils', () => {
   it('can get wrapped token', () => {
     expect(getWrappedToken(pangoroDVMConfig)).toEqual(pangoroDVMConfig.tokens.find((item) => item.symbol === 'WORING'));
     expect(getWrappedToken(darwiniaDVMConfig)).toEqual(
-      darwiniaDVMConfig.tokens.find((item) => item.symbol === 'wRING')
+      darwiniaDVMConfig.tokens.find((item) => item.symbol === 'WRING')
     );
   });
 });

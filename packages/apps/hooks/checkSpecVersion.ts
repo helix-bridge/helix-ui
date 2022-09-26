@@ -14,17 +14,31 @@ export function useCheckSpecVersion(
   direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<PolkadotChainConfig | DVMChainConfig>>
 ): BridgeState & { specVersionOnline: string } {
   const [specVersionOnline, setSpecVersionOnline] = useState<string>('');
+  const [checking, setChecking] = useState(false);
   const { to } = direction;
 
   useEffect(() => {
     const api = entrance.polkadot.getInstance(to.meta.provider);
 
-    const sub$$ = from(waitUntilConnected(api)).subscribe(() => {
-      setSpecVersionOnline(api.runtimeVersion.specVersion.toString());
+    setChecking(true);
+    const sub$$ = from(waitUntilConnected(api)).subscribe({
+      next() {
+        setSpecVersionOnline(api.runtimeVersion.specVersion.toString());
+      },
+      error() {
+        setChecking(false);
+      },
+      complete() {
+        setChecking(false);
+      },
     });
 
     return () => sub$$.unsubscribe();
   }, [to.meta.provider]);
+
+  if (checking) {
+    return { status: 'pending', reason: 'checking', specVersionOnline: 'unknown' };
+  }
 
   return to.meta.specVersion === +specVersionOnline
     ? { status: 'available', specVersionOnline }

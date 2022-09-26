@@ -106,7 +106,7 @@ export const crabDVMConfig: DVMChainConfig = {
         {
           category: 'helix',
           bridge: 'substrateDVM-substrateDVM',
-          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'wRING' },
+          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'WRING' },
         },
       ],
       type: 'mapping',
