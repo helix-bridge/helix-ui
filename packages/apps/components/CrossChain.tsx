@@ -20,6 +20,7 @@ import {
   CrossChainComponentProps,
   CrossChainDirection,
   CrossChainPayload,
+  TokenInfoWithMeta,
   TxObservableFactory,
 } from 'shared/model';
 import { isKton } from 'shared/utils/helper/validator';
@@ -43,6 +44,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const [form] = useForm<CrossChainPayload>();
   const { connectDepartureNetwork, departureConnection, setDeparture } = useApi();
   const [direction, setDirection] = useState(dir);
+  const [pureDirection, setPureDirection] = useState<CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>>(dir);
   const [bridge, setBridge] = useState<Bridge | null>(null);
   const [createTxObservable, setTxObservableFactory] = useState<TxObservableFactory>(() => EMPTY);
   const [bridgeState, setBridgeState] = useState<BridgeState>({ status: 'available' });
@@ -68,7 +70,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   }, [allowance, balances, direction.from.symbol]);
 
   const Content = useMemo(() => {
-    const { from, to } = direction;
+    const { from, to } = pureDirection;
 
     if (bridge) {
       const comp = bridge.isIssue(from.meta, to.meta)
@@ -80,7 +82,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
     }
 
     return null;
-  }, [bridge, direction]);
+  }, [bridge, pureDirection]);
 
   useEffect(() => {
     setDeparture(direction.from.meta);
@@ -93,17 +95,13 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
 
   useEffect(() => {
     setIsBalanceLoading(true);
-    const sub$$ = iif(() => !!account, fromRx(getBalance(direction, account)), of(null)).subscribe((result) => {
-      console.log(
-        '💰 ~ balances',
-        result?.map((item) => item.toString())
-      );
+    const sub$$ = iif(() => !!account, fromRx(getBalance(pureDirection, account)), of(null)).subscribe((result) => {
       setBalances(result);
       setIsBalanceLoading(false);
     });
 
     return () => sub$$.unsubscribe();
-  }, [account, direction]);
+  }, [account, pureDirection]);
 
   useEffect(() => {
     if (allowancePayload) {
@@ -143,6 +141,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
                   setTxObservableFactory(() => EMPTY);
                   setBridgeState({ status: 'available' });
                   form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined, [FORM_CONTROL.recipient]: undefined });
+                  setPureDirection({ from: omit(value.from, 'amount'), to: omit(value.to, 'amount') });
                 }
 
                 setDirection(value);
