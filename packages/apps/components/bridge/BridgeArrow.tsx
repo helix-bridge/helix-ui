@@ -24,7 +24,7 @@ export function BridgeArrow({ category, children, showName = true }: PropsWithCh
 
   return (
     <div
-      className={asHistory ? 'flex justify-center items-center mx-4 flex-1 relative' : ''}
+      className={asHistory ? 'flex justify-center items-center 2xl:mx-4 flex-1 relative' : ''}
       style={{
         width: asHistory ? 'auto' : 'max(33%, 150px)',
       }}

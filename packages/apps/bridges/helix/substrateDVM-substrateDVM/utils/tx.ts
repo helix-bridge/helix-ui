@@ -138,12 +138,18 @@ const genValidations = ({
   allowance,
   fee,
   feeTokenBalance,
-}: TxValidation): [boolean, string][] => [
-  [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
-  [!!dailyLimit && dailyLimit.lt(amount), TxValidationMessages.dailyLimitLessThanAmount],
-  [!!allowance && allowance?.lt(amount), TxValidationMessages.allowanceLessThanAmount],
-  [!!fee && fee.lt(BN_ZERO), TxValidationMessages.invalidFee],
-  [!!feeTokenBalance && feeTokenBalance.lt(fee!), TxValidationMessages.balanceLessThanFee],
-];
+}: TxValidation): [boolean, string][] => {
+  console.log(
+    '🚀 ~ file: tx.ts ~ line 142 ~ balance',
+    [balance, amount, dailyLimit, allowance, fee, feeTokenBalance].map((item) => item?.toString())
+  );
+  return [
+    [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
+    [!!dailyLimit && dailyLimit.lt(amount), TxValidationMessages.dailyLimitLessThanAmount],
+    [!!allowance && allowance?.lt(amount), TxValidationMessages.allowanceLessThanAmount],
+    [!!fee && fee.lt(BN_ZERO), TxValidationMessages.invalidFee],
+    [!!feeTokenBalance && feeTokenBalance.lt(fee!), TxValidationMessages.balanceLessThanFee],
+  ];
+};
 
 export const validate = validationObsFactory(genValidations);

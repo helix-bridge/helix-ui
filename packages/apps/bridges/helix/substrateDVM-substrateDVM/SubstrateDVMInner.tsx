@@ -31,7 +31,7 @@ export function SubstrateDVMInner({
   const { t } = useTranslation();
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const { account } = useAccount();
-  const [ring] = (balances ?? []) as BN[];
+  const [ring, native] = (balances ?? []) as BN[];
 
   const feeWithSymbol = useMemo(
     () => ({
@@ -49,8 +49,9 @@ export function SubstrateDVMInner({
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
-      const validateObs = validate([ring], {
-        balance: ring,
+      const balance = direction.from.type === 'native' ? native : ring;
+      const validateObs = validate([balance], {
+        balance,
         amount: new BN(toWei(data.direction.from)),
       });
 
@@ -64,7 +65,7 @@ export function SubstrateDVMInner({
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, feeWithSymbol, ring, setTxObservableFactory, txFn]);
+  }, [afterCrossChain, direction.from.type, feeWithSymbol, native, ring, setTxObservableFactory, txFn]);
 
   useEffect(() => {
     if (onFeeChange) {

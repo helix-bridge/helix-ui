@@ -124,7 +124,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
           <Form.Item name={FORM_CONTROL.direction} className="mb-0">
             <Direction
               fee={fee}
-              balance={balances}
+              balances={balances}
               isBalanceLoading={isBalanceLoading}
               initial={direction}
               onRefresh={() => {

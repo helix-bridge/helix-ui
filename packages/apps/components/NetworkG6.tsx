@@ -2,6 +2,7 @@ import { Graph, IEdge, IG6GraphEvent, INode, registerEdge, Tooltip } from '@antv
 import { groupBy } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
+import { isTestChain } from 'shared/config/env';
 import { CrossOverview, Network, TokenWithBridgesInfo } from 'shared/model';
 import { chainConfigs, crossChainGraph, getChainConfig, getDisplayName } from '../utils/network';
 
@@ -136,7 +137,7 @@ const getGroupedOverview = (network: Network) => {
   return groupBy(tokens, (token) => `${token.source.name}_${token.partner.name}`);
 };
 
-const defaultOverview = getGroupedOverview('darwinia');
+const defaultOverview = getGroupedOverview(isTestChain ? 'pangolin' : 'darwinia');
 
 function NetworkG6() {
   const [data, setData] = useState<{ [key: string]: Overview[] }>(defaultOverview);
@@ -348,15 +349,15 @@ function NetworkG6() {
       ></div>
 
       <div style={{ height: 500 }} className="lg:col-span-3 bg-antDark px-5 p-6 ">
-        <div className="overflow-scroll h-full">
+        <div className="overflow-scroll h-full no-scrollbar">
           {Object.entries(data).map(([group, crosses]) => {
             const [from, to] = group.split('_') as Network[];
 
             return (
               <div key={group} className="mb-4">
                 <h3 className="flex items-center justify-between">
-                  <span>{getDisplayName(from)}</span>
-                  <span>{getDisplayName(to)}</span>
+                  <span className="truncate">{getDisplayName(from)}</span>
+                  <span className="truncate">{getDisplayName(to)}</span>
                 </h3>
 
                 {crosses.map((cross, index) => {
@@ -367,14 +368,14 @@ function NetworkG6() {
                     <div key={cross.bridge + '_' + index} className="grid grid-cols-5 text-xs mb-2">
                       <div className="flex items-center gap-2 col-span-2">
                         <Logo name={cross.source.logo} width={16} height={16} />
-                        <span>{cross.source.symbol}</span>
+                        <span className="truncate">{cross.source.symbol}</span>
                       </div>
                       <div className="col-span-1 flex items-center">
                         <div className="bg-gray-500 w-full h-0.5 relative token-transfer after:bg-gray-500 before:bg-gray-500"></div>
                       </div>
                       <div className="flex flex-row-reverse items-center gap-2 col-span-2">
                         <Logo name={token?.logo} width={16} height={16} />
-                        <span>{token?.name}</span>
+                        <span className="truncate">{token?.name}</span>
                       </div>
                     </div>
                   );
