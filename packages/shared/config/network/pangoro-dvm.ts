@@ -69,6 +69,22 @@ export const pangoroDVMConfig: DVMChainConfig = {
       address: '0x46f01081e800BF47e43e7bAa6D98d45F6a0251E4',
     },
     {
+      name: 'OKTON',
+      decimals: 18,
+      cross: [
+        {
+          bridge: 'substrateDVM-ethereum',
+          category: 'helix',
+          partner: { name: 'goerli', role: 'issuing', symbol: 'OKTON', claim: true },
+        },
+      ],
+      type: 'mapping',
+      host: 'pangoro-dvm',
+      logo: 'token-kton.svg',
+      symbol: 'OKTON',
+      address: '0x0000000000000000000000000000000000000402',
+    },
+    {
       name: 'wORING',
       decimals: 18,
       cross: [
