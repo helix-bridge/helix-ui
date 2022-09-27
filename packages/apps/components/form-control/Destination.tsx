@@ -1,7 +1,7 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Cascader, Form, Input, InputNumber, InputNumberProps } from 'antd';
 import omit from 'lodash/omit';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
 import { ChainConfig, CrossToken, TokenInfoWithMeta, TokenWithBridgesInfo } from 'shared/model';
@@ -28,8 +28,8 @@ export function Destination({
 }: DestinationProps & Pick<InputNumberProps, 'disabled'>) {
   const { t } = useITranslation();
   const [searchValue, setSearchValue] = useState('');
+  const [width, setWidth] = useState<string | number>('auto');
   const inputNumberEle = useRef<HTMLInputElement>(null);
-  console.log('🚀 ~ file: Destination.tsx ~ line 30 ~ searchValue', searchValue);
 
   const origin = useMemo(
     () =>
@@ -77,16 +77,17 @@ export function Destination({
     return origin.filter((item) => item.name.includes(searchValue));
   }, [origin, searchValue]);
 
-  const width = useMemo(() => {
+  useEffect(() => {
     if (!inputNumberEle || !inputNumberEle.current) {
-      return 'auto';
+      return;
     }
 
     const rate = 0.7; // index.scss .destination .ant-input-number-input-wrap width 70%
     const padding = 12;
 
-    return inputNumberEle.current.offsetWidth / rate - padding * 2;
-  }, [inputNumberEle]);
+    const res = inputNumberEle.current.offsetWidth / rate - padding * 2;
+    setWidth(res);
+  }, []);
 
   return (
     <Form.Item label={title} className={'relative w-full mb-2 ' + className}>
