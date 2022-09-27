@@ -51,6 +51,22 @@ export const goerliConfig: EthereumChainConfig = {
       symbol: 'ORING',
       address: '0x046D07d53926318d1F06c2c2A0F26a4de83E26c4',
     },
+    {
+      name: 'OKTON',
+      decimals: 18,
+      cross: [
+        {
+          category: 'helix',
+          bridge: 'substrateDVM-ethereum',
+          partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'OKTON' },
+        },
+      ],
+      type: 'mapping',
+      host: 'goerli',
+      logo: 'token-kton.svg',
+      symbol: 'OKTON',
+      address: '0xdd3df59c868fcd40fded7af0cccc3e2c7bcb4f3c',
+    },
   ],
   wallets: ['metamask'],
 };
