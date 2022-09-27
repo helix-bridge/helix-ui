@@ -7,7 +7,6 @@ import { EMPTY } from 'rxjs/internal/observable/empty';
 import { from } from 'rxjs/internal/observable/from';
 import { filter } from 'rxjs/internal/operators/filter';
 import { map } from 'rxjs/internal/operators/map';
-import { tap } from 'rxjs/operators';
 import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
 import { DATE_TIME_FORMAT, RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord } from 'shared/model';
@@ -104,7 +103,6 @@ export default function History() {
 
     return from(requestHistoryRecords({ variables }))
       .pipe(
-        tap((res) => console.log(res)),
         map(({ data, error }) => {
           if (data) {
             return data[gqlName(HISTORY_RECORDS_IN_RESULTS)];

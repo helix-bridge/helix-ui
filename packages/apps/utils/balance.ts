@@ -15,13 +15,12 @@ import {
   isDarwinia2Ethereum,
   isDVM2Substrate,
   isEthereum2Darwinia,
-  isEthereum2SubstrateDVM,
   isMoonriver2CrabParachain,
   isSubstrate2DVM,
   isSubstrate2SubstrateDVM,
   isSubstrate2SubstrateParachain,
-  isSubstrateDVM2Ethereum,
   isSubstrateDVM2Substrate,
+  isSubstrateDVMEthereum,
   isSubstrateDVMSubstrateDVM,
   isSubstrateParachain2Substrate,
 } from './bridge';
@@ -74,11 +73,14 @@ export async function getBalance(
     return getDVMBalance(account, from.meta.provider, kton?.address);
   }
 
-  if (isSubstrateDVM2Ethereum(fromChain, toChain)) {
+  if (isSubstrateDVMEthereum(fromChain, toChain)) {
     if (from.type === 'native') {
-      return getEthereumNativeBalance(account, from.meta.provider).then((res) => [res]);
+      return getEthereumNativeBalance(account, from.meta.provider).then((res) => [res, res]);
     } else {
-      return getErc20Balance(from.address, account, from.meta.provider).then((res) => [res]);
+      return Promise.all([
+        getErc20Balance(from.address, account, from.meta.provider),
+        getEthereumNativeBalance(account, from.meta.provider),
+      ]);
     }
   }
 
@@ -89,11 +91,7 @@ export async function getBalance(
     ]);
   }
 
-  if (
-    [isSubstrateDVM2Substrate, isCBridge, isMoonriver2CrabParachain, isEthereum2SubstrateDVM].some((fn) =>
-      fn(fromChain, toChain)
-    )
-  ) {
+  if ([isSubstrateDVM2Substrate, isCBridge, isMoonriver2CrabParachain].some((fn) => fn(fromChain, toChain))) {
     if (direction.from.host === direction.to.host && isDeposit(direction)) {
       return getDVMBalance(account, from.meta.provider);
     }

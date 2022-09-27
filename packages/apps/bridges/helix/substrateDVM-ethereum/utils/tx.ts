@@ -24,8 +24,8 @@ export function issue(value: IssuingPayload, fee: BN): Observable<Tx> {
   const params = [
     departure.address,
     recipient,
-    departure.type === 'native' ? amount.sub(fee).toString() : amount.toString(),
-    { from: sender, value: amount.toString() },
+    amount.toString(),
+    { from: sender, value: departure.type === 'native' ? amount.add(fee).toString() : fee.toString() },
   ];
   const { method, args } =
     departure.type === 'native'
@@ -57,14 +57,17 @@ export function redeem(value: RedeemPayload, fee: BN): Observable<Tx> {
   );
 }
 
-const genValidations = ({ balance, amount, dailyLimit, allowance, fee }: TxValidation): [boolean, string][] => [
-  [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
-  [!!dailyLimit && dailyLimit.lt(amount), TxValidationMessages.dailyLimitLessThanAmount],
-  [!!allowance && allowance?.lt(amount), TxValidationMessages.allowanceLessThanAmount],
-  [!!fee && fee?.lt(BN_ZERO), TxValidationMessages.invalidFee],
-];
-
-export const validate = validationObsFactory(genValidations);
+export const validate = validationObsFactory(
+  ({ balance, amount, dailyLimit, allowance, fee, feeTokenBalance }: TxValidation): [boolean, string][] => {
+    return [
+      [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
+      [!!dailyLimit && dailyLimit.lt(amount), TxValidationMessages.dailyLimitLessThanAmount],
+      [!!allowance && allowance?.lt(amount), TxValidationMessages.allowanceLessThanAmount],
+      [!!fee && fee?.lt(BN_ZERO), TxValidationMessages.invalidFee],
+      [!!feeTokenBalance && feeTokenBalance.lt(fee!), TxValidationMessages.balanceLessThanFee],
+    ];
+  }
+);
 
 export const claim = (record: HelixHistoryRecord) => {
   const {

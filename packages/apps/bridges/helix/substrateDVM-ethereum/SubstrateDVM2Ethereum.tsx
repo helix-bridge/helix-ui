@@ -8,7 +8,7 @@ import { useIsMounted } from 'shared/hooks';
 import { CrossChainComponentProps, CrossToken, EthereumChainConfig, TxObservableFactory } from 'shared/model';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { pollWhile } from 'shared/utils/helper/operator';
-import { isNativeRing, isRing } from 'shared/utils/helper/validator';
+import { isNativeRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
@@ -27,7 +27,6 @@ export function SubstrateDVM2Ethereum({
   setTxObservableFactory,
   direction,
   bridge,
-  onFeeChange,
   balances,
   updateAllowancePayload,
 }: CrossChainComponentProps<
@@ -40,7 +39,7 @@ export function SubstrateDVM2Ethereum({
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const { account } = useAccount();
-  const [ring] = (balances ?? []) as BN[];
+  const [balance, nativeBalance] = (balances ?? []) as BN[];
 
   const feeWithSymbol = useMemo(
     () =>
@@ -70,10 +69,12 @@ export function SubstrateDVM2Ethereum({
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
-      const validateObs = validate([fee, dailyLimit, ring], {
-        balance: ring,
+      const validateObs = validate([fee, dailyLimit, balance, nativeBalance], {
+        balance,
         amount: new BN(toWei(data.direction.from)),
         dailyLimit,
+        feeTokenBalance: nativeBalance,
+        fee,
       });
 
       return createTxWorkflow(
@@ -86,7 +87,7 @@ export function SubstrateDVM2Ethereum({
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, dailyLimit, fee, feeWithSymbol, ring, setTxObservableFactory]);
+  }, [afterCrossChain, dailyLimit, fee, feeWithSymbol, balance, setTxObservableFactory, nativeBalance]);
 
   useEffect(() => {
     const sub$$ = from(getFee(direction))
@@ -94,15 +95,6 @@ export function SubstrateDVM2Ethereum({
       .subscribe({
         next(result) {
           setFee(result);
-
-          if (onFeeChange) {
-            onFeeChange({
-              amount: isRing(direction.from.symbol)
-                ? +fromWei({ value: result, decimals: direction.from.decimals })
-                : 0,
-              symbol: direction.from.meta.tokens.find(isNativeRing)!.symbol,
-            });
-          }
         },
         error(error) {
           console.warn('🚀 ~ file: SubstrateDVM2Ethereum.tsx ~ line 127 ~ error ~ error', error);
@@ -110,7 +102,7 @@ export function SubstrateDVM2Ethereum({
       });
 
     return () => sub$$.unsubscribe();
-  }, [direction, isMounted, onFeeChange]);
+  }, [direction, isMounted]);
 
   useEffect(() => {
     const sub$$ = from(getDailyLimit(direction))
