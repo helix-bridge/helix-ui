@@ -1,9 +1,10 @@
 import { Tooltip } from 'antd';
-import { PropsWithChildren, useEffect, useState } from 'react';
+import { PropsWithChildren } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { CrossToken, EthereumChainConfig } from 'shared/model';
-import { isNetworkConsistent } from 'shared/utils/connection';
+import { isMetamaskChainConsistent, isNativeMetamaskChain } from 'shared/utils/connection';
 import { prettyNumber } from 'shared/utils/helper/balance';
+import { isEthereumNetwork } from 'shared/utils/network/network';
 import { getDisplayName } from 'utils/network';
 import { useITranslation } from '../../hooks';
 import { addToMetamask } from '../../utils';
@@ -25,19 +26,10 @@ export const TokenOnChain = ({
 }: PropsWithChildren<TokenOnChainProps>) => {
   const { t } = useITranslation();
   const chainLogoProps = asHistory ? { width: 40, height: 40 } : { width: 60, height: 60 };
-  const [isEthereumChainActive, setIsEthereumChainActive] = useState(false);
-
-  useEffect(() => {
-    const isEthereumType = !!(token.meta as EthereumChainConfig).ethereumChain;
-
-    if (isEthereumType) {
-      isNetworkConsistent(token.meta as EthereumChainConfig).then((same) => {
-        setIsEthereumChainActive(same);
-      });
-    } else {
-      setIsEthereumChainActive(false);
-    }
-  }, [token.meta]);
+  const addBtnDisplay =
+    isEthereumNetwork(token.meta) &&
+    !isNativeMetamaskChain(token.meta as EthereumChainConfig) &&
+    token.type !== 'native';
 
   return (
     <div className={`flex items-center text-white ${className}`}>
@@ -72,7 +64,7 @@ export const TokenOnChain = ({
         <small className="font-light text-xs opacity-70 inline-flex items-center gap-1">
           <span className="truncate">on {getDisplayName(token.meta)}</span>
           <span>{children}</span>
-          {isEthereumChainActive && asHistory && (
+          {!isFrom && addBtnDisplay && asHistory && (
             <Tooltip title={t('Add to metamask')}>
               <Logo
                 name="metamask.svg"
@@ -80,7 +72,9 @@ export const TokenOnChain = ({
                 height={14}
                 className="cursor-pointer"
                 onClick={() => {
-                  addToMetamask(token);
+                  isMetamaskChainConsistent(token.meta).subscribe(() => {
+                    addToMetamask(token);
+                  });
                 }}
               />
             </Tooltip>

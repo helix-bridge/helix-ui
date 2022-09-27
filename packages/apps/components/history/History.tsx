@@ -343,6 +343,11 @@ export default function History() {
 
                         <div
                           onClick={() => {
+                            if (isEthereumDarwinia(fromChain, toChain)) {
+                              message.error(`Can not find the detail page for ${fromChain} to ${toChain}`);
+                              return;
+                            }
+
                             const paths = getDetailPaths(fromChain, toChain, record);
                             const query = new URLSearchParams({
                               from: record.fromChain,
@@ -351,10 +356,6 @@ export default function History() {
 
                             if (paths.length) {
                               window.open(`transaction/${paths.join('/')}?${query}`, '_blank');
-                            }
-
-                            if (!isEthereumDarwinia(fromChain, toChain)) {
-                              message.error(`Can not find the detail page for ${fromChain} to ${toChain}`);
                             }
                           }}
                           className={`text-right pl-4 pr-6 py-4  border border-gray-800 mb-4 bg-gray-900 rounded-xs ${
