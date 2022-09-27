@@ -174,7 +174,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
             </FormItemButton>
           ) : departureConnection.status === ConnectionStatus.success ? (
             <>
-              {bridgeState.status !== 'available' && (
+              {bridgeState.status === 'error' && (
                 <div className="w-full flex items-center gap-4 p-4 bg-white border text-gray-900 rounded-sm">
                   <WarningFilled className="text-yellow-400 text-xl" />
                   <span className="mr-2">{t('The system is under maintenance, please try again later')}</span>

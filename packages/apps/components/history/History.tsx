@@ -7,7 +7,6 @@ import { EMPTY } from 'rxjs/internal/observable/empty';
 import { from } from 'rxjs/internal/observable/from';
 import { filter } from 'rxjs/internal/operators/filter';
 import { map } from 'rxjs/internal/operators/map';
-import { tap } from 'rxjs/operators';
 import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
 import { DATE_TIME_FORMAT, RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord } from 'shared/model';
@@ -29,7 +28,6 @@ import { useAccount, useApi } from '../../providers';
 import { useClaim } from '../../providers/claim';
 import { isEthereumDarwinia } from '../../utils';
 import { fetchDarwinia2EthereumRecords, fetchEthereum2DarwiniaRecords } from '../../utils/records';
-import { isTransferableTokenPair } from '../../utils/validate';
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { TokenOnChain } from '../widget/TokenOnChain';
 import { Pending } from './Pending';
@@ -104,7 +102,6 @@ export default function History() {
 
     return from(requestHistoryRecords({ variables }))
       .pipe(
-        tap((res) => console.log(res)),
         map(({ data, error }) => {
           if (data) {
             return data[gqlName(HISTORY_RECORDS_IN_RESULTS)];
@@ -289,11 +286,11 @@ export default function History() {
                 <Spin spinning={loading} className="mt-12 mx-auto w-full">
                   {/*  eslint-disable-next-line complexity*/}
                   {records.map((record) => {
-                    const { fromChain, toChain } = record;
+                    const { fromChain, toChain, recvToken } = record;
                     const dep = getOriginChainConfig(fromChain);
                     const arrival = getOriginChainConfig(toChain);
                     const fromToken = getTokenConfigFromHelixRecord(record)!;
-                    const toToken = arrival.tokens.find((item) => isTransferableTokenPair(item, fromToken))!;
+                    const toToken = arrival.tokens.find((item) => item.symbol === recvToken)!;
                     const [d2eHeight, d2dIndex] = record.requestTxHash.split('-');
                     const [e2dHeight, e2dIndex] = record.responseTxHash.split('-');
 

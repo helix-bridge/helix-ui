@@ -78,6 +78,6 @@ export const isSameAddress = (from: string, to: string): boolean => {
 
 export const isRing = (name: string | null | undefined) => /ring/i.test(String(name)) || /crab/i.test(String(name));
 
-export const isNativeRing = (config: TokenWithBridgesInfo) => isRing(config.name) && config.type === 'native';
+export const isNativeToken = (config: TokenWithBridgesInfo) => config.type === 'native';
 
 export const isKton = (name: string | null | undefined) => /kton/i.test(String(name));
