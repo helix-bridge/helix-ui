@@ -1,3 +1,30 @@
+## [4.3.5](https://github.com/helix-bridge/helix/compare/v4.3.4-apps...v4.3.5) (2022-09-27)
+
+
+### Bug Fixes
+
+* **#276:** wrong upgrade prompt ([#280](https://github.com/helix-bridge/helix/issues/280)) ([4ececf4](https://github.com/helix-bridge/helix/commit/4ececf4abf329a64bcb3264eb0bced322f2e0550)), closes [#276](https://github.com/helix-bridge/helix/issues/276) [#276](https://github.com/helix-bridge/helix/issues/276) [#277](https://github.com/helix-bridge/helix/issues/277)
+* **#293, #287:** goerli name ([#295](https://github.com/helix-bridge/helix/issues/295)) ([4f83afa](https://github.com/helix-bridge/helix/commit/4f83afa8d6b5d4a2d998885dc5ace3c2086a4d40)), closes [#293](https://github.com/helix-bridge/helix/issues/293) [#287](https://github.com/helix-bridge/helix/issues/287)
+* fee deducted from account balance ([#294](https://github.com/helix-bridge/helix/issues/294)) ([2754948](https://github.com/helix-bridge/helix/commit/2754948060d3b3fd729b166b58d41b59adf8066a))
+* redundant fee & balance & dailyLimit quering ([#279](https://github.com/helix-bridge/helix/issues/279)) ([49b9c99](https://github.com/helix-bridge/helix/commit/49b9c990910e5291cc4da32ba46fc88f2263d821))
+
+
+### Features
+
+* eth2 support kton transfer ([#296](https://github.com/helix-bridge/helix/issues/296)) ([a4d40e8](https://github.com/helix-bridge/helix/commit/a4d40e860ee34af3a746190ad5a7220aea837bb5))
+
+
+
+## [4.3.4-apps](https://github.com/helix-bridge/helix/compare/v4.3.3-apps...v4.3.4-apps) (2022-09-26)
+
+
+### Bug Fixes
+
+* **#272:** empty fee bug on before tx launched ([#273](https://github.com/helix-bridge/helix/issues/273)) ([23fd9fb](https://github.com/helix-bridge/helix/commit/23fd9fbe5a7b673e80a321619df3b9a08ccf05d8)), closes [#272](https://github.com/helix-bridge/helix/issues/272)
+* test chainge g6 graph ([#275](https://github.com/helix-bridge/helix/issues/275)) ([bdfb0df](https://github.com/helix-bridge/helix/commit/bdfb0df7e10f6a31a72f786d316b31465fbe1e9d))
+
+
+
 ## [4.3.3](https://github.com/helix-bridge/helix/compare/v4.3.2-apps...v4.3.3) (2022-09-23)
 
 
