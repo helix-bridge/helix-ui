@@ -25,6 +25,9 @@ const isDisable = (token: TokenWithBridgesInfo) => {
   return token.host === 'crab-dvm' && token.name === 'xRING(Classic)';
 };
 
+/**
+ * @deprecated
+ */
 export const SelectTokenModal = ({ visible, onSelect, onCancel, fromToken }: SelectTokenModalProps) => {
   const { t } = useTranslation();
 
