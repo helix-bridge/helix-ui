@@ -4,17 +4,19 @@ import BN from 'bn.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
-import { BridgeStatus, CrossChainDirection, CustomFormControlProps, HashInfo } from 'shared/model';
+import { BridgeStatus, CrossChainDirection, CustomFormControlProps, HashInfo, Network } from 'shared/model';
 import { fromWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
 import { updateStorage } from 'shared/utils/helper/storage';
 import { isKton } from 'shared/utils/helper/validator';
-import { getBridge, isEthereumDarwinia, isSubstrateDVMSubstrateDVM } from 'utils/bridge';
+import { getBridge, isEthereumDarwinia, isSubstrateDVM2Ethereum, isSubstrateDVMSubstrateDVM } from 'utils/bridge';
 import { CountLoading } from '../widget/CountLoading';
 import { Destination } from './Destination';
 
+type Amount = { amount: number; symbol: string };
+
 type DirectionProps = CustomFormControlProps<CrossChainDirection> & {
   initial: CrossChainDirection;
-  fee: { amount: number; symbol: string } | null;
+  fee: Amount | null;
   balances: BN[] | null;
   isBalanceLoading: boolean;
   onRefresh?: () => void;
@@ -22,14 +24,30 @@ type DirectionProps = CustomFormControlProps<CrossChainDirection> & {
 
 const MILLION = 1e6;
 
-const calcToAmount = (payment: string, paymentFee: number | null) => {
-  if (paymentFee === null) {
-    return '';
+const subFee = (payment: Amount, fee: Amount | null) => {
+  if (!fee) {
+    return payment.amount.toString();
   }
 
-  const amount = Number(payment) - paymentFee;
+  if (fee.symbol === payment.symbol) {
+    const amount = Number(payment.amount) - fee.amount;
 
-  return amount >= 0 ? String(amount) : '';
+    return amount >= 0 ? amount.toString() : '';
+  } else {
+    return payment.amount.toString();
+  }
+};
+
+const calcToAmount = (payment: Amount, fee: Amount | null, from: Network, to: Network) => {
+  let result: string;
+
+  if (isSubstrateDVM2Ethereum(from, to)) {
+    result = payment.amount.toString();
+  } else {
+    result = subFee(payment, fee);
+  }
+
+  return result === '0' ? '' : result;
 };
 
 // eslint-disable-next-line complexity
@@ -99,10 +117,12 @@ export function Direction({
       from: data.from,
       to: {
         ...data.to,
-        amount:
-          data.from.amount !== '' && fee?.symbol === data.from.symbol
-            ? calcToAmount(data.from.amount, fee.amount)
-            : data.from.amount,
+        amount: calcToAmount(
+          { amount: +data.from.amount || 0, symbol: data.from.symbol },
+          fee,
+          data.from.host,
+          data.to.host
+        ),
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -118,7 +138,7 @@ export function Direction({
             from,
             to: {
               ...data.to,
-              amount: fee && fee.symbol === from.symbol ? calcToAmount(from.amount, fee.amount) : from.amount,
+              amount: calcToAmount({ amount: +from.amount, symbol: data.from.symbol }, fee, from.host, data.to.host),
             },
           });
         }}
@@ -141,15 +161,18 @@ export function Direction({
           >
             <span
               onClick={() => {
-                const { from } = data;
-                const amount = fromWei({ value: iBalance, decimals: data.from.decimals });
+                const { from, to } = data;
+                const amount = subFee(
+                  { amount: +fromWei({ value: iBalance, decimals: from.decimals }), symbol: from.symbol },
+                  fee
+                );
 
                 if (amount !== from.amount) {
                   triggerChange({
                     from: { ...from, amount },
                     to: {
-                      ...data.to,
-                      amount: fee && fee.symbol === from.symbol ? calcToAmount(amount, fee.amount) : amount,
+                      ...to,
+                      amount: calcToAmount({ amount: +amount, symbol: from.symbol }, fee, from.host, to.host),
                     },
                   });
                 }

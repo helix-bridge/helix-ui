@@ -28,7 +28,6 @@ import { useAccount, useApi } from '../../providers';
 import { useClaim } from '../../providers/claim';
 import { isEthereumDarwinia } from '../../utils';
 import { fetchDarwinia2EthereumRecords, fetchEthereum2DarwiniaRecords } from '../../utils/records';
-import { isTransferableTokenPair } from '../../utils/validate';
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { TokenOnChain } from '../widget/TokenOnChain';
 import { Pending } from './Pending';
@@ -287,11 +286,11 @@ export default function History() {
                 <Spin spinning={loading} className="mt-12 mx-auto w-full">
                   {/*  eslint-disable-next-line complexity*/}
                   {records.map((record) => {
-                    const { fromChain, toChain } = record;
+                    const { fromChain, toChain, recvToken } = record;
                     const dep = getOriginChainConfig(fromChain);
                     const arrival = getOriginChainConfig(toChain);
                     const fromToken = getTokenConfigFromHelixRecord(record)!;
-                    const toToken = arrival.tokens.find((item) => isTransferableTokenPair(item, fromToken))!;
+                    const toToken = arrival.tokens.find((item) => item.symbol === recvToken)!;
                     const [d2eHeight, d2dIndex] = record.requestTxHash.split('-');
                     const [e2dHeight, e2dIndex] = record.responseTxHash.split('-');
 

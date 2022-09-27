@@ -16,8 +16,13 @@ export function useCheckSpecVersion(
   const [specVersionOnline, setSpecVersionOnline] = useState<string>('');
   const [checking, setChecking] = useState(false);
   const { to } = direction;
+  const needCheck = !!to.meta.specVersion;
 
   useEffect(() => {
+    if (!needCheck) {
+      return;
+    }
+
     const api = entrance.polkadot.getInstance(to.meta.provider);
 
     setChecking(true);
@@ -34,9 +39,9 @@ export function useCheckSpecVersion(
     });
 
     return () => sub$$.unsubscribe();
-  }, [to.meta.provider]);
+  }, [needCheck, to.meta.provider]);
 
-  if (checking) {
+  if (checking || !needCheck) {
     return { status: 'pending', reason: 'checking', specVersionOnline: 'unknown' };
   }
 
