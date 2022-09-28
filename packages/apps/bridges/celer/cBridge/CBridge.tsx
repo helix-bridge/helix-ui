@@ -174,6 +174,7 @@ export function CBridge({
         balance: balances![0],
         amount: new BN(toWei(direction.from)),
         allowance,
+        decimals: direction.from.decimals,
       });
 
       const { estimatedReceiveAmt, maxSlippage } = estimateResult!;
