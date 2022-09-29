@@ -26,9 +26,8 @@ const trimLaneId = (helixId: string) => {
 };
 
 export function issue(value: IssuingPayload, fee: BN): Observable<Tx> {
-  const { sender, recipient, direction } = value;
+  const { sender, recipient, direction, bridge } = value;
   const { from: departure, to } = direction;
-  const bridge = getBridge([departure.meta, to.meta]);
   const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
   const gasLimit = '1000000';
 
@@ -47,9 +46,9 @@ export function redeem(value: RedeemPayload, fee: BN): Observable<Tx> {
   const {
     sender,
     recipient,
+    bridge,
     direction: { from: departure, to },
   } = value;
-  const bridge = getBridge([departure.meta, to.meta]);
   const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
   const gasLimit = '1000000';
 
@@ -103,9 +102,9 @@ export function refund(record: HelixHistoryRecord): Observable<Tx> {
 export function deposit(value: IssuingPayload): Observable<Tx> {
   const {
     sender,
-    direction: { from: departure, to },
+    bridge,
+    direction: { from: departure },
   } = value;
-  const bridge = getBridge([departure.meta, to.meta]);
   const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
 
   return genEthereumContractTxObs(
@@ -118,9 +117,9 @@ export function deposit(value: IssuingPayload): Observable<Tx> {
 export function withdraw(value: RedeemPayload): Observable<Tx> {
   const {
     sender,
-    direction: { from: departure, to },
+    bridge,
+    direction: { from: departure },
   } = value;
-  const bridge = getBridge([departure.meta, to.meta]);
   const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
 
   return genEthereumContractTxObs(
