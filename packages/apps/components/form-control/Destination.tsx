@@ -1,4 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons';
+import { isEthereumNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
 import { Button, Cascader, Form, Input, InputNumber, InputNumberProps } from 'antd';
 import omit from 'lodash/omit';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -31,7 +32,7 @@ export function Destination({
   const [width, setWidth] = useState<string | number>('auto');
   const inputNumberEle = useRef<HTMLInputElement>(null);
 
-  const origin = useMemo(
+  const originOptions = useMemo(
     () =>
       chainConfigs
         .filter((item) => !fromToken || !!fromToken.cross.find((cross) => cross.partner.name === item.name))
@@ -60,13 +61,13 @@ export function Destination({
     [fromToken]
   );
 
-  const options = useMemo(() => {
+  const filteredOptions = useMemo(() => {
     if (!searchValue) {
-      return origin;
+      return originOptions;
     }
 
     if (isAddress(searchValue)) {
-      return origin
+      return originOptions
         .filter((item) => item.tokens.find((token) => token.address.toLowerCase() === searchValue))
         .map((item) => ({
           ...item,
@@ -74,8 +75,40 @@ export function Destination({
         }));
     }
 
-    return origin.filter((item) => item.name.includes(searchValue));
-  }, [origin, searchValue]);
+    return originOptions.filter((item) => item.name.includes(searchValue));
+  }, [originOptions, searchValue]);
+
+  const options = useMemo(() => {
+    const groupedChains = filteredOptions.reduce<{ [key: string]: ChainConfig[] }>(
+      (acc, cur) => {
+        if (isParachainNetwork(cur)) {
+          acc.parachain.push(cur);
+        } else if (isPolkadotNetwork(cur)) {
+          acc.polkadot.push(cur);
+        } else if (isEthereumNetwork(cur)) {
+          acc.ethereum.push(cur);
+        }
+
+        return acc;
+      },
+      { ethereum: [], polkadot: [], parachain: [] }
+    );
+
+    return Object.entries(groupedChains)
+      .filter((item) => item[1].length)
+      .map(([category, values]) => [
+        {
+          label: (
+            <span className="capitalize cursor-default text-xs" key={category}>
+              {category}
+            </span>
+          ),
+          disabled: true,
+        },
+        ...values,
+      ])
+      .flat();
+  }, [filteredOptions]);
 
   useEffect(() => {
     if (!inputNumberEle || !inputNumberEle.current) {
@@ -116,9 +149,12 @@ export function Destination({
             placement="bottomRight"
             expandTrigger={'hover'}
             fieldNames={{ value: 'name', children: 'tokens' }}
+            dropdownMenuColumnStyle={{
+              width: typeof width === 'number' ? width / 2 : 'auto',
+            }}
             dropdownRender={(menus: React.ReactNode) => {
               return (
-                <div className="p-2" style={{ width }}>
+                <div className="p-2 text-xs 2xl:text-sm" style={{ width }}>
                   <Input
                     size="small"
                     placeholder={t('Search token address or chain name')}

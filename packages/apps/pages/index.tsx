@@ -89,7 +89,7 @@ const bridges: Bridge[] = [
     supportChains: getSupportChains('XCM'),
     description: {
       security: 'Trust-less',
-      tech: 'Light Client & Relays Bridge',
+      tech: 'XCVM',
       developer: 'Polkadot',
     },
   },
