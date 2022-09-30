@@ -13,8 +13,9 @@ import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
 import { useAccount } from '../../../providers';
-import { IssuingPayload, SubstrateDVMSubstrateDVMBridgeConfig } from './model';
-import { deposit, validate, withdraw } from './utils/tx';
+import { SubstrateDVMSubstrateDVMBridgeInner } from './bridge';
+import { IssuingPayload } from './model';
+import { validate } from './utils/tx';
 
 export function SubstrateDVMInner({
   form,
@@ -24,7 +25,7 @@ export function SubstrateDVMInner({
   onFeeChange,
   balances,
 }: CrossChainComponentProps<
-  SubstrateDVMSubstrateDVMBridgeConfig,
+  SubstrateDVMSubstrateDVMBridgeInner,
   CrossToken<DVMChainConfig>,
   CrossToken<DVMChainConfig>
 >) {
@@ -41,19 +42,15 @@ export function SubstrateDVMInner({
     [direction.from.meta.tokens]
   );
 
-  const txFn = useMemo(() => {
-    const overview = direction.from.cross.find((item) => item.partner.name === direction.from.host);
-
-    return overview?.partner.role === 'issuing' ? deposit : withdraw;
-  }, [direction.from.cross, direction.from.host]);
-
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
-      const balance = direction.from.type === 'native' ? native : ring;
+      const balance = data.direction.from.type === 'native' ? native : ring;
       const validateObs = validate([balance], {
         balance,
         amount: new BN(toWei(data.direction.from)),
       });
+      const overview = data.direction.from.cross.find((item) => item.partner.name === data.direction.from.host);
+      const txFn = overview?.partner.role === 'issuing' ? data.bridge.back : data.bridge.burn;
 
       return createTxWorkflow(
         validateObs.pipe(
@@ -65,7 +62,7 @@ export function SubstrateDVMInner({
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, direction.from.type, feeWithSymbol, native, ring, setTxObservableFactory, txFn]);
+  }, [afterCrossChain, feeWithSymbol, native, ring, setTxObservableFactory]);
 
   useEffect(() => {
     if (onFeeChange) {

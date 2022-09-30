@@ -1,5 +1,5 @@
 import { arbitrumConfig, optimismConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { ArbitrumOptimismBridgeConfig } from '../model';
 
 const arbitrumOptimismConfig: ArbitrumOptimismBridgeConfig = {
@@ -9,7 +9,7 @@ const arbitrumOptimismConfig: ArbitrumOptimismBridgeConfig = {
   },
 };
 
-export const arbitrumOptimism = new Bridge(arbitrumConfig, optimismConfig, arbitrumOptimismConfig, {
+export const arbitrumOptimism = new BridgeBase(arbitrumConfig, optimismConfig, arbitrumOptimismConfig, {
   name: 'arbitrum-optimism',
   category: 'cBridge',
 });

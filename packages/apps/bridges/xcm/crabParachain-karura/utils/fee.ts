@@ -1,10 +1,10 @@
 import BN from 'bn.js';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 
-export async function getRedeemFee(_: Bridge): Promise<BN> {
+export async function getRedeemFee(_: BridgeBase): Promise<BN> {
   return new BN('3200000000000000000');
 }
 
-export async function getIssuingFee(_: Bridge): Promise<BN> {
+export async function getIssuingFee(_: BridgeBase): Promise<BN> {
   return new BN('92696000000000000');
 }

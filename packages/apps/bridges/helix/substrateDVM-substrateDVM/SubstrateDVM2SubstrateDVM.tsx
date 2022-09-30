@@ -19,9 +19,8 @@ import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { useAccount, useApi } from '../../../providers';
-import { IssuingPayload, SubstrateDVMSubstrateDVMBridgeConfig } from './model';
-import { getDailyLimit, getFee } from './utils';
-import { issue, redeem, validate } from './utils/tx';
+import { SubstrateDVMSubstrateDVMBridge } from './bridge';
+import { IssuingPayload } from './model';
 
 export function SubstrateDVM2SubstrateDVM({
   form,
@@ -32,11 +31,7 @@ export function SubstrateDVM2SubstrateDVM({
   onFeeChange,
   balances,
   updateAllowancePayload,
-}: CrossChainComponentProps<
-  SubstrateDVMSubstrateDVMBridgeConfig,
-  CrossToken<DVMChainConfig>,
-  CrossToken<DVMChainConfig>
->) {
+}: CrossChainComponentProps<SubstrateDVMSubstrateDVMBridge, CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>) {
   const { t } = useTranslation();
   const { departureConnection } = useApi();
   const [fee, setFee] = useState<BN | null>(null);
@@ -56,11 +51,6 @@ export function SubstrateDVM2SubstrateDVM({
   );
 
   const isMounted = useIsMounted();
-
-  const txFn = useMemo(
-    () => (bridge.isIssue(direction.from.meta, direction.to.meta) ? issue : redeem),
-    [bridge, direction.from.meta, direction.to.meta]
-  );
 
   useEffect(() => {
     setBridgeState({ status: bridgeState.status, reason: bridgeState.reason });
@@ -84,7 +74,7 @@ export function SubstrateDVM2SubstrateDVM({
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
-      const validateObs = validate([fee, dailyLimit, wRING, native], {
+      const validateObs = data.bridge.validate([fee, dailyLimit, wRING, native], {
         balance: wRING,
         amount: new BN(toWei(data.direction.from)),
         dailyLimit,
@@ -96,29 +86,24 @@ export function SubstrateDVM2SubstrateDVM({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        () => txFn(data, fee!),
+        () => {
+          const launch = data.bridge.isIssue(data.direction.from.meta, data.direction.to.meta)
+            ? data.bridge.back
+            : data.bridge.burn;
+
+          return launch(data, fee!);
+        },
         afterCrossChain(TransferDone, { payload: data })
       );
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [
-    afterCrossChain,
-    wRING,
-    dailyLimit,
-    departureConnection,
-    fee,
-    feeWithSymbol,
-    setTxObservableFactory,
-    t,
-    txFn,
-    native,
-  ]);
+  }, [afterCrossChain, wRING, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t, native]);
 
   useEffect(() => {
     const sub$$ = isMetamaskChainConsistent(direction.from.meta)
       .pipe(
-        switchMap(() => from(getFee(direction))),
+        switchMap(() => from(bridge.getFee(direction))),
         pollWhile(LONG_DURATION, () => isMounted)
       )
       .subscribe({
@@ -140,12 +125,12 @@ export function SubstrateDVM2SubstrateDVM({
       });
 
     return () => sub$$?.unsubscribe();
-  }, [direction, isMounted, onFeeChange]);
+  }, [bridge, direction, isMounted, onFeeChange]);
 
   useEffect(() => {
     const sub$$ = isMetamaskChainConsistent(direction.from.meta)
       .pipe(
-        switchMap(() => from(getDailyLimit(direction))),
+        switchMap(() => from(bridge.getDailyLimit(direction))),
         pollWhile(LONG_DURATION, () => isMounted)
       )
       .subscribe({
@@ -160,7 +145,7 @@ export function SubstrateDVM2SubstrateDVM({
       });
 
     return () => sub$$?.unsubscribe();
-  }, [direction, isMounted]);
+  }, [bridge, direction, isMounted]);
 
   useEffect(() => {
     form.setFieldsValue({ [FORM_CONTROL.recipient]: account });

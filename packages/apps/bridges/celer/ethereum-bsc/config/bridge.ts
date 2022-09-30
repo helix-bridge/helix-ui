@@ -1,5 +1,5 @@
 import { ethereumConfig, bscConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { EthereumBSCBridgeConfig } from '../model';
 
 const ethereumBSCConfig: EthereumBSCBridgeConfig = {
@@ -10,7 +10,7 @@ const ethereumBSCConfig: EthereumBSCBridgeConfig = {
   },
 };
 
-export const ethereumBSC = new Bridge(ethereumConfig, bscConfig, ethereumBSCConfig, {
+export const ethereumBSC = new BridgeBase(ethereumConfig, bscConfig, ethereumBSCConfig, {
   name: 'ethereum-bsc',
   category: 'cBridge',
   issueCompName: 'Ethereum2BSC',

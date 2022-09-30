@@ -2,7 +2,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Form, Tooltip } from 'antd';
 import { PropsWithChildren, ReactNode, useMemo } from 'react';
 import { useITranslation } from 'shared/hooks/translation';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { prettyNumber } from 'shared/utils/helper/balance';
 import { bridgeCategoryDisplay } from '../../utils/bridge';
 import { CountLoading } from './CountLoading';
@@ -13,7 +13,7 @@ type AmountInfo = {
 };
 
 interface CrossChainInfoProps {
-  bridge: Bridge;
+  bridge: BridgeBase;
   fee?: AmountInfo | null;
   hideFee?: boolean;
   extra?: { name: string; content: ReactNode }[];

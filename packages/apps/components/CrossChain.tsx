@@ -14,7 +14,7 @@ import { of } from 'rxjs/internal/observable/of';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
 import {
-  Bridge,
+  BridgeBase,
   BridgeState,
   ConnectionStatus,
   CrossChainComponentProps,
@@ -46,7 +46,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const { connectDepartureNetwork, departureConnection, setDeparture } = useApi();
   const [direction, setDirection] = useState(dir);
   const [pureDirection, setPureDirection] = useState<CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>>(dir);
-  const [bridge, setBridge] = useState<Bridge | null>(null);
+  const [bridge, setBridge] = useState<BridgeBase | null>(null);
   const [createTxObservable, setTxObservableFactory] = useState<TxObservableFactory>(() => EMPTY);
   const [bridgeState, setBridgeState] = useState<BridgeState>({ status: 'available' });
   const [fee, setFee] = useState<{ amount: number; symbol: string } | null>(null);

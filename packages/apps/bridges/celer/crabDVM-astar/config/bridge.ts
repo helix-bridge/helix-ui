@@ -1,5 +1,5 @@
 import { crabDVMConfig, astarConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { CrabDVMAstarBridgeConfig } from '../model';
 
 const crabDVMAstarConfig: CrabDVMAstarBridgeConfig = {
@@ -11,7 +11,7 @@ const crabDVMAstarConfig: CrabDVMAstarBridgeConfig = {
   },
 };
 
-export const crabDVMAstar = new Bridge(crabDVMConfig, astarConfig, crabDVMAstarConfig, {
+export const crabDVMAstar = new BridgeBase(crabDVMConfig, astarConfig, crabDVMAstarConfig, {
   name: 'crabDVM-astar',
   category: 'cBridge',
 });

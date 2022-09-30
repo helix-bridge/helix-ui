@@ -1,5 +1,5 @@
 import { astarConfig, optimismConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { AstarOptimismBridgeConfig } from '../model';
 
 const astarOptimismConfig: AstarOptimismBridgeConfig = {
@@ -10,7 +10,7 @@ const astarOptimismConfig: AstarOptimismBridgeConfig = {
   },
 };
 
-export const astarOptimism = new Bridge(astarConfig, optimismConfig, astarOptimismConfig, {
+export const astarOptimism = new BridgeBase(astarConfig, optimismConfig, astarOptimismConfig, {
   name: 'astar-optimism',
   category: 'cBridge',
 });

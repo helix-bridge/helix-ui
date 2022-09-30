@@ -1,5 +1,5 @@
 import { ethereumConfig, polygonConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { EthereumPolygonBridgeConfig } from '../model';
 
 const ethereumPolygonConfig: EthereumPolygonBridgeConfig = {
@@ -10,7 +10,7 @@ const ethereumPolygonConfig: EthereumPolygonBridgeConfig = {
   },
 };
 
-export const ethereumPolygon = new Bridge(ethereumConfig, polygonConfig, ethereumPolygonConfig, {
+export const ethereumPolygon = new BridgeBase(ethereumConfig, polygonConfig, ethereumPolygonConfig, {
   name: 'ethereum-polygon',
   category: 'cBridge',
 });

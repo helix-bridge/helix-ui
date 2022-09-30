@@ -1,14 +1,14 @@
 import isEqual from 'lodash/isEqual';
 import unionWith from 'lodash/unionWith';
 import upperFirst from 'lodash/upperFirst';
-import { Bridge, BridgeCategory, BridgeConfig, ChainConfig, CrossChainDirection, Network } from 'shared/model';
+import { BridgeBase, BridgeCategory, BridgeConfig, ChainConfig, CrossChainDirection, Network } from 'shared/model';
 import { unknownUnavailable } from '../../bridges/unknown-unavailable/config/bridge';
 import { BRIDGES } from '../../config/bridge';
 import { crossChainGraph, getChainConfig } from '../network';
 
 export function getBridge<T extends BridgeConfig>(
   source: CrossChainDirection | [Network | ChainConfig, Network | ChainConfig]
-): Bridge<T> {
+): BridgeBase<T> {
   const direction = Array.isArray(source)
     ? source.map((item) => (typeof item === 'object' ? item.name : (item as Network)))
     : [source.from, source.to].map((item) => {
@@ -20,13 +20,13 @@ export function getBridge<T extends BridgeConfig>(
   const bridge = BRIDGES.find((item) => isEqual(item.issue, direction) || isEqual(item.redeem, direction));
 
   if (!bridge) {
-    return unknownUnavailable as Bridge<T>;
+    return unknownUnavailable as BridgeBase<T>;
   }
 
-  return bridge as Bridge<T>;
+  return bridge as BridgeBase<T>;
 }
 
-export function getBridges(source: CrossChainDirection): Bridge[] {
+export function getBridges(source: CrossChainDirection): BridgeBase[] {
   const {
     from: { cross },
     to,

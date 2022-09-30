@@ -1,5 +1,5 @@
 import { ethereumConfig, avalancheConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { EthereumAvalancheBridgeConfig } from '../model';
 
 const ethereumAvalancheConfig: EthereumAvalancheBridgeConfig = {
@@ -10,7 +10,7 @@ const ethereumAvalancheConfig: EthereumAvalancheBridgeConfig = {
   },
 };
 
-export const ethereumAvalanche = new Bridge(ethereumConfig, avalancheConfig, ethereumAvalancheConfig, {
+export const ethereumAvalanche = new BridgeBase(ethereumConfig, avalancheConfig, ethereumAvalancheConfig, {
   name: 'ethereum-avalanche',
   category: 'cBridge',
 });

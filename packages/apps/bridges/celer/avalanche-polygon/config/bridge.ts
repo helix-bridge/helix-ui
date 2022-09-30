@@ -1,5 +1,5 @@
 import { avalancheConfig, polygonConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { AvalanchePolygonBridgeConfig } from '../model';
 
 const avalanchePolygonConfig: AvalanchePolygonBridgeConfig = {
@@ -9,7 +9,7 @@ const avalanchePolygonConfig: AvalanchePolygonBridgeConfig = {
   },
 };
 
-export const avalanchePolygon = new Bridge(avalancheConfig, polygonConfig, avalanchePolygonConfig, {
+export const avalanchePolygon = new BridgeBase(avalancheConfig, polygonConfig, avalanchePolygonConfig, {
   name: 'avalanche-polygon',
   category: 'cBridge',
 });

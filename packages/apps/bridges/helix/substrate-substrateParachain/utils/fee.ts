@@ -3,7 +3,7 @@ import { hexToU8a, BN } from '@polkadot/util';
 import last from 'lodash/last';
 import lowerFirst from 'lodash/lowerFirst';
 import upperFirst from 'lodash/upperFirst';
-import { Bridge, ChainConfig } from 'shared/model';
+import { BridgeBase, ChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 
 async function getFee(from: ChainConfig, to: ChainConfig): Promise<BN> {
@@ -24,10 +24,10 @@ async function getFee(from: ChainConfig, to: ChainConfig): Promise<BN> {
   return new BN(marketFee ?? -1); // -1: fee market does not available
 }
 
-export async function getIssuingFee(bridge: Bridge): Promise<BN> {
+export async function getIssuingFee(bridge: BridgeBase): Promise<BN> {
   return getFee(bridge.departure, bridge.arrival);
 }
 
-export async function getRedeemFee(bridge: Bridge): Promise<BN> {
+export async function getRedeemFee(bridge: BridgeBase): Promise<BN> {
   return getFee(bridge.arrival, bridge.departure);
 }

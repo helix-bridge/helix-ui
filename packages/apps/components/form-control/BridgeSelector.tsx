@@ -4,13 +4,13 @@ import matches from 'lodash/matches';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo } from 'react';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
-import { Bridge, CrossChainDirection, CrossToken, CustomFormControlProps } from 'shared/model';
+import { BridgeBase, CrossChainDirection, CrossToken, CustomFormControlProps } from 'shared/model';
 import { getBridges } from 'utils/bridge';
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { BridgeState } from '../bridge/BridgeState';
 import { TokenOnChain } from '../widget/TokenOnChain';
 
-type BridgeSelectorProps = CustomFormControlProps<Bridge> & {
+type BridgeSelectorProps = CustomFormControlProps<BridgeBase> & {
   direction: CrossChainDirection;
 };
 
@@ -33,9 +33,9 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
   //   [direction.from.symbol]
   // );
 
-  const isDisabled = useCallback<(bridge: Bridge) => boolean>(
+  const isDisabled = useCallback<(bridge: BridgeBase) => boolean>(
     // eslint-disable-next-line complexity
-    (bridge: Bridge) => {
+    (bridge: BridgeBase) => {
       return (
         !!direction.from &&
         !!direction.to &&

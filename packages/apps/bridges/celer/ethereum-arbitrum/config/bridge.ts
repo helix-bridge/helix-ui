@@ -1,5 +1,5 @@
 import { ethereumConfig, arbitrumConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { EthereumArbitrumBridgeConfig } from '../model';
 
 const ethereumArbitrumConfig: EthereumArbitrumBridgeConfig = {
@@ -10,7 +10,7 @@ const ethereumArbitrumConfig: EthereumArbitrumBridgeConfig = {
   },
 };
 
-export const ethereumArbitrum = new Bridge(ethereumConfig, arbitrumConfig, ethereumArbitrumConfig, {
+export const ethereumArbitrum = new BridgeBase(ethereumConfig, arbitrumConfig, ethereumArbitrumConfig, {
   name: 'ethereum-arbitrum',
   category: 'cBridge',
 });

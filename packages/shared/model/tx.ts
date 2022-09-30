@@ -1,5 +1,5 @@
 import type { Observable } from 'rxjs';
-import { Bridge, CrossChainPayload } from './bridge';
+import { BridgeBase, CrossChainPayload } from './bridge';
 
 export type TxStatus =
   | 'future'
@@ -31,9 +31,9 @@ export interface Tx {
 
 export type TxFn<T> = (value: T) => Observable<Tx>;
 
-export type TxConfirmComponentProps<T extends Bridge = Bridge> = { value: CrossChainPayload<T> };
+export type TxConfirmComponentProps<T extends BridgeBase = BridgeBase> = { value: CrossChainPayload<T> };
 
-export type TxDoneComponentProps<T extends Bridge = Bridge> = {
+export type TxDoneComponentProps<T extends BridgeBase = BridgeBase> = {
   tx: Tx;
   value: CrossChainPayload<T>;
 };

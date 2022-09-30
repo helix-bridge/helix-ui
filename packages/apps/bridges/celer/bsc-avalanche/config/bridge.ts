@@ -1,5 +1,5 @@
 import { bscConfig, avalancheConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { BSCAvalancheBridgeConfig } from '../model';
 
 const bscAvalancheConfig: BSCAvalancheBridgeConfig = {
@@ -9,7 +9,7 @@ const bscAvalancheConfig: BSCAvalancheBridgeConfig = {
   },
 };
 
-export const bscAvalanche = new Bridge(bscConfig, avalancheConfig, bscAvalancheConfig, {
+export const bscAvalanche = new BridgeBase(bscConfig, avalancheConfig, bscAvalancheConfig, {
   name: 'bsc-avalanche',
   category: 'cBridge',
   issueCompName: 'BSC2Avalanche',

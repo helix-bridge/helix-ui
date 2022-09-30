@@ -1,5 +1,5 @@
 import { ethereumConfig, hecoConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { EthereumHecoBridgeConfig } from '../model';
 
 const ethereumHecoConfig: EthereumHecoBridgeConfig = {
@@ -9,7 +9,7 @@ const ethereumHecoConfig: EthereumHecoBridgeConfig = {
   },
 };
 
-export const ethereumHeco = new Bridge(ethereumConfig, hecoConfig, ethereumHecoConfig, {
+export const ethereumHeco = new BridgeBase(ethereumConfig, hecoConfig, ethereumHecoConfig, {
   name: 'ethereum-heco',
   category: 'cBridge',
 });

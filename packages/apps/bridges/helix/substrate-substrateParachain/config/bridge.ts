@@ -1,4 +1,4 @@
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { crabConfig, pangolinConfig } from 'shared/config/network';
 import { crabParachainConfig } from 'shared/config/network/crab-parachain';
 import { pangolinParachainConfig } from 'shared/config/network/pangolin-parachain';
@@ -11,7 +11,7 @@ const crabCrabParachainConfig: SubstrateSubstrateParachainBridgeConfig = {
   },
 };
 
-export const crabCrabParachain = new Bridge<SubstrateSubstrateParachainBridgeConfig>(
+export const crabCrabParachain = new BridgeBase<SubstrateSubstrateParachainBridgeConfig>(
   crabConfig,
   crabParachainConfig,
   crabCrabParachainConfig,
@@ -31,7 +31,7 @@ const pangolinPangolinParachainConfig: SubstrateSubstrateParachainBridgeConfig =
   },
 };
 
-export const pangolinPangolinParachain = new Bridge<SubstrateSubstrateParachainBridgeConfig>(
+export const pangolinPangolinParachain = new BridgeBase<SubstrateSubstrateParachainBridgeConfig>(
   pangolinConfig,
   pangolinParachainConfig,
   pangolinPangolinParachainConfig,

@@ -1,5 +1,5 @@
 import { goerliConfig, pangoroDVMConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { SubstrateDVMEthereumBridgeConfig } from '../model';
 
 const pangoroDVMGoerliConfig: SubstrateDVMEthereumBridgeConfig = {
@@ -10,7 +10,7 @@ const pangoroDVMGoerliConfig: SubstrateDVMEthereumBridgeConfig = {
   },
 };
 
-export const pangoroDVMGoerli = new Bridge(pangoroDVMConfig, goerliConfig, pangoroDVMGoerliConfig, {
+export const pangoroDVMGoerli = new BridgeBase(pangoroDVMConfig, goerliConfig, pangoroDVMGoerliConfig, {
   name: 'substrateDVM-ethereum',
   category: 'helix',
 });

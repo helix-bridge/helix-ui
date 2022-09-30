@@ -1,5 +1,5 @@
 import { bscConfig, optimismConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { BSCOptimismBridgeConfig } from '../model';
 
 const bscOptimismConfig: BSCOptimismBridgeConfig = {
@@ -9,7 +9,7 @@ const bscOptimismConfig: BSCOptimismBridgeConfig = {
   },
 };
 
-export const bscOptimism = new Bridge(bscConfig, optimismConfig, bscOptimismConfig, {
+export const bscOptimism = new BridgeBase(bscConfig, optimismConfig, bscOptimismConfig, {
   name: 'bsc-optimism',
   category: 'cBridge',
   issueCompName: 'BSC2Optimism',

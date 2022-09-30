@@ -1,7 +1,7 @@
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { crabConfig, pangoroConfig } from 'shared/config/network';
 
-export const unknownUnavailable = new Bridge(
+export const unknownUnavailable = new BridgeBase(
   pangoroConfig,
   crabConfig,
   {},

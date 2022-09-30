@@ -1,5 +1,5 @@
 import { crabDVMConfig, polygonConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { CrabDVMPolygonBridgeConfig } from '../model';
 
 const crabDVMPolygonConfig: CrabDVMPolygonBridgeConfig = {
@@ -9,7 +9,7 @@ const crabDVMPolygonConfig: CrabDVMPolygonBridgeConfig = {
   },
 };
 
-export const crabDVMPolygon = new Bridge(crabDVMConfig, polygonConfig, crabDVMPolygonConfig, {
+export const crabDVMPolygon = new BridgeBase(crabDVMConfig, polygonConfig, crabDVMPolygonConfig, {
   name: 'crabDVM-polygon',
   category: 'cBridge',
 });

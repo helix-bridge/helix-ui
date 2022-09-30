@@ -55,7 +55,7 @@ interface BridgeOptions {
  * departure -> arrival: issuing;
  * departure <- arrival: redeem;
  */
-export class Bridge<C = BridgeConfig> {
+export class BridgeBase<C = BridgeConfig> {
   readonly name: BridgeName;
 
   readonly status: BridgeStatus;

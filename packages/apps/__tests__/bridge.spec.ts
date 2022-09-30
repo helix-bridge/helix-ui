@@ -1,6 +1,6 @@
 /// <reference types="jest" />
 
-import { Bridge, ChainConfig, CrossToken, Network } from 'shared/model';
+import { BridgeBase, ChainConfig, CrossToken, Network } from 'shared/model';
 import { toMiddleSplitNaming } from 'shared/utils/helper/common';
 import { isDVMNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
 import { unknownUnavailable } from '../bridges/unknown-unavailable/config';
@@ -39,13 +39,13 @@ describe('bridge utils', () => {
       const mixes = getBridge([getChainConfig(departure as Network), arrival as Network]);
       const mixes2 = getBridge([departure as Network, getChainConfig(arrival as Network)]);
 
-      expect(byNetwork).toBeInstanceOf(Bridge);
+      expect(byNetwork).toBeInstanceOf(BridgeBase);
       expect(byNetwork).not.toEqual(unknownUnavailable);
-      expect(byConfig).toBeInstanceOf(Bridge);
+      expect(byConfig).toBeInstanceOf(BridgeBase);
       expect(byConfig).not.toEqual(unknownUnavailable);
-      expect(mixes).toBeInstanceOf(Bridge);
+      expect(mixes).toBeInstanceOf(BridgeBase);
       expect(mixes).not.toEqual(unknownUnavailable);
-      expect(mixes2).toBeInstanceOf(Bridge);
+      expect(mixes2).toBeInstanceOf(BridgeBase);
       expect(mixes2).not.toEqual(unknownUnavailable);
     }
   );

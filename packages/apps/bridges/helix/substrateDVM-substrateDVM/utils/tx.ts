@@ -138,10 +138,6 @@ const genValidations = ({
   fee,
   feeTokenBalance,
 }: TxValidation): [boolean, string][] => {
-  console.log(
-    '🚀 ~ file: tx.ts ~ line 142 ~ balance',
-    [balance, amount, dailyLimit, allowance, fee, feeTokenBalance].map((item) => item?.toString())
-  );
   return [
     [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
     [!!dailyLimit && dailyLimit.lt(amount), TxValidationMessages.dailyLimitLessThanAmount],

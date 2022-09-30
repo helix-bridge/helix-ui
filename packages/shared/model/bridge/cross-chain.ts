@@ -6,7 +6,7 @@ import { AllowancePayload } from '../../../apps/hooks';
 import { ChainConfig, TokenWithBridgesInfo } from '../network';
 import { Tx } from '../tx';
 import { NullableFields } from '../type-operator';
-import { Bridge, BridgeConfig, BridgeStatus } from './bridge';
+import { BridgeBase, BridgeStatus } from './bridge';
 
 export type TokenInfoWithMeta<T extends ChainConfig = ChainConfig> = TokenWithBridgesInfo & { meta: T };
 
@@ -20,7 +20,7 @@ export interface CrossChainParty {
 }
 
 export interface CrossChainPayload<
-  B extends Bridge = Bridge,
+  B extends BridgeBase = BridgeBase,
   F extends CrossToken = CrossToken,
   T extends CrossToken = CrossToken
 > extends CrossChainParty {
@@ -37,13 +37,13 @@ export interface BridgeState {
 }
 
 export interface CrossChainComponentProps<
-  B extends BridgeConfig = BridgeConfig,
+  B extends BridgeBase,
   F extends CrossToken = CrossToken,
   T extends CrossToken = CrossToken
 > {
   form: FormInstance<CrossChainPayload>;
   direction: CrossChainDirection<F, T>;
-  bridge: Bridge<B>;
+  bridge: B;
   balances: BN[] | null;
   allowance: BN | null;
   // make sure page setState function direction to avoid infinite update

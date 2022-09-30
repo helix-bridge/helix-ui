@@ -1,5 +1,5 @@
 import { arbitrumConfig, astarConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { ArbitrumAstarBridgeConfig } from '../model';
 
 const arbitrumAstarConfig: ArbitrumAstarBridgeConfig = {
@@ -10,7 +10,7 @@ const arbitrumAstarConfig: ArbitrumAstarBridgeConfig = {
   },
 };
 
-export const arbitrumAstar = new Bridge(arbitrumConfig, astarConfig, arbitrumAstarConfig, {
+export const arbitrumAstar = new BridgeBase(arbitrumConfig, astarConfig, arbitrumAstarConfig, {
   name: 'arbitrum-astar',
   category: 'cBridge',
 });

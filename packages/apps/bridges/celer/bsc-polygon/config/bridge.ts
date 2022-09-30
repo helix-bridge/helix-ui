@@ -1,5 +1,5 @@
 import { bscConfig, polygonConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/model';
 import { BSCPolygonBridgeConfig } from '../model';
 
 const bscPolygonConfig: BSCPolygonBridgeConfig = {
@@ -9,7 +9,7 @@ const bscPolygonConfig: BSCPolygonBridgeConfig = {
   },
 };
 
-export const bscPolygon = new Bridge(bscConfig, polygonConfig, bscPolygonConfig, {
+export const bscPolygon = new BridgeBase(bscConfig, polygonConfig, bscPolygonConfig, {
   name: 'bsc-polygon',
   category: 'cBridge',
   issueCompName: 'BSC2Polygon',
