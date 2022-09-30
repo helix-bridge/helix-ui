@@ -84,3 +84,5 @@ export abstract class Bridge<
 
   validate = this.validatorFactory(this.genTxParamsValidations);
 }
+
+export type CommonBridge = Bridge<BridgeConfig, ChainConfig, ChainConfig>;

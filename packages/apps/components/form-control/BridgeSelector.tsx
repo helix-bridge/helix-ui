@@ -6,11 +6,12 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { BridgeBase, CrossChainDirection, CrossToken, CustomFormControlProps } from 'shared/model';
 import { getBridges } from 'utils/bridge';
+import { CommonBridge } from '../../model/bridge';
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { BridgeState } from '../bridge/BridgeState';
 import { TokenOnChain } from '../widget/TokenOnChain';
 
-type BridgeSelectorProps = CustomFormControlProps<BridgeBase> & {
+type BridgeSelectorProps = CustomFormControlProps<CommonBridge> & {
   direction: CrossChainDirection;
 };
 

@@ -3,7 +3,6 @@ import { CrossChainDirection, TokenInfoWithMeta } from 'shared/model';
 import { isKton, isRing } from 'shared/utils/helper/validator';
 import {
   getDarwiniaBalance,
-  getDVMBalance,
   getErc20Balance,
   getEthereumNativeBalance,
   getParachainBalance,
@@ -68,9 +67,12 @@ export async function getBalance(
   }
 
   if (isDVM2Substrate(fromChain, toChain)) {
-    const kton = from.meta.tokens.find((item) => item.type === 'native' && isKton(item.symbol));
+    const kton = from.meta.tokens.find((item) => item.type === 'native' && isKton(item.symbol))!;
 
-    return getDVMBalance(account, from.meta.provider, kton?.address);
+    return Promise.all([
+      getErc20Balance(kton.address, account, from.meta.provider),
+      getEthereumNativeBalance(account, from.meta.provider),
+    ]);
   }
 
   if (isSubstrateDVMEthereum(fromChain, toChain)) {
@@ -93,7 +95,7 @@ export async function getBalance(
 
   if ([isSubstrateDVM2Substrate, isCBridge, isMoonriver2CrabParachain].some((fn) => fn(fromChain, toChain))) {
     if (direction.from.host === direction.to.host && isDeposit(direction)) {
-      return getDVMBalance(account, from.meta.provider);
+      return getEthereumNativeBalance(account, from.meta.provider).then((res) => [res, res]);
     }
 
     return getErc20Balance(from.address, account, from.meta.provider).then((res) => [res]);

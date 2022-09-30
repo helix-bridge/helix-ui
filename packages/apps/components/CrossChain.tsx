@@ -15,7 +15,9 @@ import { FORM_CONTROL } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
 import {
   BridgeBase,
+  BridgeConfig,
   BridgeState,
+  ChainConfig,
   ConnectionStatus,
   CrossChainComponentProps,
   CrossChainDirection,
@@ -26,6 +28,7 @@ import {
 import { truncate } from 'shared/utils/helper/balance';
 import { isKton } from 'shared/utils/helper/validator';
 import { AllowancePayload, useAllowance } from '../hooks/allowance';
+import { Bridge } from '../model/bridge';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
 import { getBalance } from '../utils';
 import { BridgeSelector } from './form-control/BridgeSelector';
@@ -46,7 +49,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
   const { connectDepartureNetwork, departureConnection, setDeparture } = useApi();
   const [direction, setDirection] = useState(dir);
   const [pureDirection, setPureDirection] = useState<CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>>(dir);
-  const [bridge, setBridge] = useState<BridgeBase | null>(null);
+  const [bridge, setBridge] = useState<Bridge<BridgeConfig, ChainConfig, ChainConfig> | null>(null);
   const [createTxObservable, setTxObservableFactory] = useState<TxObservableFactory>(() => EMPTY);
   const [bridgeState, setBridgeState] = useState<BridgeState>({ status: 'available' });
   const [fee, setFee] = useState<{ amount: number; symbol: string } | null>(null);
@@ -78,8 +81,11 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
         ? bridge.IssueCrossChainComponent
         : bridge.RedeemCrossChainComponent;
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return dynamic<CrossChainComponentProps>(() => import('../bridges').then((res) => (res as any)[comp])) ?? null;
+      return (
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        dynamic<CrossChainComponentProps<BridgeBase>>(() => import('../bridges').then((res) => (res as any)[comp])) ??
+        null
+      );
     }
 
     return null;
@@ -96,13 +102,17 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
 
   useEffect(() => {
     setIsBalanceLoading(true);
-    const sub$$ = iif(() => !!account, fromRx(getBalance(pureDirection, account)), of(null)).subscribe((result) => {
+    const sub$$ = iif(
+      () => !!account && !!bridge,
+      fromRx(bridge!.getBalance(pureDirection, account)),
+      of(null)
+    ).subscribe((result) => {
       setBalances(result);
       setIsBalanceLoading(false);
     });
 
     return () => sub$$.unsubscribe();
-  }, [account, pureDirection]);
+  }, [account, bridge, pureDirection]);
 
   useEffect(() => {
     if (allowancePayload) {
