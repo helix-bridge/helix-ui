@@ -5,9 +5,24 @@ import sortBy from 'lodash/sortBy';
 import unionWith from 'lodash/unionWith';
 import upperFirst from 'lodash/upperFirst';
 import { SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
-import { ChainConfig, Network, PolkadotChainConfig } from 'shared/model';
+import {
+  ChainConfig,
+  DVMChainConfig,
+  EthereumChainConfig,
+  Network,
+  ParachainChainConfig,
+  PolkadotChainConfig,
+} from 'shared/model';
 import { getCustomNetworkConfig } from 'shared/utils/helper/storage';
-import { isDVMNetwork } from 'shared/utils/network/network';
+import {
+  DVMChain,
+  EthereumChain,
+  isDVMNetwork,
+  isParachainNetwork,
+  isPolkadotNetwork,
+  ParachainChain,
+  PolkadotChain,
+} from 'shared/utils/network/network';
 import { crossChainGraph } from './graph';
 
 export const chainConfigs = (() => {
@@ -18,7 +33,8 @@ export const chainConfigs = (() => {
       .flat(),
     (pre, next) => pre === next
   ).map((vertices) => {
-    const result = SYSTEM_CHAIN_CONFIGURATIONS.find((item) => vertices === item.name);
+    const result: PolkadotChainConfig | EthereumChainConfig | ParachainChainConfig | undefined =
+      SYSTEM_CHAIN_CONFIGURATIONS.find((item) => vertices === item.name);
     let config = cloneDeep(result);
 
     if (!config) {
@@ -36,11 +52,29 @@ export const chainConfigs = (() => {
       }));
     }
 
-    return config;
+    return config as PolkadotChainConfig | EthereumChainConfig | ParachainChainConfig;
   });
 
   return sortBy(data, (item) => item.name);
 })();
+
+export const chains: (ParachainChain | PolkadotChain | EthereumChain)[] = chainConfigs.map((conf) => {
+  if (isParachainNetwork(conf)) {
+    return new ParachainChain(conf as ParachainChainConfig);
+  }
+
+  if (isPolkadotNetwork(conf)) {
+    return new PolkadotChain(conf as PolkadotChainConfig);
+  }
+
+  if (isDVMNetwork(conf)) {
+    return new DVMChain(conf as DVMChainConfig);
+  }
+
+  return new EthereumChain(conf as EthereumChainConfig);
+});
+
+console.log('🚀 ~ file: network.ts ~ line 62 ~ constchainConfigsPros: ~ chainConfigsPros', chains);
 
 function getConfig(name: Network | null | undefined, source = chainConfigs): ChainConfig {
   if (!name) {

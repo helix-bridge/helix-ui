@@ -1,8 +1,11 @@
 import {
   DVMNetwork,
+  EthereumChainConfig,
   EthereumTypeNetwork,
+  ParachainChainConfig,
   ParachainEthereumCompatibleNetwork,
   ParachainNetwork,
+  PolkadotChainConfig,
   PolkadotTypeNetwork,
 } from '../../model';
 import { arbitrumConfig } from './arbitrum';
@@ -28,7 +31,7 @@ import { pangoroDVMConfig } from './pangoro-dvm';
 import { polygonConfig } from './polygon';
 import { ropstenConfig } from './ropsten';
 
-export const SYSTEM_CHAIN_CONFIGURATIONS = [
+export const SYSTEM_CHAIN_CONFIGURATIONS: (EthereumChainConfig | PolkadotChainConfig | ParachainChainConfig)[] = [
   arbitrumConfig,
   astarConfig,
   avalancheConfig,
