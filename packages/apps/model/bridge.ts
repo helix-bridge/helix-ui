@@ -26,7 +26,7 @@ type GenValidationFn<T> = (params: T) => [boolean, string][];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Target extends ChainConfig>
-  extends BridgeBase<B> {
+  extends BridgeBase<B, Origin, Target> {
   claim?(record: HelixHistoryRecord): Observable<Tx>;
   refund?(record: HelixHistoryRecord): Observable<Tx>;
   getDailyLimit?(
@@ -38,7 +38,7 @@ export abstract class Bridge<
   B extends BridgeConfig,
   Origin extends ChainConfig,
   Target extends ChainConfig
-> extends BridgeBase<B> {
+> extends BridgeBase<B, Origin, Target> {
   protected readonly txValidationMessages = TxValidationMessages;
 
   abstract back(

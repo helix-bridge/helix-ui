@@ -12,12 +12,11 @@ import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { getBridge } from 'utils/bridge';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
-import { getChainConfig } from '../../../../utils/network';
 import { validationObsFactory } from '../../../../utils/tx';
 import backingAbi from '../config/s2sv2backing.json';
 import burnAbi from '../config/s2sv2burn.json';
 import wringABI from '../config/wring.json';
-import { IssuingPayload, RedeemPayload } from '../model';
+import { IssuingPayload, RedeemPayload, SubstrateDVMSubstrateDVMBridgeConfig } from '../model';
 import { getFee } from './fee';
 
 const trimLaneId = (helixId: string) => {
@@ -65,9 +64,10 @@ export function redeem(value: RedeemPayload, fee: BN): Observable<Tx> {
 
 export function refund(record: HelixHistoryRecord): Observable<Tx> {
   const { fromChain, toChain, sendAmount: amount, sender, id, sendTokenAddress: tokenAddress } = record;
-  const bridge = getBridge([fromChain, toChain]);
-  const departure = getChainConfig(fromChain) as DVMChainConfig;
-  const arrival = getChainConfig(toChain) as DVMChainConfig;
+  const bridge = getBridge<SubstrateDVMSubstrateDVMBridgeConfig, DVMChainConfig, DVMChainConfig>([fromChain, toChain]);
+  const [departure, arrival] = bridge.isIssue(fromChain, toChain)
+    ? [bridge.departure, bridge.arrival]
+    : [bridge.arrival, bridge.departure];
   const transferId = trimLaneId(id);
 
   const { abi, address, method } = bridge.isRedeem(fromChain, toChain)

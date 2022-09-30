@@ -55,16 +55,16 @@ interface BridgeOptions {
  * departure -> arrival: issuing;
  * departure <- arrival: redeem;
  */
-export class BridgeBase<C = BridgeConfig> {
+export class BridgeBase<C = BridgeConfig, O extends ChainConfig = ChainConfig, T extends ChainConfig = ChainConfig> {
   readonly name: BridgeName;
 
   readonly status: BridgeStatus;
 
   readonly activeArrivalConnection: boolean;
 
-  readonly departure: ChainConfig;
+  readonly departure: O;
 
-  readonly arrival: ChainConfig;
+  readonly arrival: T;
 
   readonly issue: [Departure, Arrival];
 
@@ -84,7 +84,7 @@ export class BridgeBase<C = BridgeConfig> {
 
   private crossChain: Map<Departure[], string> = new Map();
 
-  constructor(departure: ChainConfig, arrival: ChainConfig, config: C, options: BridgeOptions) {
+  constructor(departure: O, arrival: T, config: C, options: BridgeOptions) {
     const dep = departure.name;
     const arr = arrival.name;
 

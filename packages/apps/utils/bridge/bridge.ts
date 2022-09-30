@@ -7,9 +7,11 @@ import { BRIDGES } from '../../config/bridge';
 import { Bridge, CommonBridge } from '../../model/bridge';
 import { crossChainGraph, getChainConfig } from '../network';
 
-export function getBridge<T extends BridgeConfig>(
-  source: CrossChainDirection | [Network | ChainConfig, Network | ChainConfig]
-): Bridge<T, ChainConfig, ChainConfig> {
+export function getBridge<
+  B extends BridgeConfig = BridgeConfig,
+  O extends ChainConfig = ChainConfig,
+  T extends ChainConfig = ChainConfig
+>(source: CrossChainDirection | [Network | ChainConfig, Network | ChainConfig]): Bridge<B, O, T> {
   const direction = Array.isArray(source)
     ? source.map((item) => (typeof item === 'object' ? item.name : (item as Network)))
     : [source.from, source.to].map((item) => {
@@ -21,10 +23,10 @@ export function getBridge<T extends BridgeConfig>(
   const bridge = BRIDGES.find((item) => isEqual(item.issue, direction) || isEqual(item.redeem, direction));
 
   if (!bridge) {
-    return unknownUnavailable as Bridge<T, ChainConfig, ChainConfig>;
+    return unknownUnavailable as unknown as Bridge<B, O, T>;
   }
 
-  return bridge as Bridge<T, ChainConfig, ChainConfig>;
+  return bridge as Bridge<B, O, T>;
 }
 
 export function getBridges(source: CrossChainDirection): CommonBridge[] {

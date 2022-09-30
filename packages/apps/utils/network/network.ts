@@ -74,8 +74,6 @@ export const chains: (ParachainChain | PolkadotChain | EthereumChain)[] = chainC
   return new EthereumChain(conf as EthereumChainConfig);
 });
 
-console.log('🚀 ~ file: network.ts ~ line 62 ~ constchainConfigsPros: ~ chainConfigsPros', chains);
-
 function getConfig(name: Network | null | undefined, source = chainConfigs): ChainConfig {
   if (!name) {
     throw new Error(`You must pass a 'name' parameter to find the chain config`);
