@@ -89,6 +89,16 @@ export const ethereumConfig: EthereumChainConfig = {
       address: '0x9f284e1337a815fe77d2ff4ae46544645b20c5ff',
     },
     {
+      name: 'ETH',
+      decimals: 18,
+      cross: [],
+      type: 'native',
+      host: 'ethereum',
+      logo: 'token-ethereum.svg',
+      symbol: 'ETH',
+      address: '',
+    },
+    {
       name: 'USDT',
       decimals: 6,
       cross: [
