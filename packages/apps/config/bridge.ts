@@ -33,12 +33,8 @@ import {
   pangolinPangolinParachain,
 } from '../bridges/helix/substrate-substrateParachain/config/bridge';
 import { pangoroDVMGoerli } from '../bridges/helix/substrateDVM-ethereum/config';
-import {
-  darwiniaDVMCrabDVM,
-  darwiniaDVMDarwiniaDVM,
-  pangoroDVMPangolinDVM,
-  pangoroDVMPangoroDVM,
-} from '../bridges/helix/substrateDVM-substrateDVM/bridge';
+import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from '../bridges/helix/substrateDVM-substrateDVM/bridge';
+import { darwiniaDVMDarwiniaDVM, pangoroDVMPangoroDVM } from '../bridges/helix/substrateDVM-substrateDVM/bridge-inner';
 import { crabParachainKarura } from '../bridges/xcm/crabParachain-karura/config';
 import { crabParachainMoonriver } from '../bridges/xcm/crabParachain-moonriver/config/bridge';
 

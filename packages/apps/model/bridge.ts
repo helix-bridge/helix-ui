@@ -51,7 +51,7 @@ export abstract class Bridge<
     fee?: BN
   ): Observable<Tx>;
 
-  protected abstract genTxParamsValidations(params: TxValidation): [boolean, string][];
+  abstract genTxParamsValidations(params: TxValidation): [boolean, string][];
 
   abstract getBalance(
     direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>,

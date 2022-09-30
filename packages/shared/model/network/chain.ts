@@ -5,6 +5,15 @@ import { Logo, Social, TokenWithBridgesInfo } from './config';
 import { Network, SupportedWallet } from './network';
 
 export abstract class Chain implements ChainConfig {
+  isTest: boolean;
+  logos: Logo[];
+  name: Network;
+  provider: string;
+  social: Social;
+  tokens: TokenWithBridgesInfo[];
+  wallets: SupportedWallet[];
+  fullName?: string | undefined;
+
   constructor(config: ChainConfig) {
     this.isTest = config.isTest;
     this.logos = config.logos;
@@ -15,14 +24,7 @@ export abstract class Chain implements ChainConfig {
     this.wallets = config.wallets;
     this.fullName = config.fullName;
   }
-  isTest: boolean;
-  logos: Logo[];
-  name: Network;
-  provider: string;
-  social: Social;
-  tokens: TokenWithBridgesInfo[];
-  wallets: SupportedWallet[];
-  fullName?: string | undefined;
+
   abstract getBalance(
     direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>,
     account: string

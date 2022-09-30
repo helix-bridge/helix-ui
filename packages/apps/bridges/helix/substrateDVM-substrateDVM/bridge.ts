@@ -13,16 +13,11 @@ import {
 import { getErc20Balance, getEthereumNativeBalance } from 'shared/utils/network/balance';
 import { TxValidation } from '../../../model';
 import { Bridge } from '../../../model/bridge';
-import {
-  darwiniaDVMcrabDVMConfig,
-  darwiniaDVMDarwiniaDVMConfig,
-  pangoroDVMpangolinDVMConfig,
-  pangoroDVMPangoroDVMConfig,
-} from './config';
+import { darwiniaDVMcrabDVMConfig, pangoroDVMpangolinDVMConfig } from './config';
 import { IssuingPayload, RedeemPayload, SubstrateDVMSubstrateDVMBridgeConfig } from './model';
 import { getDailyLimit } from './utils/dailyLimit';
 import { getFee } from './utils/fee';
-import { deposit, issue, redeem, refund, withdraw } from './utils/tx';
+import { issue, redeem, refund } from './utils/tx';
 
 export class SubstrateDVMSubstrateDVMBridge extends Bridge<
   SubstrateDVMSubstrateDVMBridgeConfig,
@@ -37,7 +32,7 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
     return redeem(payload, fee);
   }
 
-  protected genTxParamsValidations(params: TxValidation): [boolean, string][] {
+  genTxParamsValidations(params: TxValidation): [boolean, string][] {
     const { balance, amount, dailyLimit, allowance, fee, feeTokenBalance } = params;
 
     return [
@@ -77,39 +72,6 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
   }
 }
 
-export class SubstrateDVMSubstrateDVMBridgeInner extends Bridge<
-  SubstrateDVMSubstrateDVMBridgeConfig,
-  DVMChainConfig,
-  DVMChainConfig
-> {
-  back(payload: IssuingPayload): Observable<Tx> {
-    return deposit(payload);
-  }
-
-  burn(payload: RedeemPayload): Observable<Tx> {
-    return withdraw(payload);
-  }
-
-  protected genTxParamsValidations(params: TxValidation): [boolean, string][] {
-    const { balance, amount } = params;
-
-    return [[balance.lt(amount), this.txValidationMessages.balanceLessThanAmount]];
-  }
-
-  getBalance(direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>, account: string) {
-    const { from } = direction;
-
-    return Promise.all([
-      getErc20Balance(from.address, account, from.meta.provider),
-      getEthereumNativeBalance(account, from.meta.provider),
-    ]);
-  }
-
-  async getFee(_: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>): Promise<BN | null> {
-    return null;
-  }
-}
-
 export const darwiniaDVMCrabDVM = new SubstrateDVMSubstrateDVMBridge(
   darwiniaDVMConfig,
   crabDVMConfig,
@@ -120,18 +82,6 @@ export const darwiniaDVMCrabDVM = new SubstrateDVMSubstrateDVMBridge(
   }
 );
 
-export const darwiniaDVMDarwiniaDVM = new SubstrateDVMSubstrateDVMBridgeInner(
-  darwiniaDVMConfig,
-  darwiniaDVMConfig,
-  darwiniaDVMDarwiniaDVMConfig,
-  {
-    name: 'substrateDVM-substrateDVM',
-    category: 'helix',
-    issueCompName: 'SubstrateDVMInner',
-    redeemCompName: 'SubstrateDVMInner',
-  }
-);
-
 export const pangoroDVMPangolinDVM = new SubstrateDVMSubstrateDVMBridge(
   pangoroDVMConfig,
   pangolinDVMConfig,
@@ -139,17 +89,5 @@ export const pangoroDVMPangolinDVM = new SubstrateDVMSubstrateDVMBridge(
   {
     name: 'substrateDVM-substrateDVM',
     category: 'helix',
-  }
-);
-
-export const pangoroDVMPangoroDVM = new SubstrateDVMSubstrateDVMBridgeInner(
-  pangoroDVMConfig,
-  pangoroDVMConfig,
-  pangoroDVMPangoroDVMConfig,
-  {
-    name: 'substrateDVM-substrateDVM',
-    category: 'helix',
-    issueCompName: 'SubstrateDVMInner',
-    redeemCompName: 'SubstrateDVMInner',
   }
 );

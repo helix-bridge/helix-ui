@@ -47,6 +47,7 @@ export class PolkadotChain extends Chain implements PolkadotChainConfig {
     super(config);
     this.ss58Prefix = config.ss58Prefix;
     this.specVersion = config.specVersion;
+    this.name = config.name;
   }
 
   getBalance(
@@ -66,6 +67,7 @@ export class EthereumChain extends Chain implements EthereumChainConfig {
   constructor(config: EthereumChainConfig) {
     super(config);
     this.ethereumChain = config.ethereumChain;
+    this.name = config.name;
   }
 
   async getBalance(
@@ -115,6 +117,7 @@ export class DVMChain extends EthereumChain implements DVMChainConfig {
     this.ethereumChain = config.ethereumChain;
     this.ss58Prefix = config.ss58Prefix;
     this.specVersion = config.specVersion;
+    this.name = config.name;
   }
 
   async getBalance(

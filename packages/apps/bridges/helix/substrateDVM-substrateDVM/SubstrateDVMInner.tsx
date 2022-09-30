@@ -13,7 +13,7 @@ import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
 import { useAccount } from '../../../providers';
-import { SubstrateDVMSubstrateDVMBridgeInner } from './bridge';
+import { SubstrateDVMSubstrateDVMBridgeInner } from './bridge-inner';
 import { IssuingPayload } from './model';
 import { validate } from './utils/tx';
 
