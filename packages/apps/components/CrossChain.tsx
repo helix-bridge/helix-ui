@@ -23,6 +23,7 @@ import {
   TokenInfoWithMeta,
   TxObservableFactory,
 } from 'shared/model';
+import { truncate } from 'shared/utils/helper/balance';
 import { isKton } from 'shared/utils/helper/validator';
 import { AllowancePayload, useAllowance } from '../hooks/allowance';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
@@ -119,7 +120,36 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
     >
       <Row>
         <Col xs={24} sm={8} className={`mb-4 sm:mb-0 bg-antDark p-5`}>
-          <Form.Item name={FORM_CONTROL.direction} className="mb-0">
+          <Form.Item
+            name={FORM_CONTROL.direction}
+            className="mb-0"
+            rules={[
+              {
+                validator: (_, val: CrossChainDirection) => {
+                  const {
+                    from: { amount, decimals },
+                  } = val;
+
+                  if (!amount) {
+                    return Promise.resolve();
+                  }
+
+                  const decimalCount = amount.toString().split('.')[1]?.length;
+
+                  if (decimalCount && decimalCount > decimals) {
+                    return Promise.reject(
+                      `Maximum number of digits is ${decimals}, excess digits will be ignored. Your input ${amount} will be treat as ${truncate(
+                        amount,
+                        decimals
+                      )}`
+                    );
+                  } else {
+                    return Promise.resolve();
+                  }
+                },
+              },
+            ]}
+          >
             <Direction
               fee={fee}
               balances={balances}

@@ -1,16 +1,16 @@
 /// <reference types="jest" />
 
-import { largeNumber, prettyNumber } from '../../utils/helper/balance';
+import { largeNumber, prettyNumber, toWei } from '../../utils/helper/balance';
 
 describe('balance utils', () => {
   it('pretty number', () => {
     const tests = [
       { num: 1234, options: undefined, res: '1,234.000' },
       { num: 100000000, options: undefined, res: '100,000,000.000' },
-      { num: 100000000, options: { ignoreZeroDecimal: true, decimal: 2  }, res: '100,000,000' },
+      { num: 100000000, options: { ignoreZeroDecimal: true, decimal: 2 }, res: '100,000,000' },
       { num: 100000000.2, options: undefined, res: '100,000,000.2' },
-      { num: 100000000.234, options: { ignoreZeroDecimal: true, decimal: 2  }, res: '100,000,000.23' },
-      { num: 100000000.235, options: { ignoreZeroDecimal: true, decimal: 2  }, res: '100,000,000.23' },
+      { num: 100000000.234, options: { ignoreZeroDecimal: true, decimal: 2 }, res: '100,000,000.23' },
+      { num: 100000000.235, options: { ignoreZeroDecimal: true, decimal: 2 }, res: '100,000,000.23' },
       { num: '1K', options: { ignoreZeroDecimal: true }, res: '1K' },
       { num: '1K', options: { decimal: 1 }, res: '1.0K' },
       { num: '2983M', options: undefined, res: '2,983.000M' },
@@ -42,5 +42,11 @@ describe('balance utils', () => {
     tests.forEach((item) => {
       expect(largeNumber(item.num, item.decimals)).toEqual(item.res);
     });
+  });
+
+  it('can to wei', () => {
+    expect(toWei({ value: 1 })).toEqual('1000000000000000000');
+    expect(toWei({ value: 1.23456789 })).toEqual('1234567890000000000');
+    expect(toWei({ value: 1.23456789, decimals: 6 })).toEqual('1234567');
   });
 });

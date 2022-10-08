@@ -294,7 +294,7 @@ export function CBridge({
         <SlippageItem onChange={(value) => setSlippage(value)} form={form} bridge={bridge} direction={direction} />
       )}
 
-      {minimalMaxSlippage && minimalMaxSlippage > slippage && (
+      {!!minimalMaxSlippage && minimalMaxSlippage > slippage && (
         <div className="mb-3">
           <Trans i18nKey="recommendSlippage" i18n={i18n?.use(initReactI18next)}>
             Strongly recommend the slippage greater or equal than
