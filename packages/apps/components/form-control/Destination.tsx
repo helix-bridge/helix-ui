@@ -104,11 +104,12 @@ export function Destination({
             </span>
           ),
           disabled: true,
+          name: category + '_' + title,
         },
         ...values,
       ])
       .flat();
-  }, [filteredOptions]);
+  }, [filteredOptions, title]);
 
   useEffect(() => {
     if (!inputNumberEle || !inputNumberEle.current) {

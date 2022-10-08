@@ -79,6 +79,24 @@ interface WeiArgs {
   balance?: WeiValue;
 }
 
+export function truncate(amount: string, decimals: number): string;
+export function truncate(amount: number, decimals: number): number;
+export function truncate(amount: number | string, decimals: number): number | string {
+  const [integer, decimal] = amount.toString().split('.');
+
+  if (decimal && decimal.length > decimals) {
+    const result = integer + '.' + decimal.slice(0, decimals);
+
+    if (typeof amount === 'number') {
+      return Number(result);
+    }
+
+    return result;
+  }
+
+  return amount;
+}
+
 export function fromWei(
   { value, amount, balance, decimals = DEFAULT_DECIMALS }: WeiArgs,
   ...fns: ((value: string) => string)[]
@@ -99,10 +117,12 @@ export function toWei(
 ): string {
   const data = value || amount || balance;
 
-  return [toStr, (val: string) => tw(val || '0', decimals).toString(), ...fns].reduce(
-    (acc, fn) => fn(acc as string),
-    data
-  ) as string;
+  return [
+    toStr,
+    (val: string) => truncate(val, decimals),
+    (val: string) => tw(val || '0', decimals).toString(),
+    ...fns,
+  ].reduce((acc, fn) => fn(acc as string), data) as string;
 }
 
 const completeDecimal = (value: string, bits: number): string => {
