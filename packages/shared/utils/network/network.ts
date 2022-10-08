@@ -50,10 +50,7 @@ export class PolkadotChain extends Chain implements PolkadotChainConfig {
     this.name = config.name;
   }
 
-  getBalance(
-    direction: CrossChainDirection<TokenInfoWithMeta<ChainConfig>, TokenInfoWithMeta<ChainConfig>>,
-    account: string
-  ): Promise<BN[]> {
+  getBalance(direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>, account: string): Promise<BN[]> {
     const { from } = direction;
 
     return getDarwiniaBalance(from.meta.provider, account);
@@ -71,7 +68,7 @@ export class EthereumChain extends Chain implements EthereumChainConfig {
   }
 
   async getBalance(
-    direction: CrossChainDirection<TokenInfoWithMeta<ChainConfig>, TokenInfoWithMeta<ChainConfig>>,
+    direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>,
     account: string
   ): Promise<BN[]> {
     const { from } = direction;
@@ -97,7 +94,7 @@ export class ParachainChain extends PolkadotChain implements ParachainChainConfi
   }
 
   async getBalance(
-    direction: CrossChainDirection<TokenInfoWithMeta<ChainConfig>, TokenInfoWithMeta<ChainConfig>>,
+    direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>,
     account: string
   ): Promise<BN[]> {
     const { from } = direction;
@@ -121,14 +118,14 @@ export class DVMChain extends EthereumChain implements DVMChainConfig {
   }
 
   async getBalance(
-    direction: CrossChainDirection<TokenInfoWithMeta<ChainConfig>, TokenInfoWithMeta<ChainConfig>>,
+    direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>,
     account: string
   ): Promise<BN[]> {
     const { from } = direction;
     const tokenAddress = from.address;
 
-    if (!tokenAddress) {
-      return getEthereumNativeBalance(account, from.meta.provider).then((balance) => [balance]);
+    if (from.type === 'native') {
+      return getEthereumNativeBalance(account, from.meta.provider).then((balance) => [balance, balance]);
     } else {
       return Promise.all([
         getErc20Balance(tokenAddress, account, from.meta.provider),

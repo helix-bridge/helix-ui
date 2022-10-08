@@ -4,7 +4,15 @@ import BN from 'bn.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
-import { BridgeStatus, CrossChainDirection, CustomFormControlProps, HashInfo, Network } from 'shared/model';
+import {
+  BridgeStatus,
+  Chain,
+  CrossChainDirection,
+  CrossToken,
+  CustomFormControlProps,
+  HashInfo,
+  Network,
+} from 'shared/model';
 import { fromWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
 import { updateStorage } from 'shared/utils/helper/storage';
 import { isKton } from 'shared/utils/helper/validator';
@@ -14,8 +22,8 @@ import { Destination } from './Destination';
 
 type Amount = { amount: number; symbol: string };
 
-type DirectionProps = CustomFormControlProps<CrossChainDirection> & {
-  initial: CrossChainDirection;
+type DirectionProps = CustomFormControlProps<CrossChainDirection<CrossToken<Chain>, CrossToken<Chain>>> & {
+  initial: CrossChainDirection<CrossToken<Chain>, CrossToken<Chain>>;
   fee: Amount | null;
   balances: BN[] | null;
   isBalanceLoading: boolean;
@@ -65,7 +73,7 @@ export function Direction({
   const [bridgetStatus, setBridgetStatus] = useState<null | BridgeStatus>(null);
 
   const triggerChange = useCallback(
-    (val: CrossChainDirection) => {
+    (val: CrossChainDirection<CrossToken<Chain>, CrossToken<Chain>>) => {
       if (onChange) {
         onChange(val);
       }

@@ -58,7 +58,7 @@ export const chainConfigs = (() => {
   return sortBy(data, (item) => item.name);
 })();
 
-export const chains: (ParachainChain | PolkadotChain | EthereumChain)[] = chainConfigs.map((conf) => {
+export const toChain = (conf: ChainConfig) => {
   if (isParachainNetwork(conf)) {
     return new ParachainChain(conf as ParachainChainConfig);
   }
@@ -72,7 +72,9 @@ export const chains: (ParachainChain | PolkadotChain | EthereumChain)[] = chainC
   }
 
   return new EthereumChain(conf as EthereumChainConfig);
-});
+};
+
+export const chains: (ParachainChain | PolkadotChain | EthereumChain)[] = chainConfigs.map(toChain);
 
 function getConfig(name: Network | null | undefined, source = chainConfigs): ChainConfig {
   if (!name) {
@@ -90,7 +92,7 @@ function getConfig(name: Network | null | undefined, source = chainConfigs): Cha
 
 export const getChainConfig = memoize(getConfig, (name) => name);
 export const getOriginChainConfig = memoize(
-  (name: Network | null | undefined) => getConfig(name, SYSTEM_CHAIN_CONFIGURATIONS),
+  (name: Network | null | undefined) => getConfig(name, SYSTEM_CHAIN_CONFIGURATIONS.map(toChain)),
   (name) => name
 );
 

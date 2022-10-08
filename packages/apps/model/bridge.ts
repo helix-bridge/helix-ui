@@ -16,7 +16,6 @@ import {
   DailyLimit,
   HelixHistoryRecord,
   NullableFields,
-  TokenInfoWithMeta,
   Tx,
 } from 'shared/model';
 import { TxValidationMessages } from '../config/validation';
@@ -53,11 +52,6 @@ export abstract class Bridge<
 
   abstract genTxParamsValidations(params: TxValidation): [boolean, string][];
 
-  abstract getBalance(
-    direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>,
-    account: string
-  ): Promise<BN[]>;
-
   private validatorFactory<T>(genValidations: GenValidationFn<T>) {
     const validate = (data: ReturnType<GenValidationFn<T>>) => {
       const target = data.find((item) => item[0]);
@@ -82,7 +76,7 @@ export abstract class Bridge<
     };
   }
 
-  validate = this.validatorFactory(this.genTxParamsValidations);
+  validate = this.validatorFactory(this.genTxParamsValidations.bind(this));
 }
 
 export type CommonBridge = Bridge<BridgeConfig, ChainConfig, ChainConfig>;

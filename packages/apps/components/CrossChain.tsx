@@ -17,11 +17,13 @@ import {
   BridgeBase,
   BridgeConfig,
   BridgeState,
+  Chain,
   ChainConfig,
   ConnectionStatus,
   CrossChainComponentProps,
   CrossChainDirection,
   CrossChainPayload,
+  CrossToken,
   TokenInfoWithMeta,
   TxObservableFactory,
 } from 'shared/model';
@@ -30,7 +32,6 @@ import { isKton } from 'shared/utils/helper/validator';
 import { AllowancePayload, useAllowance } from '../hooks/allowance';
 import { Bridge } from '../model/bridge';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
-import { getBalance } from '../utils';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { Direction } from './form-control/Direction';
 import { FormItemButton } from './widget/FormItemButton';
@@ -43,12 +44,13 @@ const isDirectionChanged = (pre: CrossChainDirection, cur: CrossChainDirection) 
 };
 
 // eslint-disable-next-line complexity
-export function CrossChain({ dir }: { dir: CrossChainDirection }) {
+export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<Chain>, CrossToken<Chain>> }) {
   const { i18n, t } = useTranslation();
   const [form] = useForm<CrossChainPayload>();
   const { connectDepartureNetwork, departureConnection, setDeparture } = useApi();
   const [direction, setDirection] = useState(dir);
-  const [pureDirection, setPureDirection] = useState<CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>>(dir);
+  const [pureDirection, setPureDirection] =
+    useState<CrossChainDirection<TokenInfoWithMeta<Chain>, TokenInfoWithMeta<Chain>>>(dir);
   const [bridge, setBridge] = useState<Bridge<BridgeConfig, ChainConfig, ChainConfig> | null>(null);
   const [createTxObservable, setTxObservableFactory] = useState<TxObservableFactory>(() => EMPTY);
   const [bridgeState, setBridgeState] = useState<BridgeState>({ status: 'available' });
@@ -102,9 +104,10 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
 
   useEffect(() => {
     setIsBalanceLoading(true);
+    const { from } = pureDirection;
     const sub$$ = iif(
-      () => !!account && !!bridge,
-      fromRx(bridge!.getBalance(pureDirection, account)),
+      () => !!account && !!from,
+      fromRx(from.meta.getBalance(pureDirection, account)),
       of(null)
     ).subscribe((result) => {
       setBalances(result);
@@ -168,7 +171,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
               onRefresh={() => {
                 setIsBalanceLoading(true);
 
-                fromRx(getBalance(direction, account)).subscribe((result) => {
+                fromRx(direction.from.meta.getBalance(direction, account)).subscribe((result) => {
                   setBalances(result);
                   setIsBalanceLoading(false);
                 });
@@ -249,7 +252,11 @@ export function CrossChain({ dir }: { dir: CrossChainDirection }) {
                         observer.complete();
                         setIsBalanceLoading(true);
 
-                        iif(() => !!account, fromRx(getBalance(direction, account)), of(null)).subscribe((result) => {
+                        iif(
+                          () => !!account,
+                          fromRx(direction.from.meta.getBalance(direction, account)),
+                          of(null)
+                        ).subscribe((result) => {
                           setBalances(result);
                           setIsBalanceLoading(false);
                         });

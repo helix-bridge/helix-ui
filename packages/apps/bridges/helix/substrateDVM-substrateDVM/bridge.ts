@@ -1,16 +1,7 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { EMPTY, Observable } from 'rxjs';
 import { crabDVMConfig, darwiniaDVMConfig, pangolinDVMConfig, pangoroDVMConfig } from 'shared/config/network';
-import {
-  CrossChainDirection,
-  CrossToken,
-  DailyLimit,
-  DVMChainConfig,
-  HelixHistoryRecord,
-  TokenInfoWithMeta,
-  Tx,
-} from 'shared/model';
-import { getErc20Balance, getEthereumNativeBalance } from 'shared/utils/network/balance';
+import { CrossChainDirection, CrossToken, DailyLimit, DVMChainConfig, HelixHistoryRecord, Tx } from 'shared/model';
 import { TxValidation } from '../../../model';
 import { Bridge } from '../../../model/bridge';
 import { darwiniaDVMcrabDVMConfig, pangoroDVMpangolinDVMConfig } from './config';
@@ -50,15 +41,6 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
 
   refund(record: HelixHistoryRecord): Observable<Tx> {
     return refund(record);
-  }
-
-  getBalance(direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>, account: string) {
-    const { from } = direction;
-
-    return Promise.all([
-      getErc20Balance(from.address, account, from.meta.provider),
-      getEthereumNativeBalance(account, from.meta.provider),
-    ]);
   }
 
   getFee(direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>): Promise<BN | null> {

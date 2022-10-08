@@ -5,17 +5,17 @@ import omit from 'lodash/omit';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
-import { ChainConfig, CrossToken, TokenInfoWithMeta, TokenWithBridgesInfo } from 'shared/model';
+import { Chain, ChainConfig, CrossToken, TokenInfoWithMeta, TokenWithBridgesInfo } from 'shared/model';
 import { isAddress } from 'ethers/lib/utils';
-import { chainConfigs, getDisplayName } from 'utils/network';
+import { chainConfigs, chains, getDisplayName } from 'utils/network';
 import { useITranslation } from '../../hooks';
 import { isTransferableTokenPair } from '../../utils/validate';
 
 interface DestinationProps {
   className?: string;
-  onChange?: (value: CrossToken) => void;
+  onChange?: (value: CrossToken<Chain>) => void;
   title?: string;
-  value: CrossToken;
+  value: CrossToken<Chain>;
   fromToken?: TokenInfoWithMeta;
 }
 
@@ -176,7 +176,7 @@ export function Destination({
               if (onChange) {
                 onChange({
                   ...omit(token, 'label'),
-                  meta: chainConfigs.find((item) => item.name === token.host)!,
+                  meta: chains.find((item) => item.name === token.host)!,
                   amount: value.amount,
                 });
               }
