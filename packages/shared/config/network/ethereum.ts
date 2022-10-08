@@ -64,6 +64,7 @@ export const ethereumConfig: EthereumChainConfig = {
           category: 'helix',
           bridge: 'ethereum-darwinia',
           partner: { name: 'darwinia', role: 'issuing', symbol: 'KTON' },
+          deprecated: true,
         },
       ],
       type: 'mapping',
