@@ -29,6 +29,7 @@ export const darwiniaConfig: PolkadotChainConfig = {
           category: 'helix',
           bridge: 'ethereum-darwinia',
           partner: { name: 'ethereum', role: 'backing', symbol: 'RING', claim: true },
+          deprecated: true,
         },
         {
           category: 'helix',

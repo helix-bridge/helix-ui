@@ -29,6 +29,7 @@ export const ethereumConfig: EthereumChainConfig = {
           category: 'helix',
           bridge: 'ethereum-darwinia',
           partner: { name: 'darwinia', role: 'issuing', symbol: 'RING' },
+          deprecated: true,
         },
         {
           category: 'cBridge',
