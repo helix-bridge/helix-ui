@@ -38,7 +38,7 @@ import {
   darwiniaDVMDarwiniaDVM,
   pangoroDVMPangoroDVM,
 } from '../bridges/helix/substrateDVM-substrateDVM/utils/bridge-inner';
-import { crabParachainKarura } from '../bridges/xcm/crabParachain-karura/config';
+import { crabParachainKarura } from '../bridges/xcm/crabParachain-karura/utils/bridge';
 import { crabParachainMoonriver } from '../bridges/xcm/crabParachain-moonriver/config/bridge';
 
 const formalBridges = [

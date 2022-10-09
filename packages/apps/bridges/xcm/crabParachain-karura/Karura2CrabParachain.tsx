@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
-import { CrossChainComponentProps, CrossToken, PolkadotChainConfig, TxObservableFactory } from 'shared/model';
+import { CrossChainComponentProps, CrossToken, ParachainChainConfig, TxObservableFactory } from 'shared/model';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
@@ -13,9 +13,8 @@ import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { useApi } from '../../../providers';
-import { CrabParachainKaruraBridgeConfig, IssuingPayload, RedeemPayload } from './model';
-import { getRedeemFee } from './utils';
-import { redeem, validate } from './utils/tx';
+import { RedeemPayload } from './model';
+import { CrabParachainKaruraBridge } from './utils';
 
 export function Karura2CrabParachain({
   form,
@@ -26,14 +25,14 @@ export function Karura2CrabParachain({
   onFeeChange,
   balances,
 }: CrossChainComponentProps<
-  CrabParachainKaruraBridgeConfig,
-  CrossToken<PolkadotChainConfig>,
-  CrossToken<PolkadotChainConfig>
+  CrabParachainKaruraBridge,
+  CrossToken<ParachainChainConfig>,
+  CrossToken<ParachainChainConfig>
 >) {
   const { t } = useTranslation();
   const { departureConnection } = useApi();
   const [fee, setFee] = useState<BN | null>(null);
-  const { afterCrossChain } = useAfterTx<IssuingPayload>();
+  const { afterCrossChain } = useAfterTx<RedeemPayload>();
   const bridgeState = useCheckSpecVersion(direction);
   const [balance] = (balances ?? []) as BN[];
   const symbol = direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol;
@@ -53,7 +52,7 @@ export function Karura2CrabParachain({
 
   useEffect(() => {
     const fn = () => (data: RedeemPayload) => {
-      const validateObs = validate([balance], {
+      const validateObs = data.bridge.validate([balance], {
         balance,
         amount: new BN(toWei(data.direction.from)),
       });
@@ -62,7 +61,7 @@ export function Karura2CrabParachain({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        redeem(data),
+        data.bridge.burn(data),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
@@ -71,7 +70,7 @@ export function Karura2CrabParachain({
   }, [afterCrossChain, balance, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
 
   useEffect(() => {
-    const sub$$ = from(getRedeemFee(bridge)).subscribe((result) => {
+    const sub$$ = from(bridge.getFee(direction)).subscribe((result) => {
       setFee(result);
 
       if (onFeeChange) {
@@ -83,7 +82,7 @@ export function Karura2CrabParachain({
     });
 
     return () => sub$$.unsubscribe();
-  }, [bridge, direction.from.decimals, onFeeChange, symbol]);
+  }, [bridge, direction, onFeeChange, symbol]);
 
   return (
     <>
