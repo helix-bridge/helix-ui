@@ -1,7 +1,7 @@
 import { BN } from '@polkadot/util';
 import { Observable } from 'rxjs';
 import { crabParachainConfig, karuraConfig } from 'shared/config/network';
-import { BridgeBase, CrossChainDirection, CrossToken, ParachainChainConfig, Tx } from 'shared/model';
+import { CrossChainDirection, CrossToken, ParachainChainConfig, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
@@ -143,8 +143,13 @@ export class CrabParachainKaruraBridge extends Bridge<
     }
   }
 }
-export const crabParachainKarura = new BridgeBase(crabParachainConfig, karuraConfig, crabParachainKaruraConfig, {
-  name: 'crabParachain-karura',
-  category: 'XCM',
-  activeArrivalConnection: true,
-});
+export const crabParachainKarura = new CrabParachainKaruraBridge(
+  crabParachainConfig,
+  karuraConfig,
+  crabParachainKaruraConfig,
+  {
+    name: 'crabParachain-karura',
+    category: 'XCM',
+    activeArrivalConnection: true,
+  }
+);

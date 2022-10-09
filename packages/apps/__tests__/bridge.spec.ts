@@ -1,9 +1,10 @@
 /// <reference types="jest" />
 
-import { BridgeBase, ChainConfig, CrossToken, Network } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
+import { ChainConfig, CrossToken, Network } from 'shared/model';
 import { toMiddleSplitNaming } from 'shared/utils/helper/common';
 import { isDVMNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
-import { unknownUnavailable } from '../bridges/unknown-unavailable/config';
+import { unknownUnavailable } from '../bridges/unknown-unavailable/utils/bridge';
 import { bridgeCategoryDisplay, formalBridges, getBridge, getBridges, testBridges } from '../utils/bridge';
 import { chainConfigs, crossChainGraph, getChainConfig } from '../utils/network';
 

@@ -1,5 +1,6 @@
 import isEqual from 'lodash/isEqual';
-import { Arrival, BridgeBase, BridgeConfig, ContractConfig, Departure } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
+import { Arrival, BridgeConfig, ContractConfig, Departure } from 'shared/model';
 import { BRIDGES } from '../../config/bridge';
 
 export const crossChainGraph = BRIDGES.reduce(

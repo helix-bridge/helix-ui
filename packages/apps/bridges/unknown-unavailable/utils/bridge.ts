@@ -1,7 +1,8 @@
 import { EMPTY, Observable } from 'rxjs';
 import { crabConfig, pangoroConfig } from 'shared/config/network';
-import { BridgeBase, BridgeConfig, ChainConfig, Tx } from 'shared/model';
+import { BridgeConfig, ChainConfig, Tx } from 'shared/model';
 import { Bridge } from '../../../model/bridge';
+import { unknownUnavailableConfig } from '../config';
 
 export class UnknownUnavailableBridge extends Bridge<BridgeConfig, ChainConfig, ChainConfig> {
   back(): Observable<Tx> {
@@ -17,14 +18,9 @@ export class UnknownUnavailableBridge extends Bridge<BridgeConfig, ChainConfig, 
   }
 }
 
-export const unknownUnavailable = new BridgeBase(
-  pangoroConfig,
-  crabConfig,
-  {},
-  {
-    category: 'helix',
-    name: 'substrate-DVM',
-    issueCompName: 'Unknown2Unavailable',
-    redeemCompName: 'Unavailable2Unknown',
-  }
-);
+export const unknownUnavailable = new UnknownUnavailableBridge(pangoroConfig, crabConfig, unknownUnavailableConfig, {
+  category: 'helix',
+  name: 'substrate-DVM',
+  issueCompName: 'Unknown2Unavailable',
+  redeemCompName: 'Unavailable2Unknown',
+});

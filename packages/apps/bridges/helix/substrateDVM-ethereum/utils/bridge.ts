@@ -4,7 +4,6 @@ import last from 'lodash/last';
 import { from, Observable, switchMap } from 'rxjs';
 import { goerliConfig, pangoroDVMConfig } from 'shared/config/network';
 import {
-  BridgeBase,
   CrossChainDirection,
   CrossToken,
   DailyLimit,
@@ -213,7 +212,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
   }
 }
 
-export const pangoroDVMGoerli = new BridgeBase(pangoroDVMConfig, goerliConfig, pangoroDVMGoerliConfig, {
+export const pangoroDVMGoerli = new SubstrateDVMEthereumBridge(pangoroDVMConfig, goerliConfig, pangoroDVMGoerliConfig, {
   name: 'substrateDVM-ethereum',
   category: 'helix',
 });

@@ -4,7 +4,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
-import { Chain, CrossChainDirection, CrossToken } from 'shared/model';
+import { ChainBase, CrossChainDirection, CrossToken } from 'shared/model';
 import { readStorage, updateStorage } from 'shared/utils/helper/storage';
 import { getDirectionFromSettings } from 'shared/utils/helper/url';
 import { CrossChain } from '../components/CrossChain';
@@ -21,7 +21,7 @@ const { from, to } = DEFAULT_DIRECTION;
 
 function Page() {
   const { t } = useITranslation();
-  const [dir, setDir] = useState<CrossChainDirection<CrossToken<Chain>, CrossToken<Chain>>>({
+  const [dir, setDir] = useState<CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>>>({
     from: { ...from, meta: toChain(from.meta) },
     to: { ...to, meta: toChain(to.meta) },
   });

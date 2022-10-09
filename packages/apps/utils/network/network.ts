@@ -5,6 +5,7 @@ import sortBy from 'lodash/sortBy';
 import unionWith from 'lodash/unionWith';
 import upperFirst from 'lodash/upperFirst';
 import { SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
+import { DVMChain, EthereumChain, ParachainChain, PolkadotChain } from 'shared/core/chain';
 import {
   ChainConfig,
   DVMChainConfig,
@@ -14,15 +15,7 @@ import {
   PolkadotChainConfig,
 } from 'shared/model';
 import { getCustomNetworkConfig } from 'shared/utils/helper/storage';
-import {
-  DVMChain,
-  EthereumChain,
-  isDVMNetwork,
-  isParachainNetwork,
-  isPolkadotNetwork,
-  ParachainChain,
-  PolkadotChain,
-} from 'shared/utils/network/network';
+import { isDVMNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
 import { crossChainGraph } from './graph';
 
 export const chainConfigs = (() => {

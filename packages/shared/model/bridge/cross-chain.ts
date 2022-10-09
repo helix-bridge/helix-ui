@@ -3,10 +3,11 @@ import BN from 'bn.js';
 import React from 'react';
 import type { Observable } from 'rxjs';
 import { AllowancePayload } from '../../../apps/hooks';
+import { BridgeBase } from '../../core/bridge';
 import { ChainConfig, TokenWithBridgesInfo } from '../network';
 import { Tx } from '../tx';
 import { NullableFields } from '../type-operator';
-import { BridgeBase, BridgeStatus } from './bridge';
+import { BridgeStatus } from './bridge';
 
 export type TokenInfoWithMeta<T extends ChainConfig = ChainConfig> = TokenWithBridgesInfo & { meta: T };
 

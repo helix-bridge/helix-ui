@@ -1,5 +1,6 @@
 import type { Observable } from 'rxjs';
-import { BridgeBase, CrossChainPayload } from './bridge';
+import { BridgeBase } from '../core/bridge';
+import { CrossChainPayload } from './bridge';
 
 export type TxStatus =
   | 'future'

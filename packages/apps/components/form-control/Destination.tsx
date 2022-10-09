@@ -5,7 +5,7 @@ import omit from 'lodash/omit';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
-import { Chain, ChainConfig, CrossToken, TokenInfoWithMeta, TokenWithBridgesInfo } from 'shared/model';
+import { ChainBase, ChainConfig, CrossToken, TokenInfoWithMeta, TokenWithBridgesInfo } from 'shared/model';
 import { isAddress } from 'ethers/lib/utils';
 import { chainConfigs, chains, getDisplayName } from 'utils/network';
 import { useITranslation } from '../../hooks';
@@ -13,9 +13,9 @@ import { isTransferableTokenPair } from '../../utils/validate';
 
 interface DestinationProps {
   className?: string;
-  onChange?: (value: CrossToken<Chain>) => void;
+  onChange?: (value: CrossToken<ChainBase>) => void;
   title?: string;
-  value: CrossToken<Chain>;
+  value: CrossToken<ChainBase>;
   fromToken?: TokenInfoWithMeta;
 }
 

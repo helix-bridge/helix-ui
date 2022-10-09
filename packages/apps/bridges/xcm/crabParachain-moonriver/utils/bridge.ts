@@ -1,7 +1,13 @@
 import { BN } from '@polkadot/util';
 import { Observable } from 'rxjs';
 import { crabParachainConfig, moonriverConfig } from 'shared/config/network';
-import { BridgeBase, CrossChainDirection, CrossToken, ParachainChainConfig, Tx } from 'shared/model';
+import {
+  CrossChainDirection,
+  CrossToken,
+  ParachainChainConfig,
+  ParachainEthereumCompatibleChainConfig,
+  Tx,
+} from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
@@ -16,9 +22,9 @@ import { CrabParachainMoonriverBridgeConfig, IssuingPayload, RedeemPayload } fro
 export class CrabParachainMoonriverBridge extends Bridge<
   CrabParachainMoonriverBridgeConfig,
   ParachainChainConfig,
-  ParachainChainConfig
+  ParachainEthereumCompatibleChainConfig
 > {
-  private patchAmount(departure: CrossToken<ParachainChainConfig>) {
+  private patchAmount(departure: CrossToken) {
     const pos = -3;
     const timestamp = Date.now().toString().slice(0, pos);
 
@@ -126,7 +132,7 @@ export class CrabParachainMoonriverBridge extends Bridge<
   }
 }
 
-export const crabParachainMoonriver = new BridgeBase(
+export const crabParachainMoonriver = new CrabParachainMoonriverBridge(
   crabParachainConfig,
   moonriverConfig,
   crabParachainMoonriverConfig,

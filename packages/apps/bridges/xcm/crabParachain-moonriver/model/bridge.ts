@@ -1,4 +1,11 @@
-import { BridgeConfig, ContractConfig, CrossChainPayload, CrossToken, ParachainChainConfig } from 'shared/model';
+import {
+  BridgeConfig,
+  ContractConfig,
+  CrossChainPayload,
+  CrossToken,
+  ParachainChainConfig,
+  ParachainEthereumCompatibleChainConfig,
+} from 'shared/model';
 import { Bridge } from '../../../../model/bridge';
 
 type CrabParachainMoonriverContractConfig = ContractConfig;
@@ -6,13 +13,13 @@ type CrabParachainMoonriverContractConfig = ContractConfig;
 export type CrabParachainMoonriverBridgeConfig = Required<BridgeConfig<CrabParachainMoonriverContractConfig>>;
 
 export type IssuingPayload = CrossChainPayload<
-  Bridge<CrabParachainMoonriverBridgeConfig, ParachainChainConfig, ParachainChainConfig>,
+  Bridge<CrabParachainMoonriverBridgeConfig, ParachainChainConfig, ParachainEthereumCompatibleChainConfig>,
   CrossToken<ParachainChainConfig>,
-  CrossToken<ParachainChainConfig>
+  CrossToken<ParachainEthereumCompatibleChainConfig>
 >;
 
 export type RedeemPayload = CrossChainPayload<
-  Bridge<CrabParachainMoonriverBridgeConfig, ParachainChainConfig, ParachainChainConfig>,
-  CrossToken<ParachainChainConfig>,
+  Bridge<CrabParachainMoonriverBridgeConfig, ParachainChainConfig, ParachainEthereumCompatibleChainConfig>,
+  CrossToken<ParachainEthereumCompatibleChainConfig>,
   CrossToken<ParachainChainConfig>
 >;

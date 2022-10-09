@@ -9,7 +9,6 @@ import { map } from 'rxjs/internal/operators/map';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { crabDVMConfig, darwiniaConfig, pangolinDVMConfig, pangoroConfig } from 'shared/config/network';
 import {
-  BridgeBase,
   ChainConfig,
   CrossChainDirection,
   CrossToken,
@@ -148,14 +147,19 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
   }
 }
 
-export const darwiniaCrabDVM = new BridgeBase(darwiniaConfig, crabDVMConfig, darwiniaCrabDVMConfig, {
+export const darwiniaCrabDVM = new SubstrateSubstrateDVMBridge(darwiniaConfig, crabDVMConfig, darwiniaCrabDVMConfig, {
   category: 'helix',
   activeArrivalConnection: true,
   name: 'substrate-substrateDVM',
 });
 
-export const pangoroPangolinDVM = new BridgeBase(pangoroConfig, pangolinDVMConfig, pangoroPangolinDVMConfig, {
-  category: 'helix',
-  activeArrivalConnection: true,
-  name: 'substrate-substrateDVM',
-});
+export const pangoroPangolinDVM = new SubstrateSubstrateDVMBridge(
+  pangoroConfig,
+  pangolinDVMConfig,
+  pangoroPangolinDVMConfig,
+  {
+    category: 'helix',
+    activeArrivalConnection: true,
+    name: 'substrate-substrateDVM',
+  }
+);

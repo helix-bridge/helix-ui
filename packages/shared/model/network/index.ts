@@ -1,3 +1,3 @@
 export * from './config';
 export * from './network';
-export * from './chain';
+export * from '../../core/chain';

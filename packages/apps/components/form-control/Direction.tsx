@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
 import {
   BridgeStatus,
-  Chain,
+  ChainBase,
   CrossChainDirection,
   CrossToken,
   CustomFormControlProps,
@@ -22,8 +22,8 @@ import { Destination } from './Destination';
 
 type Amount = { amount: number; symbol: string };
 
-type DirectionProps = CustomFormControlProps<CrossChainDirection<CrossToken<Chain>, CrossToken<Chain>>> & {
-  initial: CrossChainDirection<CrossToken<Chain>, CrossToken<Chain>>;
+type DirectionProps = CustomFormControlProps<CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>>> & {
+  initial: CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>>;
   fee: Amount | null;
   balances: BN[] | null;
   isBalanceLoading: boolean;
@@ -73,7 +73,7 @@ export function Direction({
   const [bridgetStatus, setBridgetStatus] = useState<null | BridgeStatus>(null);
 
   const triggerChange = useCallback(
-    (val: CrossChainDirection<CrossToken<Chain>, CrossToken<Chain>>) => {
+    (val: CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>>) => {
       if (onChange) {
         onChange(val);
       }

@@ -13,11 +13,11 @@ import { iif } from 'rxjs/internal/observable/iif';
 import { of } from 'rxjs/internal/observable/of';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
+import { BridgeBase } from 'shared/core/bridge';
 import {
-  BridgeBase,
   BridgeConfig,
   BridgeState,
-  Chain,
+  ChainBase,
   ChainConfig,
   ConnectionStatus,
   CrossChainComponentProps,
@@ -44,13 +44,13 @@ const isDirectionChanged = (pre: CrossChainDirection, cur: CrossChainDirection) 
 };
 
 // eslint-disable-next-line complexity
-export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<Chain>, CrossToken<Chain>> }) {
+export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>> }) {
   const { i18n, t } = useTranslation();
   const [form] = useForm<CrossChainPayload>();
   const { connectDepartureNetwork, departureConnection, setDeparture } = useApi();
   const [direction, setDirection] = useState(dir);
   const [pureDirection, setPureDirection] =
-    useState<CrossChainDirection<TokenInfoWithMeta<Chain>, TokenInfoWithMeta<Chain>>>(dir);
+    useState<CrossChainDirection<TokenInfoWithMeta<ChainBase>, TokenInfoWithMeta<ChainBase>>>(dir);
   const [bridge, setBridge] = useState<Bridge<BridgeConfig, ChainConfig, ChainConfig> | null>(null);
   const [createTxObservable, setTxObservableFactory] = useState<TxObservableFactory>(() => EMPTY);
   const [bridgeState, setBridgeState] = useState<BridgeState>({ status: 'available' });

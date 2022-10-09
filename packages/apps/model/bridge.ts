@@ -6,8 +6,8 @@ import { EMPTY } from 'rxjs/internal/observable/empty';
 import { of } from 'rxjs/internal/observable/of';
 import { throwError } from 'rxjs/internal/observable/throwError';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { BridgeBase } from 'shared/core/bridge';
 import {
-  BridgeBase,
   BridgeConfig,
   ChainConfig,
   CrossChainDirection,
