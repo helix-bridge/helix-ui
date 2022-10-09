@@ -17,8 +17,8 @@ import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
-import { SubstrateDVMBridgeConfig, WithdrawPayload } from './model';
-import { redeem, validate } from './utils';
+import { RedeemPayload } from './model';
+import { SubstrateDVMBridge } from './utils';
 
 export function DVM2Substrate({
   form,
@@ -27,21 +27,21 @@ export function DVM2Substrate({
   onFeeChange,
   balances,
   setTxObservableFactory,
-}: CrossChainComponentProps<SubstrateDVMBridgeConfig, CrossToken<DVMChainConfig>, CrossToken<PolkadotChainConfig>>) {
+}: CrossChainComponentProps<SubstrateDVMBridge, CrossToken<DVMChainConfig>, CrossToken<PolkadotChainConfig>>) {
   const { t } = useTranslation();
-  const { afterCrossChain } = useAfterTx<WithdrawPayload>();
+  const { afterCrossChain } = useAfterTx<RedeemPayload>();
   const [balance] = (balances ?? []) as BN[];
 
   useEffect(() => {
-    const fn = () => (data: WithdrawPayload) => {
-      const validateObs = validate([balance], {
+    const fn = () => (data: RedeemPayload) => {
+      const validateObs = data.bridge.validate([balance], {
         balance,
         amount: new BN(toWei(data.direction.from)),
       });
 
       return createTxWorkflow(
         validateObs.pipe(mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={null} /> }))),
-        redeem(data),
+        data.bridge.burn(data),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
