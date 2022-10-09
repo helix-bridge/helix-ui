@@ -19,7 +19,7 @@ import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { useAccount, useApi } from '../../../providers';
-import { SubstrateDVMSubstrateDVMBridge } from './bridge';
+import { SubstrateDVMSubstrateDVMBridge } from './utils/bridge';
 import { IssuingPayload } from './model';
 
 export function SubstrateDVM2SubstrateDVM({

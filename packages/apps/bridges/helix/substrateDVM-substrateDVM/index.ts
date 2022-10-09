@@ -1,4 +1,4 @@
 export * from './SubstrateDVM2SubstrateDVM';
 export * from './SubstrateDVMInner';
-export * from './bridge';
-export * from './bridge-inner';
+export * from './utils/bridge';
+export * from './utils/bridge-inner';

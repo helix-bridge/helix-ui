@@ -13,9 +13,8 @@ import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
 import { useAccount } from '../../../providers';
-import { SubstrateDVMSubstrateDVMBridgeInner } from './bridge-inner';
+import { SubstrateDVMSubstrateDVMBridgeInner } from './utils/bridge-inner';
 import { IssuingPayload } from './model';
-import { validate } from './utils/tx';
 
 export function SubstrateDVMInner({
   form,
@@ -45,7 +44,7 @@ export function SubstrateDVMInner({
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
       const balance = data.direction.from.type === 'native' ? native : ring;
-      const validateObs = validate([balance], {
+      const validateObs = data.bridge.validate([balance], {
         balance,
         amount: new BN(toWei(data.direction.from)),
       });
