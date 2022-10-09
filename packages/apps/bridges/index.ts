@@ -27,6 +27,7 @@ export { Astar2Polygon, Polygon2Astar } from './celer/polygon-astar';
 export { Optimism2Polygon, Polygon2Optimism } from './celer/polygon-optimism';
 export { DVM2Substrate, Substrate2DVM } from './helix/substrate-dvm';
 export { Parachain2Substrate, Substrate2Parachain } from './helix/substrate-substrateParachain';
+export { Substrate2SubstrateDVM, SubstrateDVM2Substrate } from './helix/substrate-substrateDVM';
 export { Ethereum2SubstrateDVM, SubstrateDVM2Ethereum } from './helix/substrateDVM-ethereum';
 export { SubstrateDVM2SubstrateDVM, SubstrateDVMInner } from './helix/substrateDVM-substrateDVM';
 export { Unavailable2Unknown, Unknown2Unavailable } from './unknown-unavailable';
