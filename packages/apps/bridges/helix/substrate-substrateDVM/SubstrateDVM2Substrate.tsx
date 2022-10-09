@@ -16,7 +16,6 @@ import {
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
-import { getS2SMappingAddress } from 'shared/utils/mappingToken';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
@@ -27,6 +26,7 @@ import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { useAccount } from '../../../providers';
 import { RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
 import { getRedeemFee } from './utils';
+import { getS2SMappingAddress } from './utils/mappingParams';
 import { redeem, validate } from './utils/tx';
 
 export function SubstrateDVM2Substrate({
