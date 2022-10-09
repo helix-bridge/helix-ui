@@ -7,7 +7,7 @@ import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import {
   CrossChainComponentProps,
   CrossToken,
-  DVMChainConfig,
+  ParachainChainConfig,
   PolkadotChainConfig,
   TxObservableFactory,
 } from 'shared/model';
@@ -22,9 +22,8 @@ import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { useApi } from '../../../providers';
-import { IssuingPayload, SubstrateSubstrateParachainBridgeConfig } from './model';
-import { getRedeemFee } from './utils';
-import { redeem, validate } from './utils/tx';
+import { RedeemPayload } from './model';
+import { SubstrateSubstrateParachainBridge } from './utils';
 
 export function Parachain2Substrate({
   form,
@@ -35,15 +34,15 @@ export function Parachain2Substrate({
   onFeeChange,
   balances,
 }: CrossChainComponentProps<
-  SubstrateSubstrateParachainBridgeConfig,
-  CrossToken<PolkadotChainConfig>,
-  CrossToken<DVMChainConfig>
+  SubstrateSubstrateParachainBridge,
+  CrossToken<ParachainChainConfig>,
+  CrossToken<PolkadotChainConfig>
 >) {
   const { t } = useTranslation();
   const { departureConnection } = useApi();
   const [fee, setFee] = useState<BN | null>(null);
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
-  const { afterCrossChain } = useAfterTx<IssuingPayload>();
+  const { afterCrossChain } = useAfterTx<RedeemPayload>();
   const bridgeState = useCheckSpecVersion(direction);
   const [ring] = (balances ?? []) as BN[];
 
@@ -61,8 +60,8 @@ export function Parachain2Substrate({
   }, [bridgeState.status, bridgeState.reason, setBridgeState]);
 
   useEffect(() => {
-    const fn = () => (data: IssuingPayload) => {
-      const validateObs = validate([fee, dailyLimit, ring], {
+    const fn = () => (data: RedeemPayload) => {
+      const validateObs = data.bridge.validate([fee, dailyLimit, ring], {
         balance: ring,
         amount: new BN(toWei({ value: data.direction.from.amount, decimals: 9 })),
         dailyLimit,
@@ -72,7 +71,7 @@ export function Parachain2Substrate({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        () => redeem(data, fee!),
+        () => data.bridge.burn(data, fee!),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
@@ -102,7 +101,7 @@ export function Parachain2Substrate({
   }, [direction]);
 
   useEffect(() => {
-    const sub$$ = from(getRedeemFee(bridge)).subscribe((result) => {
+    const sub$$ = from(bridge.getFee(direction)).subscribe((result) => {
       setFee(result);
 
       if (onFeeChange) {
@@ -114,7 +113,7 @@ export function Parachain2Substrate({
     });
 
     return () => sub$$.unsubscribe();
-  }, [bridge, direction.from.decimals, direction.from.meta.tokens, direction.from.symbol, onFeeChange]);
+  }, [bridge, direction, onFeeChange]);
 
   return (
     <>

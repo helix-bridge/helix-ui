@@ -14,17 +14,7 @@ import {
   pangolinConfig,
   pangolinDVMConfig,
 } from 'shared/config/network';
-import {
-  BridgeBase,
-  BridgeConfig,
-  ChainConfig,
-  ContractConfig,
-  CrossChainPayload,
-  CrossToken,
-  DVMChainConfig,
-  PolkadotChainConfig,
-  Tx,
-} from 'shared/model';
+import { DVMChainConfig, PolkadotChainConfig, Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { convertToSS58, dvmAddressToAccountId } from 'shared/utils/helper/address';
 import { toWei } from 'shared/utils/helper/balance';
@@ -35,16 +25,10 @@ import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
 import { Bridge } from '../../../../model/bridge';
 import { crabCrabDVMConfig, darwiniaDarwiniaDVMConfig, pangolinPangolinDVMConfig } from '../config';
-import { SubstrateDVMBridgeConfig } from '../model';
+import { IssuingPayload, RedeemPayload, SubstrateDVMBridgeConfig } from '../model';
 
 export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, PolkadotChainConfig, DVMChainConfig> {
-  back(
-    payload: CrossChainPayload<
-      BridgeBase<Required<Omit<BridgeConfig<ContractConfig>, 'contracts'>>, ChainConfig, ChainConfig>,
-      CrossToken<PolkadotChainConfig>,
-      CrossToken<DVMChainConfig>
-    >
-  ): Observable<Tx> {
+  back(payload: IssuingPayload): Observable<Tx> {
     const {
       sender,
       recipient,
@@ -60,13 +44,7 @@ export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, Polkado
     return signAndSendExtrinsic(api, sender, extrinsic);
   }
 
-  burn(
-    payload: CrossChainPayload<
-      BridgeBase<Required<Omit<BridgeConfig<ContractConfig>, 'contracts'>>, ChainConfig, ChainConfig>,
-      CrossToken<DVMChainConfig>,
-      CrossToken<PolkadotChainConfig>
-    >
-  ): Observable<Tx> {
+  burn(payload: RedeemPayload): Observable<Tx> {
     const {
       recipient,
       sender,

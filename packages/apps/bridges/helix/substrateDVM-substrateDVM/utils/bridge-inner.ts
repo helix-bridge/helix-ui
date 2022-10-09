@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { Observable } from 'rxjs';
 import { darwiniaDVMConfig, pangoroDVMConfig } from 'shared/config/network';
 import { CrossChainDirection, CrossToken, DVMChainConfig, Tx } from 'shared/model';
@@ -51,8 +51,8 @@ export class SubstrateDVMSubstrateDVMBridgeInner extends Bridge<
     return [[balance.lt(amount), this.txValidationMessages.balanceLessThanAmount]];
   }
 
-  async getFee(_: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>): Promise<BN | null> {
-    return null;
+  async getFee(_: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>): Promise<BN> {
+    return BN_ZERO;
   }
 }
 

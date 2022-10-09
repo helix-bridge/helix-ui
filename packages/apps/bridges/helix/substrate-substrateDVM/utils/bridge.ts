@@ -10,10 +10,8 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { crabDVMConfig, darwiniaConfig, pangolinDVMConfig, pangoroConfig } from 'shared/config/network';
 import {
   BridgeBase,
-  BridgeConfig,
   ChainConfig,
   CrossChainDirection,
-  CrossChainPayload,
   CrossToken,
   DailyLimit,
   DVMChainConfig,
@@ -30,7 +28,7 @@ import { TxValidation } from '../../../../model';
 import { Bridge } from '../../../../model/bridge';
 import { darwiniaCrabDVMConfig, pangoroPangolinDVMConfig } from '../config';
 import abi from '../config/abi.json';
-import { SubstrateSubstrateDVMBridgeConfig, SubstrateSubstrateDVMContractConfig } from '../model';
+import { IssuingPayload, RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from '../model';
 import { getS2SMappingAddress } from './mappingParams';
 
 export class SubstrateSubstrateDVMBridge extends Bridge<
@@ -38,14 +36,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
   PolkadotChainConfig,
   DVMChainConfig
 > {
-  back(
-    payload: CrossChainPayload<
-      BridgeBase<Required<BridgeConfig<SubstrateSubstrateDVMContractConfig>>, ChainConfig, ChainConfig>,
-      CrossToken<PolkadotChainConfig>,
-      CrossToken<DVMChainConfig>
-    >,
-    fee: BN
-  ): Observable<Tx> {
+  back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction } = payload;
     const { from: departure, to } = direction;
     const api = entrance.polkadot.getInstance(direction.from.meta.provider);
@@ -57,13 +48,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
     return signAndSendExtrinsic(api, sender, extrinsic);
   }
 
-  burn(
-    payload: CrossChainPayload<
-      BridgeBase<Required<BridgeConfig<SubstrateSubstrateDVMContractConfig>>, ChainConfig, ChainConfig>,
-      CrossToken<DVMChainConfig>,
-      CrossToken<PolkadotChainConfig>
-    >
-  ): Observable<Tx> {
+  burn(payload: RedeemPayload): Observable<Tx> {
     const {
       sender,
       recipient,
