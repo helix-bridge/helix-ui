@@ -26,9 +26,7 @@ import { ethereumPolygon } from '../bridges/celer/ethereum-polygon/config';
 import { hecoPolygon } from '../bridges/celer/heco-polygon/config';
 import { polygonAstar } from '../bridges/celer/polygon-astar/config';
 import { polygonOptimism } from '../bridges/celer/polygon-optimism/config';
-import { ethereumDarwinia, ropstenPangolin } from '../bridges/helix/ethereum-darwinia/config/bridge';
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from '../bridges/helix/substrate-dvm/config/bridge';
-import { darwiniaCrabDVM, pangoroPangolinDVM } from '../bridges/helix/substrate-substrateDVM/config/bridge';
 import {
   crabCrabParachain,
   pangolinPangolinParachain,
@@ -59,10 +57,8 @@ const formalBridges = [
   crabDVMHeco,
   crabDVMPolygon,
   darwiniaDarwiniaDVM,
-  darwiniaCrabDVM,
   darwiniaDVMCrabDVM,
   darwiniaDVMDarwiniaDVM,
-  ethereumDarwinia,
   ethereumHeco,
   ethereumPolygon,
   hecoPolygon,
@@ -85,9 +81,7 @@ const formalBridges = [
 const testBridges = [
   pangolinPangolinDVM,
   pangoroDVMPangolinDVM,
-  pangoroPangolinDVM,
   pangolinPangolinParachain,
-  ropstenPangolin,
   pangoroDVMGoerli,
   pangoroDVMPangoroDVM,
 ];

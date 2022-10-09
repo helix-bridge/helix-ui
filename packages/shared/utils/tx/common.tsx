@@ -1,5 +1,4 @@
 import { TransactionReceipt, TransactionRequest, TransactionResponse } from '@ethersproject/abstract-provider';
-import type { ApiPromise } from '@polkadot/api';
 import { Modal, ModalFuncProps, ModalProps } from 'antd';
 import BN from 'bn.js';
 import type { BigNumber } from 'ethers';
@@ -19,9 +18,8 @@ import type { Observer } from 'rxjs/internal/types';
 import { Icon } from '../../components/widget/Icon';
 import { abi } from '../../config/abi';
 import { CrossChainPayload, RequiredPartial, Tx, TxFn } from '../../model';
-import { entrance, waitUntilConnected } from '../connection';
+import { entrance } from '../connection';
 import { toWei } from '../helper/balance';
-import { typeRegistryFactory } from '../helper/huge';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ModalSpyFn<T = any> = (observer: Observer<T>, closeFn: () => void) => void;
@@ -228,20 +226,4 @@ export async function getAllowance(
 
     return null;
   }
-}
-
-/* -------------------------------------------Claim Token---------------------------------------------- */
-
-export async function getMPTProof(
-  api: ApiPromise,
-  hash = '',
-  proofAddress = '0xf8860dda3d08046cf2706b92bf7202eaae7a79191c90e76297e0895605b8b457'
-) {
-  await waitUntilConnected(api);
-
-  const proof = await api.rpc.state.getReadProof([proofAddress], hash);
-  const TypeRegistry = await typeRegistryFactory();
-  const registry = new TypeRegistry();
-
-  return registry.createType('Vec<Bytes>', proof.proof.toJSON());
 }
