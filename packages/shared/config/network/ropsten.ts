@@ -46,6 +46,7 @@ export const ropstenConfig: EthereumChainConfig = {
           category: 'helix',
           bridge: 'ethereum-darwinia',
           partner: { name: 'pangolin', role: 'issuing', symbol: 'PKTON' },
+          deprecated: true,
         },
       ],
       type: 'mapping',

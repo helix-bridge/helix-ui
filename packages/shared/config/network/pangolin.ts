@@ -55,6 +55,7 @@ export const pangolinConfig: PolkadotChainConfig = {
           category: 'helix',
           bridge: 'ethereum-darwinia',
           partner: { name: 'ropsten', role: 'backing', symbol: 'PKTON', claim: true },
+          deprecated: true,
         },
       ],
       type: 'native',
