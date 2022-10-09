@@ -1,5 +1,5 @@
 import memoize from 'lodash/memoize';
-import { entrance, waitUntilConnected } from '../connection';
+import { entrance, waitUntilConnected } from 'shared/utils/connection';
 
 const s2sMappingAddress: (rpc: string) => Promise<string> = async (rpc: string) => {
   const api = entrance.polkadot.getInstance(rpc);

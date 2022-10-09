@@ -1,9 +1,8 @@
-import { LoadingOutlined, PaperClipOutlined, ReloadOutlined, SwapOutlined } from '@ant-design/icons';
-import { Badge, Button, Empty, message, Pagination, Radio, Result, Spin, Tabs, Tooltip } from 'antd';
+import { LoadingOutlined, PaperClipOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Badge, Button, Empty, message, Pagination, Result, Spin, Tabs, Tooltip } from 'antd';
 import { format } from 'date-fns';
 import { useManualQuery } from 'graphql-hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { EMPTY } from 'rxjs/internal/observable/empty';
 import { from } from 'rxjs/internal/observable/from';
 import { filter } from 'rxjs/internal/operators/filter';
 import { map } from 'rxjs/internal/operators/map';
@@ -20,14 +19,12 @@ import {
   getSentAmountFromHelixRecord,
   getTokenConfigFromHelixRecord,
 } from 'utils/record';
-import { Darwinia2EthereumHistoryRes } from '../../bridges/helix/ethereum-darwinia/model';
 import { HISTORY_RECORDS_IN_RESULTS, STATUS_STATISTICS } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
 import { useAccount, useApi } from '../../providers';
 import { useClaim } from '../../providers/claim';
 import { isEthereumDarwinia } from '../../utils';
-import { fetchDarwinia2EthereumRecords, fetchEthereum2DarwiniaRecords } from '../../utils/records';
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { TokenOnChain } from '../widget/TokenOnChain';
 import { Pending } from './Pending';
@@ -35,37 +32,21 @@ import { PendingToClaim } from './PendingToClaim';
 import { PendingToRefund } from './PendingToRefund';
 import { Refunded } from './Refunded';
 
-enum HistoryType {
-  ethereumDarwinia = 1,
-  normal,
-}
-
 const paginatorDefault: Paginator = { row: 4, page: 0 };
 
-// eslint-disable-next-line complexity
 export default function History() {
   const { t } = useITranslation();
   const [activeTab, setActiveTab] = useState<number>(-1);
   const { account } = useAccount();
-  const { connectDepartureNetwork, departure, isConnecting, departureConnection } = useApi();
-  const [historyType, setHistoryType] = useState<HistoryType>(HistoryType.normal);
+  const { connectDepartureNetwork, departure, isConnecting } = useApi();
   const [total, setTotal] = useState(0);
   const [source, setSource] = useState<HelixHistoryRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [paginator, setPaginator] = useState<Paginator>(paginatorDefault);
-  const { claimedList, refundedList } = useClaim();
-  const [claimMeta, setClaimMeta] = useState<Omit<Darwinia2EthereumHistoryRes, 'list' | 'count'> | null>(null);
+  const { refundedList } = useClaim();
   const [goOnAmount, setGoOnAmount] = useState(0);
 
   const records = useMemo<HelixHistoryRecord[]>(() => {
-    if (historyType === HistoryType.ethereumDarwinia && departureConnection.type === 'polkadot') {
-      return source.map((item) => {
-        const target = claimedList.find((claimed) => claimed.id === item.id);
-
-        return target ? { ...item, targetTxHash: target.hash, result: RecordStatus.success } : item;
-      });
-    }
-
     return source.map((record) => {
       if (refundedList.find((item) => item.id === record.id)) {
         record.result = RecordStatus.pendingToConfirmRefund;
@@ -73,7 +54,7 @@ export default function History() {
 
       return record;
     });
-  }, [claimedList, departureConnection.type, historyType, refundedList, source]);
+  }, [refundedList, source]);
 
   const results = useMemo(() => {
     if (+activeTab < 0) {
@@ -127,42 +108,6 @@ export default function History() {
       });
   }, [account, paginator, requestHistoryRecords, results]);
 
-  const fetchEthereumDarwiniaData = useCallback(() => {
-    const params = {
-      address: account,
-      paginator,
-      confirmed: Array.isArray(results) ? results.length === 1 : null,
-    };
-
-    if (departureConnection.type === 'polkadot') {
-      return fetchDarwinia2EthereumRecords(params, departure).subscribe({
-        next: (response) => {
-          const { list, count, ...rest } = response;
-          setTotal(count);
-          setSource(list);
-          setClaimMeta(rest);
-        },
-        error: () => setLoading(false),
-        complete: () => setLoading(false),
-      });
-    }
-
-    if (departureConnection.type === 'metamask') {
-      return fetchEthereum2DarwiniaRecords(params, departure).subscribe({
-        next: (response) => {
-          const { list, count } = response;
-
-          setTotal(count);
-          setSource(list);
-        },
-        error: () => setLoading(false),
-        complete: () => setLoading(false),
-      });
-    }
-
-    return EMPTY.subscribe();
-  }, [account, departure, departureConnection.type, paginator, results]);
-
   const fetchGoOnAmount = useCallback(
     (address: string) => {
       return from(
@@ -190,14 +135,13 @@ export default function History() {
   useEffect(() => {
     if (!account) {
       setSource([]);
-      setClaimMeta(null);
       return;
     }
 
-    const sub$$ = historyType === HistoryType.normal ? fetchData() : fetchEthereumDarwiniaData();
+    const sub$$ = fetchData();
 
     return () => sub$$?.unsubscribe();
-  }, [account, fetchData, fetchEthereumDarwiniaData, historyType]);
+  }, [account, fetchData]);
 
   if (!account) {
     return (
@@ -220,196 +164,159 @@ export default function History() {
   }
 
   return (
-    <>
-      <Radio.Group
-        onChange={(event) => setHistoryType(+event.target.value)}
-        defaultValue={historyType}
-        buttonStyle="solid"
-        size="large"
-        className="w-full mb-4"
-      >
-        <Radio.Button value={HistoryType.ethereumDarwinia} className="w-1/2 text-center bg-transparent">
-          <div className="flex items-center justify-center">
-            <span>Ethereum</span>
-            <SwapOutlined className="mx-4" />
-            <span>Darwinia</span>
-          </div>
-        </Radio.Button>
+    <Tabs
+      defaultActiveKey="-1"
+      onTabClick={(key) => {
+        const res = Number(key) - 1;
 
-        <Radio.Button value={HistoryType.normal} className="w-1/2 text-center bg-transparent">
-          {t('Others')}
-        </Radio.Button>
-      </Radio.Group>
+        setActiveTab(res);
 
-      <Tabs
-        defaultActiveKey="-1"
-        onTabClick={(key) => {
-          const res = Number(key) - 1;
-
-          setActiveTab(res);
-
-          setPaginator(paginatorDefault);
-        }}
-        tabBarExtraContent={{
-          right: (
-            <ReloadOutlined
-              onClick={() => {
-                setTotal(0);
-                setSource([]);
-                setClaimMeta(null);
-
-                if (historyType === HistoryType.ethereumDarwinia) {
-                  fetchEthereumDarwiniaData();
-                } else {
-                  fetchData();
-                }
-
-                fetchGoOnAmount(account);
-              }}
-            />
+        setPaginator(paginatorDefault);
+      }}
+      tabBarExtraContent={{
+        right: (
+          <ReloadOutlined
+            onClick={() => {
+              setTotal(0);
+              setSource([]);
+              fetchData();
+              fetchGoOnAmount(account);
+            }}
+          />
+        ),
+      }}
+      items={['All', 'Pending', 'Success', 'Refunded'].map((label, index) => ({
+        label:
+          label === 'Pending' ? (
+            <Badge count={goOnAmount} offset={[10, 0]} color="blue">
+              <span>{t(label)}</span>
+            </Badge>
+          ) : (
+            t(label)
           ),
-        }}
-        items={['All', 'Pending', 'Success']
-          .concat(historyType === HistoryType.ethereumDarwinia ? [] : ['Refunded'])
-          .map((label, index) => ({
-            label:
-              label === 'Pending' ? (
-                <Badge count={goOnAmount} offset={[10, 0]} color="blue">
-                  <span>{t(label)}</span>
-                </Badge>
-              ) : (
-                t(label)
-              ),
-            key: String(index),
-            children: (
-              <>
-                <Spin spinning={loading} className="mt-12 mx-auto w-full">
-                  {/*  eslint-disable-next-line complexity*/}
-                  {records.map((record) => {
-                    const { fromChain, toChain, recvToken } = record;
-                    const dep = getOriginChainConfig(fromChain);
-                    const arrival = getOriginChainConfig(toChain);
-                    const fromToken = getTokenConfigFromHelixRecord(record)!;
-                    const toToken = arrival.tokens.find((item) => item.symbol === recvToken)!;
-                    const [d2eHeight, d2dIndex] = record.requestTxHash.split('-');
-                    const [e2dHeight, e2dIndex] = record.responseTxHash.split('-');
+        key: String(index),
+        children: (
+          <>
+            <Spin spinning={loading} className="mt-12 mx-auto w-full">
+              {/*  eslint-disable-next-line complexity*/}
+              {records.map((record) => {
+                const { fromChain, toChain, recvToken } = record;
+                const dep = getOriginChainConfig(fromChain);
+                const arrival = getOriginChainConfig(toChain);
+                const fromToken = getTokenConfigFromHelixRecord(record)!;
+                const toToken = arrival.tokens.find((item) => item.symbol === recvToken)!;
+                const [d2eHeight, d2dIndex] = record.requestTxHash.split('-');
+                const [e2dHeight, e2dIndex] = record.responseTxHash.split('-');
 
-                    return (
-                      <div className="flex justify-between items-center " key={record.id}>
-                        <div className="flex-1 grid grid-cols-3 self-stretch pr-8 p-4 border border-gray-800 mb-4 bg-gray-900 rounded-xs">
-                          <TokenOnChain
-                            token={{ ...fromToken, meta: dep, amount: getSentAmountFromHelixRecord(record) }}
-                            isFrom
-                            asHistory
-                          >
-                            <ExplorerLink
-                              network={dep}
-                              txHash={record.requestTxHash}
-                              extrinsic={d2eHeight && d2dIndex ? { height: d2eHeight, index: d2dIndex } : undefined}
-                            >
-                              <PaperClipOutlined className="hover:text-pangolin-main cursor-pointer" />
-                            </ExplorerLink>
-                          </TokenOnChain>
-
-                          <BridgeArrow category={record.bridge} showName={false} />
-
-                          <TokenOnChain
-                            token={{ ...toToken, meta: arrival, amount: getReceivedAmountFromHelixRecord(record) }}
-                            asHistory
-                            className="justify-end"
-                          >
-                            {(record.responseTxHash || (e2dHeight && e2dIndex)) &&
-                            record.result === RecordStatus.success ? (
-                              <ExplorerLink
-                                network={arrival}
-                                txHash={record.responseTxHash}
-                                extrinsic={e2dHeight && e2dIndex ? { height: e2dHeight, index: e2dIndex } : undefined}
-                              >
-                                <PaperClipOutlined className="hover:text-pangolin-main cursor-pointer" />
-                              </ExplorerLink>
-                            ) : (
-                              record.result === RecordStatus.pending && (
-                                <Tooltip
-                                  title={t(
-                                    'When the transaction is successful, the extrinsic message will be provided'
-                                  )}
-                                >
-                                  <PaperClipOutlined className="cursor-pointer" />
-                                </Tooltip>
-                              )
-                            )}
-                          </TokenOnChain>
-                        </div>
-
-                        <div
-                          onClick={() => {
-                            if (isEthereumDarwinia(fromChain, toChain)) {
-                              message.error(`Can not find the detail page for ${fromChain} to ${toChain}`);
-                              return;
-                            }
-
-                            const paths = getDetailPaths(fromChain, toChain, record);
-                            const query = new URLSearchParams({
-                              from: record.fromChain,
-                              to: record.toChain,
-                            }).toString();
-
-                            if (paths.length) {
-                              window.open(`transaction/${paths.join('/')}?${query}`, '_blank');
-                            }
-                          }}
-                          className={`text-right pl-4 pr-6 py-4  border border-gray-800 mb-4 bg-gray-900 rounded-xs ${
-                            !isEthereumDarwinia(fromChain, toChain) ? 'cursor-pointer' : ''
-                          }`}
+                return (
+                  <div className="flex justify-between items-center " key={record.id}>
+                    <div className="flex-1 grid grid-cols-3 self-stretch pr-8 p-4 border border-gray-800 mb-4 bg-gray-900 rounded-xs">
+                      <TokenOnChain
+                        token={{ ...fromToken, meta: dep, amount: getSentAmountFromHelixRecord(record) }}
+                        isFrom
+                        asHistory
+                      >
+                        <ExplorerLink
+                          network={dep}
+                          txHash={record.requestTxHash}
+                          extrinsic={d2eHeight && d2dIndex ? { height: d2eHeight, index: d2dIndex } : undefined}
                         >
-                          <div className="mb-2 whitespace-nowrap text-xs">
-                            {format(record.startTime * 1000, DATE_TIME_FORMAT)}
-                          </div>
+                          <PaperClipOutlined className="hover:text-pangolin-main cursor-pointer" />
+                        </ExplorerLink>
+                      </TokenOnChain>
 
-                          {record.result === RecordStatus.pending && <Pending record={record} />}
+                      <BridgeArrow category={record.bridge} showName={false} />
 
-                          {record.result === RecordStatus.pendingToClaim && (
-                            <PendingToClaim record={record} claimMeta={claimMeta} />
-                          )}
+                      <TokenOnChain
+                        token={{ ...toToken, meta: arrival, amount: getReceivedAmountFromHelixRecord(record) }}
+                        asHistory
+                        className="justify-end"
+                      >
+                        {(record.responseTxHash || (e2dHeight && e2dIndex)) &&
+                        record.result === RecordStatus.success ? (
+                          <ExplorerLink
+                            network={arrival}
+                            txHash={record.responseTxHash}
+                            extrinsic={e2dHeight && e2dIndex ? { height: e2dHeight, index: e2dIndex } : undefined}
+                          >
+                            <PaperClipOutlined className="hover:text-pangolin-main cursor-pointer" />
+                          </ExplorerLink>
+                        ) : (
+                          record.result === RecordStatus.pending && (
+                            <Tooltip
+                              title={t('When the transaction is successful, the extrinsic message will be provided')}
+                            >
+                              <PaperClipOutlined className="cursor-pointer" />
+                            </Tooltip>
+                          )
+                        )}
+                      </TokenOnChain>
+                    </div>
 
-                          {record.result === RecordStatus.pendingToRefund && (
-                            <PendingToRefund record={record} onSuccess={() => fetchGoOnAmount(account)} />
-                          )}
+                    <div
+                      onClick={() => {
+                        if (isEthereumDarwinia(fromChain, toChain)) {
+                          message.error(`Can not find the detail page for ${fromChain} to ${toChain}`);
+                          return;
+                        }
 
-                          {record.result === RecordStatus.success && (
-                            <div className="text-helix-green">{t('Success')}</div>
-                          )}
+                        const paths = getDetailPaths(fromChain, toChain, record);
+                        const query = new URLSearchParams({
+                          from: record.fromChain,
+                          to: record.toChain,
+                        }).toString();
 
-                          {record.result === RecordStatus.pendingToConfirmRefund && (
-                            <div className="text-helix-blue">{t('Refund Processing')}</div>
-                          )}
-
-                          {record.result === RecordStatus.refunded && <Refunded record={record} />}
-                        </div>
+                        if (paths.length) {
+                          window.open(`transaction/${paths.join('/')}?${query}`, '_blank');
+                        }
+                      }}
+                      className={`text-right pl-4 pr-6 py-4  border border-gray-800 mb-4 bg-gray-900 rounded-xs ${
+                        !isEthereumDarwinia(fromChain, toChain) ? 'cursor-pointer' : ''
+                      }`}
+                    >
+                      <div className="mb-2 whitespace-nowrap text-xs">
+                        {format(record.startTime * 1000, DATE_TIME_FORMAT)}
                       </div>
-                    );
-                  })}
 
-                  <div className="flex justify-end items-center">
-                    {!!total && (
-                      <Pagination
-                        onChange={(page: number, pageSize: number) => {
-                          setPaginator({ row: pageSize, page: page - 1 });
-                        }}
-                        current={paginator.page + 1}
-                        pageSize={paginator.row}
-                        total={total ?? 0}
-                        showTotal={() => t('Total {{total}}', { total })}
-                      />
-                    )}
+                      {record.result === RecordStatus.pending && <Pending record={record} />}
+
+                      {record.result === RecordStatus.pendingToClaim && <PendingToClaim record={record} />}
+
+                      {record.result === RecordStatus.pendingToRefund && (
+                        <PendingToRefund record={record} onSuccess={() => fetchGoOnAmount(account)} />
+                      )}
+
+                      {record.result === RecordStatus.success && <div className="text-helix-green">{t('Success')}</div>}
+
+                      {record.result === RecordStatus.pendingToConfirmRefund && (
+                        <div className="text-helix-blue">{t('Refund Processing')}</div>
+                      )}
+
+                      {record.result === RecordStatus.refunded && <Refunded record={record} />}
+                    </div>
                   </div>
-                </Spin>
+                );
+              })}
 
-                {!records.length && <Empty description={t('No Data')} />}
-              </>
-            ),
-          }))}
-      ></Tabs>
-    </>
+              <div className="flex justify-end items-center">
+                {!!total && (
+                  <Pagination
+                    onChange={(page: number, pageSize: number) => {
+                      setPaginator({ row: pageSize, page: page - 1 });
+                    }}
+                    current={paginator.page + 1}
+                    pageSize={paginator.row}
+                    total={total ?? 0}
+                    showTotal={() => t('Total {{total}}', { total })}
+                  />
+                )}
+              </div>
+            </Spin>
+
+            {!records.length && <Empty description={t('No Data')} />}
+          </>
+        ),
+      }))}
+    ></Tabs>
   );
 }

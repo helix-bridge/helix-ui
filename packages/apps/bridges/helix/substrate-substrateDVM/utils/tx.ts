@@ -1,17 +1,17 @@
-import { BN_ZERO, hexToU8a, stringToHex, BN } from '@polkadot/util';
+import { BN, BN_ZERO, hexToU8a, stringToHex } from '@polkadot/util';
 import type { Observable } from 'rxjs/internal/Observable';
 import { from } from 'rxjs/internal/observable/from';
 import { map } from 'rxjs/internal/operators/map';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { abi } from 'shared/config/abi';
 import { Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
-import { toWei, fromWei } from 'shared/utils/helper/balance';
+import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
 import { validationObsFactory } from '../../../../utils/tx';
+import abi from '../config/abi.json';
 import { IssuingPayload, RedeemPayload } from '../model';
 import { getFee } from './fee';
 
@@ -59,7 +59,7 @@ export function redeem(value: RedeemPayload, mappingAddress: string, specVersion
             toWei({ value: departure.amount, decimals: departure.decimals }),
             { from: sender, value: val }
           ),
-        abi.S2SMappingTokenABI
+        abi
       )
     )
   );
