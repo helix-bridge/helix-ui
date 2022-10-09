@@ -25,9 +25,8 @@ import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { useApi } from '../../../providers';
-import { IssuingPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
-import { getDailyLimit, getIssuingFee } from './utils';
-import { issue, validate } from './utils/tx';
+import { IssuingPayload } from './model';
+import { SubstrateSubstrateDVMBridge } from './utils';
 
 export function Substrate2SubstrateDVM({
   form,
@@ -37,11 +36,7 @@ export function Substrate2SubstrateDVM({
   setBridgeState,
   onFeeChange,
   balances,
-}: CrossChainComponentProps<
-  SubstrateSubstrateDVMBridgeConfig,
-  CrossToken<PolkadotChainConfig>,
-  CrossToken<DVMChainConfig>
->) {
+}: CrossChainComponentProps<SubstrateSubstrateDVMBridge, CrossToken<PolkadotChainConfig>, CrossToken<DVMChainConfig>>) {
   const { t } = useTranslation();
   const { departureConnection } = useApi();
   const [fee, setFee] = useState<BN | null>(null);
@@ -67,7 +62,7 @@ export function Substrate2SubstrateDVM({
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
-      const validateObs = validate([fee, dailyLimit, ring], {
+      const validateObs = data.bridge.validate([fee, dailyLimit, ring], {
         balance: ring,
         amount: new BN(toWei(data.direction.from)),
         dailyLimit,
@@ -77,7 +72,7 @@ export function Substrate2SubstrateDVM({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        () => issue(data, fee!),
+        () => data.bridge.back(data, fee!),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
@@ -88,7 +83,7 @@ export function Substrate2SubstrateDVM({
   useEffect(() => {
     const sub$$ = of(null)
       .pipe(
-        switchMap(() => from(getDailyLimit(direction.to.address, direction))),
+        switchMap(() => from(bridge.getDailyLimit(direction))),
         pollWhile(LONG_DURATION, () => isMounted)
       )
       .subscribe((result) => {
@@ -98,10 +93,10 @@ export function Substrate2SubstrateDVM({
       });
 
     return () => sub$$?.unsubscribe();
-  }, [direction, isMounted]);
+  }, [bridge, direction, isMounted]);
 
   useEffect(() => {
-    const sub$$ = from(getIssuingFee(bridge)).subscribe((result) => {
+    const sub$$ = from(bridge.getFee(direction)).subscribe((result) => {
       setFee(result);
 
       if (onFeeChange) {
@@ -113,7 +108,7 @@ export function Substrate2SubstrateDVM({
     });
 
     return () => sub$$.unsubscribe();
-  }, [bridge, direction.from.decimals, direction.from.meta.tokens, direction.from.symbol, onFeeChange]);
+  }, [bridge, direction, onFeeChange]);
 
   return (
     <>

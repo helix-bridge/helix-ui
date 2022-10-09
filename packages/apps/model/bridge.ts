@@ -31,6 +31,7 @@ export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Targ
   getDailyLimit?(
     direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>
   ): Promise<DailyLimit | null>;
+  getFee?(direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>): Promise<BN>;
 }
 
 export abstract class Bridge<

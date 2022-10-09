@@ -4,7 +4,6 @@ import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { from } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
-import { switchMap } from 'rxjs/internal/operators/switchMap';
 import {
   CrossChainComponentProps,
   CrossChainPayload,
@@ -24,10 +23,9 @@ import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { useAccount } from '../../../providers';
-import { RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from './model';
-import { getRedeemFee } from './utils';
+import { RedeemPayload } from './model';
+import { SubstrateSubstrateDVMBridge } from './utils/bridge';
 import { getS2SMappingAddress } from './utils/mappingParams';
-import { redeem, validate } from './utils/tx';
 
 export function SubstrateDVM2Substrate({
   allowance,
@@ -39,11 +37,7 @@ export function SubstrateDVM2Substrate({
   setTxObservableFactory,
   setBridgeState,
   updateAllowancePayload,
-}: CrossChainComponentProps<
-  SubstrateSubstrateDVMBridgeConfig,
-  CrossToken<DVMChainConfig>,
-  CrossToken<PolkadotChainConfig>
->) {
+}: CrossChainComponentProps<SubstrateSubstrateDVMBridge, CrossToken<DVMChainConfig>, CrossToken<PolkadotChainConfig>>) {
   const { t } = useTranslation();
   const bridgeState = useCheckSpecVersion(direction);
   const [fee, setFee] = useState<BN | null>(null);
@@ -70,7 +64,7 @@ export function SubstrateDVM2Substrate({
 
   useEffect(() => {
     const fn = () => (data: RedeemPayload) => {
-      const validateObs = validate([fee, balances, allowance], {
+      const validateObs = data.bridge.validate([fee, balances, allowance], {
         balance: balances ? balances[0] : BN_ZERO,
         amount: new BN(toWei(direction.from)),
         allowance,
@@ -85,11 +79,7 @@ export function SubstrateDVM2Substrate({
         )
       );
 
-      const txObs = from(getS2SMappingAddress(data.direction.from.meta.provider)).pipe(
-        switchMap((mappingAddress) => redeem(data, mappingAddress, String(data.direction.to.meta.specVersion)))
-      );
-
-      return createTxWorkflow(beforeTx, txObs, afterCrossChain(TransferDone, { payload: data }));
+      return createTxWorkflow(beforeTx, data.bridge.burn(data), afterCrossChain(TransferDone, { payload: data }));
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
@@ -116,7 +106,7 @@ export function SubstrateDVM2Substrate({
   }, [direction]);
 
   useEffect(() => {
-    const sub$$ = from(getRedeemFee(bridge)).subscribe((result) => {
+    const sub$$ = from(bridge.getFee(direction)).subscribe((result) => {
       setFee(result);
 
       if (onFeeChange) {
@@ -128,7 +118,7 @@ export function SubstrateDVM2Substrate({
     });
 
     return () => sub$$.unsubscribe();
-  }, [bridge, direction.from.decimals, direction.from.meta.tokens, direction.from.symbol, onFeeChange]);
+  }, [bridge, direction, onFeeChange]);
 
   useEffect(() => {
     setBridgeState({ status: bridgeState.status, reason: bridgeState.reason });

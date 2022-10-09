@@ -1,6 +1,6 @@
 import { BridgeConfig, ContractConfig } from 'shared/model';
 
-interface SubstrateSubstrateDVMContractConfig extends ContractConfig {
+export interface SubstrateSubstrateDVMContractConfig extends ContractConfig {
   genesis: '0x0000000000000000000000000000000000000000';
 }
 
