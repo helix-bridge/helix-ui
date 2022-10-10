@@ -1,3 +1,1 @@
-export * from './tx';
-export * from './fee';
-export * from './dailyLimit';
+export * from './bridge';

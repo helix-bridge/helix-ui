@@ -1,12 +1,12 @@
 import {
   BridgeConfig,
   ContractConfig,
-  CrossChainPayload,
   CrossToken,
   ParachainChainConfig,
   ParachainEthereumCompatibleChainConfig,
 } from 'shared/model';
 import { Bridge } from '../../../../core/bridge';
+import { CrossChainPayload } from '../../../../model/tx';
 
 type CrabParachainMoonriverContractConfig = ContractConfig;
 

@@ -119,9 +119,7 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
     );
   }
 
-  async getFee(
-    direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>
-  ): Promise<BN | null> {
+  async getFee(direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>): Promise<BN> {
     const {
       from: { meta: departure },
       to: { meta: arrival },

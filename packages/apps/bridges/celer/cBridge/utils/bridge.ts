@@ -10,7 +10,7 @@ import { CrossChainDirection, CrossToken, EthereumChainConfig, HelixHistoryRecor
 import { entrance } from 'shared/utils/connection';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
-import { getBridge, isBSCAstar, isCrabDVMAstar, isCrabDVMEthereum, isEthereumAstar } from 'utils/bridge';
+import { isBSCAstar, isCrabDVMAstar, isCrabDVMEthereum, isEthereumAstar } from 'utils/bridge';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
 import { Bridge } from '../../../../core/bridge';
@@ -139,9 +139,8 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
     const request = new GetTransferStatusRequest();
     const { id, fromChain, toChain, sender } = record;
     const transferId = last(id.split('-')) as string;
-    const bridge = getBridge([fromChain, toChain]);
-    const { contracts } = bridge.config;
-    const contractAddress = bridge.isIssue(fromChain, toChain) ? contracts?.backing : contracts?.issuing;
+    const { contracts } = this.config;
+    const contractAddress = this.isIssue(fromChain, toChain) ? contracts?.backing : contracts?.issuing;
 
     request.setTransferId(transferId);
 

@@ -1,5 +1,5 @@
-import { CrossChainPayload } from 'shared/model';
 import { useITranslation } from '../../hooks';
+import { CrossChainPayload } from '../../model/tx';
 
 export function ApproveConfirm({ value }: { value: Pick<CrossChainPayload, 'direction' | 'sender'> }) {
   const { t } = useITranslation();

@@ -1,12 +1,6 @@
-import {
-  BridgeConfig,
-  ContractConfig,
-  CrossChainPayload,
-  CrossToken,
-  DVMChainConfig,
-  EthereumChainConfig,
-} from 'shared/model';
+import { BridgeConfig, ContractConfig, CrossToken, DVMChainConfig, EthereumChainConfig } from 'shared/model';
 import { Bridge } from '../../../../core/bridge';
+import { CrossChainPayload } from '../../../../model/tx';
 
 interface SubstrateDVMEthereumContractConfig extends ContractConfig {
   guard: string;

@@ -1,7 +1,8 @@
 import { createContext, useCallback, useContext, useState } from 'react';
+import { EMPTY } from 'rxjs';
 import type { Subscription } from 'rxjs/internal/Subscription';
 import { HelixHistoryRecord, Tx } from 'shared/model';
-import { claim as substrateDVM2EthereumClaim } from '../bridges/helix/substrateDVM-ethereum/utils/tx';
+import { getBridge } from '../utils';
 import { useTx } from './tx';
 
 interface Claimed {
@@ -11,7 +12,7 @@ interface Claimed {
 
 interface ClaimCtx {
   isClaiming: boolean;
-  eth2Claim: (record: HelixHistoryRecord) => Subscription;
+  claim: (record: HelixHistoryRecord) => Subscription;
   claimedList: Claimed[];
   refundedList: Claimed[];
   onRefundSuccess: (data: Claimed) => void;
@@ -49,8 +50,20 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
     [observer]
   );
 
-  const eth2Claim = useCallback(
-    (record: HelixHistoryRecord) => substrateDVM2EthereumClaim(record).subscribe(genObserver(record)),
+  const claim = useCallback(
+    (record: HelixHistoryRecord) => {
+      const { fromChain, toChain } = record;
+      const bridge = getBridge([fromChain, toChain]);
+
+      if (bridge && bridge.claim) {
+        return bridge.claim(record).subscribe(genObserver(record));
+      } else {
+        console.warn(
+          `The bridge from ${fromChain} to ${toChain} not exist, or the claim method on the bridge doest not implemented`
+        );
+        return EMPTY.subscribe();
+      }
+    },
     [genObserver]
   );
 
@@ -58,7 +71,7 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
     <ClaimContext.Provider
       value={{
         claimedList,
-        eth2Claim,
+        claim,
         isClaiming,
         refundedList,
         onRefundSuccess: (data) => setRefundedList((pre) => [...pre, data]),

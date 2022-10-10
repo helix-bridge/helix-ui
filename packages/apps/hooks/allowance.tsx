@@ -1,12 +1,13 @@
+import { BN } from '@polkadot/util';
 import { message } from 'antd';
-import BN from 'bn.js';
 import { useCallback, useState } from 'react';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { useITranslation } from 'shared/hooks/translation';
-import { CrossChainDirection, CrossChainPayload } from 'shared/model';
+import type { CrossChainDirection } from 'shared/model';
 import { applyModalObs, approveToken, createTxWorkflow, getAllowance } from 'shared/utils/tx';
 import { ApproveConfirm } from '../components/tx/ApproveConfirm';
 import { ApproveDone } from '../components/tx/ApproveSuccess';
+import type { CrossChainPayload } from '../model/tx';
 import { useAccount, useTx, useWallet } from '../providers';
 import { useAfterTx } from './tx';
 

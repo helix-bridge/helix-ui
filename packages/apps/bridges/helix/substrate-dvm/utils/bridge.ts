@@ -1,6 +1,5 @@
-import { u8aToHex } from '@polkadot/util';
-import BN from 'bn.js';
-import { Observable } from 'rxjs';
+import { u8aToHex, BN } from '@polkadot/util';
+import type { Observable } from 'rxjs';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { from as rxFrom } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
