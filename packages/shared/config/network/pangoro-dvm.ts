@@ -24,7 +24,7 @@ export const pangoroDVMConfig: DVMChainConfig = {
     twitter: 'https://twitter.com/DarwiniaNetwork',
   },
   ss58Prefix: 18,
-  specVersion: 29050,
+  specVersion: 210000,
   tokens: [
     {
       name: 'ORING',
