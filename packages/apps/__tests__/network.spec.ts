@@ -30,7 +30,7 @@ import {
 
 describe('network utils', () => {
   const data = [...crossChainGraph];
-  const sort = (ary: string[]) => sortBy(ary, (cur) => cur.charCodeAt(0));
+  const sort = (ary: string[]) => sortBy(ary, (cur) => cur.split('').reduce((acc, cur) => acc + cur.charCodeAt(0), 0));
   const getOverview = (departure: Network, arrival: Network) =>
     chainConfigs
       .find((item) => item.name === departure)
@@ -72,7 +72,7 @@ describe('network utils', () => {
     const group = data.find((item) => item[0] === 'darwinia');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['darwinia-dvm', 'crab-dvm']);
+    expect(sort(group![1])).toEqual(sort(['darwinia-dvm', 'crab-dvm']));
 
     const overviewS2sv1 = getOverview('darwinia', 'crab-dvm');
     const overviewE2d = getOverview('darwinia', 'ethereum');
@@ -81,22 +81,20 @@ describe('network utils', () => {
     expect(overviewE2d).toEqual(undefined);
   });
 
-  it('darwinia-dvm contains 3 leafs', () => {
+  it('darwinia-dvm contains 4 leafs', () => {
     const group = data.find((item) => item[0] === 'darwinia-dvm');
 
     expect(group).not.toEqual(undefined);
-    expect(uniq(group![1])).toEqual(['darwinia', 'crab-dvm', 'darwinia-dvm']);
+    expect(uniq(group![1])).toEqual(['darwinia', 'crab-dvm', 'darwinia-dvm', 'ethereum']);
   });
 
-  it('ethereum contains 8 leafs and ethereum-darwinia deprecated', () => {
+  it('ethereum contains 9 leafs', () => {
     const group = data.find((item) => item[0] === 'ethereum');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['crab-dvm', 'heco', 'polygon', 'astar', 'bsc', 'avalanche', 'arbitrum', 'optimism']);
-
-    const overview = getOverview('ethereum', 'darwinia');
-
-    expect(overview).toEqual(undefined);
+    expect(sort(group![1])).toEqual(
+      sort(['crab-dvm', 'heco', 'polygon', 'astar', 'bsc', 'avalanche', 'arbitrum', 'optimism', 'darwinia-dvm'])
+    );
   });
 
   it('heco contains 3 leafs', () => {
@@ -110,28 +108,30 @@ describe('network utils', () => {
     const group = data.find((item) => item[0] === 'bsc');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['arbitrum', 'astar', 'avalanche', 'optimism', 'ethereum', 'polygon']);
+    expect(sort(group![1])).toEqual(sort(['arbitrum', 'astar', 'avalanche', 'optimism', 'ethereum', 'polygon']));
   });
 
   it('arbitrum contains 6 leafs', () => {
     const group = data.find((item) => item[0] === 'arbitrum');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['astar', 'avalanche', 'optimism', 'bsc', 'ethereum', 'polygon']);
+    expect(sort(group![1])).toEqual(sort(['astar', 'avalanche', 'optimism', 'bsc', 'ethereum', 'polygon']));
   });
 
   it('astar contains 7 leafs', () => {
     const group = data.find((item) => item[0] === 'astar');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['arbitrum', 'avalanche', 'optimism', 'bsc', 'polygon', 'ethereum', 'crab-dvm']);
+    expect(sort(group![1])).toEqual(
+      sort(['arbitrum', 'avalanche', 'optimism', 'bsc', 'polygon', 'ethereum', 'crab-dvm'])
+    );
   });
 
   it('avalanche contains 6 leafs', () => {
     const group = data.find((item) => item[0] === 'avalanche');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['arbitrum', 'astar', 'optimism', 'bsc', 'ethereum', 'polygon']);
+    expect(sort(group![1])).toEqual(sort(['arbitrum', 'astar', 'optimism', 'bsc', 'ethereum', 'polygon']));
   });
 
   it('optimism contains 6 leafs', () => {
@@ -145,7 +145,9 @@ describe('network utils', () => {
     const group = data.find((item) => item[0] === 'polygon');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['crab-dvm', 'ethereum', 'heco', 'astar', 'bsc', 'avalanche', 'arbitrum', 'optimism']);
+    expect(sort(group![1])).toEqual(
+      sort(['crab-dvm', 'ethereum', 'heco', 'astar', 'bsc', 'avalanche', 'arbitrum', 'optimism'])
+    );
   });
 
   it('karura contains 1 leaf', () => {
@@ -219,7 +221,7 @@ describe('network utils', () => {
     const group = data.find((item) => item[0] === 'pangoro-dvm');
 
     expect(group).not.toEqual(undefined);
-    expect(uniq(group![1])).toEqual(['pangolin-dvm', 'goerli', 'pangoro-dvm']);
+    expect(uniq(sort(group![1]))).toEqual(sort(['pangolin-dvm', 'goerli', 'pangoro-dvm']));
   });
 
   it('can get chain config by chain name', () => {
