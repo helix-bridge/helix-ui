@@ -11,15 +11,16 @@ import {
   BridgeConfig,
   ChainConfig,
   CrossChainDirection,
-  CrossChainPayload,
   CrossToken,
   DailyLimit,
   HelixHistoryRecord,
+  Network,
   NullableFields,
   Tx,
 } from 'shared/model';
 import { TxValidationMessages } from '../config/validation';
-import { TxValidation } from './validation';
+import { CrossChainPayload } from '../model/tx';
+import { TxValidation } from '../model/validation';
 
 type GenValidationFn<T> = (params: T) => [boolean, string][];
 
@@ -78,6 +79,20 @@ export abstract class Bridge<
   }
 
   validate = this.validatorFactory(this.genTxParamsValidations.bind(this));
+
+  getChainConfig(name: Network): Origin | Target {
+    if (!name) {
+      throw new Error(`You must pass a 'name' parameter to find the chain config`);
+    }
+
+    const result = [this.departure, this.arrival].find((item) => item.name === name);
+
+    if (!result) {
+      throw new Error(`Can not find the chain config by ${name}`);
+    }
+
+    return result;
+  }
 }
 
 export type CommonBridge = Bridge<BridgeConfig, ChainConfig, ChainConfig>;

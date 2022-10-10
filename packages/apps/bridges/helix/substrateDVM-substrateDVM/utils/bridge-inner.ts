@@ -5,7 +5,7 @@ import { CrossChainDirection, CrossToken, DVMChainConfig, Tx } from 'shared/mode
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { TxValidation } from '../../../../model';
-import { Bridge } from '../../../../model/bridge';
+import { Bridge } from '../../../../core/bridge';
 import { darwiniaDVMDarwiniaDVMConfig, pangoroDVMPangoroDVMConfig } from '../config';
 import wringABI from '../config/wring.json';
 import { IssuingPayload, RedeemPayload, SubstrateDVMSubstrateDVMBridgeConfig } from '../model';

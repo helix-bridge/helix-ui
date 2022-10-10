@@ -1,6 +1,7 @@
 import { ContractConfig, BridgeConfig } from 'shared/model';
-import { CrossChainPayload, CrossToken, DVMChainConfig } from 'shared/model';
-import { Bridge } from '../../../../model/bridge';
+import { CrossToken, DVMChainConfig } from 'shared/model';
+import { Bridge } from '../../../../core/bridge';
+import { CrossChainPayload } from '../../../../model/tx';
 
 type SubstrateDVMSubstrateDVMContractConfig = ContractConfig;
 

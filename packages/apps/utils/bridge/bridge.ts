@@ -2,9 +2,9 @@ import isEqual from 'lodash/isEqual';
 import unionWith from 'lodash/unionWith';
 import upperFirst from 'lodash/upperFirst';
 import { BridgeCategory, BridgeConfig, ChainConfig, CrossChainDirection, Network } from 'shared/model';
-import { unknownUnavailable } from '../../bridges/unknown-unavailable/config/bridge';
-import { BRIDGES } from '../../config/bridge';
-import { Bridge, CommonBridge } from '../../model/bridge';
+import { BRIDGES } from '../../bridges/bridges';
+import { unknownUnavailable } from '../../bridges/unknown-unavailable/utils/bridge';
+import { Bridge, CommonBridge } from '../../core/bridge';
 import { crossChainGraph, getChainConfig } from '../network';
 
 export function getBridge<
@@ -26,7 +26,7 @@ export function getBridge<
     return unknownUnavailable as unknown as Bridge<B, O, T>;
   }
 
-  return bridge as Bridge<B, O, T>;
+  return bridge as unknown as Bridge<B, O, T>;
 }
 
 export function getBridges(source: CrossChainDirection): CommonBridge[] {

@@ -1,5 +1,6 @@
-import { BridgeConfig, ContractConfig, CrossChainPayload, CrossToken, EthereumChainConfig } from 'shared/model';
-import { Bridge } from '../../../../model/bridge';
+import { BridgeConfig, ContractConfig, CrossToken, EthereumChainConfig } from 'shared/model';
+import { Bridge } from '../../../../core/bridge';
+import { CrossChainPayload } from '../../../../model/tx';
 
 export interface CBridgeContractConfig extends ContractConfig {
   stablecoinBacking?: string;

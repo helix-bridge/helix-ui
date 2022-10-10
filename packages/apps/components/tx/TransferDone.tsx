@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 import { initReactI18next } from 'react-i18next';
 import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
-import { TxDoneComponentProps } from 'shared/model';
 import { isDVMNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
 import { useITranslation } from '../../hooks';
+import { TxDoneComponentProps } from '../../model/component';
 
 export function TransferDone({ tx, value }: TxDoneComponentProps) {
   const { t } = useITranslation();

@@ -14,7 +14,7 @@ import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import { getBridge } from 'utils/bridge';
 import { TxValidation } from '../../../../model';
-import { Bridge } from '../../../../model/bridge';
+import { Bridge } from '../../../../core/bridge';
 import { crabParachainMoonriverConfig } from '../config';
 import abi from '../config/abi.json';
 import { CrabParachainMoonriverBridgeConfig, IssuingPayload, RedeemPayload } from '../model';

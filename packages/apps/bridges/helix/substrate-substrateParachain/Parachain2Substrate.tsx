@@ -1,16 +1,10 @@
-import BN from 'bn.js';
+import { BN } from '@polkadot/util';
 import upperFirst from 'lodash/upperFirst';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
-import {
-  CrossChainComponentProps,
-  CrossToken,
-  ParachainChainConfig,
-  PolkadotChainConfig,
-  TxObservableFactory,
-} from 'shared/model';
+import { CrossToken, ParachainChainConfig, PolkadotChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { fromWei, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
@@ -21,6 +15,8 @@ import { TransferDone } from '../../../components/tx/TransferDone';
 import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
+import { CrossChainComponentProps } from '../../../model/component';
+import { TxObservableFactory } from '../../../model/tx';
 import { useApi } from '../../../providers';
 import { RedeemPayload } from './model';
 import { SubstrateSubstrateParachainBridge } from './utils';

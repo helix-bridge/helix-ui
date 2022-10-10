@@ -14,23 +14,22 @@ import { of } from 'rxjs/internal/observable/of';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
 import { BridgeBase } from 'shared/core/bridge';
+import { ChainBase } from 'shared/core/chain';
 import {
   BridgeConfig,
   BridgeState,
-  ChainBase,
   ChainConfig,
   ConnectionStatus,
-  CrossChainComponentProps,
   CrossChainDirection,
-  CrossChainPayload,
   CrossToken,
   TokenInfoWithMeta,
-  TxObservableFactory,
 } from 'shared/model';
 import { truncate } from 'shared/utils/helper/balance';
 import { isKton } from 'shared/utils/helper/validator';
+import { Bridge } from '../core/bridge';
 import { AllowancePayload, useAllowance } from '../hooks/allowance';
-import { Bridge } from '../model/bridge';
+import { CrossChainComponentProps } from '../model/component';
+import { CrossChainPayload, TxObservableFactory } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { Direction } from './form-control/Direction';

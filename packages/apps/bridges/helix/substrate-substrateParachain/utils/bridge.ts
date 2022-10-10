@@ -11,7 +11,7 @@ import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
 import { TxValidation } from '../../../../model';
-import { Bridge } from '../../../../model/bridge';
+import { Bridge } from '../../../../core/bridge';
 import { crabCrabParachainConfig, pangolinPangolinParachainConfig } from '../config';
 import { IssuingPayload, RedeemPayload, SubstrateSubstrateParachainBridgeConfig } from '../model';
 

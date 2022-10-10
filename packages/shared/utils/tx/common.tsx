@@ -17,12 +17,14 @@ import { tap } from 'rxjs/internal/operators/tap';
 import type { Observer } from 'rxjs/internal/types';
 import { Icon } from '../../components/widget/Icon';
 import { abi } from '../../config/abi';
-import { CrossChainPayload, RequiredPartial, Tx, TxFn } from '../../model';
+import { RequiredPartial, Tx } from '../../model';
 import { entrance } from '../connection';
 import { toWei } from '../helper/balance';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ModalSpyFn<T = any> = (observer: Observer<T>, closeFn: () => void) => void;
+
+type TxFn<T> = (value: T) => Observable<Tx>;
 
 type IModalFuncs = {
   afterDisappear?: ModalSpyFn;
@@ -185,13 +187,12 @@ export function genEthereumTransactionObs(params: Deferrable<TransactionRequest>
   });
 }
 
-export const approveToken: TxFn<
-  RequiredPartial<CrossChainPayload, 'sender'> & {
-    tokenAddress?: string;
-    spender?: string;
-    sendOptions?: { gas?: string; gasPrice?: string };
-  }
-> = ({ sender, tokenAddress, spender, sendOptions }) => {
+export const approveToken: TxFn<{
+  sender: string;
+  tokenAddress?: string;
+  spender?: string;
+  sendOptions?: { gas?: string; gasPrice?: string };
+}> = ({ sender, tokenAddress, spender, sendOptions }) => {
   if (!tokenAddress) {
     throw new Error(`Can not approve the token with address ${tokenAddress}`);
   }

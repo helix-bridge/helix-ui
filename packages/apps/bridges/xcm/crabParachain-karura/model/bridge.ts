@@ -1,5 +1,5 @@
 import { BridgeConfig, ContractConfig, CrossChainPayload, CrossToken, ParachainChainConfig } from 'shared/model';
-import { Bridge } from '../../../../model/bridge';
+import { Bridge } from '../../../../core/bridge';
 
 type CrabParachainKaruraContractConfig = ContractConfig;
 

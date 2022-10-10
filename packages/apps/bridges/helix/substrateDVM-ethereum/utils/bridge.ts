@@ -15,17 +15,17 @@ import {
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
-import { getBridge } from 'utils/bridge';
+import { getBridge, isSubstrateDVM2Ethereum } from 'utils/bridge';
 import { TxValidation } from '../../../../model';
-import { Bridge } from '../../../../model/bridge';
-import { isSubstrateDVM2Ethereum } from '../../../../utils';
-import { getChainConfig, getWrappedToken } from '../../../../utils/network';
+import { Bridge } from '../../../../core/bridge';
+// import { getChainConfig } from '../../../../utils/network';
 import { getTokenConfigFromHelixRecord } from '../../../../utils/record/record';
 import backingAbi from '../config/backing.json';
 import { pangoroDVMGoerliConfig } from '../config/bridge';
 import guardAbi from '../config/guard.json';
 import mappingTokenAbi from '../config/mappingTokenFactory.json';
 import { IssuingPayload, RedeemPayload, SubstrateDVMEthereumBridgeConfig } from '../model';
+import { getWrappedToken } from '../../../../utils/token';
 
 export class SubstrateDVMEthereumBridge extends Bridge<
   SubstrateDVMEthereumBridgeConfig,
@@ -105,7 +105,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
     const signatures = guardSignatures?.split('-').slice(1);
     const bridge = getBridge<SubstrateDVMEthereumBridgeConfig>([fromChain, toChain]);
 
-    return isMetamaskChainConsistent(getChainConfig(toChain)).pipe(
+    return isMetamaskChainConsistent(this.getChainConfig(toChain)).pipe(
       switchMap(() =>
         genEthereumContractTxObs(
           bridge.config.contracts!.guard,
@@ -119,12 +119,12 @@ export class SubstrateDVMEthereumBridge extends Bridge<
     );
   }
 
-  refund(record: HelixHistoryRecord) {
+  refund(record: HelixHistoryRecord): Observable<Tx> {
     const { sender, sendTokenAddress, sendAmount, fromChain, toChain } = record;
     const id = last(record.id.split('-'));
     const bridge = getBridge<SubstrateDVMEthereumBridgeConfig>([fromChain, toChain]);
-    const fromChainConfig = getChainConfig(toChain);
-    const toChainConfig = getChainConfig(fromChain);
+    const fromChainConfig = this.getChainConfig(toChain);
+    const toChainConfig = this.getChainConfig(fromChain);
     const sendToken = getTokenConfigFromHelixRecord(record);
 
     const { contractAddress, abi, method } = isSubstrateDVM2Ethereum(fromChain, toChain)
@@ -141,7 +141,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       CrossToken<EthereumChainConfig>
     >;
 
-    return isMetamaskChainConsistent(getChainConfig(toChain)).pipe(
+    return isMetamaskChainConsistent(this.getChainConfig(toChain)).pipe(
       switchMap(() => from(this.getFee(direction, true))),
       switchMap((fee) => {
         return genEthereumContractTxObs(

@@ -1,8 +1,4 @@
-import type { Observable } from 'rxjs';
-import { BridgeBase } from '../core/bridge';
-import { CrossChainPayload } from './bridge';
-
-export type TxStatus =
+type TxStatus =
   | 'future'
   | 'ready'
   | 'finalized'
@@ -29,14 +25,3 @@ export interface Tx {
   hash?: string;
   error?: Error;
 }
-
-export type TxFn<T> = (value: T) => Observable<Tx>;
-
-export type TxConfirmComponentProps<T extends BridgeBase = BridgeBase> = { value: CrossChainPayload<T> };
-
-export type TxDoneComponentProps<T extends BridgeBase = BridgeBase> = {
-  tx: Tx;
-  value: CrossChainPayload<T>;
-};
-
-export type CommonPayloadKeys = 'sender' | 'recipient' | 'amount' | 'asset';

@@ -2,7 +2,7 @@ import { isAddress } from 'ethers/lib/utils';
 import { CrossOverview, Network, PolkadotChainConfig, TokenWithBridgesInfo } from 'shared/model';
 import { isSS58Address } from 'shared/utils/helper/validator';
 import { isPolkadotNetwork } from 'shared/utils/network/network';
-import { chainConfigs } from './network';
+import { chainConfigs } from './network/network';
 
 export const isTransferableTokenPair = (token1: TokenWithBridgesInfo, token2: TokenWithBridgesInfo): boolean => {
   const check = (token: TokenWithBridgesInfo) => (item: CrossOverview) =>

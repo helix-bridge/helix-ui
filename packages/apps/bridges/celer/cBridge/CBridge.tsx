@@ -10,15 +10,9 @@ import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { Logo } from 'shared/components/widget/Logo';
 import { FORM_CONTROL } from 'shared/config/constant';
-import {
-  CrossChainComponentProps,
-  CrossToken,
-  EthereumChainConfig,
-  CrossChainPayload,
-  TxObservableFactory,
-} from 'shared/model';
+import { CrossToken, EthereumChainConfig } from 'shared/model';
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
-import { fromWei, toWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
+import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
@@ -32,6 +26,8 @@ import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
+import { CrossChainComponentProps } from '../../../model/component';
+import { CrossChainPayload, TxObservableFactory } from '../../../model/tx';
 import { useAccount, useWallet } from '../../../providers';
 import { IssuingPayload } from './model';
 import { EstimateAmtRequest, EstimateAmtResponse } from './ts-proto/gateway/gateway_pb';

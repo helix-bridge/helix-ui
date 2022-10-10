@@ -8,7 +8,7 @@ import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { TxValidation } from '../../../../model';
-import { Bridge } from '../../../../model/bridge';
+import { Bridge } from '../../../../core/bridge';
 import { getBridge } from '../../../../utils/bridge';
 import { darwiniaDVMcrabDVMConfig, pangoroDVMpangolinDVMConfig } from '../config';
 import backingAbi from '../config/s2sv2backing.json';

@@ -24,7 +24,7 @@ import { isRing } from 'shared/utils/helper/validator';
 import { isDVMNetwork } from 'shared/utils/network/network';
 import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import { TxValidation } from '../../../../model';
-import { Bridge } from '../../../../model/bridge';
+import { Bridge } from '../../../../core/bridge';
 import { darwiniaCrabDVMConfig, pangoroPangolinDVMConfig } from '../config';
 import abi from '../config/abi.json';
 import { IssuingPayload, RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from '../model';

@@ -1,9 +1,9 @@
-import BN from 'bn.js';
+import { BN } from '@polkadot/util';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { FORM_CONTROL } from 'shared/config/constant';
-import { CrossChainComponentProps, CrossToken, DVMChainConfig, TxObservableFactory } from 'shared/model';
+import { CrossToken, DVMChainConfig } from 'shared/model';
 import { toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
@@ -12,9 +12,11 @@ import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
+import { CrossChainComponentProps } from '../../../model/component';
+import { TxObservableFactory } from '../../../model/tx';
 import { useAccount } from '../../../providers';
-import { SubstrateDVMSubstrateDVMBridgeInner } from './utils/bridge-inner';
 import { IssuingPayload } from './model';
+import { SubstrateDVMSubstrateDVMBridgeInner } from './utils/bridge-inner';
 
 export function SubstrateDVMInner({
   form,

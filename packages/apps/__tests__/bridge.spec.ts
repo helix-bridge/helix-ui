@@ -6,7 +6,7 @@ import { toMiddleSplitNaming } from 'shared/utils/helper/common';
 import { isDVMNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
 import { unknownUnavailable } from '../bridges/unknown-unavailable/utils/bridge';
 import { bridgeCategoryDisplay, formalBridges, getBridge, getBridges, testBridges } from '../utils/bridge';
-import { chainConfigs, crossChainGraph, getChainConfig } from '../utils/network';
+import { chainConfigs, getChainConfig, crossChainGraph } from '../utils/network/network';
 
 // exclude the config that not contains transferable tokens;
 const configs = chainConfigs.filter((item) => !!item.tokens.filter((token) => !!token.cross.length).length);

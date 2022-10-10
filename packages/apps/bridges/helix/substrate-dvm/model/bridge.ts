@@ -1,6 +1,6 @@
 import { BridgeConfig } from 'shared/model';
 import { CrossChainPayload, CrossToken, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
-import { Bridge } from '../../../../model/bridge';
+import { Bridge } from '../../../../core/bridge';
 
 export type SubstrateDVMBridgeConfig = Required<Omit<BridgeConfig, 'contracts'>>;
 

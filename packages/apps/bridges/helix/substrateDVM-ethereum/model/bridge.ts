@@ -6,7 +6,7 @@ import {
   DVMChainConfig,
   EthereumChainConfig,
 } from 'shared/model';
-import { Bridge } from '../../../../model/bridge';
+import { Bridge } from '../../../../core/bridge';
 
 interface SubstrateDVMEthereumContractConfig extends ContractConfig {
   guard: string;

@@ -1,20 +1,18 @@
 import { Network, HelixHistoryRecord } from 'shared/model';
 import {
   BridgePredicateFn,
-  isSubstrateSubstrateDVM,
-  isSubstrateDVM,
-  isSubstrateSubstrateParachain,
   isCBridge,
-  isXCM,
-  isSubstrateDVMSubstrateDVM,
+  isSubstrateDVM,
   isSubstrateDVMEthereum,
-} from '../../../apps/utils/bridge';
+  isSubstrateDVMSubstrateDVM,
+  isSubstrateSubstrateParachain,
+  isXCM,
+} from '../bridge';
 
 type DirectionPaths = [BridgePredicateFn, string, string];
 
 export function getDetailPaths(fromChain: Network, toChain: Network, record: HelixHistoryRecord): string[] {
   const filters: DirectionPaths[] = [
-    [isSubstrateSubstrateDVM, 's2s', record.id],
     [isSubstrateDVM, 's2dvm', record.id],
     [isSubstrateSubstrateParachain, 's2parachain', record.id],
     [isCBridge, 'cbridge', record.id],

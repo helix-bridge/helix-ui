@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { ChainConfig, Network } from 'shared/model';
 import { getBridge } from '../../utils/bridge';
-import { getChainConfig, getDisplayName } from '../../utils/network';
+import { getChainConfig, getDisplayName } from '../../utils/network/network';
 
 interface BridgeProps {
   from?: ChainConfig;

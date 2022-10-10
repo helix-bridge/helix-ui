@@ -1,5 +1,5 @@
 import { CrossChainPayload, CrossToken, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
-import { Bridge } from '../../../../model/bridge';
+import { Bridge } from '../../../../core/bridge';
 import { SubstrateSubstrateDVMBridgeConfig } from './bridge';
 
 export type IssuingPayload = CrossChainPayload<

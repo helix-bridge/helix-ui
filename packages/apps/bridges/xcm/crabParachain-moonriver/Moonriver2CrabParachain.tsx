@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
-import { CrossChainComponentProps, CrossToken, ParachainChainConfig, TxObservableFactory } from 'shared/model';
+import { CrossToken, ParachainChainConfig } from 'shared/model';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
@@ -12,8 +12,10 @@ import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
+import { CrossChainComponentProps } from '../../../model/component';
+import { TxObservableFactory } from '../../../model/tx';
 import { useApi } from '../../../providers';
-import { IssuingPayload, RedeemPayload } from './model';
+import { RedeemPayload } from './model';
 import { CrabParachainMoonriverBridge } from './utils';
 
 export function Moonriver2CrabParachain({
@@ -32,7 +34,7 @@ export function Moonriver2CrabParachain({
   const { t } = useTranslation();
   const { departureConnection } = useApi();
   const [fee, setFee] = useState<BN | null>(null);
-  const { afterCrossChain } = useAfterTx<IssuingPayload>();
+  const { afterCrossChain } = useAfterTx<RedeemPayload>();
   const bridgeState = useCheckSpecVersion(direction);
   const [balance] = (balances ?? []) as BN[];
   const symbol = direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol;

@@ -1,14 +1,8 @@
-import BN from 'bn.js';
+import { BN } from '@polkadot/util';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
-import {
-  CrossChainComponentProps,
-  CrossToken,
-  DVMChainConfig,
-  PolkadotChainConfig,
-  TxObservableFactory,
-} from 'shared/model';
+import { CrossToken, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
 import { toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
@@ -17,6 +11,8 @@ import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
+import { CrossChainComponentProps } from '../../../model/component';
+import { TxObservableFactory } from '../../../model/tx';
 import { RedeemPayload } from './model';
 import { SubstrateDVMBridge } from './utils';
 

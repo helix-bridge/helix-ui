@@ -7,7 +7,7 @@ import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { BridgeBase } from 'shared/core/bridge';
 import { CrossChainDirection, CrossToken, CustomFormControlProps } from 'shared/model';
 import { getBridges } from 'utils/bridge';
-import { CommonBridge } from '../../model/bridge';
+import { CommonBridge } from '../../core/bridge';
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { BridgeState } from '../bridge/BridgeState';
 import { TokenOnChain } from '../widget/TokenOnChain';

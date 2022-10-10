@@ -23,7 +23,7 @@ import { isRing } from 'shared/utils/helper/validator';
 import { genEthereumTransactionObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
-import { Bridge } from '../../../../model/bridge';
+import { Bridge } from '../../../../core/bridge';
 import { crabCrabDVMConfig, darwiniaDarwiniaDVMConfig, pangolinPangolinDVMConfig } from '../config';
 import { IssuingPayload, RedeemPayload, SubstrateDVMBridgeConfig } from '../model';
 

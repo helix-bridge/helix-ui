@@ -1,17 +1,9 @@
-import { BN_ZERO } from '@polkadot/util';
-import BN from 'bn.js';
+import { BN_ZERO, BN } from '@polkadot/util';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { from } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
-import {
-  CrossChainComponentProps,
-  CrossChainPayload,
-  CrossToken,
-  DVMChainConfig,
-  PolkadotChainConfig,
-  TxObservableFactory,
-} from 'shared/model';
+import { CrossToken, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
@@ -22,6 +14,8 @@ import { TransferDone } from '../../../components/tx/TransferDone';
 import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
+import { CrossChainComponentProps } from '../../../model/component';
+import { CrossChainPayload, TxObservableFactory } from '../../../model/tx';
 import { useAccount } from '../../../providers';
 import { RedeemPayload } from './model';
 import { SubstrateSubstrateDVMBridge } from './utils/bridge';

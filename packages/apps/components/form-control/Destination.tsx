@@ -1,12 +1,13 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { isEthereumNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
 import { Button, Cascader, Form, Input, InputNumber, InputNumberProps } from 'antd';
+import { isAddress } from 'ethers/lib/utils';
 import omit from 'lodash/omit';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
-import { ChainBase, ChainConfig, CrossToken, TokenInfoWithMeta, TokenWithBridgesInfo } from 'shared/model';
-import { isAddress } from 'ethers/lib/utils';
+import { ChainBase } from 'shared/core/chain';
+import { ChainConfig, CrossToken, TokenInfoWithMeta, TokenWithBridgesInfo } from 'shared/model';
+import { isEthereumNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
 import { chainConfigs, chains, getDisplayName } from 'utils/network';
 import { useITranslation } from '../../hooks';
 import { isTransferableTokenPair } from '../../utils/validate';

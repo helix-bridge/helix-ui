@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { isAddress } from 'ethers/lib/utils';
-import { TokenWithBridgesInfo } from 'shared/model';
+import { ChainConfig, TokenWithBridgesInfo } from 'shared/model';
 import { addAsset } from 'shared/utils/connection/metamask';
 
 export function tokenSearchFactory<T extends { address: string; name: string }>(tokens: T[]) {
@@ -47,3 +47,10 @@ export const asSameCategory = (category1: string, category2: string): boolean =>
 
   return c1 === c2 || c1.toLowerCase() === c2.toLowerCase();
 };
+
+export function getWrappedToken(config: ChainConfig) {
+  const native = config.tokens.find((item) => item.type === 'native');
+  const cross = native?.cross.find((item) => item.partner.name === native.host);
+
+  return config.tokens.find((item) => item.symbol === cross?.partner.symbol)!;
+}

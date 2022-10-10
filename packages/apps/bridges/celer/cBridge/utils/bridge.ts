@@ -13,7 +13,7 @@ import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { getBridge, isBSCAstar, isCrabDVMAstar, isCrabDVMEthereum, isEthereumAstar } from 'utils/bridge';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
-import { Bridge } from '../../../../model/bridge';
+import { Bridge } from '../../../../core/bridge';
 import transferAbi from '../config/abi/bridge.json';
 import depositAbi from '../config/abi/OriginalTokenVaultV2.json';
 import burnAbi from '../config/abi/PeggedTokenBridgeV2.json';

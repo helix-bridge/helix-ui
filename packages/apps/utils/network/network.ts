@@ -16,7 +16,29 @@ import {
 } from 'shared/model';
 import { getCustomNetworkConfig } from 'shared/utils/helper/storage';
 import { isDVMNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
-import { crossChainGraph } from './graph';
+import isEqual from 'lodash/isEqual';
+import { BridgeBase } from 'shared/core/bridge';
+import { Arrival, BridgeConfig, ContractConfig, Departure } from 'shared/model';
+import { BRIDGES } from '../../bridges/bridges';
+
+export const crossChainGraph = BRIDGES.reduce(
+  (acc: [Departure, Arrival[]][], bridge: BridgeBase<BridgeConfig<ContractConfig>>) => {
+    const check = ([ver1, ver2]: [Departure, Departure]) => {
+      const departure = acc.find((item) => isEqual(item[0], ver1));
+      if (departure) {
+        departure[1].push(ver2);
+      } else {
+        acc.push([ver1, [ver2]]);
+      }
+    };
+
+    check(bridge.issue);
+    check(bridge.redeem);
+
+    return acc;
+  },
+  []
+);
 
 export const chainConfigs = (() => {
   const data = unionWith(
@@ -84,6 +106,7 @@ function getConfig(name: Network | null | undefined, source = chainConfigs): Cha
 }
 
 export const getChainConfig = memoize(getConfig, (name) => name);
+
 export const getOriginChainConfig = memoize(
   (name: Network | null | undefined) => getConfig(name, SYSTEM_CHAIN_CONFIGURATIONS.map(toChain)),
   (name) => name
@@ -108,11 +131,4 @@ export function getDisplayName(config: ChainConfig | null | Network): string {
   }
 
   return config.fullName ?? `${upperFirst(config.name)} Chain`;
-}
-
-export function getWrappedToken(config: ChainConfig) {
-  const native = config.tokens.find((item) => item.type === 'native');
-  const cross = native?.cross.find((item) => item.partner.name === native.host);
-
-  return config.tokens.find((item) => item.symbol === cross?.partner.symbol)!;
 }

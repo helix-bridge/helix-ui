@@ -6,7 +6,7 @@ import {
   ParachainChainConfig,
   ParachainEthereumCompatibleChainConfig,
 } from 'shared/model';
-import { Bridge } from '../../../../model/bridge';
+import { Bridge } from '../../../../core/bridge';
 
 type CrabParachainMoonriverContractConfig = ContractConfig;
 

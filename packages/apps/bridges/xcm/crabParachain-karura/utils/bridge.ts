@@ -8,7 +8,7 @@ import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
-import { Bridge } from '../../../../model/bridge';
+import { Bridge } from '../../../../core/bridge';
 import { crabParachainKaruraConfig } from '../config';
 import { CrabParachainKaruraBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 

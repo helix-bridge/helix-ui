@@ -8,7 +8,7 @@ import { BridgeBase } from 'shared/core/bridge';
 import { CrossToken, PolkadotChainConfig, TxConfirmComponentProps } from 'shared/model';
 import { convertToSS58 } from 'shared/utils/helper/address';
 import { isPolkadotNetwork } from 'shared/utils/network/network';
-import { getDisplayName } from 'utils/network';
+import { getDisplayName } from 'utils/network/network';
 
 type Fee = Pick<CrossToken, 'symbol' | 'amount'>;
 
