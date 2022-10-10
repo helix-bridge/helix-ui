@@ -1,8 +1,8 @@
 import { isAddress } from 'ethers/lib/utils';
+import { SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
 import { CrossOverview, Network, PolkadotChainConfig, TokenWithBridgesInfo } from 'shared/model';
 import { isSS58Address } from 'shared/utils/helper/validator';
 import { isPolkadotNetwork } from 'shared/utils/network/network';
-import { chainConfigs } from './network/network';
 
 export const isTransferableTokenPair = (token1: TokenWithBridgesInfo, token2: TokenWithBridgesInfo): boolean => {
   const check = (token: TokenWithBridgesInfo) => (item: CrossOverview) =>
@@ -26,7 +26,7 @@ export const isValidAddressStrict = (address: string, network: Network): boolean
   }
 
   if (isPolkadotNetwork(network)) {
-    const target = chainConfigs.find((item) => item.name === network) as PolkadotChainConfig;
+    const target = SYSTEM_CHAIN_CONFIGURATIONS.find((item) => item.name === network) as PolkadotChainConfig;
 
     return isSS58Address(address, target.ss58Prefix);
   }
