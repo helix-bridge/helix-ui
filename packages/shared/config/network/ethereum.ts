@@ -49,6 +49,11 @@ export const ethereumConfig: EthereumChainConfig = {
           partner: { name: 'heco', role: 'issuing', symbol: 'RING' },
           deprecated: true,
         },
+        {
+          category: 'helix',
+          bridge: 'substrateDVM-ethereum',
+          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'WRING' },
+        },
       ],
       type: 'mapping',
       host: 'ethereum',
@@ -65,6 +70,11 @@ export const ethereumConfig: EthereumChainConfig = {
           bridge: 'ethereum-darwinia',
           partner: { name: 'darwinia', role: 'issuing', symbol: 'KTON' },
           deprecated: true,
+        },
+        {
+          category: 'helix',
+          bridge: 'substrateDVM-ethereum',
+          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'KTON' },
         },
       ],
       type: 'mapping',
