@@ -29,7 +29,7 @@ import { polygonOptimism } from './celer/polygon-optimism/utils/bridge';
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from './helix/substrate-dvm/utils/bridge';
 import { darwiniaCrabDVM, pangoroPangolinDVM } from './helix/substrate-substrateDVM/utils/bridge';
 import { crabCrabParachain, pangolinPangolinParachain } from './helix/substrate-substrateParachain/utils/bridge';
-import { pangoroDVMGoerli } from './helix/substrateDVM-ethereum/utils/bridge';
+import { pangoroDVMGoerli, darwiniaDVMEthereum } from './helix/substrateDVM-ethereum/utils/bridge';
 import { darwiniaDVMCrabDVM, pangoroDVMPangolinDVM } from './helix/substrateDVM-substrateDVM/utils/bridge';
 import { darwiniaDVMDarwiniaDVM, pangoroDVMPangoroDVM } from './helix/substrateDVM-substrateDVM/utils/bridge-inner';
 import { crabParachainKarura } from './xcm/crabParachain-karura/utils/bridge';
@@ -54,6 +54,7 @@ const formalBridges = [
   darwiniaCrabDVM,
   darwiniaDVMCrabDVM,
   darwiniaDVMDarwiniaDVM,
+  darwiniaDVMEthereum,
   ethereumHeco,
   ethereumPolygon,
   hecoPolygon,

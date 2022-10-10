@@ -2,7 +2,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { Contract } from 'ethers';
 import last from 'lodash/last';
 import { from, Observable, switchMap } from 'rxjs';
-import { goerliConfig, pangoroDVMConfig } from 'shared/config/network';
+import { darwiniaDVMConfig, ethereumConfig, goerliConfig, pangoroDVMConfig } from 'shared/config/network';
 import {
   CrossChainDirection,
   CrossToken,
@@ -20,7 +20,7 @@ import { TxValidation } from '../../../../model';
 import { Bridge } from '../../../../core/bridge';
 import { getTokenConfigFromHelixRecord } from '../../../../utils/record/record';
 import backingAbi from '../config/backing.json';
-import { pangoroDVMGoerliConfig } from '../config/bridge';
+import { darwiniaDVMEthereumConfig, pangoroDVMGoerliConfig } from '../config/bridge';
 import guardAbi from '../config/guard.json';
 import mappingTokenAbi from '../config/mappingTokenFactory.json';
 import { IssuingPayload, RedeemPayload, SubstrateDVMEthereumBridgeConfig } from '../model';
@@ -215,3 +215,13 @@ export const pangoroDVMGoerli = new SubstrateDVMEthereumBridge(pangoroDVMConfig,
   name: 'substrateDVM-ethereum',
   category: 'helix',
 });
+
+export const darwiniaDVMEthereum = new SubstrateDVMEthereumBridge(
+  darwiniaDVMConfig,
+  ethereumConfig,
+  darwiniaDVMEthereumConfig,
+  {
+    name: 'substrateDVM-ethereum',
+    category: 'helix',
+  }
+);

@@ -7,3 +7,11 @@ export const pangoroDVMGoerliConfig: SubstrateDVMEthereumBridgeConfig = {
     guard: '0xB63846f957A97eC982b83Bb50957A519878196Ef',
   },
 };
+
+export const darwiniaDVMEthereumConfig: SubstrateDVMEthereumBridgeConfig = {
+  contracts: {
+    backing: '0xD1B10B114f1975d8BCc6cb6FC43519160e2AA978',
+    issuing: '0xFBAD806Bdf9cEC2943be281FB355Da05068DE925',
+    guard: '0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1',
+  },
+};
