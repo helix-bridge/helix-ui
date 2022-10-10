@@ -1,21 +1,31 @@
 /// <reference types="jest" />
 
+import isEqual from 'lodash/isEqual';
+import unionWith from 'lodash/unionWith';
 import { BridgeBase } from 'shared/core/bridge';
 import { ChainConfig, CrossToken, Network } from 'shared/model';
 import { toMiddleSplitNaming } from 'shared/utils/helper/common';
 import { isDVMNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
+import { BRIDGES } from '../bridges/bridges';
 import { unknownUnavailable } from '../bridges/unknown-unavailable/utils/bridge';
-import { bridgeCategoryDisplay, formalBridges, getBridge, getBridges, testBridges } from '../utils/bridge';
-import { chainConfigs, getChainConfig, crossChainGraph } from '../utils/network/network';
+import { bridgeCategoryDisplay, getBridge, getBridges } from '../utils/bridge';
+import { chainConfigs, genCrossChainGraph, getChainConfig } from '../utils/network/network';
 
 // exclude the config that not contains transferable tokens;
 const configs = chainConfigs.filter((item) => !!item.tokens.filter((token) => !!token.cross.length).length);
 
-const allDirections = crossChainGraph
-  .map(([departure, arrivals]) => arrivals.map((arrival) => [departure, arrival]))
-  .flat();
+const calcBridgesAmount = (data: [Network, Network[]][]) =>
+  unionWith(
+    data.map(([from, tos]) => tos.map((to) => [from, to])).flat(),
+    (pre, cur) => isEqual(pre, cur) || isEqual(pre.reverse(), cur)
+  );
 
 describe('bridge utils', () => {
+  const bridges = genCrossChainGraph(BRIDGES);
+  const formalBridges = calcBridgesAmount(bridges.filter((item) => !getChainConfig(item[0]).isTest));
+  const testBridges = calcBridgesAmount(bridges.filter((item) => getChainConfig(item[0]).isTest));
+
+  const allDirections = bridges.map(([departure, arrivals]) => arrivals.map((arrival) => [departure, arrival])).flat();
   console.log('🌉 All cross-chain directions to be tested', allDirections);
 
   it('should support bridge count: ', () => {

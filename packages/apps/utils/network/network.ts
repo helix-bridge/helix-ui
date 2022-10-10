@@ -1,13 +1,18 @@
 import cloneDeep from 'lodash/cloneDeep';
+import isEqual from 'lodash/isEqual';
 import memoize from 'lodash/memoize';
 import pick from 'lodash/pick';
 import sortBy from 'lodash/sortBy';
-import unionWith from 'lodash/unionWith';
 import upperFirst from 'lodash/upperFirst';
 import { SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
+import { BridgeBase } from 'shared/core/bridge';
 import { DVMChain, EthereumChain, ParachainChain, PolkadotChain } from 'shared/core/chain';
 import {
+  Arrival,
+  BridgeConfig,
   ChainConfig,
+  ContractConfig,
+  Departure,
   DVMChainConfig,
   EthereumChainConfig,
   Network,
@@ -16,13 +21,10 @@ import {
 } from 'shared/model';
 import { getCustomNetworkConfig } from 'shared/utils/helper/storage';
 import { isDVMNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
-import isEqual from 'lodash/isEqual';
-import { BridgeBase } from 'shared/core/bridge';
-import { Arrival, BridgeConfig, ContractConfig, Departure } from 'shared/model';
-import { BRIDGES } from '../../bridges/bridges';
+import { Bridge } from '../../core/bridge';
 
-export const crossChainGraph = BRIDGES.reduce(
-  (acc: [Departure, Arrival[]][], bridge: BridgeBase<BridgeConfig<ContractConfig>>) => {
+export const genCrossChainGraph = (bridges: Bridge<BridgeConfig, ChainConfig, ChainConfig>[]) =>
+  bridges.reduce((acc: [Departure, Arrival[]][], bridge: BridgeBase<BridgeConfig<ContractConfig>>) => {
     const check = ([ver1, ver2]: [Departure, Departure]) => {
       const departure = acc.find((item) => isEqual(item[0], ver1));
       if (departure) {
@@ -36,36 +38,22 @@ export const crossChainGraph = BRIDGES.reduce(
     check(bridge.redeem);
 
     return acc;
-  },
-  []
-);
+  }, []);
 
 export const chainConfigs = (() => {
-  const data = unionWith(
-    crossChainGraph
-      .map(([departure, arrivals]) => [departure, ...arrivals])
-      .filter((item) => item.length > 1)
-      .flat(),
-    (pre, next) => pre === next
-  ).map((vertices) => {
-    const result: PolkadotChainConfig | EthereumChainConfig | ParachainChainConfig | undefined =
-      SYSTEM_CHAIN_CONFIGURATIONS.find((item) => vertices === item.name);
+  const data = SYSTEM_CHAIN_CONFIGURATIONS.map((result) => {
     let config = cloneDeep(result);
 
-    if (!config) {
-      throw new Error(`Can not find ${vertices} network configuration`);
-    } else {
-      const customConfigs = getCustomNetworkConfig();
+    const customConfigs = getCustomNetworkConfig();
 
-      if (customConfigs[config.name]) {
-        config = { ...config, ...pick(customConfigs[config.name], Object.keys(config)) } as PolkadotChainConfig;
-      }
-
-      config.tokens = config?.tokens.map((token) => ({
-        ...token,
-        cross: token.cross.filter((item) => !item.deprecated),
-      }));
+    if (customConfigs[config.name]) {
+      config = { ...config, ...pick(customConfigs[config.name], Object.keys(config)) } as PolkadotChainConfig;
     }
+
+    config.tokens = config?.tokens.map((token) => ({
+      ...token,
+      cross: token.cross.filter((item) => !item.deprecated),
+    }));
 
     return config as PolkadotChainConfig | EthereumChainConfig | ParachainChainConfig;
   });
@@ -89,14 +77,13 @@ export const toChain = (conf: ChainConfig) => {
   return new EthereumChain(conf as EthereumChainConfig);
 };
 
-export const chains: (ParachainChain | PolkadotChain | EthereumChain)[] = chainConfigs.map(toChain);
-
-function getConfig(name: Network | null | undefined, source = chainConfigs): ChainConfig {
+function getConfig(name: Network | null | undefined): ParachainChain | PolkadotChain | EthereumChain {
   if (!name) {
     throw new Error(`You must pass a 'name' parameter to find the chain config`);
   }
 
-  const result = source.find((item) => item.name === name);
+  const chains: (ParachainChain | PolkadotChain | EthereumChain)[] = SYSTEM_CHAIN_CONFIGURATIONS.map(toChain);
+  const result = chains.find((item) => item.name === name);
 
   if (!result) {
     throw new Error(`Can not find the chain config by ${name}`);
@@ -106,11 +93,6 @@ function getConfig(name: Network | null | undefined, source = chainConfigs): Cha
 }
 
 export const getChainConfig = memoize(getConfig, (name) => name);
-
-export const getOriginChainConfig = memoize(
-  (name: Network | null | undefined) => getConfig(name, SYSTEM_CHAIN_CONFIGURATIONS.map(toChain)),
-  (name) => name
-);
 
 // eslint-disable-next-line complexity
 export function getDisplayName(config: ChainConfig | null | Network): string {

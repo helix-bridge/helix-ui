@@ -18,7 +18,6 @@ import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { getBridge, isSubstrateDVM2Ethereum } from 'utils/bridge';
 import { TxValidation } from '../../../../model';
 import { Bridge } from '../../../../core/bridge';
-// import { getChainConfig } from '../../../../utils/network';
 import { getTokenConfigFromHelixRecord } from '../../../../utils/record/record';
 import backingAbi from '../config/backing.json';
 import { pangoroDVMGoerliConfig } from '../config/bridge';

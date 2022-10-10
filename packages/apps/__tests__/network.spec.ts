@@ -19,11 +19,12 @@ import {
 import { crabParachainConfig } from 'shared/config/network/crab-parachain';
 import { pangolinParachainConfig } from 'shared/config/network/pangolin-parachain';
 import { Network } from 'shared/model';
-import { chainConfigs, crossChainGraph, getChainConfig, getDisplayName, getOriginChainConfig } from '../utils/network';
+import { BRIDGES } from '../bridges/bridges';
+import { chainConfigs, genCrossChainGraph, getChainConfig, getDisplayName } from '../utils/network';
 import { getWrappedToken } from '../utils/token';
 
 describe('network utils', () => {
-  const data = [...crossChainGraph];
+  const data = [...genCrossChainGraph(BRIDGES)];
   const sort = (ary: string[]) => sortBy(ary, (cur) => cur.charCodeAt(0));
   const getOverview = (departure: Network, arrival: Network) =>
     chainConfigs
@@ -226,7 +227,7 @@ describe('network utils', () => {
   });
 
   it('can get origin chain config that contains deprecated bridges', () => {
-    const result = getOriginChainConfig('crab-dvm');
+    const result = getChainConfig('crab-dvm');
     const target = result.tokens.find((it) => it.symbol === 'xRING');
 
     expect(target?.cross.length).toEqual(4);

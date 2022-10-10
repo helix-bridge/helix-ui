@@ -8,7 +8,7 @@ import { Logo } from 'shared/components/widget/Logo';
 import { ChainBase } from 'shared/core/chain';
 import { ChainConfig, CrossToken, TokenInfoWithMeta, TokenWithBridgesInfo } from 'shared/model';
 import { isEthereumNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
-import { chainConfigs, chains, getDisplayName } from 'utils/network';
+import { chainConfigs, getChainConfig, getDisplayName } from 'utils/network';
 import { useITranslation } from '../../hooks';
 import { isTransferableTokenPair } from '../../utils/validate';
 
@@ -177,7 +177,7 @@ export function Destination({
               if (onChange) {
                 onChange({
                   ...omit(token, 'label'),
-                  meta: chains.find((item) => item.name === token.host)!,
+                  meta: getChainConfig(token.host),
                   amount: value.amount,
                 });
               }

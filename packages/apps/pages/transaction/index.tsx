@@ -14,7 +14,6 @@ import { CrossChainState } from 'shared/components/widget/CrossChainStatus';
 import { Logo } from 'shared/components/widget/Logo';
 import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { DATE_TIME_FORMAT } from 'shared/config/constant';
-import { SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
 import { HelixHistoryRecord, Network } from 'shared/model';
 import { convertToDvm, revertAccount } from 'shared/utils/helper/address';
 import { prettyNumber } from 'shared/utils/helper/balance';
@@ -26,7 +25,7 @@ import { getDetailPaths } from '../../utils/record/path';
 import { getFeeAmountFromHelixRecord, getSentAmountFromHelixRecord } from '../../utils/record/record';
 
 function RecordAccount({ chain, account }: { chain: Network; account: string }) {
-  const chainConfig = getChainConfig(chain, SYSTEM_CHAIN_CONFIGURATIONS);
+  const chainConfig = getChainConfig(chain);
   const displayAccount = revertAccount(account, chainConfig);
 
   return (
