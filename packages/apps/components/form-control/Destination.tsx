@@ -10,6 +10,7 @@ import { ChainConfig, CrossToken, TokenInfoWithMeta, TokenWithBridgesInfo } from
 import { isEthereumNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
 import { chainConfigs, getChainConfig, getDisplayName } from 'utils/network';
 import { useITranslation } from '../../hooks';
+import { toChain } from '../../utils/network/chain';
 import { isTransferableTokenPair } from '../../utils/validate';
 
 interface DestinationProps {
@@ -173,11 +174,12 @@ export function Destination({
             onChange={(_, selected) => {
               // selected[0] token information may be incomplete
               const token = (selected as unknown as [ChainConfig, TokenWithBridgesInfo])[1];
+              const config = getChainConfig(token.host);
 
               if (onChange) {
                 onChange({
                   ...omit(token, 'label'),
-                  meta: getChainConfig(token.host),
+                  meta: toChain(config),
                   amount: value.amount,
                 });
               }

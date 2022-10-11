@@ -7,6 +7,7 @@ import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { BridgeBase } from 'shared/core/bridge';
 import { CrossChainDirection, CrossToken, CustomFormControlProps } from 'shared/model';
 import { getBridges } from 'utils/bridge';
+import { bridgeConstructors } from '../../bridges/bridges';
 import { CommonBridge } from '../../core/bridge';
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { BridgeState } from '../bridge/BridgeState';
@@ -18,7 +19,25 @@ type BridgeSelectorProps = CustomFormControlProps<CommonBridge> & {
 
 export function BridgeSelector({ direction, value, onChange }: BridgeSelectorProps) {
   const { t } = useTranslation();
-  const bridges = useMemo(() => getBridges(direction), [direction]);
+  const bridges = useMemo(() => {
+    const configs = getBridges(direction);
+    const isInnerDirection = direction.from.host === direction.to.host;
+
+    return configs
+      .map((config) =>
+        bridgeConstructors
+          .filter(
+            // FIXME: Inner Constructor naming must end with 'Inner';
+            (item) => isInnerDirection === item.name.endsWith('Inner') && item.supportBridges.includes(config.name)
+          )
+          .map((Constructor) => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return new Constructor(config.departure, config.arrival, config.config, config.options);
+          })
+      )
+      .flat();
+  }, [direction]);
 
   const needClaim = useMemo(() => {
     const overview = direction.from?.cross.find((item) => item.partner.name === direction.to?.meta.name);

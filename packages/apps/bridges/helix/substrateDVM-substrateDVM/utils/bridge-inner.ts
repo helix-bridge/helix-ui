@@ -1,6 +1,6 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { Observable } from 'rxjs';
-import { CrossChainDirection, CrossToken, DVMChainConfig, Tx } from 'shared/model';
+import { BridgeName, CrossChainDirection, CrossToken, DVMChainConfig, Tx } from 'shared/model';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { Bridge } from '../../../../core/bridge';
@@ -13,6 +13,8 @@ export class SubstrateDVMSubstrateDVMBridgeInner extends Bridge<
   DVMChainConfig,
   DVMChainConfig
 > {
+  static supportBridges: BridgeName[] = ['substrateDVM-substrateDVM'];
+
   back(payload: IssuingPayload): Observable<Tx> {
     const {
       sender,

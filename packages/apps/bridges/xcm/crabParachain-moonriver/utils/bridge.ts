@@ -1,6 +1,7 @@
 import { BN } from '@polkadot/util';
 import { Observable } from 'rxjs';
 import {
+  BridgeName,
   CrossChainDirection,
   CrossToken,
   ParachainChainConfig,
@@ -22,6 +23,8 @@ export class CrabParachainMoonriverBridge extends Bridge<
   ParachainChainConfig,
   ParachainEthereumCompatibleChainConfig
 > {
+  static supportBridges: BridgeName[] = ['crabParachain-moonriver'];
+
   private patchAmount(departure: CrossToken) {
     const pos = -3;
     const timestamp = Date.now().toString().slice(0, pos);

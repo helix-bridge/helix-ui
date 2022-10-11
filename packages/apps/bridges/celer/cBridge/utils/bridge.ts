@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { from } from 'rxjs/internal/observable/from';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { CrossChainDirection, CrossToken, EthereumChainConfig, HelixHistoryRecord, Tx } from 'shared/model';
+import { BridgeName, CrossChainDirection, CrossToken, EthereumChainConfig, HelixHistoryRecord, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
@@ -22,6 +22,36 @@ import { GetTransferStatusRequest, WithdrawLiquidityRequest, WithdrawMethodType 
 import { WithdrawReq, WithdrawType } from '../ts-proto/sgn/cbridge/v1/tx_pb';
 
 export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConfig, EthereumChainConfig> {
+  static supportBridges: BridgeName[] = [
+    'arbitrum-astar',
+    'arbitrum-avalanche',
+    'arbitrum-optimism',
+    'arbitrum-polygon',
+    'astar-avalanche',
+    'astar-optimism',
+    'avalanche-optimism',
+    'avalanche-polygon',
+    'bsc-arbitrum',
+    'bsc-astar',
+    'bsc-avalanche',
+    'bsc-optimism',
+    'bsc-polygon',
+    'ethereum-arbitrum',
+    'ethereum-astar',
+    'ethereum-avalanche',
+    'ethereum-bsc',
+    'ethereum-heco',
+    'ethereum-optimism',
+    'ethereum-polygon',
+    'crabDVM-ethereum',
+    'crabDVM-astar',
+    'crabDVM-heco',
+    'crabDVM-polygon',
+    'heco-polygon',
+    'polygon-astar',
+    'polygon-optimism',
+  ];
+
   private prefix = hexToBn('0x6878000000000000');
   public client = new WebClient(`https://cbridge-prod2.celer.network`, null, null);
 

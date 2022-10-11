@@ -3,6 +3,7 @@ import { Contract } from 'ethers';
 import last from 'lodash/last';
 import { from, Observable, switchMap } from 'rxjs';
 import {
+  BridgeName,
   CrossChainDirection,
   CrossToken,
   DailyLimit,
@@ -28,6 +29,8 @@ export class SubstrateDVMEthereumBridge extends Bridge<
   DVMChainConfig,
   EthereumChainConfig
 > {
+  static supportBridges: BridgeName[] = ['substrateDVM-ethereum'];
+
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction } = payload;
     const { from: departure, to } = direction;

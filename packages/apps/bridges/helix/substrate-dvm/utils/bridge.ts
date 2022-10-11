@@ -5,7 +5,7 @@ import { from as rxFrom } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { SUBSTRATE_DVM_WITHDRAW } from 'shared/config/env';
-import { DVMChainConfig, PolkadotChainConfig, Tx } from 'shared/model';
+import { BridgeName, DVMChainConfig, PolkadotChainConfig, Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { convertToSS58, dvmAddressToAccountId } from 'shared/utils/helper/address';
 import { toWei } from 'shared/utils/helper/balance';
@@ -18,6 +18,8 @@ import { TxValidation } from '../../../../model';
 import { IssuingPayload, RedeemPayload, SubstrateDVMBridgeConfig } from '../model';
 
 export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, PolkadotChainConfig, DVMChainConfig> {
+  static supportBridges: BridgeName[] = ['substrate-DVM'];
+
   back(payload: IssuingPayload): Observable<Tx> {
     const {
       sender,

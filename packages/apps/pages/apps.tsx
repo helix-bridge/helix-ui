@@ -12,7 +12,7 @@ import { CrossChain } from '../components/CrossChain';
 import { DisclaimerModal } from '../components/widget/DisclaimerModal';
 import { useITranslation } from '../hooks';
 import { AccountProvider, ApiProvider, ClaimProvider, TxProvider, usePersonal, WalletProvider } from '../providers';
-import { toChain } from '../utils/network';
+import { toChain } from '../utils/network/chain';
 
 const ActiveAccount = dynamic(() => import('../components/widget/account/ActiveAccount'), { ssr: false });
 const History = dynamic(() => import('../components/history/History'), { ssr: false });

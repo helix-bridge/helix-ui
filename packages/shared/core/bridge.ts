@@ -44,7 +44,7 @@ export class BridgeBase<C = BridgeConfig, O extends ChainConfig = ChainConfig, T
 
   private _config: C;
 
-  private options: BridgeOptions;
+  readonly options: BridgeOptions;
 
   private crossChain: Map<Departure[], string> = new Map();
 
