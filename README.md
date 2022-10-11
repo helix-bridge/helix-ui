@@ -43,18 +43,22 @@ Update files below under the apps project:
 1. `config/bridge.ts` Add bridge
 1. `utils/bridge/predicates.ts` Check the predicate function generated
 
-### Step-3: Add balance query
-
-`utils/balance.ts` Update getBalance function
-
-### Step-4: Unit test
+### Step-3: Unit test
 
 Run `yarn test:apps` under the project root, fix the failed test suits.
 
-### Step-5: Complete bridge development
+### Step-4: Complete bridge development
 
 Under the `bridges/[BRIDGE_TYPE]` folder, you will find a new bridge folder which created by the script
 
-1. [YOUR BRIDGE]/utils/fee.ts Add the method to get fee here
-1. [YOUR BRIDGE]/utils/tx.ts Add the transfer methods, param validation functions and so on.
-1. [YOUR BRIDGE]/: Complete the react component
+##### [YOUR BRIDGE]/*.tsx
+
+Complete the react component.
+
+> Adjust the type parameter of <b>CrossToken</b>. <b>ChainConfig</b> is just a base type. You can find all supported chain types at <b>packages/shared/model/network/config.ts</b>
+
+##### [YOUR BRIDGE]/utils/bridge.ts
+
+Implement the methods needed for the generated bridge class.
+
+> Adjust the Bridge's second and third type parameters. <b>ChainConfig</b> is just a base type. You can find all supported chain types at <b>packages/shared/model/network/config.ts</b>

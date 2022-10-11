@@ -107,7 +107,7 @@ function component() {
             import { useAfterTx } from '../../../hooks';
             import { CrossChainComponentProps } from '../../../model/component';
             import { TxObservableFactory } from '../../../model/tx';
-            import { IssuingPayload } from './model';
+            import { $3 } from './model';
             import { ${from}${to}Bridge } from './utils';
 
             export function $1({
@@ -119,11 +119,11 @@ function component() {
                 setTxObservableFactory,
             }: CrossChainComponentProps<${from}${to}Bridge, CrossToken<ChainConfig>, CrossToken<ChainConfig>>) {
                 const { t } = useTranslation();
-                const { afterCrossChain } = useAfterTx<IssuingPayload>();
+                const { afterCrossChain } = useAfterTx<$3>();
                 const [balance] = (balances ?? []) as BN[];
 
                 useEffect(() => {
-                    const fn = () => (data: IssuingPayload) => {
+                    const fn = () => (data: $3) => {
                     const validateObs = data.bridge.validate([balance], {
                         balance,
                         amount: new BN(toWei(data.direction.from)),
@@ -323,8 +323,8 @@ function init() {
     mkdir $path'/config'
     initConfig $path'/config' $departure $arrival
 
-    component $departure $path
-    component $arrival $path
+    component $departure $path 'IssuingPayload'
+    component $arrival $path 'RedeemPayload'
 
     indexFile $departure $index
     indexFile $arrival $index
