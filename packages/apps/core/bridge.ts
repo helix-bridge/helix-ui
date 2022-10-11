@@ -134,5 +134,3 @@ export abstract class Bridge<
     })!;
   }
 }
-
-export type CommonBridge = Bridge<BridgeConfig, ChainConfig, ChainConfig>;

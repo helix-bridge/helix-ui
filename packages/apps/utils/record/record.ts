@@ -3,7 +3,7 @@ import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord, TokenWithBridgesInfo } from 'shared/model';
 import { fromWei, prettyNumber } from 'shared/utils/helper/balance';
 import { isPolkadotNetwork } from 'shared/utils/network/network';
-import { getChainConfig, getOriginChainConfig } from '../network';
+import { getOriginChainConfig } from '../network';
 
 export function getTokenConfigFromHelixRecord(
   record: HelixHistoryRecord,
@@ -49,7 +49,7 @@ export function getReceivedAmountFromHelixRecord(record: HelixHistoryRecord) {
 
 export function getFeeAmountFromHelixRecord(record: HelixHistoryRecord) {
   const { fromChain, feeToken } = record;
-  const fromConfig = getChainConfig(fromChain);
+  const fromConfig = getOriginChainConfig(fromChain);
   const token = fromConfig.tokens.find((item) => item.symbol === feeToken)!;
   let decimals = token?.decimals;
 
@@ -62,7 +62,7 @@ export function getFeeAmountFromHelixRecord(record: HelixHistoryRecord) {
 
 export function getSentAmountFromHelixRecord(record: HelixHistoryRecord) {
   const { fromChain, sendToken, sendAmount } = record;
-  const fromToken = getChainConfig(fromChain)!.tokens.find((item) => item.symbol === sendToken);
+  const fromToken = getOriginChainConfig(fromChain)!.tokens.find((item) => item.symbol === sendToken);
 
   return fromWei({ value: sendAmount, decimals: fromToken?.decimals }, (val) =>
     prettyNumber(val, { ignoreZeroDecimal: true })

@@ -1,16 +1,14 @@
 import isEqual from 'lodash/isEqual';
 import upperFirst from 'lodash/upperFirst';
+import { BridgeBase } from 'shared/core/bridge';
 import { BridgeCategory, BridgeConfig, ChainConfig, CrossChainDirection, Network } from 'shared/model';
-import { BRIDGES } from '../../config/bridge';
 import { unknownUnavailable } from '../../bridges/unknown-unavailable/config';
-import { Bridge, CommonBridge } from '../../core/bridge';
+import { BRIDGES } from '../../config/bridge';
 import { getChainConfig } from '../network';
 
-export function getBridge<
-  B extends BridgeConfig = BridgeConfig,
-  O extends ChainConfig = ChainConfig,
-  T extends ChainConfig = ChainConfig
->(source: CrossChainDirection | [Network | ChainConfig, Network | ChainConfig]): Bridge<B, O, T> {
+export function getBridge<T extends BridgeConfig>(
+  source: CrossChainDirection | [Network | ChainConfig, Network | ChainConfig]
+): BridgeBase<T> {
   const direction = Array.isArray(source)
     ? source.map((item) => (typeof item === 'object' ? item.name : (item as Network)))
     : [source.from, source.to].map((item) => {
@@ -22,13 +20,13 @@ export function getBridge<
   const bridge = BRIDGES.find((item) => isEqual(item.issue, direction) || isEqual(item.redeem, direction));
 
   if (!bridge) {
-    return unknownUnavailable as unknown as Bridge<B, O, T>;
+    return unknownUnavailable as unknown as BridgeBase<T>;
   }
 
-  return bridge as unknown as Bridge<B, O, T>;
+  return bridge as unknown as BridgeBase<T>;
 }
 
-export function getBridges(source: CrossChainDirection): CommonBridge[] {
+export function getBridges(source: CrossChainDirection): BridgeBase[] {
   const {
     from: { cross },
     to,
@@ -45,7 +43,7 @@ export function getBridges(source: CrossChainDirection): CommonBridge[] {
       bridge.isTest === source.from.meta.isTest &&
       (bridge.isIssue(source.from.meta, source.to.meta) || bridge.isRedeem(source.from.meta, source.to.meta)) &&
       overviews.find((overview) => overview.category === bridge.category && overview.bridge === bridge.name)
-  ) as CommonBridge[];
+  ) as BridgeBase[];
 }
 
 export function bridgeCategoryDisplay(category: BridgeCategory) {
