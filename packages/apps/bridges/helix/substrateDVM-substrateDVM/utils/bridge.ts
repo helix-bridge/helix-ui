@@ -74,10 +74,7 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
 
   refund(record: HelixHistoryRecord): Observable<Tx> {
     const { fromChain, toChain, sendAmount: amount, sender, id, sendTokenAddress: tokenAddress } = record;
-    const bridge = getBridge<SubstrateDVMSubstrateDVMBridgeConfig, DVMChainConfig, DVMChainConfig>([
-      fromChain,
-      toChain,
-    ]);
+    const bridge = getBridge<SubstrateDVMSubstrateDVMBridgeConfig>([fromChain, toChain]);
     const [departure, arrival] = bridge.isIssue(fromChain, toChain)
       ? [bridge.departure, bridge.arrival]
       : [bridge.arrival, bridge.departure];
@@ -107,7 +104,14 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
         genEthereumContractTxObs(
           address as string,
           (contract) =>
-            contract[method](departure.specVersion, '2000000', transferId, tokenAddress, sender, amount).send({
+            contract[method](
+              (departure as DVMChainConfig).specVersion,
+              '2000000',
+              transferId,
+              tokenAddress,
+              sender,
+              amount
+            ).send({
               from: sender,
               value: value?.toString(),
             }),
