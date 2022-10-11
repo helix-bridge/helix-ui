@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useState } from 'react';
 import { EMPTY } from 'rxjs';
 import type { Subscription } from 'rxjs/internal/Subscription';
 import { HelixHistoryRecord, Tx } from 'shared/model';
+import { bridgeFactory } from '../bridges/bridges';
 import { getBridge } from '../utils';
 import { useTx } from './tx';
 
@@ -53,7 +54,8 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
   const claim = useCallback(
     (record: HelixHistoryRecord) => {
       const { fromChain, toChain } = record;
-      const bridge = getBridge([fromChain, toChain]);
+      const config = getBridge([fromChain, toChain]);
+      const bridge = bridgeFactory(config);
 
       if (bridge && bridge.claim) {
         return bridge.claim(record).subscribe(genObserver(record));

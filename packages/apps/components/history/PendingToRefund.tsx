@@ -13,6 +13,7 @@ import { HelixHistoryRecord } from 'shared/model';
 import { gqlName } from 'shared/utils/helper/common';
 import { pollWhile } from 'shared/utils/helper/operator';
 import { getBridge } from 'utils/bridge';
+import { bridgeFactory } from '../../bridges/bridges';
 import type { CBridgeBridge } from '../../bridges/celer/cBridge/utils';
 import { HISTORY_RECORD_BY_ID } from '../../config/gql';
 import { useITranslation } from '../../hooks';
@@ -151,7 +152,8 @@ function Refund({ record, onSuccess }: RefundComponentProps) {
         event.stopPropagation();
         setLoading(true);
         const { fromChain, toChain } = record;
-        const bridge = getBridge([fromChain, toChain]);
+        const config = getBridge([fromChain, toChain]);
+        const bridge = bridgeFactory(config);
 
         if (bridge && bridge.refund) {
           bridge.refund(record).subscribe({

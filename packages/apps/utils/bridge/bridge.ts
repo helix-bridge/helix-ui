@@ -23,7 +23,7 @@ export function getBridge<T extends BridgeConfig>(
     return unknownUnavailable as unknown as BridgeBase<T>;
   }
 
-  return bridge as unknown as BridgeBase<T>;
+  return bridge as BridgeBase<T>;
 }
 
 export function getBridges(source: CrossChainDirection): BridgeBase[] {
@@ -43,7 +43,7 @@ export function getBridges(source: CrossChainDirection): BridgeBase[] {
       bridge.isTest === source.from.meta.isTest &&
       (bridge.isIssue(source.from.meta, source.to.meta) || bridge.isRedeem(source.from.meta, source.to.meta)) &&
       overviews.find((overview) => overview.category === bridge.category && overview.bridge === bridge.name)
-  ) as BridgeBase[];
+  );
 }
 
 export function bridgeCategoryDisplay(category: BridgeCategory) {

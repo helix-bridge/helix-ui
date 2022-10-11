@@ -1,3 +1,6 @@
+import type { BridgeBase } from 'shared/core/bridge';
+import { BridgeConfig, ChainConfig } from 'shared/model';
+import type { Bridge } from '../core/bridge';
 import { CBridgeBridge } from './celer/cBridge/utils';
 import { SubstrateDVMBridge } from './helix/substrate-dvm/utils';
 import { SubstrateSubstrateDVMBridge } from './helix/substrate-substrateDVM/utils';
@@ -18,3 +21,14 @@ export const bridgeConstructors = [
   SubstrateSubstrateDVMBridge,
   SubstrateSubstrateParachainBridge,
 ];
+
+export function bridgeFactory<C extends BridgeConfig, O extends ChainConfig, T extends ChainConfig>(
+  config: BridgeBase
+): Bridge<C, O, T> {
+  const Constructor = bridgeConstructors.find((item) => item.name === config.subClsName)!;
+
+  console.log('🚀 ~ file: BridgeSelector.tsx ~ line 35 ~ .map ~ Constructor', Constructor.name);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  return new Constructor(config.departure, config.arrival, config.config, config.options);
+}

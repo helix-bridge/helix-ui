@@ -5,15 +5,15 @@ import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo } from 'react';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { BridgeBase } from 'shared/core/bridge';
-import { CrossChainDirection, CrossToken, CustomFormControlProps } from 'shared/model';
+import { BridgeConfig, ChainConfig, CrossChainDirection, CrossToken, CustomFormControlProps } from 'shared/model';
 import { getBridges } from 'utils/bridge';
-import { bridgeConstructors } from '../../bridges/bridges';
-import { CommonBridge } from '../../core/bridge';
+import { bridgeFactory } from '../../bridges/bridges';
+import { Bridge } from '../../core/bridge';
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { BridgeState } from '../bridge/BridgeState';
 import { TokenOnChain } from '../widget/TokenOnChain';
 
-type BridgeSelectorProps = CustomFormControlProps<CommonBridge> & {
+type BridgeSelectorProps = CustomFormControlProps<Bridge<BridgeConfig, ChainConfig, ChainConfig>> & {
   direction: CrossChainDirection;
 };
 
@@ -22,18 +22,7 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
   const bridges = useMemo(() => {
     const configs = getBridges(direction);
 
-    return configs
-      .map((config) =>
-        bridgeConstructors
-          .filter((item) => item.name === config.subClsName)
-          .map((Constructor) => {
-            console.log('🚀 ~ file: BridgeSelector.tsx ~ line 35 ~ .map ~ Constructor', Constructor.name);
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            return new Constructor(config.departure, config.arrival, config.config, config.options);
-          })
-      )
-      .flat();
+    return configs.map((config) => bridgeFactory(config));
   }, [direction]);
 
   const needClaim = useMemo(() => {
