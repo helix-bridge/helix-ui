@@ -1,16 +1,14 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import { Contract, BigNumber } from 'ethers';
+import { BigNumber, Contract } from 'ethers';
 import last from 'lodash/last';
 import { EMPTY, from, Observable, switchMap } from 'rxjs';
-import { crabDVMConfig, darwiniaDVMConfig, pangolinDVMConfig, pangoroDVMConfig } from 'shared/config/network';
 import { CrossChainDirection, CrossToken, DailyLimit, DVMChainConfig, HelixHistoryRecord, Tx } from 'shared/model';
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
-import { TxValidation } from '../../../../model';
 import { Bridge } from '../../../../core/bridge';
+import { TxValidation } from '../../../../model';
 import { getBridge } from '../../../../utils/bridge';
-import { darwiniaDVMcrabDVMConfig, pangoroDVMpangolinDVMConfig } from '../config';
 import backingAbi from '../config/s2sv2backing.json';
 import burnAbi from '../config/s2sv2burn.json';
 import { IssuingPayload, RedeemPayload, SubstrateDVMSubstrateDVMBridgeConfig } from '../model';
@@ -158,23 +156,3 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
     return { limit: limit.toString(), spentToday: spentToday.toString() };
   }
 }
-
-export const darwiniaDVMCrabDVM = new SubstrateDVMSubstrateDVMBridge(
-  darwiniaDVMConfig,
-  crabDVMConfig,
-  darwiniaDVMcrabDVMConfig,
-  {
-    name: 'substrateDVM-substrateDVM',
-    category: 'helix',
-  }
-);
-
-export const pangoroDVMPangolinDVM = new SubstrateDVMSubstrateDVMBridge(
-  pangoroDVMConfig,
-  pangolinDVMConfig,
-  pangoroDVMpangolinDVMConfig,
-  {
-    name: 'substrateDVM-substrateDVM',
-    category: 'helix',
-  }
-);

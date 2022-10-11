@@ -1,3 +1,5 @@
+import { pangoroDVMConfig, goerliConfig, darwiniaDVMConfig, ethereumConfig } from 'shared/config/network';
+import { BridgeBase } from 'shared/core/bridge';
 import { SubstrateDVMEthereumBridgeConfig } from '../model';
 
 export const pangoroDVMGoerliConfig: SubstrateDVMEthereumBridgeConfig = {
@@ -8,6 +10,11 @@ export const pangoroDVMGoerliConfig: SubstrateDVMEthereumBridgeConfig = {
   },
 };
 
+export const pangoroDVMGoerli = new BridgeBase(pangoroDVMConfig, goerliConfig, pangoroDVMGoerliConfig, {
+  name: 'substrateDVM-ethereum',
+  category: 'helix',
+});
+
 export const darwiniaDVMEthereumConfig: SubstrateDVMEthereumBridgeConfig = {
   contracts: {
     backing: '0xD1B10B114f1975d8BCc6cb6FC43519160e2AA978',
@@ -15,3 +22,8 @@ export const darwiniaDVMEthereumConfig: SubstrateDVMEthereumBridgeConfig = {
     guard: '0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1',
   },
 };
+
+export const darwiniaDVMEthereum = new BridgeBase(darwiniaDVMConfig, ethereumConfig, darwiniaDVMEthereumConfig, {
+  name: 'substrateDVM-ethereum',
+  category: 'helix',
+});

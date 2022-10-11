@@ -1,8 +1,8 @@
 import isEqual from 'lodash/isEqual';
 import upperFirst from 'lodash/upperFirst';
 import { BridgeCategory, BridgeConfig, ChainConfig, CrossChainDirection, Network } from 'shared/model';
-import { BRIDGES } from '../../bridges/bridges';
-import { unknownUnavailable } from '../../bridges/unknown-unavailable/utils/bridge';
+import { BRIDGES } from '../../config/bridge';
+import { unknownUnavailable } from '../../bridges/unknown-unavailable/config';
 import { Bridge, CommonBridge } from '../../core/bridge';
 import { getChainConfig } from '../network';
 

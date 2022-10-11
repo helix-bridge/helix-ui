@@ -20,7 +20,7 @@ import { CrossChainComponentProps } from '../../../model/component';
 import { TxObservableFactory } from '../../../model/tx';
 import { useAccount } from '../../../providers';
 import { isEthereum2SubstrateDVM, isSubstrateDVM2Ethereum } from '../../../utils';
-import { getWrappedToken } from '../../../utils/token';
+import { getWrappedToken } from '../../../utils/network';
 import { IssuingPayload, RedeemPayload } from './model';
 import { SubstrateDVMEthereumBridge } from './utils/bridge';
 

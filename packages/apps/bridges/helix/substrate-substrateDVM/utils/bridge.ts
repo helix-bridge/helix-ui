@@ -7,7 +7,6 @@ import { from } from 'rxjs/internal/observable/from';
 import { zip } from 'rxjs/internal/observable/zip';
 import { map } from 'rxjs/internal/operators/map';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { crabDVMConfig, darwiniaConfig, pangolinDVMConfig, pangoroConfig } from 'shared/config/network';
 import {
   ChainConfig,
   CrossChainDirection,
@@ -23,9 +22,8 @@ import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
 import { isDVMNetwork } from 'shared/utils/network/network';
 import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
-import { TxValidation } from '../../../../model';
 import { Bridge } from '../../../../core/bridge';
-import { darwiniaCrabDVMConfig, pangoroPangolinDVMConfig } from '../config';
+import { TxValidation } from '../../../../model';
 import abi from '../config/abi.json';
 import { IssuingPayload, RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from '../model';
 import { getS2SMappingAddress } from './mappingParams';
@@ -146,20 +144,3 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
     >;
   }
 }
-
-export const darwiniaCrabDVM = new SubstrateSubstrateDVMBridge(darwiniaConfig, crabDVMConfig, darwiniaCrabDVMConfig, {
-  category: 'helix',
-  activeArrivalConnection: true,
-  name: 'substrate-substrateDVM',
-});
-
-export const pangoroPangolinDVM = new SubstrateSubstrateDVMBridge(
-  pangoroConfig,
-  pangolinDVMConfig,
-  pangoroPangolinDVMConfig,
-  {
-    category: 'helix',
-    activeArrivalConnection: true,
-    name: 'substrate-substrateDVM',
-  }
-);

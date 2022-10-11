@@ -3,13 +3,13 @@ import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord, TokenWithBridgesInfo } from 'shared/model';
 import { fromWei, prettyNumber } from 'shared/utils/helper/balance';
 import { isPolkadotNetwork } from 'shared/utils/network/network';
-import { getChainConfig } from '../network';
+import { getChainConfig, getOriginChainConfig } from '../network';
 
 export function getTokenConfigFromHelixRecord(
   record: HelixHistoryRecord,
   key: keyof Pick<HelixHistoryRecord, 'feeToken' | 'sendToken' | 'recvToken'> = 'sendToken'
 ): TokenWithBridgesInfo {
-  const chain = getChainConfig(record[key === 'recvToken' ? 'toChain' : 'fromChain']);
+  const chain = getOriginChainConfig(record[key === 'recvToken' ? 'toChain' : 'fromChain']);
   const symbol = record[key];
 
   return chain.tokens.find((item) => {

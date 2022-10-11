@@ -2,7 +2,7 @@
 
 import { Typography } from 'antd';
 import { create } from 'react-test-renderer';
-import { darwiniaDarwiniaDVM } from '../../bridges/helix/substrate-dvm/utils';
+import { darwiniaDarwiniaDVM } from '../../bridges/helix/substrate-dvm/config';
 import { CrossChainInfo } from '../../components/widget/CrossChainInfo';
 
 jest.mock('react-i18next', () => ({

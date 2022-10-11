@@ -1,12 +1,10 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { Observable } from 'rxjs';
-import { darwiniaDVMConfig, pangoroDVMConfig } from 'shared/config/network';
 import { CrossChainDirection, CrossToken, DVMChainConfig, Tx } from 'shared/model';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
-import { TxValidation } from '../../../../model';
 import { Bridge } from '../../../../core/bridge';
-import { darwiniaDVMDarwiniaDVMConfig, pangoroDVMPangoroDVMConfig } from '../config';
+import { TxValidation } from '../../../../model';
 import wringABI from '../config/wring.json';
 import { IssuingPayload, RedeemPayload, SubstrateDVMSubstrateDVMBridgeConfig } from '../model';
 
@@ -55,27 +53,3 @@ export class SubstrateDVMSubstrateDVMBridgeInner extends Bridge<
     return BN_ZERO;
   }
 }
-
-export const darwiniaDVMDarwiniaDVM = new SubstrateDVMSubstrateDVMBridgeInner(
-  darwiniaDVMConfig,
-  darwiniaDVMConfig,
-  darwiniaDVMDarwiniaDVMConfig,
-  {
-    name: 'substrateDVM-substrateDVM',
-    category: 'helix',
-    issueCompName: 'SubstrateDVMInner',
-    redeemCompName: 'SubstrateDVMInner',
-  }
-);
-
-export const pangoroDVMPangoroDVM = new SubstrateDVMSubstrateDVMBridgeInner(
-  pangoroDVMConfig,
-  pangoroDVMConfig,
-  pangoroDVMPangoroDVMConfig,
-  {
-    name: 'substrateDVM-substrateDVM',
-    category: 'helix',
-    issueCompName: 'SubstrateDVMInner',
-    redeemCompName: 'SubstrateDVMInner',
-  }
-);

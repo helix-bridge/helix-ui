@@ -1,6 +1,8 @@
+import { crabDVMConfig, ethereumConfig } from 'shared/config/network';
+import { BridgeBase } from 'shared/core/bridge';
 import { CrabDVMEthereumBridgeConfig } from '../model';
 
-export const crabDVMEthereumConfig: CrabDVMEthereumBridgeConfig = {
+const crabDVMEthereumConfig: CrabDVMEthereumBridgeConfig = {
   contracts: {
     backing: '0x841ce48F9446C8E281D3F1444cB859b4A6D0738C',
     issuing: '0x5427FEFA711Eff984124bFBB1AB6fbf5E3DA1820',
@@ -8,3 +10,8 @@ export const crabDVMEthereumConfig: CrabDVMEthereumBridgeConfig = {
     stablecoinIssuing: '0xB37D31b2A74029B5951a2778F959282E2D518595',
   },
 };
+
+export const crabDVMEthereum = new BridgeBase(crabDVMConfig, ethereumConfig, crabDVMEthereumConfig, {
+  name: 'crabDVM-ethereum',
+  category: 'cBridge',
+});

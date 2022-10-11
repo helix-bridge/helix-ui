@@ -2,7 +2,6 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { Contract } from 'ethers';
 import last from 'lodash/last';
 import { from, Observable, switchMap } from 'rxjs';
-import { darwiniaDVMConfig, ethereumConfig, goerliConfig, pangoroDVMConfig } from 'shared/config/network';
 import {
   CrossChainDirection,
   CrossToken,
@@ -16,15 +15,13 @@ import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { getBridge, isSubstrateDVM2Ethereum } from 'utils/bridge';
-import { TxValidation } from '../../../../model';
 import { Bridge } from '../../../../core/bridge';
-import { getTokenConfigFromHelixRecord } from '../../../../utils/record/record';
+import { TxValidation } from '../../../../model';
+import { getWrappedToken } from '../../../../utils/network';
 import backingAbi from '../config/backing.json';
-import { darwiniaDVMEthereumConfig, pangoroDVMGoerliConfig } from '../config/bridge';
 import guardAbi from '../config/guard.json';
 import mappingTokenAbi from '../config/mappingTokenFactory.json';
 import { IssuingPayload, RedeemPayload, SubstrateDVMEthereumBridgeConfig } from '../model';
-import { getWrappedToken } from '../../../../utils/token';
 
 export class SubstrateDVMEthereumBridge extends Bridge<
   SubstrateDVMEthereumBridgeConfig,
@@ -124,7 +121,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
     const bridge = getBridge<SubstrateDVMEthereumBridgeConfig>([fromChain, toChain]);
     const fromChainConfig = this.getChainConfig(toChain);
     const toChainConfig = this.getChainConfig(fromChain);
-    const sendToken = getTokenConfigFromHelixRecord(record);
+    const sendToken = this.getTokenConfigFromHelixRecord(record);
 
     const { contractAddress, abi, method } = isSubstrateDVM2Ethereum(fromChain, toChain)
       ? {
@@ -210,18 +207,3 @@ export class SubstrateDVMEthereumBridge extends Bridge<
     return { limit: limit.toString(), spentToday: '0' };
   }
 }
-
-export const pangoroDVMGoerli = new SubstrateDVMEthereumBridge(pangoroDVMConfig, goerliConfig, pangoroDVMGoerliConfig, {
-  name: 'substrateDVM-ethereum',
-  category: 'helix',
-});
-
-export const darwiniaDVMEthereum = new SubstrateDVMEthereumBridge(
-  darwiniaDVMConfig,
-  ethereumConfig,
-  darwiniaDVMEthereumConfig,
-  {
-    name: 'substrateDVM-ethereum',
-    category: 'helix',
-  }
-);

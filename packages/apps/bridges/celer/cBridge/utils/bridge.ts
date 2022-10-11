@@ -10,7 +10,6 @@ import { CrossChainDirection, CrossToken, EthereumChainConfig, HelixHistoryRecor
 import { entrance } from 'shared/utils/connection';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
-import { isBSCAstar, isCrabDVMAstar, isCrabDVMEthereum, isEthereumAstar } from 'utils/bridge';
 import { TxValidationMessages } from '../../../../config/validation';
 import { TxValidation } from '../../../../model';
 import { Bridge } from '../../../../core/bridge';
@@ -219,7 +218,8 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
   }
 
   isPegged(direction: CrossChainDirection<CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>): boolean {
-    const peggedFns = [isCrabDVMEthereum, isEthereumAstar, isCrabDVMAstar];
+    const peggedFns = [this.is('crab-dvm', 'ethereum'), this.is('ethereum', 'astar'), this.is('crab-dvm', 'astar')];
+    const isBSCAstar = this.is('bsc', 'astar');
 
     if (!this.isStablecoin(direction)) {
       return false;

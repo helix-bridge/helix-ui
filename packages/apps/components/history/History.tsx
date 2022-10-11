@@ -19,7 +19,7 @@ import { Paginator } from '../../model';
 import { useAccount, useApi } from '../../providers';
 import { useClaim } from '../../providers/claim';
 import { isEthereumDarwinia } from '../../utils';
-import { getChainConfig } from '../../utils/network';
+import { getOriginChainConfig } from '../../utils/network';
 import {
   getReceivedAmountFromHelixRecord,
   getSentAmountFromHelixRecord,
@@ -201,8 +201,8 @@ export default function History() {
               {/*  eslint-disable-next-line complexity*/}
               {records.map((record) => {
                 const { fromChain, toChain, recvToken } = record;
-                const dep = getChainConfig(fromChain);
-                const arrival = getChainConfig(toChain);
+                const dep = getOriginChainConfig(fromChain);
+                const arrival = getOriginChainConfig(toChain);
                 const fromToken = getTokenConfigFromHelixRecord(record)!;
                 const toToken = arrival.tokens.find((item) => item.symbol === recvToken)!;
                 const [d2eHeight, d2dIndex] = record.requestTxHash.split('-');

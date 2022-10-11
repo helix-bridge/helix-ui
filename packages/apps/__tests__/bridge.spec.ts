@@ -6,10 +6,10 @@ import { BridgeBase } from 'shared/core/bridge';
 import { ChainConfig, CrossToken, Network } from 'shared/model';
 import { toMiddleSplitNaming } from 'shared/utils/helper/common';
 import { isDVMNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
-import { BRIDGES } from '../bridges/bridges';
-import { unknownUnavailable } from '../bridges/unknown-unavailable/utils/bridge';
+import { BRIDGES } from '../config/bridge';
+import { unknownUnavailable } from '../bridges/unknown-unavailable/config';
 import { bridgeCategoryDisplay, getBridge, getBridges } from '../utils/bridge';
-import { chainConfigs, genCrossChainGraph, getChainConfig } from '../utils/network/network';
+import { chainConfigs, crossChainGraph, getChainConfig } from '../utils/network/network';
 
 // exclude the config that not contains transferable tokens;
 const configs = chainConfigs.filter((item) => !!item.tokens.filter((token) => !!token.cross.length).length);
@@ -21,7 +21,7 @@ const calcBridgesAmount = (data: [Network, Network[]][]) =>
   );
 
 describe('bridge utils', () => {
-  const bridges = genCrossChainGraph(BRIDGES);
+  const bridges = crossChainGraph;
   const formalBridges = calcBridgesAmount(bridges.filter((item) => !getChainConfig(item[0]).isTest));
   const testBridges = calcBridgesAmount(bridges.filter((item) => getChainConfig(item[0]).isTest));
 

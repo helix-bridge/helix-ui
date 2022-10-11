@@ -1,4 +1,5 @@
 import { BN } from '@polkadot/util';
+import { isAddress } from 'ethers/lib/utils';
 import isBoolean from 'lodash/isBoolean';
 import isString from 'lodash/isString';
 import { Observable } from 'rxjs/internal/Observable';
@@ -16,6 +17,7 @@ import {
   HelixHistoryRecord,
   Network,
   NullableFields,
+  TokenWithBridgesInfo,
   Tx,
 } from 'shared/model';
 import { TxValidationMessages } from '../config/validation';
@@ -92,6 +94,44 @@ export abstract class Bridge<
     }
 
     return result;
+  }
+
+  protected isStrict(from: Network, to: Network) {
+    return (departure: Network, arrival: Network) => departure === from && arrival === to;
+  }
+
+  protected is(from: Network, to: Network) {
+    return (departure: Network, arrival: Network) =>
+      (departure === from && arrival === to) || (departure === to && arrival === from);
+  }
+
+  getTokenConfigFromHelixRecord(
+    record: HelixHistoryRecord,
+    key: keyof Pick<HelixHistoryRecord, 'feeToken' | 'sendToken' | 'recvToken'> = 'sendToken'
+  ): TokenWithBridgesInfo {
+    const chainName = record[key === 'recvToken' ? 'toChain' : 'fromChain'];
+    const chain = this.getChainConfig(chainName);
+    const symbol = record[key];
+
+    return chain.tokens.find((item) => {
+      if (isAddress(symbol)) {
+        return item.address.toLowerCase() === symbol.toLowerCase();
+      }
+      const isSameSymbol = item.symbol === symbol;
+
+      if (!isSameSymbol) {
+        const isSameSymbolCaseInsensitive = item.symbol.toLowerCase() === symbol.toLowerCase();
+
+        if (isSameSymbolCaseInsensitive) {
+          console.log(
+            `⚠️ Token symbol(${symbol}) from ${record.id} is not consistent with the symbol(${item.symbol}) stored in ${chain.name} configuration!`
+          );
+          return true;
+        }
+      }
+
+      return isSameSymbol;
+    })!;
   }
 }
 

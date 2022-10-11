@@ -1,18 +1,10 @@
-import { u8aToHex, BN } from '@polkadot/util';
+import { BN, u8aToHex } from '@polkadot/util';
 import type { Observable } from 'rxjs';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { from as rxFrom } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { SUBSTRATE_DVM_WITHDRAW } from 'shared/config/env';
-import {
-  crabConfig,
-  crabDVMConfig,
-  darwiniaConfig,
-  darwiniaDVMConfig,
-  pangolinConfig,
-  pangolinDVMConfig,
-} from 'shared/config/network';
 import { DVMChainConfig, PolkadotChainConfig, Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { convertToSS58, dvmAddressToAccountId } from 'shared/utils/helper/address';
@@ -21,9 +13,8 @@ import { typeRegistryFactory } from 'shared/utils/helper/huge';
 import { isRing } from 'shared/utils/helper/validator';
 import { genEthereumTransactionObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import { TxValidationMessages } from '../../../../config/validation';
-import { TxValidation } from '../../../../model';
 import { Bridge } from '../../../../core/bridge';
-import { crabCrabDVMConfig, darwiniaDarwiniaDVMConfig, pangolinPangolinDVMConfig } from '../config';
+import { TxValidation } from '../../../../model';
 import { IssuingPayload, RedeemPayload, SubstrateDVMBridgeConfig } from '../model';
 
 export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, PolkadotChainConfig, DVMChainConfig> {
@@ -98,27 +89,3 @@ export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, Polkado
     return [[balance.lt(amount), TxValidationMessages.balanceLessThanAmount]];
   }
 }
-
-export const crabCrabDVM = new SubstrateDVMBridge(crabConfig, crabDVMConfig, crabCrabDVMConfig, {
-  category: 'helix',
-  activeArrivalConnection: true,
-  name: 'substrate-DVM',
-});
-
-export const darwiniaDarwiniaDVM = new SubstrateDVMBridge(
-  darwiniaConfig,
-  darwiniaDVMConfig,
-  darwiniaDarwiniaDVMConfig,
-  {
-    category: 'helix',
-    activeArrivalConnection: true,
-    name: 'substrate-DVM',
-  }
-);
-
-export const pangolinPangolinDVM = new SubstrateDVMBridge(
-  pangolinConfig,
-  pangolinDVMConfig,
-  pangolinPangolinDVMConfig,
-  { category: 'helix', activeArrivalConnection: true, name: 'substrate-DVM' }
-);

@@ -4,15 +4,12 @@ import last from 'lodash/last';
 import lowerFirst from 'lodash/lowerFirst';
 import upperFirst from 'lodash/upperFirst';
 import { Observable } from 'rxjs';
-import { crabConfig, crabParachainConfig, pangolinConfig } from 'shared/config/network';
-import { pangolinParachainConfig } from 'shared/config/network/pangolin-parachain';
 import { CrossChainDirection, CrossToken, PolkadotChainConfig, Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
-import { TxValidation } from '../../../../model';
 import { Bridge } from '../../../../core/bridge';
-import { crabCrabParachainConfig, pangolinPangolinParachainConfig } from '../config';
+import { TxValidation } from '../../../../model';
 import { IssuingPayload, RedeemPayload, SubstrateSubstrateParachainBridgeConfig } from '../model';
 
 export class SubstrateSubstrateParachainBridge extends Bridge<
@@ -75,29 +72,3 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
     return new BN(marketFee ?? -1); // -1: fee market does not available
   }
 }
-
-export const crabCrabParachain = new SubstrateSubstrateParachainBridge(
-  crabConfig,
-  crabParachainConfig,
-  crabCrabParachainConfig,
-  {
-    category: 'helix',
-    activeArrivalConnection: true,
-    name: 'substrate-substrateParachain',
-    issueCompName: 'Substrate2Parachain',
-    redeemCompName: 'Parachain2Substrate',
-  }
-);
-
-export const pangolinPangolinParachain = new SubstrateSubstrateParachainBridge(
-  pangolinConfig,
-  pangolinParachainConfig,
-  pangolinPangolinParachainConfig,
-  {
-    category: 'helix',
-    activeArrivalConnection: true,
-    name: 'substrate-substrateParachain',
-    issueCompName: 'Substrate2Parachain',
-    redeemCompName: 'Parachain2Substrate',
-  }
-);

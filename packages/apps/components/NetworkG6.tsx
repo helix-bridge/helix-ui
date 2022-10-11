@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { isTestChain } from 'shared/config/env';
 import { CrossOverview, Network, TokenWithBridgesInfo } from 'shared/model';
-import { BRIDGES } from '../bridges/bridges';
-import { chainConfigs, genCrossChainGraph, getChainConfig, getDisplayName } from '../utils/network';
+import { chainConfigs, crossChainGraph, getChainConfig, getDisplayName } from '../utils/network';
 
 interface Overview extends CrossOverview {
   source: { name: string; symbol: string; logo: string };
@@ -105,7 +104,7 @@ const nodes = configs.map((config) => ({
   type: 'image',
 }));
 
-const edges = genCrossChainGraph(BRIDGES)
+const edges = crossChainGraph
   .map(([from, tos]) => tos.map((to) => [getChainConfig(from), getChainConfig(to)]))
   .flat()
   .filter((item) => item.every((it) => isTestChain === it.isTest))

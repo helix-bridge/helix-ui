@@ -3,28 +3,25 @@ import isEqual from 'lodash/isEqual';
 import memoize from 'lodash/memoize';
 import pick from 'lodash/pick';
 import sortBy from 'lodash/sortBy';
+import unionWith from 'lodash/unionWith';
 import upperFirst from 'lodash/upperFirst';
 import { SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
 import { BridgeBase } from 'shared/core/bridge';
-import { DVMChain, EthereumChain, ParachainChain, PolkadotChain } from 'shared/core/chain';
 import {
   Arrival,
   BridgeConfig,
   ChainConfig,
   ContractConfig,
   Departure,
-  DVMChainConfig,
-  EthereumChainConfig,
   Network,
-  ParachainChainConfig,
   PolkadotChainConfig,
 } from 'shared/model';
 import { getCustomNetworkConfig } from 'shared/utils/helper/storage';
-import { isDVMNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
-import { Bridge } from '../../core/bridge';
+import { isDVMNetwork } from 'shared/utils/network/network';
+import { BRIDGES } from '../../config/bridge';
 
-export const genCrossChainGraph = (bridges: Bridge<BridgeConfig, ChainConfig, ChainConfig>[]) =>
-  bridges.reduce((acc: [Departure, Arrival[]][], bridge: BridgeBase<BridgeConfig<ContractConfig>>) => {
+export const crossChainGraph = BRIDGES.reduce(
+  (acc: [Departure, Arrival[]][], bridge: BridgeBase<BridgeConfig<ContractConfig>>) => {
     const check = ([ver1, ver2]: [Departure, Departure]) => {
       const departure = acc.find((item) => isEqual(item[0], ver1));
       if (departure) {
@@ -38,52 +35,48 @@ export const genCrossChainGraph = (bridges: Bridge<BridgeConfig, ChainConfig, Ch
     check(bridge.redeem);
 
     return acc;
-  }, []);
+  },
+  []
+);
 
 export const chainConfigs = (() => {
-  const data = SYSTEM_CHAIN_CONFIGURATIONS.map((result) => {
+  const data = unionWith(
+    crossChainGraph
+      .map(([departure, arrivals]) => [departure, ...arrivals])
+      .filter((item) => item.length > 1)
+      .flat(),
+    (pre, next) => pre === next
+  ).map((vertices) => {
+    const result = SYSTEM_CHAIN_CONFIGURATIONS.find((item) => vertices === item.name);
     let config = cloneDeep(result);
 
-    const customConfigs = getCustomNetworkConfig();
+    if (!config) {
+      throw new Error(`Can not find ${vertices} network configuration`);
+    } else {
+      const customConfigs = getCustomNetworkConfig();
 
-    if (customConfigs[config.name]) {
-      config = { ...config, ...pick(customConfigs[config.name], Object.keys(config)) } as PolkadotChainConfig;
+      if (customConfigs[config.name]) {
+        config = { ...config, ...pick(customConfigs[config.name], Object.keys(config)) } as PolkadotChainConfig;
+      }
+
+      config.tokens = config?.tokens.map((token) => ({
+        ...token,
+        cross: token.cross.filter((item) => !item.deprecated),
+      }));
     }
 
-    config.tokens = config?.tokens.map((token) => ({
-      ...token,
-      cross: token.cross.filter((item) => !item.deprecated),
-    }));
-
-    return config as PolkadotChainConfig | EthereumChainConfig | ParachainChainConfig;
+    return config;
   });
 
   return sortBy(data, (item) => item.name);
 })();
 
-export const toChain = (conf: ChainConfig) => {
-  if (isParachainNetwork(conf)) {
-    return new ParachainChain(conf as ParachainChainConfig);
-  }
-
-  if (isPolkadotNetwork(conf)) {
-    return new PolkadotChain(conf as PolkadotChainConfig);
-  }
-
-  if (isDVMNetwork(conf)) {
-    return new DVMChain(conf as DVMChainConfig);
-  }
-
-  return new EthereumChain(conf as EthereumChainConfig);
-};
-
-function getConfig(name: Network | null | undefined): ParachainChain | PolkadotChain | EthereumChain {
+function getConfig(name: Network | null | undefined, source = chainConfigs): ChainConfig {
   if (!name) {
     throw new Error(`You must pass a 'name' parameter to find the chain config`);
   }
 
-  const chains: (ParachainChain | PolkadotChain | EthereumChain)[] = SYSTEM_CHAIN_CONFIGURATIONS.map(toChain);
-  const result = chains.find((item) => item.name === name);
+  const result = source.find((item) => item.name === name);
 
   if (!result) {
     throw new Error(`Can not find the chain config by ${name}`);
@@ -93,6 +86,10 @@ function getConfig(name: Network | null | undefined): ParachainChain | PolkadotC
 }
 
 export const getChainConfig = memoize(getConfig, (name) => name);
+export const getOriginChainConfig = memoize(
+  (name: Network | null | undefined) => getConfig(name, SYSTEM_CHAIN_CONFIGURATIONS),
+  (name) => name
+);
 
 // eslint-disable-next-line complexity
 export function getDisplayName(config: ChainConfig | null | Network): string {
@@ -113,4 +110,11 @@ export function getDisplayName(config: ChainConfig | null | Network): string {
   }
 
   return config.fullName ?? `${upperFirst(config.name)} Chain`;
+}
+
+export function getWrappedToken(config: ChainConfig) {
+  const native = config.tokens.find((item) => item.type === 'native');
+  const cross = native?.cross.find((item) => item.partner.name === native.host);
+
+  return config.tokens.find((item) => item.symbol === cross?.partner.symbol)!;
 }

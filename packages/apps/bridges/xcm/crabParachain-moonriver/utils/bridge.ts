@@ -1,6 +1,5 @@
 import { BN } from '@polkadot/util';
 import { Observable } from 'rxjs';
-import { crabParachainConfig, moonriverConfig } from 'shared/config/network';
 import {
   CrossChainDirection,
   CrossToken,
@@ -13,9 +12,8 @@ import { convertToDvm } from 'shared/utils/helper/address';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import { getBridge } from 'utils/bridge';
-import { TxValidation } from '../../../../model';
 import { Bridge } from '../../../../core/bridge';
-import { crabParachainMoonriverConfig } from '../config';
+import { TxValidation } from '../../../../model';
 import abi from '../config/abi.json';
 import { CrabParachainMoonriverBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 
@@ -131,13 +129,3 @@ export class CrabParachainMoonriverBridge extends Bridge<
     }
   }
 }
-
-export const crabParachainMoonriver = new CrabParachainMoonriverBridge(
-  crabParachainConfig,
-  moonriverConfig,
-  crabParachainMoonriverConfig,
-  {
-    name: 'crabParachain-moonriver',
-    category: 'XCM',
-  }
-);

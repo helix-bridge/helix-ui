@@ -1,6 +1,8 @@
+import { bscConfig, astarConfig } from 'shared/config/network';
+import { BridgeBase } from 'shared/core/bridge';
 import { BSCAstarBridgeConfig } from '../model';
 
-export const bscAstarConfig: BSCAstarBridgeConfig = {
+const bscAstarConfig: BSCAstarBridgeConfig = {
   contracts: {
     backing: '0xdd90E5E87A2081Dcf0391920868eBc2FFB81a1aF',
     issuing: '0x841ce48F9446C8E281D3F1444cB859b4A6D0738C',
@@ -9,3 +11,8 @@ export const bscAstarConfig: BSCAstarBridgeConfig = {
     busdIssuing: '0x3b53d2c7b44d40be05fa5e2309ffeb6eb2492d88',
   },
 };
+
+export const bscAstar = new BridgeBase(bscConfig, astarConfig, bscAstarConfig, {
+  name: 'bsc-astar',
+  category: 'cBridge',
+});
