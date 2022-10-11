@@ -10,7 +10,6 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { BridgeBase } from 'shared/core/bridge';
 import {
   BridgeConfig,
-  BridgeName,
   ChainConfig,
   CrossChainDirection,
   CrossToken,
@@ -43,8 +42,6 @@ export abstract class Bridge<
   Origin extends ChainConfig,
   Target extends ChainConfig
 > extends BridgeBase<B, Origin, Target> {
-  static supportBridges: BridgeName[];
-
   protected readonly txValidationMessages = TxValidationMessages;
 
   abstract back(

@@ -11,8 +11,8 @@ import {
   PolkadotTypeNetwork,
 } from '../model';
 import { CrossChainDirection, TokenInfoWithMeta } from '../model/bridge';
-import { Logo, Social, TokenWithBridgesInfo } from '../model/network/config';
-import { Network, SupportedWallet } from '../model/network/network';
+import { Logo, ParachainEthereumCompatibleChainConfig, Social, TokenWithBridgesInfo } from '../model/network/config';
+import { Network, ParachainEthereumCompatibleNetwork, SupportedWallet } from '../model/network/network';
 import {
   getDarwiniaBalance,
   getErc20Balance,
@@ -141,5 +141,20 @@ export class DVMChain extends EthereumChain implements DVMChainConfig {
         getEthereumNativeBalance(account, from.meta.provider),
       ]);
     }
+  }
+}
+
+export class ParachainEthereumCompatibleChain extends EthereumChain implements ParachainEthereumCompatibleChainConfig {
+  ss58Prefix: number;
+  specVersion: number;
+  name: ParachainEthereumCompatibleNetwork;
+  paraId: number;
+
+  constructor(config: ParachainEthereumCompatibleChainConfig) {
+    super(config);
+    this.ss58Prefix = config.ss58Prefix;
+    this.specVersion = config.specVersion;
+    this.name = config.name;
+    this.paraId = config.paraId;
   }
 }

@@ -21,16 +21,13 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
   const { t } = useTranslation();
   const bridges = useMemo(() => {
     const configs = getBridges(direction);
-    const isInnerDirection = direction.from.host === direction.to.host;
 
     return configs
       .map((config) =>
         bridgeConstructors
-          .filter(
-            // FIXME: Inner Constructor naming must end with 'Inner';
-            (item) => isInnerDirection === item.name.endsWith('Inner') && item.supportBridges.includes(config.name)
-          )
+          .filter((item) => item.name === config.subClsName)
           .map((Constructor) => {
+            console.log('🚀 ~ file: BridgeSelector.tsx ~ line 35 ~ .map ~ Constructor', Constructor.name);
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             return new Constructor(config.departure, config.arrival, config.config, config.options);

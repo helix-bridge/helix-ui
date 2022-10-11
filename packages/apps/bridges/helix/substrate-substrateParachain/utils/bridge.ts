@@ -4,7 +4,7 @@ import last from 'lodash/last';
 import lowerFirst from 'lodash/lowerFirst';
 import upperFirst from 'lodash/upperFirst';
 import { Observable } from 'rxjs';
-import { BridgeName, CrossChainDirection, CrossToken, PolkadotChainConfig, Tx } from 'shared/model';
+import { CrossChainDirection, CrossToken, PolkadotChainConfig, Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
@@ -17,8 +17,6 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
   PolkadotChainConfig,
   PolkadotChainConfig
 > {
-  static supportBridges: BridgeName[] = ['substrate-substrateParachain'];
-
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction } = payload;
     const { from: departure, to } = direction;

@@ -10,7 +10,7 @@ import { ChainConfig, CrossToken, TokenInfoWithMeta, TokenWithBridgesInfo } from
 import { isEthereumNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
 import { chainConfigs, getChainConfig, getDisplayName } from 'utils/network';
 import { useITranslation } from '../../hooks';
-import { toChain } from '../../utils/network/chain';
+import { chainFactory } from '../../utils/network/chain';
 import { isTransferableTokenPair } from '../../utils/validate';
 
 interface DestinationProps {
@@ -179,7 +179,7 @@ export function Destination({
               if (onChange) {
                 onChange({
                   ...omit(token, 'label'),
-                  meta: toChain(config),
+                  meta: chainFactory(config),
                   amount: value.amount,
                 });
               }

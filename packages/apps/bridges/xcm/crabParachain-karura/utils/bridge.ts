@@ -1,6 +1,6 @@
 import { BN } from '@polkadot/util';
 import { Observable } from 'rxjs';
-import { BridgeName, CrossChainDirection, CrossToken, ParachainChainConfig, Tx } from 'shared/model';
+import { CrossChainDirection, CrossToken, ParachainChainConfig, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
@@ -15,8 +15,6 @@ export class CrabParachainKaruraBridge extends Bridge<
   ParachainChainConfig,
   ParachainChainConfig
 > {
-  static supportBridges: BridgeName[] = ['crabParachain-karura'];
-
   private patchAmount(departure: CrossToken<ParachainChainConfig>) {
     const pos = -3;
     const timestamp = Date.now().toString().slice(0, pos);

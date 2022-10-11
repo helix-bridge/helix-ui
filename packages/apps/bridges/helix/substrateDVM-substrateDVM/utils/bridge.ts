@@ -2,15 +2,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { BigNumber, Contract } from 'ethers';
 import last from 'lodash/last';
 import { EMPTY, from, Observable, switchMap } from 'rxjs';
-import {
-  BridgeName,
-  CrossChainDirection,
-  CrossToken,
-  DailyLimit,
-  DVMChainConfig,
-  HelixHistoryRecord,
-  Tx,
-} from 'shared/model';
+import { CrossChainDirection, CrossToken, DailyLimit, DVMChainConfig, HelixHistoryRecord, Tx } from 'shared/model';
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
@@ -26,8 +18,6 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
   DVMChainConfig,
   DVMChainConfig
 > {
-  static supportBridges: BridgeName[] = ['substrateDVM-substrateDVM'];
-
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction, bridge } = payload;
     const { from: departure, to } = direction;

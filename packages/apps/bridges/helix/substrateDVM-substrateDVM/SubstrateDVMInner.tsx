@@ -16,7 +16,7 @@ import { CrossChainComponentProps } from '../../../model/component';
 import { TxObservableFactory } from '../../../model/tx';
 import { useAccount } from '../../../providers';
 import { IssuingPayload } from './model';
-import { SubstrateDVMSubstrateDVMBridgeInner } from './utils/bridge-inner';
+import { SubstrateDVMInnerBridge } from './utils/bridge-inner';
 
 export function SubstrateDVMInner({
   form,
@@ -25,11 +25,7 @@ export function SubstrateDVMInner({
   bridge,
   onFeeChange,
   balances,
-}: CrossChainComponentProps<
-  SubstrateDVMSubstrateDVMBridgeInner,
-  CrossToken<DVMChainConfig>,
-  CrossToken<DVMChainConfig>
->) {
+}: CrossChainComponentProps<SubstrateDVMInnerBridge, CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>) {
   const { t } = useTranslation();
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const { account } = useAccount();

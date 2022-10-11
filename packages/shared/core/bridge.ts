@@ -46,8 +46,6 @@ export class BridgeBase<C = BridgeConfig, O extends ChainConfig = ChainConfig, T
 
   readonly options: BridgeOptions;
 
-  private crossChain: Map<Departure[], string> = new Map();
-
   constructor(departure: O, arrival: T, config: C, options: BridgeOptions) {
     const dep = departure.name;
     const arr = arrival.name;
@@ -75,14 +73,6 @@ export class BridgeBase<C = BridgeConfig, O extends ChainConfig = ChainConfig, T
     return name === 'bsc' ? name.toUpperCase() : upperFirst(name);
   }
 
-  setIssueComponents(crossComp: string): void {
-    this.crossChain.set(this.issue, crossComp);
-  }
-
-  setRedeemComponents(crossComp: string) {
-    this.crossChain.set(this.redeem, crossComp);
-  }
-
   isIssue(dep: Departure | ChainConfig, arr: Departure | ChainConfig): boolean {
     return isEqual(
       this.issue,
@@ -95,6 +85,18 @@ export class BridgeBase<C = BridgeConfig, O extends ChainConfig = ChainConfig, T
       this.redeem,
       [dep, arr].map((item) => (typeof item === 'object' ? item.name : item))
     );
+  }
+
+  /**
+   * naming convention: OriginChain2TargetChain
+   * The naming of components and bridge subclasses must conform to this rule
+   */
+  get subClsName(): string {
+    if (this.category === 'cBridge') {
+      return 'CBridgeBridge';
+    }
+
+    return this.IssueCrossChainComponent.split('2').join('') + 'Bridge';
   }
 
   get IssueCrossChainComponent(): string {

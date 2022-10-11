@@ -8,7 +8,6 @@ import { zip } from 'rxjs/internal/observable/zip';
 import { map } from 'rxjs/internal/operators/map';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import {
-  BridgeName,
   ChainConfig,
   CrossChainDirection,
   CrossToken,
@@ -34,8 +33,6 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
   PolkadotChainConfig,
   DVMChainConfig
 > {
-  static supportBridges: BridgeName[] = ['substrate-substrateDVM'];
-
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction } = payload;
     const { from: departure, to } = direction;

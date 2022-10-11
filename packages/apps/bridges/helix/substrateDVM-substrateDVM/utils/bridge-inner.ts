@@ -1,6 +1,6 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { Observable } from 'rxjs';
-import { BridgeName, CrossChainDirection, CrossToken, DVMChainConfig, Tx } from 'shared/model';
+import { CrossChainDirection, CrossToken, DVMChainConfig, Tx } from 'shared/model';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { Bridge } from '../../../../core/bridge';
@@ -8,13 +8,11 @@ import { TxValidation } from '../../../../model';
 import wringABI from '../config/wring.json';
 import { IssuingPayload, RedeemPayload, SubstrateDVMSubstrateDVMBridgeConfig } from '../model';
 
-export class SubstrateDVMSubstrateDVMBridgeInner extends Bridge<
+export class SubstrateDVMInnerBridge extends Bridge<
   SubstrateDVMSubstrateDVMBridgeConfig,
   DVMChainConfig,
   DVMChainConfig
 > {
-  static supportBridges: BridgeName[] = ['substrateDVM-substrateDVM'];
-
   back(payload: IssuingPayload): Observable<Tx> {
     const {
       sender,

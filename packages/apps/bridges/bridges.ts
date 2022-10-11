@@ -3,10 +3,7 @@ import { SubstrateDVMBridge } from './helix/substrate-dvm/utils';
 import { SubstrateSubstrateDVMBridge } from './helix/substrate-substrateDVM/utils';
 import { SubstrateSubstrateParachainBridge } from './helix/substrate-substrateParachain/utils';
 import { SubstrateDVMEthereumBridge } from './helix/substrateDVM-ethereum/utils';
-import {
-  SubstrateDVMSubstrateDVMBridge,
-  SubstrateDVMSubstrateDVMBridgeInner,
-} from './helix/substrateDVM-substrateDVM/utils';
+import { SubstrateDVMSubstrateDVMBridge, SubstrateDVMInnerBridge } from './helix/substrateDVM-substrateDVM/utils';
 import { CrabParachainKaruraBridge } from './xcm/crabParachain-karura/utils';
 import { CrabParachainMoonriverBridge } from './xcm/crabParachain-moonriver/utils';
 
@@ -17,7 +14,7 @@ export const bridgeConstructors = [
   SubstrateDVMBridge,
   SubstrateDVMEthereumBridge,
   SubstrateDVMSubstrateDVMBridge,
-  SubstrateDVMSubstrateDVMBridgeInner,
+  SubstrateDVMInnerBridge,
   SubstrateSubstrateDVMBridge,
   SubstrateSubstrateParachainBridge,
 ];
