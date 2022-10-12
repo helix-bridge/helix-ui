@@ -15,6 +15,7 @@ export interface Nav {
   hide?: boolean;
   Icon?: (props: AntdIconProps) => JSX.Element;
   className?: string;
+  children?: Nav[];
 }
 
 interface NavigatorProps {
@@ -88,20 +89,20 @@ export function Navigator({ navigators, onClick, theme = THEME.DARK }: Navigator
     <>
       <div className="hidden lg:flex items-center gap-8 ml-8">
         {navItems.map((nav, index) =>
-          Array.isArray(nav) ? (
+          nav.children ? (
             <Dropdown
               key={index}
               overlay={
                 <Menu
-                  items={nav.slice(1).map((item, idx) => ({
+                  items={nav.children.map((item, idx) => ({
                     key: item.path + '_' + idx,
                     label: <RouteLink {...item} />,
                   }))}
                 />
               }
             >
-              <div className="flex items-center">
-                <NavLink nav={nav[0]} theme={theme} />
+              <div className="flex items-center cursor-pointer">
+                <span>{t(nav.label)}</span>
                 <DownOutlined className="ml-2" />
               </div>
             </Dropdown>

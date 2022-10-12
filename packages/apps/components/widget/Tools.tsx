@@ -1,4 +1,4 @@
-import { Dropdown, Menu, Button } from 'antd';
+import { Dropdown, Menu } from 'antd';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useITranslation } from 'shared/hooks/translation';
@@ -28,7 +28,7 @@ export function Tools() {
         setOpen(isVisible);
       }}
     >
-      <Button>•••</Button>
+      <span>{t('Tools')}</span>
     </Dropdown>
   );
 }
