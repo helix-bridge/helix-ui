@@ -1,5 +1,5 @@
 import { MenuOutlined, WarningFilled } from '@ant-design/icons';
-import { Button, Drawer, Layout, Tooltip } from 'antd';
+import { Drawer, Layout, Tooltip } from 'antd';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { PropsWithChildren, useState } from 'react';
@@ -10,12 +10,14 @@ import { readStorage } from 'shared/utils/helper/storage';
 import { Path } from '../config';
 import { useITranslation } from '../hooks';
 import { DisclaimerModal } from './widget/DisclaimerModal';
+// import { Tools } from './widget/Tools';
 
 const { Header, Content } = Layout;
 
 const navigators: Nav[] = [
-  { label: 'Dashboard', path: Path.root },
+  { label: 'Transfer', path: Path.apps },
   { label: 'Explorer', path: Path.transaction },
+  { label: 'Tools', children: [{ label: 'Claim Tool', path: Path.claimTool }], path: '' },
   // { label: 'DAO', path: 'dao' },
   { label: 'Docs', path: 'https://docs.helixbridge.app/', extra: true },
 ];
@@ -27,7 +29,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
   const [collapsed, setCollapsed] = useState(true);
   const [visible, setVisible] = useState(false);
   const router = useRouter();
-  const isAppsPage = router.pathname === Path.apps || router.pathname === Path.claimTool;
+  const isAppsPage = router.pathname === Path.apps;
   const isHome = router.pathname === '/';
 
   return (
@@ -79,21 +81,6 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
           <div onClick={() => setCollapsed(false)} className="block lg:hidden">
             <MenuOutlined className="text-xl" />
           </div>
-
-          {!isAppsPage && (
-            <div className="hidden lg:flex lg:justify-end items-center lg:flex-1 ml-2 md:ml-8 lg:ml-12">
-              <Button
-                onClick={() => {
-                  router.push(Path.apps);
-                }}
-                type="primary"
-                size="large"
-                className="ml-8"
-              >
-                {t('Launch App')}
-              </Button>
-            </div>
-          )}
         </div>
       </Header>
 

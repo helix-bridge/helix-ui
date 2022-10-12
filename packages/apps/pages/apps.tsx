@@ -10,7 +10,6 @@ import { readStorage, updateStorage } from 'shared/utils/helper/storage';
 import { getDirectionFromSettings } from 'shared/utils/helper/url';
 import { CrossChain } from '../components/CrossChain';
 import { DisclaimerModal } from '../components/widget/DisclaimerModal';
-import { Tools } from '../components/widget/Tools';
 import { useITranslation } from '../hooks';
 import { AccountProvider, ApiProvider, ClaimProvider, TxProvider, usePersonal, WalletProvider } from '../providers';
 import { chainFactory } from '../utils/network/chain';
@@ -55,8 +54,6 @@ function Page() {
                   <Button icon={<HddOutlined />} onClick={() => setIsPersonalHistoryVisible(true)}>
                     {t('History')}
                   </Button>
-
-                  <Tools />
                 </div>
 
                 <CrossChain dir={dir} />
