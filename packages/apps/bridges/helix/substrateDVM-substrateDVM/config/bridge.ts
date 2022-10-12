@@ -1,4 +1,4 @@
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
 import { crabDVMConfig, darwiniaDVMConfig, pangolinDVMConfig, pangoroDVMConfig } from 'shared/config/network';
 import { SubstrateDVMSubstrateDVMBridgeConfig } from '../model';
 
@@ -9,7 +9,7 @@ const darwiniaDVMcrabDVMConfig: SubstrateDVMSubstrateDVMBridgeConfig = {
   },
 };
 
-export const darwiniaDVMCrabDVM = new Bridge(darwiniaDVMConfig, crabDVMConfig, darwiniaDVMcrabDVMConfig, {
+export const darwiniaDVMCrabDVM = new BridgeBase(darwiniaDVMConfig, crabDVMConfig, darwiniaDVMcrabDVMConfig, {
   name: 'substrateDVM-substrateDVM',
   category: 'helix',
 });
@@ -21,12 +21,17 @@ export const darwiniaDVMDarwiniaDVMConfig: SubstrateDVMSubstrateDVMBridgeConfig 
   },
 };
 
-export const darwiniaDVMDarwiniaDVM = new Bridge(darwiniaDVMConfig, darwiniaDVMConfig, darwiniaDVMDarwiniaDVMConfig, {
-  name: 'substrateDVM-substrateDVM',
-  category: 'helix',
-  issueCompName: 'SubstrateDVMInner',
-  redeemCompName: 'SubstrateDVMInner',
-});
+export const darwiniaDVMDarwiniaDVM = new BridgeBase(
+  darwiniaDVMConfig,
+  darwiniaDVMConfig,
+  darwiniaDVMDarwiniaDVMConfig,
+  {
+    name: 'substrateDVM-substrateDVM',
+    category: 'helix',
+    issueCompName: 'SubstrateDVMInner',
+    redeemCompName: 'SubstrateDVMInner',
+  }
+);
 
 const pangoroDVMpangolinDVMConfig: SubstrateDVMSubstrateDVMBridgeConfig = {
   contracts: {
@@ -35,7 +40,7 @@ const pangoroDVMpangolinDVMConfig: SubstrateDVMSubstrateDVMBridgeConfig = {
   },
 };
 
-export const pangoroDVMPangolinDVM = new Bridge(pangoroDVMConfig, pangolinDVMConfig, pangoroDVMpangolinDVMConfig, {
+export const pangoroDVMPangolinDVM = new BridgeBase(pangoroDVMConfig, pangolinDVMConfig, pangoroDVMpangolinDVMConfig, {
   name: 'substrateDVM-substrateDVM',
   category: 'helix',
 });
@@ -47,7 +52,7 @@ export const pangoroDVMPangoroDVMConfig: SubstrateDVMSubstrateDVMBridgeConfig = 
   },
 };
 
-export const pangoroDVMPangoroDVM = new Bridge(pangoroDVMConfig, pangoroDVMConfig, pangoroDVMPangoroDVMConfig, {
+export const pangoroDVMPangoroDVM = new BridgeBase(pangoroDVMConfig, pangoroDVMConfig, pangoroDVMPangoroDVMConfig, {
   name: 'substrateDVM-substrateDVM',
   category: 'helix',
   issueCompName: 'SubstrateDVMInner',

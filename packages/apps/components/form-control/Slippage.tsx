@@ -2,7 +2,8 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { Form, InputNumber, Tooltip } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { FORM_CONTROL } from 'shared/config/constant';
-import { CrossChainComponentProps } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
+import { CrossChainComponentProps } from '../../model/component';
 
 export const DEFAULT_SLIPPAGE = 0.3;
 
@@ -13,7 +14,7 @@ export const UI_SLIPPAGE_SCALE = 1e4;
 
 export function SlippageItem({
   onChange,
-}: Pick<CrossChainComponentProps, 'form' | 'direction' | 'bridge'> & {
+}: Pick<CrossChainComponentProps<BridgeBase>, 'form' | 'direction' | 'bridge'> & {
   onChange?: (value: number) => void;
 }) {
   const { t } = useTranslation();

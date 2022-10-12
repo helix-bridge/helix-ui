@@ -1,20 +1,31 @@
 /// <reference types="jest" />
 
-import { Bridge, ChainConfig, CrossToken, Network } from 'shared/model';
+import isEqual from 'lodash/isEqual';
+import unionWith from 'lodash/unionWith';
+import { BridgeBase } from 'shared/core/bridge';
+import { ChainConfig, CrossToken, Network } from 'shared/model';
 import { toMiddleSplitNaming } from 'shared/utils/helper/common';
 import { isDVMNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
+import { BRIDGES } from '../config/bridge';
 import { unknownUnavailable } from '../bridges/unknown-unavailable/config';
-import { bridgeCategoryDisplay, formalBridges, getBridge, getBridges, testBridges } from '../utils/bridge';
-import { chainConfigs, crossChainGraph, getChainConfig } from '../utils/network';
+import { bridgeCategoryDisplay, getBridge, getBridges } from '../utils/bridge';
+import { chainConfigs, crossChainGraph, getChainConfig } from '../utils/network/network';
 
 // exclude the config that not contains transferable tokens;
 const configs = chainConfigs.filter((item) => !!item.tokens.filter((token) => !!token.cross.length).length);
 
-const allDirections = crossChainGraph
-  .map(([departure, arrivals]) => arrivals.map((arrival) => [departure, arrival]))
-  .flat();
+const calcBridgesAmount = (data: [Network, Network[]][]) =>
+  unionWith(
+    data.map(([from, tos]) => tos.map((to) => [from, to])).flat(),
+    (pre, cur) => isEqual(pre, cur) || isEqual(pre.reverse(), cur)
+  );
 
 describe('bridge utils', () => {
+  const bridges = crossChainGraph;
+  const formalBridges = calcBridgesAmount(bridges.filter((item) => !getChainConfig(item[0]).isTest));
+  const testBridges = calcBridgesAmount(bridges.filter((item) => getChainConfig(item[0]).isTest));
+
+  const allDirections = bridges.map(([departure, arrivals]) => arrivals.map((arrival) => [departure, arrival])).flat();
   console.log('🌉 All cross-chain directions to be tested', allDirections);
 
   it('should support bridge count: ', () => {
@@ -39,13 +50,13 @@ describe('bridge utils', () => {
       const mixes = getBridge([getChainConfig(departure as Network), arrival as Network]);
       const mixes2 = getBridge([departure as Network, getChainConfig(arrival as Network)]);
 
-      expect(byNetwork).toBeInstanceOf(Bridge);
+      expect(byNetwork).toBeInstanceOf(BridgeBase);
       expect(byNetwork).not.toEqual(unknownUnavailable);
-      expect(byConfig).toBeInstanceOf(Bridge);
+      expect(byConfig).toBeInstanceOf(BridgeBase);
       expect(byConfig).not.toEqual(unknownUnavailable);
-      expect(mixes).toBeInstanceOf(Bridge);
+      expect(mixes).toBeInstanceOf(BridgeBase);
       expect(mixes).not.toEqual(unknownUnavailable);
-      expect(mixes2).toBeInstanceOf(Bridge);
+      expect(mixes2).toBeInstanceOf(BridgeBase);
       expect(mixes2).not.toEqual(unknownUnavailable);
     }
   );

@@ -1,17 +1,10 @@
-import { hexToU8a } from '@polkadot/util';
-import BN from 'bn.js';
+import { hexToU8a, BN } from '@polkadot/util';
 import upperFirst from 'lodash/upperFirst';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
-import {
-  CrossChainComponentProps,
-  CrossToken,
-  DVMChainConfig,
-  PolkadotChainConfig,
-  TxObservableFactory,
-} from 'shared/model';
+import { CrossToken, ParachainChainConfig, PolkadotChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { fromWei, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
@@ -22,10 +15,11 @@ import { TransferDone } from '../../../components/tx/TransferDone';
 import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
+import { CrossChainComponentProps } from '../../../model/component';
+import { TxObservableFactory } from '../../../model/tx';
 import { useApi } from '../../../providers';
-import { IssuingPayload, SubstrateSubstrateParachainBridgeConfig } from './model';
-import { getIssuingFee } from './utils';
-import { issue, validate } from './utils/tx';
+import { IssuingPayload } from './model';
+import { SubstrateSubstrateParachainBridge } from './utils';
 
 export function Substrate2Parachain({
   form,
@@ -36,9 +30,9 @@ export function Substrate2Parachain({
   onFeeChange,
   balances,
 }: CrossChainComponentProps<
-  SubstrateSubstrateParachainBridgeConfig,
+  SubstrateSubstrateParachainBridge,
   CrossToken<PolkadotChainConfig>,
-  CrossToken<DVMChainConfig>
+  CrossToken<ParachainChainConfig>
 >) {
   const { t } = useTranslation();
   const { departureConnection } = useApi();
@@ -63,7 +57,7 @@ export function Substrate2Parachain({
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
-      const validateObs = validate([fee, dailyLimit, ring], {
+      const validateObs = data.bridge.validate([fee, dailyLimit, ring], {
         balance: ring,
         amount: new BN(toWei(data.direction.from)),
         dailyLimit,
@@ -73,7 +67,7 @@ export function Substrate2Parachain({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        () => issue(data, fee!),
+        () => data.bridge.back(data, fee!),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
@@ -103,7 +97,7 @@ export function Substrate2Parachain({
   }, [direction]);
 
   useEffect(() => {
-    const sub$$ = from(getIssuingFee(bridge)).subscribe((result) => {
+    const sub$$ = from(bridge.getFee(direction)).subscribe((result) => {
       setFee(result);
 
       if (onFeeChange) {
@@ -115,7 +109,7 @@ export function Substrate2Parachain({
     });
 
     return () => sub$$.unsubscribe();
-  }, [bridge, direction.from.meta.tokens, direction.from.symbol, direction.from.decimals, onFeeChange]);
+  }, [bridge, direction, onFeeChange]);
 
   return (
     <>

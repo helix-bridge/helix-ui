@@ -1,5 +1,5 @@
 import { polygonConfig, optimismConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
 import { PolygonOptimismBridgeConfig } from '../model';
 
 const polygonOptimismConfig: PolygonOptimismBridgeConfig = {
@@ -9,7 +9,7 @@ const polygonOptimismConfig: PolygonOptimismBridgeConfig = {
   },
 };
 
-export const polygonOptimism = new Bridge(polygonConfig, optimismConfig, polygonOptimismConfig, {
+export const polygonOptimism = new BridgeBase(polygonConfig, optimismConfig, polygonOptimismConfig, {
   name: 'polygon-optimism',
   category: 'cBridge',
 });

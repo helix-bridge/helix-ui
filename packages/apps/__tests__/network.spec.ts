@@ -19,18 +19,11 @@ import {
 import { crabParachainConfig } from 'shared/config/network/crab-parachain';
 import { pangolinParachainConfig } from 'shared/config/network/pangolin-parachain';
 import { Network } from 'shared/model';
-import { crossChainGraph } from '../utils/network/graph';
-import {
-  chainConfigs,
-  getChainConfig,
-  getDisplayName,
-  getOriginChainConfig,
-  getWrappedToken,
-} from '../utils/network/network';
+import { chainConfigs, crossChainGraph, getChainConfig, getDisplayName, getOriginChainConfig, getWrappedToken } from '../utils/network';
 
 describe('network utils', () => {
   const data = [...crossChainGraph];
-  const sort = (ary: string[]) => sortBy(ary, (cur) => cur.split('').reduce((acc, cur) => acc + cur.charCodeAt(0), 0));
+  const sort = (ary: string[]) => sortBy(ary, (cur) => cur.charCodeAt(0));
   const getOverview = (departure: Network, arrival: Network) =>
     chainConfigs
       .find((item) => item.name === departure)

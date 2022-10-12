@@ -1,5 +1,5 @@
 import { polygonConfig, astarConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
 import { PolygonAstarBridgeConfig } from '../model';
 
 const polygonAstarConfig: PolygonAstarBridgeConfig = {
@@ -10,7 +10,7 @@ const polygonAstarConfig: PolygonAstarBridgeConfig = {
   },
 };
 
-export const polygonAstar = new Bridge(polygonConfig, astarConfig, polygonAstarConfig, {
+export const polygonAstar = new BridgeBase(polygonConfig, astarConfig, polygonAstarConfig, {
   name: 'polygon-astar',
   category: 'cBridge',
 });

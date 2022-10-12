@@ -1,9 +1,9 @@
-import BN from 'bn.js';
+import { BN } from '@polkadot/util';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { FORM_CONTROL } from 'shared/config/constant';
-import { CrossChainComponentProps, CrossToken, DVMChainConfig, TxObservableFactory } from 'shared/model';
+import { CrossToken, DVMChainConfig } from 'shared/model';
 import { toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
@@ -12,9 +12,11 @@ import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
+import { CrossChainComponentProps } from '../../../model/component';
+import { TxObservableFactory } from '../../../model/tx';
 import { useAccount } from '../../../providers';
-import { IssuingPayload, SubstrateDVMSubstrateDVMBridgeConfig } from './model';
-import { deposit, validate, withdraw } from './utils/tx';
+import { IssuingPayload } from './model';
+import { SubstrateDVMInnerBridge } from './utils/bridge-inner';
 
 export function SubstrateDVMInner({
   form,
@@ -23,11 +25,7 @@ export function SubstrateDVMInner({
   bridge,
   onFeeChange,
   balances,
-}: CrossChainComponentProps<
-  SubstrateDVMSubstrateDVMBridgeConfig,
-  CrossToken<DVMChainConfig>,
-  CrossToken<DVMChainConfig>
->) {
+}: CrossChainComponentProps<SubstrateDVMInnerBridge, CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>) {
   const { t } = useTranslation();
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const { account } = useAccount();
@@ -41,19 +39,15 @@ export function SubstrateDVMInner({
     [direction.from.meta.tokens]
   );
 
-  const txFn = useMemo(() => {
-    const overview = direction.from.cross.find((item) => item.partner.name === direction.from.host);
-
-    return overview?.partner.role === 'issuing' ? deposit : withdraw;
-  }, [direction.from.cross, direction.from.host]);
-
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
-      const balance = direction.from.type === 'native' ? native : ring;
-      const validateObs = validate([balance], {
+      const balance = data.direction.from.type === 'native' ? native : ring;
+      const validateObs = data.bridge.validate([balance], {
         balance,
         amount: new BN(toWei(data.direction.from)),
       });
+      const overview = data.direction.from.cross.find((item) => item.partner.name === data.direction.from.host);
+      const txFn = overview?.partner.role === 'issuing' ? data.bridge.back : data.bridge.burn;
 
       return createTxWorkflow(
         validateObs.pipe(
@@ -65,7 +59,7 @@ export function SubstrateDVMInner({
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, direction.from.type, feeWithSymbol, native, ring, setTxObservableFactory, txFn]);
+  }, [afterCrossChain, feeWithSymbol, native, ring, setTxObservableFactory]);
 
   useEffect(() => {
     if (onFeeChange) {

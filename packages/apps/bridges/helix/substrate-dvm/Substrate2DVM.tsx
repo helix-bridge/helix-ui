@@ -2,13 +2,7 @@ import BN from 'bn.js';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
-import {
-  CrossChainComponentProps,
-  CrossToken,
-  DVMChainConfig,
-  PolkadotChainConfig,
-  TxObservableFactory,
-} from 'shared/model';
+import { CrossToken, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
 import { toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
@@ -17,9 +11,11 @@ import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
+import { CrossChainComponentProps } from '../../../model/component';
+import { TxObservableFactory } from '../../../model/tx';
 import { useApi } from '../../../providers';
-import { SubstrateDVMBridgeConfig, TransferPayload } from './model';
-import { issue, validate } from './utils';
+import { IssuingPayload } from './model';
+import { SubstrateDVMBridge } from './utils';
 
 export function Substrate2DVM({
   form,
@@ -28,22 +24,22 @@ export function Substrate2DVM({
   balances,
   onFeeChange,
   setTxObservableFactory,
-}: CrossChainComponentProps<SubstrateDVMBridgeConfig, CrossToken<PolkadotChainConfig>, CrossToken<DVMChainConfig>>) {
+}: CrossChainComponentProps<SubstrateDVMBridge, CrossToken<PolkadotChainConfig>, CrossToken<DVMChainConfig>>) {
   const { t } = useTranslation();
   const { departureConnection } = useApi();
-  const { afterCrossChain } = useAfterTx<TransferPayload>();
+  const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const [balance] = (balances ?? []) as BN[];
 
   useEffect(() => {
-    const fn = () => (data: TransferPayload) => {
-      const validateObs = validate([balance], {
+    const fn = () => (data: IssuingPayload) => {
+      const validateObs = data.bridge.validate([balance], {
         balance,
         amount: new BN(toWei(data.direction.from)),
       });
 
       return createTxWorkflow(
         validateObs.pipe(mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={null} /> }))),
-        issue(data),
+        data.bridge.back(data),
         afterCrossChain(TransferDone, { payload: data })
       );
     };

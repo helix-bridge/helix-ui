@@ -1,6 +1,7 @@
 import {
   knownDVMNetworks,
   knownEthereumNetworks,
+  knownParachainEthereumCompatibleNetworks,
   knownParachainNetworks,
   knownPolkadotNetworks,
 } from 'shared/config/network';
@@ -21,3 +22,5 @@ export const isDVMNetwork = isSpecifyNetwork(knownDVMNetworks);
 export const isEthereumNetwork = isSpecifyNetwork(knownEthereumNetworks);
 
 export const isParachainNetwork = isSpecifyNetwork(knownParachainNetworks);
+
+export const isParachainEthereumCompatibleNetwork = isSpecifyNetwork(knownParachainEthereumCompatibleNetworks);

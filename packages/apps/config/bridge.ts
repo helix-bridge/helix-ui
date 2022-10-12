@@ -32,62 +32,62 @@ import {
   crabCrabParachain,
   pangolinPangolinParachain,
 } from '../bridges/helix/substrate-substrateParachain/config/bridge';
-import { darwiniaDVMEthereum, pangoroDVMGoerli } from '../bridges/helix/substrateDVM-ethereum/config';
+import { pangoroDVMGoerli, darwiniaDVMEthereum } from '../bridges/helix/substrateDVM-ethereum/config/bridge';
 import {
   darwiniaDVMCrabDVM,
-  darwiniaDVMDarwiniaDVM,
   pangoroDVMPangolinDVM,
+  darwiniaDVMDarwiniaDVM,
   pangoroDVMPangoroDVM,
 } from '../bridges/helix/substrateDVM-substrateDVM/config/bridge';
-import { crabParachainKarura } from '../bridges/xcm/crabParachain-karura/config';
+import { crabParachainKarura } from '../bridges/xcm/crabParachain-karura/config/bridge';
 import { crabParachainMoonriver } from '../bridges/xcm/crabParachain-moonriver/config/bridge';
 
 const formalBridges = [
   arbitrumAstar,
   arbitrumAvalanche,
   arbitrumOptimism,
-  arbitrumPolygon,
   astarAvalanche,
   astarOptimism,
   avalancheOptimism,
-  avalanchePolygon,
   bscArbitrum,
   bscAstar,
   bscAvalanche,
   bscOptimism,
-  bscPolygon,
   crabCrabDVM,
-  crabCrabParachain,
-  crabDVMAstar,
   crabDVMEthereum,
   crabDVMHeco,
   crabDVMPolygon,
-  crabParachainKarura,
-  crabParachainMoonriver,
-  darwiniaCrabDVM,
   darwiniaDarwiniaDVM,
+  darwiniaCrabDVM,
   darwiniaDVMCrabDVM,
   darwiniaDVMDarwiniaDVM,
   darwiniaDVMEthereum,
-  ethereumArbitrum,
-  ethereumAstar,
-  ethereumAvalanche,
-  ethereumBSC,
   ethereumHeco,
-  ethereumOptimism,
   ethereumPolygon,
   hecoPolygon,
+  crabCrabParachain,
   polygonAstar,
+  ethereumAstar,
+  ethereumBSC,
+  ethereumAvalanche,
+  ethereumArbitrum,
+  ethereumOptimism,
+  bscPolygon,
+  avalanchePolygon,
+  arbitrumPolygon,
   polygonOptimism,
+  crabDVMAstar,
+  crabParachainKarura,
+  crabParachainMoonriver,
 ];
 
 const testBridges = [
   pangolinPangolinDVM,
+  pangoroDVMPangolinDVM,
+  pangoroPangolinDVM,
   pangolinPangolinParachain,
   pangoroDVMGoerli,
-  pangoroDVMPangolinDVM,
   pangoroDVMPangoroDVM,
-  pangoroPangolinDVM,
 ];
 
 export const BRIDGES = (() => {

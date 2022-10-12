@@ -1,5 +1,5 @@
 import { hecoConfig, polygonConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
 import { HecoPolygonBridgeConfig } from '../model';
 
 const hecoPolygonConfig: HecoPolygonBridgeConfig = {
@@ -9,7 +9,7 @@ const hecoPolygonConfig: HecoPolygonBridgeConfig = {
   },
 };
 
-export const hecoPolygon = new Bridge(hecoConfig, polygonConfig, hecoPolygonConfig, {
+export const hecoPolygon = new BridgeBase(hecoConfig, polygonConfig, hecoPolygonConfig, {
   name: 'heco-polygon',
   category: 'cBridge',
   disableIssue: true,

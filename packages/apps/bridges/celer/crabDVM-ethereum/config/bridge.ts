@@ -1,5 +1,5 @@
 import { crabDVMConfig, ethereumConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
 import { CrabDVMEthereumBridgeConfig } from '../model';
 
 const crabDVMEthereumConfig: CrabDVMEthereumBridgeConfig = {
@@ -11,7 +11,7 @@ const crabDVMEthereumConfig: CrabDVMEthereumBridgeConfig = {
   },
 };
 
-export const crabDVMEthereum = new Bridge(crabDVMConfig, ethereumConfig, crabDVMEthereumConfig, {
+export const crabDVMEthereum = new BridgeBase(crabDVMConfig, ethereumConfig, crabDVMEthereumConfig, {
   name: 'crabDVM-ethereum',
   category: 'cBridge',
 });

@@ -1,6 +1,6 @@
 import { ExplorerLink } from 'shared/components/widget/ExplorerLink';
-import { TxDoneComponentProps } from 'shared/model';
 import { useITranslation } from '../../hooks';
+import { TxDoneComponentProps } from '../../model/component';
 
 export function ApproveDone({ value, tx }: TxDoneComponentProps) {
   const { t } = useITranslation();

@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 
 import { HelixHistoryRecord } from 'shared/model';
-import { getDetailPaths } from '../utils/record';
+import { getDetailPaths } from '../utils/record/path';
 
 describe('paths', () => {
   const record: HelixHistoryRecord = { id: '0x123' } as HelixHistoryRecord;

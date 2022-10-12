@@ -1,5 +1,5 @@
 import { avalancheConfig, optimismConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
 import { AvalancheOptimismBridgeConfig } from '../model';
 
 const avalancheOptimismConfig: AvalancheOptimismBridgeConfig = {
@@ -9,7 +9,7 @@ const avalancheOptimismConfig: AvalancheOptimismBridgeConfig = {
   },
 };
 
-export const avalancheOptimism = new Bridge(avalancheConfig, optimismConfig, avalancheOptimismConfig, {
+export const avalancheOptimism = new BridgeBase(avalancheConfig, optimismConfig, avalancheOptimismConfig, {
   name: 'avalanche-optimism',
   category: 'cBridge',
 });

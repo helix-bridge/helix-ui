@@ -1,5 +1,5 @@
 import { arbitrumConfig, polygonConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
 import { ArbitrumPolygonBridgeConfig } from '../model';
 
 const arbitrumPolygonConfig: ArbitrumPolygonBridgeConfig = {
@@ -9,7 +9,7 @@ const arbitrumPolygonConfig: ArbitrumPolygonBridgeConfig = {
   },
 };
 
-export const arbitrumPolygon = new Bridge(arbitrumConfig, polygonConfig, arbitrumPolygonConfig, {
+export const arbitrumPolygon = new BridgeBase(arbitrumConfig, polygonConfig, arbitrumPolygonConfig, {
   name: 'arbitrum-polygon',
   category: 'cBridge',
 });

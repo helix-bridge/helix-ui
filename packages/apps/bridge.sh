@@ -93,8 +93,76 @@ function component() {
         " >>$2'/'$1'.tsx'
     else
         echo "
-            export function $1() {
-                return <span>$1</span>;
+            import { BN } from '@polkadot/util';
+            import { useEffect } from 'react';
+            import { useTranslation } from 'react-i18next';
+            import { mergeMap } from 'rxjs/internal/operators/mergeMap';
+            import { ChainConfig, CrossToken } from 'shared/model';
+            import { toWei } from 'shared/utils/helper/balance';
+            import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
+            import { RecipientItem } from '../../../components/form-control/RecipientItem';
+            import { TransferConfirm } from '../../../components/tx/TransferConfirm';
+            import { TransferDone } from '../../../components/tx/TransferDone';
+            import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
+            import { useAfterTx } from '../../../hooks';
+            import { CrossChainComponentProps } from '../../../model/component';
+            import { TxObservableFactory } from '../../../model/tx';
+            import { $3 } from './model';
+            import { ${from}${to}Bridge } from './utils';
+
+            export function $1({
+                form,
+                direction,
+                bridge,
+                onFeeChange,
+                balances,
+                setTxObservableFactory,
+            }: CrossChainComponentProps<${from}${to}Bridge, CrossToken<ChainConfig>, CrossToken<ChainConfig>>) {
+                const { t } = useTranslation();
+                const { afterCrossChain } = useAfterTx<$3>();
+                const [balance] = (balances ?? []) as BN[];
+
+                useEffect(() => {
+                    const fn = () => (data: $3) => {
+                    const validateObs = data.bridge.validate([balance], {
+                        balance,
+                        amount: new BN(toWei(data.direction.from)),
+                    });
+
+                    return createTxWorkflow(
+                        validateObs.pipe(mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={null} /> }))),
+                        data.bridge.burn(data),
+                        afterCrossChain(TransferDone, { payload: data })
+                    );
+                    };
+
+                    setTxObservableFactory(fn as unknown as TxObservableFactory);
+                }, [afterCrossChain, balance, setTxObservableFactory, t]);
+
+                useEffect(() => {
+                    if (onFeeChange) {
+                    onFeeChange({
+                        amount: 0,
+                        symbol: direction.from.meta.tokens.find((item) => item.symbol === '?' )!.symbol,
+                    });
+                    }
+                }, [direction.from.meta.tokens, onFeeChange]);
+
+                return (
+                    <>
+                    <RecipientItem
+                        form={form}
+                        direction={direction}
+                        bridge={bridge}
+                        extraTip={t(
+                        'Please make sure you have entered the correct {{type}} address. Entering wrong address will cause asset loss and cannot be recovered!',
+                        { type: 'Substrate' }
+                        )}
+                    />
+
+                    <CrossChainInfo bridge={bridge} fee={null} hideFee></CrossChainInfo>
+                    </>
+                );
             }
         " >>$2'/'$1'.tsx'
     fi
@@ -108,40 +176,38 @@ function initModel() {
     local name=${from}''${to}
 
     echo "
-        import { ContractConfig, BridgeConfig } from 'shared/model';
+        import { BridgeConfig } from 'shared/model';
+        import { ContractConfig } from 'shared/model';
+        import { CrossToken, ChainConfig } from 'shared/model';
+        import { Bridge } from '../../../../core/bridge';
+        import { CrossChainPayload } from '../../../../model/tx';
 
         type ${name}ContractConfig = ContractConfig;
 
         export type ${name}BridgeConfig = Required<BridgeConfig<${name}ContractConfig>>;
-    " >>$1'/bridge.ts'
-
-    echo "
-        import { Bridge, CrossChainPayload, CrossToken, ChainConfig } from 'shared/model';
-        import { ${name}BridgeConfig } from './bridge';
 
         export type IssuingPayload = CrossChainPayload<
-            Bridge<${name}BridgeConfig>,
+            Bridge<${name}BridgeConfig, ChainConfig, ChainConfig>,
             CrossToken<ChainConfig>,
             CrossToken<ChainConfig>
         >;
 
         export type RedeemPayload = CrossChainPayload<
-            Bridge<${name}BridgeConfig>,
+            Bridge<${name}BridgeConfig, ChainConfig, ChainConfig>,
             CrossToken<ChainConfig>,
             CrossToken<ChainConfig>
         >;
-    " >>$1'/tx.ts'
+    " >>$1'/bridge.ts'
 
     echo "
         export * from './bridge';
-        export * from './tx';
     " >>$1'/index.ts'
 }
 
 function initConfig() {
     echo "
         import { ${origin}Config, ${target}Config } from 'shared/config/network';
-        import { Bridge } from 'shared/model';
+        import { BridgeBase } from 'shared/core/bridge';
         import { ${from}${to}BridgeConfig } from '../model';
 
         const ${origin}${to}Config: ${from}${to}BridgeConfig = { 
@@ -151,7 +217,7 @@ function initConfig() {
             } 
         };
 
-        export const ${origin}${to} = new Bridge(${origin}Config, ${target}Config, ${origin}${to}Config, {
+        export const ${origin}${to} = new BridgeBase(${origin}Config, ${target}Config, ${origin}${to}Config, {
             name: '${origin}-${target}',
             category: '${category}',
         });
@@ -163,38 +229,41 @@ function initConfig() {
 }
 
 function initUitls() {
-    echo "
-        import { Observable, EMPTY } from 'rxjs';
-        import { Tx } from 'shared/model';
-
-        export function issue(): Observable<Tx> {
-            return EMPTY;
-        }
-
-        export function redeem(): Observable<Tx> {
-            return EMPTY;
-        }
-    " >>$1'/tx.ts'
+    local name=${from}''${to}
 
     echo "
-        import BN from 'bn.js';
-        import { Bridge } from 'shared/model';
+        import { BN } from '@polkadot/util';
+        import { ChainConfig, Tx } from 'shared/model';
+        import { EMPTY } from 'rxjs/internal/observable/empty';
+        import type { Observable } from 'rxjs';
+        import { IssuingPayload, RedeemPayload, ${name}BridgeConfig } from '../model';
+        import { Bridge } from '../../../../core/bridge';
+        import { TxValidation } from '../../../../model';
 
+        export class ${name}Bridge extends Bridge<
+            ${name}BridgeConfig,
+            ChainConfig,
+            ChainConfig
+        > {
+            back(payload: IssuingPayload, fee: BN): Observable<Tx> {
+                console.log(payload, fee);
+                return EMPTY;
+            }
 
-        export async function getRedeemFee(bridge: Bridge): Promise<BN | null> {
-           console.log('Unfinished getRedeemFee for bridge', bridge);
-           return  new BN(0); 
+            burn(payload: RedeemPayload, fee: BN): Observable<Tx> {
+                console.log(payload, fee);
+                return EMPTY;
+            }
+
+            genTxParamsValidations(params: TxValidation): [boolean, string][] {
+                console.log(params);
+                return [];
+            }
         }
-
-        export async function getIssuingFee(bridge: Bridge): Promise<BN | null> {
-           console.log('Unfinished getIssuing for bridge', bridge);
-           return  new BN(0); 
-        }
-    " >>$1'/fee.ts'
+    " >>$1'/bridge.ts'
 
     echo "
-        export * from './tx';
-        export * from './fee';
+        export * from './bridge';
     " >>$1'/index.ts'
 }
 
@@ -222,7 +291,7 @@ function updatePredicateFns() {
 function updateBridgesIndexer() {
     echo "
         export { $1, $2 } from './'$3;
-    " >> './bridges/index.ts'
+    " >>'./bridges/index.ts'
 }
 
 function init() {
@@ -239,7 +308,7 @@ function init() {
         mkdir $path'/config'
 
         mkdir $path'/utils'
-        initUitls $path'/utils'
+        initUitls $path'/utils' $departure $arrival
 
         mkdir $path'/hooks'
         initHooks $path'/hooks'
@@ -254,8 +323,8 @@ function init() {
     mkdir $path'/config'
     initConfig $path'/config' $departure $arrival
 
-    component $departure $path
-    component $arrival $path
+    component $departure $path 'IssuingPayload'
+    component $arrival $path 'RedeemPayload'
 
     indexFile $departure $index
     indexFile $arrival $index

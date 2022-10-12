@@ -4,19 +4,26 @@ import matches from 'lodash/matches';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo } from 'react';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
-import { Bridge, CrossChainDirection, CrossToken, CustomFormControlProps } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
+import { BridgeConfig, ChainConfig, CrossChainDirection, CrossToken, CustomFormControlProps } from 'shared/model';
 import { getBridges } from 'utils/bridge';
+import { bridgeFactory } from '../../bridges/bridges';
+import { Bridge } from '../../core/bridge';
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { BridgeState } from '../bridge/BridgeState';
 import { TokenOnChain } from '../widget/TokenOnChain';
 
-type BridgeSelectorProps = CustomFormControlProps<Bridge> & {
+type BridgeSelectorProps = CustomFormControlProps<Bridge<BridgeConfig, ChainConfig, ChainConfig>> & {
   direction: CrossChainDirection;
 };
 
 export function BridgeSelector({ direction, value, onChange }: BridgeSelectorProps) {
   const { t } = useTranslation();
-  const bridges = useMemo(() => getBridges(direction), [direction]);
+  const bridges = useMemo(() => {
+    const configs = getBridges(direction);
+
+    return configs.map((config) => bridgeFactory(config));
+  }, [direction]);
 
   const needClaim = useMemo(() => {
     const overview = direction.from?.cross.find((item) => item.partner.name === direction.to?.meta.name);
@@ -33,9 +40,9 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
   //   [direction.from.symbol]
   // );
 
-  const isDisabled = useCallback<(bridge: Bridge) => boolean>(
+  const isDisabled = useCallback<(bridge: BridgeBase) => boolean>(
     // eslint-disable-next-line complexity
-    (bridge: Bridge) => {
+    (bridge: BridgeBase) => {
       return (
         !!direction.from &&
         !!direction.to &&

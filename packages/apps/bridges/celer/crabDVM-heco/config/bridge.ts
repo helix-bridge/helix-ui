@@ -1,5 +1,5 @@
 import { crabDVMConfig, hecoConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
 import { CrabDVMHecoBridgeConfig } from '../model';
 
 const crabDVMHecoConfig: CrabDVMHecoBridgeConfig = {
@@ -9,7 +9,7 @@ const crabDVMHecoConfig: CrabDVMHecoBridgeConfig = {
   },
 };
 
-export const crabDVMHeco = new Bridge(crabDVMConfig, hecoConfig, crabDVMHecoConfig, {
+export const crabDVMHeco = new BridgeBase(crabDVMConfig, hecoConfig, crabDVMHecoConfig, {
   name: 'crabDVM-heco',
   category: 'cBridge',
 });

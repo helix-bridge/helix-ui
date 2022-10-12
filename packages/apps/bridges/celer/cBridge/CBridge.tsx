@@ -10,15 +10,9 @@ import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { Logo } from 'shared/components/widget/Logo';
 import { FORM_CONTROL } from 'shared/config/constant';
-import {
-  CrossChainComponentProps,
-  CrossToken,
-  EthereumChainConfig,
-  CrossChainPayload,
-  TxObservableFactory,
-} from 'shared/model';
+import { CrossToken, EthereumChainConfig } from 'shared/model';
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
-import { fromWei, toWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
+import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
@@ -32,12 +26,12 @@ import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
+import { CrossChainComponentProps } from '../../../model/component';
+import { CrossChainPayload, TxObservableFactory } from '../../../model/tx';
 import { useAccount, useWallet } from '../../../providers';
-import { CrabDVMHecoBridgeConfig } from '../crabDVM-heco/model';
-import { useTransfer } from './hooks/transfer';
 import { IssuingPayload } from './model';
 import { EstimateAmtRequest, EstimateAmtResponse } from './ts-proto/gateway/gateway_pb';
-import { client, getMinimalMaxSlippage, validate } from './utils';
+import { CBridgeBridge } from './utils';
 
 export function CBridge({
   allowance,
@@ -48,11 +42,7 @@ export function CBridge({
   onFeeChange,
   setTxObservableFactory,
   updateAllowancePayload,
-}: CrossChainComponentProps<
-  CrabDVMHecoBridgeConfig,
-  CrossToken<EthereumChainConfig>,
-  CrossToken<EthereumChainConfig>
->) {
+}: CrossChainComponentProps<CBridgeBridge, CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>) {
   const { t } = useTranslation();
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
   const { account } = useAccount();
@@ -60,7 +50,8 @@ export function CBridge({
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE * UI_SLIPPAGE_SCALE);
   const [minimalMaxSlippage, setMinimalMaxSlippage] = useState<number | null>(null);
   const { setChainMatched } = useWallet();
-  const { isPegged, sendTx, poolAddress } = useTransfer(direction);
+
+  const isPegged = useMemo(() => bridge.isPegged(direction), [bridge, direction]);
 
   const feeWithSymbol = useMemo(
     () =>
@@ -118,7 +109,7 @@ export function CBridge({
       .pipe(
         switchMap((isConsistent) => {
           if (isConsistent) {
-            return isPegged ? of(0) : from(getMinimalMaxSlippage(poolAddress));
+            return isPegged ? of(0) : from(bridge.getMinimalMaxSlippage(direction));
           }
 
           return of(NaN);
@@ -143,7 +134,7 @@ export function CBridge({
       });
 
     return () => sub$$.unsubscribe();
-  }, [direction.from.host, direction.from.meta, isPegged, poolAddress, setChainMatched]);
+  }, [bridge, direction, isPegged, setChainMatched]);
 
   useEffect(() => {
     let promise = Promise.resolve({});
@@ -156,13 +147,13 @@ export function CBridge({
 
     promise.then((options) => {
       updateAllowancePayload({
-        spender: poolAddress,
+        spender: bridge.getPoolAddress(direction),
         tokenAddress: direction.from.address,
         provider: entrance.web3.defaultProvider,
         ...options,
       });
     });
-  }, [direction.from.address, direction.from.host, poolAddress, updateAllowancePayload]);
+  }, [bridge, direction, updateAllowancePayload]);
 
   useEffect(() => {
     form.setFieldsValue({ [FORM_CONTROL.recipient]: account });
@@ -170,7 +161,7 @@ export function CBridge({
 
   useEffect(() => {
     const fn = () => (data: Omit<IssuingPayload, 'maxSlippage'>) => {
-      const validateObs = validate([balances, allowance, estimateResult], {
+      const validateObs = data.bridge.validate([balances, allowance, estimateResult], {
         balance: balances![0],
         amount: new BN(toWei(direction.from)),
         allowance,
@@ -199,9 +190,7 @@ export function CBridge({
         )
       );
 
-      const txObs = sendTx(payload);
-
-      return createTxWorkflow(beforeTx, txObs, afterCrossChain(TransferDone, { payload }));
+      return createTxWorkflow(beforeTx, bridge.send(payload), afterCrossChain(TransferDone, { payload }));
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
@@ -209,11 +198,11 @@ export function CBridge({
     afterCrossChain,
     allowance,
     balances,
+    bridge,
     direction.from,
     direction.to.decimals,
     estimateResult,
     feeWithSymbol,
-    sendTx,
     setTxObservableFactory,
   ]);
 
@@ -248,7 +237,7 @@ export function CBridge({
       estimateRequest.setIsPegged(true);
     }
 
-    const sub$$ = from(client.estimateAmt(estimateRequest, null)).subscribe({
+    const sub$$ = from(bridge.client.estimateAmt(estimateRequest, null)).subscribe({
       next(res) {
         const result = res.toObject();
         const { estimatedReceiveAmt } = result;
@@ -273,15 +262,16 @@ export function CBridge({
     return () => sub$$.unsubscribe();
   }, [
     account,
+    bridge.client,
     direction.from.amount,
-    direction.to.decimals,
+    direction.from.decimals,
     direction.from.meta.ethereumChain.chainId,
     direction.from.symbol,
+    direction.to.decimals,
     direction.to.meta.ethereumChain.chainId,
+    isPegged,
     onFeeChange,
     slippage,
-    direction.from.decimals,
-    isPegged,
   ]);
 
   return (

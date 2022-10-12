@@ -1,5 +1,5 @@
 import { ethereumConfig, optimismConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
 import { EthereumOptimismBridgeConfig } from '../model';
 
 const ethereumOptimismConfig: EthereumOptimismBridgeConfig = {
@@ -10,7 +10,7 @@ const ethereumOptimismConfig: EthereumOptimismBridgeConfig = {
   },
 };
 
-export const ethereumOptimism = new Bridge(ethereumConfig, optimismConfig, ethereumOptimismConfig, {
+export const ethereumOptimism = new BridgeBase(ethereumConfig, optimismConfig, ethereumOptimismConfig, {
   name: 'ethereum-optimism',
   category: 'cBridge',
 });

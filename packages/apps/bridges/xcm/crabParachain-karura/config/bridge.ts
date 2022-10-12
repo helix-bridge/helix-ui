@@ -1,5 +1,5 @@
 import { crabParachainConfig, karuraConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
 import { CrabParachainKaruraBridgeConfig } from '../model';
 
 const crabParachainKaruraConfig: CrabParachainKaruraBridgeConfig = {
@@ -9,7 +9,7 @@ const crabParachainKaruraConfig: CrabParachainKaruraBridgeConfig = {
   },
 };
 
-export const crabParachainKarura = new Bridge(crabParachainConfig, karuraConfig, crabParachainKaruraConfig, {
+export const crabParachainKarura = new BridgeBase(crabParachainConfig, karuraConfig, crabParachainKaruraConfig, {
   name: 'crabParachain-karura',
   category: 'XCM',
   activeArrivalConnection: true,

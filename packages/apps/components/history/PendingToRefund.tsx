@@ -1,8 +1,7 @@
 import { SyncOutlined } from '@ant-design/icons';
 import { Button, message, Tooltip } from 'antd';
 import { useManualQuery } from 'graphql-hooks';
-import { useCallback, useMemo, useState } from 'react';
-import { EMPTY } from 'rxjs/internal/observable/empty';
+import { useCallback, useState } from 'react';
 import { from } from 'rxjs/internal/observable/from';
 import { of } from 'rxjs/internal/observable/of';
 import { map } from 'rxjs/internal/operators/map';
@@ -13,10 +12,9 @@ import { useIsMounted } from 'shared/hooks';
 import { HelixHistoryRecord } from 'shared/model';
 import { gqlName } from 'shared/utils/helper/common';
 import { pollWhile } from 'shared/utils/helper/operator';
-import { isSubstrateDVMEthereum, isSubstrateDVMSubstrateDVM } from 'utils/bridge';
-import { requestRefund, withdraw } from '../../bridges/celer/cBridge/utils/tx';
-import { refund as substrateDVMEthereumRefund } from '../../bridges/helix/substrateDVM-ethereum/utils';
-import { refund } from '../../bridges/helix/substrateDVM-substrateDVM/utils';
+import { getBridge } from 'utils/bridge';
+import { bridgeFactory } from '../../bridges/bridges';
+import type { CBridgeBridge } from '../../bridges/celer/cBridge/utils';
 import { HISTORY_RECORD_BY_ID } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { RecordStatusComponentProps } from '../../model/component';
@@ -71,8 +69,9 @@ function CBrideRefund({ record, onSuccess }: RefundComponentProps) {
         icon={loading ? <SyncOutlined spin /> : null}
         onClick={() => {
           setLoading(true);
+          const bridge = getBridge([record.fromChain, record.toChain]) as CBridgeBridge;
 
-          withdraw(record).subscribe({
+          bridge.withdraw(record).subscribe({
             next(response) {
               observer.next(response);
 
@@ -113,8 +112,10 @@ function CBrideRefund({ record, onSuccess }: RefundComponentProps) {
         icon={loading ? <SyncOutlined spin /> : null}
         onClick={() => {
           setLoading(true);
+          const bridge = getBridge([record.fromChain, record.toChain]) as CBridgeBridge;
 
-          requestRefund(record)
+          bridge
+            .requestRefund(record)
             .then((res) => {
               const { err } = res.toObject();
 
@@ -141,22 +142,6 @@ function Refund({ record, onSuccess }: RefundComponentProps) {
   const [loading, setLoading] = useState(false);
   const { observer } = useTx();
 
-  const refundFn = useMemo(() => {
-    const { fromChain, toChain } = record;
-    if (isSubstrateDVMSubstrateDVM(fromChain, toChain)) {
-      return refund;
-    }
-
-    if (isSubstrateDVMEthereum(fromChain, toChain)) {
-      return substrateDVMEthereumRefund;
-    }
-
-    return (history: HelixHistoryRecord) => {
-      console.warn(`No refund method implemented for ${history.fromChain} to ${history.toChain} transfer!`);
-      return EMPTY;
-    };
-  }, [record]);
-
   return (
     <Button
       size="small"
@@ -166,28 +151,37 @@ function Refund({ record, onSuccess }: RefundComponentProps) {
       onClick={(event) => {
         event.stopPropagation();
         setLoading(true);
+        const { fromChain, toChain } = record;
+        const config = getBridge([fromChain, toChain]);
+        const bridge = bridgeFactory(config);
 
-        refundFn(record).subscribe({
-          next(response) {
-            observer.next(response);
+        if (bridge && bridge.refund) {
+          bridge.refund(record).subscribe({
+            next(response) {
+              observer.next(response);
 
-            if (response.status === 'finalized') {
-              onRefundSuccess({ id: record.id, hash: response.hash ?? '' });
+              if (response.status === 'finalized') {
+                onRefundSuccess({ id: record.id, hash: response.hash ?? '' });
 
-              if (onSuccess) {
-                onSuccess();
+                if (onSuccess) {
+                  onSuccess();
+                }
               }
-            }
-          },
-          error(err) {
-            observer.error(err);
-            setLoading(false);
-          },
-          complete() {
-            observer.complete();
-            setLoading(false);
-          },
-        });
+            },
+            error(err) {
+              observer.error(err);
+              setLoading(false);
+            },
+            complete() {
+              observer.complete();
+              setLoading(false);
+            },
+          });
+        } else {
+          console.warn(
+            `The bridge from ${fromChain} to ${toChain} not exist, or the refund method on the bridge doest not implemented`
+          );
+        }
       }}
     >
       {t('Refund')}

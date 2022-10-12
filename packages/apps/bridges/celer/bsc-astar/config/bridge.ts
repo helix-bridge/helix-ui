@@ -1,5 +1,5 @@
 import { bscConfig, astarConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
 import { BSCAstarBridgeConfig } from '../model';
 
 const bscAstarConfig: BSCAstarBridgeConfig = {
@@ -12,7 +12,7 @@ const bscAstarConfig: BSCAstarBridgeConfig = {
   },
 };
 
-export const bscAstar = new Bridge(bscConfig, astarConfig, bscAstarConfig, {
+export const bscAstar = new BridgeBase(bscConfig, astarConfig, bscAstarConfig, {
   name: 'bsc-astar',
   category: 'cBridge',
 });

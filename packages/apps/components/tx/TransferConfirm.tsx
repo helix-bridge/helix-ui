@@ -4,14 +4,16 @@ import { i18n } from 'next-i18next';
 import { PropsWithChildren, useMemo } from 'react';
 import { initReactI18next, useTranslation } from 'react-i18next';
 import { Logo } from 'shared/components/widget/Logo';
-import { Bridge, CrossToken, PolkadotChainConfig, TxConfirmComponentProps } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
+import { CrossToken, PolkadotChainConfig } from 'shared/model';
 import { convertToSS58 } from 'shared/utils/helper/address';
 import { isPolkadotNetwork } from 'shared/utils/network/network';
-import { getDisplayName } from 'utils/network';
+import { getDisplayName } from 'utils/network/network';
+import { TxConfirmComponentProps } from '../../model/component';
 
 type Fee = Pick<CrossToken, 'symbol' | 'amount'>;
 
-export function TransferConfirm<T extends Bridge = Bridge>({
+export function TransferConfirm<T extends BridgeBase = BridgeBase>({
   value,
   fee,
   needClaim,

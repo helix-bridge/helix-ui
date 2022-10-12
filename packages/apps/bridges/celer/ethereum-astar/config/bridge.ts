@@ -1,5 +1,5 @@
 import { ethereumConfig, astarConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
 import { EthereumAstarBridgeConfig } from '../model';
 
 const ethereumAstarConfig: EthereumAstarBridgeConfig = {
@@ -11,7 +11,7 @@ const ethereumAstarConfig: EthereumAstarBridgeConfig = {
   },
 };
 
-export const ethereumAstar = new Bridge(ethereumConfig, astarConfig, ethereumAstarConfig, {
+export const ethereumAstar = new BridgeBase(ethereumConfig, astarConfig, ethereumAstarConfig, {
   name: 'ethereum-astar',
   category: 'cBridge',
 });

@@ -1,14 +1,14 @@
 import { Network, HelixHistoryRecord } from 'shared/model';
 import {
   BridgePredicateFn,
-  isSubstrateSubstrateDVM,
-  isSubstrateDVM,
-  isSubstrateSubstrateParachain,
   isCBridge,
-  isXCM,
-  isSubstrateDVMSubstrateDVM,
+  isSubstrateDVM,
   isSubstrateDVMEthereum,
-} from '../../../apps/utils/bridge';
+  isSubstrateDVMSubstrateDVM,
+  isSubstrateSubstrateDVM,
+  isSubstrateSubstrateParachain,
+  isXCM,
+} from '../bridge';
 
 type DirectionPaths = [BridgePredicateFn, string, string];
 

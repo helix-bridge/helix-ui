@@ -1,5 +1,5 @@
 import { astarConfig, avalancheConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
 import { AstarAvalancheBridgeConfig } from '../model';
 
 const astarAvalancheConfig: AstarAvalancheBridgeConfig = {
@@ -10,7 +10,7 @@ const astarAvalancheConfig: AstarAvalancheBridgeConfig = {
   },
 };
 
-export const astarAvalanche = new Bridge(astarConfig, avalancheConfig, astarAvalancheConfig, {
+export const astarAvalanche = new BridgeBase(astarConfig, avalancheConfig, astarAvalancheConfig, {
   name: 'astar-avalanche',
   category: 'cBridge',
 });

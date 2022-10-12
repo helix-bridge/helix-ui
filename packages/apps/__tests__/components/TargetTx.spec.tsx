@@ -50,6 +50,7 @@ describe('<TargetTx />', () => {
     sendTokenAddress: '',
     reason: '',
     messageNonce: '',
+    recvTokenAddress: '',
   };
 
   it.each([

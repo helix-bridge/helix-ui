@@ -43,9 +43,12 @@ describe('<Timestamp />', () => {
     sender: '0xc42226c46028de93a9a3eecabd2412ad97373fcd34ffd8efbfa8ad33c875e604',
     startTime: 1656565854,
     toChain: 'crab-dvm',
-    token: '0x6d6f646c64612f6272696e670000000000000000',
     reason: '',
     messageNonce: '',
+    sendToken: '',
+    recvToken: '',
+    recvTokenAddress: '',
+    sendTokenAddress: '',
   };
 
   let mockDate: any;

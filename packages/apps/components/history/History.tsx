@@ -12,19 +12,19 @@ import { HelixHistoryRecord } from 'shared/model';
 import { convertToDvm } from 'shared/utils/helper/address';
 import { gqlName } from 'shared/utils/helper/common';
 import { isValidAddress } from 'shared/utils/helper/validator';
-import { getOriginChainConfig } from 'utils/network';
-import {
-  getDetailPaths,
-  getReceivedAmountFromHelixRecord,
-  getSentAmountFromHelixRecord,
-  getTokenConfigFromHelixRecord,
-} from 'utils/record';
+import { getDetailPaths } from 'utils/record/path';
 import { HISTORY_RECORDS_IN_RESULTS, STATUS_STATISTICS } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
 import { useAccount, useApi } from '../../providers';
 import { useClaim } from '../../providers/claim';
 import { isEthereumDarwinia } from '../../utils';
+import { getOriginChainConfig } from '../../utils/network';
+import {
+  getReceivedAmountFromHelixRecord,
+  getSentAmountFromHelixRecord,
+  getTokenConfigFromHelixRecord,
+} from '../../utils/record/record';
 import { BridgeArrow } from '../bridge/BridgeArrow';
 import { TokenOnChain } from '../widget/TokenOnChain';
 import { Pending } from './Pending';

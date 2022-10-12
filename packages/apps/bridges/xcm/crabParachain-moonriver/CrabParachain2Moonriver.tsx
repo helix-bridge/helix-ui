@@ -1,21 +1,22 @@
-import BN from 'bn.js';
+import { BN } from '@polkadot/util';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
-import { CrossChainComponentProps, CrossToken, PolkadotChainConfig, TxObservableFactory } from 'shared/model';
-import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
+import { CrossToken, ParachainChainConfig } from 'shared/model';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
+import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
+import { CrossChainComponentProps } from '../../../model/component';
+import { TxObservableFactory } from '../../../model/tx';
 import { useApi } from '../../../providers';
-import { CrabParachainMoonriverBridgeConfig, IssuingPayload } from './model';
-import { getIssuingFee } from './utils';
-import { issue, validate } from './utils/tx';
+import { IssuingPayload } from './model';
+import { CrabParachainMoonriverBridge } from './utils';
 
 export function CrabParachain2Moonriver({
   form,
@@ -26,9 +27,9 @@ export function CrabParachain2Moonriver({
   onFeeChange,
   balances,
 }: CrossChainComponentProps<
-  CrabParachainMoonriverBridgeConfig,
-  CrossToken<PolkadotChainConfig>,
-  CrossToken<PolkadotChainConfig>
+  CrabParachainMoonriverBridge,
+  CrossToken<ParachainChainConfig>,
+  CrossToken<ParachainChainConfig>
 >) {
   const { t } = useTranslation();
   const { departureConnection } = useApi();
@@ -53,7 +54,7 @@ export function CrabParachain2Moonriver({
 
   useEffect(() => {
     const fn = () => (data: IssuingPayload) => {
-      const validateObs = validate([balance], {
+      const validateObs = data.bridge.validate([balance], {
         balance,
         amount: new BN(toWei(data.direction.from)),
       });
@@ -62,7 +63,7 @@ export function CrabParachain2Moonriver({
         validateObs.pipe(
           mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
         ),
-        issue(data),
+        data.bridge.back(data),
         afterCrossChain(TransferDone, { payload: data })
       );
     };
@@ -71,7 +72,7 @@ export function CrabParachain2Moonriver({
   }, [afterCrossChain, balance, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
 
   useEffect(() => {
-    const sub$$ = from(getIssuingFee(bridge)).subscribe((result) => {
+    const sub$$ = from(bridge.getFee(direction)).subscribe((result) => {
       setFee(result);
 
       if (onFeeChange) {
@@ -83,7 +84,7 @@ export function CrabParachain2Moonriver({
     });
 
     return () => sub$$.unsubscribe();
-  }, [bridge, direction.from.decimals, onFeeChange, symbol]);
+  }, [bridge, direction, onFeeChange, symbol]);
 
   return (
     <>

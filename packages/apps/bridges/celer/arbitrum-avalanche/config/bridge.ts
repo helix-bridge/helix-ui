@@ -1,5 +1,5 @@
 import { arbitrumConfig, avalancheConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
 import { ArbitrumAvalancheBridgeConfig } from '../model';
 
 const arbitrumAvalancheConfig: ArbitrumAvalancheBridgeConfig = {
@@ -9,7 +9,7 @@ const arbitrumAvalancheConfig: ArbitrumAvalancheBridgeConfig = {
   },
 };
 
-export const arbitrumAvalanche = new Bridge(arbitrumConfig, avalancheConfig, arbitrumAvalancheConfig, {
+export const arbitrumAvalanche = new BridgeBase(arbitrumConfig, avalancheConfig, arbitrumAvalancheConfig, {
   name: 'arbitrum-avalanche',
   category: 'cBridge',
 });

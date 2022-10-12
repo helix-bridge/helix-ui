@@ -4,21 +4,28 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
-import { CrossChainDirection } from 'shared/model';
+import { ChainBase } from 'shared/core/chain';
+import { CrossChainDirection, CrossToken } from 'shared/model';
 import { readStorage, updateStorage } from 'shared/utils/helper/storage';
 import { getDirectionFromSettings } from 'shared/utils/helper/url';
 import { CrossChain } from '../components/CrossChain';
 import { DisclaimerModal } from '../components/widget/DisclaimerModal';
 import { useITranslation } from '../hooks';
 import { AccountProvider, ApiProvider, ClaimProvider, TxProvider, usePersonal, WalletProvider } from '../providers';
+import { chainFactory } from '../utils/network/chain';
 
 const ActiveAccount = dynamic(() => import('../components/widget/account/ActiveAccount'), { ssr: false });
 const History = dynamic(() => import('../components/history/History'), { ssr: false });
 const BaseModal = dynamic(() => import('../components/widget/BaseModal'), { ssr: false });
 
+const { from, to } = DEFAULT_DIRECTION;
+
 function Page() {
   const { t } = useITranslation();
-  const [dir, setDir] = useState<CrossChainDirection>(DEFAULT_DIRECTION);
+  const [dir, setDir] = useState<CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>>>({
+    from: { ...from, meta: chainFactory(from.meta) },
+    to: { ...to, meta: chainFactory(to.meta) },
+  });
   const [visible, setVisible] = useState(false);
   const { isPersonalHistoryVisible, setIsPersonalHistoryVisible } = usePersonal();
 
@@ -28,7 +35,10 @@ function Page() {
 
     setVisible(!hide);
 
-    setDir(loc);
+    setDir({
+      from: { ...loc.from, meta: chainFactory(loc.from.meta) },
+      to: { ...loc.to, meta: chainFactory(loc.to.meta) },
+    });
   }, []);
 
   return (

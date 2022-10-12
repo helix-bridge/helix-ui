@@ -1,5 +1,5 @@
 import { crabParachainConfig, moonriverConfig } from 'shared/config/network';
-import { Bridge } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
 import { CrabParachainMoonriverBridgeConfig } from '../model';
 
 const crabParachainMoonriverConfig: CrabParachainMoonriverBridgeConfig = {
@@ -9,7 +9,12 @@ const crabParachainMoonriverConfig: CrabParachainMoonriverBridgeConfig = {
   },
 };
 
-export const crabParachainMoonriver = new Bridge(crabParachainConfig, moonriverConfig, crabParachainMoonriverConfig, {
-  name: 'crabParachain-moonriver',
-  category: 'XCM',
-});
+export const crabParachainMoonriver = new BridgeBase(
+  crabParachainConfig,
+  moonriverConfig,
+  crabParachainMoonriverConfig,
+  {
+    name: 'crabParachain-moonriver',
+    category: 'XCM',
+  }
+);

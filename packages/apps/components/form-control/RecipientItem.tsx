@@ -5,11 +5,13 @@ import { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IdentAccountAddress } from 'shared/components/widget/IdentAccountAddress';
 import { FORM_CONTROL } from 'shared/config/constant';
-import { ConnectionStatus, CrossChainComponentProps, PolkadotChainConfig } from 'shared/model';
+import { BridgeBase } from 'shared/core/bridge';
+import { ConnectionStatus, PolkadotChainConfig } from 'shared/model';
 import { convertToSS58 } from 'shared/utils/helper/address';
 import { isPolkadotNetwork } from 'shared/utils/network/network';
+import { CrossChainComponentProps } from '../../model/component';
 import { useApi } from '../../providers';
-import { getDisplayName } from '../../utils/network';
+import { getDisplayName } from '../../utils/network/network';
 import { isValidAddressStrict } from '../../utils/validate';
 
 // eslint-disable-next-line complexity
@@ -18,7 +20,7 @@ export function RecipientItem({
   direction,
   onChange,
   bridge,
-}: Pick<CrossChainComponentProps, 'form' | 'direction' | 'bridge'> & {
+}: Pick<CrossChainComponentProps<BridgeBase>, 'form' | 'direction' | 'bridge'> & {
   extraTip?: string | ReactNode;
   onChange?: (value: string) => void;
 }) {

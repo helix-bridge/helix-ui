@@ -1,21 +1,23 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { isEthereumNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
 import { Button, Cascader, Form, Input, InputNumber, InputNumberProps } from 'antd';
+import { isAddress } from 'ethers/lib/utils';
 import omit from 'lodash/omit';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
+import { ChainBase } from 'shared/core/chain';
 import { ChainConfig, CrossToken, TokenInfoWithMeta, TokenWithBridgesInfo } from 'shared/model';
-import { isAddress } from 'ethers/lib/utils';
-import { chainConfigs, getDisplayName } from 'utils/network';
+import { isEthereumNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
+import { chainConfigs, getChainConfig, getDisplayName } from 'utils/network';
 import { useITranslation } from '../../hooks';
+import { chainFactory } from '../../utils/network/chain';
 import { isTransferableTokenPair } from '../../utils/validate';
 
 interface DestinationProps {
   className?: string;
-  onChange?: (value: CrossToken) => void;
+  onChange?: (value: CrossToken<ChainBase>) => void;
   title?: string;
-  value: CrossToken;
+  value: CrossToken<ChainBase>;
   fromToken?: TokenInfoWithMeta;
 }
 
@@ -172,11 +174,12 @@ export function Destination({
             onChange={(_, selected) => {
               // selected[0] token information may be incomplete
               const token = (selected as unknown as [ChainConfig, TokenWithBridgesInfo])[1];
+              const config = getChainConfig(token.host);
 
               if (onChange) {
                 onChange({
                   ...omit(token, 'label'),
-                  meta: chainConfigs.find((item) => item.name === token.host)!,
+                  meta: chainFactory(config),
                   amount: value.amount,
                 });
               }

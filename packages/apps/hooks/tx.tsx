@@ -1,8 +1,10 @@
 import { message, ModalProps } from 'antd';
 import { FunctionComponent, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CrossChainPayload, Tx, TxDoneComponentProps } from 'shared/model';
+import type { Tx } from 'shared/model/tx';
 import { applyModal } from 'shared/utils/tx';
+import { TxDoneComponentProps } from '../model/component';
+import type { CrossChainPayload } from '../model/tx';
 import { usePersonal } from '../providers';
 
 export function useAfterTx<T extends CrossChainPayload>() {
