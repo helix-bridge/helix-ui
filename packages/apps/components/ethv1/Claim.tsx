@@ -1,19 +1,20 @@
-import { Button, Card, Divider, Form, Input, message } from 'antd';
+import { Card, Divider, Form, Input } from 'antd';
 import { Contract } from 'ethers';
-import { i18n, Trans } from 'next-i18next';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { i18n, Trans, useTranslation } from 'next-i18next';
+import { useEffect, useMemo, useState } from 'react';
 import { initReactI18next } from 'react-i18next';
+import { EMPTY } from 'rxjs/internal/observable/empty';
+import { of } from 'rxjs/internal/observable/of';
+import { filter } from 'rxjs/internal/operators/filter';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { ethereumConfig } from 'shared/config/network';
 import { validateMessages } from 'shared/config/validate-msg';
 import { Tx } from 'shared/model';
-import { entrance, metamaskGuard } from 'shared/utils/connection';
+import { entrance, getMetamaskConnection, metamaskGuard } from 'shared/utils/connection';
 import { fromWei } from 'shared/utils/helper/balance';
-import { genEthereumContractTxObs } from 'shared/utils/tx';
-import { Path } from '../../config';
+import { applyModalObs, genEthereumContractTxObs } from 'shared/utils/tx';
 import abi from '../../config/ethv1/abi.json';
 import claimSource from '../../config/ethv1/airdrop2.json';
-import { useITranslation } from '../../hooks';
 import { useApi, useTx } from '../../providers';
 import { isValidAddressStrict } from '../../utils/validate';
 import { FormItemButton } from '../widget/FormItemButton';
@@ -35,14 +36,22 @@ interface Erc20 {
 const contractAddress = '0x15fC591601044351868b13a5B629c170Bf3F30A0';
 const merkleRoot = '0x025883e9abdfb630703ed746142146ab9cb2569b24bd72475566bae6c2f0a30a';
 
+// eslint-disable-next-line complexity
 export function Claim() {
-  const { t } = useITranslation();
+  const { t } = useTranslation();
   const [claimItem, setClaimItem] = useState<ClaimItem>();
   const [account, setAccount] = useState<string>();
   const [claimed, setClaimed] = useState<boolean>(true);
-  const router = useRouter();
   const { setDeparture } = useApi();
   const { observer } = useTx();
+
+  const { ring, kton } = useMemo(
+    () => ({
+      ring: fromWei({ value: claimItem?.erc20.amounts[0] || 0 }),
+      kton: fromWei({ value: claimItem?.erc20.amounts[1] || 0 }),
+    }),
+    [claimItem]
+  );
 
   useEffect(() => {
     setDeparture(ethereumConfig);
@@ -60,6 +69,7 @@ export function Claim() {
 
     contract.claimed(to, merkleRoot).then((res: boolean) => setClaimed(res));
   }, [claimItem]);
+
   return (
     <Card className="w-full lg:w-1/2 xl:w-1/3 mx-auto rounded border-none">
       <h3 className="text-center">{t('Claim Tool')}</h3>
@@ -115,47 +125,68 @@ export function Claim() {
         {!!account && (
           <Form.Item>
             <div>
-              <div className="text-center text-lg bg-gray-900 border-solid border border-gray-700 py-4">
-                <Trans i18nKey="claimToolD2EInfo">
-                  In this account, there are{' '}
-                  <div className="text-2xl">
-                    <span className="truncate">{fromWei({ value: claimItem?.erc20.amounts[0] || 0 })}</span> RING &{' '}
-                    <span className="truncate">{fromWei({ value: claimItem?.erc20.amounts[1] || 0 })}</span> KTON{' '}
-                  </div>{' '}
-                  unclaimed on Ethereum.
-                </Trans>
+              <div className="text-center text-2xl bg-gray-900 border-solid border border-gray-700 py-4">
+                {ring} RING & {kton} KTON
               </div>
 
               <div className="text-xs text-center mt-4">
-                {t('The tokens will be claimed to the account you entered above. ')}
+                {!!account && (!claimItem || claimed)
+                  ? t('The token had been claimed or there is no token to claim for this account')
+                  : t('The tokens will be claimed to the account you entered above. ')}
               </div>
             </div>
           </Form.Item>
         )}
 
         <FormItemButton
+          disabled={!account || !claimItem || claimed}
           onClick={() => {
-            if (!account || !claimItem) {
-              return;
-            }
-
-            if (claimed) {
-              message.error(t('Already claimed, unable to claim repeat'));
-              return;
-            }
-
-            const { proof, to, erc20, erc1155, erc721, salt } = claimItem;
+            const { proof, to, erc20, erc1155, erc721, salt } = claimItem!;
 
             metamaskGuard<Tx>(() =>
-              genEthereumContractTxObs(
-                contractAddress,
-                (contract) =>
-                  contract.claimMultipleTokens(
-                    merkleRoot,
-                    [to, erc1155, erc721, [erc20.amounts, erc20.contractAddresses], salt],
-                    proof
-                  ),
-                abi
+              getMetamaskConnection().pipe(
+                filter((connection) => !!connection && !!connection.accounts[0]),
+                switchMap((connection) => {
+                  const activeAccount = connection.accounts[0].address;
+
+                  if (activeAccount.toLowerCase() !== to.toLocaleLowerCase()) {
+                    return applyModalObs({
+                      title: <h3 className="text-center">{t('Confirm To Continue')}</h3>,
+                      content: (
+                        <Trans
+                          i18nKey="claimToolD2EConfirm"
+                          i18n={i18n?.use(initReactI18next)}
+                          tOptions={{
+                            txAccount: activeAccount,
+                            to,
+                          }}
+                        >
+                          The active account in metamask is inconsistent with the receiving account. Do you want to use
+                          <p className="font-bold mb-0">{activeAccount}</p>
+                          <p className="font-bold mb-0">{to}</p>
+                        </Trans>
+                      ),
+                      cancelButtonProps: { size: 'large', className: 'w-1/2' },
+                      okButtonProps: { size: 'large', className: 'w-1/2' },
+                    });
+                  } else {
+                    return of(true);
+                  }
+                }),
+                switchMap((confirmed) =>
+                  confirmed
+                    ? genEthereumContractTxObs(
+                        contractAddress,
+                        (contract) =>
+                          contract.claimMultipleTokens(
+                            merkleRoot,
+                            [to, erc1155, erc721, [erc20.amounts, erc20.contractAddresses], salt],
+                            proof
+                          ),
+                        abi
+                      )
+                    : EMPTY
+                )
               )
             )(ethereumConfig).subscribe(observer);
           }}
@@ -163,10 +194,6 @@ export function Claim() {
           {t('Claim')}
         </FormItemButton>
       </Form>
-
-      <Button size="large" onClick={() => router.push(Path.apps)} className="w-full">
-        {t('Back')}
-      </Button>
     </Card>
   );
 }

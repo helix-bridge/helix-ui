@@ -27,7 +27,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
   const [collapsed, setCollapsed] = useState(true);
   const [visible, setVisible] = useState(false);
   const router = useRouter();
-  const isAppsPage = router.pathname === Path.apps || router.pathname === Path.claimTool;
+  const isAppsPage = router.pathname === Path.apps;
   const isHome = router.pathname === '/';
 
   return (
@@ -81,7 +81,11 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
           </div>
 
           {!isAppsPage && (
-            <div className="hidden lg:flex lg:justify-end items-center lg:flex-1 ml-2 md:ml-8 lg:ml-12">
+            <div
+              className={`hidden lg:flex lg:justify-end items-center lg:flex-1 ml-2 md:ml-8 lg:ml-12 ${
+                router.pathname === Path.claimTool ? 'mr-16' : ''
+              }`}
+            >
               <Button
                 onClick={() => {
                   router.push(Path.apps);

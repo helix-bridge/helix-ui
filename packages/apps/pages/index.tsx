@@ -61,7 +61,7 @@ const bridges: Bridge[] = [
     supportChains: getSupportChains('helix'),
     description: {
       security: 'Trust-less',
-      tech: 'Light Client & Relays Bridge',
+      tech: 'Light Client & Relays',
       developer: 'Helix',
     },
   },
