@@ -44,6 +44,7 @@ export function Claim() {
   const [claimed, setClaimed] = useState<boolean>(true);
   const { setDeparture } = useApi();
   const { observer } = useTx();
+  const [checking, setChecking] = useState(false);
 
   const { ring, kton } = useMemo(
     () => ({
@@ -67,7 +68,10 @@ export function Claim() {
     const { to } = claimItem;
     const contract = new Contract(contractAddress, abi, entrance.web3.getInstance(ethereumConfig.provider));
 
-    contract.claimed(to, merkleRoot).then((res: boolean) => setClaimed(res));
+    setChecking(true);
+    (contract.claimed(to, merkleRoot) as Promise<boolean>)
+      .then((res: boolean) => setClaimed(res))
+      .finally(() => setChecking(false));
   }, [claimItem]);
 
   return (
@@ -130,7 +134,7 @@ export function Claim() {
               </div>
 
               <div className="text-xs text-center mt-4">
-                {!!account && (!claimItem || claimed)
+                {!!account && !checking && (!claimItem || claimed)
                   ? t('The token had been claimed or there is no token to claim for this account')
                   : t('The tokens will be claimed to the account you entered above. ')}
               </div>
