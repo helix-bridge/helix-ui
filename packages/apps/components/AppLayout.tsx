@@ -27,7 +27,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
   const [collapsed, setCollapsed] = useState(true);
   const [visible, setVisible] = useState(false);
   const router = useRouter();
-  const isApps = router.pathname === Path.apps;
+  const isAppsPage = router.pathname === Path.apps || router.pathname === Path.claimTool;
   const isHome = router.pathname === '/';
 
   return (
@@ -54,7 +54,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
                 />
               </Tooltip>
 
-              {isApps && (
+              {isAppsPage && (
                 <>
                   <Image alt="..." src="/image/beta.svg" width={35} height={18} />
                   <WarningFilled onClick={() => setVisible(true)} className="text-yellow-400" />
@@ -80,7 +80,7 @@ function AppLayout({ children }: PropsWithChildren<unknown>) {
             <MenuOutlined className="text-xl" />
           </div>
 
-          {!isApps && (
+          {!isAppsPage && (
             <div className="hidden lg:flex lg:justify-end items-center lg:flex-1 ml-2 md:ml-8 lg:ml-12">
               <Button
                 onClick={() => {

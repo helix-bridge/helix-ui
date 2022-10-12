@@ -124,7 +124,6 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
 
   return (
     <Form
-      name={FORM_CONTROL.direction}
       layout="vertical"
       form={form}
       initialValues={{ direction }}
