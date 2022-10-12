@@ -4,4 +4,5 @@ export enum Path {
   transaction = '/transaction',
   docs = 'docs',
   apps = '/apps',
+  claimTool = '/claim-tool',
 }

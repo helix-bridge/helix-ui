@@ -29,12 +29,13 @@ export const TxProvider = ({ children }: React.PropsWithChildren<unknown>) => {
       next: setTx,
       error: (error: RequiredPartial<Tx, 'error'>) => {
         const errInfo = typeof error.error === 'string' ? error.error : error.error.message;
+        console.error('🚨 ~ file: tx.tsx ~ line 32 ~ observer ~ errInfo', errInfo);
 
         notification.error({
           message: (
             <div>
               <p>{t('Transaction aborted because of')}</p>
-              <p className="font-bold">{errInfo}</p>
+              <p className="font-bold">{errInfo.split(/\(.*\)/)[0]}</p>
             </div>
           ),
           duration: 5,
