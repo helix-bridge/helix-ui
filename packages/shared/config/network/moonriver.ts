@@ -42,7 +42,7 @@ export const moonriverConfig: ParachainEthereumCompatibleChainConfig = {
           partner: { name: 'crab-parachain', role: 'backing', symbol: 'CRAB' },
         },
       ],
-      type: 'mapping',
+      type: 'erc20',
       host: 'moonriver',
       logo: 'token-crab.svg',
       symbol: 'CRAB',

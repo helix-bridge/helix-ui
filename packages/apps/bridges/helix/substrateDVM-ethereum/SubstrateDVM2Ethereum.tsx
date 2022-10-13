@@ -60,7 +60,7 @@ export function SubstrateDVM2Ethereum({
   }, [bridgeState.status, bridgeState.reason, setBridgeState, direction.from.meta.name, direction.to.meta.name]);
 
   useEffect(() => {
-    if (direction.from.type === 'mapping' && isSubstrateDVM2Ethereum(direction.from.host, direction.to.host)) {
+    if (direction.from.type === 'erc20' && isSubstrateDVM2Ethereum(direction.from.host, direction.to.host)) {
       updateAllowancePayload({
         spender: bridge.config.contracts.backing,
         tokenAddress: direction.from.address || getWrappedToken(direction.from.meta).address,

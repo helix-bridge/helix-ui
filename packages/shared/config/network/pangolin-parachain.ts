@@ -25,7 +25,7 @@ export const pangolinParachainConfig: PolkadotChainConfig = {
           partner: { name: 'pangolin', role: 'backing', symbol: 'PRING' },
         },
       ],
-      type: 'native',
+      type: 'mapping',
       host: 'pangolin-parachain',
       logo: 'token-ring.svg',
       symbol: 'PRING',
