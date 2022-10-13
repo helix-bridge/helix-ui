@@ -15,6 +15,7 @@ import { fromWei } from 'shared/utils/helper/balance';
 import { applyModalObs, genEthereumContractTxObs } from 'shared/utils/tx';
 import abi from '../../config/ethv1/abi.json';
 import claimSource from '../../config/ethv1/airdrop2.json';
+import { contractAddress, merkleRoot } from '../../config/ethv1/constant';
 import { useApi, useTx } from '../../providers';
 import { isValidAddressStrict } from '../../utils/validate';
 import { FormItemButton } from '../widget/FormItemButton';
@@ -32,9 +33,6 @@ interface Erc20 {
   amounts: string[];
   contractAddresses: string[];
 }
-
-const contractAddress = '0x15fC591601044351868b13a5B629c170Bf3F30A0';
-const merkleRoot = '0x025883e9abdfb630703ed746142146ab9cb2569b24bd72475566bae6c2f0a30a';
 
 // eslint-disable-next-line complexity
 export function Claim() {

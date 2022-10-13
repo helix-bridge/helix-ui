@@ -140,6 +140,7 @@
   "You haven’t created an address yet, please create a address first.": "未发现可用地址，请创建",
   "You must connect the wallet to fetch the records": "必须连接到钱包后才可获取记录",
   "chains": "链",
+  "claimBadgeMsg": "当前账号在以太坊上有未领取的 token， <1>立即领取</1>",
   "claimToolD2EConfirm": "Metamask中当前账户和领取账号不一致，确定使用 <1>{{txAccount}}</1> 为 <2>{{to}}</2> 执行领取操作吗？",
   "claimToolD2ETips": "随着 \"Darwinia Smart Chain - Ethereum V2\" 桥的启动，\"Darwinia Chain - Ethereum V1\" 已被弃用。我们不再支持 \"Darwinia Chain - Ethereum V1\" 的转账记录。由于您在以太坊上可能有一些无人认领的代币，我们提供此工具供您检查和认领代币。如果您还有其他问题，请<1>联系我们</1>。",
   "history": "历史记录",

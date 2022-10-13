@@ -1,13 +1,28 @@
-import { CloseCircleOutlined, DisconnectOutlined, LoadingOutlined, SettingFilled } from '@ant-design/icons';
+import {
+  CloseCircleOutlined,
+  DisconnectOutlined,
+  DollarOutlined,
+  LoadingOutlined,
+  SettingFilled,
+} from '@ant-design/icons';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 import { Badge, Button, message, Tooltip } from 'antd';
+import { Contract } from 'ethers';
+import { i18n, Trans } from 'next-i18next';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { initReactI18next, useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
+import { ethereumConfig } from 'shared/config/network/ethereum';
 import { ConnectionStatus, EthereumChainConfig, SupportedWallet } from 'shared/model';
-import { switchEthereumChain } from 'shared/utils/connection';
+import { entrance, switchEthereumChain } from 'shared/utils/connection';
 import { updateStorage } from 'shared/utils/helper/storage';
 import { isPolkadotNetwork } from 'shared/utils/network/network';
+import { Path } from '../../../config';
+import abi from '../../../config/ethv1/abi.json';
+import claimSource from '../../../config/ethv1/airdrop2.json';
+import { contractAddress, merkleRoot } from '../../../config/ethv1/constant';
 import { useAccount, useApi, useWallet } from '../../../providers';
 import { SelectAccountModal } from './SelectAccountModal';
 import { SelectWalletModal } from './SelectWalletModal';
@@ -24,6 +39,8 @@ export default function ActiveAccount() {
   const [isVisible, setIsVisible] = useState(false);
   const [isWalletVisible, setIsWalletVisible] = useState(false);
   const { matched, walletMatched, chainMatched } = useWallet();
+  const [unclaimed, setUnclaimed] = useState(false);
+  const router = useRouter();
 
   const disconnected = useMemo(() => {
     const { type, status } = departureConnection;
@@ -42,6 +59,18 @@ export default function ActiveAccount() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [departure, departureConnection.accounts.length, departureConnection.type]);
 
+  useEffect(() => {
+    if (isEthereumAddress(account)) {
+      const target = claimSource.find((item) => item.to.toLowerCase() === account.toLowerCase());
+      if (!target) {
+        setUnclaimed(false);
+      } else {
+        const contract = new Contract(contractAddress, abi, entrance.web3.getInstance(ethereumConfig.provider));
+        (contract.claimed(target.to, merkleRoot) as Promise<boolean>).then((res: boolean) => setUnclaimed(!res));
+      }
+    }
+  }, [account]);
+
   return (
     <>
       {departureConnection.accounts.length >= 1 ? (
@@ -52,6 +81,26 @@ export default function ActiveAccount() {
                 count={
                   <Tooltip title={t('Wallet provider offline')}>
                     <DisconnectOutlined className="text-red-500" />
+                  </Tooltip>
+                }
+                className="absolute -top-2 -right-2 z-20"
+              ></Badge>
+            )}
+
+            {unclaimed && (
+              <Badge
+                count={
+                  <Tooltip
+                    title={
+                      <Trans i18nKey="claimBadgeMsg" i18n={i18n?.use(initReactI18next)}>
+                        The current account has unclaimed tokens on ethereum.
+                        <div className="text-blue-400 cursor-pointer" onClick={() => router.push(Path.claimTool)}>
+                          claim now
+                        </div>
+                      </Trans>
+                    }
+                  >
+                    <DollarOutlined className="text-green-500" />
                   </Tooltip>
                 }
                 className="absolute -top-2 -right-2 z-20"
