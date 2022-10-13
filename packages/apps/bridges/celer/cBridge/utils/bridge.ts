@@ -22,6 +22,8 @@ import { GetTransferStatusRequest, WithdrawLiquidityRequest, WithdrawMethodType 
 import { WithdrawReq, WithdrawType } from '../ts-proto/sgn/cbridge/v1/tx_pb';
 
 export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConfig, EthereumChainConfig> {
+  static readonly alias = 'CBridgeBridge';
+
   private prefix = hexToBn('0x6878000000000000');
   public client = new WebClient(`https://cbridge-prod2.celer.network`, null, null);
 

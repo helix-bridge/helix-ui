@@ -22,6 +22,8 @@ export class CrabParachainMoonriverBridge extends Bridge<
   ParachainChainConfig,
   ParachainEthereumCompatibleChainConfig
 > {
+  static readonly alias = 'CrabParachainMoonriverBridge';
+
   private patchAmount(departure: CrossToken) {
     const pos = -3;
     const timestamp = Date.now().toString().slice(0, pos);

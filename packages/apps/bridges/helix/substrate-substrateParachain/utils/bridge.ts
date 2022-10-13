@@ -17,6 +17,8 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
   PolkadotChainConfig,
   PolkadotChainConfig
 > {
+  static readonly alias: string = 'SubstrateSubstrateParachainBridge';
+
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction } = payload;
     const { from: departure, to } = direction;

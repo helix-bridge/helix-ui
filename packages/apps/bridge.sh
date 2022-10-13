@@ -245,6 +245,8 @@ function initUitls() {
             ChainConfig,
             ChainConfig
         > {
+            static readonly alias: string = '${name}Bridge';
+
             back(payload: IssuingPayload, fee: BN): Observable<Tx> {
                 console.log(payload, fee);
                 return EMPTY;
@@ -290,7 +292,7 @@ function updatePredicateFns() {
 
 function updateBridgesIndexer() {
     echo "
-        export { $1, $2 } from './'$3;
+        export { $1, $2 } from './$3';
     " >>'./bridges/index.ts'
 }
 
