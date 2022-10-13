@@ -17,7 +17,7 @@ export interface Logo {
   type: LogoType;
 }
 
-export type TokenType = 'native' | 'erc20' | 'original' | 'mapping';
+export type TokenType = 'native' | 'erc20' | 'mapping';
 
 type PartnerRole = 'issuing' | 'backing';
 
