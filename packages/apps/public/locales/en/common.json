@@ -140,6 +140,7 @@
   "You haven’t created an address yet, please create a address first.": "You haven’t created an address yet, please create a address first.",
   "You must connect the wallet to fetch the records": "You must connect the wallet to fetch the records",
   "chains": "chains",
+  "claimBadgeMsg": "The current account has unclaimed tokens on ethereum. <1>claim now</1>",
   "claimToolD2EConfirm": "The active account in metamask is inconsistent with the receiving account.  Do you want to use <1>{{txAccount}}</1> to claim for <2>{{to}}</2>",
   "claimToolD2ETips": "With the \"Darwinia Smart Chain - Ethereum V2\" bridge launching, the \"Darwinia Chain - Ethereum V1\" is taken down. We no longer support the transfer records of \"Darwinia Chain - Ethereum V1\". Since you may have some unclaimed tokens on Ethereum, we offer this tool for you to check and claim the tokens. <1>Contact us</1> if you have some further questions.",
   "history": "history",
