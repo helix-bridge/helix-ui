@@ -27,7 +27,7 @@ export const pangoroConfig: PolkadotChainConfig = {
           deprecated: true,
         },
       ],
-      type: 'native',
+      type: 'original',
       host: 'pangoro',
       logo: 'token-ring.svg',
       symbol: 'ORING',

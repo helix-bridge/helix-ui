@@ -43,7 +43,7 @@ export const hecoConfig: EthereumChainConfig = {
           deprecated: true,
         },
       ],
-      type: 'mapping',
+      type: 'erc20',
       logo: 'token-ring.svg',
       host: 'heco',
       symbol: 'RING',

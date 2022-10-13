@@ -35,7 +35,7 @@ export const crabParachainConfig: ParachainChainConfig = {
           partner: { name: 'moonriver', role: 'issuing', symbol: 'CRAB' },
         },
       ],
-      type: 'native',
+      type: 'mapping',
       host: 'crab-parachain',
       logo: 'token-crab.svg',
       symbol: 'CRAB',
