@@ -33,6 +33,8 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
   PolkadotChainConfig,
   DVMChainConfig
 > {
+  static readonly alias: string = 'SubstrateSubstrateDVMBridge';
+
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction } = payload;
     const { from: departure, to } = direction;

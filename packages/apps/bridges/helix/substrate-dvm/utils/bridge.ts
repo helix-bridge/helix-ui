@@ -18,6 +18,8 @@ import { TxValidation } from '../../../../model';
 import { IssuingPayload, RedeemPayload, SubstrateDVMBridgeConfig } from '../model';
 
 export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, PolkadotChainConfig, DVMChainConfig> {
+  static readonly alias: string = 'SubstrateDVMBridge';
+
   back(payload: IssuingPayload): Observable<Tx> {
     const {
       sender,

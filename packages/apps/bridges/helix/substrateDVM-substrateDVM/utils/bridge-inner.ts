@@ -13,6 +13,8 @@ export class SubstrateDVMInnerBridge extends Bridge<
   DVMChainConfig,
   DVMChainConfig
 > {
+  static readonly alias: string = 'SubstrateDVMInnerBridge';
+
   back(payload: IssuingPayload): Observable<Tx> {
     const {
       sender,

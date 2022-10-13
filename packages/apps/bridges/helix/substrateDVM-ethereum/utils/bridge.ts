@@ -28,6 +28,8 @@ export class SubstrateDVMEthereumBridge extends Bridge<
   DVMChainConfig,
   EthereumChainConfig
 > {
+  static readonly alias: string = 'SubstrateDVMEthereumBridge';
+
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction } = payload;
     const { from: departure, to } = direction;

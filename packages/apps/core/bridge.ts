@@ -42,6 +42,13 @@ export abstract class Bridge<
   Origin extends ChainConfig,
   Target extends ChainConfig
 > extends BridgeBase<B, Origin, Target> {
+  /**
+   * Will be generated automatically through `yarn init:bridge` command. alias === Constructor.name
+   *
+   * @see https://github.com/helix-bridge/helix-ui/issues/334
+   */
+  static readonly alias: string;
+
   protected readonly txValidationMessages = TxValidationMessages;
 
   abstract back(

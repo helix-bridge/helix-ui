@@ -15,6 +15,8 @@ export class CrabParachainKaruraBridge extends Bridge<
   ParachainChainConfig,
   ParachainChainConfig
 > {
+  static readonly alias = 'CrabParachainKaruraBridge';
+
   private patchAmount(departure: CrossToken<ParachainChainConfig>) {
     const pos = -3;
     const timestamp = Date.now().toString().slice(0, pos);
