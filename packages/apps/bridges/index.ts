@@ -33,3 +33,5 @@ export { SubstrateDVM2SubstrateDVM, SubstrateDVMInner } from './helix/substrateD
 export { Unavailable2Unknown, Unknown2Unavailable } from './unknown-unavailable';
 export { CrabParachain2Karura, Karura2CrabParachain } from './xcm/crabParachain-karura';
 export { CrabParachain2Moonriver, Moonriver2CrabParachain } from './xcm/crabParachain-moonriver';
+
+export { Pangolin2Pangoro, Pangoro2Pangolin } from './helix/pangolin-pangoro';

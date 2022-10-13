@@ -177,3 +177,7 @@ export const isCrabParachainMoonriver = or(isCrabParachain2Moonriver, isMoonrive
 export const isSubstrateDVM2Ethereum = or(predicate('darwinia-dvm', 'ethereum'), predicate('pangoro-dvm', 'goerli'));
 export const isEthereum2SubstrateDVM = or(predicate('ethereum', 'darwinia-dvm'), predicate('goerli', 'pangoro-dvm'));
 export const isSubstrateDVMEthereum = or(isSubstrateDVM2Ethereum, isEthereum2SubstrateDVM);
+
+export const isPangolin2Pangoro = predicate('pangolin', 'pangoro');
+export const isPangoro2Pangolin = predicate('pangoro', 'pangolin');
+export const isPangolinPangoro = or(isPangolin2Pangoro, isPangoro2Pangolin);
