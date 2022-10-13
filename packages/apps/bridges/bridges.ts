@@ -27,7 +27,6 @@ export function bridgeFactory<C extends BridgeConfig, O extends ChainConfig, T e
 ): Bridge<C, O, T> {
   const Constructor = bridgeConstructors.find((item) => item.name === config.subClsName)!;
 
-  console.log('🚀 ~ file: BridgeSelector.tsx ~ line 35 ~ .map ~ Constructor', Constructor.name);
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return new Constructor(config.departure, config.arrival, config.config, config.options);

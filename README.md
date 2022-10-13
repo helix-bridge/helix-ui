@@ -5,16 +5,12 @@
 ### Production
 
 helix: https://helixbridge.app
-helix test: https://helix-ui-test.vercel.app
-helix apps: https://apps.helixbridge.app
-helix apps test: https://helix-apps-test.vercel.app
+helix test: https://helix-apps-test.vercel.app
 
 ### Staging
 
-helix: https://helix-ui-stg.vercel.app
-helix test: https://helix-ui-test-stg.vercel.app/
-apps: https://helix-apps-stg.vercel.app/
-apps test: https://helix-apps-test-stg.vercel.app/
+helix: https://helix-stg.vercel.app
+helix test: https://helix-stg-test.vercel.app/
 
 ## HOW TO ADD A BRIDGE
 
