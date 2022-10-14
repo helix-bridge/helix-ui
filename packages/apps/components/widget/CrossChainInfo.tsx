@@ -1,19 +1,20 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Form, Tooltip } from 'antd';
 import { PropsWithChildren, ReactNode, useMemo } from 'react';
-import { BridgeBase } from 'shared/core/bridge';
 import { useITranslation } from 'shared/hooks/translation';
+import { BridgeConfig, ChainConfig, ContractConfig } from 'shared/model';
 import { prettyNumber } from 'shared/utils/helper/balance';
+import { Bridge } from '../../core/bridge';
 import { bridgeCategoryDisplay } from '../../utils/bridge';
 import { CountLoading } from './CountLoading';
 
 type AmountInfo = {
-  amount: string;
+  amount: number;
   symbol: string;
 };
 
 interface CrossChainInfoProps {
-  bridge: BridgeBase;
+  bridge: Bridge<BridgeConfig<ContractConfig>, ChainConfig, ChainConfig>;
   fee?: AmountInfo | null;
   hideFee?: boolean;
   extra?: { name: string; content: ReactNode }[];
@@ -34,8 +35,7 @@ export function CrossChainInfo({
     if (fee) {
       return (
         <Tooltip title={fee.amount} className="cursor-help">
-          {Number(fee.amount) < 1 ? fee.amount : prettyNumber(fee.amount, { decimal: 3, ignoreZeroDecimal: true })}{' '}
-          {fee.symbol}
+          {fee.amount < 1 ? fee.amount : prettyNumber(fee.amount, { decimal: 3, ignoreZeroDecimal: true })} {fee.symbol}
         </Tooltip>
       );
     }

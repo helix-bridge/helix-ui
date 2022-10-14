@@ -27,9 +27,7 @@ import { CrossChainPayload } from '../model/tx';
 import { TxValidation } from '../model/validation';
 import { isSubstrateSubstrateParachain, isXCM } from '../utils';
 
-export interface MinimumFeeTokenHolding extends Token {
-  symbol: string;
-  decimals: number;
+export interface TokenWithAmount extends Token {
   amount: BN; // with precision
 }
 
@@ -41,8 +39,11 @@ export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Targ
   getDailyLimit?(
     direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>
   ): Promise<DailyLimit | null>;
-  getFee?(direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>): Promise<BN>;
-  getMinimumFeeTokenHolding?(direction: CrossChainDirection): MinimumFeeTokenHolding | null;
+  getFee?(
+    direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>,
+    account?: string | boolean // boolean: useWalletProvider
+  ): Promise<TokenWithAmount | null>;
+  getMinimumFeeTokenHolding?(direction: CrossChainDirection): TokenWithAmount | null;
   getAllowancePayload?(direction: CrossChainDirection): Promise<AllowancePayload>;
 }
 
@@ -108,10 +109,15 @@ export abstract class Bridge<
      * else -> fee < feeToken
      */
     const result = [
+      // validate existence
+      [!to.amount || +to.amount < 0, 'Invalid transfer'],
+      [!!this.getFee && (!fee || fee.lt(BN_ZERO)), this.txValidationMessages.invalidFee],
+      [!!this.getAllowancePayload && !allowance, 'Invalid transfer'],
+      [!!this.getDailyLimit && !dailyLimit, 'Invalid transfer'],
+      // validate logic
       [balance.lt(amount), this.txValidationMessages.balanceLessThanAmount],
       [!!allowance && allowance.lt(amount), this.txValidationMessages.allowanceLessThanAmount],
       [!!dailyLimit && dailyLimit.lt(amount), this.txValidationMessages.dailyLimitLessThanAmount],
-      [!!fee && fee.lt(BN_ZERO), this.txValidationMessages.invalidFee],
       [!!feeTokenBalance && feeTokenBalance.lt(fee!), this.txValidationMessages.balanceLessThanFee],
       [!!minAmount && minAmount.gt(amount), `Transfer amount must greater than or equal to ${minAmount}`],
       [isXCM(from.host, to.host) && !Number.isInteger(+from.amount), this.txValidationMessages.mustBeAnInteger],

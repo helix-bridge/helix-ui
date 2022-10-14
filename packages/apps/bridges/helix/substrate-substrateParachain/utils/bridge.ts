@@ -2,13 +2,15 @@ import type { Codec } from '@polkadot/types-codec/types';
 import { BN, hexToU8a } from '@polkadot/util';
 import last from 'lodash/last';
 import lowerFirst from 'lodash/lowerFirst';
+import omit from 'lodash/omit';
 import upperFirst from 'lodash/upperFirst';
 import { Observable } from 'rxjs';
 import { CrossChainDirection, CrossToken, DailyLimit, PolkadotChainConfig, Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
+import { isRing } from 'shared/utils/helper/validator';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
-import { Bridge } from '../../../../core/bridge';
+import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { IssuingPayload, RedeemPayload, SubstrateSubstrateParachainBridgeConfig } from '../model';
 
 export class SubstrateSubstrateParachainBridge extends Bridge<
@@ -84,7 +86,7 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
 
   async getFee(
     direction: CrossChainDirection<CrossToken<PolkadotChainConfig>, CrossToken<PolkadotChainConfig>>
-  ): Promise<BN> {
+  ): Promise<TokenWithAmount | null> {
     const {
       from: { meta: from },
       to: { meta: to },
@@ -102,7 +104,8 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
 
     const data = last(res)?.fee.toString();
     const marketFee = data?.startsWith('0x') ? hexToU8a(data) : data;
+    const token = omit(direction.from.meta.tokens.find((item) => isRing(item.symbol))!, ['amount', 'meta']);
 
-    return new BN(marketFee ?? -1); // -1: fee market does not available
+    return { ...token, amount: new BN(marketFee ?? -1) } as TokenWithAmount; // -1: fee market does not available
   }
 }

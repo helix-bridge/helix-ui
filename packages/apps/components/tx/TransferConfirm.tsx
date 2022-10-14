@@ -5,13 +5,13 @@ import { PropsWithChildren, useMemo } from 'react';
 import { initReactI18next, useTranslation } from 'react-i18next';
 import { Logo } from 'shared/components/widget/Logo';
 import { BridgeBase } from 'shared/core/bridge';
-import { CrossToken, PolkadotChainConfig } from 'shared/model';
+import { PolkadotChainConfig } from 'shared/model';
 import { convertToSS58 } from 'shared/utils/helper/address';
 import { isPolkadotNetwork } from 'shared/utils/network/network';
 import { getDisplayName } from 'utils/network/network';
 import { TxConfirmComponentProps } from '../../model/component';
 
-type Fee = Pick<CrossToken, 'symbol' | 'amount'>;
+type Fee = { symbol: string; amount: number };
 
 export function TransferConfirm<T extends BridgeBase = BridgeBase>({
   value,

@@ -5,7 +5,7 @@ export interface TxValidation {
   dailyLimit?: BN | null;
   allowance?: BN | null;
   feeTokenBalance?: BN | null;
-  fee?: BN | null;
+  fee?: BN | null; // FIXME: better to TokenWithAmount
   minAmount?: BN;
   decimals?: number;
 }

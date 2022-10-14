@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { CrossToken, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
-import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
@@ -21,7 +20,6 @@ export function Substrate2DVM({
   direction,
   bridge,
   balances,
-  onFeeChange,
   setTxObservableFactory,
 }: CrossChainComponentProps<SubstrateDVMBridge, CrossToken<PolkadotChainConfig>, CrossToken<DVMChainConfig>>) {
   const { t } = useTranslation();
@@ -42,15 +40,6 @@ export function Substrate2DVM({
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
   }, [afterCrossChain, balance, departureConnection, setTxObservableFactory, t]);
-
-  useEffect(() => {
-    if (onFeeChange) {
-      onFeeChange({
-        amount: 0,
-        symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
-      });
-    }
-  }, [direction.from.meta.tokens, onFeeChange]);
 
   return (
     <>

@@ -13,9 +13,10 @@ import {
 } from 'shared/model';
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
+import { isNativeToken } from 'shared/utils/helper/validator';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { getBridge, isSubstrateDVM2Ethereum } from 'utils/bridge';
-import { Bridge, MinimumFeeTokenHolding } from '../../../../core/bridge';
+import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { AllowancePayload } from '../../../../model/allowance';
 import { getWrappedToken } from '../../../../utils/network';
 import backingAbi from '../config/backing.json';
@@ -147,7 +148,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       CrossToken<DVMChainConfig | EthereumChainConfig>
     >,
     useWallerProvider = false
-  ): Promise<BN> {
+  ): Promise<TokenWithAmount> {
     const {
       from: { meta: departure },
       to: { meta: arrival },
@@ -166,7 +167,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
 
     const fee = await contract.currentFee();
 
-    return new BN(fee.toString());
+    return { ...direction.from.meta.tokens.find(isNativeToken)!, amount: new BN(fee.toString()) };
   }
 
   async getDailyLimit(
@@ -197,7 +198,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       CrossToken<DVMChainConfig | EthereumChainConfig>,
       CrossToken<DVMChainConfig | EthereumChainConfig>
     >
-  ): MinimumFeeTokenHolding | null {
+  ): TokenWithAmount | null {
     const { from: dep, to } = direction;
 
     if (this.isIssue(dep.meta, to.meta) && dep.type === 'native') {

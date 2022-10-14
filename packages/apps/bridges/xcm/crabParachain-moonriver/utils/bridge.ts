@@ -10,9 +10,10 @@ import {
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
 import { toWei } from 'shared/utils/helper/balance';
+import { isRing } from 'shared/utils/helper/validator';
 import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import { getBridge } from 'utils/bridge';
-import { Bridge } from '../../../../core/bridge';
+import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import abi from '../config/abi.json';
 import { CrabParachainMoonriverBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 
@@ -111,13 +112,14 @@ export class CrabParachainMoonriverBridge extends Bridge<
 
   async getFee(
     direction: CrossChainDirection<CrossToken<ParachainChainConfig>, CrossToken<ParachainChainConfig>>
-  ): Promise<BN> {
+  ): Promise<TokenWithAmount> {
     const { from, to } = direction;
+    const token = direction.from.meta.tokens.find((item) => isRing(item.symbol))!;
 
     if (this.isIssue(from.host, to.host)) {
-      return new BN('11800000000000000000');
+      return { amount: new BN('11800000000000000000'), ...token };
     } else {
-      return new BN('3200000000000000000');
+      return { amount: new BN('3200000000000000000'), ...token };
     }
   }
 }

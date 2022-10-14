@@ -1,11 +1,8 @@
 import { BN } from '@polkadot/util';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { from } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { CrossToken, ParachainChainConfig } from 'shared/model';
-import { fromWei } from 'shared/utils/helper/balance';
-import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
@@ -24,7 +21,7 @@ export function Karura2CrabParachain({
   direction,
   bridge,
   setBridgeState,
-  onFeeChange,
+  fee,
   balances,
 }: CrossChainComponentProps<
   CrabParachainKaruraBridge,
@@ -33,20 +30,9 @@ export function Karura2CrabParachain({
 >) {
   const { t } = useTranslation();
   const { departureConnection } = useApi();
-  const [fee, setFee] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<RedeemPayload>();
   const bridgeState = useCheckSpecVersion(direction);
   const [balance] = (balances ?? []) as BN[];
-  const symbol = direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol;
-
-  const feeWithSymbol = useMemo(
-    () =>
-      fee && {
-        amount: fromWei({ value: fee, decimals: direction.from.decimals }),
-        symbol,
-      },
-    [direction.from.decimals, fee, symbol]
-  );
 
   useEffect(() => {
     setBridgeState({ status: bridgeState.status, reason: bridgeState.reason });
@@ -57,32 +43,14 @@ export function Karura2CrabParachain({
       const validateObs = payload.bridge.validate(payload, { balance });
 
       return createTxWorkflow(
-        validateObs.pipe(
-          mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={feeWithSymbol!} /> }))
-        ),
+        validateObs.pipe(mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={fee} /> }))),
         payload.bridge.burn(payload),
         afterCrossChain(TransferDone, { payload })
       );
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, balance, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
-
-  useEffect(() => {
-    const sub$$ = from(bridge.getFee(direction)).subscribe((result) => {
-      setFee(result);
-
-      if (onFeeChange) {
-        onFeeChange({
-          amount: +fromWei({ value: result, decimals: direction.from.decimals }),
-          symbol,
-        });
-      }
-    });
-
-    return () => sub$$.unsubscribe();
-  }, [bridge, direction, onFeeChange, symbol]);
-
+  }, [afterCrossChain, balance, departureConnection, fee, setTxObservableFactory, t]);
   return (
     <>
       <RecipientItem
@@ -94,7 +62,7 @@ export function Karura2CrabParachain({
         )}
       />
 
-      <CrossChainInfo bridge={bridge} fee={feeWithSymbol}></CrossChainInfo>
+      <CrossChainInfo bridge={bridge} fee={fee}></CrossChainInfo>
     </>
   );
 }

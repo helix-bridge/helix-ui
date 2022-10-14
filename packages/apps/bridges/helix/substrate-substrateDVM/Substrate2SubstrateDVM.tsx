@@ -1,5 +1,5 @@
 import { BN } from '@polkadot/util';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from } from 'rxjs/internal/observable/from';
 import { of } from 'rxjs/internal/observable/of';
@@ -8,9 +8,8 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { LONG_DURATION } from 'shared/config/constant';
 import { useIsMounted } from 'shared/hooks';
 import { CrossToken, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
-import { fromWei } from 'shared/utils/helper/balance';
+import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { pollWhile } from 'shared/utils/helper/operator';
-import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
@@ -30,26 +29,15 @@ export function Substrate2SubstrateDVM({
   direction,
   bridge,
   setBridgeState,
-  onFeeChange,
+  fee,
   balances,
 }: CrossChainComponentProps<SubstrateSubstrateDVMBridge, CrossToken<PolkadotChainConfig>, CrossToken<DVMChainConfig>>) {
   const { t } = useTranslation();
   const { departureConnection } = useApi();
-  const [fee, setFee] = useState<BN | null>(null);
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const bridgeState = useCheckSpecVersion(direction);
   const [balance] = (balances ?? []) as BN[];
-
-  const feeWithSymbol = useMemo(
-    () =>
-      fee && {
-        amount: fromWei({ value: fee, decimals: direction.from.decimals }),
-        symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
-      },
-    [direction.from.decimals, direction.from.meta.tokens, fee]
-  );
-
   const isMounted = useIsMounted();
 
   useEffect(() => {
@@ -61,16 +49,14 @@ export function Substrate2SubstrateDVM({
       const validateObs = payload.bridge.validate(payload, { balance, dailyLimit });
 
       return createTxWorkflow(
-        validateObs.pipe(
-          mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={feeWithSymbol!} /> }))
-        ),
-        () => payload.bridge.send(payload, fee!),
+        validateObs.pipe(mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={fee!} /> }))),
+        () => payload.bridge.send(payload, new BN(toWei(fee!))),
         afterCrossChain(TransferDone, { payload })
       );
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, balance, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
+  }, [afterCrossChain, balance, dailyLimit, departureConnection, fee, setTxObservableFactory, t]);
 
   useEffect(() => {
     const sub$$ = of(null)
@@ -87,21 +73,6 @@ export function Substrate2SubstrateDVM({
     return () => sub$$?.unsubscribe();
   }, [bridge, direction, isMounted]);
 
-  useEffect(() => {
-    const sub$$ = from(bridge.getFee(direction)).subscribe((result) => {
-      setFee(result);
-
-      if (onFeeChange) {
-        onFeeChange({
-          amount: isRing(direction.from.symbol) ? +fromWei({ value: result, decimals: direction.from.decimals }) : 0,
-          symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
-        });
-      }
-    });
-
-    return () => sub$$.unsubscribe();
-  }, [bridge, direction, onFeeChange]);
-
   return (
     <>
       <RecipientItem
@@ -115,7 +86,7 @@ export function Substrate2SubstrateDVM({
 
       <CrossChainInfo
         bridge={bridge}
-        fee={feeWithSymbol}
+        fee={fee!}
         extra={[
           {
             name: t('Daily limit'),

@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { BigNumber, Contract } from 'ethers';
 import last from 'lodash/last';
 import { EMPTY, from, Observable, switchMap } from 'rxjs';
@@ -13,8 +13,9 @@ import {
 } from 'shared/model';
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
+import { isRing } from 'shared/utils/helper/validator';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
-import { Bridge } from '../../../../core/bridge';
+import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { AllowancePayload } from '../../../../model/allowance';
 import { getBridge } from '../../../../utils/bridge';
 import backingAbi from '../config/s2sv2backing.json';
@@ -119,22 +120,26 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
     );
   }
 
-  async getFee(direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>): Promise<BN> {
+  async getFee(
+    direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>
+  ): Promise<TokenWithAmount> {
     const {
       from: { meta: departure },
       to: { meta: arrival },
     } = direction;
-    const bridge = getBridge([departure, arrival]);
+    const token = direction.from.meta.tokens.find((item) => isRing(item.symbol))!;
 
-    const { abi, address } = bridge.isIssue(departure, arrival)
-      ? { abi: backingAbi, address: bridge.config.contracts?.backing }
-      : { abi: burnAbi, address: bridge.config.contracts?.issuing };
+    if (!isRing(direction.from.symbol)) {
+      return { ...token, amount: BN_ZERO };
+    }
 
+    const { abi, address } = this.isIssue(departure, arrival)
+      ? { abi: backingAbi, address: this.config.contracts?.backing }
+      : { abi: burnAbi, address: this.config.contracts?.issuing };
     const contract = new Contract(address as string, abi, entrance.web3.currentProvider);
-
     const fee = await contract.fee();
 
-    return new BN(fee.toString());
+    return { ...token, amount: new BN(fee.toString()) };
   }
 
   async getDailyLimit(

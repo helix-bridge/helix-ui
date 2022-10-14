@@ -1,18 +1,19 @@
-import { BN, u8aToHex } from '@polkadot/util';
+import { BN, BN_ZERO, u8aToHex } from '@polkadot/util';
+import omit from 'lodash/omit';
 import type { Observable } from 'rxjs';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { from as rxFrom } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { SUBSTRATE_DVM_WITHDRAW } from 'shared/config/env';
-import { DVMChainConfig, PolkadotChainConfig, Tx } from 'shared/model';
+import { CrossChainDirection, CrossToken, DVMChainConfig, PolkadotChainConfig, Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { convertToSS58, dvmAddressToAccountId } from 'shared/utils/helper/address';
 import { toWei } from 'shared/utils/helper/balance';
 import { typeRegistryFactory } from 'shared/utils/helper/huge';
 import { isRing } from 'shared/utils/helper/validator';
 import { genEthereumTransactionObs, signAndSendExtrinsic } from 'shared/utils/tx';
-import { Bridge } from '../../../../core/bridge';
+import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { IssuingPayload, RedeemPayload, SubstrateDVMBridgeConfig } from '../model';
 
 export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, PolkadotChainConfig, DVMChainConfig> {
@@ -81,5 +82,14 @@ export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, Polkado
         );
       })
     );
+  }
+
+  async getFee(
+    direction: CrossChainDirection<
+      CrossToken<PolkadotChainConfig | DVMChainConfig>,
+      CrossToken<PolkadotChainConfig | DVMChainConfig>
+    >
+  ): Promise<TokenWithAmount | null> {
+    return { amount: BN_ZERO, ...omit(direction.from, ['amount', 'meta']) };
   }
 }

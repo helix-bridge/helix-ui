@@ -8,13 +8,15 @@ import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EMPTY } from 'rxjs/internal/observable/empty';
-import { from as fromRx } from 'rxjs/internal/observable/from';
+import { from, from as fromRx } from 'rxjs/internal/observable/from';
 import { iif } from 'rxjs/internal/observable/iif';
 import { of } from 'rxjs/internal/observable/of';
-import { FORM_CONTROL } from 'shared/config/constant';
+import { map } from 'rxjs/internal/operators/map';
+import { FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
 import { BridgeBase } from 'shared/core/bridge';
 import { ChainBase } from 'shared/core/chain';
+import { useIsMounted } from 'shared/hooks';
 import {
   BridgeConfig,
   BridgeState,
@@ -24,9 +26,10 @@ import {
   CrossToken,
   TokenInfoWithMeta,
 } from 'shared/model';
-import { truncate } from 'shared/utils/helper/balance';
+import { fromWei, toWei, truncate } from 'shared/utils/helper/balance';
+import { pollWhile } from 'shared/utils/helper/operator';
 import { isEthereumNetwork } from 'shared/utils/network/network';
-import { Bridge } from '../core/bridge';
+import { Bridge, TokenWithAmount } from '../core/bridge';
 import { useAllowance } from '../hooks/allowance';
 import { CrossChainComponentProps } from '../model/component';
 import { CrossChainPayload, TxObservableFactory } from '../model/tx';
@@ -53,15 +56,15 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
   const [bridge, setBridge] = useState<Bridge<BridgeConfig, ChainConfig, ChainConfig> | null>(null);
   const [createTxObservable, setTxObservableFactory] = useState<TxObservableFactory>(() => EMPTY);
   const [bridgeState, setBridgeState] = useState<BridgeState>({ status: 'available' });
-  const [fee, setFee] = useState<{ amount: number; symbol: string } | null>(null);
+  const [fee, setFee] = useState<(Omit<TokenWithAmount, 'amount'> & { amount: number }) | null>(null);
   const { account } = useAccount();
   const [balances, setBalances] = useState<BN[] | null>(null);
   const { allowance, approve, queryAllowance } = useAllowance(direction);
   const { matched } = useWallet();
   const { observer } = useTx();
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
+  const isMounted = useIsMounted();
 
-  // eslint-disable-next-line complexity
   const allowanceEnough = useMemo(() => {
     if (
       !isEthereumNetwork(direction.from.host) ||
@@ -70,18 +73,14 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
       return true;
     }
 
-    if (!allowance || !balances) {
-      return false;
-    }
-
-    return allowance.gt(balances[0]);
-  }, [allowance, balances, direction.from]);
+    return allowance && allowance.gt(new BN(toWei(direction.from)));
+  }, [allowance, direction.from]);
 
   const Content = useMemo(() => {
-    const { from, to } = pureDirection;
+    const { from: dep, to } = pureDirection;
 
     if (bridge) {
-      const comp = bridge.isIssue(from.meta, to.meta)
+      const comp = bridge.isIssue(dep.meta, to.meta)
         ? bridge.IssueCrossChainComponent
         : bridge.RedeemCrossChainComponent;
 
@@ -106,10 +105,10 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
 
   useEffect(() => {
     setIsBalanceLoading(true);
-    const { from } = pureDirection;
+    const { from: dep } = pureDirection;
     const sub$$ = iif(
-      () => !!account && !!from,
-      fromRx(from.meta.getBalance(pureDirection, account)),
+      () => !!account && !!dep,
+      fromRx(dep.meta.getBalance(pureDirection, account)),
       of(null)
     ).subscribe((result) => {
       setBalances(result);
@@ -131,6 +130,16 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
       });
     }
   }, [bridge, direction, queryAllowance]);
+
+  useEffect(() => {
+    const obs = bridge?.getFee
+      ? from(bridge.getFee(direction, account)).pipe(map((res) => res && { ...res, amount: +fromWei(res) }))
+      : of(null);
+
+    const sub$$ = obs.pipe(pollWhile(LONG_DURATION, () => isMounted)).subscribe((res) => setFee(res));
+
+    return () => sub$$.unsubscribe();
+  }, [account, bridge, direction, isMounted, setFee]);
 
   return (
     <Form
@@ -187,7 +196,6 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
               onChange={(value) => {
                 if (isDirectionChanged(direction, value)) {
                   setBridge(null);
-                  setFee(null);
                   setTxObservableFactory(() => EMPTY);
                   setBridgeState({ status: 'available' });
                   form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined, [FORM_CONTROL.recipient]: undefined });
@@ -207,9 +215,9 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
               direction={direction}
               balances={balances}
               allowance={allowance}
+              fee={fee}
               setTxObservableFactory={setTxObservableFactory}
               setBridgeState={setBridgeState}
-              onFeeChange={setFee}
             />
           )}
 

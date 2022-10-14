@@ -1,5 +1,4 @@
 import { Button, message, Tooltip } from 'antd';
-import BN from 'bn.js';
 import isNaN from 'lodash/isNaN';
 import { i18n, Trans, useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
@@ -12,7 +11,7 @@ import { Logo } from 'shared/components/widget/Logo';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { CrossToken, EthereumChainConfig } from 'shared/model';
 import { isMetamaskChainConsistent } from 'shared/utils/connection';
-import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
+import { fromWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
@@ -30,7 +29,7 @@ import { CrossChainComponentProps } from '../../../model/component';
 import { CrossChainPayload, TxObservableFactory } from '../../../model/tx';
 import { useAccount, useWallet } from '../../../providers';
 import { IssuingPayload } from './model';
-import { EstimateAmtRequest, EstimateAmtResponse } from './ts-proto/gateway/gateway_pb';
+import { EstimateAmtResponse } from './ts-proto/gateway/gateway_pb';
 import { CBridgeBridge } from './utils';
 
 export function CBridge({
@@ -39,7 +38,7 @@ export function CBridge({
   bridge,
   direction,
   balances,
-  onFeeChange,
+  fee,
   setTxObservableFactory,
 }: CrossChainComponentProps<CBridgeBridge, CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>) {
   const { t } = useTranslation();
@@ -51,18 +50,6 @@ export function CBridge({
   const { setChainMatched } = useWallet();
 
   const isPegged = useMemo(() => bridge.isPegged(direction), [bridge, direction]);
-
-  const feeWithSymbol = useMemo(
-    () =>
-      estimateResult && {
-        amount: fromWei({
-          value: new BN(estimateResult.baseFee).add(new BN(estimateResult.percFee)),
-          decimals: direction.to.decimals,
-        }),
-        symbol: direction.from.symbol,
-      },
-    [direction.to.decimals, direction.from.symbol, estimateResult]
-  );
 
   const extraInfo = useMemo(() => {
     if (!estimateResult) {
@@ -163,11 +150,7 @@ export function CBridge({
 
       return createTxWorkflow(
         validateObs.pipe(
-          mergeMap(() =>
-            applyModalObs({
-              content: <TransferConfirm value={payload} fee={feeWithSymbol!}></TransferConfirm>,
-            })
-          )
+          mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={fee}></TransferConfirm> }))
         ),
         () => bridge.send(payload),
         afterCrossChain(TransferDone, { payload })
@@ -183,77 +166,13 @@ export function CBridge({
     direction.from,
     direction.to.decimals,
     estimateResult,
-    feeWithSymbol,
+    fee,
     setTxObservableFactory,
   ]);
 
-  // eslint-disable-next-line complexity
   useEffect(() => {
-    if (!direction.from.amount || !account) {
-      setEstimateResult(null);
-
-      if (onFeeChange) {
-        onFeeChange(null);
-      }
-
-      return;
-    }
-
-    const estimateRequest = new EstimateAmtRequest();
-    const srcChainId = parseInt(direction.from.meta.ethereumChain.chainId, 16);
-    const dstChainId = parseInt(direction.to.meta.ethereumChain.chainId, 16);
-    const symbol = direction.from.symbol.startsWith('x')
-      ? direction.from.symbol.slice(1)
-      : direction.from.symbol.split('.')[0]; // as RING for avalanche the token symbol has suffix .e, remove it here
-    const amount = toWei({ value: direction.from.amount, decimals: direction.from.decimals });
-
-    estimateRequest.setSrcChainId(srcChainId);
-    estimateRequest.setDstChainId(dstChainId);
-    estimateRequest.setTokenSymbol(symbol);
-    estimateRequest.setUsrAddr(account);
-    estimateRequest.setSlippageTolerance(slippage);
-    estimateRequest.setAmt(amount);
-
-    if (isPegged) {
-      estimateRequest.setIsPegged(true);
-    }
-
-    const sub$$ = from(bridge.client.estimateAmt(estimateRequest, null)).subscribe({
-      next(res) {
-        const result = res.toObject();
-        const { estimatedReceiveAmt } = result;
-        const fee =
-          Number(direction.from.amount) -
-          Number(fromWei({ value: estimatedReceiveAmt, decimals: direction.to.decimals }));
-
-        setEstimateResult(result);
-
-        if (onFeeChange) {
-          onFeeChange({
-            amount: fee,
-            symbol: direction.from.symbol,
-          });
-        }
-      },
-      error(error) {
-        console.warn('🚨 Estimate amount error', error);
-      },
-    });
-
-    return () => sub$$.unsubscribe();
-  }, [
-    account,
-    bridge.client,
-    direction.from.amount,
-    direction.from.decimals,
-    direction.from.meta.ethereumChain.chainId,
-    direction.from.symbol,
-    direction.to.decimals,
-    direction.to.meta.ethereumChain.chainId,
-    isPegged,
-    onFeeChange,
-    slippage,
-  ]);
+    bridge.getEstimateResult(direction, account).then((res) => setEstimateResult(res));
+  }, [bridge, account, direction]);
 
   return (
     <>
@@ -288,8 +207,8 @@ export function CBridge({
 
       <CrossChainInfo
         bridge={bridge}
-        fee={feeWithSymbol}
         isDynamicFee
+        fee={fee}
         extra={[
           {
             name: t('Allowance'),

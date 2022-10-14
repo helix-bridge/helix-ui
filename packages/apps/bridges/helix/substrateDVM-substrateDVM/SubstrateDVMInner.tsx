@@ -1,10 +1,9 @@
 import { BN } from '@polkadot/util';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { CrossToken, DVMChainConfig } from 'shared/model';
-import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
@@ -22,46 +21,27 @@ export function SubstrateDVMInner({
   setTxObservableFactory,
   direction,
   bridge,
-  onFeeChange,
+  fee,
   balances,
 }: CrossChainComponentProps<SubstrateDVMInnerBridge, CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>) {
   const { t } = useTranslation();
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const { account } = useAccount();
-  const [balance, native] = (balances ?? []) as BN[];
-
-  const feeWithSymbol = useMemo(
-    () => ({
-      amount: '0',
-      symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
-    }),
-    [direction.from.meta.tokens]
-  );
+  const [balance] = (balances ?? []) as BN[];
 
   useEffect(() => {
     const fn = () => (payload: IssuingPayload) => {
       const validateObs = payload.bridge.validate(payload, { balance });
 
       return createTxWorkflow(
-        validateObs.pipe(
-          mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={feeWithSymbol!} /> }))
-        ),
+        validateObs.pipe(mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={fee!} /> }))),
         () => payload.bridge.send(payload),
         afterCrossChain(TransferDone, { payload })
       );
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, feeWithSymbol, native, balance, setTxObservableFactory]);
-
-  useEffect(() => {
-    if (onFeeChange) {
-      onFeeChange({
-        amount: 0,
-        symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
-      });
-    }
-  }, [direction, onFeeChange]);
+  }, [afterCrossChain, balance, fee, setTxObservableFactory]);
 
   useEffect(() => {
     form.setFieldsValue({ [FORM_CONTROL.recipient]: account });
@@ -80,7 +60,7 @@ export function SubstrateDVMInner({
         />
       </div>
 
-      <CrossChainInfo bridge={bridge} fee={feeWithSymbol}></CrossChainInfo>
+      <CrossChainInfo bridge={bridge} fee={fee}></CrossChainInfo>
     </>
   );
 }

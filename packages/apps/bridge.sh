@@ -114,7 +114,7 @@ function component() {
                 form,
                 direction,
                 bridge,
-                onFeeChange,
+                fee,
                 balances,
                 setTxObservableFactory,
             }: CrossChainComponentProps<${from}${to}Bridge, CrossToken<ChainConfig>, CrossToken<ChainConfig>>) {
@@ -139,15 +139,6 @@ function component() {
                     setTxObservableFactory(fn as unknown as TxObservableFactory);
                 }, [afterCrossChain, balance, setTxObservableFactory, t]);
 
-                useEffect(() => {
-                    if (onFeeChange) {
-                    onFeeChange({
-                        amount: 0,
-                        symbol: direction.from.meta.tokens.find((item) => item.symbol === '?' )!.symbol,
-                    });
-                    }
-                }, [direction.from.meta.tokens, onFeeChange]);
-
                 return (
                     <>
                     <RecipientItem
@@ -160,7 +151,7 @@ function component() {
                         )}
                     />
 
-                    <CrossChainInfo bridge={bridge} fee={null} hideFee></CrossChainInfo>
+                    <CrossChainInfo bridge={bridge} fee={fee} hideFee></CrossChainInfo>
                     </>
                 );
             }

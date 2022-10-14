@@ -25,8 +25,8 @@ export interface CrossChainComponentProps<
   bridge: B;
   balances: BN[] | null;
   allowance: BN | null;
+  fee: { symbol: string; amount: number } | null;
   // make sure page setState function direction to avoid infinite update
   setTxObservableFactory: React.Dispatch<React.SetStateAction<TxObservableFactory>>;
   setBridgeState: React.Dispatch<React.SetStateAction<BridgeState>>;
-  onFeeChange: React.Dispatch<React.SetStateAction<{ amount: number; symbol: string } | null>>;
 }
