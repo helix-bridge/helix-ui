@@ -4,7 +4,7 @@ import last from 'lodash/last';
 import lowerFirst from 'lodash/lowerFirst';
 import upperFirst from 'lodash/upperFirst';
 import { Observable } from 'rxjs';
-import { CrossChainDirection, CrossToken, PolkadotChainConfig, Tx } from 'shared/model';
+import { CrossChainDirection, CrossToken, DailyLimit, PolkadotChainConfig, Tx } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
@@ -41,6 +41,47 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
 
     return signAndSendExtrinsic(api, sender, extrinsic);
   }
+
+  async getDailyLimit(
+    direction: CrossChainDirection<CrossToken<PolkadotChainConfig>, CrossToken<PolkadotChainConfig>>
+  ): Promise<DailyLimit | null> {
+    const limit: BN = this.isIssue(direction.from.host, direction.to.host)
+      ? await this.getIssueDailyLimit(direction)
+      : await this.getRedeemDailyLimit(direction);
+
+    return { limit: limit.toString(), spentToday: '0' };
+  }
+
+  private async getIssueDailyLimit(
+    direction: CrossChainDirection<CrossToken<PolkadotChainConfig>, CrossToken<PolkadotChainConfig>>
+  ) {
+    const api = entrance.polkadot.getInstance(direction.to.meta.provider);
+
+    await waitUntilConnected(api);
+
+    const section = `from${upperFirst(direction.from.meta.name)}Issuing`;
+    const result = await api.query[section].secureLimitedRingAmount();
+    const data = result.toJSON() as [number, string]; // [0, hexString]
+    const num = hexToU8a(data[1]);
+
+    return new BN(num);
+  }
+
+  private async getRedeemDailyLimit(
+    direction: CrossChainDirection<CrossToken<PolkadotChainConfig>, CrossToken<PolkadotChainConfig>>
+  ) {
+    const api = entrance.polkadot.getInstance(direction.to.meta.provider);
+
+    await waitUntilConnected(api);
+
+    const section = `to${direction.from.meta.name.split('-').map(upperFirst).join('')}Backing`;
+    const result = await api.query[section].secureLimitedRingAmount();
+    const data = result.toJSON() as [number, number];
+    const num = result && new BN(data[1]);
+
+    return num;
+  }
+
   async getFee(
     direction: CrossChainDirection<CrossToken<PolkadotChainConfig>, CrossToken<PolkadotChainConfig>>
   ): Promise<BN> {

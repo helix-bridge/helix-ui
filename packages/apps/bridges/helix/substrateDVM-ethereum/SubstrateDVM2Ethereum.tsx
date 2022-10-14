@@ -132,10 +132,10 @@ export function SubstrateDVM2Ethereum({
       .pipe(pollWhile(LONG_DURATION, () => isMounted))
       .subscribe({
         next(res) {
-          setDailyLimit(res && new BN(res.limit));
+          setDailyLimit(res && new BN(res.limit).sub(new BN(res.spentToday)));
         },
         error(error) {
-          console.warn('🚀 ~ file: SubstrateDVM2Ethereum.tsx ~ line 136 ~ error ~ error', error);
+          console.warn('🚀 ~ DailyLimit querying error', error);
         },
       });
 

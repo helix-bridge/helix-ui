@@ -19,8 +19,6 @@ export const crabCrabParachain = new BridgeBase<SubstrateSubstrateParachainBridg
     category: 'helix',
     activeArrivalConnection: true,
     name: 'substrate-substrateParachain',
-    issueCompName: 'Substrate2Parachain',
-    redeemCompName: 'Parachain2Substrate',
   }
 );
 
@@ -39,7 +37,5 @@ export const pangolinPangolinParachain = new BridgeBase<SubstrateSubstrateParach
     category: 'helix',
     activeArrivalConnection: true,
     name: 'substrate-substrateParachain',
-    issueCompName: 'Substrate2Parachain',
-    redeemCompName: 'Parachain2Substrate',
   }
 );

@@ -130,12 +130,10 @@ export function SubstrateDVM2SubstrateDVM({
       )
       .subscribe({
         next(result) {
-          const num = result && new BN(result.limit).sub(new BN(result.spentToday));
-
-          setDailyLimit(num);
+          setDailyLimit(result && new BN(result.limit).sub(new BN(result.spentToday)));
         },
         error(error) {
-          console.warn('🚀 ~ file: SubstrateDVM2SubstrateDVM.tsx ~ line 118 ~ error ~ error', error);
+          console.warn('🚀 ~ DailyLimit querying error', error);
         },
       });
 
