@@ -2,11 +2,20 @@ import { BN } from '@polkadot/util';
 import { BigNumber, Contract } from 'ethers';
 import last from 'lodash/last';
 import { EMPTY, from, Observable, switchMap } from 'rxjs';
-import { CrossChainDirection, CrossToken, DailyLimit, DVMChainConfig, HelixHistoryRecord, Tx } from 'shared/model';
+import {
+  ChainConfig,
+  CrossChainDirection,
+  CrossToken,
+  DailyLimit,
+  DVMChainConfig,
+  HelixHistoryRecord,
+  Tx,
+} from 'shared/model';
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { Bridge } from '../../../../core/bridge';
+import { AllowancePayload } from '../../../../model/allowance';
 import { getBridge } from '../../../../utils/bridge';
 import backingAbi from '../config/s2sv2backing.json';
 import burnAbi from '../config/s2sv2burn.json';
@@ -147,5 +156,16 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
     const spentToday: BigNumber = await contract.spentToday(fromTokenAddress);
 
     return { limit: limit.toString(), spentToday: spentToday.toString() };
+  }
+
+  async getAllowancePayload(
+    direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
+  ): Promise<AllowancePayload> {
+    return {
+      spender: this.isIssue(direction.from.meta, direction.to.meta)
+        ? this.config.contracts.backing
+        : this.config.contracts.issuing,
+      tokenAddress: direction.from.address,
+    };
   }
 }

@@ -22,6 +22,7 @@ import {
 } from 'shared/model';
 import { toWei } from 'shared/utils/helper/balance';
 import { TxValidationMessages } from '../config/validation';
+import { AllowancePayload } from '../model/allowance';
 import { CrossChainPayload } from '../model/tx';
 import { TxValidation } from '../model/validation';
 import { isSubstrateSubstrateParachain, isXCM } from '../utils';
@@ -42,6 +43,7 @@ export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Targ
   ): Promise<DailyLimit | null>;
   getFee?(direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>): Promise<BN>;
   getMinimumFeeTokenHolding?(direction: CrossChainDirection): MinimumFeeTokenHolding | null;
+  getAllowancePayload?(direction: CrossChainDirection): Promise<AllowancePayload>;
 }
 
 export abstract class Bridge<

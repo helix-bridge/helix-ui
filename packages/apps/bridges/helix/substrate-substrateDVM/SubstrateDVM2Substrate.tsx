@@ -18,7 +18,6 @@ import { CrossChainComponentProps } from '../../../model/component';
 import { CrossChainPayload, TxObservableFactory } from '../../../model/tx';
 import { RedeemPayload } from './model';
 import { SubstrateSubstrateDVMBridge } from './utils/bridge';
-import { getS2SMappingAddress } from './utils/mappingParams';
 
 export function SubstrateDVM2Substrate({
   allowance,
@@ -29,7 +28,6 @@ export function SubstrateDVM2Substrate({
   onFeeChange,
   setTxObservableFactory,
   setBridgeState,
-  updateAllowancePayload,
 }: CrossChainComponentProps<SubstrateSubstrateDVMBridge, CrossToken<DVMChainConfig>, CrossToken<PolkadotChainConfig>>) {
   const { t } = useTranslation();
   const bridgeState = useCheckSpecVersion(direction);
@@ -46,14 +44,6 @@ export function SubstrateDVM2Substrate({
       },
     [direction.from.decimals, direction.from.meta.tokens, fee]
   );
-
-  useEffect(() => {
-    const sub$$ = from(getS2SMappingAddress(direction.from.meta.provider)).subscribe((spender) => {
-      updateAllowancePayload({ spender, tokenAddress: direction.from.address });
-    });
-
-    return () => sub$$.unsubscribe();
-  }, [direction.from.address, direction.from.meta.provider, updateAllowancePayload]);
 
   useEffect(() => {
     const fn = () => (payload: RedeemPayload) => {

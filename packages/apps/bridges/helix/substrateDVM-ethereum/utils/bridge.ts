@@ -16,6 +16,7 @@ import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { getBridge, isSubstrateDVM2Ethereum } from 'utils/bridge';
 import { Bridge, MinimumFeeTokenHolding } from '../../../../core/bridge';
+import { AllowancePayload } from '../../../../model/allowance';
 import { getWrappedToken } from '../../../../utils/network';
 import backingAbi from '../config/backing.json';
 import guardAbi from '../config/guard.json';
@@ -204,5 +205,21 @@ export class SubstrateDVMEthereumBridge extends Bridge<
     }
 
     return null;
+  }
+
+  async getAllowancePayload(
+    direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<EthereumChainConfig>>
+  ): Promise<AllowancePayload> {
+    if (direction.from.type === 'erc20' && this.isIssue(direction.from.host, direction.to.host)) {
+      return {
+        spender: this.config.contracts.backing,
+        tokenAddress: direction.from.address || getWrappedToken(direction.from.meta).address,
+      };
+    }
+
+    return {
+      spender: this.config.contracts.issuing,
+      tokenAddress: direction.from.address,
+    };
   }
 }

@@ -32,7 +32,6 @@ export function SubstrateDVM2SubstrateDVM({
   setBridgeState,
   onFeeChange,
   balances,
-  updateAllowancePayload,
 }: CrossChainComponentProps<SubstrateDVMSubstrateDVMBridge, CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>) {
   const { t } = useTranslation();
   const { departureConnection } = useApi();
@@ -57,22 +56,6 @@ export function SubstrateDVM2SubstrateDVM({
   useEffect(() => {
     setBridgeState({ status: bridgeState.status, reason: bridgeState.reason });
   }, [bridgeState.status, bridgeState.reason, setBridgeState]);
-
-  useEffect(() => {
-    updateAllowancePayload({
-      spender: bridge.isIssue(direction.from.meta, direction.to.meta)
-        ? bridge.config.contracts.backing
-        : bridge.config.contracts.issuing,
-      tokenAddress: direction.from.address,
-    });
-  }, [
-    bridge,
-    bridge.config.contracts.backing,
-    direction.from.address,
-    direction.from.meta,
-    direction.to.meta,
-    updateAllowancePayload,
-  ]);
 
   useEffect(() => {
     const fn = () => (payload: IssuingPayload) => {

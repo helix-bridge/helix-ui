@@ -25,9 +25,9 @@ import {
   TokenInfoWithMeta,
 } from 'shared/model';
 import { truncate } from 'shared/utils/helper/balance';
-import { isKton } from 'shared/utils/helper/validator';
+import { isEthereumNetwork } from 'shared/utils/network/network';
 import { Bridge } from '../core/bridge';
-import { AllowancePayload, useAllowance } from '../hooks/allowance';
+import { useAllowance } from '../hooks/allowance';
 import { CrossChainComponentProps } from '../model/component';
 import { CrossChainPayload, TxObservableFactory } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
@@ -57,22 +57,25 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
   const { account } = useAccount();
   const [balances, setBalances] = useState<BN[] | null>(null);
   const { allowance, approve, queryAllowance } = useAllowance(direction);
-  const [allowancePayload, setAllowancePayload] = useState<AllowancePayload | null>(null);
   const { matched } = useWallet();
   const { observer } = useTx();
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
 
+  // eslint-disable-next-line complexity
   const allowanceEnough = useMemo(() => {
+    if (
+      !isEthereumNetwork(direction.from.host) ||
+      (isEthereumNetwork(direction.from.host) && direction.from.type === 'native')
+    ) {
+      return true;
+    }
+
     if (!allowance || !balances) {
       return false;
     }
 
-    if (Array.isArray(balances)) {
-      return allowance.gt(balances[isKton(direction.from.symbol) ? 1 : 0]);
-    }
-
-    return allowance.gt(balances);
-  }, [allowance, balances, direction.from.symbol]);
+    return allowance.gt(balances[0]);
+  }, [allowance, balances, direction.from]);
 
   const Content = useMemo(() => {
     const { from, to } = pureDirection;
@@ -117,10 +120,17 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
   }, [account, bridge, pureDirection]);
 
   useEffect(() => {
-    if (allowancePayload) {
-      queryAllowance(allowancePayload);
+    if (
+      bridge &&
+      bridge.getAllowancePayload &&
+      isEthereumNetwork(direction.from.host) &&
+      direction.from.type !== 'native'
+    ) {
+      bridge.getAllowancePayload(direction).then((payload) => {
+        queryAllowance(payload);
+      });
     }
-  }, [allowancePayload, queryAllowance]);
+  }, [bridge, direction, queryAllowance]);
 
   return (
     <Form
@@ -178,7 +188,6 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
                 if (isDirectionChanged(direction, value)) {
                   setBridge(null);
                   setFee(null);
-                  setAllowancePayload(null);
                   setTxObservableFactory(() => EMPTY);
                   setBridgeState({ status: 'available' });
                   form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined, [FORM_CONTROL.recipient]: undefined });
@@ -201,7 +210,6 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
               setTxObservableFactory={setTxObservableFactory}
               setBridgeState={setBridgeState}
               onFeeChange={setFee}
-              updateAllowancePayload={setAllowancePayload}
             />
           )}
 
@@ -209,8 +217,15 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
             <Input value={account} />
           </Form.Item>
 
-          {!allowanceEnough && allowancePayload && account ? (
-            <FormItemButton onClick={() => approve(allowancePayload)} className="cy-approve">
+          {!allowanceEnough && account ? (
+            <FormItemButton
+              onClick={() => {
+                if (bridge?.getAllowancePayload) {
+                  bridge.getAllowancePayload(direction).then((payload) => approve(payload));
+                }
+              }}
+              className="cy-approve"
+            >
               {t('Approve')}
             </FormItemButton>
           ) : departureConnection.status === ConnectionStatus.success ? (

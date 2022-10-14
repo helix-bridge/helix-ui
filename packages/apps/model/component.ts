@@ -2,7 +2,6 @@ import { BN } from '@polkadot/util';
 import { FormInstance } from 'antd';
 import { BridgeBase } from 'shared/core/bridge';
 import { BridgeState, CrossChainDirection, CrossToken, HelixHistoryRecord, Tx } from 'shared/model';
-import { AllowancePayload } from '../hooks';
 import { CrossChainPayload, TxObservableFactory } from './tx';
 
 export interface RecordStatusComponentProps {
@@ -30,5 +29,4 @@ export interface CrossChainComponentProps<
   setTxObservableFactory: React.Dispatch<React.SetStateAction<TxObservableFactory>>;
   setBridgeState: React.Dispatch<React.SetStateAction<BridgeState>>;
   onFeeChange: React.Dispatch<React.SetStateAction<{ amount: number; symbol: string } | null>>;
-  updateAllowancePayload: React.Dispatch<React.SetStateAction<AllowancePayload | null>>;
 }

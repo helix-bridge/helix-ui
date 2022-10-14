@@ -11,6 +11,7 @@ import { entrance } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { Bridge } from '../../../../core/bridge';
+import { AllowancePayload } from '../../../../model/allowance';
 import transferAbi from '../config/abi/bridge.json';
 import depositAbi from '../config/abi/OriginalTokenVaultV2.json';
 import burnAbi from '../config/abi/PeggedTokenBridgeV2.json';
@@ -243,5 +244,24 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
     }
 
     return this.isIssue(departure.host, to.host) ? this.config.contracts.backing : this.config.contracts.issuing;
+  }
+
+  async getAllowancePayload(
+    direction: CrossChainDirection<CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>
+  ): Promise<AllowancePayload> {
+    let options = {};
+
+    if (direction.from.host === 'polygon') {
+      options = await entrance.web3.currentProvider.getGasPrice().then((res) => ({
+        gasPrice: new BN(res.toString()).add(new BN(res.toString()).div(new BN(10))).toString(),
+      }));
+    }
+
+    return {
+      spender: this.getPoolAddress(direction),
+      tokenAddress: direction.from.address,
+      provider: entrance.web3.defaultProvider,
+      ...options,
+    };
   }
 }

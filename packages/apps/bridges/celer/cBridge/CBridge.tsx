@@ -11,7 +11,7 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { Logo } from 'shared/components/widget/Logo';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { CrossToken, EthereumChainConfig } from 'shared/model';
-import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
+import { isMetamaskChainConsistent } from 'shared/utils/connection';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 
@@ -41,7 +41,6 @@ export function CBridge({
   balances,
   onFeeChange,
   setTxObservableFactory,
-  updateAllowancePayload,
 }: CrossChainComponentProps<CBridgeBridge, CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>) {
   const { t } = useTranslation();
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
@@ -135,25 +134,6 @@ export function CBridge({
 
     return () => sub$$.unsubscribe();
   }, [bridge, direction, isPegged, setChainMatched]);
-
-  useEffect(() => {
-    let promise = Promise.resolve({});
-
-    if (direction.from.host === 'polygon') {
-      promise = entrance.web3.currentProvider.getGasPrice().then((res) => ({
-        gasPrice: new BN(res.toString()).add(new BN(res.toString()).div(new BN(10))).toString(),
-      }));
-    }
-
-    promise.then((options) => {
-      updateAllowancePayload({
-        spender: bridge.getPoolAddress(direction),
-        tokenAddress: direction.from.address,
-        provider: entrance.web3.defaultProvider,
-        ...options,
-      });
-    });
-  }, [bridge, direction, updateAllowancePayload]);
 
   useEffect(() => {
     form.setFieldsValue({ [FORM_CONTROL.recipient]: account });

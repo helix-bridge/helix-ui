@@ -23,6 +23,7 @@ import { isRing } from 'shared/utils/helper/validator';
 import { isDVMNetwork } from 'shared/utils/network/network';
 import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge } from '../../../../core/bridge';
+import { AllowancePayload } from '../../../../model/allowance';
 import abi from '../config/abi.json';
 import { IssuingPayload, RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from '../model';
 import { getS2SMappingAddress } from './mappingParams';
@@ -134,5 +135,16 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
         fee: number;
       }[]
     >;
+  }
+
+  async getAllowancePayload(
+    direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
+  ): Promise<AllowancePayload> {
+    const spender = await getS2SMappingAddress(direction.from.meta.provider);
+
+    return {
+      spender,
+      tokenAddress: direction.from.address,
+    };
   }
 }

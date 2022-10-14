@@ -19,8 +19,7 @@ import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { CrossChainComponentProps } from '../../../model/component';
 import { TxObservableFactory } from '../../../model/tx';
 import { useAccount } from '../../../providers';
-import { isEthereum2SubstrateDVM, isSubstrateDVM2Ethereum } from '../../../utils';
-import { getWrappedToken } from '../../../utils/network';
+import { isEthereum2SubstrateDVM } from '../../../utils';
 import { IssuingPayload, RedeemPayload } from './model';
 import { SubstrateDVMEthereumBridge } from './utils/bridge';
 
@@ -31,7 +30,6 @@ export function SubstrateDVM2Ethereum({
   direction,
   bridge,
   balances,
-  updateAllowancePayload,
   setBridgeState,
 }: CrossChainComponentProps<SubstrateDVMEthereumBridge, CrossToken<EthereumChainConfig>, CrossToken<DVMChainConfig>>) {
   const bridgeState = useCheckSpecVersion(direction);
@@ -58,31 +56,6 @@ export function SubstrateDVM2Ethereum({
       setBridgeState({ status: bridgeState.status, reason: bridgeState.reason });
     }
   }, [bridgeState.status, bridgeState.reason, setBridgeState, direction.from.meta.name, direction.to.meta.name]);
-
-  useEffect(() => {
-    if (direction.from.type === 'erc20' && isSubstrateDVM2Ethereum(direction.from.host, direction.to.host)) {
-      updateAllowancePayload({
-        spender: bridge.config.contracts.backing,
-        tokenAddress: direction.from.address || getWrappedToken(direction.from.meta).address,
-      });
-    }
-
-    if (isEthereum2SubstrateDVM(direction.from.host, direction.to.host)) {
-      updateAllowancePayload({
-        spender: bridge.config.contracts.issuing,
-        tokenAddress: direction.from.address,
-      });
-    }
-  }, [
-    bridge.config.contracts.backing,
-    bridge.config.contracts.issuing,
-    direction.from.address,
-    direction.from.host,
-    direction.from.meta,
-    direction.from.type,
-    direction.to.host,
-    updateAllowancePayload,
-  ]);
 
   useEffect(() => {
     const fn = () => (payload: IssuingPayload | RedeemPayload) => {
