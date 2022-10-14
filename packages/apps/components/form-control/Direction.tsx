@@ -8,8 +8,8 @@ import { ChainBase } from 'shared/core/chain';
 import { BridgeStatus, CrossChainDirection, CrossToken, CustomFormControlProps, HashInfo, Network } from 'shared/model';
 import { fromWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
 import { updateStorage } from 'shared/utils/helper/storage';
-import { isKton } from 'shared/utils/helper/validator';
-import { getBridge, isEthereumDarwinia, isSubstrateDVM2Ethereum, isSubstrateDVMSubstrateDVM } from 'utils/bridge';
+import { getBridge, isSubstrateDVM2Ethereum, isSubstrateDVMSubstrateDVM } from 'utils/bridge';
+import { bridgeFactory } from '../../bridges/bridges';
 import { CountLoading } from '../widget/CountLoading';
 import { Destination } from './Destination';
 
@@ -25,13 +25,13 @@ type DirectionProps = CustomFormControlProps<CrossChainDirection<CrossToken<Chai
 
 const MILLION = 1e6;
 
-const subFee = (payment: Amount, fee: Amount | null) => {
+const subFee = (payment: Amount, fee: Amount | null, mini: Amount = { symbol: '', amount: 0 }) => {
   if (!fee) {
     return payment.amount.toString();
   }
 
   if (fee.symbol === payment.symbol) {
-    const amount = Number(payment.amount) - fee.amount;
+    const amount = Number(payment.amount) - fee.amount - mini.amount;
 
     return amount >= 0 ? amount.toString() : '';
   } else {
@@ -80,12 +80,6 @@ export function Direction({
       return null;
     }
 
-    if (isEthereumDarwinia(data.from.host, data.to.host)) {
-      const [ring, kton] = balances as BN[];
-
-      return isKton(data.from.symbol) ? kton : ring;
-    }
-
     if (isSubstrateDVMSubstrateDVM(data.from.host, data.to.host)) {
       const [erc20, native] = balances;
 
@@ -93,7 +87,7 @@ export function Direction({
     }
 
     return balances[0];
-  }, [balances, data.from.host, data.from.symbol, data.from.type, data.to.host]);
+  }, [balances, data.from.host, data.from.type, data.to.host]);
 
   useEffect(() => {
     const { from, to } = data;
@@ -163,9 +157,14 @@ export function Direction({
             <span
               onClick={() => {
                 const { from, to } = data;
+                const config = getBridge(data);
+                const bridge = bridgeFactory(config);
+                const mini = bridge.getMinimumFeeTokenHolding && bridge.getMinimumFeeTokenHolding(data);
+
                 const amount = subFee(
                   { amount: +fromWei({ value: iBalance, decimals: from.decimals }), symbol: from.symbol },
-                  fee
+                  fee,
+                  mini ? { ...mini, amount: +fromWei(mini) } : undefined
                 );
 
                 if (amount !== from.amount) {

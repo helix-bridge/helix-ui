@@ -9,7 +9,6 @@ import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge } from '../../../../core/bridge';
-import { TxValidation } from '../../../../model';
 import { IssuingPayload, RedeemPayload, SubstrateSubstrateParachainBridgeConfig } from '../model';
 
 export class SubstrateSubstrateParachainBridge extends Bridge<
@@ -42,14 +41,6 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
 
     return signAndSendExtrinsic(api, sender, extrinsic);
   }
-
-  genTxParamsValidations({ balance, amount, dailyLimit }: TxValidation): [boolean, string][] {
-    return [
-      [balance.lt(amount), this.txValidationMessages.balanceLessThanAmount],
-      [!!dailyLimit && dailyLimit.lt(amount), this.txValidationMessages.dailyLimitLessThanAmount],
-    ];
-  }
-
   async getFee(
     direction: CrossChainDirection<CrossToken<PolkadotChainConfig>, CrossToken<PolkadotChainConfig>>
   ): Promise<BN> {

@@ -18,7 +18,6 @@ import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
 import { useAccount, useApi } from '../../providers';
 import { useClaim } from '../../providers/claim';
-import { isEthereumDarwinia } from '../../utils';
 import { getOriginChainConfig } from '../../utils/network';
 import {
   getReceivedAmountFromHelixRecord,
@@ -255,11 +254,6 @@ export default function History() {
 
                     <div
                       onClick={() => {
-                        if (isEthereumDarwinia(fromChain, toChain)) {
-                          message.error(`Can not find the detail page for ${fromChain} to ${toChain}`);
-                          return;
-                        }
-
                         const paths = getDetailPaths(fromChain, toChain, record);
                         const query = new URLSearchParams({
                           from: record.fromChain,
@@ -270,9 +264,7 @@ export default function History() {
                           window.open(`transaction/${paths.join('/')}?${query}`, '_blank');
                         }
                       }}
-                      className={`text-right pl-4 pr-6 py-4  border border-gray-800 mb-4 bg-gray-900 rounded-xs ${
-                        !isEthereumDarwinia(fromChain, toChain) ? 'cursor-pointer' : ''
-                      }`}
+                      className={`text-right pl-4 pr-6 py-4  border border-gray-800 mb-4 bg-gray-900 rounded-xs cursor-pointer`}
                     >
                       <div className="mb-2 whitespace-nowrap text-xs">
                         {format(record.startTime * 1000, DATE_TIME_FORMAT)}

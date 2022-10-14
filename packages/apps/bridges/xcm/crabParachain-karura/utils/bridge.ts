@@ -3,11 +3,9 @@ import { Observable } from 'rxjs';
 import { CrossChainDirection, CrossToken, ParachainChainConfig, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
-import { fromWei, toWei } from 'shared/utils/helper/balance';
+import { toWei } from 'shared/utils/helper/balance';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
-import { TxValidationMessages } from '../../../../config/validation';
 import { Bridge } from '../../../../core/bridge';
-import { TxValidation } from '../../../../model';
 import { CrabParachainKaruraBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 
 export class CrabParachainKaruraBridge extends Bridge<
@@ -120,15 +118,6 @@ export class CrabParachainKaruraBridge extends Bridge<
     const extrinsic = api.tx.xTokens.transfer(currencyId, amount, dest, destWeight);
 
     return signAndSendExtrinsic(api, sender, extrinsic);
-  }
-
-  genTxParamsValidations({ balance, amount }: TxValidation): [boolean, string][] {
-    const decimals = +fromWei({ value: amount });
-
-    return [
-      [!Number.isInteger(decimals), TxValidationMessages.mustBeAnInteger],
-      [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
-    ];
   }
 
   async getFee(

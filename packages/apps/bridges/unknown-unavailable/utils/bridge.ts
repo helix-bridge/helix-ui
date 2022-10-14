@@ -12,8 +12,4 @@ export class UnknownUnavailableBridge extends Bridge<BridgeConfig, ChainConfig, 
   burn(): Observable<Tx> {
     return EMPTY;
   }
-
-  genTxParamsValidations(): [boolean, string][] {
-    return [];
-  }
 }

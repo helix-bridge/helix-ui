@@ -30,10 +30,6 @@ export const isSubstrate2SubstrateDVM = or(predicate('pangoro', 'pangolin-dvm'),
 export const isSubstrateDVM2Substrate = revert(isSubstrate2SubstrateDVM);
 export const isSubstrateSubstrateDVM = or(isSubstrate2SubstrateDVM, isSubstrateDVM2Substrate);
 
-export const isEthereum2Darwinia = or(predicate('ethereum', 'darwinia'), predicate('ropsten', 'pangolin'));
-export const isDarwinia2Ethereum = revert(isEthereum2Darwinia);
-export const isEthereumDarwinia = or(isEthereum2Darwinia, isDarwinia2Ethereum);
-
 export const isSubstrate2DVM = or(
   predicate('darwinia', 'darwinia-dvm'),
   predicate('crab', 'crab-dvm'),

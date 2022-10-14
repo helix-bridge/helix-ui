@@ -1,4 +1,4 @@
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 import { Contract } from 'ethers';
 import last from 'lodash/last';
 import { from, Observable, switchMap } from 'rxjs';
@@ -15,8 +15,7 @@ import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { getBridge, isSubstrateDVM2Ethereum } from 'utils/bridge';
-import { Bridge } from '../../../../core/bridge';
-import { TxValidation } from '../../../../model';
+import { Bridge, MinimumFeeTokenHolding } from '../../../../core/bridge';
 import { getWrappedToken } from '../../../../utils/network';
 import backingAbi from '../config/backing.json';
 import guardAbi from '../config/guard.json';
@@ -69,23 +68,6 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       (contract) => contract[method].apply(null, args),
       mappingTokenAbi
     );
-  }
-
-  genTxParamsValidations({
-    balance,
-    amount,
-    dailyLimit,
-    allowance,
-    fee,
-    feeTokenBalance,
-  }: TxValidation): [boolean, string][] {
-    return [
-      [balance.lt(amount), this.txValidationMessages.balanceLessThanAmount],
-      [!!dailyLimit && dailyLimit.lt(amount), this.txValidationMessages.dailyLimitLessThanAmount],
-      [!!allowance && allowance?.lt(amount), this.txValidationMessages.allowanceLessThanAmount],
-      [!!fee && fee?.lt(BN_ZERO), this.txValidationMessages.invalidFee],
-      [!!feeTokenBalance && feeTokenBalance.lt(fee!), this.txValidationMessages.balanceLessThanFee],
-    ];
   }
 
   claim(record: HelixHistoryRecord): Observable<Tx> {
@@ -207,5 +189,20 @@ export class SubstrateDVMEthereumBridge extends Bridge<
     const limit = await contract.calcMaxWithdraw(type === 'native' ? getWrappedToken(arrival).address : tokenAddress);
 
     return { limit: limit.toString(), spentToday: '0' };
+  }
+
+  getMinimumFeeTokenHolding(
+    direction: CrossChainDirection<
+      CrossToken<DVMChainConfig | EthereumChainConfig>,
+      CrossToken<DVMChainConfig | EthereumChainConfig>
+    >
+  ): MinimumFeeTokenHolding | null {
+    const { from: dep, to } = direction;
+
+    if (this.isIssue(dep.meta, to.meta) && dep.type === 'native') {
+      return { ...dep, amount: new BN(toWei({ value: 1, decimals: dep.decimals })) };
+    }
+
+    return null;
   }
 }

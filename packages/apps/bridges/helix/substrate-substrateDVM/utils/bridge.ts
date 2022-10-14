@@ -1,5 +1,5 @@
 import type { Codec } from '@polkadot/types-codec/types';
-import { BN, BN_ZERO, hexToU8a, stringToHex } from '@polkadot/util';
+import { BN, hexToU8a, stringToHex } from '@polkadot/util';
 import { BigNumber, Contract } from 'ethers';
 import last from 'lodash/last';
 import { Observable } from 'rxjs';
@@ -23,7 +23,6 @@ import { isRing } from 'shared/utils/helper/validator';
 import { isDVMNetwork } from 'shared/utils/network/network';
 import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge } from '../../../../core/bridge';
-import { TxValidation } from '../../../../model';
 import abi from '../config/abi.json';
 import { IssuingPayload, RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from '../model';
 import { getS2SMappingAddress } from './mappingParams';
@@ -120,15 +119,6 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
     const marketFee = last(res)?.fee.toString();
 
     return new BN(marketFee ?? -1); // -1: fee market does not available
-  }
-
-  genTxParamsValidations({ balance, dailyLimit, amount, fee, allowance }: TxValidation): [boolean, string][] {
-    return [
-      [balance.lt(amount), this.txValidationMessages.balanceLessThanAmount],
-      [!!dailyLimit && dailyLimit.lt(amount), this.txValidationMessages.dailyLimitLessThanAmount],
-      [!!allowance && allowance?.lt(amount), this.txValidationMessages.allowanceLessThanAmount],
-      [!!fee && fee?.lt(BN_ZERO), this.txValidationMessages.invalidFee],
-    ];
   }
 
   private async queryFeeFromRelayers(departure: ChainConfig, to: ChainConfig) {

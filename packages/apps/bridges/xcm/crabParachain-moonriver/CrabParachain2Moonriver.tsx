@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { from } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { CrossToken, ParachainChainConfig } from 'shared/model';
-import { fromWei, toWei } from 'shared/utils/helper/balance';
+import { fromWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
@@ -53,18 +53,15 @@ export function CrabParachain2Moonriver({
   }, [bridgeState.status, bridgeState.reason, setBridgeState]);
 
   useEffect(() => {
-    const fn = () => (data: IssuingPayload) => {
-      const validateObs = data.bridge.validate([balance], {
-        balance,
-        amount: new BN(toWei(data.direction.from)),
-      });
+    const fn = () => (payload: IssuingPayload) => {
+      const validateObs = payload.bridge.validate(payload, { balance });
 
       return createTxWorkflow(
         validateObs.pipe(
-          mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
+          mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={feeWithSymbol!} /> }))
         ),
-        data.bridge.back(data),
-        afterCrossChain(TransferDone, { payload: data })
+        () => payload.bridge.send(payload),
+        afterCrossChain(TransferDone, { payload })
       );
     };
 

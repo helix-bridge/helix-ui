@@ -8,7 +8,7 @@ import { FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
 import { useIsMounted } from 'shared/hooks';
 import { CrossToken, DVMChainConfig } from 'shared/model';
 import { isMetamaskChainConsistent } from 'shared/utils/connection';
-import { fromWei, toWei } from 'shared/utils/helper/balance';
+import { fromWei } from 'shared/utils/helper/balance';
 import { pollWhile } from 'shared/utils/helper/operator';
 import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
@@ -75,27 +75,20 @@ export function SubstrateDVM2SubstrateDVM({
   ]);
 
   useEffect(() => {
-    const fn = () => (data: IssuingPayload) => {
-      const validateObs = data.bridge.validate([fee, dailyLimit, wRING, native], {
+    const fn = () => (payload: IssuingPayload) => {
+      const validateObs = payload.bridge.validate(payload, {
         balance: wRING,
-        amount: new BN(toWei(data.direction.from)),
         dailyLimit,
-        feeTokenBalance: native,
         fee,
+        feeTokenBalance: native,
       });
 
       return createTxWorkflow(
         validateObs.pipe(
-          mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
+          mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={feeWithSymbol!} /> }))
         ),
-        () => {
-          const launch = data.bridge.isIssue(data.direction.from.meta, data.direction.to.meta)
-            ? data.bridge.back
-            : data.bridge.burn;
-
-          return launch(data, fee!);
-        },
-        afterCrossChain(TransferDone, { payload: data })
+        () => payload.bridge.send(payload, fee!),
+        afterCrossChain(TransferDone, { payload })
       );
     };
 

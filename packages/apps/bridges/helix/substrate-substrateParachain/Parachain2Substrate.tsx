@@ -6,7 +6,7 @@ import { from } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { CrossToken, ParachainChainConfig, PolkadotChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { fromWei, prettyNumber, toWei } from 'shared/utils/helper/balance';
+import { fromWei, prettyNumber } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
@@ -40,7 +40,7 @@ export function Parachain2Substrate({
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<RedeemPayload>();
   const bridgeState = useCheckSpecVersion(direction);
-  const [ring] = (balances ?? []) as BN[];
+  const [balance] = (balances ?? []) as BN[];
 
   const feeWithSymbol = useMemo(
     () =>
@@ -48,7 +48,7 @@ export function Parachain2Substrate({
         amount: fromWei({ value: fee, decimals: direction.from.decimals }),
         symbol: direction.from.meta.tokens.find((item) => isRing(item.symbol))!.symbol,
       },
-    [direction.from.decimals, direction.from.meta.tokens, fee]
+    [direction.from.meta.tokens, direction.from.decimals, fee]
   );
 
   useEffect(() => {
@@ -56,24 +56,20 @@ export function Parachain2Substrate({
   }, [bridgeState.status, bridgeState.reason, setBridgeState]);
 
   useEffect(() => {
-    const fn = () => (data: RedeemPayload) => {
-      const validateObs = data.bridge.validate([fee, dailyLimit, ring], {
-        balance: ring,
-        amount: new BN(toWei({ value: data.direction.from.amount, decimals: 9 })),
-        dailyLimit,
-      });
+    const fn = () => (payload: RedeemPayload) => {
+      const validateObs = payload.bridge.validate(payload, { balance, dailyLimit });
 
       return createTxWorkflow(
         validateObs.pipe(
-          mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
+          mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={feeWithSymbol!} /> }))
         ),
-        () => data.bridge.burn(data, fee!),
-        afterCrossChain(TransferDone, { payload: data })
+        () => payload.bridge.send(payload, fee!),
+        afterCrossChain(TransferDone, { payload })
       );
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, ring, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
+  }, [afterCrossChain, balance, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
 
   useEffect(() => {
     const api = entrance.polkadot.getInstance(direction.to.meta.provider);
@@ -130,7 +126,7 @@ export function Parachain2Substrate({
             name: t('Daily limit'),
             content: dailyLimit ? (
               <span>
-                {fromWei({ value: dailyLimit, decimals: 9 }, (value) =>
+                {fromWei({ value: dailyLimit, decimals: direction.from.decimals }, (value) =>
                   prettyNumber(value, { ignoreZeroDecimal: true })
                 )}
               </span>

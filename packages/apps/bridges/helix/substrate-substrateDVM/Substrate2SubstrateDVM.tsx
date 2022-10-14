@@ -8,7 +8,7 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { LONG_DURATION } from 'shared/config/constant';
 import { useIsMounted } from 'shared/hooks';
 import { CrossToken, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
-import { fromWei, toWei } from 'shared/utils/helper/balance';
+import { fromWei } from 'shared/utils/helper/balance';
 import { pollWhile } from 'shared/utils/helper/operator';
 import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
@@ -39,7 +39,7 @@ export function Substrate2SubstrateDVM({
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const bridgeState = useCheckSpecVersion(direction);
-  const [ring] = (balances ?? []) as BN[];
+  const [balance] = (balances ?? []) as BN[];
 
   const feeWithSymbol = useMemo(
     () =>
@@ -57,24 +57,20 @@ export function Substrate2SubstrateDVM({
   }, [bridgeState.status, bridgeState.reason, setBridgeState]);
 
   useEffect(() => {
-    const fn = () => (data: IssuingPayload) => {
-      const validateObs = data.bridge.validate([fee, dailyLimit, ring], {
-        balance: ring,
-        amount: new BN(toWei(data.direction.from)),
-        dailyLimit,
-      });
+    const fn = () => (payload: IssuingPayload) => {
+      const validateObs = payload.bridge.validate(payload, { balance, dailyLimit });
 
       return createTxWorkflow(
         validateObs.pipe(
-          mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
+          mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={feeWithSymbol!} /> }))
         ),
-        () => data.bridge.back(data, fee!),
-        afterCrossChain(TransferDone, { payload: data })
+        () => payload.bridge.send(payload, fee!),
+        afterCrossChain(TransferDone, { payload })
       );
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, ring, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
+  }, [afterCrossChain, balance, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
 
   useEffect(() => {
     const sub$$ = of(null)

@@ -1,4 +1,4 @@
-import { hexToU8a, BN } from '@polkadot/util';
+import { BN, hexToU8a } from '@polkadot/util';
 import upperFirst from 'lodash/upperFirst';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +6,7 @@ import { from } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { CrossToken, ParachainChainConfig, PolkadotChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { fromWei, prettyNumber, toWei } from 'shared/utils/helper/balance';
+import { fromWei, prettyNumber } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
@@ -40,7 +40,7 @@ export function Substrate2Parachain({
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const bridgeState = useCheckSpecVersion(direction);
-  const [ring] = (balances ?? []) as BN[];
+  const [balance] = (balances ?? []) as BN[];
 
   const feeWithSymbol = useMemo(
     () =>
@@ -56,24 +56,20 @@ export function Substrate2Parachain({
   }, [bridgeState.status, bridgeState.reason, setBridgeState]);
 
   useEffect(() => {
-    const fn = () => (data: IssuingPayload) => {
-      const validateObs = data.bridge.validate([fee, dailyLimit, ring], {
-        balance: ring,
-        amount: new BN(toWei(data.direction.from)),
-        dailyLimit,
-      });
+    const fn = () => (payload: IssuingPayload) => {
+      const validateObs = payload.bridge.validate(payload, { balance, dailyLimit });
 
       return createTxWorkflow(
         validateObs.pipe(
-          mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
+          mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={feeWithSymbol!} /> }))
         ),
-        () => data.bridge.back(data, fee!),
-        afterCrossChain(TransferDone, { payload: data })
+        () => payload.bridge.send(payload, fee!),
+        afterCrossChain(TransferDone, { payload })
       );
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, ring, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
+  }, [afterCrossChain, balance, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
 
   useEffect(() => {
     const api = entrance.polkadot.getInstance(direction.to.meta.provider);
@@ -130,7 +126,7 @@ export function Substrate2Parachain({
             name: t('Daily limit'),
             content: dailyLimit ? (
               <span>
-                {fromWei({ value: dailyLimit, decimals: 18 }, (value) =>
+                {fromWei({ value: dailyLimit, decimals: direction.from.decimals }, (value) =>
                   prettyNumber(value, { ignoreZeroDecimal: true })
                 )}
               </span>

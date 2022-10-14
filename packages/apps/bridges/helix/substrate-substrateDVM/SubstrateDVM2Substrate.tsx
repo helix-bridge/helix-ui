@@ -1,11 +1,11 @@
-import { BN_ZERO, BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { from } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { CrossToken, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
+import { fromWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
@@ -16,7 +16,6 @@ import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
 import { CrossChainComponentProps } from '../../../model/component';
 import { CrossChainPayload, TxObservableFactory } from '../../../model/tx';
-import { useAccount } from '../../../providers';
 import { RedeemPayload } from './model';
 import { SubstrateSubstrateDVMBridge } from './utils/bridge';
 import { getS2SMappingAddress } from './utils/mappingParams';
@@ -37,7 +36,7 @@ export function SubstrateDVM2Substrate({
   const [fee, setFee] = useState<BN | null>(null);
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
-  const { account } = useAccount();
+  const [balance = BN_ZERO] = (balances ?? []) as BN[];
 
   const feeWithSymbol = useMemo(
     () =>
@@ -57,27 +56,22 @@ export function SubstrateDVM2Substrate({
   }, [direction.from.address, direction.from.meta.provider, updateAllowancePayload]);
 
   useEffect(() => {
-    const fn = () => (data: RedeemPayload) => {
-      const validateObs = data.bridge.validate([fee, balances, allowance], {
-        balance: balances ? balances[0] : BN_ZERO,
-        amount: new BN(toWei(direction.from)),
-        allowance,
-        fee,
-      });
+    const fn = () => (payload: RedeemPayload) => {
+      const validateObs = payload.bridge.validate(payload, { balance, allowance, fee });
 
       const beforeTx = validateObs.pipe(
         mergeMap(() =>
           applyModalObs({
-            content: <TransferConfirm value={data} fee={feeWithSymbol!}></TransferConfirm>,
+            content: <TransferConfirm value={payload} fee={feeWithSymbol!}></TransferConfirm>,
           })
         )
       );
 
-      return createTxWorkflow(beforeTx, data.bridge.burn(data), afterCrossChain(TransferDone, { payload: data }));
+      return createTxWorkflow(beforeTx, payload.bridge.burn(payload), afterCrossChain(TransferDone, { payload }));
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [account, afterCrossChain, allowance, balances, direction.from, fee, feeWithSymbol, setTxObservableFactory, t]);
+  }, [afterCrossChain, allowance, balance, fee, feeWithSymbol, setTxObservableFactory]);
 
   useEffect(() => {
     const { to: arrival } = direction;
