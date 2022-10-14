@@ -1,7 +1,7 @@
 import { BN } from '@polkadot/util';
 import { FormInstance } from 'antd';
 import { BridgeBase } from 'shared/core/bridge';
-import { CrossChainDirection, CrossToken, HelixHistoryRecord, Tx } from 'shared/model';
+import { CrossChainDirection, CrossToken, DailyLimit, HelixHistoryRecord, Tx } from 'shared/model';
 import { CrossChainPayload, TxObservableFactory } from './tx';
 
 export interface RecordStatusComponentProps {
@@ -25,6 +25,7 @@ export interface CrossChainComponentProps<
   bridge: B;
   balances: BN[] | null;
   allowance: BN | null;
+  dailyLimit: DailyLimit | null;
   fee: { symbol: string; amount: number } | null;
   // make sure page setState function direction to avoid infinite update
   setTxObservableFactory: React.Dispatch<React.SetStateAction<TxObservableFactory>>;

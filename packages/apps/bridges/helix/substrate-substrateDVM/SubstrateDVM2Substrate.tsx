@@ -1,16 +1,13 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { useTranslation } from 'next-i18next';
-import { useEffect, useState } from 'react';
-import { from } from 'rxjs/internal/observable/from';
+import { useEffect } from 'react';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { CrossToken, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
-import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
-import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
 import { CrossChainComponentProps } from '../../../model/component';
@@ -28,7 +25,6 @@ export function SubstrateDVM2Substrate({
   setTxObservableFactory,
 }: CrossChainComponentProps<SubstrateSubstrateDVMBridge, CrossToken<DVMChainConfig>, CrossToken<PolkadotChainConfig>>) {
   const { t } = useTranslation();
-  const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<CrossChainPayload>();
   const [balance = BN_ZERO] = (balances ?? []) as BN[];
 
@@ -50,26 +46,6 @@ export function SubstrateDVM2Substrate({
     setTxObservableFactory(fn as unknown as TxObservableFactory);
   }, [afterCrossChain, allowance, balance, fee, setTxObservableFactory]);
 
-  useEffect(() => {
-    const { to: arrival } = direction;
-    const api = entrance.polkadot.getInstance(arrival.meta.provider);
-    const sub$$ = from(waitUntilConnected(api))
-      .pipe(
-        mergeMap(() => {
-          const section = arrival.meta.isTest ? 'substrate2SubstrateBacking' : 'toCrabBacking';
-          return from(api.query[section].secureLimitedRingAmount());
-        })
-      )
-      .subscribe((result) => {
-        const data = result.toJSON() as [number, number];
-        const num = result && new BN(data[1]);
-
-        setDailyLimit(num);
-      });
-
-    return () => sub$$.unsubscribe();
-  }, [direction]);
-
   return (
     <>
       <RecipientItem
@@ -84,6 +60,7 @@ export function SubstrateDVM2Substrate({
       <CrossChainInfo
         bridge={bridge}
         fee={fee}
+        direction={direction}
         extra={[
           {
             name: t('Allowance'),
@@ -96,20 +73,6 @@ export function SubstrateDVM2Substrate({
                 </span>
                 <span className="capitalize ml-1">{direction.from.symbol}</span>
               </span>
-            ),
-          },
-          {
-            name: t('Daily limit'),
-            content: dailyLimit ? (
-              <span>
-                {dailyLimit.isZero()
-                  ? t('Infinite')
-                  : fromWei({ value: dailyLimit, decimals: 9 }, (val: string) =>
-                      prettyNumber(val, { ignoreZeroDecimal: true })
-                    )}
-              </span>
-            ) : (
-              <CountLoading />
             ),
           },
         ]}

@@ -51,7 +51,7 @@ export function DVM2Substrate({
         )}
       />
 
-      <CrossChainInfo bridge={bridge} fee={null} hideFee></CrossChainInfo>
+      <CrossChainInfo bridge={bridge} fee={null} direction={direction} hideFee></CrossChainInfo>
     </>
   );
 }

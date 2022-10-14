@@ -1,18 +1,14 @@
 import { BN } from '@polkadot/util';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { from } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
-import { FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
-import { useIsMounted } from 'shared/hooks';
+import { FORM_CONTROL } from 'shared/config/constant';
 import { CrossToken, DVMChainConfig, EthereumChainConfig } from 'shared/model';
-import { fromWei, toWei } from 'shared/utils/helper/balance';
-import { pollWhile } from 'shared/utils/helper/operator';
+import { toWei } from 'shared/utils/helper/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
-import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
 import { CrossChainComponentProps } from '../../../model/component';
@@ -28,19 +24,19 @@ export function SubstrateDVM2Ethereum({
   direction,
   bridge,
   balances,
+  dailyLimit,
 }: CrossChainComponentProps<SubstrateDVMEthereumBridge, CrossToken<EthereumChainConfig>, CrossToken<DVMChainConfig>>) {
   const { t } = useTranslation();
-  const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload | RedeemPayload>();
   const { account } = useAccount();
   const [balance, nativeBalance] = (balances ?? []) as BN[];
-  const isMounted = useIsMounted();
+  const limit = useMemo(() => dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday)), [dailyLimit]);
 
   useEffect(() => {
     const fn = () => (payload: IssuingPayload | RedeemPayload) => {
       const validateObs = payload.bridge.validate(payload, {
         balance,
-        dailyLimit,
+        dailyLimit: limit,
         fee: new BN(toWei(fee!)),
         feeTokenBalance: nativeBalance,
       });
@@ -53,22 +49,7 @@ export function SubstrateDVM2Ethereum({
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, dailyLimit, fee, nativeBalance, balance, setTxObservableFactory]);
-
-  useEffect(() => {
-    const sub$$ = from(bridge.getDailyLimit(direction))
-      .pipe(pollWhile(LONG_DURATION, () => isMounted))
-      .subscribe({
-        next(res) {
-          setDailyLimit(res && new BN(res.limit).sub(new BN(res.spentToday)));
-        },
-        error(error) {
-          console.warn('🚀 ~ DailyLimit querying error', error);
-        },
-      });
-
-    return () => sub$$?.unsubscribe();
-  }, [bridge, direction, isMounted]);
+  }, [afterCrossChain, dailyLimit, fee, nativeBalance, balance, setTxObservableFactory, limit]);
 
   useEffect(() => {
     form.setFieldsValue({ [FORM_CONTROL.recipient]: account });
@@ -87,16 +68,7 @@ export function SubstrateDVM2Ethereum({
         />
       </div>
 
-      <CrossChainInfo
-        bridge={bridge}
-        fee={fee}
-        extra={[
-          {
-            name: t('Daily limit'),
-            content: dailyLimit ? <span>{fromWei({ value: dailyLimit })}</span> : <CountLoading />,
-          },
-        ]}
-      ></CrossChainInfo>
+      <CrossChainInfo bridge={bridge} fee={fee} direction={direction}></CrossChainInfo>
     </>
   );
 }

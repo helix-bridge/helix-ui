@@ -1,23 +1,17 @@
 import { BN } from '@polkadot/util';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { from } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
-import { LONG_DURATION } from 'shared/config/constant';
-import { useIsMounted } from 'shared/hooks/isMounted';
 import { CrossToken, ParachainChainConfig, PolkadotChainConfig } from 'shared/model';
-import { fromWei, prettyNumber, toWei } from 'shared/utils/helper/balance';
-import { pollWhile } from 'shared/utils/helper/operator';
+import { toWei } from 'shared/utils/helper/balance';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
-import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { useAfterTx } from '../../../hooks';
 import { CrossChainComponentProps } from '../../../model/component';
 import { TxObservableFactory } from '../../../model/tx';
-import { useApi } from '../../../providers';
 import { IssuingPayload } from './model';
 import { SubstrateSubstrateParachainBridge } from './utils';
 
@@ -28,22 +22,20 @@ export function Substrate2SubstrateParachain({
   bridge,
   fee,
   balances,
+  dailyLimit,
 }: CrossChainComponentProps<
   SubstrateSubstrateParachainBridge,
   CrossToken<PolkadotChainConfig>,
   CrossToken<ParachainChainConfig>
 >) {
   const { t } = useTranslation();
-  const { departureConnection } = useApi();
-  const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const [balance] = (balances ?? []) as BN[];
-
-  const isMounted = useIsMounted();
+  const limit = useMemo(() => dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday)), [dailyLimit]);
 
   useEffect(() => {
     const fn = () => (payload: IssuingPayload) => {
-      const validateObs = payload.bridge.validate(payload, { balance, dailyLimit });
+      const validateObs = payload.bridge.validate(payload, { balance, dailyLimit: limit });
 
       return createTxWorkflow(
         validateObs.pipe(mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={fee} /> }))),
@@ -53,22 +45,7 @@ export function Substrate2SubstrateParachain({
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, balance, dailyLimit, departureConnection, fee, setTxObservableFactory, t]);
-
-  useEffect(() => {
-    const sub$$ = from(bridge.getDailyLimit(direction))
-      .pipe(pollWhile(LONG_DURATION, () => isMounted))
-      .subscribe({
-        next(res) {
-          setDailyLimit(res && new BN(res.limit));
-        },
-        error(error) {
-          console.warn('🚀 ~ DailyLimit querying error', error);
-        },
-      });
-
-    return () => sub$$.unsubscribe();
-  }, [bridge, direction, isMounted]);
+  }, [afterCrossChain, balance, dailyLimit, fee, limit, setTxObservableFactory, t]);
 
   return (
     <>
@@ -81,24 +58,7 @@ export function Substrate2SubstrateParachain({
         )}
       />
 
-      <CrossChainInfo
-        bridge={bridge}
-        fee={fee}
-        extra={[
-          {
-            name: t('Daily limit'),
-            content: dailyLimit ? (
-              <span>
-                {fromWei({ value: dailyLimit, decimals: direction.to.decimals }, (value) =>
-                  prettyNumber(value, { ignoreZeroDecimal: true })
-                )}
-              </span>
-            ) : (
-              <CountLoading />
-            ),
-          },
-        ]}
-      ></CrossChainInfo>
+      <CrossChainInfo bridge={bridge} fee={fee} direction={direction}></CrossChainInfo>
     </>
   );
 }

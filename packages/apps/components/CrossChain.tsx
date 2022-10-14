@@ -12,6 +12,7 @@ import { from, from as fromRx } from 'rxjs/internal/observable/from';
 import { iif } from 'rxjs/internal/observable/iif';
 import { of } from 'rxjs/internal/observable/of';
 import { map } from 'rxjs/internal/operators/map';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
 import { BridgeBase } from 'shared/core/bridge';
@@ -23,6 +24,7 @@ import {
   ConnectionStatus,
   CrossChainDirection,
   CrossToken,
+  DailyLimit,
   TokenInfoWithMeta,
 } from 'shared/model';
 import { fromWei, toWei, truncate } from 'shared/utils/helper/balance';
@@ -63,6 +65,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
   const { matched } = useWallet();
   const { observer } = useTx();
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
+  const [dailyLimit, setDailyLimit] = useState<DailyLimit | null>(null);
   const isMounted = useIsMounted();
 
   const allowanceEnough = useMemo(() => {
@@ -136,10 +139,27 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
       ? from(bridge.getFee(direction, account)).pipe(map((res) => res && { ...res, amount: +fromWei(res) }))
       : of(null);
 
-    const sub$$ = obs.pipe(pollWhile(LONG_DURATION, () => isMounted)).subscribe((res) => setFee(res));
+    const sub$$ = of(null)
+      .pipe(
+        switchMap(() => obs),
+        pollWhile(LONG_DURATION, () => isMounted)
+      )
+      .subscribe((res) => setFee(res));
 
     return () => sub$$.unsubscribe();
   }, [account, bridge, direction, isMounted, setFee]);
+
+  useEffect(() => {
+    const obs = bridge?.getDailyLimit ? from(bridge.getDailyLimit(direction)) : of(null);
+    const sub$$ = of(null)
+      .pipe(
+        switchMap(() => obs),
+        pollWhile(LONG_DURATION, () => isMounted)
+      )
+      .subscribe((res) => setDailyLimit(res));
+
+    return () => sub$$?.unsubscribe();
+  }, [bridge, direction, isMounted]);
 
   return (
     <Form
@@ -215,6 +235,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
               balances={balances}
               allowance={allowance}
               fee={fee}
+              dailyLimit={dailyLimit}
               setTxObservableFactory={setTxObservableFactory}
             />
           )}

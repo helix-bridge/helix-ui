@@ -60,7 +60,7 @@ export function SubstrateDVMInner({
         />
       </div>
 
-      <CrossChainInfo bridge={bridge} fee={fee}></CrossChainInfo>
+      <CrossChainInfo bridge={bridge} fee={fee} direction={direction}></CrossChainInfo>
     </>
   );
 }

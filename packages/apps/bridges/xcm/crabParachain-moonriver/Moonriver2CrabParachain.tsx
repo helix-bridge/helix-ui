@@ -57,7 +57,7 @@ export function Moonriver2CrabParachain({
         )}
       />
 
-      <CrossChainInfo bridge={bridge}></CrossChainInfo>
+      <CrossChainInfo bridge={bridge} direction={direction}></CrossChainInfo>
     </>
   );
 }

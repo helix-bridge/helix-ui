@@ -209,6 +209,7 @@ export function CBridge({
         bridge={bridge}
         isDynamicFee
         fee={fee}
+        direction={direction}
         extra={[
           {
             name: t('Allowance'),

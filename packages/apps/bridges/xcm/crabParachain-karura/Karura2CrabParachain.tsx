@@ -56,7 +56,7 @@ export function Karura2CrabParachain({
         )}
       />
 
-      <CrossChainInfo bridge={bridge} fee={fee}></CrossChainInfo>
+      <CrossChainInfo bridge={bridge} fee={fee} direction={direction}></CrossChainInfo>
     </>
   );
 }
