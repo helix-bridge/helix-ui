@@ -8,7 +8,7 @@ import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
-import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
+import { useAfterTx } from '../../../hooks';
 import { CrossChainComponentProps } from '../../../model/component';
 import { TxObservableFactory } from '../../../model/tx';
 import { useApi } from '../../../providers';
@@ -20,7 +20,6 @@ export function CrabParachain2Moonriver({
   setTxObservableFactory,
   direction,
   bridge,
-  setBridgeState,
   fee,
   balances,
 }: CrossChainComponentProps<
@@ -31,12 +30,7 @@ export function CrabParachain2Moonriver({
   const { t } = useTranslation();
   const { departureConnection } = useApi();
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
-  const bridgeState = useCheckSpecVersion(direction);
   const [balance] = (balances ?? []) as BN[];
-
-  useEffect(() => {
-    setBridgeState({ status: bridgeState.status, reason: bridgeState.reason });
-  }, [bridgeState.status, bridgeState.reason, setBridgeState]);
 
   useEffect(() => {
     const fn = () => (payload: IssuingPayload) => {

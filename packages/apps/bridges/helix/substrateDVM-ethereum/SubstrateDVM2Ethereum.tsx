@@ -14,11 +14,10 @@ import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
 import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
-import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
+import { useAfterTx } from '../../../hooks';
 import { CrossChainComponentProps } from '../../../model/component';
 import { TxObservableFactory } from '../../../model/tx';
 import { useAccount } from '../../../providers';
-import { isEthereum2SubstrateDVM } from '../../../utils';
 import { IssuingPayload, RedeemPayload } from './model';
 import { SubstrateDVMEthereumBridge } from './utils/bridge';
 
@@ -29,21 +28,13 @@ export function SubstrateDVM2Ethereum({
   direction,
   bridge,
   balances,
-  setBridgeState,
 }: CrossChainComponentProps<SubstrateDVMEthereumBridge, CrossToken<EthereumChainConfig>, CrossToken<DVMChainConfig>>) {
-  const bridgeState = useCheckSpecVersion(direction);
   const { t } = useTranslation();
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload | RedeemPayload>();
   const { account } = useAccount();
   const [balance, nativeBalance] = (balances ?? []) as BN[];
   const isMounted = useIsMounted();
-
-  useEffect(() => {
-    if (isEthereum2SubstrateDVM(direction.from.meta.name, direction.to.meta.name)) {
-      setBridgeState({ status: bridgeState.status, reason: bridgeState.reason });
-    }
-  }, [bridgeState.status, bridgeState.reason, setBridgeState, direction.from.meta.name, direction.to.meta.name]);
 
   useEffect(() => {
     const fn = () => (payload: IssuingPayload | RedeemPayload) => {

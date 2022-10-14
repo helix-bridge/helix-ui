@@ -1,22 +1,16 @@
-import {
-  BridgeState,
-  ChainConfig,
-  CrossChainDirection,
-  CrossToken,
-  DVMChainConfig,
-  PolkadotChainConfig,
-} from 'shared/model';
+import { BridgeState, ChainConfig, CrossChainDirection, CrossToken, PolkadotChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { useEffect, useState } from 'react';
 import { from } from 'rxjs/internal/observable/from';
+import has from 'lodash/has';
 
 export function useCheckSpecVersion(
-  direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<PolkadotChainConfig | DVMChainConfig>>
+  direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
 ): BridgeState & { specVersionOnline: string } {
   const [specVersionOnline, setSpecVersionOnline] = useState<string>('');
   const [checking, setChecking] = useState(false);
   const { to } = direction;
-  const needCheck = !!to.meta.specVersion;
+  const needCheck = has(to.meta, 'specVersion');
 
   useEffect(() => {
     if (!needCheck) {
@@ -45,7 +39,7 @@ export function useCheckSpecVersion(
     return { status: 'pending', reason: 'checking', specVersionOnline: 'unknown' };
   }
 
-  return to.meta.specVersion === +specVersionOnline
+  return (to.meta as PolkadotChainConfig).specVersion === +specVersionOnline
     ? { status: 'available', specVersionOnline }
     : {
         status: 'error',

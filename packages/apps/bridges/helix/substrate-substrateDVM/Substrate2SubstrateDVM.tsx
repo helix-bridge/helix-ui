@@ -16,7 +16,7 @@ import { TransferConfirm } from '../../../components/tx/TransferConfirm';
 import { TransferDone } from '../../../components/tx/TransferDone';
 import { CountLoading } from '../../../components/widget/CountLoading';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
-import { useAfterTx, useCheckSpecVersion } from '../../../hooks';
+import { useAfterTx } from '../../../hooks';
 import { CrossChainComponentProps } from '../../../model/component';
 import { TxObservableFactory } from '../../../model/tx';
 import { useApi } from '../../../providers';
@@ -28,7 +28,6 @@ export function Substrate2SubstrateDVM({
   setTxObservableFactory,
   direction,
   bridge,
-  setBridgeState,
   fee,
   balances,
 }: CrossChainComponentProps<SubstrateSubstrateDVMBridge, CrossToken<PolkadotChainConfig>, CrossToken<DVMChainConfig>>) {
@@ -36,13 +35,8 @@ export function Substrate2SubstrateDVM({
   const { departureConnection } = useApi();
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
-  const bridgeState = useCheckSpecVersion(direction);
   const [balance] = (balances ?? []) as BN[];
   const isMounted = useIsMounted();
-
-  useEffect(() => {
-    setBridgeState({ status: bridgeState.status, reason: bridgeState.reason });
-  }, [bridgeState.status, bridgeState.reason, setBridgeState]);
 
   useEffect(() => {
     const fn = () => (payload: IssuingPayload) => {

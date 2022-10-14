@@ -19,7 +19,6 @@ import { ChainBase } from 'shared/core/chain';
 import { useIsMounted } from 'shared/hooks';
 import {
   BridgeConfig,
-  BridgeState,
   ChainConfig,
   ConnectionStatus,
   CrossChainDirection,
@@ -31,6 +30,7 @@ import { pollWhile } from 'shared/utils/helper/operator';
 import { isEthereumNetwork } from 'shared/utils/network/network';
 import { Bridge, TokenWithAmount } from '../core/bridge';
 import { useAllowance } from '../hooks/allowance';
+import { useCheckSpecVersion } from '../hooks/checkSpecVersion';
 import { CrossChainComponentProps } from '../model/component';
 import { CrossChainPayload, TxObservableFactory } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
@@ -55,7 +55,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
     useState<CrossChainDirection<TokenInfoWithMeta<ChainBase>, TokenInfoWithMeta<ChainBase>>>(dir);
   const [bridge, setBridge] = useState<Bridge<BridgeConfig, ChainConfig, ChainConfig> | null>(null);
   const [createTxObservable, setTxObservableFactory] = useState<TxObservableFactory>(() => EMPTY);
-  const [bridgeState, setBridgeState] = useState<BridgeState>({ status: 'available' });
+  const bridgeState = useCheckSpecVersion(direction);
   const [fee, setFee] = useState<(Omit<TokenWithAmount, 'amount'> & { amount: number }) | null>(null);
   const { account } = useAccount();
   const [balances, setBalances] = useState<BN[] | null>(null);
@@ -197,7 +197,6 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
                 if (isDirectionChanged(direction, value)) {
                   setBridge(null);
                   setTxObservableFactory(() => EMPTY);
-                  setBridgeState({ status: 'available' });
                   form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined, [FORM_CONTROL.recipient]: undefined });
                   setPureDirection({ from: omit(value.from, 'amount'), to: omit(value.to, 'amount') });
                 }
@@ -217,7 +216,6 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
               allowance={allowance}
               fee={fee}
               setTxObservableFactory={setTxObservableFactory}
-              setBridgeState={setBridgeState}
             />
           )}
 
