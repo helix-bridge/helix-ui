@@ -9,11 +9,10 @@ import {
 } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
-import { fromWei, toWei } from 'shared/utils/helper/balance';
+import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import { getBridge } from 'utils/bridge';
 import { Bridge } from '../../../../core/bridge';
-import { TxValidation } from '../../../../model';
 import abi from '../config/abi.json';
 import { CrabParachainMoonriverBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 
@@ -108,15 +107,6 @@ export class CrabParachainMoonriverBridge extends Bridge<
       (contract) => contract.transfer(departure.address, amount, destination, weight, { from: sender }),
       abi
     );
-  }
-
-  genTxParamsValidations({ amount, balance }: TxValidation): [boolean, string][] {
-    const decimals = +fromWei({ value: amount });
-
-    return [
-      [!Number.isInteger(decimals), this.txValidationMessages.mustBeAnInteger],
-      [balance.lt(amount), this.txValidationMessages.balanceLessThanAmount],
-    ];
   }
 
   async getFee(

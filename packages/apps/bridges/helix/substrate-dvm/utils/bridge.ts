@@ -12,9 +12,7 @@ import { toWei } from 'shared/utils/helper/balance';
 import { typeRegistryFactory } from 'shared/utils/helper/huge';
 import { isRing } from 'shared/utils/helper/validator';
 import { genEthereumTransactionObs, signAndSendExtrinsic } from 'shared/utils/tx';
-import { TxValidationMessages } from '../../../../config/validation';
 import { Bridge } from '../../../../core/bridge';
-import { TxValidation } from '../../../../model';
 import { IssuingPayload, RedeemPayload, SubstrateDVMBridgeConfig } from '../model';
 
 export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, PolkadotChainConfig, DVMChainConfig> {
@@ -83,11 +81,5 @@ export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, Polkado
         );
       })
     );
-  }
-
-  genTxParamsValidations(params: TxValidation): [boolean, string][] {
-    const { balance, amount } = params;
-
-    return [[balance.lt(amount), TxValidationMessages.balanceLessThanAmount]];
   }
 }

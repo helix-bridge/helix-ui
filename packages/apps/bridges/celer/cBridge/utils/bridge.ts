@@ -8,10 +8,8 @@ import { from } from 'rxjs/internal/observable/from';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { CrossChainDirection, CrossToken, EthereumChainConfig, HelixHistoryRecord, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
-import { fromWei, toWei } from 'shared/utils/helper/balance';
+import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
-import { TxValidationMessages } from '../../../../config/validation';
-import { TxValidation } from '../../../../model';
 import { Bridge } from '../../../../core/bridge';
 import transferAbi from '../config/abi/bridge.json';
 import depositAbi from '../config/abi/OriginalTokenVaultV2.json';
@@ -191,16 +189,6 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
     const response = await this.client.withdrawLiquidity(request, null);
 
     return response;
-  }
-
-  genTxParamsValidations({ balance, amount, allowance, decimals }: TxValidation): [boolean, string][] {
-    const minAmount = 20;
-
-    return [
-      [balance.lt(amount), TxValidationMessages.balanceLessThanAmount],
-      [!!allowance && allowance?.lt(amount), TxValidationMessages.allowanceLessThanAmount],
-      [+fromWei({ value: amount, decimals }) < minAmount, `Transfer amount must greater than or equal to ${minAmount}`],
-    ];
   }
 
   async getMinimalMaxSlippage(

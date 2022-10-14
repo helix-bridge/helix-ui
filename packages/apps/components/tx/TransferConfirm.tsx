@@ -16,8 +16,7 @@ type Fee = Pick<CrossToken, 'symbol' | 'amount'>;
 export function TransferConfirm<T extends BridgeBase = BridgeBase>({
   value,
   fee,
-  needClaim,
-}: PropsWithChildren<TxConfirmComponentProps<T> & { fee: Fee | null; needClaim?: boolean }>) {
+}: PropsWithChildren<TxConfirmComponentProps<T> & { fee: Fee | null }>) {
   const { from, to } = value.direction;
   const { t } = useTranslation('common', { i18n: i18n?.use(initReactI18next) });
 
@@ -28,6 +27,10 @@ export function TransferConfirm<T extends BridgeBase = BridgeBase>({
         : value.sender,
     [value]
   );
+
+  const needClaim = !!value.direction.from.cross.find(
+    (item) => item.partner.name === value.direction.to.host && item.bridge === value.bridge.name
+  )?.partner.claim;
 
   return (
     <>

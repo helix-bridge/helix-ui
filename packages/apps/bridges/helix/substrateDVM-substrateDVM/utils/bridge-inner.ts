@@ -4,7 +4,6 @@ import { CrossChainDirection, CrossToken, DVMChainConfig, Tx } from 'shared/mode
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { Bridge } from '../../../../core/bridge';
-import { TxValidation } from '../../../../model';
 import wringABI from '../config/wring.json';
 import { IssuingPayload, RedeemPayload, SubstrateDVMSubstrateDVMBridgeConfig } from '../model';
 
@@ -43,12 +42,6 @@ export class SubstrateDVMInnerBridge extends Bridge<
       (contract) => contract.withdraw(amount.toString(), { from: sender }),
       wringABI
     );
-  }
-
-  genTxParamsValidations(params: TxValidation): [boolean, string][] {
-    const { balance, amount } = params;
-
-    return [[balance.lt(amount), this.txValidationMessages.balanceLessThanAmount]];
   }
 
   async getFee(_: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>): Promise<BN> {

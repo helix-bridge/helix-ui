@@ -1,4 +1,4 @@
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 import { BigNumber, Contract } from 'ethers';
 import last from 'lodash/last';
 import { EMPTY, from, Observable, switchMap } from 'rxjs';
@@ -7,7 +7,6 @@ import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { Bridge } from '../../../../core/bridge';
-import { TxValidation } from '../../../../model';
 import { getBridge } from '../../../../utils/bridge';
 import backingAbi from '../config/s2sv2backing.json';
 import burnAbi from '../config/s2sv2burn.json';
@@ -56,18 +55,6 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
         }),
       burnAbi
     );
-  }
-
-  genTxParamsValidations(params: TxValidation): [boolean, string][] {
-    const { balance, amount, dailyLimit, allowance, fee, feeTokenBalance } = params;
-
-    return [
-      [balance.lt(amount), this.txValidationMessages.balanceLessThanAmount],
-      [!!dailyLimit && dailyLimit.lt(amount), this.txValidationMessages.dailyLimitLessThanAmount],
-      [!!allowance && allowance?.lt(amount), this.txValidationMessages.allowanceLessThanAmount],
-      [!!fee && fee.lt(BN_ZERO), this.txValidationMessages.invalidFee],
-      [!!feeTokenBalance && feeTokenBalance.lt(fee!), this.txValidationMessages.balanceLessThanFee],
-    ];
   }
 
   claim(_: HelixHistoryRecord): Observable<Tx> {

@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { CrossToken, DVMChainConfig, PolkadotChainConfig } from 'shared/model';
-import { toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
@@ -29,16 +28,13 @@ export function DVM2Substrate({
   const [balance] = (balances ?? []) as BN[];
 
   useEffect(() => {
-    const fn = () => (data: RedeemPayload) => {
-      const validateObs = data.bridge.validate([balance], {
-        balance,
-        amount: new BN(toWei(data.direction.from)),
-      });
+    const fn = () => (payload: RedeemPayload) => {
+      const validateObs = payload.bridge.validate(payload, { balance });
 
       return createTxWorkflow(
-        validateObs.pipe(mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={null} /> }))),
-        data.bridge.burn(data),
-        afterCrossChain(TransferDone, { payload: data })
+        validateObs.pipe(mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={null} /> }))),
+        () => payload.bridge.send(payload),
+        afterCrossChain(TransferDone, { payload })
       );
     };
 

@@ -161,14 +161,13 @@ export function CBridge({
 
   useEffect(() => {
     const fn = () => (data: Omit<IssuingPayload, 'maxSlippage'>) => {
-      const validateObs = data.bridge.validate([balances, allowance, estimateResult], {
-        balance: balances![0],
-        amount: new BN(toWei(direction.from)),
-        allowance,
-        decimals: direction.from.decimals,
-      });
+      if (!estimateResult) {
+        message.error('Network error, try again later');
+        return;
+      }
 
-      const { estimatedReceiveAmt, maxSlippage } = estimateResult!;
+      const validateObs = data.bridge.validate(data, { balance: balances![0], allowance });
+      const { estimatedReceiveAmt, maxSlippage } = estimateResult;
 
       const payload = {
         ...data,
@@ -182,15 +181,17 @@ export function CBridge({
         maxSlippage,
       };
 
-      const beforeTx = validateObs.pipe(
-        mergeMap(() =>
-          applyModalObs({
-            content: <TransferConfirm value={payload} fee={feeWithSymbol!}></TransferConfirm>,
-          })
-        )
+      return createTxWorkflow(
+        validateObs.pipe(
+          mergeMap(() =>
+            applyModalObs({
+              content: <TransferConfirm value={payload} fee={feeWithSymbol!}></TransferConfirm>,
+            })
+          )
+        ),
+        () => bridge.send(payload),
+        afterCrossChain(TransferDone, { payload })
       );
-
-      return createTxWorkflow(beforeTx, bridge.send(payload), afterCrossChain(TransferDone, { payload }));
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);

@@ -1,12 +1,13 @@
-import { hexToU8a, BN } from '@polkadot/util';
-import upperFirst from 'lodash/upperFirst';
+import { BN } from '@polkadot/util';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { from } from 'rxjs/internal/observable/from';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
+import { LONG_DURATION } from 'shared/config/constant';
+import { useIsMounted } from 'shared/hooks/isMounted';
 import { CrossToken, ParachainChainConfig, PolkadotChainConfig } from 'shared/model';
-import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { fromWei, prettyNumber, toWei } from 'shared/utils/helper/balance';
+import { fromWei, prettyNumber } from 'shared/utils/helper/balance';
+import { pollWhile } from 'shared/utils/helper/operator';
 import { isRing } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
@@ -21,7 +22,7 @@ import { useApi } from '../../../providers';
 import { IssuingPayload } from './model';
 import { SubstrateSubstrateParachainBridge } from './utils';
 
-export function Substrate2Parachain({
+export function Substrate2SubstrateParachain({
   form,
   setTxObservableFactory,
   direction,
@@ -40,7 +41,7 @@ export function Substrate2Parachain({
   const [dailyLimit, setDailyLimit] = useState<BN | null>(null);
   const { afterCrossChain } = useAfterTx<IssuingPayload>();
   const bridgeState = useCheckSpecVersion(direction);
-  const [ring] = (balances ?? []) as BN[];
+  const [balance] = (balances ?? []) as BN[];
 
   const feeWithSymbol = useMemo(
     () =>
@@ -51,50 +52,42 @@ export function Substrate2Parachain({
     [direction.from.meta.tokens, direction.from.decimals, fee]
   );
 
+  const isMounted = useIsMounted();
+
   useEffect(() => {
     setBridgeState({ status: bridgeState.status, reason: bridgeState.reason });
   }, [bridgeState.status, bridgeState.reason, setBridgeState]);
 
   useEffect(() => {
-    const fn = () => (data: IssuingPayload) => {
-      const validateObs = data.bridge.validate([fee, dailyLimit, ring], {
-        balance: ring,
-        amount: new BN(toWei(data.direction.from)),
-        dailyLimit,
-      });
+    const fn = () => (payload: IssuingPayload) => {
+      const validateObs = payload.bridge.validate(payload, { balance, dailyLimit });
 
       return createTxWorkflow(
         validateObs.pipe(
-          mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} /> }))
+          mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={feeWithSymbol!} /> }))
         ),
-        () => data.bridge.back(data, fee!),
-        afterCrossChain(TransferDone, { payload: data })
+        () => payload.bridge.send(payload, fee!),
+        afterCrossChain(TransferDone, { payload })
       );
     };
 
     setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [afterCrossChain, ring, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
+  }, [afterCrossChain, balance, dailyLimit, departureConnection, fee, feeWithSymbol, setTxObservableFactory, t]);
 
   useEffect(() => {
-    const api = entrance.polkadot.getInstance(direction.to.meta.provider);
-
-    const sub$$ = from(waitUntilConnected(api))
-      .pipe(
-        mergeMap(() => {
-          const section = `from${upperFirst(direction.from.meta.name)}Issuing`;
-
-          return from(api.query[section].secureLimitedRingAmount());
-        })
-      )
-      .subscribe((result) => {
-        const data = result.toJSON() as [number, string]; // [0, hexString]
-        const num = hexToU8a(data[1]);
-
-        setDailyLimit(new BN(num));
+    const sub$$ = from(bridge.getDailyLimit(direction))
+      .pipe(pollWhile(LONG_DURATION, () => isMounted))
+      .subscribe({
+        next(res) {
+          setDailyLimit(res && new BN(res.limit));
+        },
+        error(error) {
+          console.warn('🚀 ~ DailyLimit querying error', error);
+        },
       });
 
     return () => sub$$.unsubscribe();
-  }, [direction]);
+  }, [bridge, direction, isMounted]);
 
   useEffect(() => {
     const sub$$ = from(bridge.getFee(direction)).subscribe((result) => {
@@ -130,7 +123,7 @@ export function Substrate2Parachain({
             name: t('Daily limit'),
             content: dailyLimit ? (
               <span>
-                {fromWei({ value: dailyLimit, decimals: 18 }, (value) =>
+                {fromWei({ value: dailyLimit, decimals: direction.to.decimals }, (value) =>
                   prettyNumber(value, { ignoreZeroDecimal: true })
                 )}
               </span>

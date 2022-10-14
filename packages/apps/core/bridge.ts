@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { isAddress } from 'ethers/lib/utils';
 import isBoolean from 'lodash/isBoolean';
 import isString from 'lodash/isString';
@@ -16,15 +16,21 @@ import {
   DailyLimit,
   HelixHistoryRecord,
   Network,
-  NullableFields,
+  Token,
   TokenWithBridgesInfo,
   Tx,
 } from 'shared/model';
+import { toWei } from 'shared/utils/helper/balance';
 import { TxValidationMessages } from '../config/validation';
 import { CrossChainPayload } from '../model/tx';
 import { TxValidation } from '../model/validation';
+import { isSubstrateSubstrateParachain, isXCM } from '../utils';
 
-type GenValidationFn<T> = (params: T) => [boolean, string][];
+export interface MinimumFeeTokenHolding extends Token {
+  symbol: string;
+  decimals: number;
+  amount: BN; // with precision
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Target extends ChainConfig>
@@ -35,6 +41,7 @@ export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Targ
     direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>
   ): Promise<DailyLimit | null>;
   getFee?(direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>): Promise<BN>;
+  getMinimumFeeTokenHolding?(direction: CrossChainDirection): MinimumFeeTokenHolding | null;
 }
 
 export abstract class Bridge<
@@ -51,6 +58,21 @@ export abstract class Bridge<
 
   protected readonly txValidationMessages = TxValidationMessages;
 
+  send(
+    payload: CrossChainPayload<BridgeBase<B>, CrossToken<Origin | Target>, CrossToken<Target | Origin>>,
+    fee?: BN
+  ): Observable<Tx> {
+    const {
+      direction: { from: dep, to },
+    } = payload;
+
+    if (this.isIssue(dep.meta, to.meta)) {
+      return this.back(payload as CrossChainPayload<BridgeBase<B>, CrossToken<Origin>, CrossToken<Target>>, fee);
+    } else {
+      return this.burn(payload as CrossChainPayload<BridgeBase<B>, CrossToken<Target>, CrossToken<Origin>>, fee);
+    }
+  }
+
   abstract back(
     payload: CrossChainPayload<BridgeBase<B>, CrossToken<Origin>, CrossToken<Target>>,
     fee?: BN
@@ -61,33 +83,50 @@ export abstract class Bridge<
     fee?: BN
   ): Observable<Tx>;
 
-  abstract genTxParamsValidations(params: TxValidation): [boolean, string][];
+  // eslint-disable-next-line complexity
+  validate(
+    payload: CrossChainPayload<BridgeBase<B>, CrossToken<ChainConfig>, CrossToken<ChainConfig>>,
+    options: TxValidation
+  ): Observable<boolean> {
+    const {
+      direction: { from, to },
+    } = payload;
+    const amount = new BN(
+      toWei({
+        value: from.amount,
+        decimals: isSubstrateSubstrateParachain(from.host, to.host) ? to.decimals : from.decimals,
+      })
+    );
+    const { balance: originBalance, allowance, minAmount, dailyLimit, fee, feeTokenBalance } = options;
+    const min = this.getMinimumFeeTokenHolding && this.getMinimumFeeTokenHolding(payload.direction);
+    const balance = min ? originBalance.sub(min.amount) : originBalance;
 
-  private validatorFactory<T>(genValidations: GenValidationFn<T>) {
-    const validate = (data: ReturnType<GenValidationFn<T>>) => {
-      const target = data.find((item) => item[0]);
+    /**
+     * if from.symbol === feeToken.symbol  -> fee + amount < balance
+     * else -> fee < feeToken
+     */
+    const result = [
+      [balance.lt(amount), this.txValidationMessages.balanceLessThanAmount],
+      [!!allowance && allowance.lt(amount), this.txValidationMessages.allowanceLessThanAmount],
+      [!!dailyLimit && dailyLimit.lt(amount), this.txValidationMessages.dailyLimitLessThanAmount],
+      [!!fee && fee.lt(BN_ZERO), this.txValidationMessages.invalidFee],
+      [!!feeTokenBalance && feeTokenBalance.lt(fee!), this.txValidationMessages.balanceLessThanFee],
+      [!!minAmount && minAmount.gt(amount), `Transfer amount must greater than or equal to ${minAmount}`],
+      [isXCM(from.host, to.host) && !Number.isInteger(+from.amount), this.txValidationMessages.mustBeAnInteger],
+    ].find((item) => item[0]);
 
-      return target && target[1];
-    };
-
-    return (checkedValues: unknown[], params: NullableFields<T, keyof T>): Observable<boolean> => {
-      const result = checkedValues.every((value) => !!value) && validate(genValidations(params as T));
-
-      return of(result).pipe(
-        switchMap((res) => {
-          if (isString(res)) {
-            return throwError(() => <Pick<Tx, 'error' | 'status'>>{ error: new Error(res), status: 'error' });
-          } else if (isBoolean(res)) {
-            return EMPTY;
-          } else {
-            return of(true);
-          }
-        })
-      );
-    };
+    return of(result && result[1]).pipe(
+      switchMap((res) => {
+        if (isString(res)) {
+          return throwError(() => <Pick<Tx, 'error' | 'status'>>{ error: new Error(res), status: 'error' });
+        } else if (isBoolean(res)) {
+          return EMPTY;
+        } else {
+          return of(true);
+        }
+      })
+    );
   }
-
-  validate = this.validatorFactory(this.genTxParamsValidations.bind(this));
 
   getChainConfig(name: Network): Origin | Target {
     if (!name) {

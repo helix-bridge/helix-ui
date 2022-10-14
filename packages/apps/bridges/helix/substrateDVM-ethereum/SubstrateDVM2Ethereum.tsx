@@ -6,7 +6,7 @@ import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
 import { useIsMounted } from 'shared/hooks';
 import { CrossToken, DVMChainConfig, EthereumChainConfig } from 'shared/model';
-import { fromWei, toWei } from 'shared/utils/helper/balance';
+import { fromWei } from 'shared/utils/helper/balance';
 import { pollWhile } from 'shared/utils/helper/operator';
 import { isNativeToken } from 'shared/utils/helper/validator';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
@@ -85,25 +85,20 @@ export function SubstrateDVM2Ethereum({
   ]);
 
   useEffect(() => {
-    const fn = () => (data: IssuingPayload | RedeemPayload) => {
-      const validateObs = data.bridge.validate([fee, dailyLimit, balance, nativeBalance], {
+    const fn = () => (payload: IssuingPayload | RedeemPayload) => {
+      const validateObs = payload.bridge.validate(payload, {
         balance,
-        amount: new BN(toWei(data.direction.from)),
         dailyLimit,
         fee,
         feeTokenBalance: nativeBalance,
       });
-      const isIssue = isSubstrateDVM2Ethereum(data.direction.from.host, data.direction.to.host);
 
       return createTxWorkflow(
         validateObs.pipe(
-          mergeMap(() =>
-            applyModalObs({ content: <TransferConfirm value={data} fee={feeWithSymbol!} needClaim={isIssue} /> })
-          )
+          mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={feeWithSymbol!} /> }))
         ),
-        () =>
-          isIssue ? data.bridge.back(data as IssuingPayload, fee!) : data.bridge.burn(data as RedeemPayload, fee!),
-        afterCrossChain(TransferDone, { payload: data })
+        () => payload.bridge.send(payload, fee!),
+        afterCrossChain(TransferDone, { payload })
       );
     };
 
@@ -137,10 +132,10 @@ export function SubstrateDVM2Ethereum({
       .pipe(pollWhile(LONG_DURATION, () => isMounted))
       .subscribe({
         next(res) {
-          setDailyLimit(res && new BN(res.limit));
+          setDailyLimit(res && new BN(res.limit).sub(new BN(res.spentToday)));
         },
         error(error) {
-          console.warn('🚀 ~ file: SubstrateDVM2Ethereum.tsx ~ line 136 ~ error ~ error', error);
+          console.warn('🚀 ~ DailyLimit querying error', error);
         },
       });
 
