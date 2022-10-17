@@ -39,12 +39,8 @@ export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Targ
   getDailyLimit?(
     direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>
   ): Promise<DailyLimit | null>;
-  getFee?(
-    direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>,
-    account?: string | boolean // boolean: useWalletProvider
-  ): Promise<TokenWithAmount | null>;
   getMinimumFeeTokenHolding?(direction: CrossChainDirection): TokenWithAmount | null;
-  getAllowancePayload?(direction: CrossChainDirection): Promise<AllowancePayload>;
+  getAllowancePayload?(direction: CrossChainDirection): Promise<AllowancePayload | null>;
 }
 
 export abstract class Bridge<
@@ -76,15 +72,20 @@ export abstract class Bridge<
     }
   }
 
-  abstract back(
+  protected abstract back(
     payload: CrossChainPayload<BridgeBase<B>, CrossToken<Origin>, CrossToken<Target>>,
     fee?: BN
   ): Observable<Tx>;
 
-  abstract burn(
+  protected abstract burn(
     payload: CrossChainPayload<BridgeBase<B>, CrossToken<Target>, CrossToken<Origin>>,
     fee?: BN
   ): Observable<Tx>;
+
+  abstract getFee(
+    direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>,
+    account?: string | boolean // boolean: useWalletProvider
+  ): Promise<TokenWithAmount | null>;
 
   // eslint-disable-next-line complexity
   validate(

@@ -1,13 +1,12 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { BN } from '@polkadot/util';
 import { Form, Tooltip } from 'antd';
-import has from 'lodash/has';
 import { PropsWithChildren, ReactNode, useMemo } from 'react';
 import { useITranslation } from 'shared/hooks/translation';
 import { BridgeConfig, ChainConfig, ContractConfig, CrossChainDirection, DailyLimit } from 'shared/model';
-import { fromWei, prettyNumber } from 'shared/utils/helper/balance';
+import { fromWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
 import { Bridge } from '../../core/bridge';
-import { bridgeCategoryDisplay, isSubstrateDVM } from '../../utils/bridge';
+import { bridgeCategoryDisplay } from '../../utils/bridge';
 import { CountLoading } from './CountLoading';
 
 type AmountInfo = {
@@ -19,10 +18,10 @@ interface CrossChainInfoProps {
   bridge: Bridge<BridgeConfig<ContractConfig>, ChainConfig, ChainConfig>;
   direction: CrossChainDirection;
   fee?: AmountInfo | null;
-  hideFee?: boolean;
   extra?: { name: string; content: ReactNode }[];
   isDynamicFee?: boolean;
   dailyLimit?: DailyLimit | null;
+  allowance?: BN | null;
 }
 
 export function CrossChainInfo({
@@ -30,9 +29,9 @@ export function CrossChainInfo({
   fee,
   extra,
   children,
-  hideFee,
   dailyLimit,
   direction,
+  allowance,
   isDynamicFee = false,
 }: PropsWithChildren<CrossChainInfoProps>) {
   const { t } = useITranslation();
@@ -56,7 +55,7 @@ export function CrossChainInfo({
   }, [fee, isDynamicFee, t]);
 
   const dailyLimitContent = useMemo(() => {
-    if (has(direction.to.meta, 'specVersion') && !isSubstrateDVM(direction.from.host, direction.to.host)) {
+    if (bridge.getDailyLimit) {
       const limit = dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday));
 
       return (
@@ -74,8 +73,33 @@ export function CrossChainInfo({
         </div>
       );
     }
+
     return null;
-  }, [dailyLimit, direction.from.host, direction.to.decimals, direction.to.host, direction.to.meta, t]);
+  }, [bridge.getDailyLimit, dailyLimit, direction.to.decimals, t]);
+
+  const allowanceContent = useMemo(() => {
+    if (bridge.getAllowancePayload && direction.from.type !== 'native') {
+      return (
+        <div className={`flex justify-between items-center`}>
+          <span>{t('Allowance')}</span>
+          {dailyLimit ? (
+            <div>
+              <span>
+                {fromWei({ value: allowance }, largeNumber, (num: string) =>
+                  prettyNumber(num, { ignoreZeroDecimal: true })
+                )}
+              </span>
+              <span className="ml-1">{direction.from.symbol}</span>
+            </div>
+          ) : (
+            <CountLoading />
+          )}
+        </div>
+      );
+    }
+
+    return null;
+  }, [allowance, bridge.getAllowancePayload, dailyLimit, direction.from.symbol, direction.from.type, t]);
 
   return (
     <Form.Item label={t('Information')} className="relative">
@@ -85,12 +109,13 @@ export function CrossChainInfo({
           <span>{bridgeCategoryDisplay(bridge?.category)}</span>
         </div>
 
-        <div className={`flex justify-between items-center ${hideFee ? 'hidden' : ''}`}>
+        <div className={`flex justify-between items-center`}>
           <span>{t('Transaction Fee')}</span>
           {feeContent}
         </div>
 
         {dailyLimitContent}
+        {allowanceContent}
 
         {extra && (
           <>

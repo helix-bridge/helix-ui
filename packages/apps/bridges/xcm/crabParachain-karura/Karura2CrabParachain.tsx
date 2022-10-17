@@ -6,10 +6,11 @@ import { CrossChainComponentProps } from '../../../model/component';
 import { CrabParachainKaruraBridge } from './utils';
 
 export function Karura2CrabParachain({
-  form,
-  direction,
   bridge,
+  dailyLimit,
+  direction,
   fee,
+  form,
 }: CrossChainComponentProps<
   CrabParachainKaruraBridge,
   CrossToken<ParachainChainConfig>,
@@ -28,7 +29,7 @@ export function Karura2CrabParachain({
         )}
       />
 
-      <CrossChainInfo bridge={bridge} fee={fee} direction={direction}></CrossChainInfo>
+      <CrossChainInfo bridge={bridge} fee={fee} direction={direction} dailyLimit={dailyLimit}></CrossChainInfo>
     </>
   );
 }

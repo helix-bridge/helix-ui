@@ -210,7 +210,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
 
   async getAllowancePayload(
     direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<EthereumChainConfig>>
-  ): Promise<AllowancePayload> {
+  ): Promise<AllowancePayload | null> {
     if (direction.from.type === 'erc20' && this.isIssue(direction.from.host, direction.to.host)) {
       return {
         spender: this.config.contracts.backing,
@@ -218,9 +218,13 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       };
     }
 
-    return {
-      spender: this.config.contracts.issuing,
-      tokenAddress: direction.from.address,
-    };
+    if (this.isRedeem(direction.from.host, direction.to.host)) {
+      return {
+        spender: this.config.contracts.issuing,
+        tokenAddress: direction.from.address,
+      };
+    }
+
+    return null;
   }
 }

@@ -137,7 +137,9 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
       direction.from.type !== 'native'
     ) {
       bridge.getAllowancePayload(direction).then((payload) => {
-        queryAllowance(payload);
+        if (payload) {
+          queryAllowance(payload);
+        }
       });
     }
   }, [bridge, direction, queryAllowance]);
@@ -158,10 +160,9 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
   }, [account, bridge, direction, isMounted, setFee]);
 
   useEffect(() => {
-    const obs = bridge?.getDailyLimit ? from(bridge.getDailyLimit(direction)) : of(null);
     const sub$$ = of(null)
       .pipe(
-        switchMap(() => obs),
+        switchMap(() => (bridge?.getDailyLimit ? from(bridge.getDailyLimit(direction)) : of(null))),
         pollWhile(LONG_DURATION, () => isMounted)
       )
       .subscribe((res) => setDailyLimit(res));
@@ -256,7 +257,11 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
             <FormItemButton
               onClick={() => {
                 if (bridge?.getAllowancePayload) {
-                  bridge.getAllowancePayload(direction).then((payload) => approve(payload));
+                  bridge.getAllowancePayload(direction).then((payload) => {
+                    if (payload) {
+                      approve(payload);
+                    }
+                  });
                 }
               }}
               className="cy-approve"

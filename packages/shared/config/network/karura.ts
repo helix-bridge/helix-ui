@@ -40,7 +40,7 @@ export const karuraConfig: ParachainChainConfig = {
     },
   ],
   ss58Prefix: 8,
-  specVersion: 2091,
+  specVersion: 2095,
   paraId: 2000,
   wallets: ['polkadot'],
 };

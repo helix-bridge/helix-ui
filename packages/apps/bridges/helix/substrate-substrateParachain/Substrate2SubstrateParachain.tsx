@@ -1,34 +1,14 @@
-import { useTranslation } from 'react-i18next';
 import { CrossToken, ParachainChainConfig, PolkadotChainConfig } from 'shared/model';
-import { RecipientItem } from '../../../components/form-control/RecipientItem';
-import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
+import { Bridge } from '../../../components/bridge/Bridge';
 import { CrossChainComponentProps } from '../../../model/component';
 import { SubstrateSubstrateParachainBridge } from './utils';
 
-export function Substrate2SubstrateParachain({
-  form,
-  direction,
-  bridge,
-  fee,
-}: CrossChainComponentProps<
-  SubstrateSubstrateParachainBridge,
-  CrossToken<PolkadotChainConfig>,
-  CrossToken<ParachainChainConfig>
->) {
-  const { t } = useTranslation();
-
-  return (
-    <>
-      <RecipientItem
-        form={form}
-        direction={direction}
-        bridge={bridge}
-        extraTip={t(
-          'After the transaction is confirmed, the account cannot be changed. Please do not fill in any exchange account or cold wallet address.'
-        )}
-      />
-
-      <CrossChainInfo bridge={bridge} fee={fee} direction={direction}></CrossChainInfo>
-    </>
-  );
+export function Substrate2SubstrateParachain(
+  props: CrossChainComponentProps<
+    SubstrateSubstrateParachainBridge,
+    CrossToken<PolkadotChainConfig>,
+    CrossToken<ParachainChainConfig>
+  >
+) {
+  return <Bridge {...props} />;
 }
