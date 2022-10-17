@@ -27,7 +27,6 @@ import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { AllowancePayload } from '../../../../model/allowance';
 import abi from '../config/abi.json';
 import { IssuingPayload, RedeemPayload, SubstrateSubstrateDVMBridgeConfig } from '../model';
-import { getS2SMappingAddress } from './mappingParams';
 
 export class SubstrateSubstrateDVMBridge extends Bridge<
   SubstrateSubstrateDVMBridgeConfig,
@@ -67,7 +66,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
       })
     );
 
-    return zip([valObs, getS2SMappingAddress(departure.meta.provider)]).pipe(
+    return zip([valObs, this.s2sMappingAddress(departure.meta.provider)]).pipe(
       switchMap(([val, mappingAddress]) =>
         genEthereumContractTxObs(
           mappingAddress,
@@ -95,7 +94,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
     const {
       to: { meta: arrival, address: ringAddress },
     } = direction;
-    const mappingAddress = await getS2SMappingAddress(arrival.provider);
+    const mappingAddress = await this.s2sMappingAddress(arrival.provider);
     const contract = new Contract(mappingAddress, abi, entrance.web3.currentProvider);
     const tokenAddress = isRing(direction.from.symbol) ? ringAddress : '';
 
@@ -147,11 +146,22 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
   async getAllowancePayload(
     direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
   ): Promise<AllowancePayload> {
-    const spender = await getS2SMappingAddress(direction.from.meta.provider);
+    const spender = await this.s2sMappingAddress(direction.from.meta.provider);
 
     return {
       spender,
       tokenAddress: direction.from.address,
     };
+  }
+
+  private async s2sMappingAddress(rpc: string) {
+    const api = entrance.polkadot.getInstance(rpc);
+
+    await waitUntilConnected(api);
+
+    const section = rpc.includes('pangolin') ? api.query.substrate2SubstrateIssuing : api.query.fromDarwiniaIssuing;
+    const mappingAddress = (await section.mappingFactoryAddress()).toString();
+
+    return mappingAddress;
   }
 }

@@ -5,14 +5,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { initReactI18next } from 'react-i18next';
 import { from } from 'rxjs/internal/observable/from';
 import { of } from 'rxjs/internal/observable/of';
-import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { Logo } from 'shared/components/widget/Logo';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { CrossToken, EthereumChainConfig } from 'shared/model';
 import { isMetamaskChainConsistent } from 'shared/utils/connection';
 import { fromWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
-import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import {
@@ -21,12 +19,9 @@ import {
   SLIPPAGE_SCALE,
   UI_SLIPPAGE_SCALE,
 } from '../../../components/form-control/Slippage';
-import { TransferConfirm } from '../../../components/tx/TransferConfirm';
-import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
-import { useAfterTx } from '../../../hooks';
 import { CrossChainComponentProps } from '../../../model/component';
-import { CrossChainPayload, TxObservableFactory } from '../../../model/tx';
+import { PayloadPatchFn } from '../../../model/tx';
 import { useAccount, useWallet } from '../../../providers';
 import { IssuingPayload } from './model';
 import { EstimateAmtResponse } from './ts-proto/gateway/gateway_pb';
@@ -37,12 +32,10 @@ export function CBridge({
   form,
   bridge,
   direction,
-  balances,
   fee,
-  setTxObservableFactory,
+  updatePayload,
 }: CrossChainComponentProps<CBridgeBridge, CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>) {
   const { t } = useTranslation();
-  const { afterCrossChain } = useAfterTx<CrossChainPayload>();
   const { account } = useAccount();
   const [estimateResult, setEstimateResult] = useState<EstimateAmtResponse.AsObject | null>(null);
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE * UI_SLIPPAGE_SCALE);
@@ -130,13 +123,12 @@ export function CBridge({
     const fn = () => (data: Omit<IssuingPayload, 'maxSlippage'>) => {
       if (!estimateResult) {
         message.error('Network error, try again later');
-        return;
+        return null;
       }
 
-      const validateObs = data.bridge.validate(data, { balance: balances![0], allowance });
       const { estimatedReceiveAmt, maxSlippage } = estimateResult;
 
-      const payload = {
+      return {
         ...data,
         direction: {
           ...data.direction,
@@ -147,28 +139,10 @@ export function CBridge({
         },
         maxSlippage,
       };
-
-      return createTxWorkflow(
-        validateObs.pipe(
-          mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={fee}></TransferConfirm> }))
-        ),
-        () => bridge.send(payload),
-        afterCrossChain(TransferDone, { payload })
-      );
     };
 
-    setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [
-    afterCrossChain,
-    allowance,
-    balances,
-    bridge,
-    direction.from,
-    direction.to.decimals,
-    estimateResult,
-    fee,
-    setTxObservableFactory,
-  ]);
+    updatePayload(fn as unknown as PayloadPatchFn);
+  }, [direction.to.decimals, estimateResult, updatePayload]);
 
   useEffect(() => {
     bridge.getEstimateResult(direction, account).then((res) => setEstimateResult(res));

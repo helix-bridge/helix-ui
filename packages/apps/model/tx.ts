@@ -1,7 +1,7 @@
-import type { Observable } from 'rxjs';
 import { BridgeBase } from 'shared/core/bridge';
+import { BridgeConfig, ChainConfig } from 'shared/model';
 import { CrossChainDirection, CrossToken } from 'shared/model/bridge/cross-chain';
-import { Tx } from 'shared/model/tx';
+import { Bridge } from '../core/bridge';
 
 interface CrossChainParty {
   recipient: string;
@@ -18,4 +18,6 @@ export interface CrossChainPayload<
   slippage?: number;
 }
 
-export type TxObservableFactory = (value: CrossChainPayload) => Observable<Tx>;
+export type PayloadPatchFn = (
+  value: CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>
+) => CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>> | null;

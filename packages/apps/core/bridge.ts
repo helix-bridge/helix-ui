@@ -110,10 +110,11 @@ export abstract class Bridge<
      */
     const result = [
       // validate existence
-      [!to.amount || +to.amount < 0, 'Invalid transfer'],
-      [!!this.getFee && (!fee || fee.lt(BN_ZERO)), this.txValidationMessages.invalidFee],
-      [!!this.getAllowancePayload && !allowance, 'Invalid transfer'],
-      [!!this.getDailyLimit && !dailyLimit, 'Invalid transfer'],
+      [!from.amount, 'Transfer amount is required'],
+      [!to.amount || +to.amount < 0, 'Transfer amount invalid'],
+      [!!this.getFee && (!fee || fee.lt(BN_ZERO)), 'Failed to get fee'],
+      [!!this.getAllowancePayload && !allowance, 'Failed to get allowance'],
+      [!!this.getDailyLimit && !dailyLimit, 'Failed to get daily limit'],
       // validate logic
       [balance.lt(amount), this.txValidationMessages.balanceLessThanAmount],
       [!!allowance && allowance.lt(amount), this.txValidationMessages.allowanceLessThanAmount],

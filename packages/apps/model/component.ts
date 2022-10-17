@@ -1,8 +1,17 @@
 import { BN } from '@polkadot/util';
 import { FormInstance } from 'antd';
 import { BridgeBase } from 'shared/core/bridge';
-import { CrossChainDirection, CrossToken, DailyLimit, HelixHistoryRecord, Tx } from 'shared/model';
-import { CrossChainPayload, TxObservableFactory } from './tx';
+import {
+  BridgeConfig,
+  ChainConfig,
+  CrossChainDirection,
+  CrossToken,
+  DailyLimit,
+  HelixHistoryRecord,
+  Tx,
+} from 'shared/model';
+import { Bridge } from '../core/bridge';
+import { CrossChainPayload } from './tx';
 
 export interface RecordStatusComponentProps {
   record: HelixHistoryRecord;
@@ -27,6 +36,11 @@ export interface CrossChainComponentProps<
   allowance: BN | null;
   dailyLimit: DailyLimit | null;
   fee: { symbol: string; amount: number } | null;
-  // make sure page setState function direction to avoid infinite update
-  setTxObservableFactory: React.Dispatch<React.SetStateAction<TxObservableFactory>>;
+  updatePayload: React.Dispatch<
+    React.SetStateAction<
+      (
+        v: CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>
+      ) => CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>> | null
+    >
+  >;
 }

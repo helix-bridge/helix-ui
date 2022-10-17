@@ -2,12 +2,13 @@ import { InfoCircleOutlined, WarningFilled } from '@ant-design/icons';
 import { Col, Form, Input, message, Row, Tooltip } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import BN from 'bn.js';
+import identity from 'lodash/identity';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { EMPTY } from 'rxjs/internal/observable/empty';
+import { mergeMap } from 'rxjs';
 import { from, from as fromRx } from 'rxjs/internal/observable/from';
 import { iif } from 'rxjs/internal/observable/iif';
 import { of } from 'rxjs/internal/observable/of';
@@ -30,14 +31,18 @@ import {
 import { fromWei, toWei, truncate } from 'shared/utils/helper/balance';
 import { pollWhile } from 'shared/utils/helper/operator';
 import { isEthereumNetwork } from 'shared/utils/network/network';
+import { createTxWorkflow, applyModalObs } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../core/bridge';
 import { useAllowance } from '../hooks/allowance';
 import { useCheckSpecVersion } from '../hooks/checkSpecVersion';
+import { useAfterTx } from '../hooks/tx';
 import { CrossChainComponentProps } from '../model/component';
-import { CrossChainPayload, TxObservableFactory } from '../model/tx';
+import { CrossChainPayload, PayloadPatchFn } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { Direction } from './form-control/Direction';
+import { TransferConfirm } from './tx/TransferConfirm';
+import { TransferDone } from './tx/TransferDone';
 import { FormItemButton } from './widget/FormItemButton';
 
 const isDirectionChanged = (pre: CrossChainDirection, cur: CrossChainDirection) => {
@@ -47,16 +52,18 @@ const isDirectionChanged = (pre: CrossChainDirection, cur: CrossChainDirection) 
   );
 };
 
+type CommonBridge = Bridge<BridgeConfig, ChainConfig, ChainConfig>;
+
 // eslint-disable-next-line complexity
 export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>> }) {
   const { i18n, t } = useTranslation();
-  const [form] = useForm<CrossChainPayload>();
+  const [form] = useForm<CrossChainPayload<CommonBridge>>();
   const { connectDepartureNetwork, departureConnection, setDeparture } = useApi();
   const [direction, setDirection] = useState(dir);
   const [pureDirection, setPureDirection] =
     useState<CrossChainDirection<TokenInfoWithMeta<ChainBase>, TokenInfoWithMeta<ChainBase>>>(dir);
-  const [bridge, setBridge] = useState<Bridge<BridgeConfig, ChainConfig, ChainConfig> | null>(null);
-  const [createTxObservable, setTxObservableFactory] = useState<TxObservableFactory>(() => EMPTY);
+  const [bridge, setBridge] = useState<CommonBridge | null>(null);
+  const [patchPayload, setPatchPayload] = useState<PayloadPatchFn>(() => (v: CrossChainPayload<CommonBridge>) => v);
   const bridgeState = useCheckSpecVersion(direction);
   const [fee, setFee] = useState<(Omit<TokenWithAmount, 'amount'> & { amount: number }) | null>(null);
   const { account } = useAccount();
@@ -67,6 +74,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
   const [dailyLimit, setDailyLimit] = useState<DailyLimit | null>(null);
   const isMounted = useIsMounted();
+  const { afterCrossChain } = useAfterTx<CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>>();
 
   const allowanceEnough = useMemo(() => {
     if (
@@ -216,7 +224,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
               onChange={(value) => {
                 if (isDirectionChanged(direction, value)) {
                   setBridge(null);
-                  setTxObservableFactory(() => EMPTY);
+                  setPatchPayload(() => identity);
                   form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined, [FORM_CONTROL.recipient]: undefined });
                   setPureDirection({ from: omit(value.from, 'amount'), to: omit(value.to, 'amount') });
                 }
@@ -236,7 +244,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
               allowance={allowance}
               fee={fee}
               dailyLimit={dailyLimit}
-              setTxObservableFactory={setTxObservableFactory}
+              updatePayload={setPatchPayload}
             />
           )}
 
@@ -276,17 +284,27 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
                   }
 
                   form.validateFields().then((values) => {
-                    if (!values.direction.from.amount) {
-                      message.error(t('Transfer amount is required'));
+                    const payload = patchPayload(values);
+                    if (!payload) {
                       return;
                     }
 
-                    if (!values.direction.to.amount) {
-                      message.error(t('Transfer amount invalid'));
-                      return;
-                    }
+                    const validateObs = payload.bridge.validate(payload, {
+                      balance: balances![0],
+                      fee: new BN(toWei(fee!)),
+                      feeTokenBalance: balances![1],
+                      dailyLimit: dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday)),
+                    });
 
-                    createTxObservable(values).subscribe({
+                    const workflow = createTxWorkflow(
+                      validateObs.pipe(
+                        mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={fee} /> }))
+                      ),
+                      () => payload.bridge.send(payload),
+                      afterCrossChain(TransferDone, { payload })
+                    );
+
+                    workflow.subscribe({
                       ...observer,
                       complete() {
                         observer.complete();
