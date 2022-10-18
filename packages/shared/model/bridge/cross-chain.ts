@@ -18,4 +18,9 @@ export interface CrossChainDirection<F = CrossToken, T = CrossToken> {
   to: T;
 }
 
+export interface CrossChainPureDirection<F = TokenInfoWithMeta, T = TokenInfoWithMeta> {
+  from: F;
+  to: T;
+}
+
 export type NullableCrossChainDirection = NullableFields<CrossChainDirection, 'from' | 'to'>;

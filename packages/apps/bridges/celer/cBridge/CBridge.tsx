@@ -10,7 +10,7 @@ import { Logo } from 'shared/components/widget/Logo';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { CrossToken, EthereumChainConfig } from 'shared/model';
 import { isMetamaskChainConsistent } from 'shared/utils/connection';
-import { fromWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
+import { fromWei } from 'shared/utils/helper/balance';
 
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import {
@@ -184,22 +184,8 @@ export function CBridge({
         isDynamicFee
         fee={fee}
         direction={direction}
-        extra={[
-          {
-            name: t('Allowance'),
-            content: (
-              <span>
-                <span>
-                  {fromWei({ value: allowance }, largeNumber, (num: string) =>
-                    prettyNumber(num, { ignoreZeroDecimal: true })
-                  )}
-                </span>
-                <span className="ml-1">{direction.from.symbol}</span>
-              </span>
-            ),
-          },
-          ...extraInfo,
-        ]}
+        allowance={allowance}
+        extra={extraInfo}
       ></CrossChainInfo>
     </>
   );

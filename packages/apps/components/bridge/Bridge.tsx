@@ -9,13 +9,14 @@ import { RecipientItem } from '../form-control/RecipientItem';
 import { CrossChainInfo } from '../widget/CrossChainInfo';
 
 export function Bridge({
+  allowance,
   bridge,
   dailyLimit,
   direction,
   fee,
   form,
-  tip,
   hideRecipient = false,
+  tip,
 }: CrossChainComponentProps<
   Brg<BridgeConfig, ChainConfig, ChainConfig>,
   CrossToken<ChainConfig>,
@@ -46,7 +47,13 @@ export function Bridge({
         />
       </div>
 
-      <CrossChainInfo bridge={bridge} fee={fee} direction={direction} dailyLimit={dailyLimit}></CrossChainInfo>
+      <CrossChainInfo
+        bridge={bridge}
+        fee={fee}
+        direction={direction}
+        dailyLimit={dailyLimit}
+        allowance={allowance}
+      ></CrossChainInfo>
     </>
   );
 }

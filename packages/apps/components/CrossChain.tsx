@@ -12,7 +12,6 @@ import { mergeMap } from 'rxjs';
 import { from, from as fromRx } from 'rxjs/internal/observable/from';
 import { iif } from 'rxjs/internal/observable/iif';
 import { of } from 'rxjs/internal/observable/of';
-import { map } from 'rxjs/internal/operators/map';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
@@ -24,14 +23,15 @@ import {
   ChainConfig,
   ConnectionStatus,
   CrossChainDirection,
+  CrossChainPureDirection,
   CrossToken,
   DailyLimit,
   TokenInfoWithMeta,
 } from 'shared/model';
-import { fromWei, toWei, truncate } from 'shared/utils/helper/balance';
+import { toWei, truncate } from 'shared/utils/helper/balance';
 import { pollWhile } from 'shared/utils/helper/operator';
 import { isEthereumNetwork } from 'shared/utils/network/network';
-import { createTxWorkflow, applyModalObs } from 'shared/utils/tx';
+import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../core/bridge';
 import { useAllowance } from '../hooks/allowance';
 import { useCheckSpecVersion } from '../hooks/checkSpecVersion';
@@ -61,11 +61,11 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
   const { connectDepartureNetwork, departureConnection, setDeparture } = useApi();
   const [direction, setDirection] = useState(dir);
   const [pureDirection, setPureDirection] =
-    useState<CrossChainDirection<TokenInfoWithMeta<ChainBase>, TokenInfoWithMeta<ChainBase>>>(dir);
+    useState<CrossChainPureDirection<TokenInfoWithMeta<ChainBase>, TokenInfoWithMeta<ChainBase>>>(dir);
   const [bridge, setBridge] = useState<CommonBridge | null>(null);
   const [patchPayload, setPatchPayload] = useState<PayloadPatchFn>(() => (v: CrossChainPayload<CommonBridge>) => v);
   const bridgeState = useCheckSpecVersion(direction);
-  const [fee, setFee] = useState<(Omit<TokenWithAmount, 'amount'> & { amount: number }) | null>(null);
+  const [fee, setFee] = useState<TokenWithAmount | null>(null);
   const { account } = useAccount();
   const [balances, setBalances] = useState<BN[] | null>(null);
   const { allowance, approve, queryAllowance } = useAllowance(direction);
@@ -133,42 +133,50 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
     if (
       bridge &&
       bridge.getAllowancePayload &&
-      isEthereumNetwork(direction.from.host) &&
-      direction.from.type !== 'native'
+      isEthereumNetwork(pureDirection.from.host) &&
+      pureDirection.from.type !== 'native'
     ) {
-      bridge.getAllowancePayload(direction).then((payload) => {
+      bridge.getAllowancePayload(pureDirection).then((payload) => {
         if (payload) {
           queryAllowance(payload);
         }
       });
     }
-  }, [bridge, direction, queryAllowance]);
+  }, [bridge, pureDirection, queryAllowance]);
 
   useEffect(() => {
-    const obs = bridge?.getFee
-      ? from(bridge.getFee(direction, account)).pipe(map((res) => res && { ...res, amount: +fromWei(res) }))
-      : of(null);
+    if (!bridge) {
+      return;
+    }
 
     const sub$$ = of(null)
       .pipe(
-        switchMap(() => obs),
+        switchMap(() => from(bridge.getFee(direction, account))),
         pollWhile(LONG_DURATION, () => isMounted)
       )
-      .subscribe((res) => setFee(res));
+      .subscribe((res) => {
+        setFee((pre) => (pre?.amount.toString() === res?.amount.toString() && pre?.symbol === res?.symbol ? pre : res));
+      });
 
-    return () => sub$$.unsubscribe();
+    return () => sub$$?.unsubscribe();
   }, [account, bridge, direction, isMounted, setFee]);
 
   useEffect(() => {
+    if (!bridge?.getDailyLimit) {
+      return;
+    }
+
     const sub$$ = of(null)
       .pipe(
-        switchMap(() => (bridge?.getDailyLimit ? from(bridge.getDailyLimit(direction)) : of(null))),
+        switchMap(() => from(bridge.getDailyLimit!(pureDirection))),
         pollWhile(LONG_DURATION, () => isMounted)
       )
-      .subscribe((res) => setDailyLimit(res));
+      .subscribe((res) => {
+        setDailyLimit((pre) => (isEqual(pre, res) ? pre : res));
+      });
 
     return () => sub$$?.unsubscribe();
-  }, [bridge, direction, isMounted]);
+  }, [bridge, pureDirection, isMounted]);
 
   return (
     <Form
@@ -300,7 +308,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
 
                     const validateObs = payload.bridge.validate(payload, {
                       balance: { ...fromToken, amount: balances![0] },
-                      fee: { ...fee, amount: new BN(toWei(fee ?? { value: 0 })) } as TokenWithAmount,
+                      fee: fee!,
                       feeTokenBalance: { ...fee, amount: balances![1] } as TokenWithAmount,
                       dailyLimit: {
                         ...toToken,
@@ -313,7 +321,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
                       validateObs.pipe(
                         mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={fee!} /> }))
                       ),
-                      () => payload.bridge.send(payload, new BN(toWei(fee!))),
+                      () => payload.bridge.send(payload, fee?.amount),
                       afterCrossChain(TransferDone, { payload })
                     );
 
@@ -367,7 +375,18 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
             ]}
             className="mb-0"
           >
-            <BridgeSelector direction={direction} onChange={(value) => setBridge(value || null)} />
+            <BridgeSelector
+              direction={direction}
+              onChange={(value) => {
+                const isSameBridge =
+                  Object.getPrototypeOf(value).constructor.alias ===
+                  Object.getPrototypeOf(bridge ?? {}).constructor.alias;
+
+                if (!isSameBridge) {
+                  setBridge(value || null);
+                }
+              }}
+            />
           </Form.Item>
         </Col>
       </Row>

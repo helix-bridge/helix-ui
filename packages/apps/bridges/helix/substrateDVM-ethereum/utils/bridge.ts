@@ -42,6 +42,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       amount.toString(),
       { from: sender, value: departure.type === 'native' ? amount.add(fee).toString() : fee.toString() },
     ];
+    console.log('%cbridge.ts line:45 params', 'color: white; background-color: #007acc;', params, fee.toString());
     const { method, args } =
       departure.type === 'native'
         ? { method: 'lockAndRemoteIssuingNative', args: params.slice(1) }

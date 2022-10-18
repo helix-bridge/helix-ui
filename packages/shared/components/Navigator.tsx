@@ -117,8 +117,8 @@ export function Navigator({ navigators, onClick, theme = THEME.DARK }: Navigator
         mode="inline"
         defaultSelectedKeys={selectedNavMenu}
         items={navItems.map(({ Icon, path, label, className }) => ({
-          key: path,
-          label: <Link href={path}>{t(label)}</Link>,
+          key: label,
+          label: path ? <Link href={path}>{t(label)}</Link> : t(label),
           icon: Icon ? <Icon /> : null,
           className,
           onClick() {

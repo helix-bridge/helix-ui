@@ -4,20 +4,15 @@ import { Form, Tooltip } from 'antd';
 import { PropsWithChildren, ReactNode, useMemo } from 'react';
 import { useITranslation } from 'shared/hooks/translation';
 import { BridgeConfig, ChainConfig, ContractConfig, CrossChainDirection, DailyLimit } from 'shared/model';
-import { fromWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
-import { Bridge } from '../../core/bridge';
+import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
+import { Bridge, TokenWithAmount } from '../../core/bridge';
 import { bridgeCategoryDisplay } from '../../utils/bridge';
 import { CountLoading } from './CountLoading';
-
-type AmountInfo = {
-  amount: number;
-  symbol: string;
-};
 
 interface CrossChainInfoProps {
   bridge: Bridge<BridgeConfig<ContractConfig>, ChainConfig, ChainConfig>;
   direction: CrossChainDirection;
-  fee?: AmountInfo | null;
+  fee?: TokenWithAmount | null;
   extra?: { name: string; content: ReactNode }[];
   isDynamicFee?: boolean;
   dailyLimit?: DailyLimit | null;
@@ -39,8 +34,11 @@ export function CrossChainInfo({
   const feeContent = useMemo(() => {
     if (fee) {
       return (
-        <Tooltip title={fee.amount} className="cursor-help">
-          {fee.amount < 1 ? fee.amount : prettyNumber(fee.amount, { decimal: 3, ignoreZeroDecimal: true })} {fee.symbol}
+        <Tooltip title={fromWei(fee)} className="cursor-help">
+          {fee.amount.lt(new BN(toWei({ value: 1, decimals: fee.decimals })))
+            ? fromWei(fee)
+            : prettyNumber(fromWei(fee), { decimal: 3, ignoreZeroDecimal: true })}{' '}
+          {fee.symbol}
         </Tooltip>
       );
     }
@@ -66,6 +64,7 @@ export function CrossChainInfo({
               {fromWei({ value: limit, decimals: direction.to.decimals }, (value) =>
                 prettyNumber(value, { ignoreZeroDecimal: true })
               )}
+              <span className="ml-1">{direction.from.symbol}</span>
             </span>
           ) : (
             <CountLoading />
@@ -75,14 +74,14 @@ export function CrossChainInfo({
     }
 
     return null;
-  }, [bridge.getDailyLimit, dailyLimit, direction.to.decimals, t]);
+  }, [bridge.getDailyLimit, dailyLimit, direction.from.symbol, direction.to.decimals, t]);
 
   const allowanceContent = useMemo(() => {
     if (bridge.getAllowancePayload && direction.from.type !== 'native') {
       return (
         <div className={`flex justify-between items-center`}>
           <span>{t('Allowance')}</span>
-          {dailyLimit ? (
+          {allowance ? (
             <div>
               <span>
                 {fromWei({ value: allowance }, largeNumber, (num: string) =>
@@ -99,7 +98,7 @@ export function CrossChainInfo({
     }
 
     return null;
-  }, [allowance, bridge.getAllowancePayload, dailyLimit, direction.from.symbol, direction.from.type, t]);
+  }, [allowance, bridge.getAllowancePayload, direction.from.symbol, direction.from.type, t]);
 
   return (
     <Form.Item label={t('Information')} className="relative">

@@ -10,7 +10,7 @@ import {
   HelixHistoryRecord,
   Tx,
 } from 'shared/model';
-import { Bridge } from '../core/bridge';
+import { Bridge, TokenWithAmount } from '../core/bridge';
 import { CrossChainPayload } from './tx';
 
 export interface RecordStatusComponentProps {
@@ -35,7 +35,7 @@ export interface CrossChainComponentProps<
   balances: BN[] | null;
   allowance: BN | null;
   dailyLimit: DailyLimit | null;
-  fee: { symbol: string; amount: number } | null;
+  fee: TokenWithAmount | null;
   updatePayload: React.Dispatch<
     React.SetStateAction<
       (

@@ -7,16 +7,16 @@ import { Logo } from 'shared/components/widget/Logo';
 import { BridgeBase } from 'shared/core/bridge';
 import { PolkadotChainConfig } from 'shared/model';
 import { convertToSS58 } from 'shared/utils/helper/address';
+import { fromWei } from 'shared/utils/helper/balance';
 import { isPolkadotNetwork } from 'shared/utils/network/network';
 import { getDisplayName } from 'utils/network/network';
+import { TokenWithAmount } from '../../core/bridge';
 import { TxConfirmComponentProps } from '../../model/component';
-
-type Fee = { symbol: string; amount: number };
 
 export function TransferConfirm<T extends BridgeBase = BridgeBase>({
   value,
   fee,
-}: PropsWithChildren<TxConfirmComponentProps<T> & { fee: Fee | null }>) {
+}: PropsWithChildren<TxConfirmComponentProps<T> & { fee: TokenWithAmount }>) {
   const { from, to } = value.direction;
   const { t } = useTranslation('common', { i18n: i18n?.use(initReactI18next) });
 
@@ -89,7 +89,7 @@ export function TransferConfirm<T extends BridgeBase = BridgeBase>({
               <div className="flex items-center justify-between overflow-hidden">
                 <span className="opacity-60">{t('Fee')}</span>
                 <span>
-                  {fee.amount} {fee.symbol}
+                  {fromWei(fee)} {fee.symbol}
                 </span>
               </div>
             )}

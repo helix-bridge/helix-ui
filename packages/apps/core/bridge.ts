@@ -12,12 +12,14 @@ import {
   BridgeConfig,
   ChainConfig,
   CrossChainDirection,
+  CrossChainPureDirection,
   CrossToken,
   DailyLimit,
   HelixHistoryRecord,
   Network,
   NullableFields,
   Token,
+  TokenInfoWithMeta,
   TokenWithBridgesInfo,
   Tx,
 } from 'shared/model';
@@ -46,10 +48,10 @@ export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Targ
   claim?(record: HelixHistoryRecord): Observable<Tx>;
   refund?(record: HelixHistoryRecord): Observable<Tx>;
   getDailyLimit?(
-    direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>
+    direction: CrossChainPureDirection<TokenInfoWithMeta<Origin | Target>, TokenInfoWithMeta<Origin | Target>>
   ): Promise<DailyLimit | null>;
-  getMinimumFeeTokenHolding?(direction: CrossChainDirection): TokenWithAmount | null;
-  getAllowancePayload?(direction: CrossChainDirection): Promise<AllowancePayload | null>;
+  getMinimumFeeTokenHolding?(direction: CrossChainPureDirection): TokenWithAmount | null;
+  getAllowancePayload?(direction: CrossChainPureDirection): Promise<AllowancePayload | null>;
 }
 
 export abstract class Bridge<
@@ -113,10 +115,11 @@ export abstract class Bridge<
       balance.toString(),
       amount.toString(),
       allowance.amount?.toString(),
-      minAmount?.toString(),
+      minAmount?.amount?.toString(),
       dailyLimit.amount?.toString(),
       fee.amount?.toString(),
-      feeTokenBalance.amount?.toString()
+      feeTokenBalance.amount?.toString(),
+      amount.add(fee.amount).toString()
     );
 
     /**
