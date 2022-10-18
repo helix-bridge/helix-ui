@@ -92,4 +92,15 @@ export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, Polkado
   ): Promise<TokenWithAmount | null> {
     return { amount: BN_ZERO, ...omit(direction.from, ['amount', 'meta']) };
   }
+
+  getMinimumFeeTokenHolding(
+    direction: CrossChainDirection<
+      CrossToken<DVMChainConfig | DVMChainConfig>,
+      CrossToken<DVMChainConfig | DVMChainConfig>
+    >
+  ): TokenWithAmount | null {
+    const { from: dep } = direction;
+
+    return { ...dep, amount: new BN(toWei({ value: 1, decimals: dep.decimals })) };
+  }
 }

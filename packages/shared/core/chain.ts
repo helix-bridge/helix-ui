@@ -113,7 +113,8 @@ export class ParachainChain extends PolkadotChain implements ParachainChainConfi
   ): Promise<BN[]> {
     const { from } = direction;
     const balance = await getParachainBalance(from, account);
-    console.log('%cchain.ts line:116 balance', 'color: white; background-color: #007acc;', balance);
+
+    console.log('%cchain.ts line:116 balance', 'color: white; background-color: #007acc;', balance.toString());
 
     return [balance, balance];
   }
@@ -139,13 +140,14 @@ export class DVMChain extends EthereumChain implements DVMChainConfig {
   ): Promise<BN[]> {
     const { from } = direction;
     const tokenAddress = from.address;
+    const httpsProvider = from.meta.provider.replace('https', 'wss');
 
     if (from.type === 'native') {
-      return getEthereumNativeBalance(account, from.meta.provider).then((balance) => [balance, balance]);
+      return getEthereumNativeBalance(account, httpsProvider).then((balance) => [balance, balance]);
     } else {
       return Promise.all([
-        getErc20Balance(tokenAddress, account, from.meta.provider),
-        getEthereumNativeBalance(account, from.meta.provider),
+        getErc20Balance(tokenAddress, account, httpsProvider),
+        getEthereumNativeBalance(account, httpsProvider),
       ]);
     }
   }
