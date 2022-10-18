@@ -290,22 +290,30 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
 
                   form.validateFields().then((values) => {
                     const payload = patchPayload(values);
+
                     if (!payload) {
                       return;
                     }
 
+                    const fromToken = omit(direction.from, 'meta');
+                    const toToken = omit(direction.to, 'meta');
+
                     const validateObs = payload.bridge.validate(payload, {
-                      balance: balances![0],
-                      fee: new BN(toWei(fee!)),
-                      feeTokenBalance: balances![1],
-                      dailyLimit: dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday)),
+                      balance: { ...fromToken, amount: balances![0] },
+                      fee: { ...fee, amount: new BN(toWei(fee ?? { value: 0 })) } as TokenWithAmount,
+                      feeTokenBalance: { ...fee, amount: balances![1] } as TokenWithAmount,
+                      dailyLimit: {
+                        ...toToken,
+                        amount: dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday)),
+                      },
+                      allowance: { ...fromToken, amount: allowance },
                     });
 
                     const workflow = createTxWorkflow(
                       validateObs.pipe(
-                        mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={fee} /> }))
+                        mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={fee!} /> }))
                       ),
-                      () => payload.bridge.send(payload),
+                      () => payload.bridge.send(payload, new BN(toWei(fee!))),
                       afterCrossChain(TransferDone, { payload })
                     );
 

@@ -20,26 +20,26 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
 > {
   static readonly alias: string = 'SubstrateSubstrateParachainBridge';
 
-  back(payload: IssuingPayload, fee: BN): Observable<Tx> {
+  back(payload: RedeemPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction } = payload;
     const { from: departure, to } = direction;
     const api = entrance.polkadot.getInstance(direction.from.meta.provider);
-    const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).sub(fee).toString();
+    const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
     const WEIGHT = '10000000000';
-    const section = `from${upperFirst(to.meta.name)}Issuing`;
-    const extrinsic = api.tx[section].burnAndRemoteUnlock(String(to.meta.specVersion), WEIGHT, amount, fee, recipient);
+    const section = `to${to.host.split('-').map(upperFirst).join('')}Backing`;
+    const extrinsic = api.tx[section].lockAndRemoteIssue(String(to.meta.specVersion), WEIGHT, amount, fee, recipient);
 
     return signAndSendExtrinsic(api, sender, extrinsic);
   }
 
-  burn(payload: RedeemPayload, fee: BN): Observable<Tx> {
+  burn(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction } = payload;
     const { from: departure, to } = direction;
     const api = entrance.polkadot.getInstance(direction.from.meta.provider);
-    const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).sub(fee).toString();
+    const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
     const WEIGHT = '10000000000';
-    const section = `to${to.host.split('-').map(upperFirst).join('')}Backing`;
-    const extrinsic = api.tx[section].lockAndRemoteIssue(String(to.meta.specVersion), WEIGHT, amount, fee, recipient);
+    const section = `from${upperFirst(to.meta.name)}Issuing`;
+    const extrinsic = api.tx[section].burnAndRemoteUnlock(String(to.meta.specVersion), WEIGHT, amount, fee, recipient);
 
     return signAndSendExtrinsic(api, sender, extrinsic);
   }
@@ -107,5 +107,11 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
     const token = omit(direction.from.meta.tokens.find((item) => isRing(item.symbol))!, ['amount', 'meta']);
 
     return { ...token, amount: new BN(marketFee ?? -1) } as TokenWithAmount; // -1: fee market does not available
+  }
+
+  getMinimumFeeTokenHolding(direction: CrossChainDirection): TokenWithAmount | null {
+    const { from: dep } = direction;
+
+    return { ...dep, amount: new BN(toWei({ value: 1, decimals: dep.decimals })) };
   }
 }

@@ -28,8 +28,9 @@ export const TxProvider = ({ children }: React.PropsWithChildren<unknown>) => {
     return {
       next: setTx,
       error: (error: RequiredPartial<Tx, 'error'>) => {
-        const errInfo = typeof error.error === 'string' ? error.error : error.error.message;
-        console.error('🚨 ~ file: tx.tsx ~ line 32 ~ observer ~ errInfo', errInfo);
+        console.error('🚨 ~ file: tx.tsx ~ line 32 ~ observer ~ errInfo', error);
+        const errInfo =
+          typeof error.error === 'string' ? error.error : (error.error && error.error.message) || error.toString();
 
         notification.error({
           message: (

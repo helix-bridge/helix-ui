@@ -8,7 +8,7 @@ import { ChainBase } from 'shared/core/chain';
 import { BridgeStatus, CrossChainDirection, CrossToken, CustomFormControlProps, HashInfo, Network } from 'shared/model';
 import { fromWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
 import { updateStorage } from 'shared/utils/helper/storage';
-import { getBridge, isSubstrateDVM2Ethereum, isSubstrateDVMSubstrateDVM } from 'utils/bridge';
+import { getBridge, isCBridge, isSubstrateDVMSubstrateDVM } from 'utils/bridge';
 import { bridgeFactory } from '../../bridges/bridges';
 import { CountLoading } from '../widget/CountLoading';
 import { Destination } from './Destination';
@@ -42,10 +42,10 @@ const subFee = (payment: Amount, fee: Amount | null, mini: Amount = { symbol: ''
 const calcToAmount = (payment: Amount, fee: Amount | null, from: Network, to: Network) => {
   let result: string;
 
-  if (isSubstrateDVM2Ethereum(from, to)) {
-    result = payment.amount.toString();
-  } else {
+  if (isCBridge(from, to)) {
     result = subFee(payment, fee);
+  } else {
+    result = payment.amount.toString();
   }
 
   return result === '0' ? '' : result;
