@@ -33,7 +33,7 @@ export class CrabParachainKaruraBridge extends Bridge<
       recipient,
     } = payload;
     const amount = this.patchAmount(departure);
-    const transferAmount = toWei({ value: new BN(amount).add(fee), decimals: departure.decimals });
+    const transferAmount = new BN(amount).add(fee).toString();
     const api = entrance.polkadot.getInstance(departure.meta.provider);
     const palletInstance = 5;
 
@@ -95,7 +95,7 @@ export class CrabParachainKaruraBridge extends Bridge<
       recipient,
     } = payload;
     const amount = this.patchAmount(departure);
-    const transferAmount = toWei({ value: new BN(amount).add(fee), decimals: departure.decimals });
+    const transferAmount = new BN(amount).add(fee).toString();
     const api = entrance.polkadot.getInstance(departure.meta.provider);
 
     const currencyId = api.createType('AcalaPrimitivesCurrencyCurrencyId', {

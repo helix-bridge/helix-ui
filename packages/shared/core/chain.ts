@@ -114,8 +114,6 @@ export class ParachainChain extends PolkadotChain implements ParachainChainConfi
     const { from } = direction;
     const balance = await getParachainBalance(from, account);
 
-    console.log('%cchain.ts line:116 balance', 'color: white; background-color: #007acc;', balance.toString());
-
     return [balance, balance];
   }
 }

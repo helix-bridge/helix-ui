@@ -39,6 +39,7 @@ import { useAfterTx } from '../hooks/tx';
 import { CrossChainComponentProps } from '../model/component';
 import { CrossChainPayload, PayloadPatchFn } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
+import { isXCM } from '../utils';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { Direction } from './form-control/Direction';
 import { TransferConfirm } from './tx/TransferConfirm';
@@ -303,7 +304,10 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
                     const validateObs = payload.bridge.validate(payload, {
                       balance: { ...fromToken, amount: balances![0] },
                       fee: fee!,
-                      feeTokenBalance: { ...fee, amount: balances![1] } as TokenWithAmount,
+                      feeTokenBalance: {
+                        ...fee,
+                        amount: isXCM(direction.from.host, direction.to.host) ? balances![0] : balances![1],
+                      } as TokenWithAmount,
                       dailyLimit: {
                         ...toToken,
                         amount: dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday)),
