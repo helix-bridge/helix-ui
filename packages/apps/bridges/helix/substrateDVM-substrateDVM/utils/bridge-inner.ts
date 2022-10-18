@@ -15,6 +15,18 @@ export class SubstrateDVMInnerBridge extends Bridge<
 > {
   static readonly alias: string = 'SubstrateDVMInnerBridge';
 
+  send(payload: IssuingPayload | RedeemPayload): Observable<Tx> {
+    const {
+      direction: { from: dep },
+    } = payload;
+
+    if (dep.symbol.startsWith('W')) {
+      return this.burn(payload as RedeemPayload);
+    } else {
+      return this.back(payload as IssuingPayload);
+    }
+  }
+
   back(payload: IssuingPayload): Observable<Tx> {
     const {
       sender,

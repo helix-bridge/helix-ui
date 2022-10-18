@@ -76,16 +76,10 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
   const isMounted = useIsMounted();
   const { afterCrossChain } = useAfterTx<CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>>();
 
-  const allowanceEnough = useMemo(() => {
-    if (
-      !isEthereumNetwork(direction.from.host) ||
-      (isEthereumNetwork(direction.from.host) && direction.from.type === 'native')
-    ) {
-      return true;
-    }
-
-    return allowance && allowance.gt(new BN(toWei(direction.from)));
-  }, [allowance, direction.from]);
+  const allowanceEnough = useMemo(
+    () => !bridge?.getAllowancePayload || (allowance && allowance.gt(new BN(toWei(direction.from)))),
+    [allowance, bridge?.getAllowancePayload, direction.from]
+  );
 
   const Content = useMemo(() => {
     const { from: dep, to } = pureDirection;
