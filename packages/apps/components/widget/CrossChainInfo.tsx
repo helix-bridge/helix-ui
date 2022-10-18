@@ -6,6 +6,7 @@ import { useITranslation } from 'shared/hooks/translation';
 import { BridgeConfig, ChainConfig, ContractConfig, CrossChainDirection, DailyLimit } from 'shared/model';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { Bridge, TokenWithAmount } from '../../core/bridge';
+import { useApi } from '../../providers';
 import { bridgeCategoryDisplay } from '../../utils/bridge';
 import { CountLoading } from './CountLoading';
 
@@ -30,6 +31,7 @@ export function CrossChainInfo({
   isDynamicFee = false,
 }: PropsWithChildren<CrossChainInfoProps>) {
   const { t } = useITranslation();
+  const { departureConnection } = useApi();
 
   const feeContent = useMemo(() => {
     if (fee) {
@@ -77,7 +79,7 @@ export function CrossChainInfo({
   }, [bridge.getDailyLimit, dailyLimit, direction.from.symbol, direction.to.decimals, t]);
 
   const allowanceContent = useMemo(() => {
-    if (bridge.getAllowancePayload && direction.from.type !== 'native') {
+    if (bridge.getAllowancePayload && direction.from.type !== 'native' && departureConnection.type === 'metamask') {
       return (
         <div className={`flex justify-between items-center`}>
           <span>{t('Allowance')}</span>
@@ -98,7 +100,7 @@ export function CrossChainInfo({
     }
 
     return null;
-  }, [allowance, bridge.getAllowancePayload, direction.from.symbol, direction.from.type, t]);
+  }, [allowance, bridge.getAllowancePayload, departureConnection.type, direction.from.symbol, direction.from.type, t]);
 
   return (
     <Form.Item label={t('Information')} className="relative">

@@ -122,7 +122,7 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
 
   async getFee(
     direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>
-  ): Promise<TokenWithAmount> {
+  ): Promise<TokenWithAmount | null> {
     const {
       from: { meta: departure },
       to: { meta: arrival },
@@ -136,10 +136,15 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
     const { abi, address } = this.isIssue(departure, arrival)
       ? { abi: backingAbi, address: this.config.contracts?.backing }
       : { abi: burnAbi, address: this.config.contracts?.issuing };
-    const contract = new Contract(address as string, abi, entrance.web3.currentProvider);
-    const fee = await contract.fee();
+    const contract = new Contract(address as string, abi, entrance.web3.getInstance(departure.provider));
 
-    return { ...token, amount: new BN(fee.toString()) };
+    try {
+      const fee = await contract.fee();
+
+      return { ...token, amount: new BN(fee.toString()) };
+    } catch {
+      return null;
+    }
   }
 
   async getDailyLimit(
@@ -149,18 +154,21 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
       from: { meta: departure, address: fromTokenAddress },
       to: { meta: arrival },
     } = direction;
-    const bridge = getBridge([departure, arrival]);
 
-    const { abi, address } = bridge.isIssue(departure, arrival)
-      ? { abi: backingAbi, address: bridge.config.contracts?.backing }
-      : { abi: burnAbi, address: bridge.config.contracts?.issuing };
+    const { abi, address } = this.isIssue(departure, arrival)
+      ? { abi: backingAbi, address: this.config.contracts?.backing }
+      : { abi: burnAbi, address: this.config.contracts?.issuing };
 
-    const contract = new Contract(address as string, abi, entrance.web3.currentProvider);
+    const contract = new Contract(address as string, abi, entrance.web3.getInstance(departure.provider));
 
-    const limit: BigNumber = await contract.dailyLimit(fromTokenAddress);
-    const spentToday: BigNumber = await contract.spentToday(fromTokenAddress);
+    try {
+      const limit: BigNumber = await contract.dailyLimit(fromTokenAddress);
+      const spentToday: BigNumber = await contract.spentToday(fromTokenAddress);
 
-    return { limit: limit.toString(), spentToday: spentToday.toString() };
+      return { limit: limit.toString(), spentToday: spentToday.toString() };
+    } catch {
+      return null;
+    }
   }
 
   async getAllowancePayload(

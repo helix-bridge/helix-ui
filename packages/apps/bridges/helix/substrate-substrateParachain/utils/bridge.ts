@@ -47,11 +47,11 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
   async getDailyLimit(
     direction: CrossChainDirection<CrossToken<PolkadotChainConfig>, CrossToken<PolkadotChainConfig>>
   ): Promise<DailyLimit | null> {
-    const limit: BN = this.isIssue(direction.from.host, direction.to.host)
+    const limit: BN | null = this.isIssue(direction.from.host, direction.to.host)
       ? await this.getIssueDailyLimit(direction)
       : await this.getRedeemDailyLimit(direction);
 
-    return { limit: limit.toString(), spentToday: '0' };
+    return limit && { limit: limit.toString(), spentToday: '0' };
   }
 
   private async getIssueDailyLimit(
@@ -62,11 +62,15 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
     await waitUntilConnected(api);
 
     const section = `from${upperFirst(direction.from.meta.name)}Issuing`;
-    const result = await api.query[section].secureLimitedRingAmount();
-    const data = result.toJSON() as [number, string]; // [0, hexString]
-    const num = hexToU8a(data[1]);
+    try {
+      const result = await api.query[section].secureLimitedRingAmount();
+      const data = result.toJSON() as [number, string]; // [0, hexString]
+      const num = hexToU8a(data[1]);
 
-    return new BN(num);
+      return new BN(num);
+    } catch {
+      return null;
+    }
   }
 
   private async getRedeemDailyLimit(
@@ -77,11 +81,15 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
     await waitUntilConnected(api);
 
     const section = `to${direction.from.meta.name.split('-').map(upperFirst).join('')}Backing`;
-    const result = await api.query[section].secureLimitedRingAmount();
-    const data = result.toJSON() as [number, number];
-    const num = result && new BN(data[1]);
+    try {
+      const result = await api.query[section].secureLimitedRingAmount();
+      const data = result.toJSON() as [number, number];
+      const num = result && new BN(data[1]);
 
-    return num;
+      return num;
+    } catch {
+      return null;
+    }
   }
 
   async getFee(
@@ -94,19 +102,23 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
     const api = entrance.polkadot.getInstance(from.provider);
     const section = lowerFirst(`${to.name.split('-').map(upperFirst).join('')}FeeMarket`);
 
-    await waitUntilConnected(api);
+    try {
+      await waitUntilConnected(api);
 
-    const res = (await api.query[section]['assignedRelayers']().then((data: Codec) => data.toJSON())) as {
-      id: string;
-      collateral: number;
-      fee: number;
-    }[];
+      const res = (await api.query[section]['assignedRelayers']().then((data: Codec) => data.toJSON())) as {
+        id: string;
+        collateral: number;
+        fee: number;
+      }[];
 
-    const data = last(res)?.fee.toString();
-    const marketFee = data?.startsWith('0x') ? hexToU8a(data) : data;
-    const token = omit(direction.from.meta.tokens.find((item) => isRing(item.symbol))!, ['amount', 'meta']);
+      const data = last(res)?.fee.toString();
+      const marketFee = data?.startsWith('0x') ? hexToU8a(data) : data;
+      const token = omit(direction.from.meta.tokens.find((item) => isRing(item.symbol))!, ['amount', 'meta']);
 
-    return { ...token, amount: new BN(marketFee ?? -1) } as TokenWithAmount; // -1: fee market does not available
+      return { ...token, amount: new BN(marketFee ?? -1) } as TokenWithAmount; // -1: fee market does not available
+    } catch {
+      return null;
+    }
   }
 
   getMinimumFeeTokenHolding(direction: CrossChainDirection): TokenWithAmount | null {

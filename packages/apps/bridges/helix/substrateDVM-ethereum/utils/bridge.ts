@@ -149,7 +149,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       CrossToken<DVMChainConfig | EthereumChainConfig>
     >,
     useWallerProvider = false
-  ): Promise<TokenWithAmount> {
+  ): Promise<TokenWithAmount | null> {
     const {
       from: { meta: departure },
       to: { meta: arrival },
@@ -166,9 +166,13 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       useWallerProvider ? entrance.web3.currentProvider : entrance.web3.getInstance(direction.from.meta.provider)
     );
 
-    const fee = await contract.currentFee();
+    try {
+      const fee = await contract.currentFee();
 
-    return { ...direction.from.meta.tokens.find(isNativeToken)!, amount: new BN(fee.toString()) };
+      return { ...direction.from.meta.tokens.find(isNativeToken)!, amount: new BN(fee.toString()) };
+    } catch {
+      return null;
+    }
   }
 
   async getDailyLimit(
@@ -189,9 +193,13 @@ export class SubstrateDVMEthereumBridge extends Bridge<
 
     const contract = new Contract(address as string, abi, entrance.web3.getInstance(direction.to.meta.provider));
 
-    const limit = await contract.calcMaxWithdraw(type === 'native' ? getWrappedToken(arrival).address : tokenAddress);
+    try {
+      const limit = await contract.calcMaxWithdraw(type === 'native' ? getWrappedToken(arrival).address : tokenAddress);
 
-    return { limit: limit.toString(), spentToday: '0' };
+      return { limit: limit.toString(), spentToday: '0' };
+    } catch {
+      return null;
+    }
   }
 
   getMinimumFeeTokenHolding(
