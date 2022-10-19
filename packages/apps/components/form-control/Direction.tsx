@@ -26,7 +26,7 @@ type DirectionProps = CustomFormControlProps<CrossChainDirection<CrossToken<Chai
 const MILLION = 1e6;
 
 // eslint-disable-next-line complexity
-const subFee = (payment: TokenWithAmount, fee: TokenWithAmount | null, mini?: TokenWithAmount) => {
+export const calcMax = (payment: TokenWithAmount, fee: TokenWithAmount | null, mini?: TokenWithAmount) => {
   if (!fee || fee.symbol !== payment.symbol) {
     return fromWei({ value: payment.amount.sub(mini?.amount ?? BN_ZERO), decimals: payment.decimals });
   }
@@ -40,7 +40,7 @@ const calcToAmount = (payment: TokenWithAmount, fee: TokenWithAmount | null, fro
   let result: string;
 
   if (isCBridge(from, to)) {
-    result = subFee(payment, fee);
+    result = calcMax(payment, fee);
   } else {
     result = fromWei(payment);
   }
@@ -150,7 +150,7 @@ export function Direction({
                 const config = getBridge(data);
                 const bridge = bridgeFactory(config);
                 const mini = bridge.getMinimumFeeTokenHolding && bridge.getMinimumFeeTokenHolding(data);
-                const amount = subFee({ ...from, amount: iBalance }, fee, mini ?? undefined);
+                const amount = calcMax({ ...from, amount: iBalance }, fee, mini ?? undefined);
 
                 if (amount !== from.amount) {
                   const toAmount = calcToAmount(
