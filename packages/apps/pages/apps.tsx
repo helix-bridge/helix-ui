@@ -8,6 +8,7 @@ import { ChainBase } from 'shared/core/chain';
 import { CrossChainDirection, CrossToken } from 'shared/model';
 import { readStorage, updateStorage } from 'shared/utils/helper/storage';
 import { getDirectionFromSettings } from 'shared/utils/helper/url';
+import { BridgeState } from '../components/bridge/BridgeState';
 import { CrossChain } from '../components/CrossChain';
 import { DisclaimerModal } from '../components/widget/DisclaimerModal';
 import { useITranslation } from '../hooks';
@@ -55,6 +56,8 @@ function Page() {
                     {t('History')}
                   </Button>
                 </div>
+
+                <BridgeState className="w-full lg:w-1/2 mx-auto mb-2" />
 
                 <CrossChain dir={dir} />
 

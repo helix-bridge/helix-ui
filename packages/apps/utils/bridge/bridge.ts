@@ -1,7 +1,14 @@
 import isEqual from 'lodash/isEqual';
 import upperFirst from 'lodash/upperFirst';
 import { BridgeBase } from 'shared/core/bridge';
-import { BridgeCategory, BridgeConfig, ChainConfig, CrossChainDirection, Network } from 'shared/model';
+import {
+  BridgeCategory,
+  BridgeConfig,
+  ChainConfig,
+  CrossChainDirection,
+  CrossChainPureDirection,
+  Network,
+} from 'shared/model';
 import { unknownUnavailable } from '../../bridges/unknown-unavailable/config';
 import { BRIDGES } from '../../config/bridge';
 import { getChainConfig } from '../network';
@@ -26,7 +33,7 @@ export function getBridge<T extends BridgeConfig>(
   return bridge as BridgeBase<T>;
 }
 
-export function getBridges(source: CrossChainDirection): BridgeBase[] {
+export function getBridges(source: CrossChainPureDirection): BridgeBase[] {
   const {
     from: { cross },
     to,
