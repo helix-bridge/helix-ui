@@ -50,6 +50,12 @@ module.exports = withPlugins([withAntdLess, circularDependencyPlugin], {
     return config;
   },
 
+  compiler: {
+    removeConsole: {
+      exclude: ['error']
+    },
+  },
+
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
   },
