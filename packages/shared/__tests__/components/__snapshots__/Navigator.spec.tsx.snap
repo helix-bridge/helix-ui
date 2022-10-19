@@ -40,7 +40,7 @@ Array [
   >
     <li
       className="ant-menu-item ant-menu-item-only-child"
-      data-menu-id="rc-menu-uuid-test-/"
+      data-menu-id="rc-menu-uuid-test-Home"
       onClick={[Function]}
       onFocus={[Function]}
       onKeyDown={[Function]}
@@ -68,7 +68,7 @@ Array [
     </li>
     <li
       className="ant-menu-item ant-menu-item-only-child"
-      data-menu-id="rc-menu-uuid-test-/history"
+      data-menu-id="rc-menu-uuid-test-History"
       onClick={[Function]}
       onFocus={[Function]}
       onKeyDown={[Function]}
@@ -136,7 +136,7 @@ Array [
   >
     <li
       className="ant-menu-item ant-menu-item-only-child"
-      data-menu-id="rc-menu-uuid-test-/"
+      data-menu-id="rc-menu-uuid-test-Home"
       onClick={[Function]}
       onFocus={[Function]}
       onKeyDown={[Function]}
@@ -204,7 +204,7 @@ Array [
   >
     <li
       className="ant-menu-item ant-menu-item-only-child"
-      data-menu-id="rc-menu-uuid-test-/"
+      data-menu-id="rc-menu-uuid-test-Home"
       onClick={[Function]}
       onFocus={[Function]}
       onKeyDown={[Function]}

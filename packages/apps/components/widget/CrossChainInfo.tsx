@@ -6,7 +6,7 @@ import { useITranslation } from 'shared/hooks/translation';
 import { BridgeConfig, ChainConfig, ContractConfig, CrossChainDirection, DailyLimit } from 'shared/model';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { Bridge, TokenWithAmount } from '../../core/bridge';
-import { useApi } from '../../providers';
+import { useApi } from '../../providers/api';
 import { bridgeCategoryDisplay } from '../../utils/bridge';
 import { CountLoading } from './CountLoading';
 

@@ -21,7 +21,7 @@ import {
 } from '../../../components/form-control/Slippage';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
 import { CrossChainComponentProps } from '../../../model/component';
-import { PayloadPatchFn } from '../../../model/tx';
+import { PayloadPatchFn } from '../../../core/bridge';
 import { useAccount, useWallet } from '../../../providers';
 import { IssuingPayload } from './model';
 import { EstimateAmtResponse } from './ts-proto/gateway/gateway_pb';
