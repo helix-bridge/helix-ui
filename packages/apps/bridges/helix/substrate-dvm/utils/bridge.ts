@@ -1,5 +1,4 @@
 import { BN, BN_ZERO, u8aToHex } from '@polkadot/util';
-import omit from 'lodash/omit';
 import type { Observable } from 'rxjs';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { from as rxFrom } from 'rxjs/internal/observable/from';
@@ -11,7 +10,7 @@ import { entrance, waitUntilConnected } from 'shared/utils/connection';
 import { convertToSS58, dvmAddressToAccountId } from 'shared/utils/helper/address';
 import { toWei } from 'shared/utils/helper/balance';
 import { typeRegistryFactory } from 'shared/utils/helper/huge';
-import { isRing } from 'shared/utils/helper/validator';
+import { isNativeToken, isRing } from 'shared/utils/helper/validator';
 import { genEthereumTransactionObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { IssuingPayload, RedeemPayload, SubstrateDVMBridgeConfig } from '../model';
@@ -90,7 +89,9 @@ export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, Polkado
       CrossToken<PolkadotChainConfig | DVMChainConfig>
     >
   ): Promise<TokenWithAmount | null> {
-    return { amount: BN_ZERO, ...omit(direction.from, ['amount', 'meta']) };
+    const ring = direction.from.meta.tokens.find((item) => isRing(item.symbol) && isNativeToken(item))!;
+
+    return { amount: BN_ZERO, ...ring };
   }
 
   getMinimumFeeTokenHolding(

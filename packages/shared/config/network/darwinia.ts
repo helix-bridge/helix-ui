@@ -53,6 +53,11 @@ export const darwiniaConfig: PolkadotChainConfig = {
           partner: { name: 'ethereum', role: 'backing', symbol: 'KTON', claim: true },
           deprecated: true,
         },
+        {
+          category: 'helix',
+          bridge: 'substrate-DVM',
+          partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'KTON' },
+        },
       ],
       type: 'native',
       host: 'darwinia',

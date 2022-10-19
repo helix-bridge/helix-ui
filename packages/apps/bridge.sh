@@ -93,67 +93,13 @@ function component() {
         " >>$2'/'$1'.tsx'
     else
         echo "
-            import { BN } from '@polkadot/util';
-            import { useEffect } from 'react';
-            import { useTranslation } from 'react-i18next';
-            import { mergeMap } from 'rxjs/internal/operators/mergeMap';
             import { ChainConfig, CrossToken } from 'shared/model';
-            import { toWei } from 'shared/utils/helper/balance';
-            import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
-            import { RecipientItem } from '../../../components/form-control/RecipientItem';
-            import { TransferConfirm } from '../../../components/tx/TransferConfirm';
-            import { TransferDone } from '../../../components/tx/TransferDone';
-            import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
-            import { useAfterTx } from '../../../hooks';
+            import { Bridge } from '../../../components/bridge/Bridge';
             import { CrossChainComponentProps } from '../../../model/component';
-            import { TxObservableFactory } from '../../../model/tx';
-            import { $3 } from './model';
             import { ${from}${to}Bridge } from './utils';
 
-            export function $1({
-                form,
-                direction,
-                bridge,
-                fee,
-                balances,
-                setTxObservableFactory,
-            }: CrossChainComponentProps<${from}${to}Bridge, CrossToken<ChainConfig>, CrossToken<ChainConfig>>) {
-                const { t } = useTranslation();
-                const { afterCrossChain } = useAfterTx<$3>();
-                const [balance] = (balances ?? []) as BN[];
-
-                useEffect(() => {
-                    const fn = () => (data: $3) => {
-                    const validateObs = data.bridge.validate([balance], {
-                        balance,
-                        amount: new BN(toWei(data.direction.from)),
-                    });
-
-                    return createTxWorkflow(
-                        validateObs.pipe(mergeMap(() => applyModalObs({ content: <TransferConfirm value={data} fee={null} /> }))),
-                        data.bridge.burn(data),
-                        afterCrossChain(TransferDone, { payload: data })
-                    );
-                    };
-
-                    setTxObservableFactory(fn as unknown as TxObservableFactory);
-                }, [afterCrossChain, balance, setTxObservableFactory, t]);
-
-                return (
-                    <>
-                    <RecipientItem
-                        form={form}
-                        direction={direction}
-                        bridge={bridge}
-                        extraTip={t(
-                        'Please make sure you have entered the correct {{type}} address. Entering wrong address will cause asset loss and cannot be recovered!',
-                        { type: 'Substrate' }
-                        )}
-                    />
-
-                    <CrossChainInfo bridge={bridge} fee={fee} hideFee></CrossChainInfo>
-                    </>
-                );
+            export function $1(props: CrossChainComponentProps<${from}${to}Bridge, CrossToken<ChainConfig>, CrossToken<ChainConfig>>) {
+                return <Bridge {...props} />;
             }
         " >>$2'/'$1'.tsx'
     fi
@@ -223,13 +169,13 @@ function initUitls() {
     local name=${from}''${to}
 
     echo "
-        import { BN } from '@polkadot/util';
-        import { ChainConfig, Tx } from 'shared/model';
+        import { BN, BN_ZERO } from '@polkadot/util';
+        import omit from 'lodash/omit';
+        import { ChainConfig, CrossChainDirection, CrossToken, Tx } from 'shared/model';
         import { EMPTY } from 'rxjs/internal/observable/empty';
         import type { Observable } from 'rxjs';
         import { IssuingPayload, RedeemPayload, ${name}BridgeConfig } from '../model';
-        import { Bridge } from '../../../../core/bridge';
-        import { TxValidation } from '../../../../model';
+        import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 
         export class ${name}Bridge extends Bridge<
             ${name}BridgeConfig,
@@ -248,9 +194,10 @@ function initUitls() {
                 return EMPTY;
             }
 
-            genTxParamsValidations(params: TxValidation): [boolean, string][] {
-                console.log(params);
-                return [];
+            async getFee(
+                direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
+            ): Promise<TokenWithAmount | null> {
+                return { ...omit(direction.from, ['meta', 'amount']), amount: BN_ZERO };
             }
         }
     " >>$1'/bridge.ts'

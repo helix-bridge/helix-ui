@@ -86,6 +86,11 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'ethereum', role: 'issuing', symbol: 'KTON', claim: true },
         },
+        {
+          category: 'helix',
+          bridge: 'substrate-DVM',
+          partner: { name: 'darwinia', role: 'backing', symbol: 'KTON' },
+        },
       ],
       type: 'erc20',
       host: 'darwinia-dvm',
