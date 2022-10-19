@@ -1,6 +1,6 @@
 import { AccountData, AccountInfo } from '@darwinia/types';
 import { BN, BN_ZERO } from '@polkadot/util';
-import { ChainConfig, TokenInfoWithMeta } from '../../../model';
+import { ChainConfig, ParachainNetwork, TokenInfoWithMeta } from '../../../model';
 import { entrance, waitUntilConnected } from '../../connection';
 
 /**
@@ -11,10 +11,11 @@ export async function getBalance(fromToken: TokenInfoWithMeta<ChainConfig>, acco
   const api = entrance.polkadot.getInstance(fromToken.meta.provider);
 
   await waitUntilConnected(api);
+  const darwiniaParachain: ParachainNetwork[] = ['crab-parachain', 'pangolin-parachain'];
 
   try {
     let balance: string;
-    if (fromToken.type === 'native') {
+    if (fromToken.type === 'native' || darwiniaParachain.includes(fromToken.host as ParachainNetwork)) {
       const { data } = (await api.query.system.account(account)) as AccountInfo;
       const { free } = data as unknown as AccountData;
 
@@ -29,7 +30,6 @@ export async function getBalance(fromToken: TokenInfoWithMeta<ChainConfig>, acco
       balance = free.replace(/,/g, '');
     }
 
-    console.log('🚀 ~ file: parachain.ts ~ line 34 ~ getBalance ~ balance', balance);
     return new BN(balance);
   } catch (error) {
     console.warn('🚨 ~ file: parachain.ts ~ line 21 ~ getBalance ~ error', (error as Record<string, string>).message);

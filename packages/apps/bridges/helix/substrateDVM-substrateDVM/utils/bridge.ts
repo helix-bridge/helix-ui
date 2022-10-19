@@ -1,12 +1,22 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { BigNumber, Contract } from 'ethers';
 import last from 'lodash/last';
 import { EMPTY, from, Observable, switchMap } from 'rxjs';
-import { CrossChainDirection, CrossToken, DailyLimit, DVMChainConfig, HelixHistoryRecord, Tx } from 'shared/model';
+import {
+  ChainConfig,
+  CrossChainDirection,
+  CrossToken,
+  DailyLimit,
+  DVMChainConfig,
+  HelixHistoryRecord,
+  Tx,
+} from 'shared/model';
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
+import { isRing } from 'shared/utils/helper/validator';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
-import { Bridge } from '../../../../core/bridge';
+import { Bridge, TokenWithAmount } from '../../../../core/bridge';
+import { AllowancePayload } from '../../../../model/allowance';
 import { getBridge } from '../../../../utils/bridge';
 import backingAbi from '../config/s2sv2backing.json';
 import burnAbi from '../config/s2sv2burn.json';
@@ -110,22 +120,31 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
     );
   }
 
-  async getFee(direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>): Promise<BN> {
+  async getFee(
+    direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>
+  ): Promise<TokenWithAmount | null> {
     const {
       from: { meta: departure },
       to: { meta: arrival },
     } = direction;
-    const bridge = getBridge([departure, arrival]);
+    const token = direction.from.meta.tokens.find((item) => isRing(item.symbol))!;
 
-    const { abi, address } = bridge.isIssue(departure, arrival)
-      ? { abi: backingAbi, address: bridge.config.contracts?.backing }
-      : { abi: burnAbi, address: bridge.config.contracts?.issuing };
+    if (!isRing(direction.from.symbol)) {
+      return { ...token, amount: BN_ZERO };
+    }
 
-    const contract = new Contract(address as string, abi, entrance.web3.currentProvider);
+    const { abi, address } = this.isIssue(departure, arrival)
+      ? { abi: backingAbi, address: this.config.contracts?.backing }
+      : { abi: burnAbi, address: this.config.contracts?.issuing };
+    const contract = new Contract(address as string, abi, entrance.web3.getInstance(departure.provider));
 
-    const fee = await contract.fee();
+    try {
+      const fee = await contract.fee();
 
-    return new BN(fee.toString());
+      return { ...token, amount: new BN(fee.toString()) };
+    } catch {
+      return null;
+    }
   }
 
   async getDailyLimit(
@@ -135,17 +154,31 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
       from: { meta: departure, address: fromTokenAddress },
       to: { meta: arrival },
     } = direction;
-    const bridge = getBridge([departure, arrival]);
 
-    const { abi, address } = bridge.isIssue(departure, arrival)
-      ? { abi: backingAbi, address: bridge.config.contracts?.backing }
-      : { abi: burnAbi, address: bridge.config.contracts?.issuing };
+    const { abi, address } = this.isIssue(departure, arrival)
+      ? { abi: backingAbi, address: this.config.contracts?.backing }
+      : { abi: burnAbi, address: this.config.contracts?.issuing };
 
-    const contract = new Contract(address as string, abi, entrance.web3.currentProvider);
+    const contract = new Contract(address as string, abi, entrance.web3.getInstance(departure.provider));
 
-    const limit: BigNumber = await contract.dailyLimit(fromTokenAddress);
-    const spentToday: BigNumber = await contract.spentToday(fromTokenAddress);
+    try {
+      const limit: BigNumber = await contract.dailyLimit(fromTokenAddress);
+      const spentToday: BigNumber = await contract.spentToday(fromTokenAddress);
 
-    return { limit: limit.toString(), spentToday: spentToday.toString() };
+      return { limit: limit.toString(), spentToday: spentToday.toString() };
+    } catch {
+      return null;
+    }
+  }
+
+  async getAllowancePayload(
+    direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
+  ): Promise<AllowancePayload> {
+    return {
+      spender: this.isIssue(direction.from.meta, direction.to.meta)
+        ? this.config.contracts.backing
+        : this.config.contracts.issuing,
+      tokenAddress: direction.from.address,
+    };
   }
 }

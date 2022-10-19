@@ -15,11 +15,19 @@ import {
   optimismConfig,
   pangolinDVMConfig,
   pangoroDVMConfig,
+  SYSTEM_CHAIN_CONFIGURATIONS,
 } from 'shared/config/network';
 import { crabParachainConfig } from 'shared/config/network/crab-parachain';
 import { pangolinParachainConfig } from 'shared/config/network/pangolin-parachain';
 import { Network } from 'shared/model';
-import { chainConfigs, crossChainGraph, getChainConfig, getDisplayName, getOriginChainConfig, getWrappedToken } from '../utils/network';
+import {
+  chainConfigs,
+  crossChainGraph,
+  getChainConfig,
+  getDisplayName,
+  getOriginChainConfig,
+  getWrappedToken,
+} from '../utils/network';
 
 describe('network utils', () => {
   const data = [...crossChainGraph];
@@ -221,6 +229,15 @@ describe('network utils', () => {
     chainConfigs.forEach((chain) => {
       const { name } = chain;
       const compared = getChainConfig(name);
+
+      expect(chain).toEqual(compared);
+    });
+  });
+
+  it('can get origin chain config by chain name', () => {
+    SYSTEM_CHAIN_CONFIGURATIONS.forEach((chain) => {
+      const { name } = chain;
+      const compared = getOriginChainConfig(name);
 
       expect(chain).toEqual(compared);
     });

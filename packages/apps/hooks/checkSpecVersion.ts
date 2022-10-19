@@ -1,22 +1,17 @@
-import {
-  BridgeState,
-  ChainConfig,
-  CrossChainDirection,
-  CrossToken,
-  DVMChainConfig,
-  PolkadotChainConfig,
-} from 'shared/model';
-import { entrance, waitUntilConnected } from 'shared/utils/connection';
+import has from 'lodash/has';
 import { useEffect, useState } from 'react';
 import { from } from 'rxjs/internal/observable/from';
+import { BridgeState, ChainConfig, CrossChainDirection, CrossToken, PolkadotChainConfig } from 'shared/model';
+import { entrance, waitUntilConnected } from 'shared/utils/connection';
+import { isSubstrateDVM } from '../utils';
 
 export function useCheckSpecVersion(
-  direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<PolkadotChainConfig | DVMChainConfig>>
+  direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
 ): BridgeState & { specVersionOnline: string } {
   const [specVersionOnline, setSpecVersionOnline] = useState<string>('');
   const [checking, setChecking] = useState(false);
   const { to } = direction;
-  const needCheck = !!to.meta.specVersion;
+  const needCheck = has(to.meta, 'specVersion') && !isSubstrateDVM(direction.from.host, direction.to.host);
 
   useEffect(() => {
     if (!needCheck) {
@@ -41,11 +36,15 @@ export function useCheckSpecVersion(
     return () => sub$$.unsubscribe();
   }, [needCheck, to.meta.provider]);
 
-  if (checking || !needCheck) {
+  if (!needCheck) {
+    return { status: 'available', reason: 'do not need to check', specVersionOnline: 'unknown' };
+  }
+
+  if (checking) {
     return { status: 'pending', reason: 'checking', specVersionOnline: 'unknown' };
   }
 
-  return to.meta.specVersion === +specVersionOnline
+  return (to.meta as PolkadotChainConfig).specVersion === +specVersionOnline
     ? { status: 'available', specVersionOnline }
     : {
         status: 'error',

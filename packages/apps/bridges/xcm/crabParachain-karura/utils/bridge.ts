@@ -1,11 +1,13 @@
 import { BN } from '@polkadot/util';
+import omit from 'lodash/omit';
 import { Observable } from 'rxjs';
 import { CrossChainDirection, CrossToken, ParachainChainConfig, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
 import { toWei } from 'shared/utils/helper/balance';
+import { isRing } from 'shared/utils/helper/validator';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
-import { Bridge } from '../../../../core/bridge';
+import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { CrabParachainKaruraBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 
 export class CrabParachainKaruraBridge extends Bridge<
@@ -21,13 +23,17 @@ export class CrabParachainKaruraBridge extends Bridge<
     return toWei(departure).slice(0, -timestamp.length) + timestamp;
   }
 
-  back(payload: IssuingPayload): Observable<Tx> {
+  /**
+   * The fee is deducted from the transfer amount
+   */
+  back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const {
       direction: { from: departure, to: arrival },
       sender,
       recipient,
     } = payload;
     const amount = this.patchAmount(departure);
+    const transferAmount = new BN(amount).add(fee).toString();
     const api = entrance.polkadot.getInstance(departure.meta.provider);
     const palletInstance = 5;
 
@@ -70,7 +76,7 @@ export class CrabParachainKaruraBridge extends Bridge<
             }),
           }),
           fun: api.createType('XcmV1MultiassetFungibility', {
-            Fungible: api.createType('Compact<u128>', amount),
+            Fungible: api.createType('Compact<u128>', transferAmount),
           }),
         }),
       ],
@@ -82,13 +88,14 @@ export class CrabParachainKaruraBridge extends Bridge<
     return signAndSendExtrinsic(api, sender, extrinsic);
   }
 
-  burn(payload: RedeemPayload): Observable<Tx> {
+  burn(payload: RedeemPayload, fee: BN): Observable<Tx> {
     const {
       direction: { from: departure, to: arrival },
       sender,
       recipient,
     } = payload;
     const amount = this.patchAmount(departure);
+    const transferAmount = new BN(amount).add(fee).toString();
     const api = entrance.polkadot.getInstance(departure.meta.provider);
 
     const currencyId = api.createType('AcalaPrimitivesCurrencyCurrencyId', {
@@ -115,20 +122,21 @@ export class CrabParachainKaruraBridge extends Bridge<
     });
 
     const destWeight = 5_000_000_000;
-    const extrinsic = api.tx.xTokens.transfer(currencyId, amount, dest, destWeight);
+    const extrinsic = api.tx.xTokens.transfer(currencyId, transferAmount, dest, destWeight);
 
     return signAndSendExtrinsic(api, sender, extrinsic);
   }
 
   async getFee(
     direction: CrossChainDirection<CrossToken<ParachainChainConfig>, CrossToken<ParachainChainConfig>>
-  ): Promise<BN> {
+  ): Promise<TokenWithAmount> {
     const { from, to } = direction;
+    const token = omit(direction.from.meta.tokens.find((item) => isRing(item.symbol))!, ['amount', 'meta']);
 
     if (this.isIssue(from.host, to.host)) {
-      return new BN('92696000000000000');
+      return { ...token, amount: new BN('92696000000000000') } as TokenWithAmount;
     } else {
-      return new BN('3200000000000000000');
+      return { ...token, amount: new BN('3200000000000000000') } as TokenWithAmount;
     }
   }
 }

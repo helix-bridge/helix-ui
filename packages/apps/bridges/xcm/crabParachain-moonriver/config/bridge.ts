@@ -16,5 +16,6 @@ export const crabParachainMoonriver = new BridgeBase(
   {
     name: 'crabParachain-moonriver',
     category: 'XCM',
+    activeArrivalConnection: true,
   }
 );

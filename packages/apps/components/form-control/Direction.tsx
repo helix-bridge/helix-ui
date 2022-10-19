@@ -1,4 +1,5 @@
 import { PauseCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import { BN_ZERO } from '@polkadot/util';
 import { Tooltip } from 'antd';
 import BN from 'bn.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -6,18 +7,17 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
 import { ChainBase } from 'shared/core/chain';
 import { BridgeStatus, CrossChainDirection, CrossToken, CustomFormControlProps, HashInfo, Network } from 'shared/model';
-import { fromWei, largeNumber, prettyNumber } from 'shared/utils/helper/balance';
+import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { updateStorage } from 'shared/utils/helper/storage';
-import { getBridge, isSubstrateDVM2Ethereum, isSubstrateDVMSubstrateDVM } from 'utils/bridge';
+import { getBridge, isCBridge, isSubstrateDVMSubstrateDVM } from 'utils/bridge';
 import { bridgeFactory } from '../../bridges/bridges';
+import { TokenWithAmount } from '../../core/bridge';
 import { CountLoading } from '../widget/CountLoading';
 import { Destination } from './Destination';
 
-type Amount = { amount: number; symbol: string };
-
 type DirectionProps = CustomFormControlProps<CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>>> & {
   initial: CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>>;
-  fee: Amount | null;
+  fee: TokenWithAmount | null;
   balances: BN[] | null;
   isBalanceLoading: boolean;
   onRefresh?: () => void;
@@ -25,27 +25,24 @@ type DirectionProps = CustomFormControlProps<CrossChainDirection<CrossToken<Chai
 
 const MILLION = 1e6;
 
-const subFee = (payment: Amount, fee: Amount | null, mini: Amount = { symbol: '', amount: 0 }) => {
-  if (!fee) {
-    return payment.amount.toString();
+// eslint-disable-next-line complexity
+const subFee = (payment: TokenWithAmount, fee: TokenWithAmount | null, mini?: TokenWithAmount) => {
+  if (!fee || fee.symbol !== payment.symbol) {
+    return fromWei({ value: payment.amount.sub(mini?.amount ?? BN_ZERO), decimals: payment.decimals });
   }
 
-  if (fee.symbol === payment.symbol) {
-    const amount = Number(payment.amount) - fee.amount - mini.amount;
+  const amount = payment.amount.sub(fee.amount).sub(mini?.amount ?? BN_ZERO);
 
-    return amount >= 0 ? amount.toString() : '';
-  } else {
-    return payment.amount.toString();
-  }
+  return amount.gte(BN_ZERO) ? fromWei({ value: amount, decimals: payment.decimals }) : '';
 };
 
-const calcToAmount = (payment: Amount, fee: Amount | null, from: Network, to: Network) => {
+const calcToAmount = (payment: TokenWithAmount, fee: TokenWithAmount | null, from: Network, to: Network) => {
   let result: string;
 
-  if (isSubstrateDVM2Ethereum(from, to)) {
-    result = payment.amount.toString();
-  } else {
+  if (isCBridge(from, to)) {
     result = subFee(payment, fee);
+  } else {
+    result = fromWei(payment);
   }
 
   return result === '0' ? '' : result;
@@ -58,8 +55,8 @@ export function Direction({
   onChange,
   balances,
   onRefresh,
+  fee,
   isBalanceLoading = false,
-  fee = { amount: 0, symbol: '' },
 }: DirectionProps) {
   const data = value ?? initial;
   const { t } = useTranslation();
@@ -112,16 +109,11 @@ export function Direction({
       from: data.from,
       to: {
         ...data.to,
-        amount: calcToAmount(
-          { amount: +data.from.amount || 0, symbol: data.from.symbol },
-          fee,
-          data.from.host,
-          data.to.host
-        ),
+        amount: calcToAmount({ ...data.from, amount: new BN(toWei(data.from)) }, fee, data.from.host, data.to.host),
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fee?.amount, fee?.symbol]);
+  }, [fee?.amount.toString(), fee?.symbol]);
 
   return (
     <div className={`relative flex justify-between items-center flex-col`}>
@@ -129,12 +121,10 @@ export function Direction({
         title={t('From')}
         value={data.from}
         onChange={(from) => {
+          const toAmount = calcToAmount({ ...data.from, amount: new BN(toWei(from)) }, fee, from.host, data.to.host);
           triggerChange({
             from,
-            to: {
-              ...data.to,
-              amount: calcToAmount({ amount: +from.amount, symbol: data.from.symbol }, fee, from.host, data.to.host),
-            },
+            to: { ...data.to, amount: toAmount },
           });
         }}
       />
@@ -160,20 +150,19 @@ export function Direction({
                 const config = getBridge(data);
                 const bridge = bridgeFactory(config);
                 const mini = bridge.getMinimumFeeTokenHolding && bridge.getMinimumFeeTokenHolding(data);
-
-                const amount = subFee(
-                  { amount: +fromWei({ value: iBalance, decimals: from.decimals }), symbol: from.symbol },
-                  fee,
-                  mini ? { ...mini, amount: +fromWei(mini) } : undefined
-                );
+                const amount = subFee({ ...from, amount: iBalance }, fee, mini ?? undefined);
 
                 if (amount !== from.amount) {
+                  const toAmount = calcToAmount(
+                    { ...from, amount: new BN(toWei({ ...from, amount })) },
+                    fee,
+                    from.host,
+                    to.host
+                  );
+
                   triggerChange({
                     from: { ...from, amount },
-                    to: {
-                      ...to,
-                      amount: calcToAmount({ amount: +amount, symbol: from.symbol }, fee, from.host, to.host),
-                    },
+                    to: { ...to, amount: toAmount },
                   });
                 }
               }}

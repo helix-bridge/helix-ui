@@ -13,9 +13,11 @@ import {
 } from 'shared/model';
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
+import { isNativeToken } from 'shared/utils/helper/validator';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { getBridge, isSubstrateDVM2Ethereum } from 'utils/bridge';
-import { Bridge, MinimumFeeTokenHolding } from '../../../../core/bridge';
+import { Bridge, TokenWithAmount } from '../../../../core/bridge';
+import { AllowancePayload } from '../../../../model/allowance';
 import { getWrappedToken } from '../../../../utils/network';
 import backingAbi from '../config/backing.json';
 import guardAbi from '../config/guard.json';
@@ -40,6 +42,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       amount.toString(),
       { from: sender, value: departure.type === 'native' ? amount.add(fee).toString() : fee.toString() },
     ];
+    console.log('%cbridge.ts line:45 params', 'color: white; background-color: #007acc;', params, fee.toString());
     const { method, args } =
       departure.type === 'native'
         ? { method: 'lockAndRemoteIssuingNative', args: params.slice(1) }
@@ -146,7 +149,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       CrossToken<DVMChainConfig | EthereumChainConfig>
     >,
     useWallerProvider = false
-  ): Promise<BN> {
+  ): Promise<TokenWithAmount | null> {
     const {
       from: { meta: departure },
       to: { meta: arrival },
@@ -163,9 +166,13 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       useWallerProvider ? entrance.web3.currentProvider : entrance.web3.getInstance(direction.from.meta.provider)
     );
 
-    const fee = await contract.currentFee();
+    try {
+      const fee = await contract.currentFee();
 
-    return new BN(fee.toString());
+      return { ...direction.from.meta.tokens.find(isNativeToken)!, amount: new BN(fee.toString()) };
+    } catch {
+      return null;
+    }
   }
 
   async getDailyLimit(
@@ -186,9 +193,13 @@ export class SubstrateDVMEthereumBridge extends Bridge<
 
     const contract = new Contract(address as string, abi, entrance.web3.getInstance(direction.to.meta.provider));
 
-    const limit = await contract.calcMaxWithdraw(type === 'native' ? getWrappedToken(arrival).address : tokenAddress);
+    try {
+      const limit = await contract.calcMaxWithdraw(type === 'native' ? getWrappedToken(arrival).address : tokenAddress);
 
-    return { limit: limit.toString(), spentToday: '0' };
+      return { limit: limit.toString(), spentToday: '0' };
+    } catch {
+      return null;
+    }
   }
 
   getMinimumFeeTokenHolding(
@@ -196,11 +207,31 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       CrossToken<DVMChainConfig | EthereumChainConfig>,
       CrossToken<DVMChainConfig | EthereumChainConfig>
     >
-  ): MinimumFeeTokenHolding | null {
+  ): TokenWithAmount | null {
     const { from: dep, to } = direction;
 
     if (this.isIssue(dep.meta, to.meta) && dep.type === 'native') {
       return { ...dep, amount: new BN(toWei({ value: 1, decimals: dep.decimals })) };
+    }
+
+    return null;
+  }
+
+  async getAllowancePayload(
+    direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<EthereumChainConfig>>
+  ): Promise<AllowancePayload | null> {
+    if (direction.from.type === 'erc20' && this.isIssue(direction.from.host, direction.to.host)) {
+      return {
+        spender: this.config.contracts.backing,
+        tokenAddress: direction.from.address || getWrappedToken(direction.from.meta).address,
+      };
+    }
+
+    if (this.isRedeem(direction.from.host, direction.to.host)) {
+      return {
+        spender: this.config.contracts.issuing,
+        tokenAddress: direction.from.address,
+      };
     }
 
     return null;

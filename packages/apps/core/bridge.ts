@@ -12,25 +12,39 @@ import {
   BridgeConfig,
   ChainConfig,
   CrossChainDirection,
+  CrossChainPureDirection,
   CrossToken,
   DailyLimit,
   HelixHistoryRecord,
   Network,
+  NullableFields,
   Token,
+  TokenInfoWithMeta,
   TokenWithBridgesInfo,
   Tx,
 } from 'shared/model';
-import { toWei } from 'shared/utils/helper/balance';
-import { TxValidationMessages } from '../config/validation';
+import { fromWei, toWei } from 'shared/utils/helper/balance';
+import { AllowancePayload } from '../model/allowance';
 import { CrossChainPayload } from '../model/tx';
-import { TxValidation } from '../model/validation';
-import { isSubstrateSubstrateParachain, isXCM } from '../utils';
+import { isCBridge, isXCM } from '../utils';
 
-export interface MinimumFeeTokenHolding extends Token {
-  symbol: string;
-  decimals: number;
+export interface TokenWithAmount extends Token {
   amount: BN; // with precision
 }
+
+type TokenWithNullableAmount = NullableFields<TokenWithAmount, 'amount'>;
+
+interface TxValidation {
+  balance: TokenWithAmount;
+  dailyLimit: TokenWithNullableAmount;
+  allowance: TokenWithNullableAmount;
+  feeTokenBalance: TokenWithAmount;
+  fee: TokenWithAmount;
+}
+
+export type PayloadPatchFn = (
+  value: CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>
+) => CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>> | null;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Target extends ChainConfig>
@@ -38,10 +52,10 @@ export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Targ
   claim?(record: HelixHistoryRecord): Observable<Tx>;
   refund?(record: HelixHistoryRecord): Observable<Tx>;
   getDailyLimit?(
-    direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>
+    direction: CrossChainPureDirection<TokenInfoWithMeta<Origin | Target>, TokenInfoWithMeta<Origin | Target>>
   ): Promise<DailyLimit | null>;
-  getFee?(direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>): Promise<BN>;
-  getMinimumFeeTokenHolding?(direction: CrossChainDirection): MinimumFeeTokenHolding | null;
+  getMinimumFeeTokenHolding?(direction: CrossChainPureDirection): TokenWithAmount | null;
+  getAllowancePayload?(direction: CrossChainPureDirection): Promise<AllowancePayload | null>;
 }
 
 export abstract class Bridge<
@@ -55,8 +69,6 @@ export abstract class Bridge<
    * @see https://github.com/helix-bridge/helix-ui/issues/334
    */
   static readonly alias: string;
-
-  protected readonly txValidationMessages = TxValidationMessages;
 
   send(
     payload: CrossChainPayload<BridgeBase<B>, CrossToken<Origin | Target>, CrossToken<Target | Origin>>,
@@ -73,15 +85,20 @@ export abstract class Bridge<
     }
   }
 
-  abstract back(
+  protected abstract back(
     payload: CrossChainPayload<BridgeBase<B>, CrossToken<Origin>, CrossToken<Target>>,
     fee?: BN
   ): Observable<Tx>;
 
-  abstract burn(
+  protected abstract burn(
     payload: CrossChainPayload<BridgeBase<B>, CrossToken<Target>, CrossToken<Origin>>,
     fee?: BN
   ): Observable<Tx>;
+
+  abstract getFee(
+    direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>,
+    account?: string | boolean // boolean: useWalletProvider
+  ): Promise<TokenWithAmount | null>;
 
   // eslint-disable-next-line complexity
   validate(
@@ -91,34 +108,51 @@ export abstract class Bridge<
     const {
       direction: { from, to },
     } = payload;
-    const amount = new BN(
-      toWei({
-        value: from.amount,
-        decimals: isSubstrateSubstrateParachain(from.host, to.host) ? to.decimals : from.decimals,
-      })
+    const amount = new BN(toWei(from));
+    const { balance: originBalance, allowance, dailyLimit, fee, feeTokenBalance } = options;
+    const minAmount = this.getMinimumFeeTokenHolding && this.getMinimumFeeTokenHolding(payload.direction);
+    const balance = minAmount ? originBalance.amount.sub(minAmount.amount) : originBalance.amount;
+    console.log(
+      '%cbridge.ts line:107 balance',
+      'color: white; background-color: #007acc;',
+      originBalance.amount.toString(),
+      balance.toString(),
+      amount.toString(),
+      allowance.amount?.toString(),
+      minAmount?.amount?.toString(),
+      dailyLimit.amount?.toString(),
+      fee.amount?.toString(),
+      feeTokenBalance.amount?.toString(),
+      amount.add(fee.amount).toString()
     );
-    const { balance: originBalance, allowance, minAmount, dailyLimit, fee, feeTokenBalance } = options;
-    const min = this.getMinimumFeeTokenHolding && this.getMinimumFeeTokenHolding(payload.direction);
-    const balance = min ? originBalance.sub(min.amount) : originBalance;
 
     /**
      * if from.symbol === feeToken.symbol  -> fee + amount < balance
      * else -> fee < feeToken
      */
     const result = [
-      [balance.lt(amount), this.txValidationMessages.balanceLessThanAmount],
-      [!!allowance && allowance.lt(amount), this.txValidationMessages.allowanceLessThanAmount],
-      [!!dailyLimit && dailyLimit.lt(amount), this.txValidationMessages.dailyLimitLessThanAmount],
-      [!!fee && fee.lt(BN_ZERO), this.txValidationMessages.invalidFee],
-      [!!feeTokenBalance && feeTokenBalance.lt(fee!), this.txValidationMessages.balanceLessThanFee],
-      [!!minAmount && minAmount.gt(amount), `Transfer amount must greater than or equal to ${minAmount}`],
-      [isXCM(from.host, to.host) && !Number.isInteger(+from.amount), this.txValidationMessages.mustBeAnInteger],
+      // validate existence
+      [!from.amount, 'Transfer amount is required'],
+      [!to.amount || +to.amount < 0, 'Transfer amount invalid'],
+      [!fee || fee.amount.lt(BN_ZERO), 'Failed to get fee'],
+      [!!this.getAllowancePayload && !allowance, 'Failed to get allowance'],
+      [!!this.getDailyLimit && !dailyLimit, 'Failed to get daily limit'],
+      // validate logic
+      [isCBridge(from.host, to.host) ? balance.lt(amount) : balance.lt(amount.add(fee.amount)), 'Insufficient balance'],
+      [!!allowance.amount && allowance.amount.lt(amount), 'Insufficient allowance'],
+      [
+        !!dailyLimit.amount && new BN(toWei({ value: fromWei(dailyLimit), decimals: from.decimals })).lt(amount),
+        'Insufficient daily limit',
+      ], // keep decimals consistent
+      [!!feeTokenBalance && feeTokenBalance.amount.lt(fee.amount), 'Insufficient balance to pay fee'],
+      [!!minAmount && minAmount.amount.gt(amount), `Transfer amount must greater than or equal to ${minAmount}`],
+      [isXCM(from.host, to.host) && !Number.isInteger(+from.amount), 'Transfer Amount must be integer'],
     ].find((item) => item[0]);
 
     return of(result && result[1]).pipe(
       switchMap((res) => {
         if (isString(res)) {
-          return throwError(() => <Pick<Tx, 'error' | 'status'>>{ error: new Error(res), status: 'error' });
+          return throwError(() => ({ error: new Error(res), status: 'error' } as Pick<Tx, 'error' | 'status'>));
         } else if (isBoolean(res)) {
           return EMPTY;
         } else {

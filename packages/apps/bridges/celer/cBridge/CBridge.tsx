@@ -1,19 +1,16 @@
 import { Button, message, Tooltip } from 'antd';
-import BN from 'bn.js';
 import isNaN from 'lodash/isNaN';
 import { i18n, Trans, useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { initReactI18next } from 'react-i18next';
 import { from } from 'rxjs/internal/observable/from';
 import { of } from 'rxjs/internal/observable/of';
-import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { Logo } from 'shared/components/widget/Logo';
 import { FORM_CONTROL } from 'shared/config/constant';
 import { CrossToken, EthereumChainConfig } from 'shared/model';
-import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
-import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
-import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
+import { isMetamaskChainConsistent } from 'shared/utils/connection';
+import { fromWei } from 'shared/utils/helper/balance';
 
 import { RecipientItem } from '../../../components/form-control/RecipientItem';
 import {
@@ -22,15 +19,12 @@ import {
   SLIPPAGE_SCALE,
   UI_SLIPPAGE_SCALE,
 } from '../../../components/form-control/Slippage';
-import { TransferConfirm } from '../../../components/tx/TransferConfirm';
-import { TransferDone } from '../../../components/tx/TransferDone';
 import { CrossChainInfo } from '../../../components/widget/CrossChainInfo';
-import { useAfterTx } from '../../../hooks';
 import { CrossChainComponentProps } from '../../../model/component';
-import { CrossChainPayload, TxObservableFactory } from '../../../model/tx';
+import { PayloadPatchFn } from '../../../core/bridge';
 import { useAccount, useWallet } from '../../../providers';
 import { IssuingPayload } from './model';
-import { EstimateAmtRequest, EstimateAmtResponse } from './ts-proto/gateway/gateway_pb';
+import { EstimateAmtResponse } from './ts-proto/gateway/gateway_pb';
 import { CBridgeBridge } from './utils';
 
 export function CBridge({
@@ -38,13 +32,10 @@ export function CBridge({
   form,
   bridge,
   direction,
-  balances,
-  onFeeChange,
-  setTxObservableFactory,
-  updateAllowancePayload,
+  fee,
+  updatePayload,
 }: CrossChainComponentProps<CBridgeBridge, CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>) {
   const { t } = useTranslation();
-  const { afterCrossChain } = useAfterTx<CrossChainPayload>();
   const { account } = useAccount();
   const [estimateResult, setEstimateResult] = useState<EstimateAmtResponse.AsObject | null>(null);
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE * UI_SLIPPAGE_SCALE);
@@ -52,18 +43,6 @@ export function CBridge({
   const { setChainMatched } = useWallet();
 
   const isPegged = useMemo(() => bridge.isPegged(direction), [bridge, direction]);
-
-  const feeWithSymbol = useMemo(
-    () =>
-      estimateResult && {
-        amount: fromWei({
-          value: new BN(estimateResult.baseFee).add(new BN(estimateResult.percFee)),
-          decimals: direction.to.decimals,
-        }),
-        symbol: direction.from.symbol,
-      },
-    [direction.to.decimals, direction.from.symbol, estimateResult]
-  );
 
   const extraInfo = useMemo(() => {
     if (!estimateResult) {
@@ -137,25 +116,6 @@ export function CBridge({
   }, [bridge, direction, isPegged, setChainMatched]);
 
   useEffect(() => {
-    let promise = Promise.resolve({});
-
-    if (direction.from.host === 'polygon') {
-      promise = entrance.web3.currentProvider.getGasPrice().then((res) => ({
-        gasPrice: new BN(res.toString()).add(new BN(res.toString()).div(new BN(10))).toString(),
-      }));
-    }
-
-    promise.then((options) => {
-      updateAllowancePayload({
-        spender: bridge.getPoolAddress(direction),
-        tokenAddress: direction.from.address,
-        provider: entrance.web3.defaultProvider,
-        ...options,
-      });
-    });
-  }, [bridge, direction, updateAllowancePayload]);
-
-  useEffect(() => {
     form.setFieldsValue({ [FORM_CONTROL.recipient]: account });
   }, [form, account]);
 
@@ -163,13 +123,12 @@ export function CBridge({
     const fn = () => (data: Omit<IssuingPayload, 'maxSlippage'>) => {
       if (!estimateResult) {
         message.error('Network error, try again later');
-        return;
+        return null;
       }
 
-      const validateObs = data.bridge.validate(data, { balance: balances![0], allowance });
       const { estimatedReceiveAmt, maxSlippage } = estimateResult;
 
-      const payload = {
+      return {
         ...data,
         direction: {
           ...data.direction,
@@ -180,100 +139,14 @@ export function CBridge({
         },
         maxSlippage,
       };
-
-      return createTxWorkflow(
-        validateObs.pipe(
-          mergeMap(() =>
-            applyModalObs({
-              content: <TransferConfirm value={payload} fee={feeWithSymbol!}></TransferConfirm>,
-            })
-          )
-        ),
-        () => bridge.send(payload),
-        afterCrossChain(TransferDone, { payload })
-      );
     };
 
-    setTxObservableFactory(fn as unknown as TxObservableFactory);
-  }, [
-    afterCrossChain,
-    allowance,
-    balances,
-    bridge,
-    direction.from,
-    direction.to.decimals,
-    estimateResult,
-    feeWithSymbol,
-    setTxObservableFactory,
-  ]);
+    updatePayload(fn as unknown as PayloadPatchFn);
+  }, [direction.to.decimals, estimateResult, updatePayload]);
 
-  // eslint-disable-next-line complexity
   useEffect(() => {
-    if (!direction.from.amount || !account) {
-      setEstimateResult(null);
-
-      if (onFeeChange) {
-        onFeeChange(null);
-      }
-
-      return;
-    }
-
-    const estimateRequest = new EstimateAmtRequest();
-    const srcChainId = parseInt(direction.from.meta.ethereumChain.chainId, 16);
-    const dstChainId = parseInt(direction.to.meta.ethereumChain.chainId, 16);
-    const symbol = direction.from.symbol.startsWith('x')
-      ? direction.from.symbol.slice(1)
-      : direction.from.symbol.split('.')[0]; // as RING for avalanche the token symbol has suffix .e, remove it here
-    const amount = toWei({ value: direction.from.amount, decimals: direction.from.decimals });
-
-    estimateRequest.setSrcChainId(srcChainId);
-    estimateRequest.setDstChainId(dstChainId);
-    estimateRequest.setTokenSymbol(symbol);
-    estimateRequest.setUsrAddr(account);
-    estimateRequest.setSlippageTolerance(slippage);
-    estimateRequest.setAmt(amount);
-
-    if (isPegged) {
-      estimateRequest.setIsPegged(true);
-    }
-
-    const sub$$ = from(bridge.client.estimateAmt(estimateRequest, null)).subscribe({
-      next(res) {
-        const result = res.toObject();
-        const { estimatedReceiveAmt } = result;
-        const fee =
-          Number(direction.from.amount) -
-          Number(fromWei({ value: estimatedReceiveAmt, decimals: direction.to.decimals }));
-
-        setEstimateResult(result);
-
-        if (onFeeChange) {
-          onFeeChange({
-            amount: fee,
-            symbol: direction.from.symbol,
-          });
-        }
-      },
-      error(error) {
-        console.warn('🚨 Estimate amount error', error);
-      },
-    });
-
-    return () => sub$$.unsubscribe();
-  }, [
-    account,
-    bridge.client,
-    direction.from.amount,
-    direction.from.decimals,
-    direction.from.meta.ethereumChain.chainId,
-    direction.from.symbol,
-    direction.to.decimals,
-    direction.to.meta.ethereumChain.chainId,
-    isPegged,
-    onFeeChange,
-    slippage,
-  ]);
+    bridge.getEstimateResult(direction, account).then((res) => setEstimateResult(res));
+  }, [bridge, account, direction]);
 
   return (
     <>
@@ -308,24 +181,11 @@ export function CBridge({
 
       <CrossChainInfo
         bridge={bridge}
-        fee={feeWithSymbol}
         isDynamicFee
-        extra={[
-          {
-            name: t('Allowance'),
-            content: (
-              <span>
-                <span>
-                  {fromWei({ value: allowance }, largeNumber, (num: string) =>
-                    prettyNumber(num, { ignoreZeroDecimal: true })
-                  )}
-                </span>
-                <span className="ml-1">{direction.from.symbol}</span>
-              </span>
-            ),
-          },
-          ...extraInfo,
-        ]}
+        fee={fee}
+        direction={direction}
+        allowance={allowance}
+        extra={extraInfo}
       ></CrossChainInfo>
     </>
   );

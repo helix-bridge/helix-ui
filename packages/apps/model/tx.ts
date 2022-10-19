@@ -1,7 +1,5 @@
-import type { Observable } from 'rxjs';
 import { BridgeBase } from 'shared/core/bridge';
 import { CrossChainDirection, CrossToken } from 'shared/model/bridge/cross-chain';
-import { Tx } from 'shared/model/tx';
 
 interface CrossChainParty {
   recipient: string;
@@ -17,5 +15,3 @@ export interface CrossChainPayload<
   direction: CrossChainDirection<F, T>;
   slippage?: number;
 }
-
-export type TxObservableFactory = (value: CrossChainPayload) => Observable<Tx>;

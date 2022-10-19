@@ -2,6 +2,7 @@ import { BN, hexToBn } from '@polkadot/util';
 import { Contract } from 'ethers';
 import { base64, getAddress, hexlify } from 'ethers/lib/utils';
 import last from 'lodash/last';
+import omit from 'lodash/omit';
 import { Observable } from 'rxjs';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { from } from 'rxjs/internal/observable/from';
@@ -10,20 +11,39 @@ import { CrossChainDirection, CrossToken, EthereumChainConfig, HelixHistoryRecor
 import { entrance } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
-import { Bridge } from '../../../../core/bridge';
+import { DEFAULT_SLIPPAGE, UI_SLIPPAGE_SCALE } from '../../../../components/form-control/Slippage';
+import { Bridge, TokenWithAmount } from '../../../../core/bridge';
+import { AllowancePayload } from '../../../../model/allowance';
 import transferAbi from '../config/abi/bridge.json';
 import depositAbi from '../config/abi/OriginalTokenVaultV2.json';
 import burnAbi from '../config/abi/PeggedTokenBridgeV2.json';
 import { CBridgeBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 import { WebClient } from '../ts-proto/gateway/GatewayServiceClientPb';
-import { GetTransferStatusRequest, WithdrawLiquidityRequest, WithdrawMethodType } from '../ts-proto/gateway/gateway_pb';
+import {
+  EstimateAmtRequest,
+  EstimateAmtResponse,
+  GetTransferStatusRequest,
+  WithdrawLiquidityRequest,
+  WithdrawMethodType,
+} from '../ts-proto/gateway/gateway_pb';
 import { WithdrawReq, WithdrawType } from '../ts-proto/sgn/cbridge/v1/tx_pb';
 
 export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConfig, EthereumChainConfig> {
   static readonly alias = 'CBridgeBridge';
 
   private prefix = hexToBn('0x6878000000000000');
+
   public client = new WebClient(`https://cbridge-prod2.celer.network`, null, null);
+
+  private _slippage = DEFAULT_SLIPPAGE * UI_SLIPPAGE_SCALE;
+
+  set slippage(value: number) {
+    this._slippage = value;
+  }
+
+  get slippage() {
+    return this._slippage;
+  }
 
   send(payload: IssuingPayload | RedeemPayload) {
     const { direction } = payload;
@@ -243,5 +263,82 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
     }
 
     return this.isIssue(departure.host, to.host) ? this.config.contracts.backing : this.config.contracts.issuing;
+  }
+
+  async getAllowancePayload(
+    direction: CrossChainDirection<CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>
+  ): Promise<AllowancePayload> {
+    let options = {};
+
+    if (direction.from.host === 'polygon') {
+      options = await entrance.web3.currentProvider.getGasPrice().then((res) => ({
+        gasPrice: new BN(res.toString()).add(new BN(res.toString()).div(new BN(10))).toString(),
+      }));
+    }
+
+    return {
+      spender: this.getPoolAddress(direction),
+      tokenAddress: direction.from.address,
+      provider: entrance.web3.defaultProvider,
+      ...options,
+    };
+  }
+
+  // eslint-disable-next-line complexity
+  async getEstimateResult(
+    direction: CrossChainDirection<CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>,
+    account?: string
+  ): Promise<EstimateAmtResponse.AsObject | null> {
+    if (!direction.from.amount || !account) {
+      return null;
+    }
+
+    const estimateRequest = new EstimateAmtRequest();
+    const srcChainId = parseInt(direction.from.meta.ethereumChain.chainId, 16);
+    const dstChainId = parseInt(direction.to.meta.ethereumChain.chainId, 16);
+    const symbol = direction.from.symbol.startsWith('x')
+      ? direction.from.symbol.slice(1)
+      : direction.from.symbol.split('.')[0]; // as RING for avalanche the token symbol has suffix .e, remove it here
+    const amount = toWei({ value: direction.from.amount, decimals: direction.from.decimals });
+
+    estimateRequest.setSrcChainId(srcChainId);
+    estimateRequest.setDstChainId(dstChainId);
+    estimateRequest.setTokenSymbol(symbol);
+    estimateRequest.setUsrAddr(account);
+    estimateRequest.setSlippageTolerance(this.slippage);
+    estimateRequest.setAmt(amount);
+
+    if (this.isPegged(direction)) {
+      estimateRequest.setIsPegged(true);
+    }
+
+    try {
+      const res = await this.client.estimateAmt(estimateRequest, null);
+
+      return res.toObject();
+    } catch (error) {
+      console.warn('🚨 Estimate amount error', error);
+
+      return null;
+    }
+  }
+
+  async getFee(
+    direction: CrossChainDirection<CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>,
+    account?: string | undefined
+  ): Promise<TokenWithAmount | null> {
+    const result = await this.getEstimateResult(direction, account);
+
+    if (result) {
+      const { baseFee, percFee } = result;
+
+      return {
+        ...omit(direction.from, ['meta', 'amount']),
+        decimals: direction.to.decimals,
+        amount: new BN(baseFee).add(new BN(percFee)),
+      };
+    } else {
+      return null;
+    }
   }
 }

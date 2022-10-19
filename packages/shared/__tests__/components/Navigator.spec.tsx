@@ -1,7 +1,6 @@
 /// <reference types="jest" />
 
-import { render, screen } from '@testing-library/react';
-import React from 'react';
+import { render } from '@testing-library/react';
 import { act, create } from 'react-test-renderer';
 import { getActiveNav, Navigator } from '../../components/Navigator';
 import { THEME } from '../../config/theme';
@@ -28,7 +27,7 @@ jest.mock('next/router', () => ({
 
 describe('<Navigator />', () => {
   it('render navigator', async () => {
-    let component;
+    let component: any;
 
     await act(async () => {
       component = create(
@@ -46,7 +45,7 @@ describe('<Navigator />', () => {
   });
 
   it('should hide docs', async () => {
-    let component;
+    let component: any;
 
     await act(async () => {
       component = create(
@@ -63,7 +62,7 @@ describe('<Navigator />', () => {
   });
 
   it('should render on small screen size', async () => {
-    let component;
+    let component: any;
 
     await act(async () => {
       component = create(<Navigator navigators={[{ label: 'Home', path: '/' }]} />);
@@ -87,7 +86,7 @@ describe('<Navigator />', () => {
     });
 
     act(() => {
-      const ele = document.querySelector('[data-menu-id="rc-menu-uuid-test-/"]') as HTMLElement;
+      const ele = document.querySelector('[data-menu-id="rc-menu-uuid-test-Home"]') as HTMLElement;
 
       ele.click();
       expect(fn).toBeCalled();

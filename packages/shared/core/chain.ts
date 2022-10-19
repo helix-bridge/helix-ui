@@ -13,6 +13,7 @@ import {
 import { CrossChainDirection, TokenInfoWithMeta } from '../model/bridge';
 import { Logo, ParachainEthereumCompatibleChainConfig, Social, TokenWithBridgesInfo } from '../model/network/config';
 import { Network, ParachainEthereumCompatibleNetwork, SupportedWallet } from '../model/network/network';
+import { isRing } from '../utils/helper/validator';
 import {
   getDarwiniaBalance,
   getErc20Balance,
@@ -59,10 +60,14 @@ export class PolkadotChain extends ChainBase implements PolkadotChainConfig {
     this.name = config.name;
   }
 
-  getBalance(direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>, account: string): Promise<BN[]> {
+  async getBalance(
+    direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>,
+    account: string
+  ): Promise<BN[]> {
     const { from } = direction;
+    const [ring, kton] = await getDarwiniaBalance(from.meta.provider, account);
 
-    return getDarwiniaBalance(from.meta.provider, account);
+    return isRing(from.symbol) ? [ring, ring] : [kton, ring];
   }
 }
 
@@ -107,8 +112,9 @@ export class ParachainChain extends PolkadotChain implements ParachainChainConfi
     account: string
   ): Promise<BN[]> {
     const { from } = direction;
+    const balance = await getParachainBalance(from, account);
 
-    return getParachainBalance(from, account).then((balance) => [balance]);
+    return [balance, balance];
   }
 }
 
@@ -132,13 +138,14 @@ export class DVMChain extends EthereumChain implements DVMChainConfig {
   ): Promise<BN[]> {
     const { from } = direction;
     const tokenAddress = from.address;
+    const httpsProvider = from.meta.provider.replace('https', 'wss');
 
     if (from.type === 'native') {
-      return getEthereumNativeBalance(account, from.meta.provider).then((balance) => [balance, balance]);
+      return getEthereumNativeBalance(account, httpsProvider).then((balance) => [balance, balance]);
     } else {
       return Promise.all([
-        getErc20Balance(tokenAddress, account, from.meta.provider),
-        getEthereumNativeBalance(account, from.meta.provider),
+        getErc20Balance(tokenAddress, account, httpsProvider),
+        getEthereumNativeBalance(account, httpsProvider),
       ]);
     }
   }

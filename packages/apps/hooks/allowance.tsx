@@ -7,22 +7,12 @@ import type { CrossChainDirection } from 'shared/model';
 import { applyModalObs, approveToken, createTxWorkflow, getAllowance } from 'shared/utils/tx';
 import { ApproveConfirm } from '../components/tx/ApproveConfirm';
 import { ApproveDone } from '../components/tx/ApproveSuccess';
+import { AllowancePayload } from '../model/allowance';
 import type { CrossChainPayload } from '../model/tx';
 import { useAccount, useTx, useWallet } from '../providers';
 import { useAfterTx } from './tx';
 
 type ApproveValue = CrossChainPayload;
-
-interface ApproveOptions {
-  gas?: string;
-  gasPrice?: string;
-  provider?: string;
-}
-
-export interface AllowancePayload extends ApproveOptions {
-  spender: string;
-  tokenAddress: string;
-}
 
 export function useAllowance(direction: CrossChainDirection) {
   const { t } = useITranslation();
