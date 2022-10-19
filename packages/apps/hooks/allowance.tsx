@@ -63,7 +63,13 @@ export function useAllowance(direction: CrossChainDirection) {
           payload: value as ApproveValue,
           onDisappear: () => queryAllowance(payload),
         })
-      ).subscribe(observer);
+      ).subscribe({
+        ...observer,
+        complete() {
+          observer.complete();
+          queryAllowance(payload);
+        },
+      });
     },
     [account, afterApprove, direction, matched, observer, queryAllowance, t]
   );

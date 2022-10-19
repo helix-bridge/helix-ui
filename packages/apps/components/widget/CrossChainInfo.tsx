@@ -1,6 +1,6 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { BN } from '@polkadot/util';
-import { Form, Tooltip } from 'antd';
+import { Form, Tag, Tooltip } from 'antd';
 import { PropsWithChildren, ReactNode, useMemo } from 'react';
 import { useITranslation } from 'shared/hooks/translation';
 import { BridgeConfig, ChainConfig, ContractConfig, CrossChainDirection, DailyLimit } from 'shared/model';
@@ -102,6 +102,12 @@ export function CrossChainInfo({
     return null;
   }, [allowance, bridge.getAllowancePayload, departureConnection.type, direction.from.symbol, direction.from.type, t]);
 
+  const needClaim = useMemo(() => {
+    const overview = direction.from?.cross.find((item) => item.partner.name === direction.to?.meta.name);
+
+    return !!overview?.partner.claim;
+  }, [direction]);
+
   return (
     <Form.Item label={t('Information')} className="relative">
       <div className="w-full flex flex-col justify-center space-y-2 p-4 bg-gray-900">
@@ -109,6 +115,15 @@ export function CrossChainInfo({
           <span>{t('Bridge Name')}</span>
           <span>{bridgeCategoryDisplay(bridge?.category)}</span>
         </div>
+
+        {needClaim && (
+          <div className={`flex justify-between items-center`}>
+            <span>{t('Claim')}</span>
+            <Tag color="cyan" className="mr-0">
+              {t('Need Claim')}
+            </Tag>
+          </div>
+        )}
 
         <div className={`flex justify-between items-center`}>
           <span>{t('Transaction Fee')}</span>
