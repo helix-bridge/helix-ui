@@ -262,6 +262,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
 
             if (!isSameBridge) {
               setBridge(value || null);
+              setDailyLimit(null);
             }
           }}
         />
