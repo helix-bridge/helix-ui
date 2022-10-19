@@ -130,7 +130,7 @@ export abstract class Bridge<
      * if from.symbol === feeToken.symbol  -> fee + amount < balance
      * else -> fee < feeToken
      */
-    const result = [
+    const validations = [
       // validate existence
       [!from.amount, 'Transfer amount is required'],
       [!to.amount || +to.amount < 0, 'Transfer amount invalid'],
@@ -147,7 +147,8 @@ export abstract class Bridge<
       [!!feeTokenBalance && feeTokenBalance.amount.lt(fee.amount), 'Insufficient balance to pay fee'],
       [!!minAmount && minAmount.amount.gt(amount), `Transfer amount must greater than or equal to ${minAmount}`],
       [isXCM(from.host, to.host) && !Number.isInteger(+from.amount), 'Transfer Amount must be integer'],
-    ].find((item) => item[0]);
+    ];
+    const result = validations.find((item) => item[0]);
 
     return of(result && result[1]).pipe(
       switchMap((res) => {
