@@ -1,5 +1,5 @@
 import { InfoCircleOutlined, WarningFilled } from '@ant-design/icons';
-import { Col, Form, Input, message, Row, Tooltip } from 'antd';
+import { Form, Input, message, Tooltip } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import BN from 'bn.js';
 import identity from 'lodash/identity';
@@ -179,216 +179,210 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
       form={form}
       initialValues={{ direction }}
       validateMessages={validateMessages[i18n.language as 'en' | 'zh-CN' | 'zh']}
+      className="mb-4 sm:mb-0 bg-antDark p-5 mx-auto lg:w-1/2 w-full"
     >
-      <Row>
-        <Col xs={24} sm={8} className={`mb-4 sm:mb-0 bg-antDark p-5`}>
-          <Form.Item
-            name={FORM_CONTROL.direction}
-            className="mb-0"
-            rules={[
-              {
-                validator: (_, val: CrossChainDirection) => {
-                  const {
-                    from: { amount, decimals },
-                  } = val;
+      <Form.Item
+        name={FORM_CONTROL.direction}
+        className="mb-0"
+        rules={[
+          {
+            validator: (_, val: CrossChainDirection) => {
+              const {
+                from: { amount, decimals },
+              } = val;
 
-                  if (!amount) {
-                    return Promise.resolve();
-                  }
+              if (!amount) {
+                return Promise.resolve();
+              }
 
-                  const decimalCount = amount.toString().split('.')[1]?.length;
+              const decimalCount = amount.toString().split('.')[1]?.length;
 
-                  if (decimalCount && decimalCount > decimals) {
-                    return Promise.reject(
-                      `Maximum number of digits is ${decimals}, excess digits will be ignored. Your input ${amount} will be treat as ${truncate(
-                        amount,
-                        decimals
-                      )}`
-                    );
-                  } else {
-                    return Promise.resolve();
-                  }
-                },
-              },
-            ]}
-          >
-            <Direction
-              fee={fee}
-              balances={balances}
-              isBalanceLoading={isBalanceLoading}
-              initial={direction}
-              onRefresh={() => {
-                setIsBalanceLoading(true);
+              if (decimalCount && decimalCount > decimals) {
+                return Promise.reject(
+                  `Maximum number of digits is ${decimals}, excess digits will be ignored. Your input ${amount} will be treat as ${truncate(
+                    amount,
+                    decimals
+                  )}`
+                );
+              } else {
+                return Promise.resolve();
+              }
+            },
+          },
+        ]}
+      >
+        <Direction
+          fee={fee}
+          balances={balances}
+          isBalanceLoading={isBalanceLoading}
+          initial={direction}
+          onRefresh={() => {
+            setIsBalanceLoading(true);
 
-                fromRx(direction.from.meta.getBalance(direction, account)).subscribe((result) => {
-                  setBalances(result);
-                  setIsBalanceLoading(false);
+            fromRx(direction.from.meta.getBalance(direction, account)).subscribe((result) => {
+              setBalances(result);
+              setIsBalanceLoading(false);
+            });
+          }}
+          onChange={(value) => {
+            if (isDirectionChanged(direction, value)) {
+              setBridge(null);
+              setPatchPayload(() => identity);
+              form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined, [FORM_CONTROL.recipient]: undefined });
+              setPureDirection({ from: omit(value.from, 'amount'), to: omit(value.to, 'amount') });
+            }
+
+            setDirection(value);
+            setDeparture(value.from.meta);
+          }}
+        />
+      </Form.Item>
+
+      <Form.Item
+        name={FORM_CONTROL.bridge}
+        rules={[
+          {
+            validator(_r, value: unknown) {
+              if (!value) {
+                message.error(t('Please select a bridge first!'));
+                return Promise.reject();
+              }
+
+              return Promise.resolve();
+            },
+          },
+        ]}
+        className="mb-0 hidden"
+      >
+        <BridgeSelector
+          direction={direction}
+          onChange={(value) => {
+            const isSameBridge =
+              Object.getPrototypeOf(value).constructor.alias === Object.getPrototypeOf(bridge ?? {}).constructor.alias;
+
+            if (!isSameBridge) {
+              setBridge(value || null);
+              setDailyLimit(null);
+            }
+          }}
+        />
+      </Form.Item>
+
+      {bridge && Content && (
+        <Content
+          form={form}
+          bridge={bridge}
+          direction={direction}
+          balances={balances}
+          allowance={allowance}
+          fee={fee}
+          dailyLimit={dailyLimit}
+          updatePayload={setPatchPayload}
+        />
+      )}
+
+      <Form.Item name={FORM_CONTROL.sender} className="hidden">
+        <Input value={account} />
+      </Form.Item>
+
+      {!allowanceEnough && account ? (
+        <FormItemButton
+          onClick={() => {
+            if (bridge?.getAllowancePayload) {
+              bridge.getAllowancePayload(direction).then((payload) => {
+                if (payload) {
+                  approve(payload);
+                }
+              });
+            }
+          }}
+          className="cy-approve"
+        >
+          {t('Approve')}
+        </FormItemButton>
+      ) : departureConnection.status === ConnectionStatus.success ? (
+        <>
+          {bridgeState.status === 'error' && (
+            <div className="w-full flex items-center gap-4 p-4 bg-white border text-gray-900 rounded-sm">
+              <WarningFilled className="text-yellow-400 text-xl" />
+              <span className="mr-2">{t('The system is under maintenance, please try again later')}</span>
+              <Tooltip title={bridgeState.reason}>
+                <InfoCircleOutlined />
+              </Tooltip>
+            </div>
+          )}
+
+          <FormItemButton
+            disabled={bridgeState.status !== 'available'}
+            onClick={() => {
+              if (!matched) {
+                message.error('Wrong Network');
+                return;
+              }
+
+              form.validateFields().then((values) => {
+                const payload = patchPayload(values);
+
+                if (!payload) {
+                  return;
+                }
+
+                const fromToken = omit(direction.from, 'meta');
+                const toToken = omit(direction.to, 'meta');
+
+                const validateObs = payload.bridge.validate(payload, {
+                  balance: { ...fromToken, amount: balances![0] },
+                  fee: fee!,
+                  feeTokenBalance: {
+                    ...fee,
+                    amount: isXCM(direction.from.host, direction.to.host) ? balances![0] : balances![1],
+                  } as TokenWithAmount,
+                  dailyLimit: {
+                    ...toToken,
+                    amount: dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday)),
+                  },
+                  allowance: { ...fromToken, amount: allowance },
                 });
-              }}
-              onChange={(value) => {
-                if (isDirectionChanged(direction, value)) {
-                  setBridge(null);
-                  setPatchPayload(() => identity);
-                  form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined, [FORM_CONTROL.recipient]: undefined });
-                  setPureDirection({ from: omit(value.from, 'amount'), to: omit(value.to, 'amount') });
-                }
 
-                setDirection(value);
-                setDeparture(value.from.meta);
-              }}
-            />
-          </Form.Item>
+                const workflow = createTxWorkflow(
+                  validateObs.pipe(
+                    mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={fee!} /> }))
+                  ),
+                  () => payload.bridge.send(payload, fee?.amount),
+                  afterCrossChain(TransferDone, { payload })
+                );
 
-          {bridge && Content && (
-            <Content
-              form={form}
-              bridge={bridge}
-              direction={direction}
-              balances={balances}
-              allowance={allowance}
-              fee={fee}
-              dailyLimit={dailyLimit}
-              updatePayload={setPatchPayload}
-            />
-          )}
+                workflow.subscribe({
+                  ...observer,
+                  complete() {
+                    observer.complete();
+                    setIsBalanceLoading(true);
 
-          <Form.Item name={FORM_CONTROL.sender} className="hidden">
-            <Input value={account} />
-          </Form.Item>
-
-          {!allowanceEnough && account ? (
-            <FormItemButton
-              onClick={() => {
-                if (bridge?.getAllowancePayload) {
-                  bridge.getAllowancePayload(direction).then((payload) => {
-                    if (payload) {
-                      approve(payload);
-                    }
-                  });
-                }
-              }}
-              className="cy-approve"
-            >
-              {t('Approve')}
-            </FormItemButton>
-          ) : departureConnection.status === ConnectionStatus.success ? (
-            <>
-              {bridgeState.status === 'error' && (
-                <div className="w-full flex items-center gap-4 p-4 bg-white border text-gray-900 rounded-sm">
-                  <WarningFilled className="text-yellow-400 text-xl" />
-                  <span className="mr-2">{t('The system is under maintenance, please try again later')}</span>
-                  <Tooltip title={bridgeState.reason}>
-                    <InfoCircleOutlined />
-                  </Tooltip>
-                </div>
-              )}
-
-              <FormItemButton
-                disabled={bridgeState.status !== 'available'}
-                onClick={() => {
-                  if (!matched) {
-                    message.error('Wrong Network');
-                    return;
-                  }
-
-                  form.validateFields().then((values) => {
-                    const payload = patchPayload(values);
-
-                    if (!payload) {
-                      return;
-                    }
-
-                    const fromToken = omit(direction.from, 'meta');
-                    const toToken = omit(direction.to, 'meta');
-
-                    const validateObs = payload.bridge.validate(payload, {
-                      balance: { ...fromToken, amount: balances![0] },
-                      fee: fee!,
-                      feeTokenBalance: {
-                        ...fee,
-                        amount: isXCM(direction.from.host, direction.to.host) ? balances![0] : balances![1],
-                      } as TokenWithAmount,
-                      dailyLimit: {
-                        ...toToken,
-                        amount: dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday)),
-                      },
-                      allowance: { ...fromToken, amount: allowance },
+                    iif(
+                      () => !!account,
+                      fromRx(direction.from.meta.getBalance(direction, account)),
+                      of(null)
+                    ).subscribe((result) => {
+                      setBalances(result);
+                      setIsBalanceLoading(false);
                     });
-
-                    const workflow = createTxWorkflow(
-                      validateObs.pipe(
-                        mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={fee!} /> }))
-                      ),
-                      () => payload.bridge.send(payload, fee?.amount),
-                      afterCrossChain(TransferDone, { payload })
-                    );
-
-                    workflow.subscribe({
-                      ...observer,
-                      complete() {
-                        observer.complete();
-                        setIsBalanceLoading(true);
-
-                        iif(
-                          () => !!account,
-                          fromRx(direction.from.meta.getBalance(direction, account)),
-                          of(null)
-                        ).subscribe((result) => {
-                          setBalances(result);
-                          setIsBalanceLoading(false);
-                        });
-                      },
-                    });
-                  });
-                }}
-                className="cy-submit"
-              >
-                {t('Transfer')}
-              </FormItemButton>
-            </>
-          ) : (
-            <FormItemButton
-              onClick={() => connectDepartureNetwork(direction.from.meta)}
-              disabled={departureConnection.status === ConnectionStatus.connecting}
-            >
-              {t('Connect to Wallet')}
-            </FormItemButton>
-          )}
-        </Col>
-
-        <Col xs={24} sm={{ span: 15, offset: 1 }} className="bg-antDark">
-          <Form.Item
-            name={FORM_CONTROL.bridge}
-            rules={[
-              {
-                validator(_r, value: unknown) {
-                  if (!value) {
-                    message.error(t('Please select a bridge first!'));
-                    return Promise.reject();
-                  }
-
-                  return Promise.resolve();
-                },
-              },
-            ]}
-            className="mb-0"
+                  },
+                });
+              });
+            }}
+            className="cy-submit"
           >
-            <BridgeSelector
-              direction={direction}
-              onChange={(value) => {
-                const isSameBridge =
-                  Object.getPrototypeOf(value).constructor.alias ===
-                  Object.getPrototypeOf(bridge ?? {}).constructor.alias;
-
-                if (!isSameBridge) {
-                  setBridge(value || null);
-                  setDailyLimit(null);
-                }
-              }}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
+            {t('Transfer')}
+          </FormItemButton>
+        </>
+      ) : (
+        <FormItemButton
+          onClick={() => connectDepartureNetwork(direction.from.meta)}
+          disabled={departureConnection.status === ConnectionStatus.connecting}
+        >
+          {t('Connect to Wallet')}
+        </FormItemButton>
+      )}
     </Form>
   );
 }
