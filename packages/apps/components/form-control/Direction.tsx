@@ -9,7 +9,7 @@ import { ChainBase } from 'shared/core/chain';
 import { BridgeStatus, CrossChainDirection, CrossToken, CustomFormControlProps, HashInfo, Network } from 'shared/model';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { updateStorage } from 'shared/utils/helper/storage';
-import { getBridge, isCBridge, isSubstrateDVMSubstrateDVM } from 'utils/bridge';
+import { getBridge, isCBridge, isSubstrateDVMSubstrateDVM, isXCM } from 'utils/bridge';
 import { bridgeFactory } from '../../bridges/bridges';
 import { TokenWithAmount } from '../../core/bridge';
 import { CountLoading } from '../widget/CountLoading';
@@ -39,7 +39,7 @@ export const calcMax = (payment: TokenWithAmount, fee: TokenWithAmount | null, m
 const calcToAmount = (payment: TokenWithAmount, fee: TokenWithAmount | null, from: Network, to: Network) => {
   let result: string;
 
-  if (isCBridge(from, to)) {
+  if (isCBridge(from, to) || isXCM(from, to)) {
     result = calcMax(payment, fee);
   } else {
     result = fromWei(payment);
