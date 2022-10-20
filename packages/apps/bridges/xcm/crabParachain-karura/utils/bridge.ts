@@ -23,17 +23,13 @@ export class CrabParachainKaruraBridge extends Bridge<
     return toWei(departure).slice(0, -timestamp.length) + timestamp;
   }
 
-  /**
-   * The fee is deducted from the transfer amount
-   */
-  back(payload: IssuingPayload, fee: BN): Observable<Tx> {
+  back(payload: IssuingPayload): Observable<Tx> {
     const {
       direction: { from: departure, to: arrival },
       sender,
       recipient,
     } = payload;
     const amount = this.patchAmount(departure);
-    const transferAmount = new BN(amount).add(fee).toString();
     const api = entrance.polkadot.getInstance(departure.meta.provider);
     const palletInstance = 5;
 
@@ -76,7 +72,7 @@ export class CrabParachainKaruraBridge extends Bridge<
             }),
           }),
           fun: api.createType('XcmV1MultiassetFungibility', {
-            Fungible: api.createType('Compact<u128>', transferAmount),
+            Fungible: api.createType('Compact<u128>', amount),
           }),
         }),
       ],
@@ -88,14 +84,13 @@ export class CrabParachainKaruraBridge extends Bridge<
     return signAndSendExtrinsic(api, sender, extrinsic);
   }
 
-  burn(payload: RedeemPayload, fee: BN): Observable<Tx> {
+  burn(payload: RedeemPayload): Observable<Tx> {
     const {
       direction: { from: departure, to: arrival },
       sender,
       recipient,
     } = payload;
     const amount = this.patchAmount(departure);
-    const transferAmount = new BN(amount).add(fee).toString();
     const api = entrance.polkadot.getInstance(departure.meta.provider);
 
     const currencyId = api.createType('AcalaPrimitivesCurrencyCurrencyId', {
@@ -122,7 +117,7 @@ export class CrabParachainKaruraBridge extends Bridge<
     });
 
     const destWeight = 5_000_000_000;
-    const extrinsic = api.tx.xTokens.transfer(currencyId, transferAmount, dest, destWeight);
+    const extrinsic = api.tx.xTokens.transfer(currencyId, amount, dest, destWeight);
 
     return signAndSendExtrinsic(api, sender, extrinsic);
   }
