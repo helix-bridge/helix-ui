@@ -151,7 +151,7 @@
   "top {{count}} destination": "top {{count}} destination",
   "transaction detail": "transaction detail",
   "transactions": "transactions",
-  "viewTransactionHistory": "The transaction has been sent, please check the transfer progress in the <1>history</1>",
+  "viewTransactionHistory": "You can track the transfer progress in the <1>transaction detail</1>.",
   "{{network}} Network Address": "{{network}} Network Address",
   "{{token}} daily limit reached!": "{{token}} daily limit reached!",
   "{{year}} Developed by Helix Team": "{{year}} Developed by Helix Team"

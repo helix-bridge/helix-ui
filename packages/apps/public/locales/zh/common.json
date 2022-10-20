@@ -151,7 +151,7 @@
   "top {{count}} destination": "前 {{count}} 个目标链",
   "transaction detail": "交易详情",
   "transactions": "交易",
-  "viewTransactionHistory": "交易已发出，请在<1>历史记录</1>中查看进度",
+  "viewTransactionHistory": "交易已发出，请在<1>详情</1>中查看进度",
   "{{network}} Network Address": "{{network}} 网络地址",
   "{{token}} daily limit reached!": "{{token}} 达到日限额!",
   "{{year}} Developed by Helix Team": "{{year}} 由 Helix 团队开发"
