@@ -39,9 +39,9 @@ import { useAfterTx } from '../hooks/tx';
 import { CrossChainComponentProps } from '../model/component';
 import { CrossChainPayload } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
-import { isXCM } from '../utils';
+import { isSubstrateDVMSubstrateDVM, isXCM } from '../utils';
 import { BridgeSelector } from './form-control/BridgeSelector';
-import { Direction } from './form-control/Direction';
+import { calcMax, Direction } from './form-control/Direction';
 import { TransferConfirm } from './tx/TransferConfirm';
 import { TransferDone } from './tx/TransferDone';
 import { FormItemButton } from './widget/FormItemButton';
@@ -188,6 +188,28 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
         name={FORM_CONTROL.direction}
         className="mb-0"
         rules={[
+          {
+            // eslint-disable-next-line complexity
+            validator(_, val: CrossChainDirection) {
+              if (!bridge || !balances) {
+                return Promise.resolve();
+              }
+
+              let balance = balances[0];
+
+              if (isSubstrateDVMSubstrateDVM(val.from.host, val.to.host)) {
+                const [erc20, native] = balances;
+
+                balance = val.from.type === 'native' ? native : erc20;
+              }
+
+              const mini = bridge && bridge.getMinimumFeeTokenHolding && bridge.getMinimumFeeTokenHolding(val);
+              const max = calcMax({ ...val.from, amount: balance }, fee, mini ?? undefined);
+              return !max || new BN(toWei({ value: max })) >= new BN(toWei({ value: val.from.amount }))
+                ? Promise.resolve()
+                : Promise.reject(`Max available balance is ${max}`);
+            },
+          },
           {
             validator: (_, val: CrossChainDirection) => {
               const {
