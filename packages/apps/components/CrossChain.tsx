@@ -112,6 +112,8 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
 
   useEffect(() => {
     setIsBalanceLoading(true);
+    setBalances(null);
+
     const { from: dep } = pureDirection;
     const obs =
       !!account && !!dep && isValidAddress(account, pureDirection.from.host)
@@ -246,10 +248,15 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
           initial={direction}
           onRefresh={() => {
             setIsBalanceLoading(true);
+            setBalances(null);
 
-            fromRx(direction.from.meta.getBalance(direction, account)).subscribe((result) => {
-              setBalances(result);
-              setIsBalanceLoading(false);
+            fromRx(direction.from.meta.getBalance(direction, account)).subscribe({
+              next(result) {
+                setBalances(result);
+              },
+              complete() {
+                setIsBalanceLoading(false);
+              },
             });
           }}
           onChange={(value) => {
