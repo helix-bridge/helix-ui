@@ -26,18 +26,20 @@ export function useAfterTx<T extends CrossChainPayload>() {
       (tx: Tx) =>
       () => {
         const { destroy } = applyModal({
-          content: <Comp tx={tx} value={payload} />,
-          okText: t('History'),
-          okButtonProps: {
-            size: 'large',
-            className: 'w-full',
-            style: { margin: 0 },
-            onClick: () => {
-              destroy();
-
-              setIsPersonalHistoryVisible(true);
-            },
-          },
+          content: (
+            <Comp
+              tx={tx}
+              value={payload}
+              showHistory={() => {
+                setIsPersonalHistoryVisible(true);
+                destroy();
+              }}
+            />
+          ),
+          okButtonProps: { hidden: true },
+          cancelButtonProps: { hidden: true },
+          title: <h3 className="mb-0">{t('Transfer Submitted')}</h3>,
+          closable: true,
           onCancel: () => {
             if (onDisappear) {
               onDisappear(payload, tx);

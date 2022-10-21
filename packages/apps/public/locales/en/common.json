@@ -72,7 +72,7 @@
   "Please connect to Metamask": "Please connect to Metamask",
   "Please enter a valid {{network}} address": "Please enter a valid {{network}} address",
   "Please fill in a {{network}} address which start with 0x": "Please fill in a {{network}} address which start with 0x",
-  "Please initiate a claim transaction of the Ethereum Network in the Transfer History to receive this token. And it needs to prepare some ETH as the gas fee to claim this token.": "Please initiate a claim transaction of the Ethereum Network in the Transfer History to receive this token. And it needs to prepare some ETH as the gas fee to claim this token.",
+  "Please initiate a claim transaction on Ethereum in the Transaction Detail Page to receive this token. And it needs to prepare some ETH as the gas fee to claim this token.": "Please initiate a claim transaction on Ethereum in the Transaction Detail Page to receive this token. And it needs to prepare some ETH as the gas fee to claim this token.",
   "Please make sure you have entered the correct {{type}} address. Entering wrong address will cause asset loss and cannot be recovered!": "Please make sure you have entered the correct {{type}} address. Entering wrong address will cause asset loss and cannot be recovered!",
   "Please perform a claim asset operation in the history section after the transfer is submitted.": "Please perform a claim asset operation in the history section after the transfer is submitted.",
   "Please select a bridge first!": "Please select a bridge first!",
@@ -151,7 +151,7 @@
   "top {{count}} destination": "top {{count}} destination",
   "transaction detail": "transaction detail",
   "transactions": "transactions",
-  "viewTransactionHistory": "The transaction has been sent, please check the transfer progress in the <1>history</1>",
+  "viewTransactionHistory": "You can track the transfer progress in the <1>transaction detail</1>.",
   "{{network}} Network Address": "{{network}} Network Address",
   "{{token}} daily limit reached!": "{{token}} daily limit reached!",
   "{{year}} Developed by Helix Team": "{{year}} Developed by Helix Team"
