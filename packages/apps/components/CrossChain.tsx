@@ -6,6 +6,7 @@ import identity from 'lodash/identity';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EMPTY, mergeMap } from 'rxjs';
@@ -76,7 +77,8 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
   const [dailyLimit, setDailyLimit] = useState<DailyLimit | null>(null);
   const isMounted = useIsMounted();
-  const { afterCrossChain } = useAfterTx<CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>>();
+  const router = useRouter();
+  const { afterCrossChain } = useAfterTx<CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>>(router);
 
   const allowanceEnough = useMemo(
     () => !bridge?.getAllowancePayload || (allowance && allowance.gt(new BN(toWei(direction.from)))),

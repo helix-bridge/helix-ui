@@ -2,6 +2,7 @@ import { HddOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { ChainBase } from 'shared/core/chain';
@@ -11,8 +12,17 @@ import { getDirectionFromSettings } from 'shared/utils/helper/url';
 import { BridgeState } from '../components/bridge/BridgeState';
 import { CrossChain } from '../components/CrossChain';
 import { DisclaimerModal } from '../components/widget/DisclaimerModal';
+import { Path } from '../config';
 import { useITranslation } from '../hooks';
-import { AccountProvider, ApiProvider, ClaimProvider, TxProvider, usePersonal, WalletProvider } from '../providers';
+import {
+  AccountProvider,
+  ApiProvider,
+  ClaimProvider,
+  TxProvider,
+  useAccount,
+  usePersonal,
+  WalletProvider,
+} from '../providers';
 import { chainFactory } from '../utils/network/chain';
 
 const ActiveAccount = dynamic(() => import('../components/widget/account/ActiveAccount'), { ssr: false });
@@ -20,6 +30,28 @@ const History = dynamic(() => import('../components/history/History'), { ssr: fa
 const BaseModal = dynamic(() => import('../components/widget/BaseModal'), { ssr: false });
 
 const { from, to } = DEFAULT_DIRECTION;
+
+function HistoryBtn() {
+  const { t } = useITranslation();
+  const router = useRouter();
+  const { account } = useAccount();
+
+  return account ? (
+    <Button
+      icon={<HddOutlined />}
+      onClick={() =>
+        router.push({
+          pathname: Path.transaction,
+          query: new URLSearchParams({
+            account,
+          }).toString(),
+        })
+      }
+    >
+      {t('History')}
+    </Button>
+  ) : null;
+}
 
 function Page() {
   const { t } = useITranslation();
@@ -52,9 +84,7 @@ function Page() {
                 <div id="app-header-container" className="hidden lg:flex items-center space-x-4 fixed top-4 z-50">
                   <ActiveAccount />
 
-                  <Button icon={<HddOutlined />} onClick={() => setIsPersonalHistoryVisible(true)}>
-                    {t('History')}
-                  </Button>
+                  <HistoryBtn />
                 </div>
 
                 <BridgeState className="w-full lg:w-1/2 mx-auto mb-2" />

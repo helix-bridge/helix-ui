@@ -54,7 +54,16 @@ function Page() {
   const [isValidSender, setIsValidSender] = useState(true);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(PAGE_SIZE);
-  const [account, setAccount] = useState<string | undefined>();
+
+  const [account, setAccount] = useState<string | undefined>(() => {
+    const value = router.query.account;
+    if (typeof value === 'string') {
+      return isValidAddress(value, 'ethereum') ? value : convertToDvm(value);
+    } else {
+      return undefined;
+    }
+  });
+
   const acc = account && isAddress(account) ? account.toLowerCase() : account;
 
   const {
@@ -182,6 +191,7 @@ function Page() {
               size="large"
               suffix={<SearchOutlined />}
               allowClear
+              defaultValue={router.query.account ?? undefined}
               // eslint-disable-next-line complexity
               onChange={(event) => {
                 const value = event.target.value;
