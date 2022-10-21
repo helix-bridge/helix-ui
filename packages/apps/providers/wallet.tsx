@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { EthereumChainConfig, SupportedWallet } from 'shared/model';
+import { readStorage } from 'shared/utils/helper/storage';
+import { getChainConfig } from '../utils/network';
 import { useApi } from './api';
 
 export interface WalletCtx {
@@ -14,7 +16,7 @@ export const WalletContext = createContext<WalletCtx | null>(null);
 export const useWallet = () => useContext(WalletContext) as Exclude<WalletCtx, null>;
 
 export const WalletProvider = ({ children }: React.PropsWithChildren<unknown>) => {
-  const { departureConnection, departure } = useApi();
+  const { departureConnection, departure, connectAndUpdateDepartureNetwork } = useApi();
   const [walletMatched, setWalletMatched] = useState(true);
   const [chainMatched, setChainMatched] = useState(true);
 
@@ -33,6 +35,16 @@ export const WalletProvider = ({ children }: React.PropsWithChildren<unknown>) =
     setWalletMatched(walletMatch);
     setChainMatched(chainMatch);
   }, [departure, departureConnection, departureConnection.chainId, departureConnection.type]);
+
+  useEffect(() => {
+    const { activeWallet } = readStorage();
+    if (activeWallet?.chain) {
+      const config = getChainConfig(activeWallet.chain);
+
+      connectAndUpdateDepartureNetwork(config);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <WalletContext.Provider

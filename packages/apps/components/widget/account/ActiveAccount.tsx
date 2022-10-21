@@ -13,7 +13,6 @@ import { darwiniaConfig, SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/netwo
 import { ethereumConfig } from 'shared/config/network/ethereum';
 import { ConnectionStatus, EthereumChainConfig } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
-import { updateStorage } from 'shared/utils/helper/storage';
 import { Path } from '../../../config';
 import abi from '../../../config/ethv1/abi.json';
 import claimSource from '../../../config/ethv1/airdrop2.json';
@@ -172,7 +171,6 @@ export default function ActiveAccount() {
         onCancel={() => setIsAccountSelectOpen(false)}
         onSelect={(acc) => {
           setAccount(acc);
-          updateStorage({ [departureConnection.type]: acc });
           setIsAccountSelectOpen(false);
         }}
         title={

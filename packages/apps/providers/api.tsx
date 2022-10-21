@@ -4,6 +4,7 @@ import { EMPTY } from 'rxjs/internal/observable/empty';
 import { iif } from 'rxjs/internal/observable/iif';
 import { of } from 'rxjs/internal/observable/of';
 import type { Subscription } from 'rxjs/internal/Subscription';
+import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { isDev } from 'shared/config/env';
 import {
   Action,
@@ -18,7 +19,7 @@ import {
 } from 'shared/model';
 import { connect } from 'shared/utils/connection';
 import { convertToSS58 } from 'shared/utils/helper/address';
-import { getDirectionFromSettings } from 'shared/utils/helper/url';
+import { updateStorage } from 'shared/utils/helper/storage';
 import { isEthereumNetwork } from 'shared/utils/network/network';
 
 interface StoreState {
@@ -37,8 +38,6 @@ type RemoveConnection = Action<'removeConnection', Connection>;
 
 type Actions = SetDeparture | SetDepartureConnection | SetArrivalConnection | AddConnection | RemoveConnection;
 
-const initialDirection = getDirectionFromSettings();
-
 const initialConnection: Connection = {
   status: ConnectionStatus.pending,
   type: 'unknown',
@@ -50,7 +49,7 @@ const initialState: StoreState = {
   departureConnection: initialConnection,
   arrivalConnection: initialConnection,
   connections: [],
-  departure: initialDirection.from.meta,
+  departure: DEFAULT_DIRECTION.from.meta,
   isDev,
 };
 
@@ -186,21 +185,21 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
     [addConnection, isConnectionAvailable, state.connections, state.departure]
   );
 
-  const connectAndUpdateDepartureNetwork = useCallback(
-    (chainConfig: ChainConfig) => {
-      dep$$.unsubscribe();
-      dep$$ = getConnection(chainConfig, setDepartureConnection);
-      setDeparture(chainConfig);
-    },
-    [getConnection, setDeparture, setDepartureConnection]
-  );
-
   const connectDepartureNetwork = useCallback(
     (chainConfig: ChainConfig) => {
       dep$$.unsubscribe();
       dep$$ = getConnection(chainConfig, setDepartureConnection);
+      updateStorage({ activeWallet: { wallet: chainConfig.wallets[0], chain: chainConfig.name } });
     },
     [getConnection, setDepartureConnection]
+  );
+
+  const connectAndUpdateDepartureNetwork = useCallback(
+    (chainConfig: ChainConfig) => {
+      connectDepartureNetwork(chainConfig);
+      setDeparture(chainConfig);
+    },
+    [connectDepartureNetwork, setDeparture]
   );
 
   const connectArrivalNetwork = useCallback(

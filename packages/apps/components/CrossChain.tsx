@@ -14,7 +14,7 @@ import { from, from as fromRx } from 'rxjs/internal/observable/from';
 import { iif } from 'rxjs/internal/observable/iif';
 import { of } from 'rxjs/internal/observable/of';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
+import { DEFAULT_DIRECTION, FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
 import { BridgeBase } from 'shared/core/bridge';
 import { ChainBase } from 'shared/core/chain';
@@ -25,7 +25,6 @@ import {
   ConnectionStatus,
   CrossChainDirection,
   CrossChainPureDirection,
-  CrossToken,
   DailyLimit,
   TokenInfoWithMeta,
 } from 'shared/model';
@@ -43,7 +42,7 @@ import { CrossChainPayload } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
 import { isSubstrateDVMSubstrateDVM, isXCM } from '../utils';
 import { BridgeSelector } from './form-control/BridgeSelector';
-import { calcMax, Direction } from './form-control/Direction';
+import { calcMax, Direction, toDirection } from './form-control/Direction';
 import { TransferConfirm } from './tx/TransferConfirm';
 import { TransferDone } from './tx/TransferDone';
 import { FormItemButton } from './widget/FormItemButton';
@@ -57,14 +56,16 @@ const isDirectionChanged = (pre: CrossChainDirection, cur: CrossChainDirection) 
 
 type CommonBridge = Bridge<BridgeConfig, ChainConfig, ChainConfig>;
 
+const defaultDirection = { from: toDirection(DEFAULT_DIRECTION.from)!, to: toDirection(DEFAULT_DIRECTION.to)! };
+
 // eslint-disable-next-line complexity
-export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>> }) {
+export function CrossChain() {
   const { i18n, t } = useTranslation();
   const [form] = useForm<CrossChainPayload<CommonBridge>>();
   const { connectAndUpdateDepartureNetwork, departureConnection, setDeparture } = useApi();
-  const [direction, setDirection] = useState(dir);
+  const [direction, setDirection] = useState(defaultDirection);
   const [pureDirection, setPureDirection] =
-    useState<CrossChainPureDirection<TokenInfoWithMeta<ChainBase>, TokenInfoWithMeta<ChainBase>>>(dir);
+    useState<CrossChainPureDirection<TokenInfoWithMeta<ChainBase>, TokenInfoWithMeta<ChainBase>>>(defaultDirection);
   const [bridge, setBridge] = useState<CommonBridge | null>(null);
   const [patchPayload, setPatchPayload] = useState<PayloadPatchFn>(() => (v: CrossChainPayload<CommonBridge>) => v);
   const bridgeState = useCheckSpecVersion(direction);
@@ -187,7 +188,6 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
     <Form
       layout="vertical"
       form={form}
-      initialValues={{ direction }}
       validateMessages={validateMessages[i18n.language as 'en' | 'zh-CN' | 'zh']}
       className="mb-4 sm:mb-0 bg-antDark p-5 mx-auto lg:w-1/2 w-full"
     >
@@ -247,7 +247,6 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
           fee={fee}
           balances={balances}
           isBalanceLoading={isBalanceLoading}
-          initial={direction}
           onRefresh={() => {
             setIsBalanceLoading(true);
             setBalances(null);
@@ -323,20 +322,26 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
       </Form.Item>
 
       {!allowanceEnough && account ? (
-        <FormItemButton
-          onClick={() => {
-            if (bridge?.getAllowancePayload) {
-              bridge.getAllowancePayload(direction).then((payload) => {
-                if (payload) {
-                  approve(payload);
-                }
-              });
-            }
-          }}
-          className="cy-approve"
-        >
-          {t('Approve')}
-        </FormItemButton>
+        matched ? (
+          <FormItemButton
+            onClick={() => {
+              if (bridge?.getAllowancePayload) {
+                bridge.getAllowancePayload(direction).then((payload) => {
+                  if (payload) {
+                    approve(payload);
+                  }
+                });
+              }
+            }}
+            className="cy-approve"
+          >
+            {t('Approve')}
+          </FormItemButton>
+        ) : (
+          <FormItemButton type="default" onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}>
+            {t('Switch Wallet')}
+          </FormItemButton>
+        )
       ) : departureConnection.status === ConnectionStatus.success ? (
         matched ? (
           <>

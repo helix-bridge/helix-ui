@@ -2,21 +2,33 @@ import { PauseCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 import { BN_ZERO } from '@polkadot/util';
 import { Tooltip } from 'antd';
 import BN from 'bn.js';
+import pick from 'lodash/pick';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
+import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { ChainBase } from 'shared/core/chain';
-import { BridgeStatus, CrossChainDirection, CrossToken, CustomFormControlProps, HashInfo, Network } from 'shared/model';
+import {
+  BridgeStatus,
+  CrossChainDirection,
+  CrossToken,
+  CustomFormControlProps,
+  HashInfo,
+  Network,
+  TokenWithBridgesInfo,
+} from 'shared/model';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
-import { updateStorage } from 'shared/utils/helper/storage';
+import { readStorage, updateStorage } from 'shared/utils/helper/storage';
 import { getBridge, isCBridge, isSubstrateDVMSubstrateDVM, isXCM } from 'utils/bridge';
 import { bridgeFactory } from '../../bridges/bridges';
 import { TokenWithAmount } from '../../core/bridge';
+import { getChainConfig } from '../../utils/network';
+import { chainFactory } from '../../utils/network/chain';
 import { CountLoading } from '../widget/CountLoading';
 import { Destination } from './Destination';
 
 type DirectionProps = CustomFormControlProps<CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>>> & {
-  initial: CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>>;
+  // initial: CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>>;
   fee: TokenWithAmount | null;
   balances: BN[] | null;
   isBalanceLoading: boolean;
@@ -24,6 +36,16 @@ type DirectionProps = CustomFormControlProps<CrossChainDirection<CrossToken<Chai
 };
 
 const MILLION = 1e6;
+
+export function toDirection({
+  host,
+  symbol,
+}: Pick<TokenWithBridgesInfo, 'host' | 'symbol'>): CrossToken<ChainBase> | null {
+  const config = getChainConfig(host);
+  const token = config.tokens.find((item) => item.symbol === symbol);
+
+  return token ? { ...token, amount: '', meta: chainFactory(config) } : null;
+}
 
 // eslint-disable-next-line complexity
 export const calcMax = (payment: TokenWithAmount, fee: TokenWithAmount | null, mini?: TokenWithAmount) => {
@@ -49,16 +71,12 @@ const calcToAmount = (payment: TokenWithAmount, fee: TokenWithAmount | null, fro
 };
 
 // eslint-disable-next-line complexity
-export function Direction({
-  value,
-  initial,
-  onChange,
-  balances,
-  onRefresh,
-  fee,
-  isBalanceLoading = false,
-}: DirectionProps) {
-  const data = value ?? initial;
+export function Direction({ value, onChange, balances, onRefresh, fee, isBalanceLoading = false }: DirectionProps) {
+  const data = useMemo(
+    () => value ?? { from: toDirection(DEFAULT_DIRECTION.from)!, to: toDirection(DEFAULT_DIRECTION.to)! },
+    [value]
+  );
+
   const { t } = useTranslation();
   const [bridgetStatus, setBridgetStatus] = useState<null | BridgeStatus>(null);
 
@@ -71,7 +89,6 @@ export function Direction({
     [onChange]
   );
 
-  // eslint-disable-next-line complexity
   const iBalance = useMemo(() => {
     if (!balances) {
       return null;
@@ -87,10 +104,14 @@ export function Direction({
   }, [balances, data.from.host, data.from.type, data.to.host]);
 
   useEffect(() => {
-    const { from, to } = data;
+    if (!value) {
+      return;
+    }
+
+    const { from, to } = value;
     const info = {
-      from: from.name,
-      to: to.name,
+      from: pick(from, ['symbol', 'host']),
+      to: pick(to, ['symbol', 'host']),
     } as HashInfo;
 
     if (from && to) {
@@ -102,7 +123,7 @@ export function Direction({
     }
 
     updateStorage(info);
-  }, [data]);
+  }, [value]);
 
   useEffect(() => {
     triggerChange({
@@ -114,6 +135,18 @@ export function Direction({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fee?.amount.toString(), fee?.symbol]);
+
+  useEffect(() => {
+    const { from: storedForm, to: storedTo } = readStorage();
+
+    if (storedForm && storedTo) {
+      triggerChange({
+        from: toDirection(storedForm)!,
+        to: toDirection(storedTo)!,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className={`relative flex justify-between items-center flex-col`}>
