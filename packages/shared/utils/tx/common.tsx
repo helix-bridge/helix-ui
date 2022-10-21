@@ -35,17 +35,18 @@ type IModalFuncs = {
 export const txModalConfig: (props: Partial<ModalFuncProps>) => ModalProps = (props) => ({
   okCancel: true,
   okText: <Trans i18n={i18n?.use(initReactI18next)}>Confirm</Trans>,
-  closable: true,
+  cancelText: <Trans i18n={i18n?.use(initReactI18next)}>Cancel</Trans>,
+  closable: false,
   closeIcon: <Icon name="close" />,
-  okButtonProps: { size: 'large', className: 'w-full', style: { margin: 0 } },
-  cancelButtonProps: { size: 'large', hidden: true },
-  width: 520,
+  okButtonProps: { size: 'large', className: 'flex-1', style: { margin: 0 } },
+  cancelButtonProps: { size: 'large', className: 'flex-1', style: { margin: 0 } },
+  width: 620,
   centered: true,
   className: 'confirm-modal',
   icon: null,
   destroyOnClose: true,
   title: (
-    <h3 className="text-center mb-4">
+    <h3 className="mb-0">
       <Trans i18n={i18n?.use(initReactI18next)}>Transfer</Trans>
     </h3>
   ),

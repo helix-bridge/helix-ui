@@ -1,5 +1,5 @@
 import { ArrowDownOutlined } from '@ant-design/icons';
-import { Alert } from 'antd';
+import { Alert, Divider } from 'antd';
 import { i18n } from 'next-i18next';
 import { PropsWithChildren, useMemo } from 'react';
 import { initReactI18next, useTranslation } from 'react-i18next';
@@ -34,7 +34,9 @@ export function TransferConfirm<T extends BridgeBase = BridgeBase>({
 
   return (
     <>
-      <div className="flex flex-col">
+      <Divider />
+
+      <div className="flex flex-col gap-8">
         <div className="relative">
           <div className="flex items-center justify-between p-3 bg-gray-900 border border-gray-800">
             <div className="flex items-center space-x-3">
@@ -71,7 +73,7 @@ export function TransferConfirm<T extends BridgeBase = BridgeBase>({
           </div>
         </div>
 
-        <div className="mt-5 mb-3">
+        <div>
           <span>{t('Information')}</span>
 
           <div className="flex flex-col space-y-2 mt-1 p-3 bg-gray-900 border border-gray-800">
@@ -100,12 +102,14 @@ export function TransferConfirm<T extends BridgeBase = BridgeBase>({
           <Alert
             type="warning"
             message={t(
-              'Please initiate a claim transaction of the Ethereum Network in the Transfer History to receive this token. And it needs to prepare some ETH as the gas fee to claim this token.'
+              'Please initiate a claim transaction on Ethereum in the Transaction Detail Page to receive this token. And it needs to prepare some ETH as the gas fee to claim this token.'
             )}
             showIcon
           />
         )}
       </div>
+
+      <Divider />
     </>
   );
 }

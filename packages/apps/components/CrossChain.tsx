@@ -205,7 +205,7 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
 
               const mini = bridge && bridge.getMinimumFeeTokenHolding && bridge.getMinimumFeeTokenHolding(val);
               const max = calcMax({ ...val.from, amount: balance }, fee, mini ?? undefined);
-              return !max || new BN(toWei({ value: max })) >= new BN(toWei({ value: val.from.amount }))
+              return !max || new BN(toWei({ value: max })).gte(new BN(toWei({ value: val.from.amount })))
                 ? Promise.resolve()
                 : Promise.reject(`Max available balance is ${max}`);
             },
@@ -371,7 +371,9 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
 
                 const workflow = createTxWorkflow(
                   validateObs.pipe(
-                    mergeMap(() => applyModalObs({ content: <TransferConfirm value={payload} fee={fee!} /> }))
+                    mergeMap(() =>
+                      applyModalObs({ content: <TransferConfirm value={payload} fee={fee!} />, closable: false })
+                    )
                   ),
                   () => payload.bridge.send(payload, fee?.amount),
                   afterCrossChain(TransferDone, { payload })

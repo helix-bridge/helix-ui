@@ -22,6 +22,7 @@ export type TxConfirmComponentProps<T extends BridgeBase = BridgeBase> = { value
 export type TxDoneComponentProps<T extends BridgeBase = BridgeBase> = {
   tx: Tx;
   value: CrossChainPayload<T>;
+  showHistory?: () => void;
 };
 
 export interface CrossChainComponentProps<
