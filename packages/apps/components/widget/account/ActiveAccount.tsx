@@ -14,7 +14,6 @@ import { ethereumConfig } from 'shared/config/network/ethereum';
 import { ConnectionStatus, EthereumChainConfig } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { updateStorage } from 'shared/utils/helper/storage';
-import { isPolkadotNetwork } from 'shared/utils/network/network';
 import { Path } from '../../../config';
 import abi from '../../../config/ethv1/abi.json';
 import claimSource from '../../../config/ethv1/airdrop2.json';
@@ -42,17 +41,6 @@ export default function ActiveAccount() {
 
     return type !== 'unknown' && status !== ConnectionStatus.success;
   }, [departureConnection]);
-
-  useEffect(() => {
-    if (
-      departureConnection.type === 'polkadot' &&
-      departureConnection.accounts.length >= 1 &&
-      isPolkadotNetwork(departure)
-    ) {
-      connectDepartureNetwork(departure);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [departure, departureConnection.accounts.length, departureConnection.type]);
 
   useEffect(() => {
     if (isEthereumAddress(account)) {

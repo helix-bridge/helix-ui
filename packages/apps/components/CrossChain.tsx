@@ -8,7 +8,7 @@ import omit from 'lodash/omit';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { mergeMap } from 'rxjs';
+import { EMPTY, mergeMap } from 'rxjs';
 import { from, from as fromRx } from 'rxjs/internal/observable/from';
 import { iif } from 'rxjs/internal/observable/iif';
 import { of } from 'rxjs/internal/observable/of';
@@ -30,6 +30,7 @@ import {
 } from 'shared/model';
 import { toWei, truncate } from 'shared/utils/helper/balance';
 import { pollWhile } from 'shared/utils/helper/operator';
+import { isValidAddress } from 'shared/utils/helper/validator';
 import { isEthereumNetwork } from 'shared/utils/network/network';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { Bridge, PayloadPatchFn, TokenWithAmount } from '../core/bridge';
@@ -59,7 +60,7 @@ type CommonBridge = Bridge<BridgeConfig, ChainConfig, ChainConfig>;
 export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>> }) {
   const { i18n, t } = useTranslation();
   const [form] = useForm<CrossChainPayload<CommonBridge>>();
-  const { connectDepartureNetwork, departureConnection, setDeparture } = useApi();
+  const { connectAndUpdateDepartureNetwork, departureConnection, setDeparture } = useApi();
   const [direction, setDirection] = useState(dir);
   const [pureDirection, setPureDirection] =
     useState<CrossChainPureDirection<TokenInfoWithMeta<ChainBase>, TokenInfoWithMeta<ChainBase>>>(dir);
@@ -112,13 +113,18 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
   useEffect(() => {
     setIsBalanceLoading(true);
     const { from: dep } = pureDirection;
-    const sub$$ = iif(
-      () => !!account && !!dep,
-      fromRx(dep.meta.getBalance(pureDirection, account)),
-      of(null)
-    ).subscribe((result) => {
-      setBalances(result);
-      setIsBalanceLoading(false);
+    const obs =
+      !!account && !!dep && isValidAddress(account, pureDirection.from.host)
+        ? fromRx(dep.meta.getBalance(pureDirection, account))
+        : EMPTY;
+
+    const sub$$ = obs.subscribe({
+      next(result) {
+        setBalances(result);
+      },
+      complete() {
+        setIsBalanceLoading(false);
+      },
     });
 
     return () => sub$$.unsubscribe();
@@ -323,85 +329,89 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
           {t('Approve')}
         </FormItemButton>
       ) : departureConnection.status === ConnectionStatus.success ? (
-        <>
-          {bridgeState.status === 'error' && (
-            <div className="w-full flex items-center gap-4 p-4 bg-white border text-gray-900 rounded-sm">
-              <WarningFilled className="text-yellow-400 text-xl" />
-              <span className="mr-2">{t('The system is under maintenance, please try again later')}</span>
-              <Tooltip title={bridgeState.reason}>
-                <InfoCircleOutlined />
-              </Tooltip>
-            </div>
-          )}
+        matched ? (
+          <>
+            {bridgeState.status === 'error' && (
+              <div className="w-full flex items-center gap-4 p-4 bg-white border text-gray-900 rounded-sm">
+                <WarningFilled className="text-yellow-400 text-xl" />
+                <span className="mr-2">{t('The system is under maintenance, please try again later')}</span>
+                <Tooltip title={bridgeState.reason}>
+                  <InfoCircleOutlined />
+                </Tooltip>
+              </div>
+            )}
 
-          <FormItemButton
-            disabled={bridgeState.status !== 'available'}
-            onClick={() => {
-              if (!matched) {
-                message.error('Wrong Network');
-                return;
-              }
-
-              form.validateFields().then((values) => {
-                const payload = patchPayload(values);
-
-                if (!payload) {
+            <FormItemButton
+              disabled={bridgeState.status !== 'available'}
+              onClick={() => {
+                if (!matched) {
+                  message.error('Wrong Network');
                   return;
                 }
 
-                const fromToken = omit(direction.from, 'meta');
-                const toToken = omit(direction.to, 'meta');
+                form.validateFields().then((values) => {
+                  const payload = patchPayload(values);
 
-                const validateObs = payload.bridge.validate(payload, {
-                  balance: { ...fromToken, amount: balances![0] },
-                  fee: fee!,
-                  feeTokenBalance: {
-                    ...fee,
-                    amount: isXCM(direction.from.host, direction.to.host) ? balances![0] : balances![1],
-                  } as TokenWithAmount,
-                  dailyLimit: {
-                    ...toToken,
-                    amount: dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday)),
-                  },
-                  allowance: { ...fromToken, amount: allowance },
+                  if (!payload) {
+                    return;
+                  }
+
+                  const fromToken = omit(direction.from, 'meta');
+                  const toToken = omit(direction.to, 'meta');
+
+                  const validateObs = payload.bridge.validate(payload, {
+                    balance: { ...fromToken, amount: balances![0] },
+                    fee: fee!,
+                    feeTokenBalance: {
+                      ...fee,
+                      amount: isXCM(direction.from.host, direction.to.host) ? balances![0] : balances![1],
+                    } as TokenWithAmount,
+                    dailyLimit: {
+                      ...toToken,
+                      amount: dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday)),
+                    },
+                    allowance: { ...fromToken, amount: allowance },
+                  });
+
+                  const workflow = createTxWorkflow(
+                    validateObs.pipe(
+                      mergeMap(() =>
+                        applyModalObs({ content: <TransferConfirm value={payload} fee={fee!} />, closable: false })
+                      )
+                    ),
+                    () => payload.bridge.send(payload, fee?.amount),
+                    afterCrossChain(TransferDone, { payload })
+                  );
+
+                  workflow.subscribe({
+                    ...observer,
+                    complete() {
+                      observer.complete();
+                      setIsBalanceLoading(true);
+
+                      iif(() => !!account, fromRx(direction.from.meta.getBalance(direction, account)), EMPTY).subscribe(
+                        (result) => {
+                          setBalances(result);
+                          setIsBalanceLoading(false);
+                        }
+                      );
+                    },
+                  });
                 });
-
-                const workflow = createTxWorkflow(
-                  validateObs.pipe(
-                    mergeMap(() =>
-                      applyModalObs({ content: <TransferConfirm value={payload} fee={fee!} />, closable: false })
-                    )
-                  ),
-                  () => payload.bridge.send(payload, fee?.amount),
-                  afterCrossChain(TransferDone, { payload })
-                );
-
-                workflow.subscribe({
-                  ...observer,
-                  complete() {
-                    observer.complete();
-                    setIsBalanceLoading(true);
-
-                    iif(
-                      () => !!account,
-                      fromRx(direction.from.meta.getBalance(direction, account)),
-                      of(null)
-                    ).subscribe((result) => {
-                      setBalances(result);
-                      setIsBalanceLoading(false);
-                    });
-                  },
-                });
-              });
-            }}
-            className="cy-submit"
-          >
-            {t('Transfer')}
+              }}
+              className="cy-submit"
+            >
+              {t('Transfer')}
+            </FormItemButton>
+          </>
+        ) : (
+          <FormItemButton type="default" onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}>
+            {t('Switch Wallet')}
           </FormItemButton>
-        </>
+        )
       ) : (
         <FormItemButton
-          onClick={() => connectDepartureNetwork(direction.from.meta)}
+          onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}
           disabled={departureConnection.status === ConnectionStatus.connecting}
         >
           {t('Connect to Wallet')}

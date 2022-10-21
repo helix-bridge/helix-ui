@@ -98,6 +98,7 @@ function reducer(state: StoreState, action: Actions): StoreState {
 }
 
 export type ApiCtx = StoreState & {
+  connectAndUpdateDepartureNetwork: (network: ChainConfig) => void;
   connectDepartureNetwork: (network: ChainConfig) => void;
   connectArrivalNetwork: (network: ChainConfig) => void;
   disconnect: () => void;
@@ -185,13 +186,21 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
     [addConnection, isConnectionAvailable, state.connections, state.departure]
   );
 
-  const connectDepartureNetwork = useCallback(
+  const connectAndUpdateDepartureNetwork = useCallback(
     (chainConfig: ChainConfig) => {
       dep$$.unsubscribe();
       dep$$ = getConnection(chainConfig, setDepartureConnection);
       setDeparture(chainConfig);
     },
     [getConnection, setDeparture, setDepartureConnection]
+  );
+
+  const connectDepartureNetwork = useCallback(
+    (chainConfig: ChainConfig) => {
+      dep$$.unsubscribe();
+      dep$$ = getConnection(chainConfig, setDepartureConnection);
+    },
+    [getConnection, setDepartureConnection]
   );
 
   const connectArrivalNetwork = useCallback(
@@ -215,6 +224,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
       value={{
         ...state,
         isConnecting,
+        connectAndUpdateDepartureNetwork,
         connectDepartureNetwork,
         connectArrivalNetwork,
         disconnect,
