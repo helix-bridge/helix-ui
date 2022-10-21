@@ -21,7 +21,9 @@ import { prettyNumber } from 'shared/utils/helper/balance';
 import { gqlName } from 'shared/utils/helper/common';
 import { isSS58Address, isValidAddress } from 'shared/utils/helper/validator';
 import { getChainConfig, getDisplayName } from 'utils/network/network';
+import ActiveAccount from '../../components/widget/account/ActiveAccount';
 import { HISTORY_RECORDS, Path } from '../../config';
+import { AccountProvider, ApiProvider, WalletProvider } from '../../providers';
 import { getDetailPaths } from '../../utils/record/path';
 import { getFeeAmountFromHelixRecord, getSentAmountFromHelixRecord } from '../../utils/record/record';
 
@@ -168,87 +170,95 @@ function Page() {
   ];
 
   return (
-    <>
-      <div className="mt-2 lg:mt-4 pb-2 lg:pb-4 flex justify-between items-end">
-        <Input
-          size="large"
-          suffix={<SearchOutlined />}
-          allowClear
-          // eslint-disable-next-line complexity
-          onChange={(event) => {
-            const value = event.target.value;
+    <ApiProvider>
+      <WalletProvider>
+        <AccountProvider>
+          <div id="app-header-container" className="hidden lg:flex items-center space-x-4 fixed top-4 z-50">
+            <ActiveAccount />
+          </div>
 
-            if (value && !isAddress(value) && !isSS58Address(value)) {
-              setIsValidSender(false);
-              return;
-            }
+          <div className="mt-2 lg:mt-4 pb-2 lg:pb-4 flex justify-between items-end">
+            <Input
+              size="large"
+              suffix={<SearchOutlined />}
+              allowClear
+              // eslint-disable-next-line complexity
+              onChange={(event) => {
+                const value = event.target.value;
 
-            try {
-              const address = isValidAddress(value, 'ethereum') ? value : convertToDvm(value);
+                if (value && !isAddress(value) && !isSS58Address(value)) {
+                  setIsValidSender(false);
+                  return;
+                }
 
-              setAccount(address);
-              setPage(1);
-              setIsValidSender(true);
-            } catch {
-              setIsValidSender(false);
-            }
-          }}
-          placeholder={t('Search by address')}
-          className={`max-w-md ${isValidSender ? '' : 'border-red-400'}`}
-        />
+                try {
+                  const address = isValidAddress(value, 'ethereum') ? value : convertToDvm(value);
 
-        <Button
-          type="link"
-          onClick={() => {
-            if (page === 1) {
-              refetch({ page: 0, row: pageSize, sender: account, recipient: account });
-            } else {
-              setPage(1);
-            }
-          }}
-          disabled={loading}
-          className="flex items-center cursor-pointer px-0"
-        >
-          <span className="mr-2">{t('Latest transactions')}</span>
-          <SyncOutlined />
-        </Button>
-      </div>
+                  setAccount(address);
+                  setPage(1);
+                  setIsValidSender(true);
+                } catch {
+                  setIsValidSender(false);
+                }
+              }}
+              placeholder={t('Search by address')}
+              className={`max-w-md ${isValidSender ? '' : 'border-red-400'}`}
+            />
 
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={source?.records ?? []}
-        size="small"
-        loading={loading}
-        onRow={(record) => ({
-          onClick() {
-            const { fromChain, toChain } = record;
-            const paths = getDetailPaths(fromChain, toChain, record);
+            <Button
+              type="link"
+              onClick={() => {
+                if (page === 1) {
+                  refetch({ page: 0, row: pageSize, sender: account, recipient: account });
+                } else {
+                  setPage(1);
+                }
+              }}
+              disabled={loading}
+              className="flex items-center cursor-pointer px-0"
+            >
+              <span className="mr-2">{t('Latest transactions')}</span>
+              <SyncOutlined />
+            </Button>
+          </div>
 
-            if (paths.length) {
-              router.push({
-                pathname: `${Path.transaction}/${paths.join('/')}`,
-                query: new URLSearchParams({
-                  from: record.fromChain,
-                  to: record.toChain,
-                }).toString(),
-              });
-            } else {
-              message.error(`Can not find the detail page for ${fromChain} to ${toChain}`);
-            }
-          },
-        })}
-        pagination={{ pageSize, total: source?.total ?? 0, current: page, size: 'default' }}
-        onChange={({ current, pageSize: size }) => {
-          setPage(current ?? 1);
-          setPageSize(size ?? PAGE_SIZE);
-        }}
-        rowClassName={() => {
-          return 'cursor-pointer';
-        }}
-        className="explorer-table"
-      />
-    </>
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={source?.records ?? []}
+            size="small"
+            loading={loading}
+            onRow={(record) => ({
+              onClick() {
+                const { fromChain, toChain } = record;
+                const paths = getDetailPaths(fromChain, toChain, record);
+
+                if (paths.length) {
+                  router.push({
+                    pathname: `${Path.transaction}/${paths.join('/')}`,
+                    query: new URLSearchParams({
+                      from: record.fromChain,
+                      to: record.toChain,
+                    }).toString(),
+                  });
+                } else {
+                  message.error(`Can not find the detail page for ${fromChain} to ${toChain}`);
+                }
+              },
+            })}
+            pagination={{ pageSize, total: source?.total ?? 0, current: page, size: 'default' }}
+            onChange={({ current, pageSize: size }) => {
+              setPage(current ?? 1);
+              setPageSize(size ?? PAGE_SIZE);
+            }}
+            rowClassName={() => {
+              return 'cursor-pointer';
+            }}
+            className="explorer-table"
+          />
+        </AccountProvider>
+      </WalletProvider>
+    </ApiProvider>
   );
 }
 
