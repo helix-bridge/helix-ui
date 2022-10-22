@@ -22,7 +22,7 @@ import { readStorage, updateStorage } from 'shared/utils/helper/storage';
 import { getBridge, isCBridge, isSubstrateDVMSubstrateDVM, isXCM } from 'utils/bridge';
 import { bridgeFactory } from '../../bridges/bridges';
 import { TokenWithAmount } from '../../core/bridge';
-import { getChainConfig } from '../../utils/network';
+import { getOriginChainConfig } from '../../utils/network';
 import { chainFactory } from '../../utils/network/chain';
 import { CountLoading } from '../widget/CountLoading';
 import { Destination } from './Destination';
@@ -41,7 +41,7 @@ export function toDirection({
   host,
   symbol,
 }: Pick<TokenWithBridgesInfo, 'host' | 'symbol'>): CrossToken<ChainBase> | null {
-  const config = getChainConfig(host);
+  const config = getOriginChainConfig(host);
   const token = config.tokens.find((item) => item.symbol === symbol);
 
   return token ? { ...token, amount: '', meta: chainFactory(config) } : null;
