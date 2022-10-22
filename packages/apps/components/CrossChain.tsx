@@ -6,14 +6,15 @@ import identity from 'lodash/identity';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { mergeMap } from 'rxjs';
+import { EMPTY, mergeMap } from 'rxjs';
 import { from, from as fromRx } from 'rxjs/internal/observable/from';
 import { iif } from 'rxjs/internal/observable/iif';
 import { of } from 'rxjs/internal/observable/of';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
+import { DEFAULT_DIRECTION, FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
 import { BridgeBase } from 'shared/core/bridge';
 import { ChainBase } from 'shared/core/chain';
@@ -24,12 +25,12 @@ import {
   ConnectionStatus,
   CrossChainDirection,
   CrossChainPureDirection,
-  CrossToken,
   DailyLimit,
   TokenInfoWithMeta,
 } from 'shared/model';
 import { toWei, truncate } from 'shared/utils/helper/balance';
 import { pollWhile } from 'shared/utils/helper/operator';
+import { isValidAddress } from 'shared/utils/helper/validator';
 import { isEthereumNetwork } from 'shared/utils/network/network';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
 import { Bridge, PayloadPatchFn, TokenWithAmount } from '../core/bridge';
@@ -41,7 +42,7 @@ import { CrossChainPayload } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
 import { isSubstrateDVMSubstrateDVM, isXCM } from '../utils';
 import { BridgeSelector } from './form-control/BridgeSelector';
-import { calcMax, Direction } from './form-control/Direction';
+import { calcMax, Direction, toDirection } from './form-control/Direction';
 import { TransferConfirm } from './tx/TransferConfirm';
 import { TransferDone } from './tx/TransferDone';
 import { FormItemButton } from './widget/FormItemButton';
@@ -55,14 +56,16 @@ const isDirectionChanged = (pre: CrossChainDirection, cur: CrossChainDirection) 
 
 type CommonBridge = Bridge<BridgeConfig, ChainConfig, ChainConfig>;
 
+const defaultDirection = { from: toDirection(DEFAULT_DIRECTION.from)!, to: toDirection(DEFAULT_DIRECTION.to)! };
+
 // eslint-disable-next-line complexity
-export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>> }) {
+export function CrossChain() {
   const { i18n, t } = useTranslation();
   const [form] = useForm<CrossChainPayload<CommonBridge>>();
-  const { connectDepartureNetwork, departureConnection, setDeparture } = useApi();
-  const [direction, setDirection] = useState(dir);
+  const { connectAndUpdateDepartureNetwork, departureConnection, setDeparture } = useApi();
+  const [direction, setDirection] = useState(defaultDirection);
   const [pureDirection, setPureDirection] =
-    useState<CrossChainPureDirection<TokenInfoWithMeta<ChainBase>, TokenInfoWithMeta<ChainBase>>>(dir);
+    useState<CrossChainPureDirection<TokenInfoWithMeta<ChainBase>, TokenInfoWithMeta<ChainBase>>>(defaultDirection);
   const [bridge, setBridge] = useState<CommonBridge | null>(null);
   const [patchPayload, setPatchPayload] = useState<PayloadPatchFn>(() => (v: CrossChainPayload<CommonBridge>) => v);
   const bridgeState = useCheckSpecVersion(direction);
@@ -75,7 +78,8 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
   const [dailyLimit, setDailyLimit] = useState<DailyLimit | null>(null);
   const isMounted = useIsMounted();
-  const { afterCrossChain } = useAfterTx<CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>>();
+  const router = useRouter();
+  const { afterCrossChain } = useAfterTx<CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>>(router);
 
   const allowanceEnough = useMemo(
     () =>
@@ -114,14 +118,21 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
 
   useEffect(() => {
     setIsBalanceLoading(true);
+    setBalances(null);
+
     const { from: dep } = pureDirection;
-    const sub$$ = iif(
-      () => !!account && !!dep,
-      fromRx(dep.meta.getBalance(pureDirection, account)),
-      of(null)
-    ).subscribe((result) => {
-      setBalances(result);
-      setIsBalanceLoading(false);
+    const obs =
+      !!account && !!dep && isValidAddress(account, pureDirection.from.host)
+        ? fromRx(dep.meta.getBalance(pureDirection, account))
+        : EMPTY;
+
+    const sub$$ = obs.subscribe({
+      next(result) {
+        setBalances(result);
+      },
+      complete() {
+        setIsBalanceLoading(false);
+      },
     });
 
     return () => sub$$.unsubscribe();
@@ -180,7 +191,6 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
     <Form
       layout="vertical"
       form={form}
-      initialValues={{ direction }}
       validateMessages={validateMessages[i18n.language as 'en' | 'zh-CN' | 'zh']}
       className="mb-4 sm:mb-0 bg-antDark p-5 mx-auto lg:w-1/2 w-full"
     >
@@ -240,13 +250,17 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
           fee={fee}
           balances={balances}
           isBalanceLoading={isBalanceLoading}
-          initial={direction}
           onRefresh={() => {
             setIsBalanceLoading(true);
+            setBalances(null);
 
-            fromRx(direction.from.meta.getBalance(direction, account)).subscribe((result) => {
-              setBalances(result);
-              setIsBalanceLoading(false);
+            fromRx(direction.from.meta.getBalance(direction, account)).subscribe({
+              next(result) {
+                setBalances(result);
+              },
+              complete() {
+                setIsBalanceLoading(false);
+              },
             });
           }}
           onChange={(value) => {
@@ -311,100 +325,110 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
       </Form.Item>
 
       {!allowanceEnough && account ? (
-        <FormItemButton
-          onClick={() => {
-            if (bridge?.getAllowancePayload) {
-              bridge.getAllowancePayload(direction).then((payload) => {
-                if (payload) {
-                  approve(payload);
-                }
-              });
-            }
-          }}
-          className="cy-approve"
-        >
-          {t('Approve')}
-        </FormItemButton>
-      ) : departureConnection.status === ConnectionStatus.success ? (
-        <>
-          {bridgeState.status === 'error' && (
-            <div className="w-full flex items-center gap-4 p-4 bg-white border text-gray-900 rounded-sm">
-              <WarningFilled className="text-yellow-400 text-xl" />
-              <span className="mr-2">{t('The system is under maintenance, please try again later')}</span>
-              <Tooltip title={bridgeState.reason}>
-                <InfoCircleOutlined />
-              </Tooltip>
-            </div>
-          )}
-
+        matched ? (
           <FormItemButton
-            disabled={bridgeState.status !== 'available'}
             onClick={() => {
-              if (!matched) {
-                message.error('Wrong Network');
-                return;
+              if (bridge?.getAllowancePayload) {
+                bridge.getAllowancePayload(direction).then((payload) => {
+                  if (payload) {
+                    approve(payload);
+                  }
+                });
               }
+            }}
+            className="cy-approve"
+          >
+            {t('Approve')}
+          </FormItemButton>
+        ) : (
+          <FormItemButton type="default" onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}>
+            {t('Switch Wallet')}
+          </FormItemButton>
+        )
+      ) : departureConnection.status === ConnectionStatus.success ? (
+        matched ? (
+          <>
+            {bridgeState.status === 'error' && (
+              <div className="w-full flex items-center gap-4 p-4 bg-white border text-gray-900 rounded-sm">
+                <WarningFilled className="text-yellow-400 text-xl" />
+                <span className="mr-2">{t('The system is under maintenance, please try again later')}</span>
+                <Tooltip title={bridgeState.reason}>
+                  <InfoCircleOutlined />
+                </Tooltip>
+              </div>
+            )}
 
-              form.validateFields().then((values) => {
-                const payload = patchPayload(values);
-
-                if (!payload) {
+            <FormItemButton
+              disabled={bridgeState.status !== 'available'}
+              onClick={() => {
+                if (!matched) {
+                  message.error('Wrong Network');
                   return;
                 }
 
-                const fromToken = omit(direction.from, 'meta');
-                const toToken = omit(direction.to, 'meta');
+                form.validateFields().then((values) => {
+                  const payload = patchPayload(values);
 
-                const validateObs = payload.bridge.validate(payload, {
-                  balance: { ...fromToken, amount: balances![0] },
-                  fee: fee!,
-                  feeTokenBalance: {
-                    ...fee,
-                    amount: isXCM(direction.from.host, direction.to.host) ? balances![0] : balances![1],
-                  } as TokenWithAmount,
-                  dailyLimit: {
-                    ...toToken,
-                    amount: dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday)),
-                  },
-                  allowance: { ...fromToken, amount: allowance },
+                  if (!payload) {
+                    return;
+                  }
+
+                  const fromToken = omit(direction.from, 'meta');
+                  const toToken = omit(direction.to, 'meta');
+
+                  const validateObs = payload.bridge.validate(payload, {
+                    balance: { ...fromToken, amount: balances![0] },
+                    fee: fee!,
+                    feeTokenBalance: {
+                      ...fee,
+                      amount: isXCM(direction.from.host, direction.to.host) ? balances![0] : balances![1],
+                    } as TokenWithAmount,
+                    dailyLimit: {
+                      ...toToken,
+                      amount: dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday)),
+                    },
+                    allowance: { ...fromToken, amount: allowance },
+                  });
+
+                  const workflow = createTxWorkflow(
+                    validateObs.pipe(
+                      mergeMap(() =>
+                        applyModalObs({ content: <TransferConfirm value={payload} fee={fee!} />, closable: false })
+                      )
+                    ),
+                    () => payload.bridge.send(payload, fee?.amount),
+                    afterCrossChain(TransferDone, { payload })
+                  );
+
+                  workflow.subscribe({
+                    ...observer,
+                    complete() {
+                      observer.complete();
+                      setIsBalanceLoading(true);
+
+                      iif(() => !!account, fromRx(direction.from.meta.getBalance(direction, account)), EMPTY).subscribe(
+                        (result) => {
+                          setBalances(result);
+                          setIsBalanceLoading(false);
+                        }
+                      );
+                    },
+                  });
                 });
-
-                const workflow = createTxWorkflow(
-                  validateObs.pipe(
-                    mergeMap(() =>
-                      applyModalObs({ content: <TransferConfirm value={payload} fee={fee!} />, closable: false })
-                    )
-                  ),
-                  () => payload.bridge.send(payload, fee?.amount),
-                  afterCrossChain(TransferDone, { payload })
-                );
-
-                workflow.subscribe({
-                  ...observer,
-                  complete() {
-                    observer.complete();
-                    setIsBalanceLoading(true);
-
-                    iif(
-                      () => !!account,
-                      fromRx(direction.from.meta.getBalance(direction, account)),
-                      of(null)
-                    ).subscribe((result) => {
-                      setBalances(result);
-                      setIsBalanceLoading(false);
-                    });
-                  },
-                });
-              });
-            }}
-            className="cy-submit"
-          >
-            {t('Transfer')}
+              }}
+              className="cy-submit"
+            >
+              {t('Transfer')}
+            </FormItemButton>
+          </>
+        ) : (
+          <FormItemButton type="default" onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}>
+            {t('Switch Wallet')}
           </FormItemButton>
-        </>
+        )
       ) : (
         <FormItemButton
-          onClick={() => connectDepartureNetwork(direction.from.meta)}
+          onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}
           disabled={departureConnection.status === ConnectionStatus.connecting}
         >
           {t('Connect to Wallet')}

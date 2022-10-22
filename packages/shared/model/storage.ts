@@ -1,16 +1,9 @@
 import { THEME } from '../config/theme';
-import { ChainConfig, Network, SupportedWallet } from './network';
+import { ChainConfig, Network, SupportedWallet, TokenWithBridgesInfo } from './network';
 
 export interface HashInfo {
-  from?: string | null;
-  recipient?: string | null;
-  to?: string | null;
-}
-
-export interface HistoryRouteParam {
-  from: string;
-  sender: string;
-  to: string;
+  from?: Pick<TokenWithBridgesInfo, 'symbol' | 'host'>;
+  to?: Pick<TokenWithBridgesInfo, 'symbol' | 'host'>;
 }
 
 export type StorageInfo = HashInfo & {
@@ -18,6 +11,9 @@ export type StorageInfo = HashInfo & {
   config?: Partial<{ [key in Network]: ChainConfig }>;
   custom?: Network[];
   hideWarning?: boolean;
-} & {
-  [key in SupportedWallet]?: string;
+  activeAccount?: string;
+  activeWallet?: {
+    chain?: Network;
+    wallet?: SupportedWallet;
+  };
 };

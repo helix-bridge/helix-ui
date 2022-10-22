@@ -37,7 +37,7 @@ export default function History() {
   const { t } = useITranslation();
   const [activeTab, setActiveTab] = useState<number>(-1);
   const { account } = useAccount();
-  const { connectDepartureNetwork, departure, isConnecting } = useApi();
+  const { connectAndUpdateDepartureNetwork, departure, isConnecting } = useApi();
   const [total, setTotal] = useState(0);
   const [source, setSource] = useState<HelixHistoryRecord[]>([]);
   const [loading, setLoading] = useState(false);
@@ -150,7 +150,7 @@ export default function History() {
         extra={
           <Button
             onClick={() => {
-              connectDepartureNetwork(departure);
+              connectAndUpdateDepartureNetwork(departure);
             }}
             disabled={isConnecting}
             icon={isConnecting ? <LoadingOutlined /> : undefined}
