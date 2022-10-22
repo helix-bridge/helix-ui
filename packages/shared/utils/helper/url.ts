@@ -1,15 +1,7 @@
 import isEqual from 'lodash/isEqual';
 import mapKeys from 'lodash/mapKeys';
 import { DEFAULT_DIRECTION } from '../../config/constant';
-import {
-  CrossChainDirection,
-  HashInfo,
-  HistoryRouteParam,
-  NullableCrossChainDirection,
-  StorageInfo,
-  ValueOf,
-  WithNull,
-} from '../../model';
+import { CrossChainDirection, HashInfo, NullableCrossChainDirection, StorageInfo, ValueOf } from '../../model';
 import { readStorage } from './storage';
 
 interface HashShort {
@@ -30,7 +22,6 @@ export type AdapterMap<T extends object, D extends object> = {
 const toShort: AdapterMap<HashInfo, HashShort> = {
   from: 'f',
   to: 't',
-  recipient: 'r',
 };
 
 const toLong: AdapterMap<HashShort, HashInfo> = Object.entries(toShort).reduce(
@@ -90,33 +81,6 @@ export function apiUrl(domain: string, path: string): string {
 }
 
 // eslint-disable-next-line complexity
-export const genHistoryRouteParams: (param: HistoryRouteParam) => string = ({ from, sender, to }) => {
-  const params = new URLSearchParams();
-
-  [
-    { key: 'from', value: from || '' },
-    { key: 'sender', value: sender || '' },
-    { key: 'to', value: to || '' },
-  ].forEach(({ key, value }) => {
-    if (value) {
-      params.set(key, value);
-    }
-  });
-
-  return params.toString();
-};
-
-export const getHistoryRouteParams: (search: string) => WithNull<HistoryRouteParam> = (search) => {
-  const params = new URLSearchParams(search);
-
-  return {
-    from: params.get('from'),
-    sender: params.get('sender'),
-    to: params.get('to'),
-  } as HistoryRouteParam;
-};
-
-// eslint-disable-next-line complexity
 export const validateDirection: (dir: NullableCrossChainDirection) => CrossChainDirection = (dir) => {
   const { from, to } = dir;
 
@@ -131,8 +95,4 @@ export const validateDirection: (dir: NullableCrossChainDirection) => CrossChain
   }
 
   return { from: from ?? DEFAULT_DIRECTION.from, to: to ?? DEFAULT_DIRECTION.to };
-};
-
-export const getDirectionFromSettings: () => CrossChainDirection = () => {
-  return DEFAULT_DIRECTION;
 };

@@ -1,12 +1,7 @@
-import {
-  CloseCircleOutlined,
-  DisconnectOutlined,
-  DollarOutlined,
-  LoadingOutlined,
-  SettingFilled,
-} from '@ant-design/icons';
+import { DisconnectOutlined, DollarOutlined, LoadingOutlined, SettingFilled } from '@ant-design/icons';
+import { numberToHex } from '@polkadot/util';
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import { Badge, Button, message, Tooltip } from 'antd';
+import { Badge, Button, Dropdown, Menu, Tooltip } from 'antd';
 import { Contract } from 'ethers';
 import { i18n, Trans } from 'next-i18next';
 import dynamic from 'next/dynamic';
@@ -14,16 +9,15 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { initReactI18next, useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
+import { darwiniaConfig, SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
 import { ethereumConfig } from 'shared/config/network/ethereum';
-import { ConnectionStatus, EthereumChainConfig, SupportedWallet } from 'shared/model';
-import { entrance, switchEthereumChain } from 'shared/utils/connection';
-import { updateStorage } from 'shared/utils/helper/storage';
-import { isPolkadotNetwork } from 'shared/utils/network/network';
+import { ConnectionStatus, EthereumChainConfig } from 'shared/model';
+import { entrance } from 'shared/utils/connection';
 import { Path } from '../../../config';
 import abi from '../../../config/ethv1/abi.json';
 import claimSource from '../../../config/ethv1/airdrop2.json';
 import { contractAddress, merkleRoot } from '../../../config/ethv1/constant';
-import { useAccount, useApi, useWallet } from '../../../providers';
+import { useAccount, useApi } from '../../../providers';
 import { SelectAccountModal } from './SelectAccountModal';
 import { SelectWalletModal } from './SelectWalletModal';
 
@@ -36,9 +30,8 @@ export default function ActiveAccount() {
   const { departureConnection, departure, connectDepartureNetwork, isConnecting } = useApi();
   const { t } = useTranslation();
   const { account, setAccount } = useAccount();
-  const [isVisible, setIsVisible] = useState(false);
-  const [isWalletVisible, setIsWalletVisible] = useState(false);
-  const { matched, walletMatched, chainMatched } = useWallet();
+  const [isAccountSelectOpen, setIsAccountSelectOpen] = useState(false);
+  const [isWalletSelectOpen, setIsWalletSelectOpen] = useState(false);
   const [unclaimed, setUnclaimed] = useState(false);
   const router = useRouter();
 
@@ -49,25 +42,17 @@ export default function ActiveAccount() {
   }, [departureConnection]);
 
   useEffect(() => {
-    if (
-      departureConnection.type === 'polkadot' &&
-      departureConnection.accounts.length >= 1 &&
-      isPolkadotNetwork(departure)
-    ) {
-      connectDepartureNetwork(departure);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [departure, departureConnection.accounts.length, departureConnection.type]);
-
-  useEffect(() => {
     if (isEthereumAddress(account)) {
       const target = claimSource.find((item) => item.to.toLowerCase() === account.toLowerCase());
+
       if (!target) {
         setUnclaimed(false);
       } else {
         const contract = new Contract(contractAddress, abi, entrance.web3.getInstance(ethereumConfig.provider));
         (contract.claimed(target.to, merkleRoot) as Promise<boolean>).then((res: boolean) => setUnclaimed(!res));
       }
+    } else {
+      setUnclaimed(false);
     }
   }, [account]);
 
@@ -107,40 +92,51 @@ export default function ActiveAccount() {
               ></Badge>
             )}
 
-            <Button
-              className={`flex items-center justify-around px-1 overflow-hidden`}
-              icon={
-                matched ? (
+            {departureConnection.type === 'polkadot' && (
+              <Dropdown
+                overlay={
+                  <Menu
+                    items={[
+                      {
+                        key: 'wallet',
+                        label: <span onClick={() => setIsWalletSelectOpen(true)}>{t('Switch wallet')}</span>,
+                      },
+                      {
+                        key: 'account',
+                        label: <span onClick={() => setIsAccountSelectOpen(true)}>{t('Switch account')}</span>,
+                      },
+                    ]}
+                  ></Menu>
+                }
+              >
+                <Button
+                  className="flex items-center justify-around px-1 overflow-hidden truncate ml-1"
+                  icon={
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={`/image/${departureConnection.type}.svg`} width={18} height={18} />
+                  }
+                  style={{ maxWidth: 200 }}
+                >
+                  <span className="truncate ml-1">{account}</span>
+
+                  <Icon name="down" className="w-8 h-8" />
+                </Button>
+              </Dropdown>
+            )}
+
+            {departureConnection.type === 'metamask' && (
+              <Button
+                className="flex items-center justify-around px-1 overflow-hidden"
+                icon={
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={`/image/${departureConnection.type}.svg`} width={18} height={18} />
-                ) : (
-                  <CloseCircleOutlined />
-                )
-              }
-              style={{ maxWidth: 200 }}
-              danger={!matched}
-              type={!matched ? 'primary' : 'default'}
-              // eslint-disable-next-line complexity
-              onClick={() => {
-                if (!chainMatched && departure.wallets.includes('metamask')) {
-                  switchEthereumChain(departure as EthereumChainConfig);
-                  return;
                 }
-
-                if (!walletMatched) {
-                  setIsWalletVisible(true);
-                  return;
-                }
-
-                if (walletMatched && departureConnection.accounts.length > 1) {
-                  setIsVisible(true);
-                }
-              }}
-            >
-              <span className="truncate ml-1">{matched ? account : t('Wrong Network')}</span>
-
-              {departureConnection.accounts.length > 1 && matched && <Icon name="down" className="w-8 h-8" />}
-            </Button>
+                style={{ maxWidth: 200 }}
+                onClick={() => setIsWalletSelectOpen(true)}
+              >
+                <span className="truncate ml-1">{account}</span>
+              </Button>
+            )}
 
             <span className="lg:hidden flex">
               <Identicon value={account} size={20} className="rounded-full border p-1" />
@@ -148,7 +144,7 @@ export default function ActiveAccount() {
           </section>
 
           <SettingFilled
-            onClick={() => setIsVisible(true)}
+            onClick={() => setIsAccountSelectOpen(true)}
             className={`lg:hidden inline-flex items-center text-2xl h-8 text-${departure.name}-main`}
           />
         </>
@@ -156,22 +152,26 @@ export default function ActiveAccount() {
         <Button
           disabled={isConnecting}
           icon={isConnecting && <LoadingOutlined />}
-          onClick={() => connectDepartureNetwork(departure)}
-          className={chainMatched ? '' : 'text-red-500 border-red-500'}
+          onClick={() => {
+            if (router.pathname !== Path.transaction) {
+              connectDepartureNetwork(departure);
+            } else {
+              setIsWalletSelectOpen(true);
+            }
+          }}
         >
           {t('Connect to Wallet')}
         </Button>
       )}
 
       <SelectAccountModal
-        visible={isVisible}
+        visible={isAccountSelectOpen}
         accounts={departureConnection.accounts}
         defaultValue={account}
-        onCancel={() => setIsVisible(false)}
+        onCancel={() => setIsAccountSelectOpen(false)}
         onSelect={(acc) => {
           setAccount(acc);
-          updateStorage({ [departureConnection.type]: acc });
-          setIsVisible(false);
+          setIsAccountSelectOpen(false);
         }}
         title={
           <div className="inline-flex items-center space-x-1">
@@ -182,16 +182,29 @@ export default function ActiveAccount() {
       />
 
       <SelectWalletModal
-        visible={isWalletVisible}
+        visible={isWalletSelectOpen}
         defaultValue={departureConnection.type}
-        onCancel={() => setIsWalletVisible(false)}
+        onCancel={() => setIsWalletSelectOpen(false)}
         onSelect={(wallet) => {
-          setIsWalletVisible(false);
+          setIsWalletSelectOpen(false);
 
-          if (departure.wallets.includes(wallet as SupportedWallet)) {
-            connectDepartureNetwork(departure);
+          if (wallet === 'metamask') {
+            if (departure.wallets.includes('metamask')) {
+              connectDepartureNetwork(departure);
+            } else {
+              entrance.web3.currentProvider.getNetwork().then((res) => {
+                const chainId = numberToHex(+res.chainId);
+                const config = SYSTEM_CHAIN_CONFIGURATIONS.find(
+                  (item) => (item as EthereumChainConfig)?.ethereumChain?.chainId === chainId
+                );
+
+                connectDepartureNetwork(config ?? ethereumConfig);
+              });
+            }
+          } else if (wallet === 'polkadot') {
+            connectDepartureNetwork(departure.wallets.includes('polkadot') ? departure : darwiniaConfig);
           } else {
-            message.error(t('The selected wallet does not match the token to be transferred'));
+            //
           }
         }}
         title={

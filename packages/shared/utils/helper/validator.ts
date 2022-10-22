@@ -2,12 +2,12 @@ import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
 import { isAddress } from 'ethers/lib/utils';
 import { Network, TokenWithBridgesInfo } from '../../model';
-import { isPolkadotNetwork } from '../network/network';
+import { isEthereumNetwork, isPolkadotNetwork } from '../network/network';
 import { canConvertToEth, convertToEth, convertToSS58, dvmAddressToAccountId } from './address';
 
 // eslint-disable-next-line complexity
 export const isValidAddress = (address: string, network: Network): boolean => {
-  if (network === 'ethereum') {
+  if (isEthereumNetwork(network)) {
     const isDvm = isAddress(address);
     const isSS58 = isSS58Address(address);
 

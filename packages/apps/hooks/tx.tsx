@@ -1,15 +1,15 @@
 import { message, ModalProps } from 'antd';
+import { NextRouter } from 'next/router';
 import { FunctionComponent, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Tx } from 'shared/model/tx';
 import { applyModal } from 'shared/utils/tx';
+import { Path } from '../config';
 import { TxDoneComponentProps } from '../model/component';
 import type { CrossChainPayload } from '../model/tx';
-import { usePersonal } from '../providers';
 
-export function useAfterTx<T extends CrossChainPayload>() {
+export function useAfterTx<T extends CrossChainPayload>(router?: NextRouter) {
   const { t } = useTranslation();
-  const { setIsPersonalHistoryVisible } = usePersonal();
 
   const afterCrossChain = useCallback(
     (
@@ -31,7 +31,15 @@ export function useAfterTx<T extends CrossChainPayload>() {
               tx={tx}
               value={payload}
               showHistory={() => {
-                setIsPersonalHistoryVisible(true);
+                if (router) {
+                  router.push({
+                    pathname: Path.transaction,
+                    query: new URLSearchParams({
+                      account: payload.sender,
+                    }).toString(),
+                  });
+                }
+
                 destroy();
               }}
             />
@@ -48,7 +56,7 @@ export function useAfterTx<T extends CrossChainPayload>() {
           ...rest,
         });
       },
-    [setIsPersonalHistoryVisible, t]
+    [router, t]
   );
 
   const afterApprove = useCallback(

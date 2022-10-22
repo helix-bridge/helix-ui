@@ -138,7 +138,7 @@ export class DVMChain extends EthereumChain implements DVMChainConfig {
   ): Promise<BN[]> {
     const { from } = direction;
     const tokenAddress = from.address;
-    const httpsProvider = from.meta.provider.replace('https', 'wss');
+    const httpsProvider = from.meta.provider.replace('wss', 'https');
 
     if (from.type === 'native') {
       return getEthereumNativeBalance(account, httpsProvider).then((balance) => [balance, balance]);

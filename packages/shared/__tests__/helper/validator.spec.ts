@@ -40,6 +40,15 @@ describe('validator utils', () => {
     expect(isValidAddress(ethereumAddress, 'ethereum')).toBe(true);
     expect(isValidAddress(ethereumAddress, 'darwinia')).toBe(false);
     expect(isValidAddress(karuraAddress, 'karura')).toBe(true);
+    expect(isValidAddress(ethereumAddress, 'arbitrum')).toBe(true);
+    expect(isValidAddress(ethereumAddress, 'moonriver')).toBe(true);
+    expect(isValidAddress(ethereumAddress, 'ropsten')).toBe(true);
+    expect(isValidAddress(ethereumAddress, 'goerli')).toBe(true);
+    expect(isValidAddress(ethereumAddress, 'pangoro-dvm')).toBe(true);
+    expect(isValidAddress(ethereumAddress, 'darwinia-dvm')).toBe(true);
+    expect(isValidAddress(ethereumAddress, 'crab-dvm')).toBe(true);
+    expect(isValidAddress(substrateAddress, 'crab-dvm')).toBe(false);
+    expect(isValidAddress(darwiniaAddress, 'crab-dvm')).toBe(false);
   });
 
   it('should predicate polkadot address ', () => {
