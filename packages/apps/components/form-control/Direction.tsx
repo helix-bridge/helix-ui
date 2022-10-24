@@ -2,6 +2,8 @@ import { PauseCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 import { BN_ZERO } from '@polkadot/util';
 import { Tooltip } from 'antd';
 import BN from 'bn.js';
+import { has } from 'lodash';
+import isObject from 'lodash/isObject';
 import pick from 'lodash/pick';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -139,7 +141,11 @@ export function Direction({ value, onChange, balances, onRefresh, fee, isBalance
   useEffect(() => {
     const { from: storedForm, to: storedTo } = readStorage();
 
-    if (storedForm && storedTo) {
+    if (
+      storedForm &&
+      storedTo &&
+      [storedForm, storedTo].every((item) => isObject(item) && has(item, 'host') && has(item, 'symbol'))
+    ) {
       triggerChange({
         from: toDirection(storedForm)!,
         to: toDirection(storedTo)!,
