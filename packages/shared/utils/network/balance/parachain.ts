@@ -1,16 +1,15 @@
 import { AccountData, AccountInfo } from '@darwinia/types';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { ChainConfig, ParachainNetwork, TokenInfoWithMeta } from '../../../model';
-import { entrance, waitUntilConnected } from '../../connection';
+import { entrance } from '../../connection';
 
 /**
  * @description other api can get balances:  api.derive.balances.all, api.query.system.account;
  * @see https://github.com/darwinia-network/wormhole-ui/issues/142
  */
 export async function getBalance(fromToken: TokenInfoWithMeta<ChainConfig>, account: string): Promise<BN> {
-  const api = entrance.polkadot.getInstance(fromToken.meta.provider);
+  const api = entrance.polkadot.getInstance(fromToken.meta.provider.https);
 
-  await waitUntilConnected(api);
   const darwiniaParachain: ParachainNetwork[] = ['crab-parachain', 'pangolin-parachain'];
 
   try {

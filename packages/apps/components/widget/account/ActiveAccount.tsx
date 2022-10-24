@@ -48,7 +48,7 @@ export default function ActiveAccount() {
       if (!target) {
         setUnclaimed(false);
       } else {
-        const contract = new Contract(contractAddress, abi, entrance.web3.getInstance(ethereumConfig.provider));
+        const contract = new Contract(contractAddress, abi, entrance.web3.getInstance(ethereumConfig.provider.https));
         (contract.claimed(target.to, merkleRoot) as Promise<boolean>).then((res: boolean) => setUnclaimed(!res));
       }
     } else {

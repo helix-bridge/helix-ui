@@ -136,7 +136,7 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
     const { abi, address } = this.isIssue(departure, arrival)
       ? { abi: backingAbi, address: this.config.contracts?.backing }
       : { abi: burnAbi, address: this.config.contracts?.issuing };
-    const contract = new Contract(address as string, abi, entrance.web3.getInstance(departure.provider));
+    const contract = new Contract(address as string, abi, entrance.web3.getInstance(departure.provider.https));
 
     try {
       const fee = await contract.fee();
@@ -159,7 +159,7 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
       ? { abi: backingAbi, address: this.config.contracts?.backing }
       : { abi: burnAbi, address: this.config.contracts?.issuing };
 
-    const contract = new Contract(address as string, abi, entrance.web3.getInstance(departure.provider));
+    const contract = new Contract(address as string, abi, entrance.web3.getInstance(departure.provider.https));
 
     try {
       const limit: BigNumber = await contract.dailyLimit(fromTokenAddress);

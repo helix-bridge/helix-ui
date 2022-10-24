@@ -26,7 +26,7 @@ export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, Polkado
     } = payload;
     const toAccount = dvmAddressToAccountId(recipient).toHuman();
     const amount = toWei(from);
-    const api = entrance.polkadot.getInstance(from.meta.provider);
+    const api = entrance.polkadot.getInstance(from.meta.provider.wss);
     const extrinsic = isRing(from.symbol)
       ? api.tx.balances.transfer(toAccount, new BN(amount))
       : api.tx.kton.transfer(toAccount, new BN(amount));
@@ -51,7 +51,7 @@ export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, Polkado
         }
 
         const web3 = entrance.web3.currentProvider;
-        const api = entrance.polkadot.getInstance(from.meta.provider);
+        const api = entrance.polkadot.getInstance(from.meta.provider.wss);
 
         return rxFrom(waitUntilConnected(api)).pipe(
           mergeMap(async () => {

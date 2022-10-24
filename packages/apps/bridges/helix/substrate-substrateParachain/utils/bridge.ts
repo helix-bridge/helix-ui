@@ -23,7 +23,7 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
   back(payload: RedeemPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction } = payload;
     const { from: departure, to } = direction;
-    const api = entrance.polkadot.getInstance(direction.from.meta.provider);
+    const api = entrance.polkadot.getInstance(direction.from.meta.provider.wss);
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
     const WEIGHT = '10000000000';
     const section = `to${to.host.split('-').map(upperFirst).join('')}Backing`;
@@ -35,7 +35,7 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
   burn(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction } = payload;
     const { from: departure, to } = direction;
-    const api = entrance.polkadot.getInstance(direction.from.meta.provider);
+    const api = entrance.polkadot.getInstance(direction.from.meta.provider.wss);
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
     const WEIGHT = '10000000000';
     const section = `from${upperFirst(to.meta.name)}Issuing`;
@@ -57,7 +57,7 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
   private async getIssueDailyLimit(
     direction: CrossChainDirection<CrossToken<PolkadotChainConfig>, CrossToken<PolkadotChainConfig>>
   ) {
-    const api = entrance.polkadot.getInstance(direction.to.meta.provider);
+    const api = entrance.polkadot.getInstance(direction.to.meta.provider.https);
 
     await waitUntilConnected(api);
 
@@ -76,7 +76,7 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
   private async getRedeemDailyLimit(
     direction: CrossChainDirection<CrossToken<PolkadotChainConfig>, CrossToken<PolkadotChainConfig>>
   ) {
-    const api = entrance.polkadot.getInstance(direction.to.meta.provider);
+    const api = entrance.polkadot.getInstance(direction.to.meta.provider.https);
 
     await waitUntilConnected(api);
 
@@ -99,7 +99,7 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
       from: { meta: from },
       to: { meta: to },
     } = direction;
-    const api = entrance.polkadot.getInstance(from.provider);
+    const api = entrance.polkadot.getInstance(from.provider.https);
     const section = lowerFirst(`${to.name.split('-').map(upperFirst).join('')}FeeMarket`);
 
     try {
