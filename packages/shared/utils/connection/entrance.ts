@@ -26,7 +26,7 @@ abstract class Entrance<T> {
     const provider = url === 'ethereum' ? null : this.checkExist(url);
 
     if (provider && url.startsWith('wss')) {
-      if (this.isWebsocketActive(provider[url] as ApiPromise | WebSocketProvider)) {
+      if (this.isWebsocketActive(provider[url] as unknown as ApiPromise | WebSocketProvider)) {
         return provider[url];
       } else {
         this.removeInstance(url);
