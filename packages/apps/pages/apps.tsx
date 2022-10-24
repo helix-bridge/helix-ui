@@ -10,15 +10,7 @@ import { CrossChain } from '../components/CrossChain';
 import { DisclaimerModal } from '../components/widget/DisclaimerModal';
 import { Path } from '../config';
 import { useITranslation } from '../hooks';
-import {
-  AccountProvider,
-  ApiProvider,
-  ClaimProvider,
-  TxProvider,
-  useAccount,
-  usePersonal,
-  WalletProvider,
-} from '../providers';
+import { AccountProvider, ApiProvider, TxProvider, useAccount, usePersonal, WalletProvider } from '../providers';
 
 const ActiveAccount = dynamic(() => import('../components/widget/account/ActiveAccount'), { ssr: false });
 const History = dynamic(() => import('../components/history/History'), { ssr: false });
@@ -63,40 +55,38 @@ function Page() {
       <WalletProvider>
         <AccountProvider>
           <TxProvider>
-            <ClaimProvider>
-              <div>
-                <div id="app-header-container" className="hidden lg:flex items-center space-x-4 fixed top-4 z-50">
-                  <ActiveAccount />
+            <div>
+              <div id="app-header-container" className="hidden lg:flex items-center space-x-4 fixed top-4 z-50">
+                <ActiveAccount />
 
-                  <HistoryBtn />
-                </div>
-
-                <BridgeState className="w-full lg:w-1/2 mx-auto mb-2" />
-
-                <CrossChain />
-
-                <DisclaimerModal
-                  visible={visible}
-                  onCancel={() => setVisible(false)}
-                  onOk={() => {
-                    setVisible(false);
-                    updateStorage({ hideWarning: true });
-                  }}
-                />
-
-                <BaseModal
-                  title={t('Transfer History')}
-                  open={isPersonalHistoryVisible}
-                  onCancel={() => setIsPersonalHistoryVisible(false)}
-                  footer={null}
-                  maskClosable={false}
-                  wrapClassName="history-modal"
-                  destroyOnClose
-                >
-                  <History></History>
-                </BaseModal>
+                <HistoryBtn />
               </div>
-            </ClaimProvider>
+
+              <BridgeState className="w-full lg:w-1/2 mx-auto mb-2" />
+
+              <CrossChain />
+
+              <DisclaimerModal
+                visible={visible}
+                onCancel={() => setVisible(false)}
+                onOk={() => {
+                  setVisible(false);
+                  updateStorage({ hideWarning: true });
+                }}
+              />
+
+              <BaseModal
+                title={t('Transfer History')}
+                open={isPersonalHistoryVisible}
+                onCancel={() => setIsPersonalHistoryVisible(false)}
+                footer={null}
+                maskClosable={false}
+                wrapClassName="history-modal"
+                destroyOnClose
+              >
+                <History></History>
+              </BaseModal>
+            </div>
           </TxProvider>
         </AccountProvider>
       </WalletProvider>
