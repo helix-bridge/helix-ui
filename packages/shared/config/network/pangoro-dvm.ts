@@ -17,7 +17,7 @@ export const pangoroDVMConfig: DVMChainConfig = {
     { name: 'pangoro.png', type: 'minor' },
   ],
   name: 'pangoro-dvm',
-  provider: 'https://pangoro-rpc.darwinia.network',
+  provider: { https: 'https://pangoro-rpc.darwinia.network', wss: 'wss://pangoro-rpc.darwinia.network' },
   social: {
     portal: 'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpangoro-rpc.darwinia.network#/explorer',
     github: 'https://github.com/darwinia-network',

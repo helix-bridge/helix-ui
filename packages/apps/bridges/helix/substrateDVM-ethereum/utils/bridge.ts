@@ -163,7 +163,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
     const contract = new Contract(
       address as string,
       abi,
-      useWallerProvider ? entrance.web3.currentProvider : entrance.web3.getInstance(direction.from.meta.provider)
+      useWallerProvider ? entrance.web3.currentProvider : entrance.web3.getInstance(direction.from.meta.provider.https)
     );
 
     try {
@@ -191,7 +191,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       ? { abi: mappingTokenAbi, address: bridge.config.contracts?.issuing }
       : { abi: backingAbi, address: bridge.config.contracts?.backing };
 
-    const contract = new Contract(address as string, abi, entrance.web3.getInstance(direction.to.meta.provider));
+    const contract = new Contract(address as string, abi, entrance.web3.getInstance(direction.to.meta.provider.https));
 
     try {
       const limit = await contract.calcMaxWithdraw(type === 'native' ? getWrappedToken(arrival).address : tokenAddress);

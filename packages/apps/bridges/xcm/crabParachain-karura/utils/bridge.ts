@@ -30,7 +30,7 @@ export class CrabParachainKaruraBridge extends Bridge<
       recipient,
     } = payload;
     const amount = this.patchAmount(departure);
-    const api = entrance.polkadot.getInstance(departure.meta.provider);
+    const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
     const palletInstance = 5;
 
     const dest = api.createType('XcmVersionedMultiLocation', {
@@ -91,7 +91,7 @@ export class CrabParachainKaruraBridge extends Bridge<
       recipient,
     } = payload;
     const amount = this.patchAmount(departure);
-    const api = entrance.polkadot.getInstance(departure.meta.provider);
+    const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const currencyId = api.createType('AcalaPrimitivesCurrencyCurrencyId', {
       ForeignAsset: 13,

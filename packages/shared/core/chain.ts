@@ -11,7 +11,13 @@ import {
   PolkadotTypeNetwork,
 } from '../model';
 import { CrossChainDirection, TokenInfoWithMeta } from '../model/bridge';
-import { Logo, ParachainEthereumCompatibleChainConfig, Social, TokenWithBridgesInfo } from '../model/network/config';
+import {
+  Logo,
+  ParachainEthereumCompatibleChainConfig,
+  Provider,
+  Social,
+  TokenWithBridgesInfo,
+} from '../model/network/config';
 import { Network, ParachainEthereumCompatibleNetwork, SupportedWallet } from '../model/network/network';
 import { isRing } from '../utils/helper/validator';
 import {
@@ -25,7 +31,7 @@ export abstract class ChainBase implements ChainConfig {
   isTest: boolean;
   logos: Logo[];
   name: Network;
-  provider: string;
+  provider: Provider;
   social: Social;
   tokens: TokenWithBridgesInfo[];
   wallets: SupportedWallet[];
@@ -65,7 +71,7 @@ export class PolkadotChain extends ChainBase implements PolkadotChainConfig {
     account: string
   ): Promise<BN[]> {
     const { from } = direction;
-    const [ring, kton] = await getDarwiniaBalance(from.meta.provider, account);
+    const [ring, kton] = await getDarwiniaBalance(from.meta.provider.https, account);
 
     return isRing(from.symbol) ? [ring, ring] : [kton, ring];
   }
@@ -87,13 +93,14 @@ export class EthereumChain extends ChainBase implements EthereumChainConfig {
   ): Promise<BN[]> {
     const { from } = direction;
     const tokenAddress = from.address;
+    const provider = from.meta.provider.https;
 
     if (!tokenAddress) {
-      return getEthereumNativeBalance(account, from.meta.provider).then((balance) => [balance]);
+      return getEthereumNativeBalance(account, provider).then((balance) => [balance]);
     } else {
       return Promise.all([
-        getErc20Balance(tokenAddress, account, from.meta.provider),
-        getEthereumNativeBalance(account, from.meta.provider),
+        getErc20Balance(tokenAddress, account, provider),
+        getEthereumNativeBalance(account, provider),
       ]);
     }
   }
@@ -138,7 +145,7 @@ export class DVMChain extends EthereumChain implements DVMChainConfig {
   ): Promise<BN[]> {
     const { from } = direction;
     const tokenAddress = from.address;
-    const httpsProvider = from.meta.provider.replace('wss', 'https');
+    const httpsProvider = from.meta.provider.https;
 
     if (from.type === 'native') {
       return getEthereumNativeBalance(account, httpsProvider).then((balance) => [balance, balance]);

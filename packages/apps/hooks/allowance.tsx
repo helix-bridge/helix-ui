@@ -32,11 +32,11 @@ export function useAllowance(direction: CrossChainDirection) {
         return;
       }
 
-      const result = await getAllowance(account, spender, tokenAddress, provider ?? direction.from.meta.provider);
+      const result = await getAllowance(account, spender, tokenAddress, provider ?? direction.from.meta.provider.https);
 
       setAllowance(result);
     },
-    [account, direction.from.meta.provider]
+    [account, direction.from.meta.provider.https]
   );
 
   const approve = useCallback(

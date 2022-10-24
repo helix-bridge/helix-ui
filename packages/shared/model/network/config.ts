@@ -47,11 +47,16 @@ export interface Social {
   twitter: string;
 }
 
+export interface Provider {
+  https: string;
+  wss: string;
+}
+
 export interface ChainConfig {
   isTest: boolean;
   logos: Logo[];
   name: Network;
-  provider: string;
+  provider: Provider;
   social: Social;
   tokens: TokenWithBridgesInfo[];
   wallets: SupportedWallet[];

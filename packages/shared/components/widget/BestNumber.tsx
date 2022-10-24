@@ -49,7 +49,7 @@ function Component({ config, color = '', onChange = (num) => void num }: BestNum
     let sub$$: Subscription;
 
     if (config.wallets.includes('polkadot')) {
-      const api = entrance.polkadot.getInstance(config.provider);
+      const api = entrance.polkadot.getInstance(config.provider.wss);
 
       sub$$ = from(waitUntilConnected(api))
         .pipe(
@@ -62,7 +62,7 @@ function Component({ config, color = '', onChange = (num) => void num }: BestNum
     }
 
     if (config.wallets.includes('metamask')) {
-      const web3 = entrance.web3.getInstance(config.provider);
+      const web3 = entrance.web3.getInstance(config.provider.https);
 
       sub$$ = timer(0, DURATION)
         .pipe(

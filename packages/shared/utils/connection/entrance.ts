@@ -13,6 +13,7 @@ abstract class Entrance<T> {
   abstract beforeRemove(instance: T): void;
   abstract init(url: string): T;
   abstract afterInit(instance: T): void;
+  abstract isWebsocketActive(provider: ApiPromise | WebSocketProvider): boolean;
 
   protected checkExist(url: string): ApiGuy<T> | null {
     const target = this.apiList.find((item) => item[url]);
@@ -20,11 +21,16 @@ abstract class Entrance<T> {
     return target ?? null;
   }
 
+  // eslint-disable-next-line complexity
   getInstance(url: string): T {
-    const exist = url === 'ethereum' ? null : this.checkExist(url);
+    const provider = url === 'ethereum' ? null : this.checkExist(url);
 
-    if (exist) {
-      return exist[url];
+    if (provider && url.startsWith('wss')) {
+      if (this.isWebsocketActive(provider[url] as unknown as ApiPromise | WebSocketProvider)) {
+        return provider[url];
+      } else {
+        this.removeInstance(url);
+      }
     }
 
     const instance = this.init(url);
@@ -71,6 +77,10 @@ class PolkadotEntrance extends Entrance<ApiPromise> {
     });
   }
 
+  isWebsocketActive(provider: ApiPromise) {
+    return provider.isConnected;
+  }
+
   afterInit(_: ApiPromise) {
     // instance.connect(); // comment it if api auto connect disabled
   }
@@ -97,6 +107,10 @@ class Web3Entrance extends Entrance<JsonRpcProvider> {
     }
 
     return new Web3Provider(window.ethereum);
+  }
+
+  isWebsocketActive(provider: WebSocketProvider): boolean {
+    return provider.websocket.readyState === 1 || provider.websocket.readyState === 0;
   }
 
   get currentProvider() {
