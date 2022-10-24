@@ -13,7 +13,10 @@ export const ropstenConfig: EthereumChainConfig = {
   isTest: true,
   name: 'ropsten',
   fullName: 'Ropsten',
-  provider: 'https://ropsten.infura.io/v3/5350449ccd2349afa007061e62ee1409',
+  provider: {
+    https: 'https://ropsten.infura.io/v3/5350449ccd2349afa007061e62ee1409',
+    wss: 'wss://ropsten.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
+  },
   social: {
     portal: 'https://ethereum.org/en/',
     github: 'https://github.com/ethereum/ropsten',

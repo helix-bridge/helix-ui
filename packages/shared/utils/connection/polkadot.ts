@@ -83,7 +83,7 @@ export const getPolkadotConnection: (network: PolkadotChainConfig) => Observable
     })
   );
 
-  const apiInstance = entrance.polkadot.getInstance(network.provider);
+  const apiInstance = entrance.polkadot.getInstance(network.provider.wss);
   const apiObs = from(waitUntilConnected(apiInstance)).pipe(map(() => apiInstance));
 
   return combineLatest([extensionObs, apiObs]).pipe(

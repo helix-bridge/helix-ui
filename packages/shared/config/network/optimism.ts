@@ -13,7 +13,7 @@ export const optimismConfig: EthereumChainConfig = {
   logos: [{ name: 'optimism.png', type: 'main' }],
   name: 'optimism',
   fullName: 'Optimism',
-  provider: 'https://mainnet.optimism.io',
+  provider: { https: 'https://mainnet.optimism.io', wss: 'wss://optimism-mainnet.public.blastapi.io' },
   social: {
     portal: 'https://www.optimism.io/',
     github: 'https://github.com/ethereum-optimism',

@@ -64,7 +64,7 @@ export function Claim() {
     }
 
     const { to } = claimItem;
-    const contract = new Contract(contractAddress, abi, entrance.web3.getInstance(ethereumConfig.provider));
+    const contract = new Contract(contractAddress, abi, entrance.web3.getInstance(ethereumConfig.provider.https));
 
     setChecking(true);
     (contract.claimed(to, merkleRoot) as Promise<boolean>)

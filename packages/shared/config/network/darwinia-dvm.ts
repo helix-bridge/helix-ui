@@ -18,7 +18,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
     { name: 'darwinia.svg', type: 'minor' },
     { name: 'darwinia-logo.svg', type: 'assist' },
   ],
-  provider: 'wss://rpc.darwinia.network',
+  provider: { https: 'https://rpc.darwinia.network', wss: 'wss://rpc.darwinia.network' },
   social: {
     portal: 'https://darwinia.network/',
     github: 'https://github.com/darwinia-network',

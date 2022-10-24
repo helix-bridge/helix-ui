@@ -13,7 +13,10 @@ export const goerliConfig: EthereumChainConfig = {
   isTest: true,
   name: 'goerli',
   fullName: 'Goerli',
-  provider: 'https://goerli.infura.io/v3/5350449ccd2349afa007061e62ee1409',
+  provider: {
+    https: 'https://goerli.infura.io/v3/5350449ccd2349afa007061e62ee1409',
+    wss: 'wss://goerli.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
+  },
   social: {
     portal: 'https://ethereum.org/en/',
     github: 'https://github.com/ethereum',

@@ -13,7 +13,7 @@ export const avalancheConfig: EthereumChainConfig = {
   logos: [{ name: 'avalanche.png', type: 'main' }],
   name: 'avalanche',
   fullName: 'Avalanche',
-  provider: 'https://api.avax.network/ext/bc/C/rpc',
+  provider: { https: 'https://api.avax.network/ext/bc/C/rpc', wss: 'wss://api.avax.network/ext/bc/C/ws' },
   social: {
     portal: 'https://www.avax.network/',
     github: 'https://github.com/ava-labs',

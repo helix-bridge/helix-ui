@@ -38,7 +38,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction } = payload;
     const { from: departure, to } = direction;
-    const api = entrance.polkadot.getInstance(direction.from.meta.provider);
+    const api = entrance.polkadot.getInstance(direction.from.meta.provider.wss);
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).sub(fee).toString();
     const WEIGHT = '4000000000';
     const section = departure.meta.isTest ? 'substrate2SubstrateBacking' : 'toCrabBacking';
@@ -55,7 +55,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
     } = payload;
     const receiver = hexToU8a(convertToDvm(recipient));
     const WEIGHT = '690133000';
-    const api = entrance.polkadot.getInstance(departure.meta.provider);
+    const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const valObs = from(waitUntilConnected(api)).pipe(
       switchMap(() => this.getFee(payload.direction)),
@@ -66,7 +66,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
       })
     );
 
-    return zip([valObs, this.s2sMappingAddress(departure.meta.provider)]).pipe(
+    return zip([valObs, this.s2sMappingAddress(departure.meta.provider.wss)]).pipe(
       switchMap(([val, mappingAddress]) =>
         genEthereumContractTxObs(
           mappingAddress,
@@ -94,7 +94,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
     const {
       to: { meta: arrival, address: ringAddress },
     } = direction;
-    const mappingAddress = await this.s2sMappingAddress(arrival.provider);
+    const mappingAddress = await this.s2sMappingAddress(arrival.provider.https);
     const contract = new Contract(mappingAddress, abi, entrance.web3.currentProvider);
     const tokenAddress = isRing(direction.from.symbol) ? ringAddress : '';
 
@@ -129,7 +129,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
   }
 
   private async queryFeeFromRelayers(departure: ChainConfig, to: ChainConfig) {
-    const api = entrance.polkadot.getInstance(departure.provider);
+    const api = entrance.polkadot.getInstance(departure.provider.https);
     const section = isDVMNetwork(departure.name) || to.isTest ? `${to.name.split('-')[0]}FeeMarket` : 'feeMarket';
 
     await waitUntilConnected(api);
@@ -146,7 +146,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
   async getAllowancePayload(
     direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
   ): Promise<AllowancePayload> {
-    const spender = await this.s2sMappingAddress(direction.from.meta.provider);
+    const spender = await this.s2sMappingAddress(direction.from.meta.provider.https);
 
     return {
       spender,

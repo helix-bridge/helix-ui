@@ -13,7 +13,10 @@ export const ethereumConfig: EthereumChainConfig = {
   logos: [{ name: 'ethereum.png', type: 'main' }],
   name: 'ethereum',
   fullName: 'Ethereum',
-  provider: 'https://mainnet.infura.io/v3/5350449ccd2349afa007061e62ee1409',
+  provider: {
+    https: 'https://mainnet.infura.io/v3/5350449ccd2349afa007061e62ee1409',
+    wss: 'wss://mainnet.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409',
+  },
   social: {
     portal: 'https://ethereum.org/en/',
     github: 'https://github.com/ethereum/ethereum-org-website',
