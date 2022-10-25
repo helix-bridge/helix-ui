@@ -229,7 +229,7 @@ export default function History() {
             try {
               const address = isValidAddress(value, 'ethereum') ? value : convertToDvm(value);
 
-              setSearchAccount(address ? address : undefined);
+              setSearchAccount(address ? address.toLowerCase() : undefined);
               setPaginator(paginatorDefault);
               setIsValidSender(true);
             } catch {

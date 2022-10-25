@@ -38,7 +38,7 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
           observer.next(state);
         },
         error: (err: unknown) => {
-          observer.next({ status: 'error', error: new Error('Some error occurred during contract call') });
+          observer.error({ status: 'error', error: new Error('Some error occurred during contract call') });
           console.error('🚀 ~ file: claim.tsx ~ line 80 ~ ClaimProvider ~ err', err);
           setIsClaiming(false);
         },

@@ -74,7 +74,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
   }
 
   claim(record: HelixHistoryRecord): Observable<Tx> {
-    const { messageNonce, endTime, recvTokenAddress, recvAmount, guardSignatures, recipient, toChain, sender } = record;
+    const { messageNonce, endTime, recvTokenAddress, recvAmount, guardSignatures, recipient, toChain } = record;
     const signatures = guardSignatures?.split('-').slice(1);
     const contractAddress = this.config.contracts.guard;
 
@@ -82,10 +82,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       switchMap(() =>
         genEthereumContractTxObs(
           contractAddress,
-          (contract) =>
-            contract.claim(messageNonce, endTime, recvTokenAddress, recipient, recvAmount, signatures, {
-              from: sender,
-            }),
+          (contract) => contract.claim(messageNonce, endTime, recvTokenAddress, recipient, recvAmount, signatures),
           guardAbi
         )
       )
