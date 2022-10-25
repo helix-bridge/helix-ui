@@ -121,11 +121,14 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
       return { amount: BN_ZERO, ...token } as TokenWithAmount;
     }
 
-    const res = await this.queryFeeFromRelayers(departure.meta, to.meta);
+    try {
+      const res = await this.queryFeeFromRelayers(departure.meta, to.meta);
 
-    const marketFee = last(res)?.fee.toString();
-
-    return { ...token, amount: new BN(marketFee ?? -1) } as TokenWithAmount; // -1: fee market does not available
+      const marketFee = last(res)?.fee.toString();
+      return { ...token, amount: new BN(marketFee ?? -1) } as TokenWithAmount; // -1: fee market does not available
+    } catch {
+      return { ...token, amount: new BN(-1) } as TokenWithAmount; // -1: fee market does not available
+    }
   }
 
   private async queryFeeFromRelayers(departure: ChainConfig, to: ChainConfig) {

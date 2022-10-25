@@ -151,13 +151,14 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       abi,
       useWallerProvider ? entrance.web3.currentProvider : entrance.web3.getInstance(direction.from.meta.provider.https)
     );
+    const targetToken = direction.from.meta.tokens.find(isNativeToken)!;
 
     try {
       const fee = await contract.currentFee();
 
-      return { ...direction.from.meta.tokens.find(isNativeToken)!, amount: new BN(fee.toString()) };
+      return { ...targetToken, amount: new BN(fee.toString()) };
     } catch {
-      return null;
+      return { ...targetToken, amount: new BN(-1) };
     }
   }
 

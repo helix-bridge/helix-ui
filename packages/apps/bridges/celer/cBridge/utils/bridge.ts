@@ -327,18 +327,26 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
     direction: CrossChainDirection<CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>,
     account?: string | undefined
   ): Promise<TokenWithAmount | null> {
-    const result = await this.getEstimateResult(direction, account);
+    try {
+      const result = await this.getEstimateResult(direction, account);
 
-    if (result) {
-      const { baseFee, percFee } = result;
+      if (result) {
+        const { baseFee, percFee } = result;
 
+        return {
+          ...omit(direction.from, ['meta', 'amount']),
+          decimals: direction.to.decimals,
+          amount: new BN(baseFee).add(new BN(percFee)),
+        };
+      } else {
+        return null;
+      }
+    } catch {
       return {
         ...omit(direction.from, ['meta', 'amount']),
         decimals: direction.to.decimals,
-        amount: new BN(baseFee).add(new BN(percFee)),
+        amount: new BN(-1),
       };
-    } else {
-      return null;
     }
   }
 }

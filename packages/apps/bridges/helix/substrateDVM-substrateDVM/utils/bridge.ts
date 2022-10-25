@@ -143,7 +143,7 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
 
       return { ...token, amount: new BN(fee.toString()) };
     } catch {
-      return null;
+      return { ...token, amount: new BN(-1) };
     }
   }
 

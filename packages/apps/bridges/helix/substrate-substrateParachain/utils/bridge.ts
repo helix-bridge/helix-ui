@@ -101,6 +101,7 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
     } = direction;
     const api = entrance.polkadot.getInstance(from.provider.https);
     const section = lowerFirst(`${to.name.split('-').map(upperFirst).join('')}FeeMarket`);
+    const token = omit(direction.from.meta.tokens.find((item) => isRing(item.symbol))!, ['amount', 'meta']);
 
     try {
       await waitUntilConnected(api);
@@ -113,11 +114,10 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
 
       const data = last(res)?.fee.toString();
       const marketFee = data?.startsWith('0x') ? hexToU8a(data) : data;
-      const token = omit(direction.from.meta.tokens.find((item) => isRing(item.symbol))!, ['amount', 'meta']);
 
       return { ...token, amount: new BN(marketFee ?? -1) } as TokenWithAmount; // -1: fee market does not available
     } catch {
-      return null;
+      return { ...token, amount: new BN(-1) } as TokenWithAmount; // -1: fee market does not available
     }
   }
 
