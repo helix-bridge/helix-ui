@@ -111,44 +111,45 @@ export abstract class Bridge<
     const amount = new BN(toWei(from));
     const { balance: originBalance, allowance, dailyLimit, fee, feeTokenBalance } = options;
     const minAmount = this.getMinimumFeeTokenHolding && this.getMinimumFeeTokenHolding(payload.direction);
-    const balance = minAmount ? originBalance.amount.sub(minAmount.amount) : originBalance.amount;
-    console.log(
-      '%cbridge.ts line:107 balance',
-      'color: white; background-color: #007acc;',
-      originBalance.amount.toString(),
-      balance.toString(),
-      amount.toString(),
-      allowance.amount?.toString(),
-      minAmount?.amount?.toString(),
-      dailyLimit.amount?.toString(),
-      fee.amount?.toString(),
-      feeTokenBalance.amount?.toString(),
-      amount.add(fee.amount).toString()
-    );
 
-    /**
-     * if from.symbol === feeToken.symbol  -> fee + amount < balance
-     * else -> fee < feeToken
-     */
+    const availableBalance =
+      minAmount && minAmount.symbol === originBalance.symbol
+        ? originBalance.amount.sub(minAmount.amount)
+        : originBalance.amount;
+
+    const isBalanceEnough = () => {
+      if (originBalance.symbol === fee.symbol) {
+        return availableBalance.gte(amount.add(fee.amount));
+      } else {
+        return availableBalance.gte(amount);
+      }
+    };
+
+    const xcm = isXCM(from.host, to.host);
+    const cBridge = isCBridge(from.host, to.host);
+
     const validations = [
-      // validate existence
-      [!from.amount, 'Transfer amount is required'],
-      [!to.amount || +to.amount < 0, 'Transfer amount invalid'],
-      [!fee || fee.amount.lt(BN_ZERO), 'Failed to get fee'],
-      [!!this.getAllowancePayload && !allowance, 'Failed to get allowance'],
-      [!!this.getDailyLimit && !dailyLimit, 'Failed to get daily limit'],
+      // validate empty value
+      [originBalance.amount.gt(BN_ZERO), 'Insufficient balance'],
+      [!minAmount || minAmount.amount.gt(BN_ZERO), 'Minimum fee token setting error'],
+      [availableBalance.gt(BN_ZERO), 'Insufficient available balance'],
+      [!!fee && fee.amount.gte(BN_ZERO), 'Failed to get fee'],
+      [!!feeTokenBalance && feeTokenBalance.amount.gt(BN_ZERO), 'Insufficient fee balance'],
+      [!!from.amount && +from.amount > 0, 'Transfer amount is required'],
+      [!!to.amount && +to.amount >= 0, 'Transfer amount invalid'],
+      [!this.getAllowancePayload || (allowance.amount && allowance.amount.gt(BN_ZERO)), 'Failed to get allowance'],
+      [!this.getDailyLimit || (dailyLimit.amount && dailyLimit.amount.gt(BN_ZERO)), 'Failed to get daily limit'],
       // validate logic
-      [isCBridge(from.host, to.host) ? balance.lt(amount) : balance.lt(amount.add(fee.amount)), 'Insufficient balance'],
-      [!!allowance.amount && allowance.amount.lt(amount), 'Insufficient allowance'],
+      [xcm || cBridge ? availableBalance.gte(amount) : isBalanceEnough(), 'Insufficient balance'],
+      [feeTokenBalance.amount.gte(fee.amount), 'Insufficient balance to pay fee'],
+      [!allowance.amount || allowance.amount.gte(amount), 'Insufficient allowance'],
       [
-        !!dailyLimit.amount && new BN(toWei({ value: fromWei(dailyLimit), decimals: from.decimals })).lt(amount),
+        !dailyLimit.amount || new BN(toWei({ value: fromWei(dailyLimit), decimals: from.decimals })).gte(amount),
         'Insufficient daily limit',
       ], // keep decimals consistent
-      [!!feeTokenBalance && feeTokenBalance.amount.lt(fee.amount), 'Insufficient balance to pay fee'],
-      [!!minAmount && minAmount.amount.gt(amount), `Transfer amount must greater than or equal to ${minAmount}`],
-      [isXCM(from.host, to.host) && !Number.isInteger(+from.amount), 'Transfer Amount must be integer'],
+      [!xcm || Number.isInteger(+from.amount), 'Transfer Amount must be integer'],
     ];
-    const result = validations.find((item) => item[0]);
+    const result = validations.find((item) => !item[0]);
 
     return of(result && result[1]).pipe(
       switchMap((res) => {

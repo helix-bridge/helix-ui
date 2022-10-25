@@ -1,5 +1,5 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { Form, Tag, Tooltip } from 'antd';
 import { PropsWithChildren, ReactNode, useMemo } from 'react';
 import { useITranslation } from 'shared/hooks/translation';
@@ -35,7 +35,9 @@ export function CrossChainInfo({
 
   const feeContent = useMemo(() => {
     if (fee) {
-      return (
+      return fee.amount.lt(BN_ZERO) ? (
+        <span className="text-helix-red">{t('Query Failed')}</span>
+      ) : (
         <Tooltip title={fromWei(fee)} className="cursor-help">
           {fee.amount.lt(new BN(toWei({ value: 1, decimals: fee.decimals })))
             ? fromWei(fee)
@@ -81,7 +83,7 @@ export function CrossChainInfo({
   const allowanceContent = useMemo(() => {
     if (bridge.getAllowancePayload && direction.from.type !== 'native' && departureConnection.type === 'metamask') {
       return (
-        <div className={`flex justify-between items-center`}>
+        <div className={`justify-between items-center hidden`}>
           <span>{t('Allowance')}</span>
           {allowance ? (
             <div>
