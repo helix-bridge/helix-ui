@@ -166,7 +166,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       CrossToken<EthereumChainConfig | DVMChainConfig>,
       CrossToken<EthereumChainConfig | DVMChainConfig>
     >
-  ): Promise<DailyLimit | null> {
+  ): Promise<DailyLimit> {
     const {
       from: { meta: departure },
       to: { meta: arrival, address: tokenAddress, type },
@@ -184,7 +184,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
 
       return { limit: limit.toString(), spentToday: '0' };
     } catch {
-      return null;
+      return { limit: '-1', spentToday: '0' };
     }
   }
 

@@ -53,7 +53,7 @@ export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Targ
   refund?(record: HelixHistoryRecord): Observable<Tx>;
   getDailyLimit?(
     direction: CrossChainPureDirection<TokenInfoWithMeta<Origin | Target>, TokenInfoWithMeta<Origin | Target>>
-  ): Promise<DailyLimit | null>;
+  ): Promise<DailyLimit>;
   getMinimumFeeTokenHolding?(direction: CrossChainPureDirection): TokenWithAmount | null;
   getAllowancePayload?(direction: CrossChainPureDirection): Promise<AllowancePayload | null>;
 }

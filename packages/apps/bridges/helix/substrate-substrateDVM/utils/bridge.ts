@@ -90,7 +90,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
       CrossToken<PolkadotChainConfig | DVMChainConfig>,
       CrossToken<PolkadotChainConfig | DVMChainConfig>
     >
-  ): Promise<DailyLimit | null> {
+  ): Promise<DailyLimit> {
     const {
       to: { meta: arrival, address: ringAddress },
     } = direction;
@@ -99,7 +99,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
     const tokenAddress = isRing(direction.from.symbol) ? ringAddress : '';
 
     if (!tokenAddress) {
-      return null;
+      return { limit: '-1', spentToday: '0' };
     }
 
     const limit: BigNumber = await contract.dailyLimit(tokenAddress);

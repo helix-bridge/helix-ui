@@ -63,13 +63,17 @@ export function CrossChainInfo({
       return (
         <div className={`flex justify-between items-center`}>
           <span>{t('Daily limit')}</span>
-          {dailyLimit ? (
-            <span>
-              {fromWei({ value: limit, decimals: direction.to.decimals }, (value) =>
-                prettyNumber(value, { ignoreZeroDecimal: true })
-              )}
-              <span className="ml-1">{direction.from.symbol}</span>
-            </span>
+          {limit ? (
+            limit.lt(BN_ZERO) ? (
+              <span className="text-helix-red">{t('Query Failed')}</span>
+            ) : (
+              <span>
+                {fromWei({ value: limit, decimals: direction.to.decimals }, (value) =>
+                  prettyNumber(value, { ignoreZeroDecimal: true })
+                )}
+                <span className="ml-1">{direction.from.symbol}</span>
+              </span>
+            )
           ) : (
             <CountLoading />
           )}
@@ -86,14 +90,12 @@ export function CrossChainInfo({
         <div className={`justify-between items-center hidden`}>
           <span>{t('Allowance')}</span>
           {allowance ? (
-            <div>
-              <span>
-                {fromWei({ value: allowance }, largeNumber, (num: string) =>
-                  prettyNumber(num, { ignoreZeroDecimal: true })
-                )}
-              </span>
+            <span>
+              {fromWei({ value: allowance }, largeNumber, (num: string) =>
+                prettyNumber(num, { ignoreZeroDecimal: true })
+              )}
               <span className="ml-1">{direction.from.symbol}</span>
-            </div>
+            </span>
           ) : (
             <CountLoading />
           )}

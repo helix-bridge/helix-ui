@@ -46,12 +46,12 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
 
   async getDailyLimit(
     direction: CrossChainDirection<CrossToken<PolkadotChainConfig>, CrossToken<PolkadotChainConfig>>
-  ): Promise<DailyLimit | null> {
-    const limit: BN | null = this.isIssue(direction.from.host, direction.to.host)
+  ): Promise<DailyLimit> {
+    const limit: BN = this.isIssue(direction.from.host, direction.to.host)
       ? await this.getIssueDailyLimit(direction)
       : await this.getRedeemDailyLimit(direction);
 
-    return limit && { limit: limit.toString(), spentToday: '0' };
+    return { limit: limit.toString(), spentToday: '0' };
   }
 
   private async getIssueDailyLimit(
@@ -69,7 +69,7 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
 
       return new BN(num);
     } catch {
-      return null;
+      return new BN(-1);
     }
   }
 
@@ -88,7 +88,7 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
 
       return num;
     } catch {
-      return null;
+      return new BN(-1);
     }
   }
 
