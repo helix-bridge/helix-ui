@@ -3,7 +3,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import History from '../../components/history/History';
 import ActiveAccount from '../../components/widget/account/ActiveAccount';
 import { AccountProvider, ApiProvider, ClaimProvider, TxProvider, WalletProvider } from '../../providers';
-// eslint-disable-next-line complexity
+
 function Page() {
   return (
     <ApiProvider>
