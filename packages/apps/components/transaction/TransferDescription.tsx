@@ -6,9 +6,11 @@ export function TransferDescription({ tip, title, children }: PropsWithChildren<
   return (
     <div className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6 relative">
       <div className="w-36 flex items-center gap-2">
-        <Tooltip title={tip} className="cursor-help">
-          <InfoCircleOutlined />
-        </Tooltip>
+        {!!tip && (
+          <Tooltip title={tip} className="cursor-help">
+            <InfoCircleOutlined />
+          </Tooltip>
+        )}
         <span className="capitalize">{title}</span>
       </div>
 

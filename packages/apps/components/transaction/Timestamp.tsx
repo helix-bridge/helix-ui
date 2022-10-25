@@ -1,9 +1,9 @@
 import { ClockCircleOutlined } from '@ant-design/icons';
-import { Divider, Progress } from 'antd';
-import { format, formatDistance, fromUnixTime } from 'date-fns';
+import { Divider } from 'antd';
+import { formatDistance, fromUnixTime } from 'date-fns';
+import format from 'date-fns/formatRFC7231';
 import { useTranslation } from 'next-i18next';
 import { Icon } from 'shared/components/widget/Icon';
-import { DATE_TIME_FORMAT } from 'shared/config/constant';
 import { HelixHistoryRecord } from 'shared/model';
 import { TransferDescription } from './TransferDescription';
 
@@ -13,7 +13,9 @@ export function Timestamp({ record }: { record: HelixHistoryRecord | null }) {
   return (
     <TransferDescription
       title={t('Timestamp')}
-      tip={t('Date & time of cross-chain transaction inclusion, including length of time for confirmation.')}
+      tip={t(
+        'The date and time at which a transaction is mined. And the time period elapsed for the completion of the cross-chain.'
+      )}
     >
       {record && (
         <div className="flex items-center gap-2 whitespace-nowrap">
@@ -24,32 +26,22 @@ export function Timestamp({ record }: { record: HelixHistoryRecord | null }) {
             addSuffix: true,
           })}
 
-          <span className="hidden md:inline-block">({format(fromUnixTime(record.startTime), DATE_TIME_FORMAT)})</span>
+          <span className="hidden md:inline-block">({format(fromUnixTime(record.startTime))})</span>
 
-          <Divider type="vertical" orientation="center" />
+          {record.startTime && !!record.endTime && (
+            <>
+              <Divider type="vertical" orientation="center" />
 
-          <Icon name="clock-fill" className="text-gray-400 text-base w-4 h-4" />
+              <Icon name="clock-fill" className="text-gray-400 text-base w-4 h-4" />
 
-          {record.startTime && record.endTime ? (
-            <span className="text-gray-400">
-              {t('Confirmed within {{des}}', {
-                des: formatDistance(fromUnixTime(record.endTime), fromUnixTime(record.startTime), {
-                  includeSeconds: true,
-                }),
-              })}
-            </span>
-          ) : (
-            <div className="w-32">
-              <Progress
-                strokeColor={{
-                  from: '#108ee9',
-                  to: '#87d068',
-                }}
-                percent={99.9}
-                status="active"
-                showInfo={false}
-              />
-            </div>
+              <span className="text-gray-400">
+                {t('Confirmed within {{des}}', {
+                  des: formatDistance(fromUnixTime(record.endTime), fromUnixTime(record.startTime), {
+                    includeSeconds: true,
+                  }),
+                })}
+              </span>
+            </>
           )}
         </div>
       )}

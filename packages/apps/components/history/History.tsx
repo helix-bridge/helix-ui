@@ -19,7 +19,6 @@ import { Path } from '../../config';
 import { HISTORY_RECORDS_IN_RESULTS } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
-import { useAccount } from '../../providers';
 import { useClaim } from '../../providers/claim';
 import { chainConfigs, getChainConfig, getDisplayName } from '../../utils/network';
 import { getReceivedAmountFromHelixRecord, getSentAmountFromHelixRecord } from '../../utils/record/record';
@@ -54,7 +53,6 @@ export default function History() {
   const { t } = useITranslation();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<number>(-1);
-  const { account } = useAccount();
   const [paginator, setPaginator] = useState<Paginator>(paginatorDefault);
   const { refundedList } = useClaim();
   const [isValidSender, setIsValidSender] = useState(true);
@@ -135,20 +133,20 @@ export default function History() {
       title: t('Sender'),
       dataIndex: 'sender',
       ellipsis: true,
-      render(_: string, record) {
+      render(value: string, record) {
         const chainConfig = getChainConfig(record.fromChain, SYSTEM_CHAIN_CONFIGURATIONS);
 
-        return revertAccount(account, chainConfig);
+        return revertAccount(value, chainConfig);
       },
     },
     {
       title: t('Receiver'),
       dataIndex: 'recipient',
       ellipsis: true,
-      render(_: string, record) {
+      render(value: string, record) {
         const chainConfig = getChainConfig(record.toChain, SYSTEM_CHAIN_CONFIGURATIONS);
 
-        return revertAccount(account, chainConfig);
+        return revertAccount(value, chainConfig);
       },
     },
     {
