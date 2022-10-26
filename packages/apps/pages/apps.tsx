@@ -10,11 +10,9 @@ import { CrossChain } from '../components/CrossChain';
 import { DisclaimerModal } from '../components/widget/DisclaimerModal';
 import { Path } from '../config';
 import { useITranslation } from '../hooks';
-import { AccountProvider, ApiProvider, TxProvider, useAccount, usePersonal, WalletProvider } from '../providers';
+import { AccountProvider, ApiProvider, TxProvider, useAccount, WalletProvider } from '../providers';
 
 const ActiveAccount = dynamic(() => import('../components/widget/account/ActiveAccount'), { ssr: false });
-const History = dynamic(() => import('../components/history/History'), { ssr: false });
-const BaseModal = dynamic(() => import('../components/widget/BaseModal'), { ssr: false });
 
 function HistoryBtn() {
   const { t } = useITranslation();
@@ -39,10 +37,7 @@ function HistoryBtn() {
 }
 
 function Page() {
-  const { t } = useITranslation();
-
   const [visible, setVisible] = useState(false);
-  const { isPersonalHistoryVisible, setIsPersonalHistoryVisible } = usePersonal();
 
   useEffect(() => {
     const hide = readStorage().hideWarning;
@@ -74,18 +69,6 @@ function Page() {
                   updateStorage({ hideWarning: true });
                 }}
               />
-
-              <BaseModal
-                title={t('Transfer History')}
-                open={isPersonalHistoryVisible}
-                onCancel={() => setIsPersonalHistoryVisible(false)}
-                footer={null}
-                maskClosable={false}
-                wrapClassName="history-modal"
-                destroyOnClose
-              >
-                <History></History>
-              </BaseModal>
             </div>
           </TxProvider>
         </AccountProvider>

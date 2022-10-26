@@ -1,8 +1,10 @@
 import { GetServerSidePropsContext } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import dynamic from 'next/dynamic';
 import History from '../../components/history/History';
-import ActiveAccount from '../../components/widget/account/ActiveAccount';
 import { AccountProvider, ApiProvider, ClaimProvider, TxProvider, WalletProvider } from '../../providers';
+
+const ActiveAccount = dynamic(() => import('../../components/widget/account/ActiveAccount'), { ssr: false });
 
 function Page() {
   return (

@@ -9,7 +9,6 @@ import { FunctionComponent, useEffect, useState } from 'react';
 import GlobalLoading from 'shared/components/widget/GlobalLoading';
 import { ENDPOINT } from 'shared/config/env';
 import AppLayout from '../components/AppLayout';
-import { PersonalProvider } from '../providers';
 import '../styles/index.scss';
 
 const client = new GraphQLClient({
@@ -67,11 +66,9 @@ function MyApp({ Component, pageProps }: AppProps & { Component: FunctionCompone
       </Head>
       <ClientContext.Provider value={client}>
         <ErrorBoundary>
-          <PersonalProvider>
-            <AppLayout>
-              <Component {...pageProps} />
-            </AppLayout>
-          </PersonalProvider>
+          <AppLayout>
+            <Component {...pageProps} />
+          </AppLayout>
         </ErrorBoundary>
       </ClientContext.Provider>
     </div>
