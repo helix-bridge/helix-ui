@@ -7,7 +7,7 @@ import { useQuery } from 'graphql-hooks';
 import last from 'lodash/last';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { DATE_TIME_FORMAT, RecordStatus } from 'shared/config/constant';
 import { SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
@@ -20,6 +20,7 @@ import { Path } from '../../config';
 import { HISTORY_RECORDS_IN_RESULTS } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
+import { useAccount } from '../../providers';
 import { useClaim } from '../../providers/claim';
 import { chainConfigs, getChainConfig, getDisplayName } from '../../utils/network';
 import { getReceivedAmountFromHelixRecord, getSentAmountFromHelixRecord } from '../../utils/record/record';
@@ -50,23 +51,26 @@ function Destination({ chain, amount, symbol }: { chain: Network; amount: string
   );
 }
 
+const toSearchableAccount = (account: string | undefined) => {
+  if (!account) {
+    return undefined;
+  }
+
+  const address = isValidAddress(account, 'ethereum') ? account : convertToDvm(account);
+
+  return address ? address.toLowerCase() : undefined;
+};
+
 export default function History() {
   const { t } = useITranslation();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<number>(-1);
   const [paginator, setPaginator] = useState<Paginator>(paginatorDefault);
   const { refundedList } = useClaim();
+  const { account } = useAccount();
   const [isValidSender, setIsValidSender] = useState(true);
 
-  const [searchAccount, setSearchAccount] = useState<string | undefined>(() => {
-    const value = router.query.account;
-
-    if (typeof value === 'string') {
-      return isValidAddress(value, 'ethereum') ? value : convertToDvm(value);
-    } else {
-      return undefined;
-    }
-  });
+  const [searchAccount, setSearchAccount] = useState<string | undefined>(router.query.account as string | undefined);
 
   const results = useMemo(() => {
     if (+activeTab < 0) {
@@ -87,8 +91,8 @@ export default function History() {
   } = useQuery(HISTORY_RECORDS_IN_RESULTS, {
     variables: {
       ...paginator,
-      sender: searchAccount,
-      recipient: searchAccount,
+      sender: toSearchableAccount(searchAccount),
+      recipient: toSearchableAccount(searchAccount),
       results,
     },
   });
@@ -104,6 +108,10 @@ export default function History() {
   }, [refundedList, data]);
 
   const total = useMemo(() => data[gqlName(HISTORY_RECORDS_IN_RESULTS)].total, [data]);
+
+  useEffect(() => {
+    setSearchAccount(account);
+  }, [account]);
 
   const columns: ColumnType<HelixHistoryRecord>[] = [
     {
@@ -222,8 +230,7 @@ export default function History() {
           size="large"
           suffix={<SearchOutlined />}
           allowClear
-          defaultValue={router.query.account ?? undefined}
-          // eslint-disable-next-line complexity
+          value={searchAccount}
           onChange={(event) => {
             const value = event.target.value;
 
@@ -233,9 +240,7 @@ export default function History() {
             }
 
             try {
-              const address = isValidAddress(value, 'ethereum') ? value : convertToDvm(value);
-
-              setSearchAccount(address ? address.toLowerCase() : undefined);
+              setSearchAccount(value);
               setPaginator(paginatorDefault);
               setIsValidSender(true);
             } catch {
@@ -243,7 +248,7 @@ export default function History() {
             }
           }}
           placeholder={t('Search by address')}
-          className={`max-w-md ${isValidSender ? '' : 'border-red-400'}`}
+          className={`max-w-lg ${isValidSender ? '' : 'border-red-400'}`}
         />
 
         <Button
