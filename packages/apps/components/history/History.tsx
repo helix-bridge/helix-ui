@@ -1,5 +1,5 @@
 import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { Button, Input, message, Table, Tabs } from 'antd';
+import { Badge, Button, Input, message, Table, Tabs } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import { format } from 'date-fns';
 import { isAddress } from 'ethers/lib/utils';
@@ -170,14 +170,14 @@ export default function History() {
       width: '10%',
       // eslint-disable-next-line complexity
       render: (value: number, record: HelixHistoryRecord) => {
-        const { fromChain, toChain } = record;
-        return (
+        const { fromChain, toChain, result, startTime } = record;
+        const content = (
           <div
             onClick={() => {
               const paths = getDetailPaths(fromChain, toChain, record);
               const query = new URLSearchParams({
-                from: record.fromChain,
-                to: record.toChain,
+                from: fromChain,
+                to: toChain,
               }).toString();
 
               if (paths.length) {
@@ -185,25 +185,26 @@ export default function History() {
               }
             }}
           >
-            <div className="mb-2 whitespace-nowrap text-xs">{format(record.startTime * 1000, DATE_TIME_FORMAT)}</div>
+            <div className="mb-2 whitespace-nowrap text-xs">{format(startTime * 1000, DATE_TIME_FORMAT)}</div>
 
-            {record.result <= RecordStatus.pendingToRefund && <Pending record={record} />}
+            {result <= RecordStatus.pendingToClaim && <Pending record={record} />}
 
-            {record.result === RecordStatus.pendingToClaim && (
-              <div className="flex justify-end gap-2">
-                <Pending record={record} />
-                <span className="rounded-xl bg-helix-blue px-2">{t('Claim')}</span>
-              </div>
-            )}
+            {result === RecordStatus.success && <div className="text-helix-green">{t('Success')}</div>}
 
-            {record.result === RecordStatus.success && <div className="text-helix-green">{t('Success')}</div>}
-
-            {record.result === RecordStatus.pendingToConfirmRefund && (
+            {result === RecordStatus.pendingToConfirmRefund && (
               <div className="text-helix-blue">{t('Refund Processing')}</div>
             )}
 
-            {record.result === RecordStatus.refunded && <Refunded record={record} />}
+            {result === RecordStatus.refunded && <Refunded record={record} />}
           </div>
+        );
+
+        return result === RecordStatus.pendingToClaim ? (
+          <Badge.Ribbon text={t('Claim')} color="#00B2FF" className="-top-5 -right-6 opacity-70">
+            {content}
+          </Badge.Ribbon>
+        ) : (
+          content
         );
       },
     },
