@@ -45,7 +45,7 @@ function Destination({ chain, amount, symbol }: { chain: Network; amount: string
           <span className="ml-2">{symbol}</span>
         </div>
 
-        <span className="text-gray-400 text-xs">on {getDisplayName(chainConfig)}</span>
+        <span className="text-gray-400 text-xs">{getDisplayName(chainConfig)}</span>
       </div>
     </div>
   );
