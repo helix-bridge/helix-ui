@@ -2,6 +2,7 @@ import { SyncOutlined } from '@ant-design/icons';
 import { Button, message, Tooltip } from 'antd';
 import { useManualQuery } from 'graphql-hooks';
 import { useCallback, useState } from 'react';
+import { EMPTY } from 'rxjs';
 import { from } from 'rxjs/internal/observable/from';
 import { of } from 'rxjs/internal/observable/of';
 import { map } from 'rxjs/internal/operators/map';
@@ -12,6 +13,7 @@ import { useIsMounted } from 'shared/hooks';
 import { HelixHistoryRecord } from 'shared/model';
 import { gqlName } from 'shared/utils/helper/common';
 import { pollWhile } from 'shared/utils/helper/operator';
+import { applyModalObs } from 'shared/utils/tx';
 import { getBridge } from 'utils/bridge';
 import { bridgeFactory } from '../../bridges/bridges';
 import type { CBridgeBridge } from '../../bridges/celer/cBridge/utils';
@@ -156,27 +158,38 @@ function Refund({ record, onSuccess }: RefundComponentProps) {
         const bridge = bridgeFactory(config);
 
         if (bridge && bridge.refund) {
-          bridge.refund(record).subscribe({
-            next(response) {
-              observer.next(response);
+          applyModalObs({
+            title: <h3>{t('Confirm To Continue')}</h3>,
+            content: (
+              <span>
+                {t('This transaction will be refund to {{account}}, are you sure to execute it?', {
+                  account: record.sender,
+                })}
+              </span>
+            ),
+          })
+            .pipe(switchMap((confirmed) => (confirmed ? bridge.refund!(record) : EMPTY)))
+            .subscribe({
+              next(response) {
+                observer.next(response);
 
-              if (response.status === 'finalized') {
-                onRefundSuccess({ id: record.id, hash: response.hash ?? '' });
+                if (response.status === 'finalized') {
+                  onRefundSuccess({ id: record.id, hash: response.hash ?? '' });
 
-                if (onSuccess) {
-                  onSuccess();
+                  if (onSuccess) {
+                    onSuccess();
+                  }
                 }
-              }
-            },
-            error(err) {
-              observer.error(err);
-              setLoading(false);
-            },
-            complete() {
-              observer.complete();
-              setLoading(false);
-            },
-          });
+              },
+              error(err) {
+                observer.error(err);
+                setLoading(false);
+              },
+              complete() {
+                observer.complete();
+                setLoading(false);
+              },
+            });
         } else {
           console.warn(
             `The bridge from ${fromChain} to ${toChain} not exist, or the refund method on the bridge doest not implemented`

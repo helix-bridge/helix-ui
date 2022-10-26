@@ -1,5 +1,5 @@
 import { Button } from 'antd';
-import { useITranslation } from '../../hooks';
+import { useITranslation } from 'shared/hooks/translation';
 import { RecordStatusComponentProps } from '../../model/component';
 import { useClaim } from '../../providers/claim';
 

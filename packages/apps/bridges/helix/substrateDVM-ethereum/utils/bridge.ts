@@ -74,28 +74,15 @@ export class SubstrateDVMEthereumBridge extends Bridge<
   }
 
   claim(record: HelixHistoryRecord): Observable<Tx> {
-    const {
-      messageNonce,
-      endTime,
-      recvTokenAddress,
-      recvAmount,
-      guardSignatures,
-      recipient,
-      fromChain,
-      toChain,
-      sender,
-    } = record;
+    const { messageNonce, endTime, recvTokenAddress, recvAmount, guardSignatures, recipient, toChain } = record;
     const signatures = guardSignatures?.split('-').slice(1);
-    const bridge = getBridge<SubstrateDVMEthereumBridgeConfig>([fromChain, toChain]);
+    const contractAddress = this.config.contracts.guard;
 
     return isMetamaskChainConsistent(this.getChainConfig(toChain)).pipe(
       switchMap(() =>
         genEthereumContractTxObs(
-          bridge.config.contracts!.guard,
-          (contract) =>
-            contract.claim(messageNonce, endTime, recvTokenAddress, recipient, recvAmount, signatures, {
-              from: sender,
-            }),
+          contractAddress,
+          (contract) => contract.claim(messageNonce, endTime, recvTokenAddress, recipient, recvAmount, signatures),
           guardAbi
         )
       )
@@ -105,18 +92,17 @@ export class SubstrateDVMEthereumBridge extends Bridge<
   refund(record: HelixHistoryRecord): Observable<Tx> {
     const { sender, sendTokenAddress, sendAmount, fromChain, toChain } = record;
     const id = last(record.id.split('-'));
-    const bridge = getBridge<SubstrateDVMEthereumBridgeConfig>([fromChain, toChain]);
     const fromChainConfig = this.getChainConfig(toChain);
     const toChainConfig = this.getChainConfig(fromChain);
     const sendToken = this.getTokenConfigFromHelixRecord(record);
 
     const { contractAddress, abi, method } = isSubstrateDVM2Ethereum(fromChain, toChain)
       ? {
-          contractAddress: bridge.config.contracts!.issuing,
+          contractAddress: this.config.contracts!.issuing,
           abi: mappingTokenAbi,
           method: sendToken.type === 'native' ? 'remoteUnlockFailureNative' : 'remoteUnlockFailure',
         }
-      : { contractAddress: bridge.config.contracts!.backing, abi: backingAbi, method: 'remoteIssuingFailure' };
+      : { contractAddress: this.config.contracts!.backing, abi: backingAbi, method: 'remoteIssuingFailure' };
 
     const args = sendToken.type === 'native' ? [id, sender, sendAmount] : [id, sendTokenAddress, sender, sendAmount];
     const direction = { from: { meta: fromChainConfig }, to: { meta: toChainConfig } } as CrossChainDirection<
@@ -129,14 +115,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       switchMap((fee) => {
         return genEthereumContractTxObs(
           contractAddress,
-          (contract) =>
-            contract[method].apply(null, [
-              ...args,
-              {
-                from: sender,
-                value: fee?.toString(),
-              },
-            ]),
+          (contract) => contract[method].apply(null, [...args, { value: fee?.toString() }]),
           abi
         );
       })
@@ -165,13 +144,14 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       abi,
       useWallerProvider ? entrance.web3.currentProvider : entrance.web3.getInstance(direction.from.meta.provider.https)
     );
+    const targetToken = direction.from.meta.tokens.find(isNativeToken)!;
 
     try {
       const fee = await contract.currentFee();
 
-      return { ...direction.from.meta.tokens.find(isNativeToken)!, amount: new BN(fee.toString()) };
+      return { ...targetToken, amount: new BN(fee.toString()) };
     } catch {
-      return null;
+      return { ...targetToken, amount: new BN(-1) };
     }
   }
 
@@ -180,7 +160,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       CrossToken<EthereumChainConfig | DVMChainConfig>,
       CrossToken<EthereumChainConfig | DVMChainConfig>
     >
-  ): Promise<DailyLimit | null> {
+  ): Promise<DailyLimit> {
     const {
       from: { meta: departure },
       to: { meta: arrival, address: tokenAddress, type },
@@ -198,7 +178,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
 
       return { limit: limit.toString(), spentToday: '0' };
     } catch {
-      return null;
+      return { limit: '-1', spentToday: '0' };
     }
   }
 

@@ -9,6 +9,7 @@ import { fromWei, prettyNumber } from 'shared/utils/helper/balance';
 import { isCrabDVMHeco } from 'utils/bridge';
 import { getChainConfig } from 'utils/network';
 import { TransferStep } from '../../model/transfer';
+import { ClaimProvider, TxProvider } from '../../providers';
 import { IBreadcrumb } from './Breadcrumb';
 import { Bridge } from './Bridge';
 import { SourceTx } from './SourceTx';
@@ -43,58 +44,64 @@ export function Detail({ record, transfers }: DetailProps) {
   }, [departure.tokens, record]);
 
   return (
-    <>
-      <IBreadcrumb txHash={record?.requestTxHash} />
+    <TxProvider>
+      <ClaimProvider>
+        <IBreadcrumb txHash={record?.requestTxHash} />
 
-      <div className="flex justify-between items-center mt-6">
-        <h3 className="uppercase text-xs md:text-lg">{t('transaction detail')}</h3>
-        <Bridge />
-      </div>
+        <h3 className="uppercase text-xs md:text-lg font-bold my-6">{t('transaction detail')}</h3>
 
-      <div className="px-8 py-3 mt-6 bg-antDark">
-        <SourceTx hash={record?.requestTxHash} />
+        <div className="px-8 py-3 bg-antDark">
+          <Bridge />
 
-        <TargetTx record={record} />
+          <Divider />
 
-        <TxStatus record={record} />
+          <TxStatus record={record} />
 
-        <Timestamp record={record} />
+          <SourceTx hash={record?.requestTxHash} />
 
-        <Divider />
+          <TargetTx record={record} />
 
-        <TransferDescription title={t('Sender')} tip={t('Address (external or contract) sending the transaction.')}>
-          {record && <TextWithCopy>{revertAccount(record.sender, departure)}</TextWithCopy>}
-        </TransferDescription>
+          <Timestamp record={record} />
 
-        <TransferDescription title={t('Receiver')} tip={t('Address (external or contract) receiving the transaction.')}>
-          {record && <TextWithCopy>{revertAccount(record.recipient, arrival)}</TextWithCopy>}
-        </TransferDescription>
+          <Divider />
 
-        {!!transfers.length && <TransferDetail transfers={transfers} />}
+          <TransferDescription title={t('Sender')} tip={t('Address (external or contract) sending the transaction.')}>
+            {record && <TextWithCopy>{revertAccount(record.sender, departure)}</TextWithCopy>}
+          </TransferDescription>
 
-        <Divider />
+          <TransferDescription
+            title={t('Receiver')}
+            tip={t('Address (external or contract) receiving the transaction.')}
+          >
+            {record && <TextWithCopy>{revertAccount(record.recipient, arrival)}</TextWithCopy>}
+          </TransferDescription>
 
-        <TransferDescription
-          title={t('Value')}
-          tip={t('The amount to be transferred to the recipient with the cross-chain transaction.')}
-        >
-          {amount} {transfers[0]?.token.name}
-        </TransferDescription>
+          {!!transfers.length && <TransferDetail transfers={transfers} />}
 
-        <TransferDescription
-          title={t('Transaction Fee')}
-          tip={'Amount paid for processing the cross-chain transaction.'}
-        >
-          {record && fromWei({ value: record.fee, decimals: feeDecimals })}{' '}
-          {record && (record.feeToken === 'null' ? null : record.feeToken)}
-        </TransferDescription>
+          <Divider />
 
-        <Divider />
+          <TransferDescription
+            title={t('Value')}
+            tip={t('The amount to be transferred to the recipient with the cross-chain transaction.')}
+          >
+            {amount} {transfers[0]?.token.name}
+          </TransferDescription>
 
-        <TransferDescription title={t('Nonce')} tip={t('A unique number of cross-chain transaction in Bridge')}>
-          {record && (isCrabDVMHeco(record.fromChain, record.toChain) ? record.messageNonce : record.nonce)}
-        </TransferDescription>
-      </div>
-    </>
+          <TransferDescription
+            title={t('Transaction Fee')}
+            tip={'Amount paid for processing the cross-chain transaction.'}
+          >
+            {record && fromWei({ value: record.fee, decimals: feeDecimals })}{' '}
+            {record && (record.feeToken === 'null' ? null : record.feeToken)}
+          </TransferDescription>
+
+          <Divider />
+
+          <TransferDescription title={t('Nonce')} tip={t('A unique number of cross-chain transaction in Bridge')}>
+            {record && (isCrabDVMHeco(record.fromChain, record.toChain) ? record.messageNonce : record.nonce)}
+          </TransferDescription>
+        </div>
+      </ClaimProvider>
+    </TxProvider>
   );
 }

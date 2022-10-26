@@ -1,5 +1,5 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { Form, Tag, Tooltip } from 'antd';
 import { PropsWithChildren, ReactNode, useMemo } from 'react';
 import { useITranslation } from 'shared/hooks/translation';
@@ -35,7 +35,9 @@ export function CrossChainInfo({
 
   const feeContent = useMemo(() => {
     if (fee) {
-      return (
+      return fee.amount.lt(BN_ZERO) ? (
+        <span className="text-helix-red">{t('Query Failed')}</span>
+      ) : (
         <Tooltip title={fromWei(fee)} className="cursor-help">
           {fee.amount.lt(new BN(toWei({ value: 1, decimals: fee.decimals })))
             ? fromWei(fee)
@@ -61,13 +63,17 @@ export function CrossChainInfo({
       return (
         <div className={`flex justify-between items-center`}>
           <span>{t('Daily limit')}</span>
-          {dailyLimit ? (
-            <span>
-              {fromWei({ value: limit, decimals: direction.to.decimals }, (value) =>
-                prettyNumber(value, { ignoreZeroDecimal: true })
-              )}
-              <span className="ml-1">{direction.from.symbol}</span>
-            </span>
+          {limit ? (
+            limit.lt(BN_ZERO) ? (
+              <span className="text-helix-red">{t('Query Failed')}</span>
+            ) : (
+              <span>
+                {fromWei({ value: limit, decimals: direction.to.decimals }, (value) =>
+                  prettyNumber(value, { ignoreZeroDecimal: true })
+                )}
+                <span className="ml-1">{direction.from.symbol}</span>
+              </span>
+            )
           ) : (
             <CountLoading />
           )}
@@ -81,17 +87,15 @@ export function CrossChainInfo({
   const allowanceContent = useMemo(() => {
     if (bridge.getAllowancePayload && direction.from.type !== 'native' && departureConnection.type === 'metamask') {
       return (
-        <div className={`flex justify-between items-center`}>
+        <div className={`justify-between items-center hidden`}>
           <span>{t('Allowance')}</span>
           {allowance ? (
-            <div>
-              <span>
-                {fromWei({ value: allowance }, largeNumber, (num: string) =>
-                  prettyNumber(num, { ignoreZeroDecimal: true })
-                )}
-              </span>
+            <span>
+              {fromWei({ value: allowance }, largeNumber, (num: string) =>
+                prettyNumber(num, { ignoreZeroDecimal: true })
+              )}
               <span className="ml-1">{direction.from.symbol}</span>
-            </div>
+            </span>
           ) : (
             <CountLoading />
           )}

@@ -5,11 +5,11 @@
   "scripts": {
     "analyze": "cross-env ANALYZE=true next build",
     "dev": "NODE_OPTIONS='--inspect' next dev -p 4003",
-    "dev:test": "NODE_ENV=test NODE_OPTIONS='--inspect' next dev -p 4003",
+    "dev:test": "NODE_ENV=test NODE_OPTIONS='--inspect' next dev -p 4004",
     "build": "next build",
     "build:test": "NODE_ENV=test next build",
     "start": "next start -p 4003",
-    "start:test": "NODE_ENV=test next start -p 4003",
+    "start:test": "NODE_ENV=test next start -p 4004",
     "test:e2e": "cross-env CYPRESS_REMOTE_DEBUGGING_PORT=9222 TEST_TYPE=e2e cypress open",
     "test:e2e:ci": "cross-env CHOKIDAR_USEPOLLING=1 CYPRESS_REMOTE_DEBUGGING_PORT=9222 TEST_TYPE=e2e cypress run --browser=chrome --headed",
     "test:unit": "cross-env TZ=UTC CHAIN_TYPE=all jest --config=jest.config.js --coverage --verbose",
