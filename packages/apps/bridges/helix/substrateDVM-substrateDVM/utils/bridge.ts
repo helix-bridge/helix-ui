@@ -110,10 +110,7 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
               tokenAddress,
               sender,
               amount
-            ).send({
-              from: sender,
-              value: value?.toString(),
-            }),
+            ).send({ value: value?.toString() }),
           abi
         )
       )
@@ -143,13 +140,13 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
 
       return { ...token, amount: new BN(fee.toString()) };
     } catch {
-      return null;
+      return { ...token, amount: new BN(-1) };
     }
   }
 
   async getDailyLimit(
     direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>
-  ): Promise<DailyLimit | null> {
+  ): Promise<DailyLimit> {
     const {
       from: { meta: departure, address: fromTokenAddress },
       to: { meta: arrival },
@@ -167,7 +164,7 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
 
       return { limit: limit.toString(), spentToday: spentToday.toString() };
     } catch {
-      return null;
+      return { limit: '-1', spentToday: '0' };
     }
   }
 

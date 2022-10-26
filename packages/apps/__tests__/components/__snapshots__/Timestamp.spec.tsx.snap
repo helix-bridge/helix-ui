@@ -49,50 +49,9 @@ exports[`<Timestamp /> render Timestamp with processing 1`] = `
       className="hidden md:inline-block"
     >
       (
-      2022/06/30 05:10:54
+      Thu, 30 Jun 2022 05:10:54 GMT
       )
     </span>
-    <div
-      className="ant-divider ant-divider-vertical"
-      role="separator"
-    />
-    <svg
-      className="icon text-gray-400 text-base w-4 h-4"
-      onClick={[Function]}
-    />
-    <div
-      className="w-32"
-    >
-      <div
-        className="ant-progress ant-progress-line ant-progress-status-active ant-progress-default"
-      >
-        <div
-          className="ant-progress-outer"
-        >
-          <div
-            className="ant-progress-inner"
-            style={
-              Object {
-                "backgroundColor": undefined,
-                "borderRadius": undefined,
-              }
-            }
-          >
-            <div
-              className="ant-progress-bg"
-              style={
-                Object {
-                  "backgroundImage": "linear-gradient(to right, #108ee9, #87d068)",
-                  "borderRadius": undefined,
-                  "height": 8,
-                  "width": "99.9%",
-                }
-              }
-            />
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 `;
@@ -164,7 +123,7 @@ exports[`<Timestamp /> render Timestamp with success 1`] = `
       className="hidden md:inline-block"
     >
       (
-      2022/06/30 05:10:54
+      Thu, 30 Jun 2022 05:10:54 GMT
       )
     </span>
     <div

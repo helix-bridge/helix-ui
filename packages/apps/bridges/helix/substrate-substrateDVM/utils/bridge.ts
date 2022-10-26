@@ -90,7 +90,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
       CrossToken<PolkadotChainConfig | DVMChainConfig>,
       CrossToken<PolkadotChainConfig | DVMChainConfig>
     >
-  ): Promise<DailyLimit | null> {
+  ): Promise<DailyLimit> {
     const {
       to: { meta: arrival, address: ringAddress },
     } = direction;
@@ -99,7 +99,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
     const tokenAddress = isRing(direction.from.symbol) ? ringAddress : '';
 
     if (!tokenAddress) {
-      return null;
+      return { limit: '-1', spentToday: '0' };
     }
 
     const limit: BigNumber = await contract.dailyLimit(tokenAddress);
@@ -121,11 +121,14 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
       return { amount: BN_ZERO, ...token } as TokenWithAmount;
     }
 
-    const res = await this.queryFeeFromRelayers(departure.meta, to.meta);
+    try {
+      const res = await this.queryFeeFromRelayers(departure.meta, to.meta);
 
-    const marketFee = last(res)?.fee.toString();
-
-    return { ...token, amount: new BN(marketFee ?? -1) } as TokenWithAmount; // -1: fee market does not available
+      const marketFee = last(res)?.fee.toString();
+      return { ...token, amount: new BN(marketFee ?? -1) } as TokenWithAmount; // -1: fee market does not available
+    } catch {
+      return { ...token, amount: new BN(-1) } as TokenWithAmount; // -1: fee market does not available
+    }
   }
 
   private async queryFeeFromRelayers(departure: ChainConfig, to: ChainConfig) {

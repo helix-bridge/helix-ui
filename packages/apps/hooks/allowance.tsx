@@ -44,7 +44,7 @@ export function useAllowance(direction: CrossChainDirection) {
       const value = { sender: account, direction };
       const { sender } = value;
       const beforeTx = applyModalObs({
-        title: <h3 className="text-center mb-4">{t('Approve')}</h3>,
+        title: <h3 className="mb-0">{t('Approve')}</h3>,
         content: <ApproveConfirm value={value} />,
       });
       const { spender, tokenAddress, gas, gasPrice } = payload;

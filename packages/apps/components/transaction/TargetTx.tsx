@@ -1,4 +1,3 @@
-import { Progress } from 'antd';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
@@ -21,7 +20,7 @@ export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
     }
 
     if ([RecordStatus.pending, RecordStatus.pendingToClaim, RecordStatus.pendingToRefund].includes(record.result)) {
-      return <Progress percent={50} className="max-w-xs" />;
+      return <span>{t('Waiting for the transaction on the target chain...')}</span>;
     }
 
     if (isHelixRecord(record)) {
@@ -41,7 +40,7 @@ export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
     }
 
     return null;
-  }, [arrival, departure, record]);
+  }, [arrival, departure, record, t]);
 
   return (
     <TransferDescription

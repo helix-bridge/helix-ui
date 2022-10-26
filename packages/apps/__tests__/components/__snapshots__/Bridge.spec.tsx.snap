@@ -1,18 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<Bridge /> render bridge 1`] = `
-<div>
+<div
+  className="flex flex-wrap md:items-center gap-2 md:gap-16 my-3 md:my-6 relative"
+>
   <div
-    className="flex justify-between items-center gap-4 bg-antDark bg-opacity-25"
-    style={
-      Object {
-        "borderRadius": 40,
-      }
-    }
+    className="w-36 flex items-center gap-2"
+  >
+    <span
+      className="capitalize"
+    >
+      Transfer Route
+    </span>
+  </div>
+  <div
+    className="flex justify-between items-center gap-2 bg-antDark bg-opacity-25"
   >
     <div
-      className="p-2 pr-0 flex items-center"
+      className="flex items-center gap-2"
     >
+      <div>
+        Darwinia Chain
+      </div>
       <span
         style={
           Object {
@@ -128,21 +137,24 @@ exports[`<Bridge /> render bridge 1`] = `
         </noscript>
       </span>
     </div>
+    <svg
+      className="icon w-4 h-4"
+      onClick={[Function]}
+    />
     <div
-      className="flex items-center justify-center self-stretch px-4 md:px-8 bg-blue-900 bg-opacity-25 relative"
-      style={
-        Object {
-          "clipPath": "polygon(85% 0%, 100% 50%, 85% 100%, 0% 100%, 15% 50%, 0% 0%)",
-        }
-      }
+      className="bg-black p-2 px-4 rounded-3xl"
     >
       <img
         className="w-10 md:w-28"
         src="/image/bridges/helix.png"
       />
     </div>
+    <svg
+      className="icon w-4 h-4"
+      onClick={[Function]}
+    />
     <div
-      className="p-2 pl-0 flex items-center"
+      className="flex items-center gap-2"
     >
       <span
         style={
@@ -258,16 +270,9 @@ exports[`<Bridge /> render bridge 1`] = `
           />
         </noscript>
       </span>
-    </div>
-  </div>
-  <div
-    className="flex justify-between text-xs capitalize mt-1 px-3 whitespace-nowrap"
-  >
-    <div>
-      Darwinia Chain
-    </div>
-    <div>
-      Crab Smart Chain
+      <div>
+        Crab Smart Chain
+      </div>
     </div>
   </div>
 </div>
