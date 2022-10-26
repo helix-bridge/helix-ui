@@ -18,6 +18,7 @@ import {
   MetamaskNativeNetworkIds,
   TokenWithBridgesInfo,
 } from '../../model';
+import { readStorage, updateStorage } from '../helper/storage';
 
 export function isNativeMetamaskChain(chain: EthereumChainConfig): boolean {
   const ids = [
@@ -116,6 +117,9 @@ export const switchMetamaskNetwork: DebouncedFunc<(chain: EthereumChainConfig) =
     return new Observable((observer: Observer<null>) => {
       switchEthereumChain(chain)
         .then((res) => {
+          const origin = readStorage().activeWallet ?? {};
+
+          updateStorage({ activeWallet: { ...origin, chain: chain.name } });
           observer.next(res);
         })
         .catch(() => {

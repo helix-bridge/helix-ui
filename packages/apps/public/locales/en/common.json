@@ -111,6 +111,8 @@
   "The transfer amount is not enough to cover the fee": "The transfer amount is not enough to cover the fee",
   "The transfer cannot be completed because the bridge rate has moved unfavorably by your slippage tolerance. Please click the button below to get a refund.": "The transfer cannot be completed because the bridge rate has moved unfavorably by your slippage tolerance. Please click the button below to get a refund.",
   "The transfer won’t go through if the bridge rate moves unfavorably by more than this percentage when the transfer is executed.": "The transfer won’t go through if the bridge rate moves unfavorably by more than this percentage when the transfer is executed.",
+  "This transaction will be claim to {{account}}, are you sure to execute it?": "This transaction will be claim to {{account}}, are you sure to execute it?",
+  "This transaction will be refund to {{account}}, are you sure to execute it?": "This transaction will be refund to {{account}}, are you sure to execute it?",
   "Time": "Time",
   "Timestamp": "Timestamp",
   "To": "To",

@@ -115,14 +115,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       switchMap((fee) => {
         return genEthereumContractTxObs(
           contractAddress,
-          (contract) =>
-            contract[method].apply(null, [
-              ...args,
-              {
-                from: sender,
-                value: fee?.toString(),
-              },
-            ]),
+          (contract) => contract[method].apply(null, [...args, { value: fee?.toString() }]),
           abi
         );
       })

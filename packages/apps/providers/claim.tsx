@@ -1,8 +1,10 @@
 import { createContext, useCallback, useContext, useState } from 'react';
-import { EMPTY } from 'rxjs';
+import { EMPTY, switchMap } from 'rxjs';
 import type { Subscription } from 'rxjs/internal/Subscription';
 import { HelixHistoryRecord, Tx } from 'shared/model';
+import { applyModalObs } from 'shared/utils/tx/common';
 import { bridgeFactory } from '../bridges/bridges';
+import { useITranslation } from '../hooks';
 import { getBridge } from '../utils';
 import { useTx } from './tx';
 
@@ -22,6 +24,7 @@ interface ClaimCtx {
 export const ClaimContext = createContext<ClaimCtx | null>(null);
 
 export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) => {
+  const { t } = useITranslation();
   const { observer } = useTx();
   const [isClaiming, setIsClaiming] = useState(false);
   const [claimedList, setClaimedList] = useState<Claimed[]>([]);
@@ -58,7 +61,18 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
       const bridge = bridgeFactory(config);
 
       if (bridge && bridge.claim) {
-        return bridge.claim(record).subscribe(genObserver(record));
+        return applyModalObs({
+          title: <h3>{t('Confirm To Continue')}</h3>,
+          content: (
+            <span>
+              {t('This transaction will be claim to {{account}}, are you sure to execute it?', {
+                account: record.sender,
+              })}
+            </span>
+          ),
+        })
+          .pipe(switchMap((confirmed) => (confirmed ? bridge.claim!(record) : EMPTY)))
+          .subscribe(genObserver(record));
       } else {
         console.warn(
           `The bridge from ${fromChain} to ${toChain} not exist, or the claim method on the bridge doest not implemented`
@@ -66,7 +80,7 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
         return EMPTY.subscribe();
       }
     },
-    [genObserver]
+    [genObserver, t]
   );
 
   return (

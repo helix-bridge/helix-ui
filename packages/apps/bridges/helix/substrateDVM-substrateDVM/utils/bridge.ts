@@ -110,10 +110,7 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
               tokenAddress,
               sender,
               amount
-            ).send({
-              from: sender,
-              value: value?.toString(),
-            }),
+            ).send({ value: value?.toString() }),
           abi
         )
       )

@@ -4,6 +4,7 @@ import { ColumnType } from 'antd/lib/table';
 import { format } from 'date-fns';
 import { isAddress } from 'ethers/lib/utils';
 import { useQuery } from 'graphql-hooks';
+import last from 'lodash/last';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
@@ -12,7 +13,7 @@ import { DATE_TIME_FORMAT, RecordStatus } from 'shared/config/constant';
 import { SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
 import { HelixHistoryRecord, Network } from 'shared/model';
 import { convertToDvm, revertAccount } from 'shared/utils/helper/address';
-import { gqlName } from 'shared/utils/helper/common';
+import { gqlName, toMiddleSplitNaming } from 'shared/utils/helper/common';
 import { isSS58Address, isValidAddress } from 'shared/utils/helper/validator';
 import { getDetailPaths } from 'utils/record/path';
 import { Path } from '../../config';
@@ -199,8 +200,12 @@ export default function History() {
           </div>
         );
 
-        return result === RecordStatus.pendingToClaim ? (
-          <Badge.Ribbon text={t('Claim')} color="#00B2FF" className="-top-5 -right-6 opacity-70">
+        return result === RecordStatus.pendingToClaim || result === RecordStatus.pendingToRefund ? (
+          <Badge.Ribbon
+            text={t(last(toMiddleSplitNaming(RecordStatus[result]).split('-')) as string)}
+            color="#00B2FF"
+            className="flex items-center w-14 -top-5 -right-6 opacity-70 text-xs capitalize"
+          >
             {content}
           </Badge.Ribbon>
         ) : (

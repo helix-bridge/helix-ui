@@ -27,7 +27,7 @@ export function TxStatus({ record }: { record: HelixHistoryRecord | null }) {
       tip={t('The status of the cross-chain transaction: Success, Pending, or Refunded.')}
     >
       <div className="flex items-center gap-2">
-        <CrossChainState value={state} className="relative" detailedState></CrossChainState>
+        <CrossChainState value={state} className="relative"></CrossChainState>
 
         {state === RecordStatus.pending && (
           <div className="flex items-center gap-2">
@@ -55,14 +55,14 @@ export function TxStatus({ record }: { record: HelixHistoryRecord | null }) {
         )}
 
         {state === RecordStatus.pendingToClaim && record && (
-          <div>
+          <div className="flex items-center gap-2">
             <span>{t('Please request claim on the source chain.')}</span>
             <PendingToClaim record={record} />
           </div>
         )}
 
         {state === RecordStatus.pendingToRefund && record && (
-          <div>
+          <div className="flex items-center gap-2">
             <span>{t('Please request refund on the source chain.')}</span>
             <PendingToRefund record={record} />
           </div>
