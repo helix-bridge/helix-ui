@@ -162,7 +162,7 @@ export default function History() {
       title: t('Bridge'),
       dataIndex: 'bridge',
       align: 'center',
-      width: '5%',
+      width: 90,
       render: (value) => (
         <Image
           alt="..."
@@ -176,7 +176,7 @@ export default function History() {
       title: t('Status'),
       dataIndex: 'result',
       align: 'right',
-      width: '10%',
+      width: 150,
       // eslint-disable-next-line complexity
       render: (value: number, record: HelixHistoryRecord) => {
         const { fromChain, toChain, result, startTime } = record;
