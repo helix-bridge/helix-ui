@@ -14,14 +14,10 @@ import { isNativeToken, isRing } from 'shared/utils/helper/validator';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import wringABI from '../config/wring.json';
-import { IssuingPayload, RedeemPayload, SubstrateDVMSubstrateDVMBridgeConfig } from '../model';
+import { IssuingPayload, RedeemPayload, DarwiniaDVMCrabDVMBridgeConfig } from '../model';
 
-export class SubstrateDVMInnerBridge extends Bridge<
-  SubstrateDVMSubstrateDVMBridgeConfig,
-  DVMChainConfig,
-  DVMChainConfig
-> {
-  static readonly alias: string = 'SubstrateDVMInnerBridge';
+export class DarwiniaDVMInnerBridge extends Bridge<DarwiniaDVMCrabDVMBridgeConfig, DVMChainConfig, DVMChainConfig> {
+  static readonly alias: string = 'DarwiniaDVMInnerBridge';
 
   send(payload: IssuingPayload | RedeemPayload): Observable<Tx> {
     const {

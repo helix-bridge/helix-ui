@@ -32,7 +32,7 @@ export const pangoroDVMConfig: DVMChainConfig = {
       cross: [
         {
           category: 'helix',
-          bridge: 'substrateDVM-substrateDVM',
+          bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'pangoro-dvm', role: 'issuing', symbol: 'WORING' },
         },
         {
@@ -53,7 +53,7 @@ export const pangoroDVMConfig: DVMChainConfig = {
       cross: [
         {
           category: 'helix',
-          bridge: 'substrateDVM-substrateDVM',
+          bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'ORING', claim: true },
         },
         {
@@ -90,7 +90,7 @@ export const pangoroDVMConfig: DVMChainConfig = {
       cross: [
         {
           category: 'helix',
-          bridge: 'substrateDVM-substrateDVM',
+          bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'pangolin-dvm', role: 'issuing', symbol: 'xWORING' },
         },
       ],

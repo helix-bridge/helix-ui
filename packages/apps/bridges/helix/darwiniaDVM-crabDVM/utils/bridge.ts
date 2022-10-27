@@ -20,14 +20,10 @@ import { AllowancePayload } from '../../../../model/allowance';
 import { getBridge } from '../../../../utils/bridge';
 import backingAbi from '../config/s2sv2backing.json';
 import burnAbi from '../config/s2sv2burn.json';
-import { IssuingPayload, RedeemPayload, SubstrateDVMSubstrateDVMBridgeConfig } from '../model';
+import { IssuingPayload, RedeemPayload, DarwiniaDVMCrabDVMBridgeConfig } from '../model';
 
-export class SubstrateDVMSubstrateDVMBridge extends Bridge<
-  SubstrateDVMSubstrateDVMBridgeConfig,
-  DVMChainConfig,
-  DVMChainConfig
-> {
-  static readonly alias: string = 'SubstrateDVMSubstrateDVMBridge';
+export class DarwiniaDVMCrabDVMBridge extends Bridge<DarwiniaDVMCrabDVMBridgeConfig, DVMChainConfig, DVMChainConfig> {
+  static readonly alias: string = 'DarwiniaDVMCrabDVMBridge';
 
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction, bridge } = payload;
@@ -73,7 +69,7 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
 
   refund(record: HelixHistoryRecord): Observable<Tx> {
     const { fromChain, toChain, sendAmount: amount, sender, id, sendTokenAddress: tokenAddress } = record;
-    const bridge = getBridge<SubstrateDVMSubstrateDVMBridgeConfig>([fromChain, toChain]);
+    const bridge = getBridge<DarwiniaDVMCrabDVMBridgeConfig>([fromChain, toChain]);
     const [departure, arrival] = bridge.isIssue(fromChain, toChain)
       ? [bridge.departure, bridge.arrival]
       : [bridge.arrival, bridge.departure];

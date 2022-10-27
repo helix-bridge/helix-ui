@@ -36,7 +36,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
         },
         {
           category: 'helix',
-          bridge: 'substrateDVM-substrateDVM',
+          bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'WRING' },
         },
         {
@@ -57,12 +57,12 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       cross: [
         {
           category: 'helix',
-          bridge: 'substrateDVM-substrateDVM',
+          bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'crab-dvm', role: 'issuing', symbol: 'xWRING' },
         },
         {
           category: 'helix',
-          bridge: 'substrateDVM-substrateDVM',
+          bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
         },
         {
@@ -97,6 +97,22 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       logo: 'token-kton.svg',
       symbol: 'KTON',
       address: '0x0000000000000000000000000000000000000402',
+    },
+    {
+      name: 'xWCRAB',
+      cross: [
+        {
+          category: 'helix',
+          bridge: 'crabDVM-darwiniaDVM',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'WCRAB' },
+        },
+      ],
+      decimals: 18,
+      type: 'erc20',
+      host: 'darwinia-dvm',
+      logo: 'token-wcrab.svg',
+      symbol: 'xWCRAB',
+      address: '0xbc2a8439694BdE33E401b6a8ccaEA632bA003b44',
     },
   ],
   ss58Prefix: 18,

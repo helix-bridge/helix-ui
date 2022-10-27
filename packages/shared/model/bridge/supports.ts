@@ -8,7 +8,7 @@ export type BridgeName =
   | 'ethereum-heco'
   | 'ethereum-polygon'
   | 'crabDVM-polygon'
-  | 'substrateDVM-substrateDVM'
+  | 'darwiniaDVM-crabDVM'
   | 'bsc-arbitrum'
   | 'heco-polygon'
   | 'bsc-astar'
@@ -34,4 +34,5 @@ export type BridgeName =
   | 'crabParachain-karura'
   | 'crabParachain-moonriver'
   | 'substrateDVM-ethereum'
-  | 'pangolin-pangoro';
+  | 'pangolin-pangoro'
+  | 'crabDVM-darwiniaDVM';

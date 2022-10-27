@@ -96,25 +96,25 @@ export class BridgeBase<C = BridgeConfig, O extends ChainConfig = ChainConfig, T
       return 'CBridgeBridge';
     }
 
-    return this.IssueCrossChainComponent.split('2').join('') + 'Bridge';
+    return this.IssueComponentName.split('2').join('') + 'Bridge';
   }
 
-  get IssueCrossChainComponent(): string {
-    return (
-      this.options.issueCompName ||
-      this.name.split('-').map(this.toComponentName).join('2') ||
-      this.issue.map((item) => item.split('-').map(this.toComponentName).join('')).join('2')
-    );
+  get IssueComponentName(): string {
+    return this.options.issueCompName || this.name.split('-').map(this.toComponentName).join('2');
   }
 
-  get RedeemCrossChainComponent(): string {
-    return (
-      this.options.redeemCompName ||
-      this.name.split('-').map(this.toComponentName).reverse().join('2') ||
-      this.issue
-        .map((item) => item.split('-').map(this.toComponentName).join(''))
-        .reverse()
-        .join('2')
-    );
+  get IssueComponentAlias(): string {
+    return this.issue.map((item) => item.split('-').map(this.toComponentName).join('')).join('2');
+  }
+
+  get RedeemComponentName(): string {
+    return this.options.redeemCompName || this.name.split('-').map(this.toComponentName).reverse().join('2');
+  }
+
+  get RedeemComponentAlias(): string {
+    return this.issue
+      .map((item) => item.split('-').map(this.toComponentName).join(''))
+      .reverse()
+      .join('2');
   }
 }

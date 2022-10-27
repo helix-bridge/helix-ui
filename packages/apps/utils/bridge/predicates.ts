@@ -177,3 +177,7 @@ export const isSubstrateDVMEthereum = or(isSubstrateDVM2Ethereum, isEthereum2Sub
 export const isPangolin2Pangoro = predicate('pangolin', 'pangoro');
 export const isPangoro2Pangolin = predicate('pangoro', 'pangolin');
 export const isPangolinPangoro = or(isPangolin2Pangoro, isPangoro2Pangolin);
+
+export const isCrabDVM2DarwiniaDVM = predicate('crab-dvm', 'darwinia-dvm');
+export const isDarwiniaDVM2CrabDVM = predicate('darwinia-dvm', 'crab-dvm');
+export const isCrabDVMDarwiniaDVM = or(isCrabDVM2DarwiniaDVM, isDarwiniaDVM2CrabDVM);

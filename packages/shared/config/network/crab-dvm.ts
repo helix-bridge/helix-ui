@@ -34,6 +34,11 @@ export const crabDVMConfig: DVMChainConfig = {
           bridge: 'substrate-DVM',
           partner: { name: 'crab', role: 'backing', symbol: 'CRAB' },
         },
+        {
+          category: 'helix',
+          bridge: 'crabDVM-darwiniaDVM',
+          partner: { name: 'crab-dvm', role: 'issuing', symbol: 'WCRAB' },
+        },
       ],
       type: 'native',
       host: 'crab-dvm',
@@ -108,7 +113,7 @@ export const crabDVMConfig: DVMChainConfig = {
       cross: [
         {
           category: 'helix',
-          bridge: 'substrateDVM-substrateDVM',
+          bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'WRING' },
         },
       ],
@@ -159,6 +164,27 @@ export const crabDVMConfig: DVMChainConfig = {
       logo: 'token-usdc.svg',
       symbol: 'USDC',
       address: '0x81ECac0D6Be0550A00FF064a4f9dd2400585FE9c',
+    },
+    {
+      name: 'WCRAB',
+      cross: [
+        {
+          category: 'helix',
+          bridge: 'crabDVM-darwiniaDVM',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'CRAB' },
+        },
+        {
+          category: 'helix',
+          bridge: 'crabDVM-darwiniaDVM',
+          partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'xWCRAB' },
+        },
+      ],
+      decimals: 18,
+      type: 'erc20',
+      host: 'crab-dvm',
+      logo: 'token-wcrab.svg',
+      symbol: 'WCRAB',
+      address: '0x2D2b97EA380b0185e9fDF8271d1AFB5d2Bf18329',
     },
   ],
   ss58Prefix: 42,

@@ -1,10 +1,10 @@
 import { CrossToken, DVMChainConfig } from 'shared/model';
 import { Bridge } from '../../../components/bridge/Bridge';
 import { CrossChainComponentProps } from '../../../model/component';
-import { SubstrateDVMInnerBridge } from './utils/bridge-inner';
+import { DarwiniaDVMCrabDVMBridge } from './utils/bridge';
 
-export function SubstrateDVMInner(
-  props: CrossChainComponentProps<SubstrateDVMInnerBridge, CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>
+export function DarwiniaDVM2CrabDVM(
+  props: CrossChainComponentProps<DarwiniaDVMCrabDVMBridge, CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>
 ) {
   return <Bridge {...props} hideRecipient />;
 }

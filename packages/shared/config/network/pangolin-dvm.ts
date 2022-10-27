@@ -80,7 +80,7 @@ export const pangolinDVMConfig: DVMChainConfig = {
       cross: [
         {
           category: 'helix',
-          bridge: 'substrateDVM-substrateDVM',
+          bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'wORING' },
         },
       ],

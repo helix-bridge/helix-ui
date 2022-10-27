@@ -21,7 +21,7 @@ import {
 } from 'shared/model';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { readStorage, updateStorage } from 'shared/utils/helper/storage';
-import { getBridge, isCBridge, isSubstrateDVMSubstrateDVM, isXCM } from 'utils/bridge';
+import { getBridge, isCBridge, isXCM } from 'utils/bridge';
 import { bridgeFactory } from '../../bridges/bridges';
 import { TokenWithAmount } from '../../core/bridge';
 import { getOriginChainConfig } from '../../utils/network';
@@ -91,19 +91,7 @@ export function Direction({ value, onChange, balances, onRefresh, fee, isBalance
     [onChange]
   );
 
-  const iBalance = useMemo(() => {
-    if (!balances) {
-      return null;
-    }
-
-    if (isSubstrateDVMSubstrateDVM(data.from.host, data.to.host)) {
-      const [erc20, native] = balances;
-
-      return data.from.type === 'native' ? native : erc20;
-    }
-
-    return balances[0];
-  }, [balances, data.from.host, data.from.type, data.to.host]);
+  const iBalance = useMemo(() => balances && balances[0], [balances]);
 
   useEffect(() => {
     if (!value) {
