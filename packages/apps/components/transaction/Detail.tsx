@@ -15,6 +15,7 @@ import { Bridge } from './Bridge';
 import { SourceTx } from './SourceTx';
 import { TargetTx } from './TargetTx';
 import { Timestamp } from './Timestamp';
+import { Token } from './Token';
 import { TransferDescription } from './TransferDescription';
 import { TransferDetail } from './TransferDetail';
 import { TxStatus } from './TxStatus';
@@ -77,6 +78,8 @@ export function Detail({ record, transfers }: DetailProps) {
           </TransferDescription>
 
           {!!transfers.length && <TransferDetail transfers={transfers} />}
+
+          <Token record={record} />
 
           <Divider />
 

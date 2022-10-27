@@ -37,8 +37,8 @@ function Destination({ chain, amount, symbol }: { chain: Network; amount: string
       <Logo name={chainConfig.logos[0].name} width={36} height={36} />
 
       <div className="flex flex-col">
-        <div className="flex items-center">
-          <span style={{ maxWidth: '8em' }} className="inline-block truncate" title={amount}>
+        <div className="flex items-center" style={{ maxWidth: '10em' }}>
+          <span style={{ maxWidth: '6em' }} className="inline-block truncate" title={amount}>
             {amount}
           </span>
 
@@ -162,7 +162,7 @@ export default function History() {
       title: t('Bridge'),
       dataIndex: 'bridge',
       align: 'center',
-      width: '5%',
+      width: 90,
       render: (value) => (
         <Image
           alt="..."
@@ -176,7 +176,7 @@ export default function History() {
       title: t('Status'),
       dataIndex: 'result',
       align: 'right',
-      width: '10%',
+      width: 150,
       // eslint-disable-next-line complexity
       render: (value: number, record: HelixHistoryRecord) => {
         const { fromChain, toChain, result, startTime } = record;
@@ -309,8 +309,13 @@ export default function History() {
                   current: paginator.page + 1,
                   size: 'default',
                 }}
-                onChange={({ current, pageSize: size }) => {
-                  setPaginator({ page: current ?? 1, row: size ?? paginatorDefault.row });
+                onChange={({ current, pageSize: size }, _filters, _sorter, extra) => {
+                  const { action } = extra;
+
+                  // @see https://github.com/ant-design/ant-design/issues/38240
+                  if (action !== 'filter') {
+                    setPaginator({ page: (current ?? 1) - 1, row: size ?? paginatorDefault.row });
+                  }
                 }}
                 rowClassName={() => {
                   return 'cursor-pointer';
