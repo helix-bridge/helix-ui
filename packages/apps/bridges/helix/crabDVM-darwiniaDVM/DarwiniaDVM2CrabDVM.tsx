@@ -6,5 +6,5 @@ import { CrabDVMDarwiniaDVMBridge } from './utils';
 export function DarwiniaDVM2CrabDVM(
   props: CrossChainComponentProps<CrabDVMDarwiniaDVMBridge, CrossToken<ChainConfig>, CrossToken<ChainConfig>>
 ) {
-  return <Bridge {...props} />;
+  return <Bridge {...props} hideRecipient />;
 }
