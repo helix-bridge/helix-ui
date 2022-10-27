@@ -37,8 +37,8 @@ function Destination({ chain, amount, symbol }: { chain: Network; amount: string
       <Logo name={chainConfig.logos[0].name} width={36} height={36} />
 
       <div className="flex flex-col">
-        <div className="flex items-center">
-          <span style={{ maxWidth: '8em' }} className="inline-block truncate" title={amount}>
+        <div className="flex items-center" style={{ maxWidth: '10em' }}>
+          <span style={{ maxWidth: '6em' }} className="inline-block truncate" title={amount}>
             {amount}
           </span>
 
