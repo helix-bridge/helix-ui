@@ -81,7 +81,7 @@ export function CrossChainInfo({
   const allowanceContent = useMemo(() => {
     if (bridge.getAllowancePayload && direction.from.type !== 'native' && departureConnection.type === 'metamask') {
       return (
-        <div className={`flex justify-between items-center`}>
+        <div className={`justify-between items-center hidden`}>
           <span>{t('Allowance')}</span>
           {allowance ? (
             <div>

@@ -78,7 +78,10 @@ export function CrossChain({ dir }: { dir: CrossChainDirection<CrossToken<ChainB
   const { afterCrossChain } = useAfterTx<CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>>();
 
   const allowanceEnough = useMemo(
-    () => !bridge?.getAllowancePayload || (allowance && allowance.gt(new BN(toWei(direction.from)))),
+    () =>
+      !bridge?.getAllowancePayload ||
+      direction.from.type === 'native' ||
+      (allowance && allowance.gt(new BN(toWei(direction.from)))),
     [allowance, bridge?.getAllowancePayload, direction.from]
   );
 
