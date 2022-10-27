@@ -309,8 +309,13 @@ export default function History() {
                   current: paginator.page + 1,
                   size: 'default',
                 }}
-                onChange={({ current, pageSize: size }) => {
-                  setPaginator({ page: current ?? 1, row: size ?? paginatorDefault.row });
+                onChange={({ current, pageSize: size }, _filters, _sorter, extra) => {
+                  const { action } = extra;
+
+                  // @see https://github.com/ant-design/ant-design/issues/38240
+                  if (action !== 'filter') {
+                    setPaginator({ page: (current ?? 1) - 1, row: size ?? paginatorDefault.row });
+                  }
                 }}
                 rowClassName={() => {
                   return 'cursor-pointer';
