@@ -1,5 +1,6 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { BigNumber, Contract } from 'ethers/lib/ethers';
+import { remove } from 'lodash';
 import type { Observable } from 'rxjs';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import {
@@ -12,7 +13,9 @@ import {
   Tx,
 } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
+import { toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
+import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { AllowancePayload } from '../../../../model/allowance';
 import backingAbi from '../config/backing.json';
@@ -22,8 +25,32 @@ import { CrabDVMDarwiniaDVMBridgeConfig, IssuingPayload, RedeemPayload } from '.
 export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeConfig, ChainConfig, ChainConfig> {
   static readonly alias: string = 'CrabDVMDarwiniaDVMBridge';
 
-  back(_: IssuingPayload, _fee: BN): Observable<Tx> {
-    return EMPTY;
+  back(payload: IssuingPayload, fee: BN): Observable<Tx> {
+    const { sender, recipient, direction, bridge } = payload;
+    const { from: departure, to } = direction;
+    const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
+    const gasLimit = '100';
+    const fullParams = [
+      to.meta.specVersion,
+      gasLimit,
+      departure.address,
+      recipient,
+      amount,
+      {
+        from: sender,
+        value: fee.toString(),
+      },
+    ];
+    const [method, params] =
+      direction.from.type === 'native'
+        ? ['lockAndRemoteIssuingNative', remove(fullParams, (_, index) => index !== 2)]
+        : ['lockAndRemoteIssuing', fullParams];
+
+    return genEthereumContractTxObs(
+      bridge.config.contracts!.backing,
+      (contract) => contract[method].apply(this, params),
+      backingAbi
+    );
   }
 
   burn(_payload: RedeemPayload, _fee: BN): Observable<Tx> {
