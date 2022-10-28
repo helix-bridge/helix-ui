@@ -9,6 +9,7 @@ import {
   CrossChainPureDirection,
   CrossToken,
   DailyLimit,
+  DVMChainConfig,
   TokenInfoWithMeta,
   Tx,
 } from 'shared/model';
@@ -18,6 +19,7 @@ import { isRing } from 'shared/utils/helper/validator';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { AllowancePayload } from '../../../../model/allowance';
+import { getWrappedToken } from '../../../../utils/network/network';
 import backingAbi from '../config/backing.json';
 import burnAbi from '../config/mappingToken.json';
 import { CrabDVMDarwiniaDVMBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
@@ -28,17 +30,17 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction, bridge } = payload;
     const { from: departure, to } = direction;
-    const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
+    const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
     const gasLimit = '100';
     const fullParams = [
       to.meta.specVersion,
       gasLimit,
       departure.address,
       recipient,
-      amount,
+      amount.toString(),
       {
         from: sender,
-        value: fee.toString(),
+        value: departure.type === 'native' ? amount.add(fee).toString() : fee.toString(),
       },
     ];
     const [method, params] =
@@ -88,33 +90,57 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
     direction: CrossChainPureDirection<TokenInfoWithMeta<ChainConfig>, TokenInfoWithMeta<ChainConfig>>
   ): Promise<DailyLimit> {
     const {
-      from: { meta: departure, address: fromTokenAddress },
-      to: { meta: arrival },
+      from: { meta: departure },
+      to: { meta: arrival, address: toTokenAddress },
     } = direction;
 
-    const { abi, address } = this.isIssue(departure, arrival)
+    const { abi, address } = this.isRedeem(departure, arrival)
       ? { abi: backingAbi, address: this.config.contracts?.backing }
       : { abi: burnAbi, address: this.config.contracts?.issuing };
 
-    const contract = new Contract(address as string, abi, entrance.web3.getInstance(departure.provider.https));
+    const contract = new Contract(address as string, abi, entrance.web3.getInstance(arrival.provider.https));
 
     try {
-      const limit: BigNumber = await contract.calcMaxWithdraw(fromTokenAddress);
+      const limit: BigNumber = await contract.calcMaxWithdraw(toTokenAddress);
 
       return { limit: limit.toString(), spentToday: '0' };
-    } catch (err) {
+    } catch {
       return { limit: '-1', spentToday: '0' };
     }
   }
 
   async getAllowancePayload(
     direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
-  ): Promise<AllowancePayload> {
-    return {
-      spender: this.isIssue(direction.from.meta, direction.to.meta)
-        ? this.config.contracts.backing
-        : this.config.contracts.issuing,
-      tokenAddress: direction.from.address,
-    };
+  ): Promise<AllowancePayload | null> {
+    if (direction.from.type === 'erc20' && this.isIssue(direction.from.host, direction.to.host)) {
+      return {
+        spender: this.config.contracts.backing,
+        tokenAddress: direction.from.address || getWrappedToken(direction.from.meta).address,
+      };
+    }
+
+    if (this.isRedeem(direction.from.host, direction.to.host)) {
+      return {
+        spender: this.config.contracts.issuing,
+        tokenAddress: direction.from.address,
+      };
+    }
+
+    return null;
+  }
+
+  getMinimumFeeTokenHolding(
+    direction: CrossChainDirection<
+      CrossToken<DVMChainConfig | DVMChainConfig>,
+      CrossToken<DVMChainConfig | DVMChainConfig>
+    >
+  ): TokenWithAmount | null {
+    const { from: dep, to } = direction;
+
+    if (this.isIssue(dep.meta, to.meta) && dep.type === 'native') {
+      return { ...dep, amount: new BN(toWei({ value: 1, decimals: dep.decimals })) };
+    }
+
+    return null;
   }
 }

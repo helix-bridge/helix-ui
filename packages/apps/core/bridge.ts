@@ -135,7 +135,6 @@ export abstract class Bridge<
       [!!feeTokenBalance && feeTokenBalance.amount.gt(BN_ZERO), 'Insufficient fee balance'],
       [!!from.amount && +from.amount > 0, 'Transfer amount is required'],
       [!!to.amount && +to.amount >= 0, 'Transfer amount invalid'],
-      [!this.getAllowancePayload || (allowance.amount && allowance.amount.gt(BN_ZERO)), 'Failed to get allowance'],
       [
         !this.getAllowancePayload || from.type === 'native' || (allowance.amount && allowance.amount.gt(BN_ZERO)),
         'Failed to get allowance',

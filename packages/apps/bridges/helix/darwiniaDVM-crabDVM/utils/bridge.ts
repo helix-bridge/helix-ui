@@ -144,19 +144,19 @@ export class DarwiniaDVMCrabDVMBridge extends Bridge<DarwiniaDVMCrabDVMBridgeCon
     direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>
   ): Promise<DailyLimit> {
     const {
-      from: { meta: departure, address: fromTokenAddress },
-      to: { meta: arrival },
+      from: { meta: departure },
+      to: { meta: arrival, address: toTokenAddress },
     } = direction;
 
-    const { abi, address } = this.isIssue(departure, arrival)
+    const { abi, address } = this.isRedeem(departure, arrival)
       ? { abi: backingAbi, address: this.config.contracts?.backing }
       : { abi: burnAbi, address: this.config.contracts?.issuing };
 
-    const contract = new Contract(address as string, abi, entrance.web3.getInstance(departure.provider.https));
+    const contract = new Contract(address as string, abi, entrance.web3.getInstance(arrival.provider.https));
 
     try {
-      const limit: BigNumber = await contract.dailyLimit(fromTokenAddress);
-      const spentToday: BigNumber = await contract.spentToday(fromTokenAddress);
+      const limit: BigNumber = await contract.dailyLimit(toTokenAddress);
+      const spentToday: BigNumber = await contract.spentToday(toTokenAddress);
 
       return { limit: limit.toString(), spentToday: spentToday.toString() };
     } catch {

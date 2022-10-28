@@ -106,6 +106,11 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           bridge: 'crabDVM-darwiniaDVM',
           partner: { name: 'crab-dvm', role: 'backing', symbol: 'WCRAB' },
         },
+        {
+          category: 'helix',
+          bridge: 'crabDVM-darwiniaDVM',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'CRAB' },
+        },
       ],
       decimals: 18,
       type: 'erc20',
