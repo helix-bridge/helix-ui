@@ -72,7 +72,7 @@ export function CrossChain() {
   const [fee, setFee] = useState<TokenWithAmount | null>(null);
   const { account } = useAccount();
   const [balances, setBalances] = useState<BN[] | null>(null);
-  const { allowance, approve, queryAllowance } = useAllowance(direction);
+  const { allowance, approve, queryAllowance, resetAllowance } = useAllowance(direction);
   const { matched } = useWallet();
   const { observer } = useTx();
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
@@ -151,11 +151,14 @@ export function CrossChain() {
           queryAllowance(payload);
         }
       });
+    } else {
+      resetAllowance();
     }
-  }, [bridge, pureDirection, queryAllowance]);
+  }, [bridge, pureDirection, queryAllowance, resetAllowance]);
 
   useEffect(() => {
     if (!bridge) {
+      setFee(null);
       return;
     }
 
@@ -173,6 +176,7 @@ export function CrossChain() {
 
   useEffect(() => {
     if (!bridge?.getDailyLimit) {
+      setDailyLimit(null);
       return;
     }
 

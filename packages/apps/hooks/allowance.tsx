@@ -71,5 +71,9 @@ export function useAllowance(direction: CrossChainDirection) {
     [account, afterApprove, direction, matched, observer, queryAllowance, t]
   );
 
-  return { approve, allowance, queryAllowance };
+  const resetAllowance = useCallback(() => {
+    setAllowance(null);
+  }, [setAllowance]);
+
+  return { approve, allowance, queryAllowance, resetAllowance };
 }
