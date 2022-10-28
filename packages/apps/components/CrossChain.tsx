@@ -263,6 +263,7 @@ export function CrossChain() {
               setPatchPayload(() => identity);
               form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined, [FORM_CONTROL.recipient]: undefined });
               setPureDirection({ from: omit(value.from, 'amount'), to: omit(value.to, 'amount') });
+              setFee(null);
             }
 
             setDirection(value);

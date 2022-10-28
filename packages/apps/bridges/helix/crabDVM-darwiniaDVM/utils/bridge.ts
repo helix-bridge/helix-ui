@@ -1,10 +1,23 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import omit from 'lodash/omit';
-import { ChainConfig, CrossChainDirection, CrossToken, Tx } from 'shared/model';
-import { EMPTY } from 'rxjs/internal/observable/empty';
+import { BigNumber, Contract } from 'ethers/lib/ethers';
 import type { Observable } from 'rxjs';
-import { IssuingPayload, RedeemPayload, CrabDVMDarwiniaDVMBridgeConfig } from '../model';
+import { EMPTY } from 'rxjs/internal/observable/empty';
+import {
+  ChainConfig,
+  CrossChainDirection,
+  CrossChainPureDirection,
+  CrossToken,
+  DailyLimit,
+  TokenInfoWithMeta,
+  Tx,
+} from 'shared/model';
+import { entrance } from 'shared/utils/connection';
+import { isRing } from 'shared/utils/helper/validator';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
+import { AllowancePayload } from '../../../../model/allowance';
+import backingAbi from '../config/backing.json';
+import burnAbi from '../config/mappingToken.json';
+import { CrabDVMDarwiniaDVMBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 
 export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeConfig, ChainConfig, ChainConfig> {
   static readonly alias: string = 'CrabDVMDarwiniaDVMBridge';
@@ -20,6 +33,61 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
   async getFee(
     direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
   ): Promise<TokenWithAmount | null> {
-    return { ...omit(direction.from, ['meta', 'amount']), amount: BN_ZERO };
+    const {
+      from: { meta: departure },
+      to: { meta: arrival },
+    } = direction;
+    const token = direction.from.meta.tokens.find((item) => isRing(item.symbol))!;
+
+    if (!isRing(direction.from.symbol)) {
+      return { ...token, amount: BN_ZERO };
+    }
+
+    const { abi, address } = this.isIssue(departure, arrival)
+      ? { abi: backingAbi, address: this.config.contracts?.backing }
+      : { abi: burnAbi, address: this.config.contracts?.issuing };
+    const contract = new Contract(address as string, abi, entrance.web3.getInstance(departure.provider.https));
+
+    try {
+      const fee = await contract.fee();
+
+      return { ...token, amount: new BN(fee.toString()) };
+    } catch {
+      return { ...token, amount: new BN(-1) };
+    }
+  }
+
+  async getDailyLimit(
+    direction: CrossChainPureDirection<TokenInfoWithMeta<ChainConfig>, TokenInfoWithMeta<ChainConfig>>
+  ): Promise<DailyLimit> {
+    const {
+      from: { meta: departure, address: fromTokenAddress },
+      to: { meta: arrival },
+    } = direction;
+
+    const { abi, address } = this.isIssue(departure, arrival)
+      ? { abi: backingAbi, address: this.config.contracts?.backing }
+      : { abi: burnAbi, address: this.config.contracts?.issuing };
+
+    const contract = new Contract(address as string, abi, entrance.web3.getInstance(departure.provider.https));
+
+    try {
+      const limit: BigNumber = await contract.calcMaxWithdraw(fromTokenAddress);
+
+      return { limit: limit.toString(), spentToday: '0' };
+    } catch (err) {
+      return { limit: '-1', spentToday: '0' };
+    }
+  }
+
+  async getAllowancePayload(
+    direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
+  ): Promise<AllowancePayload> {
+    return {
+      spender: this.isIssue(direction.from.meta, direction.to.meta)
+        ? this.config.contracts.backing
+        : this.config.contracts.issuing,
+      tokenAddress: direction.from.address,
+    };
   }
 }
