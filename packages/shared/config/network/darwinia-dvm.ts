@@ -117,7 +117,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       host: 'darwinia-dvm',
       logo: 'token-wcrab.svg',
       symbol: 'xWCRAB',
-      address: '0xbc2a8439694BdE33E401b6a8ccaEA632bA003b44',
+      address: '0x656567Eb75b765FC320783cc6EDd86bD854b2305',
     },
   ],
   ss58Prefix: 18,

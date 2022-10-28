@@ -2,7 +2,6 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { BigNumber, Contract } from 'ethers/lib/ethers';
 import { remove } from 'lodash';
 import type { Observable } from 'rxjs';
-import { EMPTY } from 'rxjs/internal/observable/empty';
 import {
   ChainConfig,
   CrossChainDirection,
@@ -31,7 +30,7 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
     const { sender, recipient, direction, bridge } = payload;
     const { from: departure, to } = direction;
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
-    const gasLimit = '100';
+    const gasLimit = '1000000';
     const fullParams = [
       to.meta.specVersion,
       gasLimit,
@@ -55,8 +54,36 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
     );
   }
 
-  burn(_payload: RedeemPayload, _fee: BN): Observable<Tx> {
-    return EMPTY;
+  burn(payload: RedeemPayload, fee: BN): Observable<Tx> {
+    const {
+      sender,
+      recipient,
+      bridge,
+      direction: { from: departure, to },
+    } = payload;
+    const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
+    const gasLimit = '1000000';
+    const fullParams = [
+      to.meta.specVersion,
+      gasLimit,
+      departure.address,
+      recipient,
+      amount.toString(),
+      {
+        from: sender,
+        value: departure.type === 'native' ? amount.add(fee).toString() : fee.toString(),
+      },
+    ];
+    const [method, params] =
+      departure.type === 'native'
+        ? ['burnAndRemoteUnlockNative', remove(fullParams, (_, index) => index !== 2)]
+        : ['burnAndRemoteUnlock', fullParams];
+
+    return genEthereumContractTxObs(
+      bridge.config.contracts!.issuing,
+      (contract) => contract[method].apply(this.IssueComponentAlias, params),
+      burnAbi
+    );
   }
 
   async getFee(
@@ -101,7 +128,9 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
     const contract = new Contract(address as string, abi, entrance.web3.getInstance(arrival.provider.https));
 
     try {
-      const limit: BigNumber = await contract.calcMaxWithdraw(toTokenAddress);
+      const limit: BigNumber = await contract.calcMaxWithdraw(
+        toTokenAddress ? toTokenAddress : getWrappedToken(arrival).address
+      );
 
       return { limit: limit.toString(), spentToday: '0' };
     } catch {

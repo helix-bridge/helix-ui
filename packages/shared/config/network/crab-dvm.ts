@@ -49,7 +49,7 @@ export const crabDVMConfig: DVMChainConfig = {
       host: 'crab-dvm',
       logo: 'token-wcrab.svg',
       symbol: 'CRAB',
-      address: '0x588abe3F7EE935137102C5e2B8042788935f4CB0',
+      address: '',
     },
     {
       name: 'CKTON',

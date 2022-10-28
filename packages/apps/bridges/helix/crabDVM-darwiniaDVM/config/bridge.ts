@@ -4,8 +4,8 @@ import { CrabDVMDarwiniaDVMBridgeConfig } from '../model';
 
 const crabDVMDarwiniaDVMConfig: CrabDVMDarwiniaDVMBridgeConfig = {
   contracts: {
-    backing: '0xE0E888cA28738Fa2667b095d66bBAD15Fec5245E',
-    issuing: '0xc9454EAc2815cd7677Ca7f237e8aDB226676DDbA',
+    backing: '0xCF8923ebF4244cedC647936a0281dd10bDFCBF18',
+    issuing: '0x8c585F9791EE5b4B23fe82888cE576DBB69607eB',
   },
 };
 
