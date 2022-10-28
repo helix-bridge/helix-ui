@@ -184,13 +184,11 @@ function initUitls() {
         > {
             static readonly alias: string = '${name}Bridge';
 
-            back(payload: IssuingPayload, fee: BN): Observable<Tx> {
-                console.log(payload, fee);
+            back(_payload: IssuingPayload, _fee: BN): Observable<Tx> {
                 return EMPTY;
             }
 
-            burn(payload: RedeemPayload, fee: BN): Observable<Tx> {
-                console.log(payload, fee);
+            burn(_payload: RedeemPayload, _fee: BN): Observable<Tx> {
                 return EMPTY;
             }
 

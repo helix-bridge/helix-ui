@@ -29,12 +29,8 @@ export { DVM2Substrate, Substrate2DVM } from './helix/substrate-dvm';
 export { SubstrateParachain2Substrate, Substrate2SubstrateParachain } from './helix/substrate-substrateParachain';
 export { Substrate2SubstrateDVM, SubstrateDVM2Substrate } from './helix/substrate-substrateDVM';
 export { Ethereum2SubstrateDVM, SubstrateDVM2Ethereum } from './helix/substrateDVM-ethereum';
-export {
-  DarwiniaDVM2CrabDVM as SubstrateDVM2SubstrateDVM,
-  DarwiniaDVMInner as SubstrateDVMInner,
-} from './helix/darwiniaDVM-crabDVM';
+export { DarwiniaDVM2CrabDVM, CrabDVM2DarwiniaDVM, DarwiniaDVMInner } from './helix/darwiniaDVM-crabDVM';
 export { Unavailable2Unknown, Unknown2Unavailable } from './unknown-unavailable';
 export { CrabParachain2Karura, Karura2CrabParachain } from './xcm/crabParachain-karura';
 export { CrabParachain2Moonriver, Moonriver2CrabParachain } from './xcm/crabParachain-moonriver';
-
-export { CrabDVM2DarwiniaDVM, DarwiniaDVM2CrabDVM } from './helix/crabDVM-darwiniaDVM';
+export { CrabDVMInner } from './helix/crabDVM-darwiniaDVM';

@@ -17,13 +17,6 @@ function extrinsicSpy(observer: Observer<Tx>) {
       return;
     }
 
-    console.info(
-      '%c [ extrinsic status ]-22',
-      'font-size:13px; background:pink; color:blue;',
-      result.status.toJSON(),
-      result
-    );
-
     const { error } = result.status.toJSON() as Record<string, string>;
 
     if (result.status.isBroadcast) {

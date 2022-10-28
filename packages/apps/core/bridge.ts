@@ -207,9 +207,6 @@ export abstract class Bridge<
         const isSameSymbolCaseInsensitive = item.symbol.toLowerCase() === symbol.toLowerCase();
 
         if (isSameSymbolCaseInsensitive) {
-          console.log(
-            `⚠️ Token symbol(${symbol}) from ${record.id} is not consistent with the symbol(${item.symbol}) stored in ${chain.name} configuration!`
-          );
           return true;
         }
       }

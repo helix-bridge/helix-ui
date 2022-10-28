@@ -162,7 +162,6 @@ export function genEthereumContractTxObs(
           observer.error({ status: 'error', error: error.message + '\n' + error.data?.message ?? '' });
         });
     } catch (error) {
-      console.warn('%c contract tx observable error', 'font-size:13px; background:pink; color:#bf2c9f;', error);
       observer.error({ status: 'error', error: 'Contract construction/call failed!' });
     }
   });
@@ -224,8 +223,6 @@ export async function getAllowance(
     return new BN(allowanceAmount);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    console.log('⚠ ~ file: allowance.ts getIssuingAllowance ~ error', error.message);
-
     return null;
   }
 }

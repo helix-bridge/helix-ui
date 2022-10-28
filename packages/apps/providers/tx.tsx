@@ -43,7 +43,7 @@ export const TxProvider = ({ children }: React.PropsWithChildren<unknown>) => {
         setTx(null);
       },
       complete: () => {
-        console.log('🛫 ~ Transaction sent or terminated!');
+        //
       },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

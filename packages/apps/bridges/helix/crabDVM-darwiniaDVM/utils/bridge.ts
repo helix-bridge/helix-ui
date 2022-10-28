@@ -9,13 +9,11 @@ import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeConfig, ChainConfig, ChainConfig> {
   static readonly alias: string = 'CrabDVMDarwiniaDVMBridge';
 
-  back(payload: IssuingPayload, fee: BN): Observable<Tx> {
-    console.log(payload, fee);
+  back(_: IssuingPayload, _fee: BN): Observable<Tx> {
     return EMPTY;
   }
 
-  burn(payload: RedeemPayload, fee: BN): Observable<Tx> {
-    console.log(payload, fee);
+  burn(_payload: RedeemPayload, _fee: BN): Observable<Tx> {
     return EMPTY;
   }
 

@@ -39,6 +39,11 @@ export const crabDVMConfig: DVMChainConfig = {
           bridge: 'crabDVM-darwiniaDVM',
           partner: { name: 'crab-dvm', role: 'issuing', symbol: 'WCRAB' },
         },
+        // {
+        //   category: 'helix',
+        //   bridge: 'crabDVM-darwiniaDVM',
+        //   partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'xWCRAB' },
+        // },
       ],
       type: 'native',
       host: 'crab-dvm',

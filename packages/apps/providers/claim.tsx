@@ -40,9 +40,8 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
           }
           observer.next(state);
         },
-        error: (err: unknown) => {
+        error: (_: unknown) => {
           observer.error({ status: 'error', error: new Error('Some error occurred during contract call') });
-          console.error('🚀 ~ file: claim.tsx ~ line 80 ~ ClaimProvider ~ err', err);
           setIsClaiming(false);
         },
         complete: () => {
@@ -74,9 +73,6 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
           .pipe(switchMap((confirmed) => (confirmed ? bridge.claim!(record) : EMPTY)))
           .subscribe(genObserver(record));
       } else {
-        console.warn(
-          `The bridge from ${fromChain} to ${toChain} not exist, or the claim method on the bridge doest not implemented`
-        );
         return EMPTY.subscribe();
       }
     },

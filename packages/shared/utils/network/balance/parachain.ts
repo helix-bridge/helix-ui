@@ -31,8 +31,6 @@ export async function getBalance(fromToken: TokenInfoWithMeta<ChainConfig>, acco
 
     return new BN(balance);
   } catch (error) {
-    console.warn('🚨 ~ file: parachain.ts ~ line 21 ~ getBalance ~ error', (error as Record<string, string>).message);
-
     return BN_ZERO;
   }
 }

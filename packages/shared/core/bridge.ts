@@ -90,6 +90,10 @@ export class BridgeBase<C = BridgeConfig, O extends ChainConfig = ChainConfig, T
   /**
    * naming convention: OriginChain2TargetChain
    * The naming of components and bridge subclasses must conform to this rule
+   * TODO: better unique naming
+   * e.g. darwinia-dvm <> crab-dvm and crab-dvm <> darwinia-dvm should be recognized as different bridges
+   * But for ui components, the naming will be conflict, both are DarwiniaDVM2CrabDVM and CrabDVM2DarwiniaDVM, although the meanings are different.
+   * DarwiniaDVM2CrabDVM is issue component for darwinia-dvm <> crab-dvm and is redeem component for crab-dvm <> darwinia-dvm.
    */
   get subClsName(): string {
     if (this.category === 'cBridge') {
