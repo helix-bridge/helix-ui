@@ -39,6 +39,7 @@
   "Ethereum - Darwinia Record": "Ethereum - Darwinia 记录",
   "Exceed the authorized amount, click to authorize more amount, or reduce the transfer amount": "超出授权限制，请增加授权金额或减少转账金额",
   "Explorer": "浏览器",
+  "Failed to get token information by symbol {{recvToken}} on {{toChain}}": "获取 {{toChain}} 上的 {{recvToken}} 信息失败",
   "Fee": "手续费",
   "Fetch own accounts": "查询我的账号",
   "For": "发送",

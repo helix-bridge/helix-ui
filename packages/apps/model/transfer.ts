@@ -4,6 +4,6 @@ export interface TransferStep {
   chain: ChainConfig;
   sender: string;
   recipient: string;
-  token: TokenWithBridgesInfo;
+  token: TokenWithBridgesInfo | undefined;
   amount: string;
 }
