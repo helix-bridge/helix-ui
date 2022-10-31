@@ -41,6 +41,7 @@ import { CrossChainComponentProps } from '../model/component';
 import { CrossChainPayload } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
 import { isXCM } from '../utils';
+import { getDisplayName } from '../utils/network';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { calcMax, Direction, toDirection } from './form-control/Direction';
 import { TransferConfirm } from './tx/TransferConfirm';
@@ -421,8 +422,8 @@ export function CrossChain() {
             </FormItemButton>
           </>
         ) : (
-          <FormItemButton type="default" onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}>
-            {t('Switch Wallet')}
+          <FormItemButton onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}>
+            {t('Switch to {{chain}}', { chain: getDisplayName(direction.from.meta) })}
           </FormItemButton>
         )
       ) : (

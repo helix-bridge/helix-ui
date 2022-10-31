@@ -95,7 +95,7 @@
   "Source Tx Hash": "源链哈希",
   "Status": "状态",
   "Success": "成功",
-  "Switch wallet": "切换钱包",
+  "Switch to {{chain}}": "切换到 {{chain}}",
   "Symbol": "代币符号",
   "Target Chain": "目标链",
   "Target Tx Hash": "结束哈希",

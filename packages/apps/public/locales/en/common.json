@@ -95,7 +95,7 @@
   "Source Tx Hash": "Source Tx Hash",
   "Status": "Status",
   "Success": "Success",
-  "Switch wallet": "Switch wallet",
+  "Switch to {{chain}}": "Switch to {{chain}}",
   "Symbol": "Symbol",
   "Target Chain": "Target Chain",
   "Target Tx Hash": "Target Tx Hash",
