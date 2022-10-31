@@ -71,11 +71,11 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
       amount.toString(),
       {
         from: sender,
-        value: departure.type === 'native' ? amount.add(fee).toString() : fee.toString(),
+        value: fee.toString(),
       },
     ];
     const [method, params] =
-      departure.type === 'native'
+      to.type === 'native'
         ? ['burnAndRemoteUnlockNative', remove(fullParams, (_, index) => index !== 2)]
         : ['burnAndRemoteUnlock', fullParams];
 

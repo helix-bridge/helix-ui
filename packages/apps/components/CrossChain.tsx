@@ -341,8 +341,8 @@ export function CrossChain() {
             {t('Approve')}
           </FormItemButton>
         ) : (
-          <FormItemButton type="default" onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}>
-            {t('Switch Wallet')}
+          <FormItemButton onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}>
+            {t('Switch to {{chain}}', { chain: getDisplayName(direction.from.meta) })}
           </FormItemButton>
         )
       ) : departureConnection.status === ConnectionStatus.success ? (
