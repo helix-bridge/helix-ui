@@ -103,11 +103,10 @@ export function CBridge({
             setChainMatched(false);
           }
         },
-        error: (error) => {
+        error: (_) => {
           message.error(
             `The active metamask chain is not consistent with required, you must switch it to ${direction.from.host} in metamask`
           );
-          console.warn('🚀 ~ file: CBridge.tsx ~ line 126 ~ useEffect ~ error', error);
           setChainMatched(false);
         },
       });

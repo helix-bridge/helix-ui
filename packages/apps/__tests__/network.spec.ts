@@ -50,12 +50,12 @@ describe('network utils', () => {
     expect(group![1]).toEqual(['crab-dvm', 'crab-parachain']);
   });
 
-  it('crab-dvm contains 7 leafs and substrate-substrateDVM deprecated', () => {
+  it('crab-dvm contains 8 leafs and substrate-substrateDVM deprecated', () => {
     const group = data.find((item) => item[0] === 'crab-dvm');
-    const expected = sort(['crab', 'ethereum', 'heco', 'polygon', 'darwinia', 'darwinia-dvm', 'astar']);
+    const expected = sort(['crab', 'ethereum', 'heco', 'polygon', 'darwinia-dvm', 'darwinia', 'astar', 'crab-dvm']);
 
     expect(group).not.toEqual(undefined);
-    expect(sort(group![1])).toEqual(expected);
+    expect(sort(uniq(group![1]))).toEqual(sort(expected));
 
     const overview = getOverview('crab-dvm', 'darwinia');
     expect(overview).toEqual(undefined);
@@ -86,7 +86,7 @@ describe('network utils', () => {
     const group = data.find((item) => item[0] === 'darwinia-dvm');
 
     expect(group).not.toEqual(undefined);
-    expect(uniq(group![1])).toEqual(['darwinia', 'crab-dvm', 'darwinia-dvm', 'ethereum']);
+    expect(sort(uniq(group![1]))).toEqual(sort(['darwinia', 'crab-dvm', 'darwinia-dvm', 'ethereum']));
   });
 
   it('ethereum contains 9 leafs', () => {

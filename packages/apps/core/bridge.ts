@@ -2,6 +2,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { isAddress } from 'ethers/lib/utils';
 import isBoolean from 'lodash/isBoolean';
 import isString from 'lodash/isString';
+import last from 'lodash/last';
 import { Observable } from 'rxjs/internal/Observable';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { of } from 'rxjs/internal/observable/of';
@@ -135,7 +136,6 @@ export abstract class Bridge<
       [!!feeTokenBalance && feeTokenBalance.amount.gt(BN_ZERO), 'Insufficient fee balance'],
       [!!from.amount && +from.amount > 0, 'Transfer amount is required'],
       [!!to.amount && +to.amount >= 0, 'Transfer amount invalid'],
-      [!this.getAllowancePayload || (allowance.amount && allowance.amount.gt(BN_ZERO)), 'Failed to get allowance'],
       [
         !this.getAllowancePayload || from.type === 'native' || (allowance.amount && allowance.amount.gt(BN_ZERO)),
         'Failed to get allowance',
@@ -207,14 +207,17 @@ export abstract class Bridge<
         const isSameSymbolCaseInsensitive = item.symbol.toLowerCase() === symbol.toLowerCase();
 
         if (isSameSymbolCaseInsensitive) {
-          console.log(
-            `⚠️ Token symbol(${symbol}) from ${record.id} is not consistent with the symbol(${item.symbol}) stored in ${chain.name} configuration!`
-          );
           return true;
         }
       }
 
       return isSameSymbol;
     })!;
+  }
+
+  protected trimLaneId(id: string) {
+    const res = last(id.split('-')) as string;
+
+    return res.substring(10, id.length + 1);
   }
 }

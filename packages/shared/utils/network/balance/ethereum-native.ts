@@ -15,8 +15,6 @@ export async function getBalance(account: string, provider: string): Promise<BN>
 
     return new BN(result);
   } catch (error) {
-    console.log(':🚨 ~ file: ethereum-native.ts ~ line 18 ~ getBalance ~ error', error);
-
     return BN_ZERO;
   }
 }

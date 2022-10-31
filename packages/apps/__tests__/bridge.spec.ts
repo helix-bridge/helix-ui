@@ -3,22 +3,30 @@
 import isEqual from 'lodash/isEqual';
 import unionWith from 'lodash/unionWith';
 import { BridgeBase } from 'shared/core/bridge';
-import { ChainConfig, CrossToken, Network } from 'shared/model';
+import { BridgeName, ChainConfig, CrossToken, Network } from 'shared/model';
 import { toMiddleSplitNaming } from 'shared/utils/helper/common';
 import { isDVMNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
 import { BRIDGES } from '../config/bridge';
 import { unknownUnavailable } from '../bridges/unknown-unavailable/config';
-import { bridgeCategoryDisplay, getBridge, getBridges } from '../utils/bridge';
+import { bridgeCategoryDisplay, getBridge, getBridges, isSubstrateDVMSubstrateDVM } from '../utils/bridge';
 import { chainConfigs, crossChainGraph, getChainConfig } from '../utils/network/network';
 
 // exclude the config that not contains transferable tokens;
 const configs = chainConfigs.filter((item) => !!item.tokens.filter((token) => !!token.cross.length).length);
 
 const calcBridgesAmount = (data: [Network, Network[]][]) =>
-  unionWith(
-    data.map(([from, tos]) => tos.map((to) => [from, to])).flat(),
-    (pre, cur) => isEqual(pre, cur) || isEqual(pre.reverse(), cur)
-  );
+  unionWith(data.map(([from, tos]) => tos.map((to) => [from, to])).flat(), (pre, cur) => {
+    if (isSubstrateDVMSubstrateDVM(cur[0], cur[1])) {
+      return isEqual(pre.reverse(), cur); // crabDVM<>darwiniaDVM and darwiniaDVM<>crabDVM should be different two bridges
+    }
+
+    return isEqual(pre, cur) || isEqual(pre.reverse(), cur);
+  });
+
+const mapToTestChain: { [key: string]: string } = {
+  'darwinia-dvm': 'pangoro-dvm',
+  'crab-dvm': 'pangolin-dvm',
+};
 
 describe('bridge utils', () => {
   const bridges = crossChainGraph;
@@ -30,11 +38,11 @@ describe('bridge utils', () => {
 
   it('should support bridge count: ', () => {
     expect(testBridges).toHaveLength(6);
-    expect(formalBridges).toHaveLength(36);
+    expect(formalBridges).toHaveLength(38);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(84);
+    expect(allDirections).toHaveLength(88);
   });
 
   it('Should correct bridge category name', () => {
@@ -139,6 +147,13 @@ describe.each(configs)("$name network's ", ({ name, tokens, ...other }) => {
           expect(isDVMNetwork(from.host)).toBe(true);
         } else if (issuing === 'substrate-parachain') {
           expect(isParachainNetwork(from.host)).toBe(true);
+          // bridge inner: crabDVM<>darwiniaDVM darwiniaDVM<>crabDVM
+        } else if (from.host === partner.name) {
+          const backingChain = other.isTest ? mapToTestChain[backing] : backing;
+
+          expect(from.host).toEqual(backingChain);
+        } else if (bridge === 'darwiniaDVM-crabDVM' && other.isTest) {
+          expect(from.host).toEqual(mapToTestChain[issuing]);
         } else {
           expect(from.host).toEqual(issuing);
         }
@@ -149,6 +164,8 @@ describe.each(configs)("$name network's ", ({ name, tokens, ...other }) => {
           expect(isDVMNetwork(from.host)).toBe(true);
         } else if (backing === 'substrate-parachain') {
           expect(isParachainNetwork(from.host)).toBe(true);
+        } else if (bridge === 'darwiniaDVM-crabDVM' && other.isTest) {
+          expect(from.host).toEqual(mapToTestChain[backing]);
         } else {
           expect(from.host).toEqual(backing);
         }

@@ -25,9 +25,6 @@ export function useAllowance(direction: CrossChainDirection) {
   const queryAllowance = useCallback(
     async ({ spender, tokenAddress, provider }: AllowancePayload) => {
       if ([account, spender, tokenAddress].some((item) => !item)) {
-        console.log(
-          `⚠️ Missing parameters to  query allowance: address(${account}), spender(${spender}), tokenAddress(${tokenAddress})`
-        );
         setAllowance(null);
         return;
       }
@@ -74,5 +71,9 @@ export function useAllowance(direction: CrossChainDirection) {
     [account, afterApprove, direction, matched, observer, queryAllowance, t]
   );
 
-  return { approve, allowance, queryAllowance };
+  const resetAllowance = useCallback(() => {
+    setAllowance(null);
+  }, [setAllowance]);
+
+  return { approve, allowance, queryAllowance, resetAllowance };
 }

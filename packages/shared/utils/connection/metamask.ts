@@ -93,7 +93,13 @@ export async function switchEthereumChain(chain: EthereumChainConfig): Promise<n
   } catch (switchError: any) {
     // eslint-disable-next-line no-magic-numbers
     if (switchError.code === 4902) {
-      return addEthereumChain(chain);
+      const added = await addEthereumChain(chain);
+
+      if (added === null) {
+        return switchEthereumChain(chain);
+      } else {
+        throw switchError;
+      }
     } else {
       throw switchError;
     }

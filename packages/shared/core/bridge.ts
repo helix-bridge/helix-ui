@@ -90,31 +90,35 @@ export class BridgeBase<C = BridgeConfig, O extends ChainConfig = ChainConfig, T
   /**
    * naming convention: OriginChain2TargetChain
    * The naming of components and bridge subclasses must conform to this rule
+   * TODO: better unique naming
+   * e.g. darwinia-dvm <> crab-dvm and crab-dvm <> darwinia-dvm should be recognized as different bridges
+   * But for ui components, the naming will be conflict, both are DarwiniaDVM2CrabDVM and CrabDVM2DarwiniaDVM, although the meanings are different.
+   * DarwiniaDVM2CrabDVM is issue component for darwinia-dvm <> crab-dvm and is redeem component for crab-dvm <> darwinia-dvm.
    */
   get subClsName(): string {
     if (this.category === 'cBridge') {
       return 'CBridgeBridge';
     }
 
-    return this.IssueCrossChainComponent.split('2').join('') + 'Bridge';
+    return this.IssueComponentName.split('2').join('') + 'Bridge';
   }
 
-  get IssueCrossChainComponent(): string {
-    return (
-      this.options.issueCompName ||
-      this.name.split('-').map(this.toComponentName).join('2') ||
-      this.issue.map((item) => item.split('-').map(this.toComponentName).join('')).join('2')
-    );
+  get IssueComponentName(): string {
+    return this.options.issueCompName || this.name.split('-').map(this.toComponentName).join('2');
   }
 
-  get RedeemCrossChainComponent(): string {
-    return (
-      this.options.redeemCompName ||
-      this.name.split('-').map(this.toComponentName).reverse().join('2') ||
-      this.issue
-        .map((item) => item.split('-').map(this.toComponentName).join(''))
-        .reverse()
-        .join('2')
-    );
+  get IssueComponentAlias(): string {
+    return this.issue.map((item) => item.split('-').map(this.toComponentName).join('')).join('2');
+  }
+
+  get RedeemComponentName(): string {
+    return this.options.redeemCompName || this.name.split('-').map(this.toComponentName).reverse().join('2');
+  }
+
+  get RedeemComponentAlias(): string {
+    return this.issue
+      .map((item) => item.split('-').map(this.toComponentName).join(''))
+      .reverse()
+      .join('2');
   }
 }

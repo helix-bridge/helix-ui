@@ -15,7 +15,7 @@ import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { isNativeToken } from 'shared/utils/helper/validator';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
-import { getBridge, isSubstrateDVM2Ethereum } from 'utils/bridge';
+import { getBridge } from 'utils/bridge';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { AllowancePayload } from '../../../../model/allowance';
 import { getWrappedToken } from '../../../../utils/network';
@@ -33,8 +33,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
 
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction } = payload;
-    const { from: departure, to } = direction;
-    const bridge = getBridge([departure.meta, to.meta]);
+    const { from: departure } = direction;
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
     const params = [
       departure.address,
@@ -42,14 +41,13 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       amount.toString(),
       { from: sender, value: departure.type === 'native' ? amount.add(fee).toString() : fee.toString() },
     ];
-    console.log('%cbridge.ts line:45 params', 'color: white; background-color: #007acc;', params, fee.toString());
     const { method, args } =
       departure.type === 'native'
         ? { method: 'lockAndRemoteIssuingNative', args: params.slice(1) }
         : { method: 'lockAndRemoteIssuing', args: params };
 
     return genEthereumContractTxObs(
-      bridge.config.contracts!.backing,
+      this.config.contracts!.backing,
       (contract) => contract[method].apply(null, args),
       backingAbi
     );
@@ -92,20 +90,26 @@ export class SubstrateDVMEthereumBridge extends Bridge<
   refund(record: HelixHistoryRecord): Observable<Tx> {
     const { sender, sendTokenAddress, sendAmount, fromChain, toChain } = record;
     const id = last(record.id.split('-'));
-    const fromChainConfig = this.getChainConfig(toChain);
-    const toChainConfig = this.getChainConfig(fromChain);
     const sendToken = this.getTokenConfigFromHelixRecord(record);
 
-    const { contractAddress, abi, method } = isSubstrateDVM2Ethereum(fromChain, toChain)
+    const { contractAddress, abi, method, departure, arrival } = this.isIssue(fromChain, toChain)
       ? {
           contractAddress: this.config.contracts!.issuing,
           abi: mappingTokenAbi,
           method: sendToken.type === 'native' ? 'remoteUnlockFailureNative' : 'remoteUnlockFailure',
+          departure: this.departure,
+          arrival: this.arrival,
         }
-      : { contractAddress: this.config.contracts!.backing, abi: backingAbi, method: 'remoteIssuingFailure' };
+      : {
+          contractAddress: this.config.contracts!.backing,
+          abi: backingAbi,
+          method: 'remoteIssuingFailure',
+          departure: this.arrival,
+          arrival: this.departure,
+        };
 
     const args = sendToken.type === 'native' ? [id, sender, sendAmount] : [id, sendTokenAddress, sender, sendAmount];
-    const direction = { from: { meta: fromChainConfig }, to: { meta: toChainConfig } } as CrossChainDirection<
+    const direction = { from: { meta: arrival }, to: { meta: departure } } as CrossChainDirection<
       CrossToken<DVMChainConfig>,
       CrossToken<EthereumChainConfig>
     >;
@@ -115,7 +119,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       switchMap((fee) => {
         return genEthereumContractTxObs(
           contractAddress,
-          (contract) => contract[method].apply(null, [...args, { value: fee?.toString() }]),
+          (contract) => contract[method].apply(null, [...args, { value: fee?.amount.toString() }]),
           abi
         );
       })
@@ -133,18 +137,17 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       from: { meta: departure },
       to: { meta: arrival },
     } = direction;
-    const bridge = getBridge([departure, arrival]);
 
-    const { abi, address } = bridge.isIssue(departure, arrival)
-      ? { abi: backingAbi, address: bridge.config.contracts?.backing }
-      : { abi: mappingTokenAbi, address: bridge.config.contracts?.issuing };
+    const { abi, address } = this.isIssue(departure, arrival)
+      ? { abi: backingAbi, address: this.config.contracts?.backing }
+      : { abi: mappingTokenAbi, address: this.config.contracts?.issuing };
 
     const contract = new Contract(
       address as string,
       abi,
-      useWallerProvider ? entrance.web3.currentProvider : entrance.web3.getInstance(direction.from.meta.provider.https)
+      useWallerProvider ? entrance.web3.currentProvider : entrance.web3.getInstance(departure.provider.https)
     );
-    const targetToken = direction.from.meta.tokens.find(isNativeToken)!;
+    const targetToken = departure.tokens.find(isNativeToken)!;
 
     try {
       const fee = await contract.currentFee();
@@ -165,11 +168,10 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       from: { meta: departure },
       to: { meta: arrival, address: tokenAddress, type },
     } = direction;
-    const bridge = getBridge([departure, arrival]);
 
-    const { abi, address } = bridge.isIssue(departure, arrival)
-      ? { abi: mappingTokenAbi, address: bridge.config.contracts?.issuing }
-      : { abi: backingAbi, address: bridge.config.contracts?.backing };
+    const { abi, address } = this.isIssue(departure, arrival)
+      ? { abi: mappingTokenAbi, address: this.config.contracts?.issuing }
+      : { abi: backingAbi, address: this.config.contracts?.backing };
 
     const contract = new Contract(address as string, abi, entrance.web3.getInstance(direction.to.meta.provider.https));
 

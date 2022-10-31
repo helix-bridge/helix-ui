@@ -1,6 +1,5 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { BigNumber, Contract } from 'ethers';
-import last from 'lodash/last';
 import { EMPTY, from, Observable, switchMap } from 'rxjs';
 import {
   ChainConfig,
@@ -17,17 +16,12 @@ import { isRing } from 'shared/utils/helper/validator';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { AllowancePayload } from '../../../../model/allowance';
-import { getBridge } from '../../../../utils/bridge';
 import backingAbi from '../config/s2sv2backing.json';
 import burnAbi from '../config/s2sv2burn.json';
-import { IssuingPayload, RedeemPayload, SubstrateDVMSubstrateDVMBridgeConfig } from '../model';
+import { IssuingPayload, RedeemPayload, DarwiniaDVMCrabDVMBridgeConfig } from '../model';
 
-export class SubstrateDVMSubstrateDVMBridge extends Bridge<
-  SubstrateDVMSubstrateDVMBridgeConfig,
-  DVMChainConfig,
-  DVMChainConfig
-> {
-  static readonly alias: string = 'SubstrateDVMSubstrateDVMBridge';
+export class DarwiniaDVMCrabDVMBridge extends Bridge<DarwiniaDVMCrabDVMBridgeConfig, DVMChainConfig, DVMChainConfig> {
+  static readonly alias: string = 'DarwiniaDVMCrabDVMBridge';
 
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction, bridge } = payload;
@@ -73,44 +67,45 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
 
   refund(record: HelixHistoryRecord): Observable<Tx> {
     const { fromChain, toChain, sendAmount: amount, sender, id, sendTokenAddress: tokenAddress } = record;
-    const bridge = getBridge<SubstrateDVMSubstrateDVMBridgeConfig>([fromChain, toChain]);
-    const [departure, arrival] = bridge.isIssue(fromChain, toChain)
-      ? [bridge.departure, bridge.arrival]
-      : [bridge.arrival, bridge.departure];
+    const sendToken = this.getTokenConfigFromHelixRecord(record);
+    const recvToken = this.getTokenConfigFromHelixRecord(record, 'recvToken');
 
-    const trimLaneId = (helixId: string) => {
-      const res = last(helixId.split('-')) as string;
-      return res.substring(10, id.length + 1);
-    };
-    const transferId = trimLaneId(id);
+    const { abi, address, method, departure, arrival } = this.isRedeem(fromChain, toChain)
+      ? {
+          abi: backingAbi,
+          address: this.config.contracts?.backing,
+          method: 'remoteIssuingFailure',
+          departure: this.arrival,
+          arrival: this.departure,
+        }
+      : {
+          abi: burnAbi,
+          address: this.config.contracts?.issuing,
+          method: 'remoteUnlockFailure',
+          departure: this.departure,
+          arrival: this.arrival,
+        };
 
-    const { abi, address, method } = bridge.isRedeem(fromChain, toChain)
-      ? { abi: backingAbi, address: bridge.config.contracts?.backing, method: 'remoteIssuingFailure' }
-      : { abi: burnAbi, address: bridge.config.contracts?.issuing, method: 'remoteUnlockFailure' };
+    const direction = {
+      from: { ...recvToken, meta: arrival },
+      to: { ...sendToken, meta: departure },
+    } as CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>;
 
     return isMetamaskChainConsistent(arrival).pipe(
-      switchMap((isConsistent) =>
-        isConsistent
-          ? from(
-              this.getFee({ from: { meta: arrival }, to: { meta: departure } } as CrossChainDirection<
-                CrossToken<DVMChainConfig>,
-                CrossToken<DVMChainConfig>
-              >)
-            )
-          : EMPTY
-      ),
-      switchMap((value) =>
+      switchMap((isConsistent) => (isConsistent ? from(this.getFee(direction)) : EMPTY)),
+      switchMap((fee) =>
         genEthereumContractTxObs(
           address as string,
           (contract) =>
             contract[method](
               (departure as DVMChainConfig).specVersion,
               '2000000',
-              transferId,
+              this.trimLaneId(id),
               tokenAddress,
               sender,
-              amount
-            ).send({ value: value?.toString() }),
+              amount,
+              { value: fee?.amount.toString() }
+            ),
           abi
         )
       )
@@ -148,19 +143,19 @@ export class SubstrateDVMSubstrateDVMBridge extends Bridge<
     direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>
   ): Promise<DailyLimit> {
     const {
-      from: { meta: departure, address: fromTokenAddress },
-      to: { meta: arrival },
+      from: { meta: departure },
+      to: { meta: arrival, address: toTokenAddress },
     } = direction;
 
-    const { abi, address } = this.isIssue(departure, arrival)
+    const { abi, address } = this.isRedeem(departure, arrival)
       ? { abi: backingAbi, address: this.config.contracts?.backing }
       : { abi: burnAbi, address: this.config.contracts?.issuing };
 
-    const contract = new Contract(address as string, abi, entrance.web3.getInstance(departure.provider.https));
+    const contract = new Contract(address as string, abi, entrance.web3.getInstance(arrival.provider.https));
 
     try {
-      const limit: BigNumber = await contract.dailyLimit(fromTokenAddress);
-      const spentToday: BigNumber = await contract.spentToday(fromTokenAddress);
+      const limit: BigNumber = await contract.dailyLimit(toTokenAddress);
+      const spentToday: BigNumber = await contract.spentToday(toTokenAddress);
 
       return { limit: limit.toString(), spentToday: spentToday.toString() };
     } catch {

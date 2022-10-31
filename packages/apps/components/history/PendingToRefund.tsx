@@ -52,8 +52,7 @@ function CBrideRefund({ record, onSuccess }: RefundComponentProps) {
         next(result) {
           setReason(result.reason);
         },
-        error(err) {
-          console.warn(`🚨 polling status error: ${err}`);
+        error(_) {
           setLoading(false);
         },
         complete() {
@@ -191,9 +190,7 @@ function Refund({ record, onSuccess }: RefundComponentProps) {
               },
             });
         } else {
-          console.warn(
-            `The bridge from ${fromChain} to ${toChain} not exist, or the refund method on the bridge doest not implemented`
-          );
+          //
         }
       }}
     >

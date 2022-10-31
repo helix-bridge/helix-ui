@@ -44,7 +44,6 @@ module.exports = {
 
     async function sendSettleTx() {
       const txn = await snxjs.Synthetix.settle(assetAsBytes32);
-      console.log(`Settle executed: ${txn.hash}`);
       await txn.wait();
       return txn.hash;
     }
@@ -57,7 +56,6 @@ module.exports = {
     const networkName = getNetwork().networkName;
     const maxSecsLeftInWaitingPeriod = await getMaxSecsLeftInWaitingPeriod(networkName, walletAddress, assetAsBytes32);
     if (maxSecsLeftInWaitingPeriod > 0) {
-      console.log(`We're currently in waiting period, waiting for ${maxSecsLeftInWaitingPeriod} seconds..`);
       await sleep(maxSecsLeftInWaitingPeriod * 1000);
       return true;
     } else {

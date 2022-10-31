@@ -171,13 +171,11 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
             setIsConnecting(false);
           }
         },
-        error: (err: unknown) => {
-          console.log('🚨 ~ file: api-provider.tsx ~ get connection ~ error', err);
+        error: (_: unknown) => {
           action({ ...initialConnection, status: ConnectionStatus.error });
           setIsConnecting(false);
         },
         complete: () => {
-          console.log('🥀 Departure connection life is over');
           setIsConnecting(false);
         },
       });

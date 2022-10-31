@@ -57,7 +57,6 @@ export async function getBalance(provider: string, account: string): Promise<[BN
 
     return [ring.isNeg() ? BN_ZERO : ring, kton.isNeg() ? BN_ZERO : kton];
   } catch (err) {
-    console.error(err);
     return [BN_ZERO, BN_ZERO];
   }
 }

@@ -11,12 +11,13 @@ import {
 } from 'utils/record';
 import { getBridge } from 'utils/bridge';
 import { getChainConfig } from 'utils/network';
-import { SubstrateDVMSubstrateDVMBridgeConfig } from '../../../bridges/helix/substrateDVM-substrateDVM/model';
+import { DarwiniaDVMCrabDVMBridgeConfig } from '../../../bridges/helix/darwiniaDVM-crabDVM/model';
 import { Detail } from '../../../components/transaction/Detail';
 import { ZERO_ADDRESS } from '../../../config';
 import { useUpdatableRecord } from '../../../hooks';
 import { TransferStep } from '../../../model/transfer';
 import { getServerSideRecordProps } from '../../../utils/getServerSideRecordProps';
+import { CrabDVMDarwiniaDVMBridgeConfig } from '../../../bridges/helix/crabDVM-darwiniaDVM/model';
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ id: string }, HelixHistoryRecord>) {
   return getServerSideRecordProps(context);
@@ -36,7 +37,7 @@ const Page: NextPage<{
 
     const departure = getChainConfig(router.query.from as Network);
     const arrival = getChainConfig(router.query.to as Network);
-    const bridge = getBridge<SubstrateDVMSubstrateDVMBridgeConfig>([departure, arrival]);
+    const bridge = getBridge<DarwiniaDVMCrabDVMBridgeConfig | CrabDVMDarwiniaDVMBridgeConfig>([departure, arrival]);
     const isIssuing = bridge.isIssue(departure, arrival);
     const fromToken = getTokenConfigFromHelixRecord(record);
     const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');

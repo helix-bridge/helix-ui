@@ -3,9 +3,11 @@ import { useTranslation } from 'next-i18next';
 import { Logo } from 'shared/components/widget/Logo';
 import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { HelixHistoryRecord } from 'shared/model';
-import { addAsset } from 'shared/utils/connection';
+import { isMetamaskChainConsistent } from 'shared/utils/connection/connection';
 import { isEthereumNetwork } from 'shared/utils/network/network';
+import { getOriginChainConfig } from '../../utils/network';
 import { getTokenConfigFromHelixRecord } from '../../utils/record';
+import { addToMetamask } from '../../utils/token';
 import { TransferDescription } from './TransferDescription';
 
 // eslint-disable-next-line complexity
@@ -16,7 +18,7 @@ export function Token({ record }: { record: HelixHistoryRecord | null }) {
     return null;
   }
 
-  const token = getTokenConfigFromHelixRecord(record);
+  const token = getTokenConfigFromHelixRecord(record, 'recvToken');
 
   if (!token.address) {
     return null;
@@ -31,7 +33,11 @@ export function Token({ record }: { record: HelixHistoryRecord | null }) {
         <Button
           size="small"
           onClick={() => {
-            addAsset(token);
+            const config = getOriginChainConfig(record.fromChain);
+
+            isMetamaskChainConsistent(config).subscribe(() => {
+              addToMetamask(token);
+            });
           }}
         >
           {t('Add to metamask')}

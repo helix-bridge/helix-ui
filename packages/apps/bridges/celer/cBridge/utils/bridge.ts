@@ -113,9 +113,6 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
       : contracts.stablecoinIssuing;
 
     if (!contractAddress) {
-      console.warn(
-        `🚨 Transfer from ${value.direction.from.symbol} on ${fromChain.name} to ${value.direction.to.symbol} on ${to.host} terminated because of ${contractAddress} is an invalid contract address`
-      );
       return EMPTY;
     }
 
@@ -317,8 +314,6 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
 
       return res.toObject();
     } catch (error) {
-      console.warn('🚨 Estimate amount error', error);
-
       return null;
     }
   }

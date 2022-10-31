@@ -3,18 +3,18 @@ import { CrossToken, DVMChainConfig } from 'shared/model';
 import { Bridge } from '../../../../core/bridge';
 import { CrossChainPayload } from '../../../../model/tx';
 
-type SubstrateDVMSubstrateDVMContractConfig = ContractConfig;
+type DarwiniaDVMCrabDVMContractConfig = ContractConfig;
 
-export type SubstrateDVMSubstrateDVMBridgeConfig = Required<BridgeConfig<SubstrateDVMSubstrateDVMContractConfig>>;
+export type DarwiniaDVMCrabDVMBridgeConfig = Required<BridgeConfig<DarwiniaDVMCrabDVMContractConfig>>;
 
 export type IssuingPayload = CrossChainPayload<
-  Bridge<SubstrateDVMSubstrateDVMBridgeConfig, DVMChainConfig, DVMChainConfig>,
+  Bridge<DarwiniaDVMCrabDVMBridgeConfig, DVMChainConfig, DVMChainConfig>,
   CrossToken<DVMChainConfig>,
   CrossToken<DVMChainConfig>
 >;
 
 export type RedeemPayload = CrossChainPayload<
-  Bridge<SubstrateDVMSubstrateDVMBridgeConfig, DVMChainConfig, DVMChainConfig>,
+  Bridge<DarwiniaDVMCrabDVMBridgeConfig, DVMChainConfig, DVMChainConfig>,
   CrossToken<DVMChainConfig>,
   CrossToken<DVMChainConfig>
 >;

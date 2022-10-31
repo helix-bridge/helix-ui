@@ -1,8 +1,8 @@
-import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
+import { useITranslation } from 'shared/hooks/translation';
 import { ChainConfig, Network } from 'shared/model';
 import { getBridge } from '../../utils/bridge';
 import { getChainConfig, getDisplayName } from '../../utils/network';
@@ -15,7 +15,7 @@ interface BridgeProps {
 }
 
 export function Bridge({ from, to }: BridgeProps) {
-  const { t } = useTranslation();
+  const { t } = useITranslation();
   const router = useRouter();
   const measure = 40;
 

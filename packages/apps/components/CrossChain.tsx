@@ -40,7 +40,8 @@ import { useAfterTx } from '../hooks/tx';
 import { CrossChainComponentProps } from '../model/component';
 import { CrossChainPayload } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
-import { isSubstrateDVMSubstrateDVM, isXCM } from '../utils';
+import { isXCM } from '../utils';
+import { getDisplayName } from '../utils/network';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { calcMax, Direction, toDirection } from './form-control/Direction';
 import { TransferConfirm } from './tx/TransferConfirm';
@@ -72,7 +73,7 @@ export function CrossChain() {
   const [fee, setFee] = useState<TokenWithAmount | null>(null);
   const { account } = useAccount();
   const [balances, setBalances] = useState<BN[] | null>(null);
-  const { allowance, approve, queryAllowance } = useAllowance(direction);
+  const { allowance, approve, queryAllowance, resetAllowance } = useAllowance(direction);
   const { matched } = useWallet();
   const { observer } = useTx();
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
@@ -93,14 +94,15 @@ export function CrossChain() {
     const { from: dep, to } = pureDirection;
 
     if (bridge) {
-      const comp = bridge.isIssue(dep.meta, to.meta)
-        ? bridge.IssueCrossChainComponent
-        : bridge.RedeemCrossChainComponent;
+      const [name, alias] = bridge.isIssue(dep.meta, to.meta)
+        ? [bridge.IssueComponentName, bridge.IssueComponentAlias]
+        : [bridge.RedeemComponentName, bridge.RedeemComponentAlias];
 
       return (
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        dynamic<CrossChainComponentProps<BridgeBase>>(() => import('../bridges').then((res) => (res as any)[comp])) ??
-        null
+        dynamic<CrossChainComponentProps<BridgeBase>>(() =>
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          import('../bridges').then((res) => (res as any)[name] || (res as any)[alias])
+        ) ?? null
       );
     }
 
@@ -150,11 +152,14 @@ export function CrossChain() {
           queryAllowance(payload);
         }
       });
+    } else {
+      resetAllowance();
     }
-  }, [bridge, pureDirection, queryAllowance]);
+  }, [bridge, pureDirection, queryAllowance, resetAllowance]);
 
   useEffect(() => {
     if (!bridge) {
+      setFee(null);
       return;
     }
 
@@ -172,6 +177,7 @@ export function CrossChain() {
 
   useEffect(() => {
     if (!bridge?.getDailyLimit) {
+      setDailyLimit(null);
       return;
     }
 
@@ -205,14 +211,7 @@ export function CrossChain() {
                 return Promise.resolve();
               }
 
-              let balance = balances[0];
-
-              if (isSubstrateDVMSubstrateDVM(val.from.host, val.to.host)) {
-                const [erc20, native] = balances;
-
-                balance = val.from.type === 'native' ? native : erc20;
-              }
-
+              const balance = balances[0];
               const mini = bridge && bridge.getMinimumFeeTokenHolding && bridge.getMinimumFeeTokenHolding(val);
               const max = calcMax({ ...val.from, amount: balance }, fee, mini ?? undefined);
               return !max || new BN(toWei({ value: max })).gte(new BN(toWei({ value: val.from.amount })))
@@ -269,6 +268,7 @@ export function CrossChain() {
               setPatchPayload(() => identity);
               form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined, [FORM_CONTROL.recipient]: undefined });
               setPureDirection({ from: omit(value.from, 'amount'), to: omit(value.to, 'amount') });
+              setFee(null);
             }
 
             setDirection(value);
@@ -341,8 +341,8 @@ export function CrossChain() {
             {t('Approve')}
           </FormItemButton>
         ) : (
-          <FormItemButton type="default" onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}>
-            {t('Switch Wallet')}
+          <FormItemButton onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}>
+            {t('Switch to {{chain}}', { chain: getDisplayName(direction.from.meta) })}
           </FormItemButton>
         )
       ) : departureConnection.status === ConnectionStatus.success ? (
@@ -422,8 +422,8 @@ export function CrossChain() {
             </FormItemButton>
           </>
         ) : (
-          <FormItemButton type="default" onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}>
-            {t('Switch Wallet')}
+          <FormItemButton onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}>
+            {t('Switch to {{chain}}', { chain: getDisplayName(direction.from.meta) })}
           </FormItemButton>
         )
       ) : (

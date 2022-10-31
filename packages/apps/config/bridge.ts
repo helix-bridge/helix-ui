@@ -26,19 +26,20 @@ import { ethereumPolygon } from '../bridges/celer/ethereum-polygon/config';
 import { hecoPolygon } from '../bridges/celer/heco-polygon/config';
 import { polygonAstar } from '../bridges/celer/polygon-astar/config';
 import { polygonOptimism } from '../bridges/celer/polygon-optimism/config';
+import { crabDVMcrabDVM, crabDVMDarwiniaDVM } from '../bridges/helix/crabDVM-darwiniaDVM/config/bridge';
+import {
+  darwiniaDVMCrabDVM,
+  darwiniaDVMDarwiniaDVM,
+  pangoroDVMPangolinDVM,
+  pangoroDVMPangoroDVM,
+} from '../bridges/helix/darwiniaDVM-crabDVM/config/bridge';
 import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from '../bridges/helix/substrate-dvm/config/bridge';
 import { darwiniaCrabDVM, pangoroPangolinDVM } from '../bridges/helix/substrate-substrateDVM/config/bridge';
 import {
   crabCrabParachain,
   pangolinPangolinParachain,
 } from '../bridges/helix/substrate-substrateParachain/config/bridge';
-import { pangoroDVMGoerli, darwiniaDVMEthereum } from '../bridges/helix/substrateDVM-ethereum/config/bridge';
-import {
-  darwiniaDVMCrabDVM,
-  pangoroDVMPangolinDVM,
-  darwiniaDVMDarwiniaDVM,
-  pangoroDVMPangoroDVM,
-} from '../bridges/helix/substrateDVM-substrateDVM/config/bridge';
+import { darwiniaDVMEthereum, pangoroDVMGoerli } from '../bridges/helix/substrateDVM-ethereum/config/bridge';
 import { crabParachainKarura } from '../bridges/xcm/crabParachain-karura/config/bridge';
 import { crabParachainMoonriver } from '../bridges/xcm/crabParachain-moonriver/config/bridge';
 
@@ -54,6 +55,8 @@ const formalBridges = [
   bscAvalanche,
   bscOptimism,
   crabCrabDVM,
+  crabDVMcrabDVM,
+  crabDVMDarwiniaDVM,
   crabDVMEthereum,
   crabDVMHeco,
   crabDVMPolygon,
