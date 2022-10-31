@@ -1,7 +1,7 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { BigNumber, Contract } from 'ethers/lib/ethers';
-import { remove } from 'lodash';
-import type { Observable } from 'rxjs';
+import remove from 'lodash/remove';
+import { from, Observable, switchMap } from 'rxjs';
 import {
   ChainConfig,
   CrossChainDirection,
@@ -9,10 +9,11 @@ import {
   CrossToken,
   DailyLimit,
   DVMChainConfig,
+  HelixHistoryRecord,
   TokenInfoWithMeta,
   Tx,
 } from 'shared/model';
-import { entrance } from 'shared/utils/connection';
+import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
 import { genEthereumContractTxObs } from 'shared/utils/tx';
@@ -26,14 +27,15 @@ import { CrabDVMDarwiniaDVMBridgeConfig, IssuingPayload, RedeemPayload } from '.
 export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeConfig, ChainConfig, ChainConfig> {
   static readonly alias: string = 'CrabDVMDarwiniaDVMBridge';
 
+  private gasLimit = '1000000';
+
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction, bridge } = payload;
     const { from: departure, to } = direction;
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
-    const gasLimit = '1000000';
     const fullParams = [
       to.meta.specVersion,
-      gasLimit,
+      this.gasLimit,
       departure.address,
       recipient,
       amount.toString(),
@@ -62,10 +64,9 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
       direction: { from: departure, to },
     } = payload;
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
-    const gasLimit = '1000000';
     const fullParams = [
       to.meta.specVersion,
-      gasLimit,
+      this.gasLimit,
       departure.address,
       recipient,
       amount.toString(),
@@ -93,7 +94,7 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
       from: { meta: departure },
       to: { meta: arrival },
     } = direction;
-    const token = direction.from.meta.tokens.find((item) => isRing(item.symbol))!;
+    const token = departure.tokens.find((item) => isRing(item.symbol))!;
 
     if (!isRing(direction.from.symbol)) {
       return { ...token, amount: BN_ZERO };
@@ -171,5 +172,60 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
     }
 
     return null;
+  }
+
+  refund(record: HelixHistoryRecord): Observable<Tx> {
+    const { sender, sendTokenAddress, sendAmount, fromChain, toChain } = record;
+    const sendToken = this.getTokenConfigFromHelixRecord(record);
+    const recvToken = this.getTokenConfigFromHelixRecord(record, 'recvToken');
+
+    const { contractAddress, abi, method, departure, arrival } = this.isIssue(fromChain, toChain)
+      ? {
+          contractAddress: this.config.contracts!.issuing,
+          abi: burnAbi,
+          method: sendToken.type === 'native' ? 'remoteUnlockFailureNative' : 'remoteUnlockFailure',
+          departure: this.departure,
+          arrival: this.arrival,
+        }
+      : {
+          contractAddress: this.config.contracts!.backing,
+          abi: backingAbi,
+          method: 'remoteIssuingFailure',
+          departure: this.arrival,
+          arrival: this.departure,
+        };
+
+    const fullParams = [
+      (departure as DVMChainConfig).specVersion,
+      this.gasLimit,
+      this.trimLaneId(record.id),
+      sendTokenAddress,
+      sender,
+      sendAmount,
+    ];
+    const sendTokenAddressIndex = 3;
+    const params =
+      sendToken.type === 'native' ? remove(fullParams, (_, index) => index !== sendTokenAddressIndex) : fullParams;
+
+    const direction = {
+      from: { ...recvToken, meta: arrival },
+      to: { ...sendToken, meta: departure },
+    } as CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>;
+
+    return isMetamaskChainConsistent(this.getChainConfig(toChain)).pipe(
+      switchMap(() => from(this.getFee(direction))),
+      switchMap((fee) => {
+        console.log(
+          '%cbridge.ts line:217 fee.amount.toString()',
+          'color: white; background-color: #007acc;',
+          fee?.amount.toString()
+        );
+        return genEthereumContractTxObs(
+          contractAddress,
+          (contract) => contract[method].apply(null, [...params, { value: fee?.amount.toString() }]),
+          abi
+        );
+      })
+    );
   }
 }

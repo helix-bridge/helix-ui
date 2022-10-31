@@ -78,7 +78,11 @@ export function metamaskGuard<T>(fn: () => Observable<T>) {
 
     return from(isNetworkConsistent(network as EthereumChainConfig, chainId)).pipe(
       switchMap((isMatch) => {
-        return isMatch ? fn() : switchMetamaskNetwork(network as EthereumChainConfig)!.pipe(mergeMap(() => fn()));
+        return isMatch
+          ? fn()
+          : switchMetamaskNetwork(network as EthereumChainConfig)!.pipe(
+              mergeMap((res) => (res === null ? fn() : EMPTY))
+            );
       })
     );
   };

@@ -2,6 +2,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { isAddress } from 'ethers/lib/utils';
 import isBoolean from 'lodash/isBoolean';
 import isString from 'lodash/isString';
+import last from 'lodash/last';
 import { Observable } from 'rxjs/internal/Observable';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { of } from 'rxjs/internal/observable/of';
@@ -212,5 +213,11 @@ export abstract class Bridge<
 
       return isSameSymbol;
     })!;
+  }
+
+  protected trimLaneId(id: string) {
+    const res = last(id.split('-')) as string;
+
+    return res.substring(10, id.length + 1);
   }
 }
