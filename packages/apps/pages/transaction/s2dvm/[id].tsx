@@ -26,6 +26,7 @@ const Page: NextPage<{
   const router = useRouter();
   const { record } = useUpdatableRecord(id);
 
+  // eslint-disable-next-line complexity
   const transfers = useMemo(() => {
     if (!record) {
       return [];
@@ -63,17 +64,19 @@ const Page: NextPage<{
         },
       ];
     } else {
+      const addr = toToken?.address ?? record.recvTokenAddress;
+
       issuingTransfer = [
         {
           chain: departure,
           sender: revertAccount(record.sender, departure),
-          recipient: toToken.address,
+          recipient: addr,
           token: fromToken,
           amount,
         },
         {
           chain: arrival,
-          sender: toToken.address,
+          sender: addr,
           recipient: revertAccount(record.recipient, arrival),
           token: toToken,
           amount,
