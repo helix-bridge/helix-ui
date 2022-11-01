@@ -1,4 +1,4 @@
-import { BridgeCategory, Network } from 'shared/model';
+import { BridgeCategory, CrossChainPureDirection, Network } from 'shared/model';
 import { getBridge } from './bridge';
 
 export type BridgePredicateFn = (departure: Network, arrival: Network) => boolean;
@@ -14,15 +14,15 @@ const or: (...fns: BridgePredicateFn[]) => (dep: Network, arr: Network) => boole
   (departure, arrival) =>
     fns.some((fn) => fn(departure, arrival));
 
-const isBridge = (category: BridgeCategory) => (departure: Network, arrival: Network) => {
-  const bridge = getBridge([departure, arrival]);
+const isBridge = (category: BridgeCategory) => (direction: CrossChainPureDirection) => {
+  const bridge = getBridge(direction, category);
 
   return bridge.category === category;
 };
 
-export const isCBridge: BridgePredicateFn = isBridge('cBridge');
+export const isCBridge = isBridge('cBridge');
 
-export const isXCM: BridgePredicateFn = isBridge('XCM');
+export const isXCM = isBridge('XCM');
 
 /* -----------------------------generated auto------------------------------------- */
 

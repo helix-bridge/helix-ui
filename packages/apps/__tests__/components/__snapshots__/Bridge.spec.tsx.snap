@@ -20,7 +20,7 @@ exports[`<Bridge /> render bridge 1`] = `
       className="flex items-center gap-2"
     >
       <div>
-        Darwinia Chain
+        Darwinia Smart Chain
       </div>
       <span
         style={

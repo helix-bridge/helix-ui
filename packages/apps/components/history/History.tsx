@@ -179,18 +179,14 @@ export default function History() {
       width: 150,
       // eslint-disable-next-line complexity
       render: (value: number, record: HelixHistoryRecord) => {
-        const { fromChain, toChain, result, startTime } = record;
+        const { result, startTime } = record;
         const content = (
           <div
             onClick={() => {
-              const paths = getDetailPaths(fromChain, toChain, record);
-              const query = new URLSearchParams({
-                from: fromChain,
-                to: toChain,
-              }).toString();
+              const paths = getDetailPaths(record);
 
               if (paths.length) {
-                window.open(`transaction/${paths.join('/')}?${query}`, '_blank');
+                window.open(`transaction/${paths.join('/')}`, '_blank');
               }
             }}
           >
@@ -287,19 +283,12 @@ export default function History() {
                 loading={loading}
                 onRow={(record) => ({
                   onClick() {
-                    const { fromChain, toChain } = record;
-                    const paths = getDetailPaths(fromChain, toChain, record);
+                    const paths = getDetailPaths(record);
 
                     if (paths.length) {
-                      router.push({
-                        pathname: `${Path.transaction}/${paths.join('/')}`,
-                        query: new URLSearchParams({
-                          from: record.fromChain,
-                          to: record.toChain,
-                        }).toString(),
-                      });
+                      router.push({ pathname: `${Path.transaction}/${paths.join('/')}` });
                     } else {
-                      message.error(`Can not find the detail page for ${fromChain} to ${toChain}`);
+                      message.error(`Can not find the detail page for ${record.fromChain} to ${record.toChain}`);
                     }
                   },
                 })}

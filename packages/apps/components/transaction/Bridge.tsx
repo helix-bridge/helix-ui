@@ -1,30 +1,20 @@
-import { useRouter } from 'next/router';
-import { useMemo } from 'react';
 import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
 import { useITranslation } from 'shared/hooks/translation';
-import { ChainConfig, Network } from 'shared/model';
-import { getBridge } from '../../utils/bridge';
-import { getChainConfig, getDisplayName } from '../../utils/network';
+import { BridgeCategory, ChainConfig } from 'shared/model';
+import { getDisplayName } from '../../utils/network';
 import { TransferDescription } from './TransferDescription';
 
 interface BridgeProps {
-  from?: ChainConfig;
-  to?: ChainConfig;
+  from: ChainConfig;
+  to: ChainConfig;
+  category: BridgeCategory;
   size?: 'small' | 'default';
 }
 
-export function Bridge({ from, to }: BridgeProps) {
+export function Bridge({ from: departure, to: arrival, category }: BridgeProps) {
   const { t } = useITranslation();
-  const router = useRouter();
   const measure = 40;
-
-  const [departure, arrival] = useMemo(
-    () => [from ?? getChainConfig(router.query.from as Network), to ?? getChainConfig(router.query.to as Network)],
-    [from, router.query.from, router.query.to, to]
-  );
-
-  const bridge = getBridge([departure, arrival]);
 
   return (
     <TransferDescription title={t('Transfer Route')} tip="">
@@ -38,7 +28,7 @@ export function Bridge({ from, to }: BridgeProps) {
 
         <div className="bg-black p-2 px-4 rounded-3xl">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`/image/bridges/${bridge.category.toLowerCase()}.png`} className={`w-10 md:w-28`} />
+          <img src={`/image/bridges/${category.toLowerCase()}.png`} className={`w-10 md:w-28`} />
         </div>
 
         <Icon name="right" />

@@ -11,7 +11,6 @@ type BridgeSelectorProps = CustomFormControlProps<Bridge<BridgeConfig, ChainConf
 };
 
 export function BridgeSelector({ direction, value, onChange }: BridgeSelectorProps) {
-  // const { t } = useTranslation();
   const bridges = useMemo(() => {
     const configs = getBridges(direction);
 

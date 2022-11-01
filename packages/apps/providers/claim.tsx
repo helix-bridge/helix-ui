@@ -6,6 +6,7 @@ import { applyModalObs } from 'shared/utils/tx/common';
 import { bridgeFactory } from '../bridges/bridges';
 import { useITranslation } from '../hooks';
 import { getBridge } from '../utils';
+import { getDirectionFromHelixRecord } from '../utils/record';
 import { useTx } from './tx';
 
 interface Claimed {
@@ -55,8 +56,13 @@ export const ClaimProvider = ({ children }: React.PropsWithChildren<unknown>) =>
 
   const claim = useCallback(
     (record: HelixHistoryRecord) => {
-      const { fromChain, toChain } = record;
-      const config = getBridge([fromChain, toChain]);
+      const direction = getDirectionFromHelixRecord(record);
+
+      if (!direction) {
+        return EMPTY.subscribe();
+      }
+
+      const config = getBridge(direction);
       const bridge = bridgeFactory(config);
 
       if (bridge && bridge.claim) {

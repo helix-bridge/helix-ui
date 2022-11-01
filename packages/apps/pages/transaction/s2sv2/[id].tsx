@@ -1,23 +1,23 @@
 import type { GetServerSidePropsContext, NextPage } from 'next';
-import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { RecordStatus } from 'shared/config/constant';
-import { HelixHistoryRecord, Network } from 'shared/model';
+import { HelixHistoryRecord } from 'shared/model';
 import { revertAccount } from 'shared/utils/helper/address';
+import { getBridge } from 'utils/bridge';
+import { getChainConfig } from 'utils/network';
 import {
+  getDirectionFromHelixRecord,
   getReceivedAmountFromHelixRecord,
   getSentAmountFromHelixRecord,
   getTokenConfigFromHelixRecord,
 } from 'utils/record';
-import { getBridge } from 'utils/bridge';
-import { getChainConfig } from 'utils/network';
+import { CrabDVMDarwiniaDVMBridgeConfig } from '../../../bridges/helix/crabDVM-darwiniaDVM/model';
 import { DarwiniaDVMCrabDVMBridgeConfig } from '../../../bridges/helix/darwiniaDVM-crabDVM/model';
 import { Detail } from '../../../components/transaction/Detail';
 import { ZERO_ADDRESS } from '../../../config';
 import { useUpdatableRecord } from '../../../hooks';
 import { TransferStep } from '../../../model/transfer';
 import { getServerSideRecordProps } from '../../../utils/getServerSideRecordProps';
-import { CrabDVMDarwiniaDVMBridgeConfig } from '../../../bridges/helix/crabDVM-darwiniaDVM/model';
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ id: string }, HelixHistoryRecord>) {
   return getServerSideRecordProps(context);
@@ -26,7 +26,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ id
 const Page: NextPage<{
   id: string;
 }> = ({ id }) => {
-  const router = useRouter();
   const { record } = useUpdatableRecord(id);
 
   // eslint-disable-next-line complexity
@@ -35,9 +34,15 @@ const Page: NextPage<{
       return [];
     }
 
-    const departure = getChainConfig(router.query.from as Network);
-    const arrival = getChainConfig(router.query.to as Network);
-    const bridge = getBridge<DarwiniaDVMCrabDVMBridgeConfig | CrabDVMDarwiniaDVMBridgeConfig>([departure, arrival]);
+    const departure = getChainConfig(record.fromChain);
+    const arrival = getChainConfig(record.toChain);
+    const direction = getDirectionFromHelixRecord(record);
+
+    if (!direction) {
+      return [];
+    }
+
+    const bridge = getBridge<DarwiniaDVMCrabDVMBridgeConfig | CrabDVMDarwiniaDVMBridgeConfig>(direction);
     const isIssuing = bridge.isIssue(departure, arrival);
     const fromToken = getTokenConfigFromHelixRecord(record);
     const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
@@ -101,9 +106,9 @@ const Page: NextPage<{
     const redeemTransfer = [redeemStart, record.result === RecordStatus.success ? redeemSuccess : redeemFail];
 
     return isIssuing ? issuingTransfer : redeemTransfer;
-  }, [record, router.query.from, router.query.to]);
+  }, [record]);
 
-  return <Detail record={record} transfers={transfers} />;
+  return record && <Detail record={record} transfers={transfers} />;
 };
 
 export default Page;

@@ -56,7 +56,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
   burn(payload: RedeemPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction } = payload;
     const { from: departure, to } = direction;
-    const bridge = getBridge([departure.meta, to.meta]);
+    const bridge = getBridge(direction, 'helix');
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
     const params = [departure.address, recipient, amount.toString(), { from: sender, value: fee.toString() }];
     const { method, args } =

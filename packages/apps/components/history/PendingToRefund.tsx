@@ -21,7 +21,7 @@ import { HISTORY_RECORD_BY_ID } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { RecordStatusComponentProps } from '../../model/component';
 import { useClaim, useTx } from '../../providers';
-import { isCBridgeRecord } from '../../utils/record';
+import { getDirectionFromHelixRecord, isCBridgeRecord } from '../../utils/record';
 
 interface RefundComponentProps extends RecordStatusComponentProps {
   onSuccess?: () => void;
@@ -61,6 +61,17 @@ function CBrideRefund({ record, onSuccess }: RefundComponentProps) {
       });
   }, [isMounted, request]);
 
+  const findBridge = useCallback(() => {
+    const direction = getDirectionFromHelixRecord(record);
+
+    if (!direction) {
+      message.error('Can not find the correct transfer direction from record!');
+      return null;
+    }
+
+    return getBridge(direction, 'cBridge') as CBridgeBridge;
+  }, [record]);
+
   if (reason === CBridgeRecordStatus[CBridgeRecordStatus.refundToBeConfirmed]) {
     return (
       <Button
@@ -70,9 +81,9 @@ function CBrideRefund({ record, onSuccess }: RefundComponentProps) {
         icon={loading ? <SyncOutlined spin /> : null}
         onClick={() => {
           setLoading(true);
-          const bridge = getBridge([record.fromChain, record.toChain]) as CBridgeBridge;
+          const bridge = findBridge();
 
-          bridge.withdraw(record).subscribe({
+          bridge?.withdraw(record).subscribe({
             next(response) {
               observer.next(response);
 
@@ -113,10 +124,10 @@ function CBrideRefund({ record, onSuccess }: RefundComponentProps) {
         icon={loading ? <SyncOutlined spin /> : null}
         onClick={() => {
           setLoading(true);
-          const bridge = getBridge([record.fromChain, record.toChain]) as CBridgeBridge;
+          const bridge = findBridge();
 
           bridge
-            .requestRefund(record)
+            ?.requestRefund(record)
             .then((res) => {
               const { err } = res.toObject();
 
@@ -152,9 +163,15 @@ function Refund({ record, onSuccess }: RefundComponentProps) {
       onClick={(event) => {
         event.stopPropagation();
         setLoading(true);
-        const { fromChain, toChain } = record;
-        const config = getBridge([fromChain, toChain]);
-        const bridge = bridgeFactory(config);
+        const direction = getDirectionFromHelixRecord(record);
+
+        if (!direction) {
+          message.error('Can not find the correct transfer direction from record!');
+          return null;
+        }
+
+        const target = getBridge(direction, 'helix');
+        const bridge = bridgeFactory(target);
 
         if (bridge && bridge.refund) {
           applyModalObs({

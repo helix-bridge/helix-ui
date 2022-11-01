@@ -1,30 +1,34 @@
 import isEqual from 'lodash/isEqual';
 import upperFirst from 'lodash/upperFirst';
 import { BridgeBase } from 'shared/core/bridge';
-import {
-  BridgeCategory,
-  BridgeConfig,
-  ChainConfig,
-  CrossChainDirection,
-  CrossChainPureDirection,
-  Network,
-} from 'shared/model';
+import { BridgeCategory, BridgeConfig, CrossChainPureDirection, CrossOverview } from 'shared/model';
 import { unknownUnavailable } from '../../bridges/unknown-unavailable/config';
 import { BRIDGES } from '../../config/bridge';
-import { getChainConfig } from '../network';
 
 export function getBridge<T extends BridgeConfig>(
-  source: CrossChainDirection | [Network | ChainConfig, Network | ChainConfig]
+  direction: CrossChainPureDirection,
+  category?: BridgeCategory
 ): BridgeBase<T> {
-  const direction = Array.isArray(source)
-    ? source.map((item) => (typeof item === 'object' ? item.name : (item as Network)))
-    : [source.from, source.to].map((item) => {
-        const conf = item.meta ?? getChainConfig(item.host);
+  const { from, to } = direction;
+  const overviews = from.cross.filter((item) => item.partner.name === to.host);
+  let overview: CrossOverview | undefined = overviews[0];
 
-        return conf.name;
-      });
+  if (overviews.length > 1) {
+    if (category) {
+      overview = overviews.find((item) => item.category === category);
+    } else {
+      console.warn(
+        `Found multiple transfer paths for ${direction.from.symbol} to ${direction.to.symbol}. Pass the category argument get a more specific bridge`
+      );
+    }
+  }
 
-  const bridge = BRIDGES.find((item) => isEqual(item.issue, direction) || isEqual(item.redeem, direction));
+  if (!overview) {
+    return unknownUnavailable as unknown as BridgeBase<T>;
+  }
+
+  const bridges = getBridges(direction);
+  const bridge = bridges.find((item) => item.name === overview?.bridge);
 
   if (!bridge) {
     return unknownUnavailable as unknown as BridgeBase<T>;

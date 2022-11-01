@@ -13,10 +13,10 @@ import { ChainBase } from 'shared/core/chain';
 import {
   BridgeStatus,
   CrossChainDirection,
+  CrossChainPureDirection,
   CrossToken,
   CustomFormControlProps,
   HashInfo,
-  Network,
   TokenWithBridgesInfo,
 } from 'shared/model';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
@@ -60,10 +60,10 @@ export const calcMax = (payment: TokenWithAmount, fee: TokenWithAmount | null, m
   return amount.gte(BN_ZERO) ? fromWei({ value: amount, decimals: payment.decimals }) : '';
 };
 
-const calcToAmount = (payment: TokenWithAmount, fee: TokenWithAmount | null, from: Network, to: Network) => {
+const calcToAmount = (payment: TokenWithAmount, fee: TokenWithAmount | null, direction: CrossChainPureDirection) => {
   let result: string;
 
-  if (isCBridge(from, to) || isXCM(from, to)) {
+  if (isCBridge(direction) || isXCM(direction)) {
     result = calcMax(payment, fee);
   } else {
     result = fromWei(payment);
@@ -120,7 +120,7 @@ export function Direction({ value, onChange, balances, onRefresh, fee, isBalance
       from: data.from,
       to: {
         ...data.to,
-        amount: calcToAmount({ ...data.from, amount: new BN(toWei(data.from)) }, fee, data.from.host, data.to.host),
+        amount: calcToAmount({ ...data.from, amount: new BN(toWei(data.from)) }, fee, data),
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -148,7 +148,7 @@ export function Direction({ value, onChange, balances, onRefresh, fee, isBalance
         title={t('From')}
         value={data.from}
         onChange={(from) => {
-          const toAmount = calcToAmount({ ...data.from, amount: new BN(toWei(from)) }, fee, from.host, data.to.host);
+          const toAmount = calcToAmount({ ...data.from, amount: new BN(toWei(from)) }, fee, { from, to: data.to });
           triggerChange({
             from,
             to: { ...data.to, amount: toAmount },
@@ -180,12 +180,7 @@ export function Direction({ value, onChange, balances, onRefresh, fee, isBalance
                 const amount = calcMax({ ...from, amount: iBalance }, fee, mini ?? undefined);
 
                 if (amount !== from.amount) {
-                  const toAmount = calcToAmount(
-                    { ...from, amount: new BN(toWei({ ...from, amount })) },
-                    fee,
-                    from.host,
-                    to.host
-                  );
+                  const toAmount = calcToAmount({ ...from, amount: new BN(toWei({ ...from, amount })) }, fee, data);
 
                   triggerChange({
                     from: { ...from, amount },
