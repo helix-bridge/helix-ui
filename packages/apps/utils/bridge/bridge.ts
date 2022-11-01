@@ -15,7 +15,7 @@ export function getBridge<T extends BridgeConfig>(
 
   if (overviews.length > 1) {
     if (category) {
-      overview = overviews.find((item) => item.category === category);
+      overview = overviews.find((item) => item.category.toLowerCase() === category.toLowerCase());
     } else {
       console.warn(
         `Found multiple transfer paths for ${direction.from.symbol} to ${direction.to.symbol}. Pass the category argument get a more specific bridge`

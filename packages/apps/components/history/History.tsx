@@ -11,19 +11,23 @@ import { useEffect, useMemo, useState } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { DATE_TIME_FORMAT, RecordStatus } from 'shared/config/constant';
 import { SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
-import { HelixHistoryRecord, Network } from 'shared/model';
+import { BridgeCategory, HelixHistoryRecord, Network } from 'shared/model';
 import { convertToDvm, revertAccount } from 'shared/utils/helper/address';
 import { gqlName, toMiddleSplitNaming } from 'shared/utils/helper/common';
 import { isSS58Address, isValidAddress } from 'shared/utils/helper/validator';
-import { getDetailPaths } from 'utils/record/path';
 import { Path } from '../../config';
 import { HISTORY_RECORDS_IN_RESULTS } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
 import { useAccount } from '../../providers';
 import { useClaim } from '../../providers/claim';
+import { getBridge } from '../../utils';
 import { chainConfigs, getChainConfig, getDisplayName } from '../../utils/network';
-import { getReceivedAmountFromHelixRecord, getSentAmountFromHelixRecord } from '../../utils/record/record';
+import {
+  getDirectionFromHelixRecord,
+  getReceivedAmountFromHelixRecord,
+  getSentAmountFromHelixRecord,
+} from '../../utils/record/record';
 import { Pending } from './Pending';
 import { Refunded } from './Refunded';
 
@@ -275,12 +279,22 @@ export default function History() {
                 loading={loading}
                 onRow={(record) => ({
                   onClick() {
-                    const paths = getDetailPaths(record);
+                    const category = record.bridge.split('-')[0] as BridgeCategory;
 
-                    if (paths.length) {
-                      router.push({ pathname: `${Path.records}/${paths.join('/')}` });
+                    if (category === 'helix') {
+                      const direction = getDirectionFromHelixRecord(record);
+
+                      if (direction) {
+                        const bridge = getBridge(direction, category);
+
+                        router.push({
+                          pathname: `${Path.records}/${category.toLowerCase()}/${bridge.name}/${record.id}`,
+                        });
+                      } else {
+                        message.error(`Page render failed, it may be a wrong record`);
+                      }
                     } else {
-                      message.error(`Can not find the detail page for ${record.fromChain} to ${record.toChain}`);
+                      router.push({ pathname: `${Path.records}/${category.toLowerCase()}/${record.id}` });
                     }
                   },
                 })}
