@@ -1,7 +1,6 @@
 import type { GetServerSidePropsContext, NextPage } from 'next';
 import { useMemo } from 'react';
-import { GENESIS_ADDRESS, RecordStatus } from 'shared/config/constant';
-import { SUBSTRATE_PARACHAIN_BACKING } from 'shared/config/env';
+import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord } from 'shared/model';
 import { revertAccount } from 'shared/utils/helper/address';
 import { getBridge } from 'utils/bridge';
@@ -12,11 +11,12 @@ import {
   getSentAmountFromHelixRecord,
   getTokenConfigFromHelixRecord,
 } from 'utils/record';
-import { SubstrateSubstrateParachainBridgeConfig } from '../../../bridges/helix/substrate-substrateParachain/model';
-import { Detail } from '../../../components/transaction/Detail';
-import { useUpdatableRecord } from '../../../hooks';
-import { TransferStep } from '../../../model/transfer';
-import { getServerSideRecordProps } from '../../../utils/getServerSideRecordProps';
+import { SubstrateDVMEthereumBridgeConfig } from '../../../../bridges/helix/substrateDVM-ethereum/model';
+import { Detail } from '../../../../components/transaction/Detail';
+import { ZERO_ADDRESS } from '../../../../config';
+import { useUpdatableRecord } from '../../../../hooks';
+import { TransferStep } from '../../../../model/transfer';
+import { getServerSideRecordProps } from '../../../../utils/getServerSideRecordProps';
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ id: string }, HelixHistoryRecord>) {
   return getServerSideRecordProps(context);
@@ -41,75 +41,68 @@ const Page: NextPage<{
       return [];
     }
 
-    const bridge = getBridge<SubstrateSubstrateParachainBridgeConfig>(direction);
+    const bridge = getBridge<SubstrateDVMEthereumBridgeConfig>(direction);
     const isIssuing = bridge.isIssue(departure, arrival);
     const fromToken = getTokenConfigFromHelixRecord(record);
     const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
     const sendAmount = getSentAmountFromHelixRecord(record);
     const recvAmount = getReceivedAmountFromHelixRecord(record);
 
+    const { backing } = bridge.config.contracts;
+
+    // issuing steps
     const issueStart: TransferStep = {
       chain: departure,
       sender: revertAccount(record.sender, departure),
-      recipient: SUBSTRATE_PARACHAIN_BACKING,
+      recipient: backing,
       token: fromToken,
       amount: sendAmount,
     };
     const issueSuccess: TransferStep = {
       chain: arrival,
-      sender: GENESIS_ADDRESS,
-      recipient: revertAccount(record.recipient, arrival),
+      sender: ZERO_ADDRESS,
+      recipient: revertAccount(record.sender, arrival),
       token: toToken,
       amount: recvAmount,
     };
     const issueFail: TransferStep = {
-      chain: arrival,
-      sender: SUBSTRATE_PARACHAIN_BACKING,
+      chain: departure,
+      sender: backing,
       recipient: revertAccount(record.sender, departure),
       token: fromToken,
       amount: sendAmount,
     };
 
+    // redeem steps
     const redeemStart: TransferStep = {
       chain: departure,
       sender: revertAccount(record.sender, departure),
-      recipient: SUBSTRATE_PARACHAIN_BACKING,
+      recipient: ZERO_ADDRESS,
       token: fromToken,
       amount: sendAmount,
     };
-    const redeemDispatch: TransferStep = {
-      chain: arrival,
-      sender: SUBSTRATE_PARACHAIN_BACKING,
-      recipient: revertAccount(record.recipient, arrival),
-      token: toToken,
-      amount: recvAmount,
-    };
     const redeemSuccess: TransferStep = {
-      chain: departure,
-      sender: revertAccount(record.sender, departure),
-      recipient: GENESIS_ADDRESS,
+      chain: arrival,
+      sender: backing,
+      recipient: revertAccount(record.recipient, arrival),
       token: toToken,
       amount: recvAmount,
     };
     const redeemFail: TransferStep = {
       chain: departure,
-      sender: SUBSTRATE_PARACHAIN_BACKING,
+      sender: ZERO_ADDRESS,
       recipient: revertAccount(record.sender, departure),
       token: fromToken,
       amount: sendAmount,
     };
 
-    if (record.result === RecordStatus.pending) {
+    if ([RecordStatus.pending, RecordStatus.pendingToClaim, RecordStatus.pendingToRefund].includes(record.result)) {
       return isIssuing ? [issueStart] : [redeemStart];
     }
 
-    const issuingTransfer: TransferStep[] = [
-      issueStart,
-      record.result === RecordStatus.success ? issueSuccess : issueFail,
-    ];
+    const issuingTransfer = [issueStart, record.result === RecordStatus.success ? issueSuccess : issueFail];
 
-    const redeemTransfer: TransferStep[] =
-      record.result === RecordStatus.success ? [redeemStart, redeemDispatch, redeemSuccess] : [redeemStart, redeemFail];
+    const redeemTransfer = [redeemStart, record.result === RecordStatus.success ? redeemSuccess : redeemFail];
 
     return isIssuing ? issuingTransfer : redeemTransfer;
   }, [record]);

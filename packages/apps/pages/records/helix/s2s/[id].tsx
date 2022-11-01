@@ -11,13 +11,11 @@ import {
   getSentAmountFromHelixRecord,
   getTokenConfigFromHelixRecord,
 } from 'utils/record';
-import { CrabDVMDarwiniaDVMBridgeConfig } from '../../../bridges/helix/crabDVM-darwiniaDVM/model';
-import { DarwiniaDVMCrabDVMBridgeConfig } from '../../../bridges/helix/darwiniaDVM-crabDVM/model';
-import { Detail } from '../../../components/transaction/Detail';
-import { ZERO_ADDRESS } from '../../../config';
-import { useUpdatableRecord } from '../../../hooks';
-import { TransferStep } from '../../../model/transfer';
-import { getServerSideRecordProps } from '../../../utils/getServerSideRecordProps';
+import { SubstrateSubstrateDVMBridgeConfig } from '../../../../bridges/helix/substrate-substrateDVM/model';
+import { Detail } from '../../../../components/transaction/Detail';
+import { useUpdatableRecord } from '../../../../hooks';
+import { TransferStep } from '../../../../model/transfer';
+import { getServerSideRecordProps } from '../../../../utils/getServerSideRecordProps';
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ id: string }, HelixHistoryRecord>) {
   return getServerSideRecordProps(context);
@@ -42,14 +40,14 @@ const Page: NextPage<{
       return [];
     }
 
-    const bridge = getBridge<DarwiniaDVMCrabDVMBridgeConfig | CrabDVMDarwiniaDVMBridgeConfig>(direction);
+    const bridge = getBridge<SubstrateSubstrateDVMBridgeConfig>(direction);
     const isIssuing = bridge.isIssue(departure, arrival);
     const fromToken = getTokenConfigFromHelixRecord(record);
     const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
     const sendAmount = getSentAmountFromHelixRecord(record);
     const recvAmount = getReceivedAmountFromHelixRecord(record);
 
-    const { backing } = bridge.config.contracts;
+    const { backing, issuing, genesis } = bridge.config.contracts;
 
     // issuing steps
     const issueStart: TransferStep = {
@@ -61,8 +59,8 @@ const Page: NextPage<{
     };
     const issueSuccess: TransferStep = {
       chain: arrival,
-      sender: ZERO_ADDRESS,
-      recipient: revertAccount(record.sender, arrival),
+      sender: genesis,
+      recipient: revertAccount(record.recipient, arrival),
       token: toToken,
       amount: recvAmount,
     };
@@ -78,20 +76,27 @@ const Page: NextPage<{
     const redeemStart: TransferStep = {
       chain: departure,
       sender: revertAccount(record.sender, departure),
-      recipient: ZERO_ADDRESS,
+      recipient: issuing,
       token: fromToken,
       amount: sendAmount,
     };
-    const redeemSuccess: TransferStep = {
+    const redeemDispatch: TransferStep = {
       chain: arrival,
       sender: backing,
       recipient: revertAccount(record.recipient, arrival),
       token: toToken,
       amount: recvAmount,
     };
+    const redeemSuccess: TransferStep = {
+      chain: departure,
+      sender: issuing,
+      recipient: genesis,
+      token: fromToken,
+      amount: recvAmount,
+    };
     const redeemFail: TransferStep = {
       chain: departure,
-      sender: ZERO_ADDRESS,
+      sender: issuing,
       recipient: revertAccount(record.sender, departure),
       token: fromToken,
       amount: sendAmount,
@@ -101,9 +106,11 @@ const Page: NextPage<{
       return isIssuing ? [issueStart] : [redeemStart];
     }
 
-    const issuingTransfer = [issueStart, record.result === RecordStatus.success ? issueSuccess : issueFail];
+    const issuingTransfer =
+      record.result === RecordStatus.success ? [issueStart, issueSuccess] : [issueStart, issueFail];
 
-    const redeemTransfer = [redeemStart, record.result === RecordStatus.success ? redeemSuccess : redeemFail];
+    const redeemTransfer =
+      record.result === RecordStatus.success ? [redeemStart, redeemDispatch, redeemSuccess] : [redeemStart, redeemFail];
 
     return isIssuing ? issuingTransfer : redeemTransfer;
   }, [record]);

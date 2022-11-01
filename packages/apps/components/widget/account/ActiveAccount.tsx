@@ -153,7 +153,7 @@ export default function ActiveAccount() {
           disabled={isConnecting}
           icon={isConnecting && <LoadingOutlined />}
           onClick={() => {
-            if (router.pathname !== Path.transaction) {
+            if (router.pathname !== Path.records) {
               connectDepartureNetwork(departure);
             } else {
               setIsWalletSelectOpen(true);

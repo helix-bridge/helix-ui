@@ -1,7 +1,7 @@
 export enum Path {
   root = '/',
   register = '/register',
-  transaction = '/transaction',
+  records = '/records',
   docs = 'docs',
   apps = '/apps',
   claimTool = '/claim-tool',

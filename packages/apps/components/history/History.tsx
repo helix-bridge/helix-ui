@@ -278,7 +278,7 @@ export default function History() {
                     const paths = getDetailPaths(record);
 
                     if (paths.length) {
-                      router.push({ pathname: `${Path.transaction}/${paths.join('/')}` });
+                      router.push({ pathname: `${Path.records}/${paths.join('/')}` });
                     } else {
                       message.error(`Can not find the detail page for ${record.fromChain} to ${record.toChain}`);
                     }

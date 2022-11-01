@@ -58,7 +58,7 @@ done
 subdir="helix"
 
 if [ $category = "cBridge" ]; then
-    subdir="celer"
+    subdir="cbridge"
 elif [ $category = "XCM" ]; then
     subdir="xcm"
 else

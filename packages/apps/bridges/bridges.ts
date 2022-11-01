@@ -1,7 +1,7 @@
 import type { BridgeBase } from 'shared/core/bridge';
 import { BridgeConfig, ChainConfig } from 'shared/model';
 import type { Bridge } from '../core/bridge';
-import { CBridgeBridge } from './celer/cBridge/utils';
+import { CBridgeBridge } from './cbridge/cBridge/utils';
 import { SubstrateDVMBridge } from './helix/substrate-dvm/utils';
 import { SubstrateSubstrateDVMBridge } from './helix/substrate-substrateDVM/utils';
 import { SubstrateSubstrateParachainBridge } from './helix/substrate-substrateParachain/utils';

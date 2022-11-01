@@ -11,7 +11,7 @@ import {
   getSentAmountFromHelixRecord,
   getTokenConfigFromHelixRecord,
 } from 'utils/record';
-import { CrabDVMHecoBridgeConfig } from '../../../bridges/celer/crabDVM-heco/model';
+import { CrabDVMHecoBridgeConfig } from '../../../bridges/cbridge/crabDVM-heco/model';
 import { Detail } from '../../../components/transaction/Detail';
 import { useUpdatableRecord } from '../../../hooks';
 import { TransferStep } from '../../../model/transfer';
