@@ -1,18 +1,17 @@
 import { isAfter } from 'date-fns';
 import type { GetServerSidePropsContext, NextPage } from 'next';
-import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { SUBSTRATE_DVM_WITHDRAW } from 'shared/config/env';
-import { HelixHistoryRecord, Network } from 'shared/model';
-import { getBridge } from 'utils/bridge';
+import { HelixHistoryRecord } from 'shared/model';
 import { revertAccount } from 'shared/utils/helper/address';
-import { getChainConfig } from 'utils/network';
-import { getSentAmountFromHelixRecord, getTokenConfigFromHelixRecord } from 'utils/record';
+import { getBridge } from 'utils/bridge';
+import { getOriginChainConfig } from 'utils/network';
+import { getDirectionFromHelixRecord, getSentAmountFromHelixRecord, getTokenConfigFromHelixRecord } from 'utils/record';
+import { SubstrateDVMBridgeConfig } from '../../../bridges/helix/substrate-dvm/model';
 import { Detail } from '../../../components/transaction/Detail';
 import { useUpdatableRecord } from '../../../hooks';
 import { TransferStep } from '../../../model/transfer';
 import { getServerSideRecordProps } from '../../../utils/getServerSideRecordProps';
-import { SubstrateDVMBridgeConfig } from '../../../bridges/helix/substrate-dvm/model';
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ id: string }, HelixHistoryRecord>) {
   return getServerSideRecordProps(context);
@@ -23,7 +22,6 @@ const precompileDeprecatedAt = new Date('2022-08-15');
 const Page: NextPage<{
   id: string;
 }> = ({ id }) => {
-  const router = useRouter();
   const { record } = useUpdatableRecord(id);
 
   // eslint-disable-next-line complexity
@@ -32,9 +30,15 @@ const Page: NextPage<{
       return [];
     }
 
-    const departure = getChainConfig(router.query.from as Network);
-    const arrival = getChainConfig(router.query.to as Network);
-    const bridge = getBridge<SubstrateDVMBridgeConfig>([departure, arrival]);
+    const direction = getDirectionFromHelixRecord(record);
+
+    if (!direction) {
+      return [];
+    }
+
+    const bridge = getBridge<SubstrateDVMBridgeConfig>(direction);
+    const departure = getOriginChainConfig(record.fromChain);
+    const arrival = getOriginChainConfig(record.toChain);
     const isIssuing = bridge.isIssue(departure, arrival);
     const fromToken = getTokenConfigFromHelixRecord(record);
     const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
@@ -102,9 +106,9 @@ const Page: NextPage<{
     }
 
     return isIssuing ? issuingTransfer : redeemTransfer;
-  }, [record, router.query.from, router.query.to]);
+  }, [record]);
 
-  return <Detail record={record} transfers={transfers} />;
+  return record && <Detail record={record} transfers={transfers} />;
 };
 
 export default Page;

@@ -1,16 +1,16 @@
 import type { GetServerSidePropsContext, NextPage } from 'next';
-import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { RecordStatus } from 'shared/config/constant';
-import { HelixHistoryRecord, Network } from 'shared/model';
+import { HelixHistoryRecord } from 'shared/model';
 import { revertAccount } from 'shared/utils/helper/address';
+import { getBridge } from 'utils/bridge';
+import { getChainConfig } from 'utils/network';
 import {
+  getDirectionFromHelixRecord,
   getReceivedAmountFromHelixRecord,
   getSentAmountFromHelixRecord,
   getTokenConfigFromHelixRecord,
 } from 'utils/record';
-import { getBridge } from 'utils/bridge';
-import { getChainConfig } from 'utils/network';
 import { SubstrateSubstrateDVMBridgeConfig } from '../../../bridges/helix/substrate-substrateDVM/model';
 import { Detail } from '../../../components/transaction/Detail';
 import { useUpdatableRecord } from '../../../hooks';
@@ -24,7 +24,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ id
 const Page: NextPage<{
   id: string;
 }> = ({ id }) => {
-  const router = useRouter();
   const { record } = useUpdatableRecord(id);
 
   // eslint-disable-next-line complexity
@@ -33,9 +32,15 @@ const Page: NextPage<{
       return [];
     }
 
-    const departure = getChainConfig(router.query.from as Network);
-    const arrival = getChainConfig(router.query.to as Network);
-    const bridge = getBridge<SubstrateSubstrateDVMBridgeConfig>([departure, arrival]);
+    const departure = getChainConfig(record.fromChain);
+    const arrival = getChainConfig(record.toChain);
+    const direction = getDirectionFromHelixRecord(record);
+
+    if (!direction) {
+      return [];
+    }
+
+    const bridge = getBridge<SubstrateSubstrateDVMBridgeConfig>(direction);
     const isIssuing = bridge.isIssue(departure, arrival);
     const fromToken = getTokenConfigFromHelixRecord(record);
     const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
@@ -108,9 +113,9 @@ const Page: NextPage<{
       record.result === RecordStatus.success ? [redeemStart, redeemDispatch, redeemSuccess] : [redeemStart, redeemFail];
 
     return isIssuing ? issuingTransfer : redeemTransfer;
-  }, [record, router.query.from, router.query.to]);
+  }, [record]);
 
-  return <Detail record={record} transfers={transfers} />;
+  return record && <Detail record={record} transfers={transfers} />;
 };
 
 export default Page;

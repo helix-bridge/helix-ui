@@ -1,6 +1,6 @@
 import { isAddress } from 'ethers/lib/utils';
 import { RecordStatus } from 'shared/config/constant';
-import { HelixHistoryRecord, TokenWithBridgesInfo } from 'shared/model';
+import { CrossChainPureDirection, HelixHistoryRecord, TokenWithBridgesInfo } from 'shared/model';
 import { fromWei, prettyNumber } from 'shared/utils/helper/balance';
 import { isPolkadotNetwork } from 'shared/utils/network/network';
 import { getOriginChainConfig } from '../network';
@@ -67,6 +67,20 @@ export function getSentAmountFromHelixRecord(record: HelixHistoryRecord) {
   return fromWei({ value: sendAmount, decimals: fromToken?.decimals }, (val) =>
     prettyNumber(val, { ignoreZeroDecimal: true })
   );
+}
+
+export function getDirectionFromHelixRecord(record: HelixHistoryRecord): CrossChainPureDirection | null {
+  const { fromChain, toChain, sendToken, recvToken } = record;
+  const fromConfig = getOriginChainConfig(fromChain);
+  const toConfig = getOriginChainConfig(toChain);
+  const fromToken = fromConfig.tokens.find((item) => item.symbol.toLowerCase() === sendToken.toLowerCase());
+  const toToken = toConfig.tokens.find((item) => item.symbol.toLowerCase() === recvToken.toLowerCase());
+
+  if (fromToken && toToken) {
+    return { from: { ...fromToken, meta: fromConfig }, to: { ...toToken, meta: toConfig } };
+  }
+
+  return null;
 }
 
 export function isHelixRecord(record: HelixHistoryRecord): boolean {

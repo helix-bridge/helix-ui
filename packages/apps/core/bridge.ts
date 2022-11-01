@@ -124,8 +124,8 @@ export abstract class Bridge<
       }
     };
 
-    const xcm = isXCM(from.host, to.host);
-    const cBridge = isCBridge(from.host, to.host);
+    const xcm = isXCM(payload.direction);
+    const cBridge = isCBridge(payload.direction);
 
     const validations = [
       // validate empty value

@@ -1,4 +1,4 @@
-import { Network, HelixHistoryRecord } from 'shared/model';
+import { HelixHistoryRecord } from 'shared/model';
 import {
   BridgePredicateFn,
   isCBridge,
@@ -9,21 +9,27 @@ import {
   isSubstrateSubstrateParachain,
   isXCM,
 } from '../bridge';
+import { getDirectionFromHelixRecord } from './record';
 
 type DirectionPaths = [BridgePredicateFn, string, string];
 
-export function getDetailPaths(fromChain: Network, toChain: Network, record: HelixHistoryRecord): string[] {
+/**
+ * TODO: remove this function.
+ */
+export function getDetailPaths(record: HelixHistoryRecord): string[] {
+  const { fromChain, toChain } = record;
+  const direction = getDirectionFromHelixRecord(record);
   const filters: DirectionPaths[] = [
     [isSubstrateSubstrateDVM, 's2s', record.id],
     [isSubstrateDVM, 's2dvm', record.id],
     [isSubstrateSubstrateParachain, 's2parachain', record.id],
-    [isCBridge, 'cbridge', record.id],
-    [isXCM, 'xcm', record.id],
+    [() => !!direction && isCBridge(direction), 'cbridge', record.id],
+    [() => !!direction && isXCM(direction), 'xcm', record.id],
     [isSubstrateDVMSubstrateDVM, 's2sv2', record.id],
     [isSubstrateDVMEthereum, 'eth2', record.id],
   ];
 
-  const result = filters.find(([predicate]) => predicate(fromChain as Network, toChain as Network));
+  const result = filters.find(([predicate]) => predicate(fromChain, toChain));
 
   return result ? (result.slice(1) as string[]) : [];
 }

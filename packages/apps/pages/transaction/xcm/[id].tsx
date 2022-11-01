@@ -67,7 +67,7 @@ const Page: NextPage<{
     return [start, record.result === RecordStatus.success ? success : fail];
   }, [record, router.query.from, router.query.to]);
 
-  return <Detail record={record} transfers={transfers} />;
+  return record && <Detail record={record} transfers={transfers} />;
 };
 
 export default Page;

@@ -10,6 +10,8 @@ import { BRIDGES } from '../config/bridge';
 import { unknownUnavailable } from '../bridges/unknown-unavailable/config';
 import { bridgeCategoryDisplay, getBridge, getBridges, isSubstrateDVMSubstrateDVM } from '../utils/bridge';
 import { chainConfigs, crossChainGraph, getChainConfig } from '../utils/network/network';
+import { crabConfig, crabDVMConfig, darwiniaConfig, darwiniaDVMConfig } from 'shared/config/network';
+import { upperFirst } from 'lodash';
 
 // exclude the config that not contains transferable tokens;
 const configs = chainConfigs.filter((item) => !!item.tokens.filter((token) => !!token.cross.length).length);
@@ -49,26 +51,53 @@ describe('bridge utils', () => {
     expect(bridgeCategoryDisplay('helix')).toBe('Helix');
     expect(bridgeCategoryDisplay('cBridge')).toBe('cBridge');
   });
-
-  it.each(allDirections.map(([departure, arrival]) => ({ departure, arrival })))(
-    'could find bridge by $departure and $arrival',
-    ({ departure, arrival }) => {
-      const byNetwork = getBridge([departure, arrival] as [Network, Network]);
-      const byConfig = getBridge([getChainConfig(departure as Network), getChainConfig(arrival as Network)]);
-      const mixes = getBridge([getChainConfig(departure as Network), arrival as Network]);
-      const mixes2 = getBridge([departure as Network, getChainConfig(arrival as Network)]);
-
-      expect(byNetwork).toBeInstanceOf(BridgeBase);
-      expect(byNetwork).not.toEqual(unknownUnavailable);
-      expect(byConfig).toBeInstanceOf(BridgeBase);
-      expect(byConfig).not.toEqual(unknownUnavailable);
-      expect(mixes).toBeInstanceOf(BridgeBase);
-      expect(mixes).not.toEqual(unknownUnavailable);
-      expect(mixes2).toBeInstanceOf(BridgeBase);
-      expect(mixes2).not.toEqual(unknownUnavailable);
-    }
-  );
 });
+
+/**
+ * Test getBridge function
+ */
+describe.each(configs.filter((item) => !item.isTest))(
+  "can find bridge which from $name's",
+  ({ tokens, name: chainName, ...restChainConfigs }) => {
+    describe.each(tokens.filter((item) => !!item.cross.length))(
+      '$name token',
+      ({ cross, name: tokenName, ...restTokenConfigs }) => {
+        const fromToken = {
+          cross,
+          name: tokenName,
+          ...restTokenConfigs,
+          meta: { tokens, name: chainName, ...restChainConfigs },
+        };
+
+        it.each(cross)(
+          "to $partner.name's $partner.symbol token with name $bridge",
+          ({ partner: { name, symbol, role }, bridge, category }) => {
+            const meta = configs.find((item) => item.name === name)!;
+            const token = meta.tokens.find((item) => item.symbol === symbol)!;
+            const toToken = { ...token, meta };
+            const target = getBridge({ from: fromToken, to: toToken }, category);
+
+            expect(target.name).toEqual(bridge);
+
+            /**
+             * Some common bridge's name may be not flow the rules below
+             * e.g. darwinia-darwiniaDVM actually is substrate-DVM
+             */
+            // const toCamelCase = (str: string) => {
+            //   const [head, ...rest] = str.split('-');
+
+            //   return head + rest.map(item => item === 'dvm' ? 'DVM': upperFirst(item)).join('');
+            // }
+            // const nameItems = role === 'backing' ? [name, fromToken.host]: [fromToken.host, name];
+            // const bridgeName = nameItems.map(toCamelCase).join('-')
+
+            // expect(target.name).toEqual(bridgeName);
+          }
+        );
+      }
+    );
+  }
+);
 
 /**
  * Test whether the token transfer configuration of the bridge is correct;

@@ -381,7 +381,7 @@ export function CrossChain() {
                     fee: fee!,
                     feeTokenBalance: {
                       ...fee,
-                      amount: isXCM(direction.from.host, direction.to.host) ? balances![0] : balances![1],
+                      amount: isXCM(direction) ? balances![0] : balances![1],
                     } as TokenWithAmount,
                     dailyLimit: {
                       ...toToken,
