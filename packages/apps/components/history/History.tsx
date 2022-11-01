@@ -181,15 +181,7 @@ export default function History() {
       render: (value: number, record: HelixHistoryRecord) => {
         const { result, startTime } = record;
         const content = (
-          <div
-            onClick={() => {
-              const paths = getDetailPaths(record);
-
-              if (paths.length) {
-                window.open(`transaction/${paths.join('/')}`, '_blank');
-              }
-            }}
-          >
+          <div>
             <div className="mb-2 whitespace-nowrap text-xs">{format(startTime * 1000, DATE_TIME_FORMAT)}</div>
 
             {result <= RecordStatus.pendingToClaim && <Pending record={record} />}
