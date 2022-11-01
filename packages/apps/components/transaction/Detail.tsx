@@ -1,4 +1,5 @@
 import { Divider } from 'antd';
+import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
@@ -52,17 +53,27 @@ export function Detail({ record, transfers }: DetailProps) {
         <h3 className="uppercase text-xs md:text-lg font-bold my-6">{t('transaction detail')}</h3>
 
         <div className="px-8 py-3 bg-antDark">
-          <Bridge />
+          <ErrorBoundary>
+            <Bridge />
+          </ErrorBoundary>
 
           <Divider />
 
-          <TxStatus record={record} />
+          <ErrorBoundary>
+            <TxStatus record={record} />
+          </ErrorBoundary>
 
-          <SourceTx hash={record?.requestTxHash} />
+          <ErrorBoundary>
+            <SourceTx hash={record?.requestTxHash} />
+          </ErrorBoundary>
 
-          <TargetTx record={record} />
+          <ErrorBoundary>
+            <TargetTx record={record} />
+          </ErrorBoundary>
 
-          <Timestamp record={record} />
+          <ErrorBoundary>
+            <Timestamp record={record} />
+          </ErrorBoundary>
 
           <Divider />
 
@@ -79,7 +90,9 @@ export function Detail({ record, transfers }: DetailProps) {
 
           {!!transfers.length && <TransferDetail transfers={transfers} />}
 
-          <Token record={record} />
+          <ErrorBoundary>
+            <Token record={record} />
+          </ErrorBoundary>
 
           <Divider />
 
@@ -87,7 +100,7 @@ export function Detail({ record, transfers }: DetailProps) {
             title={t('Value')}
             tip={t('The amount to be transferred to the recipient with the cross-chain transaction.')}
           >
-            {amount} {transfers[0]?.token.name}
+            {amount} {transfers[0]?.token?.name}
           </TransferDescription>
 
           <TransferDescription

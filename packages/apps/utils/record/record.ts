@@ -8,7 +8,7 @@ import { getOriginChainConfig } from '../network';
 export function getTokenConfigFromHelixRecord(
   record: HelixHistoryRecord,
   key: keyof Pick<HelixHistoryRecord, 'feeToken' | 'sendToken' | 'recvToken'> = 'sendToken'
-): TokenWithBridgesInfo {
+): TokenWithBridgesInfo | undefined {
   const chain = getOriginChainConfig(record[key === 'recvToken' ? 'toChain' : 'fromChain']);
   const symbol = record[key];
 
@@ -30,7 +30,7 @@ export function getTokenConfigFromHelixRecord(
     }
 
     return isSameSymbol;
-  })!;
+  });
 }
 
 export function getReceivedAmountFromHelixRecord(record: HelixHistoryRecord) {
