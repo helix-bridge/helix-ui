@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { IAccountMeta } from 'shared/model';
 import { readStorage, updateStorage } from 'shared/utils/helper/storage';
-import { isSameAddress } from 'shared/utils/helper/validator';
+import { isSameAddress, isSS58Address } from 'shared/utils/helper/validator';
 import { useApi } from './api';
 
 export interface AccountCtx {
@@ -24,10 +24,14 @@ export const AccountProvider = ({ children }: React.PropsWithChildren<unknown>) 
   );
 
   useEffect(() => {
-    const { activeAccount } = readStorage();
+    const { activeMetamaskAccount, activePolkadotAccount } = readStorage();
     const acc =
-      departureConnection.accounts.find((value) => isSameAddress(value.address, activeAccount ?? ''))?.address ||
-      departureConnection.accounts[0]?.address;
+      departureConnection.accounts.find((value) =>
+        isSameAddress(
+          value.address,
+          (departureConnection.type === 'polkadot' ? activePolkadotAccount : activeMetamaskAccount) ?? ''
+        )
+      )?.address || departureConnection.accounts[0]?.address;
 
     if (acc) {
       setAccount(acc);
@@ -36,7 +40,7 @@ export const AccountProvider = ({ children }: React.PropsWithChildren<unknown>) 
 
   useEffect(() => {
     if (account) {
-      updateStorage({ activeAccount: account });
+      updateStorage({ [isSS58Address(account) ? 'activePolkadotAccount' : 'activeMetamaskAccount']: account });
     }
   }, [account]);
 

@@ -231,7 +231,7 @@ export default function History() {
                 onClick={() => {
                   setAccount('');
                   disconnect();
-                  updateStorage({ activeWallet: undefined, activeAccount: '' });
+                  updateStorage({ activeWallet: undefined, activeMetamaskAccount: '', activePolkadotAccount: '' });
                 }}
               />
             ),
