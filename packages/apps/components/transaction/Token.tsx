@@ -45,7 +45,7 @@ export function Token({ record }: { record: HelixHistoryRecord | null }) {
         <Button
           size="small"
           onClick={() => {
-            const config = getOriginChainConfig(record.fromChain);
+            const config = getOriginChainConfig(record.toChain);
 
             isMetamaskChainConsistent(config).subscribe(() => {
               addToMetamask(token);

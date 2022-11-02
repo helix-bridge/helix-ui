@@ -78,6 +78,11 @@ export function TransferConfirm<T extends BridgeBase = BridgeBase>({
 
           <div className="flex flex-col space-y-2 mt-1 p-3 bg-gray-900 border border-gray-800">
             <div className="flex items-center justify-between overflow-hidden">
+              <span className="opacity-60">{t('Bridge')}</span>
+              <span className="truncate text-right w-11/12 capitalize">{value.bridge.category}</span>
+            </div>
+
+            <div className="flex items-center justify-between overflow-hidden">
               <span className="opacity-60">{t('From')}</span>
               <span className="truncate text-right w-11/12">{sender}</span>
             </div>
@@ -89,21 +94,31 @@ export function TransferConfirm<T extends BridgeBase = BridgeBase>({
 
             {fee && (
               <div className="flex items-center justify-between overflow-hidden">
-                <span className="opacity-60">{t('Fee')}</span>
+                <span className="opacity-60">{t('Transaction Fee')}</span>
                 <span>
                   {fromWei(fee)} {fee.symbol}
                 </span>
               </div>
             )}
+
+            <div className="flex items-center justify-between overflow-hidden">
+              <span className="opacity-60">{t('Estimate Arrival Time')}</span>
+              <span>{t('{{count}} Minutes', { count: 15 })}</span>
+            </div>
           </div>
         </div>
 
         {needClaim && (
           <Alert
             type="warning"
-            message={t(
-              'Please initiate a claim transaction on Ethereum in the Transaction Detail Page to receive this token. And it needs to prepare some ETH as the gas fee to claim this token.'
-            )}
+            message={
+              <span className="text-gray-900">
+                {t(
+                  'Please initiate a claim transaction on Ethereum in the Transaction Detail Page to receive this token. And it needs to prepare some ETH as the gas fee to claim this token.'
+                )}
+              </span>
+            }
+            className="bg-white"
             showIcon
           />
         )}

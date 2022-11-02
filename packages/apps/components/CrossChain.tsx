@@ -393,7 +393,11 @@ export function CrossChain() {
                   const workflow = createTxWorkflow(
                     validateObs.pipe(
                       mergeMap(() =>
-                        applyModalObs({ content: <TransferConfirm value={payload} fee={fee!} />, closable: false })
+                        applyModalObs({
+                          content: <TransferConfirm value={payload} fee={fee!} />,
+                          closable: false,
+                          title: t('Confirm To Continue'),
+                        })
                       )
                     ),
                     () => payload.bridge.send(payload, fee?.amount),

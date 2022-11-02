@@ -44,8 +44,9 @@ export function TransferDone({ tx, value, showHistory: destroy }: TxDoneComponen
               }}
               className="text-helix-blue cursor-pointer hover:opacity-80"
             >
-              transaction detail
+              transaction history
             </span>
+            , it may take a few seconds.
           </Trans>
         </p>
 

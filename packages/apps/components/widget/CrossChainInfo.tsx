@@ -1,6 +1,6 @@
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { BN, BN_ZERO } from '@polkadot/util';
-import { Form, Tag, Tooltip } from 'antd';
+import { Form, Tooltip } from 'antd';
 import { PropsWithChildren, ReactNode, useMemo } from 'react';
 import { useITranslation } from 'shared/hooks/translation';
 import { BridgeConfig, ChainConfig, ContractConfig, CrossChainDirection, DailyLimit } from 'shared/model';
@@ -120,12 +120,29 @@ export function CrossChainInfo({
           <span>{bridgeCategoryDisplay(bridge?.category)}</span>
         </div>
 
+        <div className={`flex justify-between items-center`}>
+          <span>{t('Estimated Arrival Time')}</span>
+
+          <div className="flex items-center gap-2">
+            <span>{t('{{count}} Minutes', { count: 15 })}</span>
+          </div>
+        </div>
+
         {needClaim && (
           <div className={`flex justify-between items-center`}>
-            <span>{t('Claim')}</span>
-            <Tag color="cyan" className="mr-0">
-              {t('Need Claim')}
-            </Tag>
+            <span>{t('Attention')}</span>
+
+            <div className="flex items-center gap-2">
+              <Tooltip
+                title={t(
+                  'You need to initiate a claim transaction on the target chain after the transfer is confirmed.'
+                )}
+                className="cursor-help"
+              >
+                <InfoCircleOutlined />
+              </Tooltip>
+              <span>{t('Need Claim')}</span>
+            </div>
           </div>
         )}
 
