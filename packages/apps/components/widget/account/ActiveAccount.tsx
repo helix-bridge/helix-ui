@@ -1,4 +1,11 @@
-import { DisconnectOutlined, DollarOutlined, LoadingOutlined, SettingFilled } from '@ant-design/icons';
+import {
+  DisconnectOutlined,
+  DollarOutlined,
+  LoadingOutlined,
+  SettingFilled,
+  UserSwitchOutlined,
+  WalletOutlined,
+} from '@ant-design/icons';
 import { numberToHex } from '@polkadot/util';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 import { Badge, Button, Dropdown, Menu, Tooltip } from 'antd';
@@ -99,11 +106,21 @@ export default function ActiveAccount() {
                     items={[
                       {
                         key: 'wallet',
-                        label: <span onClick={() => setIsWalletSelectOpen(true)}>{t('Switch wallet')}</span>,
+                        label: (
+                          <span onClick={() => setIsWalletSelectOpen(true)} className="space-x-2">
+                            <WalletOutlined />
+                            <span>{t('Switch Wallet')}</span>
+                          </span>
+                        ),
                       },
                       {
                         key: 'account',
-                        label: <span onClick={() => setIsAccountSelectOpen(true)}>{t('Switch account')}</span>,
+                        label: (
+                          <span onClick={() => setIsAccountSelectOpen(true)} className="space-x-2">
+                            <UserSwitchOutlined />
+                            <span>{t('Switch Account')}</span>
+                          </span>
+                        ),
                       },
                     ]}
                   ></Menu>
@@ -209,7 +226,7 @@ export default function ActiveAccount() {
         }}
         title={
           <div className="inline-flex items-center space-x-1">
-            <span>{t('Switch wallet')}</span>
+            <span>{t('Switch Wallet')}</span>
           </div>
         }
         footer={null}

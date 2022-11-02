@@ -100,6 +100,7 @@ export function Navigator({ navigators, onClick, theme = THEME.DARK }: Navigator
                   }))}
                 />
               }
+              className="text-base"
             >
               <div className="flex items-center cursor-pointer">
                 <span>{t(nav.label)}</span>
