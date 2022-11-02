@@ -1,17 +1,13 @@
 import { useTranslation } from 'next-i18next';
-import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { RecordStatus } from 'shared/config/constant';
-import { HelixHistoryRecord, Network } from 'shared/model';
+import { HelixHistoryRecord } from 'shared/model';
 import { isCBridgeRecord, isHelixRecord, isXCMRecord } from '../../utils/record/record';
 import { Hash } from './Hash';
 import { TransferDescription } from './TransferDescription';
 
 export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
   const { t } = useTranslation();
-  const router = useRouter();
-  const departure = router.query.from as Network;
-  const arrival = router.query.to as Network;
 
   // eslint-disable-next-line complexity
   const content = useMemo(() => {
@@ -22,6 +18,9 @@ export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
     if ([RecordStatus.pending, RecordStatus.pendingToClaim, RecordStatus.pendingToRefund].includes(record.result)) {
       return <span>{t('Waiting for the transaction on the target chain...')}</span>;
     }
+
+    const departure = record.fromChain;
+    const arrival = record.toChain;
 
     if (isHelixRecord(record)) {
       if (record.result === RecordStatus.success) {
@@ -40,7 +39,7 @@ export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
     }
 
     return null;
-  }, [arrival, departure, record, t]);
+  }, [record, t]);
 
   return (
     <TransferDescription
