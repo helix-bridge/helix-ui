@@ -61,3 +61,9 @@ In most cases you do not need to modify this component, if you need to, feel fre
 Adjust the Bridge's second and third type parameters. <b>ChainConfig</b> is just a base type. You can find all supported chain types at <b>packages/shared/model/network/config.ts</b>
 
 Implement the methods needed for the generated bridge class, this should be your main job.
+
+### Step-5: Complete record detail page
+
+If the bridge that you created is helix type, you will find a new record file created `pages/records/helix/[BRIDGE_NAME]/[id].tsx`, check and update the transfer process.
+
+For other types of bridges, you can skip this step.
