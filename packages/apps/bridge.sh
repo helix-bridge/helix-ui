@@ -218,14 +218,6 @@ function updateSupports() {
    " >'../shared/model/bridge/supports.ts'
 }
 
-function updatePredicateFns() {
-    echo "
-        export const is${departure} = predicate('${origin}', '${target}');
-        export const is${arrival} = predicate('${target}', '${origin}');
-        export const is${from}${to} = or(is${departure}, is${arrival});
-    " >>'./utils/bridge/predicates.ts'
-}
-
 function updateBridgesIndexer() {
     echo "
         export { $1, $2 } from './$3';
@@ -270,7 +262,6 @@ function init() {
     updateBridgesIndexer $departure $arrival $dir
 
     updateSupports
-    updatePredicateFns $departure $arrival
 
     echo "\033[32mCreate success!\033[0m"
 }

@@ -2,23 +2,18 @@
 
 import isEqual from 'lodash/isEqual';
 import unionWith from 'lodash/unionWith';
-import { BridgeBase } from 'shared/core/bridge';
-import { BridgeName, ChainConfig, CrossToken, Network } from 'shared/model';
+import { ChainConfig, CrossToken, Network } from 'shared/model';
 import { toMiddleSplitNaming } from 'shared/utils/helper/common';
 import { isDVMNetwork, isParachainNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
-import { BRIDGES } from '../config/bridge';
-import { unknownUnavailable } from '../bridges/unknown-unavailable/config';
-import { bridgeCategoryDisplay, getBridge, getBridges, isSubstrateDVMSubstrateDVM } from '../utils/bridge';
+import { bridgeCategoryDisplay, getBridge, getBridges } from '../utils/bridge';
 import { chainConfigs, crossChainGraph, getChainConfig } from '../utils/network/network';
-import { crabConfig, crabDVMConfig, darwiniaConfig, darwiniaDVMConfig } from 'shared/config/network';
-import { upperFirst } from 'lodash';
 
 // exclude the config that not contains transferable tokens;
 const configs = chainConfigs.filter((item) => !!item.tokens.filter((token) => !!token.cross.length).length);
 
 const calcBridgesAmount = (data: [Network, Network[]][]) =>
   unionWith(data.map(([from, tos]) => tos.map((to) => [from, to])).flat(), (pre, cur) => {
-    if (isSubstrateDVMSubstrateDVM(cur[0], cur[1])) {
+    if ([cur[0], cur[1]].every(isDVMNetwork)) {
       return isEqual(pre.reverse(), cur); // crabDVM<>darwiniaDVM and darwiniaDVM<>crabDVM should be different two bridges
     }
 

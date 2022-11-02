@@ -41,7 +41,6 @@ Update files below under the apps project:
 1. `bridges/[BRIDGE_TYPE]/[YOU_BRIDGE]/model/bridge.ts` Update the generated type if needed
 1. `bridges/[BRIDGE_TYPE]/[YOU_BRIDGE]/config/bridge.ts` Update bridge configuration
 1. `config/bridge.ts` Add bridge
-1. `utils/bridge/predicates.ts` Check the predicate function generated
 
 ### Step-3: Unit test
 

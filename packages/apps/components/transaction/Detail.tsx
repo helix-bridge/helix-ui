@@ -6,7 +6,7 @@ import { useITranslation } from 'shared/hooks';
 import { BridgeCategory, HelixHistoryRecord } from 'shared/model';
 import { revertAccount } from 'shared/utils/helper/address';
 import { fromWei, prettyNumber } from 'shared/utils/helper/balance';
-import { isCrabDVMHeco } from 'utils/bridge';
+import { isTransferBetween } from 'utils/bridge';
 import { getChainConfig } from 'utils/network';
 import { TransferStep } from '../../model/transfer';
 import { ClaimProvider, TxProvider } from '../../providers';
@@ -41,6 +41,8 @@ export function Detail({ record, transfers }: DetailProps) {
 
     return token?.decimals ?? 9;
   }, [departure.tokens, record]);
+
+  const isCrabDVMHeco = useMemo(() => isTransferBetween('crab-dvm', 'heco'), []);
 
   return (
     <TxProvider>
