@@ -27,3 +27,14 @@
     right: calc((100vw - 1536px) / 2);
   }
 }
+
+.destination-dropdown .ant-cascader-menu {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

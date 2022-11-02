@@ -37,22 +37,5 @@ exports[`<SourceTx /> render SourceTx 1`] = `
       Source Tx Hash
     </span>
   </div>
-  <span
-    className="space-x-2"
-  >
-    <a
-      className="hover:opacity-80 transition-opacity duration-200 underline text-white"
-      href="https://undefined.etherscan.io/tx/0xa9673370dce7f48b306fb96b90c42fa2a13986f1e618eb2996eaeb5abce88643"
-      onClick={[Function]}
-      rel="noreferrer"
-      target="_blank"
-    >
-      0xa9673370dce7f48b306fb96b90c42fa2a13986f1e618eb2996eaeb5abce88643
-    </a>
-    <svg
-      className="icon text-base w-4 h-4 cursor-pointer "
-      onClick={[Function]}
-    />
-  </span>
 </div>
 `;

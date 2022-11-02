@@ -10,7 +10,6 @@ import { getTokenConfigFromHelixRecord } from '../../utils/record';
 import { addToMetamask } from '../../utils/token';
 import { TransferDescription } from './TransferDescription';
 
-// eslint-disable-next-line complexity
 export function Token({ record }: { record: HelixHistoryRecord | null }) {
   const { t } = useTranslation();
 

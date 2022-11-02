@@ -63,7 +63,7 @@ export function Detail({ record, transfers }: DetailProps) {
           </ErrorBoundary>
 
           <ErrorBoundary>
-            <SourceTx hash={record.requestTxHash} />
+            <SourceTx record={record} />
           </ErrorBoundary>
 
           <ErrorBoundary>
