@@ -16,7 +16,7 @@ import { pollWhile } from 'shared/utils/helper/operator';
 import { applyModalObs } from 'shared/utils/tx';
 import { getBridge } from 'utils/bridge';
 import { bridgeFactory } from '../../bridges/bridges';
-import type { CBridgeBridge } from '../../bridges/celer/cBridge/utils';
+import type { CBridgeBridge } from '../../bridges/cbridge/cBridge/utils';
 import { HISTORY_RECORD_BY_ID } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { RecordStatusComponentProps } from '../../model/component';

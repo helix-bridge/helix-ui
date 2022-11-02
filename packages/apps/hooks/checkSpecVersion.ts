@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { from } from 'rxjs/internal/observable/from';
 import { BridgeState, ChainConfig, CrossChainDirection, CrossToken, PolkadotChainConfig } from 'shared/model';
 import { entrance, waitUntilConnected } from 'shared/utils/connection';
-import { isSubstrateDVM } from '../utils';
 
 export function useCheckSpecVersion(
   direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
@@ -11,7 +10,7 @@ export function useCheckSpecVersion(
   const [specVersionOnline, setSpecVersionOnline] = useState<string>('');
   const [checking, setChecking] = useState(false);
   const { to } = direction;
-  const needCheck = has(to.meta, 'specVersion') && !isSubstrateDVM(direction.from.host, direction.to.host);
+  const needCheck = has(to.meta, 'specVersion');
 
   useEffect(() => {
     if (!needCheck) {

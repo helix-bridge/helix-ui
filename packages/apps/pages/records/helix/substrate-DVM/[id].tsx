@@ -7,11 +7,11 @@ import { revertAccount } from 'shared/utils/helper/address';
 import { getBridge } from 'utils/bridge';
 import { getOriginChainConfig } from 'utils/network';
 import { getDirectionFromHelixRecord, getSentAmountFromHelixRecord, getTokenConfigFromHelixRecord } from 'utils/record';
-import { SubstrateDVMBridgeConfig } from '../../../bridges/helix/substrate-dvm/model';
-import { Detail } from '../../../components/transaction/Detail';
-import { useUpdatableRecord } from '../../../hooks';
-import { TransferStep } from '../../../model/transfer';
-import { getServerSideRecordProps } from '../../../utils/getServerSideRecordProps';
+import { SubstrateDVMBridgeConfig } from '../../../../bridges/helix/substrate-dvm/model';
+import { Detail } from '../../../../components/transaction/Detail';
+import { useUpdatableRecord } from '../../../../hooks';
+import { TransferStep } from '../../../../model/transfer';
+import { getServerSideRecordProps } from '../../../../utils/getServerSideRecordProps';
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ id: string }, HelixHistoryRecord>) {
   return getServerSideRecordProps(context);

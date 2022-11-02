@@ -11,12 +11,13 @@ import {
   getSentAmountFromHelixRecord,
   getTokenConfigFromHelixRecord,
 } from 'utils/record';
-import { SubstrateDVMEthereumBridgeConfig } from '../../../bridges/helix/substrateDVM-ethereum/model';
-import { Detail } from '../../../components/transaction/Detail';
-import { ZERO_ADDRESS } from '../../../config';
-import { useUpdatableRecord } from '../../../hooks';
-import { TransferStep } from '../../../model/transfer';
-import { getServerSideRecordProps } from '../../../utils/getServerSideRecordProps';
+import { CrabDVMDarwiniaDVMBridgeConfig } from '../../../../bridges/helix/crabDVM-darwiniaDVM/model';
+import { DarwiniaDVMCrabDVMBridgeConfig } from '../../../../bridges/helix/darwiniaDVM-crabDVM/model';
+import { Detail } from '../../../../components/transaction/Detail';
+import { ZERO_ADDRESS } from '../../../../config';
+import { useUpdatableRecord } from '../../../../hooks';
+import { TransferStep } from '../../../../model/transfer';
+import { getServerSideRecordProps } from '../../../../utils/getServerSideRecordProps';
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ id: string }, HelixHistoryRecord>) {
   return getServerSideRecordProps(context);
@@ -41,7 +42,7 @@ const Page: NextPage<{
       return [];
     }
 
-    const bridge = getBridge<SubstrateDVMEthereumBridgeConfig>(direction);
+    const bridge = getBridge<DarwiniaDVMCrabDVMBridgeConfig | CrabDVMDarwiniaDVMBridgeConfig>(direction);
     const isIssuing = bridge.isIssue(departure, arrival);
     const fromToken = getTokenConfigFromHelixRecord(record);
     const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
@@ -96,7 +97,7 @@ const Page: NextPage<{
       amount: sendAmount,
     };
 
-    if ([RecordStatus.pending, RecordStatus.pendingToClaim, RecordStatus.pendingToRefund].includes(record.result)) {
+    if (record.result === RecordStatus.pending) {
       return isIssuing ? [issueStart] : [redeemStart];
     }
 

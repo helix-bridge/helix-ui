@@ -33,7 +33,7 @@ export function useAfterTx<T extends CrossChainPayload>(router?: NextRouter) {
               showHistory={() => {
                 if (router) {
                   router.push({
-                    pathname: Path.transaction,
+                    pathname: Path.records,
                     query: new URLSearchParams({
                       account: payload.sender,
                     }).toString(),

@@ -16,7 +16,7 @@ const { Header, Content } = Layout;
 
 const navigators: Nav[] = [
   { label: 'Transfer', path: Path.apps },
-  { label: 'Explorer', path: Path.transaction },
+  { label: 'Explorer', path: Path.records },
   { label: 'Tools', children: [{ label: 'Claim Tool', path: Path.claimTool }], path: '' },
   // { label: 'DAO', path: 'dao' },
   { label: 'Docs', path: 'https://docs.helixbridge.app/', extra: true },

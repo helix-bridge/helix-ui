@@ -24,7 +24,7 @@ function HistoryBtn() {
       icon={<HddOutlined />}
       onClick={() =>
         router.push({
-          pathname: Path.transaction,
+          pathname: Path.records,
           query: new URLSearchParams({
             account,
           }).toString(),

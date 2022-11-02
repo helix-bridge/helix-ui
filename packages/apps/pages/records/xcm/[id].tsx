@@ -1,8 +1,7 @@
 import type { GetServerSidePropsContext, NextPage } from 'next';
-import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { RecordStatus } from 'shared/config/constant';
-import { HelixHistoryRecord, Network } from 'shared/model';
+import { HelixHistoryRecord } from 'shared/model';
 import { revertAccount } from 'shared/utils/helper/address';
 import { getChainConfig } from 'utils/network';
 import {
@@ -23,7 +22,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ id
 const Page: NextPage<{
   id: string;
 }> = ({ id }) => {
-  const router = useRouter();
   const { record } = useUpdatableRecord(id);
 
   const transfers = useMemo(() => {
@@ -31,8 +29,8 @@ const Page: NextPage<{
       return [];
     }
 
-    const departure = getChainConfig(router.query.from as Network);
-    const arrival = getChainConfig(router.query.to as Network);
+    const departure = getChainConfig(record.fromChain);
+    const arrival = getChainConfig(record.toChain);
     const fromToken = getTokenConfigFromHelixRecord(record);
     const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
     const sendAmount = getSentAmountFromHelixRecord(record);
@@ -65,7 +63,7 @@ const Page: NextPage<{
     }
 
     return [start, record.result === RecordStatus.success ? success : fail];
-  }, [record, router.query.from, router.query.to]);
+  }, [record]);
 
   return record && <Detail record={record} transfers={transfers} />;
 };

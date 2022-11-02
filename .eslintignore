@@ -13,4 +13,4 @@ cypress/
 **/plugins/**/*.js
 .eslintrc.js
 public/
-packages/apps/bridges/celer/cBridge/ts-proto
+packages/apps/bridges/cbridge/cBridge/ts-proto
