@@ -157,7 +157,7 @@ export function Destination({
             }}
             dropdownRender={(menus: React.ReactNode) => {
               return (
-                <div className="p-2 text-xs 2xl:text-sm" style={{ width }}>
+                <div className="p-2 text-xs 2xl:text-sm destination-dropdown" style={{ width }}>
                   <Input
                     size="small"
                     placeholder={t('Search token address or chain name')}
