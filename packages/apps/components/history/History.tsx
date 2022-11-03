@@ -18,7 +18,7 @@ import { gqlName, toMiddleSplitNaming } from 'shared/utils/helper/common';
 import { updateStorage } from 'shared/utils/helper/storage';
 import { isSS58Address, isValidAddress } from 'shared/utils/helper/validator';
 import { Path } from '../../config';
-import { HISTORY_RECORDS_IN_RESULTS } from '../../config/gql';
+import { HISTORY_RECORDS } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { Paginator } from '../../model';
 import { useAccount, useApi } from '../../providers';
@@ -30,8 +30,16 @@ import {
   getReceivedAmountFromHelixRecord,
   getSentAmountFromHelixRecord,
 } from '../../utils/record/record';
-import { Pending } from './Pending';
-import { Refunded } from './Refunded';
+
+interface QueryParams {
+  row: number;
+  page: number;
+  sender?: string;
+  recipient?: string;
+  results?: number[];
+  fromChains?: string[];
+  toChains?: string[];
+}
 
 const paginatorDefault: Paginator = { row: 20, page: 0 };
 
@@ -77,6 +85,14 @@ export default function History() {
   const { account, setAccount } = useAccount();
   const [isValidSender, setIsValidSender] = useState(true);
 
+  const [chainFilters, setChainFilters] = useState<{
+    fromChains: Network[] | undefined;
+    toChains: Network[] | undefined;
+  }>({
+    fromChains: undefined,
+    toChains: undefined,
+  });
+
   const [searchAccount, setSearchAccount] = useState<string | undefined>(router.query.account as string | undefined);
 
   const results = useMemo(() => {
@@ -93,19 +109,21 @@ export default function History() {
 
   const {
     loading,
-    data = { [gqlName(HISTORY_RECORDS_IN_RESULTS)]: { total: 0, records: [] as HelixHistoryRecord[] } },
+    data = { [gqlName(HISTORY_RECORDS)]: { total: 0, records: [] as HelixHistoryRecord[] } },
     refetch,
-  } = useQuery(HISTORY_RECORDS_IN_RESULTS, {
+  } = useQuery<{ [key: string]: { total: number; records: HelixHistoryRecord[] } }, QueryParams>(HISTORY_RECORDS, {
     variables: {
       ...paginator,
       sender: toSearchableAccount(searchAccount),
       recipient: toSearchableAccount(searchAccount),
       results,
+      fromChains: chainFilters.fromChains ? chainFilters.fromChains : undefined,
+      toChains: chainFilters.toChains ? chainFilters.toChains : undefined,
     },
   });
 
   const records = useMemo<HelixHistoryRecord[]>(() => {
-    return data[gqlName(HISTORY_RECORDS_IN_RESULTS)].records.map((record: HelixHistoryRecord) => {
+    return data[gqlName(HISTORY_RECORDS)].records.map((record: HelixHistoryRecord) => {
       if (refundedList.find((item) => item.id === record.id)) {
         record.result = RecordStatus.pendingToConfirmRefund;
       }
@@ -114,7 +132,7 @@ export default function History() {
     });
   }, [refundedList, data]);
 
-  const total = useMemo(() => data[gqlName(HISTORY_RECORDS_IN_RESULTS)].total, [data]);
+  const total = useMemo(() => data[gqlName(HISTORY_RECORDS)].total, [data]);
 
   useEffect(() => {
     setSearchAccount(account);
@@ -126,7 +144,6 @@ export default function History() {
       width: '16%',
       dataIndex: 'fromChain',
       filters: chainConfigs.map((config) => ({ text: getDisplayName(config), value: config.name })),
-      onFilter: (value, record: HelixHistoryRecord) => record.fromChain === value,
       render(chain: Network, record: HelixHistoryRecord) {
         const amount = getSentAmountFromHelixRecord(record);
 
@@ -137,7 +154,6 @@ export default function History() {
       title: t('To'),
       width: '16%',
       filters: chainConfigs.map((config) => ({ text: getDisplayName(config), value: config.name })),
-      onFilter: (value, record: HelixHistoryRecord) => record.toChain === value,
       dataIndex: 'toChain',
       render(chain: Network, record) {
         const amount = getReceivedAmountFromHelixRecord(record);
@@ -191,7 +207,7 @@ export default function History() {
           <div>
             <div className="mb-2 whitespace-nowrap text-xs">{format(startTime * 1000, DATE_TIME_FORMAT)}</div>
 
-            {result <= RecordStatus.pendingToClaim && <Pending record={record} />}
+            {result <= RecordStatus.pendingToClaim && <div className="text-helix-blue">{t('Pending')}</div>}
 
             {result === RecordStatus.success && <div className="text-helix-green">{t('Success')}</div>}
 
@@ -199,7 +215,7 @@ export default function History() {
               <div className="text-helix-blue">{t('Refund Processing')}</div>
             )}
 
-            {result === RecordStatus.refunded && <Refunded record={record} />}
+            {result === RecordStatus.refunded && <div className="text-helix-yellow">{t('Refunded')}</div>}
           </div>
         );
 
@@ -279,62 +295,67 @@ export default function History() {
           setPaginator(paginatorDefault);
         }}
         className="explorer-tabs"
-        // eslint-disable-next-line complexity
         items={['All', 'Pending', 'Success', 'Refunded'].map((label, index) => ({
           label: t(label),
           key: String(index),
-          children: (
-            <>
-              <Table
-                rowKey="id"
-                columns={columns}
-                dataSource={records}
-                size="small"
-                loading={loading}
-                onRow={(record) => ({
-                  onClick() {
-                    const category = record.bridge.split('-')[0] as BridgeCategory;
-
-                    if (category === 'helix') {
-                      const direction = getDirectionFromHelixRecord(record);
-
-                      if (direction) {
-                        const bridge = getBridge(direction, category);
-
-                        router.push({
-                          pathname: `${Path.records}/${category.toLowerCase()}/${bridge.name}/${record.id}`,
-                        });
-                      } else {
-                        message.error(`Page render failed, it may be a wrong record`);
-                      }
-                    } else {
-                      router.push({ pathname: `${Path.records}/${category.toLowerCase()}/${record.id}` });
-                    }
-                  },
-                })}
-                pagination={{
-                  pageSize: paginator.row,
-                  total,
-                  current: paginator.page + 1,
-                  size: 'default',
-                }}
-                onChange={({ current, pageSize: size }, _filters, _sorter, extra) => {
-                  const { action } = extra;
-
-                  // @see https://github.com/ant-design/ant-design/issues/38240
-                  if (action !== 'filter') {
-                    setPaginator({ page: (current ?? 1) - 1, row: size ?? paginatorDefault.row });
-                  }
-                }}
-                rowClassName={() => {
-                  return 'cursor-pointer';
-                }}
-                className="explorer-table"
-              />
-            </>
-          ),
+          children: <></>,
         }))}
       ></Tabs>
+
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={records}
+        size="small"
+        loading={loading}
+        onRow={(record) => ({
+          onClick() {
+            const category = record.bridge.split('-')[0] as BridgeCategory;
+
+            if (category === 'helix') {
+              const direction = getDirectionFromHelixRecord(record);
+
+              if (direction) {
+                const bridge = getBridge(direction, category);
+
+                router.push({
+                  pathname: `${Path.records}/${category.toLowerCase()}/${bridge.name}/${record.id}`,
+                });
+              } else {
+                message.error(`Page render failed, it may be a wrong record`);
+              }
+            } else {
+              router.push({ pathname: `${Path.records}/${category.toLowerCase()}/${record.id}` });
+            }
+          },
+        })}
+        pagination={{
+          pageSize: paginator.row,
+          total,
+          current: paginator.page + 1,
+          size: 'default',
+        }}
+        // eslint-disable-next-line complexity
+        onChange={({ current, pageSize: size }, filters, _sorter, extra) => {
+          const { action } = extra;
+
+          // @see https://github.com/ant-design/ant-design/issues/38240
+          if (action !== 'filter') {
+            setPaginator({ page: (current ?? 1) - 1, row: size ?? paginatorDefault.row });
+          } else {
+            const { fromChain, toChain } = filters as {
+              fromChain: Network[] | null;
+              toChain: Network[] | null;
+            };
+
+            setChainFilters({ fromChains: fromChain ?? undefined, toChains: toChain ?? undefined });
+          }
+        }}
+        rowClassName={() => {
+          return 'cursor-pointer';
+        }}
+        className="explorer-table"
+      />
     </>
   );
 }
