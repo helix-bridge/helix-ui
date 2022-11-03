@@ -11,7 +11,8 @@ export type StorageInfo = HashInfo & {
   config?: Partial<{ [key in Network]: ChainConfig }>;
   custom?: Network[];
   hideWarning?: boolean;
-  activeAccount?: string;
+  activeMetamaskAccount?: string;
+  activePolkadotAccount?: string;
   activeWallet?: {
     chain?: Network;
     wallet?: SupportedWallet;
