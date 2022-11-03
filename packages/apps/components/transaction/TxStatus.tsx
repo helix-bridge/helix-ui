@@ -1,4 +1,5 @@
 import { ReloadOutlined } from '@ant-design/icons';
+import Countdown from 'antd/lib/statistic/Countdown';
 import { isAfter } from 'date-fns';
 import { i18n, Trans } from 'next-i18next';
 import { useMemo } from 'react';
@@ -17,7 +18,7 @@ export function TxStatus({ record }: { record: HelixHistoryRecord | null }) {
   const state = record?.result ?? RecordStatus.pending;
   const estimateMin = 5;
   const isTimeout = useMemo(
-    () => record?.startTime && isAfter(new Date(), new Date(record.startTime * 1000 + estimateMin * 3600 * 1000)),
+    () => record?.startTime && isAfter(new Date(), new Date(record.startTime * 1000 + estimateMin * 60 * 1000)),
     [record?.startTime]
   );
 
@@ -49,7 +50,10 @@ export function TxStatus({ record }: { record: HelixHistoryRecord | null }) {
                 </Trans>
               </span>
             ) : (
-              <span>{t('Estimated to wait 5 minutes ...')}</span>
+              <Trans i18nKey="estimateCutdown" i18n={i18n?.use(initReactI18next)}>
+                Estimated to wait
+                <Countdown value={(record ? record.startTime * 1000 : Date.now()) + estimateMin * 60 * 1000} />
+              </Trans>
             )}
           </div>
         )}
