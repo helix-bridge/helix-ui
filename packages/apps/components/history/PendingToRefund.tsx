@@ -68,8 +68,9 @@ function CBrideRefund({ record, onSuccess }: RefundComponentProps) {
       message.error('Can not find the correct transfer direction from record!');
       return null;
     }
+    const config = getBridge(direction, 'cBridge');
 
-    return getBridge(direction, 'cBridge') as CBridgeBridge;
+    return bridgeFactory(config) as CBridgeBridge;
   }, [record]);
 
   if (reason === CBridgeRecordStatus[CBridgeRecordStatus.refundToBeConfirmed]) {
