@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { CSSProperties } from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { BridgeCategory, ChainConfig, Social } from 'shared/model';
+import { useITranslation } from '../hooks';
 import { bridgeCategoryDisplay } from '../utils/bridge/bridge';
 import { chainConfigs } from '../utils/network';
 
@@ -89,30 +90,32 @@ const bridges: Bridge[] = [
     supportChains: getSupportChains('XCM'),
     description: {
       security: 'Trust-less',
-      tech: 'XCVM',
+      tech: 'Light Client & Relays',
       developer: 'Polkadot',
     },
   },
 ];
 
 function Page() {
+  const { t } = useITranslation();
+
   return (
     <div>
       <div className="2xl:mb-24 lg:mb-8">
         <h3 style={h3Style}>Helix</h3>
-        <h3 style={h3Style}>Aggregators of</h3>
-        <h3 style={h3Style}>strictly selected bridges</h3>
+        <h3 style={h3Style}>{t('Aggregator of')}</h3>
+        <h3 style={h3Style}>{t('strictly selected bridges')}</h3>
 
-        <p style={pStyle}>Providing a secure and convenient service for asset cross-chain users</p>
+        <p style={pStyle}>{t('Providing a secure and convenient service for asset cross-chain users')}</p>
       </div>
 
-      <h2 className="text-4xl font-bold">Supported Chains</h2>
+      <h2 className="text-4xl font-bold">{t('Supported Chains')}</h2>
 
       <div className="gap-4 lg:gap-6">
         <NetworkGraph />
       </div>
 
-      <h2 className="text-4xl font-bold mt-16 mb-8">Aggregated Bridges</h2>
+      <h2 className="text-4xl font-bold mt-16 mb-8">{t('Aggregated Bridges')}</h2>
 
       <div className={`grid grid-cols-3 gap-8`}>
         {bridges.map((bridge) => (

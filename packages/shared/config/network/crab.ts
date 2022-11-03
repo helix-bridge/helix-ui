@@ -28,6 +28,7 @@ export const crabConfig: PolkadotChainConfig = {
           category: 'helix',
           bridge: 'substrate-substrateParachain',
           partner: { name: 'crab-parachain', role: 'issuing', symbol: 'CRAB' },
+          deprecated: true,
         },
       ],
       type: 'native',
