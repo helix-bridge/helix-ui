@@ -39,7 +39,7 @@ function Component({ config, color = '', onChange = (num) => void num }: BestNum
         console.error(error);
       },
       complete() {
-        console.log('best number observer completed');
+        //
       },
     }),
     [onChange]

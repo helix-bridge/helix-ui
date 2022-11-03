@@ -215,11 +215,6 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
     return isMetamaskChainConsistent(this.getChainConfig(toChain)).pipe(
       switchMap(() => from(this.getFee(direction))),
       switchMap((fee) => {
-        console.log(
-          '%cbridge.ts line:217 fee.amount.toString()',
-          'color: white; background-color: #007acc;',
-          fee?.amount.toString()
-        );
         return genEthereumContractTxObs(
           contractAddress,
           (contract) => contract[method].apply(null, [...params, { value: fee?.amount.toString() }]),
