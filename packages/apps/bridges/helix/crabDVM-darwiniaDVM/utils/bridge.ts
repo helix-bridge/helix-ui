@@ -82,7 +82,7 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
 
     return genEthereumContractTxObs(
       bridge.config.contracts!.issuing,
-      (contract) => contract[method].apply(this.IssueComponentAlias, params),
+      (contract) => contract[method].apply(this, params),
       burnAbi
     );
   }

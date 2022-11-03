@@ -6,6 +6,7 @@ export const optimismConfig: EthereumChainConfig = {
     chainName: 'Optimism',
     nativeCurrency: {
       decimals: 18,
+      symbol: 'ETH',
     },
     rpcUrls: ['https://mainnet.optimism.io/'],
   },

@@ -6,6 +6,7 @@ export const astarConfig: EthereumChainConfig = {
     chainName: 'Astar',
     nativeCurrency: {
       decimals: 18,
+      symbol: 'ASTAR',
     },
     rpcUrls: ['https://astar.api.onfinality.io/public'],
   },

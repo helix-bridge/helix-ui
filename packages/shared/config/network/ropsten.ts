@@ -6,6 +6,7 @@ export const ropstenConfig: EthereumChainConfig = {
     chainName: '',
     nativeCurrency: {
       decimals: 18,
+      symbol: 'RopstenETH',
     },
     rpcUrls: [],
   },

@@ -6,6 +6,7 @@ export const bscConfig: EthereumChainConfig = {
     chainName: 'bsc',
     nativeCurrency: {
       decimals: 18,
+      symbol: 'BNB',
     },
     rpcUrls: ['https://github.com/bsc-chain'],
   },
