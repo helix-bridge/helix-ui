@@ -10,7 +10,7 @@ export function getBridge<T extends BridgeConfig>(
   category?: BridgeCategory
 ): BridgeBase<T> {
   const { from, to } = direction;
-  const overviews = from.cross.filter((item) => item.partner.name === to.host);
+  const overviews = from.cross.filter((item) => item.partner.name === to.host && item.partner.symbol === to.symbol);
   let overview: CrossOverview | undefined = overviews[0];
 
   if (overviews.length > 1) {
