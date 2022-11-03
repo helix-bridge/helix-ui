@@ -23,6 +23,7 @@ export const crabParachainConfig: ParachainChainConfig = {
           category: 'helix',
           bridge: 'substrate-substrateParachain',
           partner: { name: 'crab', role: 'backing', symbol: 'CRAB' },
+          deprecated: true,
         },
         {
           category: 'XCM',
