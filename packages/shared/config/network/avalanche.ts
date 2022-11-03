@@ -6,6 +6,7 @@ export const avalancheConfig: EthereumChainConfig = {
     chainName: 'Avalanche',
     nativeCurrency: {
       decimals: 18,
+      symbol: 'AVAX',
     },
     rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
   },

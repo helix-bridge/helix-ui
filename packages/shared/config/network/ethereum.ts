@@ -6,6 +6,7 @@ export const ethereumConfig: EthereumChainConfig = {
     chainName: '',
     nativeCurrency: {
       decimals: 18,
+      symbol: 'ETH',
     },
     rpcUrls: [],
   },

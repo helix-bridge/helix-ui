@@ -6,6 +6,7 @@ export const arbitrumConfig: EthereumChainConfig = {
     chainName: 'Arbitrum',
     nativeCurrency: {
       decimals: 18,
+      symbol: 'ETH',
     },
     rpcUrls: ['https://arb1.arbitrum.io/rpc'],
   },

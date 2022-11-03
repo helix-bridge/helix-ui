@@ -153,7 +153,7 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
 
   withdraw(record: HelixHistoryRecord): Observable<Tx> {
     const request = new GetTransferStatusRequest();
-    const { id, fromChain, toChain, sender } = record;
+    const { id, fromChain, toChain } = record;
     const transferId = last(id.split('-')) as string;
     const { contracts } = this.config;
     const contractAddress = this.isIssue(fromChain, toChain) ? contracts?.backing : contracts?.issuing;
@@ -181,7 +181,7 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
 
         return genEthereumContractTxObs(
           contractAddress as string,
-          (contract) => contract.withdraw(wd, sigs, signers, powers, { from: sender }),
+          (contract) => contract.withdraw(wd, sigs, signers, powers),
           transferAbi
         );
       })

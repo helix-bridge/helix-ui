@@ -79,10 +79,9 @@ export function remove0x(text: string): string {
   return text;
 }
 
-// eslint-disable-next-line complexity
 export function revertAccount(account: string, config: ChainConfig): string {
-  if (isPolkadotNetwork(config.name) || config?.wallets.includes('polkadot')) {
-    return convertToSS58(account, (<PolkadotChainConfig>config).ss58Prefix);
+  if (isPolkadotNetwork(config.name)) {
+    return convertToSS58(account, (config as PolkadotChainConfig).ss58Prefix);
   }
 
   if (isDVMNetwork(config.name) && account.startsWith('0x64766d3a00000000000000')) {

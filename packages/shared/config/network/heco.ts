@@ -6,6 +6,7 @@ export const hecoConfig: EthereumChainConfig = {
     chainName: 'heco-mainnet',
     nativeCurrency: {
       decimals: 18,
+      symbol: 'HT',
     },
     rpcUrls: ['https://http-mainnet.hecochain.com'],
   },

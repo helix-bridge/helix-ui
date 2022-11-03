@@ -6,6 +6,7 @@ export const goerliConfig: EthereumChainConfig = {
     chainName: '',
     nativeCurrency: {
       decimals: 18,
+      symbol: 'GoerliETH',
     },
     rpcUrls: [],
   },

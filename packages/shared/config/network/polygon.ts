@@ -6,6 +6,7 @@ export const polygonConfig: EthereumChainConfig = {
     chainName: 'Polygon',
     nativeCurrency: {
       decimals: 18,
+      symbol: 'MATIC',
     },
     rpcUrls: ['https://polygon-rpc.com/'],
   },
