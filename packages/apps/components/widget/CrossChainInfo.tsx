@@ -124,7 +124,7 @@ export function CrossChainInfo({
           <span>{t('Estimated Arrival Time')}</span>
 
           <div className="flex items-center gap-2">
-            <span>{t('{{count}} Minutes', { count: 15 })}</span>
+            <span>{t('{{estimate}} Minutes', { estimate: bridge.category === 'cBridge' ? '5-20' : '1-3' })}</span>
           </div>
         </div>
 
