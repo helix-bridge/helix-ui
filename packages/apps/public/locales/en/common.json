@@ -165,7 +165,7 @@
   "transactions": "transactions",
   "txTimeout": "It seems to be taking longer than usual. <1>Contact us</1> for support.",
   "viewTransactionHistory": "You can track the transfer progress in the <1>transaction history</1>, it may take a few seconds.",
-  "{{estimate}} Minutes": "{{count}} Minutes",
+  "{{estimate}} Minutes": "{{estimate}} Minutes",
   "{{network}} Network Address": "{{network}} Network Address",
   "{{token}} daily limit reached!": "{{token}} daily limit reached!",
   "{{year}} Developed by Helix Team": "{{year}} Developed by Helix Team"
