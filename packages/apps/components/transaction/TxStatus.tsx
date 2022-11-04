@@ -16,10 +16,11 @@ import { TransferDescription } from './TransferDescription';
 export function TxStatus({ record }: { record: HelixHistoryRecord | null }) {
   const { t } = useITranslation();
   const state = record?.result ?? RecordStatus.pending;
-  const estimateMin = 5;
+  // eslint-disable-next-line no-magic-numbers
+  const estimateMin = record?.bridge.split('-')[0] === 'cBridge' ? 20 : 3;
   const isTimeout = useMemo(
     () => record?.startTime && isAfter(new Date(), new Date(record.startTime * 1000 + estimateMin * 60 * 1000)),
-    [record?.startTime]
+    [estimateMin, record?.startTime]
   );
 
   return (
