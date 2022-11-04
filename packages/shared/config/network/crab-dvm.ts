@@ -47,7 +47,7 @@ export const crabDVMConfig: DVMChainConfig = {
       ],
       type: 'native',
       host: 'crab-dvm',
-      logo: 'token-wcrab.svg',
+      logo: 'token-crab.svg',
       symbol: 'CRAB',
       address: '',
     },
