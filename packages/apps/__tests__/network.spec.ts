@@ -178,11 +178,11 @@ describe('network utils', () => {
     expect(overview).toEqual(undefined);
   });
 
-  it('pangolin-dvm contains 3 leafs and substrate-substrateDVM deprecated', () => {
+  it('pangolin-dvm contains 4 leafs and substrate-substrateDVM deprecated', () => {
     const group = data.find((item) => item[0] === 'pangolin-dvm');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['pangolin', 'pangoro-dvm', 'pangoro']);
+    expect(group![1]).toEqual(['pangolin-parachain', 'pangolin', 'pangoro-dvm', 'pangoro']);
 
     const overview = getOverview('pangolin-dvm', 'pangoro');
 
