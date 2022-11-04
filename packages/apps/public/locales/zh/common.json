@@ -165,7 +165,7 @@
   "transactions": "交易",
   "txTimeout": "交易超时，<1>联系我们</1>",
   "viewTransactionHistory": "交易已发出，请在<1>交易记录</1>中查看，可能需要等候几十秒",
-  "{{count}} Minutes": "{{count}} 分钟",
+  "{{estimate}} Minutes": "{{estimate}} 分钟",
   "{{network}} Network Address": "{{network}} 网络地址",
   "{{token}} daily limit reached!": "{{token}} 达到日限额!",
   "{{year}} Developed by Helix Team": "{{year}} 由 Helix 团队开发"
