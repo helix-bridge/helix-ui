@@ -63,7 +63,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
 
   async getFee(
     direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
-  ): Promise<TokenWithAmount | null> {
+  ): Promise<TokenWithAmount> {
     const { from, to } = direction;
     const token = omit(direction.from, ['meta', 'amount']);
 

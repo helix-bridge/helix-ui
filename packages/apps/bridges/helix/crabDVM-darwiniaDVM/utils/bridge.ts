@@ -89,7 +89,7 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
 
   async getFee(
     direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
-  ): Promise<TokenWithAmount | null> {
+  ): Promise<TokenWithAmount> {
     const {
       from: { meta: departure },
       to: { meta: arrival },

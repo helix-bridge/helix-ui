@@ -114,7 +114,7 @@ export class DarwiniaDVMCrabDVMBridge extends Bridge<DarwiniaDVMCrabDVMBridgeCon
 
   async getFee(
     direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>
-  ): Promise<TokenWithAmount | null> {
+  ): Promise<TokenWithAmount> {
     const {
       from: { meta: departure },
       to: { meta: arrival },

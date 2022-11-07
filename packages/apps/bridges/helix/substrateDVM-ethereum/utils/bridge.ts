@@ -132,7 +132,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
       CrossToken<DVMChainConfig | EthereumChainConfig>
     >,
     useWallerProvider = false
-  ): Promise<TokenWithAmount | null> {
+  ): Promise<TokenWithAmount> {
     const {
       from: { meta: departure },
       to: { meta: arrival },
