@@ -272,7 +272,7 @@ function createRecord() {
 
                 const bridge = getBridge<DarwiniaDVMCrabDVMBridgeConfig | CrabDVMDarwiniaDVMBridgeConfig>(direction);
                 const isIssuing = bridge.isIssue(departure, arrival);
-                const fromToken = getTokenConfigFromHelixRecord(record);
+                const fromToken = getTokenConfigFromHelixRecord(record, 'sendToken');
                 const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
                 const sendAmount = getSentAmountFromHelixRecord(record);
                 const recvAmount = getReceivedAmountFromHelixRecord(record);

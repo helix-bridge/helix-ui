@@ -7,7 +7,7 @@ import { getOriginChainConfig } from '../network';
 
 export function getTokenConfigFromHelixRecord(
   record: HelixHistoryRecord,
-  key: keyof Pick<HelixHistoryRecord, 'feeToken' | 'sendToken' | 'recvToken'> = 'sendToken'
+  key: keyof Pick<HelixHistoryRecord, 'feeToken' | 'sendToken' | 'recvToken'>
 ): TokenWithBridgesInfo | undefined {
   const chain = getOriginChainConfig(record[key === 'recvToken' ? 'toChain' : 'fromChain']);
   const symbol = record[key];
@@ -35,7 +35,7 @@ export function getTokenConfigFromHelixRecord(
 
 export function getReceivedAmountFromHelixRecord(record: HelixHistoryRecord) {
   const { result } = record;
-  const fromToken = getTokenConfigFromHelixRecord(record)!;
+  const fromToken = getTokenConfigFromHelixRecord(record, 'sendToken')!;
   const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
 
   let decimals = toToken?.decimals;

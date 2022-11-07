@@ -31,7 +31,7 @@ const Page: NextPage<{
 
     const departure = getChainConfig(record.fromChain);
     const arrival = getChainConfig(record.toChain);
-    const fromToken = getTokenConfigFromHelixRecord(record);
+    const fromToken = getTokenConfigFromHelixRecord(record, 'sendToken');
     const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
     const sendAmount = getSentAmountFromHelixRecord(record);
     const recvAmount = getReceivedAmountFromHelixRecord(record);

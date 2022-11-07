@@ -90,7 +90,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
   refund(record: HelixHistoryRecord): Observable<Tx> {
     const { sender, sendTokenAddress, sendAmount, fromChain, toChain } = record;
     const id = last(record.id.split('-'));
-    const sendToken = this.getTokenConfigFromHelixRecord(record);
+    const sendToken = this.getTokenConfigFromHelixRecord(record, 'sendToken');
 
     const { contractAddress, abi, method, departure, arrival } = this.isIssue(fromChain, toChain)
       ? {

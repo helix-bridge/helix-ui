@@ -191,7 +191,7 @@ export abstract class Bridge<
 
   getTokenConfigFromHelixRecord(
     record: HelixHistoryRecord,
-    key: keyof Pick<HelixHistoryRecord, 'feeToken' | 'sendToken' | 'recvToken'> = 'sendToken'
+    key: keyof Pick<HelixHistoryRecord, 'feeToken' | 'sendToken' | 'recvToken'>
   ): TokenWithBridgesInfo {
     const chainName = record[key === 'recvToken' ? 'toChain' : 'fromChain'];
     const chain = this.getChainConfig(chainName);

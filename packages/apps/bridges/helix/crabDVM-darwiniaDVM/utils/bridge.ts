@@ -176,7 +176,7 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
 
   refund(record: HelixHistoryRecord): Observable<Tx> {
     const { sender, sendTokenAddress, sendAmount, fromChain, toChain } = record;
-    const sendToken = this.getTokenConfigFromHelixRecord(record);
+    const sendToken = this.getTokenConfigFromHelixRecord(record, 'sendToken');
     const recvToken = this.getTokenConfigFromHelixRecord(record, 'recvToken');
 
     const { contractAddress, abi, method, departure, arrival } = this.isIssue(fromChain, toChain)
