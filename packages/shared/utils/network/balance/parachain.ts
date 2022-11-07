@@ -8,7 +8,7 @@ import { entrance } from '../../connection';
  * @see https://github.com/darwinia-network/wormhole-ui/issues/142
  */
 export async function getBalance(fromToken: TokenInfoWithMeta<ChainConfig>, account: string): Promise<BN> {
-  const api = entrance.polkadot.getInstance(fromToken.meta.provider.https);
+  const api = entrance.polkadot.getInstance(fromToken.meta.provider.wss);
 
   const darwiniaParachain: ParachainNetwork[] = ['crab-parachain', 'pangolin-parachain'];
 
