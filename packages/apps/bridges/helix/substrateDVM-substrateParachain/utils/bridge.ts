@@ -1,16 +1,29 @@
 import type { Codec } from '@polkadot/types-codec/types';
 import { BN, hexToU8a } from '@polkadot/util';
+import { message } from 'antd';
 import { Contract } from 'ethers';
 import last from 'lodash/last';
 import omit from 'lodash/omit';
 import upperFirst from 'lodash/upperFirst';
-import type { Observable } from 'rxjs';
-import { ChainConfig, CrossChainDirection, CrossToken, Tx } from 'shared/model';
-import { entrance, waitUntilConnected } from 'shared/utils/connection';
+import type { Observable } from 'rxjs/internal/Observable';
+import { EMPTY } from 'rxjs/internal/observable/empty';
+import { from as fromRx } from 'rxjs/internal/observable/from';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import {
+  ChainConfig,
+  CrossChainDirection,
+  CrossToken,
+  HelixHistoryRecord,
+  ParachainChainConfig,
+  Tx,
+} from 'shared/model';
+import { entrance, isMetamaskChainConsistent, waitUntilConnected } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
+import { getOriginChainConfig } from '../../../../utils/network';
+import { getDirectionFromHelixRecord } from '../../../../utils/record';
 import backingAbi from '../config/abi.json';
 import { IssuingPayload, RedeemPayload, SubstrateDVMSubstrateParachainBridgeConfig } from '../model';
 
@@ -24,7 +37,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     const { sender, recipient, direction } = payload;
     const { from: departure, to } = direction;
-    const weight = 6e8;
+    const WEIGHT = 6e8;
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
 
     return genEthereumContractTxObs(
@@ -32,7 +45,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
       (contract) =>
         contract.lockAndRemoteIssuing(
           to.meta.specVersion.toString(),
-          weight,
+          WEIGHT,
           convertToDvm(recipient),
           amount.toString(),
           { from: sender, value: amount.add(fee).toString() }
@@ -59,6 +72,85 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
     );
 
     return signAndSendExtrinsic(api, sender, extrinsic);
+  }
+
+  refund(record: HelixHistoryRecord): Observable<Tx> {
+    const { fromChain, toChain, id } = record;
+    const nonce = this.trimLaneId(id);
+    const contract = new Contract(this.config.contracts.backing, backingAbi);
+
+    return fromRx(contract.minReservedLockedMessageNonce() as Promise<number>).pipe(
+      switchMap((msgNonce) => {
+        console.log('%cbridge.ts line:75 msgNonce', 'color: white; background-color: #007acc;', msgNonce);
+        const isLocal = +nonce < msgNonce;
+
+        if (this.isIssue(fromChain, toChain)) {
+          return isLocal ? this.localUnlockFailure(record) : this.remoteUnlockFailure(record);
+        } else {
+          return isLocal ? this.localIssuingFailure(record) : this.remoteIssuingFailure(record);
+        }
+      })
+    );
+  }
+
+  private localUnlockFailure(record: HelixHistoryRecord) {
+    const nonce = this.trimLaneId(record.id);
+
+    return isMetamaskChainConsistent(getOriginChainConfig(record.fromChain)).pipe(
+      switchMap(() =>
+        genEthereumContractTxObs(
+          this.config.contracts.backing,
+          (con) => con.handleUnlockFailureLocal(nonce),
+          backingAbi
+        )
+      )
+    );
+  }
+
+  private remoteUnlockFailure(record: HelixHistoryRecord) {
+    const toConfig = getOriginChainConfig(record.toChain) as ParachainChainConfig;
+    const api = entrance.polkadot.getInstance(toConfig.provider.wss);
+    const section = `from${upperFirst(toConfig.name.split('-')[0])}Issuing`;
+    const WEIGHT = 400e8;
+    const gaslimit = 1e6;
+    const dir = getDirectionFromHelixRecord(record);
+    const nonce = this.trimLaneId(record.id);
+
+    if (!dir) {
+      message.error('Can not revert the transfer from record, processing terminated!');
+      return EMPTY;
+    }
+
+    const extrinsic = this.getFee(dir).then((fee) =>
+      api.tx[section].remoteUnlockFailure(String(toConfig.specVersion), WEIGHT, gaslimit, nonce, fee.amount.toString())
+    );
+
+    return fromRx(extrinsic).pipe(switchMap((ext) => signAndSendExtrinsic(api, record.sender, ext)));
+  }
+
+  private localIssuingFailure(record: HelixHistoryRecord) {
+    const fromConfig = getOriginChainConfig(record.fromChain) as ParachainChainConfig;
+    const api = entrance.polkadot.getInstance(fromConfig.provider.wss);
+    const section = `from${upperFirst(fromConfig.name.split('-')[0])}Issuing`;
+    const nonce = this.trimLaneId(record.id);
+
+    return signAndSendExtrinsic(api, record.sender, api.tx[section].handleIssuingFailureLocal(nonce));
+  }
+
+  private remoteIssuingFailure(record: HelixHistoryRecord) {
+    const nonce = this.trimLaneId(record.id);
+    const toChain = getOriginChainConfig(record.toChain) as ParachainChainConfig;
+    const WEIGHT = 6e8;
+
+    return isMetamaskChainConsistent(toChain).pipe(
+      switchMap(() =>
+        genEthereumContractTxObs(
+          this.config.contracts.backing,
+          (con) => con.remoteIssuingFailure(String(toChain.specVersion), WEIGHT, nonce),
+          backingAbi
+        )
+      )
+    );
   }
 
   async getFee(
