@@ -46,7 +46,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
     const { from: departure, to } = direction;
     const api = entrance.polkadot.getInstance(direction.from.meta.provider.wss);
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
-    const WEIGHT = 10e8;
+    const WEIGHT = 400e8;
     const gaslimit = 1e6;
     const section = `from${upperFirst(to.meta.name.split('-')[0])}Issuing`;
     const extrinsic = api.tx[section].burnAndRemoteUnlock(
