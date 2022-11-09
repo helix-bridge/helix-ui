@@ -97,6 +97,8 @@ const walletConnections: {
 } = {
   metamask: connectMetamask,
   polkadot: connectPolkadot,
+  subwallet: connectPolkadot,
+  talisman: connectPolkadot,
 };
 
 export const connect: ConnectFn<Connection> = (chain, wallet) => {
