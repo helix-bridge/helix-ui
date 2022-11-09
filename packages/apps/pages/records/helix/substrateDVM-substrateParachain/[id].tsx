@@ -4,12 +4,10 @@ import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord } from 'shared/model';
 import { revertAccount } from 'shared/utils/helper/address';
 import { getBridge } from 'utils/bridge';
-import { getChainConfig } from 'utils/network';
 import {
   getDirectionFromHelixRecord,
   getReceivedAmountFromHelixRecord,
   getSentAmountFromHelixRecord,
-  getTokenConfigFromHelixRecord,
 } from 'utils/record';
 import { CrabDVMDarwiniaDVMBridgeConfig } from '../../../../bridges/helix/crabDVM-darwiniaDVM/model';
 import { DarwiniaDVMCrabDVMBridgeConfig } from '../../../../bridges/helix/darwiniaDVM-crabDVM/model';
@@ -34,8 +32,6 @@ const Page: NextPage<{
       return [];
     }
 
-    const departure = getChainConfig(record.fromChain);
-    const arrival = getChainConfig(record.toChain);
     const direction = getDirectionFromHelixRecord(record);
 
     if (!direction) {
@@ -43,69 +39,46 @@ const Page: NextPage<{
     }
 
     const bridge = getBridge<DarwiniaDVMCrabDVMBridgeConfig | CrabDVMDarwiniaDVMBridgeConfig>(direction);
-    const isIssuing = bridge.isIssue(departure, arrival);
-    const fromToken = getTokenConfigFromHelixRecord(record, 'sendToken');
-    const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
+    const { from: fromToken, to: toToken } = direction;
+    const departure = fromToken.meta;
+    const arrival = toToken.meta;
+    const isBack = bridge.isIssue(departure, arrival);
     const sendAmount = getSentAmountFromHelixRecord(record);
     const recvAmount = getReceivedAmountFromHelixRecord(record);
-
     const { backing } = bridge.config.contracts;
+    const sender = revertAccount(record.sender, departure);
+    const recipient = revertAccount(record.recipient, arrival);
+    const issuing = ZERO_ADDRESS;
 
-    // issuing steps
-    const issueStart: TransferStep = {
+    const start: TransferStep = {
       chain: departure,
-      sender: revertAccount(record.sender, departure),
-      recipient: backing,
-      token: fromToken,
-      amount: sendAmount,
-    };
-    const issueSuccess: TransferStep = {
-      chain: arrival,
-      sender: ZERO_ADDRESS,
-      recipient: revertAccount(record.sender, arrival),
-      token: toToken,
-      amount: recvAmount,
-    };
-    const issueFail: TransferStep = {
-      chain: departure,
-      sender: backing,
-      recipient: revertAccount(record.sender, departure),
+      sender,
+      recipient: isBack ? backing : issuing,
       token: fromToken,
       amount: sendAmount,
     };
 
-    // redeem steps
-    const redeemStart: TransferStep = {
-      chain: departure,
-      sender: revertAccount(record.sender, departure),
-      recipient: ZERO_ADDRESS,
-      token: fromToken,
-      amount: sendAmount,
-    };
-    const redeemSuccess: TransferStep = {
+    const success: TransferStep = {
       chain: arrival,
-      sender: backing,
-      recipient: revertAccount(record.recipient, arrival),
+      sender: isBack ? issuing : backing,
+      recipient,
       token: toToken,
       amount: recvAmount,
     };
-    const redeemFail: TransferStep = {
+
+    const fail: TransferStep = {
       chain: departure,
-      sender: ZERO_ADDRESS,
-      recipient: revertAccount(record.sender, departure),
+      sender: isBack ? backing : issuing,
+      recipient: sender,
       token: fromToken,
       amount: sendAmount,
     };
 
     if (record.result === RecordStatus.pending) {
-      return isIssuing ? [issueStart] : [redeemStart];
+      return [start];
     }
 
-    const issuingTransfer = [issueStart, record.result === RecordStatus.success ? issueSuccess : issueFail];
-
-    const redeemTransfer = [redeemStart, record.result === RecordStatus.success ? redeemSuccess : redeemFail];
-
-    return isIssuing ? issuingTransfer : redeemTransfer;
+    return [start, record.result === RecordStatus.success ? success : fail];
   }, [record]);
 
   return record && <Detail record={record} transfers={transfers} />;

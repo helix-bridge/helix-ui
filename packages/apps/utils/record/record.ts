@@ -70,11 +70,11 @@ export function getSentAmountFromHelixRecord(record: HelixHistoryRecord) {
 }
 
 export function getDirectionFromHelixRecord(record: HelixHistoryRecord): CrossChainDirection | null {
-  const { fromChain, toChain, sendToken, recvToken, sendAmount, recvAmount } = record;
+  const { fromChain, toChain, sendAmount, recvAmount } = record;
   const fromConfig = getOriginChainConfig(fromChain);
   const toConfig = getOriginChainConfig(toChain);
-  const fromToken = fromConfig.tokens.find((item) => item.symbol.toLowerCase() === sendToken.toLowerCase());
-  const toToken = toConfig.tokens.find((item) => item.symbol.toLowerCase() === recvToken.toLowerCase());
+  const fromToken = getTokenConfigFromHelixRecord(record, 'sendToken');
+  const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
 
   if (fromToken && toToken) {
     return {
