@@ -1,7 +1,7 @@
 import type { Codec } from '@polkadot/types-codec/types';
 import { BN, hexToU8a } from '@polkadot/util';
 import { message } from 'antd';
-import { Contract } from 'ethers';
+import { BigNumber, Contract } from 'ethers/lib/ethers';
 import last from 'lodash/last';
 import omit from 'lodash/omit';
 import upperFirst from 'lodash/upperFirst';
@@ -75,32 +75,42 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
   }
 
   refund(record: HelixHistoryRecord): Observable<Tx> {
-    const { fromChain, toChain, id } = record;
-    const nonce = this.trimLaneId(id);
-    const contract = new Contract(this.config.contracts.backing, backingAbi);
+    const { fromChain, toChain, nonce } = record;
+    const config = getOriginChainConfig(fromChain);
 
-    return fromRx(contract.minReservedLockedMessageNonce() as Promise<number>).pipe(
-      switchMap((msgNonce) => {
-        console.log('%cbridge.ts line:75 msgNonce', 'color: white; background-color: #007acc;', msgNonce);
-        const isLocal = +nonce < msgNonce;
+    if (this.isIssue(fromChain, toChain)) {
+      const contract = new Contract(
+        this.config.contracts.backing,
+        backingAbi,
+        entrance.web3.getInstance(config.provider.https)
+      );
 
-        if (this.isIssue(fromChain, toChain)) {
-          return isLocal ? this.localUnlockFailure(record) : this.remoteUnlockFailure(record);
-        } else {
-          return isLocal ? this.localIssuingFailure(record) : this.remoteIssuingFailure(record);
-        }
-      })
-    );
+      return fromRx(contract.minReservedLockedMessageNonce() as Promise<BigNumber>).pipe(
+        switchMap((msgNonce) =>
+          Number(nonce) < msgNonce.toNumber() ? this.localUnlockFailure(record) : this.remoteUnlockFailure(record)
+        )
+      );
+    } else {
+      const api = entrance.polkadot.getInstance(config.provider.wss);
+      const section = `from${upperFirst(config.name.split('-')[0])}Issuing`;
+
+      return fromRx(waitUntilConnected(api)).pipe(
+        switchMap(() => api.query[section].minReservedBurnNonce()),
+        switchMap((res: Codec) =>
+          Number(nonce) < Number(res.toHuman()) ? this.localIssuingFailure(record) : this.remoteIssuingFailure(record)
+        )
+      );
+    }
   }
 
   private localUnlockFailure(record: HelixHistoryRecord) {
-    const nonce = this.trimLaneId(record.id);
+    const { fromChain, nonce } = record;
 
-    return isMetamaskChainConsistent(getOriginChainConfig(record.fromChain)).pipe(
+    return isMetamaskChainConsistent(getOriginChainConfig(fromChain)).pipe(
       switchMap(() =>
         genEthereumContractTxObs(
           this.config.contracts.backing,
-          (con) => con.handleUnlockFailureLocal(nonce),
+          (contract) => contract.handleUnlockFailureLocal(nonce),
           backingAbi
         )
       )
@@ -114,7 +124,6 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
     const WEIGHT = 400e8;
     const gaslimit = 1e6;
     const dir = getDirectionFromHelixRecord(record);
-    const nonce = this.trimLaneId(record.id);
 
     if (!dir) {
       message.error('Can not revert the transfer from record, processing terminated!');
@@ -122,7 +131,13 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
     }
 
     const extrinsic = this.getFee(dir).then((fee) =>
-      api.tx[section].remoteUnlockFailure(String(toConfig.specVersion), WEIGHT, gaslimit, nonce, fee.amount.toString())
+      api.tx[section].remoteUnlockFailure(
+        String(toConfig.specVersion),
+        WEIGHT,
+        gaslimit,
+        record.nonce,
+        fee.amount.toString()
+      )
     );
 
     return fromRx(extrinsic).pipe(switchMap((ext) => signAndSendExtrinsic(api, record.sender, ext)));
@@ -132,21 +147,32 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
     const fromConfig = getOriginChainConfig(record.fromChain) as ParachainChainConfig;
     const api = entrance.polkadot.getInstance(fromConfig.provider.wss);
     const section = `from${upperFirst(fromConfig.name.split('-')[0])}Issuing`;
-    const nonce = this.trimLaneId(record.id);
 
-    return signAndSendExtrinsic(api, record.sender, api.tx[section].handleIssuingFailureLocal(nonce));
+    return fromRx(waitUntilConnected(api)).pipe(
+      switchMap(() => signAndSendExtrinsic(api, record.sender, api.tx[section].handleIssuingFailureLocal(record.nonce)))
+    );
   }
 
   private remoteIssuingFailure(record: HelixHistoryRecord) {
-    const nonce = this.trimLaneId(record.id);
     const toChain = getOriginChainConfig(record.toChain) as ParachainChainConfig;
+    const fromChain = getOriginChainConfig(record.fromChain) as ParachainChainConfig;
     const WEIGHT = 6e8;
+    const dir = getDirectionFromHelixRecord(record);
+
+    if (!dir) {
+      message.error('Can not revert the transfer from record, processing terminated!');
+      return EMPTY;
+    }
 
     return isMetamaskChainConsistent(toChain).pipe(
-      switchMap(() =>
+      switchMap(() => this.getFee(dir)),
+      switchMap(({ amount: fee }) =>
         genEthereumContractTxObs(
           this.config.contracts.backing,
-          (con) => con.remoteIssuingFailure(String(toChain.specVersion), WEIGHT, nonce),
+          (contract) =>
+            contract.remoteIssuingFailure(String(fromChain.specVersion), WEIGHT, record.nonce, {
+              value: fee.add(new BN(record.sendAmount)).toString(),
+            }),
           backingAbi
         )
       )

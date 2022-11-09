@@ -23,7 +23,11 @@ export function useUpdatableRecord(id: string) {
       .pipe(
         switchMap(() => from(request())),
         map(({ data }) => data[gqlName(HISTORY_RECORD_BY_ID)]),
-        pollWhile<HelixHistoryRecord>(MIDDLE_DURATION, (res) => isMounted && res.result === RecordStatus.pending, 100),
+        pollWhile<HelixHistoryRecord>(
+          MIDDLE_DURATION,
+          (res) => isMounted && ![RecordStatus.success, RecordStatus.refunded].includes(res.result),
+          100
+        ),
         distinctUntilChanged((pre, cur) => isEqual(pre, cur))
       )
       .subscribe({
