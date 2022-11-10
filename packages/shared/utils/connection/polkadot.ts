@@ -9,8 +9,24 @@ import { distinctUntilKeyChanged } from 'rxjs/internal/operators/distinctUntilKe
 import { map } from 'rxjs/internal/operators/map';
 import { startWith } from 'rxjs/internal/operators/startWith';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { ConnectionStatus, PolkadotChainConfig, PolkadotChainSimpleToken, PolkadotConnection } from '../../model';
+import {
+  ConnectionStatus,
+  PolkadotChainConfig,
+  PolkadotChainSimpleToken,
+  PolkadotConnection,
+  SupportedWallet,
+} from '../../model';
 import { entrance } from './entrance';
+
+export type PolkadotExtension = Exclude<SupportedWallet, 'metamask'>;
+
+const walletToPropName: { [key in PolkadotExtension]: string } = {
+  polkadot: 'polkadot-js',
+  subwallet: 'subwallet-js',
+  talisman: 'talisman',
+};
+
+export const polkadotExtensions: PolkadotExtension[] = ['polkadot', 'subwallet', 'talisman'];
 
 export async function waitUntilConnected(api: ApiPromise): Promise<null> {
   await api.isReady;
@@ -42,15 +58,16 @@ export async function getPolkadotChainProperties(api: ApiPromise): Promise<Polka
   );
 }
 
-export async function isPolkadotInstalled(extension = 'apps'): Promise<boolean> {
-  const extensions = await import('@polkadot/extension-dapp').then(({ web3Enable }) =>
-    web3Enable(`'polkadot-js/${extension}`)
-  );
+export async function isPolkadotExtensionInstalled(wallet: SupportedWallet): Promise<boolean> {
+  const extensions = await import('@polkadot/extension-dapp').then(({ web3Enable }) => web3Enable('helix'));
 
-  return !!extensions.length;
+  return !!extensions.find((item) => item.name === walletToPropName[wallet as PolkadotExtension]);
 }
 
-export const getPolkadotConnection: (network: PolkadotChainConfig) => Observable<PolkadotConnection> = (network) => {
+export const getPolkadotExtensionConnection: (
+  network: PolkadotChainConfig,
+  wallet: PolkadotExtension
+) => Observable<PolkadotConnection> = (network, wallet) => {
   const bundle = import('@polkadot/extension-dapp').then(({ web3Enable, web3Accounts }) => ({
     web3Enable,
     web3Accounts,
@@ -58,14 +75,17 @@ export const getPolkadotConnection: (network: PolkadotChainConfig) => Observable
 
   const extensionObs = from(bundle).pipe(
     concatMap(({ web3Accounts, web3Enable }) =>
-      from(web3Enable('polkadot-js/apps')).pipe(
+      from(web3Enable('helix')).pipe(
         concatMap((extensions) =>
           from(web3Accounts()).pipe(
             map(
               (accounts) =>
                 ({
-                  accounts: !extensions.length && !accounts.length ? [] : accounts,
-                  type: 'polkadot',
+                  accounts:
+                    !extensions.length && !accounts.length
+                      ? []
+                      : accounts.filter((acc) => acc.meta.source === walletToPropName[wallet]),
+                  type: wallet,
                   status: 'pending',
                   chainId: network.name,
                 } as Exclude<PolkadotConnection, 'api'>)

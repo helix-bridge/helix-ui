@@ -16,10 +16,11 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { initReactI18next, useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
-import { darwiniaConfig, SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
+import { isDev } from 'shared/config/env';
+import { darwiniaConfig, pangolinConfig, SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
 import { ethereumConfig } from 'shared/config/network/ethereum';
 import { ConnectionStatus, EthereumChainConfig } from 'shared/model';
-import { entrance } from 'shared/utils/connection';
+import { entrance, polkadotExtensions } from 'shared/utils/connection';
 import { Path } from '../../../config';
 import abi from '../../../config/ethv1/abi.json';
 import claimSource from '../../../config/ethv1/airdrop2.json';
@@ -99,7 +100,7 @@ export default function ActiveAccount() {
               ></Badge>
             )}
 
-            {departureConnection.type === 'polkadot' && (
+            {polkadotExtensions.includes(departureConnection.type as unknown as never) && (
               <Dropdown
                 overlay={
                   <Menu
@@ -191,7 +192,7 @@ export default function ActiveAccount() {
           setIsAccountSelectOpen(false);
         }}
         title={
-          <div className="inline-flex items-center space-x-1">
+          <div className="inline-flex space-x-1">
             <span>{t('Select active account')}</span>
           </div>
         }
@@ -218,14 +219,13 @@ export default function ActiveAccount() {
                 connectDepartureNetwork(config ?? ethereumConfig);
               });
             }
-          } else if (wallet === 'polkadot') {
-            connectDepartureNetwork(departure.wallets.includes('polkadot') ? departure : darwiniaConfig);
           } else {
-            //
+            const config = isDev ? pangolinConfig : darwiniaConfig;
+            connectDepartureNetwork(departure.wallets.includes('polkadot') ? departure : config, wallet);
           }
         }}
         title={
-          <div className="inline-flex items-center space-x-1">
+          <div className="inline-flex space-x-1">
             <span>{t('Switch Wallet')}</span>
           </div>
         }

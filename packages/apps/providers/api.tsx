@@ -1,9 +1,12 @@
+import { Radio } from 'antd';
 import negate from 'lodash/negate';
 import { createContext, useCallback, useContext, useReducer, useState } from 'react';
+import { switchMap } from 'rxjs';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { iif } from 'rxjs/internal/observable/iif';
 import { of } from 'rxjs/internal/observable/of';
 import type { Subscription } from 'rxjs/internal/Subscription';
+import { Logo } from 'shared/components/widget/Logo';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { isDev } from 'shared/config/env';
 import {
@@ -16,11 +19,14 @@ import {
   NoNullFields,
   PolkadotChainConfig,
   PolkadotConnection,
+  SupportedWallet,
 } from 'shared/model';
 import { connect } from 'shared/utils/connection';
 import { convertToSS58 } from 'shared/utils/helper/address';
 import { updateStorage } from 'shared/utils/helper/storage';
 import { isEthereumNetwork } from 'shared/utils/network/network';
+import { applyModalObs } from 'shared/utils/tx';
+import { useITranslation } from '../hooks';
 
 interface StoreState {
   departureConnection: Connection;
@@ -98,8 +104,8 @@ function reducer(state: StoreState, action: Actions): StoreState {
 
 export type ApiCtx = StoreState & {
   connectAndUpdateDepartureNetwork: (network: ChainConfig) => void;
-  connectDepartureNetwork: (network: ChainConfig) => void;
-  connectArrivalNetwork: (network: ChainConfig) => void;
+  connectDepartureNetwork: (network: ChainConfig, wallet?: SupportedWallet) => void;
+  connectArrivalNetwork: (network: ChainConfig, wallet?: SupportedWallet) => void;
   disconnect: () => void;
   isConnecting: boolean;
   setDeparture: (network: ChainConfig) => void;
@@ -111,6 +117,7 @@ let dep$$: Subscription = EMPTY.subscribe();
 let arr$$: Subscription = EMPTY.subscribe();
 
 export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
+  const { t } = useITranslation();
   const [state, dispatch] = useReducer(reducer, initialState);
   const setDeparture = useCallback((payload: ChainConfig) => dispatch({ type: 'setDeparture', payload }), []);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
@@ -143,18 +150,56 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   );
 
   const getConnection = useCallback(
-    (chainConfig: ChainConfig, action: (payload: Connection) => void) => {
+    (chainConfig: ChainConfig, action: (payload: Connection) => void, wallet?: SupportedWallet) => {
       const isConnectToMetamask = isEthereumNetwork(chainConfig);
 
       const target = state.connections.find((item) => {
-        return isConnectToMetamask
-          ? (item as EthereumConnection).chainId === (chainConfig as EthereumChainConfig).ethereumChain.chainId
-          : (item as PolkadotConnection).chainId === chainConfig.name;
+        if (isConnectToMetamask) {
+          return (item as EthereumConnection).chainId === (chainConfig as EthereumChainConfig).ethereumChain.chainId;
+        } else {
+          return wallet && wallet !== 'polkadot'
+            ? item.type === wallet
+            : (item as PolkadotConnection).chainId === chainConfig.name;
+        }
       });
+
+      let selectedWallet = wallet ?? chainConfig.wallets[0];
 
       setIsConnecting(true);
 
-      return iif(() => isConnectionAvailable(target), of(target!), connect(chainConfig)).subscribe({
+      return iif(
+        () => isConnectionAvailable(target),
+        of(target!),
+        chainConfig.wallets.length > 1 && !wallet
+          ? applyModalObs({
+              title: (
+                <div className="inline-flex items-center space-x-1 mb-4">
+                  <span>{t('Select Wallet')}</span>
+                </div>
+              ),
+              content: (
+                <Radio.Group
+                  className="w-full"
+                  defaultValue={chainConfig.wallets[0]}
+                  onChange={(event) => {
+                    selectedWallet = event.target.value;
+                  }}
+                >
+                  {chainConfig.wallets.map((item) => (
+                    <Radio.Button
+                      value={item}
+                      key={item}
+                      className={`radio-list 'transition-all duration-300 hover:scale-105'`}
+                    >
+                      <Logo name={`${item}.svg`} width={36} height={36} />
+                      <span className="ml-4 capitalize">{item}</span>
+                    </Radio.Button>
+                  ))}
+                </Radio.Group>
+              ),
+            }).pipe(switchMap((goOn) => (goOn ? connect(chainConfig, selectedWallet) : EMPTY)))
+          : connect(chainConfig)
+      ).subscribe({
         next: (connection: Connection) => {
           if (connection.status === ConnectionStatus.success) {
             if (connection.type === 'polkadot') {
@@ -170,6 +215,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
             action(connection);
             setIsConnecting(false);
           }
+          updateStorage({ activeWallet: { wallet: selectedWallet, chain: chainConfig.name } });
         },
         error: (_: unknown) => {
           action({ ...initialConnection, status: ConnectionStatus.error });
@@ -180,14 +226,13 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
         },
       });
     },
-    [addConnection, isConnectionAvailable, state.connections, state.departure]
+    [addConnection, isConnectionAvailable, state.connections, state.departure, t]
   );
 
   const connectDepartureNetwork = useCallback(
-    (chainConfig: ChainConfig) => {
+    (chainConfig: ChainConfig, wallet?: SupportedWallet) => {
       dep$$.unsubscribe();
-      dep$$ = getConnection(chainConfig, setDepartureConnection);
-      updateStorage({ activeWallet: { wallet: chainConfig.wallets[0], chain: chainConfig.name } });
+      dep$$ = getConnection(chainConfig, setDepartureConnection, wallet);
     },
     [getConnection, setDepartureConnection]
   );
@@ -201,9 +246,9 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   );
 
   const connectArrivalNetwork = useCallback(
-    (chainConfig: ChainConfig) => {
+    (chainConfig: ChainConfig, wallet?: SupportedWallet) => {
       arr$$.unsubscribe();
-      arr$$ = getConnection(chainConfig, setArrivalConnection);
+      arr$$ = getConnection(chainConfig, setArrivalConnection, wallet);
     },
     [getConnection, setArrivalConnection]
   );

@@ -19,7 +19,7 @@ import {
 } from '../../model';
 import { entrance } from './entrance';
 import { getMetamaskConnection, isMetamaskInstalled, switchMetamaskNetwork } from './metamask';
-import { getPolkadotConnection, isPolkadotInstalled } from './polkadot';
+import { getPolkadotExtensionConnection, isPolkadotExtensionInstalled, PolkadotExtension } from './polkadot';
 
 type ConnectFn<T extends Connection> = (network: ChainConfig, extension?: SupportedWallet) => Observable<T>;
 
@@ -38,15 +38,15 @@ const showWarning = (plugin: string, downloadUrl: string) =>
     okText: <Trans i18n={i18n?.use(initReactI18next)}>OK</Trans>,
   });
 
-const connectPolkadot: ConnectFn<PolkadotConnection> = (network) => {
+const connectPolkadot: ConnectFn<PolkadotConnection> = (network, wallet = 'polkadot') => {
   if (!network) {
     return EMPTY;
   }
 
-  return from(isPolkadotInstalled()).pipe(
+  return from(isPolkadotExtensionInstalled(wallet)).pipe(
     switchMap((enable) => {
       if (enable) {
-        return getPolkadotConnection(network as PolkadotChainConfig);
+        return getPolkadotExtensionConnection(network as PolkadotChainConfig, wallet as PolkadotExtension);
       } else {
         showWarning('polkadot', 'https://polkadot.js.org/extension/');
         return EMPTY;
