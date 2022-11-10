@@ -20,16 +20,16 @@ import type { CBridgeBridge } from '../../bridges/cbridge/cBridge/utils';
 import { HISTORY_RECORD_BY_ID } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { RecordStatusComponentProps } from '../../model/component';
-import { useClaim, useTx } from '../../providers';
+import { useTx } from '../../providers';
 import { getDirectionFromHelixRecord, isCBridgeRecord } from '../../utils/record';
 
 interface RefundComponentProps extends RecordStatusComponentProps {
   onSuccess?: () => void;
 }
 
+// eslint-disable-next-line complexity
 function CBrideRefund({ record, onSuccess }: RefundComponentProps) {
   const { t } = useITranslation();
-  const { onRefundSuccess } = useClaim();
   const [loading, setLoading] = useState(false);
   const { observer } = useTx();
   const isMounted = useIsMounted();
@@ -88,12 +88,8 @@ function CBrideRefund({ record, onSuccess }: RefundComponentProps) {
             next(response) {
               observer.next(response);
 
-              if (response.status === 'finalized') {
-                onRefundSuccess({ id: record.id, hash: response.hash ?? '' });
-
-                if (onSuccess) {
-                  onSuccess();
-                }
+              if (response.status === 'finalized' && onSuccess) {
+                onSuccess();
               }
             },
             error(err) {
@@ -151,7 +147,6 @@ function CBrideRefund({ record, onSuccess }: RefundComponentProps) {
 
 function Refund({ record, onSuccess }: RefundComponentProps) {
   const { t } = useITranslation();
-  const { onRefundSuccess } = useClaim();
   const [loading, setLoading] = useState(false);
   const { observer } = useTx();
 
@@ -190,12 +185,8 @@ function Refund({ record, onSuccess }: RefundComponentProps) {
               next(response) {
                 observer.next(response);
 
-                if (response.status === 'finalized') {
-                  onRefundSuccess({ id: record.id, hash: response.hash ?? '' });
-
-                  if (onSuccess) {
-                    onSuccess();
-                  }
+                if (response.status === 'finalized' && onSuccess) {
+                  onSuccess();
                 }
               },
               error(err) {
@@ -212,15 +203,27 @@ function Refund({ record, onSuccess }: RefundComponentProps) {
         }
       }}
     >
-      {t('Refund')}
+      {loading ? t('Waiting for Response') : t('Refund')}
     </Button>
   );
 }
 
-export function PendingToRefund({ record, onSuccess }: RefundComponentProps) {
-  if (isCBridgeRecord(record)) {
-    return <CBrideRefund record={record} onSuccess={onSuccess} />;
+export function PendingToRefund({ record }: RefundComponentProps) {
+  const { t } = useITranslation();
+  const [executed, setExecuted] = useState(false);
+
+  if (executed) {
+    return (
+      <span className="flex items-center gap-2">
+        <SyncOutlined spin />
+        <span>{t('Executed, querying execution result')}</span>
+      </span>
+    );
   }
 
-  return <Refund record={record} onSuccess={onSuccess} />;
+  if (isCBridgeRecord(record)) {
+    return <CBrideRefund record={record} onSuccess={() => setExecuted(true)} />;
+  }
+
+  return <Refund record={record} onSuccess={() => setExecuted(true)} />;
 }

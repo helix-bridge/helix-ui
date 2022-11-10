@@ -40,7 +40,7 @@ const Page: NextPage<{
     const departure = getOriginChainConfig(record.fromChain);
     const arrival = getOriginChainConfig(record.toChain);
     const isIssuing = bridge.isIssue(departure, arrival);
-    const fromToken = getTokenConfigFromHelixRecord(record);
+    const fromToken = getTokenConfigFromHelixRecord(record, 'sendToken');
     const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
     const amount = getSentAmountFromHelixRecord(record);
 

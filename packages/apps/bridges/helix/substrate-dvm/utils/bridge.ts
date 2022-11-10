@@ -88,7 +88,7 @@ export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, Polkado
       CrossToken<PolkadotChainConfig | DVMChainConfig>,
       CrossToken<PolkadotChainConfig | DVMChainConfig>
     >
-  ): Promise<TokenWithAmount | null> {
+  ): Promise<TokenWithAmount> {
     const ring = direction.from.meta.tokens.find((item) => isRing(item.symbol) && isNativeToken(item))!;
 
     return { amount: BN_ZERO, ...ring };

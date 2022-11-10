@@ -94,7 +94,7 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
 
   async getFee(
     direction: CrossChainDirection<CrossToken<PolkadotChainConfig>, CrossToken<PolkadotChainConfig>>
-  ): Promise<TokenWithAmount | null> {
+  ): Promise<TokenWithAmount> {
     const {
       from: { meta: from },
       to: { meta: to },

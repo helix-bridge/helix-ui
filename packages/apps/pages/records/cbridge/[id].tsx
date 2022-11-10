@@ -40,7 +40,7 @@ const Page: NextPage<{ id: string }> = ({ id }) => {
 
     const bridge = getBridge<CrabDVMHecoBridgeConfig>(direction);
     const isRedeem = bridge.isRedeem(departure, arrival);
-    const fromToken = getTokenConfigFromHelixRecord(record);
+    const fromToken = getTokenConfigFromHelixRecord(record, 'sendToken');
     const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
     const sendAmount = getSentAmountFromHelixRecord(record);
     const recvAmount = getReceivedAmountFromHelixRecord(record);

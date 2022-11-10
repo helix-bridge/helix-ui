@@ -42,6 +42,7 @@ import {
 import { darwiniaDVMEthereum, pangoroDVMGoerli } from '../bridges/helix/substrateDVM-ethereum/config/bridge';
 import { crabParachainKarura } from '../bridges/xcm/crabParachain-karura/config/bridge';
 import { crabParachainMoonriver } from '../bridges/xcm/crabParachain-moonriver/config/bridge';
+import { pangolinDVMPangolinParachain } from '../bridges/helix/substrateDVM-substrateParachain/config/bridge';
 
 const formalBridges = [
   arbitrumAstar,
@@ -85,12 +86,13 @@ const formalBridges = [
 ];
 
 const testBridges = [
+  pangolinDVMPangolinParachain,
   pangolinPangolinDVM,
-  pangoroDVMPangolinDVM,
-  pangoroPangolinDVM,
   pangolinPangolinParachain,
   pangoroDVMGoerli,
+  pangoroDVMPangolinDVM,
   pangoroDVMPangoroDVM,
+  pangoroPangolinDVM,
 ];
 
 export const BRIDGES = (() => {

@@ -35,4 +35,5 @@ export type BridgeName =
   | 'crabParachain-moonriver'
   | 'substrateDVM-ethereum'
   | 'pangolin-pangoro'
-  | 'crabDVM-darwiniaDVM';
+  | 'crabDVM-darwiniaDVM'
+  | 'substrateDVM-substrateParachain';

@@ -34,6 +34,11 @@ export const pangolinDVMConfig: DVMChainConfig = {
           bridge: 'substrate-DVM',
           partner: { name: 'pangolin', role: 'backing', symbol: 'PRING' },
         },
+        {
+          category: 'helix',
+          bridge: 'substrateDVM-substrateParachain',
+          partner: { name: 'pangolin-parachain', role: 'issuing', symbol: 'PRING' },
+        },
       ],
       type: 'native',
       host: 'pangolin-dvm',
