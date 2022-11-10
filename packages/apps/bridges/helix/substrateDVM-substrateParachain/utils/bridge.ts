@@ -13,12 +13,13 @@ import {
   ChainConfig,
   CrossChainDirection,
   CrossToken,
+  DVMChainConfig,
   HelixHistoryRecord,
   ParachainChainConfig,
   Tx,
 } from 'shared/model';
 import { entrance, isMetamaskChainConsistent, waitUntilConnected } from 'shared/utils/connection';
-import { convertToDvm } from 'shared/utils/helper/address';
+import { convertToDvm, revertAccount } from 'shared/utils/helper/address';
 import { toWei } from 'shared/utils/helper/balance';
 import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
@@ -75,7 +76,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
   }
 
   refund(record: HelixHistoryRecord): Observable<Tx> {
-    const { fromChain, toChain, nonce } = record;
+    const { fromChain, toChain, messageNonce } = record;
     const config = getOriginChainConfig(fromChain);
 
     if (this.isIssue(fromChain, toChain)) {
@@ -87,7 +88,9 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
 
       return fromRx(contract.minReservedLockedMessageNonce() as Promise<BigNumber>).pipe(
         switchMap((msgNonce) =>
-          Number(nonce) < msgNonce.toNumber() ? this.localUnlockFailure(record) : this.remoteUnlockFailure(record)
+          Number(messageNonce) < msgNonce.toNumber()
+            ? this.localUnlockFailure(record)
+            : this.remoteUnlockFailure(record)
         )
       );
     } else {
@@ -97,20 +100,22 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
       return fromRx(waitUntilConnected(api)).pipe(
         switchMap(() => api.query[section].minReservedBurnNonce()),
         switchMap((res: Codec) =>
-          Number(nonce) < Number(res.toHuman()) ? this.localIssuingFailure(record) : this.remoteIssuingFailure(record)
+          Number(messageNonce) < Number(res.toHuman())
+            ? this.localIssuingFailure(record)
+            : this.remoteIssuingFailure(record)
         )
       );
     }
   }
 
   private localUnlockFailure(record: HelixHistoryRecord) {
-    const { fromChain, nonce } = record;
+    const { fromChain, messageNonce } = record;
 
     return isMetamaskChainConsistent(getOriginChainConfig(fromChain)).pipe(
       switchMap(() =>
         genEthereumContractTxObs(
           this.config.contracts.backing,
-          (contract) => contract.handleUnlockFailureLocal(nonce),
+          (contract) => contract.handleUnlockFailureLocal(messageNonce),
           backingAbi
         )
       )
@@ -118,29 +123,37 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
   }
 
   private remoteUnlockFailure(record: HelixHistoryRecord) {
-    const toConfig = getOriginChainConfig(record.toChain) as ParachainChainConfig;
-    const api = entrance.polkadot.getInstance(toConfig.provider.wss);
-    const section = `from${upperFirst(toConfig.name.split('-')[0])}Issuing`;
-    const WEIGHT = 400e8;
-    const gaslimit = 1e6;
-    const dir = getDirectionFromHelixRecord(record);
+    const dir = getDirectionFromHelixRecord(record) as CrossChainDirection<
+      CrossToken<DVMChainConfig>,
+      CrossToken<ParachainChainConfig>
+    >;
 
     if (!dir) {
       message.error('Can not revert the transfer from record, processing terminated!');
       return EMPTY;
     }
 
-    const extrinsic = this.getFee(dir).then((fee) =>
-      api.tx[section].remoteUnlockFailure(
-        String(toConfig.specVersion),
-        WEIGHT,
-        gaslimit,
-        record.nonce,
-        fee.amount.toString()
+    const api = entrance.polkadot.getInstance(dir.to.meta.provider.wss);
+    const section = `from${upperFirst(dir.to.meta.name.split('-')[0])}Issuing`;
+    const WEIGHT = 400e8;
+    const gaslimit = 1e6;
+    const recipient = revertAccount(record.recipient, dir.to.meta);
+
+    const extrinsic = fromRx(waitUntilConnected(api)).pipe(
+      switchMap(() =>
+        this.getFee({ from: dir.to, to: dir.from }).then((fee) =>
+          api.tx[section].remoteUnlockFailure(
+            String(dir.from.meta.specVersion),
+            WEIGHT,
+            gaslimit,
+            record.messageNonce,
+            fee.amount.toString()
+          )
+        )
       )
     );
 
-    return fromRx(extrinsic).pipe(switchMap((ext) => signAndSendExtrinsic(api, record.sender, ext)));
+    return fromRx(extrinsic).pipe(switchMap((ext) => signAndSendExtrinsic(api, recipient, ext)));
   }
 
   private localIssuingFailure(record: HelixHistoryRecord) {
@@ -149,7 +162,9 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
     const section = `from${upperFirst(fromConfig.name.split('-')[0])}Issuing`;
 
     return fromRx(waitUntilConnected(api)).pipe(
-      switchMap(() => signAndSendExtrinsic(api, record.sender, api.tx[section].handleIssuingFailureLocal(record.nonce)))
+      switchMap(() =>
+        signAndSendExtrinsic(api, record.sender, api.tx[section].handleIssuingFailureLocal(record.messageNonce))
+      )
     );
   }
 
@@ -165,12 +180,12 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
     }
 
     return isMetamaskChainConsistent(toChain).pipe(
-      switchMap(() => this.getFee(dir)),
+      switchMap(() => this.getFee({ from: dir.to, to: dir.from })),
       switchMap(({ amount: fee }) =>
         genEthereumContractTxObs(
           this.config.contracts.backing,
           (contract) =>
-            contract.remoteIssuingFailure(String(fromChain.specVersion), WEIGHT, record.nonce, {
+            contract.remoteIssuingFailure(String(fromChain.specVersion), WEIGHT, record.messageNonce, {
               value: fee.add(new BN(record.sendAmount)).toString(),
             }),
           backingAbi

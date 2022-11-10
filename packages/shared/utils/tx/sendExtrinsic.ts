@@ -51,9 +51,13 @@ export function signAndSendExtrinsic(
     extrinsic.signAndSend(sender, extrinsicSpy(spy)).catch((error) => spy.error({ status: 'error', error }));
   });
 
-  const web3FromAddress = import('@polkadot/extension-dapp').then((res) => res.web3FromAddress(sender));
+  const result = import('@polkadot/extension-dapp').then(({ web3Enable, web3FromAddress }) => {
+    web3Enable('polkadot-js/apps');
 
-  return from(web3FromAddress).pipe(
+    return web3FromAddress(sender);
+  });
+
+  return from(result).pipe(
     tap((injector) => api.setSigner(injector.signer)),
     switchMap(() => from(waitUntilConnected(api))),
     switchMap(() => obs)
