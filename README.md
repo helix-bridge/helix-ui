@@ -14,7 +14,22 @@ helix test: https://helix-stg-test.vercel.app/
 
 ## HOW TO ADD A BRIDGE
 
-### Step-1: Check network
+### Step-1: Generate bridge
+
+Check whether the corresponding bridge already exists in the `package/apps/bridges/` directory
+
+If exists, you can skip the steps below, otherwise follow these:
+
+Go to `package/apps/` and run `yarn init:bridge`
+
+Update files below under the apps project:
+
+1. `bridges/[BRIDGE_TYPE]/[YOU_BRIDGE]/model/bridge.ts` Update the generated type if needed
+1. `bridges/[BRIDGE_TYPE]/[YOU_BRIDGE]/config/bridge.ts` Update bridge configuration
+1. `config/bridge.ts` Add bridge to the corresponding bridge array.
+1. `bridges/bridges.ts` Add the bridge class to the constructor array.
+
+### Step-2: Check network
 
 `shared/config/network/` Add network configuration if needed:
 
@@ -27,20 +42,6 @@ Make sure the token exists on the network configuration:
 
 1. add the token config if not exist
 1. update the cross field for the token if exist
-
-### Step-2: Generate bridge(OPTIONAL)
-
-Check whether the corresponding bridge already exists in the `package/apps/bridges/` directory
-
-If exists, you can skip the steps below, otherwise follow these:
-
-Go to `package/apps/` and run `yarn init:bridge`
-
-Update files below under the apps project:
-
-1. `bridges/[BRIDGE_TYPE]/[YOU_BRIDGE]/model/bridge.ts` Update the generated type if needed
-1. `bridges/[BRIDGE_TYPE]/[YOU_BRIDGE]/config/bridge.ts` Update bridge configuration
-1. `config/bridge.ts` Add bridge
 
 ### Step-3: Unit test
 

@@ -113,7 +113,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
       CrossToken<PolkadotChainConfig | DVMChainConfig>,
       CrossToken<PolkadotChainConfig | DVMChainConfig>
     >
-  ): Promise<TokenWithAmount | null> {
+  ): Promise<TokenWithAmount> {
     const { from: departure, to } = direction;
     const token = omit(direction.from.meta.tokens.find((item) => isRing(item.symbol))!, ['amount', 'meta']);
 

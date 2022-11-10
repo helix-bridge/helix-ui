@@ -67,7 +67,7 @@ export class DarwiniaDVMCrabDVMBridge extends Bridge<DarwiniaDVMCrabDVMBridgeCon
 
   refund(record: HelixHistoryRecord): Observable<Tx> {
     const { fromChain, toChain, sendAmount: amount, sender, id, sendTokenAddress: tokenAddress } = record;
-    const sendToken = this.getTokenConfigFromHelixRecord(record);
+    const sendToken = this.getTokenConfigFromHelixRecord(record, 'sendToken');
     const recvToken = this.getTokenConfigFromHelixRecord(record, 'recvToken');
 
     const { abi, address, method, departure, arrival } = this.isRedeem(fromChain, toChain)
@@ -114,7 +114,7 @@ export class DarwiniaDVMCrabDVMBridge extends Bridge<DarwiniaDVMCrabDVMBridgeCon
 
   async getFee(
     direction: CrossChainDirection<CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>
-  ): Promise<TokenWithAmount | null> {
+  ): Promise<TokenWithAmount> {
     const {
       from: { meta: departure },
       to: { meta: arrival },

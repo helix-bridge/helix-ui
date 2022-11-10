@@ -26,6 +26,12 @@ export const pangolinParachainConfig: PolkadotChainConfig = {
           category: 'helix',
           bridge: 'substrate-substrateParachain',
           partner: { name: 'pangolin', role: 'backing', symbol: 'PRING' },
+          deprecated: true,
+        },
+        {
+          category: 'helix',
+          bridge: 'substrateDVM-substrateParachain',
+          partner: { name: 'pangolin-dvm', role: 'backing', symbol: 'PRING' },
         },
       ],
       type: 'mapping',
@@ -36,6 +42,6 @@ export const pangolinParachainConfig: PolkadotChainConfig = {
     },
   ],
   ss58Prefix: 42,
-  specVersion: 5330,
+  specVersion: 5340,
   wallets: ['polkadot'],
 };

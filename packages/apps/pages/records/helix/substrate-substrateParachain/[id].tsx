@@ -1,6 +1,6 @@
 import type { GetServerSidePropsContext, NextPage } from 'next';
 import { useMemo } from 'react';
-import { GENESIS_ADDRESS, RecordStatus } from 'shared/config/constant';
+import { RecordStatus } from 'shared/config/constant';
 import { SUBSTRATE_PARACHAIN_BACKING } from 'shared/config/env';
 import { HelixHistoryRecord } from 'shared/model';
 import { revertAccount } from 'shared/utils/helper/address';
@@ -14,6 +14,7 @@ import {
 } from 'utils/record';
 import { SubstrateSubstrateParachainBridgeConfig } from '../../../../bridges/helix/substrate-substrateParachain/model';
 import { Detail } from '../../../../components/transaction/Detail';
+import { ZERO_ADDRESS } from '../../../../config/constant';
 import { useUpdatableRecord } from '../../../../hooks';
 import { TransferStep } from '../../../../model/transfer';
 import { getServerSideRecordProps } from '../../../../utils/getServerSideRecordProps';
@@ -43,7 +44,7 @@ const Page: NextPage<{
 
     const bridge = getBridge<SubstrateSubstrateParachainBridgeConfig>(direction);
     const isIssuing = bridge.isIssue(departure, arrival);
-    const fromToken = getTokenConfigFromHelixRecord(record);
+    const fromToken = getTokenConfigFromHelixRecord(record, 'sendToken');
     const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
     const sendAmount = getSentAmountFromHelixRecord(record);
     const recvAmount = getReceivedAmountFromHelixRecord(record);
@@ -57,7 +58,7 @@ const Page: NextPage<{
     };
     const issueSuccess: TransferStep = {
       chain: arrival,
-      sender: GENESIS_ADDRESS,
+      sender: ZERO_ADDRESS,
       recipient: revertAccount(record.recipient, arrival),
       token: toToken,
       amount: recvAmount,
@@ -87,7 +88,7 @@ const Page: NextPage<{
     const redeemSuccess: TransferStep = {
       chain: departure,
       sender: revertAccount(record.sender, departure),
-      recipient: GENESIS_ADDRESS,
+      recipient: ZERO_ADDRESS,
       token: toToken,
       amount: recvAmount,
     };

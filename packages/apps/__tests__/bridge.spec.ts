@@ -34,12 +34,12 @@ describe('bridge utils', () => {
   console.log('🌉 All cross-chain directions to be tested', allDirections);
 
   it('should support bridge count: ', () => {
-    expect(testBridges).toHaveLength(6);
+    expect(testBridges).toHaveLength(7);
     expect(formalBridges).toHaveLength(38);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(88);
+    expect(allDirections).toHaveLength(90);
   });
 
   it('Should correct bridge category name', () => {

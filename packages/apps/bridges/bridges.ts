@@ -10,6 +10,7 @@ import { DarwiniaDVMCrabDVMBridge, DarwiniaDVMInnerBridge } from './helix/darwin
 import { CrabDVMDarwiniaDVMBridge, CrabDVMInnerBridge } from './helix/crabDVM-darwiniaDVM/utils';
 import { CrabParachainKaruraBridge } from './xcm/crabParachain-karura/utils';
 import { CrabParachainMoonriverBridge } from './xcm/crabParachain-moonriver/utils';
+import { SubstrateDVMSubstrateParachainBridge } from './helix/substrateDVM-substrateParachain/utils';
 
 export const bridgeConstructors = [
   CBridgeBridge,
@@ -23,6 +24,7 @@ export const bridgeConstructors = [
   DarwiniaDVMInnerBridge,
   SubstrateSubstrateDVMBridge,
   SubstrateSubstrateParachainBridge,
+  SubstrateDVMSubstrateParachainBridge,
 ];
 
 export function bridgeFactory<C extends BridgeConfig, O extends ChainConfig, T extends ChainConfig>(

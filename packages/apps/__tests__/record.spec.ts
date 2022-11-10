@@ -16,38 +16,56 @@ import darwinDVMCrabDVMRecords from './fixture/darwin-dvm-crab-dvm.json';
 
 describe('record utils', () => {
   it('should get token name from helix record', () => {
-    const crab2CrabDVMSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>crabDVMRecords[0]);
-    const crabDVM2CrabSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>crabDVMRecords[1]);
+    const crab2CrabDVMSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>crabDVMRecords[0], 'sendToken');
+    const crabDVM2CrabSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>crabDVMRecords[1], 'sendToken');
 
     expect(crab2CrabDVMSuccess?.symbol).toEqual('CRAB');
     expect(crabDVM2CrabSuccess?.symbol).toEqual('CRAB');
 
-    const crabDVM2HecoRefunded = getTokenConfigFromHelixRecord(<HelixHistoryRecord>crabDVMHecoRecords[0]);
-    const crabDVM2HecoSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>crabDVMHecoRecords[1]);
+    const crabDVM2HecoRefunded = getTokenConfigFromHelixRecord(<HelixHistoryRecord>crabDVMHecoRecords[0], 'sendToken');
+    const crabDVM2HecoSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>crabDVMHecoRecords[1], 'sendToken');
 
     expect(crabDVM2HecoRefunded?.symbol).toEqual('xRING');
     expect(crabDVM2HecoSuccess?.symbol).toEqual('xRING');
 
-    const darwinia2CrabDVMSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>darwiniaCrabDVMRecords[0]);
-    const crabDVM2DarwiniaSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>darwiniaCrabDVMRecords[1]);
+    const darwinia2CrabDVMSuccess = getTokenConfigFromHelixRecord(
+      <HelixHistoryRecord>darwiniaCrabDVMRecords[0],
+      'sendToken'
+    );
+    const crabDVM2DarwiniaSuccess = getTokenConfigFromHelixRecord(
+      <HelixHistoryRecord>darwiniaCrabDVMRecords[1],
+      'sendToken'
+    );
 
     expect(darwinia2CrabDVMSuccess?.symbol).toEqual('RING');
     expect(crabDVM2DarwiniaSuccess?.symbol).toEqual('xRING');
 
-    const crab2CrabParachainSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>crabCrabParachainRecords[0]);
-    const crabParachain2CrabSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>crabCrabParachainRecords[1]);
+    const crab2CrabParachainSuccess = getTokenConfigFromHelixRecord(
+      <HelixHistoryRecord>crabCrabParachainRecords[0],
+      'sendToken'
+    );
+    const crabParachain2CrabSuccess = getTokenConfigFromHelixRecord(
+      <HelixHistoryRecord>crabCrabParachainRecords[1],
+      'sendToken'
+    );
 
     expect(crab2CrabParachainSuccess?.symbol).toEqual('CRAB');
     expect(crabParachain2CrabSuccess?.symbol).toEqual('CRAB');
 
-    const darwinia2dvmSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>darwiniaDVMRecords[0]);
-    const dvm2DarwiniaSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>darwiniaDVMRecords[1]);
+    const darwinia2dvmSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>darwiniaDVMRecords[0], 'sendToken');
+    const dvm2DarwiniaSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>darwiniaDVMRecords[1], 'sendToken');
 
     expect(darwinia2dvmSuccess?.symbol).toEqual('RING');
     expect(dvm2DarwiniaSuccess?.symbol).toEqual('RING');
 
-    const darwinDVMCrabDVMSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>darwinDVMCrabDVMRecords[0]);
-    const crabDVM2DarwiniaDVMSuccess = getTokenConfigFromHelixRecord(<HelixHistoryRecord>darwinDVMCrabDVMRecords[1]);
+    const darwinDVMCrabDVMSuccess = getTokenConfigFromHelixRecord(
+      <HelixHistoryRecord>darwinDVMCrabDVMRecords[0],
+      'sendToken'
+    );
+    const crabDVM2DarwiniaDVMSuccess = getTokenConfigFromHelixRecord(
+      <HelixHistoryRecord>darwinDVMCrabDVMRecords[1],
+      'sendToken'
+    );
 
     expect(darwinDVMCrabDVMSuccess?.symbol).toEqual('WRING');
     expect(crabDVM2DarwiniaDVMSuccess?.symbol).toEqual('xWRING');
