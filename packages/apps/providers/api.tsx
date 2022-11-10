@@ -1,10 +1,8 @@
 import { Radio } from 'antd';
-import negate from 'lodash/negate';
 import { createContext, useCallback, useContext, useReducer, useState } from 'react';
 import { switchMap } from 'rxjs';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { iif } from 'rxjs/internal/observable/iif';
-import { of } from 'rxjs/internal/observable/of';
 import type { Subscription } from 'rxjs/internal/Subscription';
 import { Logo } from 'shared/components/widget/Logo';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
@@ -14,7 +12,6 @@ import {
   ChainConfig,
   Connection,
   ConnectionStatus,
-  EthereumChainConfig,
   EthereumConnection,
   NoNullFields,
   PolkadotChainConfig,
@@ -23,8 +20,7 @@ import {
 } from 'shared/model';
 import { connect } from 'shared/utils/connection';
 import { convertToSS58 } from 'shared/utils/helper/address';
-import { updateStorage } from 'shared/utils/helper/storage';
-import { isEthereumNetwork } from 'shared/utils/network/network';
+import { readStorage, updateStorage } from 'shared/utils/helper/storage';
 import { applyModalObs } from 'shared/utils/tx';
 import { useITranslation } from '../hooks';
 
@@ -59,11 +55,6 @@ const initialState: StoreState = {
   isDev,
 };
 
-const isSameConnection = (origin: Connection) => {
-  return (item: Connection) => item.type === origin.type && item.chainId === origin.chainId;
-};
-
-// eslint-disable-next-line complexity
 function reducer(state: StoreState, action: Actions): StoreState {
   switch (action.type) {
     case 'setDeparture': {
@@ -76,25 +67,6 @@ function reducer(state: StoreState, action: Actions): StoreState {
 
     case 'setArrivalConnection': {
       return { ...state, arrivalConnection: action.payload };
-    }
-
-    case 'addConnection': {
-      const omitMetamask = (connection: Connection) =>
-        action.payload.type === 'metamask' ? connection.type !== 'metamask' : true;
-
-      return {
-        ...state,
-        connections: state.connections
-          .filter((item) => negate(isSameConnection(action.payload))(item) && omitMetamask(item))
-          .concat([action.payload]),
-      };
-    }
-
-    case 'removeConnection': {
-      return {
-        ...state,
-        connections: state.connections.filter(negate(isSameConnection(action.payload))),
-      };
     }
 
     default:
@@ -132,73 +104,44 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
     []
   );
 
-  const removeConnection = useCallback((payload: Connection) => dispatch({ type: 'removeConnection', payload }), []);
-  const addConnection = useCallback((payload: Connection) => dispatch({ type: 'addConnection', payload }), []);
-
-  const isConnectionAvailable = useCallback(
-    (connection: Connection | undefined) => {
-      const availableStatus = [ConnectionStatus.success, ConnectionStatus.connecting, ConnectionStatus];
-      const existAvailableConnection = !!connection && availableStatus.includes(connection.status);
-
-      if (connection && !existAvailableConnection) {
-        removeConnection(connection);
-      }
-
-      return existAvailableConnection;
-    },
-    [removeConnection]
-  );
-
   const getConnection = useCallback(
     (chainConfig: ChainConfig, action: (payload: Connection) => void, wallet?: SupportedWallet) => {
-      const isConnectToMetamask = isEthereumNetwork(chainConfig);
-
-      const target = state.connections.find((item) => {
-        if (isConnectToMetamask) {
-          return (item as EthereumConnection).chainId === (chainConfig as EthereumChainConfig).ethereumChain.chainId;
-        } else {
-          return wallet && wallet !== 'polkadot'
-            ? item.type === wallet
-            : (item as PolkadotConnection).chainId === chainConfig.name;
-        }
-      });
-
-      let selectedWallet = wallet ?? chainConfig.wallets[0];
+      const { activeWallet } = readStorage();
+      const lastActive = activeWallet && activeWallet.wallet;
+      let selectedWallet = wallet ?? lastActive ?? chainConfig.wallets[0];
 
       setIsConnecting(true);
 
       return iif(
-        () => isConnectionAvailable(target),
-        of(target!),
-        chainConfig.wallets.length > 1 && !wallet
-          ? applyModalObs({
-              title: (
-                <div className="inline-flex items-center space-x-1 mb-4">
-                  <span>{t('Select Wallet')}</span>
-                </div>
-              ),
-              content: (
-                <Radio.Group
-                  className="w-full"
-                  defaultValue={chainConfig.wallets[0]}
-                  onChange={(event) => {
-                    selectedWallet = event.target.value;
-                  }}
+        () => chainConfig.wallets.length > 1 && !wallet && !activeWallet,
+        applyModalObs({
+          title: (
+            <div className="inline-flex items-center space-x-1 mb-4">
+              <span>{t('Select Wallet')}</span>
+            </div>
+          ),
+          content: (
+            <Radio.Group
+              className="w-full"
+              defaultValue={chainConfig.wallets[0]}
+              onChange={(event) => {
+                selectedWallet = event.target.value;
+              }}
+            >
+              {chainConfig.wallets.map((item) => (
+                <Radio.Button
+                  value={item}
+                  key={item}
+                  className={`radio-list 'transition-all duration-300 hover:scale-105'`}
                 >
-                  {chainConfig.wallets.map((item) => (
-                    <Radio.Button
-                      value={item}
-                      key={item}
-                      className={`radio-list 'transition-all duration-300 hover:scale-105'`}
-                    >
-                      <Logo name={`${item}.svg`} width={36} height={36} />
-                      <span className="ml-4 capitalize">{item}</span>
-                    </Radio.Button>
-                  ))}
-                </Radio.Group>
-              ),
-            }).pipe(switchMap((goOn) => (goOn ? connect(chainConfig, selectedWallet) : EMPTY)))
-          : connect(chainConfig)
+                  <Logo name={`${item}.svg`} width={36} height={36} />
+                  <span className="ml-4 capitalize">{item}</span>
+                </Radio.Button>
+              ))}
+            </Radio.Group>
+          ),
+        }).pipe(switchMap((goOn) => (goOn ? connect(chainConfig, selectedWallet) : EMPTY))),
+        connect(chainConfig, selectedWallet)
       ).subscribe({
         next: (connection: Connection) => {
           if (connection.status === ConnectionStatus.success) {
@@ -211,7 +154,6 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
                 })),
               };
             }
-            addConnection(connection);
             action(connection);
             setIsConnecting(false);
           }
@@ -226,7 +168,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
         },
       });
     },
-    [addConnection, isConnectionAvailable, state.connections, state.departure, t]
+    [state.departure, t]
   );
 
   const connectDepartureNetwork = useCallback(
