@@ -85,7 +85,7 @@ export function CrossChainInfo({
   }, [bridge.getDailyLimit, dailyLimit, direction.from.symbol, direction.to.decimals, t]);
 
   const allowanceContent = useMemo(() => {
-    if (bridge.getAllowancePayload && direction.from.type !== 'native' && departureConnection.type === 'metamask') {
+    if (bridge.getAllowancePayload && direction.from.type !== 'native' && departureConnection.wallet === 'metamask') {
       return (
         <div className={`justify-between items-center hidden`}>
           <span>{t('Allowance')}</span>
@@ -104,7 +104,14 @@ export function CrossChainInfo({
     }
 
     return null;
-  }, [allowance, bridge.getAllowancePayload, departureConnection.type, direction.from.symbol, direction.from.type, t]);
+  }, [
+    allowance,
+    bridge.getAllowancePayload,
+    departureConnection.wallet,
+    direction.from.symbol,
+    direction.from.type,
+    t,
+  ]);
 
   const needClaim = useMemo(() => {
     const overview = direction.from?.cross.find((item) => item.partner.name === direction.to?.meta.name);

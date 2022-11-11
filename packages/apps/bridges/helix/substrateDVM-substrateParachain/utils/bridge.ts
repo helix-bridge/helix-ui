@@ -56,7 +56,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
   }
 
   burn(payload: RedeemPayload, fee: BN): Observable<Tx> {
-    const { sender, recipient, direction } = payload;
+    const { sender, recipient, direction, wallet } = payload;
     const { from: departure, to } = direction;
     const api = entrance.polkadot.getInstance(direction.from.meta.provider.wss);
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
@@ -72,7 +72,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
       recipient
     );
 
-    return signAndSendExtrinsic(api, sender, extrinsic);
+    return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
 
   refund(record: HelixHistoryRecord): Observable<Tx> {
@@ -153,7 +153,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
       )
     );
 
-    return fromRx(extrinsic).pipe(switchMap((ext) => signAndSendExtrinsic(api, recipient, ext)));
+    return fromRx(extrinsic).pipe(switchMap((ext) => signAndSendExtrinsic(api, recipient, ext, 'polkadot')));
   }
 
   private localIssuingFailure(record: HelixHistoryRecord) {
@@ -163,7 +163,12 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
 
     return fromRx(waitUntilConnected(api)).pipe(
       switchMap(() =>
-        signAndSendExtrinsic(api, record.sender, api.tx[section].handleIssuingFailureLocal(record.messageNonce))
+        signAndSendExtrinsic(
+          api,
+          record.sender,
+          api.tx[section].handleIssuingFailureLocal(record.messageNonce),
+          'polkadot'
+        )
       )
     );
   }

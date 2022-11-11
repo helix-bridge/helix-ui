@@ -48,10 +48,14 @@ export abstract class ChainBase implements ChainConfig {
     this.fullName = config.fullName;
   }
 
+  /**
+   * @return [from token balance, native token balance];
+   * The two balance will be equal for native token balance querying.
+   */
   abstract getBalance(
     direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>,
     account: string
-  ): Promise<BN[]>;
+  ): Promise<[BN, BN]>;
 }
 
 export class PolkadotChain extends ChainBase implements PolkadotChainConfig {
@@ -69,7 +73,7 @@ export class PolkadotChain extends ChainBase implements PolkadotChainConfig {
   async getBalance(
     direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>,
     account: string
-  ): Promise<BN[]> {
+  ): Promise<[BN, BN]> {
     const { from } = direction;
     const [ring, kton] = await getDarwiniaBalance(from.meta.provider.https, account);
 
@@ -90,13 +94,13 @@ export class EthereumChain extends ChainBase implements EthereumChainConfig {
   async getBalance(
     direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>,
     account: string
-  ): Promise<BN[]> {
+  ): Promise<[BN, BN]> {
     const { from } = direction;
     const tokenAddress = from.address;
     const provider = from.meta.provider.https;
 
-    if (!tokenAddress) {
-      return getEthereumNativeBalance(account, provider).then((balance) => [balance]);
+    if (from.type === 'native') {
+      return getEthereumNativeBalance(account, provider).then((balance) => [balance, balance]);
     } else {
       return Promise.all([
         getErc20Balance(tokenAddress, account, provider),
@@ -117,7 +121,7 @@ export class ParachainChain extends PolkadotChain implements ParachainChainConfi
   async getBalance(
     direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>,
     account: string
-  ): Promise<BN[]> {
+  ): Promise<[BN, BN]> {
     const { from } = direction;
     const balance = await getParachainBalance(from, account);
 
@@ -137,24 +141,6 @@ export class DVMChain extends EthereumChain implements DVMChainConfig {
     this.ss58Prefix = config.ss58Prefix;
     this.specVersion = config.specVersion;
     this.name = config.name;
-  }
-
-  async getBalance(
-    direction: CrossChainDirection<TokenInfoWithMeta, TokenInfoWithMeta>,
-    account: string
-  ): Promise<BN[]> {
-    const { from } = direction;
-    const tokenAddress = from.address;
-    const httpsProvider = from.meta.provider.https;
-
-    if (from.type === 'native') {
-      return getEthereumNativeBalance(account, httpsProvider).then((balance) => [balance, balance]);
-    } else {
-      return Promise.all([
-        getErc20Balance(tokenAddress, account, httpsProvider),
-        getEthereumNativeBalance(account, httpsProvider),
-      ]);
-    }
   }
 }
 

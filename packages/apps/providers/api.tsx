@@ -7,17 +7,7 @@ import type { Subscription } from 'rxjs/internal/Subscription';
 import { Logo } from 'shared/components/widget/Logo';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { isDev } from 'shared/config/env';
-import {
-  Action,
-  ChainConfig,
-  Connection,
-  ConnectionStatus,
-  EthereumConnection,
-  NoNullFields,
-  PolkadotChainConfig,
-  PolkadotConnection,
-  SupportedWallet,
-} from 'shared/model';
+import { Action, ChainConfig, Connection, ConnectionStatus, PolkadotChainConfig, SupportedWallet } from 'shared/model';
 import { connect } from 'shared/utils/connection';
 import { convertToSS58 } from 'shared/utils/helper/address';
 import { readStorage, updateStorage } from 'shared/utils/helper/storage';
@@ -27,7 +17,6 @@ import { useITranslation } from '../hooks';
 interface StoreState {
   departureConnection: Connection;
   arrivalConnection: Connection;
-  connections: (NoNullFields<PolkadotConnection> | EthereumConnection)[];
   departure: ChainConfig;
   isDev: boolean;
 }
@@ -42,7 +31,7 @@ type Actions = SetDeparture | SetDepartureConnection | SetArrivalConnection | Ad
 
 const initialConnection: Connection = {
   status: ConnectionStatus.pending,
-  type: 'unknown',
+  wallet: 'unknown',
   accounts: [],
   chainId: 'unknown',
 };
@@ -50,7 +39,6 @@ const initialConnection: Connection = {
 const initialState: StoreState = {
   departureConnection: initialConnection,
   arrivalConnection: initialConnection,
-  connections: [],
   departure: DEFAULT_DIRECTION.from.meta,
   isDev,
 };
@@ -75,7 +63,7 @@ function reducer(state: StoreState, action: Actions): StoreState {
 }
 
 export type ApiCtx = StoreState & {
-  connectAndUpdateDepartureNetwork: (network: ChainConfig) => void;
+  connectAndUpdateDepartureNetwork: (network: ChainConfig, wallet?: SupportedWallet) => void;
   connectDepartureNetwork: (network: ChainConfig, wallet?: SupportedWallet) => void;
   connectArrivalNetwork: (network: ChainConfig, wallet?: SupportedWallet) => void;
   disconnect: () => void;
@@ -107,13 +95,14 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   const getConnection = useCallback(
     (chainConfig: ChainConfig, action: (payload: Connection) => void, wallet?: SupportedWallet) => {
       const { activeWallet } = readStorage();
-      const lastActive = activeWallet && activeWallet.wallet;
-      let selectedWallet = wallet ?? lastActive ?? chainConfig.wallets[0];
+      const cachedWallet = activeWallet && activeWallet.wallet;
+      const isCachedAvailable = chainConfig.wallets.includes(cachedWallet as unknown as never);
+      let selectedWallet = wallet ?? (isCachedAvailable ? cachedWallet : undefined) ?? chainConfig.wallets[0];
 
       setIsConnecting(true);
 
       return iif(
-        () => chainConfig.wallets.length > 1 && !wallet && !activeWallet,
+        () => chainConfig.wallets.length > 1 && !wallet && (!activeWallet || !isCachedAvailable),
         applyModalObs({
           title: (
             <div className="inline-flex items-center space-x-1 mb-4">
@@ -145,7 +134,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
       ).subscribe({
         next: (connection: Connection) => {
           if (connection.status === ConnectionStatus.success) {
-            if (connection.type === 'polkadot') {
+            if (connection.wallet === 'polkadot') {
               connection = {
                 ...connection,
                 accounts: connection.accounts.map((item) => ({
@@ -180,8 +169,8 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   );
 
   const connectAndUpdateDepartureNetwork = useCallback(
-    (chainConfig: ChainConfig) => {
-      connectDepartureNetwork(chainConfig);
+    (chainConfig: ChainConfig, wallet?: SupportedWallet) => {
+      connectDepartureNetwork(chainConfig, wallet);
       setDeparture(chainConfig);
     },
     [connectDepartureNetwork, setDeparture]

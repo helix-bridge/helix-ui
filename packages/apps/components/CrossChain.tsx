@@ -1,7 +1,8 @@
 import { InfoCircleOutlined, WarningFilled } from '@ant-design/icons';
+import { BN_ZERO, BN } from '@polkadot/util';
 import { Form, Input, message, Tooltip } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
-import BN from 'bn.js';
+import flow from 'lodash/flow';
 import identity from 'lodash/identity';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
@@ -26,6 +27,7 @@ import {
   CrossChainDirection,
   CrossChainPureDirection,
   DailyLimit,
+  SupportedWallet,
   TokenInfoWithMeta,
 } from 'shared/model';
 import { toWei, truncate } from 'shared/utils/helper/balance';
@@ -367,7 +369,11 @@ export function CrossChain() {
                 }
 
                 form.validateFields().then((values) => {
-                  const payload = patchPayload(values);
+                  const payload = flow(
+                    patchPayload,
+                    (value: CrossChainPayload<CommonBridge> | null) =>
+                      value && { ...value, wallet: departureConnection.wallet as SupportedWallet }
+                  )(values);
 
                   if (!payload) {
                     return;
@@ -375,13 +381,14 @@ export function CrossChain() {
 
                   const fromToken = omit(direction.from, 'meta');
                   const toToken = omit(direction.to, 'meta');
+                  const [balance, nativeTokenBalance] = balances ?? [BN_ZERO, BN_ZERO];
 
                   const validateObs = payload.bridge.validate(payload, {
-                    balance: { ...fromToken, amount: balances![0] },
+                    balance: { ...fromToken, amount: balance },
                     fee: fee!,
                     feeTokenBalance: {
                       ...fee,
-                      amount: isXCM(direction) ? balances![0] : balances![1],
+                      amount: isXCM(direction) ? balance : nativeTokenBalance,
                     } as TokenWithAmount,
                     dailyLimit: {
                       ...toToken,

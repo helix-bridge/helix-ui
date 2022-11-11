@@ -56,7 +56,7 @@ export const getMetamaskConnection: () => Observable<EthereumConnection> = () =>
             observer.next({
               status: ConnectionStatus.success,
               accounts: addressToAccounts(accounts),
-              type: 'metamask',
+              wallet: 'metamask',
               chainId,
             });
           })
@@ -66,7 +66,7 @@ export const getMetamaskConnection: () => Observable<EthereumConnection> = () =>
             observer.next({
               status: ConnectionStatus.success,
               accounts: addressToAccounts(accounts),
-              type: 'metamask',
+              wallet: 'metamask',
               chainId,
             });
           });
@@ -76,9 +76,14 @@ export const getMetamaskConnection: () => Observable<EthereumConnection> = () =>
       return merge(request, obs);
     }),
     catchError((_) => {
-      return of<EthereumConnection>({ status: ConnectionStatus.error, accounts: [], type: 'metamask', chainId: '' });
+      return of<EthereumConnection>({ status: ConnectionStatus.error, accounts: [], wallet: 'metamask', chainId: '' });
     }),
-    startWith<EthereumConnection>({ status: ConnectionStatus.connecting, accounts: [], type: 'metamask', chainId: '' })
+    startWith<EthereumConnection>({
+      status: ConnectionStatus.connecting,
+      accounts: [],
+      wallet: 'metamask',
+      chainId: '',
+    })
   );
 
 export async function switchEthereumChain(chain: EthereumChainConfig): Promise<null> {

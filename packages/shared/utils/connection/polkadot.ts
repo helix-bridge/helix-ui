@@ -58,10 +58,16 @@ export async function getPolkadotChainProperties(api: ApiPromise): Promise<Polka
   );
 }
 
-export async function isPolkadotExtensionInstalled(wallet: SupportedWallet): Promise<boolean> {
+export async function getPolkadotExtension(wallet: PolkadotExtension) {
   const extensions = await import('@polkadot/extension-dapp').then(({ web3Enable }) => web3Enable('helix'));
 
-  return !!extensions.find((item) => item.name === walletToPropName[wallet as PolkadotExtension]);
+  return extensions.find((item) => item.name === walletToPropName[wallet]);
+}
+
+export async function isPolkadotExtensionInstalled(wallet: SupportedWallet): Promise<boolean> {
+  const ext = getPolkadotExtension(wallet as PolkadotExtension);
+
+  return !!ext;
 }
 
 export const getPolkadotExtensionConnection: (
@@ -85,7 +91,7 @@ export const getPolkadotExtensionConnection: (
                     !extensions.length && !accounts.length
                       ? []
                       : accounts.filter((acc) => acc.meta.source === walletToPropName[wallet]),
-                  type: wallet,
+                  wallet,
                   status: 'pending',
                   chainId: network.name,
                 } as Exclude<PolkadotConnection, 'api'>)
@@ -98,7 +104,7 @@ export const getPolkadotExtensionConnection: (
       status: ConnectionStatus.connecting,
       accounts: [],
       api: null,
-      type: 'polkadot',
+      wallet: 'polkadot',
       chainId: network.name,
     })
   );

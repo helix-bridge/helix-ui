@@ -44,9 +44,9 @@ export default function ActiveAccount() {
   const router = useRouter();
 
   const disconnected = useMemo(() => {
-    const { type, status } = departureConnection;
+    const { wallet, status } = departureConnection;
 
-    return type !== 'unknown' && status !== ConnectionStatus.success;
+    return wallet !== 'unknown' && status !== ConnectionStatus.success;
   }, [departureConnection]);
 
   useEffect(() => {
@@ -100,7 +100,7 @@ export default function ActiveAccount() {
               ></Badge>
             )}
 
-            {polkadotExtensions.includes(departureConnection.type as unknown as never) && (
+            {polkadotExtensions.includes(departureConnection.wallet as unknown as never) && (
               <Dropdown
                 overlay={
                   <Menu
@@ -131,7 +131,7 @@ export default function ActiveAccount() {
                   className="flex items-center justify-around px-1 overflow-hidden truncate ml-1"
                   icon={
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={`/image/${departureConnection.type}.svg`} width={18} height={18} />
+                    <img src={`/image/${departureConnection.wallet}.svg`} width={18} height={18} />
                   }
                   style={{ maxWidth: 200 }}
                 >
@@ -142,12 +142,12 @@ export default function ActiveAccount() {
               </Dropdown>
             )}
 
-            {departureConnection.type === 'metamask' && (
+            {departureConnection.wallet === 'metamask' && (
               <Button
                 className="flex items-center justify-around px-1 overflow-hidden"
                 icon={
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={`/image/${departureConnection.type}.svg`} width={18} height={18} />
+                  <img src={`/image/${departureConnection.wallet}.svg`} width={18} height={18} />
                 }
                 style={{ maxWidth: 200 }}
                 onClick={() => setIsWalletSelectOpen(true)}
@@ -201,7 +201,7 @@ export default function ActiveAccount() {
 
       <SelectWalletModal
         visible={isWalletSelectOpen}
-        defaultValue={departureConnection.type}
+        defaultValue={departureConnection.wallet}
         onCancel={() => setIsWalletSelectOpen(false)}
         onSelect={(wallet) => {
           setIsWalletSelectOpen(false);

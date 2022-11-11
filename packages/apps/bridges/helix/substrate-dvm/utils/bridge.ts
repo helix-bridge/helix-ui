@@ -23,15 +23,24 @@ export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, Polkado
       sender,
       recipient,
       direction: { from },
+      wallet,
     } = payload;
     const toAccount = dvmAddressToAccountId(recipient).toHuman();
     const amount = toWei(from);
     const api = entrance.polkadot.getInstance(from.meta.provider.wss);
-    const extrinsic = isRing(from.symbol)
-      ? api.tx.balances.transfer(toAccount, new BN(amount))
-      : api.tx.kton.transfer(toAccount, new BN(amount));
 
-    return signAndSendExtrinsic(api, sender, extrinsic);
+    return rxFrom(waitUntilConnected(api)).pipe(
+      mergeMap(() =>
+        signAndSendExtrinsic(
+          api,
+          sender,
+          isRing(from.symbol)
+            ? api.tx.balances.transfer(toAccount, new BN(amount))
+            : api.tx.kton.transfer(toAccount, new BN(amount)),
+          wallet
+        )
+      )
+    );
   }
 
   burn(payload: RedeemPayload): Observable<Tx> {

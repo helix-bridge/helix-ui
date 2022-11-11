@@ -7,6 +7,7 @@ import { IdentAccountAddress } from 'shared/components/widget/IdentAccountAddres
 import { FORM_CONTROL } from 'shared/config/constant';
 import { BridgeBase } from 'shared/core/bridge';
 import { ConnectionStatus, PolkadotChainConfig } from 'shared/model';
+import { polkadotExtensions } from 'shared/utils/connection';
 import { convertToSS58 } from 'shared/utils/helper/address';
 import { isPolkadotNetwork } from 'shared/utils/network/network';
 import { CrossChainComponentProps } from '../../model/component';
@@ -31,8 +32,12 @@ export function RecipientItem({
   const type = isPolkadot ? to.meta.name : 'ethereum';
 
   const displayLink = useMemo(() => {
-    return isPolkadot && bridge.activeArrivalConnection && arrivalConnection.type !== 'polkadot';
-  }, [arrivalConnection.type, bridge.activeArrivalConnection, isPolkadot]);
+    return (
+      isPolkadot &&
+      bridge.activeArrivalConnection &&
+      !polkadotExtensions.includes(arrivalConnection.wallet as unknown as never)
+    );
+  }, [arrivalConnection.wallet, bridge.activeArrivalConnection, isPolkadot]);
 
   const accounts = useMemo(() => {
     const prefix = (direction.to.meta as PolkadotChainConfig).ss58Prefix;

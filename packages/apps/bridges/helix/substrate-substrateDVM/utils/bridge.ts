@@ -36,7 +36,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
   static readonly alias: string = 'SubstrateSubstrateDVMBridge';
 
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
-    const { sender, recipient, direction } = payload;
+    const { sender, recipient, direction, wallet } = payload;
     const { from: departure, to } = direction;
     const api = entrance.polkadot.getInstance(direction.from.meta.provider.wss);
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).sub(fee).toString();
@@ -44,7 +44,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
     const section = departure.meta.isTest ? 'substrate2SubstrateBacking' : 'toCrabBacking';
     const extrinsic = api.tx[section].lockAndRemoteIssue(String(to.meta.specVersion), WEIGHT, amount, fee, recipient);
 
-    return signAndSendExtrinsic(api, sender, extrinsic);
+    return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
 
   burn(payload: RedeemPayload): Observable<Tx> {

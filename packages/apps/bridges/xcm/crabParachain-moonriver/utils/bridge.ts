@@ -36,6 +36,7 @@ export class CrabParachainMoonriverBridge extends Bridge<
       direction: { from: departure, to: arrival },
       sender,
       recipient,
+      wallet,
     } = payload;
     const amount = this.patchAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
@@ -89,7 +90,7 @@ export class CrabParachainMoonriverBridge extends Bridge<
     const feeAssetItem = 0;
     const extrinsic = api.tx.polkadotXcm.reserveTransferAssets(dest, beneficiary, assets, feeAssetItem);
 
-    return signAndSendExtrinsic(api, sender, extrinsic);
+    return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
 
   burn(payload: RedeemPayload): Observable<Tx> {

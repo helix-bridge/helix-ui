@@ -1,12 +1,13 @@
 import type { ApiPromise, SubmittableResult } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
+import { EMPTY } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import { from } from 'rxjs/internal/observable/from';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { tap } from 'rxjs/internal/operators/tap';
 import type { Observer } from 'rxjs/internal/types';
-import { Tx } from '../../model';
-import { waitUntilConnected } from '../connection';
+import { SupportedWallet, Tx } from '../../model';
+import { getPolkadotExtension, PolkadotExtension, polkadotExtensions, waitUntilConnected } from '../connection';
 
 function extrinsicSpy(observer: Observer<Tx>) {
   observer.next({ status: 'signing' });
@@ -45,21 +46,27 @@ function extrinsicSpy(observer: Observer<Tx>) {
 export function signAndSendExtrinsic(
   api: ApiPromise,
   sender: string,
-  extrinsic: SubmittableExtrinsic<'promise', SubmittableResult>
+  extrinsic: SubmittableExtrinsic<'promise', SubmittableResult>,
+  wallet: SupportedWallet
 ) {
   const obs = new Observable((spy: Observer<Tx>) => {
     extrinsic.signAndSend(sender, extrinsicSpy(spy)).catch((error) => spy.error({ status: 'error', error }));
   });
 
-  const result = import('@polkadot/extension-dapp').then(({ web3Enable, web3FromAddress }) => {
-    web3Enable('polkadot-js/apps');
+  if (!polkadotExtensions.includes(wallet as unknown as never)) {
+    console.warn(`Can not sign the extrinsic with the ${wallet}`);
+    return EMPTY;
+  }
 
-    return web3FromAddress(sender);
-  });
-
-  return from(result).pipe(
-    tap((injector) => api.setSigner(injector.signer)),
-    switchMap(() => from(waitUntilConnected(api))),
-    switchMap(() => obs)
+  return from(waitUntilConnected(api)).pipe(
+    switchMap(() => from(getPolkadotExtension(wallet as PolkadotExtension))),
+    tap((injector) => {
+      if (injector) {
+        api.setSigner(injector.signer);
+      } else {
+        console.warn(`Can not find the ${wallet} extension, make sure you have install and enable it.`);
+      }
+    }),
+    switchMap((injector) => (injector ? obs : EMPTY))
   );
 }
