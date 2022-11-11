@@ -21,7 +21,7 @@ import {
 import { entrance, isMetamaskChainConsistent, waitUntilConnected } from 'shared/utils/connection';
 import { convertToDvm, revertAccount } from 'shared/utils/helper/address';
 import { toWei } from 'shared/utils/helper/balance';
-import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
+import { sendTransactionFromContract, signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { getOriginChainConfig } from '../../../../utils/network';
 import { getDirectionFromHelixRecord } from '../../../../utils/record';
@@ -41,7 +41,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
     const WEIGHT = 6e8;
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
 
-    return genEthereumContractTxObs(
+    return sendTransactionFromContract(
       this.config.contracts.backing,
       (contract) =>
         contract.lockAndRemoteIssuing(
@@ -113,7 +113,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
 
     return isMetamaskChainConsistent(getOriginChainConfig(fromChain)).pipe(
       switchMap(() =>
-        genEthereumContractTxObs(
+        sendTransactionFromContract(
           this.config.contracts.backing,
           (contract) => contract.handleUnlockFailureLocal(messageNonce),
           backingAbi
@@ -187,7 +187,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
     return isMetamaskChainConsistent(toChain).pipe(
       switchMap(() => this.getFee({ from: dir.to, to: dir.from })),
       switchMap(({ amount: fee }) =>
-        genEthereumContractTxObs(
+        sendTransactionFromContract(
           this.config.contracts.backing,
           (contract) =>
             contract.remoteIssuingFailure(String(fromChain.specVersion), WEIGHT, record.messageNonce, {

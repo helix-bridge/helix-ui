@@ -10,7 +10,7 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { CrossChainDirection, CrossToken, EthereumChainConfig, HelixHistoryRecord, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
-import { genEthereumContractTxObs } from 'shared/utils/tx';
+import { sendTransactionFromContract } from 'shared/utils/tx';
 import { DEFAULT_SLIPPAGE, UI_SLIPPAGE_SCALE } from '../../../../components/form-control/Slippage';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { AllowancePayload } from '../../../../model/allowance';
@@ -83,7 +83,7 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
       return EMPTY;
     }
 
-    return genEthereumContractTxObs(
+    return sendTransactionFromContract(
       contractAddress,
       (contract) => contract.burn(tokenAddress, transferAmount, toChainId, recipient, nonce, { from: sender }),
       burnAbi
@@ -116,7 +116,7 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
       return EMPTY;
     }
 
-    return genEthereumContractTxObs(
+    return sendTransactionFromContract(
       contractAddress,
       (contract) => contract.deposit(tokenAddress, transferAmount, mintChainId, recipient, nonce, { from: sender }),
       depositAbi
@@ -143,7 +143,7 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
     const { contracts } = bridge.config;
     const contractAddress = bridge.isIssue(fromChain, to.meta) ? contracts.backing : contracts.issuing;
 
-    return genEthereumContractTxObs(
+    return sendTransactionFromContract(
       contractAddress,
       (contract) =>
         contract.send(recipient, tokenAddress, transferAmount, dstChainId, nonce, maxSlippage, { from: sender }),
@@ -179,7 +179,7 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
           return hexlify(ary);
         });
 
-        return genEthereumContractTxObs(
+        return sendTransactionFromContract(
           contractAddress as string,
           (contract) => contract.withdraw(wd, sigs, signers, powers),
           transferAbi

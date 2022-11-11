@@ -22,7 +22,7 @@ import { convertToDvm } from 'shared/utils/helper/address';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
 import { isDVMNetwork } from 'shared/utils/network/network';
-import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
+import { sendTransactionFromContract, signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { AllowancePayload } from '../../../../model/allowance';
 import abi from '../config/abi.json';
@@ -68,7 +68,7 @@ export class SubstrateSubstrateDVMBridge extends Bridge<
 
     return zip([valObs, this.s2sMappingAddress(departure.meta.provider.wss)]).pipe(
       switchMap(([val, mappingAddress]) =>
-        genEthereumContractTxObs(
+        sendTransactionFromContract(
           mappingAddress,
           (contract) =>
             contract.burnAndRemoteUnlockWaitingConfirm(

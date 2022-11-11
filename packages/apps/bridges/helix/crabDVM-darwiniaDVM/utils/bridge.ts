@@ -16,7 +16,7 @@ import {
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
-import { genEthereumContractTxObs } from 'shared/utils/tx';
+import { sendTransactionFromContract } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { AllowancePayload } from '../../../../model/allowance';
 import { getWrappedToken } from '../../../../utils/network/network';
@@ -49,7 +49,7 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
         ? ['lockAndRemoteIssuingNative', remove(fullParams, (_, index) => index !== 2)]
         : ['lockAndRemoteIssuing', fullParams];
 
-    return genEthereumContractTxObs(
+    return sendTransactionFromContract(
       bridge.config.contracts!.backing,
       (contract) => contract[method].apply(this, params),
       backingAbi
@@ -80,7 +80,7 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
         ? ['burnAndRemoteUnlockNative', remove(fullParams, (_, index) => index !== 2)]
         : ['burnAndRemoteUnlock', fullParams];
 
-    return genEthereumContractTxObs(
+    return sendTransactionFromContract(
       bridge.config.contracts!.issuing,
       (contract) => contract[method].apply(this, params),
       burnAbi
@@ -215,7 +215,7 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
     return isMetamaskChainConsistent(this.getChainConfig(toChain)).pipe(
       switchMap(() => from(this.getFee(direction))),
       switchMap((fee) => {
-        return genEthereumContractTxObs(
+        return sendTransactionFromContract(
           contractAddress,
           (contract) => contract[method].apply(null, [...params, { value: fee?.amount.toString() }]),
           abi

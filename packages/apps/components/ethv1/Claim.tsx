@@ -12,7 +12,7 @@ import { validateMessages } from 'shared/config/validate-msg';
 import { Tx } from 'shared/model';
 import { entrance, getMetamaskConnection, metamaskGuard } from 'shared/utils/connection';
 import { fromWei } from 'shared/utils/helper/balance';
-import { applyModalObs, genEthereumContractTxObs } from 'shared/utils/tx';
+import { applyModalObs, sendTransactionFromContract } from 'shared/utils/tx';
 import abi from '../../config/ethv1/abi.json';
 import claimSource from '../../config/ethv1/airdrop2.json';
 import { contractAddress, merkleRoot } from '../../config/ethv1/constant';
@@ -177,7 +177,7 @@ export function Claim() {
                 }),
                 switchMap((confirmed) =>
                   confirmed
-                    ? genEthereumContractTxObs(
+                    ? sendTransactionFromContract(
                         contractAddress,
                         (contract) =>
                           contract.claimMultipleTokens(

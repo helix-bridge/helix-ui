@@ -13,7 +13,7 @@ import {
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
-import { genEthereumContractTxObs } from 'shared/utils/tx';
+import { sendTransactionFromContract } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { AllowancePayload } from '../../../../model/allowance';
 import backingAbi from '../config/s2sv2backing.json';
@@ -29,7 +29,7 @@ export class DarwiniaDVMCrabDVMBridge extends Bridge<DarwiniaDVMCrabDVMBridgeCon
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
     const gasLimit = '1000000';
 
-    return genEthereumContractTxObs(
+    return sendTransactionFromContract(
       bridge.config.contracts!.backing,
       (contract) =>
         contract.lockAndRemoteIssuing(to.meta.specVersion, gasLimit, departure.address, recipient, amount, {
@@ -50,7 +50,7 @@ export class DarwiniaDVMCrabDVMBridge extends Bridge<DarwiniaDVMCrabDVMBridgeCon
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
     const gasLimit = '1000000';
 
-    return genEthereumContractTxObs(
+    return sendTransactionFromContract(
       bridge.config.contracts!.issuing,
       (contract) =>
         contract.burnAndRemoteUnlock(to.meta.specVersion, gasLimit, departure.address, recipient, amount, {
@@ -94,7 +94,7 @@ export class DarwiniaDVMCrabDVMBridge extends Bridge<DarwiniaDVMCrabDVMBridgeCon
     return isMetamaskChainConsistent(arrival).pipe(
       switchMap((isConsistent) => (isConsistent ? from(this.getFee(direction)) : EMPTY)),
       switchMap((fee) =>
-        genEthereumContractTxObs(
+        sendTransactionFromContract(
           address as string,
           (contract) =>
             contract[method](
