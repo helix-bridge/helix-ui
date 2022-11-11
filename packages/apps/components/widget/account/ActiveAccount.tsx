@@ -104,24 +104,22 @@ export default function ActiveAccount() {
               <Dropdown
                 overlay={
                   <Menu
+                    onClick={(event) => {
+                      const { key } = event;
+
+                      setIsWalletSelectOpen(key === 'wallet');
+                      setIsAccountSelectOpen(key === 'account');
+                    }}
                     items={[
                       {
                         key: 'wallet',
-                        label: (
-                          <span onClick={() => setIsWalletSelectOpen(true)} className="space-x-2">
-                            <WalletOutlined />
-                            <span>{t('Switch Wallet')}</span>
-                          </span>
-                        ),
+                        label: t('Switch Wallet'),
+                        icon: <WalletOutlined />,
                       },
                       {
                         key: 'account',
-                        label: (
-                          <span onClick={() => setIsAccountSelectOpen(true)} className="space-x-2">
-                            <UserSwitchOutlined />
-                            <span>{t('Switch Account')}</span>
-                          </span>
-                        ),
+                        label: t('Switch Account'),
+                        icon: <UserSwitchOutlined />,
                       },
                     ]}
                   ></Menu>
