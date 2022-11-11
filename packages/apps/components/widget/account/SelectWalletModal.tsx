@@ -13,11 +13,12 @@ type Props = {
   onCancel: () => void;
 };
 
-const wallets: { logo: string; name: SupportedWallet }[] = [
+export const wallets: { logo: string; name: SupportedWallet }[] = [
   { name: 'metamask', logo: 'metamask.svg' },
   { name: 'polkadot', logo: 'polkadot.svg' },
   { name: 'subwallet', logo: 'subwallet.svg' },
   { name: 'talisman', logo: 'talisman.svg' },
+  { name: 'mathwallet', logo: 'mathwallet.png' },
 ];
 
 export const SelectWalletModal: React.FC<Props> = ({ visible, defaultValue, title, footer, onSelect, onCancel }) => {

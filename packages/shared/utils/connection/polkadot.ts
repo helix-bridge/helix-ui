@@ -24,9 +24,10 @@ const walletToPropName: { [key in PolkadotExtension]: string } = {
   polkadot: 'polkadot-js',
   subwallet: 'subwallet-js',
   talisman: 'talisman',
+  mathwallet: 'mathwallet',
 };
 
-export const polkadotExtensions: PolkadotExtension[] = ['polkadot', 'subwallet', 'talisman'];
+export const polkadotExtensions: PolkadotExtension[] = ['polkadot', 'subwallet', 'talisman', 'mathwallet'];
 
 export async function waitUntilConnected(api: ApiPromise): Promise<null> {
   await api.isReady;

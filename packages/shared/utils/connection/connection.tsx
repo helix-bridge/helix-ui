@@ -99,6 +99,7 @@ const walletConnections: {
   polkadot: connectPolkadot,
   subwallet: connectPolkadot,
   talisman: connectPolkadot,
+  mathwallet: connectPolkadot,
 };
 
 export const connect: ConnectFn<Connection> = (chain, wallet) => {

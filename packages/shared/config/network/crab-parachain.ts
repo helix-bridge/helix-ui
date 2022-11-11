@@ -46,5 +46,5 @@ export const crabParachainConfig: ParachainChainConfig = {
   ss58Prefix: 42,
   specVersion: 5330,
   paraId: 2105,
-  wallets: ['polkadot', 'subwallet', 'talisman'],
+  wallets: ['polkadot', 'subwallet', 'talisman', 'mathwallet'],
 };

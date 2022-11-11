@@ -34,5 +34,5 @@ export const pangoroConfig: PolkadotChainConfig = {
       address: '',
     },
   ],
-  wallets: ['polkadot', 'subwallet', 'talisman'],
+  wallets: ['polkadot', 'subwallet', 'talisman', 'mathwallet'],
 };

@@ -123,7 +123,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
                   key={item}
                   className={`radio-list 'transition-all duration-300 hover:scale-105'`}
                 >
-                  <Logo name={`${item}.svg`} width={36} height={36} />
+                  <Logo name={`${item}.${item === 'mathwallet' ? 'png' : 'svg'}`} width={36} height={36} />
                   <span className="ml-4 capitalize">{item}</span>
                 </Radio.Button>
               ))}

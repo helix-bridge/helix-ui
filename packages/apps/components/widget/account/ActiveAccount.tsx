@@ -129,7 +129,13 @@ export default function ActiveAccount() {
                   className="flex items-center justify-around px-1 overflow-hidden truncate ml-1"
                   icon={
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={`/image/${departureConnection.wallet}.svg`} width={18} height={18} />
+                    <img
+                      src={`/image/${departureConnection.wallet}.${
+                        departureConnection.wallet === 'mathwallet' ? 'png' : 'svg'
+                      }`}
+                      width={18}
+                      height={18}
+                    />
                   }
                   style={{ maxWidth: 200 }}
                 >
