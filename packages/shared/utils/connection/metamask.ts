@@ -46,7 +46,7 @@ export const getMetamaskConnection: () => Observable<EthereumConnection> = () =>
           accounts: addressToAccounts(addresses),
           status: ConnectionStatus.success,
           chainId,
-          type: 'metamask',
+          wallet: 'metamask',
         }))
       );
 
