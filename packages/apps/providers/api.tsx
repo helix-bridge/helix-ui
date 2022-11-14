@@ -102,7 +102,9 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
       setIsConnecting(true);
 
       return iif(
-        () => chainConfig.wallets.length > 1 && !wallet && (!activeWallet || !isCachedAvailable),
+        () =>
+          chainConfig.wallets.length > 1 &&
+          ((!wallet && (!activeWallet || !isCachedAvailable)) || action === setArrivalConnection),
         applyModalObs({
           title: (
             <div className="inline-flex items-center space-x-1 mb-4">
@@ -157,7 +159,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
         },
       });
     },
-    [state.departure, t]
+    [setArrivalConnection, state.departure, t]
   );
 
   const connectDepartureNetwork = useCallback(
@@ -177,9 +179,9 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   );
 
   const connectArrivalNetwork = useCallback(
-    (chainConfig: ChainConfig, wallet?: SupportedWallet) => {
+    (chainConfig: ChainConfig) => {
       arr$$.unsubscribe();
-      arr$$ = getConnection(chainConfig, setArrivalConnection, wallet);
+      arr$$ = getConnection(chainConfig, setArrivalConnection);
     },
     [getConnection, setArrivalConnection]
   );

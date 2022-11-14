@@ -17,10 +17,16 @@ import { useEffect, useMemo, useState } from 'react';
 import { initReactI18next, useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
 import { isDev } from 'shared/config/env';
-import { darwiniaConfig, pangolinConfig, SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
+import { darwiniaConfig, goerliConfig, pangolinConfig, SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
 import { ethereumConfig } from 'shared/config/network/ethereum';
 import { ConnectionStatus, EthereumChainConfig } from 'shared/model';
-import { entrance, polkadotExtensions } from 'shared/utils/connection';
+import {
+  entrance,
+  EthereumExtension,
+  ethereumExtensions,
+  PolkadotExtension,
+  polkadotExtensions,
+} from 'shared/utils/connection';
 import { Path } from '../../../config';
 import abi from '../../../config/ethv1/abi.json';
 import claimSource from '../../../config/ethv1/airdrop2.json';
@@ -210,22 +216,24 @@ export default function ActiveAccount() {
         onSelect={(wallet) => {
           setIsWalletSelectOpen(false);
 
-          if (wallet === 'metamask') {
-            if (departure.wallets.includes('metamask')) {
-              connectDepartureNetwork(departure);
-            } else {
-              entrance.web3.currentProvider.getNetwork().then((res) => {
-                const chainId = numberToHex(+res.chainId);
-                const config = SYSTEM_CHAIN_CONFIGURATIONS.find(
+          if (departure.wallets.includes(wallet)) {
+            connectDepartureNetwork(departure, wallet);
+          } else if (ethereumExtensions.includes(wallet as EthereumExtension)) {
+            entrance.web3.currentProvider.getNetwork().then((res) => {
+              const chainId = numberToHex(+res.chainId);
+              const config =
+                SYSTEM_CHAIN_CONFIGURATIONS.find(
                   (item) => (item as EthereumChainConfig)?.ethereumChain?.chainId === chainId
-                );
+                ) ?? (isDev ? goerliConfig : ethereumConfig);
 
-                connectDepartureNetwork(config ?? ethereumConfig);
-              });
-            }
-          } else {
+              connectDepartureNetwork(config, wallet);
+            });
+          } else if (polkadotExtensions.includes(wallet as PolkadotExtension)) {
             const config = isDev ? pangolinConfig : darwiniaConfig;
-            connectDepartureNetwork(departure.wallets.includes('polkadot') ? departure : config, wallet);
+
+            connectDepartureNetwork(config, wallet);
+          } else {
+            //
           }
         }}
         title={

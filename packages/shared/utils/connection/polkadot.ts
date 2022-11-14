@@ -66,7 +66,7 @@ export async function getPolkadotExtension(wallet: PolkadotExtension) {
 }
 
 export async function isPolkadotExtensionInstalled(wallet: SupportedWallet): Promise<boolean> {
-  const ext = getPolkadotExtension(wallet as PolkadotExtension);
+  const ext = await getPolkadotExtension(wallet as PolkadotExtension);
 
   return !!ext;
 }
