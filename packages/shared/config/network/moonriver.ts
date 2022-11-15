@@ -52,5 +52,5 @@ export const moonriverConfig: ParachainEthereumCompatibleChainConfig = {
   ss58Prefix: 8,
   specVersion: 1803,
   paraId: 2023,
-  wallets: ['metamask'],
+  wallets: ['metamask', 'mathwallet-ethereum'],
 };

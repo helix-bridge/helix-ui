@@ -20,13 +20,13 @@ export const WalletProvider = ({ children }: React.PropsWithChildren<unknown>) =
   const [walletMatched, setWalletMatched] = useState(true);
   const [chainMatched, setChainMatched] = useState(true);
 
-  // eslint-disable-next-line complexity
   useEffect(() => {
-    const { type } = departureConnection;
-    const walletMatch = type === 'unknown' || departure.wallets.includes(departureConnection.type as SupportedWallet);
+    const { wallet } = departureConnection;
+    const walletMatch =
+      wallet === 'unknown' || departure.wallets.includes(departureConnection.wallet as SupportedWallet);
     let chainMatch = walletMatch;
 
-    if (walletMatch && type === 'metamask') {
+    if (walletMatch && wallet === 'metamask') {
       chainMatch =
         (departure as EthereumChainConfig).ethereumChain &&
         (departure as EthereumChainConfig).ethereumChain.chainId === departureConnection.chainId;
@@ -34,14 +34,14 @@ export const WalletProvider = ({ children }: React.PropsWithChildren<unknown>) =
 
     setWalletMatched(walletMatch);
     setChainMatched(chainMatch);
-  }, [departure, departureConnection, departureConnection.chainId, departureConnection.type]);
+  }, [departure, departureConnection, departureConnection.chainId, departureConnection.wallet]);
 
   useEffect(() => {
     const { activeWallet } = readStorage();
     if (activeWallet?.chain) {
       const config = getChainConfig(activeWallet.chain);
 
-      connectAndUpdateDepartureNetwork(config);
+      connectAndUpdateDepartureNetwork(config, activeWallet.wallet);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

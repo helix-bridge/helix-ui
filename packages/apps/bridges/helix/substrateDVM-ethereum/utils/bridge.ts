@@ -14,7 +14,7 @@ import {
 import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { isNativeToken } from 'shared/utils/helper/validator';
-import { genEthereumContractTxObs } from 'shared/utils/tx';
+import { sendTransactionFromContract } from 'shared/utils/tx';
 import { getBridge } from 'utils/bridge';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { AllowancePayload } from '../../../../model/allowance';
@@ -46,7 +46,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
         ? { method: 'lockAndRemoteIssuingNative', args: params.slice(1) }
         : { method: 'lockAndRemoteIssuing', args: params };
 
-    return genEthereumContractTxObs(
+    return sendTransactionFromContract(
       this.config.contracts!.backing,
       (contract) => contract[method].apply(null, args),
       backingAbi
@@ -64,7 +64,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
         ? { method: 'burnAndRemoteUnlockNative', args: params.slice(1) }
         : { method: 'burnAndRemoteUnlock', args: params };
 
-    return genEthereumContractTxObs(
+    return sendTransactionFromContract(
       bridge.config.contracts!.issuing,
       (contract) => contract[method].apply(null, args),
       mappingTokenAbi
@@ -78,7 +78,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
 
     return isMetamaskChainConsistent(this.getChainConfig(toChain)).pipe(
       switchMap(() =>
-        genEthereumContractTxObs(
+        sendTransactionFromContract(
           contractAddress,
           (contract) => contract.claim(messageNonce, endTime, recvTokenAddress, recipient, recvAmount, signatures),
           guardAbi
@@ -117,7 +117,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
     return isMetamaskChainConsistent(this.getChainConfig(toChain)).pipe(
       switchMap(() => from(this.getFee(direction, true))),
       switchMap((fee) => {
-        return genEthereumContractTxObs(
+        return sendTransactionFromContract(
           contractAddress,
           (contract) => contract[method].apply(null, [...args, { value: fee?.amount.toString() }]),
           abi

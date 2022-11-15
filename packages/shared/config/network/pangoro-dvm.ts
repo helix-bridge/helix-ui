@@ -101,5 +101,5 @@ export const pangoroDVMConfig: DVMChainConfig = {
       address: '0x78f3B1ae818c304Bbec76e244B67dEdC70506006',
     },
   ],
-  wallets: ['metamask'],
+  wallets: ['metamask', 'mathwallet-ethereum'],
 };

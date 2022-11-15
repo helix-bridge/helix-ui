@@ -12,7 +12,7 @@ import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
 import { toWei } from 'shared/utils/helper/balance';
 import { isRing } from 'shared/utils/helper/validator';
-import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
+import { sendTransactionFromContract, signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import abi from '../config/abi.json';
 import { CrabParachainMoonriverBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
@@ -36,6 +36,7 @@ export class CrabParachainMoonriverBridge extends Bridge<
       direction: { from: departure, to: arrival },
       sender,
       recipient,
+      wallet,
     } = payload;
     const amount = this.patchAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
@@ -89,7 +90,7 @@ export class CrabParachainMoonriverBridge extends Bridge<
     const feeAssetItem = 0;
     const extrinsic = api.tx.polkadotXcm.reserveTransferAssets(dest, beneficiary, assets, feeAssetItem);
 
-    return signAndSendExtrinsic(api, sender, extrinsic);
+    return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
 
   burn(payload: RedeemPayload): Observable<Tx> {
@@ -102,7 +103,7 @@ export class CrabParachainMoonriverBridge extends Bridge<
     const destination = [1, ['0x0000000839', `0x01${convertToDvm(recipient).slice(2)}00`]];
     const weight = 4_000_000_000;
 
-    return genEthereumContractTxObs(
+    return sendTransactionFromContract(
       this.config.contracts!.issuing,
       (contract) => contract.transfer(departure.address, amount, destination, weight, { from: sender }),
       abi

@@ -16,10 +16,17 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { initReactI18next, useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
-import { darwiniaConfig, SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
+import { isDev } from 'shared/config/env';
+import { darwiniaConfig, goerliConfig, pangolinConfig, SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
 import { ethereumConfig } from 'shared/config/network/ethereum';
 import { ConnectionStatus, EthereumChainConfig } from 'shared/model';
-import { entrance } from 'shared/utils/connection';
+import {
+  entrance,
+  EthereumExtension,
+  ethereumExtensions,
+  PolkadotExtension,
+  polkadotExtensions,
+} from 'shared/utils/connection';
 import { Path } from '../../../config';
 import abi from '../../../config/ethv1/abi.json';
 import claimSource from '../../../config/ethv1/airdrop2.json';
@@ -43,9 +50,9 @@ export default function ActiveAccount() {
   const router = useRouter();
 
   const disconnected = useMemo(() => {
-    const { type, status } = departureConnection;
+    const { wallet, status } = departureConnection;
 
-    return type !== 'unknown' && status !== ConnectionStatus.success;
+    return wallet !== 'unknown' && status !== ConnectionStatus.success;
   }, [departureConnection]);
 
   useEffect(() => {
@@ -99,28 +106,26 @@ export default function ActiveAccount() {
               ></Badge>
             )}
 
-            {departureConnection.type === 'polkadot' && (
+            {polkadotExtensions.includes(departureConnection.wallet as unknown as never) && (
               <Dropdown
                 overlay={
                   <Menu
+                    onClick={(event) => {
+                      const { key } = event;
+
+                      setIsWalletSelectOpen(key === 'wallet');
+                      setIsAccountSelectOpen(key === 'account');
+                    }}
                     items={[
                       {
                         key: 'wallet',
-                        label: (
-                          <span onClick={() => setIsWalletSelectOpen(true)} className="space-x-2">
-                            <WalletOutlined />
-                            <span>{t('Switch Wallet')}</span>
-                          </span>
-                        ),
+                        label: t('Switch Wallet'),
+                        icon: <WalletOutlined />,
                       },
                       {
                         key: 'account',
-                        label: (
-                          <span onClick={() => setIsAccountSelectOpen(true)} className="space-x-2">
-                            <UserSwitchOutlined />
-                            <span>{t('Switch Account')}</span>
-                          </span>
-                        ),
+                        label: t('Switch Account'),
+                        icon: <UserSwitchOutlined />,
                       },
                     ]}
                   ></Menu>
@@ -130,7 +135,7 @@ export default function ActiveAccount() {
                   className="flex items-center justify-around px-1 overflow-hidden truncate ml-1"
                   icon={
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={`/image/${departureConnection.type}.svg`} width={18} height={18} />
+                    <img src={`/image/${departureConnection.wallet.split('-')[0]}.svg`} width={18} height={18} />
                   }
                   style={{ maxWidth: 200 }}
                 >
@@ -141,12 +146,12 @@ export default function ActiveAccount() {
               </Dropdown>
             )}
 
-            {departureConnection.type === 'metamask' && (
+            {ethereumExtensions.includes(departureConnection.wallet as unknown as never) && (
               <Button
                 className="flex items-center justify-around px-1 overflow-hidden"
                 icon={
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={`/image/${departureConnection.type}.svg`} width={18} height={18} />
+                  <img src={`/image/${departureConnection.wallet.split('-')[0]}.svg`} width={18} height={18} />
                 }
                 style={{ maxWidth: 200 }}
                 onClick={() => setIsWalletSelectOpen(true)}
@@ -170,11 +175,7 @@ export default function ActiveAccount() {
           disabled={isConnecting}
           icon={isConnecting && <LoadingOutlined />}
           onClick={() => {
-            if (router.pathname !== Path.records) {
-              connectDepartureNetwork(departure);
-            } else {
-              setIsWalletSelectOpen(true);
-            }
+            setIsWalletSelectOpen(true);
           }}
         >
           {t('Connect to Wallet')}
@@ -191,7 +192,7 @@ export default function ActiveAccount() {
           setIsAccountSelectOpen(false);
         }}
         title={
-          <div className="inline-flex items-center space-x-1">
+          <div className="inline-flex space-x-1">
             <span>{t('Select active account')}</span>
           </div>
         }
@@ -200,32 +201,33 @@ export default function ActiveAccount() {
 
       <SelectWalletModal
         visible={isWalletSelectOpen}
-        defaultValue={departureConnection.type}
+        defaultValue={departureConnection.wallet}
         onCancel={() => setIsWalletSelectOpen(false)}
         onSelect={(wallet) => {
           setIsWalletSelectOpen(false);
 
-          if (wallet === 'metamask') {
-            if (departure.wallets.includes('metamask')) {
-              connectDepartureNetwork(departure);
-            } else {
-              entrance.web3.currentProvider.getNetwork().then((res) => {
-                const chainId = numberToHex(+res.chainId);
-                const config = SYSTEM_CHAIN_CONFIGURATIONS.find(
+          if (departure.wallets.includes(wallet)) {
+            connectDepartureNetwork(departure, wallet);
+          } else if (ethereumExtensions.includes(wallet as EthereumExtension)) {
+            entrance.web3.currentProvider.getNetwork().then((res) => {
+              const chainId = numberToHex(+res.chainId);
+              const config =
+                SYSTEM_CHAIN_CONFIGURATIONS.find(
                   (item) => (item as EthereumChainConfig)?.ethereumChain?.chainId === chainId
-                );
+                ) ?? (isDev ? goerliConfig : ethereumConfig);
 
-                connectDepartureNetwork(config ?? ethereumConfig);
-              });
-            }
-          } else if (wallet === 'polkadot') {
-            connectDepartureNetwork(departure.wallets.includes('polkadot') ? departure : darwiniaConfig);
+              connectDepartureNetwork(config, wallet);
+            });
+          } else if (polkadotExtensions.includes(wallet as PolkadotExtension)) {
+            const config = isDev ? pangolinConfig : darwiniaConfig;
+
+            connectDepartureNetwork(config, wallet);
           } else {
             //
           }
         }}
         title={
-          <div className="inline-flex items-center space-x-1">
+          <div className="inline-flex space-x-1">
             <span>{t('Switch Wallet')}</span>
           </div>
         }

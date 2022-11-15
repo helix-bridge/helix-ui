@@ -29,14 +29,14 @@ export const AccountProvider = ({ children }: React.PropsWithChildren<unknown>) 
       departureConnection.accounts.find((value) =>
         isSameAddress(
           value.address,
-          (departureConnection.type === 'polkadot' ? activePolkadotAccount : activeMetamaskAccount) ?? ''
+          (departureConnection.wallet === 'polkadot' ? activePolkadotAccount : activeMetamaskAccount) ?? ''
         )
       )?.address || departureConnection.accounts[0]?.address;
 
     if (acc) {
       setAccount(acc);
     }
-  }, [departureConnection.accounts, departureConnection.type]);
+  }, [departureConnection.accounts, departureConnection.wallet]);
 
   useEffect(() => {
     if (account) {

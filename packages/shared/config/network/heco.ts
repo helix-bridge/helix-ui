@@ -51,5 +51,5 @@ export const hecoConfig: EthereumChainConfig = {
       address: '0x15e65456310ecb216B51EfBd8a1dBf753353DcF9',
     },
   ],
-  wallets: ['metamask'],
+  wallets: ['metamask', 'mathwallet-ethereum'],
 };

@@ -3,7 +3,7 @@ import { EthereumChainConfig } from '../../model';
 export const goerliConfig: EthereumChainConfig = {
   ethereumChain: {
     chainId: '0x5',
-    chainName: '',
+    chainName: 'Goerli test network',
     nativeCurrency: {
       decimals: 18,
       symbol: 'GoerliETH',
@@ -72,5 +72,5 @@ export const goerliConfig: EthereumChainConfig = {
       address: '0xdd3df59c868fcd40fded7af0cccc3e2c7bcb4f3c',
     },
   ],
-  wallets: ['metamask'],
+  wallets: ['metamask', 'mathwallet-ethereum'],
 };

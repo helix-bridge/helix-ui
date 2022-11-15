@@ -21,7 +21,7 @@ import {
 import { entrance, isMetamaskChainConsistent, waitUntilConnected } from 'shared/utils/connection';
 import { convertToDvm, revertAccount } from 'shared/utils/helper/address';
 import { toWei } from 'shared/utils/helper/balance';
-import { genEthereumContractTxObs, signAndSendExtrinsic } from 'shared/utils/tx';
+import { sendTransactionFromContract, signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { getOriginChainConfig } from '../../../../utils/network';
 import { getDirectionFromHelixRecord } from '../../../../utils/record';
@@ -41,7 +41,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
     const WEIGHT = 6e8;
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
 
-    return genEthereumContractTxObs(
+    return sendTransactionFromContract(
       this.config.contracts.backing,
       (contract) =>
         contract.lockAndRemoteIssuing(
@@ -56,7 +56,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
   }
 
   burn(payload: RedeemPayload, fee: BN): Observable<Tx> {
-    const { sender, recipient, direction } = payload;
+    const { sender, recipient, direction, wallet } = payload;
     const { from: departure, to } = direction;
     const api = entrance.polkadot.getInstance(direction.from.meta.provider.wss);
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals }));
@@ -72,7 +72,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
       recipient
     );
 
-    return signAndSendExtrinsic(api, sender, extrinsic);
+    return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
 
   refund(record: HelixHistoryRecord): Observable<Tx> {
@@ -113,7 +113,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
 
     return isMetamaskChainConsistent(getOriginChainConfig(fromChain)).pipe(
       switchMap(() =>
-        genEthereumContractTxObs(
+        sendTransactionFromContract(
           this.config.contracts.backing,
           (contract) => contract.handleUnlockFailureLocal(messageNonce),
           backingAbi
@@ -153,7 +153,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
       )
     );
 
-    return fromRx(extrinsic).pipe(switchMap((ext) => signAndSendExtrinsic(api, recipient, ext)));
+    return fromRx(extrinsic).pipe(switchMap((ext) => signAndSendExtrinsic(api, recipient, ext, 'polkadot')));
   }
 
   private localIssuingFailure(record: HelixHistoryRecord) {
@@ -163,7 +163,12 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
 
     return fromRx(waitUntilConnected(api)).pipe(
       switchMap(() =>
-        signAndSendExtrinsic(api, record.sender, api.tx[section].handleIssuingFailureLocal(record.messageNonce))
+        signAndSendExtrinsic(
+          api,
+          record.sender,
+          api.tx[section].handleIssuingFailureLocal(record.messageNonce),
+          'polkadot'
+        )
       )
     );
   }
@@ -182,7 +187,7 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
     return isMetamaskChainConsistent(toChain).pipe(
       switchMap(() => this.getFee({ from: dir.to, to: dir.from })),
       switchMap(({ amount: fee }) =>
-        genEthereumContractTxObs(
+        sendTransactionFromContract(
           this.config.contracts.backing,
           (contract) =>
             contract.remoteIssuingFailure(String(fromChain.specVersion), WEIGHT, record.messageNonce, {

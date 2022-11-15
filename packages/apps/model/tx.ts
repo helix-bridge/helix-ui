@@ -1,4 +1,5 @@
 import { BridgeBase } from 'shared/core/bridge';
+import { SupportedWallet } from 'shared/model';
 import { CrossChainDirection, CrossToken } from 'shared/model/bridge/cross-chain';
 
 interface CrossChainParty {
@@ -14,4 +15,5 @@ export interface CrossChainPayload<
   bridge: B;
   direction: CrossChainDirection<F, T>;
   slippage?: number;
+  wallet: SupportedWallet;
 }

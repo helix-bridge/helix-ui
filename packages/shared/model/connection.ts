@@ -17,7 +17,7 @@ export enum ConnectionStatus {
 export interface Connection {
   status: ConnectionStatus;
   accounts: IAccountMeta[];
-  type: SupportedWallet | 'unknown';
+  wallet: SupportedWallet | 'unknown';
   chainId: PolkadotTypeNetwork | string;
 }
 

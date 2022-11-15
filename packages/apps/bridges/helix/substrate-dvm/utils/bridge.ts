@@ -11,7 +11,7 @@ import { convertToSS58, dvmAddressToAccountId } from 'shared/utils/helper/addres
 import { toWei } from 'shared/utils/helper/balance';
 import { typeRegistryFactory } from 'shared/utils/helper/huge';
 import { isNativeToken, isRing } from 'shared/utils/helper/validator';
-import { genEthereumTransactionObs, signAndSendExtrinsic } from 'shared/utils/tx';
+import { sendTransaction, signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { IssuingPayload, RedeemPayload, SubstrateDVMBridgeConfig } from '../model';
 
@@ -23,15 +23,24 @@ export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, Polkado
       sender,
       recipient,
       direction: { from },
+      wallet,
     } = payload;
     const toAccount = dvmAddressToAccountId(recipient).toHuman();
     const amount = toWei(from);
     const api = entrance.polkadot.getInstance(from.meta.provider.wss);
-    const extrinsic = isRing(from.symbol)
-      ? api.tx.balances.transfer(toAccount, new BN(amount))
-      : api.tx.kton.transfer(toAccount, new BN(amount));
 
-    return signAndSendExtrinsic(api, sender, extrinsic);
+    return rxFrom(waitUntilConnected(api)).pipe(
+      mergeMap(() =>
+        signAndSendExtrinsic(
+          api,
+          sender,
+          isRing(from.symbol)
+            ? api.tx.balances.transfer(toAccount, new BN(amount))
+            : api.tx.kton.transfer(toAccount, new BN(amount)),
+          wallet
+        )
+      )
+    );
   }
 
   burn(payload: RedeemPayload): Observable<Tx> {
@@ -69,7 +78,7 @@ export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, Polkado
               })
             ).pipe(
               switchMap((gas) =>
-                genEthereumTransactionObs({
+                sendTransaction({
                   from: sender,
                   to: SUBSTRATE_DVM_WITHDRAW,
                   data: u8aToHex(extrinsic.method.toU8a()),

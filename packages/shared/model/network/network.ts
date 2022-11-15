@@ -28,4 +28,10 @@ export type EthereumTypeNetwork =
 
 export type Network = PolkadotTypeNetwork | EthereumTypeNetwork | DVMNetwork | ParachainNetwork;
 
-export type SupportedWallet = 'metamask' | 'polkadot';
+export type SupportedWallet =
+  | 'metamask'
+  | 'polkadot'
+  | 'talisman'
+  | 'subwallet'
+  | 'mathwallet-ethereum'
+  | 'mathwallet-polkadot';

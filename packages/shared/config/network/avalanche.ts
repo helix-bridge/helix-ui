@@ -99,5 +99,5 @@ export const avalancheConfig: EthereumChainConfig = {
       address: '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664',
     },
   ],
-  wallets: ['metamask'],
+  wallets: ['metamask', 'mathwallet-ethereum'],
 };

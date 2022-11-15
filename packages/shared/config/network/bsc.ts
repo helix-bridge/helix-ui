@@ -123,5 +123,5 @@ export const bscConfig: EthereumChainConfig = {
       address: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
     },
   ],
-  wallets: ['metamask'],
+  wallets: ['metamask', 'mathwallet-ethereum'],
 };

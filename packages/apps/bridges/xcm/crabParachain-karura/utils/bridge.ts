@@ -28,6 +28,7 @@ export class CrabParachainKaruraBridge extends Bridge<
       direction: { from: departure, to: arrival },
       sender,
       recipient,
+      wallet,
     } = payload;
     const amount = this.patchAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
@@ -81,7 +82,7 @@ export class CrabParachainKaruraBridge extends Bridge<
     const feeAssetItem = 0;
     const extrinsic = api.tx.polkadotXcm.reserveTransferAssets(dest, beneficiary, assets, feeAssetItem);
 
-    return signAndSendExtrinsic(api, sender, extrinsic);
+    return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
 
   burn(payload: RedeemPayload): Observable<Tx> {
@@ -89,6 +90,7 @@ export class CrabParachainKaruraBridge extends Bridge<
       direction: { from: departure, to: arrival },
       sender,
       recipient,
+      wallet,
     } = payload;
     const amount = this.patchAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
@@ -119,7 +121,7 @@ export class CrabParachainKaruraBridge extends Bridge<
     const destWeight = 5_000_000_000;
     const extrinsic = api.tx.xTokens.transfer(currencyId, amount, dest, destWeight);
 
-    return signAndSendExtrinsic(api, sender, extrinsic);
+    return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
 
   async getFee(

@@ -1,2 +1,3 @@
 export * from './common';
-export * from './sendExtrinsic';
+export * from './polkadot';
+export * from './metamask';

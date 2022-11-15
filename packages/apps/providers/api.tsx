@@ -1,31 +1,23 @@
-import negate from 'lodash/negate';
 import { createContext, useCallback, useContext, useReducer, useState } from 'react';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { iif } from 'rxjs/internal/observable/iif';
 import { of } from 'rxjs/internal/observable/of';
+import { map } from 'rxjs/internal/operators/map';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import type { Subscription } from 'rxjs/internal/Subscription';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { isDev } from 'shared/config/env';
-import {
-  Action,
-  ChainConfig,
-  Connection,
-  ConnectionStatus,
-  EthereumChainConfig,
-  EthereumConnection,
-  NoNullFields,
-  PolkadotChainConfig,
-  PolkadotConnection,
-} from 'shared/model';
+import { Action, ChainConfig, Connection, ConnectionStatus, PolkadotChainConfig, SupportedWallet } from 'shared/model';
 import { connect } from 'shared/utils/connection';
 import { convertToSS58 } from 'shared/utils/helper/address';
-import { updateStorage } from 'shared/utils/helper/storage';
-import { isEthereumNetwork } from 'shared/utils/network/network';
+import { readStorage, updateStorage } from 'shared/utils/helper/storage';
+import { applyModalObs } from 'shared/utils/tx';
+import { WalletList } from '../components/widget/account/SelectWalletModal';
+import { useITranslation } from '../hooks';
 
 interface StoreState {
   departureConnection: Connection;
   arrivalConnection: Connection;
-  connections: (NoNullFields<PolkadotConnection> | EthereumConnection)[];
   departure: ChainConfig;
   isDev: boolean;
 }
@@ -40,7 +32,7 @@ type Actions = SetDeparture | SetDepartureConnection | SetArrivalConnection | Ad
 
 const initialConnection: Connection = {
   status: ConnectionStatus.pending,
-  type: 'unknown',
+  wallet: 'unknown',
   accounts: [],
   chainId: 'unknown',
 };
@@ -48,16 +40,10 @@ const initialConnection: Connection = {
 const initialState: StoreState = {
   departureConnection: initialConnection,
   arrivalConnection: initialConnection,
-  connections: [],
   departure: DEFAULT_DIRECTION.from.meta,
   isDev,
 };
 
-const isSameConnection = (origin: Connection) => {
-  return (item: Connection) => item.type === origin.type && item.chainId === origin.chainId;
-};
-
-// eslint-disable-next-line complexity
 function reducer(state: StoreState, action: Actions): StoreState {
   switch (action.type) {
     case 'setDeparture': {
@@ -72,34 +58,15 @@ function reducer(state: StoreState, action: Actions): StoreState {
       return { ...state, arrivalConnection: action.payload };
     }
 
-    case 'addConnection': {
-      const omitMetamask = (connection: Connection) =>
-        action.payload.type === 'metamask' ? connection.type !== 'metamask' : true;
-
-      return {
-        ...state,
-        connections: state.connections
-          .filter((item) => negate(isSameConnection(action.payload))(item) && omitMetamask(item))
-          .concat([action.payload]),
-      };
-    }
-
-    case 'removeConnection': {
-      return {
-        ...state,
-        connections: state.connections.filter(negate(isSameConnection(action.payload))),
-      };
-    }
-
     default:
       return state;
   }
 }
 
 export type ApiCtx = StoreState & {
-  connectAndUpdateDepartureNetwork: (network: ChainConfig) => void;
-  connectDepartureNetwork: (network: ChainConfig) => void;
-  connectArrivalNetwork: (network: ChainConfig) => void;
+  connectAndUpdateDepartureNetwork: (network: ChainConfig, wallet?: SupportedWallet) => void;
+  connectDepartureNetwork: (network: ChainConfig, wallet?: SupportedWallet) => void;
+  connectArrivalNetwork: (network: ChainConfig, wallet?: SupportedWallet) => void;
   disconnect: () => void;
   isConnecting: boolean;
   setDeparture: (network: ChainConfig) => void;
@@ -111,6 +78,7 @@ let dep$$: Subscription = EMPTY.subscribe();
 let arr$$: Subscription = EMPTY.subscribe();
 
 export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
+  const { t } = useITranslation();
   const [state, dispatch] = useReducer(reducer, initialState);
   const setDeparture = useCallback((payload: ChainConfig) => dispatch({ type: 'setDeparture', payload }), []);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
@@ -125,76 +93,81 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
     []
   );
 
-  const removeConnection = useCallback((payload: Connection) => dispatch({ type: 'removeConnection', payload }), []);
-  const addConnection = useCallback((payload: Connection) => dispatch({ type: 'addConnection', payload }), []);
-
-  const isConnectionAvailable = useCallback(
-    (connection: Connection | undefined) => {
-      const availableStatus = [ConnectionStatus.success, ConnectionStatus.connecting, ConnectionStatus];
-      const existAvailableConnection = !!connection && availableStatus.includes(connection.status);
-
-      if (connection && !existAvailableConnection) {
-        removeConnection(connection);
-      }
-
-      return existAvailableConnection;
-    },
-    [removeConnection]
-  );
-
   const getConnection = useCallback(
-    (chainConfig: ChainConfig, action: (payload: Connection) => void) => {
-      const isConnectToMetamask = isEthereumNetwork(chainConfig);
-
-      const target = state.connections.find((item) => {
-        return isConnectToMetamask
-          ? (item as EthereumConnection).chainId === (chainConfig as EthereumChainConfig).ethereumChain.chainId
-          : (item as PolkadotConnection).chainId === chainConfig.name;
-      });
+    (chainConfig: ChainConfig, action: (payload: Connection) => void, specifiedWallet?: SupportedWallet) => {
+      const { activeWallet } = readStorage();
+      const storedWallet = activeWallet && activeWallet.wallet;
+      const isStoredAvailable = chainConfig.wallets.includes(storedWallet as unknown as never);
+      const cachedWallet = isStoredAvailable ? storedWallet : undefined;
+      const availableWallet = specifiedWallet ?? cachedWallet;
+      let selectedWallet = availableWallet ?? chainConfig.wallets[0];
 
       setIsConnecting(true);
 
-      return iif(() => isConnectionAvailable(target), of(target!), connect(chainConfig)).subscribe({
-        next: (connection: Connection) => {
-          if (connection.status === ConnectionStatus.success) {
-            if (connection.type === 'polkadot') {
-              connection = {
-                ...connection,
-                accounts: connection.accounts.map((item) => ({
-                  ...item,
-                  address: convertToSS58(item.address, (state.departure as PolkadotChainConfig).ss58Prefix),
-                })),
-              };
+      return iif(
+        () =>
+          !availableWallet ||
+          (chainConfig.wallets.length > 1 &&
+            ((!specifiedWallet && !isStoredAvailable) || action === setArrivalConnection)),
+        applyModalObs({
+          title: (
+            <div className="inline-flex items-center space-x-1 mb-4">
+              <span>{t('Select Wallet')}</span>
+            </div>
+          ),
+          content: (
+            <WalletList
+              defaultValue={selectedWallet}
+              onSelect={(value) => {
+                selectedWallet = value;
+              }}
+              wallets={chainConfig.wallets}
+            ></WalletList>
+          ),
+        }).pipe(map((goOn) => (goOn ? selectedWallet : null))),
+        of(selectedWallet)
+      )
+        .pipe(switchMap((wallet) => (wallet ? connect(chainConfig, wallet) : EMPTY)))
+        .subscribe({
+          next: (connection: Connection) => {
+            if (connection.status === ConnectionStatus.success) {
+              if (connection.wallet === 'polkadot') {
+                connection = {
+                  ...connection,
+                  accounts: connection.accounts.map((item) => ({
+                    ...item,
+                    address: convertToSS58(item.address, (state.departure as PolkadotChainConfig).ss58Prefix),
+                  })),
+                };
+              }
+              action(connection);
+              setIsConnecting(false);
             }
-            addConnection(connection);
-            action(connection);
+            updateStorage({ activeWallet: { wallet: availableWallet, chain: chainConfig.name } });
+          },
+          error: (_: unknown) => {
+            action({ ...initialConnection, status: ConnectionStatus.error });
             setIsConnecting(false);
-          }
-        },
-        error: (_: unknown) => {
-          action({ ...initialConnection, status: ConnectionStatus.error });
-          setIsConnecting(false);
-        },
-        complete: () => {
-          setIsConnecting(false);
-        },
-      });
+          },
+          complete: () => {
+            setIsConnecting(false);
+          },
+        });
     },
-    [addConnection, isConnectionAvailable, state.connections, state.departure]
+    [setArrivalConnection, state.departure, t]
   );
 
   const connectDepartureNetwork = useCallback(
-    (chainConfig: ChainConfig) => {
+    (chainConfig: ChainConfig, wallet?: SupportedWallet) => {
       dep$$.unsubscribe();
-      dep$$ = getConnection(chainConfig, setDepartureConnection);
-      updateStorage({ activeWallet: { wallet: chainConfig.wallets[0], chain: chainConfig.name } });
+      dep$$ = getConnection(chainConfig, setDepartureConnection, wallet);
     },
     [getConnection, setDepartureConnection]
   );
 
   const connectAndUpdateDepartureNetwork = useCallback(
-    (chainConfig: ChainConfig) => {
-      connectDepartureNetwork(chainConfig);
+    (chainConfig: ChainConfig, wallet?: SupportedWallet) => {
+      connectDepartureNetwork(chainConfig, wallet);
       setDeparture(chainConfig);
     },
     [connectDepartureNetwork, setDeparture]

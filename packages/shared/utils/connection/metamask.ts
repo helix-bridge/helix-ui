@@ -1,5 +1,6 @@
 import type { DebouncedFunc } from 'lodash';
 import throttle from 'lodash/throttle';
+import { notification } from 'antd';
 import { Observable } from 'rxjs/internal/Observable';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 import { from } from 'rxjs/internal/observable/from';
@@ -16,9 +17,14 @@ import {
   EthereumChainConfig,
   EthereumConnection,
   MetamaskNativeNetworkIds,
+  SupportedWallet,
   TokenWithBridgesInfo,
 } from '../../model';
 import { readStorage, updateStorage } from '../helper/storage';
+
+export type EthereumExtension = Extract<SupportedWallet, 'metamask' | 'mathwallet-ethereum'>;
+
+export const ethereumExtensions: EthereumExtension[] = ['metamask', 'mathwallet-ethereum'];
 
 export function isNativeMetamaskChain(chain: EthereumChainConfig): boolean {
   const ids = [
@@ -32,7 +38,7 @@ export function isNativeMetamaskChain(chain: EthereumChainConfig): boolean {
   return ids.includes(parseInt(chain.ethereumChain.chainId, 16));
 }
 
-export const getMetamaskConnection: () => Observable<EthereumConnection> = () =>
+export const getMetamaskConnection: (wallet: EthereumExtension) => Observable<EthereumConnection> = (wallet) =>
   from(window.ethereum.request({ method: 'eth_requestAccounts' })).pipe(
     switchMap((_) => {
       const addressToAccounts = (addresses: string[]) =>
@@ -46,7 +52,7 @@ export const getMetamaskConnection: () => Observable<EthereumConnection> = () =>
           accounts: addressToAccounts(addresses),
           status: ConnectionStatus.success,
           chainId,
-          type: 'metamask',
+          wallet,
         }))
       );
 
@@ -56,7 +62,7 @@ export const getMetamaskConnection: () => Observable<EthereumConnection> = () =>
             observer.next({
               status: ConnectionStatus.success,
               accounts: addressToAccounts(accounts),
-              type: 'metamask',
+              wallet,
               chainId,
             });
           })
@@ -66,7 +72,7 @@ export const getMetamaskConnection: () => Observable<EthereumConnection> = () =>
             observer.next({
               status: ConnectionStatus.success,
               accounts: addressToAccounts(accounts),
-              type: 'metamask',
+              wallet,
               chainId,
             });
           });
@@ -76,23 +82,36 @@ export const getMetamaskConnection: () => Observable<EthereumConnection> = () =>
       return merge(request, obs);
     }),
     catchError((_) => {
-      return of<EthereumConnection>({ status: ConnectionStatus.error, accounts: [], type: 'metamask', chainId: '' });
+      return of<EthereumConnection>({ status: ConnectionStatus.error, accounts: [], wallet: 'metamask', chainId: '' });
     }),
-    startWith<EthereumConnection>({ status: ConnectionStatus.connecting, accounts: [], type: 'metamask', chainId: '' })
+    startWith<EthereumConnection>({
+      status: ConnectionStatus.connecting,
+      accounts: [],
+      wallet,
+      chainId: '',
+    })
   );
 
-export async function switchEthereumChain(chain: EthereumChainConfig): Promise<null> {
+// eslint-disable-next-line complexity
+export async function switchEthereumChain(chain: EthereumChainConfig): Promise<boolean> {
   try {
-    const res: null = await window.ethereum.request({
+    const res = await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: chain.ethereumChain.chainId }],
     });
 
-    return res;
+    return res === null || !!res; // switch success:  metamask return null; mathwallet return true;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (switchError: any) {
-    // eslint-disable-next-line no-magic-numbers
-    if (switchError.code === 4902) {
+    const metamaskErrCode = 4902;
+    if (window.ethereum.isMathWallet) {
+      notification.warn({
+        message: `Switch Error`,
+        description: `Please add ${chain.name} on mathwallet and enable it`,
+      });
+
+      throw switchError;
+    } else if (switchError.code === metamaskErrCode) {
       const added = await addEthereumChain(chain);
 
       if (added === null) {
@@ -118,9 +137,9 @@ async function addEthereumChain(chain: EthereumChainConfig): Promise<null> {
   return result;
 }
 
-export const switchMetamaskNetwork: DebouncedFunc<(chain: EthereumChainConfig) => Observable<null>> = throttle(
+export const switchMetamaskNetwork: DebouncedFunc<(chain: EthereumChainConfig) => Observable<boolean>> = throttle(
   (chain) => {
-    return new Observable((observer: Observer<null>) => {
+    return new Observable((observer: Observer<boolean>) => {
       switchEthereumChain(chain)
         .then((res) => {
           const origin = readStorage().activeWallet ?? {};
@@ -136,8 +155,15 @@ export const switchMetamaskNetwork: DebouncedFunc<(chain: EthereumChainConfig) =
   SHORT_DURATION
 );
 
-export function isMetamaskInstalled(): boolean {
-  return typeof window.ethereum !== 'undefined' || typeof window.web3 !== 'undefined';
+export function isEthereumExtensionInstalled(ext: EthereumExtension): boolean {
+  switch (ext) {
+    case 'mathwallet-ethereum':
+      return window.ethereum?.isMathWallet;
+    case 'metamask':
+      return window.ethereum?.isMetaMask;
+    default:
+      return false;
+  }
 }
 
 export async function addAsset(

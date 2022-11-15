@@ -105,5 +105,5 @@ export const astarConfig: EthereumChainConfig = {
       address: '0x4Bf769b05E832FCdc9053fFFBC78Ca889aCb5E1E',
     },
   ],
-  wallets: ['metamask'],
+  wallets: ['metamask', 'mathwallet-ethereum'],
 };

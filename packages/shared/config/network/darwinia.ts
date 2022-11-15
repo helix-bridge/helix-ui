@@ -68,5 +68,5 @@ export const darwiniaConfig: PolkadotChainConfig = {
   ],
   ss58Prefix: 18,
   specVersion: 1250,
-  wallets: ['polkadot'],
+  wallets: ['polkadot', 'subwallet', 'talisman', 'mathwallet-polkadot'],
 };

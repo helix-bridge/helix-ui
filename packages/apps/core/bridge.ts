@@ -127,7 +127,10 @@ export abstract class Bridge<
     const xcm = isXCM(payload.direction);
     const cBridge = isCBridge(payload.direction);
 
-    const validations = [
+    /**
+     * [pass condition, error message]
+     */
+    const validations: [boolean, string][] = [
       // validate empty value
       [originBalance.amount.gt(BN_ZERO), 'Insufficient balance'],
       [!minAmount || minAmount.amount.gt(BN_ZERO), 'Minimum fee token setting error'],
@@ -137,10 +140,10 @@ export abstract class Bridge<
       [!!from.amount && +from.amount > 0, 'Transfer amount is required'],
       [!!to.amount && +to.amount >= 0, 'Transfer amount invalid'],
       [
-        !this.getAllowancePayload || from.type === 'native' || (allowance.amount && allowance.amount.gt(BN_ZERO)),
+        !this.getAllowancePayload || from.type === 'native' || (!!allowance.amount && allowance.amount.gt(BN_ZERO)),
         'Failed to get allowance',
       ],
-      [!this.getDailyLimit || (dailyLimit.amount && dailyLimit.amount.gt(BN_ZERO)), 'Failed to get daily limit'],
+      [!this.getDailyLimit || (!!dailyLimit.amount && dailyLimit.amount.gte(BN_ZERO)), 'Failed to get daily limit'],
       // validate logic
       [xcm || cBridge ? availableBalance.gte(amount) : isBalanceEnough(), 'Insufficient balance'],
       [feeTokenBalance.amount.gte(fee.amount), 'Insufficient balance to pay fee'],

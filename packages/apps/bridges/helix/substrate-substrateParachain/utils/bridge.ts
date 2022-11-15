@@ -21,7 +21,7 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
   static readonly alias: string = 'SubstrateSubstrateParachainBridge';
 
   back(payload: RedeemPayload, fee: BN): Observable<Tx> {
-    const { sender, recipient, direction } = payload;
+    const { sender, recipient, direction, wallet } = payload;
     const { from: departure, to } = direction;
     const api = entrance.polkadot.getInstance(direction.from.meta.provider.wss);
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
@@ -29,11 +29,11 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
     const section = `to${to.host.split('-').map(upperFirst).join('')}Backing`;
     const extrinsic = api.tx[section].lockAndRemoteIssue(String(to.meta.specVersion), WEIGHT, amount, fee, recipient);
 
-    return signAndSendExtrinsic(api, sender, extrinsic);
+    return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
 
   burn(payload: IssuingPayload, fee: BN): Observable<Tx> {
-    const { sender, recipient, direction } = payload;
+    const { sender, recipient, direction, wallet } = payload;
     const { from: departure, to } = direction;
     const api = entrance.polkadot.getInstance(direction.from.meta.provider.wss);
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
@@ -41,7 +41,7 @@ export class SubstrateSubstrateParachainBridge extends Bridge<
     const section = `from${upperFirst(to.meta.name)}Issuing`;
     const extrinsic = api.tx[section].burnAndRemoteUnlock(String(to.meta.specVersion), WEIGHT, amount, fee, recipient);
 
-    return signAndSendExtrinsic(api, sender, extrinsic);
+    return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
 
   async getDailyLimit(

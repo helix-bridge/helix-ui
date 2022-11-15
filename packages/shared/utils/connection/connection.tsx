@@ -1,7 +1,8 @@
 import { isHex } from '@polkadot/util';
+import { Modal, notification } from 'antd';
+import { upperFirst } from 'lodash';
+import { i18n, Trans } from 'next-i18next';
 import { initReactI18next } from 'react-i18next';
-import { Modal } from 'antd';
-import { Trans, i18n } from 'next-i18next';
 import type { Observable } from 'rxjs/internal/Observable';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { from } from 'rxjs/internal/observable/from';
@@ -17,71 +18,139 @@ import {
   PolkadotConnection,
   SupportedWallet,
 } from '../../model';
+import { isEthereumNetwork, isPolkadotNetwork } from '../network/network';
 import { entrance } from './entrance';
-import { getMetamaskConnection, isMetamaskInstalled, switchMetamaskNetwork } from './metamask';
-import { getPolkadotConnection, isPolkadotInstalled } from './polkadot';
+import {
+  EthereumExtension,
+  ethereumExtensions,
+  getMetamaskConnection,
+  isEthereumExtensionInstalled,
+  switchMetamaskNetwork,
+} from './metamask';
+import {
+  getPolkadotExtensionConnection,
+  isPolkadotExtensionInstalled,
+  PolkadotExtension,
+  polkadotExtensions,
+} from './polkadot';
 
-type ConnectFn<T extends Connection> = (network: ChainConfig, extension?: SupportedWallet) => Observable<T>;
+type ConnectFn<T extends Connection> = (network: ChainConfig, extension: SupportedWallet) => Observable<T>;
 
-const showWarning = (plugin: string, downloadUrl: string) =>
-  Modal.warn({
-    title: <Trans i18n={i18n?.use(initReactI18next)}>Missing Wallet Plugin</Trans>,
+export const extractWalletInfo = (wallet: SupportedWallet) =>
+  wallet
+    .split('-')
+    .map(upperFirst)
+    .map((item) => (item === 'Mathwallet' ? 'Math Wallet' : item));
+
+const showWarning = (name: SupportedWallet, downloadUrl: string) => {
+  const [plugin, mode] = extractWalletInfo(name);
+
+  return Modal.warn({
+    title: <Trans i18n={i18n?.use(initReactI18next)}>Wallet Not Available</Trans>,
     content: (
-      <Trans i18nKey="MissingPlugin" i18n={i18n?.use(initReactI18next)}>
-        We need {{ plugin }} plugin to continue. Please
-        <a href={downloadUrl} target="_blank" rel="noreferrer" style={{ margin: '0 0.5em' }}>
-          install
+      <div>
+        <p className="mb-2">
+          <span>
+            <Trans i18nKey="MissingPlugin" i18n={i18n?.use(initReactI18next)}>
+              Make sure the {{ plugin }} plugin is installed and unlocked.
+            </Trans>
+          </span>
+          {!!mode && (
+            <span className="ml-2">
+              <Trans i18nKey="MissingPluginType" i18n={i18n?.use(initReactI18next)}>
+                And you need to switch to a {{ mode }}-Type chain in the wallet.
+              </Trans>
+            </span>
+          )}
+        </p>
+
+        <a href={downloadUrl} target="_blank" rel="noreferrer">
+          <Trans i18nKey="Install Now" i18n={i18n?.use(initReactI18next)}>
+            Install Now
+          </Trans>
         </a>
-        or enable it first.
-      </Trans>
+      </div>
     ),
     okText: <Trans i18n={i18n?.use(initReactI18next)}>OK</Trans>,
   });
+};
 
-const connectPolkadot: ConnectFn<PolkadotConnection> = (network) => {
+const connectPolkadot: ConnectFn<PolkadotConnection> = (network, wallet = 'polkadot') => {
   if (!network) {
     return EMPTY;
   }
 
-  return from(isPolkadotInstalled()).pipe(
+  return from(isPolkadotExtensionInstalled(wallet)).pipe(
     switchMap((enable) => {
       if (enable) {
-        return getPolkadotConnection(network as PolkadotChainConfig);
+        return getPolkadotExtensionConnection(network as PolkadotChainConfig, wallet as PolkadotExtension);
       } else {
-        showWarning('polkadot', 'https://polkadot.js.org/extension/');
+        const url: { [key in PolkadotExtension]: string } = {
+          polkadot: 'https://polkadot.js.org/extension/',
+          subwallet: 'https://subwallet.app/',
+          talisman: 'https://talisman.xyz/',
+          'mathwallet-polkadot': 'https://mathwallet.org/',
+        };
+
+        showWarning(wallet, url[wallet as PolkadotExtension]);
         return EMPTY;
       }
     })
   );
 };
 
-export async function isNetworkConsistent(chain: EthereumChainConfig, id = ''): Promise<boolean> {
+async function isNetworkConsistent(chain: EthereumChainConfig, id = ''): Promise<boolean> {
   id = id && isHex(id) ? parseInt(id, 16).toString() : id;
   // id 1: eth mainnet 3: ropsten 4: rinkeby 5: goerli 42: kovan  43: pangolin 44: crab
   const web3 = entrance.web3.currentProvider;
+  // TODO: on mathwallet it will be 0 if no account.
   const actualId: string | number = id ? await Promise.resolve(id) : await web3.getNetwork().then((res) => res.chainId);
   const storedId = chain.ethereumChain.chainId;
 
   return parseInt(storedId, 16) === actualId;
 }
 
-export function metamaskGuard<T>(fn: () => Observable<T>) {
-  return (network: ChainConfig, chainId?: string) => {
-    if (!isMetamaskInstalled()) {
-      showWarning(
-        'metamask',
-        'https://chrome.google.com/webstore/detail/empty-title/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=zh-CN'
-      );
+export function metamaskGuard<T>(fn: (wallet: EthereumExtension) => Observable<T>) {
+  // eslint-disable-next-line complexity
+  return (network: ChainConfig, wallet?: SupportedWallet) => {
+    if (!wallet) {
+      wallet = window.ethereum.isMathWallet ? 'mathwallet-ethereum' : 'metamask';
+    }
+
+    if (!isEthereumExtensionInstalled(wallet as EthereumExtension)) {
+      const url: { [key in EthereumExtension]: string } = {
+        metamask: 'https://chrome.google.com/webstore/detail/empty-title/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=zh-CN',
+        'mathwallet-ethereum': 'https://mathwallet.org/',
+      };
+
+      showWarning(wallet, url[wallet as EthereumExtension]);
 
       return EMPTY;
     }
 
-    return from(isNetworkConsistent(network as EthereumChainConfig, chainId)).pipe(
+    if (wallet === 'metamask' && window.ethereum.isMathWallet) {
+      notification.warn({
+        message: (
+          <Trans i18nKey="WalletConflict" i18n={i18n?.use(initReactI18next)}>
+            Wallet Conflict
+          </Trans>
+        ),
+        description: (
+          <Trans i18nKey="WalletConflictDes" i18n={i18n?.use(initReactI18next)}>
+            Lock the mathwallet or switch it to a Non-Ethereum-Type chain
+          </Trans>
+        ),
+      });
+
+      return EMPTY;
+    }
+
+    return from(isNetworkConsistent(network as EthereumChainConfig)).pipe(
       switchMap((isMatch) => {
         return isMatch
-          ? fn()
+          ? fn(wallet as EthereumExtension)
           : switchMetamaskNetwork(network as EthereumChainConfig)!.pipe(
-              mergeMap((res) => (res === null ? fn() : EMPTY))
+              mergeMap((isSuccess) => (isSuccess ? fn(wallet as EthereumExtension) : EMPTY))
             );
       })
     );
@@ -92,13 +161,7 @@ export const isMetamaskChainConsistent = metamaskGuard(() => of(true));
 
 const connectMetamask: ConnectFn<EthereumConnection> = metamaskGuard(getMetamaskConnection);
 
-const walletConnections: {
-  [key in SupportedWallet]: ConnectFn<Connection>;
-} = {
-  metamask: connectMetamask,
-  polkadot: connectPolkadot,
-};
-
+// eslint-disable-next-line complexity
 export const connect: ConnectFn<Connection> = (chain, wallet) => {
   const { wallets } = chain;
 
@@ -107,5 +170,12 @@ export const connect: ConnectFn<Connection> = (chain, wallet) => {
     return EMPTY;
   }
 
-  return walletConnections[wallet ?? chain.wallets[0]](chain, wallet);
+  if (polkadotExtensions.includes(wallet as unknown as never) && isPolkadotNetwork(chain)) {
+    return connectPolkadot(chain, wallet);
+  } else if (ethereumExtensions.includes(wallet as unknown as never) && isEthereumNetwork(chain)) {
+    return connectMetamask(chain, wallet);
+  } else {
+    console.log(`🚨 ~${chain.name} do not support wallet: `, wallet);
+    return EMPTY;
+  }
 };

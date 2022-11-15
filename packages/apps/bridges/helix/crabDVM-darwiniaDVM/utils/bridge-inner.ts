@@ -11,7 +11,7 @@ import {
 } from 'shared/model';
 import { toWei } from 'shared/utils/helper/balance';
 import { isNativeToken, isRing } from 'shared/utils/helper/validator';
-import { genEthereumContractTxObs } from 'shared/utils/tx';
+import { sendTransactionFromContract } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import wcrabABI from '../config/wcrab.json';
 import { CrabDVMDarwiniaDVMBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
@@ -39,7 +39,7 @@ export class CrabDVMInnerBridge extends Bridge<CrabDVMDarwiniaDVMBridgeConfig, D
     } = payload;
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
 
-    return genEthereumContractTxObs(
+    return sendTransactionFromContract(
       bridge.config.contracts!.issuing,
       (contract) => contract.deposit({ from: sender, value: amount.toString() }),
       wcrabABI
@@ -54,7 +54,7 @@ export class CrabDVMInnerBridge extends Bridge<CrabDVMDarwiniaDVMBridgeConfig, D
     } = payload;
     const amount = new BN(toWei({ value: departure.amount, decimals: departure.decimals })).toString();
 
-    return genEthereumContractTxObs(
+    return sendTransactionFromContract(
       bridge.config.contracts!.issuing,
       (contract) => contract.withdraw(amount.toString(), { from: sender }),
       wcrabABI
