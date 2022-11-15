@@ -1,5 +1,6 @@
 import type { DebouncedFunc } from 'lodash';
 import throttle from 'lodash/throttle';
+import { notification } from 'antd';
 import { Observable } from 'rxjs/internal/Observable';
 import { combineLatest } from 'rxjs/internal/observable/combineLatest';
 import { from } from 'rxjs/internal/observable/from';
@@ -91,6 +92,7 @@ export const getMetamaskConnection: (wallet: EthereumExtension) => Observable<Et
     })
   );
 
+// eslint-disable-next-line complexity
 export async function switchEthereumChain(chain: EthereumChainConfig): Promise<boolean> {
   try {
     const res = await window.ethereum.request({
@@ -101,8 +103,15 @@ export async function switchEthereumChain(chain: EthereumChainConfig): Promise<b
     return res === null || !!res; // switch success:  metamask return null; mathwallet return true;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (switchError: any) {
-    // eslint-disable-next-line no-magic-numbers
-    if (switchError.code === 4902) {
+    const metamaskErrCode = 4902;
+    if (window.ethereum.isMathWallet) {
+      notification.warn({
+        message: `Switch Error`,
+        description: `Please add ${chain.name} on mathwallet and enable it`,
+      });
+
+      throw switchError;
+    } else if (switchError.code === metamaskErrCode) {
       const added = await addEthereumChain(chain);
 
       if (added === null) {

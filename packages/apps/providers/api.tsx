@@ -97,14 +97,16 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
       const { activeWallet } = readStorage();
       const cachedWallet = activeWallet && activeWallet.wallet;
       const isCachedAvailable = chainConfig.wallets.includes(cachedWallet as unknown as never);
-      let selectedWallet = wallet ?? (isCachedAvailable ? cachedWallet : undefined) ?? chainConfig.wallets[0];
+      let selectedWallet = wallet ?? (isCachedAvailable ? cachedWallet : undefined);
 
       setIsConnecting(true);
 
       return iif(
+        // eslint-disable-next-line complexity
         () =>
-          chainConfig.wallets.length > 1 &&
-          ((!wallet && (!activeWallet || !isCachedAvailable)) || action === setArrivalConnection),
+          !selectedWallet ||
+          (chainConfig.wallets.length > 1 &&
+            ((!wallet && (!activeWallet || !isCachedAvailable)) || action === setArrivalConnection)),
         applyModalObs({
           title: (
             <div className="inline-flex items-center space-x-1 mb-4">
@@ -114,7 +116,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
           content: (
             <Radio.Group
               className="w-full"
-              defaultValue={chainConfig.wallets[0]}
+              defaultValue={selectedWallet || chainConfig.wallets[0]}
               onChange={(event) => {
                 selectedWallet = event.target.value;
               }}
@@ -125,14 +127,14 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
                   key={item}
                   className={`radio-list 'transition-all duration-300 hover:scale-105'`}
                 >
-                  <Logo name={`${item}.${item === 'mathwallet' ? 'png' : 'svg'}`} width={36} height={36} />
+                  <Logo name={`${item}.svg`} width={36} height={36} />
                   <span className="ml-4 capitalize">{item}</span>
                 </Radio.Button>
               ))}
             </Radio.Group>
           ),
-        }).pipe(switchMap((goOn) => (goOn ? connect(chainConfig, selectedWallet) : EMPTY))),
-        connect(chainConfig, selectedWallet)
+        }).pipe(switchMap((goOn) => (goOn ? connect(chainConfig, selectedWallet ?? chainConfig.wallets[0]) : EMPTY))),
+        connect(chainConfig, selectedWallet!)
       ).subscribe({
         next: (connection: Connection) => {
           if (connection.status === ConnectionStatus.success) {

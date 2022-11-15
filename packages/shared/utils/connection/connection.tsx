@@ -1,5 +1,5 @@
 import { isHex } from '@polkadot/util';
-import { Modal } from 'antd';
+import { Modal, notification } from 'antd';
 import { i18n, Trans } from 'next-i18next';
 import { ReactNode } from 'react';
 import { initReactI18next } from 'react-i18next';
@@ -106,6 +106,15 @@ export function metamaskGuard<T>(fn: (wallet: EthereumExtension) => Observable<T
       return EMPTY;
     }
 
+    if (wallet === 'metamask' && window.ethereum.isMathWallet) {
+      notification.warn({
+        message: 'Wallet Conflict',
+        description: 'Lock the mathwallet or switch it to a Non-Ethereum-Type chain',
+      });
+
+      return EMPTY;
+    }
+
     return from(isNetworkConsistent(network as EthereumChainConfig)).pipe(
       switchMap((isMatch) => {
         return isMatch
@@ -131,12 +140,10 @@ export const connect: ConnectFn<Connection> = (chain, wallet) => {
     return EMPTY;
   }
 
-  const extension = wallet ?? chain.wallets[0];
-
-  if (polkadotExtensions.includes(extension as unknown as never) && isPolkadotNetwork(chain)) {
-    return connectPolkadot(chain, extension);
-  } else if (ethereumExtensions.includes(extension as unknown as never) && isEthereumNetwork(chain)) {
-    return connectMetamask(chain, extension);
+  if (polkadotExtensions.includes(wallet as unknown as never) && isPolkadotNetwork(chain)) {
+    return connectPolkadot(chain, wallet);
+  } else if (ethereumExtensions.includes(wallet as unknown as never) && isEthereumNetwork(chain)) {
+    return connectMetamask(chain, wallet);
   } else {
     console.log(`🚨 ~${chain.name} do not support wallet: `, wallet);
     return EMPTY;
