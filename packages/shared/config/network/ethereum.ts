@@ -211,5 +211,5 @@ export const ethereumConfig: EthereumChainConfig = {
       address: '0x4Fabb145d64652a948d72533023f6E7A623C7C53',
     },
   ],
-  wallets: ['metamask'],
+  wallets: ['metamask', 'mathwallet-ethereum'],
 };

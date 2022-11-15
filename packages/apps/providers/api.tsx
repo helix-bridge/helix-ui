@@ -1,10 +1,8 @@
-import { Radio } from 'antd';
 import { createContext, useCallback, useContext, useReducer, useState } from 'react';
 import { switchMap } from 'rxjs';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { iif } from 'rxjs/internal/observable/iif';
 import type { Subscription } from 'rxjs/internal/Subscription';
-import { Logo } from 'shared/components/widget/Logo';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { isDev } from 'shared/config/env';
 import { Action, ChainConfig, Connection, ConnectionStatus, PolkadotChainConfig, SupportedWallet } from 'shared/model';
@@ -12,6 +10,7 @@ import { connect } from 'shared/utils/connection';
 import { convertToSS58 } from 'shared/utils/helper/address';
 import { readStorage, updateStorage } from 'shared/utils/helper/storage';
 import { applyModalObs } from 'shared/utils/tx';
+import { WalletList } from '../components/widget/account/SelectWalletModal';
 import { useITranslation } from '../hooks';
 
 interface StoreState {
@@ -114,24 +113,13 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
             </div>
           ),
           content: (
-            <Radio.Group
-              className="w-full"
+            <WalletList
               defaultValue={selectedWallet || chainConfig.wallets[0]}
-              onChange={(event) => {
-                selectedWallet = event.target.value;
+              onSelect={(value) => {
+                selectedWallet = value;
               }}
-            >
-              {chainConfig.wallets.map((item) => (
-                <Radio.Button
-                  value={item}
-                  key={item}
-                  className={`radio-list 'transition-all duration-300 hover:scale-105'`}
-                >
-                  <Logo name={`${item}.svg`} width={36} height={36} />
-                  <span className="ml-4 capitalize">{item}</span>
-                </Radio.Button>
-              ))}
-            </Radio.Group>
+              wallets={chainConfig.wallets}
+            ></WalletList>
           ),
         }).pipe(switchMap((goOn) => (goOn ? connect(chainConfig, selectedWallet ?? chainConfig.wallets[0]) : EMPTY))),
         connect(chainConfig, selectedWallet!)

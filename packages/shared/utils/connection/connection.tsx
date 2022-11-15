@@ -1,7 +1,7 @@
 import { isHex } from '@polkadot/util';
 import { Modal, notification } from 'antd';
+import { upperFirst } from 'lodash';
 import { i18n, Trans } from 'next-i18next';
-import { ReactNode } from 'react';
 import { initReactI18next } from 'react-i18next';
 import type { Observable } from 'rxjs/internal/Observable';
 import { EMPTY } from 'rxjs/internal/observable/empty';
@@ -36,25 +36,44 @@ import {
 
 type ConnectFn<T extends Connection> = (network: ChainConfig, extension: SupportedWallet) => Observable<T>;
 
-const showWarning = (plugin: string, downloadUrl: string, extra?: string | ReactNode) =>
-  Modal.warn({
+export const extractWalletInfo = (wallet: SupportedWallet) =>
+  wallet
+    .split('-')
+    .map(upperFirst)
+    .map((item) => (item === 'MathWallet' ? 'Math Wallet' : item));
+
+const showWarning = (name: SupportedWallet, downloadUrl: string) => {
+  const [plugin, mode] = extractWalletInfo(name);
+
+  return Modal.warn({
     title: <Trans i18n={i18n?.use(initReactI18next)}>Wallet Not Available</Trans>,
     content: (
       <div>
-        <Trans i18nKey="MissingPlugin" i18n={i18n?.use(initReactI18next)}>
-          Please
-          <a href={downloadUrl} target="_blank" rel="noreferrer">
-            install
-          </a>
-          {{ plugin }}
-          or enable it first.
-        </Trans>
+        <p className="mb-2">
+          <span>
+            <Trans i18nKey="MissingPlugin" i18n={i18n?.use(initReactI18next)}>
+              Make sure the {{ plugin }} plugin is installed and unlocked.
+            </Trans>
+          </span>
+          {!!mode && (
+            <span className="ml-2">
+              <Trans i18nKey="MissingPluginType" i18n={i18n?.use(initReactI18next)}>
+                And you need to switch to a {{ mode }}-Type chain in the wallet.
+              </Trans>
+            </span>
+          )}
+        </p>
 
-        <p>{extra}</p>
+        <a href={downloadUrl} target="_blank" rel="noreferrer">
+          <Trans i18nKey="Install Now" i18n={i18n?.use(initReactI18next)}>
+            Install Now
+          </Trans>
+        </a>
       </div>
     ),
     okText: <Trans i18n={i18n?.use(initReactI18next)}>OK</Trans>,
   });
+};
 
 const connectPolkadot: ConnectFn<PolkadotConnection> = (network, wallet = 'polkadot') => {
   if (!network) {
@@ -70,11 +89,10 @@ const connectPolkadot: ConnectFn<PolkadotConnection> = (network, wallet = 'polka
           polkadot: 'https://polkadot.js.org/extension/',
           subwallet: 'https://subwallet.app/',
           talisman: 'https://talisman.xyz/',
-          mathwallet: 'https://mathwallet.org/',
+          'mathwallet-polkadot': 'https://mathwallet.org/',
         };
-        const extraTip = wallet === 'mathwallet' ? 'Make sure you have switch to a Polkadot-Type chain' : undefined;
 
-        showWarning(wallet, url[wallet as PolkadotExtension], extraTip);
+        showWarning(wallet, url[wallet as PolkadotExtension]);
         return EMPTY;
       }
     })
@@ -97,19 +115,26 @@ export function metamaskGuard<T>(fn: (wallet: EthereumExtension) => Observable<T
     if (!isEthereumExtensionInstalled(wallet as EthereumExtension)) {
       const url: { [key in EthereumExtension]: string } = {
         metamask: 'https://chrome.google.com/webstore/detail/empty-title/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=zh-CN',
-        mathwallet: 'https://mathwallet.org/',
+        'mathwallet-ethereum': 'https://mathwallet.org/',
       };
-      const extraTip = wallet === 'mathwallet' ? 'Make sure you have switch to a Ethereum-Type chain' : undefined;
 
-      showWarning(wallet, url[wallet as EthereumExtension], extraTip);
+      showWarning(wallet, url[wallet as EthereumExtension]);
 
       return EMPTY;
     }
 
     if (wallet === 'metamask' && window.ethereum.isMathWallet) {
       notification.warn({
-        message: 'Wallet Conflict',
-        description: 'Lock the mathwallet or switch it to a Non-Ethereum-Type chain',
+        message: (
+          <Trans i18nKey="WalletConflict" i18n={i18n?.use(initReactI18next)}>
+            Wallet Conflict
+          </Trans>
+        ),
+        description: (
+          <Trans i18nKey="WalletConflictDes" i18n={i18n?.use(initReactI18next)}>
+            Lock the mathwallet or switch it to a Non-Ethereum-Type chain
+          </Trans>
+        ),
       });
 
       return EMPTY;

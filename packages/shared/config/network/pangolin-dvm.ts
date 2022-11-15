@@ -98,5 +98,5 @@ export const pangolinDVMConfig: DVMChainConfig = {
   ],
   ss58Prefix: 42,
   specVersion: 210010,
-  wallets: ['metamask', 'mathwallet'],
+  wallets: ['metamask', 'mathwallet-ethereum'],
 };

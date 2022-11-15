@@ -132,5 +132,5 @@ export const polygonConfig: EthereumChainConfig = {
     },
     // { name: 'MATIC', decimals: 18, cross: [], type: 'native', host: 'polygon', logo: '', symbol: 'MATIC', address: '' },
   ],
-  wallets: ['metamask'],
+  wallets: ['metamask', 'mathwallet-ethereum'],
 };

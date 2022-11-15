@@ -22,9 +22,9 @@ import {
 } from '../../model';
 import { readStorage, updateStorage } from '../helper/storage';
 
-export type EthereumExtension = Extract<SupportedWallet, 'metamask' | 'mathwallet'>;
+export type EthereumExtension = Extract<SupportedWallet, 'metamask' | 'mathwallet-ethereum'>;
 
-export const ethereumExtensions: EthereumExtension[] = ['metamask', 'mathwallet'];
+export const ethereumExtensions: EthereumExtension[] = ['metamask', 'mathwallet-ethereum'];
 
 export function isNativeMetamaskChain(chain: EthereumChainConfig): boolean {
   const ids = [
@@ -157,7 +157,7 @@ export const switchMetamaskNetwork: DebouncedFunc<(chain: EthereumChainConfig) =
 
 export function isEthereumExtensionInstalled(ext: EthereumExtension): boolean {
   switch (ext) {
-    case 'mathwallet':
+    case 'mathwallet-ethereum':
       return window.ethereum?.isMathWallet;
     case 'metamask':
       return window.ethereum?.isMetaMask;

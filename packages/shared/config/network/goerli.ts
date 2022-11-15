@@ -72,5 +72,5 @@ export const goerliConfig: EthereumChainConfig = {
       address: '0xdd3df59c868fcd40fded7af0cccc3e2c7bcb4f3c',
     },
   ],
-  wallets: ['metamask', 'mathwallet'],
+  wallets: ['metamask', 'mathwallet-ethereum'],
 };

@@ -27,7 +27,6 @@ import {
   PolkadotExtension,
   polkadotExtensions,
 } from 'shared/utils/connection';
-import { isEthereumNetwork, isPolkadotNetwork } from 'shared/utils/network/network';
 import { Path } from '../../../config';
 import abi from '../../../config/ethv1/abi.json';
 import claimSource from '../../../config/ethv1/airdrop2.json';
@@ -136,7 +135,7 @@ export default function ActiveAccount() {
                   className="flex items-center justify-around px-1 overflow-hidden truncate ml-1"
                   icon={
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={`/image/${departureConnection.wallet}.svg`} width={18} height={18} />
+                    <img src={`/image/${departureConnection.wallet.split('-')[0]}.svg`} width={18} height={18} />
                   }
                   style={{ maxWidth: 200 }}
                 >
@@ -147,12 +146,12 @@ export default function ActiveAccount() {
               </Dropdown>
             )}
 
-            {departureConnection.wallet === 'metamask' && (
+            {ethereumExtensions.includes(departureConnection.wallet as unknown as never) && (
               <Button
                 className="flex items-center justify-around px-1 overflow-hidden"
                 icon={
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={`/image/${departureConnection.wallet}.svg`} width={18} height={18} />
+                  <img src={`/image/${departureConnection.wallet.split('-')[0]}.svg`} width={18} height={18} />
                 }
                 style={{ maxWidth: 200 }}
                 onClick={() => setIsWalletSelectOpen(true)}
@@ -204,16 +203,10 @@ export default function ActiveAccount() {
         visible={isWalletSelectOpen}
         defaultValue={departureConnection.wallet}
         onCancel={() => setIsWalletSelectOpen(false)}
-        // eslint-disable-next-line complexity
-        onSelect={(wallet, mathwalletMode) => {
+        onSelect={(wallet) => {
           setIsWalletSelectOpen(false);
 
-          if (
-            departure.wallets.includes(wallet) &&
-            (wallet !== 'mathwallet' ||
-              (mathwalletMode === 'ethereum' && isEthereumNetwork(departure)) ||
-              (mathwalletMode === 'polkadot' && isPolkadotNetwork(departure)))
-          ) {
+          if (departure.wallets.includes(wallet)) {
             connectDepartureNetwork(departure, wallet);
           } else if (ethereumExtensions.includes(wallet as EthereumExtension)) {
             entrance.web3.currentProvider.getNetwork().then((res) => {

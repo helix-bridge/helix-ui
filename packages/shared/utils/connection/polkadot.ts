@@ -18,16 +18,17 @@ import {
 } from '../../model';
 import { entrance } from './entrance';
 
-export type PolkadotExtension = Exclude<SupportedWallet, 'metamask'>;
+export type PolkadotExtension = Exclude<SupportedWallet, 'metamask' | 'mathwallet-ethereum'>;
 
-const walletToPropName: { [key in PolkadotExtension]: string } = {
+const walletToPropName: { [key in PolkadotExtension | 'mathwallet']: string } = {
   polkadot: 'polkadot-js',
   subwallet: 'subwallet-js',
   talisman: 'talisman',
   mathwallet: 'mathwallet',
+  'mathwallet-polkadot': 'mathwallet',
 };
 
-export const polkadotExtensions: PolkadotExtension[] = ['polkadot', 'subwallet', 'talisman', 'mathwallet'];
+export const polkadotExtensions: PolkadotExtension[] = ['polkadot', 'subwallet', 'talisman', 'mathwallet-polkadot'];
 
 export async function waitUntilConnected(api: ApiPromise): Promise<null> {
   await api.isReady;
