@@ -1,8 +1,8 @@
 import { Radio } from 'antd';
-import upperFirst from 'lodash/upperFirst';
 import React from 'react';
 import { Logo } from 'shared/components/widget/Logo';
 import { SupportedWallet } from 'shared/model';
+import { extractWalletInfo } from 'shared/utils/connection';
 import BaseModal from '../BaseModal';
 
 type Props = {
@@ -33,10 +33,7 @@ export const WalletList: React.FC<Pick<Props, 'defaultValue' | 'onSelect'> & { w
       {walletConfigs
         .filter((item) => !wallets || wallets.includes(item.name))
         .map((item) => {
-          const [plugin, mode] = item.name
-            .split('-')
-            .map(upperFirst)
-            .map((name) => (name === 'MathWallet' ? 'Math Wallet' : name));
+          const [plugin, mode] = extractWalletInfo(item.name);
 
           return (
             <Radio.Button

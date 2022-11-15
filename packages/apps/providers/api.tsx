@@ -1,7 +1,9 @@
 import { createContext, useCallback, useContext, useReducer, useState } from 'react';
-import { switchMap } from 'rxjs';
 import { EMPTY } from 'rxjs/internal/observable/empty';
 import { iif } from 'rxjs/internal/observable/iif';
+import { of } from 'rxjs/internal/observable/of';
+import { map } from 'rxjs/internal/operators/map';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
 import type { Subscription } from 'rxjs/internal/Subscription';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { isDev } from 'shared/config/env';
@@ -92,20 +94,21 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   );
 
   const getConnection = useCallback(
-    (chainConfig: ChainConfig, action: (payload: Connection) => void, wallet?: SupportedWallet) => {
+    (chainConfig: ChainConfig, action: (payload: Connection) => void, specifiedWallet?: SupportedWallet) => {
       const { activeWallet } = readStorage();
-      const cachedWallet = activeWallet && activeWallet.wallet;
-      const isCachedAvailable = chainConfig.wallets.includes(cachedWallet as unknown as never);
-      let selectedWallet = wallet ?? (isCachedAvailable ? cachedWallet : undefined);
+      const storedWallet = activeWallet && activeWallet.wallet;
+      const isStoredAvailable = chainConfig.wallets.includes(storedWallet as unknown as never);
+      const cachedWallet = isStoredAvailable ? storedWallet : undefined;
+      const availableWallet = specifiedWallet ?? cachedWallet;
+      let selectedWallet = availableWallet ?? chainConfig.wallets[0];
 
       setIsConnecting(true);
 
       return iif(
-        // eslint-disable-next-line complexity
         () =>
-          !selectedWallet ||
+          !availableWallet ||
           (chainConfig.wallets.length > 1 &&
-            ((!wallet && (!activeWallet || !isCachedAvailable)) || action === setArrivalConnection)),
+            ((!specifiedWallet && !isStoredAvailable) || action === setArrivalConnection)),
         applyModalObs({
           title: (
             <div className="inline-flex items-center space-x-1 mb-4">
@@ -114,40 +117,42 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
           ),
           content: (
             <WalletList
-              defaultValue={selectedWallet || chainConfig.wallets[0]}
+              defaultValue={selectedWallet}
               onSelect={(value) => {
                 selectedWallet = value;
               }}
               wallets={chainConfig.wallets}
             ></WalletList>
           ),
-        }).pipe(switchMap((goOn) => (goOn ? connect(chainConfig, selectedWallet ?? chainConfig.wallets[0]) : EMPTY))),
-        connect(chainConfig, selectedWallet!)
-      ).subscribe({
-        next: (connection: Connection) => {
-          if (connection.status === ConnectionStatus.success) {
-            if (connection.wallet === 'polkadot') {
-              connection = {
-                ...connection,
-                accounts: connection.accounts.map((item) => ({
-                  ...item,
-                  address: convertToSS58(item.address, (state.departure as PolkadotChainConfig).ss58Prefix),
-                })),
-              };
+        }).pipe(map((goOn) => (goOn ? selectedWallet : null))),
+        of(selectedWallet)
+      )
+        .pipe(switchMap((wallet) => (wallet ? connect(chainConfig, wallet) : EMPTY)))
+        .subscribe({
+          next: (connection: Connection) => {
+            if (connection.status === ConnectionStatus.success) {
+              if (connection.wallet === 'polkadot') {
+                connection = {
+                  ...connection,
+                  accounts: connection.accounts.map((item) => ({
+                    ...item,
+                    address: convertToSS58(item.address, (state.departure as PolkadotChainConfig).ss58Prefix),
+                  })),
+                };
+              }
+              action(connection);
+              setIsConnecting(false);
             }
-            action(connection);
+            updateStorage({ activeWallet: { wallet: availableWallet, chain: chainConfig.name } });
+          },
+          error: (_: unknown) => {
+            action({ ...initialConnection, status: ConnectionStatus.error });
             setIsConnecting(false);
-          }
-          updateStorage({ activeWallet: { wallet: selectedWallet, chain: chainConfig.name } });
-        },
-        error: (_: unknown) => {
-          action({ ...initialConnection, status: ConnectionStatus.error });
-          setIsConnecting(false);
-        },
-        complete: () => {
-          setIsConnecting(false);
-        },
-      });
+          },
+          complete: () => {
+            setIsConnecting(false);
+          },
+        });
     },
     [setArrivalConnection, state.departure, t]
   );

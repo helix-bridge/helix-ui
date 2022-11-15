@@ -146,7 +146,7 @@ export function Claim() {
             const { proof, to, erc20, erc1155, erc721, salt } = claimItem!;
 
             metamaskGuard<Tx>(() =>
-              getMetamaskConnection().pipe(
+              getMetamaskConnection('metamask').pipe(
                 filter((connection) => !!connection && !!connection.accounts[0]),
                 switchMap((connection) => {
                   const activeAccount = connection.accounts[0].address;

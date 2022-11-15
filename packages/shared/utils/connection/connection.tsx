@@ -40,7 +40,7 @@ export const extractWalletInfo = (wallet: SupportedWallet) =>
   wallet
     .split('-')
     .map(upperFirst)
-    .map((item) => (item === 'MathWallet' ? 'Math Wallet' : item));
+    .map((item) => (item === 'Mathwallet' ? 'Math Wallet' : item));
 
 const showWarning = (name: SupportedWallet, downloadUrl: string) => {
   const [plugin, mode] = extractWalletInfo(name);
@@ -111,7 +111,12 @@ async function isNetworkConsistent(chain: EthereumChainConfig, id = ''): Promise
 }
 
 export function metamaskGuard<T>(fn: (wallet: EthereumExtension) => Observable<T>) {
-  return (network: ChainConfig, wallet: SupportedWallet) => {
+  // eslint-disable-next-line complexity
+  return (network: ChainConfig, wallet?: SupportedWallet) => {
+    if (!wallet) {
+      wallet = window.ethereum.isMathWallet ? 'mathwallet-ethereum' : 'metamask';
+    }
+
     if (!isEthereumExtensionInstalled(wallet as EthereumExtension)) {
       const url: { [key in EthereumExtension]: string } = {
         metamask: 'https://chrome.google.com/webstore/detail/empty-title/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=zh-CN',
