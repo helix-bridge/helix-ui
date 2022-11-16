@@ -12,6 +12,7 @@ import { TransferDescription } from './TransferDescription';
 
 export function Token({ record }: { record: HelixHistoryRecord | null }) {
   const { t } = useTranslation();
+  const title = t('Token To Receive');
 
   if (!record || !isEthereumNetwork(record?.toChain)) {
     return null;
@@ -21,7 +22,7 @@ export function Token({ record }: { record: HelixHistoryRecord | null }) {
 
   if (!token) {
     return (
-      <TransferDescription title={t('Token to Receive')} tip={''}>
+      <TransferDescription title={title} tip={''}>
         <span className="text-helix-red">
           {t('Failed to get token information by symbol {{recvToken}} on {{chain}}', {
             ...record,
@@ -37,7 +38,7 @@ export function Token({ record }: { record: HelixHistoryRecord | null }) {
   }
 
   return (
-    <TransferDescription title={t('Token to Receive')} tip={''}>
+    <TransferDescription title={title} tip={''}>
       <div className="flex items-center gap-2 whitespace-nowrap">
         <TextWithCopy>{token.address}</TextWithCopy>
         <Logo name={token.logo} width={18} height={18} />
