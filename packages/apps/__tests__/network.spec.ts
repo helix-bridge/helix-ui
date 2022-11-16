@@ -50,9 +50,19 @@ describe('network utils', () => {
     expect(group![1]).toEqual(['crab-dvm', 'crab-parachain']);
   });
 
-  it('crab-dvm contains 8 leafs and substrate-substrateDVM deprecated', () => {
+  it('crab-dvm contains 9 leafs and substrate-substrateDVM deprecated', () => {
     const group = data.find((item) => item[0] === 'crab-dvm');
-    const expected = sort(['crab', 'ethereum', 'heco', 'polygon', 'darwinia-dvm', 'darwinia', 'astar', 'crab-dvm']);
+    const expected = sort([
+      'crab',
+      'ethereum',
+      'heco',
+      'polygon',
+      'darwinia-dvm',
+      'darwinia',
+      'astar',
+      'crab-dvm',
+      'crab-parachain',
+    ]);
 
     expect(group).not.toEqual(undefined);
     expect(sort(uniq(group![1]))).toEqual(sort(expected));
@@ -61,9 +71,9 @@ describe('network utils', () => {
     expect(overview).toEqual(undefined);
   });
 
-  it('crab-parachain contains 3 leafs', () => {
+  it('crab-parachain contains 4 leafs', () => {
     const group = data.find((item) => item[0] === 'crab-parachain');
-    const expected = sort(['crab', 'karura', 'moonriver']);
+    const expected = sort(['crab', 'karura', 'moonriver', 'crab-dvm']);
 
     expect(group).not.toEqual(undefined);
     expect(sort(group![1])).toEqual(expected);
@@ -94,7 +104,7 @@ describe('network utils', () => {
 
     expect(group).not.toEqual(undefined);
     expect(sort(group![1])).toEqual(
-      sort(['crab-dvm', 'heco', 'polygon', 'astar', 'bsc', 'avalanche', 'arbitrum', 'optimism', 'darwinia-dvm'])
+      sort(['crab-dvm', 'heco', 'polygon', 'bsc', 'arbitrum', 'astar', 'avalanche', 'optimism', 'darwinia-dvm'])
     );
   });
 
@@ -147,7 +157,7 @@ describe('network utils', () => {
 
     expect(group).not.toEqual(undefined);
     expect(sort(group![1])).toEqual(
-      sort(['crab-dvm', 'ethereum', 'heco', 'astar', 'bsc', 'avalanche', 'arbitrum', 'optimism'])
+      sort(['crab-dvm', 'ethereum', 'heco', 'bsc', 'arbitrum', 'avalanche', 'astar', 'optimism'])
     );
   });
 
