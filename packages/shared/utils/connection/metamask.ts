@@ -16,13 +16,11 @@ import {
   ConnectionStatus,
   EthereumChainConfig,
   EthereumConnection,
+  EthereumExtension,
   MetamaskNativeNetworkIds,
-  SupportedWallet,
   TokenWithBridgesInfo,
 } from '../../model';
 import { readStorage, updateStorage } from '../helper/storage';
-
-export type EthereumExtension = Extract<SupportedWallet, 'metamask' | 'mathwallet-ethereum'>;
 
 export const ethereumExtensions: EthereumExtension[] = ['metamask', 'mathwallet-ethereum'];
 

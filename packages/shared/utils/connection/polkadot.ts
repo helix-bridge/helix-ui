@@ -14,11 +14,10 @@ import {
   PolkadotChainConfig,
   PolkadotChainSimpleToken,
   PolkadotConnection,
+  PolkadotExtension,
   SupportedWallet,
 } from '../../model';
 import { entrance } from './entrance';
-
-export type PolkadotExtension = Exclude<SupportedWallet, 'metamask' | 'mathwallet-ethereum'>;
 
 const walletToPropName: { [key in PolkadotExtension | 'mathwallet']: string } = {
   polkadot: 'polkadot-js',

@@ -35,3 +35,7 @@ export type SupportedWallet =
   | 'subwallet'
   | 'mathwallet-ethereum'
   | 'mathwallet-polkadot';
+
+export type EthereumExtension = Extract<SupportedWallet, 'metamask' | 'mathwallet-ethereum'>;
+
+export type PolkadotExtension = Exclude<SupportedWallet, 'metamask' | 'mathwallet-ethereum'>;

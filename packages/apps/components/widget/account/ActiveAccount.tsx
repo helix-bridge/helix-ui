@@ -19,14 +19,8 @@ import { Icon } from 'shared/components/widget/Icon';
 import { isDev } from 'shared/config/env';
 import { darwiniaConfig, goerliConfig, pangolinConfig, SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
 import { ethereumConfig } from 'shared/config/network/ethereum';
-import { ConnectionStatus, EthereumChainConfig } from 'shared/model';
-import {
-  entrance,
-  EthereumExtension,
-  ethereumExtensions,
-  PolkadotExtension,
-  polkadotExtensions,
-} from 'shared/utils/connection';
+import { ConnectionStatus, EthereumChainConfig, EthereumExtension, PolkadotExtension } from 'shared/model';
+import { entrance, ethereumExtensions, polkadotExtensions } from 'shared/utils/connection';
 import { Path } from '../../../config';
 import abi from '../../../config/ethv1/abi.json';
 import claimSource from '../../../config/ethv1/airdrop2.json';
