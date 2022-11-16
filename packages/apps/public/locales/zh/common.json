@@ -145,7 +145,7 @@
   "Type or select the recipient address": "输入或选择接收账号",
   "Unique character string (TxID) assigned to every verified transaction on the Source Chain.": "分配给源链上每个已验证交易的唯一字符串 (TxID)",
   "Unique character string (TxID) assigned to every verified transaction on the Target Chain.": "分配给目标链上每个已验证交易的唯一字符串 (TxID)",
-  "Value": "数量",
+  "Value": "金额",
   "View in explorer": "在浏览器中查看",
   "View in {{scan}} explorer": "在 {{scan}} 浏览器中查看",
   "Waiting for Response": "等待处理",
