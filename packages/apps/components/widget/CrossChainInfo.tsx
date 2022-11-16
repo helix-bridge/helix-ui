@@ -36,7 +36,7 @@ export function CrossChainInfo({
   const feeContent = useMemo(() => {
     if (fee) {
       return fee.amount.lt(BN_ZERO) ? (
-        <span className="text-helix-red">{t('Query Failed')}</span>
+        <CountLoading />
       ) : (
         <Tooltip title={fromWei(fee)} className="cursor-help">
           {fee.amount.lt(new BN(toWei({ value: 1, decimals: fee.decimals })))

@@ -126,13 +126,20 @@ export function CrossChain() {
 
     const { from: dep } = pureDirection;
     const obs =
-      !!account && !!dep && isValidAddress(account, pureDirection.from.host)
-        ? fromRx(dep.meta.getBalance(pureDirection, account))
+      !!account && !!dep && isValidAddress(account, dep.host)
+        ? of(null).pipe(
+            switchMap(() => fromRx(dep.meta.getBalance(pureDirection, account))),
+            pollWhile(LONG_DURATION, () => isMounted)
+          )
         : EMPTY;
 
     const sub$$ = obs.subscribe({
       next(result) {
         setBalances(result);
+        setIsBalanceLoading(false);
+      },
+      error() {
+        setIsBalanceLoading(false);
       },
       complete() {
         setIsBalanceLoading(false);
@@ -140,7 +147,7 @@ export function CrossChain() {
     });
 
     return () => sub$$.unsubscribe();
-  }, [account, bridge, pureDirection]);
+  }, [account, bridge, isMounted, pureDirection]);
 
   useEffect(() => {
     if (

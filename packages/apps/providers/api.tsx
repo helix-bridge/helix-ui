@@ -131,6 +131,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
         .subscribe({
           next: (connection: Connection) => {
             if (connection.status === ConnectionStatus.success) {
+              // TODO: remove account convert
               if (connection.wallet === 'polkadot') {
                 connection = {
                   ...connection,
@@ -143,7 +144,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
               action(connection);
               setIsConnecting(false);
             }
-            updateStorage({ activeWallet: { wallet: availableWallet, chain: chainConfig.name } });
+            updateStorage({ activeWallet: { wallet: selectedWallet, chain: chainConfig.name } });
           },
           error: (_: unknown) => {
             action({ ...initialConnection, status: ConnectionStatus.error });

@@ -35,6 +35,11 @@ export const crabParachainConfig: ParachainChainConfig = {
           bridge: 'crabParachain-moonriver',
           partner: { name: 'moonriver', role: 'issuing', symbol: 'CRAB' },
         },
+        {
+          category: 'helix',
+          bridge: 'substrateDVM-substrateParachain',
+          partner: { name: 'crab-dvm', role: 'backing', symbol: 'CRAB' },
+        },
       ],
       type: 'mapping',
       host: 'crab-parachain',
