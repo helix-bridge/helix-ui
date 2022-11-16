@@ -11,6 +11,7 @@ import { tap } from 'rxjs/internal/operators/tap';
 import { CBridgeRecordStatus, LONG_DURATION } from 'shared/config/constant';
 import { useIsMounted } from 'shared/hooks';
 import { HelixHistoryRecord } from 'shared/model';
+import { revertAccount } from 'shared/utils/helper/address';
 import { gqlName } from 'shared/utils/helper/common';
 import { pollWhile } from 'shared/utils/helper/operator';
 import { applyModalObs } from 'shared/utils/tx';
@@ -21,6 +22,7 @@ import { HISTORY_RECORD_BY_ID } from '../../config/gql';
 import { useITranslation } from '../../hooks';
 import { RecordStatusComponentProps } from '../../model/component';
 import { useTx } from '../../providers';
+import { getOriginChainConfig } from '../../utils/network';
 import { getDirectionFromHelixRecord, isCBridgeRecord } from '../../utils/record';
 
 interface RefundComponentProps extends RecordStatusComponentProps {
@@ -175,7 +177,7 @@ function Refund({ record, onSuccess }: RefundComponentProps) {
             content: (
               <span>
                 {t('This transaction will be refund to {{account}}, are you sure to execute it?', {
-                  account: record.sender,
+                  account: revertAccount(record.sender, getOriginChainConfig(record.fromChain)),
                 })}
               </span>
             ),
