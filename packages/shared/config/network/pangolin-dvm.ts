@@ -44,7 +44,7 @@ export const pangolinDVMConfig: DVMChainConfig = {
       host: 'pangolin-dvm',
       logo: 'token-ring.svg',
       symbol: 'PRING',
-      address: '0xc52287b259b2431ba0f61BC7EBD0eD793B0b7044',
+      address: '',
     },
     {
       name: 'WPKTON',
