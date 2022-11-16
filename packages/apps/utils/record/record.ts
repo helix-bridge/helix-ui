@@ -57,7 +57,7 @@ export function getFeeAmountFromHelixRecord(record: HelixHistoryRecord) {
     decimals = isPolkadotNetwork(fromChain) && !fromChain.includes('parachain') ? 9 : 18;
   }
 
-  return fromWei({ value: record.fee, decimals });
+  return fromWei({ value: record.fee, decimals }, (val) => prettyNumber(val, { ignoreZeroDecimal: true }));
 }
 
 export function getSentAmountFromHelixRecord(record: HelixHistoryRecord) {

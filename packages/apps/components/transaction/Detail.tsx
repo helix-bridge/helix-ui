@@ -5,11 +5,11 @@ import { TextWithCopy } from 'shared/components/widget/TextWithCopy';
 import { useITranslation } from 'shared/hooks';
 import { BridgeCategory, HelixHistoryRecord } from 'shared/model';
 import { revertAccount } from 'shared/utils/helper/address';
-import { fromWei, prettyNumber } from 'shared/utils/helper/balance';
 import { isTransferBetween } from 'utils/bridge';
 import { getChainConfig } from 'utils/network';
 import { TransferStep } from '../../model/transfer';
 import { ClaimProvider, TxProvider } from '../../providers';
+import { getFeeAmountFromHelixRecord, getSentAmountFromHelixRecord } from '../../utils/record';
 import { IBreadcrumb } from './Breadcrumb';
 import { Bridge } from './Bridge';
 import { SourceTx } from './SourceTx';
@@ -29,18 +29,6 @@ export function Detail({ record, transfers }: DetailProps) {
   const { t } = useITranslation();
   const departure = getChainConfig(record.fromChain);
   const arrival = getChainConfig(record.toChain);
-
-  const amount = useMemo(() => {
-    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === record.sendToken.toLowerCase());
-
-    return fromWei({ value: record.sendAmount ?? 0, decimals: token?.decimals ?? 9 }, prettyNumber);
-  }, [departure.tokens, record]);
-
-  const feeDecimals = useMemo(() => {
-    const token = departure.tokens.find((item) => item.symbol.toLowerCase() === record.feeToken.toLowerCase());
-
-    return token?.decimals ?? 9;
-  }, [departure.tokens, record]);
 
   const isCrabDVMHeco = useMemo(() => isTransferBetween('crab-dvm', 'heco'), []);
 
@@ -99,15 +87,14 @@ export function Detail({ record, transfers }: DetailProps) {
             title={t('Value')}
             tip={t('The amount to be transferred to the recipient with the cross-chain transaction.')}
           >
-            {amount} {transfers[0]?.token?.name}
+            {getSentAmountFromHelixRecord(record)} {transfers[0]?.token?.name}
           </TransferDescription>
 
           <TransferDescription
             title={t('Transaction Fee')}
             tip={'Amount paid for processing the cross-chain transaction.'}
           >
-            {fromWei({ value: record.fee, decimals: feeDecimals })}{' '}
-            {record.feeToken === 'null' ? null : record.feeToken}
+            {getFeeAmountFromHelixRecord(record)} {record.feeToken === 'null' ? null : record.feeToken}
           </TransferDescription>
 
           <Divider />
