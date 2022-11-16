@@ -6,8 +6,8 @@ import { from } from 'rxjs/internal/observable/from';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { tap } from 'rxjs/internal/operators/tap';
 import type { Observer } from 'rxjs/internal/types';
-import { SupportedWallet, Tx } from '../../model';
-import { getPolkadotExtension, PolkadotExtension, polkadotExtensions, waitUntilConnected } from '../connection';
+import { PolkadotExtension, SupportedWallet, Tx } from '../../model';
+import { getPolkadotExtension, polkadotExtensions, waitUntilConnected } from '../connection';
 
 function extrinsicSpy(observer: Observer<Tx>) {
   observer.next({ status: 'signing' });
