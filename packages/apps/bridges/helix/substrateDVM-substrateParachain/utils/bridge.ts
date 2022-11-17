@@ -240,6 +240,6 @@ export class SubstrateDVMSubstrateParachainBridge extends Bridge<
   getMinimumFeeTokenHolding(direction: CrossChainDirection): TokenWithAmount | null {
     const { from: dep } = direction;
 
-    return { ...dep, amount: new BN(toWei({ value: 1, decimals: dep.decimals })) };
+    return { ...dep, amount: new BN(toWei({ value: 3, decimals: dep.decimals })) };
   }
 }

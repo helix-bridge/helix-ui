@@ -1,5 +1,12 @@
 import { THEME } from '../config/theme';
-import { ChainConfig, Network, SupportedWallet, TokenWithBridgesInfo } from './network';
+import {
+  ChainConfig,
+  EthereumExtension,
+  Network,
+  PolkadotExtension,
+  SupportedWallet,
+  TokenWithBridgesInfo,
+} from './network';
 
 export interface HashInfo {
   from?: Pick<TokenWithBridgesInfo, 'symbol' | 'host'>;
@@ -16,5 +23,9 @@ export type StorageInfo = HashInfo & {
   activeWallet?: {
     chain?: Network;
     wallet?: SupportedWallet;
+  };
+  recentlyUsedWallet?: {
+    ethereum?: EthereumExtension;
+    polkadot?: PolkadotExtension;
   };
 };

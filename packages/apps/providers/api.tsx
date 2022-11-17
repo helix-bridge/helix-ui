@@ -8,9 +8,10 @@ import type { Subscription } from 'rxjs/internal/Subscription';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { isDev } from 'shared/config/env';
 import { Action, ChainConfig, Connection, ConnectionStatus, PolkadotChainConfig, SupportedWallet } from 'shared/model';
-import { connect } from 'shared/utils/connection';
+import { connect, ethereumExtensions } from 'shared/utils/connection';
 import { convertToSS58 } from 'shared/utils/helper/address';
 import { readStorage, updateStorage } from 'shared/utils/helper/storage';
+import { isEthereumNetwork } from 'shared/utils/network/network';
 import { applyModalObs } from 'shared/utils/tx';
 import { WalletList } from '../components/widget/account/SelectWalletModal';
 import { useITranslation } from '../hooks';
@@ -94,10 +95,13 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   );
 
   const getConnection = useCallback(
+    // eslint-disable-next-line complexity
     (chainConfig: ChainConfig, action: (payload: Connection) => void, specifiedWallet?: SupportedWallet) => {
-      const { activeWallet } = readStorage();
-      const storedWallet = activeWallet && activeWallet.wallet;
-      const isStoredAvailable = chainConfig.wallets.includes(storedWallet as unknown as never);
+      const { recentlyUsedWallet } = readStorage();
+      const storedWallet = (isEthereumNetwork(chainConfig)
+        ? recentlyUsedWallet?.ethereum
+        : recentlyUsedWallet?.polkadot) as unknown as never;
+      const isStoredAvailable = chainConfig.wallets.includes(storedWallet);
       const cachedWallet = isStoredAvailable ? storedWallet : undefined;
       const availableWallet = specifiedWallet ?? cachedWallet;
       let selectedWallet = availableWallet ?? chainConfig.wallets[0];
@@ -144,7 +148,15 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
               action(connection);
               setIsConnecting(false);
             }
-            updateStorage({ activeWallet: { wallet: selectedWallet, chain: chainConfig.name } });
+
+            updateStorage({
+              activeWallet: { wallet: selectedWallet, chain: chainConfig.name },
+              recentlyUsedWallet: {
+                ...recentlyUsedWallet,
+                [ethereumExtensions.includes(selectedWallet as unknown as never) ? 'ethereum' : 'polkadot']:
+                  selectedWallet,
+              },
+            });
           },
           error: (_: unknown) => {
             action({ ...initialConnection, status: ConnectionStatus.error });

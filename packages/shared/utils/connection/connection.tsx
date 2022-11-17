@@ -14,25 +14,21 @@ import {
   Connection,
   EthereumChainConfig,
   EthereumConnection,
+  EthereumExtension,
   PolkadotChainConfig,
   PolkadotConnection,
+  PolkadotExtension,
   SupportedWallet,
 } from '../../model';
 import { isEthereumNetwork, isPolkadotNetwork } from '../network/network';
 import { entrance } from './entrance';
 import {
-  EthereumExtension,
   ethereumExtensions,
   getMetamaskConnection,
   isEthereumExtensionInstalled,
   switchMetamaskNetwork,
 } from './metamask';
-import {
-  getPolkadotExtensionConnection,
-  isPolkadotExtensionInstalled,
-  PolkadotExtension,
-  polkadotExtensions,
-} from './polkadot';
+import { getPolkadotExtensionConnection, isPolkadotExtensionInstalled, polkadotExtensions } from './polkadot';
 
 type ConnectFn<T extends Connection> = (network: ChainConfig, extension: SupportedWallet) => Observable<T>;
 
