@@ -1,7 +1,10 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { IAccountMeta } from 'shared/model';
+import { IAccountMeta, PolkadotChainConfig, PolkadotTypeNetwork } from 'shared/model';
+import { polkadotExtensions } from 'shared/utils/connection';
+import { convertToSS58 } from 'shared/utils/helper/address';
 import { readStorage, updateStorage } from 'shared/utils/helper/storage';
 import { isSameAddress, isSS58Address } from 'shared/utils/helper/validator';
+import { getChainConfig } from '../utils/network';
 import { useApi } from './api';
 
 export interface AccountCtx {
@@ -25,18 +28,22 @@ export const AccountProvider = ({ children }: React.PropsWithChildren<unknown>) 
 
   useEffect(() => {
     const { activeMetamaskAccount, activePolkadotAccount } = readStorage();
+    const isPolkadotTypeConnection = polkadotExtensions.includes(departureConnection.wallet as unknown as never);
     const acc =
       departureConnection.accounts.find((value) =>
-        isSameAddress(
-          value.address,
-          (departureConnection.wallet === 'polkadot' ? activePolkadotAccount : activeMetamaskAccount) ?? ''
-        )
+        isSameAddress(value.address, (isPolkadotTypeConnection ? activePolkadotAccount : activeMetamaskAccount) ?? '')
       )?.address || departureConnection.accounts[0]?.address;
 
     if (acc) {
-      setAccount(acc);
+      if (isPolkadotTypeConnection) {
+        const config = getChainConfig(departureConnection.chainId as PolkadotTypeNetwork) as PolkadotChainConfig;
+
+        setAccount(convertToSS58(acc, config.ss58Prefix));
+      } else {
+        setAccount(acc);
+      }
     }
-  }, [departureConnection.accounts, departureConnection.wallet]);
+  }, [departureConnection.accounts, departureConnection.chainId, departureConnection.wallet]);
 
   useEffect(() => {
     if (account) {
