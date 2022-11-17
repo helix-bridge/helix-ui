@@ -7,14 +7,23 @@ import { switchMap } from 'rxjs/internal/operators/switchMap';
 import type { Subscription } from 'rxjs/internal/Subscription';
 import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { isDev } from 'shared/config/env';
-import { Action, ChainConfig, Connection, ConnectionStatus, PolkadotChainConfig, SupportedWallet } from 'shared/model';
-import { connect, ethereumExtensions } from 'shared/utils/connection';
+import {
+  Action,
+  ChainConfig,
+  Connection,
+  ConnectionStatus,
+  PolkadotChainConfig,
+  PolkadotTypeNetwork,
+  SupportedWallet,
+} from 'shared/model';
+import { connect, ethereumExtensions, polkadotExtensions } from 'shared/utils/connection';
 import { convertToSS58 } from 'shared/utils/helper/address';
 import { readStorage, updateStorage } from 'shared/utils/helper/storage';
 import { isEthereumNetwork } from 'shared/utils/network/network';
 import { applyModalObs } from 'shared/utils/tx';
 import { WalletList } from '../components/widget/account/SelectWalletModal';
 import { useITranslation } from '../hooks';
+import { getChainConfig } from '../utils/network';
 
 interface StoreState {
   departureConnection: Connection;
@@ -95,7 +104,6 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   );
 
   const getConnection = useCallback(
-    // eslint-disable-next-line complexity
     (chainConfig: ChainConfig, action: (payload: Connection) => void, specifiedWallet?: SupportedWallet) => {
       const { recentlyUsedWallet } = readStorage();
       const storedWallet = (isEthereumNetwork(chainConfig)
@@ -134,17 +142,20 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
         .pipe(switchMap((wallet) => (wallet ? connect(chainConfig, wallet) : EMPTY)))
         .subscribe({
           next: (connection: Connection) => {
-            if (connection.status === ConnectionStatus.success) {
-              // TODO: remove account convert
-              if (connection.wallet === 'polkadot') {
-                connection = {
-                  ...connection,
-                  accounts: connection.accounts.map((item) => ({
-                    ...item,
-                    address: convertToSS58(item.address, (state.departure as PolkadotChainConfig).ss58Prefix),
-                  })),
-                };
-              }
+            if (
+              connection.status === ConnectionStatus.success &&
+              polkadotExtensions.includes(connection.wallet as unknown as never)
+            ) {
+              const config = getChainConfig(connection.chainId as PolkadotTypeNetwork) as PolkadotChainConfig;
+
+              connection = {
+                ...connection,
+                accounts: connection.accounts.map((item) => ({
+                  ...item,
+                  address: convertToSS58(item.address, config.ss58Prefix),
+                })),
+              };
+
               action(connection);
               setIsConnecting(false);
             }
@@ -167,7 +178,7 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
           },
         });
     },
-    [setArrivalConnection, state.departure, t]
+    [setArrivalConnection, t]
   );
 
   const connectDepartureNetwork = useCallback(
