@@ -37,11 +37,13 @@ export const WalletProvider = ({ children }: React.PropsWithChildren<unknown>) =
   }, [departure, departureConnection, departureConnection.chainId, departureConnection.wallet]);
 
   useEffect(() => {
-    const { activeWallet } = readStorage();
-    if (activeWallet?.chain) {
+    const { activeWallet, from } = readStorage();
+    if (activeWallet?.chain && activeWallet.chain === from?.host) {
       const config = getChainConfig(activeWallet.chain);
 
-      connectAndUpdateDepartureNetwork(config, activeWallet.wallet);
+      if (activeWallet.wallet && config.wallets.includes(activeWallet.wallet)) {
+        connectAndUpdateDepartureNetwork(config, activeWallet.wallet);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
