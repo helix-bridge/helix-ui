@@ -1,3 +1,155 @@
+# [4.5.0](https://github.com/helix-bridge/helix/compare/v4.4.4-apps...v4.5.0) (2022-11-17)
+
+
+### Bug Fixes
+
+* **#420:** amount display on detail page ([#427](https://github.com/helix-bridge/helix/issues/427)) ([cd306f4](https://github.com/helix-bridge/helix/commit/cd306f45e1b4ecef307da983b75d533332a1d813)), closes [#420](https://github.com/helix-bridge/helix/issues/420)
+* **#422, #423:** remove PRING address ([#428](https://github.com/helix-bridge/helix/issues/428)) ([f9fe921](https://github.com/helix-bridge/helix/commit/f9fe9210afd2f5702161e3d25049237d692624d6)), closes [#422](https://github.com/helix-bridge/helix/issues/422) [#423](https://github.com/helix-bridge/helix/issues/423) [#422](https://github.com/helix-bridge/helix/issues/422) [#423](https://github.com/helix-bridge/helix/issues/423)
+* **#426:** limit incorrect wallet memo connect ([#433](https://github.com/helix-bridge/helix/issues/433)) ([8958baa](https://github.com/helix-bridge/helix/commit/8958baa3db87ed05fe0d40a37f0829baf696a58a)), closes [#426](https://github.com/helix-bridge/helix/issues/426)
+* **#430:** flow the departure connnection account format ([#434](https://github.com/helix-bridge/helix/issues/434)) ([c165508](https://github.com/helix-bridge/helix/commit/c1655082f521a4fc9cff31bd41faaed2ad8a9fc7)), closes [#430](https://github.com/helix-bridge/helix/issues/430)
+
+
+### Features
+
+* crab-dvm<>crab-parachain ([#425](https://github.com/helix-bridge/helix/issues/425)) ([3bc7fe5](https://github.com/helix-bridge/helix/commit/3bc7fe5a88eb51296466f251b4a89cf875ddb1db))
+* memo favorite wallet ([#431](https://github.com/helix-bridge/helix/issues/431)) ([3a995a3](https://github.com/helix-bridge/helix/commit/3a995a3e67eb8473425387d4211e0988148e95b8))
+* subwallet & talisman & mathwallet ([#412](https://github.com/helix-bridge/helix/issues/412)) ([a9dafbe](https://github.com/helix-bridge/helix/commit/a9dafbe161b262c012cacb2bb7a3e07164b0c4fe))
+
+
+
+## [4.4.4-apps](https://github.com/helix-bridge/helix/compare/v4.4.3-apps...v4.4.4-apps) (2022-11-15)
+
+
+
+## [4.4.3-apps](https://github.com/helix-bridge/helix/compare/v4.4.2-apps...v4.4.3-apps) (2022-11-14)
+
+
+
+## [4.4.2-apps](https://github.com/helix-bridge/helix/compare/v4.4.1-apps...v4.4.2-apps) (2022-11-10)
+
+
+### Bug Fixes
+
+* parachain balance querying use wss provider ([#407](https://github.com/helix-bridge/helix/issues/407)) ([14a0b3a](https://github.com/helix-bridge/helix/commit/14a0b3a95cb26cb15d41e753ddbac04ba265f2e2))
+
+
+### Features
+
+* substrate-dvm 2 parachain ([#405](https://github.com/helix-bridge/helix/issues/405)) ([080a7cd](https://github.com/helix-bridge/helix/commit/080a7cdfe6cb45eaef4e733079978d88cef1435b))
+
+
+
+## [4.4.1-apps](https://github.com/helix-bridge/helix/compare/v4.4.0-apps...v4.4.1-apps) (2022-11-04)
+
+
+
+# [4.4.0-apps](https://github.com/helix-bridge/helix/compare/v4.3.14-apps...v4.4.0-apps) (2022-11-04)
+
+
+### Bug Fixes
+
+* **#345:** max available balance validate ([#352](https://github.com/helix-bridge/helix/issues/352)) ([42820ac](https://github.com/helix-bridge/helix/commit/42820ac56b064e4a30977d2c19486ca729445f5c)), closes [#345](https://github.com/helix-bridge/helix/issues/345) [#345](https://github.com/helix-bridge/helix/issues/345)
+* **#346:** restore xcm toAmount ([#353](https://github.com/helix-bridge/helix/issues/353)) ([180e841](https://github.com/helix-bridge/helix/commit/180e841d09841d0442c88e633e88554ecb15b54a)), closes [#346](https://github.com/helix-bridge/helix/issues/346)
+* **#349:** substrate-dvm inner fee holding ([#351](https://github.com/helix-bridge/helix/issues/351)) ([02049b1](https://github.com/helix-bridge/helix/commit/02049b1255ad740c45306751e6df4a54aba1cdc0)), closes [#349](https://github.com/helix-bridge/helix/issues/349)
+* **#382:** hash link error ([#384](https://github.com/helix-bridge/helix/issues/384)) ([782e1ee](https://github.com/helix-bridge/helix/commit/782e1eed3d351e341e9a402ea1e84424492fc527)), closes [#382](https://github.com/helix-bridge/helix/issues/382) [#382](https://github.com/helix-bridge/helix/issues/382)
+* **#402:** counttdown time ([#404](https://github.com/helix-bridge/helix/issues/404)) ([d7227c0](https://github.com/helix-bridge/helix/commit/d7227c02feca1e9e0949d54ed07b59d4b3b4c647)), closes [#402](https://github.com/helix-bridge/helix/issues/402)
+* some known issues ([#372](https://github.com/helix-bridge/helix/issues/372)) ([5bd4515](https://github.com/helix-bridge/helix/commit/5bd4515d435ff567dd5c658459cdbfcc7bc0e467)), closes [#370](https://github.com/helix-bridge/helix/issues/370) [#369](https://github.com/helix-bridge/helix/issues/369) [#364](https://github.com/helix-bridge/helix/issues/364) [#366](https://github.com/helix-bridge/helix/issues/366) [#368](https://github.com/helix-bridge/helix/issues/368)
+* some known issues ([#385](https://github.com/helix-bridge/helix/issues/385)) ([6a268e6](https://github.com/helix-bridge/helix/commit/6a268e6df653cf98fb2882404de9a052ce501f3e))
+* storage field validate ([#356](https://github.com/helix-bridge/helix/issues/356)) ([6451e35](https://github.com/helix-bridge/helix/commit/6451e35c70b205d4759d0a703574708e098f46e1))
+* validation ([#363](https://github.com/helix-bridge/helix/issues/363)) ([3ea18ed](https://github.com/helix-bridge/helix/commit/3ea18edbaf8391850137acb2cd6f16023551684a))
+
+
+### Features
+
+* confirm done modal  ([#354](https://github.com/helix-bridge/helix/issues/354)) ([83d9fb7](https://github.com/helix-bridge/helix/commit/83d9fb7709c096373251a0c8c7e79ac21fbef003))
+* decouple wallet connection with transfer ([#355](https://github.com/helix-bridge/helix/issues/355)) ([ff7676c](https://github.com/helix-bridge/helix/commit/ff7676c0742c1993e0d260c80dde2a9098a66764))
+* do not hung hole page when record contains incorrect field ([#378](https://github.com/helix-bridge/helix/issues/378)) ([274b085](https://github.com/helix-bridge/helix/commit/274b085511ea1a57095ce5db1d5d39b46f985af5))
+* new explorer page ([#358](https://github.com/helix-bridge/helix/issues/358)) ([c2fe941](https://github.com/helix-bridge/helix/commit/c2fe9415fb4c778ae0da7de395c4834948ae8f9d))
+* remote chain filter ([#392](https://github.com/helix-bridge/helix/issues/392)) ([5b96daf](https://github.com/helix-bridge/helix/commit/5b96daf5fc7f09e079f79fe68951576b8b37a894))
+* s2s crab2darwinia ([#377](https://github.com/helix-bridge/helix/issues/377)) ([ca136cd](https://github.com/helix-bridge/helix/commit/ca136cdd905c452fcd4583e2263c56e36359cc7b))
+
+
+
+## [4.3.14-apps](https://github.com/helix-bridge/helix/compare/v4.3.13-apps...v4.3.14-apps) (2022-10-27)
+
+
+### Bug Fixes
+
+* validation and approve ([#376](https://github.com/helix-bridge/helix/issues/376)) ([a925eb0](https://github.com/helix-bridge/helix/commit/a925eb0e690a08e89ca09d3fa4d4d94938a5f639))
+
+
+
+## [4.3.13-apps](https://github.com/helix-bridge/helix/compare/v4.3.12-apps...v4.3.13-apps) (2022-10-19)
+
+
+### Features
+
+* **#339:** darwinia-dvm kton transfer ([#341](https://github.com/helix-bridge/helix/issues/341)) ([76b21aa](https://github.com/helix-bridge/helix/commit/76b21aad5fcb44da06978dfb394f92c28a11de4f)), closes [#339](https://github.com/helix-bridge/helix/issues/339) [#339](https://github.com/helix-bridge/helix/issues/339)
+
+
+
+## [4.3.12-apps](https://github.com/helix-bridge/helix/compare/v4.3.11-apps...v4.3.12-apps) (2022-10-14)
+
+
+### Bug Fixes
+
+* **#282:** add min fee token holding for ethv2 ([#337](https://github.com/helix-bridge/helix/issues/337)) ([ab01348](https://github.com/helix-bridge/helix/commit/ab013483d4c8aa5eb45317ab2e5745466d24d813)), closes [#282](https://github.com/helix-bridge/helix/issues/282) [#282](https://github.com/helix-bridge/helix/issues/282)
+* **#315:** modify token type ([#333](https://github.com/helix-bridge/helix/issues/333)) ([a6e3c61](https://github.com/helix-bridge/helix/commit/a6e3c61f4b8ba3f0fdaa4880c92a1d53b584f8b4)), closes [#315](https://github.com/helix-bridge/helix/issues/315) [#315](https://github.com/helix-bridge/helix/issues/315) [#315](https://github.com/helix-bridge/helix/issues/315)
+* **#316:** bridge down on test net ([#332](https://github.com/helix-bridge/helix/issues/332)) ([e5b9f2c](https://github.com/helix-bridge/helix/commit/e5b9f2c4e235896a6317721ccdf9627c7052cc51)), closes [#316](https://github.com/helix-bridge/helix/issues/316)
+* claim label ([#330](https://github.com/helix-bridge/helix/issues/330)) ([9db9e8d](https://github.com/helix-bridge/helix/commit/9db9e8df186717679369042ff7f66495d5359cc4)), closes [#326](https://github.com/helix-bridge/helix/issues/326) [#308](https://github.com/helix-bridge/helix/issues/308) [#308](https://github.com/helix-bridge/helix/issues/308)
+* runtime error ([#335](https://github.com/helix-bridge/helix/issues/335)) ([49b824d](https://github.com/helix-bridge/helix/commit/49b824dadb4ea668813c0e033f2ee8bc963f1ee9))
+
+
+### Features
+
+* **#328:** ethv1 claim page ([#329](https://github.com/helix-bridge/helix/issues/329)) ([0a2352f](https://github.com/helix-bridge/helix/commit/0a2352f8acfa6cdcf91c30e573e8672a500bba30)), closes [#328](https://github.com/helix-bridge/helix/issues/328) [#327](https://github.com/helix-bridge/helix/issues/327) [#328](https://github.com/helix-bridge/helix/issues/328)
+
+
+
+## [4.3.11-apps](https://github.com/helix-bridge/helix/compare/v4.3.10-apps...v4.3.11-apps) (2022-10-10)
+
+
+### Features
+
+* eth2 support darwina-dvm<>ethereum ([#302](https://github.com/helix-bridge/helix/issues/302)) ([588262e](https://github.com/helix-bridge/helix/commit/588262e4961001f125ab617cee9653905e4d255b))
+
+
+
+## [4.3.10-apps](https://github.com/helix-bridge/helix/compare/v4.3.9-apps...v4.3.10-apps) (2022-10-08)
+
+
+
+## [4.3.9-apps](https://github.com/helix-bridge/helix/compare/v4.3.8-apps...v4.3.9-apps) (2022-10-08)
+
+
+
+## [4.3.8-apps](https://github.com/helix-bridge/helix/compare/v4.3.7-apps...v4.3.8-apps) (2022-10-08)
+
+
+
+## [4.3.7-apps](https://github.com/helix-bridge/helix/compare/v4.3.6-apps...v4.3.7-apps) (2022-10-08)
+
+
+### Bug Fixes
+
+* **#317:** digits excess ([#318](https://github.com/helix-bridge/helix/issues/318)) ([ba70df0](https://github.com/helix-bridge/helix/commit/ba70df09e60fef63330d66e0515314e4a3bbfc57)), closes [#317](https://github.com/helix-bridge/helix/issues/317)
+
+
+
+## [4.3.6-apps](https://github.com/helix-bridge/helix/compare/v4.3.5-apps...v4.3.6-apps) (2022-09-28)
+
+
+### Bug Fixes
+
+* **#299:** cbridge validation ([#301](https://github.com/helix-bridge/helix/issues/301)) ([129bcee](https://github.com/helix-bridge/helix/commit/129bcee63333d46b357355b4c27079f324414e8a)), closes [#299](https://github.com/helix-bridge/helix/issues/299)
+
+
+### Features
+
+* simplify token selection ([#297](https://github.com/helix-bridge/helix/issues/297)) ([3a26ced](https://github.com/helix-bridge/helix/commit/3a26ced6dc0af579629d2fb25dfe0594a71829d6))
+
+
+
 ## [4.3.5](https://github.com/helix-bridge/helix/compare/v4.3.4-apps...v4.3.5) (2022-09-27)
 
 
