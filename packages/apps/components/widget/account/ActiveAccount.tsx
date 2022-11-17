@@ -16,7 +16,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { initReactI18next, useTranslation } from 'react-i18next';
 import { Icon } from 'shared/components/widget/Icon';
-import { isDev } from 'shared/config/env';
+import { isTestChain } from 'shared/config/env';
 import { darwiniaConfig, goerliConfig, pangolinConfig, SYSTEM_CHAIN_CONFIGURATIONS } from 'shared/config/network';
 import { ethereumConfig } from 'shared/config/network/ethereum';
 import { ConnectionStatus, EthereumChainConfig, EthereumExtension, PolkadotExtension } from 'shared/model';
@@ -208,12 +208,12 @@ export default function ActiveAccount() {
               const config =
                 SYSTEM_CHAIN_CONFIGURATIONS.find(
                   (item) => (item as EthereumChainConfig)?.ethereumChain?.chainId === chainId
-                ) ?? (isDev ? goerliConfig : ethereumConfig);
+                ) ?? (isTestChain ? goerliConfig : ethereumConfig);
 
               connectDepartureNetwork(config, wallet);
             });
           } else if (polkadotExtensions.includes(wallet as PolkadotExtension)) {
-            const config = isDev ? pangolinConfig : darwiniaConfig;
+            const config = isTestChain ? pangolinConfig : darwiniaConfig;
 
             connectDepartureNetwork(config, wallet);
           } else {

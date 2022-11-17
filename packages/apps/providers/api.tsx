@@ -142,19 +142,18 @@ export const ApiProvider = ({ children }: React.PropsWithChildren<unknown>) => {
         .pipe(switchMap((wallet) => (wallet ? connect(chainConfig, wallet) : EMPTY)))
         .subscribe({
           next: (connection: Connection) => {
-            if (
-              connection.status === ConnectionStatus.success &&
-              polkadotExtensions.includes(connection.wallet as unknown as never)
-            ) {
-              const config = getChainConfig(connection.chainId as PolkadotTypeNetwork) as PolkadotChainConfig;
+            if (connection.status === ConnectionStatus.success) {
+              if (polkadotExtensions.includes(connection.wallet as unknown as never)) {
+                const config = getChainConfig(connection.chainId as PolkadotTypeNetwork) as PolkadotChainConfig;
 
-              connection = {
-                ...connection,
-                accounts: connection.accounts.map((item) => ({
-                  ...item,
-                  address: convertToSS58(item.address, config.ss58Prefix),
-                })),
-              };
+                connection = {
+                  ...connection,
+                  accounts: connection.accounts.map((item) => ({
+                    ...item,
+                    address: convertToSS58(item.address, config.ss58Prefix),
+                  })),
+                };
+              }
 
               action(connection);
               setIsConnecting(false);
