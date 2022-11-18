@@ -61,7 +61,7 @@ export function TxStatus({ record }: { record: HelixHistoryRecord | null }) {
 
         {state === RecordStatus.pendingToClaim && record && (
           <div className="flex items-center gap-2">
-            <span>{t('Please request claim on the source chain.')}</span>
+            <span>{t('Please claim the tokens on the target chain.')}</span>
             <PendingToClaim record={record} />
           </div>
         )}
