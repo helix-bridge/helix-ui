@@ -172,12 +172,17 @@ export function Direction({ value, onChange, balances, onRefresh, fee, isBalance
             }
           >
             <span
+              // eslint-disable-next-line complexity
               onClick={() => {
                 const { from, to } = data;
                 const config = getBridge(data);
                 const bridge = bridgeFactory(config);
                 const mini = bridge.getMinimumFeeTokenHolding && bridge.getMinimumFeeTokenHolding(data);
-                const amount = calcMax({ ...from, amount: iBalance }, fee, mini ?? undefined);
+                const amount = calcMax(
+                  { ...from, amount: iBalance },
+                  isCBridge(data) || isXCM(data) ? null : fee,
+                  mini ?? undefined
+                );
 
                 if (amount !== from.amount) {
                   const toAmount = calcToAmount({ ...from, amount: new BN(toWei({ ...from, amount })) }, fee, data);
