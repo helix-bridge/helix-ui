@@ -1,4 +1,5 @@
 import type { ApiPromise } from '@polkadot/api';
+import type { Injected, InjectedAccount, InjectedWindowProvider } from '@polkadot/extension-inject/types';
 import once from 'lodash/once';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import type { Observable } from 'rxjs/internal/Observable';
@@ -59,14 +60,12 @@ export async function getPolkadotChainProperties(api: ApiPromise): Promise<Polka
   );
 }
 
-export async function getPolkadotExtension(wallet: PolkadotExtension) {
-  const extensions = await import('@polkadot/extension-dapp').then(({ web3Enable }) => web3Enable('helix'));
-
-  return extensions.find((item) => item.name === walletToPropName[wallet]);
+export function getPolkadotExtension(wallet: PolkadotExtension): InjectedWindowProvider {
+  return window.injectedWeb3[walletToPropName[wallet]];
 }
 
-export async function isPolkadotExtensionInstalled(wallet: SupportedWallet): Promise<boolean> {
-  const ext = await getPolkadotExtension(wallet as PolkadotExtension);
+export function isPolkadotExtensionInstalled(wallet: SupportedWallet): boolean {
+  const ext = getPolkadotExtension(wallet as PolkadotExtension);
 
   return !!ext;
 }
@@ -75,40 +74,37 @@ export const getPolkadotExtensionConnection: (
   network: PolkadotChainConfig,
   wallet: PolkadotExtension
 ) => Observable<PolkadotConnection> = (network, wallet) => {
-  const bundle = import('@polkadot/extension-dapp').then(({ web3Enable, web3Accounts }) => ({
-    web3Enable,
-    web3Accounts,
-  }));
+  const provider = getPolkadotExtension(wallet);
 
-  const extensionObs = from(bundle).pipe(
-    concatMap(({ web3Accounts, web3Enable }) =>
-      from(web3Enable('helix')).pipe(
-        concatMap((extensions) =>
-          from(web3Accounts()).pipe(
-            map(
-              (accounts) =>
-                ({
-                  accounts:
-                    !extensions.length && !accounts.length
-                      ? []
-                      : accounts.filter((acc) => acc.meta.source === walletToPropName[wallet]),
-                  wallet,
-                  status: 'pending',
-                  chainId: network.name,
-                } as Exclude<PolkadotConnection, 'api'>)
-            )
+  const extensionObs = from(provider.enable('helix'))
+    .pipe(
+      concatMap((injected: Injected) =>
+        from(injected.accounts.get()).pipe(
+          map(
+            (accounts: InjectedAccount[]) =>
+              ({
+                accounts: accounts.map((acc) => ({
+                  address: acc.address,
+                  type: acc.type,
+                  meta: { name: acc.name, genesisHash: acc.genesisHash, source: wallet },
+                })),
+                wallet,
+                status: 'pending',
+                chainId: network.name,
+              } as Exclude<PolkadotConnection, 'api'>)
           )
         )
       )
-    ),
-    startWith<PolkadotConnection>({
-      status: ConnectionStatus.connecting,
-      accounts: [],
-      api: null,
-      wallet: 'polkadot',
-      chainId: network.name,
-    })
-  );
+    )
+    .pipe(
+      startWith<PolkadotConnection>({
+        status: ConnectionStatus.connecting,
+        accounts: [],
+        api: null,
+        wallet: 'polkadot',
+        chainId: network.name,
+      })
+    );
 
   const apiInstance = entrance.polkadot.getInstance(network.provider.wss);
   const apiObs = from(waitUntilConnected(apiInstance)).pipe(map(() => apiInstance));

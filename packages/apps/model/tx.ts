@@ -10,10 +10,11 @@ interface CrossChainParty {
 export interface CrossChainPayload<
   B extends BridgeBase = BridgeBase,
   F extends CrossToken = CrossToken,
-  T extends CrossToken = CrossToken
+  T extends CrossToken = CrossToken,
+  W extends SupportedWallet = SupportedWallet
 > extends CrossChainParty {
   bridge: B;
   direction: CrossChainDirection<F, T>;
   slippage?: number;
-  wallet: SupportedWallet;
+  wallet: W;
 }
