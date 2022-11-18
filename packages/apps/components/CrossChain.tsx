@@ -30,6 +30,7 @@ import {
   SupportedWallet,
   TokenInfoWithMeta,
 } from 'shared/model';
+import { isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei, truncate } from 'shared/utils/helper/balance';
 import { pollWhile } from 'shared/utils/helper/operator';
 import { isValidAddress } from 'shared/utils/helper/validator';
@@ -340,7 +341,11 @@ export function CrossChain() {
               if (bridge?.getAllowancePayload) {
                 bridge.getAllowancePayload(direction).then((payload) => {
                   if (payload) {
-                    approve(payload);
+                    isMetamaskChainConsistent(direction.from.meta).subscribe((is) => {
+                      if (is) {
+                        approve(payload);
+                      }
+                    });
                   }
                 });
               }
