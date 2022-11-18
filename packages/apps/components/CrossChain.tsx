@@ -42,7 +42,7 @@ import { useAfterTx } from '../hooks/tx';
 import { CrossChainComponentProps } from '../model/component';
 import { CrossChainPayload } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
-import { isXCM } from '../utils';
+import { isCBridge, isXCM } from '../utils';
 import { getDisplayName } from '../utils/network';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { calcMax, Direction, toDirection } from './form-control/Direction';
@@ -222,7 +222,11 @@ export function CrossChain() {
 
               const balance = balances[0];
               const mini = bridge && bridge.getMinimumFeeTokenHolding && bridge.getMinimumFeeTokenHolding(val);
-              const max = calcMax({ ...val.from, amount: balance }, fee, mini ?? undefined);
+              const max = calcMax(
+                { ...val.from, amount: balance },
+                isCBridge(direction) || isXCM(direction) ? null : fee,
+                mini ?? undefined
+              );
               return !max || new BN(toWei({ value: max })).gte(new BN(toWei({ value: val.from.amount })))
                 ? Promise.resolve()
                 : Promise.reject(`Max available balance is ${max}`);
@@ -375,6 +379,7 @@ export function CrossChain() {
                   return;
                 }
 
+                // eslint-disable-next-line complexity
                 form.validateFields().then((values) => {
                   const payload = flow(
                     patchPayload,
@@ -395,7 +400,7 @@ export function CrossChain() {
                     fee: fee!,
                     feeTokenBalance: {
                       ...fee,
-                      amount: isXCM(direction) ? balance : nativeTokenBalance,
+                      amount: isXCM(direction) || isCBridge(direction) ? balance : nativeTokenBalance,
                     } as TokenWithAmount,
                     dailyLimit: {
                       ...toToken,
