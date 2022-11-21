@@ -6,7 +6,7 @@ import { from } from 'rxjs/internal/observable/from';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { tap } from 'rxjs/internal/operators/tap';
 import type { Observer } from 'rxjs/internal/types';
-import { PolkadotExtension, SupportedWallet, Tx } from '../../model';
+import { PolkadotExtension, Tx } from '../../model';
 import { getPolkadotExtension, polkadotExtensions, waitUntilConnected } from '../connection';
 
 function extrinsicSpy(observer: Observer<Tx>) {
@@ -47,7 +47,7 @@ export function signAndSendExtrinsic(
   api: ApiPromise,
   sender: string,
   extrinsic: SubmittableExtrinsic<'promise', SubmittableResult>,
-  wallet: SupportedWallet
+  wallet: PolkadotExtension
 ) {
   const obs = new Observable((spy: Observer<Tx>) => {
     extrinsic.signAndSend(sender, extrinsicSpy(spy)).catch((error) => spy.error({ status: 'error', error }));
@@ -59,7 +59,11 @@ export function signAndSendExtrinsic(
   }
 
   return from(waitUntilConnected(api)).pipe(
-    switchMap(() => from(getPolkadotExtension(wallet as PolkadotExtension))),
+    switchMap(() => {
+      const provider = getPolkadotExtension(wallet);
+
+      return from(provider.enable('helix'));
+    }),
     tap((injector) => {
       if (injector) {
         api.setSigner(injector.signer);

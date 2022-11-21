@@ -76,7 +76,7 @@ const connectPolkadot: ConnectFn<PolkadotConnection> = (network, wallet = 'polka
     return EMPTY;
   }
 
-  return from(isPolkadotExtensionInstalled(wallet)).pipe(
+  return of(isPolkadotExtensionInstalled(wallet)).pipe(
     switchMap((enable) => {
       if (enable) {
         return getPolkadotExtensionConnection(network as PolkadotChainConfig, wallet as PolkadotExtension);
