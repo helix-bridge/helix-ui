@@ -17,7 +17,7 @@ export function useCheckSpecVersion(
       return;
     }
 
-    const api = entrance.polkadot.getInstance(to.meta.provider.https);
+    const api = entrance.polkadot.getInstance(to.meta.provider.wss);
 
     setChecking(true);
     const sub$$ = from(waitUntilConnected(api)).subscribe({
@@ -33,7 +33,7 @@ export function useCheckSpecVersion(
     });
 
     return () => sub$$.unsubscribe();
-  }, [needCheck, to.meta.provider.https]);
+  }, [needCheck, to.meta.provider.wss]);
 
   if (!needCheck) {
     return { status: 'available', reason: 'do not need to check', specVersionOnline: 'unknown' };
