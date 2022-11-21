@@ -10,6 +10,9 @@ export declare global {
     ethereum: any;
     tronWeb: any;
     tronLink: any;
+    injectedWeb3: {
+      [key: string]: Injected;
+    };
     /* eslint-enable */
   }
 }

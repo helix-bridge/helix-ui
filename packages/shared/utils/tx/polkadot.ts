@@ -59,7 +59,11 @@ export function signAndSendExtrinsic(
   }
 
   return from(waitUntilConnected(api)).pipe(
-    switchMap(() => from(getPolkadotExtension(wallet))),
+    switchMap(() => {
+      const provider = getPolkadotExtension(wallet);
+
+      return from(provider.enable('helix'));
+    }),
     tap((injector) => {
       if (injector) {
         api.setSigner(injector.signer);
