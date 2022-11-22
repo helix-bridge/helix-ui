@@ -5,7 +5,7 @@ export const karuraConfig: ParachainChainConfig = {
   logos: [{ name: 'karura.svg', type: 'main' }],
   name: 'karura',
   fullName: 'Karura',
-  provider: { https: 'https://eth-rpc-karura.aca-api.network', wss: 'wss://karura.api.onfinality.io/public-ws' },
+  provider: { https: 'https://karura-rpc.dwellir.com', wss: 'wss://karura.api.onfinality.io/public-ws' },
   social: {
     portal: 'https://acala.network/karura/join-karura',
     github: '',
@@ -40,7 +40,7 @@ export const karuraConfig: ParachainChainConfig = {
     },
   ],
   ss58Prefix: 8,
-  specVersion: 2095,
+  specVersion: 2100,
   paraId: 2000,
   wallets: ['polkadot', 'subwallet', 'talisman', 'mathwallet-polkadot'],
 };

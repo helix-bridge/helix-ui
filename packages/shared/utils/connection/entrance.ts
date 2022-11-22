@@ -1,4 +1,4 @@
-import { typesBundleForPolkadotApps } from '@darwinia/types/mix';
+// import { typesBundleForPolkadotApps } from '@darwinia/types/mix';
 import { JsonRpcProvider, Web3Provider, WebSocketProvider } from '@ethersproject/providers';
 import { ApiPromise, HttpProvider, WsProvider } from '@polkadot/api';
 import { SHORT_DURATION } from '../../config/constant';
@@ -72,7 +72,7 @@ class PolkadotEntrance extends Entrance<ApiPromise> {
 
     return new ApiPromise({
       provider,
-      typesBundle: typesBundleForPolkadotApps,
+      // typesBundle: typesBundleForPolkadotApps,
     });
   }
 
