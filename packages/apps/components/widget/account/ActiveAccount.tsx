@@ -1,7 +1,6 @@
 import {
   DisconnectOutlined,
   DollarOutlined,
-  LoadingOutlined,
   SettingFilled,
   UserSwitchOutlined,
   WalletOutlined,
@@ -26,6 +25,7 @@ import abi from '../../../config/ethv1/abi.json';
 import claimSource from '../../../config/ethv1/airdrop2.json';
 import { contractAddress, merkleRoot } from '../../../config/ethv1/constant';
 import { useAccount, useApi } from '../../../providers';
+import { Wifi } from '../Wifi';
 import { SelectAccountModal } from './SelectAccountModal';
 import { SelectWalletModal } from './SelectWalletModal';
 
@@ -167,7 +167,7 @@ export default function ActiveAccount() {
       ) : (
         <Button
           disabled={isConnecting}
-          icon={isConnecting && <LoadingOutlined />}
+          icon={isConnecting && <Wifi loading className="translate-y-3/4 mr-4" />}
           onClick={() => {
             setIsWalletSelectOpen(true);
           }}

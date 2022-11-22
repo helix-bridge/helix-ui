@@ -43,3 +43,120 @@ $size: 20px;
     height: 8px;
   }
 }
+
+@mixin getWifi($size) {
+  $anim: 1.5s linear infinite;
+  $border-width: $size/3.35;
+  $line-color: #ffffff;
+  $line-color-weak: rgba($line-color, 0.4);
+  $trans: 0.3s linear;
+  box-sizing: border-box;
+  background-color: transparent;
+  border: $size/2 solid transparent;
+  border-top-color: $line-color;
+  border-radius: $size / 2;
+  height: $size;
+  position: relative;
+  transition: border-top-color $trans;
+  width: $size;
+
+  &::before,
+  &::after {
+    content: '';
+    box-sizing: border-box;
+    background-color: transparent;
+    border: $border-width/1.2 solid transparent;
+    border-top-color: $line-color;
+    position: absolute;
+    transition: border-top-color $trans;
+  }
+
+  &::before {
+    border-radius: $size;
+    height: $size * 2;
+    left: -$size;
+    top: -$size;
+    width: $size * 2;
+  }
+
+  &::after {
+    border-radius: $size * 3;
+    height: $size * 3;
+    left: -$size * 1.5;
+    top: -$size * 1.5;
+    width: $size * 3;
+  }
+
+  &.loading {
+    animation: blink-1 $anim;
+
+    &::before {
+      animation: blink-2 $anim;
+    }
+
+    &::after {
+      animation: blink-3 $anim;
+    }
+  }
+
+  &.none:not(.loading) {
+    border-top-color: $line-color-weak;
+
+    &::before,
+    &::after {
+      border-top-color: $line-color-weak;
+    }
+  }
+
+  &.weak:not(.loading) {
+    &::before,
+    &::after {
+      border-top-color: $line-color-weak;
+    }
+  }
+
+  &.medium:not(.loading) {
+    &::after {
+      border-top-color: $line-color-weak;
+    }
+  }
+
+  @at-root { /* stylelint-disable-line */
+    @keyframes blink-1 {
+      0% {
+        border-top-color: $line-color-weak;
+      }
+
+      50%,
+      100% {
+        border-top-color: $line-color;
+      }
+    }
+
+    @keyframes blink-2 {
+      0%,
+      100% {
+        border-top-color: $line-color;
+      }
+
+      50% {
+        border-top-color: $line-color-weak;
+      }
+    }
+
+    @keyframes blink-3 {
+      0%,
+      50% {
+        border-top-color: $line-color;
+      }
+
+      100% {
+        border-top-color: $line-color-weak;
+      }
+    }
+  }
+}
+
+.wifi {
+  @include getWifi(12px);
+}
