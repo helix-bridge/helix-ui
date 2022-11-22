@@ -115,7 +115,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       decimals: 18,
       type: 'erc20',
       host: 'darwinia-dvm',
-      logo: 'token-wcrab.svg',
+      logo: 'token-crab.svg',
       symbol: 'xWCRAB',
       address: '0x656567Eb75b765FC320783cc6EDd86bD854b2305',
     },
