@@ -213,6 +213,7 @@ export function CrossChain() {
       <Form.Item
         name={FORM_CONTROL.direction}
         className="mb-0"
+        validateFirst
         rules={[
           {
             // eslint-disable-next-line complexity
@@ -255,6 +256,20 @@ export function CrossChain() {
               } else {
                 return Promise.resolve();
               }
+            },
+          },
+          {
+            validator: (_, val: CrossChainDirection) => {
+              if (bridge && bridge.validateDirection) {
+                const rules = bridge.validateDirection(val);
+                const result = rules.find((item) => !item[0]);
+
+                if (result && !result[0]) {
+                  return Promise.reject(result[1]);
+                }
+              }
+
+              return Promise.resolve();
             },
           },
         ]}
