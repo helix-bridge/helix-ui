@@ -1,5 +1,5 @@
 import { InfoCircleOutlined, WarningFilled } from '@ant-design/icons';
-import { BN_ZERO, BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { Form, Input, message, Tooltip } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import flow from 'lodash/flow';
@@ -49,6 +49,7 @@ import { BridgeSelector } from './form-control/BridgeSelector';
 import { calcMax, Direction, toDirection } from './form-control/Direction';
 import { TransferConfirm } from './tx/TransferConfirm';
 import { TransferDone } from './tx/TransferDone';
+import { Connecting } from './widget/Connecting';
 import { FormItemButton } from './widget/FormItemButton';
 
 const isDirectionChanged = (pre: CrossChainDirection, cur: CrossChainDirection) => {
@@ -66,7 +67,7 @@ const defaultDirection = { from: toDirection(DEFAULT_DIRECTION.from)!, to: toDir
 export function CrossChain() {
   const { i18n, t } = useTranslation();
   const [form] = useForm<CrossChainPayload<CommonBridge>>();
-  const { connectAndUpdateDepartureNetwork, departureConnection, setDeparture } = useApi();
+  const { connectAndUpdateDepartureNetwork, departureConnection, setDeparture, isConnecting } = useApi();
   const [direction, setDirection] = useState(defaultDirection);
   const [pureDirection, setPureDirection] =
     useState<CrossChainPureDirection<TokenInfoWithMeta<ChainBase>, TokenInfoWithMeta<ChainBase>>>(defaultDirection);
@@ -213,6 +214,7 @@ export function CrossChain() {
       <Form.Item
         name={FORM_CONTROL.direction}
         className="mb-0"
+        validateFirst
         rules={[
           {
             // eslint-disable-next-line complexity
@@ -255,6 +257,20 @@ export function CrossChain() {
               } else {
                 return Promise.resolve();
               }
+            },
+          },
+          {
+            validator: (_, val: CrossChainDirection) => {
+              if (bridge && bridge.validateDirection) {
+                const rules = bridge.validateDirection(val);
+                const result = rules.find((item) => !item[0]);
+
+                if (result && !result[0]) {
+                  return Promise.reject(result[1]);
+                }
+              }
+
+              return Promise.resolve();
             },
           },
         ]}
@@ -359,8 +375,8 @@ export function CrossChain() {
             {t('Approve')}
           </FormItemButton>
         ) : (
-          <FormItemButton onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}>
-            {t('Switch to {{chain}}', { chain: getDisplayName(direction.from.meta) })}
+          <FormItemButton disabled={isConnecting} onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}>
+            {isConnecting ? <Connecting /> : t('Switch to {{chain}}', { chain: getDisplayName(direction.from.meta) })}
           </FormItemButton>
         )
       ) : departureConnection.status === ConnectionStatus.success ? (
@@ -450,16 +466,13 @@ export function CrossChain() {
             </FormItemButton>
           </>
         ) : (
-          <FormItemButton onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}>
-            {t('Switch to {{chain}}', { chain: getDisplayName(direction.from.meta) })}
+          <FormItemButton disabled={isConnecting} onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}>
+            {isConnecting ? <Connecting /> : t('Switch to {{chain}}', { chain: getDisplayName(direction.from.meta) })}
           </FormItemButton>
         )
       ) : (
-        <FormItemButton
-          onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)}
-          disabled={departureConnection.status === ConnectionStatus.connecting}
-        >
-          {t('Connect to Wallet')}
+        <FormItemButton onClick={() => connectAndUpdateDepartureNetwork(direction.from.meta)} disabled={isConnecting}>
+          {isConnecting ? <Connecting /> : t('Connect to Wallet')}
         </FormItemButton>
       )}
     </Form>

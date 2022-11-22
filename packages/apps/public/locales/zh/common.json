@@ -35,6 +35,7 @@
   "Confirm To Continue": "确认以继续",
   "Confirmed within {{des}}": "在 {{des}} 内确认",
   "Connect to Wallet": "连接钱包",
+  "Connecting...": "连接中...",
   "Current Chain Environment {{type}}": "当前链环境 {{type}}",
   "Daily limit": "每日限额",
   "Dashboard": "主页",

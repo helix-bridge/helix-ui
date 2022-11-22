@@ -47,7 +47,6 @@ export type PayloadPatchFn = (
   value: CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>
 ) => CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>> | null;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Target extends ChainConfig>
   extends BridgeBase<B, Origin, Target> {
   claim?(record: HelixHistoryRecord): Observable<Tx>;
@@ -57,6 +56,7 @@ export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Targ
   ): Promise<DailyLimit>;
   getMinimumFeeTokenHolding?(direction: CrossChainPureDirection): TokenWithAmount | null;
   getAllowancePayload?(direction: CrossChainPureDirection): Promise<AllowancePayload | null>;
+  validateDirection?(direction: CrossChainDirection): [boolean, string][];
 }
 
 export abstract class Bridge<
