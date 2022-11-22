@@ -349,6 +349,7 @@ export default function History() {
             };
 
             setChainFilters({ fromChains: fromChain ?? undefined, toChains: toChain ?? undefined });
+            setPaginator({ ...paginatorDefault, row: size ?? paginatorDefault.row });
           }
         }}
         rowClassName={() => {
