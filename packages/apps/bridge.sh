@@ -105,10 +105,6 @@ function component() {
     fi
 }
 
-function indexEmpty() {
-    echo "export default void 0;" >>$1'/index.ts'
-}
-
 function initModel() {
     local name=${from}''${to}
 
@@ -203,10 +199,6 @@ function initUitls() {
     echo "
         export * from './bridge';
     " >>$1'/index.ts'
-}
-
-function initHooks() {
-    echo "export default void 0;" >>$1'/index.ts'
 }
 
 function updateSupports() {
@@ -335,12 +327,6 @@ function init() {
 
         mkdir $path'/utils'
         initUitls $path'/utils' $departure $arrival
-
-        mkdir $path'/hooks'
-        initHooks $path'/hooks'
-
-        mkdir $path'/providers'
-        indexEmpty $path'/providers'
     fi
 
     if [ "$category" == "helix" ]; then
