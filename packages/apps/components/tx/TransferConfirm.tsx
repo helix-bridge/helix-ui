@@ -12,6 +12,7 @@ import { isPolkadotNetwork } from 'shared/utils/network/network';
 import { getDisplayName } from 'utils/network/network';
 import { TokenWithAmount } from '../../core/bridge';
 import { TxConfirmComponentProps } from '../../model/component';
+import { isXCM } from '../../utils';
 
 export function TransferConfirm<T extends BridgeBase = BridgeBase>({
   value,
@@ -115,6 +116,21 @@ export function TransferConfirm<T extends BridgeBase = BridgeBase>({
               <span className="text-gray-900">
                 {t(
                   'Please initiate a claim transaction on Ethereum in the Transaction Detail Page to receive this token. And it needs to prepare some ETH as the gas fee to claim this token.'
+                )}
+              </span>
+            }
+            className="bg-white"
+            showIcon
+          />
+        )}
+
+        {isXCM(value.direction) && (
+          <Alert
+            type="warning"
+            message={
+              <span className="text-gray-900">
+                {t(
+                  'Please pay extra attention when using XCM transfer. It is important for users to confirm each and every setting information to avoid financial loss. Be Aware of risks, including but not limited to, incorrect settings of XCM message may result in loss of funds'
                 )}
               </span>
             }
