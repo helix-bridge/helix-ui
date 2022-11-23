@@ -1,6 +1,6 @@
-import { PolkadotChainConfig } from '../../model';
+import { ParachainChainConfig } from '../../model';
 
-export const shidenConfig: PolkadotChainConfig = {
+export const shidenConfig: ParachainChainConfig = {
   isTest: false,
   logos: [{ name: 'shiden.png', type: 'main' }],
   name: 'shiden',
@@ -47,5 +47,6 @@ export const shidenConfig: PolkadotChainConfig = {
   ],
   specVersion: 79,
   ss58Prefix: 5,
+  paraId: 2007,
   wallets: ['polkadot', 'subwallet', 'talisman', 'mathwallet-polkadot'],
 };

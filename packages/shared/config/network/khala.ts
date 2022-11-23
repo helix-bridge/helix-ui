@@ -1,6 +1,6 @@
-import { PolkadotChainConfig } from '../../model';
+import { ParachainChainConfig } from '../../model';
 
-export const khalaConfig: PolkadotChainConfig = {
+export const khalaConfig: ParachainChainConfig = {
   isTest: false,
   logos: [{ name: 'khala.svg', type: 'main' }],
   name: 'khala',
@@ -47,5 +47,6 @@ export const khalaConfig: PolkadotChainConfig = {
   ],
   specVersion: 1191,
   ss58Prefix: 30,
+  paraId: 2004,
   wallets: ['polkadot', 'subwallet', 'talisman', 'mathwallet-polkadot'],
 };
