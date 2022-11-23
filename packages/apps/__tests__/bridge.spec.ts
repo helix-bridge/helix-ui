@@ -11,10 +11,16 @@ import { chainConfigs, crossChainGraph, getChainConfig } from '../utils/network/
 // exclude the config that not contains transferable tokens;
 const configs = chainConfigs.filter((item) => !!item.tokens.filter((token) => !!token.cross.length).length);
 
+// e.g. crabDVM<>darwiniaDVM and darwiniaDVM<>crabDVM should be different two bridges
+const dualBridges: [Network, Network][] = [
+  ['crab-dvm', 'darwinia-dvm'],
+  ['shiden', 'khala'],
+];
+
 const calcBridgesAmount = (data: [Network, Network[]][]) =>
   unionWith(data.map(([from, tos]) => tos.map((to) => [from, to])).flat(), (pre, cur) => {
-    if ([cur[0], cur[1]].every(isDVMNetwork)) {
-      return isEqual(pre.reverse(), cur); // crabDVM<>darwiniaDVM and darwiniaDVM<>crabDVM should be different two bridges
+    if (dualBridges.find((item) => isEqual(item, cur) || isEqual(item.reverse(), cur))) {
+      return isEqual(pre.reverse(), cur);
     }
 
     return isEqual(pre, cur) || isEqual(pre.reverse(), cur);
@@ -35,11 +41,11 @@ describe('bridge utils', () => {
 
   it('should support bridge count: ', () => {
     expect(testBridges).toHaveLength(7);
-    expect(formalBridges).toHaveLength(39);
+    expect(formalBridges).toHaveLength(41);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(92);
+    expect(allDirections).toHaveLength(96);
   });
 
   it('Should correct bridge category name', () => {

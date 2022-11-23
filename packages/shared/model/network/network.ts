@@ -1,4 +1,4 @@
-export type ParachainNetwork = 'pangolin-parachain' | 'karura' | 'crab-parachain' | 'moonriver';
+export type ParachainNetwork = 'pangolin-parachain' | 'karura' | 'crab-parachain' | 'moonriver' | 'shiden' | 'khala';
 
 export type PolkadotTypeNetwork =
   | 'pangolin'

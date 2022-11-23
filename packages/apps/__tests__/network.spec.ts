@@ -40,7 +40,7 @@ describe('network utils', () => {
       .find((item) => item.partner.name === arrival);
 
   it('should contains chains count: ', () => {
-    expect(chainConfigs).toHaveLength(21);
+    expect(chainConfigs).toHaveLength(23);
   });
 
   it('crab contains 2 leafs', () => {
@@ -233,6 +233,20 @@ describe('network utils', () => {
 
     expect(group).not.toEqual(undefined);
     expect(uniq(sort(group![1]))).toEqual(sort(['pangolin-dvm', 'goerli', 'pangoro-dvm']));
+  });
+
+  it('khala contains 1 leaf', () => {
+    const group = data.find((item) => item[0] === 'khala');
+
+    expect(group).not.toEqual(undefined);
+    expect(uniq(sort(group![1]))).toEqual(sort(['shiden']));
+  });
+
+  it('shiden contains 1 leaf', () => {
+    const group = data.find((item) => item[0] === 'shiden');
+
+    expect(group).not.toEqual(undefined);
+    expect(uniq(sort(group![1]))).toEqual(sort(['khala']));
   });
 
   it('can get chain config by chain name', () => {

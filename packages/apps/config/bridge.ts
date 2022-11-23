@@ -46,6 +46,8 @@ import {
   crabDVMCrabParachain,
   pangolinDVMPangolinParachain,
 } from '../bridges/helix/substrateDVM-substrateParachain/config/bridge';
+import { shidenKhala } from '../bridges/xcm/shiden-khala/config';
+import { khalaShiden } from '../bridges/xcm/khala-shiden/config';
 
 const formalBridges = [
   arbitrumAstar,
@@ -85,8 +87,10 @@ const formalBridges = [
   ethereumOptimism,
   ethereumPolygon,
   hecoPolygon,
+  khalaShiden,
   polygonAstar,
   polygonOptimism,
+  shidenKhala,
 ];
 
 const testBridges = [

@@ -36,7 +36,7 @@ export const karuraConfig: ParachainChainConfig = {
       host: 'karura',
       logo: 'token-crab.svg',
       symbol: 'CRAB',
-      address: '13',
+      address: '13', // foreign asset id
     },
   ],
   ss58Prefix: 8,
