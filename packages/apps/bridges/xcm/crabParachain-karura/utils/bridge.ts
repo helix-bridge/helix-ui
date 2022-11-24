@@ -4,8 +4,6 @@ import { Observable } from 'rxjs';
 import { CrossChainDirection, CrossToken, ParachainChainConfig, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
-import { toWei } from 'shared/utils/helper/balance';
-import { isRing } from 'shared/utils/helper/validator';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { CrabParachainKaruraBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
@@ -17,12 +15,6 @@ export class CrabParachainKaruraBridge extends Bridge<
 > {
   static readonly alias = 'CrabParachainKaruraBridge';
 
-  private patchAmount(departure: CrossToken<ParachainChainConfig>) {
-    const pos = -3;
-    const timestamp = Date.now().toString().slice(0, pos);
-    return toWei(departure).slice(0, -timestamp.length) + timestamp;
-  }
-
   back(payload: IssuingPayload): Observable<Tx> {
     const {
       direction: { from: departure, to: arrival },
@@ -30,7 +22,7 @@ export class CrabParachainKaruraBridge extends Bridge<
       recipient,
       wallet,
     } = payload;
-    const amount = this.patchAmount(departure);
+    const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
     const palletInstance = 5;
 
@@ -92,7 +84,7 @@ export class CrabParachainKaruraBridge extends Bridge<
       recipient,
       wallet,
     } = payload;
-    const amount = this.patchAmount(departure);
+    const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const currencyId = api.createType('AcalaPrimitivesCurrencyCurrencyId', {
@@ -128,12 +120,12 @@ export class CrabParachainKaruraBridge extends Bridge<
     direction: CrossChainDirection<CrossToken<ParachainChainConfig>, CrossToken<ParachainChainConfig>>
   ): Promise<TokenWithAmount> {
     const { from, to } = direction;
-    const token = omit(direction.from.meta.tokens.find((item) => isRing(item.symbol))!, ['amount', 'meta']);
+    const token = omit(direction.from, ['amount', 'meta']);
 
     if (this.isIssue(from.host, to.host)) {
       return { ...token, amount: new BN('92696000000000000') } as TokenWithAmount;
     } else {
-      return { ...token, amount: new BN('3200000000000000000') } as TokenWithAmount;
+      return { ...token, amount: new BN('4000000000000000000') } as TokenWithAmount;
     }
   }
 }

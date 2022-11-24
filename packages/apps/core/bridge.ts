@@ -223,4 +223,11 @@ export abstract class Bridge<
 
     return res.substring(10, id.length + 1);
   }
+
+  protected wrapXCMAmount(token: CrossToken<ChainConfig>): string {
+    const pos = -3;
+    const HELIX_FLAG = '204';
+
+    return toWei(token).slice(0, pos) + HELIX_FLAG;
+  }
 }
