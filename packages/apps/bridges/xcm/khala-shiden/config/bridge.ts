@@ -12,4 +12,5 @@ const khalaShidenConfig: KhalaShidenBridgeConfig = {
 export const khalaShiden = new BridgeBase(khalaConfig, shidenConfig, khalaShidenConfig, {
   name: 'khala-shiden',
   category: 'XCM',
+  activeArrivalConnection: true,
 });

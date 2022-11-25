@@ -55,7 +55,7 @@ export class KhalaShidenBridge extends Bridge<KhalaShidenBridgeConfig, Parachain
     });
 
     const destWeight = 6e9;
-    const extrinsic = api.tx.xTokens.transfer(asset, dest, destWeight);
+    const extrinsic = api.tx.xTransfer.transfer(asset, dest, destWeight);
 
     return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
@@ -133,7 +133,7 @@ export class KhalaShidenBridge extends Bridge<KhalaShidenBridgeConfig, Parachain
         amount: new BN('24464000000'),
       } as TokenWithAmount;
     } else {
-      return { ...token, amount: new BN('92696000000000000') } as TokenWithAmount;
+      return { ...token, amount: new BN('92696000000') } as TokenWithAmount;
     }
   }
 }
