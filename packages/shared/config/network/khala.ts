@@ -42,7 +42,7 @@ export const khalaConfig: ParachainChainConfig = {
       host: 'khala',
       logo: 'token-sdn.png',
       symbol: 'SDN',
-      address: '',
+      address: '12', // assets.metadata
     },
   ],
   specVersion: 1191,

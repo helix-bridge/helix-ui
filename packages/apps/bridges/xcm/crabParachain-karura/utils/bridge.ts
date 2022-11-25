@@ -116,6 +116,18 @@ export class CrabParachainKaruraBridge extends Bridge<
     return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
 
+  /**
+   * Querying from target chain
+   *
+   * native token: Fee = UnitWeightCost * instruction count * BASE_WEIGHT_FEE
+   * foreign token fee: Fee = UnitWeightCost * instruction count * UnitWeightPerSecond/WEIGHT_PER_SECOND
+   *
+   * UnitWeightCost: from rust code of each project
+   * BASE_WEIGHT_FEE: from rust code of each project
+   * WEIGHT_PER_SECOND: 1000000000000
+   * instruction count: 4;
+   * UnitWeightPerSecond: query from api
+   */
   async getFee(
     direction: CrossChainDirection<CrossToken<ParachainChainConfig>, CrossToken<ParachainChainConfig>>
   ): Promise<TokenWithAmount> {
