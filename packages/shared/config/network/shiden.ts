@@ -30,7 +30,7 @@ export const shidenConfig: ParachainChainConfig = {
     },
     {
       name: 'PHA',
-      decimals: 18,
+      decimals: 12,
       cross: [
         {
           category: 'XCM',

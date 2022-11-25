@@ -14,7 +14,7 @@ export const karuraConfig: ParachainChainConfig = {
   tokens: [
     {
       name: 'KAR',
-      decimals: 18,
+      decimals: 12,
       cross: [],
       type: 'native',
       host: 'karura',

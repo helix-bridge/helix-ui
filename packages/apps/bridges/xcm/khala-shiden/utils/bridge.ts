@@ -24,7 +24,7 @@ export class KhalaShidenBridge extends Bridge<KhalaShidenBridgeConfig, Parachain
     const asset = api.createType('XcmV1MultiAsset', {
       id: api.createType('XcmV1MultiassetAssetId', {
         Concrete: api.createType('XcmV1MultiLocation', {
-          parents: 1,
+          parents: 0,
           interior: api.createType('XcmV1MultilocationJunctions', {
             X1: api.createType('XcmV1Junction', {
               Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
@@ -100,7 +100,7 @@ export class KhalaShidenBridge extends Bridge<KhalaShidenBridgeConfig, Parachain
         api.createType('XcmV1MultiAsset', {
           id: api.createType('XcmV1MultiassetAssetId', {
             Concrete: api.createType('XcmV1MultiLocation', {
-              parents: 1,
+              parents: 0,
               interior: api.createType('XcmV1MultilocationJunctions', {
                 X1: api.createType('XcmV1Junction', {
                   Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
@@ -128,13 +128,12 @@ export class KhalaShidenBridge extends Bridge<KhalaShidenBridgeConfig, Parachain
     const token = omit(direction.from, ['amount', 'meta']);
 
     if (this.isIssue(from.host, to.host)) {
-      const BASE_XCM_WEIGHT = 1e9;
-      const INSTRUCTION_COUNT = 4;
-      const BASE_WEIGHT_FEE = 1e9;
-
-      return { ...token, amount: new BN(BASE_XCM_WEIGHT * INSTRUCTION_COUNT * BASE_WEIGHT_FEE) } as TokenWithAmount;
+      return {
+        ...token,
+        amount: new BN('24464000000'),
+      } as TokenWithAmount;
     } else {
-      return { ...token, amount: new BN('3200000000000000000') } as TokenWithAmount;
+      return { ...token, amount: new BN('92696000000000000') } as TokenWithAmount;
     }
   }
 }
