@@ -38,6 +38,22 @@ export const karuraConfig: ParachainChainConfig = {
       symbol: 'CRAB',
       address: '13', // foreign asset id: assetRegistry.assetMetadatas
     },
+    {
+      name: 'SDN',
+      decimals: 18,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'shiden-karura',
+          partner: { name: 'shiden', role: 'backing', symbol: 'SDN' },
+        },
+      ],
+      type: 'mapping',
+      host: 'karura',
+      logo: 'token-sdn.png',
+      symbol: 'SDN',
+      address: '18',
+    },
   ],
   ss58Prefix: 8,
   specVersion: 2100,

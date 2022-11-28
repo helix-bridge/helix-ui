@@ -19,12 +19,17 @@ import {
   HelixHistoryRecord,
   Network,
   NullableFields,
+  ParachainChainConfig,
+  PolkadotExtension,
   Token,
   TokenInfoWithMeta,
   TokenWithBridgesInfo,
   Tx,
 } from 'shared/model';
+import { entrance } from 'shared/utils/connection';
+import { convertToDvm } from 'shared/utils/helper/address';
 import { fromWei, toWei } from 'shared/utils/helper/balance';
+import { signAndSendExtrinsic } from 'shared/utils/tx';
 import { AllowancePayload } from '../model/allowance';
 import { CrossChainPayload } from '../model/tx';
 import { isCBridge, isXCM } from '../utils';
@@ -229,5 +234,73 @@ export abstract class Bridge<
     const HELIX_FLAG = '204';
 
     return toWei(token).slice(0, pos) + HELIX_FLAG;
+  }
+
+  protected xcmReserveTransferAssets(
+    payload: CrossChainPayload<
+      Bridge<BridgeConfig, ParachainChainConfig, ParachainChainConfig>,
+      CrossToken<ParachainChainConfig>,
+      CrossToken<ParachainChainConfig>,
+      PolkadotExtension
+    >
+  ): Observable<Tx> {
+    const {
+      direction: { from: departure, to: arrival },
+      sender,
+      recipient,
+      wallet,
+    } = payload;
+    const amount = this.wrapXCMAmount(departure);
+    const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
+
+    const dest = api.createType('XcmVersionedMultiLocation', {
+      V1: api.createType('XcmV1MultiLocation', {
+        parents: 1,
+        interior: api.createType('XcmV1MultilocationJunctions', {
+          X1: api.createType('XcmV1Junction', {
+            Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
+          }),
+        }),
+      }),
+    });
+
+    const beneficiary = api.createType('XcmVersionedMultiLocation', {
+      V1: api.createType('XcmV1MultiLocation', {
+        parents: 0,
+        interior: api.createType('XcmV1MultilocationJunctions', {
+          X1: api.createType('XcmV1Junction', {
+            AccountId32: {
+              network: api.createType('NetworkId', 'Any'),
+              id: convertToDvm(recipient),
+            },
+          }),
+        }),
+      }),
+    });
+
+    const assets = api.createType('XcmVersionedMultiAssets', {
+      V1: [
+        api.createType('XcmV1MultiAsset', {
+          id: api.createType('XcmV1MultiassetAssetId', {
+            Concrete: api.createType('XcmV1MultiLocation', {
+              parents: this.isIssue(departure.host, arrival.host) ? 1 : 0,
+              interior: api.createType('XcmV1MultilocationJunctions', {
+                X1: api.createType('XcmV1Junction', {
+                  Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
+                }),
+              }),
+            }),
+          }),
+          fun: api.createType('XcmV1MultiassetFungibility', {
+            Fungible: api.createType('Compact<u128>', amount),
+          }),
+        }),
+      ],
+    });
+
+    const feeAssetItem = 0;
+    const extrinsic = api.tx.polkadotXcm.reserveTransferAssets(dest, beneficiary, assets, feeAssetItem);
+
+    return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
 }

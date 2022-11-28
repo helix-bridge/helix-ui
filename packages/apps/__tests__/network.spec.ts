@@ -161,11 +161,11 @@ describe('network utils', () => {
     );
   });
 
-  it('karura contains 1 leaf', () => {
+  it('karura contains 2 leafs', () => {
     const group = data.find((item) => item[0] === 'karura');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['crab-parachain']);
+    expect(group![1]).toEqual(['crab-parachain', 'shiden']);
   });
 
   it('moonriver contains 1 leaf', () => {
@@ -242,11 +242,11 @@ describe('network utils', () => {
     expect(uniq(sort(group![1]))).toEqual(sort(['shiden']));
   });
 
-  it('shiden contains 1 leaf', () => {
+  it('shiden contains 2 leafs', () => {
     const group = data.find((item) => item[0] === 'shiden');
 
     expect(group).not.toEqual(undefined);
-    expect(uniq(sort(group![1]))).toEqual(sort(['khala']));
+    expect(uniq(sort(group![1]))).toEqual(sort(['khala', 'karura']));
   });
 
   it('can get chain config by chain name', () => {

@@ -38,4 +38,5 @@ export type BridgeName =
   | 'crabDVM-darwiniaDVM'
   | 'substrateDVM-substrateParachain'
   | 'shiden-khala'
-  | 'khala-shiden';
+  | 'khala-shiden'
+  | 'shiden-karura';

@@ -48,6 +48,7 @@ import {
 } from '../bridges/helix/substrateDVM-substrateParachain/config/bridge';
 import { shidenKhala } from '../bridges/xcm/shiden-khala/config';
 import { khalaShiden } from '../bridges/xcm/khala-shiden/config';
+import { shidenKarura } from '../bridges/xcm/shiden-karura/config';
 
 const formalBridges = [
   arbitrumAstar,
@@ -90,6 +91,7 @@ const formalBridges = [
   khalaShiden,
   polygonAstar,
   polygonOptimism,
+  shidenKarura,
   shidenKhala,
 ];
 

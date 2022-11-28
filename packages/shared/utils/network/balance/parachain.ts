@@ -22,7 +22,7 @@ export async function getBalance(fromToken: TokenInfoWithMeta<ChainConfig>, acco
     } else {
       const foreign = await api.query.tokens.accounts(
         account,
-        api.createType('AcalaPrimitivesCurrencyCurrencyId', { ForeignAsset: 13 })
+        api.createType('AcalaPrimitivesCurrencyCurrencyId', { ForeignAsset: fromToken.address })
       );
       const { free } = foreign.toHuman() as { free: string; reserved: number; frozen: number };
 

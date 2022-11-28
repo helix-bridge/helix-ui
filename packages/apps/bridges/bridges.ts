@@ -12,6 +12,7 @@ import { SubstrateDVMSubstrateParachainBridge } from './helix/substrateDVM-subst
 import { CrabParachainKaruraBridge } from './xcm/crabParachain-karura/utils';
 import { CrabParachainMoonriverBridge } from './xcm/crabParachain-moonriver/utils';
 import { KhalaShidenBridge } from './xcm/khala-shiden/utils';
+import { ShidenKaruraBridge } from './xcm/shiden-karura/utils';
 import { ShidenKhalaBridge } from './xcm/shiden-khala/utils';
 
 export const bridgeConstructors = [
@@ -23,6 +24,7 @@ export const bridgeConstructors = [
   DarwiniaDVMCrabDVMBridge,
   DarwiniaDVMInnerBridge,
   KhalaShidenBridge,
+  ShidenKaruraBridge,
   ShidenKhalaBridge,
   SubstrateDVMBridge,
   SubstrateDVMEthereumBridge,

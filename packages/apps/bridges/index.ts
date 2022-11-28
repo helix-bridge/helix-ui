@@ -41,3 +41,5 @@ export { CrabParachain2Moonriver, Moonriver2CrabParachain } from './xcm/crabPara
 export { Khala2Shiden, Shiden2Khala } from './xcm/shiden-khala';
 
 // export { Khala2Shiden, Shiden2Khala } from './xcm/khala-shiden';
+
+export { Shiden2Karura, Karura2Shiden } from './xcm/shiden-karura';
