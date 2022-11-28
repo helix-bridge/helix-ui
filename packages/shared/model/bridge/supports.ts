@@ -39,4 +39,5 @@ export type BridgeName =
   | 'substrateDVM-substrateParachain'
   | 'shiden-khala'
   | 'khala-shiden'
-  | 'shiden-karura';
+  | 'shiden-karura'
+  | 'karura-shiden';

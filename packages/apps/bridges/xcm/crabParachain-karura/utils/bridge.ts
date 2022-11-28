@@ -88,7 +88,7 @@ export class CrabParachainKaruraBridge extends Bridge<
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const currencyId = api.createType('AcalaPrimitivesCurrencyCurrencyId', {
-      ForeignAsset: 13,
+      ForeignAsset: departure.address,
     });
 
     const dest = api.createType('XcmVersionedMultiLocation', {

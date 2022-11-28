@@ -15,7 +15,13 @@ export const karuraConfig: ParachainChainConfig = {
     {
       name: 'KAR',
       decimals: 12,
-      cross: [],
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'karura-shiden',
+          partner: { name: 'shiden', role: 'issuing', symbol: 'KAR' },
+        },
+      ],
       type: 'native',
       host: 'karura',
       logo: 'token-karura.svg',

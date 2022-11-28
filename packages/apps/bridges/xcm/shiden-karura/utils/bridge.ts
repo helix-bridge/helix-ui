@@ -25,10 +25,10 @@ export class ShidenKaruraBridge extends Bridge<ShidenKaruraBridgeConfig, ChainCo
     if (this.isIssue(from.host, to.host)) {
       return {
         ...token,
-        amount: new BN('24464000000000000'),
+        amount: new BN('926960000000000'),
       } as TokenWithAmount;
     } else {
-      return { ...token, amount: new BN('92696000000000000') } as TokenWithAmount;
+      return { ...token, amount: new BN('4635101625000000') } as TokenWithAmount;
     }
   }
 }

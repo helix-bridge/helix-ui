@@ -43,3 +43,5 @@ export { Khala2Shiden, Shiden2Khala } from './xcm/shiden-khala';
 // export { Khala2Shiden, Shiden2Khala } from './xcm/khala-shiden';
 
 export { Shiden2Karura, Karura2Shiden } from './xcm/shiden-karura';
+
+// export { Karura2Shiden, Shiden2Karura } from './xcm/karura-shiden';

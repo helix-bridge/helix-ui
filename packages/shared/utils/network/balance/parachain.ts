@@ -19,7 +19,7 @@ export async function getBalance(fromToken: TokenInfoWithMeta<ChainConfig>, acco
       const { free } = data as unknown as AccountData;
 
       balance = free.toString();
-    } else {
+    } else if (fromToken.meta.name === 'karura') {
       const foreign = await api.query.tokens.accounts(
         account,
         api.createType('AcalaPrimitivesCurrencyCurrencyId', { ForeignAsset: fromToken.address })
@@ -27,6 +27,11 @@ export async function getBalance(fromToken: TokenInfoWithMeta<ChainConfig>, acco
       const { free } = foreign.toHuman() as { free: string; reserved: number; frozen: number };
 
       balance = free.replace(/,/g, '');
+    } else {
+      const asset = await api.query.assets.account(fromToken.address, account);
+      const result = asset.toHuman() as { balance: string; isFrozen: boolean; reason: string; extra: unknown };
+
+      balance = result.balance.replace(/,/g, '');
     }
 
     return new BN(balance);

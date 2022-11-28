@@ -15,6 +15,7 @@ const configs = chainConfigs.filter((item) => !!item.tokens.filter((token) => !!
 const dualBridges: [Network, Network][] = [
   ['crab-dvm', 'darwinia-dvm'],
   ['shiden', 'khala'],
+  ['shiden', 'karura'],
 ];
 
 const calcBridgesAmount = (data: [Network, Network[]][]) =>
@@ -41,11 +42,11 @@ describe('bridge utils', () => {
 
   it('should support bridge count: ', () => {
     expect(testBridges).toHaveLength(7);
-    expect(formalBridges).toHaveLength(42);
+    expect(formalBridges).toHaveLength(43);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(98);
+    expect(allDirections).toHaveLength(100);
   });
 
   it('Should correct bridge category name', () => {
