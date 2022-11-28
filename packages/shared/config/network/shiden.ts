@@ -65,6 +65,22 @@ export const shidenConfig: ParachainChainConfig = {
       symbol: 'KAR',
       address: '18446744073709551618',
     },
+    {
+      name: 'AUSD',
+      decimals: 12,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'karura-shiden',
+          partner: { name: 'karura', role: 'backing', symbol: 'aUSD' },
+        },
+      ],
+      type: 'mapping',
+      host: 'shiden',
+      logo: 'token-ausd.png',
+      symbol: 'aUSD',
+      address: '',
+    },
   ],
   specVersion: 79,
   ss58Prefix: 5,

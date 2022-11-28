@@ -61,9 +61,11 @@ export class KaruraShidenBridge extends Bridge<KaruraShidenBridgeConfig, ChainCo
     const token = omit(direction.from, ['amount', 'meta']);
 
     if (this.isIssue(from.host, to.host)) {
+      const feeMap: { [key: string]: string } = { KAR: '3880000000', aUSD: '2080000000' };
+
       return {
         ...token,
-        amount: new BN('3880000000'),
+        amount: new BN(feeMap[from.symbol]),
       } as TokenWithAmount;
     } else {
       return { ...token, amount: new BN('9269600000') } as TokenWithAmount;

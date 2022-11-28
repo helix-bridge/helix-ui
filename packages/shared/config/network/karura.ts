@@ -29,6 +29,22 @@ export const karuraConfig: ParachainChainConfig = {
       address: '',
     },
     {
+      name: 'AUSD',
+      decimals: 12,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'karura-shiden',
+          partner: { name: 'shiden', role: 'issuing', symbol: 'aUSD' },
+        },
+      ],
+      type: 'mapping',
+      host: 'karura',
+      logo: 'token-ausd.png',
+      symbol: 'aUSD',
+      address: '',
+    },
+    {
       name: 'CRAB',
       decimals: 18,
       cross: [
