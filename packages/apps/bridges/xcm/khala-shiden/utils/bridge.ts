@@ -25,11 +25,7 @@ export class KhalaShidenBridge extends Bridge<KhalaShidenBridgeConfig, Parachain
       id: api.createType('XcmV1MultiassetAssetId', {
         Concrete: api.createType('XcmV1MultiLocation', {
           parents: 0,
-          interior: api.createType('XcmV1MultilocationJunctions', {
-            X1: api.createType('XcmV1Junction', {
-              Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
-            }),
-          }),
+          interior: api.createType('XcmV1MultilocationJunctions', 'Here'),
         }),
       }),
       fun: api.createType('XcmV1MultiassetFungibility', {
