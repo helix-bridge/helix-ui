@@ -9,11 +9,11 @@ import { entrance } from '../../connection';
  */
 export async function getBalance(fromToken: TokenInfoWithMeta<ChainConfig>, account: string): Promise<BN> {
   const api = entrance.polkadot.getInstance(fromToken.meta.provider.wss);
-
   const darwiniaParachain: ParachainNetwork[] = ['crab-parachain', 'pangolin-parachain'];
 
   try {
     let balance: string;
+
     if (fromToken.type === 'native' || darwiniaParachain.includes(fromToken.host as ParachainNetwork)) {
       const { data } = (await api.query.system.account(account)) as AccountInfo;
       const { free } = data as unknown as AccountData;

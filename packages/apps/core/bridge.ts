@@ -242,7 +242,8 @@ export abstract class Bridge<
       CrossToken<ParachainChainConfig>,
       CrossToken<ParachainChainConfig>,
       PolkadotExtension
-    >
+    >,
+    method = 'reserveTransferAssets'
   ): Observable<Tx> {
     const {
       direction: { from: departure, to: arrival },
@@ -295,7 +296,7 @@ export abstract class Bridge<
     });
 
     const feeAssetItem = 0;
-    const extrinsic = api.tx.polkadotXcm.reserveTransferAssets(dest, beneficiary, assets, feeAssetItem);
+    const extrinsic = api.tx.polkadotXcm[method](dest, beneficiary, assets, feeAssetItem);
 
     return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }

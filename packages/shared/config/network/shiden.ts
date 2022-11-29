@@ -47,7 +47,7 @@ export const shidenConfig: ParachainChainConfig = {
       host: 'shiden',
       logo: 'token-pha.png',
       symbol: 'PHA',
-      address: '',
+      address: '18446744073709551623',
     },
     {
       name: 'KAR',

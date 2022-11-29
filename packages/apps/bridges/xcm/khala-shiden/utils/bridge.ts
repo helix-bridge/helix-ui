@@ -57,7 +57,7 @@ export class KhalaShidenBridge extends Bridge<KhalaShidenBridgeConfig, Parachain
   }
 
   burn(payload: RedeemPayload): Observable<Tx> {
-    return this.xcmReserveTransferAssets(payload);
+    return this.xcmReserveTransferAssets(payload, 'reserveWithdrawAssets');
   }
 
   async getFee(
