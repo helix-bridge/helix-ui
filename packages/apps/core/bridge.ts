@@ -255,22 +255,14 @@ export abstract class Bridge<
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const dest = api.createType('XcmVersionedMultiLocation', {
-      V1: api.createType(
-        'XcmV1MultiLocation',
-        this.isIssue(departure.host, arrival.host)
-          ? {
-              parents: 1,
-              interior: api.createType('XcmV1MultilocationJunctions', {
-                X1: api.createType('XcmV1Junction', {
-                  Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
-                }),
-              }),
-            }
-          : {
-              parents: 0,
-              interior: api.createType('XcmV1MultilocationJunctions', 'Here'),
-            }
-      ),
+      V1: api.createType('XcmV1MultiLocation', {
+        parents: 1,
+        interior: api.createType('XcmV1MultilocationJunctions', {
+          X1: api.createType('XcmV1Junction', {
+            Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
+          }),
+        }),
+      }),
     });
 
     const beneficiary = api.createType('XcmVersionedMultiLocation', {
@@ -291,10 +283,22 @@ export abstract class Bridge<
       V1: [
         api.createType('XcmV1MultiAsset', {
           id: api.createType('XcmV1MultiassetAssetId', {
-            Concrete: api.createType('XcmV1MultiLocation', {
-              parents: 0,
-              interior: api.createType('XcmV1MultilocationJunctions', 'Here'),
-            }),
+            Concrete: api.createType(
+              'XcmV1MultiLocation',
+              this.isIssue(departure.host, arrival.host)
+                ? {
+                    parents: 0,
+                    interior: api.createType('XcmV1MultilocationJunctions', 'Here'),
+                  }
+                : {
+                    parents: 1,
+                    interior: api.createType('XcmV1MultilocationJunctions', {
+                      X1: api.createType('XcmV1Junction', {
+                        Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
+                      }),
+                    }),
+                  }
+            ),
           }),
           fun: api.createType('XcmV1MultiassetFungibility', {
             Fungible: api.createType('Compact<u128>', amount),

@@ -28,8 +28,12 @@ export class ShidenKhalaBridge extends Bridge<ShidenKhalaBridgeConfig, Parachain
     const asset = api.createType('XcmV1MultiAsset', {
       id: api.createType('XcmV1MultiassetAssetId', {
         Concrete: api.createType('XcmV1MultiLocation', {
-          parents: 0,
-          interior: api.createType('XcmV1MultilocationJunctions', 'Here'),
+          parents: 1,
+          interior: api.createType('XcmV1MultilocationJunctions', {
+            X1: api.createType('XcmV1Junction', {
+              Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
+            }),
+          }),
         }),
       }),
       fun: api.createType('XcmV1MultiassetFungibility', {
@@ -38,7 +42,7 @@ export class ShidenKhalaBridge extends Bridge<ShidenKhalaBridgeConfig, Parachain
     });
 
     const dest = api.createType('XcmV1MultiLocation', {
-      parents: 1,
+      parents: 0,
       interior: api.createType('XcmV1MultilocationJunctions', {
         X2: [
           api.createType('XcmV1Junction', {
