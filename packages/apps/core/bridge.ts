@@ -1,4 +1,5 @@
 import { BN, BN_ZERO } from '@polkadot/util';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 import { isAddress } from 'ethers/lib/utils';
 import isBoolean from 'lodash/isBoolean';
 import isString from 'lodash/isString';
@@ -269,12 +270,24 @@ export abstract class Bridge<
       V1: api.createType('XcmV1MultiLocation', {
         parents: 0,
         interior: api.createType('XcmV1MultilocationJunctions', {
-          X1: api.createType('XcmV1Junction', {
-            AccountId32: {
-              network: api.createType('NetworkId', 'Any'),
-              id: convertToDvm(recipient),
-            },
-          }),
+          X1: api.createType(
+            'XcmV1Junction',
+            isEthereumAddress(recipient)
+              ? {
+                  // for ethereum compatible parachain (e.g. moonriver), use this
+                  AccountKey20: {
+                    network: api.createType('NetworkId', 'Any'),
+                    key: recipient,
+                  },
+                }
+              : {
+                  // for common parachain, use this
+                  AccountId32: {
+                    network: api.createType('NetworkId', 'Any'),
+                    id: convertToDvm(recipient),
+                  },
+                }
+          ),
         }),
       }),
     });

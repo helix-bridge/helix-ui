@@ -15,6 +15,7 @@ import { KaruraShidenBridge } from './xcm/karura-shiden/utils';
 import { KhalaShidenBridge } from './xcm/khala-shiden/utils';
 import { ShidenKaruraBridge } from './xcm/shiden-karura/utils';
 import { ShidenKhalaBridge } from './xcm/shiden-khala/utils';
+import { ShidenMoonriverBridge } from './xcm/shiden-moonriver/utils';
 
 export const bridgeConstructors = [
   CBridgeBridge,
@@ -28,6 +29,7 @@ export const bridgeConstructors = [
   KhalaShidenBridge,
   ShidenKaruraBridge,
   ShidenKhalaBridge,
+  ShidenMoonriverBridge,
   SubstrateDVMBridge,
   SubstrateDVMEthereumBridge,
   SubstrateDVMSubstrateParachainBridge,

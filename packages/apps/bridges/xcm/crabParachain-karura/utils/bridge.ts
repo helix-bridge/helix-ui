@@ -133,11 +133,8 @@ export class CrabParachainKaruraBridge extends Bridge<
   ): Promise<TokenWithAmount> {
     const { from, to } = direction;
     const token = omit(direction.from, ['amount', 'meta']);
+    const amount = this.isIssue(from.host, to.host) ? new BN('92696000000000000') : new BN('4000000000000000000');
 
-    if (this.isIssue(from.host, to.host)) {
-      return { ...token, amount: new BN('92696000000000000') } as TokenWithAmount;
-    } else {
-      return { ...token, amount: new BN('4000000000000000000') } as TokenWithAmount;
-    }
+    return { ...token, amount } as TokenWithAmount;
   }
 }

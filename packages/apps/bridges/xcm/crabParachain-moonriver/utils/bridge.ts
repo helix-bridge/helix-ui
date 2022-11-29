@@ -12,7 +12,7 @@ import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
 import { sendTransactionFromContract, signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
-import abi from '../config/abi.json';
+import abi from '../../../../config/abi/moonriver.json';
 import { CrabParachainMoonriverBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 
 export class CrabParachainMoonriverBridge extends Bridge<

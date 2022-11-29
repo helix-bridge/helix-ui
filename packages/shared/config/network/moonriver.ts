@@ -62,7 +62,7 @@ export const moonriverConfig: ParachainEthereumCompatibleChainConfig = {
       host: 'moonriver',
       logo: 'token-sdn.png',
       symbol: 'xcSDN',
-      address: '108457044225666871745333730479173774551',
+      address: '0xFFFfffFF0Ca324C842330521525E7De111F38972',
     },
   ],
   ss58Prefix: 8,
