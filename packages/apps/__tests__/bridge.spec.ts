@@ -42,11 +42,11 @@ describe('bridge utils', () => {
 
   it('should support bridge count: ', () => {
     expect(testBridges).toHaveLength(7);
-    expect(formalBridges).toHaveLength(43);
+    expect(formalBridges).toHaveLength(44);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(100);
+    expect(allDirections).toHaveLength(102);
   });
 
   it('Should correct bridge category name', () => {

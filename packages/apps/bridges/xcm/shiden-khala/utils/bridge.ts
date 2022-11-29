@@ -42,7 +42,7 @@ export class ShidenKhalaBridge extends Bridge<ShidenKhalaBridgeConfig, Parachain
     });
 
     const dest = api.createType('XcmV1MultiLocation', {
-      parents: 0,
+      parents: 1,
       interior: api.createType('XcmV1MultilocationJunctions', {
         X2: [
           api.createType('XcmV1Junction', {

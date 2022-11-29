@@ -26,6 +26,11 @@ export const shidenConfig: ParachainChainConfig = {
           bridge: 'shiden-karura',
           partner: { name: 'karura', role: 'issuing', symbol: 'SDN' },
         },
+        {
+          category: 'XCM',
+          bridge: 'shiden-moonriver',
+          partner: { name: 'moonriver', role: 'issuing', symbol: 'xcSDN' },
+        },
       ],
       type: 'native',
       host: 'shiden',

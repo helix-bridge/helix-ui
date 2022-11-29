@@ -50,6 +50,7 @@ import { shidenKhala } from '../bridges/xcm/shiden-khala/config';
 import { khalaShiden } from '../bridges/xcm/khala-shiden/config';
 import { shidenKarura } from '../bridges/xcm/shiden-karura/config';
 import { karuraShiden } from '../bridges/xcm/karura-shiden/config';
+import { shidenMoonriver } from '../bridges/xcm/shiden-moonriver/config';
 
 const formalBridges = [
   arbitrumAstar,
@@ -95,6 +96,7 @@ const formalBridges = [
   polygonOptimism,
   shidenKarura,
   shidenKhala,
+  shidenMoonriver,
 ];
 
 const testBridges = [

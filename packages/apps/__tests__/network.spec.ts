@@ -168,11 +168,25 @@ describe('network utils', () => {
     expect(uniq(group![1])).toEqual(['crab-parachain', 'shiden']);
   });
 
-  it('moonriver contains 1 leaf', () => {
+  it('moonriver contains 2 leafs', () => {
     const group = data.find((item) => item[0] === 'moonriver');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['crab-parachain']);
+    expect(group![1]).toEqual(['crab-parachain', 'shiden']);
+  });
+
+  it('khala contains 1 leaf', () => {
+    const group = data.find((item) => item[0] === 'khala');
+
+    expect(group).not.toEqual(undefined);
+    expect(uniq(sort(group![1]))).toEqual(sort(['shiden']));
+  });
+
+  it('shiden contains 3 leafs', () => {
+    const group = data.find((item) => item[0] === 'shiden');
+
+    expect(group).not.toEqual(undefined);
+    expect(uniq(sort(group![1]))).toEqual(sort(['khala', 'karura', 'moonriver']));
   });
 
   // ------------------------------------test networks---------------------------------------
@@ -233,20 +247,6 @@ describe('network utils', () => {
 
     expect(group).not.toEqual(undefined);
     expect(uniq(sort(group![1]))).toEqual(sort(['pangolin-dvm', 'goerli', 'pangoro-dvm']));
-  });
-
-  it('khala contains 1 leaf', () => {
-    const group = data.find((item) => item[0] === 'khala');
-
-    expect(group).not.toEqual(undefined);
-    expect(uniq(sort(group![1]))).toEqual(sort(['shiden']));
-  });
-
-  it('shiden contains 2 leafs', () => {
-    const group = data.find((item) => item[0] === 'shiden');
-
-    expect(group).not.toEqual(undefined);
-    expect(uniq(sort(group![1]))).toEqual(sort(['khala', 'karura']));
   });
 
   it('can get chain config by chain name', () => {

@@ -48,6 +48,22 @@ export const moonriverConfig: ParachainEthereumCompatibleChainConfig = {
       symbol: 'CRAB',
       address: '0xFFFffFfF8283448b3cB519Ca4732F2ddDC6A6165',
     },
+    {
+      name: 'SDN',
+      decimals: 18,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'shiden-moonriver',
+          partner: { name: 'shiden', role: 'backing', symbol: 'SDN' },
+        },
+      ],
+      type: 'mapping',
+      host: 'moonriver',
+      logo: 'token-sdn.png',
+      symbol: 'xcSDN',
+      address: '108457044225666871745333730479173774551',
+    },
   ],
   ss58Prefix: 8,
   specVersion: 1901,
