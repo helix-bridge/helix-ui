@@ -255,14 +255,22 @@ export abstract class Bridge<
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const dest = api.createType('XcmVersionedMultiLocation', {
-      V1: api.createType('XcmV1MultiLocation', {
-        parents: 1,
-        interior: api.createType('XcmV1MultilocationJunctions', {
-          X1: api.createType('XcmV1Junction', {
-            Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
-          }),
-        }),
-      }),
+      V1: api.createType(
+        'XcmV1MultiLocation',
+        this.isIssue(departure.host, arrival.host)
+          ? {
+              parents: 1,
+              interior: api.createType('XcmV1MultilocationJunctions', {
+                X1: api.createType('XcmV1Junction', {
+                  Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
+                }),
+              }),
+            }
+          : {
+              parents: 0,
+              interior: api.createType('XcmV1MultilocationJunctions', 'Here'),
+            }
+      ),
     });
 
     const beneficiary = api.createType('XcmVersionedMultiLocation', {
