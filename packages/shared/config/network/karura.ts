@@ -42,7 +42,7 @@ export const karuraConfig: ParachainChainConfig = {
       host: 'karura',
       logo: 'token-ausd.png',
       symbol: 'aUSD',
-      address: '',
+      address: 'KUSD', // NativeAssetId
     },
     {
       name: 'CRAB',
@@ -58,7 +58,7 @@ export const karuraConfig: ParachainChainConfig = {
       host: 'karura',
       logo: 'token-crab.svg',
       symbol: 'CRAB',
-      address: '13', // foreign asset id: assetRegistry.assetMetadatas
+      address: '13', // ForeignAssetId
     },
     {
       name: 'SDN',
@@ -74,7 +74,7 @@ export const karuraConfig: ParachainChainConfig = {
       host: 'karura',
       logo: 'token-sdn.png',
       symbol: 'SDN',
-      address: '18',
+      address: '18', // ForeignAssetId
     },
   ],
   ss58Prefix: 8,

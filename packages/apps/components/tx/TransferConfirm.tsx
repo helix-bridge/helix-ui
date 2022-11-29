@@ -104,7 +104,9 @@ export function TransferConfirm<T extends BridgeBase = BridgeBase>({
 
             <div className="flex items-center justify-between overflow-hidden">
               <span className="opacity-60">{t('Estimate Arrival Time')}</span>
-              <span>{t('{{count}} Minutes', { count: 15 })}</span>
+              <span>
+                {t('{{estimate}} Minutes', { estimate: value.bridge.category === 'cBridge' ? '5-20' : '1-3' })}
+              </span>
             </div>
           </div>
         </div>

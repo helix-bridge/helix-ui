@@ -51,7 +51,7 @@ export class KaruraShidenBridge extends Bridge<KaruraShidenBridgeConfig, ChainCo
   }
 
   burn(payload: RedeemPayload): Observable<Tx> {
-    return this.xcmReserveTransferAssets(payload);
+    return this.xcmReserveTransferAssets(payload, 'reserveWithdrawAssets');
   }
 
   async getFee(
@@ -60,15 +60,10 @@ export class KaruraShidenBridge extends Bridge<KaruraShidenBridgeConfig, ChainCo
     const { from, to } = direction;
     const token = omit(direction.from, ['amount', 'meta']);
 
-    if (this.isIssue(from.host, to.host)) {
-      const feeMap: { [key: string]: string } = { KAR: '3880000000', aUSD: '2080000000' };
+    const feeMap: { [key: string]: string } = this.isIssue(from.host, to.host)
+      ? { KAR: '3880000000', aUSD: '2080000000' }
+      : { KAR: '9269600000', aUSD: '3826597686' };
 
-      return {
-        ...token,
-        amount: new BN(feeMap[from.symbol]),
-      } as TokenWithAmount;
-    } else {
-      return { ...token, amount: new BN('9269600000') } as TokenWithAmount;
-    }
+    return { ...token, amount: new BN(feeMap[from.symbol]) } as TokenWithAmount;
   }
 }
