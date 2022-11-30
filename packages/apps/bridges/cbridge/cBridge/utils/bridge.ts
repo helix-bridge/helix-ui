@@ -348,12 +348,8 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
   validateDirection(
     direction: CrossChainDirection<CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>
   ): [boolean, string][] {
-    if (direction.from.host === 'arbitrum' && direction.from.symbol === 'USDC') {
-      const min = 20;
+    const min = 20;
 
-      return [[+direction.from.amount >= min, 'The transfer amount must greater than 20']];
-    }
-
-    return [];
+    return [[+direction.from.amount > min, 'The transfer amount must greater than 20']];
   }
 }
