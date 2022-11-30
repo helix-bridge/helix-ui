@@ -123,30 +123,32 @@ export function CrossChain() {
   }, [account, form]);
 
   useEffect(() => {
-    setIsBalanceLoading(true);
-    setBalances(null);
+    let sub$$ = EMPTY.subscribe();
 
-    const { from: dep } = pureDirection;
-    const obs =
-      !!account && !!dep && isValidAddress(account, dep.host)
-        ? of(null).pipe(
-            switchMap(() => fromRx(dep.meta.getBalance(pureDirection, account))),
-            pollWhile(LONG_DURATION, () => isMounted)
-          )
-        : EMPTY;
+    if (!!account && !!pureDirection.from && isValidAddress(account, pureDirection.from.host)) {
+      setIsBalanceLoading(true);
+      setBalances(null);
 
-    const sub$$ = obs.subscribe({
-      next(result) {
-        setBalances(result);
-        setIsBalanceLoading(false);
-      },
-      error() {
-        setIsBalanceLoading(false);
-      },
-      complete() {
-        setIsBalanceLoading(false);
-      },
-    });
+      const { from: dep } = pureDirection;
+
+      const obs = of(null).pipe(
+        switchMap(() => fromRx(dep.meta.getBalance(pureDirection, account))),
+        pollWhile(LONG_DURATION, () => isMounted)
+      );
+
+      sub$$ = obs.subscribe({
+        next(result) {
+          setBalances(result);
+          setIsBalanceLoading(false);
+        },
+        error() {
+          setIsBalanceLoading(false);
+        },
+        complete() {
+          setIsBalanceLoading(false);
+        },
+      });
+    }
 
     return () => sub$$.unsubscribe();
   }, [account, bridge, isMounted, pureDirection]);

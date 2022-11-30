@@ -92,24 +92,14 @@ export class KaruraShidenBridge extends Bridge<KaruraShidenBridgeConfig, ChainCo
             Concrete: api.createType('XcmV1MultiLocation', {
               parents: 1,
               interior: api.createType('XcmV1MultilocationJunctions', {
-                X1: api.createType('XcmV1Junction', {
-                  Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
-                }),
-              }),
-            }),
-          }),
-          fun: api.createType('XcmV1MultiassetFungibility', {
-            Fungible: api.createType('Compact<u128>', amount),
-          }),
-        }),
-        api.createType('XcmV1MultiAsset', {
-          id: api.createType('XcmV1MultiassetAssetId', {
-            Concrete: api.createType('XcmV1MultiLocation', {
-              parents: 1,
-              interior: api.createType('XcmV1MultilocationJunctions', {
-                X1: api.createType('XcmV1Junction', {
-                  GeneralKey: departure.extra!.generalKey,
-                }),
+                X2: [
+                  api.createType('XcmV1Junction', {
+                    Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
+                  }),
+                  api.createType('XcmV1Junction', {
+                    GeneralKey: departure.extra!.generalKey,
+                  }),
+                ],
               }),
             }),
           }),

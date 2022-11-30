@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN, numberToHex } from '@polkadot/util';
 import omit from 'lodash/omit';
 import { Observable } from 'rxjs';
 import {
@@ -86,12 +86,15 @@ export class CrabParachainMoonriverBridge extends Bridge<
 
   burn(payload: RedeemPayload): Observable<Tx> {
     const {
-      direction: { from: departure },
+      direction: { from: departure, to: arrival },
       sender,
       recipient,
     } = payload;
     const amount = this.wrapXCMAmount(departure);
-    const destination = [1, ['0x0000000839', `0x01${convertToDvm(recipient).slice(2)}00`]];
+    const destination = [
+      1,
+      [`0x000000${numberToHex(arrival.meta.paraId).slice(2)}`, `0x01${convertToDvm(recipient).slice(2)}00`],
+    ];
     const weight = 4_000_000_000;
 
     return sendTransactionFromContract(
