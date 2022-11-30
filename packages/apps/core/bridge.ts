@@ -21,6 +21,7 @@ import {
   Network,
   NullableFields,
   ParachainChainConfig,
+  ParachainEthereumCompatibleChainConfig,
   PolkadotExtension,
   Token,
   TokenInfoWithMeta,
@@ -52,6 +53,8 @@ interface TxValidation {
 export type PayloadPatchFn = (
   value: CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>
 ) => CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>> | null;
+
+type XCMChainConfig = ParachainChainConfig | ParachainEthereumCompatibleChainConfig;
 
 export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Target extends ChainConfig>
   extends BridgeBase<B, Origin, Target> {
@@ -239,9 +242,9 @@ export abstract class Bridge<
 
   protected xcmReserveTransferAssets(
     payload: CrossChainPayload<
-      Bridge<BridgeConfig, ParachainChainConfig, ParachainChainConfig>,
-      CrossToken<ParachainChainConfig>,
-      CrossToken<ParachainChainConfig>,
+      Bridge<BridgeConfig, XCMChainConfig, XCMChainConfig>,
+      CrossToken<XCMChainConfig>,
+      CrossToken<XCMChainConfig>,
       PolkadotExtension
     >,
     method = 'reserveTransferAssets'

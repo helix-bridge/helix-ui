@@ -24,7 +24,6 @@ export class CrabParachainKaruraBridge extends Bridge<
     } = payload;
     const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
-    const palletInstance = 5;
 
     const dest = api.createType('XcmVersionedMultiLocation', {
       V1: api.createType('XcmV1MultiLocation', {
@@ -59,7 +58,7 @@ export class CrabParachainKaruraBridge extends Bridge<
               parents: 0,
               interior: api.createType('XcmV1MultilocationJunctions', {
                 X1: api.createType('XcmV1Junction', {
-                  PalletInstance: palletInstance,
+                  PalletInstance: departure.extra!.palletInstance,
                 }),
               }),
             }),

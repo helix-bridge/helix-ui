@@ -16,6 +16,7 @@ const dualBridges: [Network, Network][] = [
   ['crab-dvm', 'darwinia-dvm'],
   ['shiden', 'khala'],
   ['shiden', 'karura'],
+  ['shiden', 'moonriver'],
 ];
 
 const calcBridgesAmount = (data: [Network, Network[]][]) =>
@@ -42,11 +43,11 @@ describe('bridge utils', () => {
 
   it('should support bridge count: ', () => {
     expect(testBridges).toHaveLength(7);
-    expect(formalBridges).toHaveLength(44);
+    expect(formalBridges).toHaveLength(45);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(102);
+    expect(allDirections).toHaveLength(104);
   });
 
   it('Should correct bridge category name', () => {

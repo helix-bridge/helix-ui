@@ -10,20 +10,20 @@ import {
 import { Bridge } from '../../../../core/bridge';
 import { CrossChainPayload } from '../../../../model/tx';
 
-type ShidenMoonriverContractConfig = ContractConfig;
+type MoonriverShidenContractConfig = ContractConfig;
 
-export type ShidenMoonriverBridgeConfig = Required<BridgeConfig<ShidenMoonriverContractConfig>>;
+export type MoonriverShidenBridgeConfig = Required<BridgeConfig<MoonriverShidenContractConfig>>;
 
 export type IssuingPayload = CrossChainPayload<
-  Bridge<ShidenMoonriverBridgeConfig, ParachainChainConfig, ParachainEthereumCompatibleChainConfig>,
-  CrossToken<ParachainChainConfig>,
-  CrossToken<ParachainEthereumCompatibleChainConfig>,
-  PolkadotExtension
->;
-
-export type RedeemPayload = CrossChainPayload<
-  Bridge<ShidenMoonriverBridgeConfig, ParachainEthereumCompatibleChainConfig, ParachainChainConfig>,
+  Bridge<MoonriverShidenBridgeConfig, ParachainEthereumCompatibleChainConfig, ParachainChainConfig>,
   CrossToken<ParachainEthereumCompatibleChainConfig>,
   CrossToken<ParachainChainConfig>,
   EthereumExtension
+>;
+
+export type RedeemPayload = CrossChainPayload<
+  Bridge<MoonriverShidenBridgeConfig, ParachainChainConfig, ParachainEthereumCompatibleChainConfig>,
+  CrossToken<ParachainChainConfig>,
+  CrossToken<ParachainEthereumCompatibleChainConfig>,
+  PolkadotExtension
 >;

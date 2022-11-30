@@ -41,4 +41,5 @@ export type BridgeName =
   | 'khala-shiden'
   | 'shiden-karura'
   | 'karura-shiden'
-  | 'shiden-moonriver';
+  | 'shiden-moonriver'
+  | 'moonriver-shiden';

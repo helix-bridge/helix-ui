@@ -46,6 +46,7 @@ export const crabParachainConfig: ParachainChainConfig = {
       logo: 'token-crab.svg',
       symbol: 'CRAB',
       address: '',
+      extra: { palletInstance: 5 },
     },
   ],
   ss58Prefix: 42,

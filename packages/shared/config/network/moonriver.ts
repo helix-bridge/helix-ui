@@ -25,12 +25,18 @@ export const moonriverConfig: ParachainEthereumCompatibleChainConfig = {
     {
       name: 'MOVR',
       decimals: 18,
-      cross: [],
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'moonriver-shiden',
+          partner: { name: 'shiden', role: 'issuing', symbol: 'MOVR' },
+        },
+      ],
       type: 'native',
       host: 'moonriver',
       logo: 'token-movr.png',
       symbol: 'MOVR',
-      address: '',
+      address: '0x0000000000000000000000000000000000000802',
     },
     {
       name: 'CRAB',

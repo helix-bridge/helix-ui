@@ -88,6 +88,23 @@ export const shidenConfig: ParachainChainConfig = {
       address: '18446744073709551616',
       extra: { generalKey: '0x0081' },
     },
+    {
+      name: 'MOVR',
+      decimals: 18,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'moonriver-shiden',
+          partner: { name: 'moonriver', role: 'backing', symbol: 'MOVR' },
+        },
+      ],
+      type: 'mapping',
+      host: 'shiden',
+      logo: 'token-movr.png',
+      symbol: 'MOVR',
+      address: '18446744073709551620',
+      extra: { palletInstance: 10 },
+    },
   ],
   specVersion: 79,
   ss58Prefix: 5,

@@ -1,7 +1,13 @@
 import { BN, numberToHex } from '@polkadot/util';
 import omit from 'lodash/omit';
 import type { Observable } from 'rxjs';
-import { CrossChainDirection, CrossToken, ParachainChainConfig, Tx } from 'shared/model';
+import {
+  CrossChainDirection,
+  CrossToken,
+  ParachainChainConfig,
+  ParachainEthereumCompatibleChainConfig,
+  Tx,
+} from 'shared/model';
 import { convertToDvm } from 'shared/utils/helper/address';
 import { sendTransactionFromContract } from 'shared/utils/tx';
 import abi from '../../../../config/abi/moonriver.json';
@@ -11,7 +17,7 @@ import { IssuingPayload, RedeemPayload, ShidenMoonriverBridgeConfig } from '../m
 export class ShidenMoonriverBridge extends Bridge<
   ShidenMoonriverBridgeConfig,
   ParachainChainConfig,
-  ParachainChainConfig
+  ParachainEthereumCompatibleChainConfig
 > {
   static readonly alias: string = 'ShidenMoonriverBridge';
 

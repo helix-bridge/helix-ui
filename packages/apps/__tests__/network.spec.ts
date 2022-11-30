@@ -172,7 +172,7 @@ describe('network utils', () => {
     const group = data.find((item) => item[0] === 'moonriver');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['crab-parachain', 'shiden']);
+    expect(uniq(group![1])).toEqual(['crab-parachain', 'shiden']);
   });
 
   it('khala contains 1 leaf', () => {
