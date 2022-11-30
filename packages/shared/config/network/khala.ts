@@ -21,6 +21,11 @@ export const khalaConfig: ParachainChainConfig = {
           bridge: 'khala-shiden',
           partner: { name: 'shiden', role: 'issuing', symbol: 'PHA' },
         },
+        {
+          category: 'XCM',
+          bridge: 'khala-karura',
+          partner: { name: 'karura', role: 'issuing', symbol: 'PHA' },
+        },
       ],
       type: 'native',
       host: 'khala',
@@ -45,7 +50,7 @@ export const khalaConfig: ParachainChainConfig = {
       address: '12', // assets.metadata
     },
   ],
-  specVersion: 1191,
+  specVersion: 1192,
   ss58Prefix: 30,
   paraId: 2004,
   wallets: ['polkadot', 'subwallet', 'talisman', 'mathwallet-polkadot'],

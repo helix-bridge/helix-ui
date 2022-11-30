@@ -1,15 +1,15 @@
 import { BN } from '@polkadot/util';
 import omit from 'lodash/omit';
 import type { Observable } from 'rxjs';
-import { CrossChainDirection, CrossToken, ParachainChainConfig, Tx } from 'shared/model';
+import { ChainConfig, CrossChainDirection, CrossToken, ParachainChainConfig, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
-import { signAndSendExtrinsic } from 'shared/utils/tx/polkadot';
+import { signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
-import { IssuingPayload, KhalaShidenBridgeConfig, RedeemPayload } from '../model';
+import { IssuingPayload, KhalaKaruraBridgeConfig, RedeemPayload } from '../model';
 
-export class KhalaShidenBridge extends Bridge<KhalaShidenBridgeConfig, ParachainChainConfig, ParachainChainConfig> {
-  static readonly alias: string = 'KhalaShidenBridge';
+export class KhalaKaruraBridge extends Bridge<KhalaKaruraBridgeConfig, ParachainChainConfig, ParachainChainConfig> {
+  static readonly alias: string = 'KhalaKaruraBridge';
 
   back(payload: IssuingPayload): Observable<Tx> {
     const {
@@ -56,15 +56,49 @@ export class KhalaShidenBridge extends Bridge<KhalaShidenBridgeConfig, Parachain
   }
 
   burn(payload: RedeemPayload): Observable<Tx> {
-    return this.xcmReserveTransferAssets(payload, 'reserveWithdrawAssets');
+    const {
+      direction: { from: departure, to: arrival },
+      sender,
+      recipient,
+      wallet,
+    } = payload;
+    const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
+
+    const currencyId = api.createType('AcalaPrimitivesCurrencyCurrencyId', {
+      Token: departure.symbol,
+    });
+
+    const dest = api.createType('XcmVersionedMultiLocation', {
+      V1: api.createType('XcmV1MultiLocation', {
+        parents: 1,
+        interior: api.createType('XcmV1MultilocationJunctions', {
+          X2: [
+            api.createType('XcmV1Junction', {
+              Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
+            }),
+            api.createType('XcmV1Junction', {
+              AccountId32: {
+                network: api.createType('XcmV0JunctionNetworkId', 'Any'),
+                id: convertToDvm(recipient),
+              },
+            }),
+          ],
+        }),
+      }),
+    });
+
+    const destWeight = 5_000_000_000;
+    const extrinsic = api.tx.xTokens.transfer(currencyId, departure.amount, dest, destWeight);
+
+    return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
 
   async getFee(
-    direction: CrossChainDirection<CrossToken<ParachainChainConfig>, CrossToken<ParachainChainConfig>>
+    direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
   ): Promise<TokenWithAmount | null> {
     const { from, to } = direction;
     const token = omit(direction.from, ['amount', 'meta']);
-    const amount = this.isIssue(from.host, to.host) ? new BN('24464000000') : new BN('92696000000');
+    const amount = this.isIssue(from.host, to.host) ? new BN('5120000000') : new BN('92696000000');
 
     return { ...token, amount } as TokenWithAmount;
   }

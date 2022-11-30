@@ -102,6 +102,22 @@ export const karuraConfig: ParachainChainConfig = {
       symbol: 'MOVR',
       address: '3', // ForeignAssetId
     },
+    {
+      name: 'PHA',
+      decimals: 12,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'khala-karura',
+          partner: { name: 'khala', role: 'backing', symbol: 'PHA' },
+        },
+      ],
+      type: 'mapping',
+      host: 'karura',
+      logo: 'token-pha.png',
+      symbol: 'PHA',
+      address: 'PHA', // NativeAssetId
+    },
   ],
   ss58Prefix: 8,
   specVersion: 2100,

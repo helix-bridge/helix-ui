@@ -13,6 +13,7 @@ import { CrabParachainKaruraBridge } from './xcm/crabParachain-karura/utils';
 import { CrabParachainMoonriverBridge } from './xcm/crabParachain-moonriver/utils';
 import { KaruraMoonriverBridge } from './xcm/karura-moonriver/utils';
 import { KaruraShidenBridge } from './xcm/karura-shiden/utils';
+import { KhalaKaruraBridge } from './xcm/khala-karura/utils';
 import { KhalaShidenBridge } from './xcm/khala-shiden/utils';
 import { MoonriverKaruraBridge } from './xcm/moonriver-karura/utils';
 import { MoonriverShidenBridge } from './xcm/moonriver-shiden/utils';
@@ -30,6 +31,7 @@ export const bridgeConstructors = [
   DarwiniaDVMInnerBridge,
   KaruraMoonriverBridge,
   KaruraShidenBridge,
+  KhalaKaruraBridge,
   KhalaShidenBridge,
   MoonriverShidenBridge,
   MoonriverKaruraBridge,
