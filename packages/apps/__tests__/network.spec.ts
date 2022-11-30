@@ -161,18 +161,18 @@ describe('network utils', () => {
     );
   });
 
-  it('karura contains 2 leafs', () => {
+  it('karura contains 3 leafs', () => {
     const group = data.find((item) => item[0] === 'karura');
 
     expect(group).not.toEqual(undefined);
-    expect(uniq(group![1])).toEqual(['crab-parachain', 'shiden']);
+    expect(uniq(group![1])).toEqual(['crab-parachain', 'shiden', 'moonriver']);
   });
 
-  it('moonriver contains 2 leafs', () => {
+  it('moonriver contains 3 leafs', () => {
     const group = data.find((item) => item[0] === 'moonriver');
 
     expect(group).not.toEqual(undefined);
-    expect(uniq(group![1])).toEqual(['crab-parachain', 'shiden']);
+    expect(uniq(group![1])).toEqual(['crab-parachain', 'karura', 'shiden']);
   });
 
   it('khala contains 1 leaf', () => {

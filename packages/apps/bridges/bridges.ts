@@ -13,6 +13,7 @@ import { CrabParachainKaruraBridge } from './xcm/crabParachain-karura/utils';
 import { CrabParachainMoonriverBridge } from './xcm/crabParachain-moonriver/utils';
 import { KaruraShidenBridge } from './xcm/karura-shiden/utils';
 import { KhalaShidenBridge } from './xcm/khala-shiden/utils';
+import { MoonriverKaruraBridge } from './xcm/moonriver-karura/utils';
 import { MoonriverShidenBridge } from './xcm/moonriver-shiden/utils';
 import { ShidenKaruraBridge } from './xcm/shiden-karura/utils';
 import { ShidenKhalaBridge } from './xcm/shiden-khala/utils';
@@ -29,6 +30,7 @@ export const bridgeConstructors = [
   KaruraShidenBridge,
   KhalaShidenBridge,
   MoonriverShidenBridge,
+  MoonriverKaruraBridge,
   ShidenKaruraBridge,
   ShidenKhalaBridge,
   ShidenMoonriverBridge,

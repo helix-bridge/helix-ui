@@ -31,6 +31,11 @@ export const moonriverConfig: ParachainEthereumCompatibleChainConfig = {
           bridge: 'moonriver-shiden',
           partner: { name: 'shiden', role: 'issuing', symbol: 'MOVR' },
         },
+        {
+          category: 'XCM',
+          bridge: 'moonriver-karura',
+          partner: { name: 'karura', role: 'issuing', symbol: 'MOVR' },
+        },
       ],
       type: 'native',
       host: 'moonriver',

@@ -76,6 +76,22 @@ export const karuraConfig: ParachainChainConfig = {
       symbol: 'SDN',
       address: '18', // ForeignAssetId
     },
+    {
+      name: 'MOVR',
+      decimals: 18,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'moonriver-karura',
+          partner: { name: 'moonriver', role: 'backing', symbol: 'MOVR' },
+        },
+      ],
+      type: 'mapping',
+      host: 'karura',
+      logo: 'token-movr.png',
+      symbol: 'MOVR',
+      address: '3', // ForeignAssetId
+    },
   ],
   ss58Prefix: 8,
   specVersion: 2100,

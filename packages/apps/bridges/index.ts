@@ -49,3 +49,5 @@ export { Shiden2Karura, Karura2Shiden } from './xcm/shiden-karura';
 export { Shiden2Moonriver, Moonriver2Shiden } from './xcm/shiden-moonriver';
 
 // export { Moonriver2Shiden, Shiden2Moonriver } from './xcm/moonriver-shiden';
+
+export { Moonriver2Karura, Karura2Moonriver } from './xcm/moonriver-karura';
