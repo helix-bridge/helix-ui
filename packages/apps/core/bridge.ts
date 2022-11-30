@@ -161,7 +161,6 @@ export abstract class Bridge<
         !dailyLimit.amount || new BN(toWei({ value: fromWei(dailyLimit), decimals: from.decimals })).gte(amount),
         'Insufficient daily limit',
       ], // keep decimals consistent
-      [!xcm || Number.isInteger(+from.amount), 'Transfer Amount must be integer'],
     ];
     const result = validations.find((item) => !item[0]);
 
@@ -233,13 +232,6 @@ export abstract class Bridge<
     return res.substring(10, id.length + 1);
   }
 
-  protected wrapXCMAmount(token: CrossToken<ChainConfig>): string {
-    const pos = -3;
-    const HELIX_FLAG = '204';
-
-    return toWei(token).slice(0, pos) + HELIX_FLAG;
-  }
-
   protected xcmReserveTransferAssets(
     payload: CrossChainPayload<
       Bridge<BridgeConfig, XCMChainConfig, XCMChainConfig>,
@@ -255,7 +247,6 @@ export abstract class Bridge<
       recipient,
       wallet,
     } = payload;
-    const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const dest = api.createType('XcmVersionedMultiLocation', {
@@ -317,7 +308,7 @@ export abstract class Bridge<
             ),
           }),
           fun: api.createType('XcmV1MultiassetFungibility', {
-            Fungible: api.createType('Compact<u128>', amount),
+            Fungible: api.createType('Compact<u128>', departure.amount),
           }),
         }),
       ],

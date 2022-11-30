@@ -18,7 +18,6 @@ export class KhalaShidenBridge extends Bridge<KhalaShidenBridgeConfig, Parachain
       recipient,
       wallet,
     } = payload;
-    const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const asset = api.createType('XcmV1MultiAsset', {
@@ -29,7 +28,7 @@ export class KhalaShidenBridge extends Bridge<KhalaShidenBridgeConfig, Parachain
         }),
       }),
       fun: api.createType('XcmV1MultiassetFungibility', {
-        Fungible: api.createType('Compact<u128>', amount),
+        Fungible: api.createType('Compact<u128>', departure.amount),
       }),
     });
 

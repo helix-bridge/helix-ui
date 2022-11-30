@@ -1,6 +1,6 @@
 /// <reference types="jest" />
 
-import { largeNumber, prettyNumber, toWei } from '../../utils/helper/balance';
+import { addHelixFlag, largeNumber, prettyNumber, toWei } from '../../utils/helper/balance';
 
 describe('balance utils', () => {
   it('pretty number', () => {
@@ -48,5 +48,22 @@ describe('balance utils', () => {
     expect(toWei({ value: 1 })).toEqual('1000000000000000000');
     expect(toWei({ value: 1.23456789 })).toEqual('1234567890000000000');
     expect(toWei({ value: 1.23456789, decimals: 6 })).toEqual('1234567');
+  });
+
+  it('can add helix flag safely', () => {
+    expect(addHelixFlag('1')).toEqual('0.999999999999999204');
+    expect(addHelixFlag('0.999999999999999203', 18)).toEqual('0.999999999999998204');
+    expect(addHelixFlag('0.999999999999999204', 18)).toEqual('0.999999999999999204');
+    expect(addHelixFlag('0.98')).toEqual('0.979999999999999204');
+
+    expect(addHelixFlag('1', 12)).toEqual('0.999999999204');
+    expect(addHelixFlag('0.999999999203', 12)).toEqual('0.999999998204');
+    expect(addHelixFlag('0.999999999204', 12)).toEqual('0.999999999204');
+    expect(addHelixFlag('0.98', 12)).toEqual('0.979999999204');
+
+    expect(addHelixFlag('1', 6)).toEqual('0.999204');
+    expect(addHelixFlag('0.999203', 6)).toEqual('0.998204');
+    expect(addHelixFlag('0.999204', 6)).toEqual('0.999204');
+    expect(addHelixFlag('0.98', 6)).toEqual('0.979204');
   });
 });

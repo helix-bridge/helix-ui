@@ -29,7 +29,6 @@ export class CrabParachainMoonriverBridge extends Bridge<
       recipient,
       wallet,
     } = payload;
-    const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const dest = api.createType('XcmVersionedMultiLocation', {
@@ -71,7 +70,7 @@ export class CrabParachainMoonriverBridge extends Bridge<
             }),
           }),
           fun: api.createType('XcmV1MultiassetFungibility', {
-            Fungible: api.createType('Compact<u128>', amount),
+            Fungible: api.createType('Compact<u128>', departure.amount),
           }),
         }),
       ],
@@ -89,7 +88,6 @@ export class CrabParachainMoonriverBridge extends Bridge<
       sender,
       recipient,
     } = payload;
-    const amount = this.wrapXCMAmount(departure);
     const destination = [
       1,
       [`0x000000${numberToHex(arrival.meta.paraId).slice(2)}`, `0x01${convertToDvm(recipient).slice(2)}00`],
@@ -98,7 +96,7 @@ export class CrabParachainMoonriverBridge extends Bridge<
 
     return sendTransactionFromContract(
       this.config.contracts!.issuing,
-      (contract) => contract.transfer(departure.address, amount, destination, weight, { from: sender }),
+      (contract) => contract.transfer(departure.address, departure.amount, destination, weight, { from: sender }),
       abi
     );
   }

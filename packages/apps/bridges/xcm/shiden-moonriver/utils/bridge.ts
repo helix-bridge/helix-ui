@@ -31,7 +31,6 @@ export class ShidenMoonriverBridge extends Bridge<
       sender,
       recipient,
     } = payload;
-    const amount = this.wrapXCMAmount(departure);
     // [hex paraId, AccountId32 Network Any]
     const destination = [
       1,
@@ -41,7 +40,7 @@ export class ShidenMoonriverBridge extends Bridge<
 
     return sendTransactionFromContract(
       this.config.contracts!.issuing,
-      (contract) => contract.transfer(departure.address, amount, destination, weight, { from: sender }),
+      (contract) => contract.transfer(departure.address, departure.amount, destination, weight, { from: sender }),
       abi
     );
   }

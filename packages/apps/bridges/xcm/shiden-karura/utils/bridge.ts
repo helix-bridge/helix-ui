@@ -22,7 +22,6 @@ export class ShidenKaruraBridge extends Bridge<ShidenKaruraBridgeConfig, ChainCo
       recipient,
       wallet,
     } = payload;
-    const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const currencyId = api.createType('AcalaPrimitivesCurrencyCurrencyId', {
@@ -49,7 +48,7 @@ export class ShidenKaruraBridge extends Bridge<ShidenKaruraBridgeConfig, ChainCo
     });
 
     const destWeight = 5_000_000_000;
-    const extrinsic = api.tx.xTokens.transfer(currencyId, amount, dest, destWeight);
+    const extrinsic = api.tx.xTokens.transfer(currencyId, departure.amount, dest, destWeight);
 
     return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }

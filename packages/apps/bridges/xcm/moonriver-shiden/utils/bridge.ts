@@ -18,7 +18,6 @@ export class MoonriverShidenBridge extends Bridge<MoonriverShidenBridgeConfig, C
       sender,
       recipient,
     } = payload;
-    const amount = this.wrapXCMAmount(departure);
     // [hex paraId, AccountId32 Network Any]
     const destination = [
       1,
@@ -28,7 +27,7 @@ export class MoonriverShidenBridge extends Bridge<MoonriverShidenBridgeConfig, C
 
     return sendTransactionFromContract(
       this.config.contracts!.backing,
-      (contract) => contract.transfer(departure.address, amount, destination, weight, { from: sender }),
+      (contract) => contract.transfer(departure.address, departure.amount, destination, weight, { from: sender }),
       abi
     );
   }
@@ -40,7 +39,6 @@ export class MoonriverShidenBridge extends Bridge<MoonriverShidenBridgeConfig, C
       recipient,
       wallet,
     } = payload;
-    const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const dest = api.createType('XcmVersionedMultiLocation', {
@@ -82,7 +80,7 @@ export class MoonriverShidenBridge extends Bridge<MoonriverShidenBridgeConfig, C
             }),
           }),
           fun: api.createType('XcmV1MultiassetFungibility', {
-            Fungible: api.createType('Compact<u128>', amount),
+            Fungible: api.createType('Compact<u128>', departure.amount),
           }),
         }),
       ],
