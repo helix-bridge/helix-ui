@@ -17,6 +17,7 @@ const dualBridges: [Network, Network][] = [
   ['shiden', 'khala'],
   ['shiden', 'karura'],
   ['shiden', 'moonriver'],
+  ['karura', 'moonriver'],
 ];
 
 const calcBridgesAmount = (data: [Network, Network[]][]) =>
@@ -43,11 +44,11 @@ describe('bridge utils', () => {
 
   it('should support bridge count: ', () => {
     expect(testBridges).toHaveLength(7);
-    expect(formalBridges).toHaveLength(46);
+    expect(formalBridges).toHaveLength(47);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(106);
+    expect(allDirections).toHaveLength(108);
   });
 
   it('Should correct bridge category name', () => {

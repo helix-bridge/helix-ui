@@ -21,6 +21,11 @@ export const karuraConfig: ParachainChainConfig = {
           bridge: 'karura-shiden',
           partner: { name: 'shiden', role: 'issuing', symbol: 'KAR' },
         },
+        {
+          category: 'XCM',
+          bridge: 'karura-moonriver',
+          partner: { name: 'moonriver', role: 'issuing', symbol: 'xcKAR' },
+        },
       ],
       type: 'native',
       host: 'karura',
@@ -36,6 +41,11 @@ export const karuraConfig: ParachainChainConfig = {
           category: 'XCM',
           bridge: 'karura-shiden',
           partner: { name: 'shiden', role: 'issuing', symbol: 'KUSD' },
+        },
+        {
+          category: 'XCM',
+          bridge: 'karura-moonriver',
+          partner: { name: 'moonriver', role: 'issuing', symbol: 'KUSD' },
         },
       ],
       type: 'mapping',

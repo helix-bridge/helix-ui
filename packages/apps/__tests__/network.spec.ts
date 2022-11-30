@@ -165,7 +165,7 @@ describe('network utils', () => {
     const group = data.find((item) => item[0] === 'karura');
 
     expect(group).not.toEqual(undefined);
-    expect(uniq(group![1])).toEqual(['crab-parachain', 'shiden', 'moonriver']);
+    expect(uniq(sort(group![1]))).toEqual(sort(['crab-parachain', 'shiden', 'moonriver']));
   });
 
   it('moonriver contains 3 leafs', () => {

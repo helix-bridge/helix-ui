@@ -39,15 +39,6 @@ export { Unavailable2Unknown, Unknown2Unavailable } from './unknown-unavailable'
 export { CrabParachain2Karura, Karura2CrabParachain } from './xcm/crabParachain-karura';
 export { CrabParachain2Moonriver, Moonriver2CrabParachain } from './xcm/crabParachain-moonriver';
 export { Khala2Shiden, Shiden2Khala } from './xcm/shiden-khala';
-
-// export { Khala2Shiden, Shiden2Khala } from './xcm/khala-shiden';
-
 export { Shiden2Karura, Karura2Shiden } from './xcm/shiden-karura';
-
-// export { Karura2Shiden, Shiden2Karura } from './xcm/karura-shiden';
-
 export { Shiden2Moonriver, Moonriver2Shiden } from './xcm/shiden-moonriver';
-
-// export { Moonriver2Shiden, Shiden2Moonriver } from './xcm/moonriver-shiden';
-
 export { Moonriver2Karura, Karura2Moonriver } from './xcm/moonriver-karura';

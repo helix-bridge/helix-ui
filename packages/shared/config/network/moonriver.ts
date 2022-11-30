@@ -75,6 +75,38 @@ export const moonriverConfig: ParachainEthereumCompatibleChainConfig = {
       symbol: 'xcSDN',
       address: '0xFFFfffFF0Ca324C842330521525E7De111F38972',
     },
+    {
+      name: 'KAR',
+      decimals: 12,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'karura-moonriver',
+          partner: { name: 'karura', role: 'backing', symbol: 'KAR' },
+        },
+      ],
+      type: 'mapping',
+      host: 'moonriver',
+      logo: 'token-karura.svg',
+      symbol: 'xcKAR',
+      address: '0xFfFFFFfF08220AD2E6e157f26eD8bD22A336A0A5',
+    },
+    {
+      name: 'KUSD',
+      decimals: 12,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'karura-moonriver',
+          partner: { name: 'karura', role: 'backing', symbol: 'KUSD' },
+        },
+      ],
+      type: 'mapping',
+      host: 'moonriver',
+      logo: 'token-ausd.png',
+      symbol: 'KUSD',
+      address: '0xFfFffFFfa1B026a00FbAA67c86D5d1d5BF8D8228',
+    },
   ],
   ss58Prefix: 8,
   specVersion: 1901,
