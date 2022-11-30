@@ -69,6 +69,7 @@ export const shidenConfig: ParachainChainConfig = {
       logo: 'token-karura.svg',
       symbol: 'KAR',
       address: '18446744073709551618',
+      extra: { generalKey: '0x0080' },
     },
     {
       name: 'KUSD',
@@ -85,6 +86,7 @@ export const shidenConfig: ParachainChainConfig = {
       logo: 'token-ausd.png',
       symbol: 'KUSD',
       address: '18446744073709551616',
+      extra: { generalKey: '0x0081' },
     },
   ],
   specVersion: 79,

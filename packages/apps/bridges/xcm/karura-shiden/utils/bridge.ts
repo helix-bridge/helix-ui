@@ -51,7 +51,79 @@ export class KaruraShidenBridge extends Bridge<KaruraShidenBridgeConfig, ChainCo
   }
 
   burn(payload: RedeemPayload): Observable<Tx> {
-    return this.xcmReserveTransferAssets(payload, 'reserveWithdrawAssets');
+    const {
+      direction: { from: departure, to: arrival },
+      sender,
+      recipient,
+      wallet,
+    } = payload;
+    const amount = this.wrapXCMAmount(departure);
+    const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
+
+    const dest = api.createType('XcmVersionedMultiLocation', {
+      V1: api.createType('XcmV1MultiLocation', {
+        parents: 1,
+        interior: api.createType('XcmV1MultilocationJunctions', {
+          X1: api.createType('XcmV1Junction', {
+            Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
+          }),
+        }),
+      }),
+    });
+
+    const beneficiary = api.createType('XcmVersionedMultiLocation', {
+      V1: api.createType('XcmV1MultiLocation', {
+        parents: 0,
+        interior: api.createType('XcmV1MultilocationJunctions', {
+          X1: api.createType('XcmV1Junction', {
+            AccountId32: {
+              network: api.createType('NetworkId', 'Any'),
+              id: convertToDvm(recipient),
+            },
+          }),
+        }),
+      }),
+    });
+
+    const assets = api.createType('XcmVersionedMultiAssets', {
+      V1: [
+        api.createType('XcmV1MultiAsset', {
+          id: api.createType('XcmV1MultiassetAssetId', {
+            Concrete: api.createType('XcmV1MultiLocation', {
+              parents: 1,
+              interior: api.createType('XcmV1MultilocationJunctions', {
+                X1: api.createType('XcmV1Junction', {
+                  Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
+                }),
+              }),
+            }),
+          }),
+          fun: api.createType('XcmV1MultiassetFungibility', {
+            Fungible: api.createType('Compact<u128>', amount),
+          }),
+        }),
+        api.createType('XcmV1MultiAsset', {
+          id: api.createType('XcmV1MultiassetAssetId', {
+            Concrete: api.createType('XcmV1MultiLocation', {
+              parents: 1,
+              interior: api.createType('XcmV1MultilocationJunctions', {
+                X1: api.createType('XcmV1Junction', {
+                  GeneralKey: departure.extra!.generalKey,
+                }),
+              }),
+            }),
+          }),
+          fun: api.createType('XcmV1MultiassetFungibility', {
+            Fungible: api.createType('Compact<u128>', amount),
+          }),
+        }),
+      ],
+    });
+
+    const feeAssetItem = 0;
+    const extrinsic = api.tx.polkadotXcm.reserveWithdrawAssets(dest, beneficiary, assets, feeAssetItem);
+
+    return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
 
   async getFee(
@@ -61,8 +133,8 @@ export class KaruraShidenBridge extends Bridge<KaruraShidenBridgeConfig, ChainCo
     const token = omit(direction.from, ['amount', 'meta']);
 
     const feeMap: { [key: string]: string } = this.isIssue(from.host, to.host)
-      ? { KAR: '3880000000', aUSD: '2080000000' }
-      : { KAR: '9269600000', aUSD: '3826597686' };
+      ? { KAR: '3880000000', KUSD: '2080000000' }
+      : { KAR: '9269600000', KUSD: '3826597686' };
 
     return { ...token, amount: new BN(feeMap[from.symbol]) } as TokenWithAmount;
   }
