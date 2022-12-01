@@ -168,18 +168,18 @@ describe('network utils', () => {
     expect(uniq(sort(group![1]))).toEqual(sort(['crab-parachain', 'khala', 'shiden', 'moonriver']));
   });
 
-  it('moonriver contains 3 leafs', () => {
+  it('moonriver contains 4 leafs', () => {
     const group = data.find((item) => item[0] === 'moonriver');
 
     expect(group).not.toEqual(undefined);
-    expect(uniq(group![1])).toEqual(['crab-parachain', 'karura', 'shiden']);
+    expect(uniq(group![1])).toEqual(['crab-parachain', 'karura', 'khala', 'shiden']);
   });
 
-  it('khala contains 2 leaf', () => {
+  it('khala contains 3 leaf', () => {
     const group = data.find((item) => item[0] === 'khala');
 
     expect(group).not.toEqual(undefined);
-    expect(uniq(sort(group![1]))).toEqual(sort(['karura', 'shiden']));
+    expect(uniq(sort(group![1]))).toEqual(sort(['karura', 'moonriver', 'shiden']));
   });
 
   it('shiden contains 3 leafs', () => {

@@ -1,27 +1,27 @@
 import { BN, numberToHex } from '@polkadot/util';
 import omit from 'lodash/omit';
 import type { Observable } from 'rxjs';
-import { abi } from 'shared/config/abi';
 import {
   ChainConfig,
   CrossChainDirection,
   CrossToken,
+  ParachainChainConfig,
   ParachainEthereumCompatibleChainConfig,
-  PolkadotChainConfig,
   Tx,
 } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
 import { sendTransactionFromContract, signAndSendExtrinsic } from 'shared/utils/tx';
+import abi from '../../../../config/abi/moonriver.json';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
-import { IssuingPayload, MoonriverKaruraBridgeConfig, RedeemPayload } from '../model';
+import { IssuingPayload, MoonriverKhalaBridgeConfig, RedeemPayload } from '../model';
 
-export class MoonriverKaruraBridge extends Bridge<
-  MoonriverKaruraBridgeConfig,
+export class MoonriverKhalaBridge extends Bridge<
+  MoonriverKhalaBridgeConfig,
   ParachainEthereumCompatibleChainConfig,
-  PolkadotChainConfig
+  ParachainChainConfig
 > {
-  static readonly alias: string = 'MoonriverKaruraBridge';
+  static readonly alias: string = 'MoonriverKhalaBridge';
 
   back(payload: IssuingPayload): Observable<Tx> {
     const {
@@ -54,31 +54,41 @@ export class MoonriverKaruraBridge extends Bridge<
     const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
-    const currencyId = api.createType('AcalaPrimitivesCurrencyCurrencyId', {
-      ForeignAsset: departure.address,
-    });
-
-    const dest = api.createType('XcmVersionedMultiLocation', {
-      V1: api.createType('XcmV1MultiLocation', {
-        parents: 1,
-        interior: api.createType('XcmV1MultilocationJunctions', {
-          X2: [
-            api.createType('XcmV1Junction', {
+    const asset = api.createType('XcmV1MultiAsset', {
+      id: api.createType('XcmV1MultiassetAssetId', {
+        Concrete: api.createType('XcmV1MultiLocation', {
+          parents: 1,
+          interior: api.createType('XcmV1MultilocationJunctions', {
+            X1: api.createType('XcmV1Junction', {
               Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
             }),
-            api.createType('XcmV1Junction', {
-              AccountKey20: {
-                network: api.createType('XcmV0JunctionNetworkId', 'Any'),
-                key: recipient,
-              },
-            }),
-          ],
+          }),
         }),
+      }),
+      fun: api.createType('XcmV1MultiassetFungibility', {
+        Fungible: api.createType('Compact<u128>', amount),
       }),
     });
 
-    const destWeight = 5_000_000_000;
-    const extrinsic = api.tx.xTokens.transfer(currencyId, amount, dest, destWeight);
+    const dest = api.createType('XcmV1MultiLocation', {
+      parents: 1,
+      interior: api.createType('XcmV1MultilocationJunctions', {
+        X2: [
+          api.createType('XcmV1Junction', {
+            Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
+          }),
+          api.createType('XcmV1Junction', {
+            AccountKey20: {
+              network: api.createType('XcmV0JunctionNetworkId', 'Any'),
+              key: recipient,
+            },
+          }),
+        ],
+      }),
+    });
+
+    const destWeight = 6e9;
+    const extrinsic = api.tx.xTransfer.transfer(asset, dest, destWeight);
 
     return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
@@ -88,7 +98,7 @@ export class MoonriverKaruraBridge extends Bridge<
   ): Promise<TokenWithAmount | null> {
     const { from, to } = direction;
     const token = omit(direction.from, ['amount', 'meta']);
-    const amount = this.isIssue(from.host, to.host) ? new BN('92696000000000') : new BN('8000000000000');
+    const amount = this.isIssue(from.host, to.host) ? new BN('266666666666400') : new BN('80000000000000');
 
     return { ...token, amount } as TokenWithAmount;
   }

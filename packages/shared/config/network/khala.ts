@@ -65,6 +65,22 @@ export const khalaConfig: ParachainChainConfig = {
       symbol: 'KAR',
       address: '1',
     },
+    {
+      name: 'MOVR',
+      decimals: 18,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'moonriver-khala',
+          partner: { name: 'moonriver', role: 'backing', symbol: 'MOVR' },
+        },
+      ],
+      type: 'mapping',
+      host: 'khala',
+      logo: 'token-movr.png',
+      symbol: 'MOVR',
+      address: '6',
+    },
   ],
   specVersion: 1192,
   ss58Prefix: 30,

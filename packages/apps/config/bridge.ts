@@ -56,6 +56,7 @@ import { moonriverKarura } from '../bridges/xcm/moonriver-karura/config';
 import { karuraMoonriver } from '../bridges/xcm/karura-moonriver/config';
 import { khalaKarura } from '../bridges/xcm/khala-karura/config';
 import { karuraKhala } from '../bridges/xcm/karura-khala/config';
+import { moonriverKhala } from '../bridges/xcm/moonriver-khala/config';
 
 const formalBridges = [
   arbitrumAstar,
@@ -101,6 +102,7 @@ const formalBridges = [
   khalaKarura,
   khalaShiden,
   moonriverKarura,
+  moonriverKhala,
   moonriverShiden,
   polygonAstar,
   polygonOptimism,
