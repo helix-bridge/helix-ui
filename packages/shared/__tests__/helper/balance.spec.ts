@@ -1,6 +1,6 @@
 /// <reference types="jest" />
 
-import { addHelixFlag, largeNumber, prettyNumber, toWei } from '../../utils/helper/balance';
+import { addHelixFlag, largeNumber, prettyNumber, removeHelixFlag, toWei } from '../../utils/helper/balance';
 
 describe('balance utils', () => {
   it('pretty number', () => {
@@ -65,5 +65,17 @@ describe('balance utils', () => {
     expect(addHelixFlag('0.999203', 6)).toEqual('0.998204');
     expect(addHelixFlag('0.999204', 6)).toEqual('0.999204');
     expect(addHelixFlag('0.98', 6)).toEqual('0.979204');
+  });
+
+  it('use rounding to remove marker bits', () => {
+    expect(removeHelixFlag('0.999999999999994204')).toEqual('0.99999999999999');
+    expect(removeHelixFlag('0.999999999999995204')).toEqual('0.999999999999996');
+    expect(removeHelixFlag('0.999999999999998204')).toEqual('0.999999999999999');
+    expect(removeHelixFlag('0.999999999999999204')).toEqual('1');
+
+    expect(removeHelixFlag('0.999999994204', 12)).toEqual('0.99999999');
+    expect(removeHelixFlag('0.999999995204', 12)).toEqual('0.999999996');
+    expect(removeHelixFlag('0.999999998204', 12)).toEqual('0.999999999');
+    expect(removeHelixFlag('0.999999999204', 12)).toEqual('1');
   });
 });

@@ -1,7 +1,7 @@
 import { isAddress } from 'ethers/lib/utils';
 import { RecordStatus } from 'shared/config/constant';
 import { CrossChainDirection, HelixHistoryRecord, TokenWithBridgesInfo } from 'shared/model';
-import { fromWei, prettyNumber } from 'shared/utils/helper/balance';
+import { fromWei, prettyNumber, removeHelixFlag } from 'shared/utils/helper/balance';
 import { isPolkadotNetwork } from 'shared/utils/network/network';
 import { getOriginChainConfig } from '../network';
 
@@ -34,7 +34,7 @@ export function getTokenConfigFromHelixRecord(
 }
 
 export function getReceivedAmountFromHelixRecord(record: HelixHistoryRecord) {
-  const { result } = record;
+  const { result, id } = record;
   const fromToken = getTokenConfigFromHelixRecord(record, 'sendToken')!;
   const toToken = getTokenConfigFromHelixRecord(record, 'recvToken');
 
@@ -44,7 +44,11 @@ export function getReceivedAmountFromHelixRecord(record: HelixHistoryRecord) {
     decimals = fromToken.decimals;
   }
 
-  return fromWei({ value: record.recvAmount, decimals }, (val) => prettyNumber(val, { ignoreZeroDecimal: true }));
+  return fromWei(
+    { value: record.recvAmount, decimals },
+    (val) => (id.startsWith('xcm') ? removeHelixFlag(val, decimals) : val),
+    (val) => prettyNumber(val, { ignoreZeroDecimal: true })
+  );
 }
 
 export function getFeeAmountFromHelixRecord(record: HelixHistoryRecord) {
@@ -61,11 +65,13 @@ export function getFeeAmountFromHelixRecord(record: HelixHistoryRecord) {
 }
 
 export function getSentAmountFromHelixRecord(record: HelixHistoryRecord) {
-  const { fromChain, sendToken, sendAmount } = record;
+  const { fromChain, sendToken, sendAmount, id } = record;
   const fromToken = getOriginChainConfig(fromChain)!.tokens.find((item) => item.symbol === sendToken);
 
-  return fromWei({ value: sendAmount, decimals: fromToken?.decimals }, (val) =>
-    prettyNumber(val, { ignoreZeroDecimal: true })
+  return fromWei(
+    { value: sendAmount, decimals: fromToken?.decimals },
+    (val) => (id.startsWith('xcm') ? removeHelixFlag(val, fromToken?.decimals) : val),
+    (val) => prettyNumber(val, { ignoreZeroDecimal: true })
   );
 }
 

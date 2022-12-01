@@ -1,5 +1,5 @@
 import { formatFixed as fw, parseFixed as tw } from '@ethersproject/bignumber';
-import { BN } from '@polkadot/util';
+import { BN, BN_ONE } from '@polkadot/util';
 import Bignumber from 'bignumber.js';
 import isEmpty from 'lodash/isEmpty';
 import isNull from 'lodash/isNull';
@@ -166,4 +166,14 @@ export function addHelixFlag(amount: string | number | BN, decimals = 18): strin
 
     return fromWei({ value: result + HELIX_XCM_FLAG, decimals });
   }
+}
+
+export function removeHelixFlag(amount: string | number | BN, decimals = 18): string {
+  const len = String(HELIX_XCM_FLAG).length;
+  const num = toWei({ value: amount, decimals }).slice(0, -len);
+  const tail = num[num.length - 1];
+  const flag = 4;
+  const rounded = Number(tail) > flag ? new BN(num).add(BN_ONE) : new BN(num.slice(0, -1) + '0');
+
+  return fromWei({ value: rounded.toString() + new Array(len).fill('0').join(''), decimals });
 }
