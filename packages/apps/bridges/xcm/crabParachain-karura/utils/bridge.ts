@@ -131,7 +131,7 @@ export class CrabParachainKaruraBridge extends Bridge<
     direction: CrossChainDirection<CrossToken<ParachainChainConfig>, CrossToken<ParachainChainConfig>>
   ): Promise<TokenWithAmount> {
     const { from, to } = direction;
-    const token = omit(direction.from, ['amount', 'meta']);
+    const token = omit(to, ['amount', 'meta']);
     const amount = this.isIssue(from.host, to.host) ? new BN('92696000000000000') : new BN('4000000000000000000');
 
     return { ...token, amount } as TokenWithAmount;

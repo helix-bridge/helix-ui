@@ -108,7 +108,7 @@ export class KaruraKhalaBridge extends Bridge<KaruraKhalaBridgeConfig, ChainConf
     direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
   ): Promise<TokenWithAmount | null> {
     const { from, to } = direction;
-    const token = omit(direction.from, ['amount', 'meta']);
+    const token = omit(to, ['amount', 'meta']);
     const amount = this.isIssue(from.host, to.host) ? new BN('8000000000') : new BN('9269600000');
 
     return { ...token, amount } as TokenWithAmount;

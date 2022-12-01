@@ -82,8 +82,8 @@ export class KhalaMoonriverBridge extends Bridge<KhalaMoonriverBridgeConfig, Cha
     direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
   ): Promise<TokenWithAmount | null> {
     const { from, to } = direction;
-    const token = omit(direction.from, ['amount', 'meta']);
-    const amount = this.isIssue(from.host, to.host) ? new BN('92694000000') : new BN('92694000000');
+    const token = omit(to, ['amount', 'meta']);
+    const amount = this.isIssue(from.host, to.host) ? new BN('186546282132') : new BN('92694000000');
 
     return { ...token, amount } as TokenWithAmount;
   }

@@ -87,7 +87,7 @@ export class MoonriverKaruraBridge extends Bridge<
     direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
   ): Promise<TokenWithAmount | null> {
     const { from, to } = direction;
-    const token = omit(direction.from, ['amount', 'meta']);
+    const token = omit(to, ['amount', 'meta']);
     const amount = this.isIssue(from.host, to.host) ? new BN('92696000000000') : new BN('8000000000000');
 
     return { ...token, amount } as TokenWithAmount;

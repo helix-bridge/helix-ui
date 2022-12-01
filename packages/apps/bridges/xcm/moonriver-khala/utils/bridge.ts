@@ -102,7 +102,7 @@ export class MoonriverKhalaBridge extends Bridge<
     direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
   ): Promise<TokenWithAmount | null> {
     const { from, to } = direction;
-    const token = omit(direction.from, ['amount', 'meta']);
+    const token = omit(to, ['amount', 'meta']);
     const amount = this.isIssue(from.host, to.host) ? new BN('266666666666400') : new BN('80000000000000');
 
     return { ...token, amount } as TokenWithAmount;

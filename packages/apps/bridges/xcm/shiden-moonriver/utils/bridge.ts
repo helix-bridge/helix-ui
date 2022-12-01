@@ -104,7 +104,7 @@ export class ShidenMoonriverBridge extends Bridge<
     direction: CrossChainDirection<CrossToken<ParachainChainConfig>, CrossToken<ParachainChainConfig>>
   ): Promise<TokenWithAmount | null> {
     const { from, to } = direction;
-    const token = omit(direction.from, ['amount', 'meta']);
+    const token = omit(to, ['amount', 'meta']);
     const amount = this.isIssue(from.host, to.host) ? new BN('65168231790366830') : new BN('4635101624671734');
 
     return { ...token, amount } as TokenWithAmount;

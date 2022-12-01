@@ -120,7 +120,7 @@ export class KaruraShidenBridge extends Bridge<KaruraShidenBridgeConfig, ChainCo
     direction: CrossChainDirection<CrossToken<ChainConfig>, CrossToken<ChainConfig>>
   ): Promise<TokenWithAmount | null> {
     const { from, to } = direction;
-    const token = omit(direction.from, ['amount', 'meta']);
+    const token = omit(to, ['amount', 'meta']);
 
     const feeMap: { [key: string]: string } = this.isIssue(from.host, to.host)
       ? { KAR: '3880000000', KUSD: '2080000000' }

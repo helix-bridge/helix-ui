@@ -121,7 +121,7 @@ export class ShidenKhalaBridge extends Bridge<ShidenKhalaBridgeConfig, Parachain
     direction: CrossChainDirection<CrossToken<ParachainChainConfig>, CrossToken<ParachainChainConfig>>
   ): Promise<TokenWithAmount | null> {
     const { from, to } = direction;
-    const token = omit(direction.from, ['amount', 'meta']);
+    const token = omit(to, ['amount', 'meta']);
     const api = entrance.polkadot.getInstance(to.meta.provider.wss);
     const INSTRUCTION_COUNT = new BN('4');
     const WEIGHT_PER_SECOND = new BN('1000000000000');
