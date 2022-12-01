@@ -9,7 +9,6 @@ import {
   Tx,
 } from 'shared/model';
 import { convertToDvm } from 'shared/utils/helper/address';
-import { toWei } from 'shared/utils/helper/balance';
 import { sendTransactionFromContract } from 'shared/utils/tx';
 import abi from '../../../../config/abi/moonriver.json';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
@@ -32,6 +31,7 @@ export class ShidenMoonriverBridge extends Bridge<
       sender,
       recipient,
     } = payload;
+    const amount = this.wrapXCMAmount(departure);
     // [hex paraId, AccountId32 Network Any]
     const destination = [
       1,
@@ -41,7 +41,7 @@ export class ShidenMoonriverBridge extends Bridge<
 
     return sendTransactionFromContract(
       this.config.contracts!.issuing,
-      (contract) => contract.transfer(departure.address, toWei(departure), destination, weight, { from: sender }),
+      (contract) => contract.transfer(departure.address, amount, destination, weight, { from: sender }),
       abi
     );
   }

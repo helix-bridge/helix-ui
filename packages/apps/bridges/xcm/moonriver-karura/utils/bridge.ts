@@ -12,7 +12,6 @@ import {
 } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
-import { toWei } from 'shared/utils/helper/balance';
 import { sendTransactionFromContract, signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { IssuingPayload, MoonriverKaruraBridgeConfig, RedeemPayload } from '../model';
@@ -30,6 +29,7 @@ export class MoonriverKaruraBridge extends Bridge<
       sender,
       recipient,
     } = payload;
+    const amount = this.wrapXCMAmount(departure);
     // [hex paraId, AccountId32 Network Any]
     const destination = [
       1,
@@ -39,7 +39,7 @@ export class MoonriverKaruraBridge extends Bridge<
 
     return sendTransactionFromContract(
       this.config.contracts!.backing,
-      (contract) => contract.transfer(departure.address, toWei(departure), destination, weight, { from: sender }),
+      (contract) => contract.transfer(departure.address, amount, destination, weight, { from: sender }),
       abi
     );
   }
@@ -51,6 +51,7 @@ export class MoonriverKaruraBridge extends Bridge<
       recipient,
       wallet,
     } = payload;
+    const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const currencyId = api.createType('AcalaPrimitivesCurrencyCurrencyId', {
@@ -77,7 +78,7 @@ export class MoonriverKaruraBridge extends Bridge<
     });
 
     const destWeight = 5_000_000_000;
-    const extrinsic = api.tx.xTokens.transfer(currencyId, toWei(departure), dest, destWeight);
+    const extrinsic = api.tx.xTokens.transfer(currencyId, amount, dest, destWeight);
 
     return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }

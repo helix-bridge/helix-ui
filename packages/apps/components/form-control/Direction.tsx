@@ -19,7 +19,7 @@ import {
   HashInfo,
   TokenWithBridgesInfo,
 } from 'shared/model';
-import { addHelixFlag, fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
+import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { readStorage, updateStorage } from 'shared/utils/helper/storage';
 import { getBridge, isCBridge, isXCM } from 'utils/bridge';
 import { bridgeFactory } from '../../bridges/bridges';
@@ -178,15 +178,11 @@ export function Direction({ value, onChange, balances, onRefresh, fee, isBalance
                 const config = getBridge(data);
                 const bridge = bridgeFactory(config);
                 const mini = bridge.getMinimumFeeTokenHolding && bridge.getMinimumFeeTokenHolding(data);
-                let amount = calcMax(
+                const amount = calcMax(
                   { ...from, amount: iBalance },
                   isCBridge(data) || isXCM(data) ? null : fee,
                   mini ?? undefined
                 );
-
-                if (isXCM(data)) {
-                  amount = addHelixFlag(amount);
-                }
 
                 if (amount !== from.amount) {
                   const toAmount = calcToAmount({ ...from, amount: new BN(toWei({ ...from, amount })) }, fee, data);

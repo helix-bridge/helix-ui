@@ -26,6 +26,11 @@ export const karuraConfig: ParachainChainConfig = {
           bridge: 'karura-moonriver',
           partner: { name: 'moonriver', role: 'issuing', symbol: 'xcKAR' },
         },
+        {
+          category: 'XCM',
+          bridge: 'karura-khala',
+          partner: { name: 'khala', role: 'issuing', symbol: 'KAR' },
+        },
       ],
       type: 'native',
       host: 'karura',

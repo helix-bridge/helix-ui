@@ -30,7 +30,7 @@ import {
 } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
-import { fromWei, toWei } from 'shared/utils/helper/balance';
+import { addHelixFlag, fromWei, toWei } from 'shared/utils/helper/balance';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
 import { AllowancePayload } from '../model/allowance';
 import { CrossChainPayload } from '../model/tx';
@@ -232,6 +232,12 @@ export abstract class Bridge<
     return res.substring(10, id.length + 1);
   }
 
+  protected wrapXCMAmount(token: CrossToken<ChainConfig>): string {
+    const amount = addHelixFlag(token.amount, token.decimals);
+
+    return toWei({ value: amount, decimals: token.decimals });
+  }
+
   protected xcmReserveTransferAssets(
     payload: CrossChainPayload<
       Bridge<BridgeConfig, XCMChainConfig, XCMChainConfig>,
@@ -247,6 +253,7 @@ export abstract class Bridge<
       recipient,
       wallet,
     } = payload;
+    const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const dest = api.createType('XcmVersionedMultiLocation', {
@@ -308,7 +315,7 @@ export abstract class Bridge<
             ),
           }),
           fun: api.createType('XcmV1MultiassetFungibility', {
-            Fungible: api.createType('Compact<u128>', toWei(departure)),
+            Fungible: api.createType('Compact<u128>', amount),
           }),
         }),
       ],

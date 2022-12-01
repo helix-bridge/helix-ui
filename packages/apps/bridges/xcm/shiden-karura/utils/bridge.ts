@@ -4,7 +4,6 @@ import type { Observable } from 'rxjs';
 import { ChainConfig, CrossChainDirection, CrossToken, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
-import { toWei } from 'shared/utils/helper/balance';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { IssuingPayload, RedeemPayload, ShidenKaruraBridgeConfig } from '../model';
@@ -23,6 +22,7 @@ export class ShidenKaruraBridge extends Bridge<ShidenKaruraBridgeConfig, ChainCo
       recipient,
       wallet,
     } = payload;
+    const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const currencyId = api.createType('AcalaPrimitivesCurrencyCurrencyId', {
@@ -49,7 +49,7 @@ export class ShidenKaruraBridge extends Bridge<ShidenKaruraBridgeConfig, ChainCo
     });
 
     const destWeight = 5_000_000_000;
-    const extrinsic = api.tx.xTokens.transfer(currencyId, toWei(departure), dest, destWeight);
+    const extrinsic = api.tx.xTokens.transfer(currencyId, amount, dest, destWeight);
 
     return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }

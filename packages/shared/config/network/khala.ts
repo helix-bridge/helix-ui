@@ -49,6 +49,22 @@ export const khalaConfig: ParachainChainConfig = {
       symbol: 'SDN',
       address: '12', // assets.metadata
     },
+    {
+      name: 'KAR',
+      decimals: 12,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'karura-khala',
+          partner: { name: 'karura', role: 'backing', symbol: 'KAR' },
+        },
+      ],
+      type: 'mapping',
+      host: 'khala',
+      logo: 'token-karura.svg',
+      symbol: 'KAR',
+      address: '1',
+    },
   ],
   specVersion: 1192,
   ss58Prefix: 30,

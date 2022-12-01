@@ -4,7 +4,6 @@ import type { Observable } from 'rxjs';
 import { ChainConfig, CrossChainDirection, CrossToken, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
-import { toWei } from 'shared/utils/helper/balance';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { IssuingPayload, KaruraShidenBridgeConfig, RedeemPayload } from '../model';
@@ -19,6 +18,7 @@ export class KaruraShidenBridge extends Bridge<KaruraShidenBridgeConfig, ChainCo
       recipient,
       wallet,
     } = payload;
+    const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const currencyId = api.createType('AcalaPrimitivesCurrencyCurrencyId', {
@@ -45,7 +45,7 @@ export class KaruraShidenBridge extends Bridge<KaruraShidenBridgeConfig, ChainCo
     });
 
     const destWeight = 5_000_000_000;
-    const extrinsic = api.tx.xTokens.transfer(currencyId, toWei(departure), dest, destWeight);
+    const extrinsic = api.tx.xTokens.transfer(currencyId, amount, dest, destWeight);
 
     return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
@@ -57,6 +57,7 @@ export class KaruraShidenBridge extends Bridge<KaruraShidenBridgeConfig, ChainCo
       recipient,
       wallet,
     } = payload;
+    const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const dest = api.createType('XcmVersionedMultiLocation', {
@@ -103,7 +104,7 @@ export class KaruraShidenBridge extends Bridge<KaruraShidenBridgeConfig, ChainCo
             }),
           }),
           fun: api.createType('XcmV1MultiassetFungibility', {
-            Fungible: api.createType('Compact<u128>', toWei(departure)),
+            Fungible: api.createType('Compact<u128>', amount),
           }),
         }),
       ],
