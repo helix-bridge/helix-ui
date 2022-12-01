@@ -4,6 +4,7 @@ import type { Observable } from 'rxjs';
 import { ChainConfig, CrossChainDirection, CrossToken, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
+import { toWei } from 'shared/utils/helper/balance';
 import { sendTransactionFromContract, signAndSendExtrinsic } from 'shared/utils/tx';
 import abi from '../../../../config/abi/moonriver.json';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
@@ -45,7 +46,7 @@ export class KaruraMoonriverBridge extends Bridge<KaruraMoonriverBridgeConfig, C
     });
 
     const destWeight = 5_000_000_000;
-    const extrinsic = api.tx.xTokens.transfer(currencyId, departure.amount, dest, destWeight);
+    const extrinsic = api.tx.xTokens.transfer(currencyId, toWei(departure), dest, destWeight);
 
     return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
@@ -65,7 +66,7 @@ export class KaruraMoonriverBridge extends Bridge<KaruraMoonriverBridgeConfig, C
 
     return sendTransactionFromContract(
       this.config.contracts!.issuing,
-      (contract) => contract.transfer(departure.address, departure.amount, destination, weight, { from: sender }),
+      (contract) => contract.transfer(departure.address, toWei(departure), destination, weight, { from: sender }),
       abi
     );
   }

@@ -308,7 +308,7 @@ export abstract class Bridge<
             ),
           }),
           fun: api.createType('XcmV1MultiassetFungibility', {
-            Fungible: api.createType('Compact<u128>', departure.amount),
+            Fungible: api.createType('Compact<u128>', toWei(departure)),
           }),
         }),
       ],

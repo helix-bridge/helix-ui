@@ -4,6 +4,7 @@ import type { Observable } from 'rxjs';
 import { ChainConfig, CrossChainDirection, CrossToken, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
+import { toWei } from 'shared/utils/helper/balance';
 import { sendTransactionFromContract, signAndSendExtrinsic } from 'shared/utils/tx';
 import abi from '../../../../config/abi/moonriver.json';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
@@ -27,7 +28,7 @@ export class MoonriverShidenBridge extends Bridge<MoonriverShidenBridgeConfig, C
 
     return sendTransactionFromContract(
       this.config.contracts!.backing,
-      (contract) => contract.transfer(departure.address, departure.amount, destination, weight, { from: sender }),
+      (contract) => contract.transfer(departure.address, toWei(departure), destination, weight, { from: sender }),
       abi
     );
   }
@@ -85,7 +86,7 @@ export class MoonriverShidenBridge extends Bridge<MoonriverShidenBridgeConfig, C
             }),
           }),
           fun: api.createType('XcmV1MultiassetFungibility', {
-            Fungible: api.createType('Compact<u128>', departure.amount),
+            Fungible: api.createType('Compact<u128>', toWei(departure)),
           }),
         }),
       ],

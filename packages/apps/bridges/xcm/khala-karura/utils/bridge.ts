@@ -4,6 +4,7 @@ import type { Observable } from 'rxjs';
 import { ChainConfig, CrossChainDirection, CrossToken, ParachainChainConfig, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
+import { toWei } from 'shared/utils/helper/balance';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { IssuingPayload, KhalaKaruraBridgeConfig, RedeemPayload } from '../model';
@@ -28,7 +29,7 @@ export class KhalaKaruraBridge extends Bridge<KhalaKaruraBridgeConfig, Parachain
         }),
       }),
       fun: api.createType('XcmV1MultiassetFungibility', {
-        Fungible: api.createType('Compact<u128>', departure.amount),
+        Fungible: api.createType('Compact<u128>', toWei(departure)),
       }),
     });
 
@@ -88,7 +89,7 @@ export class KhalaKaruraBridge extends Bridge<KhalaKaruraBridgeConfig, Parachain
     });
 
     const destWeight = 5_000_000_000;
-    const extrinsic = api.tx.xTokens.transfer(currencyId, departure.amount, dest, destWeight);
+    const extrinsic = api.tx.xTokens.transfer(currencyId, toWei(departure), dest, destWeight);
 
     return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }

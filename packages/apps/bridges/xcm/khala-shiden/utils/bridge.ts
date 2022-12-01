@@ -4,6 +4,7 @@ import type { Observable } from 'rxjs';
 import { CrossChainDirection, CrossToken, ParachainChainConfig, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
+import { toWei } from 'shared/utils/helper/balance';
 import { signAndSendExtrinsic } from 'shared/utils/tx/polkadot';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { IssuingPayload, KhalaShidenBridgeConfig, RedeemPayload } from '../model';
@@ -28,7 +29,7 @@ export class KhalaShidenBridge extends Bridge<KhalaShidenBridgeConfig, Parachain
         }),
       }),
       fun: api.createType('XcmV1MultiassetFungibility', {
-        Fungible: api.createType('Compact<u128>', departure.amount),
+        Fungible: api.createType('Compact<u128>', toWei(departure)),
       }),
     });
 
