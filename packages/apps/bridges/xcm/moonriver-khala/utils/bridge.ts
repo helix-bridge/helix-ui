@@ -59,9 +59,14 @@ export class MoonriverKhalaBridge extends Bridge<
         Concrete: api.createType('XcmV1MultiLocation', {
           parents: 1,
           interior: api.createType('XcmV1MultilocationJunctions', {
-            X1: api.createType('XcmV1Junction', {
-              Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
-            }),
+            X2: [
+              api.createType('XcmV1Junction', {
+                Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
+              }),
+              api.createType('XcmV1Junction', {
+                PalletInstance: departure.extra!.palletInstance,
+              }),
+            ],
           }),
         }),
       }),

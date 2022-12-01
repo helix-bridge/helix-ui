@@ -26,6 +26,11 @@ export const khalaConfig: ParachainChainConfig = {
           bridge: 'khala-karura',
           partner: { name: 'karura', role: 'issuing', symbol: 'PHA' },
         },
+        {
+          category: 'XCM',
+          bridge: 'khala-moonriver',
+          partner: { name: 'moonriver', role: 'issuing', symbol: 'xcPHA' },
+        },
       ],
       type: 'native',
       host: 'khala',
@@ -64,6 +69,7 @@ export const khalaConfig: ParachainChainConfig = {
       logo: 'token-karura.svg',
       symbol: 'KAR',
       address: '1',
+      extra: { generalKey: '0x0080' },
     },
     {
       name: 'MOVR',
@@ -80,6 +86,7 @@ export const khalaConfig: ParachainChainConfig = {
       logo: 'token-movr.png',
       symbol: 'MOVR',
       address: '6',
+      extra: { palletInstance: 10 },
     },
   ],
   specVersion: 1192,

@@ -112,6 +112,22 @@ export const moonriverConfig: ParachainEthereumCompatibleChainConfig = {
       symbol: 'KUSD',
       address: '0xFfFffFFfa1B026a00FbAA67c86D5d1d5BF8D8228',
     },
+    {
+      name: 'PHA',
+      decimals: 12,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'khala-moonriver',
+          partner: { name: 'khala', role: 'backing', symbol: 'PHA' },
+        },
+      ],
+      type: 'mapping',
+      host: 'moonriver',
+      logo: 'token-pha.png',
+      symbol: 'xcPHA',
+      address: '0xffFfFFff8E6b63d9e447B6d4C45BDA8AF9dc9603',
+    },
   ],
   ss58Prefix: 8,
   specVersion: 1901,

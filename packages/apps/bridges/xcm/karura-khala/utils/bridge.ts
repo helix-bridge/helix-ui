@@ -65,9 +65,14 @@ export class KaruraKhalaBridge extends Bridge<KaruraKhalaBridgeConfig, ChainConf
         Concrete: api.createType('XcmV1MultiLocation', {
           parents: 1,
           interior: api.createType('XcmV1MultilocationJunctions', {
-            X1: api.createType('XcmV1Junction', {
-              Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
-            }),
+            X2: [
+              api.createType('XcmV1Junction', {
+                Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
+              }),
+              api.createType('XcmV1Junction', {
+                GeneralKey: departure.extra!.generalKey,
+              }),
+            ],
           }),
         }),
       }),

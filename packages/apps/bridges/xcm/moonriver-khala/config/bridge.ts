@@ -4,7 +4,7 @@ import { MoonriverKhalaBridgeConfig } from '../model';
 
 const moonriverKhalaConfig: MoonriverKhalaBridgeConfig = {
   contracts: {
-    backing: '',
+    backing: '0x0000000000000000000000000000000000000804',
     issuing: '',
   },
 };

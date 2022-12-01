@@ -15,6 +15,7 @@ import { KaruraKhalaBridge } from './xcm/karura-khala/utils';
 import { KaruraMoonriverBridge } from './xcm/karura-moonriver/utils';
 import { KaruraShidenBridge } from './xcm/karura-shiden/utils';
 import { KhalaKaruraBridge } from './xcm/khala-karura/utils';
+import { KhalaMoonriverBridge } from './xcm/khala-moonriver/utils';
 import { KhalaShidenBridge } from './xcm/khala-shiden/utils';
 import { MoonriverKaruraBridge } from './xcm/moonriver-karura/utils';
 import { MoonriverKhalaBridge } from './xcm/moonriver-khala/utils';
@@ -35,6 +36,7 @@ export const bridgeConstructors = [
   KaruraShidenBridge,
   KaruraKhalaBridge,
   KhalaKaruraBridge,
+  KhalaMoonriverBridge,
   KhalaShidenBridge,
   MoonriverShidenBridge,
   MoonriverKaruraBridge,

@@ -50,7 +50,7 @@ export class KhalaKaruraBridge extends Bridge<KhalaKaruraBridgeConfig, Parachain
       }),
     });
 
-    const destWeight = 6e9;
+    const destWeight = 5e9;
     const extrinsic = api.tx.xTransfer.transfer(asset, dest, destWeight);
 
     return signAndSendExtrinsic(api, sender, extrinsic, wallet);
