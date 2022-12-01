@@ -45,6 +45,7 @@
   "Ethereum - Darwinia Record": "Ethereum - Darwinia Record",
   "Exceed the authorized amount, click to authorize more amount, or reduce the transfer amount": "Exceed the authorized amount, click to authorize more amount, or reduce the transfer amount",
   "Explorer": "Explorer",
+  "Failed": "Failed",
   "Failed to get token information by symbol {{recvToken}} on {{toChain}}": "Failed to get token information by symbol {{recvToken}} on {{toChain}}",
   "Fee": "Fee",
   "Fetch own accounts": "Fetch own accounts",

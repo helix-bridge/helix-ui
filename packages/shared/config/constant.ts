@@ -33,6 +33,7 @@ export enum RecordStatus {
   success,
   refunded,
   pendingToConfirmRefund,
+  failed,
 }
 
 export enum CBridgeRecordStatus {

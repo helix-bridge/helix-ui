@@ -33,7 +33,7 @@ const CrossChainStatusColor = [
   '#52c41a',
   '#EC9D00',
   '#00AA75',
-  '#EC9D01',
+  '#FF4D4F',
   '#00b3fc',
   '#00b3fb',
   '#00b3fa',
@@ -65,7 +65,7 @@ export function CrossChainState({
       className={`flex items-center gap-1 px-2 rounded-2xl max-w-max min-w-min h-6 text-gray-200 ${className}`}
     >
       <Icon />
-      <span className="h-full">{t(statusDes)}</span>
+      <span className="capitalize">{t(statusDes)}</span>
       {children}
     </div>
   );
