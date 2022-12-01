@@ -1,7 +1,6 @@
 import { BN, numberToHex } from '@polkadot/util';
 import omit from 'lodash/omit';
 import type { Observable } from 'rxjs';
-import { abi } from 'shared/config/abi';
 import {
   ChainConfig,
   CrossChainDirection,
@@ -15,6 +14,7 @@ import { convertToDvm } from 'shared/utils/helper/address';
 import { sendTransactionFromContract, signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { IssuingPayload, MoonriverKaruraBridgeConfig, RedeemPayload } from '../model';
+import abi from '../../../../config/abi/moonriver.json';
 
 export class MoonriverKaruraBridge extends Bridge<
   MoonriverKaruraBridgeConfig,
