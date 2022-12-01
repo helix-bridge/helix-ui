@@ -1,5 +1,4 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import { isEthereumAddress } from '@polkadot/util-crypto';
 import { isAddress } from 'ethers/lib/utils';
 import isBoolean from 'lodash/isBoolean';
 import isString from 'lodash/isString';
@@ -20,18 +19,12 @@ import {
   HelixHistoryRecord,
   Network,
   NullableFields,
-  ParachainChainConfig,
-  ParachainEthereumCompatibleChainConfig,
-  PolkadotExtension,
   Token,
   TokenInfoWithMeta,
   TokenWithBridgesInfo,
   Tx,
 } from 'shared/model';
-import { entrance } from 'shared/utils/connection';
-import { convertToDvm } from 'shared/utils/helper/address';
 import { addHelixFlag, fromWei, toWei } from 'shared/utils/helper/balance';
-import { signAndSendExtrinsic } from 'shared/utils/tx';
 import { AllowancePayload } from '../model/allowance';
 import { CrossChainPayload } from '../model/tx';
 import { isCBridge, isXCM } from '../utils';
@@ -53,8 +46,6 @@ interface TxValidation {
 export type PayloadPatchFn = (
   value: CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>
 ) => CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>> | null;
-
-type XCMChainConfig = ParachainChainConfig | ParachainEthereumCompatibleChainConfig;
 
 export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Target extends ChainConfig>
   extends BridgeBase<B, Origin, Target> {
@@ -236,94 +227,5 @@ export abstract class Bridge<
     const amount = addHelixFlag(token.amount, token.decimals);
 
     return toWei({ value: amount, decimals: token.decimals });
-  }
-
-  protected xcmReserveTransferAssets(
-    payload: CrossChainPayload<
-      Bridge<BridgeConfig, XCMChainConfig, XCMChainConfig>,
-      CrossToken<XCMChainConfig>,
-      CrossToken<XCMChainConfig>,
-      PolkadotExtension
-    >,
-    method = 'reserveTransferAssets'
-  ): Observable<Tx> {
-    const {
-      direction: { from: departure, to: arrival },
-      sender,
-      recipient,
-      wallet,
-    } = payload;
-    const amount = this.wrapXCMAmount(departure);
-    const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
-
-    const dest = api.createType('XcmVersionedMultiLocation', {
-      V1: api.createType('XcmV1MultiLocation', {
-        parents: 1,
-        interior: api.createType('XcmV1MultilocationJunctions', {
-          X1: api.createType('XcmV1Junction', {
-            Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
-          }),
-        }),
-      }),
-    });
-
-    const beneficiary = api.createType('XcmVersionedMultiLocation', {
-      V1: api.createType('XcmV1MultiLocation', {
-        parents: 0,
-        interior: api.createType('XcmV1MultilocationJunctions', {
-          X1: api.createType(
-            'XcmV1Junction',
-            isEthereumAddress(recipient)
-              ? {
-                  // for ethereum compatible parachain (e.g. moonriver), use this
-                  AccountKey20: {
-                    network: api.createType('NetworkId', 'Any'),
-                    key: recipient,
-                  },
-                }
-              : {
-                  // for common parachain, use this
-                  AccountId32: {
-                    network: api.createType('NetworkId', 'Any'),
-                    id: convertToDvm(recipient),
-                  },
-                }
-          ),
-        }),
-      }),
-    });
-
-    const assets = api.createType('XcmVersionedMultiAssets', {
-      V1: [
-        api.createType('XcmV1MultiAsset', {
-          id: api.createType('XcmV1MultiassetAssetId', {
-            Concrete: api.createType(
-              'XcmV1MultiLocation',
-              this.isIssue(departure.host, arrival.host)
-                ? {
-                    parents: 0,
-                    interior: api.createType('XcmV1MultilocationJunctions', 'Here'),
-                  }
-                : {
-                    parents: 1,
-                    interior: api.createType('XcmV1MultilocationJunctions', {
-                      X1: api.createType('XcmV1Junction', {
-                        Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
-                      }),
-                    }),
-                  }
-            ),
-          }),
-          fun: api.createType('XcmV1MultiassetFungibility', {
-            Fungible: api.createType('Compact<u128>', amount),
-          }),
-        }),
-      ],
-    });
-
-    const feeAssetItem = 0;
-    const extrinsic = api.tx.polkadotXcm[method](dest, beneficiary, assets, feeAssetItem);
-
-    return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
 }

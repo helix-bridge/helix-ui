@@ -12,7 +12,60 @@ export class ShidenKhalaBridge extends Bridge<ShidenKhalaBridgeConfig, Parachain
   static readonly alias: string = 'ShidenKhalaBridge';
 
   back(payload: IssuingPayload): Observable<Tx> {
-    return this.xcmReserveTransferAssets(payload);
+    const {
+      direction: { from: departure, to: arrival },
+      sender,
+      recipient,
+      wallet,
+    } = payload;
+    const amount = this.wrapXCMAmount(departure);
+    const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
+
+    const dest = api.createType('XcmVersionedMultiLocation', {
+      V1: api.createType('XcmV1MultiLocation', {
+        parents: 1,
+        interior: api.createType('XcmV1MultilocationJunctions', {
+          X1: api.createType('XcmV1Junction', {
+            Parachain: api.createType('Compact<u32>', arrival.meta.paraId),
+          }),
+        }),
+      }),
+    });
+
+    const beneficiary = api.createType('XcmVersionedMultiLocation', {
+      V1: api.createType('XcmV1MultiLocation', {
+        parents: 0,
+        interior: api.createType('XcmV1MultilocationJunctions', {
+          X1: api.createType('XcmV1Junction', {
+            AccountId32: {
+              network: api.createType('NetworkId', 'Any'),
+              id: convertToDvm(recipient),
+            },
+          }),
+        }),
+      }),
+    });
+
+    const assets = api.createType('XcmVersionedMultiAssets', {
+      V1: [
+        api.createType('XcmV1MultiAsset', {
+          id: api.createType('XcmV1MultiassetAssetId', {
+            Concrete: api.createType('XcmV1MultiLocation', {
+              parents: 0,
+              interior: api.createType('XcmV1MultilocationJunctions', 'Here'),
+            }),
+          }),
+          fun: api.createType('XcmV1MultiassetFungibility', {
+            Fungible: api.createType('Compact<u128>', amount),
+          }),
+        }),
+      ],
+    });
+
+    const feeAssetItem = 0;
+    const extrinsic = api.tx.polkadotXcm.reserveTransferAssets(dest, beneficiary, assets, feeAssetItem);
+
+    return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
 
   burn(payload: RedeemPayload): Observable<Tx> {
