@@ -11,7 +11,6 @@ import {
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
 import { sendTransactionFromContract, signAndSendExtrinsic } from 'shared/utils/tx';
-import { toWei } from 'shared/utils/helper/balance';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import abi from '../../../../config/abi/moonriver.json';
 import { CrabParachainMoonriverBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
@@ -90,6 +89,7 @@ export class CrabParachainMoonriverBridge extends Bridge<
       sender,
       recipient,
     } = payload;
+    const amount = this.wrapXCMAmount(departure);
     const destination = [
       1,
       [`0x000000${numberToHex(arrival.meta.paraId).slice(2)}`, `0x01${convertToDvm(recipient).slice(2)}00`],
@@ -98,7 +98,7 @@ export class CrabParachainMoonriverBridge extends Bridge<
 
     return sendTransactionFromContract(
       this.config.contracts!.issuing,
-      (contract) => contract.transfer(departure.address, toWei(departure), destination, weight, { from: sender }),
+      (contract) => contract.transfer(departure.address, amount, destination, weight, { from: sender }),
       abi
     );
   }
