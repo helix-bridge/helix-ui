@@ -216,6 +216,8 @@ export default function History() {
             )}
 
             {result === RecordStatus.refunded && <div className="text-helix-yellow">{t('Refunded')}</div>}
+
+            {result === RecordStatus.failed && <div className="text-helix-red">{t('Failed')}</div>}
           </div>
         );
 

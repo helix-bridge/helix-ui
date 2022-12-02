@@ -46,6 +46,18 @@ import {
   crabDVMCrabParachain,
   pangolinDVMPangolinParachain,
 } from '../bridges/helix/substrateDVM-substrateParachain/config/bridge';
+import { shidenKhala } from '../bridges/xcm/shiden-khala/config';
+import { khalaShiden } from '../bridges/xcm/khala-shiden/config';
+import { shidenKarura } from '../bridges/xcm/shiden-karura/config';
+import { karuraShiden } from '../bridges/xcm/karura-shiden/config';
+import { shidenMoonriver } from '../bridges/xcm/shiden-moonriver/config';
+import { moonriverShiden } from '../bridges/xcm/moonriver-shiden/config';
+import { moonriverKarura } from '../bridges/xcm/moonriver-karura/config';
+import { karuraMoonriver } from '../bridges/xcm/karura-moonriver/config';
+import { khalaKarura } from '../bridges/xcm/khala-karura/config';
+import { karuraKhala } from '../bridges/xcm/karura-khala/config';
+import { moonriverKhala } from '../bridges/xcm/moonriver-khala/config';
+import { khalaMoonriver } from '../bridges/xcm/khala-moonriver/config';
 
 const formalBridges = [
   arbitrumAstar,
@@ -85,8 +97,20 @@ const formalBridges = [
   ethereumOptimism,
   ethereumPolygon,
   hecoPolygon,
+  karuraMoonriver,
+  karuraShiden,
+  karuraKhala,
+  khalaKarura,
+  khalaMoonriver,
+  khalaShiden,
+  moonriverKarura,
+  moonriverKhala,
+  moonriverShiden,
   polygonAstar,
   polygonOptimism,
+  shidenKarura,
+  shidenKhala,
+  shidenMoonriver,
 ];
 
 const testBridges = [

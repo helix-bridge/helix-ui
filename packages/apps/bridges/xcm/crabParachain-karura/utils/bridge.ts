@@ -4,8 +4,6 @@ import { Observable } from 'rxjs';
 import { CrossChainDirection, CrossToken, ParachainChainConfig, Tx } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
-import { toWei } from 'shared/utils/helper/balance';
-import { isRing } from 'shared/utils/helper/validator';
 import { signAndSendExtrinsic } from 'shared/utils/tx';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { CrabParachainKaruraBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
@@ -17,12 +15,6 @@ export class CrabParachainKaruraBridge extends Bridge<
 > {
   static readonly alias = 'CrabParachainKaruraBridge';
 
-  private patchAmount(departure: CrossToken<ParachainChainConfig>) {
-    const pos = -3;
-    const timestamp = Date.now().toString().slice(0, pos);
-    return toWei(departure).slice(0, -timestamp.length) + timestamp;
-  }
-
   back(payload: IssuingPayload): Observable<Tx> {
     const {
       direction: { from: departure, to: arrival },
@@ -30,9 +22,8 @@ export class CrabParachainKaruraBridge extends Bridge<
       recipient,
       wallet,
     } = payload;
-    const amount = this.patchAmount(departure);
+    const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
-    const palletInstance = 5;
 
     const dest = api.createType('XcmVersionedMultiLocation', {
       V1: api.createType('XcmV1MultiLocation', {
@@ -67,7 +58,7 @@ export class CrabParachainKaruraBridge extends Bridge<
               parents: 0,
               interior: api.createType('XcmV1MultilocationJunctions', {
                 X1: api.createType('XcmV1Junction', {
-                  PalletInstance: palletInstance,
+                  PalletInstance: departure.extra!.palletInstance,
                 }),
               }),
             }),
@@ -92,11 +83,11 @@ export class CrabParachainKaruraBridge extends Bridge<
       recipient,
       wallet,
     } = payload;
-    const amount = this.patchAmount(departure);
+    const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
 
     const currencyId = api.createType('AcalaPrimitivesCurrencyCurrencyId', {
-      ForeignAsset: 13,
+      ForeignAsset: departure.address,
     });
 
     const dest = api.createType('XcmVersionedMultiLocation', {
@@ -124,16 +115,25 @@ export class CrabParachainKaruraBridge extends Bridge<
     return signAndSendExtrinsic(api, sender, extrinsic, wallet);
   }
 
+  /**
+   * Querying from target chain
+   *
+   * native token: Fee = UnitWeightCost * instruction count * BASE_WEIGHT_FEE
+   * foreign token fee: Fee = UnitWeightCost * instruction count * UnitWeightPerSecond/WEIGHT_PER_SECOND
+   *
+   * UnitWeightCost: from rust code of each project
+   * BASE_WEIGHT_FEE: from rust code of each project
+   * WEIGHT_PER_SECOND: 1000000000000
+   * instruction count: 4;
+   * UnitWeightPerSecond: query from api
+   */
   async getFee(
     direction: CrossChainDirection<CrossToken<ParachainChainConfig>, CrossToken<ParachainChainConfig>>
   ): Promise<TokenWithAmount> {
     const { from, to } = direction;
-    const token = omit(direction.from.meta.tokens.find((item) => isRing(item.symbol))!, ['amount', 'meta']);
+    const token = omit(to, ['amount', 'meta']);
+    const amount = this.isIssue(from.host, to.host) ? new BN('92696000000000000') : new BN('4000000000000000000');
 
-    if (this.isIssue(from.host, to.host)) {
-      return { ...token, amount: new BN('92696000000000000') } as TokenWithAmount;
-    } else {
-      return { ...token, amount: new BN('3200000000000000000') } as TokenWithAmount;
-    }
+    return { ...token, amount } as TokenWithAmount;
   }
 }

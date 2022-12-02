@@ -16,11 +16,9 @@ helix test: https://helix-stg-test.vercel.app/
 
 ### Step-1: Generate bridge
 
-Check whether the corresponding bridge already exists in the `package/apps/bridges/` directory
-
-If exists, you can skip the steps below, otherwise follow these:
-
 Go to `package/apps/` and run `yarn init:bridge`
+
+Under the `bridges/[BRIDGE_TYPE]` folder, you will find a new bridge folder which created by the script
 
 Update files below under the apps project:
 
@@ -45,11 +43,11 @@ Make sure the token exists on the network configuration:
 
 ### Step-3: Unit test
 
-Run `yarn test:apps` under the project root, fix the failed test suits.
+Run `yarn test:apps:unit` under the project root, fix the failed test suits.
+
+> After the steps above completed, you can find the tokens in the token selection list, and next what you need to do is complete the transfer function.
 
 ### Step-4: Complete bridge development
-
-Under the `bridges/[BRIDGE_TYPE]` folder, you will find a new bridge folder which created by the script
 
 ##### [YOUR BRIDGE]/*.tsx
 

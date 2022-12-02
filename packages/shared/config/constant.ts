@@ -33,6 +33,7 @@ export enum RecordStatus {
   success,
   refunded,
   pendingToConfirmRefund,
+  failed,
 }
 
 export enum CBridgeRecordStatus {
@@ -77,3 +78,5 @@ const DEFAULT_DEV_DIRECTION = {
 };
 
 export const DEFAULT_DIRECTION = CHAIN_TYPE === 'formal' ? DEFAULT_FORMAL_DIRECTION : DEFAULT_DEV_DIRECTION;
+
+export const HELIX_XCM_FLAG = 204;

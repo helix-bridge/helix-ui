@@ -31,7 +31,7 @@ import {
 
 describe('network utils', () => {
   const data = [...crossChainGraph];
-  const sort = (ary: string[]) => sortBy(ary, (cur) => cur.charCodeAt(0));
+  const sort = (ary: string[]) => sortBy(ary, (cur) => cur.split('').reduce((acc, cur) => acc + cur.charAt(0)));
   const getOverview = (departure: Network, arrival: Network) =>
     chainConfigs
       .find((item) => item.name === departure)
@@ -40,7 +40,7 @@ describe('network utils', () => {
       .find((item) => item.partner.name === arrival);
 
   it('should contains chains count: ', () => {
-    expect(chainConfigs).toHaveLength(21);
+    expect(chainConfigs).toHaveLength(23);
   });
 
   it('crab contains 2 leafs', () => {
@@ -161,18 +161,32 @@ describe('network utils', () => {
     );
   });
 
-  it('karura contains 1 leaf', () => {
+  it('karura contains 4 leafs', () => {
     const group = data.find((item) => item[0] === 'karura');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['crab-parachain']);
+    expect(uniq(sort(group![1]))).toEqual(sort(['crab-parachain', 'khala', 'shiden', 'moonriver']));
   });
 
-  it('moonriver contains 1 leaf', () => {
+  it('moonriver contains 4 leafs', () => {
     const group = data.find((item) => item[0] === 'moonriver');
 
     expect(group).not.toEqual(undefined);
-    expect(group![1]).toEqual(['crab-parachain']);
+    expect(uniq(group![1])).toEqual(['crab-parachain', 'karura', 'khala', 'shiden']);
+  });
+
+  it('khala contains 3 leaf', () => {
+    const group = data.find((item) => item[0] === 'khala');
+
+    expect(group).not.toEqual(undefined);
+    expect(uniq(sort(group![1]))).toEqual(sort(['karura', 'moonriver', 'shiden']));
+  });
+
+  it('shiden contains 3 leafs', () => {
+    const group = data.find((item) => item[0] === 'shiden');
+
+    expect(group).not.toEqual(undefined);
+    expect(uniq(sort(group![1]))).toEqual(sort(['khala', 'karura', 'moonriver']));
   });
 
   // ------------------------------------test networks---------------------------------------

@@ -11,6 +11,7 @@ export interface Token<T = string> {
   decimals: number;
   address: string;
   logo: string;
+  extra?: { [key: string]: unknown };
 }
 
 export interface MappingToken extends Token {

@@ -21,6 +21,7 @@ import { ethereumConfig } from './ethereum';
 import { goerliConfig } from './goerli';
 import { hecoConfig } from './heco';
 import { karuraConfig } from './karura';
+import { khalaConfig } from './khala';
 import { moonriverConfig } from './moonriver';
 import { optimismConfig } from './optimism';
 import { pangolinConfig } from './pangolin';
@@ -30,6 +31,7 @@ import { pangoroConfig } from './pangoro';
 import { pangoroDVMConfig } from './pangoro-dvm';
 import { polygonConfig } from './polygon';
 import { ropstenConfig } from './ropsten';
+import { shidenConfig } from './shiden';
 
 export const SYSTEM_CHAIN_CONFIGURATIONS: (EthereumChainConfig | PolkadotChainConfig | ParachainChainConfig)[] = [
   arbitrumConfig,
@@ -42,8 +44,10 @@ export const SYSTEM_CHAIN_CONFIGURATIONS: (EthereumChainConfig | PolkadotChainCo
   darwiniaConfig,
   darwiniaDVMConfig,
   ethereumConfig,
+  goerliConfig,
   hecoConfig,
   karuraConfig,
+  khalaConfig,
   moonriverConfig,
   optimismConfig,
   pangolinConfig,
@@ -53,14 +57,16 @@ export const SYSTEM_CHAIN_CONFIGURATIONS: (EthereumChainConfig | PolkadotChainCo
   pangoroDVMConfig,
   polygonConfig,
   ropstenConfig,
-  goerliConfig,
+  shidenConfig,
 ];
 
 export const knownParachainNetworks: ParachainNetwork[] = [
   'pangolin-parachain',
   'crab-parachain',
   'karura',
+  'khala',
   'moonriver',
+  'shiden',
 ];
 
 export const knownPolkadotNetworks: PolkadotTypeNetwork[] = [

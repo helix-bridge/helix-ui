@@ -24,7 +24,7 @@ import {
   TokenWithBridgesInfo,
   Tx,
 } from 'shared/model';
-import { fromWei, toWei } from 'shared/utils/helper/balance';
+import { addHelixFlag, fromWei, toWei } from 'shared/utils/helper/balance';
 import { AllowancePayload } from '../model/allowance';
 import { CrossChainPayload } from '../model/tx';
 import { isCBridge, isXCM } from '../utils';
@@ -152,7 +152,6 @@ export abstract class Bridge<
         !dailyLimit.amount || new BN(toWei({ value: fromWei(dailyLimit), decimals: from.decimals })).gte(amount),
         'Insufficient daily limit',
       ], // keep decimals consistent
-      [!xcm || Number.isInteger(+from.amount), 'Transfer Amount must be integer'],
     ];
     const result = validations.find((item) => !item[0]);
 
@@ -222,5 +221,11 @@ export abstract class Bridge<
     const res = last(id.split('-')) as string;
 
     return res.substring(10, id.length + 1);
+  }
+
+  protected wrapXCMAmount(token: CrossToken<ChainConfig>): string {
+    const amount = addHelixFlag(token.amount, token.decimals);
+
+    return toWei({ value: amount, decimals: token.decimals });
   }
 }

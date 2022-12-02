@@ -36,4 +36,16 @@ export type BridgeName =
   | 'substrateDVM-ethereum'
   | 'pangolin-pangoro'
   | 'crabDVM-darwiniaDVM'
-  | 'substrateDVM-substrateParachain';
+  | 'substrateDVM-substrateParachain'
+  | 'shiden-khala'
+  | 'khala-shiden'
+  | 'shiden-karura'
+  | 'karura-shiden'
+  | 'shiden-moonriver'
+  | 'moonriver-shiden'
+  | 'moonriver-karura'
+  | 'karura-moonriver'
+  | 'khala-karura'
+  | 'karura-khala'
+  | 'moonriver-khala'
+  | 'khala-moonriver';

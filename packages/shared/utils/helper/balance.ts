@@ -1,11 +1,12 @@
 import { formatFixed as fw, parseFixed as tw } from '@ethersproject/bignumber';
+import { BN, BN_ONE } from '@polkadot/util';
 import Bignumber from 'bignumber.js';
-import BN from 'bn.js';
 import isEmpty from 'lodash/isEmpty';
 import isNull from 'lodash/isNull';
 import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
 import isUndefined from 'lodash/isUndefined';
+import { HELIX_XCM_FLAG } from '../../config/constant';
 
 export type WeiValue = string | BN | number | null | undefined | Bignumber;
 export interface PrettyNumberOptions {
@@ -148,4 +149,31 @@ export function largeNumber(num: string | number, decimals = 0) {
     .find((item) => +num >= item.value);
 
   return result ? (+num / result.value).toFixed(decimals).replace(rx, '$1') + result.symbol : '0';
+}
+
+export function addHelixFlag(amount: string | number | BN, decimals = 18): string {
+  const len = String(HELIX_XCM_FLAG).length;
+  const num = toWei({ value: amount, decimals });
+  const tail = Number(num.slice(-len));
+  const flag = new BN(num.slice(0, -len) + String(HELIX_XCM_FLAG));
+
+  if (tail === HELIX_XCM_FLAG) {
+    return amount.toString();
+  } else if (new BN(num).gte(flag)) {
+    return fromWei({ value: flag, decimals });
+  } else {
+    const result = new BN(num.slice(0, -len)).sub(new BN(1)).toString();
+
+    return fromWei({ value: result + HELIX_XCM_FLAG, decimals });
+  }
+}
+
+export function removeHelixFlag(amount: string | number | BN, decimals = 18): string {
+  const len = String(HELIX_XCM_FLAG).length;
+  const num = toWei({ value: amount, decimals }).slice(0, -len);
+  const tail = num[num.length - 1];
+  const flag = 4;
+  const rounded = Number(tail) > flag ? new BN(num).add(BN_ONE) : new BN(num.slice(0, -1) + '0');
+
+  return fromWei({ value: rounded.toString() + new Array(len).fill('0').join(''), decimals });
 }

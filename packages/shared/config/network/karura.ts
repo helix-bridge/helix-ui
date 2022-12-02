@@ -14,13 +14,50 @@ export const karuraConfig: ParachainChainConfig = {
   tokens: [
     {
       name: 'KAR',
-      decimals: 18,
-      cross: [],
+      decimals: 12,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'karura-shiden',
+          partner: { name: 'shiden', role: 'issuing', symbol: 'KAR' },
+        },
+        {
+          category: 'XCM',
+          bridge: 'karura-moonriver',
+          partner: { name: 'moonriver', role: 'issuing', symbol: 'xcKAR' },
+        },
+        {
+          category: 'XCM',
+          bridge: 'karura-khala',
+          partner: { name: 'khala', role: 'issuing', symbol: 'KAR' },
+        },
+      ],
       type: 'native',
       host: 'karura',
       logo: 'token-karura.svg',
       symbol: 'KAR',
       address: '',
+    },
+    {
+      name: 'KUSD',
+      decimals: 12,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'karura-shiden',
+          partner: { name: 'shiden', role: 'issuing', symbol: 'KUSD' },
+        },
+        {
+          category: 'XCM',
+          bridge: 'karura-moonriver',
+          partner: { name: 'moonriver', role: 'issuing', symbol: 'KUSD' },
+        },
+      ],
+      type: 'mapping',
+      host: 'karura',
+      logo: 'token-ausd.png',
+      symbol: 'KUSD',
+      address: 'KUSD', // NativeAssetId
     },
     {
       name: 'CRAB',
@@ -36,7 +73,55 @@ export const karuraConfig: ParachainChainConfig = {
       host: 'karura',
       logo: 'token-crab.svg',
       symbol: 'CRAB',
-      address: '13',
+      address: '13', // ForeignAssetId
+    },
+    {
+      name: 'SDN',
+      decimals: 18,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'shiden-karura',
+          partner: { name: 'shiden', role: 'backing', symbol: 'SDN' },
+        },
+      ],
+      type: 'mapping',
+      host: 'karura',
+      logo: 'token-sdn.png',
+      symbol: 'SDN',
+      address: '18', // ForeignAssetId
+    },
+    {
+      name: 'MOVR',
+      decimals: 18,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'moonriver-karura',
+          partner: { name: 'moonriver', role: 'backing', symbol: 'MOVR' },
+        },
+      ],
+      type: 'mapping',
+      host: 'karura',
+      logo: 'token-movr.png',
+      symbol: 'MOVR',
+      address: '3', // ForeignAssetId
+    },
+    {
+      name: 'PHA',
+      decimals: 12,
+      cross: [
+        {
+          category: 'XCM',
+          bridge: 'khala-karura',
+          partner: { name: 'khala', role: 'backing', symbol: 'PHA' },
+        },
+      ],
+      type: 'mapping',
+      host: 'karura',
+      logo: 'token-pha.png',
+      symbol: 'PHA',
+      address: 'PHA', // NativeAssetId
     },
   ],
   ss58Prefix: 8,

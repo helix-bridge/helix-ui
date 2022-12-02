@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN, numberToHex } from '@polkadot/util';
 import omit from 'lodash/omit';
 import { Observable } from 'rxjs';
 import {
@@ -10,11 +10,10 @@ import {
 } from 'shared/model';
 import { entrance } from 'shared/utils/connection';
 import { convertToDvm } from 'shared/utils/helper/address';
-import { toWei } from 'shared/utils/helper/balance';
-import { isRing } from 'shared/utils/helper/validator';
 import { sendTransactionFromContract, signAndSendExtrinsic } from 'shared/utils/tx';
+import { toWei } from 'shared/utils/helper/balance';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
-import abi from '../config/abi.json';
+import abi from '../../../../config/abi/moonriver.json';
 import { CrabParachainMoonriverBridgeConfig, IssuingPayload, RedeemPayload } from '../model';
 
 export class CrabParachainMoonriverBridge extends Bridge<
@@ -24,13 +23,6 @@ export class CrabParachainMoonriverBridge extends Bridge<
 > {
   static readonly alias = 'CrabParachainMoonriverBridge';
 
-  private patchAmount(departure: CrossToken) {
-    const pos = -3;
-    const timestamp = Date.now().toString().slice(0, pos);
-
-    return toWei(departure).slice(0, -timestamp.length) + timestamp;
-  }
-
   back(payload: IssuingPayload): Observable<Tx> {
     const {
       direction: { from: departure, to: arrival },
@@ -38,9 +30,8 @@ export class CrabParachainMoonriverBridge extends Bridge<
       recipient,
       wallet,
     } = payload;
-    const amount = this.patchAmount(departure);
+    const amount = this.wrapXCMAmount(departure);
     const api = entrance.polkadot.getInstance(departure.meta.provider.wss);
-    const palletInstance = 5;
 
     const dest = api.createType('XcmVersionedMultiLocation', {
       V1: api.createType('XcmV1MultiLocation', {
@@ -75,7 +66,7 @@ export class CrabParachainMoonriverBridge extends Bridge<
               parents: 0,
               interior: api.createType('XcmV1MultilocationJunctions', {
                 X1: api.createType('XcmV1Junction', {
-                  PalletInstance: palletInstance,
+                  PalletInstance: departure.extra!.palletInstance,
                 }),
               }),
             }),
@@ -95,17 +86,19 @@ export class CrabParachainMoonriverBridge extends Bridge<
 
   burn(payload: RedeemPayload): Observable<Tx> {
     const {
-      direction: { from: departure },
+      direction: { from: departure, to: arrival },
       sender,
       recipient,
     } = payload;
-    const amount = this.patchAmount(departure);
-    const destination = [1, ['0x0000000839', `0x01${convertToDvm(recipient).slice(2)}00`]];
+    const destination = [
+      1,
+      [`0x000000${numberToHex(arrival.meta.paraId).slice(2)}`, `0x01${convertToDvm(recipient).slice(2)}00`],
+    ];
     const weight = 4_000_000_000;
 
     return sendTransactionFromContract(
       this.config.contracts!.issuing,
-      (contract) => contract.transfer(departure.address, amount, destination, weight, { from: sender }),
+      (contract) => contract.transfer(departure.address, toWei(departure), destination, weight, { from: sender }),
       abi
     );
   }
@@ -114,12 +107,9 @@ export class CrabParachainMoonriverBridge extends Bridge<
     direction: CrossChainDirection<CrossToken<ParachainChainConfig>, CrossToken<ParachainChainConfig>>
   ): Promise<TokenWithAmount> {
     const { from, to } = direction;
-    const token = omit(direction.from.meta.tokens.find((item) => isRing(item.symbol))!, ['amount', 'meta']);
+    const token = omit(to, ['amount', 'meta']);
+    const amount = this.isIssue(from.host, to.host) ? new BN('11800000000000000000') : new BN('4000000000000000000');
 
-    if (this.isIssue(from.host, to.host)) {
-      return { ...token, amount: new BN('11800000000000000000') } as TokenWithAmount;
-    } else {
-      return { ...token, amount: new BN('3200000000000000000') } as TokenWithAmount;
-    }
+    return { ...token, amount } as TokenWithAmount;
   }
 }

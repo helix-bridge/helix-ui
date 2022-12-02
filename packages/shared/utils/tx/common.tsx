@@ -102,10 +102,8 @@ export function createTxWorkflow(
 
   return before.pipe(
     switchMap((confirmed) => {
-      const obs = isFunction(txObs) ? txObs() : txObs;
-
       return confirmed
-        ? obs.pipe(
+        ? (isFunction(txObs) ? txObs() : txObs).pipe(
             tap((tx) => {
               if (tx.status === 'finalized') {
                 finish = after(tx);

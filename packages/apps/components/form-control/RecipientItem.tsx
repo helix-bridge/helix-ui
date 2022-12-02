@@ -14,6 +14,7 @@ import { CrossChainComponentProps } from '../../model/component';
 import { useApi } from '../../providers';
 import { getDisplayName } from '../../utils/network/network';
 import { isValidAddressStrict } from '../../utils/validate';
+import { Wifi } from '../widget/Wifi';
 
 // eslint-disable-next-line complexity
 export function RecipientItem({
@@ -26,7 +27,7 @@ export function RecipientItem({
   onChange?: (value: string) => void;
 }) {
   const { t } = useTranslation();
-  const { departureConnection, arrivalConnection, connectArrivalNetwork } = useApi();
+  const { departureConnection, arrivalConnection, connectArrivalNetwork, isConnecting } = useApi();
   const { to } = direction;
   const isPolkadot = isPolkadotNetwork(to.meta);
   const type = isPolkadot ? to.meta.name : 'ethereum';
@@ -109,15 +110,19 @@ export function RecipientItem({
       </Form.Item>
 
       <div className="absolute top-0 right-0">
-        {displayLink && (
-          <Tooltip title={t('Fetch own accounts')}>
-            <Button
-              size="small"
-              onClick={() => connectArrivalNetwork(to.meta)}
-              type="link"
-              icon={<ApiOutlined />}
-            ></Button>
-          </Tooltip>
+        {isConnecting ? (
+          <Wifi loading className="absolute top-4 right-2" />
+        ) : (
+          displayLink && (
+            <Tooltip title={t('Fetch own accounts')}>
+              <Button
+                size="small"
+                onClick={() => connectArrivalNetwork(to.meta)}
+                type="link"
+                icon={<ApiOutlined />}
+              ></Button>
+            </Tooltip>
+          )
         )}
       </div>
     </div>
