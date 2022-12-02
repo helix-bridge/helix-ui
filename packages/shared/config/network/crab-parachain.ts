@@ -33,7 +33,7 @@ export const crabParachainConfig: ParachainChainConfig = {
         {
           category: 'XCM',
           bridge: 'crabParachain-moonriver',
-          partner: { name: 'moonriver', role: 'issuing', symbol: 'CRAB' },
+          partner: { name: 'moonriver', role: 'issuing', symbol: 'xcCRAB' },
         },
         {
           category: 'helix',

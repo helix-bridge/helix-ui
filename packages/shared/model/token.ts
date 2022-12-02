@@ -12,6 +12,7 @@ export interface Token<T = string> {
   address: string;
   logo: string;
   extra?: { [key: string]: unknown };
+  symbolAlias?: string[];
 }
 
 export interface MappingToken extends Token {
