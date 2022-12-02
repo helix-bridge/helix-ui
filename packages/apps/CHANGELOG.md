@@ -1,3 +1,25 @@
+# [4.6.0](https://github.com/helix-bridge/helix/compare/v4.5.1-apps...v4.6.0) (2022-12-02)
+
+
+### Bug Fixes
+
+* **#304:** add validator on bridge subclass ([#450](https://github.com/helix-bridge/helix/issues/450)) ([0728564](https://github.com/helix-bridge/helix/commit/0728564a73f74eb67ef8c445716a887c90c8fb6f)), closes [#304](https://github.com/helix-bridge/helix/issues/304) [#304](https://github.com/helix-bridge/helix/issues/304)
+* **#413:** update claim tip ([#445](https://github.com/helix-bridge/helix/issues/445)) ([a7dc5b6](https://github.com/helix-bridge/helix/commit/a7dc5b6fade14157b39c290e436229676e15d262)), closes [#413](https://github.com/helix-bridge/helix/issues/413)
+* **#415:** cBridge tx params validation ([#443](https://github.com/helix-bridge/helix/issues/443)) ([24dde41](https://github.com/helix-bridge/helix/commit/24dde4129b06625c897ee5e1d57385a413ba1690)), closes [#415](https://github.com/helix-bridge/helix/issues/415)
+* **#416:** validate connected chain before approve ([#442](https://github.com/helix-bridge/helix/issues/442)) ([950ef00](https://github.com/helix-bridge/helix/commit/950ef005b61df9fe38af812e884d60f9aff0a22b)), closes [#416](https://github.com/helix-bridge/helix/issues/416)
+* **#417:** remove wcrab wkton logo ([#452](https://github.com/helix-bridge/helix/issues/452)) ([e50c70d](https://github.com/helix-bridge/helix/commit/e50c70d898c1953b68f3e58b396727dd0c6e733e)), closes [#417](https://github.com/helix-bridge/helix/issues/417)
+* **#424:** reset paginator when filter changed ([#453](https://github.com/helix-bridge/helix/issues/453)) ([64d02d5](https://github.com/helix-bridge/helix/commit/64d02d5198f6bf306b7ae3985c64b872ce0fa883)), closes [#424](https://github.com/helix-bridge/helix/issues/424)
+* **#435:** remove web3Enable ([#447](https://github.com/helix-bridge/helix/issues/447)) ([2dec515](https://github.com/helix-bridge/helix/commit/2dec515a4da9963d59a3e00533197913ca6bbf4d)), closes [#435](https://github.com/helix-bridge/helix/issues/435) [#435](https://github.com/helix-bridge/helix/issues/435)
+* **#454:** xcm warnning ([#455](https://github.com/helix-bridge/helix/issues/455)) ([996b435](https://github.com/helix-bridge/helix/commit/996b435b0ee38c35b0ded4b6d6ef373f79b07565)), closes [#454](https://github.com/helix-bridge/helix/issues/454)
+* cbridge min transfer amount ([#458](https://github.com/helix-bridge/helix/issues/458)) ([f3d81ab](https://github.com/helix-bridge/helix/commit/f3d81ab14b8b3173c7bdb51fc291c52e39772c15))
+
+
+### Features
+
+* shiden<>khala ([#456](https://github.com/helix-bridge/helix/issues/456)) ([08d7117](https://github.com/helix-bridge/helix/commit/08d71175325a2b15d63abbb7ff988d9e8f3b5a89))
+
+
+
 # [4.5.0](https://github.com/helix-bridge/helix/compare/v4.4.4-apps...v4.5.0) (2022-11-17)
 
 
