@@ -20,11 +20,16 @@ export function getTokenConfigFromHelixRecord(
 
     if (!isSameSymbol) {
       const isSameSymbolCaseInsensitive = item.symbol.toLowerCase() === symbol.toLowerCase();
+      const isInAlias = item.symbolAlias?.includes(symbol);
 
       if (isSameSymbolCaseInsensitive) {
         console.log(
           `⚠️ Token symbol(${symbol}) from ${record.id} is not consistent with the symbol(${item.symbol}) stored in ${chain.name} configuration!`
         );
+        return true;
+      }
+
+      if (isInAlias) {
         return true;
       }
     }
@@ -54,7 +59,7 @@ export function getReceivedAmountFromHelixRecord(record: HelixHistoryRecord) {
 export function getFeeAmountFromHelixRecord(record: HelixHistoryRecord) {
   const { fromChain, feeToken } = record;
   const fromConfig = getOriginChainConfig(fromChain);
-  const token = fromConfig.tokens.find((item) => item.symbol === feeToken)!;
+  const token = fromConfig.tokens.find((item) => item.symbol === feeToken || item.symbolAlias?.includes(feeToken))!;
   let decimals = token?.decimals;
 
   if (!decimals) {
@@ -66,7 +71,9 @@ export function getFeeAmountFromHelixRecord(record: HelixHistoryRecord) {
 
 export function getSentAmountFromHelixRecord(record: HelixHistoryRecord) {
   const { fromChain, sendToken, sendAmount, id } = record;
-  const fromToken = getOriginChainConfig(fromChain)!.tokens.find((item) => item.symbol === sendToken);
+  const fromToken = getOriginChainConfig(fromChain)!.tokens.find(
+    (item) => item.symbol === sendToken || item.symbolAlias?.includes(sendToken)
+  );
 
   return fromWei(
     { value: sendAmount, decimals: fromToken?.decimals },

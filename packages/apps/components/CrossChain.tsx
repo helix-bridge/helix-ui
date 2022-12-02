@@ -238,7 +238,7 @@ export function CrossChain() {
             },
           },
           {
-            validator: (_, val: CrossChainDirection) => {
+            validator(_, val: CrossChainDirection) {
               const {
                 from: { amount, decimals },
               } = val;
@@ -262,7 +262,7 @@ export function CrossChain() {
             },
           },
           {
-            validator: (_, val: CrossChainDirection) => {
+            validator(_, val: CrossChainDirection) {
               if (bridge && bridge.validateDirection) {
                 const rules = bridge.validateDirection(val);
                 const result = rules.find((item) => !item[0]);
@@ -270,6 +270,17 @@ export function CrossChain() {
                 if (result && !result[0]) {
                   return Promise.reject(result[1]);
                 }
+              }
+
+              return Promise.resolve();
+            },
+          },
+          {
+            validator(_, val: CrossChainDirection) {
+              if (bridge && bridge.category === 'XCM' && fee) {
+                return fee.amount.gte(new BN(toWei({ value: val.from.amount, decimals: fee.decimals })))
+                  ? Promise.reject('Transfer amount invalid')
+                  : Promise.resolve();
               }
 
               return Promise.resolve();

@@ -39,25 +39,26 @@ export const karuraConfig: ParachainChainConfig = {
       address: '',
     },
     {
-      name: 'KUSD',
+      name: 'aUSD',
       decimals: 12,
       cross: [
         {
           category: 'XCM',
           bridge: 'karura-shiden',
-          partner: { name: 'shiden', role: 'issuing', symbol: 'KUSD' },
+          partner: { name: 'shiden', role: 'issuing', symbol: 'aUSD' },
         },
         {
           category: 'XCM',
           bridge: 'karura-moonriver',
-          partner: { name: 'moonriver', role: 'issuing', symbol: 'KUSD' },
+          partner: { name: 'moonriver', role: 'issuing', symbol: 'xcAUSD' },
         },
       ],
       type: 'mapping',
       host: 'karura',
       logo: 'token-ausd.png',
-      symbol: 'KUSD',
+      symbol: 'aUSD',
       address: 'KUSD', // NativeAssetId
+      symbolAlias: ['KUSD'],
     },
     {
       name: 'CRAB',
