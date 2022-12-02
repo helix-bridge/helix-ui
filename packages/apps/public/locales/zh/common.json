@@ -83,7 +83,7 @@
   "Please fill in a {{network}} address which start with 0x": "请填入以 0x 开头的 {{network}} 地址",
   "Please initiate a claim transaction on Ethereum in the Transaction Detail Page to receive this token. And it needs to prepare some ETH as the gas fee to claim this token.": "转账发起后，请在历史记录中领取，需要一些 ETH 作为手续费",
   "Please make sure you have entered the correct {{type}} address. Entering wrong address will cause asset loss and cannot be recovered!": "请确保您输入正确的 {{type}} 地址，因地址输入错误导致的损失无法找回！",
-  "Please pay extra attention when using XCM transfer. It is important for users to confirm each and every setting information to avoid financial loss. Be Aware of risks, including but not limited to, incorrect settings of XCM message may result in loss of funds": "在使用XCM转账时，请格外小心。用户必须确认每一个设置信息，以避免资金损失。请了解到风险包括但不限于，错误地设置XCM信息可能导致资金损失。",
+  "Please pay extra attention when using XCM transfer. Users need to be aware of the risks associated with XCM transfers in order to avoid loss of funds. Risks include, but are not limited to, incorrectly setting up XCM information or Helix not updating the relevant interface in time may result in the loss of funds. Once the transaction fails, Helix would not be able to provide a refund function or help you recover lost assets.": "在使用XCM转账时，请格外小心。用户需要意识到 xcm 的转账风险，以避免资金损失。请了解到风险包括但不限于，错误地设置XCM信息或Helix 未及时更新相关接口，可能导致资金损失。一旦交易失败，Helix将无法提供退款功能或帮你找回丢失的资产。",
   "Please perform a claim asset operation in the history section after the transfer is submitted.": "转账提交后请在记录中领取",
   "Please select a bridge first!": "请选择使用的桥！",
   "Please select the parameters for your desired transfer and enter an amount.": "请选择转账 token 及数量",

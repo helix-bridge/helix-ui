@@ -132,7 +132,7 @@ export function TransferConfirm<T extends BridgeBase = BridgeBase>({
             message={
               <span className="text-gray-900">
                 {t(
-                  'Please pay extra attention when using XCM transfer. It is important for users to confirm each and every setting information to avoid financial loss. Be Aware of risks, including but not limited to, incorrect settings of XCM message may result in loss of funds'
+                  'Please pay extra attention when using XCM transfer. Users need to be aware of the risks associated with XCM transfers in order to avoid loss of funds. Risks include, but are not limited to, incorrectly setting up XCM information or Helix not updating the relevant interface in time may result in the loss of funds. Once the transaction fails, Helix would not be able to provide a refund function or help you recover lost assets.'
                 )}
               </span>
             }
