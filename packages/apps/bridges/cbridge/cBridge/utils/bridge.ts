@@ -276,7 +276,7 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
     return {
       spender: this.getPoolAddress(direction),
       tokenAddress: direction.from.address,
-      provider: entrance.web3.defaultProvider,
+      provider: direction.from.meta.provider.https,
       ...options,
     };
   }
