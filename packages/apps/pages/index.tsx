@@ -106,7 +106,7 @@ function Page() {
         <h3 style={h3Style}>{t('Aggregator of')}</h3>
         <h3 style={h3Style}>{t('strictly selected bridges')}</h3>
 
-        <p style={pStyle}>{t('Providing a secure and convenient service for asset cross-chain users')}</p>
+        <p style={pStyle}>{t('Providing a secure and convenient interface for cross-chain asset transfer')}</p>
       </div>
 
       <h2 className="text-4xl font-bold">{t('Supported Chains')}</h2>
