@@ -62,7 +62,7 @@ export const SYSTEM_CHAIN_CONFIGURATIONS: (EthereumChainConfig | PolkadotChainCo
 
 export const knownParachainNetworks: ParachainNetwork[] = [
   'pangolin-parachain',
-  'crab-parachain',
+  // 'crab-parachain',
   'karura',
   'khala',
   'moonriver',
@@ -70,15 +70,20 @@ export const knownParachainNetworks: ParachainNetwork[] = [
 ];
 
 export const knownPolkadotNetworks: PolkadotTypeNetwork[] = [
-  'crab',
-  'darwinia',
+  // 'crab',
+  // 'darwinia',
   'pangolin',
   'pangoro',
   'polkadot',
   ...(knownParachainNetworks.filter((item) => item !== 'moonriver') as PolkadotTypeNetwork[]),
 ];
 
-export const knownDVMNetworks: DVMNetwork[] = ['crab-dvm', 'pangolin-dvm', 'pangoro-dvm', 'darwinia-dvm'];
+export const knownDVMNetworks: DVMNetwork[] = [
+  // 'crab-dvm',
+  'pangolin-dvm',
+  'pangoro-dvm',
+  'darwinia-dvm',
+];
 
 export const knownParachainEthereumCompatibleNetworks: ParachainEthereumCompatibleNetwork[] = ['moonriver'];
 

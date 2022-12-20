@@ -49,23 +49,6 @@ export const moonriverConfig: ParachainEthereumCompatibleChainConfig = {
       address: '0x0000000000000000000000000000000000000802',
     },
     {
-      name: 'CRAB',
-      decimals: 18,
-      cross: [
-        {
-          category: 'XCM',
-          bridge: 'crabParachain-moonriver',
-          partner: { name: 'crab-parachain', role: 'backing', symbol: 'CRAB' },
-        },
-      ],
-      type: 'erc20',
-      host: 'moonriver',
-      logo: 'token-crab.svg',
-      symbol: 'xcCRAB',
-      address: '0xFFFffFfF8283448b3cB519Ca4732F2ddDC6A6165',
-      symbolAlias: ['CRAB'],
-    },
-    {
       name: 'SDN',
       decimals: 18,
       cross: [

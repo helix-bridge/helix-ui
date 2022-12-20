@@ -58,23 +58,7 @@ export const karuraConfig: ParachainChainConfig = {
       logo: 'token-ausd.png',
       symbol: 'aUSD',
       address: 'KUSD', // NativeAssetId
-      symbolAlias: ['KUSD'],
-    },
-    {
-      name: 'CRAB',
-      decimals: 18,
-      cross: [
-        {
-          category: 'XCM',
-          bridge: 'crabParachain-karura',
-          partner: { name: 'crab-parachain', role: 'backing', symbol: 'CRAB' },
-        },
-      ],
-      type: 'mapping',
-      host: 'karura',
-      logo: 'token-crab.svg',
-      symbol: 'CRAB',
-      address: '13', // ForeignAssetId
+      symbolAlias: ['KUSD', 'xcAUSD'],
     },
     {
       name: 'SDN',
