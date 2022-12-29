@@ -117,22 +117,22 @@ export const crabDVMConfig: DVMChainConfig = {
       symbol: 'xKTON',
       address: '',
     },
-    {
-      name: 'xWRING',
-      decimals: 18,
-      cross: [
-        {
-          category: 'helix',
-          bridge: 'darwiniaDVM-crabDVM',
-          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'WRING' },
-        },
-      ],
-      type: 'erc20',
-      host: 'crab-dvm',
-      logo: 'token-oring.svg',
-      symbol: 'xWRING',
-      address: '0x273131F7CB50ac002BDd08cA721988731F7e1092',
-    },
+    // {
+    // name: 'xWRING',
+    // decimals: 18,
+    // cross: [
+    // {
+    // category: 'helix',
+    // bridge: 'darwiniaDVM-crabDVM',
+    // partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'WRING' },
+    // },
+    // ],
+    // type: 'erc20',
+    // host: 'crab-dvm',
+    // logo: 'token-oring.svg',
+    // symbol: 'xWRING',
+    // address: '0x273131F7CB50ac002BDd08cA721988731F7e1092',
+    // },
     {
       name: 'USDT',
       decimals: 6,

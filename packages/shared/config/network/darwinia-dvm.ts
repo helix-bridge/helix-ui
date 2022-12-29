@@ -55,11 +55,11 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       name: 'WRING',
       decimals: 18,
       cross: [
-        {
-          category: 'helix',
-          bridge: 'darwiniaDVM-crabDVM',
-          partner: { name: 'crab-dvm', role: 'issuing', symbol: 'xWRING' },
-        },
+        // {
+        // category: 'helix',
+        // bridge: 'darwiniaDVM-crabDVM',
+        // partner: { name: 'crab-dvm', role: 'issuing', symbol: 'xWRING' },
+        // },
         {
           category: 'helix',
           bridge: 'darwiniaDVM-crabDVM',
