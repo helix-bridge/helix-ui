@@ -58,17 +58,17 @@ describe('record utils', () => {
     expect(darwinia2dvmSuccess?.symbol).toEqual('RING');
     expect(dvm2DarwiniaSuccess?.symbol).toEqual('RING');
 
-    const darwinDVMCrabDVMSuccess = getTokenConfigFromHelixRecord(
-      <HelixHistoryRecord>darwinDVMCrabDVMRecords[0],
-      'sendToken'
-    );
-    const crabDVM2DarwiniaDVMSuccess = getTokenConfigFromHelixRecord(
-      <HelixHistoryRecord>darwinDVMCrabDVMRecords[1],
-      'sendToken'
-    );
+    //const darwinDVMCrabDVMSuccess = getTokenConfigFromHelixRecord(
+    //<HelixHistoryRecord>darwinDVMCrabDVMRecords[0],
+    //'sendToken'
+    //);
+    //const crabDVM2DarwiniaDVMSuccess = getTokenConfigFromHelixRecord(
+    //<HelixHistoryRecord>darwinDVMCrabDVMRecords[1],
+    //'sendToken'
+    //);
 
-    expect(darwinDVMCrabDVMSuccess?.symbol).toEqual('WRING');
-    expect(crabDVM2DarwiniaDVMSuccess?.symbol).toEqual('xWRING');
+    //expect(darwinDVMCrabDVMSuccess?.symbol).toEqual('WRING');
+    //expect(crabDVM2DarwiniaDVMSuccess?.symbol).toEqual('xWRING');
   });
 
   it('should get received amount from helix record', () => {
@@ -96,11 +96,11 @@ describe('record utils', () => {
     expect(crab2CrabParachainSuccess).toEqual('1,000');
     expect(crabParachain2CrabSuccess).toEqual('2');
 
-    const darwinDVMCrabDVMSuccess = getReceivedAmountFromHelixRecord(<HelixHistoryRecord>darwinDVMCrabDVMRecords[0]);
-    const crabDVM2DarwiniaDVMSuccess = getReceivedAmountFromHelixRecord(<HelixHistoryRecord>darwinDVMCrabDVMRecords[1]);
+    //const darwinDVMCrabDVMSuccess = getReceivedAmountFromHelixRecord(<HelixHistoryRecord>darwinDVMCrabDVMRecords[0]);
+    //const crabDVM2DarwiniaDVMSuccess = getReceivedAmountFromHelixRecord(<HelixHistoryRecord>darwinDVMCrabDVMRecords[1]);
 
-    expect(darwinDVMCrabDVMSuccess).toEqual('0.1013');
-    expect(crabDVM2DarwiniaDVMSuccess).toEqual('0.1013');
+    //expect(darwinDVMCrabDVMSuccess).toEqual('0.1013');
+    //expect(crabDVM2DarwiniaDVMSuccess).toEqual('0.1013');
   });
 
   it('should get sent amount from helix record', () => {
@@ -128,11 +128,11 @@ describe('record utils', () => {
     expect(crab2CrabParachainSuccess).toEqual('1,000');
     expect(crabParachain2CrabSuccess).toEqual('2');
 
-    const darwinDVMCrabDVMSuccess = getSentAmountFromHelixRecord(<HelixHistoryRecord>darwinDVMCrabDVMRecords[0]);
-    const crabDVM2DarwiniaDVMSuccess = getSentAmountFromHelixRecord(<HelixHistoryRecord>darwinDVMCrabDVMRecords[1]);
+    //const darwinDVMCrabDVMSuccess = getSentAmountFromHelixRecord(<HelixHistoryRecord>darwinDVMCrabDVMRecords[0]);
+    //const crabDVM2DarwiniaDVMSuccess = getSentAmountFromHelixRecord(<HelixHistoryRecord>darwinDVMCrabDVMRecords[1]);
 
-    expect(darwinDVMCrabDVMSuccess).toEqual('0.1013');
-    expect(crabDVM2DarwiniaDVMSuccess).toEqual('0.1013');
+    //expect(darwinDVMCrabDVMSuccess).toEqual('0.1013');
+    //expect(crabDVM2DarwiniaDVMSuccess).toEqual('0.1013');
   });
 
   it('should get fee amount from helix record', () => {
@@ -160,10 +160,10 @@ describe('record utils', () => {
     expect(crab2CrabParachainSuccess).toEqual('100');
     expect(crabParachain2CrabSuccess).toEqual('15');
 
-    const darwinDVMCrabDVMSuccess = getFeeAmountFromHelixRecord(<HelixHistoryRecord>darwinDVMCrabDVMRecords[0]);
-    const crabDVM2DarwiniaDVMSuccess = getFeeAmountFromHelixRecord(<HelixHistoryRecord>darwinDVMCrabDVMRecords[1]);
+    //const darwinDVMCrabDVMSuccess = getFeeAmountFromHelixRecord(<HelixHistoryRecord>darwinDVMCrabDVMRecords[0]);
+    //const crabDVM2DarwiniaDVMSuccess = getFeeAmountFromHelixRecord(<HelixHistoryRecord>darwinDVMCrabDVMRecords[1]);
 
-    expect(darwinDVMCrabDVMSuccess).toEqual('39');
-    expect(crabDVM2DarwiniaDVMSuccess).toEqual('225');
+    //expect(darwinDVMCrabDVMSuccess).toEqual('39');
+    //expect(crabDVM2DarwiniaDVMSuccess).toEqual('225');
   });
 });
