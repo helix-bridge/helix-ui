@@ -55,9 +55,9 @@ const bridges: Bridge[] = [
   {
     category: 'helix',
     social: {
-      portal: 'https://darwinia.network/',
+      portal: 'https://helixbridge.app/',
       github: 'https://github.com/helix-bridge',
-      twitter: 'https://twitter.com/DarwiniaNetwork',
+      twitter: 'https://twitter.com/helixbridges',
     },
     supportChains: getSupportChains('helix'),
     description: {
