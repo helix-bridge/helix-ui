@@ -406,7 +406,7 @@ export function CrossChain() {
             )}
 
             <FormItemButton
-              disabled={bridgeState.status !== 'available'}
+              disabled={bridgeState.status !== 'available' || bridge == null}
               onClick={() => {
                 if (!matched) {
                   message.error('Wrong Network');
