@@ -111,6 +111,9 @@ export class SubstrateDVMBridge extends Bridge<SubstrateDVMBridgeConfig, Polkado
   ): TokenWithAmount | null {
     const { from: dep } = direction;
 
-    return { ...dep, amount: new BN(toWei({ value: 1, decimals: dep.decimals })) };
+    if (dep.type === 'native') {
+      return { ...dep, amount: new BN(toWei({ value: 1, decimals: dep.decimals })) };
+    }
+    return null;
   }
 }
