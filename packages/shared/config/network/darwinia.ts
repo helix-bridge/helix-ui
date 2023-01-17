@@ -59,7 +59,7 @@ export const darwiniaConfig: PolkadotChainConfig = {
           partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'KTON' },
         },
       ],
-      type: 'native',
+      type: 'erc20',
       host: 'darwinia',
       logo: 'token-kton.svg',
       symbol: 'KTON',
