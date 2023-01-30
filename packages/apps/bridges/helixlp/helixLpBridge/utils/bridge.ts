@@ -143,7 +143,7 @@ export abstract class HelixLpBridgeBridge<
   ): Promise<TokenWithAmount | null> {
     const overview = getOverview(direction, 'helixLpBridge');
     // basefee + amount * 0.1%
-    const totalFee = overview!.basefee! + Number(direction.from.amount) * this.feePercent;
+    const totalFee = overview!.basefee! + Number(direction.from.amount) * Number(this.feePercent);
     const fee = toWei({ value: totalFee, decimals: direction.from.decimals });
     return {
       ...omit(direction.from, ['meta', 'amount']),
