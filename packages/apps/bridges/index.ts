@@ -44,3 +44,5 @@ export { Shiden2Moonriver, Moonriver2Shiden } from './xcm/shiden-moonriver';
 export { Moonriver2Karura, Karura2Moonriver } from './xcm/moonriver-karura';
 export { Khala2Karura, Karura2Khala } from './xcm/khala-karura';
 export { Moonriver2Khala, Khala2Moonriver } from './xcm/moonriver-khala';
+
+export { Crab2Darwinia, Darwinia2Crab } from './helixlp/crab-darwinia';

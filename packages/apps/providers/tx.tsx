@@ -30,6 +30,7 @@ export const TxProvider = ({ children }: React.PropsWithChildren<unknown>) => {
       error: (error: RequiredPartial<Tx, 'error'>) => {
         const errInfo =
           typeof error.error === 'string' ? error.error : (error.error && error.error.message) || error.toString();
+        console.log('Transaction aborted:', errInfo);
 
         notification.error({
           message: (

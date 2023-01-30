@@ -33,6 +33,7 @@ export interface CrossOverview {
   bridge: BridgeName;
   partner: Partner;
   deprecated?: boolean;
+  basefee?: number; // not include decimals
 }
 
 export interface TokenWithBridgesInfo extends Token {

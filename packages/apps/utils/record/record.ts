@@ -103,6 +103,10 @@ export function isHelixRecord(record: HelixHistoryRecord): boolean {
   return record.bridge.toLowerCase().startsWith('helix');
 }
 
+export function isHelixLpRecord(record: HelixHistoryRecord): boolean {
+  return record.bridge.toLowerCase().startsWith('lpbridge');
+}
+
 export function isCBridgeRecord(record: HelixHistoryRecord): boolean {
   return record.bridge.toLowerCase().startsWith('cbridge');
 }

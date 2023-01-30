@@ -406,7 +406,7 @@ export function CrossChain() {
             )}
 
             <FormItemButton
-              disabled={bridgeState.status !== 'available' || bridge == null}
+              disabled={bridgeState.status !== 'available' || bridge == null || isBalanceLoading}
               onClick={() => {
                 if (!matched) {
                   message.error('Wrong Network');
@@ -453,7 +453,9 @@ export function CrossChain() {
                         })
                       )
                     ),
-                    () => payload.bridge.send(payload, fee?.amount),
+                    () => {
+                      return payload.bridge.send(payload, fee?.amount);
+                    },
                     afterCrossChain(TransferDone, { payload })
                   );
 

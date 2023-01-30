@@ -51,6 +51,7 @@ export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Targ
   extends BridgeBase<B, Origin, Target> {
   claim?(record: HelixHistoryRecord): Observable<Tx>;
   refund?(record: HelixHistoryRecord): Observable<Tx>;
+  speedUp?(record: HelixHistoryRecord, newFee: number): Observable<Tx>;
   getDailyLimit?(
     direction: CrossChainPureDirection<TokenInfoWithMeta<Origin | Target>, TokenInfoWithMeta<Origin | Target>>
   ): Promise<DailyLimit>;

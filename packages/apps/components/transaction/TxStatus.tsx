@@ -10,6 +10,8 @@ import { useITranslation } from 'shared/hooks/translation';
 import { HelixHistoryRecord } from 'shared/model';
 import { PendingToClaim } from '../history/PendingToClaim';
 import { PendingToRefund } from '../history/PendingToRefund';
+import { SpeedUp } from '../history/SpeedUp';
+import { isHelixLpRecord } from '../../utils/record/record';
 import { TransferDescription } from './TransferDescription';
 
 // eslint-disable-next-line complexity
@@ -70,6 +72,14 @@ export function TxStatus({ record }: { record: HelixHistoryRecord | null }) {
           <div className="flex items-center gap-2">
             <span>{t('Please request refund on the source chain.')}</span>
             <PendingToRefund record={record} />
+          </div>
+        )}
+
+        {state === RecordStatus.pending && record && isHelixLpRecord(record) && (
+          <div className="flex items-center gap-2">
+            <span>{t('You can request refund or speed up this transaction.')}</span>
+            <PendingToRefund record={record} />
+            <SpeedUp record={record} />
           </div>
         )}
 
