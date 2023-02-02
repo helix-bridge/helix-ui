@@ -152,12 +152,4 @@ export abstract class HelixLpBridgeBridge<
       amount: new BN(fee),
     };
   }
-
-  validateDirection(
-    direction: CrossChainDirection<CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>
-  ): [boolean, string][] {
-    const min = 0;
-
-    return [[+direction.from.amount > min, 'The transfer amount must greater than 0']];
-  }
 }

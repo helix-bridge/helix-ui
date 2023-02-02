@@ -315,6 +315,7 @@ export function CrossChain() {
           onChange={(value) => {
             if (isDirectionChanged(direction, value)) {
               setBridge(null);
+              setBridgeSize(0);
               setPatchPayload(() => identity);
               form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined, [FORM_CONTROL.recipient]: undefined });
               setPureDirection({ from: omit(value.from, 'amount'), to: omit(value.to, 'amount') });
@@ -352,6 +353,7 @@ export function CrossChain() {
             if (!isSameBridge) {
               setBridge(value || null);
               setDailyLimit(null);
+              setFee(null);
             }
           }}
         />
@@ -374,7 +376,7 @@ export function CrossChain() {
         <Input value={account} />
       </Form.Item>
 
-      {!allowanceEnough && account ? (
+      {!allowanceEnough && account && !isBalanceLoading ? (
         matched ? (
           <FormItemButton
             onClick={() => {

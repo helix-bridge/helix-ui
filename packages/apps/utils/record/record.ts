@@ -99,6 +99,27 @@ export function getDirectionFromHelixRecord(record: HelixHistoryRecord): CrossCh
   return null;
 }
 
+export function getCategoryFromRecord(record: HelixHistoryRecord): string | null {
+  const prefix = record.bridge.toLowerCase().split('-')[0];
+  switch (prefix) {
+    case 'helix': {
+      return 'helix';
+    }
+    case 'lpbridge': {
+      return 'helixLpBridge';
+    }
+    case 'cbridge': {
+      return 'cBridge';
+    }
+    case 'xcm': {
+      return 'xcm';
+    }
+    default: {
+      return null;
+    }
+  }
+}
+
 export function isHelixRecord(record: HelixHistoryRecord): boolean {
   return record.bridge.toLowerCase().startsWith('helix');
 }

@@ -47,6 +47,11 @@ export const crabDVMConfig: DVMChainConfig = {
         },
         {
           category: 'helix',
+          bridge: 'crabDVM-darwiniaDVM',
+          partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'xWCRAB' },
+        },
+        {
+          category: 'helix',
           bridge: 'substrateDVM-substrateParachain',
           partner: { name: 'crab-parachain', role: 'issuing', symbol: 'CRAB' },
         },
@@ -136,6 +141,16 @@ export const crabDVMConfig: DVMChainConfig = {
           basefee: 1.1,
           index: 1,
         },
+        {
+          category: 'helix',
+          bridge: 'darwiniaDVM-crabDVM',
+          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'WRING' },
+        },
+        {
+          category: 'helix',
+          bridge: 'darwiniaDVM-crabDVM',
+          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
+        },
       ],
       type: 'erc20',
       host: 'crab-dvm',
@@ -199,6 +214,11 @@ export const crabDVMConfig: DVMChainConfig = {
           partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'xWCRAB' },
           basefee: 1.1,
           index: 0,
+        },
+        {
+          category: 'helix',
+          bridge: 'crabDVM-darwiniaDVM',
+          partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'xWCRAB' },
         },
       ],
       decimals: 18,

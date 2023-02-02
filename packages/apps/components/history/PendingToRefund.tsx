@@ -23,7 +23,7 @@ import { useITranslation } from '../../hooks';
 import { RecordStatusComponentProps } from '../../model/component';
 import { useTx } from '../../providers';
 import { getOriginChainConfig } from '../../utils/network';
-import { getDirectionFromHelixRecord, isCBridgeRecord } from '../../utils/record';
+import { getDirectionFromHelixRecord, getCategoryFromRecord, isCBridgeRecord } from '../../utils/record';
 
 interface RefundComponentProps extends RecordStatusComponentProps {
   onSuccess?: () => void;
@@ -168,7 +168,13 @@ function Refund({ record, onSuccess }: RefundComponentProps) {
           return null;
         }
 
-        const target = getBridge(direction, 'helix');
+        const category = getCategoryFromRecord(record);
+        if (!category) {
+          message.error('Can not find the matched bridge for this record');
+          return null;
+        }
+
+        const target = getBridge(direction, category);
         const bridge = bridgeFactory(target);
 
         if (bridge && bridge.refund) {
