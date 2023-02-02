@@ -73,12 +73,13 @@ export abstract class HelixLpBridgeBridge<
             }
           );
         } else {
+          const overview = getOverview(value.direction, 'helixLpBridge');
           return contract.lockAndRemoteIssuing(
             nonce,
             recipient,
             transferAmount,
             fee.toString(),
-            0,
+            overview!.index!,
             to.type === 'native',
             { from: sender }
           );

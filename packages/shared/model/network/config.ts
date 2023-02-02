@@ -34,6 +34,7 @@ export interface CrossOverview {
   partner: Partner;
   deprecated?: boolean;
   basefee?: number; // not include decimals
+  index?: number; // the index of token address
 }
 
 export interface TokenWithBridgesInfo extends Token {

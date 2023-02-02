@@ -40,9 +40,10 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'WRING' },
         },
         {
-          category: 'helix',
-          bridge: 'darwiniaDVM-crabDVM',
+          category: 'helixLpBridge',
+          bridge: 'crab-darwinia',
           partner: { name: 'crab-dvm', role: 'issuing', symbol: 'xWRING' },
+          basefee: 1.1,
         },
         {
           category: 'helix',
@@ -61,9 +62,11 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       decimals: 18,
       cross: [
         {
-          category: 'helix',
-          bridge: 'darwiniaDVM-crabDVM',
+          category: 'helixLpBridge',
+          bridge: 'crab-darwinia',
           partner: { name: 'crab-dvm', role: 'issuing', symbol: 'xWRING' },
+          basefee: 1.1,
+          index: 1,
         },
         {
           category: 'helix',
@@ -131,13 +134,15 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helixLpBridge',
           bridge: 'crab-darwinia',
           partner: { name: 'crab-dvm', role: 'backing', symbol: 'WCRAB' },
-          basefee: 12,
+          basefee: 1.1,
+          index: 0,
         },
         {
           category: 'helixLpBridge',
           bridge: 'crab-darwinia',
           partner: { name: 'crab-dvm', role: 'backing', symbol: 'CRAB' },
-          basefee: 12,
+          basefee: 1.1,
+          index: 0,
         },
       ],
       decimals: 18,

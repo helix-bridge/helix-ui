@@ -4,8 +4,8 @@ import { CrabDarwiniaBridgeConfig } from '../model';
 
 const crabDarwiniaConfig: CrabDarwiniaBridgeConfig = {
   contracts: {
-    backing: '0x173f5694Eee6BBd1317D925Fb8C66E0C8966E00F',
-    issuing: '0x1AfcfB0ca36d2cF3573281CBAd9457F5222df02a',
+    backing: '0x0C2E72C10D2db4BD00960151B114d56E2a2daEc7',
+    issuing: '0x71388920e33021E871b322a50859691a3332A5a3',
   },
 };
 
