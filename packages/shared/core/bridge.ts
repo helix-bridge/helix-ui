@@ -11,6 +11,7 @@ interface BridgeOptions {
   activeArrivalConnection?: boolean;
   disableIssue?: boolean;
   disableRedeem?: boolean;
+  isDefault?: boolean;
   issueCompName?: string;
   redeemCompName?: string;
 }
@@ -46,6 +47,9 @@ export class BridgeBase<C = BridgeConfig, O extends ChainConfig = ChainConfig, T
 
   readonly options: BridgeOptions;
 
+  readonly isDefault: boolean;
+
+  // eslint-disable-next-line complexity
   constructor(departure: O, arrival: T, config: C, options: BridgeOptions) {
     const dep = departure.name;
     const arr = arrival.name;
@@ -63,6 +67,7 @@ export class BridgeBase<C = BridgeConfig, O extends ChainConfig = ChainConfig, T
     this.isTest = departure.isTest;
     this.disableIssue = options.disableIssue ?? false;
     this.disableRedeem = options.disableRedeem ?? false;
+    this.isDefault = options.isDefault ?? false;
   }
 
   get config() {

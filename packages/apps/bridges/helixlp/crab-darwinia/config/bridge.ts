@@ -12,4 +12,5 @@ const crabDarwiniaConfig: CrabDarwiniaBridgeConfig = {
 export const crabDarwinia = new BridgeBase(crabDVMConfig, darwiniaDVMConfig, crabDarwiniaConfig, {
   name: 'crab-darwinia',
   category: 'helixLpBridge',
+  isDefault: true,
 });

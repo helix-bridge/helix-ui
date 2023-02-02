@@ -31,10 +31,13 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
   );
 
   useEffect(() => {
-    if (!value && bridges.length && onChange && !isDisabled(bridges[0])) {
-      onChange(bridges[0]);
+    if (bridges.length && onChange) {
+      const defaultBridge = bridges.find((item) => item.isDefault) || bridges[0];
+      if (!isDisabled(defaultBridge)) {
+        onChange(defaultBridge);
+      }
     }
-  }, [bridges, isDisabled, onChange, value]);
+  }, [bridges, isDisabled, onChange]);
 
   return (
     <Select
