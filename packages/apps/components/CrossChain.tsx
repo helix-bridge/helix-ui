@@ -342,7 +342,7 @@ export function CrossChain() {
             },
           },
         ]}
-        className={bridgeSize < 2 ? 'mb-0 hidden' : null}
+        className={bridgeSize < 2 ? 'mb-0 hidden' : undefined}
       >
         <BridgeSelector
           direction={direction}
