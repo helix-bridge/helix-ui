@@ -17,6 +17,7 @@ import { of } from 'rxjs/internal/observable/of';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { DEFAULT_DIRECTION, FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
+import { getBridges } from 'utils/bridge';
 import { BridgeBase } from 'shared/core/bridge';
 import { ChainBase } from 'shared/core/chain';
 import { useIsMounted } from 'shared/hooks';
@@ -72,6 +73,7 @@ export function CrossChain() {
   const [pureDirection, setPureDirection] =
     useState<CrossChainPureDirection<TokenInfoWithMeta<ChainBase>, TokenInfoWithMeta<ChainBase>>>(defaultDirection);
   const [bridge, setBridge] = useState<CommonBridge | null>(null);
+  const [bridgeSize, setBridgeSize] = useState<number>(0);
   const [patchPayload, setPatchPayload] = useState<PayloadPatchFn>(() => (v: CrossChainPayload<CommonBridge>) => v);
   const bridgeState = useCheckSpecVersion(direction);
   const [fee, setFee] = useState<TokenWithAmount | null>(null);
@@ -117,6 +119,11 @@ export function CrossChain() {
     setDeparture(direction.from.meta);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const configs = getBridges(direction);
+    setBridgeSize(configs.length);
+  }, [direction]);
 
   useEffect(() => {
     form.setFieldsValue({ [FORM_CONTROL.sender]: account });
@@ -334,7 +341,7 @@ export function CrossChain() {
             },
           },
         ]}
-        className="mb-0 hidden"
+        className={bridgeSize < 2 ? 'mb-0 hidden' : null}
       >
         <BridgeSelector
           direction={direction}
