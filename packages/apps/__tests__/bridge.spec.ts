@@ -46,11 +46,11 @@ describe('bridge utils', () => {
 
   it('should support bridge count: ', () => {
     expect(testBridges).toHaveLength(7);
-    expect(formalBridges).toHaveLength(51);
+    expect(formalBridges).toHaveLength(52);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(116);
+    expect(allDirections).toHaveLength(120);
   });
 
   it('Should correct bridge category name', () => {
@@ -201,6 +201,8 @@ describe.each(configs)("$name network's ", ({ name, tokens, ...other }) => {
           expect(isParachainNetwork(from.host)).toBe(true);
         } else if (bridge === 'darwiniaDVM-crabDVM' && other.isTest) {
           expect(from.host).toEqual(mapToTestChain[backing]);
+        } else if (bridge === 'darwinia-ethereum') {
+          expect(isDVMNetwork(from.host)).toBe(true);
         } else {
           expect(from.host).toEqual(backing);
         }
