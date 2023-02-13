@@ -44,7 +44,7 @@ import { useAfterTx } from '../hooks/tx';
 import { CrossChainComponentProps } from '../model/component';
 import { CrossChainPayload } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
-import { isCBridge, isXCM } from '../utils';
+import { isCBridge, isXCM, isLpBridge } from '../utils';
 import { getDisplayName } from '../utils/network';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { calcMax, Direction, toDirection } from './form-control/Direction';
@@ -236,7 +236,7 @@ export function CrossChain() {
               const mini = bridge && bridge.getMinimumFeeTokenHolding && bridge.getMinimumFeeTokenHolding(val);
               const max = calcMax(
                 { ...val.from, amount: balance },
-                isCBridge(direction) || isXCM(direction) ? null : fee,
+                isCBridge(direction) || isXCM(direction) || isLpBridge(direction) ? null : fee,
                 mini ?? undefined
               );
               return !max || new BN(toWei({ value: max })).gte(new BN(toWei({ value: val.from.amount })))
@@ -297,6 +297,7 @@ export function CrossChain() {
       >
         <Direction
           fee={fee}
+          bridge={bridge}
           balances={balances}
           isBalanceLoading={isBalanceLoading}
           onRefresh={() => {
@@ -437,13 +438,14 @@ export function CrossChain() {
                   const fromToken = omit(direction.from, 'meta');
                   const toToken = omit(direction.to, 'meta');
                   const [balance, nativeTokenBalance] = balances ?? [BN_ZERO, BN_ZERO];
+                  const feeIsErc20Token = isXCM(direction) || isCBridge(direction) || isLpBridge(direction);
 
                   const validateObs = payload.bridge.validate(payload, {
                     balance: { ...fromToken, amount: balance },
                     fee: fee!,
                     feeTokenBalance: {
                       ...fee,
-                      amount: isXCM(direction) || isCBridge(direction) ? balance : nativeTokenBalance,
+                      amount: feeIsErc20Token ? balance : nativeTokenBalance,
                     } as TokenWithAmount,
                     dailyLimit: {
                       ...toToken,

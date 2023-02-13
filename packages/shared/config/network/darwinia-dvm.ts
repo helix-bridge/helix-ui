@@ -39,12 +39,14 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'WRING' },
         },
+        /*
         {
           category: 'helixLpBridge',
           bridge: 'crab-darwinia',
           partner: { name: 'crab-dvm', role: 'issuing', symbol: 'xWRING' },
           basefee: 1.1,
         },
+        */
         {
           category: 'helix',
           bridge: 'darwiniaDVM-crabDVM',
@@ -54,6 +56,13 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'ethereum', role: 'issuing', symbol: 'RING' },
+        },
+        {
+          category: 'helixLpBridge',
+          bridge: 'darwinia-ethereum',
+          partner: { name: 'ethereum', role: 'issuing', symbol: 'RING' },
+          basefee: 10,
+          index: 0,
         },
       ],
       type: 'native',
@@ -66,6 +75,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       name: 'WRING',
       decimals: 18,
       cross: [
+        /*
         {
           category: 'helixLpBridge',
           bridge: 'crab-darwinia',
@@ -73,6 +83,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           basefee: 1.1,
           index: 1,
         },
+        */
         {
           category: 'helix',
           bridge: 'darwiniaDVM-crabDVM',
@@ -87,6 +98,13 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'ethereum', role: 'issuing', symbol: 'RING' },
+        },
+        {
+          category: 'helixLpBridge',
+          bridge: 'darwinia-ethereum',
+          partner: { name: 'ethereum', role: 'issuing', symbol: 'RING' },
+          basefee: 10,
+          index: 0,
         },
       ],
       type: 'erc20',
@@ -140,6 +158,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
     {
       name: 'xWCRAB',
       cross: [
+        /*
         {
           category: 'helixLpBridge',
           bridge: 'crab-darwinia',
@@ -154,6 +173,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           basefee: 1.1,
           index: 0,
         },
+        */
         {
           category: 'helix',
           bridge: 'crabDVM-darwiniaDVM',

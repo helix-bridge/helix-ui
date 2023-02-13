@@ -99,8 +99,16 @@ function component() {
         " >>$2'/'$1'.tsx'
     elif [ "$category" = "helixLpBridge" ]; then
         echo "
-            import { HelixLpBridge } from '../helixLpBridge/HelixLpBridge';
-            export const $1 = HelixLpBridge;
+            import { CrossToken, DVMChainConfig } from 'shared/model';
+            import { Bridge } from '../../../components/bridge/Bridge';
+            import { CrossChainComponentProps } from '../../../model/component';
+            import { ${from}${to}Bridge } from './utils/bridge';
+            
+            export function $1(
+              props: CrossChainComponentProps<${from}${to}Bridge, CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>
+            ) {
+              return <Bridge {...props} hideRecipient />;
+            }
         " >>$2'/'$1'.tsx'
     else
         echo "

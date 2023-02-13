@@ -12,6 +12,8 @@ import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { ChainBase } from 'shared/core/chain';
 import {
   BridgeStatus,
+  BridgeConfig,
+  ChainConfig,
   CrossChainDirection,
   CrossChainPureDirection,
   CrossToken,
@@ -23,7 +25,7 @@ import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/b
 import { readStorage, updateStorage } from 'shared/utils/helper/storage';
 import { getBridge, isCBridge, isXCM } from 'utils/bridge';
 import { bridgeFactory } from '../../bridges/bridges';
-import { TokenWithAmount } from '../../core/bridge';
+import { Bridge, TokenWithAmount } from '../../core/bridge';
 import { getOriginChainConfig } from '../../utils/network';
 import { chainFactory } from '../../utils/network/chain';
 import { CountLoading } from '../widget/CountLoading';
@@ -33,6 +35,7 @@ type DirectionProps = CustomFormControlProps<CrossChainDirection<CrossToken<Chai
   // initial: CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>>;
   fee: TokenWithAmount | null;
   balances: BN[] | null;
+  bridge: Bridge<BridgeConfig, ChainConfig, ChainConfig> | null;
   isBalanceLoading: boolean;
   onRefresh?: () => void;
 };
@@ -73,7 +76,15 @@ const calcToAmount = (payment: TokenWithAmount, fee: TokenWithAmount | null, dir
 };
 
 // eslint-disable-next-line complexity
-export function Direction({ value, onChange, balances, onRefresh, fee, isBalanceLoading = false }: DirectionProps) {
+export function Direction({
+  value,
+  bridge,
+  onChange,
+  balances,
+  onRefresh,
+  fee,
+  isBalanceLoading = false,
+}: DirectionProps) {
   const data = useMemo(
     () => value ?? { from: toDirection(DEFAULT_DIRECTION.from)!, to: toDirection(DEFAULT_DIRECTION.to)! },
     [value]
@@ -104,16 +115,14 @@ export function Direction({ value, onChange, balances, onRefresh, fee, isBalance
       to: pick(to, ['symbol', 'host']),
     } as HashInfo;
 
-    if (from && to) {
-      const bridge = getBridge({ from, to });
-
+    if (bridge) {
       setBridgetStatus(bridge.status);
     } else {
       setBridgetStatus(null);
     }
 
     updateStorage(info);
-  }, [value]);
+  }, [bridge, value]);
 
   useEffect(() => {
     triggerChange({
@@ -176,8 +185,8 @@ export function Direction({ value, onChange, balances, onRefresh, fee, isBalance
               onClick={() => {
                 const { from, to } = data;
                 const config = getBridge(data);
-                const bridge = bridgeFactory(config);
-                const mini = bridge.getMinimumFeeTokenHolding && bridge.getMinimumFeeTokenHolding(data);
+                const selectedBridge = bridgeFactory(config);
+                const mini = selectedBridge.getMinimumFeeTokenHolding && selectedBridge.getMinimumFeeTokenHolding(data);
                 const amount = calcMax(
                   { ...from, amount: iBalance },
                   isCBridge(data) || isXCM(data) ? null : fee,
