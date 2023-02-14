@@ -19,7 +19,20 @@ export function TxStatus({ record }: { record: HelixHistoryRecord | null }) {
   const { t } = useITranslation();
   const state = record?.result ?? RecordStatus.pending;
   // eslint-disable-next-line no-magic-numbers
-  const estimateMin = record?.bridge.split('-')[0] === 'cBridge' ? 20 : 3;
+  let estimateMin = 3;
+  const bridge = record?.bridge.split('-')[0];
+  if (bridge === 'cBridge') {
+    // eslint-disable-next-line no-magic-numbers
+    estimateMin = 20;
+  } else if (bridge === 'helix') {
+    if (record?.fromChain === 'ethereum') {
+      // eslint-disable-next-line no-magic-numbers
+      estimateMin = 35;
+    } else if (record?.toChain === 'ethereum') {
+      // eslint-disable-next-line no-magic-numbers
+      estimateMin = 10;
+    }
+  }
   const isTimeout = useMemo(
     () => record?.startTime && isAfter(new Date(), new Date(record.startTime * 1000 + estimateMin * 60 * 1000)),
     [estimateMin, record?.startTime]
