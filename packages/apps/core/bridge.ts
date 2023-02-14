@@ -152,7 +152,7 @@ export abstract class Bridge<
       [!allowance.amount || allowance.amount.gte(amount), 'Insufficient allowance'],
       [
         !dailyLimit.amount || new BN(toWei({ value: fromWei(dailyLimit), decimals: from.decimals })).gte(amount),
-        'Insufficient daily limit',
+        lpBridge ? 'Insufficient transfer limit' : 'Insufficient daily limit',
       ], // keep decimals consistent
     ];
     const result = validations.find((item) => !item[0]);

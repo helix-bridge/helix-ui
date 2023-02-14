@@ -3,11 +3,15 @@ import last from 'lodash/last';
 import omit from 'lodash/omit';
 import { Observable, switchMap } from 'rxjs';
 import {
+  ChainConfig,
   BridgeConfig,
   CrossChainDirection,
+  CrossChainPureDirection,
   CrossToken,
+  DailyLimit,
   EthereumChainConfig,
   HelixHistoryRecord,
+  TokenInfoWithMeta,
   Tx,
 } from 'shared/model';
 import { isMetamaskChainConsistent } from 'shared/utils/connection';
@@ -151,5 +155,11 @@ export abstract class HelixLpBridgeBridge<
       decimals: direction.to.decimals,
       amount: new BN(fee),
     };
+  }
+
+  async getDailyLimit(
+    _direction: CrossChainPureDirection<TokenInfoWithMeta<ChainConfig>, TokenInfoWithMeta<ChainConfig>>
+  ): Promise<DailyLimit> {
+    return { limit: '500000000000000000000000', spentToday: '0' };
   }
 }

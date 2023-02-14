@@ -56,13 +56,14 @@ export function CrossChainInfo({
     );
   }, [fee, isDynamicFee, t]);
 
+  // eslint-disable-next-line complexity
   const dailyLimitContent = useMemo(() => {
     if (bridge.getDailyLimit) {
       const limit = dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday));
 
       return (
         <div className={`flex justify-between items-center`}>
-          <span>{t('Daily limit')}</span>
+          <span>{bridge.category === 'helixLpBridge' ? t('Transfer limit') : t('Daily limit')}</span>
           {limit ? (
             limit.lt(BN_ZERO) ? (
               <span className="text-helix-red">{t('Query Failed')}</span>
@@ -82,7 +83,7 @@ export function CrossChainInfo({
     }
 
     return null;
-  }, [bridge.getDailyLimit, dailyLimit, direction.from.symbol, direction.to.decimals, t]);
+  }, [bridge.getDailyLimit, bridge.category, dailyLimit, direction.from.symbol, direction.to.decimals, t]);
 
   const allowanceContent = useMemo(() => {
     if (bridge.getAllowancePayload && direction.from.type !== 'native' && departureConnection.wallet === 'metamask') {
