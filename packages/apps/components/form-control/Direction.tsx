@@ -23,8 +23,7 @@ import {
 } from 'shared/model';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { readStorage, updateStorage } from 'shared/utils/helper/storage';
-import { getBridge, isCBridge, isXCM } from 'utils/bridge';
-import { bridgeFactory } from '../../bridges/bridges';
+import { isCBridge, isXCM, isLpBridge } from 'utils/bridge';
 import { Bridge, TokenWithAmount } from '../../core/bridge';
 import { getOriginChainConfig } from '../../utils/network';
 import { chainFactory } from '../../utils/network/chain';
@@ -182,19 +181,34 @@ export function Direction({
           >
             <span
               // eslint-disable-next-line complexity
-              onClick={() => {
+              onClick={async () => {
+                if (!bridge) {
+                  return;
+                }
                 const { from, to } = data;
-                const config = getBridge(data);
-                const selectedBridge = bridgeFactory(config);
-                const mini = selectedBridge.getMinimumFeeTokenHolding && selectedBridge.getMinimumFeeTokenHolding(data);
+                const mini = bridge.getMinimumFeeTokenHolding && bridge.getMinimumFeeTokenHolding(data);
+                let dynamicFee = fee;
+                if (isLpBridge(data)) {
+                  dynamicFee = await bridge.getFee({
+                    from: {
+                      ...from,
+                      amount: fromWei({ value: iBalance, decimals: data.from.decimals }),
+                    },
+                    to: { ...to },
+                  });
+                }
                 const amount = calcMax(
                   { ...from, amount: iBalance },
-                  isCBridge(data) || isXCM(data) ? null : fee,
+                  isCBridge(data) || isXCM(data) ? null : dynamicFee,
                   mini ?? undefined
                 );
 
                 if (amount !== from.amount) {
-                  const toAmount = calcToAmount({ ...from, amount: new BN(toWei({ ...from, amount })) }, fee, data);
+                  const toAmount = calcToAmount(
+                    { ...from, amount: new BN(toWei({ ...from, amount })) },
+                    dynamicFee,
+                    data
+                  );
 
                   triggerChange({
                     from: { ...from, amount },

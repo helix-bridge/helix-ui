@@ -236,7 +236,7 @@ export function CrossChain() {
               const mini = bridge && bridge.getMinimumFeeTokenHolding && bridge.getMinimumFeeTokenHolding(val);
               const max = calcMax(
                 { ...val.from, amount: balance },
-                isCBridge(direction) || isXCM(direction) || isLpBridge(direction) ? null : fee,
+                isCBridge(direction) || isXCM(direction) ? null : fee,
                 mini ?? undefined
               );
               return !max || new BN(toWei({ value: max })).gte(new BN(toWei({ value: val.from.amount })))
