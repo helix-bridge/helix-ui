@@ -63,6 +63,13 @@ export const ethereumConfig: EthereumChainConfig = {
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
         },
+        {
+          category: 'helixLpBridge',
+          bridge: 'darwinia-ethereum',
+          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
+          basefee: 100,
+          index: 0,
+        },
       ],
       type: 'erc20',
       host: 'ethereum',

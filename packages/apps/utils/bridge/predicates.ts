@@ -24,6 +24,8 @@ export const isCBridge = isBridge('cBridge');
 
 export const isXCM = isBridge('XCM');
 
+export const isLpBridge = isBridge('helixLpBridge');
+
 export const isTransferBetween = (network1: Network, network2: Network) => {
   const isBacking = predicate(network1, network2);
   const isIssuing = revert(isBacking);

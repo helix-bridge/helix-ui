@@ -5,23 +5,28 @@ import { BridgeCategory, BridgeConfig, CrossChainPureDirection, CrossOverview } 
 import { unknownUnavailable } from '../../bridges/unknown-unavailable/config';
 import { BRIDGES } from '../../config/bridge';
 
-export function getBridge<T extends BridgeConfig>(
-  direction: CrossChainPureDirection,
-  category?: BridgeCategory
-): BridgeBase<T> {
+export function getOverview(direction: CrossChainPureDirection, category?: BridgeCategory): CrossOverview | undefined {
   const { from, to } = direction;
   const overviews = from.cross.filter((item) => item.partner.name === to.host && item.partner.symbol === to.symbol);
-  let overview: CrossOverview | undefined = overviews[0];
+  const overview: CrossOverview | undefined = overviews[0];
 
   if (overviews.length > 1) {
     if (category) {
-      overview = overviews.find((item) => item.category.toLowerCase() === category.toLowerCase());
+      return overviews.find((item) => item.category.toLowerCase() === category.toLowerCase());
     } else {
       console.warn(
         `Found multiple transfer paths for ${direction.from.symbol} to ${direction.to.symbol}. Pass the category argument get a more specific bridge`
       );
     }
   }
+  return overview;
+}
+
+export function getBridge<T extends BridgeConfig>(
+  direction: CrossChainPureDirection,
+  category?: BridgeCategory
+): BridgeBase<T> {
+  const overview = getOverview(direction, category);
 
   if (!overview) {
     return unknownUnavailable as unknown as BridgeBase<T>;

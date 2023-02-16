@@ -39,6 +39,14 @@ export const crabDVMConfig: DVMChainConfig = {
           bridge: 'crabDVM-darwiniaDVM',
           partner: { name: 'crab-dvm', role: 'issuing', symbol: 'WCRAB' },
         },
+        /*
+        {
+          category: 'helixLpBridge',
+          bridge: 'crab-darwinia',
+          partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'xWCRAB' },
+          basefee: 1.1,
+        },
+        */
         {
           category: 'helix',
           bridge: 'crabDVM-darwiniaDVM',
@@ -121,6 +129,22 @@ export const crabDVMConfig: DVMChainConfig = {
       name: 'xWRING',
       decimals: 18,
       cross: [
+        /*
+        {
+          category: 'helixLpBridge',
+          bridge: 'crab-darwinia',
+          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'WRING' },
+          basefee: 1.1,
+          index: 1,
+        },
+        {
+          category: 'helixLpBridge',
+          bridge: 'crab-darwinia',
+          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
+          basefee: 1.1,
+          index: 1,
+        },
+        */
         {
           category: 'helix',
           bridge: 'darwiniaDVM-crabDVM',
@@ -188,6 +212,15 @@ export const crabDVMConfig: DVMChainConfig = {
           bridge: 'crabDVM-darwiniaDVM',
           partner: { name: 'crab-dvm', role: 'backing', symbol: 'CRAB' },
         },
+        /*
+        {
+          category: 'helixLpBridge',
+          bridge: 'crab-darwinia',
+          partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'xWCRAB' },
+          basefee: 1.1,
+          index: 0,
+        },
+        */
         {
           category: 'helix',
           bridge: 'crabDVM-darwiniaDVM',

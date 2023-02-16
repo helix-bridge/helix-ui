@@ -28,7 +28,7 @@ target=$REPLY
 validate $target
 to=$(echo ${target:0:1} | tr a-z A-Z)${target:1}
 
-options=("helix" "cBridge" "XCM")
+options=("helix" "helixLpBridge" "cBridge" "XCM")
 
 echo "Input the bridge category index"
 
@@ -46,6 +46,10 @@ select category in "${options[@]}"; do
         echo "The bridge category set to XCM"
         break
         ;;
+    helixLpBridge)
+        echo "The bridge category set to helixLpBridge"
+        break
+        ;;
     quit)
         break
         ;;
@@ -61,6 +65,8 @@ if [ $category = "cBridge" ]; then
     subdir="cbridge"
 elif [ $category = "XCM" ]; then
     subdir="xcm"
+elif [ $category = "helixLpBridge" ]; then
+    subdir="helixlp"
 else
     subdir="helix"
 fi
@@ -90,6 +96,19 @@ function component() {
             import { CBridge } from '../cBridge/CBridge';
 
             export const $1 = CBridge;
+        " >>$2'/'$1'.tsx'
+    elif [ "$category" = "helixLpBridge" ]; then
+        echo "
+            import { CrossToken, DVMChainConfig } from 'shared/model';
+            import { Bridge } from '../../../components/bridge/Bridge';
+            import { CrossChainComponentProps } from '../../../model/component';
+            import { ${from}${to}Bridge } from './utils/bridge';
+            
+            export function $1(
+              props: CrossChainComponentProps<${from}${to}Bridge, CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>
+            ) {
+              return <Bridge {...props} hideRecipient />;
+            }
         " >>$2'/'$1'.tsx'
     else
         echo "
@@ -231,8 +250,8 @@ function createRecord() {
             getSentAmountFromHelixRecord,
             getTokenConfigFromHelixRecord,
         } from 'utils/record';
-        import { CrabDVMDarwiniaDVMBridgeConfig } from '../../../../bridges/helix/crabDVM-darwiniaDVM/model';
-        import { DarwiniaDVMCrabDVMBridgeConfig } from '../../../../bridges/helix/darwiniaDVM-crabDVM/model';
+        import { CrabDVMDarwiniaDVMBridgeConfig } from '../../../../bridges/$2/crabDVM-darwiniaDVM/model';
+        import { DarwiniaDVMCrabDVMBridgeConfig } from '../../../../bridges/$2/darwiniaDVM-crabDVM/model';
         import { Detail } from '../../../../components/transaction/Detail';
         import { ZERO_ADDRESS } from '../../../../config';
         import { useUpdatableRecord } from '../../../../hooks';
@@ -329,9 +348,17 @@ function init() {
         initUitls $path'/utils' $departure $arrival
     fi
 
+    if [ "$category" != "helixLpBridge" ]; then
+        mkdir $path'/config'
+        mkdir $path'/utils'
+        initUitls $path'/utils' $departure $arrival
+        mkdir './pages/records/'$dir
+        createRecord './pages/records/'$dir 'helixLpBridge'
+    fi
+
     if [ "$category" == "helix" ]; then
         mkdir './pages/records/'$dir
-        createRecord './pages/records/'$dir
+        createRecord './pages/records/'$dir 'helix'
     fi
 
     mkdir $path'/model'

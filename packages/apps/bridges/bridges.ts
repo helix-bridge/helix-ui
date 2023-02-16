@@ -23,9 +23,13 @@ import { MoonriverShidenBridge } from './xcm/moonriver-shiden/utils';
 import { ShidenKaruraBridge } from './xcm/shiden-karura/utils';
 import { ShidenKhalaBridge } from './xcm/shiden-khala/utils';
 import { ShidenMoonriverBridge } from './xcm/shiden-moonriver/utils';
+import { CrabDarwiniaBridge } from './helixlp/crab-darwinia/utils';
+import { DarwiniaEthereumBridge } from './helixlp/darwinia-ethereum/utils';
+import { HelixLpBridgeBridge } from './helixlp/helixLpBridge/utils';
 
 export const bridgeConstructors = [
   CBridgeBridge,
+  HelixLpBridgeBridge,
   CrabDVMDarwiniaDVMBridge,
   CrabDVMInnerBridge,
   CrabParachainKaruraBridge,
@@ -49,12 +53,16 @@ export const bridgeConstructors = [
   SubstrateDVMSubstrateParachainBridge,
   SubstrateSubstrateDVMBridge,
   SubstrateSubstrateParachainBridge,
+  CrabDarwiniaBridge,
+  DarwiniaEthereumBridge,
 ];
 
 export function bridgeFactory<C extends BridgeConfig, O extends ChainConfig, T extends ChainConfig>(
   config: BridgeBase
 ): Bridge<C, O, T> {
-  const Constructor = bridgeConstructors.find((item) => item.alias === config.subClsName)!;
+  const Constructor = bridgeConstructors.find((item) => {
+    return item.alias === config.subClsName;
+  })!;
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore

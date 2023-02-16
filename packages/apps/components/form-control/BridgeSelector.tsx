@@ -30,9 +30,13 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
     [direction.from, direction.to]
   );
 
+  // eslint-disable-next-line complexity
   useEffect(() => {
-    if (!value && bridges.length && onChange && !isDisabled(bridges[0])) {
-      onChange(bridges[0]);
+    if (bridges.length && onChange && !value) {
+      const defaultBridge = bridges.find((item) => item.isDefault) || bridges[0];
+      if (!isDisabled(defaultBridge)) {
+        onChange(defaultBridge);
+      }
     }
   }, [bridges, isDisabled, onChange, value]);
 
@@ -51,7 +55,7 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
     >
       {bridges.map((item) => (
         <Select.Option key={item.name} value={item.name}>
-          {item.category}
+          {item.category === 'helixLpBridge' ? 'helix(Fast)' : item.category}
         </Select.Option>
       ))}
     </Select>

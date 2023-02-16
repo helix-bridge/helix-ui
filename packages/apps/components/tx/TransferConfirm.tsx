@@ -14,6 +14,7 @@ import { TokenWithAmount } from '../../core/bridge';
 import { TxConfirmComponentProps } from '../../model/component';
 import { isXCM } from '../../utils';
 
+// eslint-disable-next-line complexity
 export function TransferConfirm<T extends BridgeBase = BridgeBase>({
   value,
   fee,
@@ -105,7 +106,9 @@ export function TransferConfirm<T extends BridgeBase = BridgeBase>({
             <div className="flex items-center justify-between overflow-hidden">
               <span className="opacity-60">{t('Estimate Arrival Time')}</span>
               <span>
-                {t('{{estimate}} Minutes', { estimate: value.bridge.category === 'cBridge' ? '5-20' : '1-3' })}
+                {t('{{estimate}} Minutes', {
+                  estimate: value.bridge.category === 'cBridge' || value.bridge.category === 'helix' ? '5-20' : '1-3',
+                })}
               </span>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import { isAddress } from 'ethers/lib/utils';
 import { RecordStatus } from 'shared/config/constant';
-import { CrossChainDirection, HelixHistoryRecord, TokenWithBridgesInfo } from 'shared/model';
+import { BridgeCategory, CrossChainDirection, HelixHistoryRecord, TokenWithBridgesInfo } from 'shared/model';
 import { fromWei, prettyNumber, removeHelixFlag } from 'shared/utils/helper/balance';
 import { isPolkadotNetwork } from 'shared/utils/network/network';
 import { getOriginChainConfig } from '../network';
@@ -99,8 +99,33 @@ export function getDirectionFromHelixRecord(record: HelixHistoryRecord): CrossCh
   return null;
 }
 
+export function getCategoryFromRecord(record: HelixHistoryRecord): BridgeCategory {
+  const prefix = record.bridge.toLowerCase().split('-')[0];
+  switch (prefix) {
+    case 'helix': {
+      return 'helix';
+    }
+    case 'lpbridge': {
+      return 'helixLpBridge';
+    }
+    case 'cbridge': {
+      return 'cBridge';
+    }
+    case 'xcm': {
+      return 'XCM';
+    }
+    default: {
+      return 'helix';
+    }
+  }
+}
+
 export function isHelixRecord(record: HelixHistoryRecord): boolean {
   return record.bridge.toLowerCase().startsWith('helix');
+}
+
+export function isHelixLpRecord(record: HelixHistoryRecord): boolean {
+  return record.bridge.toLowerCase().startsWith('lpbridge');
 }
 
 export function isCBridgeRecord(record: HelixHistoryRecord): boolean {

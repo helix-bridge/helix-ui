@@ -27,7 +27,7 @@ import {
 import { addHelixFlag, fromWei, toWei } from 'shared/utils/helper/balance';
 import { AllowancePayload } from '../model/allowance';
 import { CrossChainPayload } from '../model/tx';
-import { isCBridge, isXCM } from '../utils';
+import { isCBridge, isLpBridge, isXCM } from '../utils';
 
 export interface TokenWithAmount extends Token {
   amount: BN; // with precision
@@ -51,6 +51,7 @@ export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Targ
   extends BridgeBase<B, Origin, Target> {
   claim?(record: HelixHistoryRecord): Observable<Tx>;
   refund?(record: HelixHistoryRecord): Observable<Tx>;
+  speedUp?(record: HelixHistoryRecord, newFee: number): Observable<Tx>;
   getDailyLimit?(
     direction: CrossChainPureDirection<TokenInfoWithMeta<Origin | Target>, TokenInfoWithMeta<Origin | Target>>
   ): Promise<DailyLimit>;
@@ -126,6 +127,7 @@ export abstract class Bridge<
 
     const xcm = isXCM(payload.direction);
     const cBridge = isCBridge(payload.direction);
+    const lpBridge = isLpBridge(payload.direction);
 
     /**
      * [pass condition, error message]
@@ -145,12 +147,12 @@ export abstract class Bridge<
       ],
       [!this.getDailyLimit || (!!dailyLimit.amount && dailyLimit.amount.gte(BN_ZERO)), 'Failed to get daily limit'],
       // validate logic
-      [xcm || cBridge ? availableBalance.gte(amount) : isBalanceEnough(), 'Insufficient balance'],
+      [xcm || cBridge || lpBridge ? availableBalance.gte(amount) : isBalanceEnough(), 'Insufficient balance'],
       [feeTokenBalance.amount.gte(fee.amount), 'Insufficient balance to pay fee'],
       [!allowance.amount || allowance.amount.gte(amount), 'Insufficient allowance'],
       [
         !dailyLimit.amount || new BN(toWei({ value: fromWei(dailyLimit), decimals: from.decimals })).gte(amount),
-        'Insufficient daily limit',
+        lpBridge ? 'Insufficient transfer limit' : 'Insufficient daily limit',
       ], // keep decimals consistent
     ];
     const result = validations.find((item) => !item[0]);

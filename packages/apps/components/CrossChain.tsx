@@ -17,6 +17,7 @@ import { of } from 'rxjs/internal/observable/of';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { DEFAULT_DIRECTION, FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
+import { getBridges } from 'utils/bridge';
 import { BridgeBase } from 'shared/core/bridge';
 import { ChainBase } from 'shared/core/chain';
 import { useIsMounted } from 'shared/hooks';
@@ -43,7 +44,7 @@ import { useAfterTx } from '../hooks/tx';
 import { CrossChainComponentProps } from '../model/component';
 import { CrossChainPayload } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
-import { isCBridge, isXCM } from '../utils';
+import { isCBridge, isXCM, isLpBridge } from '../utils';
 import { getDisplayName } from '../utils/network';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { calcMax, Direction, toDirection } from './form-control/Direction';
@@ -72,6 +73,7 @@ export function CrossChain() {
   const [pureDirection, setPureDirection] =
     useState<CrossChainPureDirection<TokenInfoWithMeta<ChainBase>, TokenInfoWithMeta<ChainBase>>>(defaultDirection);
   const [bridge, setBridge] = useState<CommonBridge | null>(null);
+  const [bridgeSize, setBridgeSize] = useState<number>(0);
   const [patchPayload, setPatchPayload] = useState<PayloadPatchFn>(() => (v: CrossChainPayload<CommonBridge>) => v);
   const bridgeState = useCheckSpecVersion(direction);
   const [fee, setFee] = useState<TokenWithAmount | null>(null);
@@ -117,6 +119,11 @@ export function CrossChain() {
     setDeparture(direction.from.meta);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const configs = getBridges(direction);
+    setBridgeSize(configs.length);
+  }, [direction]);
 
   useEffect(() => {
     form.setFieldsValue({ [FORM_CONTROL.sender]: account });
@@ -290,6 +297,7 @@ export function CrossChain() {
       >
         <Direction
           fee={fee}
+          bridge={bridge}
           balances={balances}
           isBalanceLoading={isBalanceLoading}
           onRefresh={() => {
@@ -308,6 +316,7 @@ export function CrossChain() {
           onChange={(value) => {
             if (isDirectionChanged(direction, value)) {
               setBridge(null);
+              setBridgeSize(0);
               setPatchPayload(() => identity);
               form.setFieldsValue({ [FORM_CONTROL.bridge]: undefined, [FORM_CONTROL.recipient]: undefined });
               setPureDirection({ from: omit(value.from, 'amount'), to: omit(value.to, 'amount') });
@@ -334,7 +343,7 @@ export function CrossChain() {
             },
           },
         ]}
-        className="mb-0 hidden"
+        className={bridgeSize < 2 ? 'mb-0 hidden' : undefined}
       >
         <BridgeSelector
           direction={direction}
@@ -345,6 +354,7 @@ export function CrossChain() {
             if (!isSameBridge) {
               setBridge(value || null);
               setDailyLimit(null);
+              setFee(null);
             }
           }}
         />
@@ -367,7 +377,7 @@ export function CrossChain() {
         <Input value={account} />
       </Form.Item>
 
-      {!allowanceEnough && account ? (
+      {!allowanceEnough && account && !isBalanceLoading ? (
         matched ? (
           <FormItemButton
             onClick={() => {
@@ -406,7 +416,7 @@ export function CrossChain() {
             )}
 
             <FormItemButton
-              disabled={bridgeState.status !== 'available' || bridge == null}
+              disabled={bridgeState.status !== 'available' || bridge == null || isBalanceLoading}
               onClick={() => {
                 if (!matched) {
                   message.error('Wrong Network');
@@ -428,13 +438,14 @@ export function CrossChain() {
                   const fromToken = omit(direction.from, 'meta');
                   const toToken = omit(direction.to, 'meta');
                   const [balance, nativeTokenBalance] = balances ?? [BN_ZERO, BN_ZERO];
+                  const feeIsErc20Token = isXCM(direction) || isCBridge(direction) || isLpBridge(direction);
 
                   const validateObs = payload.bridge.validate(payload, {
                     balance: { ...fromToken, amount: balance },
                     fee: fee!,
                     feeTokenBalance: {
                       ...fee,
-                      amount: isXCM(direction) || isCBridge(direction) ? balance : nativeTokenBalance,
+                      amount: feeIsErc20Token ? balance : nativeTokenBalance,
                     } as TokenWithAmount,
                     dailyLimit: {
                       ...toToken,
@@ -453,7 +464,9 @@ export function CrossChain() {
                         })
                       )
                     ),
-                    () => payload.bridge.send(payload, fee?.amount),
+                    () => {
+                      return payload.bridge.send(payload, fee?.amount);
+                    },
                     afterCrossChain(TransferDone, { payload })
                   );
 

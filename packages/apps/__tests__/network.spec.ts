@@ -104,7 +104,18 @@ describe('network utils', () => {
 
     expect(group).not.toEqual(undefined);
     expect(sort(group![1])).toEqual(
-      sort(['crab-dvm', 'heco', 'polygon', 'bsc', 'arbitrum', 'astar', 'avalanche', 'optimism', 'darwinia-dvm'])
+      sort([
+        'crab-dvm',
+        'heco',
+        'polygon',
+        'bsc',
+        'arbitrum',
+        'astar',
+        'avalanche',
+        'optimism',
+        'darwinia-dvm',
+        'darwinia-dvm',
+      ])
     );
   });
 

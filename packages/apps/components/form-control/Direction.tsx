@@ -12,6 +12,8 @@ import { DEFAULT_DIRECTION } from 'shared/config/constant';
 import { ChainBase } from 'shared/core/chain';
 import {
   BridgeStatus,
+  BridgeConfig,
+  ChainConfig,
   CrossChainDirection,
   CrossChainPureDirection,
   CrossToken,
@@ -21,9 +23,8 @@ import {
 } from 'shared/model';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { readStorage, updateStorage } from 'shared/utils/helper/storage';
-import { getBridge, isCBridge, isXCM } from 'utils/bridge';
-import { bridgeFactory } from '../../bridges/bridges';
-import { TokenWithAmount } from '../../core/bridge';
+import { isCBridge, isXCM, isLpBridge } from 'utils/bridge';
+import { Bridge, TokenWithAmount } from '../../core/bridge';
 import { getOriginChainConfig } from '../../utils/network';
 import { chainFactory } from '../../utils/network/chain';
 import { CountLoading } from '../widget/CountLoading';
@@ -33,6 +34,7 @@ type DirectionProps = CustomFormControlProps<CrossChainDirection<CrossToken<Chai
   // initial: CrossChainDirection<CrossToken<ChainBase>, CrossToken<ChainBase>>;
   fee: TokenWithAmount | null;
   balances: BN[] | null;
+  bridge: Bridge<BridgeConfig, ChainConfig, ChainConfig> | null;
   isBalanceLoading: boolean;
   onRefresh?: () => void;
 };
@@ -73,7 +75,15 @@ const calcToAmount = (payment: TokenWithAmount, fee: TokenWithAmount | null, dir
 };
 
 // eslint-disable-next-line complexity
-export function Direction({ value, onChange, balances, onRefresh, fee, isBalanceLoading = false }: DirectionProps) {
+export function Direction({
+  value,
+  bridge,
+  onChange,
+  balances,
+  onRefresh,
+  fee,
+  isBalanceLoading = false,
+}: DirectionProps) {
   const data = useMemo(
     () => value ?? { from: toDirection(DEFAULT_DIRECTION.from)!, to: toDirection(DEFAULT_DIRECTION.to)! },
     [value]
@@ -104,16 +114,14 @@ export function Direction({ value, onChange, balances, onRefresh, fee, isBalance
       to: pick(to, ['symbol', 'host']),
     } as HashInfo;
 
-    if (from && to) {
-      const bridge = getBridge({ from, to });
-
+    if (bridge) {
       setBridgetStatus(bridge.status);
     } else {
       setBridgetStatus(null);
     }
 
     updateStorage(info);
-  }, [value]);
+  }, [bridge, value]);
 
   useEffect(() => {
     triggerChange({
@@ -173,19 +181,34 @@ export function Direction({ value, onChange, balances, onRefresh, fee, isBalance
           >
             <span
               // eslint-disable-next-line complexity
-              onClick={() => {
+              onClick={async () => {
+                if (!bridge) {
+                  return;
+                }
                 const { from, to } = data;
-                const config = getBridge(data);
-                const bridge = bridgeFactory(config);
                 const mini = bridge.getMinimumFeeTokenHolding && bridge.getMinimumFeeTokenHolding(data);
+                let dynamicFee = fee;
+                if (isLpBridge(data)) {
+                  dynamicFee = await bridge.getFee({
+                    from: {
+                      ...from,
+                      amount: fromWei({ value: iBalance, decimals: data.from.decimals }),
+                    },
+                    to: { ...to },
+                  });
+                }
                 const amount = calcMax(
                   { ...from, amount: iBalance },
-                  isCBridge(data) || isXCM(data) ? null : fee,
+                  isCBridge(data) || isXCM(data) ? null : dynamicFee,
                   mini ?? undefined
                 );
 
                 if (amount !== from.amount) {
-                  const toAmount = calcToAmount({ ...from, amount: new BN(toWei({ ...from, amount })) }, fee, data);
+                  const toAmount = calcToAmount(
+                    { ...from, amount: new BN(toWei({ ...from, amount })) },
+                    dynamicFee,
+                    data
+                  );
 
                   triggerChange({
                     from: { ...from, amount },
