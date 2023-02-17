@@ -14,7 +14,7 @@ import {
   TokenInfoWithMeta,
   Tx,
 } from 'shared/model';
-import { isMetamaskChainConsistent } from 'shared/utils/connection';
+import { entrance, isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei } from 'shared/utils/helper/balance';
 import { sendTransactionFromContract } from 'shared/utils/tx';
 import { getOverview } from 'utils/bridge';
@@ -32,6 +32,7 @@ export abstract class HelixLpBridgeBridge<
 
   private prefix = hexToBn('0x6878000000000000');
   private readonly feePercent = '0.002';
+  private readonly relayGasLimit = '100000';
 
   send(
     payload: CrossChainPayload<Bridge<B, Origin, Target>, CrossToken<Origin | Target>, CrossToken<Target | Origin>>,
@@ -148,12 +149,19 @@ export abstract class HelixLpBridgeBridge<
   ): Promise<TokenWithAmount | null> {
     const overview = getOverview(direction, 'helixLpBridge');
     // basefee + amount * 0.1%
-    const totalFee = overview!.basefee! + Number(direction.from.amount) * Number(this.feePercent);
-    const fee = toWei({ value: totalFee, decimals: direction.from.decimals });
+    const baseFee = overview!.basefee! + Number(direction.from.amount) * Number(this.feePercent);
+    let totalFee = toWei({ value: baseFee, decimals: direction.from.decimals });
+    // need get realtime fee
+    if (overview!.price) {
+      const provider = entrance.web3.getInstance(direction.to.meta.provider.https);
+      const gasPrice = await provider.getGasPrice();
+      const dynamicFee = gasPrice.mul(overview!.price! * Number(this.relayGasLimit));
+      totalFee = dynamicFee.add(totalFee).toString();
+    }
     return {
       ...omit(direction.from, ['meta', 'amount']),
       decimals: direction.to.decimals,
-      amount: new BN(fee),
+      amount: new BN(totalFee),
     };
   }
 
