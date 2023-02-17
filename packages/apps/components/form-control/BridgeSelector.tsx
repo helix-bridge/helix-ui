@@ -55,7 +55,11 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
     >
       {bridges.map((item) => (
         <Select.Option key={item.name} value={item.name}>
-          {item.category === 'helixLpBridge' ? 'helix(Fast)' : item.category}
+          {item.category === 'helix'
+            ? 'helix(Legacy)'
+            : item.category === 'helixLpBridge'
+            ? 'helix(Fusion)'
+            : item.category}
         </Select.Option>
       ))}
     </Select>
