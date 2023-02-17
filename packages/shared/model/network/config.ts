@@ -35,6 +35,7 @@ export interface CrossOverview {
   deprecated?: boolean;
   basefee?: number; // not include decimals
   index?: number; // the index of token address
+  price?: number; // the price of token to gasToken
 }
 
 export interface TokenWithBridgesInfo extends Token {
