@@ -19,6 +19,7 @@ import { darwiniaConfig } from './darwinia';
 import { darwiniaDVMConfig } from './darwinia-dvm';
 import { ethereumConfig } from './ethereum';
 import { goerliConfig } from './goerli';
+import { arbitrumGoerliConfig } from './arbitrum-goerli';
 import { hecoConfig } from './heco';
 import { karuraConfig } from './karura';
 import { khalaConfig } from './khala';
@@ -45,6 +46,7 @@ export const SYSTEM_CHAIN_CONFIGURATIONS: (EthereumChainConfig | PolkadotChainCo
   darwiniaDVMConfig,
   ethereumConfig,
   goerliConfig,
+  arbitrumGoerliConfig,
   hecoConfig,
   karuraConfig,
   khalaConfig,
@@ -89,6 +91,7 @@ export const knownEthereumNetworks: (DVMNetwork | EthereumTypeNetwork)[] = [
   'heco',
   'polygon',
   'arbitrum',
+  'arbitrum-goerli',
   'astar',
   'avalanche',
   'bsc',

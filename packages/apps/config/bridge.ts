@@ -60,6 +60,7 @@ import { moonriverKhala } from '../bridges/xcm/moonriver-khala/config';
 import { khalaMoonriver } from '../bridges/xcm/khala-moonriver/config';
 import { crabDarwinia } from '../bridges/helixlp/crab-darwinia/config';
 import { darwiniaEthereum } from '../bridges/helixlp/darwinia-ethereum/config';
+import { arbitrumGoerli } from '../bridges/helixlp/arbitrum-ethereum/config';
 
 const formalBridges = [
   arbitrumAstar,
@@ -125,6 +126,7 @@ const testBridges = [
   pangoroDVMPangolinDVM,
   pangoroDVMPangoroDVM,
   pangoroPangolinDVM,
+  arbitrumGoerli,
 ];
 
 export const BRIDGES = (() => {

@@ -104,12 +104,12 @@ function component() {
             import { CrossChainComponentProps } from '../../../model/component';
             import { ${from}${to}Bridge } from './utils/bridge';
             
-            export function $1(
+            export function $1$3(
               props: CrossChainComponentProps<${from}${to}Bridge, CrossToken<DVMChainConfig>, CrossToken<DVMChainConfig>>
             ) {
               return <Bridge {...props} hideRecipient />;
             }
-        " >>$2'/'$1'.tsx'
+        " >>$2'/'$1$3'.tsx'
     else
         echo "
             import { ChainConfig, CrossToken } from 'shared/model';
@@ -130,7 +130,7 @@ function initModel() {
     echo "
         import { BridgeConfig } from 'shared/model';
         import { ContractConfig } from 'shared/model';
-        import { CrossToken, ChainConfig } from 'shared/model';
+        import { CrossToken, $2ChainConfig } from 'shared/model';
         import { Bridge } from '../../../../core/bridge';
         import { CrossChainPayload } from '../../../../model/tx';
 
@@ -139,15 +139,15 @@ function initModel() {
         export type ${name}BridgeConfig = Required<BridgeConfig<${name}ContractConfig>>;
 
         export type IssuingPayload = CrossChainPayload<
-            Bridge<${name}BridgeConfig, ChainConfig, ChainConfig>,
-            CrossToken<ChainConfig>,
-            CrossToken<ChainConfig>
+            Bridge<${name}BridgeConfig, $2ChainConfig, $2ChainConfig>,
+            CrossToken<$2ChainConfig>,
+            CrossToken<$2ChainConfig>
         >;
 
         export type RedeemPayload = CrossChainPayload<
-            Bridge<${name}BridgeConfig, ChainConfig, ChainConfig>,
-            CrossToken<ChainConfig>,
-            CrossToken<ChainConfig>
+            Bridge<${name}BridgeConfig, DVMChainConfig, DVMChainConfig>,
+            CrossToken<$2ChainConfig>,
+            CrossToken<$2ChainConfig>
         >;
     " >>$1'/bridge.ts'
 
@@ -338,6 +338,8 @@ function init() {
     local dir=$subdir'/'$origin'-'$target
     local path='./bridges/'$dir
     local index=$path'/index.ts'
+    local dvmFlag='DVM'
+    local categoryFlag=''
 
     mkdir $path
 
@@ -354,26 +356,29 @@ function init() {
         initUitls $path'/utils' $departure $arrival
         mkdir './pages/records/'$dir
         createRecord './pages/records/'$dir 'helixLpBridge'
+    else
+        categoryFlag='Ln'
     fi
 
     if [ "$category" == "helix" ]; then
         mkdir './pages/records/'$dir
         createRecord './pages/records/'$dir 'helix'
+        dvmFlag = ''
     fi
 
     mkdir $path'/model'
-    initModel $path'/model' $departure $arrival
+    initModel $path'/model' $dvmFlag
 
     mkdir $path'/config'
     initConfig $path'/config' $departure $arrival
 
-    component $departure $path 'IssuingPayload'
-    component $arrival $path 'RedeemPayload'
+    component $departure $path $categoryFlag
+    component $arrival $path $categoryFlag
 
-    indexFile $departure $index
-    indexFile $arrival $index
+    indexFile $departure$categoryFlag $index
+    indexFile $arrival$categoryFlag $index
 
-    updateBridgesIndexer $departure $arrival $dir
+    updateBridgesIndexer $departure$categoryFlag $arrival$categoryFlag $dir
 
     updateSupports
 

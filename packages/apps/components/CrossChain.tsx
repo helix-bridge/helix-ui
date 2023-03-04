@@ -104,10 +104,15 @@ export function CrossChain() {
         ? [bridge.IssueComponentName, bridge.IssueComponentAlias]
         : [bridge.RedeemComponentName, bridge.RedeemComponentAlias];
 
+      let nameWithSuffix = name;
+      if (bridge.category === 'helixLpBridge') {
+        nameWithSuffix = name + 'Ln';
+      }
+
       return (
         dynamic<CrossChainComponentProps<BridgeBase>>(() =>
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          import('../bridges').then((res) => (res as any)[name] || (res as any)[alias])
+          import('../bridges').then((res) => (res as any)[nameWithSuffix] || (res as any)[alias])
         ) ?? null
       );
     }

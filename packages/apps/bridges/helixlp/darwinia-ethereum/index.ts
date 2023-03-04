@@ -1,2 +1,2 @@
-export * from './Darwinia2Ethereum';
-export * from './Ethereum2Darwinia';
+export * from './Darwinia2EthereumLn';
+export * from './Ethereum2DarwiniaLn';

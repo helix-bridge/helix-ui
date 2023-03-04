@@ -47,4 +47,6 @@ export { Moonriver2Khala, Khala2Moonriver } from './xcm/moonriver-khala';
 
 export { Crab2Darwinia, Darwinia2Crab } from './helixlp/crab-darwinia';
 
-export { Darwinia2Ethereum, Ethereum2Darwinia } from './helixlp/darwinia-ethereum';
+export { Darwinia2EthereumLn, Ethereum2DarwiniaLn } from './helixlp/darwinia-ethereum';
+
+export { Arbitrum2EthereumLn, Ethereum2ArbitrumLn } from './helixlp/arbitrum-ethereum';

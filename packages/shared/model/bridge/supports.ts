@@ -51,4 +51,5 @@ export type BridgeName =
   | 'khala-moonriver'
   | 'crab-darwinia'
   | 'crab-darwinia'
-  | 'darwinia-ethereum';
+  | 'darwinia-ethereum'
+  | 'arbitrum-ethereum';
