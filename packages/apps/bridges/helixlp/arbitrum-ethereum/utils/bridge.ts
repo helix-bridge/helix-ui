@@ -35,11 +35,7 @@ export class ArbitrumEthereumBridge extends HelixLpBridgeBridge<
   refund(record: HelixHistoryRecord): Observable<Tx> {
     const { sender, recipient, sendAmount, fromChain, toChain } = record;
     const splitRecords = record.id.split('-');
-    console.log(splitRecords);
-    // eslint-disable-next-line no-magic-numbers
-    const sourceChainId = splitRecords[1];
-    // eslint-disable-next-line no-magic-numbers
-    const transferId = splitRecords[4];
+    const [, sourceChainId, , , transferId] = splitRecords;
     const sendToken = this.getTokenConfigFromHelixRecord(record, 'sendToken');
     const recvToken = this.getTokenConfigFromHelixRecord(record, 'recvToken');
 
