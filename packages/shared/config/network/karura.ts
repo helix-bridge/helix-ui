@@ -68,6 +68,7 @@ export const karuraConfig: ParachainChainConfig = {
           category: 'XCM',
           bridge: 'crabParachain-karura',
           partner: { name: 'crab-parachain', role: 'backing', symbol: 'CRAB' },
+          deprecated: true,
         },
       ],
       type: 'mapping',

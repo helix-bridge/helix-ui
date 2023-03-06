@@ -38,6 +38,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'WRING' },
+          deprecated: true,
         },
         /*
         {
@@ -51,6 +52,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'crab-dvm', role: 'issuing', symbol: 'xWRING' },
+          deprecated: true,
         },
         {
           category: 'helix',
@@ -89,11 +91,13 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'crab-dvm', role: 'issuing', symbol: 'xWRING' },
+          deprecated: true,
         },
         {
           category: 'helix',
           bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
+          deprecated: true,
         },
         {
           category: 'helix',
@@ -180,11 +184,13 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'crabDVM-darwiniaDVM',
           partner: { name: 'crab-dvm', role: 'backing', symbol: 'WCRAB' },
+          deprecated: true,
         },
         {
           category: 'helix',
           bridge: 'crabDVM-darwiniaDVM',
           partner: { name: 'crab-dvm', role: 'backing', symbol: 'CRAB' },
+          deprecated: true,
         },
       ],
       decimals: 18,

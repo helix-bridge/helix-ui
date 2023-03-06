@@ -56,6 +56,7 @@ export const moonriverConfig: ParachainEthereumCompatibleChainConfig = {
           category: 'XCM',
           bridge: 'crabParachain-moonriver',
           partner: { name: 'crab-parachain', role: 'backing', symbol: 'CRAB' },
+          deprecated: true,
         },
       ],
       type: 'erc20',

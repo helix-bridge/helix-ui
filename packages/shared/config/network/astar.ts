@@ -34,6 +34,7 @@ export const astarConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'crabDVM-astar',
           partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDT' },
+          deprecated: true,
         },
       ],
       type: 'erc20',
@@ -75,6 +76,7 @@ export const astarConfig: EthereumChainConfig = {
           category: 'cBridge',
           bridge: 'crabDVM-astar',
           partner: { name: 'crab-dvm', role: 'backing', symbol: 'USDC' },
+          deprecated: true,
         },
         {
           category: 'cBridge',
