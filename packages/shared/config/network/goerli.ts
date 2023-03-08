@@ -59,12 +59,11 @@ export const goerliConfig: EthereumChainConfig = {
       name: 'RING',
       decimals: 18,
       cross: [
-        // {
-        // category: 'helixLpBridge',
-        // bridge: 'arbitrum-ethereum',
-        // partner: { name: 'arbitrum-goerli', role: 'backing', symbol: 'RING' },
-        // deprecated: true,
-        // },
+        {
+          category: 'l1tol2',
+          bridge: 'ethereum-arbitrum',
+          partner: { name: 'arbitrum-goerli', role: 'issuing', symbol: 'RING' },
+        },
       ],
       type: 'erc20',
       host: 'goerli',

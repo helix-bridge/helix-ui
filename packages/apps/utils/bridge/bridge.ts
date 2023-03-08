@@ -63,5 +63,8 @@ export function getBridges(source: CrossChainPureDirection): BridgeBase[] {
 }
 
 export function bridgeCategoryDisplay(category: BridgeCategory) {
+  if (category === 'l1tol2') {
+    return 'L2Bridge';
+  }
   return /^[a-z]+$/.test(category) ? upperFirst(category) : category;
 }

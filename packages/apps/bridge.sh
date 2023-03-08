@@ -28,7 +28,7 @@ target=$REPLY
 validate $target
 to=$(echo ${target:0:1} | tr a-z A-Z)${target:1}
 
-options=("helix" "helixLpBridge" "cBridge" "XCM")
+options=("helix" "helixLpBridge" "cBridge" "XCM" "l1tol2")
 
 echo "Input the bridge category index"
 
@@ -50,6 +50,10 @@ select category in "${options[@]}"; do
         echo "The bridge category set to helixLpBridge"
         break
         ;;
+    l1tol2)
+        echo "The bridge category set to l1tol2"
+        break
+        ;;
     quit)
         break
         ;;
@@ -67,6 +71,8 @@ elif [ $category = "XCM" ]; then
     subdir="xcm"
 elif [ $category = "helixLpBridge" ]; then
     subdir="helixlp"
+elif [ $category = "l1tol2" ]; then
+    subdir="l1tol2"
 else
     subdir="helix"
 fi
@@ -117,10 +123,10 @@ function component() {
             import { CrossChainComponentProps } from '../../../model/component';
             import { ${from}${to}Bridge } from './utils';
 
-            export function $1(props: CrossChainComponentProps<${from}${to}Bridge, CrossToken<ChainConfig>, CrossToken<ChainConfig>>) {
+            export function $1$3(props: CrossChainComponentProps<${from}${to}Bridge, CrossToken<ChainConfig>, CrossToken<ChainConfig>>) {
                 return <Bridge {...props} />;
             }
-        " >>$2'/'$1'.tsx'
+        " >>$2'/'$1$3'.tsx'
     fi
 }
 
@@ -350,14 +356,21 @@ function init() {
         initUitls $path'/utils' $departure $arrival
     fi
 
-    if [ "$category" != "helixLpBridge" ]; then
+    if [ "$category" == "helixLpBridge" ]; then
         mkdir $path'/config'
         mkdir $path'/utils'
         initUitls $path'/utils' $departure $arrival
         mkdir './pages/records/'$dir
         createRecord './pages/records/'$dir 'helixLpBridge'
-    else
         categoryFlag='Ln'
+    fi
+
+    if [ "$category" == "l1tol2" ]; then
+        mkdir $path'/config'
+        mkdir $path'/utils'
+        mkdir './pages/records/'$dir
+        createRecord './pages/records/'$dir 'l1tol2'
+        categoryFlag='L2'
     fi
 
     if [ "$category" == "helix" ]; then

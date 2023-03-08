@@ -130,6 +130,10 @@ export abstract class HelixLpBridgeBridge<
     );
   }
 
+  getEstimateTime(): string {
+    return '1-3';
+  }
+
   async getAllowancePayload(
     direction: CrossChainDirection<CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>
   ): Promise<AllowancePayload> {

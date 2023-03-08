@@ -96,6 +96,7 @@ export function CrossChain() {
     [allowance, bridge?.getAllowancePayload, direction.from]
   );
 
+  // eslint-disable-next-line complexity
   const Content = useMemo(() => {
     const { from: dep, to } = pureDirection;
 
@@ -107,6 +108,8 @@ export function CrossChain() {
       let nameWithSuffix = name;
       if (bridge.category === 'helixLpBridge') {
         nameWithSuffix = name + 'Ln';
+      } else if (bridge.category === 'l1tol2') {
+        nameWithSuffix = name + 'L2';
       }
 
       return (
@@ -421,7 +424,7 @@ export function CrossChain() {
             )}
 
             <FormItemButton
-              disabled={bridgeState.status !== 'available' || bridge == null || isBalanceLoading}
+              disabled={bridgeState.status !== 'available' || bridge == null || isBalanceLoading || fee == null}
               onClick={() => {
                 if (!matched) {
                   message.error('Wrong Network');

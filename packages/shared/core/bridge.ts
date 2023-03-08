@@ -109,6 +109,10 @@ export class BridgeBase<C = BridgeConfig, O extends ChainConfig = ChainConfig, T
     // return 'HelixLpBridgeBridge';
     // }
 
+    if (this.category === 'l1tol2') {
+      return this.IssueComponentName.split('2').join('') + 'BridgeL2';
+    }
+
     return this.IssueComponentName.split('2').join('') + 'Bridge';
   }
 

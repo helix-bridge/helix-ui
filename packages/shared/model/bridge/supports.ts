@@ -52,4 +52,5 @@ export type BridgeName =
   | 'crab-darwinia'
   | 'crab-darwinia'
   | 'darwinia-ethereum'
-  | 'arbitrum-ethereum';
+  | 'arbitrum-ethereum'
+  | 'ethereum-arbitrum';

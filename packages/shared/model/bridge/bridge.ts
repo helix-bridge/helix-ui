@@ -12,7 +12,7 @@ export type Arrival = Network;
 
 /* ----------------------------------------------- bridge config ------------------------------------------------ */
 
-export type BridgeCategory = 'helix' | 'helixLpBridge' | 'cBridge' | 'XCM';
+export type BridgeCategory = 'helix' | 'helixLpBridge' | 'cBridge' | 'XCM' | 'l1tol2';
 
 export interface LockEventsStorage {
   min: number;
@@ -29,6 +29,10 @@ export interface CBridgeContractConfig extends ContractConfig {
   stablecoinIssuing?: string;
   stablecoinBacking?: string;
   busdIssuing?: string;
+}
+
+export interface L2BridgeContractConfig extends ContractConfig {
+  gatewayAddress: string;
 }
 
 export interface BridgeConfig<C = ContractConfig> {
