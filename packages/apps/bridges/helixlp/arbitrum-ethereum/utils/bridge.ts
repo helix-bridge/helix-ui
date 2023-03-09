@@ -23,6 +23,7 @@ export class ArbitrumEthereumBridge extends HelixLpBridgeBridge<
 > {
   static readonly alias: string = 'ArbitrumEthereumBridge';
   private l2GasLimit = '100000';
+  private feeScaler = '1.1';
 
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     return this.send(payload, fee);
@@ -102,23 +103,26 @@ export class ArbitrumEthereumBridge extends HelixLpBridgeBridge<
     try {
       const l1BaseFee = (await l1Provider.getBlock('latest')).baseFeePerGas;
       const l2GasPrice = await l2Provider.getGasPrice();
+      const feeScaler = Number(this.feeScaler);
+      const scaleL1BaseFee = (Number(l1BaseFee) * feeScaler).toFixed();
+      const scaleL2GasPrice = (Number(l2GasPrice) * feeScaler).toFixed();
 
       const address = this.isIssue(departure, arrival)
         ? this.config.contracts?.backing
         : this.config.contracts?.issuing;
       const contract = new Contract(address as string, lpArbitrumL1IssuingAbi, l1Provider);
       const maxSubmissionCost = await contract.submissionFee(
-        l1BaseFee?.toString(),
+        scaleL1BaseFee.toString(),
         [transferId],
         withdrawNative,
         receiver,
         10
       );
-      const deposit = Number(this.l2GasLimit) * Number(l2GasPrice) + Number(maxSubmissionCost);
+      const deposit = Number(this.l2GasLimit) * scaleL2GasPrice + Number(maxSubmissionCost);
 
       return {
         maxSubmissionCost: new BN(maxSubmissionCost.toString()),
-        gasPrice: new BN(l2GasPrice.toString()),
+        gasPrice: new BN(scaleL2GasPrice.toString()),
         deposit: new BN(deposit.toString()),
       };
     } catch (err) {

@@ -61,8 +61,10 @@ export class EthereumArbitrumBridgeL2 extends Bridge<EthereumArbitrumBridgeConfi
         return sendTransactionFromContract(
           contractAddress,
           (contract) => {
-            return contract.outboundTransfer(
+            // a little refund fee received by helixDao wallet to indict that the tx is sent by helix
+            return contract.outboundTransferCustomRefund(
               tokenAddress,
+              contracts!.helixDaoAddress,
               recipient,
               transferAmount,
               this.l2GasLimit,
@@ -95,21 +97,24 @@ export class EthereumArbitrumBridgeL2 extends Bridge<EthereumArbitrumBridgeConfi
     const l1Provider = entrance.web3.getInstance(departure.provider.https);
     const l2Provider = entrance.web3.getInstance(arrival.provider.https);
 
+    const feeScaler = Number(this.feeScaler);
     const l1BaseFee = (await l1Provider.getBlock('latest')).baseFeePerGas;
     const l2GasPrice = await l2Provider.getGasPrice();
+    const scaleL1BaseFee = (Number(l1BaseFee) * feeScaler).toFixed();
+    const scaleL2GasPrice = (Number(l2GasPrice) * feeScaler).toFixed();
     const address = this.isIssue(departure, arrival) ? this.config.contracts?.backing : this.config.contracts?.issuing;
     const contract = new Contract(address as string, l1GatewayRouterAbi, l1Provider);
     const inboxAddress = await contract.inbox();
     const inboxContract = new Contract(inboxAddress as string, inboxAbi, l1Provider);
     const maxSubmissionCost = await inboxContract.calculateRetryableSubmissionFee(
       this.l2FixedDataSize,
-      l1BaseFee?.toString()
+      scaleL1BaseFee.toString()
     );
-    const deposit = Number(this.l2GasLimit) * Number(l2GasPrice) + Number(maxSubmissionCost);
+    const deposit = Number(this.l2GasLimit) * scaleL2GasPrice + Number(maxSubmissionCost);
     const scaleDeposit = (deposit * Number(this.feeScaler)).toFixed();
     return {
       maxSubmissionCost: new BN(maxSubmissionCost.toString()),
-      gasPrice: new BN(l2GasPrice.toString()),
+      gasPrice: new BN(scaleL2GasPrice.toString()),
       deposit: new BN(scaleDeposit.toString()),
     };
   }

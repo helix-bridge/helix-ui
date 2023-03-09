@@ -33,6 +33,7 @@ export interface CBridgeContractConfig extends ContractConfig {
 
 export interface L2BridgeContractConfig extends ContractConfig {
   gatewayAddress: string;
+  helixDaoAddress: string;
 }
 
 export interface BridgeConfig<C = ContractConfig> {
