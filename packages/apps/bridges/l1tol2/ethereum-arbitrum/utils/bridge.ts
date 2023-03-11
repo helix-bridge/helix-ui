@@ -25,6 +25,8 @@ export class EthereumArbitrumBridgeL2 extends Bridge<EthereumArbitrumBridgeConfi
   private l2GasLimit = '600000';
   private l2FixedDataSize = '1600';
   private feeScaler = '1.1';
+  // To ensure a successful transaction, we set the scaler to be 3 times
+  private l2GasPriceScaler = '3';
 
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     return this.transfer(payload, fee);
@@ -101,7 +103,7 @@ export class EthereumArbitrumBridgeL2 extends Bridge<EthereumArbitrumBridgeConfi
     const l1BaseFee = (await l1Provider.getBlock('latest')).baseFeePerGas;
     const l2GasPrice = await l2Provider.getGasPrice();
     const scaleL1BaseFee = (Number(l1BaseFee) * feeScaler).toFixed();
-    const scaleL2GasPrice = (Number(l2GasPrice) * feeScaler).toFixed();
+    const scaleL2GasPrice = (Number(l2GasPrice) * Number(this.l2GasPriceScaler)).toFixed();
     const address = this.isIssue(departure, arrival) ? this.config.contracts?.backing : this.config.contracts?.issuing;
     const contract = new Contract(address as string, l1GatewayRouterAbi, l1Provider);
     const inboxAddress = await contract.inbox();
