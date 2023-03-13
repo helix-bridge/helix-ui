@@ -199,6 +199,7 @@ describe('<ExplorerLink />', () => {
       avalanche: `https://snowtrace.io/tx/0x123456`,
       bsc: `https://bscscan.com/tx/0x123456`,
       astar: `https://astar.subscan.io/tx/0x123456`,
+      'arbitrum-goerli': `https://goerli.arbiscan.io/tx/0x123456`,
     };
     const expected = explorers[config.name] ?? href;
 

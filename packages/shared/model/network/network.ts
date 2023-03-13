@@ -20,6 +20,7 @@ export type EthereumTypeNetwork =
   | 'bsc'
   | 'avalanche'
   | 'arbitrum'
+  | 'arbitrum-goerli'
   | 'optimism'
   | 'astar'
   | 'goerli'

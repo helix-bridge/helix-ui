@@ -27,7 +27,7 @@ import {
 import { addHelixFlag, fromWei, toWei } from 'shared/utils/helper/balance';
 import { AllowancePayload } from '../model/allowance';
 import { CrossChainPayload } from '../model/tx';
-import { isCBridge, isLpBridge, isXCM } from '../utils';
+import { isCBridge, isLpBridge, isXCM, isL2Bridge } from '../utils';
 
 export interface TokenWithAmount extends Token {
   amount: BN; // with precision
@@ -58,6 +58,7 @@ export interface Bridge<B extends BridgeConfig, Origin extends ChainConfig, Targ
   getMinimumFeeTokenHolding?(direction: CrossChainPureDirection): TokenWithAmount | null;
   getAllowancePayload?(direction: CrossChainPureDirection): Promise<AllowancePayload | null>;
   validateDirection?(direction: CrossChainDirection): [boolean, string][];
+  getEstimateTime?(): string;
 }
 
 export abstract class Bridge<
@@ -128,6 +129,7 @@ export abstract class Bridge<
     const xcm = isXCM(payload.direction);
     const cBridge = isCBridge(payload.direction);
     const lpBridge = isLpBridge(payload.direction);
+    const l2Bridge = isL2Bridge(payload.direction);
 
     /**
      * [pass condition, error message]
@@ -147,7 +149,10 @@ export abstract class Bridge<
       ],
       [!this.getDailyLimit || (!!dailyLimit.amount && dailyLimit.amount.gte(BN_ZERO)), 'Failed to get daily limit'],
       // validate logic
-      [xcm || cBridge || lpBridge ? availableBalance.gte(amount) : isBalanceEnough(), 'Insufficient balance'],
+      [
+        xcm || cBridge || lpBridge || l2Bridge ? availableBalance.gte(amount) : isBalanceEnough(),
+        'Insufficient balance',
+      ],
       [feeTokenBalance.amount.gte(fee.amount), 'Insufficient balance to pay fee'],
       [!allowance.amount || allowance.amount.gte(amount), 'Insufficient allowance'],
       [

@@ -34,6 +34,8 @@ const calcBridgesAmount = (data: [Network, Network[]][]) =>
 const mapToTestChain: { [key: string]: string } = {
   'darwinia-dvm': 'pangoro-dvm',
   'crab-dvm': 'pangolin-dvm',
+  ethereum: 'goerli',
+  arbitrum: 'arbitrum-goerli',
 };
 
 describe('bridge utils', () => {
@@ -45,12 +47,12 @@ describe('bridge utils', () => {
   console.log('🌉 All cross-chain directions to be tested', allDirections);
 
   it('should support bridge count: ', () => {
-    expect(testBridges).toHaveLength(7);
+    expect(testBridges).toHaveLength(8);
     expect(formalBridges).toHaveLength(52);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(120);
+    expect(allDirections).toHaveLength(124);
   });
 
   it('Should correct bridge category name', () => {
@@ -189,6 +191,8 @@ describe.each(configs)("$name network's ", ({ name, tokens, ...other }) => {
           expect(from.host).toEqual(backingChain);
         } else if (bridge === 'darwiniaDVM-crabDVM' && other.isTest) {
           expect(from.host).toEqual(mapToTestChain[issuing]);
+        } else if (other.isTest) {
+          expect(from.host).toEqual(mapToTestChain[backing]);
         } else {
           expect(from.host).toEqual(issuing);
         }
@@ -203,6 +207,8 @@ describe.each(configs)("$name network's ", ({ name, tokens, ...other }) => {
           expect(from.host).toEqual(mapToTestChain[backing]);
         } else if (bridge === 'darwinia-ethereum') {
           expect(isDVMNetwork(from.host)).toBe(true);
+        } else if (other.isTest) {
+          expect(from.host).toEqual(mapToTestChain[backing]);
         } else {
           expect(from.host).toEqual(backing);
         }

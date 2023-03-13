@@ -56,6 +56,22 @@ export const goerliConfig: EthereumChainConfig = {
       address: '0x046D07d53926318d1F06c2c2A0F26a4de83E26c4',
     },
     {
+      name: 'RING',
+      decimals: 18,
+      cross: [
+        {
+          category: 'l1tol2',
+          bridge: 'ethereum-arbitrum',
+          partner: { name: 'arbitrum-goerli', role: 'issuing', symbol: 'RING' },
+        },
+      ],
+      type: 'erc20',
+      host: 'goerli',
+      logo: 'token-ring.svg',
+      symbol: 'RING',
+      address: '0x1836bafa3016dd5ce543d0f7199cb858ec69f41e',
+    },
+    {
       name: 'OKTON',
       decimals: 18,
       cross: [

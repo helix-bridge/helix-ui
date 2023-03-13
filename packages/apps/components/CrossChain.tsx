@@ -96,6 +96,7 @@ export function CrossChain() {
     [allowance, bridge?.getAllowancePayload, direction.from]
   );
 
+  // eslint-disable-next-line complexity
   const Content = useMemo(() => {
     const { from: dep, to } = pureDirection;
 
@@ -104,10 +105,17 @@ export function CrossChain() {
         ? [bridge.IssueComponentName, bridge.IssueComponentAlias]
         : [bridge.RedeemComponentName, bridge.RedeemComponentAlias];
 
+      let nameWithSuffix = name;
+      if (bridge.category === 'helixLpBridge') {
+        nameWithSuffix = name + 'Ln';
+      } else if (bridge.category === 'l1tol2') {
+        nameWithSuffix = name + 'L2';
+      }
+
       return (
         dynamic<CrossChainComponentProps<BridgeBase>>(() =>
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          import('../bridges').then((res) => (res as any)[name] || (res as any)[alias])
+          import('../bridges').then((res) => (res as any)[nameWithSuffix] || (res as any)[alias])
         ) ?? null
       );
     }
@@ -416,7 +424,7 @@ export function CrossChain() {
             )}
 
             <FormItemButton
-              disabled={bridgeState.status !== 'available' || bridge == null || isBalanceLoading}
+              disabled={bridgeState.status !== 'available' || bridge == null || isBalanceLoading || fee == null}
               onClick={() => {
                 if (!matched) {
                   message.error('Wrong Network');

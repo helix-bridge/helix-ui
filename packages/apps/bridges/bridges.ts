@@ -25,6 +25,8 @@ import { ShidenKhalaBridge } from './xcm/shiden-khala/utils';
 import { ShidenMoonriverBridge } from './xcm/shiden-moonriver/utils';
 import { CrabDarwiniaBridge } from './helixlp/crab-darwinia/utils';
 import { DarwiniaEthereumBridge } from './helixlp/darwinia-ethereum/utils';
+import { ArbitrumEthereumBridge } from './helixlp/arbitrum-ethereum/utils';
+import { EthereumArbitrumBridgeL2 } from './l1tol2/ethereum-arbitrum/utils';
 import { HelixLpBridgeBridge } from './helixlp/helixLpBridge/utils';
 
 export const bridgeConstructors = [
@@ -55,6 +57,8 @@ export const bridgeConstructors = [
   SubstrateSubstrateParachainBridge,
   CrabDarwiniaBridge,
   DarwiniaEthereumBridge,
+  ArbitrumEthereumBridge,
+  EthereumArbitrumBridgeL2,
 ];
 
 export function bridgeFactory<C extends BridgeConfig, O extends ChainConfig, T extends ChainConfig>(

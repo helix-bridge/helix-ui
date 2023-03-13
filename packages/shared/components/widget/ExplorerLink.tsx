@@ -89,6 +89,7 @@ export function ExplorerLink({
       optimism: `https://optimistic.etherscan.io/tx/${txHash}`,
       avalanche: `https://snowtrace.io/tx/${txHash}`,
       bsc: `https://bscscan.com/tx/${txHash}`,
+      'arbitrum-goerli': `https://goerli.arbiscan.io/tx/${txHash}`,
     };
 
     const href =
