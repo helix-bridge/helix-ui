@@ -118,7 +118,7 @@ export class ArbitrumEthereumBridge extends HelixLpBridgeBridge<
         receiver,
         10
       );
-      const deposit = Number(this.l2GasLimit) * scaleL2GasPrice + Number(maxSubmissionCost);
+      const deposit = Number(this.l2GasLimit) * Number(scaleL2GasPrice) + Number(maxSubmissionCost);
 
       return {
         maxSubmissionCost: new BN(maxSubmissionCost.toString()),

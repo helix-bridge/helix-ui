@@ -112,7 +112,7 @@ export class EthereumArbitrumBridgeL2 extends Bridge<EthereumArbitrumBridgeConfi
       this.l2FixedDataSize,
       scaleL1BaseFee.toString()
     );
-    const deposit = Number(this.l2GasLimit) * scaleL2GasPrice + Number(maxSubmissionCost);
+    const deposit = Number(this.l2GasLimit) * Number(scaleL2GasPrice) + Number(maxSubmissionCost);
     const scaleDeposit = (deposit * Number(this.feeScaler)).toFixed();
     return {
       maxSubmissionCost: new BN(maxSubmissionCost.toString()),

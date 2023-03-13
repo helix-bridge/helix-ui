@@ -8,6 +8,7 @@ const ethereumArbitrumConfig: EthereumArbitrumBridgeConfig = {
     backing: '',
     issuing: '',
     gatewayAddress: '',
+    helixDaoAddress: '',
   },
 };
 
