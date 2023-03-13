@@ -31,7 +31,7 @@ export abstract class HelixLpBridgeBridge<
   // static readonly alias = 'HelixLpBridgeBridge';
 
   private prefix = hexToBn('0x6878000000000000');
-  private readonly feePercent = '0.002';
+  private readonly feePercent = '0.003';
   private readonly relayGasLimit = '100000';
 
   send(
