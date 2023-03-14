@@ -2,7 +2,7 @@ import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
 import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord } from 'shared/model';
-import { isCBridgeRecord, isHelixRecord, isHelixLpRecord, isXCMRecord } from '../../utils/record/record';
+import { isCBridgeRecord, isHelixRecord, isHelixLpRecord, isXCMRecord, isL2Record } from '../../utils/record/record';
 import { Hash } from './Hash';
 import { TransferDescription } from './TransferDescription';
 
@@ -22,7 +22,7 @@ export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
     const departure = record.fromChain;
     const arrival = record.toChain;
 
-    if (isHelixRecord(record) || isHelixLpRecord(record)) {
+    if (isHelixRecord(record) || isHelixLpRecord(record) || isL2Record(record)) {
       if (record.result === RecordStatus.success) {
         return <Hash network={arrival} hash={record.responseTxHash} />;
       }

@@ -99,6 +99,7 @@ export function getDirectionFromHelixRecord(record: HelixHistoryRecord): CrossCh
   return null;
 }
 
+// eslint-disable-next-line complexity
 export function getCategoryFromRecord(record: HelixHistoryRecord): BridgeCategory {
   const prefix = record.bridge.toLowerCase().split('-')[0];
   switch (prefix) {
@@ -113,6 +114,9 @@ export function getCategoryFromRecord(record: HelixHistoryRecord): BridgeCategor
     }
     case 'xcm': {
       return 'XCM';
+    }
+    case 'l2arbitrumbridge': {
+      return 'l1tol2';
     }
     default: {
       return 'helix';
@@ -134,4 +138,8 @@ export function isCBridgeRecord(record: HelixHistoryRecord): boolean {
 
 export function isXCMRecord(record: HelixHistoryRecord): boolean {
   return record.bridge.toLowerCase().startsWith('xcm');
+}
+
+export function isL2Record(record: HelixHistoryRecord): boolean {
+  return record.bridge.toLowerCase().startsWith('l2');
 }
