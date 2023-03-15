@@ -99,6 +99,25 @@ export const arbitrumConfig: EthereumChainConfig = {
       symbol: 'USDC',
       address: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
     },
+    {
+      name: 'RING',
+      decimals: 18,
+      cross: [
+        {
+          category: 'helixLpBridge',
+          bridge: 'arbitrum-ethereum',
+          partner: { name: 'ethereum', role: 'backing', symbol: 'RING' },
+          basefee: 1300,
+          price: 320000,
+          index: 0,
+        },
+      ],
+      type: 'erc20',
+      host: 'arbitrum',
+      logo: 'token-ring.svg',
+      symbol: 'RING',
+      address: '0x9e523234D36973f9e38642886197D023C88e307e',
+    },
   ],
   wallets: ['metamask', 'mathwallet-ethereum'],
 };

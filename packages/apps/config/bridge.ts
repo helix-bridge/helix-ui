@@ -60,8 +60,8 @@ import { moonriverKhala } from '../bridges/xcm/moonriver-khala/config';
 import { khalaMoonriver } from '../bridges/xcm/khala-moonriver/config';
 import { crabDarwinia } from '../bridges/helixlp/crab-darwinia/config';
 import { darwiniaEthereum } from '../bridges/helixlp/darwinia-ethereum/config';
-import { arbitrumGoerli } from '../bridges/helixlp/arbitrum-ethereum/config';
-import { arbitrumGoerliL2 } from '../bridges/l1tol2/ethereum-arbitrum/config';
+import { arbitrumGoerli, arbitrumEthereum } from '../bridges/helixlp/arbitrum-ethereum/config';
+import { arbitrumGoerliL2, ethereumArbitrumL2 } from '../bridges/l1tol2/ethereum-arbitrum/config';
 
 const formalBridges = [
   arbitrumAstar,
@@ -117,6 +117,8 @@ const formalBridges = [
   shidenMoonriver,
   crabDarwinia,
   darwiniaEthereum,
+  arbitrumEthereum,
+  ethereumArbitrumL2,
 ];
 
 const testBridges = [
