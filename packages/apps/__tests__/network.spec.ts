@@ -99,7 +99,7 @@ describe('network utils', () => {
     expect(sort(uniq(group![1]))).toEqual(sort(['darwinia', 'crab-dvm', 'darwinia-dvm', 'ethereum']));
   });
 
-  it('ethereum contains 9 leafs', () => {
+  it('ethereum contains 12 leafs', () => {
     const group = data.find((item) => item[0] === 'ethereum');
 
     expect(group).not.toEqual(undefined);
@@ -109,6 +109,8 @@ describe('network utils', () => {
         'heco',
         'polygon',
         'bsc',
+        'arbitrum',
+        'arbitrum',
         'arbitrum',
         'astar',
         'avalanche',
@@ -137,7 +139,9 @@ describe('network utils', () => {
     const group = data.find((item) => item[0] === 'arbitrum');
 
     expect(group).not.toEqual(undefined);
-    expect(sort(group![1])).toEqual(sort(['astar', 'avalanche', 'optimism', 'bsc', 'ethereum', 'polygon']));
+    expect(sort(group![1])).toEqual(
+      sort(['astar', 'avalanche', 'optimism', 'bsc', 'ethereum', 'ethereum', 'ethereum', 'polygon'])
+    );
   });
 
   it('astar contains 7 leafs', () => {
