@@ -70,6 +70,11 @@ export const ethereumConfig: EthereumChainConfig = {
           basefee: 800,
           index: 0,
         },
+        {
+          category: 'l1tol2',
+          bridge: 'ethereum-arbitrum',
+          partner: { name: 'arbitrum', role: 'issuing', symbol: 'RING' },
+        },
       ],
       type: 'erc20',
       host: 'ethereum',

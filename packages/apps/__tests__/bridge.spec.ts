@@ -52,7 +52,7 @@ describe('bridge utils', () => {
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(124);
+    expect(allDirections).toHaveLength(128);
   });
 
   it('Should correct bridge category name', () => {
@@ -176,6 +176,12 @@ describe.each(configs)("$name network's ", ({ name, tokens, ...other }) => {
           expect(from.host).toEqual(partner.role === 'backing' ? 'goerli' : 'pangoro-dvm');
         } else {
           expect(from.host).toEqual(partner.role === 'backing' ? 'ethereum' : 'darwinia-dvm');
+        }
+      } else if (bridge === 'arbitrum-ethereum') {
+        if (other.isTest) {
+          expect(from.host).toEqual(partner.role === 'backing' ? 'arbitrum-goerli' : 'goerli');
+        } else {
+          expect(from.host).toEqual(partner.role === 'backing' ? 'arbitrum' : 'ethereum');
         }
       } else if (partner.role === 'backing') {
         if (issuing === 'substrate') {
