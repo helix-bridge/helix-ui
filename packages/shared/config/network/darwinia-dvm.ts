@@ -76,6 +76,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       logo: 'token-ring.svg',
       symbol: 'RING',
       address: '',
+      deprecated: true,
     },
     {
       name: 'WRING',
@@ -123,6 +124,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       logo: 'token-ring.svg',
       symbol: 'WRING',
       address: '0xE7578598Aac020abFB918f33A20faD5B71d670b4',
+      deprecated: true,
     },
     {
       name: 'KTON',
@@ -146,6 +148,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       logo: 'token-kton.svg',
       symbol: 'KTON',
       address: '0x0000000000000000000000000000000000000402',
+      deprecated: true,
     },
     // {
     // name: 'xWCRAB',
@@ -206,6 +209,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       logo: 'token-crab.svg',
       symbol: 'xWCRAB',
       address: '0x656567Eb75b765FC320783cc6EDd86bD854b2305',
+      deprecated: true,
     },
   ],
   ss58Prefix: 18,

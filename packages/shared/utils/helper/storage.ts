@@ -12,8 +12,7 @@ export function updateStorage(data: Partial<StorageInfo>): void {
 }
 
 export function readStorage(): StorageInfo {
-  // return store.get(STORAGE_KEY) || {};
-  return {};
+  return store.get(STORAGE_KEY) || {};
 }
 
 export function saveNetworkConfig(config: ChainConfig) {

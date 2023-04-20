@@ -107,6 +107,7 @@ export const ethereumConfig: EthereumChainConfig = {
       logo: 'token-kton.svg',
       symbol: 'KTON',
       address: '0x9f284e1337a815fe77d2ff4ae46544645b20c5ff',
+      deprecated: true,
     },
     {
       name: 'ETH',
