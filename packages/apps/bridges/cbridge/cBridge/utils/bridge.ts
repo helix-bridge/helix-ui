@@ -33,7 +33,7 @@ export class CBridgeBridge extends Bridge<CBridgeBridgeConfig, EthereumChainConf
 
   private prefix = hexToBn('0x6878000000000000');
 
-  public client = new WebClient(`https://cbridge-prod2.celer.network`, null, null);
+  public client = new WebClient(`https://cbridge-prod2.celer.app`, null, null);
 
   private _slippage = DEFAULT_SLIPPAGE * UI_SLIPPAGE_SCALE;
 
