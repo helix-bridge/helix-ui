@@ -33,6 +33,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'substrate-DVM',
           partner: { name: 'darwinia', role: 'backing', symbol: 'RING' },
+          deprecated: true,
         },
         {
           category: 'helix',
@@ -58,6 +59,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'ethereum', role: 'issuing', symbol: 'RING' },
+          deprecated: true,
         },
         {
           category: 'helixLpBridge',
@@ -66,6 +68,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           basefee: 1000,
           index: 0,
           price: 320000,
+          deprecated: true,
         },
       ],
       type: 'native',
@@ -103,6 +106,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'ethereum', role: 'issuing', symbol: 'RING' },
+          deprecated: true,
         },
         {
           category: 'helixLpBridge',
@@ -111,6 +115,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           basefee: 1000,
           index: 0,
           price: 320000,
+          deprecated: true,
         },
       ],
       type: 'erc20',
@@ -127,11 +132,13 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'ethereum', role: 'issuing', symbol: 'KTON', claim: true },
+          deprecated: true,
         },
         {
           category: 'helix',
           bridge: 'substrate-DVM',
           partner: { name: 'darwinia', role: 'backing', symbol: 'KTON' },
+          deprecated: true,
         },
       ],
       type: 'erc20',

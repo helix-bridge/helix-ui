@@ -57,11 +57,13 @@ export const ethereumConfig: EthereumChainConfig = {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'WRING' },
+          deprecated: true,
         },
         {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
+          deprecated: true,
         },
         {
           category: 'helixLpBridge',
@@ -69,6 +71,7 @@ export const ethereumConfig: EthereumChainConfig = {
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
           basefee: 800,
           index: 0,
+          deprecated: true,
         },
         {
           category: 'l1tol2',
@@ -96,6 +99,7 @@ export const ethereumConfig: EthereumChainConfig = {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'KTON' },
+          deprecated: true,
         },
       ],
       type: 'erc20',
