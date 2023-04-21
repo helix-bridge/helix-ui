@@ -2,7 +2,6 @@ export * from './arbitrum';
 export * from './astar';
 export * from './avalanche';
 export * from './bsc';
-export * from './crab';
 export * from './crab-dvm';
 export * from './crab-parachain';
 export * from './darwinia';

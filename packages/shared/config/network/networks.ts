@@ -12,7 +12,6 @@ import { arbitrumConfig } from './arbitrum';
 import { astarConfig } from './astar';
 import { avalancheConfig } from './avalanche';
 import { bscConfig } from './bsc';
-import { crabConfig } from './crab';
 import { crabDVMConfig } from './crab-dvm';
 import { crabParachainConfig } from './crab-parachain';
 import { darwiniaConfig } from './darwinia';
@@ -39,7 +38,6 @@ export const SYSTEM_CHAIN_CONFIGURATIONS: (EthereumChainConfig | PolkadotChainCo
   astarConfig,
   avalancheConfig,
   bscConfig,
-  crabConfig,
   crabDVMConfig,
   crabParachainConfig,
   darwiniaConfig,
