@@ -46,7 +46,7 @@ export function toDirection({
   symbol,
 }: Pick<TokenWithBridgesInfo, 'host' | 'symbol'>): CrossToken<ChainBase> | null {
   const config = getOriginChainConfig(host);
-  const token = config.tokens.find((item) => item.symbol === symbol);
+  const token = config.tokens.find((item) => item.symbol === symbol && !item.deprecated);
 
   return token ? { ...token, amount: '', meta: chainFactory(config) } : null;
 }
@@ -134,6 +134,7 @@ export function Direction({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fee?.amount.toString(), fee?.symbol]);
 
+  // eslint-disable-next-line complexity
   useEffect(() => {
     const { from: storedForm, to: storedTo } = readStorage();
 
@@ -142,10 +143,14 @@ export function Direction({
       storedTo &&
       [storedForm, storedTo].every((item) => isObject(item) && has(item, 'host') && has(item, 'symbol'))
     ) {
-      triggerChange({
-        from: toDirection(storedForm)!,
-        to: toDirection(storedTo)!,
-      });
+      const fromDir = toDirection(storedForm);
+      const toDir = toDirection(storedTo);
+      if (fromDir && toDir) {
+        triggerChange({
+          from: toDirection(storedForm)!,
+          to: toDirection(storedTo)!,
+        });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

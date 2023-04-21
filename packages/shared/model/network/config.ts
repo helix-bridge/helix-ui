@@ -42,6 +42,7 @@ export interface TokenWithBridgesInfo extends Token {
   type: TokenType;
   cross: CrossOverview[];
   host: Network;
+  deprecated?: boolean;
 }
 
 export interface Social {

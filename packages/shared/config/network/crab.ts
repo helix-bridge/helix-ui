@@ -37,6 +37,7 @@ export const crabConfig: PolkadotChainConfig = {
       logo: 'token-crab.svg',
       symbol: 'CRAB',
       address: '',
+      deprecated: true,
     },
     {
       name: 'CKTON',
@@ -54,6 +55,7 @@ export const crabConfig: PolkadotChainConfig = {
       logo: 'token-ckton.svg',
       symbol: 'CKTON',
       address: '',
+      deprecated: true,
     },
   ],
   ss58Prefix: 42,

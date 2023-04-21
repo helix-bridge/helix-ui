@@ -33,6 +33,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'substrate-DVM',
           partner: { name: 'darwinia', role: 'backing', symbol: 'RING' },
+          deprecated: true,
         },
         {
           category: 'helix',
@@ -58,6 +59,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'ethereum', role: 'issuing', symbol: 'RING' },
+          deprecated: true,
         },
         {
           category: 'helixLpBridge',
@@ -66,6 +68,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           basefee: 1000,
           index: 0,
           price: 320000,
+          deprecated: true,
         },
       ],
       type: 'native',
@@ -73,6 +76,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       logo: 'token-ring.svg',
       symbol: 'RING',
       address: '',
+      deprecated: true,
     },
     {
       name: 'WRING',
@@ -103,6 +107,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'ethereum', role: 'issuing', symbol: 'RING' },
+          deprecated: true,
         },
         {
           category: 'helixLpBridge',
@@ -111,6 +116,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           basefee: 1000,
           index: 0,
           price: 320000,
+          deprecated: true,
         },
       ],
       type: 'erc20',
@@ -118,6 +124,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       logo: 'token-ring.svg',
       symbol: 'WRING',
       address: '0xE7578598Aac020abFB918f33A20faD5B71d670b4',
+      deprecated: true,
     },
     {
       name: 'KTON',
@@ -127,11 +134,13 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'ethereum', role: 'issuing', symbol: 'KTON', claim: true },
+          deprecated: true,
         },
         {
           category: 'helix',
           bridge: 'substrate-DVM',
           partner: { name: 'darwinia', role: 'backing', symbol: 'KTON' },
+          deprecated: true,
         },
       ],
       type: 'erc20',
@@ -139,6 +148,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       logo: 'token-kton.svg',
       symbol: 'KTON',
       address: '0x0000000000000000000000000000000000000402',
+      deprecated: true,
     },
     // {
     // name: 'xWCRAB',
@@ -199,6 +209,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       logo: 'token-crab.svg',
       symbol: 'xWCRAB',
       address: '0x656567Eb75b765FC320783cc6EDd86bD854b2305',
+      deprecated: true,
     },
   ],
   ss58Prefix: 18,

@@ -1,5 +1,5 @@
 import { CHAIN_TYPE } from './env';
-import { darwiniaConfig, ethereumConfig, pangolinConfig, ropstenConfig } from './network';
+import { arbitrumConfig, ethereumConfig, pangolinConfig, ropstenConfig } from './network';
 
 /* eslint-disable no-magic-numbers */
 export const LONG_DURATION = 10 * 1000;
@@ -68,8 +68,8 @@ export enum XferStatus {
 }
 
 const DEFAULT_FORMAL_DIRECTION = {
-  from: { ...darwiniaConfig.tokens[0], amount: '', meta: darwiniaConfig },
-  to: { ...ethereumConfig.tokens[1], amount: '', meta: ethereumConfig },
+  from: { ...ethereumConfig.tokens[0], amount: '', meta: ethereumConfig },
+  to: { ...arbitrumConfig.tokens[2], amount: '', meta: arbitrumConfig },
 };
 
 const DEFAULT_DEV_DIRECTION = {
