@@ -41,7 +41,6 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'crab-dvm', role: 'issuing', symbol: 'xWRING' },
-          deprecated: true,
         },
         {
           category: 'helix',
@@ -64,7 +63,6 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       logo: 'token-ring.svg',
       symbol: 'RING',
       address: '',
-      deprecated: true,
     },
     {
       name: 'KTON',
@@ -107,7 +105,6 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'crabDVM-darwiniaDVM',
           partner: { name: 'crab-dvm', role: 'backing', symbol: 'CRAB' },
-          deprecated: true,
         },
       ],
       decimals: 18,
@@ -116,10 +113,9 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       logo: 'token-crab.svg',
       symbol: 'xWCRAB',
       address: '0x656567Eb75b765FC320783cc6EDd86bD854b2305',
-      deprecated: true,
     },
   ],
   ss58Prefix: 18,
-  specVersion: 1250,
+  specVersion: 6210,
   wallets: ['metamask', 'mathwallet-ethereum'],
 };

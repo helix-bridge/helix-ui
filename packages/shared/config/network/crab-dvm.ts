@@ -41,7 +41,6 @@ export const crabDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'crabDVM-darwiniaDVM',
           partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'xWCRAB' },
-          deprecated: true,
         },
       ],
       type: 'native',
@@ -74,7 +73,6 @@ export const crabDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
-          deprecated: true,
         },
       ],
       type: 'erc20',
@@ -131,6 +129,6 @@ export const crabDVMConfig: DVMChainConfig = {
     },
   ],
   ss58Prefix: 42,
-  specVersion: 1250,
+  specVersion: 6210,
   wallets: ['metamask', 'mathwallet-ethereum'],
 };
