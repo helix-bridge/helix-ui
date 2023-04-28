@@ -62,7 +62,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       host: 'darwinia-dvm',
       logo: 'token-ring.svg',
       symbol: 'RING',
-      address: '',
+      address: '0xE7578598Aac020abFB918f33A20faD5B71d670b4',
     },
     {
       name: 'KTON',
