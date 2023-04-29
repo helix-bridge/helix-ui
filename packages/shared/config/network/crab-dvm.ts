@@ -82,6 +82,41 @@ export const crabDVMConfig: DVMChainConfig = {
       address: '0x273131F7CB50ac002BDd08cA721988731F7e1092',
     },
     {
+      name: 'xRING(Classic)',
+      decimals: 9,
+      cross: [
+        {
+          category: 'helix',
+          bridge: 'substrate-substrateDVM',
+          partner: { name: 'darwinia', role: 'backing', symbol: 'RING' },
+          deprecated: true,
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-heco',
+          partner: { name: 'heco', role: 'issuing', symbol: 'RING' },
+          deprecated: true,
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-ethereum',
+          partner: { name: 'ethereum', role: 'issuing', symbol: 'RING' },
+          deprecated: true,
+        },
+        {
+          category: 'cBridge',
+          bridge: 'crabDVM-polygon',
+          partner: { name: 'polygon', role: 'issuing', symbol: 'RING' },
+          deprecated: true,
+        },
+      ],
+      type: 'erc20',
+      host: 'crab-dvm',
+      logo: 'token-oring.svg',
+      symbol: 'xRING',
+      address: '0x7399Ea6C9d35124d893B8d9808930e9d3F211501',
+    },
+    {
       name: 'USDT',
       decimals: 6,
       cross: [
