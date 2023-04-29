@@ -11,7 +11,6 @@ export function getTokenConfigFromHelixRecord(
 ): TokenWithBridgesInfo | undefined {
   const chain = getOriginChainConfig(record[key === 'recvToken' ? 'toChain' : 'fromChain']);
   const symbol = record[key];
-
   return chain.tokens.find((item) => {
     if (isAddress(symbol)) {
       return item.address.toLowerCase() === symbol.toLowerCase();

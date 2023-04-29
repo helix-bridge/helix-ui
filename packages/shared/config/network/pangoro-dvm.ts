@@ -33,7 +33,7 @@ export const pangoroDVMConfig: DVMChainConfig = {
         {
           category: 'helix',
           bridge: 'darwiniaDVM-crabDVM',
-          partner: { name: 'pangoro-dvm', role: 'issuing', symbol: 'WORING' },
+          partner: { name: 'pangolin-dvm', role: 'issuing', symbol: 'xWORING' },
         },
         {
           bridge: 'substrateDVM-ethereum',
@@ -46,27 +46,6 @@ export const pangoroDVMConfig: DVMChainConfig = {
       logo: 'token-ring.svg',
       symbol: 'ORING',
       address: '',
-    },
-    {
-      name: 'WORING',
-      decimals: 18,
-      cross: [
-        {
-          category: 'helix',
-          bridge: 'darwiniaDVM-crabDVM',
-          partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'ORING', claim: true },
-        },
-        {
-          bridge: 'substrateDVM-ethereum',
-          category: 'helix',
-          partner: { name: 'goerli', role: 'issuing', symbol: 'ORING', claim: true },
-        },
-      ],
-      type: 'erc20',
-      host: 'pangoro-dvm',
-      logo: 'token-ring.svg',
-      symbol: 'WORING',
-      address: '0x46f01081e800BF47e43e7bAa6D98d45F6a0251E4',
     },
     {
       name: 'OKTON',
@@ -83,22 +62,6 @@ export const pangoroDVMConfig: DVMChainConfig = {
       logo: 'token-kton.svg',
       symbol: 'OKTON',
       address: '0x0000000000000000000000000000000000000402',
-    },
-    {
-      name: 'wORING',
-      decimals: 18,
-      cross: [
-        {
-          category: 'helix',
-          bridge: 'darwiniaDVM-crabDVM',
-          partner: { name: 'pangolin-dvm', role: 'issuing', symbol: 'xWORING' },
-        },
-      ],
-      type: 'erc20',
-      host: 'pangoro-dvm',
-      logo: 'token-ring.svg',
-      symbol: 'wORING',
-      address: '0x78f3B1ae818c304Bbec76e244B67dEdC70506006',
     },
   ],
   wallets: ['metamask', 'mathwallet-ethereum'],
