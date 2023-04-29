@@ -198,7 +198,7 @@ export class CrabDVMDarwiniaDVMBridge extends Bridge<CrabDVMDarwiniaDVMBridgeCon
     const fullParams = [
       (departure as DVMChainConfig).specVersion,
       this.gasLimit,
-      this.trimLaneId(record.id),
+      record.messageNonce,
       sendTokenAddress,
       sender,
       sendAmount,

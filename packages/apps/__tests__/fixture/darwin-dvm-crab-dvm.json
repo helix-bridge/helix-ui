@@ -2,7 +2,7 @@
   {
     "sendAmount": "101300000000000000",
     "recvAmount": "101300000000000000",
-    "bridge": "helix-s2sv2",
+    "bridge": "helix-s2sv21",
     "endTime": 1661679906,
     "fee": "39000000000000000000",
     "feeToken": "RING",
@@ -18,13 +18,13 @@
     "sender": "0xd2c7008400f54aa70af01cf8c747a4473246593e",
     "startTime": 1661679858,
     "toChain": "crab-dvm",
-    "sendToken": "WRING",
+    "sendToken": "RING",
     "recvToken": "xWRING"
   },
   {
     "sendAmount": "101300000000000000",
     "recvAmount": "101300000000000000",
-    "bridge": "helix-s2sv2",
+    "bridge": "helix-s2sv21",
     "endTime": 1661680248,
     "fee": "225000000000000000000",
     "feeToken": "CRAB",
@@ -41,6 +41,6 @@
     "startTime": 1661680194,
     "toChain": "darwinia-dvm",
     "sendToken": "xWRING",
-    "recvToken": "WRING"
+    "recvToken": "RING"
   }
 ]

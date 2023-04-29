@@ -20,12 +20,6 @@ export const crabParachainConfig: ParachainChainConfig = {
       decimals: 18,
       cross: [
         {
-          category: 'helix',
-          bridge: 'substrate-substrateParachain',
-          partner: { name: 'crab', role: 'backing', symbol: 'CRAB' },
-          deprecated: true,
-        },
-        {
           category: 'XCM',
           bridge: 'crabParachain-karura',
           partner: { name: 'karura', role: 'issuing', symbol: 'CRAB' },
@@ -35,12 +29,6 @@ export const crabParachainConfig: ParachainChainConfig = {
           category: 'XCM',
           bridge: 'crabParachain-moonriver',
           partner: { name: 'moonriver', role: 'issuing', symbol: 'xcCRAB' },
-          deprecated: true,
-        },
-        {
-          category: 'helix',
-          bridge: 'substrateDVM-substrateParachain',
-          partner: { name: 'crab-dvm', role: 'backing', symbol: 'CRAB' },
           deprecated: true,
         },
       ],

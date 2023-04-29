@@ -1,9 +1,9 @@
 import { BridgeBase } from 'shared/core/bridge';
-import { crabConfig, pangoroConfig } from 'shared/config/network';
+import { pangolinDVMConfig, pangoroDVMConfig } from 'shared/config/network';
 
 export const unknownUnavailable = new BridgeBase(
-  pangoroConfig,
-  crabConfig,
+  pangolinDVMConfig,
+  pangoroDVMConfig,
   {},
   {
     category: 'helix',

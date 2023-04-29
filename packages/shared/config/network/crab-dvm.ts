@@ -29,18 +29,6 @@ export const crabDVMConfig: DVMChainConfig = {
       name: 'CRAB',
       decimals: 18,
       cross: [
-        {
-          category: 'helix',
-          bridge: 'substrate-DVM',
-          partner: { name: 'crab', role: 'backing', symbol: 'CRAB' },
-          deprecated: true,
-        },
-        {
-          category: 'helix',
-          bridge: 'crabDVM-darwiniaDVM',
-          partner: { name: 'crab-dvm', role: 'issuing', symbol: 'WCRAB' },
-          deprecated: true,
-        },
         /*
         {
           category: 'helixLpBridge',
@@ -53,37 +41,45 @@ export const crabDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'crabDVM-darwiniaDVM',
           partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'xWCRAB' },
-          deprecated: true,
-        },
-        {
-          category: 'helix',
-          bridge: 'substrateDVM-substrateParachain',
-          partner: { name: 'crab-parachain', role: 'issuing', symbol: 'CRAB' },
-          deprecated: true,
         },
       ],
       type: 'native',
       host: 'crab-dvm',
       logo: 'token-crab.svg',
       symbol: 'CRAB',
-      address: '',
+      address: '0x2D2b97EA380b0185e9fDF8271d1AFB5d2Bf18329',
     },
     {
-      name: 'CKTON',
+      name: 'xWRING',
       decimals: 18,
       cross: [
+        /*
+        {
+          category: 'helixLpBridge',
+          bridge: 'crab-darwinia',
+          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'WRING' },
+          basefee: 1.1,
+          index: 1,
+        },
+        {
+          category: 'helixLpBridge',
+          bridge: 'crab-darwinia',
+          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
+          basefee: 1.1,
+          index: 1,
+        },
+        */
         {
           category: 'helix',
-          bridge: 'substrate-DVM',
-          partner: { name: 'crab', role: 'backing', symbol: 'CKTON' },
-          deprecated: true,
+          bridge: 'darwiniaDVM-crabDVM',
+          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
         },
       ],
       type: 'erc20',
       host: 'crab-dvm',
-      logo: 'token-ckton.svg',
-      symbol: 'WCKTON',
-      address: '0x0000000000000000000000000000000000000402',
+      logo: 'token-oring.svg',
+      symbol: 'xWRING',
+      address: '0x273131F7CB50ac002BDd08cA721988731F7e1092',
     },
     {
       name: 'xRING(Classic)',
@@ -119,55 +115,6 @@ export const crabDVMConfig: DVMChainConfig = {
       logo: 'token-oring.svg',
       symbol: 'xRING',
       address: '0x7399Ea6C9d35124d893B8d9808930e9d3F211501',
-    },
-    {
-      name: 'xKTON',
-      decimals: 9,
-      cross: [],
-      type: 'erc20',
-      host: 'crab-dvm',
-      logo: 'token-okton.svg',
-      symbol: 'xKTON',
-      address: '',
-    },
-    {
-      name: 'xWRING',
-      decimals: 18,
-      cross: [
-        /*
-        {
-          category: 'helixLpBridge',
-          bridge: 'crab-darwinia',
-          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'WRING' },
-          basefee: 1.1,
-          index: 1,
-        },
-        {
-          category: 'helixLpBridge',
-          bridge: 'crab-darwinia',
-          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
-          basefee: 1.1,
-          index: 1,
-        },
-        */
-        {
-          category: 'helix',
-          bridge: 'darwiniaDVM-crabDVM',
-          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'WRING' },
-          deprecated: true,
-        },
-        {
-          category: 'helix',
-          bridge: 'darwiniaDVM-crabDVM',
-          partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
-          deprecated: true,
-        },
-      ],
-      type: 'erc20',
-      host: 'crab-dvm',
-      logo: 'token-oring.svg',
-      symbol: 'xWRING',
-      address: '0x273131F7CB50ac002BDd08cA721988731F7e1092',
     },
     {
       name: 'USDT',
@@ -215,40 +162,8 @@ export const crabDVMConfig: DVMChainConfig = {
       symbol: 'USDC',
       address: '0x81ECac0D6Be0550A00FF064a4f9dd2400585FE9c',
     },
-    {
-      name: 'WCRAB',
-      cross: [
-        {
-          category: 'helix',
-          bridge: 'crabDVM-darwiniaDVM',
-          partner: { name: 'crab-dvm', role: 'backing', symbol: 'CRAB' },
-          deprecated: true,
-        },
-        /*
-        {
-          category: 'helixLpBridge',
-          bridge: 'crab-darwinia',
-          partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'xWCRAB' },
-          basefee: 1.1,
-          index: 0,
-        },
-        */
-        {
-          category: 'helix',
-          bridge: 'crabDVM-darwiniaDVM',
-          partner: { name: 'darwinia-dvm', role: 'issuing', symbol: 'xWCRAB' },
-          deprecated: true,
-        },
-      ],
-      decimals: 18,
-      type: 'erc20',
-      host: 'crab-dvm',
-      logo: 'token-crab.svg',
-      symbol: 'WCRAB',
-      address: '0x2D2b97EA380b0185e9fDF8271d1AFB5d2Bf18329',
-    },
   ],
   ss58Prefix: 42,
-  specVersion: 1250,
+  specVersion: 6210,
   wallets: ['metamask', 'mathwallet-ethereum'],
 };

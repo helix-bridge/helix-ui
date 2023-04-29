@@ -198,7 +198,7 @@ export class DarwiniaDVMCrabDVMBridge extends Bridge<DarwiniaDVMCrabDVMBridgeCon
     const fullParams = [
       (departure as DVMChainConfig).specVersion,
       this.gasLimit,
-      this.trimLaneId(record.id),
+      record.messageNonce,
       sendTokenAddress,
       sender,
       sendAmount,

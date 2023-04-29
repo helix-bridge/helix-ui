@@ -4,19 +4,12 @@ import { isDVMNetwork, isEthereumNetwork, isParachainNetwork, isPolkadotNetwork 
 
 describe('network utils', () => {
   it('can recognize polkadot network', () => {
-    expect(isPolkadotNetwork('crab')).toBe(true);
-    expect(isPolkadotNetwork('darwinia')).toBe(true);
-    expect(isPolkadotNetwork('pangolin')).toBe(true);
-    expect(isPolkadotNetwork('pangoro')).toBe(true);
-    expect(isPolkadotNetwork('pangolin-parachain')).toBe(true);
     expect(isPolkadotNetwork('crab-parachain')).toBe(true);
     expect(isPolkadotNetwork('karura')).toBe(true);
     expect(isPolkadotNetwork('moonriver')).toBe(false);
   });
 
   it('can recognize parachain network', () => {
-    expect(isParachainNetwork('pangolin-parachain')).toBe(true);
-    expect(isParachainNetwork('crab-parachain')).toBe(true);
     expect(isParachainNetwork('karura')).toBe(true);
     expect(isParachainNetwork('moonriver')).toBe(true);
   });

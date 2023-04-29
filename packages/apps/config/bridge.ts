@@ -33,19 +33,9 @@ import {
   pangoroDVMPangolinDVM,
   pangoroDVMPangoroDVM,
 } from '../bridges/helix/darwiniaDVM-crabDVM/config/bridge';
-import { crabCrabDVM, darwiniaDarwiniaDVM, pangolinPangolinDVM } from '../bridges/helix/substrate-dvm/config/bridge';
-import { darwiniaCrabDVM, pangoroPangolinDVM } from '../bridges/helix/substrate-substrateDVM/config/bridge';
-import {
-  crabCrabParachain,
-  pangolinPangolinParachain,
-} from '../bridges/helix/substrate-substrateParachain/config/bridge';
 import { darwiniaDVMEthereum, pangoroDVMGoerli } from '../bridges/helix/substrateDVM-ethereum/config/bridge';
 import { crabParachainKarura } from '../bridges/xcm/crabParachain-karura/config/bridge';
 import { crabParachainMoonriver } from '../bridges/xcm/crabParachain-moonriver/config/bridge';
-import {
-  crabDVMCrabParachain,
-  pangolinDVMPangolinParachain,
-} from '../bridges/helix/substrateDVM-substrateParachain/config/bridge';
 import { shidenKhala } from '../bridges/xcm/shiden-khala/config';
 import { khalaShiden } from '../bridges/xcm/khala-shiden/config';
 import { shidenKarura } from '../bridges/xcm/shiden-karura/config';
@@ -77,19 +67,14 @@ const formalBridges = [
   bscAvalanche,
   bscOptimism,
   bscPolygon,
-  crabCrabDVM,
-  crabCrabParachain,
   crabDVMAstar,
   crabDVMcrabDVM,
-  crabDVMCrabParachain,
   crabDVMDarwiniaDVM,
   crabDVMEthereum,
   crabDVMHeco,
   crabDVMPolygon,
   crabParachainKarura,
   crabParachainMoonriver,
-  darwiniaCrabDVM,
-  darwiniaDarwiniaDVM,
   darwiniaDVMCrabDVM,
   darwiniaDVMDarwiniaDVM,
   darwiniaDVMEthereum,
@@ -121,17 +106,7 @@ const formalBridges = [
   ethereumArbitrumL2,
 ];
 
-const testBridges = [
-  pangolinDVMPangolinParachain,
-  pangolinPangolinDVM,
-  pangolinPangolinParachain,
-  pangoroDVMGoerli,
-  pangoroDVMPangolinDVM,
-  pangoroDVMPangoroDVM,
-  pangoroPangolinDVM,
-  arbitrumGoerli,
-  arbitrumGoerliL2,
-];
+const testBridges = [pangoroDVMGoerli, pangoroDVMPangolinDVM, pangoroDVMPangoroDVM, arbitrumGoerli, arbitrumGoerliL2];
 
 export const BRIDGES = (() => {
   switch (CHAIN_TYPE) {

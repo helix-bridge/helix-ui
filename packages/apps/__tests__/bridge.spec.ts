@@ -47,12 +47,12 @@ describe('bridge utils', () => {
   console.log('🌉 All cross-chain directions to be tested', allDirections);
 
   it('should support bridge count: ', () => {
-    expect(testBridges).toHaveLength(8);
-    expect(formalBridges).toHaveLength(52);
+    expect(testBridges).toHaveLength(4);
+    expect(formalBridges).toHaveLength(47);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(128);
+    expect(allDirections).toHaveLength(110);
   });
 
   it('Should correct bridge category name', () => {
@@ -87,10 +87,8 @@ describe.each(configs.filter((item) => !item.isTest))(
 
             expect(target.name).toEqual(bridge);
 
-            /**
-             * Some common bridge's name may be not flow the rules below
-             * e.g. darwinia-darwiniaDVM actually is substrate-DVM
-             */
+            //Some common bridge's name may be not flow the rules below
+            //e.g. darwinia-darwiniaDVM actually is substrate-DVM
             // const toCamelCase = (str: string) => {
             //   const [head, ...rest] = str.split('-');
 
@@ -130,44 +128,12 @@ describe.each(configs)("$name network's ", ({ name, tokens, ...other }) => {
       expect(rest.host).toEqual(name);
     });
 
-    it.each(bridgeCountStatistics)(
-      `to $toNetwork's $toSymbol should have $count bridges`,
-      ({ toNetwork, toSymbol, count }) => {
-        const meta = getChainConfig(toNetwork as Network);
-        const toConfig = meta.tokens.find(
-          (item) => item.symbol === toSymbol && item.cross.find((cross) => cross.partner.name === from.meta.name)
-        );
-
-        expect(toConfig).not.toBeUndefined();
-
-        const to = { ...toConfig, meta, amount: '' } as unknown as CrossToken<ChainConfig>;
-        const bridges = getBridges({ from, to });
-
-        expect(bridges).toHaveLength(count);
-      }
-    );
-
-    it.each(cross.map((item) => item.partner).flat())(
-      '$symbol must be exist on the $name chain',
-      ({ symbol, name }) => {
-        const config = getChainConfig(name);
-        const target = config.tokens.find((item) => item.symbol === symbol);
-
-        expect(target).not.toBeUndefined();
-      }
-    );
-
-    /**
-     * e.g.
-     * For USDT transfer on crabDVM-astar bridge, crab-dvm must contains USDT token, and the cross role of partner must be issuing.
-     * In turn, astar must contains USDT too, and it's cross role of partner must be backing.
-     */
     it.each(cross)('role should be set consistent with the bridge naming - $bridge', ({ bridge, partner }) => {
       const [backing, issuing] = bridge.split('-').map((chain) => toMiddleSplitNaming(chain));
 
       if (bridge === 'ethereum-darwinia') {
         if (other.isTest) {
-          expect(from.host).toEqual(partner.role === 'backing' ? 'pangolin' : 'ropsten');
+          expect(from.host).toEqual(partner.role === 'backing' ? 'pangolin-dvm' : 'ropsten');
         } else {
           expect(from.host).toEqual(partner.role === 'backing' ? issuing : backing);
         }

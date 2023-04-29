@@ -316,6 +316,7 @@ export default function History() {
 
             if (category === 'helix') {
               const direction = getDirectionFromHelixRecord(record);
+              console.log(direction);
 
               if (direction) {
                 const bridge = getBridge(direction, category);
