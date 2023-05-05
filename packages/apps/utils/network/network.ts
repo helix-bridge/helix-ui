@@ -102,7 +102,7 @@ export function getDisplayName(config: ChainConfig | null | Network): string {
   }
 
   if (isDVMNetwork(config.name)) {
-    return `${upperFirst(config.name.split('-')[0])} Smart Chain`;
+    return `${upperFirst(config.name.split('-')[0])}`;
   }
 
   if (config.name.includes('parachain')) {

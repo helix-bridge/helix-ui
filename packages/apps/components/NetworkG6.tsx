@@ -137,7 +137,7 @@ const getGroupedOverview = (network: Network) => {
   return groupBy(tokens, (token) => `${token.source.name}_${token.partner.name}`);
 };
 
-const defaultOverview = getGroupedOverview(isTestChain ? 'pangolin' : 'darwinia');
+const defaultOverview = getGroupedOverview(isTestChain ? 'pangolin' : 'darwinia-dvm');
 
 function NetworkG6() {
   const [data, setData] = useState<{ [key: string]: Overview[] }>(defaultOverview);

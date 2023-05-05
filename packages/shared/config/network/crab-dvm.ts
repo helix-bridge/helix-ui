@@ -13,9 +13,9 @@ export const crabDVMConfig: DVMChainConfig = {
   },
   isTest: false,
   logos: [
-    { name: 'crab-smart.svg', type: 'main' },
+    { name: 'crab.svg', type: 'main' },
     { name: 'crab.svg', type: 'minor' },
-    { name: 'crab-logo.svg', type: 'assist' },
+    { name: 'crab.svg', type: 'assist' },
   ],
   name: 'crab-dvm',
   provider: { https: 'https://crab-rpc.darwinia.network', wss: 'wss://crab-rpc.darwinia.network' },
