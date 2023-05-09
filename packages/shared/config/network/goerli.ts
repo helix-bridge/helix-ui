@@ -35,25 +35,20 @@ export const goerliConfig: EthereumChainConfig = {
       address: '',
     },
     {
-      name: 'ORING',
+      name: 'PRING',
       decimals: 18,
       cross: [
         {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
-          partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'ORING' },
-        },
-        {
-          category: 'helix',
-          bridge: 'substrateDVM-ethereum',
-          partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'WORING' },
+          partner: { name: 'pangolin-dvm', role: 'backing', symbol: 'PRING' },
         },
       ],
       type: 'erc20',
       host: 'goerli',
       logo: 'token-ring.svg',
-      symbol: 'ORING',
-      address: '0x046D07d53926318d1F06c2c2A0F26a4de83E26c4',
+      symbol: 'PRING',
+      address: '0xeb93165E3CDb354c977A182AbF4fad3238E04319',
     },
     {
       name: 'RING',
@@ -78,7 +73,7 @@ export const goerliConfig: EthereumChainConfig = {
         {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
-          partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'OKTON' },
+          partner: { name: 'pangolin-dvm', role: 'backing', symbol: 'OKTON' },
         },
       ],
       type: 'erc20',
