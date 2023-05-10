@@ -7,7 +7,6 @@ import {
   astarConfig,
   avalancheConfig,
   bscConfig,
-  crabConfig,
   crabDVMConfig,
   darwiniaDVMConfig,
   karuraConfig,
@@ -200,10 +199,10 @@ describe('network utils', () => {
   });
 
   it('can convert display name', () => {
-    expect(getDisplayName(crabDVMConfig)).toEqual('Crab Smart Chain');
-    expect(getDisplayName(pangolinDVMConfig)).toEqual('Pangolin Smart Chain');
-    expect(getDisplayName(pangoroDVMConfig)).toEqual('Pangoro Smart Chain');
-    expect(getDisplayName(darwiniaDVMConfig)).toEqual('Darwinia Smart Chain');
+    expect(getDisplayName(crabDVMConfig)).toEqual('Crab');
+    expect(getDisplayName(pangolinDVMConfig)).toEqual('Pangolin');
+    expect(getDisplayName(pangoroDVMConfig)).toEqual('Pangoro');
+    expect(getDisplayName(darwiniaDVMConfig)).toEqual('Darwinia');
     expect(getDisplayName(crabParachainConfig)).toEqual('Crab Parachain');
     expect(getDisplayName(karuraConfig)).toEqual('Karura');
     expect(getDisplayName(astarConfig)).toEqual('Astar');
