@@ -225,17 +225,16 @@ export function CrossChain() {
   }, [bridge, pureDirection, isMounted]);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
     try {
       const _from = toDirection({
-        host: router.query.from_host as Network,
-        symbol: (router.query.from_token || '') as string,
+        host: params.get('from_host') as Network,
+        symbol: (params.get('from_token') || '') as string,
       });
       const _to = toDirection({
-        host: router.query.to_host as Network,
-        symbol: (router.query.to_token || '') as string,
+        host: params.get('to_host') as Network,
+        symbol: (params.get('to_token') || '') as string,
       });
-
-      console.log(_from, _to);
 
       setDirection((prev) => {
         const d = { from: _from ?? prev.from, to: _to ?? prev.to };
@@ -246,20 +245,21 @@ export function CrossChain() {
     } catch (err) {
       // console.error(err);
     }
-  }, [router.query, form]);
+  }, [form]);
 
   useEffect(() => {
-    if (typeof router.query.bridge === 'string') {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('bridge')) {
       const configs = getBridges(direction);
       const b: Bridge<BridgeConfig<ContractConfig>, ChainConfig, ChainConfig> | undefined = configs
         .map((config) => bridgeFactory(config))
-        .find((item) => item.name === router.query.bridge);
+        .find((item) => item.name === params.get('bridge'));
       if (b) {
         form.setFieldValue([FORM_CONTROL.bridge], b);
         setBridge(b);
       }
     }
-  }, [router.query, form, direction]);
+  }, [form, direction]);
 
   return (
     <Form
