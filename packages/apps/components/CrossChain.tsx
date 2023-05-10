@@ -28,6 +28,8 @@ import {
   CrossChainDirection,
   CrossChainPureDirection,
   DailyLimit,
+  Network,
+  ContractConfig,
   SupportedWallet,
   TokenInfoWithMeta,
 } from 'shared/model';
@@ -46,6 +48,7 @@ import { CrossChainPayload } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
 import { isCBridge, isXCM, isLpBridge } from '../utils';
 import { getDisplayName } from '../utils/network';
+import { bridgeFactory } from '../bridges/bridges';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { calcMax, Direction, toDirection } from './form-control/Direction';
 import { TransferConfirm } from './tx/TransferConfirm';
@@ -220,6 +223,43 @@ export function CrossChain() {
 
     return () => sub$$?.unsubscribe();
   }, [bridge, pureDirection, isMounted]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    try {
+      const _from = toDirection({
+        host: params.get('from_host') as Network,
+        symbol: (params.get('from_token') || '') as string,
+      });
+      const _to = toDirection({
+        host: params.get('to_host') as Network,
+        symbol: (params.get('to_token') || '') as string,
+      });
+
+      setDirection((prev) => {
+        const d = { from: _from ?? prev.from, to: _to ?? prev.to };
+        form.setFieldsValue({ [FORM_CONTROL.direction]: d });
+        return d;
+      });
+      setPureDirection((prev) => ({ from: _from ?? prev.from, to: _to ?? prev.to }));
+    } catch (err) {
+      // console.error(err);
+    }
+  }, [form]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('bridge')) {
+      const configs = getBridges(direction);
+      const b: Bridge<BridgeConfig<ContractConfig>, ChainConfig, ChainConfig> | undefined = configs
+        .map((config) => bridgeFactory(config))
+        .find((item) => item.name === params.get('bridge'));
+      if (b) {
+        form.setFieldValue([FORM_CONTROL.bridge], b);
+        setBridge(b);
+      }
+    }
+  }, [form, direction]);
 
   return (
     <Form

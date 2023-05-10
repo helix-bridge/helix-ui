@@ -1,5 +1,6 @@
 import { Select } from 'antd';
 import { useCallback, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/router';
 import { BridgeBase } from 'shared/core/bridge';
 import { BridgeConfig, ChainConfig, ContractConfig, CrossChainDirection, CustomFormControlProps } from 'shared/model';
 import { getBridges } from 'utils/bridge';
@@ -11,6 +12,8 @@ type BridgeSelectorProps = CustomFormControlProps<Bridge<BridgeConfig, ChainConf
 };
 
 export function BridgeSelector({ direction, value, onChange }: BridgeSelectorProps) {
+  const router = useRouter();
+
   const bridges = useMemo(() => {
     const configs = getBridges(direction);
 
@@ -46,6 +49,10 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
         const target: Bridge<BridgeConfig<ContractConfig>, ChainConfig, ChainConfig> = bridges.find(
           (item) => item.name === name
         )!;
+
+        const params = new URLSearchParams(router.query as Record<string, string>);
+        params.set('bridge', name);
+        router.push({ query: params.toString() });
 
         if (onChange) {
           onChange(target);
