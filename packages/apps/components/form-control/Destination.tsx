@@ -182,7 +182,7 @@ export function Destination({
 
               const params = new URLSearchParams(router.query as Record<string, string>);
               params.set(`${position}_host`, token.host);
-              params.set(`${position}_token`, token.name);
+              params.set(`${position}_token`, token.symbol);
               router.push({ query: params.toString() });
 
               if (onChange) {
