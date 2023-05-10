@@ -3,6 +3,7 @@ import { Button, Cascader, Form, Input, InputNumber, InputNumberProps } from 'an
 import { isAddress } from 'ethers/lib/utils';
 import omit from 'lodash/omit';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
 import { ChainBase } from 'shared/core/chain';
@@ -19,6 +20,7 @@ interface DestinationProps {
   title?: string;
   value: CrossToken<ChainBase>;
   fromToken?: TokenInfoWithMeta;
+  position: 'from' | 'to';
 }
 
 export function Destination({
@@ -28,11 +30,13 @@ export function Destination({
   className,
   disabled,
   fromToken,
+  position,
 }: DestinationProps & Pick<InputNumberProps, 'disabled'>) {
   const { t } = useITranslation();
   const [searchValue, setSearchValue] = useState('');
   const [width, setWidth] = useState<string | number>('auto');
   const inputNumberEle = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const originOptions = useMemo(
     () =>
@@ -175,6 +179,11 @@ export function Destination({
               // selected[0] token information may be incomplete
               const token = (selected as unknown as [ChainConfig, TokenWithBridgesInfo])[1];
               const config = getChainConfig(token.host);
+
+              const params = new URLSearchParams(router.query as Record<string, string>);
+              params.set(`${position}_host`, token.host);
+              params.set(`${position}_token`, token.symbol);
+              router.push({ query: params.toString() });
 
               if (onChange) {
                 onChange({

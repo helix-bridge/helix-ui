@@ -167,6 +167,7 @@ export function Direction({
             to: { ...data.to, amount: toAmount },
           });
         }}
+        position="from"
       />
 
       {isBalanceLoading && (
@@ -264,6 +265,7 @@ export function Direction({
         onChange={(to) => {
           triggerChange({ to, from: data.from });
         }}
+        position="to"
       />
     </div>
   );
