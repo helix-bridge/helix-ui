@@ -28,6 +28,8 @@ import {
   CrossChainDirection,
   CrossChainPureDirection,
   DailyLimit,
+  Network,
+  ContractConfig,
   SupportedWallet,
   TokenInfoWithMeta,
 } from 'shared/model';
@@ -46,6 +48,7 @@ import { CrossChainPayload } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
 import { isCBridge, isXCM, isLpBridge } from '../utils';
 import { getDisplayName } from '../utils/network';
+import { bridgeFactory } from '../bridges/bridges';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { calcMax, Direction, toDirection } from './form-control/Direction';
 import { TransferConfirm } from './tx/TransferConfirm';
@@ -220,6 +223,43 @@ export function CrossChain() {
 
     return () => sub$$?.unsubscribe();
   }, [bridge, pureDirection, isMounted]);
+
+  useEffect(() => {
+    try {
+      const _from = toDirection({
+        host: router.query.from_host as Network,
+        symbol: (router.query.from_token || '') as string,
+      });
+      const _to = toDirection({
+        host: router.query.to_host as Network,
+        symbol: (router.query.to_token || '') as string,
+      });
+
+      console.log(_from, _to);
+
+      setDirection((prev) => {
+        const d = { from: _from ?? prev.from, to: _to ?? prev.to };
+        form.setFieldsValue({ [FORM_CONTROL.direction]: d });
+        return d;
+      });
+      setPureDirection((prev) => ({ from: _from ?? prev.from, to: _to ?? prev.to }));
+    } catch (err) {
+      // console.error(err);
+    }
+  }, [router.query, form]);
+
+  useEffect(() => {
+    if (typeof router.query.bridge === 'string') {
+      const configs = getBridges(direction);
+      const b: Bridge<BridgeConfig<ContractConfig>, ChainConfig, ChainConfig> | undefined = configs
+        .map((config) => bridgeFactory(config))
+        .find((item) => item.name === router.query.bridge);
+      if (b) {
+        form.setFieldValue([FORM_CONTROL.bridge], b);
+        setBridge(b);
+      }
+    }
+  }, [router.query, form, direction]);
 
   return (
     <Form
