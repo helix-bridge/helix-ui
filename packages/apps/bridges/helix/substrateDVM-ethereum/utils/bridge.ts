@@ -166,7 +166,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
   ): Promise<DailyLimit> {
     const {
       from: { meta: departure },
-      to: { meta: arrival, address: tokenAddress, type },
+      to: { meta: arrival, address: tokenAddress },
     } = direction;
 
     const { abi, address } = this.isIssue(departure, arrival)
@@ -176,7 +176,7 @@ export class SubstrateDVMEthereumBridge extends Bridge<
     const contract = new Contract(address as string, abi, entrance.web3.getInstance(direction.to.meta.provider.https));
 
     try {
-      const limit = await contract.calcMaxWithdraw(type === 'native' ? getWrappedToken(arrival).address : tokenAddress);
+      const limit = await contract.calcMaxWithdraw(tokenAddress);
 
       return { limit: limit.toString(), spentToday: '0' };
     } catch {

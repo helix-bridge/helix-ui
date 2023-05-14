@@ -53,25 +53,25 @@ export const ethereumConfig: EthereumChainConfig = {
           partner: { name: 'heco', role: 'issuing', symbol: 'RING' },
           deprecated: true,
         },
+        /*
         {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'WRING' },
           deprecated: true,
         },
+        */
         {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
-          deprecated: true,
         },
         {
           category: 'helixLpBridge',
           bridge: 'darwinia-ethereum',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
-          basefee: 800,
+          basefee: 5000,
           index: 0,
-          deprecated: true,
         },
         {
           category: 'l1tol2',
