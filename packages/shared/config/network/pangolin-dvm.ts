@@ -26,6 +26,22 @@ export const pangolinDVMConfig: DVMChainConfig = {
   },
   tokens: [
     {
+      name: 'PRING',
+      decimals: 18,
+      cross: [
+        {
+          bridge: 'substrateDVM-ethereum',
+          category: 'helix',
+          partner: { name: 'goerli', role: 'issuing', symbol: 'PRING', claim: true },
+        },
+      ],
+      type: 'native',
+      host: 'pangolin-dvm',
+      logo: 'token-ring.svg',
+      symbol: 'PRING',
+      address: '0x3F3eDBda6124462a09E071c5D90e072E0d5d4ed4',
+    },
+    {
       name: 'xWORING',
       decimals: 18,
       cross: [
@@ -43,6 +59,6 @@ export const pangolinDVMConfig: DVMChainConfig = {
     },
   ],
   ss58Prefix: 42,
-  specVersion: 210010,
+  specVersion: 6200,
   wallets: ['metamask', 'mathwallet-ethereum'],
 };
