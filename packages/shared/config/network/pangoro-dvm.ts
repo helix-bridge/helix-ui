@@ -35,11 +35,6 @@ export const pangoroDVMConfig: DVMChainConfig = {
           bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'pangolin-dvm', role: 'issuing', symbol: 'xWORING' },
         },
-        {
-          bridge: 'substrateDVM-ethereum',
-          category: 'helix',
-          partner: { name: 'goerli', role: 'issuing', symbol: 'ORING', claim: true },
-        },
       ],
       type: 'native',
       host: 'pangoro-dvm',

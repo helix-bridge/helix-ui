@@ -91,11 +91,6 @@ export const ethereumConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'helix',
-          bridge: 'ethereum-darwinia',
-          partner: { name: 'darwinia', role: 'issuing', symbol: 'KTON' },
-        },
-        {
-          category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'KTON' },
         },
