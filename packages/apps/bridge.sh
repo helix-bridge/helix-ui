@@ -9,22 +9,20 @@ function validate() {
     fi
 }
 
-function validateFloder() {
+function validate_folder() {
     if [ -d './bridges/'$2'/'$1 ]; then
         echo "bridge $1 of $2 exist"
         exit 1
     fi
 }
 
-read -p "Origin chain(backing chain): "
+read -p "Origin chain(backing chain): " origin
 
-origin=$REPLY
 validate $origin
 from=$(echo ${origin:0:1} | tr a-z A-Z)${origin:1}
 
-read -p "Target chain(issuing chain): "
+read -p "Target chain(issuing chain): " target
 
-target=$REPLY
 validate $target
 to=$(echo ${target:0:1} | tr a-z A-Z)${target:1}
 
@@ -77,12 +75,12 @@ else
     subdir="helix"
 fi
 
-validateFloder $origin'-'$target $subdir
+validate_folder $origin'-'$target $subdir
 
-function checkExist() {
+function check_exist() {
     local departure=${from}"2"${to}
     local arrival=${to}"2"${from}
-    local dir=$category'/'$origin'-'$target
+    local dir=$origin'-'$target
 
     for cur in $(ls ./bridges/$subdir'/'); do
         if [ $cur = $dir ]; then
@@ -92,7 +90,7 @@ function checkExist() {
     done
 }
 
-function indexFile() {
+function index_file() {
     echo "export * from './$1';" >>$2
 }
 
@@ -130,7 +128,7 @@ function component() {
     fi
 }
 
-function initModel() {
+function init_model() {
     local name=${from}''${to}
 
     echo "
@@ -151,7 +149,7 @@ function initModel() {
         >;
 
         export type RedeemPayload = CrossChainPayload<
-            Bridge<${name}BridgeConfig, DVMChainConfig, DVMChainConfig>,
+            Bridge<${name}BridgeConfig, $2ChainConfig, $2ChainConfig>,
             CrossToken<$2ChainConfig>,
             CrossToken<$2ChainConfig>
         >;
@@ -162,7 +160,7 @@ function initModel() {
     " >>$1'/index.ts'
 }
 
-function initConfig() {
+function init_config() {
     echo "
         import { ${origin}Config, ${target}Config } from 'shared/config/network';
         import { BridgeBase } from 'shared/core/bridge';
@@ -186,7 +184,7 @@ function initConfig() {
     " >>$1'/index.ts'
 }
 
-function initUitls() {
+function init_uitls() {
     local name=${from}''${to}
 
     echo "
@@ -226,7 +224,7 @@ function initUitls() {
     " >>$1'/index.ts'
 }
 
-function updateSupports() {
+function update_supports() {
     local BRGS=$(sed -r 's/(.*);/\1/' ../shared/model/bridge/supports.ts)
 
     echo "
@@ -235,13 +233,13 @@ function updateSupports() {
    " >'../shared/model/bridge/supports.ts'
 }
 
-function updateBridgesIndexer() {
+function update_bridges_indexer() {
     echo "
         export { $1, $2 } from './$3';
     " >>'./bridges/index.ts'
 }
 
-function createRecord() {
+function create_record() {
     echo "
         import type { GetServerSidePropsContext, NextPage } from 'next';
         import { useMemo } from 'react';
@@ -249,12 +247,10 @@ function createRecord() {
         import { HelixHistoryRecord } from 'shared/model';
         import { revertAccount } from 'shared/utils/helper/address';
         import { getBridge } from 'utils/bridge';
-        import { getChainConfig } from 'utils/network';
         import {
             getDirectionFromHelixRecord,
             getReceivedAmountFromHelixRecord,
             getSentAmountFromHelixRecord,
-            getTokenConfigFromHelixRecord,
         } from 'utils/record';
         import { CrabDVMDarwiniaDVMBridgeConfig } from '../../../../bridges/$2/crabDVM-darwiniaDVM/model';
         import { DarwiniaDVMCrabDVMBridgeConfig } from '../../../../bridges/$2/darwiniaDVM-crabDVM/model';
@@ -279,10 +275,7 @@ function createRecord() {
                     return [];
                 }
 
-                const departure = getChainConfig(record.fromChain);
-                const arrival = getChainConfig(record.toChain);
                 const direction = getDirectionFromHelixRecord(record);
-
                 if (!direction) {
                     return [];
                 }
@@ -344,61 +337,57 @@ function init() {
     local dir=$subdir'/'$origin'-'$target
     local path='./bridges/'$dir
     local index=$path'/index.ts'
-    local dvmFlag='DVM'
-    local categoryFlag=''
+    local dvm_flag='DVM'
+    local category_flag=''
 
     mkdir $path
 
     if [ "$category" != "cBridge" ]; then
-        mkdir $path'/config'
-
         mkdir $path'/utils'
-        initUitls $path'/utils' $departure $arrival
+        init_uitls $path'/utils' $departure $arrival
     fi
 
-    if [ "$category" == "helixLpBridge" ]; then
-        mkdir $path'/config'
-        mkdir $path'/utils'
-        initUitls $path'/utils' $departure $arrival
-        mkdir './pages/records/'$dir
-        createRecord './pages/records/'$dir 'helixLpBridge'
-        categoryFlag='Ln'
-    fi
+    # if [ "$category" == "helixLpBridge" ]; then
+    #     mkdir './pages/records/'$dir
+    #     create_record './pages/records/'$dir 'helixLpBridge'
+    #     category_flag='Ln'
+    # fi
 
-    if [ "$category" == "l1tol2" ]; then
-        mkdir $path'/config'
-        mkdir $path'/utils'
-        mkdir './pages/records/'$dir
-        createRecord './pages/records/'$dir 'l1tol2'
-        categoryFlag='L2'
-    fi
+    # if [ "$category" == "l1tol2" ]; then
+    #     mkdir './pages/records/'$dir
+    #     create_record './pages/records/'$dir 'l1tol2'
+    #     category_flag='L2'
+    # fi
 
     if [ "$category" == "helix" ]; then
         mkdir './pages/records/'$dir
-        createRecord './pages/records/'$dir 'helix'
-        dvmFlag = ''
+        create_record './pages/records/'$dir 'helix'
     fi
 
-    mkdir $path'/model'
-    initModel $path'/model' $dvmFlag
+    if [ ! -d $path'/model' ]; then
+        mkdir $path'/model'
+    fi
+    init_model $path'/model' $dvm_flag
 
-    mkdir $path'/config'
-    initConfig $path'/config' $departure $arrival
+    if [ ! -d $path'/config' ]; then
+        mkdir $path'/config'
+    fi
+    init_config $path'/config' $departure $arrival
 
-    component $departure $path $categoryFlag
-    component $arrival $path $categoryFlag
+    component $departure $path $category_flag
+    component $arrival $path $category_flag
 
-    indexFile $departure$categoryFlag $index
-    indexFile $arrival$categoryFlag $index
+    index_file $departure$category_flag $index
+    index_file $arrival$category_flag $index
 
-    updateBridgesIndexer $departure$categoryFlag $arrival$categoryFlag $dir
+    update_bridges_indexer $departure$category_flag $arrival$category_flag $dir
 
-    updateSupports
+    update_supports
 
     echo "\033[32mCreate success!\033[0m"
 }
 
-checkExist
+check_exist
 
 init
 
