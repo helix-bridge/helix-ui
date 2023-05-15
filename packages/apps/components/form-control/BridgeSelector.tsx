@@ -39,6 +39,13 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
       const defaultBridge = bridges.find((item) => item.isDefault);
       if (defaultBridge && !value && !isDisabled(defaultBridge)) {
         onChange(defaultBridge);
+      } else if (!value) {
+        onChange(bridges[0]);
+      } else {
+        const matched = bridges.find((item) => item.category === value.category);
+        if (!matched) {
+          onChange(bridges[0]);
+        }
       }
     }
   }, [bridges, isDisabled, onChange, value]);
