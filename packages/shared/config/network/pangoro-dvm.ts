@@ -47,22 +47,6 @@ export const pangoroDVMConfig: DVMChainConfig = {
       symbol: 'ORING',
       address: '',
     },
-    {
-      name: 'OKTON',
-      decimals: 18,
-      cross: [
-        {
-          bridge: 'substrateDVM-ethereum',
-          category: 'helix',
-          partner: { name: 'goerli', role: 'issuing', symbol: 'OKTON', claim: true },
-        },
-      ],
-      type: 'erc20',
-      host: 'pangoro-dvm',
-      logo: 'token-kton.svg',
-      symbol: 'OKTON',
-      address: '0x0000000000000000000000000000000000000402',
-    },
   ],
   wallets: ['metamask', 'mathwallet-ethereum'],
 };

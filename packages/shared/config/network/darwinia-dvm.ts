@@ -70,7 +70,6 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'ethereum', role: 'issuing', symbol: 'KTON', claim: true },
-          deprecated: true,
         },
       ],
       type: 'erc20',
@@ -78,7 +77,6 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       logo: 'token-kton.svg',
       symbol: 'KTON',
       address: '0x0000000000000000000000000000000000000402',
-      deprecated: true,
     },
     {
       name: 'xWCRAB',
