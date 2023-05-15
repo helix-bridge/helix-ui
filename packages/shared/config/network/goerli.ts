@@ -35,25 +35,20 @@ export const goerliConfig: EthereumChainConfig = {
       address: '',
     },
     {
-      name: 'ORING',
+      name: 'PRING',
       decimals: 18,
       cross: [
         {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
-          partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'ORING' },
-        },
-        {
-          category: 'helix',
-          bridge: 'substrateDVM-ethereum',
-          partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'WORING' },
+          partner: { name: 'pangolin-dvm', role: 'backing', symbol: 'PRING' },
         },
       ],
       type: 'erc20',
       host: 'goerli',
       logo: 'token-ring.svg',
-      symbol: 'ORING',
-      address: '0x046D07d53926318d1F06c2c2A0F26a4de83E26c4',
+      symbol: 'PRING',
+      address: '0xeb93165E3CDb354c977A182AbF4fad3238E04319',
     },
     {
       name: 'RING',
@@ -70,22 +65,6 @@ export const goerliConfig: EthereumChainConfig = {
       logo: 'token-ring.svg',
       symbol: 'RING',
       address: '0x1836bafa3016dd5ce543d0f7199cb858ec69f41e',
-    },
-    {
-      name: 'OKTON',
-      decimals: 18,
-      cross: [
-        {
-          category: 'helix',
-          bridge: 'substrateDVM-ethereum',
-          partner: { name: 'pangoro-dvm', role: 'backing', symbol: 'OKTON' },
-        },
-      ],
-      type: 'erc20',
-      host: 'goerli',
-      logo: 'token-kton.svg',
-      symbol: 'OKTON',
-      address: '0xdd3df59c868fcd40fded7af0cccc3e2c7bcb4f3c',
     },
   ],
   wallets: ['metamask', 'mathwallet-ethereum'],

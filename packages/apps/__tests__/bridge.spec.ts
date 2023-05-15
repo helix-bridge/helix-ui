@@ -139,7 +139,7 @@ describe.each(configs)("$name network's ", ({ name, tokens, ...other }) => {
         }
       } else if (bridge === 'substrateDVM-ethereum') {
         if (other.isTest) {
-          expect(from.host).toEqual(partner.role === 'backing' ? 'goerli' : 'pangoro-dvm');
+          expect(from.host).toEqual(partner.role === 'backing' ? 'goerli' : 'pangolin-dvm');
         } else {
           expect(from.host).toEqual(partner.role === 'backing' ? 'ethereum' : 'darwinia-dvm');
         }

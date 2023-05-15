@@ -170,14 +170,14 @@ describe('network utils', () => {
     const group = data.find((item) => item[0] === 'goerli');
 
     expect(group).not.toEqual(undefined);
-    expect(uniq(sort(group![1]))).toEqual(sort(['pangoro-dvm', 'arbitrum-goerli']));
+    expect(uniq(sort(group![1]))).toEqual(sort(['pangolin-dvm', 'arbitrum-goerli']));
   });
 
-  it('pangoro-dvm contains 3 leafs', () => {
+  it('pangoro-dvm contains 2 leafs', () => {
     const group = data.find((item) => item[0] === 'pangoro-dvm');
 
     expect(group).not.toEqual(undefined);
-    expect(uniq(sort(group![1]))).toEqual(sort(['pangolin-dvm', 'goerli', 'pangoro-dvm']));
+    expect(uniq(sort(group![1]))).toEqual(sort(['pangolin-dvm', 'pangoro-dvm']));
   });
 
   it('can get chain config by chain name', () => {

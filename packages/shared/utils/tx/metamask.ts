@@ -44,7 +44,7 @@ export const approveToken: TxFn<{
     throw new Error(`No spender account set`);
   }
 
-  const hardCodeAmount = '100000000000000000000000000';
+  const hardCodeAmount = '100000000000000000000';
   const params = sendOptions ? { from: sender, ...omitBy(sendOptions, (value) => !value) } : { from: sender };
 
   return sendTransactionFromContract(tokenAddress, (contract) =>

@@ -53,25 +53,25 @@ export const ethereumConfig: EthereumChainConfig = {
           partner: { name: 'heco', role: 'issuing', symbol: 'RING' },
           deprecated: true,
         },
+        /*
         {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'WRING' },
           deprecated: true,
         },
+        */
         {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
-          deprecated: true,
         },
         {
           category: 'helixLpBridge',
           bridge: 'darwinia-ethereum',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
-          basefee: 800,
+          basefee: 3000,
           index: 0,
-          deprecated: true,
         },
         {
           category: 'l1tol2',
@@ -91,15 +91,8 @@ export const ethereumConfig: EthereumChainConfig = {
       cross: [
         {
           category: 'helix',
-          bridge: 'ethereum-darwinia',
-          partner: { name: 'darwinia', role: 'issuing', symbol: 'KTON' },
-          deprecated: true,
-        },
-        {
-          category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'KTON' },
-          deprecated: true,
         },
       ],
       type: 'erc20',
@@ -107,7 +100,6 @@ export const ethereumConfig: EthereumChainConfig = {
       logo: 'token-kton.svg',
       symbol: 'KTON',
       address: '0x9f284e1337a815fe77d2ff4ae46544645b20c5ff',
-      deprecated: true,
     },
     {
       name: 'ETH',

@@ -33,7 +33,7 @@ import {
   pangoroDVMPangolinDVM,
   pangoroDVMPangoroDVM,
 } from '../bridges/helix/darwiniaDVM-crabDVM/config/bridge';
-import { darwiniaDVMEthereum, pangoroDVMGoerli } from '../bridges/helix/substrateDVM-ethereum/config/bridge';
+import { darwiniaDVMEthereum, pangolinDVMGoerli } from '../bridges/helix/substrateDVM-ethereum/config/bridge';
 import { crabParachainKarura } from '../bridges/xcm/crabParachain-karura/config/bridge';
 import { crabParachainMoonriver } from '../bridges/xcm/crabParachain-moonriver/config/bridge';
 import { shidenKhala } from '../bridges/xcm/shiden-khala/config';
@@ -106,7 +106,7 @@ const formalBridges = [
   ethereumArbitrumL2,
 ];
 
-const testBridges = [pangoroDVMGoerli, pangoroDVMPangolinDVM, pangoroDVMPangoroDVM, arbitrumGoerli, arbitrumGoerliL2];
+const testBridges = [pangolinDVMGoerli, pangoroDVMPangolinDVM, pangoroDVMPangoroDVM, arbitrumGoerli, arbitrumGoerliL2];
 
 export const BRIDGES = (() => {
   switch (CHAIN_TYPE) {
