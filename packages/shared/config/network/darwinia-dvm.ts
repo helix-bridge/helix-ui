@@ -51,7 +51,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           category: 'helixLpBridge',
           bridge: 'darwinia-ethereum',
           partner: { name: 'ethereum', role: 'issuing', symbol: 'RING' },
-          basefee: 5000,
+          basefee: 3000,
           index: 0,
           price: 470000,
         },

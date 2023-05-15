@@ -70,7 +70,7 @@ export const ethereumConfig: EthereumChainConfig = {
           category: 'helixLpBridge',
           bridge: 'darwinia-ethereum',
           partner: { name: 'darwinia-dvm', role: 'backing', symbol: 'RING' },
-          basefee: 5000,
+          basefee: 3000,
           index: 0,
         },
         {

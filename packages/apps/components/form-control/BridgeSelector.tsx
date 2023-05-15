@@ -36,8 +36,8 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
   // eslint-disable-next-line complexity
   useEffect(() => {
     if (bridges.length && onChange) {
-      const defaultBridge = bridges.find((item) => item.isDefault) || bridges[0];
-      if (!value && !isDisabled(defaultBridge)) {
+      const defaultBridge = bridges.find((item) => item.isDefault);
+      if (defaultBridge && !value && !isDisabled(defaultBridge)) {
         onChange(defaultBridge);
       }
     }
