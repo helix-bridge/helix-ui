@@ -23,7 +23,7 @@ import {
 } from 'shared/model';
 import { fromWei, largeNumber, prettyNumber, toWei } from 'shared/utils/helper/balance';
 import { readStorage, updateStorage } from 'shared/utils/helper/storage';
-import { isCBridge, isXCM, isLpBridge } from 'utils/bridge';
+import { isCBridge, isXCM, isLpBridge, getBridges } from 'utils/bridge';
 import { Bridge, TokenWithAmount } from '../../core/bridge';
 import { getOriginChainConfig } from '../../utils/network';
 import { chainFactory } from '../../utils/network/chain';
@@ -145,7 +145,7 @@ export function Direction({
     ) {
       const fromDir = toDirection(storedForm);
       const toDir = toDirection(storedTo);
-      if (fromDir && toDir) {
+      if (fromDir && toDir && getBridges({ from: fromDir, to: toDir }).length) {
         triggerChange({
           from: toDirection(storedForm)!,
           to: toDirection(storedTo)!,
