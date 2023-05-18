@@ -112,6 +112,6 @@ export const darwiniaDVMConfig: DVMChainConfig = {
     },
   ],
   ss58Prefix: 18,
-  specVersion: 6210,
+  specVersion: 6300,
   wallets: ['metamask', 'mathwallet-ethereum'],
 };
