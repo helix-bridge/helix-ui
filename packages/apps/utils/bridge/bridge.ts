@@ -51,7 +51,11 @@ export function getBridges(source: CrossChainPureDirection): BridgeBase[] {
   const overviews = cross.filter((bridge) => {
     const { partner } = bridge;
 
-    return partner.symbol.toLowerCase() === to.symbol.toLowerCase() && isEqual(partner.name, to.meta.name);
+    return (
+      partner.symbol.toLowerCase() === to.symbol.toLowerCase() &&
+      isEqual(partner.name, to.meta.name) &&
+      !bridge.deprecated
+    );
   });
 
   return BRIDGES.filter(
