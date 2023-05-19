@@ -108,7 +108,7 @@ export const arbitrumConfig: EthereumChainConfig = {
           bridge: 'arbitrum-ethereum',
           partner: { name: 'ethereum', role: 'backing', symbol: 'RING' },
           basefee: 1300,
-          price: 320000,
+          price: 440000,
           index: 0,
         },
       ],

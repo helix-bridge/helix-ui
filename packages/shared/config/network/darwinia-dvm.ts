@@ -53,7 +53,7 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           partner: { name: 'ethereum', role: 'issuing', symbol: 'RING' },
           basefee: 3000,
           index: 0,
-          price: 470000,
+          price: 440000,
         },
       ],
       type: 'native',
