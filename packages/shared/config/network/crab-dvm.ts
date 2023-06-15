@@ -164,6 +164,6 @@ export const crabDVMConfig: DVMChainConfig = {
     },
   ],
   ss58Prefix: 42,
-  specVersion: 6300,
+  specVersion: 6310,
   wallets: ['metamask', 'mathwallet-ethereum'],
 };
