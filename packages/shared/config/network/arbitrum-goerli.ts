@@ -29,7 +29,7 @@ export const arbitrumGoerliConfig: EthereumChainConfig = {
         {
           category: 'helixLpBridge',
           bridge: 'arbitrum-ethereum',
-          partner: { name: 'goerli', role: 'backing', symbol: 'RING' },
+          partner: { name: 'goerli', role: 'issuing', symbol: 'RING' },
           basefee: 5000,
           index: 0,
         },
