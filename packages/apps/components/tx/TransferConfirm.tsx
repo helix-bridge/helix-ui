@@ -107,7 +107,12 @@ export function TransferConfirm<T extends BridgeBase = BridgeBase>({
               <span className="opacity-60">{t('Estimate Arrival Time')}</span>
               <span>
                 {t('{{estimate}} Minutes', {
-                  estimate: value.bridge.category === 'cBridge' || value.bridge.category === 'helix' ? '5-20' : '1-3',
+                  estimate:
+                    value.bridge.category === 'cBridge' || value.bridge.category === 'helix'
+                      ? '5-20'
+                      : value.bridge.category === 'LnBridge'
+                      ? '1-30'
+                      : '1-3',
                 })}
               </span>
             </div>

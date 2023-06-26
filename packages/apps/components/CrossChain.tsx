@@ -5,12 +5,14 @@ import { useForm } from 'antd/lib/form/Form';
 import flow from 'lodash/flow';
 import identity from 'lodash/identity';
 import isEqual from 'lodash/isEqual';
+import { BigNumber, utils } from 'ethers';
 import omit from 'lodash/omit';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EMPTY, mergeMap } from 'rxjs';
+import { useManualQuery } from 'graphql-hooks';
 import { from, from as fromRx } from 'rxjs/internal/observable/from';
 import { iif } from 'rxjs/internal/observable/iif';
 import { of } from 'rxjs/internal/observable/of';
@@ -49,6 +51,7 @@ import { useAccount, useApi, useTx, useWallet } from '../providers';
 import { isCBridge, isXCM, isLpBridge } from '../utils';
 import { getDisplayName } from '../utils/network';
 import { bridgeFactory } from '../bridges/bridges';
+import { GET_RELAYERS_INFO } from '../config/gql';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { calcMax, Direction, toDirection } from './form-control/Direction';
 import { TransferConfirm } from './tx/TransferConfirm';
@@ -90,6 +93,7 @@ export function CrossChain() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const { afterCrossChain } = useAfterTx<CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>>(router);
+  const [fetchRelayersInfo] = useManualQuery(GET_RELAYERS_INFO);
 
   const allowanceEnough = useMemo(
     () =>
@@ -113,6 +117,8 @@ export function CrossChain() {
         nameWithSuffix = name + 'Ln';
       } else if (bridge.category === 'l1tol2') {
         nameWithSuffix = name + 'L2';
+      } else if (bridge.category === 'LnBridge') {
+        nameWithSuffix = name + 'LnBridge';
       }
 
       return (
@@ -253,7 +259,7 @@ export function CrossChain() {
       const configs = getBridges(direction);
       const b: Bridge<BridgeConfig<ContractConfig>, ChainConfig, ChainConfig> | undefined = configs
         .map((config) => bridgeFactory(config))
-        .find((item) => item.name === params.get('bridge'));
+        .find((item) => item.category === params.get('bridge'));
       if (b) {
         form.setFieldValue([FORM_CONTROL.bridge], b);
         setBridge(b);
@@ -472,11 +478,36 @@ export function CrossChain() {
                 }
 
                 // eslint-disable-next-line complexity
-                form.validateFields().then((values) => {
-                  const payload = flow(
+                form.validateFields().then(async (values) => {
+                  const payload = await flow(
                     patchPayload,
                     (value: CrossChainPayload<CommonBridge> | null) =>
-                      value && { ...value, wallet: departureConnection.wallet as SupportedWallet }
+                      value && { ...value, wallet: departureConnection.wallet as SupportedWallet },
+                    async (value) => {
+                      if (value?.bridge.category === 'LnBridge') {
+                        try {
+                          const { data: relayersInfo } = await fetchRelayersInfo({
+                            variables: {
+                              amount: utils
+                                .parseUnits(value.direction.from.amount.toString(), value.direction.from.decimals)
+                                .toNumber(),
+                              decimals: 1000000000000000000, // TODO
+                            },
+                          });
+
+                          if (relayersInfo?.sortedLnv20RelayInfos.length) {
+                            return {
+                              ...value,
+                              providerKey: Number(relayersInfo.sortedLnv20RelayInfos[0].providerKey),
+                              depositedMargin: BigNumber.from(relayersInfo.sortedLnv20RelayInfos[0].margin),
+                            };
+                          }
+                        } catch (err) {
+                          console.error(err);
+                        }
+                      }
+                      return value;
+                    }
                   )(values);
 
                   if (!payload) {

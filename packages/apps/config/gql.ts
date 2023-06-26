@@ -89,3 +89,12 @@ export const STATUS_STATISTICS = `
     }
   }
 `;
+
+export const GET_RELAYERS_INFO = `
+  query sortedLnv20RelayInfos($amount: BigInt, $decimals: BigInt) {
+    sortedLnv20RelayInfos(amount: $amount, decimals: $decimals) {
+      providerKey,
+      margin
+    }
+  }
+`;

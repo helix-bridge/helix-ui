@@ -1,3 +1,4 @@
+import type { BigNumber } from 'ethers';
 import { BridgeBase } from 'shared/core/bridge';
 import { SupportedWallet } from 'shared/model';
 import { CrossChainDirection, CrossToken } from 'shared/model/bridge/cross-chain';
@@ -17,4 +18,6 @@ export interface CrossChainPayload<
   direction: CrossChainDirection<F, T>;
   slippage?: number;
   wallet: W;
+  providerKey?: number;
+  depositedMargin?: BigNumber;
 }

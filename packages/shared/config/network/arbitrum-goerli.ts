@@ -33,6 +33,12 @@ export const arbitrumGoerliConfig: EthereumChainConfig = {
           basefee: 5000,
           index: 0,
         },
+        {
+          category: 'LnBridge',
+          bridge: 'arbitrum-ethereum',
+          partner: { name: 'goerli', role: 'issuing', symbol: 'RING' },
+          basefee: 5000,
+        },
       ],
       type: 'erc20',
       host: 'arbitrum-goerli',
