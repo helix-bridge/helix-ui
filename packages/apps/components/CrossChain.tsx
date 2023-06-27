@@ -117,7 +117,7 @@ export function CrossChain() {
         nameWithSuffix = name + 'Ln';
       } else if (bridge.category === 'l1tol2') {
         nameWithSuffix = name + 'L2';
-      } else if (bridge.category === 'LnBridge') {
+      } else if (bridge.category === 'lnbridgev20') {
         nameWithSuffix = name + 'LnBridge';
       }
 
@@ -484,7 +484,7 @@ export function CrossChain() {
                     (value: CrossChainPayload<CommonBridge> | null) =>
                       value && { ...value, wallet: departureConnection.wallet as SupportedWallet },
                     async (value) => {
-                      if (value?.bridge.category === 'LnBridge') {
+                      if (value?.bridge.category === 'lnbridgev20') {
                         try {
                           const { data: relayersInfo } = await fetchRelayersInfo({
                             variables: {

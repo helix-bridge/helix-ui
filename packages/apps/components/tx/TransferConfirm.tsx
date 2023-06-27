@@ -110,7 +110,7 @@ export function TransferConfirm<T extends BridgeBase = BridgeBase>({
                   estimate:
                     value.bridge.category === 'cBridge' || value.bridge.category === 'helix'
                       ? '5-20'
-                      : value.bridge.category === 'LnBridge'
+                      : value.bridge.category === 'lnbridgev20'
                       ? '1-30'
                       : '1-3',
                 })}

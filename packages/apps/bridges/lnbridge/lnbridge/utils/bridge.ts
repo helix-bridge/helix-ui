@@ -154,7 +154,7 @@ export abstract class LnBridgeBridge<
   async getFee(
     direction: CrossChainDirection<CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>
   ): Promise<TokenWithAmount | null> {
-    const overview = getOverview(direction, 'LnBridge');
+    const overview = getOverview(direction, 'lnbridgev20');
     // basefee + amount * 0.1%
     const baseFee = overview!.basefee! + Number(direction.from.amount) * Number(this.feePercent);
     let totalFee = toWei({ value: baseFee, decimals: direction.from.decimals });
