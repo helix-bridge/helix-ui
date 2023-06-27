@@ -142,3 +142,7 @@ export function isXCMRecord(record: HelixHistoryRecord): boolean {
 export function isL2Record(record: HelixHistoryRecord): boolean {
   return record.bridge.toLowerCase().startsWith('l2');
 }
+
+export function isLnBridgeRecord(record: HelixHistoryRecord): boolean {
+  return record.bridge.toLowerCase().startsWith('lnbridge');
+}
