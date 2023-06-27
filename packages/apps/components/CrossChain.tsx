@@ -490,8 +490,8 @@ export function CrossChain() {
                             variables: {
                               amount: utils
                                 .parseUnits(value.direction.from.amount.toString(), value.direction.from.decimals)
-                                .toNumber(),
-                              decimals: 1000000000000000000, // TODO
+                                .toString(),
+                              decimals: value.direction.from.decimals,
                             },
                           });
 

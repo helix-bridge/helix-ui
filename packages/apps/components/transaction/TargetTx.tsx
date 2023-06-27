@@ -2,7 +2,14 @@ import { useTranslation } from 'next-i18next';
 import { useMemo } from 'react';
 import { RecordStatus } from 'shared/config/constant';
 import { HelixHistoryRecord } from 'shared/model';
-import { isCBridgeRecord, isHelixRecord, isHelixLpRecord, isXCMRecord, isL2Record } from '../../utils/record/record';
+import {
+  isCBridgeRecord,
+  isHelixRecord,
+  isHelixLpRecord,
+  isXCMRecord,
+  isL2Record,
+  isLnBridgeRecord,
+} from '../../utils/record/record';
 import { Hash } from './Hash';
 import { TransferDescription } from './TransferDescription';
 
@@ -34,7 +41,7 @@ export function TargetTx({ record }: { record: HelixHistoryRecord | null }) {
       return (
         <Hash network={record.result === RecordStatus.refunded ? departure : arrival} hash={record.responseTxHash} />
       );
-    } else if (isXCMRecord(record)) {
+    } else if (isXCMRecord(record) || isLnBridgeRecord(record)) {
       return <Hash network={arrival} hash={record.responseTxHash} />;
     }
 
