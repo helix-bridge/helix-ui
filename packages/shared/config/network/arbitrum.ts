@@ -111,6 +111,12 @@ export const arbitrumConfig: EthereumChainConfig = {
           price: 320000,
           index: 0,
         },
+        {
+          category: 'lnbridgev20',
+          bridge: 'arbitrum-ethereum',
+          partner: { name: 'ethereum', role: 'issuing', symbol: 'RING' },
+          basefee: 5000,
+        },
       ],
       type: 'erc20',
       host: 'arbitrum',
