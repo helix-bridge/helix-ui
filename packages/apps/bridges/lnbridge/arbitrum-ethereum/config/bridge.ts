@@ -5,8 +5,8 @@ import { ArbitrumEthereumBridgeConfig } from '../model';
 
 const arbitrumEthereumConfig: ArbitrumEthereumBridgeConfig = {
   contracts: {
-    backing: '0xFBAD806Bdf9cEC2943be281FB355Da05068DE925',
-    issuing: '0xb3BF74703976BdD817bf2b82660D24A777111981',
+    backing: '0xD1B10B114f1975d8BCc6cb6FC43519160e2AA978',
+    issuing: '0xeAb1F01a8f4A2687023B159c2063639Adad5304E',
   },
 };
 
