@@ -17,9 +17,9 @@ const arbitrumGoerliGoerliConfig: ArbitrumEthereumBridgeConfig = {
   },
 };
 
-export const arbitrumEthereum = new BridgeBase(arbitrumConfig, ethereumConfig, arbitrumEthereumConfig, {
+export const arbitrumEthereumLnBridge = new BridgeBase(arbitrumConfig, ethereumConfig, arbitrumEthereumConfig, {
   name: 'arbitrum-ethereum',
-  category: 'helixLpBridge',
+  category: 'lnbridgev20',
 });
 
 export const arbitrumGoerliLnBridge = new BridgeBase(arbitrumGoerliConfig, goerliConfig, arbitrumGoerliGoerliConfig, {

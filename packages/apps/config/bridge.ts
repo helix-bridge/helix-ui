@@ -52,7 +52,7 @@ import { crabDarwinia } from '../bridges/helixlp/crab-darwinia/config';
 import { darwiniaEthereum } from '../bridges/helixlp/darwinia-ethereum/config';
 import { arbitrumGoerli, arbitrumEthereum } from '../bridges/helixlp/arbitrum-ethereum/config';
 import { arbitrumGoerliL2, ethereumArbitrumL2 } from '../bridges/l1tol2/ethereum-arbitrum/config';
-import { arbitrumGoerliLnBridge } from '../bridges/lnbridge/arbitrum-ethereum/config';
+import { arbitrumGoerliLnBridge, arbitrumEthereumLnBridge } from '../bridges/lnbridge/arbitrum-ethereum/config';
 
 const formalBridges = [
   arbitrumAstar,
@@ -105,6 +105,7 @@ const formalBridges = [
   darwiniaEthereum,
   arbitrumEthereum,
   ethereumArbitrumL2,
+  arbitrumEthereumLnBridge,
 ];
 
 const testBridges = [

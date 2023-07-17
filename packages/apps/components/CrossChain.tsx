@@ -243,15 +243,17 @@ export function CrossChain() {
       });
 
       setDirection((prev) => {
-        const d = { from: _from ?? prev.from, to: _to ?? prev.to };
-        form.setFieldsValue({ [FORM_CONTROL.direction]: d });
-        return d;
+        return { from: _from ?? prev.from, to: _to ?? prev.to };
       });
       setPureDirection((prev) => ({ from: _from ?? prev.from, to: _to ?? prev.to }));
     } catch (err) {
       // console.error(err);
     }
-  }, [form]);
+  }, []);
+
+  useEffect(() => {
+    form.setFieldsValue({ [FORM_CONTROL.direction]: direction });
+  }, [direction, form]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
