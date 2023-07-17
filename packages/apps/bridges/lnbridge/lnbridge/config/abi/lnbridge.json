@@ -8,8 +8,8 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": false, "internalType": "uint64", "name": "providerKey", "type": "uint64" },
       { "indexed": false, "internalType": "address", "name": "provider", "type": "address" },
+      { "indexed": false, "internalType": "address", "name": "token", "type": "address" },
       { "indexed": false, "internalType": "uint112", "name": "amount", "type": "uint112" }
     ],
     "name": "LiquidityWithdrawn",
@@ -19,7 +19,7 @@
     "anonymous": false,
     "inputs": [
       { "indexed": false, "internalType": "address", "name": "provider", "type": "address" },
-      { "indexed": false, "internalType": "uint64", "name": "providerKey", "type": "uint64" },
+      { "indexed": false, "internalType": "address", "name": "token", "type": "address" },
       { "indexed": false, "internalType": "uint112", "name": "margin", "type": "uint112" },
       { "indexed": false, "internalType": "uint112", "name": "baseFee", "type": "uint112" },
       { "indexed": false, "internalType": "uint8", "name": "liquidityfeeRate", "type": "uint8" }
@@ -31,18 +31,6 @@
     "anonymous": false,
     "inputs": [{ "indexed": false, "internalType": "address", "name": "account", "type": "address" }],
     "name": "Paused",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      { "indexed": false, "internalType": "bytes32", "name": "transferId", "type": "bytes32" },
-      { "indexed": false, "internalType": "uint64", "name": "providerKey", "type": "uint64" },
-      { "indexed": false, "internalType": "address", "name": "provider", "type": "address" },
-      { "indexed": false, "internalType": "uint112", "name": "margin", "type": "uint112" },
-      { "indexed": false, "internalType": "address", "name": "slasher", "type": "address" }
-    ],
-    "name": "Refund",
     "type": "event"
   },
   {
@@ -78,11 +66,21 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": false, "internalType": "uint64", "name": "nonce", "type": "uint64" },
-      { "indexed": false, "internalType": "uint64", "name": "providerKey", "type": "uint64" },
       { "indexed": false, "internalType": "bytes32", "name": "transferId", "type": "bytes32" },
-      { "indexed": false, "internalType": "bytes32", "name": "lastBlockHash", "type": "bytes32" },
-      { "indexed": false, "internalType": "address", "name": "localToken", "type": "address" },
+      { "indexed": false, "internalType": "address", "name": "provider", "type": "address" },
+      { "indexed": false, "internalType": "address", "name": "token", "type": "address" },
+      { "indexed": false, "internalType": "uint112", "name": "margin", "type": "uint112" },
+      { "indexed": false, "internalType": "address", "name": "slasher", "type": "address" }
+    ],
+    "name": "Slash",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "internalType": "bytes32", "name": "transferId", "type": "bytes32" },
+      { "indexed": false, "internalType": "address", "name": "provider", "type": "address" },
+      { "indexed": false, "internalType": "address", "name": "sourceToken", "type": "address" },
       { "indexed": false, "internalType": "uint112", "name": "amount", "type": "uint112" },
       { "indexed": false, "internalType": "uint112", "name": "fee", "type": "uint112" },
       { "indexed": false, "internalType": "address", "name": "receiver", "type": "address" }
@@ -146,6 +144,16 @@
     "type": "function"
   },
   {
+    "inputs": [
+      { "internalType": "address", "name": "provider", "type": "address" },
+      { "internalType": "address", "name": "token", "type": "address" }
+    ],
+    "name": "getProviderKey",
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
     "inputs": [{ "internalType": "bytes32", "name": "role", "type": "bytes32" }],
     "name": "getRoleAdmin",
     "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
@@ -167,29 +175,6 @@
     "name": "getRoleMemberCount",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "components": [
-          { "internalType": "uint64", "name": "providerKey", "type": "uint64" },
-          { "internalType": "bytes32", "name": "previousTransferId", "type": "bytes32" },
-          { "internalType": "bytes32", "name": "lastBlockHash", "type": "bytes32" },
-          { "internalType": "uint112", "name": "amount", "type": "uint112" },
-          { "internalType": "uint64", "name": "nonce", "type": "uint64" },
-          { "internalType": "uint64", "name": "timestamp", "type": "uint64" },
-          { "internalType": "address", "name": "token", "type": "address" },
-          { "internalType": "address", "name": "receiver", "type": "address" }
-        ],
-        "internalType": "struct LnBridgeHelper.TransferParameter",
-        "name": "param",
-        "type": "tuple"
-      }
-    ],
-    "name": "getTransferId",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
-    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -220,31 +205,16 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "lnProviderIndexes",
-    "outputs": [{ "internalType": "uint64", "name": "", "type": "uint64" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "lnProviderSize",
-    "outputs": [{ "internalType": "uint32", "name": "", "type": "uint32" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint64", "name": "", "type": "uint64" }],
+    "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
     "name": "lnProviders",
     "outputs": [
-      { "internalType": "address", "name": "provider", "type": "address" },
       {
         "components": [
           { "internalType": "uint112", "name": "margin", "type": "uint112" },
           { "internalType": "uint112", "name": "baseFee", "type": "uint112" },
           { "internalType": "uint8", "name": "liquidityFeeRate", "type": "uint8" }
         ],
-        "internalType": "struct LnBridgeSource.LnProviderConfigure",
+        "internalType": "struct LnOppositeBridgeSource.LnProviderConfigure",
         "name": "config",
         "type": "tuple"
       },
@@ -257,10 +227,8 @@
     "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
     "name": "lockInfos",
     "outputs": [
-      { "internalType": "uint64", "name": "providerKey", "type": "uint64" },
       { "internalType": "uint112", "name": "amountWithFeeAndPenalty", "type": "uint112" },
-      { "internalType": "uint64", "name": "nonce", "type": "uint64" },
-      { "internalType": "bool", "name": "hasRefund", "type": "bool" }
+      { "internalType": "bool", "name": "hasSlashed", "type": "bool" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -275,35 +243,12 @@
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "latestSlashTransferId", "type": "bytes32" },
-      { "internalType": "bytes32", "name": "transferId", "type": "bytes32" },
-      { "internalType": "address", "name": "slasher", "type": "address" }
-    ],
-    "name": "refund",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint32", "name": "tokenIndex", "type": "uint32" },
-      { "internalType": "uint112", "name": "margin", "type": "uint112" },
-      { "internalType": "uint112", "name": "baseFee", "type": "uint112" },
-      { "internalType": "uint8", "name": "liquidityFeeRate", "type": "uint8" }
-    ],
-    "name": "registerOrUpdateLnProvider",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "address", "name": "local", "type": "address" },
-      { "internalType": "address", "name": "remote", "type": "address" },
+      { "internalType": "address", "name": "sourceToken", "type": "address" },
+      { "internalType": "address", "name": "targetToken", "type": "address" },
       { "internalType": "uint112", "name": "protocolFee", "type": "uint112" },
       { "internalType": "uint112", "name": "penaltyLnCollateral", "type": "uint112" },
-      { "internalType": "uint8", "name": "localDecimals", "type": "uint8" },
-      { "internalType": "uint8", "name": "remoteDecimals", "type": "uint8" }
+      { "internalType": "uint8", "name": "sourceDecimals", "type": "uint8" },
+      { "internalType": "uint8", "name": "targetDecimals", "type": "uint8" }
     ],
     "name": "registerToken",
     "outputs": [],
@@ -359,6 +304,19 @@
     "type": "function"
   },
   {
+    "inputs": [
+      { "internalType": "bytes32", "name": "latestSlashTransferId", "type": "bytes32" },
+      { "internalType": "bytes32", "name": "transferId", "type": "bytes32" },
+      { "internalType": "address", "name": "provider", "type": "address" },
+      { "internalType": "address", "name": "sourceToken", "type": "address" },
+      { "internalType": "address", "name": "slasher", "type": "address" }
+    ],
+    "name": "slash",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [{ "internalType": "bytes4", "name": "interfaceId", "type": "bytes4" }],
     "name": "supportsInterface",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
@@ -366,29 +324,23 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "tokenLength",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "tokens",
+    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "name": "tokenInfos",
     "outputs": [
-      { "internalType": "address", "name": "localToken", "type": "address" },
-      { "internalType": "address", "name": "remoteToken", "type": "address" },
+      { "internalType": "address", "name": "targetToken", "type": "address" },
       { "internalType": "uint112", "name": "protocolFee", "type": "uint112" },
       { "internalType": "uint112", "name": "penaltyLnCollateral", "type": "uint112" },
-      { "internalType": "uint8", "name": "localDecimals", "type": "uint8" },
-      { "internalType": "uint8", "name": "remoteDecimals", "type": "uint8" }
+      { "internalType": "uint8", "name": "sourceDecimals", "type": "uint8" },
+      { "internalType": "uint8", "name": "targetDecimals", "type": "uint8" },
+      { "internalType": "bool", "name": "isRegistered", "type": "bool" }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint64", "name": "providerKey", "type": "uint64" },
+      { "internalType": "address", "name": "provider", "type": "address" },
+      { "internalType": "address", "name": "sourceToken", "type": "address" },
       { "internalType": "uint112", "name": "amount", "type": "uint112" }
     ],
     "name": "totalFee",
@@ -400,12 +352,13 @@
     "inputs": [
       {
         "components": [
-          { "internalType": "uint64", "name": "providerKey", "type": "uint64" },
+          { "internalType": "address", "name": "provider", "type": "address" },
+          { "internalType": "address", "name": "sourceToken", "type": "address" },
           { "internalType": "bytes32", "name": "transferId", "type": "bytes32" },
           { "internalType": "uint112", "name": "depositedMargin", "type": "uint112" },
           { "internalType": "uint112", "name": "totalFee", "type": "uint112" }
         ],
-        "internalType": "struct LnBridgeSource.Snapshot",
+        "internalType": "struct LnOppositeBridgeSource.Snapshot",
         "name": "snapshot",
         "type": "tuple"
       },
@@ -427,7 +380,7 @@
   },
   {
     "inputs": [
-      { "internalType": "uint32", "name": "_tokenIndex", "type": "uint32" },
+      { "internalType": "address", "name": "token", "type": "address" },
       { "internalType": "uint112", "name": "_protocolFee", "type": "uint112" }
     ],
     "name": "updateProtocolFee",
@@ -437,9 +390,22 @@
   },
   {
     "inputs": [
+      { "internalType": "address", "name": "sourceToken", "type": "address" },
+      { "internalType": "uint112", "name": "margin", "type": "uint112" },
+      { "internalType": "uint112", "name": "baseFee", "type": "uint112" },
+      { "internalType": "uint8", "name": "liquidityFeeRate", "type": "uint8" }
+    ],
+    "name": "updateProviderFeeAndMargin",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       { "internalType": "bytes32", "name": "latestSlashTransferId", "type": "bytes32" },
       { "internalType": "bytes32", "name": "lastTransferId", "type": "bytes32" },
       { "internalType": "address", "name": "provider", "type": "address" },
+      { "internalType": "address", "name": "sourceToken", "type": "address" },
       { "internalType": "uint112", "name": "amount", "type": "uint112" }
     ],
     "name": "withdrawMargin",

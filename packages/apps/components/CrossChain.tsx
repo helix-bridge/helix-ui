@@ -492,13 +492,16 @@ export function CrossChain() {
                                 .parseUnits(value.direction.from.amount.toString(), value.direction.from.decimals)
                                 .toString(),
                               decimals: value.direction.from.decimals,
+                              bridge: value.bridge.category,
+                              token: value.direction.from.address,
                             },
                           });
 
                           if (relayersInfo?.sortedLnv20RelayInfos.length) {
                             return {
                               ...value,
-                              providerKey: Number(relayersInfo.sortedLnv20RelayInfos[0].providerKey),
+                              relayer: relayersInfo.sortedLnv20RelayInfos[0].relayer,
+                              sourceToken: relayersInfo.sortedLnv20RelayInfos[0].sendToken,
                               depositedMargin: BigNumber.from(relayersInfo.sortedLnv20RelayInfos[0].margin),
                             };
                           }

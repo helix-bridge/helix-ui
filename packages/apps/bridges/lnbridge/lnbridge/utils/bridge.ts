@@ -55,7 +55,8 @@ export abstract class LnBridgeBridge<
         to,
       },
       bridge,
-      providerKey,
+      relayer,
+      sourceToken,
       depositedMargin,
     } = value;
     const nonce = new BN(Date.now()).add(this.prefix).toString();
@@ -79,14 +80,16 @@ export abstract class LnBridgeBridge<
             }
           );
         } else {
+          const providerKey = await contract.getProviderKey(relayer, sourceToken);
+
           const [provider, totalFee] = await Promise.all([
             contract.lnProviders(providerKey),
-            contract.totalFee(providerKey, transferAmount),
+            contract.totalFee(relayer, sourceToken, transferAmount),
           ]);
           const transferId = provider?.lastTransferId as string | undefined;
 
           return contract.transferAndLockMargin(
-            [providerKey, transferId, depositedMargin, totalFee],
+            [relayer, sourceToken, transferId, depositedMargin, totalFee],
             transferAmount,
             recipient,
             { gasLimit: 1000000 }

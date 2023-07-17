@@ -18,6 +18,7 @@ export interface CrossChainPayload<
   direction: CrossChainDirection<F, T>;
   slippage?: number;
   wallet: W;
-  providerKey?: number;
+  relayer?: string;
+  sourceToken?: string;
   depositedMargin?: BigNumber;
 }
