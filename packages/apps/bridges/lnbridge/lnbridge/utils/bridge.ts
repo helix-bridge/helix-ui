@@ -88,11 +88,13 @@ export abstract class LnBridgeBridge<
           ]);
           const transferId = provider?.lastTransferId as string | undefined;
 
+          const overrides = fromChain.name === 'arbitrum-goerli' ? { gasLimit: 1000000 } : undefined;
+
           return contract.transferAndLockMargin(
             [relayer, sourceToken, transferId, depositedMargin, totalFee],
             transferAmount,
             recipient,
-            { gasLimit: 1000000 }
+            overrides
           );
         }
       },
