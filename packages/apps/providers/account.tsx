@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import { IAccountMeta, PolkadotChainConfig, PolkadotTypeNetwork } from 'shared/model';
 import { polkadotExtensions } from 'shared/utils/connection';
 import { convertToSS58 } from 'shared/utils/helper/address';
-import { readStorage, updateStorage } from 'shared/utils/helper/storage';
+import { updateStorage } from 'shared/utils/helper/storage';
 import { isSameAddress, isSS58Address } from 'shared/utils/helper/validator';
 import { getChainConfig } from '../utils/network';
 import { useApi } from './api';
@@ -27,12 +27,8 @@ export const AccountProvider = ({ children }: React.PropsWithChildren<unknown>) 
   );
 
   useEffect(() => {
-    const { activeMetamaskAccount, activePolkadotAccount } = readStorage();
     const isPolkadotTypeConnection = polkadotExtensions.includes(departureConnection.wallet as unknown as never);
-    const acc =
-      departureConnection.accounts.find((value) =>
-        isSameAddress(value.address, (isPolkadotTypeConnection ? activePolkadotAccount : activeMetamaskAccount) ?? '')
-      )?.address || departureConnection.accounts[0]?.address;
+    const acc = departureConnection.accounts.at(0)?.address;
 
     if (acc) {
       if (isPolkadotTypeConnection) {
