@@ -110,6 +110,7 @@ export const arbitrumConfig: EthereumChainConfig = {
           basefee: 1300,
           price: 320000,
           index: 0,
+          deprecated: true,
         },
         {
           category: 'lnbridgev20',

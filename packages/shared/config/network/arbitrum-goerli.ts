@@ -32,6 +32,7 @@ export const arbitrumGoerliConfig: EthereumChainConfig = {
           partner: { name: 'goerli', role: 'issuing', symbol: 'RING' },
           basefee: 5000,
           index: 0,
+          deprecated: true,
         },
         {
           category: 'lnbridgev20',
