@@ -72,6 +72,7 @@ describe('network utils', () => {
         'arbitrum',
         'arbitrum',
         'arbitrum',
+        'arbitrum',
         'astar',
         'avalanche',
         'optimism',
@@ -100,7 +101,7 @@ describe('network utils', () => {
 
     expect(group).not.toEqual(undefined);
     expect(sort(group![1])).toEqual(
-      sort(['astar', 'avalanche', 'optimism', 'bsc', 'ethereum', 'ethereum', 'ethereum', 'polygon'])
+      sort(['astar', 'avalanche', 'optimism', 'bsc', 'ethereum', 'ethereum', 'ethereum', 'ethereum', 'polygon'])
     );
   });
 
