@@ -2,7 +2,7 @@ import { BN, hexToBn } from '@polkadot/util';
 import last from 'lodash/last';
 import omit from 'lodash/omit';
 import { Observable, switchMap } from 'rxjs';
-import { utils } from 'ethers';
+import { utils, Contract } from 'ethers';
 import {
   ChainConfig,
   BridgeConfig,
@@ -88,13 +88,11 @@ export abstract class LnBridgeBridge<
           ]);
           const transferId = provider?.lastTransferId as string | undefined;
 
-          const overrides = fromChain.name === 'arbitrum-goerli' ? { gasLimit: 1000000 } : undefined;
-
           return contract.transferAndLockMargin(
             [relayer, sourceToken, transferId, depositedMargin, totalFee],
             transferAmount,
             recipient,
-            overrides
+            { gasLimit: 1000000 }
           );
         }
       },
@@ -157,19 +155,41 @@ export abstract class LnBridgeBridge<
   }
 
   async getFee(
-    direction: CrossChainDirection<CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>
+    direction: CrossChainDirection<CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>,
+    account?: string | boolean,
+    options?: { relayer: string; sourceToken: string; bridge: Bridge<B, Origin, Target> }
   ): Promise<TokenWithAmount | null> {
-    const overview = getOverview(direction, 'lnbridgev20');
-    // basefee + amount * 0.1%
-    const baseFee = overview!.basefee! + Number(direction.from.amount) * Number(this.feePercent);
-    let totalFee = toWei({ value: baseFee, decimals: direction.from.decimals });
-    // need get realtime fee
-    if (overview!.price) {
-      const provider = entrance.web3.getInstance(direction.to.meta.provider.https);
-      const gasPrice = await provider.getGasPrice();
-      const dynamicFee = gasPrice.mul(overview!.price! * Number(this.relayGasLimit));
-      totalFee = dynamicFee.add(totalFee).toString();
+    let totalFee = '0';
+    const amount = Number.isNaN(Number(direction.from.amount)) ? 0 : Number(direction.from.amount);
+
+    if (options) {
+      const { contracts } = options.bridge.config;
+      const contractAddress = options.bridge.isIssue(direction.from.meta, direction.to.meta)
+        ? contracts!.backing
+        : contracts!.issuing;
+
+      const contract = new Contract(contractAddress, lnBridgeAbi, entrance.web3.currentProvider);
+      totalFee = (
+        await contract.totalFee(
+          options.relayer,
+          options.sourceToken,
+          utils.parseUnits(amount.toString(), direction.from.decimals)
+        )
+      ).toString();
+    } else {
+      const overview = getOverview(direction, 'lnbridgev20');
+      // basefee + amount * 0.1%
+      const baseFee = overview!.basefee! + amount * Number(this.feePercent);
+      totalFee = toWei({ value: baseFee, decimals: direction.from.decimals });
+      // need get realtime fee
+      if (overview!.price) {
+        const provider = entrance.web3.getInstance(direction.to.meta.provider.https);
+        const gasPrice = await provider.getGasPrice();
+        const dynamicFee = gasPrice.mul(overview!.price! * Number(this.relayGasLimit));
+        totalFee = dynamicFee.add(totalFee).toString();
+      }
     }
+
     return {
       ...omit(direction.from, ['meta', 'amount']),
       decimals: direction.to.decimals,

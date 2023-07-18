@@ -17,6 +17,7 @@ import { from, from as fromRx } from 'rxjs/internal/observable/from';
 import { iif } from 'rxjs/internal/observable/iif';
 import { of } from 'rxjs/internal/observable/of';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
+import type { Subscription } from 'rxjs';
 import { DEFAULT_DIRECTION, FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
 import { getBridges } from 'utils/bridge';
@@ -48,7 +49,7 @@ import { useAfterTx } from '../hooks/tx';
 import { CrossChainComponentProps } from '../model/component';
 import { CrossChainPayload } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
-import { isCBridge, isXCM, isLpBridge } from '../utils';
+import { isCBridge, isXCM, isLpBridge, isLnBridge } from '../utils';
 import { getDisplayName } from '../utils/network';
 import { bridgeFactory } from '../bridges/bridges';
 import { GET_RELAYERS_INFO } from '../config/gql';
@@ -200,17 +201,50 @@ export function CrossChain() {
       return;
     }
 
-    const sub$$ = of(null)
-      .pipe(
-        switchMap(() => from(bridge.getFee(direction, account))),
-        pollWhile(LONG_DURATION, () => isMounted)
+    let sub$$: Subscription;
+    if (bridge.category === 'lnbridgev20') {
+      const amount = Number.isNaN(Number(direction.from.amount)) ? 0 : Number(direction.from.amount);
+      sub$$ = from(
+        fetchRelayersInfo({
+          variables: {
+            amount: utils.parseUnits(amount.toString(), direction.from.decimals).toString(),
+            decimals: direction.from.decimals,
+            bridge: bridge.category,
+            token: direction.from.address,
+          },
+        })
       )
-      .subscribe((res) => {
-        setFee((pre) => (pre?.amount.toString() === res?.amount.toString() && pre?.symbol === res?.symbol ? pre : res));
-      });
+        .pipe(
+          switchMap(({ data: relayersInfo }) =>
+            relayersInfo?.sortedLnv20RelayInfos.length
+              ? bridge.getFee(direction, false, {
+                  relayer: relayersInfo.sortedLnv20RelayInfos[0].relayer,
+                  sourceToken: relayersInfo.sortedLnv20RelayInfos[0].sendToken,
+                  bridge,
+                })
+              : of(null)
+          )
+        )
+        .subscribe((res) => {
+          setFee((pre) =>
+            pre?.amount.toString() === res?.amount.toString() && pre?.symbol === res?.symbol ? pre : res
+          );
+        });
+    } else {
+      sub$$ = of(null)
+        .pipe(
+          switchMap(() => from(bridge.getFee(direction))),
+          pollWhile(LONG_DURATION, () => isMounted)
+        )
+        .subscribe((res) => {
+          setFee((pre) =>
+            pre?.amount.toString() === res?.amount.toString() && pre?.symbol === res?.symbol ? pre : res
+          );
+        });
+    }
 
     return () => sub$$?.unsubscribe();
-  }, [account, bridge, direction, isMounted, setFee]);
+  }, [bridge, direction, isMounted, fetchRelayersInfo]);
 
   useEffect(() => {
     if (!bridge?.getDailyLimit) {
@@ -522,7 +556,8 @@ export function CrossChain() {
                   const fromToken = omit(direction.from, 'meta');
                   const toToken = omit(direction.to, 'meta');
                   const [balance, nativeTokenBalance] = balances ?? [BN_ZERO, BN_ZERO];
-                  const feeIsErc20Token = isXCM(direction) || isCBridge(direction) || isLpBridge(direction);
+                  const feeIsErc20Token =
+                    isXCM(direction) || isCBridge(direction) || isLpBridge(direction) || isLnBridge(direction);
 
                   const validateObs = payload.bridge.validate(payload, {
                     balance: { ...fromToken, amount: balance },

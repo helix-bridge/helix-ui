@@ -100,7 +100,8 @@ export abstract class Bridge<
 
   abstract getFee(
     direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>,
-    account?: string | boolean // boolean: useWalletProvider
+    account?: string | boolean, // boolean: useWalletProvider
+    options?: unknown
   ): Promise<TokenWithAmount | null>;
 
   // eslint-disable-next-line complexity
