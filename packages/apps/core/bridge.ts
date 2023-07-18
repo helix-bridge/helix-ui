@@ -41,6 +41,7 @@ interface TxValidation {
   allowance: TokenWithNullableAmount;
   feeTokenBalance: TokenWithAmount;
   fee: TokenWithAmount;
+  relayerCount: number;
 }
 
 export type PayloadPatchFn = (
@@ -100,7 +101,8 @@ export abstract class Bridge<
 
   abstract getFee(
     direction: CrossChainDirection<CrossToken<Origin | Target>, CrossToken<Origin | Target>>,
-    account?: string | boolean // boolean: useWalletProvider
+    account?: string | boolean, // boolean: useWalletProvider
+    options?: unknown
   ): Promise<TokenWithAmount | null>;
 
   // eslint-disable-next-line complexity
@@ -112,7 +114,7 @@ export abstract class Bridge<
       direction: { from, to },
     } = payload;
     const amount = new BN(toWei(from));
-    const { balance: originBalance, allowance, dailyLimit, fee, feeTokenBalance } = options;
+    const { balance: originBalance, allowance, dailyLimit, fee, feeTokenBalance, relayerCount } = options;
     const minAmount = this.getMinimumFeeTokenHolding && this.getMinimumFeeTokenHolding(payload.direction);
     const availableBalance =
       minAmount && minAmount.symbol === originBalance.symbol
@@ -159,6 +161,7 @@ export abstract class Bridge<
         !dailyLimit.amount || new BN(toWei({ value: fromWei(dailyLimit), decimals: from.decimals })).gte(amount),
         lpBridge ? 'Insufficient transfer limit' : 'Insufficient daily limit',
       ], // keep decimals consistent
+      [relayerCount > 0, 'No provider available, please check the transfer amount'],
     ];
     const result = validations.find((item) => !item[0]);
 

@@ -5,16 +5,19 @@ import { useForm } from 'antd/lib/form/Form';
 import flow from 'lodash/flow';
 import identity from 'lodash/identity';
 import isEqual from 'lodash/isEqual';
+import { BigNumber, utils } from 'ethers';
 import omit from 'lodash/omit';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EMPTY, mergeMap } from 'rxjs';
+import { useManualQuery } from 'graphql-hooks';
 import { from, from as fromRx } from 'rxjs/internal/observable/from';
 import { iif } from 'rxjs/internal/observable/iif';
 import { of } from 'rxjs/internal/observable/of';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
+import type { Subscription } from 'rxjs';
 import { DEFAULT_DIRECTION, FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
 import { getBridges } from 'utils/bridge';
@@ -46,9 +49,10 @@ import { useAfterTx } from '../hooks/tx';
 import { CrossChainComponentProps } from '../model/component';
 import { CrossChainPayload } from '../model/tx';
 import { useAccount, useApi, useTx, useWallet } from '../providers';
-import { isCBridge, isXCM, isLpBridge } from '../utils';
+import { isCBridge, isXCM, isLpBridge, isLnBridge } from '../utils';
 import { getDisplayName } from '../utils/network';
 import { bridgeFactory } from '../bridges/bridges';
+import { GET_RELAYERS_INFO } from '../config/gql';
 import { BridgeSelector } from './form-control/BridgeSelector';
 import { calcMax, Direction, toDirection } from './form-control/Direction';
 import { TransferConfirm } from './tx/TransferConfirm';
@@ -90,6 +94,7 @@ export function CrossChain() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const { afterCrossChain } = useAfterTx<CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>>(router);
+  const [fetchRelayersInfo] = useManualQuery(GET_RELAYERS_INFO);
 
   const allowanceEnough = useMemo(
     () =>
@@ -113,6 +118,8 @@ export function CrossChain() {
         nameWithSuffix = name + 'Ln';
       } else if (bridge.category === 'l1tol2') {
         nameWithSuffix = name + 'L2';
+      } else if (bridge.category === 'lnbridgev20') {
+        nameWithSuffix = name + 'LnBridge';
       }
 
       return (
@@ -194,17 +201,50 @@ export function CrossChain() {
       return;
     }
 
-    const sub$$ = of(null)
-      .pipe(
-        switchMap(() => from(bridge.getFee(direction, account))),
-        pollWhile(LONG_DURATION, () => isMounted)
+    let sub$$: Subscription;
+    if (bridge.category === 'lnbridgev20') {
+      const amount = Number.isNaN(Number(direction.from.amount)) ? 0 : Number(direction.from.amount);
+      sub$$ = from(
+        fetchRelayersInfo({
+          variables: {
+            amount: utils.parseUnits(amount.toString(), direction.from.decimals).toString(),
+            decimals: direction.from.decimals,
+            bridge: bridge.category,
+            token: direction.from.address,
+          },
+        })
       )
-      .subscribe((res) => {
-        setFee((pre) => (pre?.amount.toString() === res?.amount.toString() && pre?.symbol === res?.symbol ? pre : res));
-      });
+        .pipe(
+          switchMap(({ data: relayersInfo }) =>
+            relayersInfo?.sortedLnv20RelayInfos.length
+              ? bridge.getFee(direction, false, {
+                  relayer: relayersInfo.sortedLnv20RelayInfos[0].relayer,
+                  sourceToken: relayersInfo.sortedLnv20RelayInfos[0].sendToken,
+                  bridge,
+                })
+              : of(null)
+          )
+        )
+        .subscribe((res) => {
+          setFee((pre) =>
+            pre?.amount.toString() === res?.amount.toString() && pre?.symbol === res?.symbol ? pre : res
+          );
+        });
+    } else {
+      sub$$ = of(null)
+        .pipe(
+          switchMap(() => from(bridge.getFee(direction))),
+          pollWhile(LONG_DURATION, () => isMounted)
+        )
+        .subscribe((res) => {
+          setFee((pre) =>
+            pre?.amount.toString() === res?.amount.toString() && pre?.symbol === res?.symbol ? pre : res
+          );
+        });
+    }
 
     return () => sub$$?.unsubscribe();
-  }, [account, bridge, direction, isMounted, setFee]);
+  }, [bridge, direction, isMounted, fetchRelayersInfo]);
 
   useEffect(() => {
     if (!bridge?.getDailyLimit) {
@@ -237,15 +277,17 @@ export function CrossChain() {
       });
 
       setDirection((prev) => {
-        const d = { from: _from ?? prev.from, to: _to ?? prev.to };
-        form.setFieldsValue({ [FORM_CONTROL.direction]: d });
-        return d;
+        return { from: _from ?? prev.from, to: _to ?? prev.to };
       });
       setPureDirection((prev) => ({ from: _from ?? prev.from, to: _to ?? prev.to }));
     } catch (err) {
       // console.error(err);
     }
-  }, [form]);
+  }, []);
+
+  useEffect(() => {
+    form.setFieldsValue({ [FORM_CONTROL.direction]: direction });
+  }, [direction, form]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -253,7 +295,7 @@ export function CrossChain() {
       const configs = getBridges(direction);
       const b: Bridge<BridgeConfig<ContractConfig>, ChainConfig, ChainConfig> | undefined = configs
         .map((config) => bridgeFactory(config))
-        .find((item) => item.name === params.get('bridge'));
+        .find((item) => item.category === params.get('bridge'));
       if (b) {
         form.setFieldValue([FORM_CONTROL.bridge], b);
         setBridge(b);
@@ -408,7 +450,7 @@ export function CrossChain() {
         />
       </Form.Item>
 
-      {bridge && Content && (
+      {bridge && Content ? (
         <Content
           form={form}
           bridge={bridge}
@@ -419,6 +461,10 @@ export function CrossChain() {
           dailyLimit={dailyLimit}
           updatePayload={setPatchPayload}
         />
+      ) : (
+        <div className="p-3 bg-gray-900 my-2">
+          <span className="text-sm font-light text-white/50">{t('No bridge found for selected tokens')}</span>
+        </div>
       )}
 
       <Form.Item name={FORM_CONTROL.sender} className="hidden">
@@ -472,11 +518,43 @@ export function CrossChain() {
                 }
 
                 // eslint-disable-next-line complexity
-                form.validateFields().then((values) => {
-                  const payload = flow(
+                form.validateFields().then(async (values) => {
+                  let relayerCount = 1;
+
+                  const payload = await flow(
                     patchPayload,
                     (value: CrossChainPayload<CommonBridge> | null) =>
-                      value && { ...value, wallet: departureConnection.wallet as SupportedWallet }
+                      value && { ...value, wallet: departureConnection.wallet as SupportedWallet },
+                    async (value) => {
+                      if (value?.bridge.category === 'lnbridgev20') {
+                        relayerCount = 0;
+                        try {
+                          const { data: relayersInfo } = await fetchRelayersInfo({
+                            variables: {
+                              amount: utils
+                                .parseUnits(value.direction.from.amount.toString(), value.direction.from.decimals)
+                                .toString(),
+                              decimals: value.direction.from.decimals,
+                              bridge: value.bridge.category,
+                              token: value.direction.from.address,
+                            },
+                          });
+                          relayerCount = relayersInfo?.sortedLnv20RelayInfos.length || 0;
+
+                          if (relayerCount) {
+                            return {
+                              ...value,
+                              relayer: relayersInfo.sortedLnv20RelayInfos[0].relayer,
+                              sourceToken: relayersInfo.sortedLnv20RelayInfos[0].sendToken,
+                              depositedMargin: BigNumber.from(relayersInfo.sortedLnv20RelayInfos[0].margin),
+                            };
+                          }
+                        } catch (err) {
+                          console.error(err);
+                        }
+                      }
+                      return value;
+                    }
                   )(values);
 
                   if (!payload) {
@@ -486,7 +564,8 @@ export function CrossChain() {
                   const fromToken = omit(direction.from, 'meta');
                   const toToken = omit(direction.to, 'meta');
                   const [balance, nativeTokenBalance] = balances ?? [BN_ZERO, BN_ZERO];
-                  const feeIsErc20Token = isXCM(direction) || isCBridge(direction) || isLpBridge(direction);
+                  const feeIsErc20Token =
+                    isXCM(direction) || isCBridge(direction) || isLpBridge(direction) || isLnBridge(direction);
 
                   const validateObs = payload.bridge.validate(payload, {
                     balance: { ...fromToken, amount: balance },
@@ -500,6 +579,7 @@ export function CrossChain() {
                       amount: dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday)),
                     },
                     allowance: { ...fromToken, amount: allowance },
+                    relayerCount,
                   });
 
                   const workflow = createTxWorkflow(

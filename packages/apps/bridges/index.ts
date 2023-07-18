@@ -45,3 +45,5 @@ export { Darwinia2EthereumLn, Ethereum2DarwiniaLn } from './helixlp/darwinia-eth
 export { Arbitrum2EthereumLn, Ethereum2ArbitrumLn } from './helixlp/arbitrum-ethereum';
 
 export { Ethereum2ArbitrumL2, Arbitrum2EthereumL2 } from './l1tol2/ethereum-arbitrum';
+
+export { Arbitrum2EthereumLnBridge } from './lnbridge/arbitrum-ethereum';

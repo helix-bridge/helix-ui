@@ -89,3 +89,13 @@ export const STATUS_STATISTICS = `
     }
   }
 `;
+
+export const GET_RELAYERS_INFO = `
+  query sortedLnv20RelayInfos($amount: String, $decimals: Int, $bridge: String, $token: String) {
+    sortedLnv20RelayInfos(amount: $amount, decimals: $decimals, bridge: $bridge, token: $token) {
+      sendToken
+      relayer
+      margin
+    }
+  }
+`;

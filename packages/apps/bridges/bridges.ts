@@ -24,6 +24,7 @@ import { DarwiniaEthereumBridge } from './helixlp/darwinia-ethereum/utils';
 import { ArbitrumEthereumBridge } from './helixlp/arbitrum-ethereum/utils';
 import { EthereumArbitrumBridgeL2 } from './l1tol2/ethereum-arbitrum/utils';
 import { HelixLpBridgeBridge } from './helixlp/helixLpBridge/utils';
+import { ArbitrumEthereumBridge as ArbitrumEthereumBridgeLnBridge } from './lnbridge/arbitrum-ethereum/utils';
 
 export const bridgeConstructors = [
   CBridgeBridge,
@@ -51,6 +52,7 @@ export const bridgeConstructors = [
   DarwiniaEthereumBridge,
   ArbitrumEthereumBridge,
   EthereumArbitrumBridgeL2,
+  ArbitrumEthereumBridgeLnBridge,
 ];
 
 export function bridgeFactory<C extends BridgeConfig, O extends ChainConfig, T extends ChainConfig>(

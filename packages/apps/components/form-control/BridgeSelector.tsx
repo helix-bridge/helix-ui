@@ -52,27 +52,29 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
 
   return (
     <Select
-      onChange={(name: string) => {
+      onChange={(category: string) => {
         const target: Bridge<BridgeConfig<ContractConfig>, ChainConfig, ChainConfig> = bridges.find(
-          (item) => item.name === name
+          (item) => item.category === category
         )!;
 
         const params = new URLSearchParams(router.query as Record<string, string>);
-        params.set('bridge', name);
+        params.set('bridge', target.category);
         router.push({ query: params.toString() });
 
         if (onChange) {
           onChange(target);
         }
       }}
-      value={value?.name}
+      value={value?.category}
     >
-      {bridges.map((item) => (
-        <Select.Option key={item.name} value={item.name}>
+      {bridges.map((item, index) => (
+        <Select.Option key={index} value={item.category}>
           {item.category === 'helix'
             ? 'helix(Legacy)'
             : item.category === 'helixLpBridge'
             ? 'helix(Fusion)'
+            : item.category === 'lnbridgev20'
+            ? 'Helix LnBridge'
             : item.category}
         </Select.Option>
       ))}
