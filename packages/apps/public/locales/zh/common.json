@@ -73,6 +73,7 @@
   "NFT": "NFT",
   "Need Claim": "需领取",
   "No Data": "暂无数据",
+  "No bridge available, please check the transfer amount": "暂无可用桥，请检查转账数量",
   "No bridge found for selected tokens": "未发现可用的桥",
   "Nonce": "Nonce",
   "Nothing more to load": "已全部加载",

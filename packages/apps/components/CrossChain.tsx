@@ -450,7 +450,7 @@ export function CrossChain() {
         />
       </Form.Item>
 
-      {bridge && Content && (
+      {bridge && Content ? (
         <Content
           form={form}
           bridge={bridge}
@@ -461,6 +461,12 @@ export function CrossChain() {
           dailyLimit={dailyLimit}
           updatePayload={setPatchPayload}
         />
+      ) : (
+        <div className="p-3 bg-gray-900 my-2">
+          <span className="text-sm font-light text-white/50">
+            {t('No bridge available, please check the transfer amount')}
+          </span>
+        </div>
       )}
 
       <Form.Item name={FORM_CONTROL.sender} className="hidden">
