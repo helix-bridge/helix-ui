@@ -463,9 +463,7 @@ export function CrossChain() {
         />
       ) : (
         <div className="p-3 bg-gray-900 my-2">
-          <span className="text-sm font-light text-white/50">
-            {t('No bridge available, please check the transfer amount')}
-          </span>
+          <span className="text-sm font-light text-white/50">{t('No bridge found for selected tokens')}</span>
         </div>
       )}
 
@@ -521,12 +519,15 @@ export function CrossChain() {
 
                 // eslint-disable-next-line complexity
                 form.validateFields().then(async (values) => {
+                  let relayerCount = 1;
+
                   const payload = await flow(
                     patchPayload,
                     (value: CrossChainPayload<CommonBridge> | null) =>
                       value && { ...value, wallet: departureConnection.wallet as SupportedWallet },
                     async (value) => {
                       if (value?.bridge.category === 'lnbridgev20') {
+                        relayerCount = 0;
                         try {
                           const { data: relayersInfo } = await fetchRelayersInfo({
                             variables: {
@@ -538,8 +539,9 @@ export function CrossChain() {
                               token: value.direction.from.address,
                             },
                           });
+                          relayerCount = relayersInfo?.sortedLnv20RelayInfos.length || 0;
 
-                          if (relayersInfo?.sortedLnv20RelayInfos.length) {
+                          if (relayerCount) {
                             return {
                               ...value,
                               relayer: relayersInfo.sortedLnv20RelayInfos[0].relayer,
@@ -577,6 +579,7 @@ export function CrossChain() {
                       amount: dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday)),
                     },
                     allowance: { ...fromToken, amount: allowance },
+                    relayerCount,
                   });
 
                   const workflow = createTxWorkflow(
