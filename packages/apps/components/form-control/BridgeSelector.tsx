@@ -74,7 +74,7 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
             : item.category === 'helixLpBridge'
             ? 'helix(Fusion)'
             : item.category === 'lnbridgev20'
-            ? 'LnBridge'
+            ? 'Helix LnBridge'
             : item.category}
         </Select.Option>
       ))}
