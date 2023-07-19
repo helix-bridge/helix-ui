@@ -18,6 +18,7 @@ interface CrossChainInfoProps {
   isDynamicFee?: boolean;
   dailyLimit?: DailyLimit | null;
   allowance?: BN | null;
+  relayerCount: number;
 }
 
 export function CrossChainInfo({
@@ -28,11 +29,13 @@ export function CrossChainInfo({
   dailyLimit,
   direction,
   allowance,
+  relayerCount,
   isDynamicFee = false,
 }: PropsWithChildren<CrossChainInfoProps>) {
   const { t } = useITranslation();
   const { departureConnection } = useApi();
 
+  // eslint-disable-next-line complexity
   const feeContent = useMemo(() => {
     if (fee) {
       return fee.amount.lt(BN_ZERO) ? (
@@ -45,16 +48,22 @@ export function CrossChainInfo({
           {fee.symbol}
         </Tooltip>
       );
+    } else if (isDynamicFee) {
+      return (
+        <Tooltip title={t('The transaction fee is dynamic, need some conditions to estimate it')}>
+          <QuestionCircleOutlined className="cursor-pointer" />
+        </Tooltip>
+      );
+    } else if (relayerCount === 0) {
+      return (
+        <Tooltip title={t('No provider available, please check the transfer amount')}>
+          <InfoCircleOutlined />
+        </Tooltip>
+      );
+    } else {
+      return <CountLoading />;
     }
-
-    return isDynamicFee ? (
-      <Tooltip title={t('The transaction fee is dynamic, need some conditions to estimate it')}>
-        <QuestionCircleOutlined className="cursor-pointer" />
-      </Tooltip>
-    ) : (
-      <CountLoading />
-    );
-  }, [fee, isDynamicFee, t]);
+  }, [fee, relayerCount, isDynamicFee, t]);
 
   // eslint-disable-next-line complexity
   const dailyLimitContent = useMemo(() => {
