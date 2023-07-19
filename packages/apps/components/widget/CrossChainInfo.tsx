@@ -18,7 +18,7 @@ interface CrossChainInfoProps {
   isDynamicFee?: boolean;
   dailyLimit?: DailyLimit | null;
   allowance?: BN | null;
-  relayerCount: number;
+  relayerCount?: number;
 }
 
 export function CrossChainInfo({
