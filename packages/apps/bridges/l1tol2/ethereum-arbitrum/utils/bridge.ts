@@ -136,9 +136,16 @@ export class EthereumArbitrumBridgeL2 extends Bridge<EthereumArbitrumBridgeConfi
   ): Promise<TokenWithAmount | null> {
     try {
       const params = await this.getL1toL2Params(direction);
+      const nativeToken = direction.from.meta.tokens.find(({ type }) => type === 'native');
+      const { decimals, symbol } =
+        direction.from.host === 'ethereum' && nativeToken
+          ? { decimals: nativeToken.decimals, symbol: nativeToken.symbol }
+          : { decimals: direction.from.decimals, symbol: direction.from.symbol };
+
       return {
         ...omit(direction.from, ['meta', 'amount']),
-        decimals: direction.to.decimals,
+        decimals,
+        symbol,
         amount: new BN(params.deposit.toString()),
       };
     } catch (err) {
