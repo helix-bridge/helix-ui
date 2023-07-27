@@ -17,7 +17,7 @@ import { from, from as fromRx } from 'rxjs/internal/observable/from';
 import { iif } from 'rxjs/internal/observable/iif';
 import { of } from 'rxjs/internal/observable/of';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
-import type { Subscription } from 'rxjs';
+import { Subscription, tap } from 'rxjs';
 import { DEFAULT_DIRECTION, FORM_CONTROL, LONG_DURATION } from 'shared/config/constant';
 import { validateMessages } from 'shared/config/validate-msg';
 import { getBridges } from 'utils/bridge';
@@ -95,6 +95,7 @@ export function CrossChain() {
   const router = useRouter();
   const { afterCrossChain } = useAfterTx<CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>>(router);
   const [fetchRelayersInfo] = useManualQuery(GET_RELAYERS_INFO);
+  const [relayerCount, setRelayerCount] = useState(-1);
 
   const allowanceEnough = useMemo(
     () =>
@@ -215,6 +216,7 @@ export function CrossChain() {
         })
       )
         .pipe(
+          tap(({ data: relayersInfo }) => setRelayerCount(relayersInfo?.sortedLnv20RelayInfos.length || 0)),
           switchMap(({ data: relayersInfo }) =>
             relayersInfo?.sortedLnv20RelayInfos.length
               ? bridge.getFee(direction, false, {
@@ -459,6 +461,7 @@ export function CrossChain() {
           allowance={allowance}
           fee={fee}
           dailyLimit={dailyLimit}
+          relayerCount={relayerCount}
           updatePayload={setPatchPayload}
         />
       ) : (
@@ -519,7 +522,7 @@ export function CrossChain() {
 
                 // eslint-disable-next-line complexity
                 form.validateFields().then(async (values) => {
-                  let relayerCount = 1;
+                  let _relayerCount = 1;
 
                   const payload = await flow(
                     patchPayload,
@@ -527,7 +530,7 @@ export function CrossChain() {
                       value && { ...value, wallet: departureConnection.wallet as SupportedWallet },
                     async (value) => {
                       if (value?.bridge.category === 'lnbridgev20') {
-                        relayerCount = 0;
+                        _relayerCount = 0;
                         try {
                           const { data: relayersInfo } = await fetchRelayersInfo({
                             variables: {
@@ -539,7 +542,7 @@ export function CrossChain() {
                               token: value.direction.from.address,
                             },
                           });
-                          relayerCount = relayersInfo?.sortedLnv20RelayInfos.length || 0;
+                          _relayerCount = relayersInfo?.sortedLnv20RelayInfos.length || 0;
 
                           if (relayerCount) {
                             return {
@@ -579,7 +582,7 @@ export function CrossChain() {
                       amount: dailyLimit && new BN(dailyLimit.limit).sub(new BN(dailyLimit.spentToday)),
                     },
                     allowance: { ...fromToken, amount: allowance },
-                    relayerCount,
+                    relayerCount: _relayerCount,
                   });
 
                   const workflow = createTxWorkflow(

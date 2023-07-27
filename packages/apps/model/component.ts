@@ -37,6 +37,7 @@ export interface CrossChainComponentProps<
   allowance: BN | null;
   dailyLimit: DailyLimit | null;
   fee: TokenWithAmount | null;
+  relayerCount?: number;
   updatePayload: React.Dispatch<
     React.SetStateAction<
       (

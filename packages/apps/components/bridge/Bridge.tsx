@@ -17,6 +17,7 @@ export function Bridge({
   form,
   hideRecipient = false,
   tip,
+  relayerCount = -1,
 }: CrossChainComponentProps<
   Brg<BridgeConfig, ChainConfig, ChainConfig>,
   CrossToken<ChainConfig>,
@@ -53,6 +54,7 @@ export function Bridge({
         direction={direction}
         dailyLimit={dailyLimit}
         allowance={allowance}
+        relayerCount={relayerCount}
       ></CrossChainInfo>
     </>
   );
