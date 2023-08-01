@@ -91,11 +91,14 @@ export const STATUS_STATISTICS = `
 `;
 
 export const GET_RELAYERS_INFO = `
-  query sortedLnv20RelayInfos($amount: String, $decimals: Int, $bridge: String, $token: String) {
-    sortedLnv20RelayInfos(amount: $amount, decimals: $decimals, bridge: $bridge, token: $token) {
+  query sortedLnv20RelayInfos($amount: String, $decimals: Int, $bridge: String, $token: String, $fromChain: String, $toChain: String) {
+    sortedLnv20RelayInfos(amount: $amount, decimals: $decimals, bridge: $bridge, token: $token, fromChain: $fromChain, toChain: $toChain) {
       sendToken
       relayer
       margin
+      baseFee
+      liquidityFeeRate
+      lastTransferId
     }
   }
 `;

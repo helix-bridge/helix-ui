@@ -124,7 +124,7 @@ export const arbitrumConfig: EthereumChainConfig = {
           deprecated: true,
         },
         {
-          category: 'lnbridgev20',
+          category: 'lnbridgev20-opposite',
           bridge: 'arbitrum-ethereum',
           partner: { name: 'ethereum', role: 'issuing', symbol: 'RING' },
           basefee: 5000,

@@ -3,6 +3,15 @@ import { BridgeBase } from 'shared/core/bridge';
 import { SupportedWallet } from 'shared/model';
 import { CrossChainDirection, CrossToken } from 'shared/model/bridge/cross-chain';
 
+// lnbridge snapshot parameter
+interface Snapshot {
+  relayer: string;
+  sourceToken: string;
+  transferId: string;
+  depositedMargin: BigNumber;
+  totalFee: BigNumber;
+}
+
 interface CrossChainParty {
   recipient: string;
   sender: string;
@@ -18,7 +27,5 @@ export interface CrossChainPayload<
   direction: CrossChainDirection<F, T>;
   slippage?: number;
   wallet: W;
-  relayer?: string;
-  sourceToken?: string;
-  depositedMargin?: BigNumber;
+  snapshot?: Snapshot;
 }

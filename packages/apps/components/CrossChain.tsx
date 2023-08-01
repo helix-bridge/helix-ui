@@ -42,6 +42,7 @@ import { pollWhile } from 'shared/utils/helper/operator';
 import { isValidAddress } from 'shared/utils/helper/validator';
 import { isEthereumNetwork } from 'shared/utils/network/network';
 import { applyModalObs, createTxWorkflow } from 'shared/utils/tx';
+import { RelayersInfoReq, RelayersInfoRes } from 'model/gql';
 import { Bridge, PayloadPatchFn, TokenWithAmount } from '../core/bridge';
 import { useAllowance } from '../hooks/allowance';
 import { useCheckSpecVersion } from '../hooks/checkSpecVersion';
@@ -94,7 +95,7 @@ export function CrossChain() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const { afterCrossChain } = useAfterTx<CrossChainPayload<Bridge<BridgeConfig, ChainConfig, ChainConfig>>>(router);
-  const [fetchRelayersInfo] = useManualQuery(GET_RELAYERS_INFO);
+  const [fetchRelayersInfo] = useManualQuery<RelayersInfoRes, RelayersInfoReq>(GET_RELAYERS_INFO);
   const [relayerCount, setRelayerCount] = useState(-1);
 
   const allowanceEnough = useMemo(
@@ -119,7 +120,7 @@ export function CrossChain() {
         nameWithSuffix = name + 'Ln';
       } else if (bridge.category === 'l1tol2') {
         nameWithSuffix = name + 'L2';
-      } else if (bridge.category === 'lnbridgev20') {
+      } else if (bridge.category === 'lnbridgev20-opposite') {
         nameWithSuffix = name + 'LnBridge';
       }
 
@@ -203,7 +204,7 @@ export function CrossChain() {
     }
 
     let sub$$: Subscription;
-    if (bridge.category === 'lnbridgev20') {
+    if (bridge.category === 'lnbridgev20-opposite') {
       const amount = Number.isNaN(Number(direction.from.amount)) ? 0 : Number(direction.from.amount);
       sub$$ = from(
         fetchRelayersInfo({
@@ -212,6 +213,8 @@ export function CrossChain() {
             decimals: direction.from.decimals,
             bridge: bridge.category,
             token: direction.from.address,
+            fromChain: direction.from.host,
+            toChain: direction.to.host,
           },
         })
       )
@@ -529,27 +532,49 @@ export function CrossChain() {
                     (value: CrossChainPayload<CommonBridge> | null) =>
                       value && { ...value, wallet: departureConnection.wallet as SupportedWallet },
                     async (value) => {
-                      if (value?.bridge.category === 'lnbridgev20') {
+                      if (value?.bridge.category === 'lnbridgev20-opposite') {
                         _relayerCount = 0;
                         try {
+                          const amount = utils.parseUnits(
+                            value.direction.from.amount.toString(),
+                            value.direction.from.decimals
+                          );
+
                           const { data: relayersInfo } = await fetchRelayersInfo({
                             variables: {
-                              amount: utils
-                                .parseUnits(value.direction.from.amount.toString(), value.direction.from.decimals)
-                                .toString(),
+                              amount: amount.toString(),
                               decimals: value.direction.from.decimals,
                               bridge: value.bridge.category,
                               token: value.direction.from.address,
+                              fromChain: value.direction.from.host,
+                              toChain: value.direction.to.host,
                             },
                           });
                           _relayerCount = relayersInfo?.sortedLnv20RelayInfos.length || 0;
 
-                          if (relayerCount) {
+                          if (relayersInfo?.sortedLnv20RelayInfos.length) {
+                            const relayer = relayersInfo.sortedLnv20RelayInfos[0].relayer;
+                            const sourceToken = relayersInfo.sortedLnv20RelayInfos[0].sendToken;
+                            const depositedMargin = BigNumber.from(relayersInfo.sortedLnv20RelayInfos[0].margin);
+                            const baseFee = BigNumber.from(relayersInfo.sortedLnv20RelayInfos[0].baseFee);
+                            const liquidityFeeRate = relayersInfo.sortedLnv20RelayInfos[0].liquidityFeeRate;
+                            const transferId = relayersInfo.sortedLnv20RelayInfos[0].lastTransferId;
+
+                            const totalFee = BigNumber.from(liquidityFeeRate)
+                              .mul(amount)
+                              // eslint-disable-next-line no-magic-numbers
+                              .div(BigNumber.from(100000))
+                              .add(baseFee);
+
                             return {
                               ...value,
-                              relayer: relayersInfo.sortedLnv20RelayInfos[0].relayer,
-                              sourceToken: relayersInfo.sortedLnv20RelayInfos[0].sendToken,
-                              depositedMargin: BigNumber.from(relayersInfo.sortedLnv20RelayInfos[0].margin),
+                              snapshot: {
+                                relayer,
+                                sourceToken,
+                                transferId,
+                                depositedMargin,
+                                totalFee,
+                              },
                             };
                           }
                         } catch (err) {

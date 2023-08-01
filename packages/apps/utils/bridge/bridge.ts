@@ -69,7 +69,7 @@ export function getBridges(source: CrossChainPureDirection): BridgeBase[] {
 export function bridgeCategoryDisplay(category: BridgeCategory) {
   if (category === 'l1tol2') {
     return 'L2Bridge';
-  } else if (category === 'lnbridgev20') {
+  } else if (category === 'lnbridgev20-opposite') {
     return 'Helix LnBridge';
   }
   return /^[a-z]+$/.test(category) ? upperFirst(category) : category;

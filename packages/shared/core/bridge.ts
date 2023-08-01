@@ -113,7 +113,7 @@ export class BridgeBase<C = BridgeConfig, O extends ChainConfig = ChainConfig, T
       return this.IssueComponentName.split('2').join('') + 'BridgeL2';
     }
 
-    if (this.category === 'lnbridgev20') {
+    if (this.category === 'lnbridgev20-opposite') {
       return this.IssueComponentName.split('2').join('') + 'LnBridge';
     }
 
