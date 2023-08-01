@@ -158,7 +158,7 @@ export abstract class LnBridgeBridge<
         )
       ).toString();
     } else {
-      const overview = getOverview(direction, 'lnbridgev20');
+      const overview = getOverview(direction, 'lnbridgev20-opposite');
       // basefee + amount * 0.1%
       const baseFee = overview!.basefee! + amount * Number(this.feePercent);
       totalFee = toWei({ value: baseFee, decimals: direction.from.decimals });

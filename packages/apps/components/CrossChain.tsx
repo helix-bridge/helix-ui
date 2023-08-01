@@ -120,7 +120,7 @@ export function CrossChain() {
         nameWithSuffix = name + 'Ln';
       } else if (bridge.category === 'l1tol2') {
         nameWithSuffix = name + 'L2';
-      } else if (bridge.category === 'lnbridgev20') {
+      } else if (bridge.category === 'lnbridgev20-opposite') {
         nameWithSuffix = name + 'LnBridge';
       }
 
@@ -204,7 +204,7 @@ export function CrossChain() {
     }
 
     let sub$$: Subscription;
-    if (bridge.category === 'lnbridgev20') {
+    if (bridge.category === 'lnbridgev20-opposite') {
       const amount = Number.isNaN(Number(direction.from.amount)) ? 0 : Number(direction.from.amount);
       sub$$ = from(
         fetchRelayersInfo({
@@ -532,7 +532,7 @@ export function CrossChain() {
                     (value: CrossChainPayload<CommonBridge> | null) =>
                       value && { ...value, wallet: departureConnection.wallet as SupportedWallet },
                     async (value) => {
-                      if (value?.bridge.category === 'lnbridgev20') {
+                      if (value?.bridge.category === 'lnbridgev20-opposite') {
                         _relayerCount = 0;
                         try {
                           const amount = utils.parseUnits(
