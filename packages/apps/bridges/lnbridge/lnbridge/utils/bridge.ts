@@ -2,7 +2,7 @@ import { BN, hexToBn } from '@polkadot/util';
 import last from 'lodash/last';
 import omit from 'lodash/omit';
 import { Observable, switchMap } from 'rxjs';
-import { utils, Contract } from 'ethers';
+import { utils, BigNumber } from 'ethers';
 import {
   BridgeConfig,
   CrossChainDirection,
@@ -138,25 +138,19 @@ export abstract class LnBridgeBridge<
   async getFee(
     direction: CrossChainDirection<CrossToken<EthereumChainConfig>, CrossToken<EthereumChainConfig>>,
     account?: string | boolean,
-    options?: { relayer: string; sourceToken: string; bridge: Bridge<B, Origin, Target> }
+    options?: { baseFee: string; liquidityFeeRate: number }
   ): Promise<TokenWithAmount | null> {
     let totalFee = '0';
     const amount = Number.isNaN(Number(direction.from.amount)) ? 0 : Number(direction.from.amount);
 
     if (options) {
-      const { contracts } = options.bridge.config;
-      const contractAddress = options.bridge.isIssue(direction.from.meta, direction.to.meta)
-        ? contracts!.backing
-        : contracts!.issuing;
-
-      const contract = new Contract(contractAddress, lnBridgeAbi, entrance.web3.currentProvider);
-      totalFee = (
-        await contract.totalFee(
-          options.relayer,
-          options.sourceToken,
-          utils.parseUnits(amount.toString(), direction.from.decimals)
-        )
-      ).toString();
+      totalFee = utils
+        .parseUnits(amount.toString(), direction.from.decimals)
+        .mul(BigNumber.from(options.liquidityFeeRate))
+        // eslint-disable-next-line no-magic-numbers
+        .div(BigNumber.from(100000))
+        .add(BigNumber.from(options.baseFee))
+        .toString();
     } else {
       const overview = getOverview(direction, 'lnbridgev20-opposite');
       // basefee + amount * 0.1%

@@ -223,9 +223,8 @@ export function CrossChain() {
           switchMap(({ data: relayersInfo }) =>
             relayersInfo?.sortedLnv20RelayInfos.length
               ? bridge.getFee(direction, false, {
-                  relayer: relayersInfo.sortedLnv20RelayInfos[0].relayer,
-                  sourceToken: relayersInfo.sortedLnv20RelayInfos[0].sendToken,
-                  bridge,
+                  baseFee: relayersInfo.sortedLnv20RelayInfos[0].baseFee,
+                  liquidityFeeRate: relayersInfo.sortedLnv20RelayInfos[0].liquidityFeeRate,
                 })
               : of(null)
           )
