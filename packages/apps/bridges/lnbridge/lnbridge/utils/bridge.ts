@@ -73,8 +73,14 @@ export abstract class LnBridgeBridge<
               value: transferAmount.add(fee.toString()),
             }
           );
-        } else {
-          return contract.transferAndLockMargin(snapshot, transferAmount, recipient, { gasLimit: 1000000 });
+        } else if (snapshot) {
+          const { relayer, sourceToken, transferId, depositedMargin, totalFee } = snapshot;
+          return contract.transferAndLockMargin(
+            [relayer, sourceToken, transferId, depositedMargin, totalFee],
+            transferAmount,
+            recipient,
+            { gasLimit: 1000000 }
+          );
         }
       },
       lnBridgeAbi

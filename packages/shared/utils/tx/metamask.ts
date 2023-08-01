@@ -82,9 +82,11 @@ export function sendTransactionFromContract(
           observer.complete();
         })
         .catch((error: { code: number; message: string; data?: { data: string; message: string } }) => {
+          console.error(error);
           observer.error({ status: 'error', error: error.message + '\n' + error.data?.message ?? '' });
         });
     } catch (error) {
+      console.error(error);
       observer.error({ status: 'error', error: 'Contract construction/call failed!' });
     }
   });
