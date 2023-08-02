@@ -55,7 +55,7 @@ export const goerliConfig: EthereumChainConfig = {
       decimals: 18,
       cross: [
         {
-          category: 'lnbridgev20-opposite',
+          category: 'lnbridgev20-default',
           bridge: 'ethereum-arbitrum',
           partner: { name: 'arbitrum-goerli', role: 'issuing', symbol: 'RING' },
         },

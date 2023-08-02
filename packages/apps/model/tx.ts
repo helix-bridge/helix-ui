@@ -10,6 +10,7 @@ interface Snapshot {
   transferId: string;
   depositedMargin: BigNumber;
   totalFee: BigNumber;
+  withdrawNonce: BigNumber;
 }
 
 interface CrossChainParty {

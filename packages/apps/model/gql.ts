@@ -15,5 +15,6 @@ export interface RelayersInfoRes {
     baseFee: string;
     liquidityFeeRate: number; // 0 ~ 256
     lastTransferId: string;
+    withdrawNonce: string;
   }[];
 }

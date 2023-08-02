@@ -51,8 +51,9 @@ import { khalaMoonriver } from '../bridges/xcm/khala-moonriver/config';
 import { crabDarwinia } from '../bridges/helixlp/crab-darwinia/config';
 import { darwiniaEthereum } from '../bridges/helixlp/darwinia-ethereum/config';
 import { arbitrumGoerli, arbitrumEthereum } from '../bridges/helixlp/arbitrum-ethereum/config';
-import { arbitrumGoerliL2, ethereumArbitrumL2 } from '../bridges/l1tol2/ethereum-arbitrum/config';
+import { goerliArbitrumL2, ethereumArbitrumL2 } from '../bridges/l1tol2/ethereum-arbitrum/config';
 import { arbitrumGoerliLnBridge, arbitrumEthereumLnBridge } from '../bridges/lnbridge/arbitrum-ethereum/config';
+import { goerliArbitrumLnBridge, ethereumArbitrumLnBridge } from '../bridges/lnbridge/ethereum-arbitrum/config';
 
 const formalBridges = [
   arbitrumAstar,
@@ -79,7 +80,6 @@ const formalBridges = [
   darwiniaDVMCrabDVM,
   darwiniaDVMDarwiniaDVM,
   darwiniaDVMEthereum,
-  ethereumArbitrum,
   ethereumAstar,
   ethereumAvalanche,
   ethereumBSC,
@@ -104,8 +104,10 @@ const formalBridges = [
   crabDarwinia,
   darwiniaEthereum,
   arbitrumEthereum,
-  ethereumArbitrumL2,
   arbitrumEthereumLnBridge,
+  ethereumArbitrumLnBridge,
+  ethereumArbitrumL2,
+  ethereumArbitrum,
 ];
 
 const testBridges = [
@@ -113,8 +115,9 @@ const testBridges = [
   pangoroDVMPangolinDVM,
   pangoroDVMPangoroDVM,
   arbitrumGoerli,
-  arbitrumGoerliL2,
   arbitrumGoerliLnBridge,
+  goerliArbitrumLnBridge,
+  goerliArbitrumL2,
 ];
 
 export const BRIDGES = (() => {

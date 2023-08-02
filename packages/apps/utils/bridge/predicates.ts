@@ -14,11 +14,18 @@ const or: (...fns: BridgePredicateFn[]) => (dep: Network, arr: Network) => boole
   (departure, arrival) =>
     fns.some((fn) => fn(departure, arrival));
 
-const isBridge = (category: BridgeCategory) => (direction: CrossChainPureDirection) => {
-  const bridge = getBridge(direction, category);
+const isBridge =
+  (...categories: BridgeCategory[]) =>
+  (direction: CrossChainPureDirection) => {
+    for (const category of categories) {
+      const bridge = getBridge(direction, category);
+      if (bridge.category === category) {
+        return true;
+      }
+    }
 
-  return bridge.category === category;
-};
+    return false;
+  };
 
 export const isCBridge = isBridge('cBridge');
 
@@ -28,7 +35,7 @@ export const isLpBridge = isBridge('helixLpBridge');
 
 export const isL2Bridge = isBridge('l1tol2');
 
-export const isLnBridge = isBridge('lnbridgev20-opposite');
+export const isLnBridge = isBridge('lnbridgev20-opposite', 'lnbridgev20-default');
 
 export const isTransferBetween = (network1: Network, network2: Network) => {
   const isBacking = predicate(network1, network2);
