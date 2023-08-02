@@ -99,6 +99,7 @@ export const GET_RELAYERS_INFO = `
       baseFee
       liquidityFeeRate
       lastTransferId
+      withdrawNonce
     }
   }
 `;

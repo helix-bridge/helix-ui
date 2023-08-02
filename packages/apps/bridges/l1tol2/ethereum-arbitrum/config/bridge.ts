@@ -26,7 +26,7 @@ export const ethereumArbitrumL2 = new BridgeBase(ethereumConfig, arbitrumConfig,
   category: 'l1tol2',
 });
 
-export const arbitrumGoerliL2 = new BridgeBase(goerliConfig, arbitrumGoerliConfig, arbitrumGoerliGoerliConfig, {
+export const goerliArbitrumL2 = new BridgeBase(goerliConfig, arbitrumGoerliConfig, arbitrumGoerliGoerliConfig, {
   name: 'ethereum-arbitrum',
   category: 'l1tol2',
 });

@@ -73,7 +73,7 @@ export function BridgeSelector({ direction, value, onChange }: BridgeSelectorPro
             ? 'helix(Legacy)'
             : item.category === 'helixLpBridge'
             ? 'helix(Fusion)'
-            : item.category === 'lnbridgev20-opposite'
+            : item.category === 'lnbridgev20-opposite' || item.category === 'lnbridgev20-default'
             ? 'Helix LnBridge'
             : item.category}
         </Select.Option>

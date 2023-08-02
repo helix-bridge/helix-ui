@@ -17,7 +17,8 @@ import { sendTransactionFromContract } from 'shared/utils/tx';
 import { getOverview } from 'utils/bridge';
 import { Bridge, TokenWithAmount } from '../../../../core/bridge';
 import { AllowancePayload } from '../../../../model/allowance';
-import lnBridgeAbi from '../config/abi/lnbridge.json';
+import arbEthAbi from '../config/abi/arb-eth.json';
+import ethArbAbi from '../config/abi/eth-arb.json';
 import { CrossChainPayload } from '../../../../model/tx';
 
 export abstract class LnBridgeBridge<
@@ -57,6 +58,7 @@ export abstract class LnBridgeBridge<
     const transferAmount = utils.parseUnits(amount.toString(), decimals);
     const { contracts } = bridge.config;
     const contractAddress = bridge.isIssue(fromChain, to.meta) ? contracts!.backing : contracts!.issuing;
+    const contractAbi = bridge.category === 'lnbridgev20-default' ? ethArbAbi : arbEthAbi;
 
     return sendTransactionFromContract(
       contractAddress,
@@ -74,16 +76,15 @@ export abstract class LnBridgeBridge<
             }
           );
         } else if (snapshot) {
-          const { relayer, sourceToken, transferId, depositedMargin, totalFee } = snapshot;
-          return contract.transferAndLockMargin(
-            [relayer, sourceToken, transferId, depositedMargin, totalFee],
-            transferAmount,
-            recipient,
-            { gasLimit: 1000000 }
-          );
+          const { relayer, sourceToken, transferId, depositedMargin, totalFee, withdrawNonce } = snapshot;
+          const snapshotArgs =
+            bridge.category === 'lnbridgev20-default'
+              ? [relayer, sourceToken, transferId, totalFee, withdrawNonce]
+              : [relayer, sourceToken, transferId, depositedMargin, totalFee];
+          return contract.transferAndLockMargin(snapshotArgs, transferAmount, recipient, { gasLimit: 1000000 });
         }
       },
-      lnBridgeAbi
+      contractAbi
     );
   }
 
@@ -117,7 +118,7 @@ export abstract class LnBridgeBridge<
               });
             }
           },
-          lnBridgeAbi
+          arbEthAbi
         );
       })
     );
@@ -152,13 +153,13 @@ export abstract class LnBridgeBridge<
     if (options) {
       totalFee = utils
         .parseUnits(amount.toString(), direction.from.decimals)
-        .mul(BigNumber.from(options.liquidityFeeRate))
+        .mul(options.liquidityFeeRate)
         // eslint-disable-next-line no-magic-numbers
-        .div(BigNumber.from(100000))
+        .div(100000)
         .add(BigNumber.from(options.baseFee))
         .toString();
     } else {
-      const overview = getOverview(direction, 'lnbridgev20-opposite');
+      const overview = getOverview(direction, 'lnbridgev20-default');
       // basefee + amount * 0.1%
       const baseFee = overview!.basefee! + amount * Number(this.feePercent);
       totalFee = toWei({ value: baseFee, decimals: direction.from.decimals });

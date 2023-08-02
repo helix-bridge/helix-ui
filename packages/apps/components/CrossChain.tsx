@@ -120,7 +120,7 @@ export function CrossChain() {
         nameWithSuffix = name + 'Ln';
       } else if (bridge.category === 'l1tol2') {
         nameWithSuffix = name + 'L2';
-      } else if (bridge.category === 'lnbridgev20-opposite') {
+      } else if (bridge.category === 'lnbridgev20-opposite' || bridge.category === 'lnbridgev20-default') {
         nameWithSuffix = name + 'LnBridge';
       }
 
@@ -204,7 +204,7 @@ export function CrossChain() {
     }
 
     let sub$$: Subscription;
-    if (bridge.category === 'lnbridgev20-opposite') {
+    if (bridge.category === 'lnbridgev20-opposite' || bridge.category === 'lnbridgev20-default') {
       const amount = Number.isNaN(Number(direction.from.amount)) ? 0 : Number(direction.from.amount);
       sub$$ = from(
         fetchRelayersInfo({
@@ -530,8 +530,12 @@ export function CrossChain() {
                     patchPayload,
                     (value: CrossChainPayload<CommonBridge> | null) =>
                       value && { ...value, wallet: departureConnection.wallet as SupportedWallet },
+                    // eslint-disable-next-line complexity
                     async (value) => {
-                      if (value?.bridge.category === 'lnbridgev20-opposite') {
+                      if (
+                        value?.bridge.category === 'lnbridgev20-opposite' ||
+                        value?.bridge.category === 'lnbridgev20-default'
+                      ) {
                         _relayerCount = 0;
                         try {
                           const amount = utils.parseUnits(
@@ -558,6 +562,9 @@ export function CrossChain() {
                             const baseFee = BigNumber.from(relayersInfo.sortedLnv20RelayInfos[0].baseFee);
                             const liquidityFeeRate = relayersInfo.sortedLnv20RelayInfos[0].liquidityFeeRate;
                             const transferId = relayersInfo.sortedLnv20RelayInfos[0].lastTransferId;
+                            const withdrawNonce = BigNumber.from(
+                              relayersInfo.sortedLnv20RelayInfos[0].withdrawNonce
+                            ).add(1);
 
                             const totalFee = BigNumber.from(liquidityFeeRate)
                               .mul(amount)
@@ -573,6 +580,7 @@ export function CrossChain() {
                                 transferId,
                                 depositedMargin,
                                 totalFee,
+                                withdrawNonce,
                               },
                             };
                           }

@@ -12,7 +12,14 @@ export type Arrival = Network;
 
 /* ----------------------------------------------- bridge config ------------------------------------------------ */
 
-export type BridgeCategory = 'helix' | 'helixLpBridge' | 'cBridge' | 'XCM' | 'l1tol2' | 'lnbridgev20-opposite';
+export type BridgeCategory =
+  | 'helix'
+  | 'helixLpBridge'
+  | 'cBridge'
+  | 'XCM'
+  | 'l1tol2'
+  | 'lnbridgev20-opposite'
+  | 'lnbridgev20-default';
 
 export interface LockEventsStorage {
   min: number;
