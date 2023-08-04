@@ -71,6 +71,22 @@ export const goerliConfig: EthereumChainConfig = {
       symbol: 'RING',
       address: '0x1836bafa3016dd5ce543d0f7199cb858ec69f41e',
     },
+    {
+      name: 'USDC',
+      decimals: 6,
+      cross: [
+        {
+          category: 'lnbridgev20-default',
+          bridge: 'ethereum-arbitrum',
+          partner: { name: 'arbitrum-goerli', role: 'issuing', symbol: 'USDC' },
+        },
+      ],
+      type: 'erc20',
+      host: 'goerli',
+      logo: 'token-usdc.svg',
+      symbol: 'USDC',
+      address: '0xd35CCeEAD182dcee0F148EbaC9447DA2c4D449c4',
+    },
   ],
   wallets: ['metamask', 'mathwallet-ethereum'],
 };
