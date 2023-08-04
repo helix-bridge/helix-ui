@@ -202,12 +202,17 @@ export default function History() {
       width: 150,
       // eslint-disable-next-line complexity
       render: (value: number, record: HelixHistoryRecord) => {
-        const { result, startTime } = record;
+        const { result, startTime, confirmedBlocks } = record;
         const content = (
           <div>
             <div className="mb-2 whitespace-nowrap text-xs">{format(startTime * 1000, DATE_TIME_FORMAT)}</div>
 
-            {result <= RecordStatus.pendingToClaim && <div className="text-helix-blue">{t('Pending')}</div>}
+            {result <= RecordStatus.pendingToClaim && (
+              <div className="text-helix-blue">
+                {t('Pending')}
+                {confirmedBlocks ? ` (${confirmedBlocks})` : ''}
+              </div>
+            )}
 
             {result === RecordStatus.success && <div className="text-helix-green">{t('Success')}</div>}
 
