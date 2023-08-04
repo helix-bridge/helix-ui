@@ -47,6 +47,7 @@ export const HISTORY_RECORDS = `
         recvToken
         sendTokenAddress
         recvTokenAddress
+        confirmedBlocks
       }
     }
   }

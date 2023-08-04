@@ -27,4 +27,5 @@ export interface HelixHistoryRecord {
   recvToken: string;
   sendTokenAddress: string;
   recvTokenAddress: string;
+  confirmedBlocks: string;
 }
