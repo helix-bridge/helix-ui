@@ -562,9 +562,7 @@ export function CrossChain() {
                             const baseFee = BigNumber.from(relayersInfo.sortedLnv20RelayInfos[0].baseFee);
                             const liquidityFeeRate = relayersInfo.sortedLnv20RelayInfos[0].liquidityFeeRate;
                             const transferId = relayersInfo.sortedLnv20RelayInfos[0].lastTransferId;
-                            const withdrawNonce = BigNumber.from(
-                              relayersInfo.sortedLnv20RelayInfos[0].withdrawNonce
-                            ).add(1);
+                            const withdrawNonce = BigNumber.from(relayersInfo.sortedLnv20RelayInfos[0].withdrawNonce);
 
                             const totalFee = BigNumber.from(liquidityFeeRate)
                               .mul(amount)
