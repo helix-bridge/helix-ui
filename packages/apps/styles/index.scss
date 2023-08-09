@@ -199,6 +199,21 @@ body {
   }
 }
 
+.refresh-countdown {
+  animation: countdown-dash 9.3s linear infinite;
+  animation-delay: 0.7s;
+}
+
+@keyframes countdown-dash {
+  from {
+    stroke-dashoffset: 0;
+  }
+
+  to {
+    stroke-dashoffset: -30;
+  }
+}
+
 @import './loading.scss';
 @import './reset.scss';
 @import './modal.scss';
