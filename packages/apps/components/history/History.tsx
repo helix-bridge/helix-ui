@@ -1,4 +1,4 @@
-import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
+import { SearchOutlined } from '@ant-design/icons';
 import { Badge, Button, Input, message, Table, Tabs } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import { format } from 'date-fns';
@@ -7,7 +7,7 @@ import { useQuery } from 'graphql-hooks';
 import last from 'lodash/last';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Icon } from 'shared/components/widget/Icon';
 import { Logo } from 'shared/components/widget/Logo';
 import { DATE_TIME_FORMAT, RecordStatus } from 'shared/config/constant';
@@ -17,6 +17,7 @@ import { convertToDvm, revertAccount } from 'shared/utils/helper/address';
 import { gqlName, toMiddleSplitNaming } from 'shared/utils/helper/common';
 import { updateStorage } from 'shared/utils/helper/storage';
 import { isSS58Address, isValidAddress } from 'shared/utils/helper/validator';
+import { CountdownRefresh } from 'components/widget/CountdownRefresh';
 import { Path } from '../../config';
 import { HISTORY_RECORDS } from '../../config/gql';
 import { useITranslation } from '../../hooks';
@@ -76,6 +77,7 @@ const toSearchableAccount = (account: string | undefined) => {
 };
 
 export default function History() {
+  const countdownRefreshRef = useRef<SVGSVGElement>(null);
   const { t } = useITranslation();
   const { disconnect } = useApi();
   const router = useRouter();
@@ -241,6 +243,11 @@ export default function History() {
     },
   ];
 
+  const handleRefresh = useCallback(() => {
+    countdownRefreshRef.current?.dispatchEvent(new Event('click'));
+    refetch({ ...paginator, sender: searchAccount, recipient: searchAccount });
+  }, [paginator, searchAccount, refetch]);
+
   return (
     <>
       <div className="mt-2 lg:mt-4 pb-2 lg:pb-4 flex justify-between items-end">
@@ -282,14 +289,12 @@ export default function History() {
 
         <Button
           type="link"
-          onClick={() => {
-            refetch({ ...paginator, sender: searchAccount, recipient: searchAccount });
-          }}
+          onClick={handleRefresh}
           disabled={loading}
           className="flex items-center cursor-pointer px-0"
         >
-          <span className="mr-2">{t('Latest transactions')}</span>
-          <SyncOutlined />
+          <span>{t('Latest transactions')}</span>
+          <CountdownRefresh ref={countdownRefreshRef} isActive={!loading} onIteration={handleRefresh} />
         </Button>
       </div>
 
