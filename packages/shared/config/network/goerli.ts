@@ -27,12 +27,18 @@ export const goerliConfig: EthereumChainConfig = {
     {
       name: 'GoerliETH',
       decimals: 18,
-      cross: [],
+      cross: [
+        {
+          category: 'lnbridgev20-default',
+          bridge: 'ethereum-zksync',
+          partner: { name: 'zksync-goerli', role: 'issuing', symbol: 'ETH' },
+        },
+      ],
       type: 'native',
       host: 'goerli',
       logo: 'token-ethereum.svg',
       symbol: 'GoerliETH',
-      address: '',
+      address: '0x0000000000000000000000000000000000000000',
     },
     {
       name: 'PRING',
@@ -64,6 +70,11 @@ export const goerliConfig: EthereumChainConfig = {
           bridge: 'ethereum-arbitrum',
           partner: { name: 'arbitrum-goerli', role: 'issuing', symbol: 'RING' },
         },
+        {
+          category: 'lnbridgev20-default',
+          bridge: 'ethereum-zksync',
+          partner: { name: 'zksync-goerli', role: 'issuing', symbol: 'RING' },
+        },
       ],
       type: 'erc20',
       host: 'goerli',
@@ -79,6 +90,11 @@ export const goerliConfig: EthereumChainConfig = {
           category: 'lnbridgev20-default',
           bridge: 'ethereum-arbitrum',
           partner: { name: 'arbitrum-goerli', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'lnbridgev20-default',
+          bridge: 'ethereum-zksync',
+          partner: { name: 'zksync-goerli', role: 'issuing', symbol: 'USDC' },
         },
       ],
       type: 'erc20',

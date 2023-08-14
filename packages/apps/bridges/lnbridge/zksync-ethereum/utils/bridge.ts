@@ -1,15 +1,11 @@
 import { BN } from '@polkadot/util';
 import { DVMChainConfig, Tx } from 'shared/model';
 import { Observable } from 'rxjs';
-import { IssuingPayload, RedeemPayload, ArbitrumEthereumBridgeConfig } from '../model';
+import { IssuingPayload, RedeemPayload, ZksyncEthereumBridgeConfig } from '../model';
 import { LnBridgeBridge } from '../../lnbridge/utils/bridge';
 
-export class ArbitrumEthereumBridge extends LnBridgeBridge<
-  ArbitrumEthereumBridgeConfig,
-  DVMChainConfig,
-  DVMChainConfig
-> {
-  static readonly alias: string = 'ArbitrumEthereumLnBridge';
+export class ZksyncEthereumBridge extends LnBridgeBridge<ZksyncEthereumBridgeConfig, DVMChainConfig, DVMChainConfig> {
+  static readonly alias: string = 'ZksyncEthereumLnBridge';
 
   back(payload: IssuingPayload, fee: BN): Observable<Tx> {
     return this.send(payload, fee);
