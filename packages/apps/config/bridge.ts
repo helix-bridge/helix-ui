@@ -54,6 +54,8 @@ import { arbitrumGoerli, arbitrumEthereum } from '../bridges/helixlp/arbitrum-et
 import { goerliArbitrumL2, ethereumArbitrumL2 } from '../bridges/l1tol2/ethereum-arbitrum/config';
 import { arbitrumGoerliLnBridge, arbitrumEthereumLnBridge } from '../bridges/lnbridge/arbitrum-ethereum/config';
 import { goerliArbitrumLnBridge, ethereumArbitrumLnBridge } from '../bridges/lnbridge/ethereum-arbitrum/config';
+import { goerliZksyncGoerliLnBridge } from '../bridges/lnbridge/ethereum-zksync/config';
+import { zksyncGoerliGoerliLnBridge } from '../bridges/lnbridge/zksync-ethereum/config';
 
 const formalBridges = [
   arbitrumAstar,
@@ -117,6 +119,8 @@ const testBridges = [
   arbitrumGoerli,
   arbitrumGoerliLnBridge,
   goerliArbitrumLnBridge,
+  goerliZksyncGoerliLnBridge,
+  zksyncGoerliGoerliLnBridge,
   goerliArbitrumL2,
 ];
 

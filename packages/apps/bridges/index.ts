@@ -47,5 +47,7 @@ export { Arbitrum2EthereumLn, Ethereum2ArbitrumLn } from './helixlp/arbitrum-eth
 export { Ethereum2ArbitrumL2, Arbitrum2EthereumL2 } from './l1tol2/ethereum-arbitrum';
 
 export { Arbitrum2EthereumLnBridge } from './lnbridge/arbitrum-ethereum';
-
 export { Ethereum2ArbitrumLnBridge } from './lnbridge/ethereum-arbitrum';
+
+export { Ethereum2ZksyncLnBridge } from './lnbridge/ethereum-zksync';
+export { Zksync2EthereumLnBridge } from './lnbridge/zksync-ethereum';

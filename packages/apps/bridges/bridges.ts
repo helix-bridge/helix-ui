@@ -26,6 +26,8 @@ import { EthereumArbitrumBridgeL2 } from './l1tol2/ethereum-arbitrum/utils';
 import { HelixLpBridgeBridge } from './helixlp/helixLpBridge/utils';
 import { ArbitrumEthereumBridge as ArbitrumEthereumBridgeLnBridge } from './lnbridge/arbitrum-ethereum/utils';
 import { EthereumArbitrumBridge as EthereumArbitrumBridgeLnBridge } from './lnbridge/ethereum-arbitrum/utils';
+import { EthereumZksyncBridge as EthereumZksyncBridgeLnBridge } from './lnbridge/ethereum-zksync/utils';
+import { ZksyncEthereumBridge as ZksyncEthereumBridgeLnBridge } from './lnbridge/zksync-ethereum/utils';
 
 export const bridgeConstructors = [
   CBridgeBridge,
@@ -55,6 +57,8 @@ export const bridgeConstructors = [
   EthereumArbitrumBridgeL2,
   ArbitrumEthereumBridgeLnBridge,
   EthereumArbitrumBridgeLnBridge,
+  EthereumZksyncBridgeLnBridge,
+  ZksyncEthereumBridgeLnBridge,
 ];
 
 export function bridgeFactory<C extends BridgeConfig, O extends ChainConfig, T extends ChainConfig>(

@@ -44,8 +44,9 @@ export abstract class LnBridgeBridge<
     value: CrossChainPayload<Bridge<B, Origin, Target>, CrossToken<Origin | Target>, CrossToken<Target | Origin>>,
     fee: BN
   ): Observable<Tx> {
+    void fee;
+
     const {
-      sender,
       recipient,
       direction: {
         from: { amount, decimals, meta: fromChain, type },
@@ -54,7 +55,6 @@ export abstract class LnBridgeBridge<
       bridge,
       snapshot,
     } = value;
-    const nonce = new BN(Date.now()).add(this.prefix).toString();
     const transferAmount = utils.parseUnits(amount.toString(), decimals);
     const { contracts } = bridge.config;
     const contractAddress = bridge.isIssue(fromChain, to.meta) ? contracts!.backing : contracts!.issuing;
@@ -63,25 +63,21 @@ export abstract class LnBridgeBridge<
     return sendTransactionFromContract(
       contractAddress,
       async (contract) => {
-        if (type === 'native') {
-          return contract.lockNativeAndRemoteIssuing(
-            transferAmount,
-            fee.toString(),
-            recipient,
-            nonce,
-            to.type === 'native',
-            {
-              from: sender,
-              value: transferAmount.add(fee.toString()),
-            }
-          );
-        } else if (snapshot) {
+        if (snapshot) {
           const { relayer, sourceToken, transferId, depositedMargin, totalFee, withdrawNonce } = snapshot;
           const snapshotArgs =
             bridge.category === 'lnbridgev20-default'
               ? [relayer, sourceToken, transferId, totalFee, withdrawNonce]
               : [relayer, sourceToken, transferId, depositedMargin, totalFee];
-          return contract.transferAndLockMargin(snapshotArgs, transferAmount, recipient, { gasLimit: 1000000 });
+
+          if (type === 'native') {
+            return contract.transferAndLockMargin(snapshotArgs, transferAmount, recipient, {
+              gasLimit: 1000000,
+              value: transferAmount.add(totalFee),
+            });
+          } else {
+            return contract.transferAndLockMargin(snapshotArgs, transferAmount, recipient, { gasLimit: 1000000 });
+          }
         }
       },
       contractAbi

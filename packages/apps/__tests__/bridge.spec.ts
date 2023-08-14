@@ -36,6 +36,7 @@ const mapToTestChain: { [key: string]: string } = {
   'crab-dvm': 'pangolin-dvm',
   ethereum: 'goerli',
   arbitrum: 'arbitrum-goerli',
+  zksync: 'zksync-goerli',
 };
 
 describe('bridge utils', () => {
@@ -47,12 +48,12 @@ describe('bridge utils', () => {
   console.log('🌉 All cross-chain directions to be tested', allDirections);
 
   it('should support bridge count: ', () => {
-    expect(testBridges).toHaveLength(4);
+    expect(testBridges).toHaveLength(5);
     expect(formalBridges).toHaveLength(47);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(118);
+    expect(allDirections).toHaveLength(122);
   });
 
   it('Should correct bridge category name', () => {
