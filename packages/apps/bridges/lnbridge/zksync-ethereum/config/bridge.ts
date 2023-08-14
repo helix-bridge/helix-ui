@@ -1,9 +1,8 @@
-import { arbitrumConfig, ethereumConfig } from 'shared/config/network';
-import { zksyncGoerliConfig, goerliConfig } from 'shared/config/network';
+import { zksyncConfig, ethereumConfig, zksyncGoerliConfig, goerliConfig } from 'shared/config/network';
 import { BridgeBase } from 'shared/core/bridge';
 import { ZksyncEthereumBridgeConfig } from '../model';
 
-const arbitrumEthereumConfig: ZksyncEthereumBridgeConfig = {
+const zksyncEthereumConfig: ZksyncEthereumBridgeConfig = {
   contracts: {
     backing: '0xD1B10B114f1975d8BCc6cb6FC43519160e2AA978',
     issuing: '0xeAb1F01a8f4A2687023B159c2063639Adad5304E',
@@ -17,8 +16,8 @@ const zksyncGoerliGoerliConfig: ZksyncEthereumBridgeConfig = {
   },
 };
 
-export const arbitrumEthereumLnBridge = new BridgeBase(arbitrumConfig, ethereumConfig, arbitrumEthereumConfig, {
-  name: 'arbitrum-ethereum',
+export const zksyncEthereumLnBridge = new BridgeBase(zksyncConfig, ethereumConfig, zksyncEthereumConfig, {
+  name: 'zksync-ethereum',
   category: 'lnbridgev20-opposite',
 });
 

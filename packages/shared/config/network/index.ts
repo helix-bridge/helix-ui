@@ -23,3 +23,4 @@ export * from './khala';
 export * from './shiden';
 export * from './arbitrum-goerli';
 export * from './zksync-goerli';
+export * from './zksync';

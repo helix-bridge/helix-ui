@@ -30,6 +30,7 @@ import { polygonConfig } from './polygon';
 import { ropstenConfig } from './ropsten';
 import { shidenConfig } from './shiden';
 import { zksyncGoerliConfig } from './zksync-goerli';
+import { zksyncConfig } from './zksync';
 
 export const SYSTEM_CHAIN_CONFIGURATIONS: (EthereumChainConfig | PolkadotChainConfig | ParachainChainConfig)[] = [
   arbitrumConfig,
@@ -54,6 +55,7 @@ export const SYSTEM_CHAIN_CONFIGURATIONS: (EthereumChainConfig | PolkadotChainCo
   ropstenConfig,
   shidenConfig,
   zksyncGoerliConfig,
+  zksyncConfig,
 ];
 
 export const knownParachainNetworks: ParachainNetwork[] = ['crab-parachain', 'karura', 'khala', 'moonriver', 'shiden'];
@@ -82,6 +84,7 @@ export const knownEthereumNetworks: (DVMNetwork | EthereumTypeNetwork)[] = [
   'bsc',
   'optimism',
   'zksync-goerli',
+  'zksync',
   ...knownDVMNetworks,
   ...knownParachainEthereumCompatibleNetworks,
 ];
