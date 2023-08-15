@@ -1,0 +1,27 @@
+{
+  "name": "helix.js",
+  "version": "0.1.0",
+  "private": true,
+  "description": "helix.js",
+  "main": "dist/index.js",
+  "devDependencies": {
+    "typescript": "^5.1.6"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helix-bridge/helix-ui.git"
+  },
+  "keywords": [
+    "helix.js",
+    "helix"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/helix-bridge/helix-ui/issues"
+  },
+  "homepage": "https://github.com/helix-bridge/helix-ui#readme"
+}
