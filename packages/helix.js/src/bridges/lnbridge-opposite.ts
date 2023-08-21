@@ -8,6 +8,10 @@ export class LnBridgeOpposite extends BaseBridge {
 
   async transfer(): Promise<void> {}
 
+  getEstimateTime(): string | undefined {
+    return "1-30 Minutes";
+  }
+
   getName(): string {
     return "Helix LnBridge";
   }
