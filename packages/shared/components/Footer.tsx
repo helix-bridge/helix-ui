@@ -11,7 +11,10 @@ type FooterProps = LanguageProps & { className?: string } & ThemeSwitchProps;
 
 export function Footer({ theme, className = '' }: FooterProps) {
   const { t } = useITranslation();
-  const [mainnetOrTestnet, setMainnetOrTestnet] = useState<{ label: 'Mainnet' | 'Testnet'; link: string }>();
+  const [mainnetOrTestnet, setMainnetOrTestnet] = useState<{ label: 'Mainnet' | 'Testnet'; link: string }>({
+    label: 'Mainnet',
+    link: '',
+  });
 
   useEffect(() => {
     if (window.location.hostname === 'helixbridge.app') {
@@ -76,9 +79,9 @@ export function Footer({ theme, className = '' }: FooterProps) {
               className="text-gray-400 text-sm font-bold"
               target="_blank"
               rel="noreferrer"
-              href={mainnetOrTestnet.label}
+              href={mainnetOrTestnet.link}
             >
-              {mainnetOrTestnet.link}
+              {mainnetOrTestnet.label}
             </a>
           </>
         )}
