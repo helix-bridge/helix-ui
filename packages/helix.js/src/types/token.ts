@@ -1,9 +1,4 @@
-export enum TokenSymbol {
-  ETH = "ETH",
-  RING = "RING",
-  USDC = "USDC",
-  USDT = "USDT",
-}
+export type TokenSymbol = "ETH" | "RING" | "USDC" | "USDT";
 
 export interface Token {
   decimals: 18;
