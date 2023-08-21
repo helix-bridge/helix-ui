@@ -16,4 +16,5 @@ export abstract class BaseBridge {
   }
 
   abstract transfer(sender: string, receiver: string, amount: bigint, options?: Object): Promise<void>;
+  abstract getName(): string;
 }

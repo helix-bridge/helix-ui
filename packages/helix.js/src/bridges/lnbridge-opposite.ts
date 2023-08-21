@@ -7,4 +7,8 @@ export class LnBridgeOpposite extends BaseBridge {
   }
 
   async transfer(): Promise<void> {}
+
+  getName(): string {
+    return "Helix LnBridge";
+  }
 }
