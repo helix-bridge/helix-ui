@@ -20,6 +20,10 @@ export abstract class BaseBridge {
     return undefined;
   }
 
+  getFee(): bigint | undefined {
+    return undefined;
+  }
+
   abstract transfer(sender: string, receiver: string, amount: bigint, options?: Object): Promise<void>;
   abstract getName(): string;
 }
