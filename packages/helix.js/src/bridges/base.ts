@@ -15,8 +15,7 @@ export abstract class BaseBridge {
     return this.category;
   }
 
-  getEstimateTime(): { fastest: number; slowest: number } | undefined {
-    // fastest and slowest are in seconds
+  getEstimateTime(): string | undefined {
     return undefined;
   }
 
