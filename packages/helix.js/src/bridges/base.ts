@@ -15,6 +15,11 @@ export abstract class BaseBridge {
     return this.category;
   }
 
+  getEstimateTime(): { fastest: number; slowest: number } | undefined {
+    // fastest and slowest are in seconds
+    return undefined;
+  }
+
   abstract transfer(sender: string, receiver: string, amount: bigint, options?: Object): Promise<void>;
   abstract getName(): string;
 }
