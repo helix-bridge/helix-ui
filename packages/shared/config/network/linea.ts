@@ -1,4 +1,4 @@
-import { EthereumChainConfig } from 'model';
+import { EthereumChainConfig } from '../../model';
 
 export const lineaConfig: EthereumChainConfig = {
   ethereumChain: {
