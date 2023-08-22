@@ -23,6 +23,26 @@ export const zksyncConfig: EthereumChainConfig = {
   },
   tokens: [
     {
+      name: 'RING',
+      decimals: 18,
+      cross: [],
+      type: 'erc20',
+      host: 'zksync',
+      logo: 'token-ring.svg',
+      symbol: 'RING',
+      address: '',
+    },
+    {
+      name: 'KTON',
+      decimals: 18,
+      cross: [],
+      type: 'erc20',
+      host: 'zksync',
+      logo: 'token-kton.svg',
+      symbol: 'KTON',
+      address: '',
+    },
+    {
       name: 'ETH',
       decimals: 18,
       cross: [],

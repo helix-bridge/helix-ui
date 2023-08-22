@@ -33,6 +33,11 @@ export const goerliConfig: EthereumChainConfig = {
           bridge: 'ethereum-zksync',
           partner: { name: 'zksync-goerli', role: 'issuing', symbol: 'ETH' },
         },
+        {
+          category: 'lnbridgev20-default',
+          bridge: 'ethereum-linea',
+          partner: { name: 'linea-goerli', role: 'issuing', symbol: 'ETH' },
+        },
       ],
       type: 'native',
       host: 'goerli',
@@ -95,6 +100,11 @@ export const goerliConfig: EthereumChainConfig = {
           category: 'lnbridgev20-default',
           bridge: 'ethereum-zksync',
           partner: { name: 'zksync-goerli', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'lnbridgev20-default',
+          bridge: 'ethereum-linea',
+          partner: { name: 'linea-goerli', role: 'issuing', symbol: 'USDC' },
         },
       ],
       type: 'erc20',

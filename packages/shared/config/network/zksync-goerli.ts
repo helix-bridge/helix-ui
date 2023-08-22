@@ -23,22 +23,6 @@ export const zksyncGoerliConfig: EthereumChainConfig = {
   },
   tokens: [
     {
-      name: 'ETH',
-      decimals: 18,
-      cross: [
-        {
-          category: 'lnbridgev20-opposite',
-          bridge: 'zksync-ethereum',
-          partner: { name: 'goerli', role: 'issuing', symbol: 'GoerliETH' },
-        },
-      ],
-      type: 'native',
-      host: 'zksync-goerli',
-      logo: 'token-ethereum.svg',
-      symbol: 'ETH',
-      address: '0x0000000000000000000000000000000000000000',
-    },
-    {
       name: 'RING',
       decimals: 18,
       cross: [
@@ -54,6 +38,32 @@ export const zksyncGoerliConfig: EthereumChainConfig = {
       logo: 'token-ring.svg',
       symbol: 'RING',
       address: '0x61C31A1fA4a8D765e63D4285f368aA2f4d912DbB',
+    },
+    {
+      name: 'KTON',
+      decimals: 18,
+      cross: [],
+      type: 'erc20',
+      host: 'zksync-goerli',
+      logo: 'token-kton.svg',
+      symbol: 'KTON',
+      address: '',
+    },
+    {
+      name: 'ETH',
+      decimals: 18,
+      cross: [
+        {
+          category: 'lnbridgev20-opposite',
+          bridge: 'zksync-ethereum',
+          partner: { name: 'goerli', role: 'issuing', symbol: 'GoerliETH' },
+        },
+      ],
+      type: 'native',
+      host: 'zksync-goerli',
+      logo: 'token-ethereum.svg',
+      symbol: 'ETH',
+      address: '0x0000000000000000000000000000000000000000',
     },
     {
       name: 'USDC',

@@ -28,6 +28,8 @@ import { ArbitrumEthereumBridge as ArbitrumEthereumBridgeLnBridge } from './lnbr
 import { EthereumArbitrumBridge as EthereumArbitrumBridgeLnBridge } from './lnbridge/ethereum-arbitrum/utils';
 import { EthereumZksyncBridge as EthereumZksyncBridgeLnBridge } from './lnbridge/ethereum-zksync/utils';
 import { ZksyncEthereumBridge as ZksyncEthereumBridgeLnBridge } from './lnbridge/zksync-ethereum/utils';
+import { EthereumLineaBridge as EthereumLineaBridgeLnBridge } from './lnbridge/ethereum-linea/utils';
+import { LineaEthereumBridge as LineaEthereumBridgeLnBridge } from './lnbridge/linea-ethereum/utils';
 
 export const bridgeConstructors = [
   CBridgeBridge,
@@ -59,6 +61,8 @@ export const bridgeConstructors = [
   EthereumArbitrumBridgeLnBridge,
   EthereumZksyncBridgeLnBridge,
   ZksyncEthereumBridgeLnBridge,
+  EthereumLineaBridgeLnBridge,
+  LineaEthereumBridgeLnBridge,
 ];
 
 export function bridgeFactory<C extends BridgeConfig, O extends ChainConfig, T extends ChainConfig>(

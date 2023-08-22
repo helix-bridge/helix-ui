@@ -24,3 +24,5 @@ export * from './shiden';
 export * from './arbitrum-goerli';
 export * from './zksync-goerli';
 export * from './zksync';
+export * from './linea';
+export * from './linea-goerli';
