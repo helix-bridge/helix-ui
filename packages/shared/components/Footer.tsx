@@ -4,12 +4,26 @@ import { getYear } from 'date-fns';
 import { LanguageProps } from 'shared/components/widget/Language';
 import { ThemeSwitchProps } from 'shared/components/widget/ThemeSwitch';
 import { THEME } from 'shared/config/theme';
+import { useEffect, useState } from 'react';
 import { useITranslation } from '../hooks/translation';
 
 type FooterProps = LanguageProps & { className?: string } & ThemeSwitchProps;
 
 export function Footer({ theme, className = '' }: FooterProps) {
   const { t } = useITranslation();
+  const [mainnetOrTestnet, setMainnetOrTestnet] = useState<{ label: 'Mainnet' | 'Testnet'; link: string }>();
+
+  useEffect(() => {
+    if (window.location.hostname === 'helixbridge.app') {
+      setMainnetOrTestnet({ label: 'Testnet', link: 'helix-apps-test.vercel.app' });
+    } else if (window.location.hostname === 'helix-apps-test.vercel.app') {
+      setMainnetOrTestnet({ label: 'Mainnet', link: 'helixbridge.app' });
+    } else if (window.location.hostname === 'helix-stg.vercel.app') {
+      setMainnetOrTestnet({ label: 'Testnet', link: 'helix-stg-test.vercel.app' });
+    } else if (window.location.hostname === 'helix-stg-test.vercel.app') {
+      setMainnetOrTestnet({ label: 'Mainnet', link: 'helix-stg.vercel.app' });
+    }
+  }, []);
 
   return (
     <Layout.Footer
@@ -54,6 +68,20 @@ export function Footer({ theme, className = '' }: FooterProps) {
         >
           <MailOutlined style={{ fontSize: '1.25rem' }} />
         </a>
+
+        {mainnetOrTestnet && (
+          <>
+            <div className="w-[1px] h-3 bg-white/30" />
+            <a
+              className="text-gray-400 text-sm font-bold hover:underline"
+              target="_blank"
+              rel="noreferrer"
+              href={mainnetOrTestnet.link}
+            >
+              {mainnetOrTestnet.label}
+            </a>
+          </>
+        )}
 
         <Divider
           type="vertical"
