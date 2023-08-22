@@ -15,13 +15,13 @@ export function Footer({ theme, className = '' }: FooterProps) {
 
   useEffect(() => {
     if (window.location.hostname === 'helixbridge.app') {
-      setMainnetOrTestnet({ label: 'Testnet', link: 'helix-apps-test.vercel.app' });
+      setMainnetOrTestnet({ label: 'Testnet', link: 'https://helix-apps-test.vercel.app' });
     } else if (window.location.hostname === 'helix-apps-test.vercel.app') {
-      setMainnetOrTestnet({ label: 'Mainnet', link: 'helixbridge.app' });
+      setMainnetOrTestnet({ label: 'Mainnet', link: 'https://helixbridge.app' });
     } else if (window.location.hostname === 'helix-stg.vercel.app') {
-      setMainnetOrTestnet({ label: 'Testnet', link: 'helix-stg-test.vercel.app' });
+      setMainnetOrTestnet({ label: 'Testnet', link: 'https://helix-stg-test.vercel.app' });
     } else if (window.location.hostname === 'helix-stg-test.vercel.app') {
-      setMainnetOrTestnet({ label: 'Mainnet', link: 'helix-stg.vercel.app' });
+      setMainnetOrTestnet({ label: 'Mainnet', link: 'https://helix-stg.vercel.app' });
     }
   }, []);
 
