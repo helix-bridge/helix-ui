@@ -53,6 +53,7 @@ export const goerliConfig: EthereumChainConfig = {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
           partner: { name: 'pangolin-dvm', role: 'backing', symbol: 'PRING' },
+          deprecated: true,
         },
       ],
       type: 'erc20',
