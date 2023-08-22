@@ -10,7 +10,7 @@ export const lineaConfig: EthereumChainConfig = {
     },
     rpcUrls: [],
   },
-  isTest: true,
+  isTest: false,
   logos: [{ name: 'linea.png', type: 'main' }],
   name: 'linea',
   fullName: 'Linea',
