@@ -38,7 +38,7 @@ describe('network utils', () => {
       .find((item) => item.partner.name === arrival);
 
   it('should contains chains count: ', () => {
-    expect(chainConfigs).toHaveLength(20);
+    expect(chainConfigs).toHaveLength(19);
   });
 
   it('crab-dvm contains 5 leafs and substrate-substrateDVM deprecated', () => {
@@ -183,14 +183,13 @@ describe('network utils', () => {
     const group = data.find((item) => item[0] === 'goerli');
 
     expect(group).not.toEqual(undefined);
-    expect(uniq(sort(group![1]))).toEqual(sort(['pangolin-dvm', 'arbitrum-goerli', 'zksync-goerli']));
+    expect(uniq(sort(group![1]))).toEqual(sort(['linea-goerli', 'arbitrum-goerli', 'zksync-goerli']));
   });
 
-  it('pangoro-dvm contains 2 leafs', () => {
+  it('pangoro-dvm contains 0 leafs', () => {
     const group = data.find((item) => item[0] === 'pangoro-dvm');
 
-    expect(group).not.toEqual(undefined);
-    expect(uniq(sort(group![1]))).toEqual(sort(['pangolin-dvm', 'pangoro-dvm']));
+    expect(group).toEqual(undefined);
   });
 
   it('can get chain config by chain name', () => {
