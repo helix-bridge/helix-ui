@@ -55,4 +55,6 @@ export type BridgeName =
   | 'arbitrum-ethereum'
   | 'ethereum-arbitrum'
   | 'zksync-ethereum'
-  | 'ethereum-zksync';
+  | 'ethereum-zksync'
+  | 'ethereum-linea'
+  | 'linea-ethereum';

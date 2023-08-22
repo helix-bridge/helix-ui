@@ -27,13 +27,8 @@ import { hecoPolygon } from '../bridges/cbridge/heco-polygon/config';
 import { polygonAstar } from '../bridges/cbridge/polygon-astar/config';
 import { polygonOptimism } from '../bridges/cbridge/polygon-optimism/config';
 import { crabDVMcrabDVM, crabDVMDarwiniaDVM } from '../bridges/helix/crabDVM-darwiniaDVM/config/bridge';
-import {
-  darwiniaDVMCrabDVM,
-  darwiniaDVMDarwiniaDVM,
-  pangoroDVMPangolinDVM,
-  pangoroDVMPangoroDVM,
-} from '../bridges/helix/darwiniaDVM-crabDVM/config/bridge';
-import { darwiniaDVMEthereum, pangolinDVMGoerli } from '../bridges/helix/substrateDVM-ethereum/config/bridge';
+import { darwiniaDVMCrabDVM, darwiniaDVMDarwiniaDVM } from '../bridges/helix/darwiniaDVM-crabDVM/config/bridge';
+import { darwiniaDVMEthereum } from '../bridges/helix/substrateDVM-ethereum/config/bridge';
 import { crabParachainKarura } from '../bridges/xcm/crabParachain-karura/config/bridge';
 import { crabParachainMoonriver } from '../bridges/xcm/crabParachain-moonriver/config/bridge';
 import { shidenKhala } from '../bridges/xcm/shiden-khala/config';
@@ -56,6 +51,8 @@ import { arbitrumGoerliLnBridge, arbitrumEthereumLnBridge } from '../bridges/lnb
 import { goerliArbitrumLnBridge, ethereumArbitrumLnBridge } from '../bridges/lnbridge/ethereum-arbitrum/config';
 import { goerliZksyncGoerliLnBridge } from '../bridges/lnbridge/ethereum-zksync/config';
 import { zksyncGoerliGoerliLnBridge } from '../bridges/lnbridge/zksync-ethereum/config';
+import { goerliLineaGoerliLnBridge } from '../bridges/lnbridge/ethereum-linea/config';
+import { lineaGoerliGoerliLnBridge } from '../bridges/lnbridge/linea-ethereum/config';
 
 const formalBridges = [
   arbitrumAstar,
@@ -113,14 +110,13 @@ const formalBridges = [
 ];
 
 const testBridges = [
-  pangolinDVMGoerli,
-  pangoroDVMPangolinDVM,
-  pangoroDVMPangoroDVM,
   arbitrumGoerli,
   arbitrumGoerliLnBridge,
   goerliArbitrumLnBridge,
   goerliZksyncGoerliLnBridge,
   zksyncGoerliGoerliLnBridge,
+  goerliLineaGoerliLnBridge,
+  lineaGoerliGoerliLnBridge,
   goerliArbitrumL2,
 ];
 

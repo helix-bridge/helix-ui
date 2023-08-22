@@ -1,25 +1,27 @@
 import { EthereumChainConfig } from '../../model';
 
-export const zksyncConfig: EthereumChainConfig = {
+export const lineaConfig: EthereumChainConfig = {
   ethereumChain: {
-    chainId: '0x144',
-    chainName: 'zkSync Era Mainnet',
+    chainId: '0xe708',
+    chainName: '',
     nativeCurrency: {
       decimals: 18,
       symbol: 'ETH',
     },
-    rpcUrls: ['https://mainnet.era.zksync.io'],
+    rpcUrls: [],
   },
-  isTest: true,
-  logos: [{ name: 'zksync.png', type: 'main' }],
-  name: 'zksync',
-  fullName: 'zkSync Era Mainnet',
-  // wss binary message
-  provider: { https: 'https://mainnet.era.zksync.io', wss: 'wss://mainnet.era.zksync.io/ws' },
+  isTest: false,
+  logos: [{ name: 'linea.png', type: 'main' }],
+  name: 'linea',
+  fullName: 'Linea',
+  provider: {
+    https: 'https://rpc.linea.build',
+    wss: 'wss://rpc.linea.build',
+  },
   social: {
-    portal: 'https://zksync.io/',
-    github: 'https://github.com/matter-labs',
-    twitter: 'https://twitter.com/zksync',
+    portal: 'https://linea.build/',
+    github: 'https://github.com/Consensys',
+    twitter: 'https://twitter.com/LineaBuild',
   },
   tokens: [
     {
@@ -27,7 +29,7 @@ export const zksyncConfig: EthereumChainConfig = {
       decimals: 18,
       cross: [],
       type: 'erc20',
-      host: 'zksync',
+      host: 'linea',
       logo: 'token-ring.svg',
       symbol: 'RING',
       address: '',
@@ -37,7 +39,7 @@ export const zksyncConfig: EthereumChainConfig = {
       decimals: 18,
       cross: [],
       type: 'erc20',
-      host: 'zksync',
+      host: 'linea',
       logo: 'token-kton.svg',
       symbol: 'KTON',
       address: '',
@@ -47,10 +49,20 @@ export const zksyncConfig: EthereumChainConfig = {
       decimals: 18,
       cross: [],
       type: 'native',
-      host: 'zksync',
+      host: 'linea',
       logo: 'token-ethereum.svg',
       symbol: 'ETH',
-      address: '0x0000000000000000000000000000000000000000',
+      address: '',
+    },
+    {
+      name: 'USDC',
+      decimals: 6,
+      cross: [],
+      type: 'erc20',
+      host: 'linea',
+      logo: 'token-usdt.svg',
+      symbol: 'USDC',
+      address: '',
     },
   ],
   wallets: ['metamask', 'mathwallet-ethereum'],

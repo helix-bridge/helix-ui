@@ -26,6 +26,8 @@ export type EthereumTypeNetwork =
   | 'optimism'
   | 'astar'
   | 'goerli'
+  | 'linea'
+  | 'linea-goerli'
   | ParachainEthereumCompatibleNetwork
   | DVMNetwork;
 

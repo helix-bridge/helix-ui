@@ -1,5 +1,5 @@
 import { CHAIN_TYPE } from './env';
-import { arbitrumConfig, ethereumConfig, pangolinDVMConfig, pangoroDVMConfig } from './network';
+import { arbitrumConfig, ethereumConfig, arbitrumGoerliConfig, goerliConfig } from './network';
 
 /* eslint-disable no-magic-numbers */
 export const LONG_DURATION = 10 * 1000;
@@ -73,8 +73,8 @@ const DEFAULT_FORMAL_DIRECTION = {
 };
 
 const DEFAULT_DEV_DIRECTION = {
-  from: { ...pangolinDVMConfig.tokens[0], amount: '', meta: pangolinDVMConfig },
-  to: { ...pangoroDVMConfig.tokens[0], amount: '', meta: pangoroDVMConfig },
+  from: { ...goerliConfig.tokens[0], amount: '', meta: goerliConfig },
+  to: { ...arbitrumGoerliConfig.tokens[0], amount: '', meta: arbitrumGoerliConfig },
 };
 
 export const DEFAULT_DIRECTION = CHAIN_TYPE === 'formal' ? DEFAULT_FORMAL_DIRECTION : DEFAULT_DEV_DIRECTION;

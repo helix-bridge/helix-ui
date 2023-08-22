@@ -51,3 +51,6 @@ export { Ethereum2ArbitrumLnBridge } from './lnbridge/ethereum-arbitrum';
 
 export { Ethereum2ZksyncLnBridge } from './lnbridge/ethereum-zksync';
 export { Zksync2EthereumLnBridge } from './lnbridge/zksync-ethereum';
+
+export { Ethereum2LineaLnBridge } from './lnbridge/ethereum-linea';
+export { Linea2EthereumLnBridge } from './lnbridge/linea-ethereum';
