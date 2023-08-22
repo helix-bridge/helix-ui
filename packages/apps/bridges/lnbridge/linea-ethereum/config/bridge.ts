@@ -11,8 +11,8 @@ const lineaEthereumConfig: LineaEthereumBridgeConfig = {
 
 const lineaGoerliGoerliConfig: LineaEthereumBridgeConfig = {
   contracts: {
-    backing: '0x91bdd735Dc214876605C18A57C7841CFF7eE959a',
-    issuing: '0x9C80EdD342b5D179c3a87946fC1F0963BfcaAa09',
+    backing: '0x9C80EdD342b5D179c3a87946fC1F0963BfcaAa09',
+    issuing: '0x91bdd735Dc214876605C18A57C7841CFF7eE959a',
   },
 };
 

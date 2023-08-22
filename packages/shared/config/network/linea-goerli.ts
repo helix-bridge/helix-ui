@@ -58,7 +58,7 @@ export const lineaGoerliConfig: EthereumChainConfig = {
       host: 'linea-goerli',
       logo: 'token-ethereum.svg',
       symbol: 'ETH',
-      address: '',
+      address: '0x0000000000000000000000000000000000000000',
     },
     {
       name: 'USDC',
@@ -67,12 +67,12 @@ export const lineaGoerliConfig: EthereumChainConfig = {
         {
           category: 'lnbridgev20-opposite',
           bridge: 'linea-ethereum',
-          partner: { name: 'goerli', role: 'issuing', symbol: 'USDC' },
+          partner: { name: 'goerli', role: 'issuing', symbol: 'USD//C' },
         },
       ],
       type: 'erc20',
       host: 'linea-goerli',
-      logo: 'token-usdt.svg',
+      logo: 'token-usdc.svg',
       symbol: 'USDC',
       address: '0xB4257F31750961C8e536f5cfCBb3079437700416',
     },

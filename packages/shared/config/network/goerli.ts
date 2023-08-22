@@ -114,6 +114,22 @@ export const goerliConfig: EthereumChainConfig = {
       symbol: 'USDC',
       address: '0xd35CCeEAD182dcee0F148EbaC9447DA2c4D449c4',
     },
+    {
+      name: 'USD//C',
+      decimals: 6,
+      cross: [
+        {
+          category: 'lnbridgev20-default',
+          bridge: 'ethereum-linea',
+          partner: { name: 'linea-goerli', role: 'issuing', symbol: 'USDC' },
+        },
+      ],
+      type: 'erc20',
+      host: 'goerli',
+      logo: 'token-usdc.svg',
+      symbol: 'USD//C',
+      address: '0x07865c6E87B9F70255377e024ace6630C1Eaa37F',
+    },
   ],
   wallets: ['metamask', 'mathwallet-ethereum'],
 };
