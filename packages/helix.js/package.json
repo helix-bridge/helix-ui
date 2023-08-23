@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/helix-bridge/helix-ui/issues"
   },
-  "homepage": "https://github.com/helix-bridge/helix-ui#readme"
+  "homepage": "https://github.com/helix-bridge/helix-ui#readme",
+  "dependencies": {
+    "viem": "^1.6.7"
+  }
 }
