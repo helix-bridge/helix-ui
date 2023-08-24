@@ -6,7 +6,7 @@ export const lineaGoerliConfig: EthereumChainConfig = {
     chainName: '',
     nativeCurrency: {
       decimals: 18,
-      symbol: 'ETH',
+      symbol: 'lineaETH',
     },
     rpcUrls: [],
   },
@@ -45,7 +45,7 @@ export const lineaGoerliConfig: EthereumChainConfig = {
       address: '',
     },
     {
-      name: 'ETH',
+      name: 'lineaETH',
       decimals: 18,
       cross: [
         {
@@ -57,7 +57,7 @@ export const lineaGoerliConfig: EthereumChainConfig = {
       type: 'native',
       host: 'linea-goerli',
       logo: 'token-ethereum.svg',
-      symbol: 'ETH',
+      symbol: 'lineaETH',
       address: '0x0000000000000000000000000000000000000000',
     },
     {
