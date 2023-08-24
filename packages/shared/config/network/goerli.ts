@@ -36,7 +36,7 @@ export const goerliConfig: EthereumChainConfig = {
         {
           category: 'lnbridgev20-default',
           bridge: 'ethereum-linea',
-          partner: { name: 'linea-goerli', role: 'issuing', symbol: 'ETH' },
+          partner: { name: 'linea-goerli', role: 'issuing', symbol: 'lineaETH' },
         },
       ],
       type: 'native',
