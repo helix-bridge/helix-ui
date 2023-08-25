@@ -6,6 +6,7 @@
     "dev:apps": "npm run dev -w apps",
     "build:apps": "npm run build -w apps",
     "build:helix.js": "npm run build -w helix.js",
+    "start:apps": "npm run start -w apps",
     "prettier": "prettier '**/*.{js,jsx,ts,tsx,json}' --write",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky install"
