@@ -31,7 +31,7 @@ export const goerliConfig: EthereumChainConfig = {
         {
           category: 'lnbridgev20-default',
           bridge: 'ethereum-zksync',
-          partner: { name: 'zksync-goerli', role: 'issuing', symbol: 'ETH' },
+          partner: { name: 'zksync-goerli', role: 'issuing', symbol: 'zkETH' },
         },
         {
           category: 'lnbridgev20-default',

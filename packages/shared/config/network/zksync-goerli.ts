@@ -6,7 +6,7 @@ export const zksyncGoerliConfig: EthereumChainConfig = {
     chainName: 'zkSync Era Testnet',
     nativeCurrency: {
       decimals: 18,
-      symbol: 'ETH',
+      symbol: 'zkETH',
     },
     rpcUrls: ['https://testnet.era.zksync.dev'],
   },
@@ -50,7 +50,7 @@ export const zksyncGoerliConfig: EthereumChainConfig = {
       address: '',
     },
     {
-      name: 'ETH',
+      name: 'zkETH',
       decimals: 18,
       cross: [
         {
@@ -62,7 +62,7 @@ export const zksyncGoerliConfig: EthereumChainConfig = {
       type: 'native',
       host: 'zksync-goerli',
       logo: 'token-ethereum.svg',
-      symbol: 'ETH',
+      symbol: 'zkETH',
       address: '0x0000000000000000000000000000000000000000',
     },
     {
