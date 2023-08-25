@@ -90,6 +90,10 @@ export function ExplorerLink({
       avalanche: `https://snowtrace.io/tx/${txHash}`,
       bsc: `https://bscscan.com/tx/${txHash}`,
       'arbitrum-goerli': `https://goerli.arbiscan.io/tx/${txHash}`,
+      'linea-goerli': `https://goerli.lineascan.build/tx/${txHash}`,
+      linea: `https://lineascan.build/tx/${txHash}`,
+      'zksync-goerli': `https://goerli.explorer.zksync.io/tx/${txHash}`,
+      zksync: `https://explorer.zksync.io/tx/${txHash}`,
     };
 
     const href =
