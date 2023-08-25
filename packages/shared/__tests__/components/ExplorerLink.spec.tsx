@@ -200,6 +200,10 @@ describe('<ExplorerLink />', () => {
       bsc: `https://bscscan.com/tx/0x123456`,
       astar: `https://astar.subscan.io/tx/0x123456`,
       'arbitrum-goerli': `https://goerli.arbiscan.io/tx/0x123456`,
+      'linea-goerli': `https://goerli.lineascan.build/tx/0x123456`,
+      linea: `https://lineascan.build/tx/0x123456`,
+      'zksync-goerli': `https://goerli.explorer.zksync.io/tx/0x123456`,
+      zksync: `https://explorer.zksync.io/tx/0x123456`,
     };
     const expected = explorers[config.name] ?? href;
 
