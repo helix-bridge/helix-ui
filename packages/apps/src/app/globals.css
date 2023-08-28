@@ -32,7 +32,8 @@ body {
 
 @layer components {
   .page-bg {
-    background: var(--page-bg, linear-gradient(180deg, #02061f 0%, #1c1837 100%));
+    /* background: var(--page-bg, linear-gradient(180deg, #02061f 0%, #1c1837 100%)); */
+    @apply bg-app-bg;
   }
 
   .home-page-bg {
@@ -45,7 +46,12 @@ body {
     opacity: 0.2;
   }
 
-  .app-footer {
+  .app-footer,
+  .app-header {
     @apply h-[70px] lg:h-[80px];
+  }
+
+  .app-main {
+    @apply py-[70px] lg:px-[80px];
   }
 }

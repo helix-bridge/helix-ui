@@ -2,6 +2,7 @@ import Footer from "@/components/footer";
 import "./globals.css";
 import type { Metadata } from "next";
 import { IBM_Plex_Sans } from "next/font/google";
+import Header from "@/components/header";
 
 const ibm_plex_sans = IBM_Plex_Sans({
   subsets: ["latin", "latin-ext"],
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className="bg-app-bg text-white">
       <body className={ibm_plex_sans.className}>
         <div className="relative min-h-screen">
+          <Header />
           {children}
           <Footer />
         </div>
