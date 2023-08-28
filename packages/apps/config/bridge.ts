@@ -53,6 +53,12 @@ import { goerliZksyncGoerliLnBridge } from '../bridges/lnbridge/ethereum-zksync/
 import { zksyncGoerliGoerliLnBridge } from '../bridges/lnbridge/zksync-ethereum/config';
 import { goerliLineaGoerliLnBridge } from '../bridges/lnbridge/ethereum-linea/config';
 import { lineaGoerliGoerliLnBridge } from '../bridges/lnbridge/linea-ethereum/config';
+import { arbitrumGoerliLineaGoerliLnBridge } from '../bridges/lnbridge/arbitrum-linea/config';
+import { lineaGoerliArbitrumGoerliLnBridge } from '../bridges/lnbridge/linea-arbitrum/config';
+import { arbitrumGoerliZksyncGoerliLnBridge } from '../bridges/lnbridge/arbitrum-zksync/config';
+import { zksyncGoerliArbitrumGoerliLnBridge } from '../bridges/lnbridge/zksync-arbitrum/config';
+import { lineaGoerliZksyncGoerliLnBridge } from '../bridges/lnbridge/linea-zksync/config';
+import { zksyncGoerliLineaGoerliLnBridge } from '../bridges/lnbridge/zksync-linea/config';
 
 const formalBridges = [
   arbitrumAstar,
@@ -118,6 +124,12 @@ const testBridges = [
   goerliLineaGoerliLnBridge,
   lineaGoerliGoerliLnBridge,
   goerliArbitrumL2,
+  arbitrumGoerliLineaGoerliLnBridge,
+  lineaGoerliArbitrumGoerliLnBridge,
+  arbitrumGoerliZksyncGoerliLnBridge,
+  zksyncGoerliArbitrumGoerliLnBridge,
+  lineaGoerliZksyncGoerliLnBridge,
+  zksyncGoerliLineaGoerliLnBridge,
 ];
 
 export const BRIDGES = (() => {

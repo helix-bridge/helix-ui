@@ -30,6 +30,12 @@ import { EthereumZksyncBridge as EthereumZksyncBridgeLnBridge } from './lnbridge
 import { ZksyncEthereumBridge as ZksyncEthereumBridgeLnBridge } from './lnbridge/zksync-ethereum/utils';
 import { EthereumLineaBridge as EthereumLineaBridgeLnBridge } from './lnbridge/ethereum-linea/utils';
 import { LineaEthereumBridge as LineaEthereumBridgeLnBridge } from './lnbridge/linea-ethereum/utils';
+import { ArbitrumLineaBridge as ArbitrumLineaBridgeLnBridge } from './lnbridge/arbitrum-linea/utils';
+import { LineaArbitrumBridge as LineaArbitrumBridgeLnBridge } from './lnbridge/linea-arbitrum/utils';
+import { ArbitrumZksyncBridge as ArbitrumZksyncBridgeLnBridge } from './lnbridge/arbitrum-zksync/utils';
+import { ZksyncArbitrumBridge as ZksyncArbitrumBridgeLnBridge } from './lnbridge/zksync-arbitrum/utils';
+import { LineaZksyncBridge as LineaZksyncBridgeLnBridge } from './lnbridge/linea-zksync/utils';
+import { ZksyncLineaBridge as ZksyncLineaBridgeLnBridge } from './lnbridge/zksync-linea/utils';
 
 export const bridgeConstructors = [
   CBridgeBridge,
@@ -63,6 +69,12 @@ export const bridgeConstructors = [
   ZksyncEthereumBridgeLnBridge,
   EthereumLineaBridgeLnBridge,
   LineaEthereumBridgeLnBridge,
+  ArbitrumLineaBridgeLnBridge,
+  LineaArbitrumBridgeLnBridge,
+  ArbitrumZksyncBridgeLnBridge,
+  ZksyncArbitrumBridgeLnBridge,
+  LineaZksyncBridgeLnBridge,
+  ZksyncLineaBridgeLnBridge,
 ];
 
 export function bridgeFactory<C extends BridgeConfig, O extends ChainConfig, T extends ChainConfig>(

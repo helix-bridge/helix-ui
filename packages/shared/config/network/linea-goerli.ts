@@ -69,6 +69,16 @@ export const lineaGoerliConfig: EthereumChainConfig = {
           bridge: 'linea-ethereum',
           partner: { name: 'goerli', role: 'issuing', symbol: 'USD//C' },
         },
+        {
+          category: 'lnbridgev20-default',
+          bridge: 'linea-arbitrum',
+          partner: { name: 'arbitrum-goerli', role: 'issuing', symbol: 'USDC' },
+        },
+        {
+          category: 'lnbridgev20-default',
+          bridge: 'linea-zksync',
+          partner: { name: 'zksync-goerli', role: 'issuing', symbol: 'USDC' },
+        },
       ],
       type: 'erc20',
       host: 'linea-goerli',

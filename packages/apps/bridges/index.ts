@@ -54,3 +54,12 @@ export { Zksync2EthereumLnBridge } from './lnbridge/zksync-ethereum';
 
 export { Ethereum2LineaLnBridge } from './lnbridge/ethereum-linea';
 export { Linea2EthereumLnBridge } from './lnbridge/linea-ethereum';
+
+export { Arbitrum2LineaLnBridge } from './lnbridge/arbitrum-linea';
+export { Linea2ArbitrumLnBridge } from './lnbridge/linea-arbitrum';
+
+export { Arbitrum2ZksyncLnBridge } from './lnbridge/arbitrum-zksync';
+export { Zksync2ArbitrumLnBridge } from './lnbridge/zksync-arbitrum';
+
+export { Linea2ZksyncLnBridge } from './lnbridge/linea-zksync';
+export { Zksync2LineaLnBridge } from './lnbridge/zksync-linea';
