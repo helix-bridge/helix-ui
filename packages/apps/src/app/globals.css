@@ -44,4 +44,8 @@ body {
     filter: blur(64.5px);
     opacity: 0.2;
   }
+
+  .app-footer {
+    @apply h-[70px] lg:h-[80px];
+  }
 }
