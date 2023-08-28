@@ -57,4 +57,10 @@ export type BridgeName =
   | 'zksync-ethereum'
   | 'ethereum-zksync'
   | 'ethereum-linea'
-  | 'linea-ethereum';
+  | 'linea-ethereum'
+  | 'arbitrum-linea'
+  | 'linea-arbitrum'
+  | 'arbitrum-zksync'
+  | 'zksync-arbitrum'
+  | 'linea-zksync'
+  | 'zksync-linea';
