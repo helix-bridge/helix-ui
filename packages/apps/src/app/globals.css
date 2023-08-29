@@ -55,3 +55,32 @@ body {
     @apply py-[70px] lg:px-[80px];
   }
 }
+
+.drawer-fade-enter {
+  opacity: 0;
+}
+.drawer-fade-enter > div {
+  transform: translateX(100%);
+}
+.drawer-fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+.drawer-fade-enter-active > div {
+  transform: translateX(0);
+  transition: transform 300ms;
+}
+.drawer-fade-exit {
+  opacity: 1;
+}
+.drawer-fade-exit > div {
+  transform: translateX(0);
+}
+.drawer-fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+.drawer-fade-exit-active > div {
+  transform: translateX(100%);
+  transition: transform 300ms;
+}
