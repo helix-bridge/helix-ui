@@ -35,7 +35,7 @@ export default function Header() {
 
         {/* right */}
         {pathName === "/apps" && (
-          <button className="border-primary px-middle inline-flex h-[30px] shrink-0 items-center justify-center rounded border transition hover:opacity-80 active:scale-95">
+          <button className="px-middle bg-primary hover:bg-primary/90 inline-flex h-[30px] shrink-0 items-center justify-center rounded transition active:translate-y-1">
             <span className="text-sm font-normal">Connect Wallet</span>
           </button>
         )}
@@ -48,7 +48,7 @@ function Nav({ children, href }: PropsWithChildren<{ href: string }>) {
   return (
     <Link
       href={href}
-      className="rounded-lg px-3 py-1 text-base font-medium transition hover:bg-white/10 active:scale-95"
+      className="rounded-lg px-3 py-1 text-base font-medium transition hover:bg-white/10 active:translate-y-1"
     >
       {children}
     </Link>
