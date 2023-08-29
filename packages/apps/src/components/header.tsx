@@ -1,5 +1,6 @@
 "use client";
 
+import Tooltip from "@/ui/tooltip";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -18,7 +19,12 @@ export default function Header() {
             <Link href="/">
               <Image width={90} height={25} alt="Logo" src="/images/logo.svg" />
             </Link>
-            <Image width={35} height={18} alt="Beta" src="/images/beta.svg" />
+            <Tooltip
+              content={<span className="text-xs font-light">Helix is in beta. Please use at your own risk level</span>}
+              className="w-fit"
+            >
+              <Image width={35} height={18} alt="Beta" src="/images/beta.svg" />
+            </Tooltip>
           </div>
 
           {/* nav */}
