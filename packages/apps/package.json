@@ -9,8 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.8.2",
     "@floating-ui/react": "^0.25.2",
     "@rainbow-me/rainbowkit": "^1.0.9",
+    "date-fns": "^2.30.0",
+    "date-fns-tz": "^2.0.0",
+    "graphql": "^16.8.0",
+    "helix.js": "^0.1.0",
     "next": "13.4.16",
     "react": "18.2.0",
     "react-dom": "18.2.0",
