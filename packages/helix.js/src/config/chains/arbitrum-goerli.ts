@@ -1,4 +1,4 @@
-import { ChainConfig, ChainID } from "@/types";
+import { ChainConfig, ChainID } from "../../types";
 
 export const arbitrumGoerliChain: ChainConfig = {
   id: ChainID.ARBITRUM_GOERLI,

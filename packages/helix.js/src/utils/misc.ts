@@ -1,5 +1,5 @@
-import { arbitrumGoerliChain, goerliChain } from "@/config";
-import { ChainConfig, Network } from "@/types";
+import { arbitrumGoerliChain, goerliChain } from "../config";
+import { ChainConfig, Network } from "../types";
 
 export function getChainsConfig() {
   return [goerliChain, arbitrumGoerliChain];

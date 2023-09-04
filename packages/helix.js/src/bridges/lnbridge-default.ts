@@ -1,7 +1,7 @@
-import type { Network, TokenSymbol } from "@/types";
+import type { Network, TokenSymbol } from "../types";
 import { PublicClient, TransactionReceipt, WalletClient } from "viem";
 import { LnBridgeCommon } from "./lnbridge-common";
-import { getChainConfig } from "@/utils";
+import { getChainConfig } from "../utils";
 
 export class LnBridgeDefault extends LnBridgeCommon {
   constructor(args: {
@@ -41,7 +41,7 @@ export class LnBridgeDefault extends LnBridgeCommon {
     const token = tokens.find(({ symbol }) => symbol === this.sourceToken);
 
     if (bridgeContract && walletAddress && token) {
-      const abi = (await import(`@/abi/lnbridgev20-default.json`)).default;
+      const abi = (await import(`../abi/lnbridgev20-default.json`)).default;
       const snapshot = [
         options.relayer,
         options.sourceToken,

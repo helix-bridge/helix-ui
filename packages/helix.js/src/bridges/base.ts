@@ -1,6 +1,6 @@
-import type { BridgeCategory, Network, TokenSymbol } from "@/types";
+import type { BridgeCategory, Network, TokenSymbol } from "../types";
 import { PublicClient, TransactionReceipt, WalletClient } from "viem";
-import { getChainConfig } from "@/utils";
+import { getChainConfig } from "../utils";
 
 export abstract class BaseBridge {
   protected readonly category: BridgeCategory;
@@ -51,7 +51,7 @@ export abstract class BaseBridge {
     const tokenAddress = tokens.find(({ symbol }) => symbol === this.sourceToken)?.address;
 
     if (bridgeContract && tokenAddress) {
-      const abi = (await import("@/abi/erc20.json")).default;
+      const abi = (await import("../abi/erc20.json")).default;
       const spender = bridgeContract.sourceAddress;
 
       return (await this.publicClient.readContract({
@@ -72,7 +72,7 @@ export abstract class BaseBridge {
     const walletAddress = (await this.walletClient.requestAddresses()).at(0);
 
     if (bridgeContract && tokenAddress && walletAddress) {
-      const abi = (await import("@/abi/erc20.json")).default;
+      const abi = (await import("../abi/erc20.json")).default;
       const spender = bridgeContract.sourceAddress;
 
       const { request } = await this.publicClient.simulateContract({

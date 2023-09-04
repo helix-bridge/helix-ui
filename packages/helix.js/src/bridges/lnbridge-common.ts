@@ -1,4 +1,4 @@
-import type { BridgeCategory, Network, TokenSymbol } from "@/types";
+import type { BridgeCategory, Network, TokenSymbol } from "../types";
 import { BaseBridge } from "./base";
 import { PublicClient, WalletClient } from "viem";
 
