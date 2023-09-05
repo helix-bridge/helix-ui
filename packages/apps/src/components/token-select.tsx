@@ -1,4 +1,4 @@
-import { getNetworkConfig, getTokenIconSrc } from "@/utils";
+import { getChainConfig, getTokenIcon } from "@/utils";
 import {
   FloatingPortal,
   offset,
@@ -12,12 +12,12 @@ import { Network, TokenSymbol } from "helix.js";
 import Image from "next/image";
 import { useRef, useState } from "react";
 
-interface Value {
+export interface Value {
   network: Network;
   symbol: TokenSymbol;
 }
 
-interface Item {
+export interface Item {
   network: Network;
   symbols: TokenSymbol[];
 }
@@ -29,6 +29,7 @@ interface Props {
 }
 
 export default function TokenSelect({ items, value, onSelect = () => undefined }: Props) {
+  const chainConfig = getChainConfig(value.network);
   const [isOpen, setIsOpen] = useState(false);
 
   const { refs, context, floatingStyles } = useFloating({
@@ -47,27 +48,24 @@ export default function TokenSelect({ items, value, onSelect = () => undefined }
   const dismiss = useDismiss(context);
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
 
-  const tokenIconSrc = getTokenIconSrc(value.symbol);
-  const networkConfig = getNetworkConfig(value.network);
-
   return (
     <>
       <button className="p-middle flex items-center justify-between" ref={refs.setReference} {...getReferenceProps()}>
         <div className="gap-middle flex items-center">
           <div className="relative w-fit">
-            <Image width={30} height={30} alt="Token icon" src={`/images/token/${tokenIconSrc}`} />
+            <Image width={30} height={30} alt="Token icon" src={`/images/token/${getTokenIcon(value.symbol)}`} />
             <Image
               width={16}
               height={16}
               alt="Network logo"
-              src={`/images/network/${networkConfig?.logoSrc || "unknown.png"}`}
+              src={`/images/network/${chainConfig?.logo || "unknown.png"}`}
               className="absolute bottom-0 right-0"
             />
           </div>
 
           <div className="gap-small flex flex-col">
             <span className="text-sm font-medium text-white">{value.symbol}</span>
-            <span className="truncate text-xs font-light text-white">{networkConfig?.name || "Unknown"}</span>
+            <span className="truncate text-xs font-light text-white">{chainConfig?.name || "Unknown"}</span>
           </div>
         </div>
 
@@ -101,7 +99,7 @@ function Cascader({ items, onSelect }: { items: Item[]; onSelect: (value: Value)
       {/* left */}
       <div className="flex h-60 flex-1 flex-col overflow-y-auto border-r border-r-white/30">
         {items.map(({ network, symbols }) => {
-          const networkConfig = getNetworkConfig(network);
+          const chainConfig = getChainConfig(network);
           return (
             <div
               key={network}
@@ -120,9 +118,9 @@ function Cascader({ items, onSelect }: { items: Item[]; onSelect: (value: Value)
                   width={16}
                   height={16}
                   alt="Network icon"
-                  src={`/images/network/${networkConfig?.logoSrc || "unknown.png"}`}
+                  src={`/images/network/${chainConfig?.logo || "unknown.png"}`}
                 />
-                <span>{networkConfig?.name || "Unknown"}</span>
+                <span>{chainConfig?.name || "Unknown"}</span>
               </div>
               <span>{`>`}</span>
             </div>
@@ -138,7 +136,7 @@ function Cascader({ items, onSelect }: { items: Item[]; onSelect: (value: Value)
             className="gap-small flex items-center"
             onClick={() => networkRef.current && onSelect({ network: networkRef.current, symbol })}
           >
-            <Image width={16} height={16} alt="Token icon" src={`/images/token/${getTokenIconSrc(symbol)}`} />
+            <Image width={16} height={16} alt="Token icon" src={`/images/token/${getTokenIcon(symbol)}`} />
             <span>{symbol}</span>
           </button>
         ))}
