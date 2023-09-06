@@ -46,6 +46,11 @@ body {
     opacity: 0.2;
   }
 
+  .token-select-dropdown {
+    width: calc(100vw - 3rem);
+    @apply lg:w-[36rem];
+  }
+
   .app-footer,
   .app-header {
     @apply h-[70px] lg:h-[80px];

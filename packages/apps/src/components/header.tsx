@@ -5,27 +5,25 @@ import Tooltip from "@/ui/tooltip";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 const User = dynamic(() => import("@/components/user"), { ssr: false });
 const Drawer = dynamic(() => import("@/ui/drawer"), { ssr: false });
 
 const navigationsConfig: { label: string; href: string; external?: boolean }[] = [
-  { href: "/apps", label: "Transfer" },
+  { href: "/", label: "Transfer" },
   { href: "/records", label: "Explorer" },
   { href: "https://docs.helixbridge.app/", label: "Docs", external: true },
 ];
 
 export default function Header() {
   const [isDrawerOpen, _, setDrawerOpen, setDrawerClose] = useToggle(false);
-  const pathName = usePathname();
 
   return (
     <>
       <div className="fixed left-0 top-0 z-10 w-full">
         <div className="app-header px-middle container mx-auto flex items-center justify-between">
           {/* left */}
-          <div className="gap-middle lg:gap-middle flex items-center">
+          <div className="flex items-center gap-5">
             {/* logo */}
             <div className="gap-middle flex items-center">
               <Link href="/">
@@ -42,33 +40,33 @@ export default function Header() {
             </div>
 
             {/* navigations */}
-            {navigationsConfig.map(({ href, label, external }) =>
-              external ? (
-                <a
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  href={href}
-                  key={label}
-                  className="hidden rounded-lg px-3 py-1 text-base font-medium transition hover:bg-white/10 active:translate-y-1 lg:inline"
-                >
-                  {label}
-                </a>
-              ) : (
-                <Link
-                  key={label}
-                  href={href}
-                  className="hidden rounded-lg px-3 py-1 text-base font-medium transition hover:bg-white/10 active:translate-y-1 lg:inline"
-                >
-                  {label}
-                </Link>
-              ),
-            )}
+            <div className="gap-middle hidden items-center lg:flex">
+              {navigationsConfig.map(({ href, label, external }) =>
+                external ? (
+                  <a
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    href={href}
+                    key={label}
+                    className="rounded-lg px-3 py-1 text-base font-medium transition hover:bg-white/10 active:translate-y-1"
+                  >
+                    {label}
+                  </a>
+                ) : (
+                  <Link
+                    key={label}
+                    href={href}
+                    className="rounded-lg px-3 py-1 text-base font-medium transition hover:bg-white/10 active:translate-y-1"
+                  >
+                    {label}
+                  </Link>
+                ),
+              )}
+            </div>
           </div>
 
           {/* right */}
-          {pathName !== "/" && (
-            <User className="px-middle hover:bg-primary/90 gap-middle hidden h-[30px] items-center justify-center lg:inline-flex" />
-          )}
+          <User className="px-middle hover:bg-primary/90 gap-middle hidden h-[30px] items-center justify-center lg:inline-flex" />
           <Image
             width={24}
             height={24}
@@ -103,12 +101,10 @@ export default function Header() {
           </div>
 
           <div className="flex justify-center">
-            {pathName !== "/" && (
-              <User
-                className="px-large gap-middle inline-flex h-8 items-center justify-center"
-                onClose={setDrawerClose}
-              />
-            )}
+            <User
+              className="px-large gap-middle inline-flex h-8 items-center justify-center"
+              onClose={setDrawerClose}
+            />
           </div>
         </div>
 

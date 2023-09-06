@@ -1,12 +1,11 @@
-import Link from "next/link";
+import Transfer from "@/components/transfer";
 
 export default function Home() {
   return (
-    <main className="app-main relative">
-      <div className="home-page-bg absolute bottom-0 left-0 right-0 top-0 -z-10" />
-
-      <Link href="/apps">Apps 👉</Link>
-      <p>Apps Page</p>
+    <main className="app-main">
+      <div className="px-middle py-middle container mx-auto lg:py-12">
+        <Transfer />
+      </div>
     </main>
   );
 }

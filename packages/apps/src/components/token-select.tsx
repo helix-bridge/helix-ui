@@ -24,18 +24,18 @@ export interface Item {
 
 interface Props {
   items: Item[];
-  value: Value;
+  value?: Value;
   onSelect?: (value: Value) => void;
 }
 
 export default function TokenSelect({ items, value, onSelect = () => undefined }: Props) {
-  const chainConfig = getChainConfig(value.network);
   const [isOpen, setIsOpen] = useState(false);
 
   const { refs, context, floatingStyles } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
-    middleware: [offset(10)],
+    placement: "bottom-end",
+    middleware: [offset(8)],
   });
 
   const { styles, isMounted } = useTransitionStyles(context, {
@@ -48,24 +48,37 @@ export default function TokenSelect({ items, value, onSelect = () => undefined }
   const dismiss = useDismiss(context);
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
 
+  const chainConfig = value && getChainConfig(value.network);
+  const tokenIcon = value ? getTokenIcon(value.symbol) : "unknown.svg";
+
   return (
     <>
-      <button className="p-middle flex items-center justify-between" ref={refs.setReference} {...getReferenceProps()}>
+      <button
+        className="p-middle bg-component hover:border-line flex w-36 shrink-0 items-center justify-between rounded border border-transparent transition active:translate-y-1 lg:w-44"
+        ref={refs.setReference}
+        {...getReferenceProps()}
+      >
         <div className="gap-middle flex items-center">
-          <div className="relative w-fit">
-            <Image width={30} height={30} alt="Token icon" src={`/images/token/${getTokenIcon(value.symbol)}`} />
+          <div className="relative w-fit shrink-0">
+            <Image
+              width={30}
+              height={30}
+              alt="Token icon"
+              src={`/images/token/${tokenIcon}`}
+              className="rounded-full"
+            />
             <Image
               width={16}
               height={16}
               alt="Network logo"
               src={`/images/network/${chainConfig?.logo || "unknown.png"}`}
-              className="absolute bottom-0 right-0"
+              className="absolute -bottom-1 -right-1 rounded-full"
             />
           </div>
 
-          <div className="gap-small flex flex-col">
-            <span className="text-sm font-medium text-white">{value.symbol}</span>
-            <span className="truncate text-xs font-light text-white">{chainConfig?.name || "Unknown"}</span>
+          <div className="gap-small flex flex-col items-start truncate">
+            <span className="text-sm font-medium text-white">{value?.symbol || "Unknown"}</span>
+            <span className="text-xs font-light text-white/60">{chainConfig?.name || "Unknown"}</span>
           </div>
         </div>
 
@@ -75,14 +88,21 @@ export default function TokenSelect({ items, value, onSelect = () => undefined }
           width={16}
           height={16}
           style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
+          className="shrink-0"
         />
       </button>
 
       {isMounted && (
         <FloatingPortal>
-          <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
-            <div style={styles} className="bg-component rounded"></div>
-            <Cascader items={items} onSelect={onSelect} />
+          <div
+            style={floatingStyles}
+            ref={refs.setFloating}
+            {...getFloatingProps()}
+            className="token-select-dropdown z-20"
+          >
+            <div style={styles} className="bg-component p-small lg:p-middle rounded border border-white/10 shadow-2xl">
+              <Cascader items={items} onSelect={onSelect} />
+            </div>
           </div>
         </FloatingPortal>
       )}
@@ -97,13 +117,13 @@ function Cascader({ items, onSelect }: { items: Item[]; onSelect: (value: Value)
   return (
     <div className="flex">
       {/* left */}
-      <div className="flex h-60 flex-1 flex-col overflow-y-auto border-r border-r-white/30">
+      <div className="pr-small flex h-60 flex-1 flex-col overflow-y-auto border-r border-r-white/20">
         {items.map(({ network, symbols }) => {
           const chainConfig = getChainConfig(network);
           return (
             <div
               key={network}
-              className="flex items-center justify-between hover:cursor-pointer hover:bg-white/30"
+              className="px-small lg:px-middle flex items-center justify-between rounded py-[2px] transition-colors hover:cursor-pointer hover:bg-white/10"
               onMouseEnter={() => {
                 setSymbols(symbols);
                 networkRef.current = network;
@@ -119,25 +139,32 @@ function Cascader({ items, onSelect }: { items: Item[]; onSelect: (value: Value)
                   height={16}
                   alt="Network icon"
                   src={`/images/network/${chainConfig?.logo || "unknown.png"}`}
+                  className="rounded-full"
                 />
-                <span>{chainConfig?.name || "Unknown"}</span>
+                <span className="text-sm font-light">{chainConfig?.name || "Unknown"}</span>
               </div>
-              <span>{`>`}</span>
+              <span className="text-sm font-light text-white/50">{`>`}</span>
             </div>
           );
         })}
       </div>
 
       {/* right */}
-      <div className="h-60 flex-1 overflow-y-auto">
+      <div className="pl-small h-60 flex-1 overflow-y-auto">
         {symbols.map((symbol) => (
           <button
             key={symbol}
-            className="gap-small flex items-center"
+            className="gap-small px-small lg:px-middle flex w-full items-center rounded py-[2px] hover:bg-white/10"
             onClick={() => networkRef.current && onSelect({ network: networkRef.current, symbol })}
           >
-            <Image width={16} height={16} alt="Token icon" src={`/images/token/${getTokenIcon(symbol)}`} />
-            <span>{symbol}</span>
+            <Image
+              width={16}
+              height={16}
+              alt="Token icon"
+              src={`/images/token/${getTokenIcon(symbol)}`}
+              className="rounded-full"
+            />
+            <span className="text-sm font-light">{symbol}</span>
           </button>
         ))}
       </div>
