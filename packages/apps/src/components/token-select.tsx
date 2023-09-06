@@ -35,7 +35,7 @@ export default function TokenSelect({ items, value, onSelect = () => undefined }
     open: isOpen,
     onOpenChange: setIsOpen,
     placement: "bottom-end",
-    middleware: [offset(8)],
+    middleware: [offset(6)],
   });
 
   const { styles, isMounted } = useTransitionStyles(context, {

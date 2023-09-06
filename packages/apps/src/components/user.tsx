@@ -30,7 +30,7 @@ export default function User({ className, onClose = () => undefined }: Props) {
     open: isOpen,
     onOpenChange: setIsOpen,
     middleware: [
-      offset(10),
+      offset(6),
       size({
         apply({ rects, elements }) {
           Object.assign(elements.floating.style, { width: `${rects.reference.width}px` });
