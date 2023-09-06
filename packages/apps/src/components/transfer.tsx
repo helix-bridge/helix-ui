@@ -96,7 +96,7 @@ export default function Transfer() {
       </Section>
 
       {/* action */}
-      <button className="bg-primary inline-flex h-10 shrink-0 items-center justify-center rounded">
+      <button className="bg-primary inline-flex h-10 shrink-0 items-center justify-center rounded transition hover:opacity-80 active:translate-y-1">
         <span className="text-sm font-medium text-white">Transfer</span>
       </button>
     </div>
