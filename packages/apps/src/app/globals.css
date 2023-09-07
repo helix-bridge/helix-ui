@@ -106,3 +106,25 @@ body {
   opacity: 0;
   transition: opacity 200ms;
 }
+
+/* component loading */
+.component-loading-appear,
+.component-loading-enter {
+  background-color: transparent;
+}
+.component-loading-appear-active,
+.component-loading-enter-active {
+  background-color: rgba(36, 42, 46, 0.6);
+  transition: background-color 300ms;
+}
+.component-loading-appear-done,
+.component-loading-enter-done {
+  background-color: rgba(36, 42, 46, 0.6);
+}
+.component-loading-exit {
+  background-color: rgba(36, 42, 46, 0.6);
+}
+.component-loading-exit-active {
+  background-color: transparent;
+  transition: background-color 300ms;
+}
