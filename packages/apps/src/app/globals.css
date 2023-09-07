@@ -61,6 +61,7 @@ body {
   }
 }
 
+/* drawer */
 .drawer-fade-enter {
   opacity: 0;
 }
@@ -88,4 +89,20 @@ body {
 .drawer-fade-exit-active > div {
   transform: translateX(100%);
   transition: transform 300ms;
+}
+
+/* tabs */
+.tabs-fade-enter {
+  opacity: 0;
+}
+.tabs-fade-enter-active {
+  opacity: 1;
+  transition: opacity 200ms;
+}
+.tabs-fade-exit {
+  opacity: 1;
+}
+.tabs-fade-exit-active {
+  opacity: 0;
+  transition: opacity 200ms;
 }
