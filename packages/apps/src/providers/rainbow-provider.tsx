@@ -2,7 +2,7 @@
 
 import "@rainbow-me/rainbowkit/styles.css";
 import { RainbowKitProvider, connectorsForWallets, getDefaultWallets, darkTheme } from "@rainbow-me/rainbowkit";
-import { imTokenWallet, okxWallet } from "@rainbow-me/rainbowkit/wallets";
+import { imTokenWallet, okxWallet, talismanWallet } from "@rainbow-me/rainbowkit/wallets";
 import { PropsWithChildren } from "react";
 import { mainnet, goerli, arbitrum, arbitrumGoerli, zkSync, zkSyncTestnet, linea, lineaTestnet } from "viem/chains";
 import { WagmiConfig, configureChains, createConfig } from "wagmi";
@@ -23,7 +23,7 @@ export default function RainbowProvider({ children }: PropsWithChildren<unknown>
     ...wallets,
     {
       groupName: "More",
-      wallets: [okxWallet({ projectId, chains }), imTokenWallet({ projectId, chains })],
+      wallets: [okxWallet({ projectId, chains }), imTokenWallet({ projectId, chains }), talismanWallet({ chains })],
     },
   ]);
 
