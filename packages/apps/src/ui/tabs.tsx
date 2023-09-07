@@ -13,9 +13,8 @@ export interface TabsProps<K> {
 }
 
 export default function Tabs<K extends Key = string>({ items, activeKey, onChange = () => undefined }: TabsProps<K>) {
-  const activeItem = items.find(({ key }) => key === activeKey) || items.at(0);
-
   const [dividerWidth, setDividerWidth] = useState<number | undefined>();
+
   const labelRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const railRef = useRef<HTMLDivElement | null>(null);
 
@@ -25,6 +24,7 @@ export default function Tabs<K extends Key = string>({ items, activeKey, onChang
 
   const nodeRef = stateRef.current === activeKey ? currentRef : previousRef;
   stateRef.current = activeKey;
+  const activeItem = items.find(({ key }) => key === activeKey) || items.at(0);
 
   useEffect(() => {
     const labelElement = labelRefs.current[items.findIndex(({ key }) => key === activeKey)];
