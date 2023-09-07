@@ -78,10 +78,10 @@ export default function Table<T extends { key: Key }>({
           </div>
         </CSSTransition>
 
-        {/* data source */}
+        {/* content */}
         {dataSource.length ? (
           <div>
-            {/* content */}
+            {/* data source */}
             <div>
               {dataSource.map((row) => (
                 <div
