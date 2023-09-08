@@ -3,6 +3,7 @@
   "description": "Helix UI",
   "private": true,
   "scripts": {
+    "lint:apps": "npm run lint -w apps",
     "dev:apps": "npm run dev -w apps",
     "build:apps": "npm run build -w apps",
     "build:helix.js": "npm run build -w helix.js",

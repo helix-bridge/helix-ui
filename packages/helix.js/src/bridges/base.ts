@@ -46,9 +46,9 @@ export abstract class BaseBridge {
   }
 
   async getAllowance(owner: `0x${string}`) {
-    const { crossChain, tokens } = getChainConfig(this.sourceChain);
-    const bridgeContract = crossChain[this.targetChain]?.[this.category]?.bridgeContract;
-    const tokenAddress = tokens.find(({ symbol }) => symbol === this.sourceToken)?.address;
+    const chainConfig = getChainConfig(this.sourceChain);
+    const bridgeContract = chainConfig?.crossChain[this.targetChain]?.[this.category]?.bridgeContract;
+    const tokenAddress = chainConfig?.tokens.find(({ symbol }) => symbol === this.sourceToken)?.address;
 
     if (bridgeContract && tokenAddress) {
       const abi = (await import("../abi/erc20.json")).default;
@@ -66,9 +66,9 @@ export abstract class BaseBridge {
   }
 
   async approve(amount: bigint) {
-    const { crossChain, tokens } = getChainConfig(this.sourceChain);
-    const bridgeContract = crossChain[this.targetChain]?.[this.category]?.bridgeContract;
-    const tokenAddress = tokens.find(({ symbol }) => symbol === this.sourceToken)?.address;
+    const chainConfig = getChainConfig(this.sourceChain);
+    const bridgeContract = chainConfig?.crossChain[this.targetChain]?.[this.category]?.bridgeContract;
+    const tokenAddress = chainConfig?.tokens.find(({ symbol }) => symbol === this.sourceToken)?.address;
     const walletAddress = (await this.walletClient.requestAddresses()).at(0);
 
     if (bridgeContract && tokenAddress && walletAddress) {

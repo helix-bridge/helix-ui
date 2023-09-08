@@ -35,10 +35,10 @@ export class LnBridgeDefault extends LnBridgeCommon {
       withdrawNonce: bigint;
     },
   ): Promise<TransactionReceipt | undefined> {
-    const { crossChain, tokens } = getChainConfig(this.sourceChain);
-    const bridgeContract = crossChain[this.targetChain]?.[this.category]?.bridgeContract;
+    const chainConfig = getChainConfig(this.sourceChain);
+    const bridgeContract = chainConfig?.crossChain[this.targetChain]?.[this.category]?.bridgeContract;
     const walletAddress = (await this.walletClient.requestAddresses()).at(0);
-    const token = tokens.find(({ symbol }) => symbol === this.sourceToken);
+    const token = chainConfig?.tokens.find(({ symbol }) => symbol === this.sourceToken);
 
     if (bridgeContract && walletAddress && token) {
       const abi = (await import(`../abi/lnbridgev20-default.json`)).default;

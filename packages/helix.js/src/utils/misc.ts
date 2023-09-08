@@ -1,15 +1,17 @@
 import { arbitrumGoerliChain, goerliChain } from "../config";
-import { ChainConfig, Network } from "../types";
+import { Network } from "../types";
 
 export function getChainsConfig() {
   return [goerliChain, arbitrumGoerliChain];
 }
 
 export function getChainConfig(network: Network) {
-  const mapping: Record<Network, ChainConfig> = {
-    "arbitrum-goerli": arbitrumGoerliChain,
-    goerli: goerliChain,
-  };
-
-  return mapping[network];
+  switch (network) {
+    case "arbitrum-goerli":
+      return arbitrumGoerliChain;
+    case "goerli":
+      return goerliChain;
+    default:
+      return undefined;
+  }
 }

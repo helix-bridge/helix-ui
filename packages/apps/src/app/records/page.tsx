@@ -1,41 +1,82 @@
 "use client";
 
+import { QUERY_RECORDS } from "@/config";
+import { RecordStatus, RecordsResponseData, RecordsVariables, UrlSearchParam } from "@/types";
 import Tabs, { TabsProps } from "@/ui/tabs";
+import { useQuery } from "@apollo/client";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import HistoryRecords from "@/components/history-records";
 
-type TabKey = "all" | "pending" | "success" | "refunded";
+enum AllStatus {
+  All = -1,
+}
+type TabKey = RecordStatus | AllStatus;
+
+const pageSize = 10;
 
 export default function Records() {
-  const [activeKey, setActiveKey] = useState<TabsProps<TabKey>["activeKey"]>("all");
+  const searchParams = useSearchParams();
+
+  const [activeKey, setActiveKey] = useState<TabsProps<TabKey>["activeKey"]>(AllStatus.All);
+  const [currentPagge, setCurrentPage] = useState(0);
+
+  const {
+    loading,
+    data: records,
+    refetch,
+  } = useQuery<RecordsResponseData, RecordsVariables>(QUERY_RECORDS, {
+    variables: {
+      row: pageSize,
+      page: currentPagge,
+      sender: searchParams.get(UrlSearchParam.Address) || undefined,
+      recipient: searchParams.get(UrlSearchParam.Address) || undefined,
+      results: activeKey === AllStatus.All ? undefined : [activeKey],
+    },
+  });
+
+  const createChildren = () => (
+    <HistoryRecords
+      // dataSource={[]}
+      dataSource={(records?.historyRecords?.records || []).map((r) => ({ ...r, key: r.id }))}
+      // loading={true}
+      loading={loading}
+      total={records?.historyRecords?.total}
+      pageSize={pageSize}
+      currentPage={currentPagge}
+      onPageChange={setCurrentPage}
+      onRowClick={() => undefined}
+    />
+  );
 
   return (
     <main className="app-main">
       <div className="px-middle container mx-auto">
         <Tabs
-          activeKey={activeKey}
-          onChange={setActiveKey}
           items={[
             {
-              key: "all",
+              key: AllStatus.All,
               label: <span>All</span>,
-              children: <div>All</div>,
+              children: createChildren(),
             },
             {
-              key: "pending",
+              key: RecordStatus.Pending,
               label: <span>Pending</span>,
-              children: <div>Pending</div>,
+              children: createChildren(),
             },
             {
-              key: "success",
+              key: RecordStatus.Success,
               label: <span>Success</span>,
-              children: <div>Success</div>,
+              children: createChildren(),
             },
             {
-              key: "refunded",
+              key: RecordStatus.Refunded,
               label: <span>Refunded</span>,
-              children: <div>Refunded</div>,
+              children: createChildren(),
             },
           ]}
+          activeKey={activeKey}
+          onChange={setActiveKey}
         />
       </div>
     </main>

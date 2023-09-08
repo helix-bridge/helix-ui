@@ -1,4 +1,4 @@
-export type TokenSymbol = "ETH" | "GoerliETH" | "RING" | "USDC" | "USDT";
+export type TokenSymbol = "ETH" | "GoerliETH" | "RING" | "USDC" | "USDT" | "USD//C";
 
 export interface Token {
   decimals: 18 | 6;

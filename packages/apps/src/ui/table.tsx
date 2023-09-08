@@ -7,7 +7,7 @@ import Pagination from "./pagination";
 export interface ColumnType<T> {
   title: ReactElement;
   key: Key;
-  dataIndex: keyof T;
+  dataIndex?: keyof T;
   width?: string | number;
   render?: (row: T) => ReactElement;
 }
@@ -51,7 +51,7 @@ export default function Table<T extends { key: Key }>({
     <div className="min-w-[60rem] overflow-x-auto">
       {/* header */}
       <div
-        className="gap-middle bg-component px-middle py-large grid items-center text-sm font-normal text-white"
+        className="gap-middle bg-component px-middle py-large grid items-center rounded-t text-sm font-normal text-white"
         style={{ gridTemplateColumns: templateCols }}
       >
         {columns.map(({ key, title }) => (
@@ -71,7 +71,7 @@ export default function Table<T extends { key: Key }>({
           appear
         >
           <div
-            className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center"
+            className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center rounded-b"
             ref={loadingRef}
           >
             <CountLoading size="large" />
@@ -82,19 +82,19 @@ export default function Table<T extends { key: Key }>({
         {dataSource.length ? (
           <div>
             {/* data source */}
-            <div>
+            <div className="mb-5">
               {dataSource.map((row) => (
                 <div
                   key={row.key}
-                  className={`gap-middle p-middle grid items-center text-sm font-light text-white transition-colors ${
-                    onRowClick ? "hover:cursor-pointer hover:opacity-80" : ""
+                  className={`gap-middle p-middle grid items-center border-t border-t-white/10 text-sm font-light text-white transition-colors ${
+                    onRowClick ? "hover:cursor-pointer hover:bg-white/10" : ""
                   }`}
                   style={{ gridTemplateColumns: templateCols }}
                   onClick={() => onRowClick && onRowClick(row.key, row)}
                 >
                   {columns.map(({ key, dataIndex, render }) => (
                     <Fragment key={key}>
-                      {render ? render(row) : <span className="truncate">{row[dataIndex]}</span>}
+                      {render ? render(row) : dataIndex ? <span className="truncate">{row[dataIndex]}</span> : null}
                     </Fragment>
                   ))}
                 </div>
@@ -107,7 +107,7 @@ export default function Table<T extends { key: Key }>({
             )}
           </div>
         ) : (
-          <div className="gap-large flex flex-col items-center justify-center py-10">
+          <div className="gap-large flex h-48 flex-col items-center justify-center">
             {!loading && (
               <>
                 <Image width={50} height={63} alt="No data" src="/images/no-data.svg" />

@@ -7,9 +7,10 @@ interface Props {
   address: string;
   copyable?: boolean;
   className?: string;
+  forceShort?: boolean;
 }
 
-export default function PrettyAddress({ address, copyable, className }: Props) {
+export default function PrettyAddress({ address, copyable, className, forceShort }: Props) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback<MouseEventHandler<HTMLImageElement>>(
@@ -35,8 +36,14 @@ export default function PrettyAddress({ address, copyable, className }: Props) {
 
   return (
     <div className="gap-small inline-flex items-center">
-      <span className={`lg:hidden ${className}`}>{toShortAdrress(address)}</span>
-      <span className={`hidden lg:inline`}>{address}</span>
+      {forceShort ? (
+        <span className={className}>{toShortAdrress(address)}</span>
+      ) : (
+        <>
+          <span className={`lg:hidden ${className}`}>{toShortAdrress(address)}</span>
+          <span className={`hidden lg:inline`}>{address}</span>
+        </>
+      )}
 
       {copyable ? (
         copied ? (
