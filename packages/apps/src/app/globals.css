@@ -31,21 +31,6 @@ body {
 }
 
 @layer components {
-  .page-bg {
-    /* background: var(--page-bg, linear-gradient(180deg, #02061f 0%, #1c1837 100%)); */
-    @apply bg-app-bg;
-  }
-
-  .home-page-bg {
-    background:
-      url(../../public/images/home-page-bg.png),
-      lightgray 50% / cover no-repeat;
-    background-repeat: no-repeat;
-    background-size: cover;
-    filter: blur(64.5px);
-    opacity: 0.2;
-  }
-
   .token-select-dropdown {
     width: calc(100vw - 3rem);
     @apply lg:w-[36rem];
