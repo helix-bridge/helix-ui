@@ -87,7 +87,7 @@ export default function Table<T extends { key: Key }>({
                 <div
                   key={row.key}
                   className={`gap-middle p-middle grid items-center border-t border-t-white/10 text-sm font-light text-white transition-colors ${
-                    onRowClick ? "hover:cursor-pointer hover:bg-white/10" : ""
+                    onRowClick ? "hover:cursor-pointer hover:bg-white/5" : ""
                   }`}
                   style={{ gridTemplateColumns: templateCols }}
                   onClick={() => onRowClick && onRowClick(row.key, row)}
