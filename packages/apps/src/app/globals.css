@@ -128,3 +128,33 @@ body {
   background-color: transparent;
   transition: background-color 300ms;
 }
+
+/* modal */
+.modal-fade-enter {
+  opacity: 0;
+}
+.modal-fade-enter > div {
+  transform: scale(0.5);
+}
+.modal-fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+.modal-fade-enter-active > div {
+  transform: scale(1);
+  transition: transform 300ms;
+}
+.modal-fade-exit {
+  opacity: 1;
+}
+.modal-fade-exit > div {
+  transform: scale(1);
+}
+.modal-fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+.modal-fade-exit-active > div {
+  transform: scale(0.5);
+  transition: transform 300ms;
+}
