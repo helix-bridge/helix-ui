@@ -26,3 +26,5 @@ export * from './zksync-goerli';
 export * from './zksync';
 export * from './linea';
 export * from './linea-goerli';
+export * from './mantle';
+export * from './mantle-goerli';

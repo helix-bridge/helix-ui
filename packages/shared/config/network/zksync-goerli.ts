@@ -25,14 +25,7 @@ export const zksyncGoerliConfig: EthereumChainConfig = {
     {
       name: 'RING',
       decimals: 18,
-      cross: [
-        {
-          category: 'lnbridgev20-opposite',
-          bridge: 'zksync-ethereum',
-          partner: { name: 'goerli', role: 'issuing', symbol: 'RING' },
-          basefee: 5000,
-        },
-      ],
+      cross: [],
       type: 'erc20',
       host: 'zksync-goerli',
       logo: 'token-ring.svg',
@@ -52,13 +45,7 @@ export const zksyncGoerliConfig: EthereumChainConfig = {
     {
       name: 'zkETH',
       decimals: 18,
-      cross: [
-        {
-          category: 'lnbridgev20-opposite',
-          bridge: 'zksync-ethereum',
-          partner: { name: 'goerli', role: 'issuing', symbol: 'GoerliETH' },
-        },
-      ],
+      cross: [],
       type: 'native',
       host: 'zksync-goerli',
       logo: 'token-ethereum.svg',
@@ -68,23 +55,7 @@ export const zksyncGoerliConfig: EthereumChainConfig = {
     {
       name: 'USDC',
       decimals: 6,
-      cross: [
-        {
-          category: 'lnbridgev20-opposite',
-          bridge: 'zksync-ethereum',
-          partner: { name: 'goerli', role: 'issuing', symbol: 'USDC' },
-        },
-        {
-          category: 'lnbridgev20-default',
-          bridge: 'zksync-arbitrum',
-          partner: { name: 'arbitrum-goerli', role: 'issuing', symbol: 'USDC' },
-        },
-        {
-          category: 'lnbridgev20-default',
-          bridge: 'zksync-linea',
-          partner: { name: 'linea-goerli', role: 'issuing', symbol: 'USDC' },
-        },
-      ],
+      cross: [],
       type: 'erc20',
       host: 'zksync-goerli',
       logo: 'token-usdc.svg',

@@ -36,6 +36,12 @@ import { ArbitrumZksyncBridge as ArbitrumZksyncBridgeLnBridge } from './lnbridge
 import { ZksyncArbitrumBridge as ZksyncArbitrumBridgeLnBridge } from './lnbridge/zksync-arbitrum/utils';
 import { LineaZksyncBridge as LineaZksyncBridgeLnBridge } from './lnbridge/linea-zksync/utils';
 import { ZksyncLineaBridge as ZksyncLineaBridgeLnBridge } from './lnbridge/zksync-linea/utils';
+import { MantleArbitrumBridge as MantleArbitrumBridgeLnBridge } from './lnbridge/mantle-arbitrum/utils';
+import { ArbitrumMantleBridge as ArbitrumMantleBridgeLnBridge } from './lnbridge/arbitrum-mantle/utils';
+import { MantleEthereumBridge as MantleEthereumBridgeLnBridge } from './lnbridge/mantle-ethereum/utils';
+import { EthereumMantleBridge as EthereumMantleBridgeLnBridge } from './lnbridge/ethereum-mantle/utils';
+import { MantleLineaBridge as MantleLineaBridgeLnBridge } from './lnbridge/mantle-linea/utils';
+import { LineaMantleBridge as LineaMantleBridgeLnBridge } from './lnbridge/linea-mantle/utils';
 
 export const bridgeConstructors = [
   CBridgeBridge,
@@ -75,6 +81,12 @@ export const bridgeConstructors = [
   ZksyncArbitrumBridgeLnBridge,
   LineaZksyncBridgeLnBridge,
   ZksyncLineaBridgeLnBridge,
+  MantleArbitrumBridgeLnBridge,
+  ArbitrumMantleBridgeLnBridge,
+  MantleEthereumBridgeLnBridge,
+  EthereumMantleBridgeLnBridge,
+  MantleLineaBridgeLnBridge,
+  LineaMantleBridgeLnBridge,
 ];
 
 export function bridgeFactory<C extends BridgeConfig, O extends ChainConfig, T extends ChainConfig>(

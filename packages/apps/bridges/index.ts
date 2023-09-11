@@ -63,3 +63,10 @@ export { Zksync2ArbitrumLnBridge } from './lnbridge/zksync-arbitrum';
 
 export { Linea2ZksyncLnBridge } from './lnbridge/linea-zksync';
 export { Zksync2LineaLnBridge } from './lnbridge/zksync-linea';
+
+export { Mantle2ArbitrumLnBridge } from './lnbridge/mantle-arbitrum';
+export { Arbitrum2MantleLnBridge } from './lnbridge/arbitrum-mantle';
+export { Mantle2EthereumLnBridge } from './lnbridge/mantle-ethereum';
+export { Ethereum2MantleLnBridge } from './lnbridge/ethereum-mantle';
+export { Mantle2LineaLnBridge } from './lnbridge/mantle-linea';
+export { Linea2MantleLnBridge } from './lnbridge/linea-mantle';

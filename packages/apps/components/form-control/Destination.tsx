@@ -51,7 +51,10 @@ export function Destination({
             </div>
           ),
           tokens: item.tokens
-            .filter((token) => (!fromToken || isTransferableTokenPair(token, fromToken)) && !!token.cross.length)
+            .filter(
+              (token) =>
+                (!fromToken && token.cross.length > 0) || (fromToken && isTransferableTokenPair(fromToken, token))
+            )
             .map((token) => ({
               ...token,
               label: (

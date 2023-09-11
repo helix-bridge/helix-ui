@@ -49,11 +49,20 @@ export abstract class LnBridgeBridge<
       contractAddress,
       async (contract) => {
         if (snapshot) {
-          const { relayer, sourceToken, transferId, depositedMargin, totalFee, withdrawNonce } = snapshot;
+          const {
+            remoteChainId,
+            relayer,
+            sourceToken,
+            targetToken,
+            transferId,
+            depositedMargin,
+            totalFee,
+            withdrawNonce,
+          } = snapshot;
           const snapshotArgs =
             bridge.category === 'lnbridgev20-default'
-              ? [relayer, sourceToken, transferId, totalFee, withdrawNonce]
-              : [relayer, sourceToken, transferId, depositedMargin, totalFee];
+              ? [remoteChainId, relayer, sourceToken, targetToken, transferId, totalFee, withdrawNonce]
+              : [remoteChainId, relayer, sourceToken, targetToken, transferId, totalFee, depositedMargin];
 
           if (type === 'native') {
             return contract.transferAndLockMargin(snapshotArgs, transferAmount, recipient, {
