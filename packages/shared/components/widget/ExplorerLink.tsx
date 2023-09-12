@@ -94,6 +94,8 @@ export function ExplorerLink({
       linea: `https://lineascan.build/tx/${txHash}`,
       'zksync-goerli': `https://goerli.explorer.zksync.io/tx/${txHash}`,
       zksync: `https://explorer.zksync.io/tx/${txHash}`,
+      mantle: `https://explorer.mantle.xyz/tx/${txHash}`,
+      'mantle-goerli': `https://explorer.testnet.mantle.xyz/tx/${txHash}`,
     };
 
     const href =

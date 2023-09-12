@@ -1,19 +1,11 @@
 import { isAddress } from 'ethers/lib/utils';
-import { CrossOverview, Network, PolkadotChainConfig, TokenWithBridgesInfo } from 'shared/model';
+import { Network, PolkadotChainConfig, TokenWithBridgesInfo } from 'shared/model';
 import { isSS58Address } from 'shared/utils/helper/validator';
 import { isPolkadotNetwork } from 'shared/utils/network/network';
 import { chainConfigs } from './network';
 
-export const isTransferableTokenPair = (token1: TokenWithBridgesInfo, token2: TokenWithBridgesInfo): boolean => {
-  const check = (token: TokenWithBridgesInfo) => (item: CrossOverview) =>
-    item.partner.name === token.host && item.partner.symbol === token.symbol;
-
-  const inToken1 = check(token1);
-  const inToken2 = check(token2);
-  const overviewList1 = token1.cross.filter(inToken2);
-  const overviewList2 = token2.cross.filter(inToken1);
-
-  return !!overviewList1.length && !!overviewList2.length;
+export const isTransferableTokenPair = (fromToken: TokenWithBridgesInfo, toToken: TokenWithBridgesInfo): boolean => {
+  return fromToken.cross.some(({ partner }) => partner.name === toToken.host && partner.symbol === toToken.symbol);
 };
 
 export const isValidAddressStrict = (address: string, network: Network): boolean => {

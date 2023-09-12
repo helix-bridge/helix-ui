@@ -60,7 +60,7 @@ export const lineaConfig: EthereumChainConfig = {
       cross: [],
       type: 'erc20',
       host: 'linea',
-      logo: 'token-usdt.svg',
+      logo: 'token-usdc.svg',
       symbol: 'USDC',
       address: '',
     },

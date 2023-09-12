@@ -28,6 +28,8 @@ export type EthereumTypeNetwork =
   | 'goerli'
   | 'linea'
   | 'linea-goerli'
+  | 'mantle'
+  | 'mantle-goerli'
   | ParachainEthereumCompatibleNetwork
   | DVMNetwork;
 

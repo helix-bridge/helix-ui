@@ -35,6 +35,7 @@ import {
   ContractConfig,
   SupportedWallet,
   TokenInfoWithMeta,
+  EthereumChainConfig,
 } from 'shared/model';
 import { isMetamaskChainConsistent } from 'shared/utils/connection';
 import { toWei, truncate } from 'shared/utils/helper/balance';
@@ -556,8 +557,12 @@ export function CrossChain() {
                           _relayerCount = relayersInfo?.sortedLnv20RelayInfos.length || 0;
 
                           if (relayersInfo?.sortedLnv20RelayInfos.length) {
+                            const remoteChainId = BigNumber.from(
+                              (value.direction.to.meta as EthereumChainConfig).ethereumChain.chainId
+                            );
                             const relayer = relayersInfo.sortedLnv20RelayInfos[0].relayer;
                             const sourceToken = relayersInfo.sortedLnv20RelayInfos[0].sendToken;
+                            const targetToken = value.direction.to.address;
                             const depositedMargin = BigNumber.from(relayersInfo.sortedLnv20RelayInfos[0].margin);
                             const baseFee = BigNumber.from(relayersInfo.sortedLnv20RelayInfos[0].baseFee);
                             const liquidityFeeRate = relayersInfo.sortedLnv20RelayInfos[0].liquidityFeeRate;
@@ -573,8 +578,10 @@ export function CrossChain() {
                             return {
                               ...value,
                               snapshot: {
+                                remoteChainId,
                                 relayer,
                                 sourceToken,
+                                targetToken,
                                 transferId,
                                 depositedMargin,
                                 totalFee,

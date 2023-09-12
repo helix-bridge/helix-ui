@@ -33,6 +33,8 @@ import { zksyncGoerliConfig } from './zksync-goerli';
 import { zksyncConfig } from './zksync';
 import { lineaConfig } from './linea';
 import { lineaGoerliConfig } from './linea-goerli';
+// import { mantleConfig } from './mantle';
+import { mantleGoerliConfig } from './mantle-goerli';
 
 export const SYSTEM_CHAIN_CONFIGURATIONS: (EthereumChainConfig | PolkadotChainConfig | ParachainChainConfig)[] = [
   arbitrumConfig,
@@ -60,6 +62,7 @@ export const SYSTEM_CHAIN_CONFIGURATIONS: (EthereumChainConfig | PolkadotChainCo
   zksyncConfig,
   lineaGoerliConfig,
   lineaConfig,
+  mantleGoerliConfig,
 ];
 
 export const knownParachainNetworks: ParachainNetwork[] = ['crab-parachain', 'karura', 'khala', 'moonriver', 'shiden'];
@@ -91,6 +94,7 @@ export const knownEthereumNetworks: (DVMNetwork | EthereumTypeNetwork)[] = [
   'zksync',
   'linea-goerli',
   'linea',
+  'mantle-goerli',
   ...knownDVMNetworks,
   ...knownParachainEthereumCompatibleNetworks,
 ];

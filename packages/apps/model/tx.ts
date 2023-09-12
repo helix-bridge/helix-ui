@@ -5,8 +5,10 @@ import { CrossChainDirection, CrossToken } from 'shared/model/bridge/cross-chain
 
 // lnbridge snapshot parameter
 interface Snapshot {
+  remoteChainId: BigNumber;
   relayer: string;
   sourceToken: string;
+  targetToken: string;
   transferId: string;
   depositedMargin: BigNumber;
   totalFee: BigNumber;

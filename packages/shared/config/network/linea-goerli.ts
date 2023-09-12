@@ -47,13 +47,7 @@ export const lineaGoerliConfig: EthereumChainConfig = {
     {
       name: 'lineaETH',
       decimals: 18,
-      cross: [
-        {
-          category: 'lnbridgev20-opposite',
-          bridge: 'linea-ethereum',
-          partner: { name: 'goerli', role: 'issuing', symbol: 'GoerliETH' },
-        },
-      ],
+      cross: [],
       type: 'native',
       host: 'linea-goerli',
       logo: 'token-ethereum.svg',
@@ -67,7 +61,7 @@ export const lineaGoerliConfig: EthereumChainConfig = {
         {
           category: 'lnbridgev20-opposite',
           bridge: 'linea-ethereum',
-          partner: { name: 'goerli', role: 'issuing', symbol: 'USD//C' },
+          partner: { name: 'goerli', role: 'issuing', symbol: 'USDC' },
         },
         {
           category: 'lnbridgev20-default',
@@ -76,15 +70,41 @@ export const lineaGoerliConfig: EthereumChainConfig = {
         },
         {
           category: 'lnbridgev20-default',
-          bridge: 'linea-zksync',
-          partner: { name: 'zksync-goerli', role: 'issuing', symbol: 'USDC' },
+          bridge: 'linea-mantle',
+          partner: { name: 'mantle-goerli', role: 'issuing', symbol: 'USDC' },
         },
       ],
       type: 'erc20',
       host: 'linea-goerli',
       logo: 'token-usdc.svg',
       symbol: 'USDC',
-      address: '0xB4257F31750961C8e536f5cfCBb3079437700416',
+      address: '0xb5E028f980dF5533cB0e8F04530B76637383d993',
+    },
+    {
+      name: 'USDT',
+      decimals: 18,
+      cross: [
+        {
+          category: 'lnbridgev20-opposite',
+          bridge: 'linea-ethereum',
+          partner: { name: 'goerli', role: 'issuing', symbol: 'USDT' },
+        },
+        {
+          category: 'lnbridgev20-default',
+          bridge: 'linea-arbitrum',
+          partner: { name: 'arbitrum-goerli', role: 'issuing', symbol: 'USDT' },
+        },
+        {
+          category: 'lnbridgev20-default',
+          bridge: 'linea-mantle',
+          partner: { name: 'mantle-goerli', role: 'issuing', symbol: 'USDT' },
+        },
+      ],
+      type: 'erc20',
+      host: 'linea-goerli',
+      logo: 'token-usdt.svg',
+      symbol: 'USDT',
+      address: '0xBC1A2f123Dc9CD2ec8d3cE42eF16c28F3C9bA686',
     },
   ],
   wallets: ['metamask', 'mathwallet-ethereum'],

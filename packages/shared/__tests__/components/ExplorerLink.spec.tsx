@@ -204,6 +204,8 @@ describe('<ExplorerLink />', () => {
       linea: `https://lineascan.build/tx/0x123456`,
       'zksync-goerli': `https://goerli.explorer.zksync.io/tx/0x123456`,
       zksync: `https://explorer.zksync.io/tx/0x123456`,
+      mantle: `https://explorer.mantle.xyz/tx/0x123456`,
+      'mantle-goerli': `https://explorer.testnet.mantle.xyz/tx/0x123456`,
     };
     const expected = explorers[config.name] ?? href;
 

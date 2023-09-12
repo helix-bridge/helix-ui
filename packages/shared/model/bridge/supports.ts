@@ -63,4 +63,12 @@ export type BridgeName =
   | 'arbitrum-zksync'
   | 'zksync-arbitrum'
   | 'linea-zksync'
-  | 'zksync-linea';
+  | 'zksync-linea'
+  | 'mantle-ethereum'
+  | 'ethereum-mantle'
+  | 'mantle-linea'
+  | 'linea-mantle'
+  | 'mantle-arbitrum'
+  | 'arbitrum-mantle'
+  | 'mantle-zksync'
+  | 'zksync-mantle';
