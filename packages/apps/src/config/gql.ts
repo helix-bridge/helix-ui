@@ -49,3 +49,33 @@ export const QUERY_RECORDS = gql`
     }
   }
 `;
+
+export const QUERY_RECORD_BY_ID = gql`
+  query historyRecordById($id: String!) {
+    historyRecordById(id: $id) {
+      sendAmount
+      recvAmount
+      bridge
+      endTime
+      fee
+      feeToken
+      fromChain
+      guardSignatures
+      id
+      nonce
+      messageNonce
+      recipient
+      requestTxHash
+      responseTxHash
+      reason
+      result
+      sender
+      startTime
+      toChain
+      sendToken
+      recvToken
+      sendTokenAddress
+      recvTokenAddress
+    }
+  }
+`;

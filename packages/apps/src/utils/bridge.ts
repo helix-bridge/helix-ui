@@ -1,6 +1,6 @@
-import { bridgeIconConfig } from "@/config/bridge-icon";
+import { bridgeConfig } from "@/config/bridge";
 import { BridgeCategory } from "helix.js";
 
-export function getBridgeIcon(bridge: BridgeCategory) {
-  return bridgeIconConfig[bridge] || "unknown.svg";
+export function getBridgeConfig(bridge?: BridgeCategory | null) {
+  return bridge ? bridgeConfig[bridge] : undefined;
 }

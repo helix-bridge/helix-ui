@@ -32,14 +32,14 @@ const createItem = (config: Config, status: Status, onClose: () => void) => {
         alt={status}
         width={20}
         height={20}
-        src={`/images/status/${status}.svg`}
+        src={`/images/notification/${status}.svg`}
         className="shrink-0 self-start lg:hidden"
       />
       <Image
         alt={status}
         width={24}
         height={24}
-        src={`/images/status/${status}.svg`}
+        src={`/images/notification/${status}.svg`}
         className="hidden shrink-0 self-start lg:inline"
       />
       <div className="gap-small flex flex-col">

@@ -16,7 +16,7 @@ export interface Record {
   bridge: BridgeCategory;
   endTime: number;
   fee: string;
-  feeToken: string;
+  feeToken: TokenSymbol;
   fromChain: Network;
   guardSignatures?: string | null;
   id: string;
@@ -54,4 +54,12 @@ export interface RecordsVariables {
   toChains?: Network[];
   bridges?: BridgeCategory[];
   // order?: string;
+}
+
+export interface RecordResponseData {
+  historyRecordById?: Record | null;
+}
+
+export interface RecordVariables {
+  id: string;
 }

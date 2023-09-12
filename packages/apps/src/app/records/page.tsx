@@ -6,7 +6,7 @@ import Tabs, { TabsProps } from "@/ui/tabs";
 import { useQuery } from "@apollo/client";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import HistoryRecords from "@/components/history-records";
+import RecordsTable from "@/components/records-table";
 
 enum AllStatus {
   All = -1,
@@ -36,7 +36,7 @@ export default function Records() {
   });
 
   const createChildren = () => (
-    <HistoryRecords
+    <RecordsTable
       // dataSource={[]}
       dataSource={(records?.historyRecords?.records || []).map((r) => ({ ...r, key: r.id }))}
       // loading={true}

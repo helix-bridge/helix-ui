@@ -1,12 +1,12 @@
 import { Record, RecordStatus } from "@/types";
-import PrettyAddress from "@/ui/pretty-address";
+import PrettyAddress from "@/components/pretty-address";
 import Table, { ColumnType } from "@/ui/table";
 import {
   formatBlanace,
   formatRecordStatus,
   formatTime,
   getChainConfig as getAppChainConfig,
-  getBridgeIcon,
+  getBridgeConfig,
 } from "@/utils";
 import { Network, TokenSymbol, getChainConfig as getHelixjsChainConfig } from "helix.js";
 import Image from "next/image";
@@ -24,7 +24,7 @@ interface Props {
   onPageChange?: (page: number) => void;
 }
 
-export default function HistoryRecords({
+export default function RecordsTable({
   dataSource,
   loading,
   total,
@@ -84,7 +84,7 @@ const columns: ColumnType<DataSource>[] = [
         width={36}
         height={36}
         alt="Bridge"
-        src={`/images/bridge/${getBridgeIcon(bridge)}`}
+        src={`/images/bridge/${getBridgeConfig(bridge)?.logo || "unknown.png"}`}
         className="rounded-full"
       />
     ),
