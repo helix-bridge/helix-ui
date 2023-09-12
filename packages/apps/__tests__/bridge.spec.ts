@@ -38,6 +38,7 @@ const mapToTestChain: { [key: string]: string } = {
   arbitrum: 'arbitrum-goerli',
   zksync: 'zksync-goerli',
   linea: 'linea-goerli',
+  mantle: 'mantle-goerli',
 };
 
 describe('bridge utils', () => {
@@ -49,12 +50,12 @@ describe('bridge utils', () => {
   console.log('🌉 All cross-chain directions to be tested', allDirections);
 
   it('should support bridge count: ', () => {
-    expect(testBridges).toHaveLength(6);
+    expect(testBridges).toHaveLength(9);
     expect(formalBridges).toHaveLength(47);
   });
 
   it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(132);
+    expect(allDirections).toHaveLength(144);
   });
 
   it('Should correct bridge category name', () => {
