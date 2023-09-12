@@ -12,7 +12,7 @@ const mantleLineaConfig: MantleLineaBridgeConfig = {
 
 const mantleGoerliLineaGoerliConfig: MantleLineaBridgeConfig = {
   contracts: {
-    backing: '0x79e6f452f1e491a7aF0382FA0a6EF9368691960D',
+    backing: '0x54cc9716905ba8ebdD01E6364125cA338Cd0054E',
     issuing: '',
   },
 };
