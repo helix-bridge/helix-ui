@@ -12,7 +12,7 @@ const arbitrumLineaConfig: ArbitrumLineaBridgeConfig = {
 
 const arbitrumGoerliLineaGoerliConfig: ArbitrumLineaBridgeConfig = {
   contracts: {
-    backing: '0x504F597CfB0A32704AA6533Fb75dCD60dB982836',
+    backing: '0x54cc9716905ba8ebdD01E6364125cA338Cd0054E',
     issuing: '',
   },
 };
