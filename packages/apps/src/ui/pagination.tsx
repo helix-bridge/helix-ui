@@ -34,9 +34,9 @@ function PageButton({
 }) {
   return (
     <button
-      className={`bg-app-black inline-flex h-8 w-8 items-center justify-center text-sm font-light transition disabled:scale-100 disabled:cursor-not-allowed disabled:opacity-60 ${
-        page === currentPage || page === "previous" || page === "next" ? "text-white" : "text-white/50"
-      } ${page === "more" || page === currentPage ? "hover:cursor-default" : "hover:scale-105 active:scale-95"}`}
+      className={`inline-flex h-8 w-8 items-center justify-center rounded border text-sm font-light text-white transition disabled:scale-100 disabled:cursor-not-allowed disabled:opacity-60 ${
+        page === "more" || page === currentPage ? "hover:cursor-default" : "hover:scale-105 active:scale-95"
+      } ${page === currentPage ? "bg-primary border-primary" : "bg-component border-line"}`}
       onClick={onClick}
       disabled={disabled}
     >

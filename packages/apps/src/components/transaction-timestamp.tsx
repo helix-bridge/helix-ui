@@ -1,5 +1,7 @@
 import { Record } from "@/types";
 import { formatTime, toTimeAgo } from "@/utils";
+import { formatDistanceStrict } from "date-fns";
+import Image from "next/image";
 
 interface Props {
   record?: Record | null;
@@ -7,8 +9,19 @@ interface Props {
 
 export default function TransactionTimestamp({ record }: Props) {
   return (
-    <span className="text-sm font-normal text-white">
-      {record ? `${toTimeAgo(record.startTime)} (${formatTime(record.startTime)})` : null}
-    </span>
+    <div className="gap-middle flex items-center">
+      <span className="text-sm font-normal text-white">
+        {record ? `${toTimeAgo(record.startTime * 1000)} (${formatTime(record.startTime * 1000)})` : null}
+      </span>
+      {!!(record?.startTime && record?.endTime) && (
+        <>
+          <div className="h-3 w-[1px] bg-white/50" />
+          <Image width={16} height={16} alt="Confirm time" src="/images/clock.svg" className="shrink-0" />
+          <span className="text-sm font-normal text-white/50">
+            Confirmed within {formatDistanceStrict(record.startTime * 1000, record.endTime * 1000)}
+          </span>
+        </>
+      )}
+    </div>
   );
 }

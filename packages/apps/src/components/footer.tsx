@@ -3,7 +3,7 @@ import { PropsWithChildren } from "react";
 
 export default function Footer() {
   return (
-    <div className="absolute bottom-0 left-0 z-10 w-full">
+    <div className="bg-app-bg absolute bottom-0 left-0 z-10 w-full">
       <div className="app-footer px-middle container mx-auto flex shrink-0 items-center justify-center lg:justify-between">
         {/* copyright */}
         <span className="text-sm font-light text-white/50">{`© ${new Date().getFullYear()} Helix Bridge`}</span>

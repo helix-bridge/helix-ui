@@ -37,10 +37,10 @@ export default function Tabs<K extends Key = string>({ items, activeKey, onChang
   }, [items, activeKey]);
 
   return (
-    <div>
+    <div className="">
       {/* labels */}
       <div className="overflow-x-auto">
-        <div className="relative flex items-center gap-10" ref={(node) => setDividerWidth(node?.scrollWidth)}>
+        <div className="relative flex items-center gap-5" ref={(node) => setDividerWidth(node?.scrollWidth)}>
           {items.map(({ key, label }, index) => (
             <button
               key={key}
@@ -50,7 +50,7 @@ export default function Tabs<K extends Key = string>({ items, activeKey, onChang
                 e.stopPropagation();
                 onChange(key);
               }}
-              className={`hover:text-primary/80 text-sm transition-all duration-200 active:opacity-60 ${
+              className={`rounded-lg px-3 py-1 text-sm transition duration-200 hover:bg-white/10 ${
                 key === activeKey ? "text-primary font-bold" : "font-light text-white"
               }`}
             >
@@ -63,7 +63,7 @@ export default function Tabs<K extends Key = string>({ items, activeKey, onChang
         <div className="mt-middle relative" style={{ width: dividerWidth }}>
           <div className="bg-primary absolute h-[2px] w-6 transition-transform duration-200" ref={railRef} />
           <div className="h-[1px] bg-transparent" />
-          <div className="h-[1px] bg-white/20" />
+          <div className="bg-line h-[1px]" />
         </div>
       </div>
 

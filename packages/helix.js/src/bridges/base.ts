@@ -1,4 +1,4 @@
-import type { BridgeCategory, Network, TokenSymbol } from "../types";
+import type { BridgeCategory, BridgeContract, Network, TokenSymbol } from "../types";
 import { PublicClient, TransactionReceipt, WalletClient } from "viem";
 import { getChainConfig } from "../utils";
 
@@ -98,4 +98,5 @@ export abstract class BaseBridge {
   }
 
   abstract getName(): string;
+  abstract getContract(): BridgeContract | undefined;
 }

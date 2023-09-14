@@ -64,23 +64,20 @@ export default function User({ className, onClose = () => undefined }: Props) {
       {isMounted && (
         <FloatingPortal>
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
-            <div
-              style={styles}
-              className="bg-component flex flex-col rounded border border-white/20 lg:border-white/10"
-            >
+            <div style={styles} className="bg-component border-line py-small flex flex-col rounded border">
               <Link
                 href="/records"
                 onClick={() => {
                   setIsOpen(false);
                   onClose();
                 }}
-                className="px-large py-small text-start transition hover:bg-white/10 active:translate-y-1"
+                className="px-large py-small hover:text-primary text-start transition active:translate-y-1"
               >
                 <span className="text-sm font-light">History</span>
               </Link>
               <button
                 onClick={() => disconnect()}
-                className="px-large py-small text-start transition hover:bg-white/10 active:translate-y-1"
+                className="px-large py-small hover:text-primary text-start transition active:translate-y-1"
               >
                 <span className="text-sm font-light">Disconnect</span>
               </button>

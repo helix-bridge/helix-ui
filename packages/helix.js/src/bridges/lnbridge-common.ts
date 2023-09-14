@@ -1,4 +1,5 @@
-import type { BridgeCategory, Network, TokenSymbol } from "../types";
+import { getChainConfig } from "..";
+import type { BridgeCategory, BridgeContract, Network, TokenSymbol } from "../types";
 import { BaseBridge } from "./base";
 import { PublicClient, WalletClient } from "viem";
 
@@ -29,6 +30,10 @@ export class LnBridgeCommon extends BaseBridge {
 
   getName(): string {
     return "Helix LnBridge";
+  }
+
+  getContract(): BridgeContract | undefined {
+    return getChainConfig(this.sourceChain)?.crossChain[this.targetChain]?.[this.category]?.bridgeContract;
   }
 
   async getFee(baseFee: bigint, liquidityFeeRate: bigint, sendAmount: bigint): Promise<bigint | undefined> {

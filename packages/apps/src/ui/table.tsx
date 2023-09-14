@@ -1,8 +1,7 @@
-import { Fragment, Key, ReactElement, useRef } from "react";
-import { CSSTransition } from "react-transition-group";
-import CountLoading from "./count-loading";
+import { Fragment, Key, ReactElement } from "react";
 import Image from "next/image";
 import Pagination from "./pagination";
+import ComponentLoading from "@/components/component-loading";
 
 export interface ColumnType<T> {
   title: ReactElement;
@@ -35,8 +34,6 @@ export default function Table<T extends { key: Key }>({
   onRowClick,
   onPageChange,
 }: Props<T>) {
-  const loadingRef = useRef<HTMLDivElement>(null);
-
   const templateCols = columns.reduce((acc, cur) => {
     const width = typeof cur.width === "string" ? cur.width : typeof cur.width === "number" ? `${cur.width}px` : "1fr";
     if (acc === "auto") {
@@ -48,7 +45,7 @@ export default function Table<T extends { key: Key }>({
   }, "auto");
 
   return (
-    <div className="min-w-[60rem] overflow-x-auto">
+    <div className="min-w-[50rem] overflow-x-auto">
       {/* header */}
       <div
         className="gap-middle bg-component px-middle py-large grid items-center rounded-t text-sm font-normal text-white"
@@ -62,31 +59,17 @@ export default function Table<T extends { key: Key }>({
       {/* body */}
       <div className="relative">
         {/* loading */}
-        <CSSTransition
-          in={loading}
-          timeout={300}
-          nodeRef={loadingRef}
-          classNames="component-loading"
-          unmountOnExit
-          appear
-        >
-          <div
-            className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center rounded-b"
-            ref={loadingRef}
-          >
-            <CountLoading size="large" />
-          </div>
-        </CSSTransition>
+        <ComponentLoading loading={!!loading} className="rounded-b" />
 
         {/* content */}
         {dataSource.length ? (
-          <div>
+          <div className="">
             {/* data source */}
-            <div className="mb-5">
+            <div className="mb-middle bg-app-bg rounded-b">
               {dataSource.map((row) => (
                 <div
                   key={row.key}
-                  className={`gap-middle p-middle grid items-center border-t border-t-white/10 text-sm font-light text-white transition-colors ${
+                  className={`gap-middle p-middle border-t-line/60 grid items-center border-t text-sm font-light text-white transition-colors ${
                     onRowClick ? "hover:cursor-pointer hover:bg-white/5" : ""
                   }`}
                   style={{ gridTemplateColumns: templateCols }}
@@ -94,7 +77,11 @@ export default function Table<T extends { key: Key }>({
                 >
                   {columns.map(({ key, dataIndex, render }) => (
                     <Fragment key={key}>
-                      {render ? render(row) : dataIndex ? <span className="truncate">{row[dataIndex]}</span> : null}
+                      {render ? (
+                        render(row)
+                      ) : dataIndex ? (
+                        <span className="truncate">{`${row[dataIndex]}`}</span>
+                      ) : null}
                     </Fragment>
                   ))}
                 </div>

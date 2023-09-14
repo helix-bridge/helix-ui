@@ -1,4 +1,5 @@
 import CopyIcon from "@/ui/copy-icon";
+import Tooltip from "@/ui/tooltip";
 import { toShortAdrress } from "@/utils";
 
 interface Props {
@@ -12,11 +13,15 @@ export default function PrettyAddress({ address, copyable, className, forceShort
   return (
     <div className="gap-small inline-flex items-center">
       {forceShort ? (
-        <span className={className}>{toShortAdrress(address)}</span>
+        <Tooltip content={<span className="text-xs font-normal text-white">{address}</span>}>
+          <span className={className}>{toShortAdrress(address)}</span>
+        </Tooltip>
       ) : (
         <>
-          <span className={`lg:hidden ${className}`}>{toShortAdrress(address)}</span>
-          <span className={`hidden lg:inline`}>{address}</span>
+          <Tooltip content={<span className="text-xs font-normal text-white">{address}</span>}>
+            <span className={`lg:hidden ${className}`}>{toShortAdrress(address)}</span>
+          </Tooltip>
+          <span className={`hidden lg:inline ${className}`}>{address}</span>
         </>
       )}
 

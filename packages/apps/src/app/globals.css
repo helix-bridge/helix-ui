@@ -26,24 +26,27 @@ body {
     rgb(var(--background-start-rgb));
 } */
 
-:root {
-  --page-bg: #13132d;
-}
-
 @layer components {
   .token-select-dropdown {
     width: calc(100vw - 3rem);
     @apply lg:w-[36rem];
   }
 
-  .app-footer,
   .app-header {
-    @apply h-[70px] lg:h-[80px];
+    @apply h-[64px];
+  }
+
+  .app-footer {
+    @apply h-[58px];
   }
 
   .app-main {
-    @apply py-[70px] lg:px-[80px];
+    @apply pt-[64px] pb-[58px];
   }
+}
+
+.page-bg {
+  background: linear-gradient(180deg, #02061f 0%, #1c1837 100%);
 }
 
 /* drawer */
@@ -99,15 +102,15 @@ body {
 }
 .component-loading-appear-active,
 .component-loading-enter-active {
-  background-color: rgba(36, 42, 46, 0.6);
+  background-color: rgba(0, 0, 0, 0.35);
   transition: background-color 300ms;
 }
 .component-loading-appear-done,
 .component-loading-enter-done {
-  background-color: rgba(36, 42, 46, 0.6);
+  background-color: rgba(0, 0, 0, 0.35);
 }
 .component-loading-exit {
-  background-color: rgba(36, 42, 46, 0.6);
+  background-color: rgba(0, 0, 0, 0.35);
 }
 .component-loading-exit-active {
   background-color: transparent;

@@ -5,7 +5,7 @@ import { RecordStatus, RecordsResponseData, RecordsVariables, UrlSearchParam } f
 import Tabs, { TabsProps } from "@/ui/tabs";
 import { useQuery } from "@apollo/client";
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import RecordsTable from "@/components/records-table";
 
 enum AllStatus {
@@ -17,6 +17,8 @@ const pageSize = 10;
 
 export default function Records() {
   const searchParams = useSearchParams();
+  const pathName = usePathname();
+  const router = useRouter();
 
   const [activeKey, setActiveKey] = useState<TabsProps<TabKey>["activeKey"]>(AllStatus.All);
   const [currentPagge, setCurrentPage] = useState(0);
@@ -45,13 +47,13 @@ export default function Records() {
       pageSize={pageSize}
       currentPage={currentPagge}
       onPageChange={setCurrentPage}
-      onRowClick={() => undefined}
+      onRowClick={(_, { id }) => router.push(`${pathName}/${id}`)}
     />
   );
 
   return (
     <main className="app-main">
-      <div className="px-middle container mx-auto">
+      <div className="px-middle container mx-auto py-5">
         <Tabs
           items={[
             {

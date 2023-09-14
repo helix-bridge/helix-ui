@@ -1,5 +1,5 @@
 import type { Token, TokenSymbol } from "./token";
-import type { BridgeCategory } from "./bridge";
+import type { BridgeCategory, BridgeContract } from "./bridge";
 
 export enum ChainID {
   ETHEREUM = 1,
@@ -20,10 +20,7 @@ export interface ChainConfig {
   crossChain: {
     [destination in Partial<Network>]?: {
       [bridge in Partial<BridgeCategory>]?: {
-        bridgeContract: {
-          sourceAddress: `0x${string}`;
-          targetAddress: `0x${string}`;
-        };
+        bridgeContract: BridgeContract;
         tokens: { sourceToken: TokenSymbol; targetToken: TokenSymbol }[];
       };
     };

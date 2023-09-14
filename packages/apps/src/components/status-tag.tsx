@@ -26,11 +26,17 @@ export function StatusTag({ status }: { status?: RecordStatus | null }) {
   }, [status]);
 
   return (
-    <div className="gap-small pl-small pr-middle flex items-center rounded-3xl py-[3px]">
-      <Image width={20} height={20} alt="Status" src={`/images/status/${icon}`} />
-      <span className="text-sm font-medium text-white" style={{ backgroundColor: color }}>
-        {text}
-      </span>
+    <div
+      className="gap-small pl-small pr-middle flex items-center rounded-3xl py-[3px]"
+      style={{ backgroundColor: color }}
+    >
+      <Image
+        width={icon === "unknown.svg" ? 16 : 20}
+        height={icon === "unknown.svg" ? 16 : 20}
+        alt="Status"
+        src={`/images/status/${icon}`}
+      />
+      <span className="text-sm font-medium text-white">{text}</span>
     </div>
   );
 }

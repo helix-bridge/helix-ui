@@ -5,7 +5,7 @@ export function toTimeAgo(timestamp: number) {
   // 1 year ago
   return `${formatDistanceStrict(timestamp, Date.now(), {
     addSuffix: true,
-  })} ago`;
+  })}`;
 }
 
 export function formatTime(timestamp: number, options?: { compact?: boolean }) {

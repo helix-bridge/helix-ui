@@ -22,6 +22,7 @@ interface Props {
   enabledSafePolygon?: boolean;
   enabled?: boolean;
   className?: string;
+  contentClassName?: string;
 }
 
 export default function Tooltip({
@@ -29,6 +30,7 @@ export default function Tooltip({
   content,
   enabledSafePolygon,
   className,
+  contentClassName,
   enabled = true,
 }: PropsWithChildren<Props>) {
   const [isOpen, setIsOpen] = useState(false);
@@ -62,8 +64,11 @@ export default function Tooltip({
       {isMounted && (
         <FloatingPortal>
           <div ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()} className="z-30">
-            <FloatingArrow ref={arrowRef} style={styles} context={context} fill="#4BB1F8" />
-            <div style={styles} className="border-primary bg-component px-middle rounded border">
+            <FloatingArrow ref={arrowRef} style={styles} context={context} fill="#343946" />
+            <div
+              style={styles}
+              className={`border-line bg-component px-middle py-small flex items-center rounded border ${contentClassName}`}
+            >
               {content}
             </div>
           </div>

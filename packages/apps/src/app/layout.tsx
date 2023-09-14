@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="bg-app-bg text-white">
+    <html lang="en" className="page-bg text-white">
       <body className={ibm_plex_sans.className}>
         <div className="relative min-h-screen">
           <GraphqlProvider>

@@ -92,9 +92,9 @@ const columns: ColumnType<DataSource>[] = [
   {
     key: "status",
     title: <Title className="text-end">Status</Title>,
-    render: ({ startTime, result }) => (
+    render: ({ startTime, result, confirmedBlocks }) => (
       <div className="gap-small flex flex-col items-end">
-        <span className="text-xs font-normal text-white">{formatTime(startTime, { compact: true })}</span>
+        <span className="text-xs font-normal text-white">{formatTime(startTime * 1000, { compact: true })}</span>
         <span
           className={`text-xs font-semibold ${
             result === RecordStatus.Success
@@ -107,6 +107,7 @@ const columns: ColumnType<DataSource>[] = [
           }`}
         >
           {formatRecordStatus(result)}
+          {result === RecordStatus.Pending && confirmedBlocks ? ` (${confirmedBlocks})` : ""}
         </span>
       </div>
     ),

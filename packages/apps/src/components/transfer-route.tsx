@@ -15,11 +15,11 @@ export default function TransferRoute({ bridge, fromChain, toChain }: Props) {
   const bridgeConfig = getBridgeConfig(bridge);
 
   return (
-    <div className="gap-middle flex items-center">
+    <div className="gap-large flex items-center">
       <ChainIcon logo={fromChainConfig?.logo || "unknown.png"} name={fromChainConfig?.name || "Unknown"} />
       <CaretRight />
       <Tooltip content={<span className="text-xs font-normal text-white">{bridgeConfig?.name || "Unknown"}</span>}>
-        <Image width={64} height={64} alt="Bridge" src={`/images/bridge/${bridgeConfig?.logo || "unknown.svg"}`} />
+        <Image width={54} height={54} alt="Bridge" src={`/images/bridge/${bridgeConfig?.logo || "unknown.svg"}`} />
       </Tooltip>
       <CaretRight />
       <ChainIcon logo={toChainConfig?.logo || "unknown.png"} name={toChainConfig?.name || "Unknown"} />
@@ -30,7 +30,7 @@ export default function TransferRoute({ bridge, fromChain, toChain }: Props) {
 function ChainIcon({ logo, name }: { logo: string; name: string }) {
   return (
     <Tooltip content={<span className="text-xs font-normal text-white">{name}</span>} className="shrink-0">
-      <Image width={40} height={40} alt={name} src={`/images/network/${logo}`} />
+      <Image width={40} height={40} alt={name} src={`/images/network/${logo}`} className="rounded-full" />
     </Tooltip>
   );
 }
