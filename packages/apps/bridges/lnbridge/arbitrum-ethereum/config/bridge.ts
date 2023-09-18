@@ -12,8 +12,8 @@ const arbitrumEthereumConfig: ArbitrumEthereumBridgeConfig = {
 
 const arbitrumGoerliGoerliConfig: ArbitrumEthereumBridgeConfig = {
   contracts: {
-    backing: '0x7B8413FA1c1033844ac813A2E6475E15FB0fb3BA',
-    issuing: '0x3B1A953bFa72Af4ae3494b08e453BFF30a06A550',
+    backing: '0x79e6f452f1e491a7aF0382FA0a6EF9368691960D',
+    issuing: '',
   },
 };
 
