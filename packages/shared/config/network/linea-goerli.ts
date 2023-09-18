@@ -82,7 +82,7 @@ export const lineaGoerliConfig: EthereumChainConfig = {
     },
     {
       name: 'USDT',
-      decimals: 18,
+      decimals: 6,
       cross: [
         {
           category: 'lnbridgev20-opposite',
