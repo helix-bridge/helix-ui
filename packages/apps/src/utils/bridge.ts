@@ -17,7 +17,7 @@ export function bridgeFactory(args: {
   targetToken?: TokenSymbol;
 
   publicClient?: PublicClient;
-  walletClient?: WalletClient;
+  walletClient?: WalletClient | null;
 }): BaseBridge | undefined {
   switch (args.category) {
     case "lnbridgev20-default":

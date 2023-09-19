@@ -2,7 +2,8 @@ import { BridgeCategory, BridgeContract, BridgeLogoType } from "@/types/bridge";
 import { Network } from "@/types/chain";
 import { TokenSymbol } from "@/types/token";
 import { getChainConfig } from "@/utils/chain";
-import { PublicClient, TransactionReceipt, WalletClient } from "viem";
+import { TransactionReceipt } from "viem";
+import { PublicClient, WalletClient } from "wagmi";
 
 export abstract class BaseBridge {
   protected logo = {
@@ -20,7 +21,7 @@ export abstract class BaseBridge {
   protected readonly targetToken?: TokenSymbol;
 
   protected readonly publicClient?: PublicClient;
-  protected readonly walletClient?: WalletClient;
+  protected readonly walletClient?: WalletClient | null;
 
   constructor(args: {
     category: BridgeCategory;
@@ -32,7 +33,7 @@ export abstract class BaseBridge {
     targetToken?: TokenSymbol;
 
     publicClient?: PublicClient;
-    walletClient?: WalletClient;
+    walletClient?: WalletClient | null;
   }) {
     this.category = args.category;
     this.contract = args.contract;

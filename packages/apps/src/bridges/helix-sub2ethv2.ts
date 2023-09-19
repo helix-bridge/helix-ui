@@ -16,7 +16,7 @@ export class HelixSub2ethv2 extends BaseBridge {
     targetToken?: TokenSymbol;
 
     publicClient?: PublicClient;
-    walletClient?: WalletClient;
+    walletClient?: WalletClient | null;
   }) {
     super(args);
 

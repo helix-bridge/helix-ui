@@ -1,8 +1,9 @@
 import { Network } from "@/types/chain";
 import { BaseBridge } from "./base";
-import { PublicClient, TransactionReceipt, WalletClient } from "viem";
+import { TransactionReceipt } from "viem";
 import { TokenSymbol } from "@/types/token";
 import { BridgeCategory, BridgeContract } from "@/types/bridge";
+import { PublicClient, WalletClient } from "wagmi";
 
 export class LnBridgeCommon extends BaseBridge {
   constructor(args: {
@@ -15,7 +16,7 @@ export class LnBridgeCommon extends BaseBridge {
     targetToken?: TokenSymbol;
 
     publicClient?: PublicClient;
-    walletClient?: WalletClient;
+    walletClient?: WalletClient | null;
   }) {
     super(args);
 

@@ -65,3 +65,26 @@ export interface RecordResponseData {
 export interface RecordVariables {
   id: string;
 }
+
+export interface RelayerInfo {
+  sendToken?: string | null;
+  relayer: string;
+  margin?: string | null;
+  baseFee?: string | null;
+  liquidityFeeRate?: number | null;
+  lastTransferId?: string | null;
+  withdrawNonce?: string | null; // bigint
+}
+
+export interface RelayersResponseData {
+  sortedLnv20RelayInfos?: RelayerInfo[];
+}
+
+export interface RelayersVariables {
+  amount: string;
+  decimals: number;
+  bridge: BridgeCategory;
+  token: string;
+  fromChain: Network;
+  toChain: Network;
+}
