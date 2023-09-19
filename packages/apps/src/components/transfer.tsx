@@ -1,12 +1,12 @@
 "use client";
 
-import { PropsWithChildren, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { ButtonHTMLAttributes, PropsWithChildren, useDeferredValue, useEffect, useRef, useState } from "react";
 import TransferInput from "./transfer-input";
 import CrossChainInfo from "./cross-chain-info";
 import { getCrossChain, getParsedCrossChain } from "@/utils/cross-chain";
 import { BaseBridge } from "@/bridges/base";
 import { BridgeCategory } from "@/types/bridge";
-import { useAccount, useBalance, usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, useBalance, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
 import { bridgeFactory } from "@/utils/bridge";
 import { useQuery } from "@apollo/client";
 import { RelayersResponseData, RelayersVariables } from "@/types/graphql";
@@ -15,6 +15,7 @@ import { getChainConfig } from "@/utils/chain";
 import { Network } from "@/types/chain";
 import BridgeSelect from "./bridge-select";
 import SwitchCross from "./switch-cross";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 const {
   defaultTargetChainTokens,
@@ -32,30 +33,32 @@ export default function Transfer() {
   const [targetValue, setTargetValue] = useState(defaultTargetValue);
   const [targetItems, setTargetItems] = useState(defaultTargetChainTokens);
 
+  const [sourceChainConfig, setSourceChainConfig] = useState(getChainConfig(defaultSourceValue?.network));
+  const [transferToken, setTransferToken] = useState(
+    getChainConfig(defaultSourceValue?.network)?.tokens.find(({ symbol }) => sourceValue?.symbol === symbol),
+  );
   const [category, setCategory] = useState<BridgeCategory | null | undefined>(defaultCategory);
   const [bridge, setBridge] = useState<BaseBridge | null>();
   const [amount, setAmount] = useState(0n);
   const deferredAmount = useDeferredValue(amount);
 
-  const token = useMemo(
-    () => getChainConfig(sourceValue?.network)?.tokens.find(({ symbol }) => sourceValue?.symbol === symbol),
-    [sourceValue],
-  );
-
   const { address } = useAccount();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
-  const { data: balanceData, refetch: refetchBalance } = useBalance({
+  const { data: balanceData } = useBalance({
     address,
-    token: token?.type === "erc20" ? token.address : undefined,
+    token: transferToken?.type === "erc20" ? transferToken.address : undefined,
   });
+  const { openConnectModal } = useConnectModal();
+  const { chain } = useNetwork();
+  const { switchNetwork } = useSwitchNetwork();
 
   const { loading, data: relayers } = useQuery<RelayersResponseData, RelayersVariables>(QUERY_RELAYERS, {
     variables: {
       amount: deferredAmount.toString(),
-      decimals: token?.decimals || 0,
+      decimals: transferToken?.decimals || 0,
       bridge: (category || "") as BridgeCategory,
-      token: token?.address || "",
+      token: transferToken?.address || "",
       fromChain: (sourceValue?.network || "") as Network,
       toChain: (targetValue?.network || "") as Network,
     },
@@ -95,6 +98,8 @@ export default function Transfer() {
           onAmountChange={setAmount}
           onTokenChange={(value) => {
             setSourceValue(value);
+            setSourceChainConfig(getChainConfig(value.network));
+            setTransferToken(getChainConfig(value.network)?.tokens.find(({ symbol }) => value.symbol === symbol));
 
             const network = availableTargetChainTokens[value.network]?.[value.symbol]?.at(0)?.network;
             const symbol = availableTargetChainTokens[value.network]?.[value.symbol]?.at(0)?.symbols.at(0);
@@ -124,6 +129,12 @@ export default function Transfer() {
                 ? availableTargetChainTokens[targetValueRef.current.network]?.[targetValueRef.current.symbol] || []
                 : [],
             );
+            setTransferToken(
+              getChainConfig(targetValueRef.current?.network)?.tokens.find(
+                ({ symbol }) => targetValueRef.current?.symbol === symbol,
+              ),
+            );
+            setSourceChainConfig(getChainConfig(targetValueRef.current?.network));
           }}
         />
       </div>
@@ -148,7 +159,7 @@ export default function Transfer() {
       <Section label="Information" className="mt-8">
         <CrossChainInfo
           amount={deferredAmount}
-          token={token}
+          token={transferToken}
           bridge={bridge}
           relayer={relayers?.sortedLnv20RelayInfos?.at(0)}
           externalLoading={loading}
@@ -156,9 +167,17 @@ export default function Transfer() {
       </Section>
 
       {/* action */}
-      <button className="bg-primary inline-flex h-10 shrink-0 items-center justify-center rounded transition hover:opacity-80 active:translate-y-1">
-        <span className="text-sm font-medium text-white">Transfer</span>
-      </button>
+      {chain ? (
+        sourceChainConfig && chain.id !== sourceChainConfig.id ? (
+          <ActionButton onClick={() => switchNetwork && switchNetwork(sourceChainConfig.id)}>
+            Switch Network
+          </ActionButton>
+        ) : (
+          <ActionButton>Transfer</ActionButton>
+        )
+      ) : (
+        <ActionButton onClick={openConnectModal}>Connect Wallet</ActionButton>
+      )}
     </div>
   );
 }
@@ -171,5 +190,16 @@ function Section({ children, label, className }: PropsWithChildren<{ label: stri
       </div>
       {children}
     </div>
+  );
+}
+
+function ActionButton({ children, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button
+      className="bg-primary inline-flex h-10 shrink-0 items-center justify-center rounded transition hover:opacity-80 active:translate-y-1 disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+      {...rest}
+    >
+      <span className="text-sm font-medium text-white">{children}</span>
+    </button>
   );
 }
