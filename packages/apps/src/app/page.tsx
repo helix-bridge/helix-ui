@@ -1,4 +1,6 @@
-import Transfer from "@/components/transfer";
+import dynamic from "next/dynamic";
+
+const Transfer = dynamic(() => import("@/components/transfer"), { ssr: false });
 
 export default function Home() {
   return (
