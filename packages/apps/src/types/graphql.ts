@@ -1,4 +1,6 @@
-import { BridgeCategory, Network, TokenSymbol } from "helix.js";
+import { TokenSymbol } from "./token";
+import { BridgeCategory } from "./bridge";
+import { Network } from "./chain";
 
 export enum RecordStatus {
   Pending,

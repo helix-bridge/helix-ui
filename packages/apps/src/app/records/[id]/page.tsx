@@ -1,11 +1,11 @@
 "use client";
 
-import { QUERY_RECORD_BY_ID } from "@/config";
-import { RecordResponseData, RecordVariables } from "@/types";
+import { QUERY_RECORD_BY_ID } from "@/config/gql";
+import { RecordResponseData, RecordVariables } from "@/types/graphql";
 import { Divider } from "@/ui/divider";
 import { RecordLabel } from "@/components/record-label";
 import { useQuery } from "@apollo/client";
-import { PropsWithChildren, useEffect, useRef, useState } from "react";
+import { PropsWithChildren, useMemo } from "react";
 import TransferRoute from "@/components/transfer-route";
 import TransactionStatus from "@/components/transaction-status";
 import { TransactionHash } from "@/components/transaction-hash";
@@ -13,10 +13,13 @@ import TransactionTimestamp from "@/components/transaction-timestamp";
 import PrettyAddress from "@/components/pretty-address";
 import TransactionValue from "@/components/transaction-value";
 import TokenToReceive from "@/components/token-to-receive";
-import { BaseBridge, LnBridgeDefault, LnBridgeOpposite } from "helix.js";
-import { usePublicClient, useWalletClient } from "wagmi";
 import TokenTransfer from "@/components/token-transfer";
-import ComponentLoading from "@/components/component-loading";
+import ComponentLoading from "@/ui/component-loading";
+import { BaseBridge } from "@/bridges/base";
+import { getCrossChain } from "@/utils/cross-chain";
+import { bridgeFactory } from "@/utils/bridge";
+
+const crossChain = getCrossChain();
 
 interface Props {
   params: {
@@ -25,32 +28,22 @@ interface Props {
 }
 
 export default function RecordDetail({ params }: Props) {
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
   const { loading, data: record } = useQuery<RecordResponseData, RecordVariables>(QUERY_RECORD_BY_ID, {
     variables: { id: params.id },
   });
-  const [bridge, setBridge] = useState<BaseBridge>();
 
-  useEffect(() => {
-    const category = record?.historyRecordById?.bridge;
+  const bridge = useMemo<BaseBridge | undefined>(() => {
     const sourceChain = record?.historyRecordById?.fromChain;
     const targetChain = record?.historyRecordById?.toChain;
-    const sourceToken = record?.historyRecordById?.sendToken;
-    const targetToken = record?.historyRecordById?.recvToken;
+    const category = record?.historyRecordById?.bridge;
 
-    if (category && sourceChain && targetChain && sourceToken && targetToken && publicClient && walletClient) {
-      if (category === "lnbridgev20-default") {
-        setBridge(
-          new LnBridgeDefault({ sourceChain, targetChain, sourceToken, targetToken, publicClient, walletClient }),
-        );
-      } else if (category === "lnbridgev20-opposite") {
-        setBridge(
-          new LnBridgeOpposite({ sourceChain, targetChain, sourceToken, targetToken, publicClient, walletClient }),
-        );
-      }
+    if (sourceChain && targetChain && category) {
+      const contract = crossChain[sourceChain]?.[targetChain]?.[category]?.contract;
+      return contract ? bridgeFactory({ category, contract }) : undefined;
     }
-  }, [record?.historyRecordById, publicClient, walletClient]);
+
+    return undefined;
+  }, [record?.historyRecordById]);
 
   return (
     <main className="app-main">
@@ -62,11 +55,7 @@ export default function RecordDetail({ params }: Props) {
             <ComponentLoading loading={loading} className="rounded" />
 
             <Section label="Transfer Route">
-              <TransferRoute
-                bridge={record?.historyRecordById?.bridge}
-                fromChain={record?.historyRecordById?.fromChain}
-                toChain={record?.historyRecordById?.toChain}
-              />
+              <TransferRoute record={record?.historyRecordById} />
             </Section>
 
             <Divider />

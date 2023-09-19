@@ -1,28 +1,27 @@
 import Tooltip from "@/ui/tooltip";
-import { getBridgeConfig, getChainConfig } from "@/utils";
-import { BridgeCategory, Network } from "helix.js";
+import { getChainConfig } from "@/utils/chain";
+import { getChainLogoSrc } from "@/utils/misc";
 import Image from "next/image";
+import BridgeLogo from "./bridge-logo";
+import { Record } from "@/types/graphql";
+import { bridgeFactory } from "@/utils/bridge";
 
 interface Props {
-  bridge?: BridgeCategory;
-  fromChain?: Network;
-  toChain?: Network;
+  record?: Record | null;
 }
 
-export default function TransferRoute({ bridge, fromChain, toChain }: Props) {
-  const fromChainConfig = getChainConfig(fromChain);
-  const toChainConfig = getChainConfig(toChain);
-  const bridgeConfig = getBridgeConfig(bridge);
+export default function TransferRoute({ record }: Props) {
+  const fromChainConfig = getChainConfig(record?.fromChain);
+  const toChainConfig = getChainConfig(record?.toChain);
+  const bridge = record ? bridgeFactory({ category: record.bridge }) : undefined;
 
   return (
     <div className="gap-large flex items-center">
-      <ChainIcon logo={fromChainConfig?.logo || "unknown.png"} name={fromChainConfig?.name || "Unknown"} />
+      <ChainIcon logo={getChainLogoSrc(fromChainConfig?.logo)} name={fromChainConfig?.name || "Unknown"} />
       <CaretRight />
-      <Tooltip content={<span className="text-xs font-normal text-white">{bridgeConfig?.name || "Unknown"}</span>}>
-        <Image width={54} height={54} alt="Bridge" src={`/images/bridge/${bridgeConfig?.logo || "unknown.svg"}`} />
-      </Tooltip>
+      <BridgeLogo width={132} height={32} type="horizontal" bridge={bridge} className="bg-app-bg" />
       <CaretRight />
-      <ChainIcon logo={toChainConfig?.logo || "unknown.png"} name={toChainConfig?.name || "Unknown"} />
+      <ChainIcon logo={getChainLogoSrc(toChainConfig?.logo)} name={toChainConfig?.name || "Unknown"} />
     </div>
   );
 }
@@ -30,7 +29,7 @@ export default function TransferRoute({ bridge, fromChain, toChain }: Props) {
 function ChainIcon({ logo, name }: { logo: string; name: string }) {
   return (
     <Tooltip content={<span className="text-xs font-normal text-white">{name}</span>} className="shrink-0">
-      <Image width={40} height={40} alt={name} src={`/images/network/${logo}`} className="rounded-full" />
+      <Image width={40} height={40} alt={name} src={logo} className="rounded-full" />
     </Tooltip>
   );
 }

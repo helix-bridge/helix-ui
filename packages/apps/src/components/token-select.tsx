@@ -1,4 +1,8 @@
-import { getChainConfig, getTokenIcon } from "@/utils";
+import { Network } from "@/types/chain";
+import { ChainTokens } from "@/types/cross-chain";
+import { TokenSymbol } from "@/types/token";
+import { getChainConfig } from "@/utils/chain";
+import { getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
 import {
   FloatingPortal,
   offset,
@@ -8,7 +12,6 @@ import {
   useInteractions,
   useTransitionStyles,
 } from "@floating-ui/react";
-import { Network, TokenSymbol } from "helix.js";
 import Image from "next/image";
 import { useRef, useState } from "react";
 
@@ -17,10 +20,7 @@ export interface Value {
   symbol: TokenSymbol;
 }
 
-export interface Item {
-  network: Network;
-  symbols: TokenSymbol[];
-}
+export type Item = ChainTokens;
 
 interface Props {
   items: Item[];
@@ -49,7 +49,7 @@ export default function TokenSelect({ items, value, onSelect = () => undefined }
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
 
   const chainConfig = value && getChainConfig(value.network);
-  const tokenIcon = value ? getTokenIcon(value.symbol) : "unknown.svg";
+  const token = chainConfig?.tokens.find(({ symbol }) => symbol === value?.symbol);
 
   return (
     <>
@@ -64,14 +64,14 @@ export default function TokenSelect({ items, value, onSelect = () => undefined }
               width={30}
               height={30}
               alt="Token icon"
-              src={`/images/token/${tokenIcon}`}
+              src={getTokenLogoSrc(token?.logo)}
               className="rounded-full"
             />
             <Image
               width={16}
               height={16}
               alt="Network logo"
-              src={`/images/network/${chainConfig?.logo || "unknown.png"}`}
+              src={getChainLogoSrc(chainConfig?.logo)}
               className="absolute -bottom-1 -right-1 rounded-full"
             />
           </div>
@@ -138,7 +138,7 @@ function Cascader({ items, onSelect }: { items: Item[]; onSelect: (value: Value)
                   width={16}
                   height={16}
                   alt="Network icon"
-                  src={`/images/network/${chainConfig?.logo || "unknown.png"}`}
+                  src={getChainLogoSrc(chainConfig?.logo)}
                   className="rounded-full"
                 />
                 <span className="text-sm font-light">{chainConfig?.name || "Unknown"}</span>
@@ -151,22 +151,25 @@ function Cascader({ items, onSelect }: { items: Item[]; onSelect: (value: Value)
 
       {/* right */}
       <div className="pl-small h-60 flex-1 overflow-y-auto">
-        {symbols.map((symbol) => (
-          <button
-            key={symbol}
-            className="gap-small px-small lg:px-middle flex w-full items-center rounded py-[2px] hover:bg-white/10"
-            onClick={() => networkRef.current && onSelect({ network: networkRef.current, symbol })}
-          >
-            <Image
-              width={16}
-              height={16}
-              alt="Token icon"
-              src={`/images/token/${getTokenIcon(symbol)}`}
-              className="rounded-full"
-            />
-            <span className="text-sm font-light">{symbol}</span>
-          </button>
-        ))}
+        {symbols.map((symbol) => {
+          const token = getChainConfig(networkRef.current)?.tokens.find((t) => t.symbol === symbol);
+          return (
+            <button
+              key={symbol}
+              className="gap-small px-small lg:px-middle flex w-full items-center rounded py-[2px] hover:bg-white/10"
+              onClick={() => networkRef.current && onSelect({ network: networkRef.current, symbol })}
+            >
+              <Image
+                width={16}
+                height={16}
+                alt="Token icon"
+                src={getTokenLogoSrc(token?.logo)}
+                className="rounded-full"
+              />
+              <span className="text-sm font-light">{symbol}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

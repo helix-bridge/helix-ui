@@ -1,19 +1,18 @@
-import { Record } from "@/types";
-import { formatBlanace } from "@/utils";
-import { getChainConfig } from "helix.js";
+import { Record } from "@/types/graphql";
+import { formatBalance } from "@/utils/balance";
+import { getChainConfig } from "@/utils/chain";
 
 interface Props {
   record?: Record | null;
 }
 
 export default function TransactionFee({ record }: Props) {
-  const chainConfig = record?.fromChain ? getChainConfig(record.fromChain) : undefined;
-  const token = chainConfig?.tokens.find(({ symbol }) => symbol === record?.feeToken);
+  const token = getChainConfig(record?.fromChain)?.tokens.find(({ symbol }) => symbol === record?.feeToken);
 
   return (
     <span className="text-sm font-normal text-white">
       {token && record?.fee
-        ? `${formatBlanace(BigInt(record.fee), token.decimals, { keepZero: false, precision: 4 })} ${token.symbol}`
+        ? `${formatBalance(BigInt(record.fee), token.decimals, { keepZero: false, precision: 4 })} ${token.symbol}`
         : null}
     </span>
   );

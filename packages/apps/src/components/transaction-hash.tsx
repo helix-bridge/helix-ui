@@ -1,6 +1,6 @@
+import { Network } from "@/types/chain";
 import CopyIcon from "@/ui/copy-icon";
-import { getChainConfig } from "@/utils";
-import { Network } from "helix.js";
+import { getChainConfig } from "@/utils/chain";
 import path from "path";
 
 interface Props {

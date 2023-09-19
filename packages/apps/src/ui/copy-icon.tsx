@@ -25,7 +25,7 @@ export default function CopyIcon({ text }: Props) {
   useEffect(() => {
     let sub$$: Subscription | undefined;
     if (copied) {
-      sub$$ = timer(1500, 0).subscribe(() => setCopied(false));
+      sub$$ = timer(1000, 0).subscribe(() => setCopied(false));
     }
     return () => sub$$?.unsubscribe();
   }, [copied]);

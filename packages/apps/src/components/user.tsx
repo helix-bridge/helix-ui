@@ -1,4 +1,4 @@
-import { toShortAdrress } from "@/utils";
+import { toShortAdrress } from "@/utils/address";
 import {
   FloatingPortal,
   offset,

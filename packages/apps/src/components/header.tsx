@@ -1,6 +1,6 @@
 "use client";
 
-import { useToggle } from "@/hooks";
+import { useToggle } from "@/hooks/use-toggle";
 import Tooltip from "@/ui/tooltip";
 import dynamic from "next/dynamic";
 import Image from "next/image";

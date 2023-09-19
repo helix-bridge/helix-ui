@@ -1,12 +1,13 @@
 "use client";
 
-import { QUERY_RECORDS } from "@/config";
-import { RecordStatus, RecordsResponseData, RecordsVariables, UrlSearchParam } from "@/types";
+import { QUERY_RECORDS } from "@/config/gql";
+import { RecordStatus, RecordsResponseData, RecordsVariables } from "@/types/graphql";
 import Tabs, { TabsProps } from "@/ui/tabs";
 import { useQuery } from "@apollo/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import RecordsTable from "@/components/records-table";
+import { UrlSearchParam } from "@/types/url";
 
 enum AllStatus {
   All = -1,
@@ -22,20 +23,29 @@ export default function Records() {
 
   const [activeKey, setActiveKey] = useState<TabsProps<TabKey>["activeKey"]>(AllStatus.All);
   const [currentPagge, setCurrentPage] = useState(0);
+  const [records, setRecords] = useState<RecordsResponseData>();
 
-  const {
-    loading,
-    data: records,
-    refetch,
-  } = useQuery<RecordsResponseData, RecordsVariables>(QUERY_RECORDS, {
+  const { loading, data, refetch } = useQuery<RecordsResponseData, RecordsVariables>(QUERY_RECORDS, {
     variables: {
       row: pageSize,
       page: currentPagge,
       sender: searchParams.get(UrlSearchParam.Address) || undefined,
       recipient: searchParams.get(UrlSearchParam.Address) || undefined,
-      results: activeKey === AllStatus.All ? undefined : [activeKey],
+      results:
+        activeKey === AllStatus.All
+          ? undefined
+          : activeKey === RecordStatus.Pending
+          ? [RecordStatus.Pending, RecordStatus.PendingToRefund, RecordStatus.PendingToClaim]
+          : [activeKey],
     },
   });
+
+  useEffect(() => {
+    // better user experience
+    if (!loading) {
+      setRecords(data);
+    }
+  }, [loading, data]);
 
   const createChildren = () => (
     <RecordsTable

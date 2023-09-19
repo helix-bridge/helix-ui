@@ -1,4 +1,4 @@
-import { RecordStatus } from "@/types";
+import { RecordStatus } from "@/types/graphql";
 import Image from "next/image";
 import { useMemo } from "react";
 

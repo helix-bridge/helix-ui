@@ -1,5 +1,5 @@
-import { Record } from "@/types";
-import { formatTime, toTimeAgo } from "@/utils";
+import { Record } from "@/types/graphql";
+import { formatTime, toTimeAgo } from "@/utils/time";
 import { formatDistanceStrict } from "date-fns";
 import Image from "next/image";
 
@@ -10,6 +10,7 @@ interface Props {
 export default function TransactionTimestamp({ record }: Props) {
   return (
     <div className="gap-middle flex items-center">
+      <Image width={16} height={16} alt="Confirm time" src="/images/time.svg" className="shrink-0" />
       <span className="text-sm font-normal text-white">
         {record ? `${toTimeAgo(record.startTime * 1000)} (${formatTime(record.startTime * 1000)})` : null}
       </span>

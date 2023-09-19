@@ -1,4 +1,4 @@
-import { Record } from "@/types";
+import { Record } from "@/types/graphql";
 import { StatusTag } from "./status-tag";
 
 interface Props {

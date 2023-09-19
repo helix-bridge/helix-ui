@@ -41,7 +41,8 @@ body {
   }
 
   .app-main {
-    @apply pt-[64px] pb-[58px];
+    /* gap 20px */
+    @apply pt-[84px] pb-[78px];
   }
 }
 

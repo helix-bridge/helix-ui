@@ -1,9 +1,13 @@
-import { RecordStatus } from "@/types";
+import { RecordStatus } from "@/types/graphql";
 
 export function formatRecordStatus(status: RecordStatus) {
   switch (status) {
     case RecordStatus.Pending:
       return "Pending";
+    case RecordStatus.PendingToRefund:
+      return "Pending to Refund";
+    case RecordStatus.PendingToClaim:
+      return "Pending to Claim";
     case RecordStatus.Refunded:
       return "Refunded";
     case RecordStatus.Success:
@@ -11,4 +15,12 @@ export function formatRecordStatus(status: RecordStatus) {
     default:
       return "-";
   }
+}
+
+export function getTokenLogoSrc(fileName?: string | null) {
+  return `/images/token/${fileName || "unknown.svg"}`;
+}
+
+export function getChainLogoSrc(fileName?: string | null) {
+  return `/images/network/${fileName || "unknown.png"}`;
 }

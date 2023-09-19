@@ -1,13 +1,14 @@
 import { Fragment, Key, ReactElement } from "react";
 import Image from "next/image";
 import Pagination from "./pagination";
-import ComponentLoading from "@/components/component-loading";
+import ComponentLoading from "@/ui/component-loading";
 
 export interface ColumnType<T> {
   title: ReactElement;
   key: Key;
   dataIndex?: keyof T;
   width?: string | number;
+  align?: "left" | "center" | "right"; // TODO
   render?: (row: T) => ReactElement;
 }
 

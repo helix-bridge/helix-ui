@@ -1,9 +1,13 @@
-import { Record } from "@/types";
+import { Record } from "@/types/graphql";
 import Tooltip from "@/ui/tooltip";
-import { formatBlanace, getChainConfig as getAppChainConfig, getTokenIcon } from "@/utils";
-import { BaseBridge, Network, TokenSymbol, getChainConfig as getHelixjsChainConfig } from "helix.js";
 import Image from "next/image";
 import PrettyAddress from "./pretty-address";
+import { BaseBridge } from "@/bridges/base";
+import { Network } from "@/types/chain";
+import { TokenSymbol } from "@/types/token";
+import { getChainConfig } from "@/utils/chain";
+import { getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
+import { formatBalance } from "@/utils/balance";
 
 interface Props {
   record?: Record | null;
@@ -11,20 +15,20 @@ interface Props {
 }
 
 export default function TokenTransfer({ record, bridge }: Props) {
-  const bridgeContract = bridge?.getContract();
+  const contract = bridge?.getContract();
 
-  return record && bridgeContract ? (
+  return record && contract ? (
     <div className="flex flex-col items-start justify-between">
       <Item
         chain={record.fromChain}
         from={record.sender}
-        to={bridgeContract.sourceAddress}
+        to={contract.sourceAddress}
         symbol={record.sendToken}
         amount={BigInt(record.sendAmount || 0)}
       />
       <Item
         chain={record.toChain}
-        from={bridgeContract.targetAddress}
+        from={contract.targetAddress}
         to={record.recipient}
         symbol={record.recvToken}
         amount={BigInt(record.recvAmount || 0)}
@@ -46,29 +50,44 @@ function Item({
   symbol: TokenSymbol;
   amount: bigint;
 }) {
-  const helixjsChainConfig = getHelixjsChainConfig(chain);
-  const appChainConfig = getAppChainConfig(chain);
+  const chainConfig = getChainConfig(chain);
+  const token = chainConfig?.tokens.find((t) => t.symbol === symbol);
 
-  const chainLogo = appChainConfig?.logo || "unknown.png";
-  const chainName = appChainConfig?.name || "Unknown";
-
-  const decimals = helixjsChainConfig?.tokens.find((token) => token.symbol === symbol)?.decimals;
-  const tokenIcon = getTokenIcon(symbol);
-
-  return decimals ? (
+  return token && chainConfig ? (
     <div className="gap-middle flex items-center">
-      <Tooltip content={<span className="text-xs font-normal text-white">{chainName}</span>} className="shrink-0">
-        <Image width={16} height={16} alt="Chain logo" src={`/images/network/${chainLogo}`} />
+      <Tooltip
+        content={<span className="text-xs font-normal text-white">{chainConfig.name}</span>}
+        className="shrink-0"
+      >
+        <Image
+          width={16}
+          height={16}
+          alt="Chain logo"
+          src={getChainLogoSrc(chainConfig.logo)}
+          className="shrink-0 rounded-full"
+        />
       </Tooltip>
-      <span className="text-sm font-medium text-white">From</span>
-      <PrettyAddress address={from} forceShort className="text-primary text-sm font-normal" />
-      <span className="text-sm font-medium text-white">From</span>
-      <PrettyAddress address={to} forceShort className="text-primary text-sm font-normal" />
-      <span className="text-sm font-medium text-white">For</span>
-      <Image width={16} height={16} alt="Token icon" src={`/images/token/${tokenIcon}`} className="shrink-0" />
+      <Label text="From" />
+      <Address address={from} />
+      <Label text="To" />
+      <Address address={to} />
+      <Label text="For" />
+      <Image width={16} height={16} alt="Token icon" src={getTokenLogoSrc(token.logo)} className="shrink-0" />
       <span className="text-sm font-normal text-white">
-        {formatBlanace(amount, decimals, { keepZero: false, precision: 4 })} {symbol}
+        {formatBalance(amount, token.decimals, { keepZero: false, precision: 4 })} {symbol}
       </span>
     </div>
   ) : null;
+}
+
+function Address({ address }: { address: string }) {
+  return (
+    <div className="inline-block w-24 truncate">
+      <PrettyAddress address={address} forceShort className="text-primary text-sm font-normal" />
+    </div>
+  );
+}
+
+function Label({ text }: { text: string }) {
+  return <span className="text-sm font-medium text-white">{text}</span>;
 }

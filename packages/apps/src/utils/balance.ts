@@ -5,7 +5,7 @@ interface Options {
   keepZero?: boolean;
 }
 
-export function formatBlanace(value: bigint, decimals = 18, options: Options = { precision: 3, keepZero: true }) {
+export function formatBalance(value: bigint, decimals = 18, options: Options = { precision: 3, keepZero: true }) {
   const precision = options.precision === undefined ? 3 : options.precision;
   const keepZero = options.keepZero === undefined ? true : options.keepZero;
 
