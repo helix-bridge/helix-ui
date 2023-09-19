@@ -18,6 +18,11 @@ export interface ChainTokens {
   symbols: TokenSymbol[];
 }
 
+export interface ChainToken {
+  network: Network;
+  symbol: TokenSymbol;
+}
+
 export type AvailableBridges = {
   [sourceChain in Network]?: {
     [targetChain in Network]?: {

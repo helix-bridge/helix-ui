@@ -1,9 +1,7 @@
 "use client";
 
-import { PropsWithChildren, useEffect, useMemo, useState } from "react";
-import { Item as TokenSelectItem, Value as TokenSelectValue } from "./token-select";
+import { PropsWithChildren, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import TransferInput from "./transfer-input";
-import Image from "next/image";
 import CrossChainInfo from "./cross-chain-info";
 import { getCrossChain, getParsedCrossChain } from "@/utils/cross-chain";
 import { BaseBridge } from "@/bridges/base";
@@ -16,34 +14,31 @@ import { QUERY_RELAYERS } from "@/config/gql";
 import { getChainConfig } from "@/utils/chain";
 import { Network } from "@/types/chain";
 import BridgeSelect from "./bridge-select";
+import SwitchCross from "./switch-cross";
 
-const { sourceChainTokens, availableBridges, availableTargetChainTokens } = getParsedCrossChain();
+const {
+  defaultTargetChainTokens,
+  sourceChainTokens,
+  availableBridges,
+  availableTargetChainTokens,
+  defaultSourceValue,
+  defaultTargetValue,
+  defaultCategory,
+} = getParsedCrossChain();
 const crossChain = getCrossChain();
 
 export default function Transfer() {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
 
-  const [sourceValue, setSourceValue] = useState<TokenSelectValue | undefined>(
-    sourceChainTokens.length && sourceChainTokens[0].symbols.length
-      ? { network: sourceChainTokens[0].network, symbol: sourceChainTokens[0].symbols[0] }
-      : undefined,
-  );
-  const [targetItems, setTargetItems] = useState<TokenSelectItem[]>(
-    sourceValue ? availableTargetChainTokens[sourceValue.network]?.[sourceValue.symbol] || [] : [],
-  );
-  const [targetValue, setTargetValue] = useState<TokenSelectValue | undefined>(
-    targetItems.length && targetItems[0].symbols.length
-      ? { network: targetItems[0].network, symbol: targetItems[0].symbols[0] }
-      : undefined,
-  );
-  const [amount, setAmount] = useState(0n);
-  const [category, setCategory] = useState<BridgeCategory | null | undefined>(
-    sourceValue && targetValue
-      ? availableBridges[sourceValue.network]?.[targetValue.network]?.[sourceValue.symbol]?.at(0)?.category
-      : null,
-  );
+  const [sourceValue, setSourceValue] = useState(defaultSourceValue);
+  const [targetValue, setTargetValue] = useState(defaultTargetValue);
+  const [targetItems, setTargetItems] = useState(defaultTargetChainTokens);
+
+  const [category, setCategory] = useState<BridgeCategory | null | undefined>(defaultCategory);
   const [bridge, setBridge] = useState<BaseBridge | null>();
+  const [amount, setAmount] = useState(0n);
+  const deferredAmount = useDeferredValue(amount);
 
   const token = useMemo(
     () => getChainConfig(sourceValue?.network)?.tokens.find(({ symbol }) => sourceValue?.symbol === symbol),
@@ -52,7 +47,7 @@ export default function Transfer() {
 
   const { loading, data: relayers } = useQuery<RelayersResponseData, RelayersVariables>(QUERY_RELAYERS, {
     variables: {
-      amount: amount.toString(),
+      amount: deferredAmount.toString(),
       decimals: token?.decimals || 0,
       bridge: (category || "") as BridgeCategory,
       token: token?.address || "",
@@ -60,6 +55,9 @@ export default function Transfer() {
       toChain: (targetValue?.network || "") as Network,
     },
   });
+
+  const sourceValueRef = useRef(sourceValue);
+  const targetValueRef = useRef(targetValue);
 
   useEffect(() => {
     if (sourceValue && targetValue && category) {
@@ -85,21 +83,51 @@ export default function Transfer() {
     <div className="p-middle bg-component gap-large mx-auto flex w-full flex-col rounded lg:w-[40rem] lg:gap-5 lg:p-5">
       {/* source */}
       <Section label="From" className="mt-8">
-        <TransferInput items={sourceChainTokens} value={sourceValue} />
+        <TransferInput
+          items={sourceChainTokens}
+          value={sourceValue}
+          onAmountChange={setAmount}
+          onTokenChange={(value) => {
+            setSourceValue(value);
+
+            const network = availableTargetChainTokens[value.network]?.[value.symbol]?.at(0)?.network;
+            const symbol = availableTargetChainTokens[value.network]?.[value.symbol]?.at(0)?.symbols.at(0);
+            setTargetValue(network && symbol ? { network, symbol } : undefined);
+            setTargetItems(availableTargetChainTokens[value.network]?.[value.symbol] || []);
+          }}
+        />
       </Section>
 
       {/* switch */}
       <div className="flex justify-center">
-        <button className="transition hover:scale-105 hover:opacity-80 active:scale-95 disabled:scale-100 disabled:cursor-not-allowed disabled:opacity-100">
-          <Image width={36} height={36} alt="Switch" src="/images/switch.svg" />
-        </button>
+        <SwitchCross
+          disabled={
+            !(
+              sourceValue &&
+              targetValue &&
+              availableBridges[targetValue.network]?.[sourceValue.network]?.[targetValue.symbol]?.length
+            )
+          }
+          onClick={() => {
+            sourceValueRef.current = sourceValue;
+            targetValueRef.current = targetValue;
+            setSourceValue(targetValueRef.current);
+            setTargetValue(sourceValueRef.current);
+            setTargetItems(
+              targetValueRef.current
+                ? availableTargetChainTokens[targetValueRef.current.network]?.[targetValueRef.current.symbol] || []
+                : [],
+            );
+          }}
+        />
       </div>
 
       {/* target */}
       <Section label="To">
-        <TransferInput items={targetItems} value={targetValue} isTarget />
+        <TransferInput items={targetItems} value={targetValue} isTarget onTokenChange={setTargetValue} />
       </Section>
 
+      {/* bridge */}
       <Section label="Bridge" className="mt-8">
         <BridgeSelect
           sourceChain={sourceValue?.network}
@@ -113,7 +141,7 @@ export default function Transfer() {
       {/* information */}
       <Section label="Information" className="mt-8">
         <CrossChainInfo
-          amount={amount}
+          amount={deferredAmount}
           token={token}
           bridge={bridge}
           relayer={relayers?.sortedLnv20RelayInfos?.at(0)}

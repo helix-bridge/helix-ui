@@ -1,5 +1,5 @@
 import { Network } from "@/types/chain";
-import { ChainTokens } from "@/types/cross-chain";
+import { ChainToken, ChainTokens } from "@/types/cross-chain";
 import { TokenSymbol } from "@/types/token";
 import { getChainConfig } from "@/utils/chain";
 import { getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
@@ -15,20 +15,13 @@ import {
 import Image from "next/image";
 import { useRef, useState } from "react";
 
-export interface Value {
-  network: Network;
-  symbol: TokenSymbol;
-}
-
-export type Item = ChainTokens;
-
 interface Props {
-  items: Item[];
-  value?: Value;
-  onSelect?: (value: Value) => void;
+  items: ChainTokens[];
+  value?: ChainToken;
+  onChange?: (value: ChainToken) => void;
 }
 
-export default function TokenSelect({ items, value, onSelect = () => undefined }: Props) {
+export default function TokenSelect({ items, value, onChange = () => undefined }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const { refs, context, floatingStyles } = useFloating({
@@ -101,7 +94,7 @@ export default function TokenSelect({ items, value, onSelect = () => undefined }
             className="token-select-dropdown z-20"
           >
             <div style={styles} className="bg-component p-small lg:p-middle rounded border border-white/10 shadow-2xl">
-              <Cascader items={items} onSelect={onSelect} />
+              <Cascader items={items} onChange={onChange} onClose={setIsOpen} />
             </div>
           </div>
         </FloatingPortal>
@@ -110,7 +103,15 @@ export default function TokenSelect({ items, value, onSelect = () => undefined }
   );
 }
 
-function Cascader({ items, onSelect }: { items: Item[]; onSelect: (value: Value) => void }) {
+function Cascader({
+  items,
+  onChange,
+  onClose,
+}: {
+  items: ChainTokens[];
+  onChange: (value: ChainToken) => void;
+  onClose: (isOpen: false) => void;
+}) {
   const [symbols, setSymbols] = useState<TokenSymbol[]>([]);
   const networkRef = useRef<Network | null>();
 
@@ -161,7 +162,10 @@ function Cascader({ items, onSelect }: { items: Item[]; onSelect: (value: Value)
             <button
               key={symbol}
               className="gap-small px-small lg:px-middle flex w-full items-center rounded py-[2px] hover:bg-white/10"
-              onClick={() => networkRef.current && onSelect({ network: networkRef.current, symbol })}
+              onClick={() => {
+                networkRef.current && onChange({ network: networkRef.current, symbol });
+                onClose(false);
+              }}
             >
               <Image
                 width={16}

@@ -1,12 +1,16 @@
 import { crossChain } from "@/config/cross-chain";
 import { BridgeCategory } from "@/types/bridge";
 import { Network } from "@/types/chain";
-import { AvailableBridges, AvailableTargetChainTokens, ChainTokens } from "@/types/cross-chain";
+import { AvailableBridges, AvailableTargetChainTokens, ChainToken, ChainTokens } from "@/types/cross-chain";
 import { TokenSymbol } from "@/types/token";
 
+let defaultTargetChainTokens: ChainTokens[] = [];
 const sourceChainTokens: ChainTokens[] = [];
 let availableBridges: AvailableBridges = {};
 let availableTargetChainTokens: AvailableTargetChainTokens = {};
+let defaultSourceValue: ChainToken | undefined;
+let defaultTargetValue: ChainToken | undefined;
+let defaultCategory: BridgeCategory | undefined;
 
 (Object.keys(crossChain) as Network[]).forEach((sourceChain) => {
   const sourceTokens = new Set<TokenSymbol>();
@@ -56,8 +60,31 @@ let availableTargetChainTokens: AvailableTargetChainTokens = {};
   }
 });
 
+const sourceNetwork = sourceChainTokens.at(0)?.network;
+const sourceSymbol = sourceChainTokens.at(0)?.symbols.at(0);
+if (sourceNetwork && sourceSymbol) {
+  defaultSourceValue = { network: sourceNetwork, symbol: sourceSymbol };
+  defaultTargetChainTokens.push(...(availableTargetChainTokens[sourceNetwork]?.[sourceSymbol] || []));
+
+  const targetNetwork = availableTargetChainTokens[sourceNetwork]?.[sourceSymbol]?.at(0)?.network;
+  const targetSymbol = availableTargetChainTokens[sourceNetwork]?.[sourceSymbol]?.at(0)?.symbols.at(0);
+  if (targetNetwork && targetSymbol) {
+    defaultTargetValue = { network: targetNetwork, symbol: targetSymbol };
+
+    defaultCategory = availableBridges[sourceNetwork]?.[targetNetwork]?.[sourceSymbol]?.at(0)?.category;
+  }
+}
+
 export function getParsedCrossChain() {
-  return { sourceChainTokens, availableBridges, availableTargetChainTokens };
+  return {
+    defaultTargetChainTokens,
+    sourceChainTokens,
+    availableBridges,
+    availableTargetChainTokens,
+    defaultSourceValue,
+    defaultTargetValue,
+    defaultCategory,
+  };
 }
 
 export function getCrossChain() {
