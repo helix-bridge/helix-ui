@@ -16,35 +16,37 @@ let availableTargetChainTokens: AvailableTargetChainTokens = {};
       const contract = crossChain[sourceChain]?.[targetChain]?.[category]?.contract;
       const tokens = crossChain[sourceChain]?.[targetChain]?.[category]?.tokens;
 
-      tokens?.forEach(({ sourceToken, targetToken }) => {
-        sourceTokens.add(sourceToken);
+      tokens?.forEach(({ sourceToken, targetToken, deprecated }) => {
+        if (!deprecated) {
+          sourceTokens.add(sourceToken);
 
-        if (contract) {
-          availableBridges = {
-            ...availableBridges,
-            [sourceChain]: {
-              ...availableBridges[sourceChain],
-              [targetChain]: {
-                ...availableBridges[sourceChain]?.[targetChain],
-                [sourceToken]: (availableBridges[sourceChain]?.[targetChain]?.[sourceToken] || []).concat({
-                  category,
-                  contract,
-                }),
+          if (contract) {
+            availableBridges = {
+              ...availableBridges,
+              [sourceChain]: {
+                ...availableBridges[sourceChain],
+                [targetChain]: {
+                  ...availableBridges[sourceChain]?.[targetChain],
+                  [sourceToken]: (availableBridges[sourceChain]?.[targetChain]?.[sourceToken] || []).concat({
+                    category,
+                    contract,
+                  }),
+                },
               },
+            };
+          }
+
+          availableTargetChainTokens = {
+            ...availableTargetChainTokens,
+            [sourceChain]: {
+              ...availableTargetChainTokens[sourceChain],
+              [sourceToken]: (availableTargetChainTokens[sourceChain]?.[sourceToken] || []).concat({
+                network: targetChain,
+                symbols: [targetToken],
+              }),
             },
           };
         }
-
-        availableTargetChainTokens = {
-          ...availableTargetChainTokens,
-          [sourceChain]: {
-            ...availableTargetChainTokens[sourceChain],
-            [sourceToken]: (availableTargetChainTokens[sourceChain]?.[sourceToken] || []).concat({
-              network: targetChain,
-              symbols: [targetToken],
-            }),
-          },
-        };
       });
     });
   });
