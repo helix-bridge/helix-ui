@@ -8,7 +8,11 @@ export function StatusTag({ status }: { status?: RecordStatus | null }) {
     let text = "Unknown";
     let color = "#00B2FF";
 
-    if (status === RecordStatus.Pending) {
+    if (
+      status === RecordStatus.Pending ||
+      status === RecordStatus.PendingToRefund ||
+      status === RecordStatus.PendingToClaim
+    ) {
       icon = "pending.svg";
       text = "Pending";
       color = "#00B2FF";
