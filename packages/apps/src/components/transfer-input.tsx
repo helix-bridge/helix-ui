@@ -32,8 +32,10 @@ export default function TransferInput({
       className={`p-small lg:p-middle gap-small flex items-center justify-between rounded border transition-colors ${
         isTarget
           ? "bg-app-bg/60 border-transparent"
-          : `bg-app-bg focus-within:border-line ${
-              isInsufficient ? "border-app-red hover:border-app-red" : "hover:border-line border-transparent"
+          : `bg-app-bg ${
+              isInsufficient
+                ? "hover:border-app-red focus-within:border-app-red border-app-red"
+                : "hover:border-line focus-within:border-line border-transparent"
             }`
       }`}
     >
