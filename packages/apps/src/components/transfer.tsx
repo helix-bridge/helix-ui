@@ -15,6 +15,7 @@ import { RelayersResponseData, RelayersVariables } from "@/types/graphql";
 import { QUERY_RELAYERS } from "@/config/gql";
 import { getChainConfig } from "@/utils/chain";
 import { Network } from "@/types/chain";
+import BridgeSelect from "./bridge-select";
 
 const { sourceChainTokens, availableBridges, availableTargetChainTokens } = getParsedCrossChain();
 const crossChain = getCrossChain();
@@ -37,7 +38,11 @@ export default function Transfer() {
       : undefined,
   );
   const [amount, setAmount] = useState(0n);
-  const [category, setCategory] = useState<BridgeCategory | null>();
+  const [category, setCategory] = useState<BridgeCategory | null | undefined>(
+    sourceValue && targetValue
+      ? availableBridges[sourceValue.network]?.[targetValue.network]?.[sourceValue.symbol]?.at(0)?.category
+      : null,
+  );
   const [bridge, setBridge] = useState<BaseBridge | null>();
 
   const token = useMemo(
@@ -93,6 +98,16 @@ export default function Transfer() {
       {/* target */}
       <Section label="To">
         <TransferInput items={targetItems} value={targetValue} isTarget />
+      </Section>
+
+      <Section label="Bridge" className="mt-8">
+        <BridgeSelect
+          sourceChain={sourceValue?.network}
+          targetChain={targetValue?.network}
+          token={sourceValue?.symbol}
+          value={category}
+          onChange={setCategory}
+        />
       </Section>
 
       {/* information */}

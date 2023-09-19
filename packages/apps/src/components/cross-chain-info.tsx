@@ -3,7 +3,7 @@ import { RelayerInfo } from "@/types/graphql";
 import { Token } from "@/types/token";
 import CountLoading from "@/ui/count-loading";
 import { formatBalance } from "@/utils/balance";
-import { useEffect, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import { from, Subscription } from "rxjs";
 
 interface Props {
@@ -42,15 +42,15 @@ export default function CrossChainInfo({ amount, token, bridge, relayer }: Props
 
   return (
     <div className="bg-app-bg p-middle gap-small flex flex-col rounded border border-transparent">
-      <div className="flex items-center justify-between text-sm font-medium text-white">
+      <Section>
         <span>Bridge</span>
         <span>{bridge?.getName() || "-"}</span>
-      </div>
-      <div className="flex items-center justify-between text-sm font-medium text-white">
+      </Section>
+      <Section>
         <span>Estimated Arrival Time</span>
         <span>{bridge?.getEstimateTime() || "-"}</span>
-      </div>
-      <div className="flex items-center justify-between text-sm font-medium text-white">
+      </Section>
+      <Section>
         <span>Transaction Fee</span>
         {loading ? (
           <CountLoading />
@@ -61,7 +61,11 @@ export default function CrossChainInfo({ amount, token, bridge, relayer }: Props
         ) : (
           <span>-</span>
         )}
-      </div>
+      </Section>
     </div>
   );
+}
+
+function Section({ children }: PropsWithChildren<unknown>) {
+  return <div className="flex items-center justify-between text-sm font-normal text-white">{children}</div>;
 }
