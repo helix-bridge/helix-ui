@@ -148,7 +148,7 @@ export const crossChain: CrossChain = {
           sourceAddress: "0x",
           targetAddress: "0x",
         },
-        tokens: [{ sourceToken: "PRING", targetToken: "PRING" }],
+        tokens: [{ sourceToken: "PRING", targetToken: "PRING", deprecated: true }],
       },
     },
   },

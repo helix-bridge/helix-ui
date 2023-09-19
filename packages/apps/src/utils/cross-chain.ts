@@ -51,7 +51,9 @@ let availableTargetChainTokens: AvailableTargetChainTokens = {};
     });
   });
 
-  sourceChainTokens.push({ network: sourceChain, symbols: Array.from(sourceTokens) });
+  if (sourceTokens.size) {
+    sourceChainTokens.push({ network: sourceChain, symbols: Array.from(sourceTokens) });
+  }
 });
 
 export function getParsedCrossChain() {
