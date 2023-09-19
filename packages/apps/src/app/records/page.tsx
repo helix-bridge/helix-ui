@@ -88,7 +88,11 @@ export default function Records() {
             },
           ]}
           activeKey={activeKey}
-          onChange={setActiveKey}
+          onChange={(key) => {
+            setRecords(undefined);
+            setCurrentPage(0);
+            setActiveKey(key);
+          }}
         />
       </div>
     </main>
