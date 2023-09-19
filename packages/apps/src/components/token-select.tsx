@@ -115,9 +115,13 @@ function Cascader({ items, onSelect }: { items: Item[]; onSelect: (value: Value)
   const networkRef = useRef<Network | null>();
 
   return (
-    <div className="flex">
+    <div className="py-small flex">
       {/* left */}
-      <div className="pr-small flex h-60 flex-1 flex-col overflow-y-auto border-r border-r-white/20">
+      <div
+        className={`pr-small gap-small flex flex-1 flex-col overflow-y-auto border-r ${
+          symbols.length ? "border-r-white/20" : "border-r-transparent"
+        }`}
+      >
         {items.map(({ network, symbols }) => {
           const chainConfig = getChainConfig(network);
           return (
@@ -150,7 +154,7 @@ function Cascader({ items, onSelect }: { items: Item[]; onSelect: (value: Value)
       </div>
 
       {/* right */}
-      <div className="pl-small h-60 flex-1 overflow-y-auto">
+      <div className="pl-small flex-1 overflow-y-auto">
         {symbols.map((symbol) => {
           const token = getChainConfig(networkRef.current)?.tokens.find((t) => t.symbol === symbol);
           return (

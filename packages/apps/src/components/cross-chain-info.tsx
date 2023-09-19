@@ -11,9 +11,10 @@ interface Props {
   token?: Token | null;
   bridge?: BaseBridge | null;
   relayer?: RelayerInfo | null;
+  externalLoading?: boolean;
 }
 
-export default function CrossChainInfo({ amount, token, bridge, relayer }: Props) {
+export default function CrossChainInfo({ amount, token, bridge, relayer, externalLoading }: Props) {
   const [loading, setLoading] = useState(false);
   const [fee, setFee] = useState(0n);
 
@@ -52,8 +53,8 @@ export default function CrossChainInfo({ amount, token, bridge, relayer }: Props
       </Section>
       <Section>
         <span>Transaction Fee</span>
-        {loading ? (
-          <CountLoading />
+        {loading || externalLoading ? (
+          <CountLoading color="white" />
         ) : token ? (
           <span>
             {formatBalance(fee, token.decimals, { keepZero: false })} {token.symbol}

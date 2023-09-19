@@ -50,7 +50,7 @@ export default function Transfer() {
     [sourceValue],
   );
 
-  const { data: relayers } = useQuery<RelayersResponseData, RelayersVariables>(QUERY_RELAYERS, {
+  const { loading, data: relayers } = useQuery<RelayersResponseData, RelayersVariables>(QUERY_RELAYERS, {
     variables: {
       amount: amount.toString(),
       decimals: token?.decimals || 0,
@@ -117,6 +117,7 @@ export default function Transfer() {
           token={token}
           bridge={bridge}
           relayer={relayers?.sortedLnv20RelayInfos?.at(0)}
+          externalLoading={loading}
         />
       </Section>
 
