@@ -16,6 +16,7 @@ import { Network } from "@/types/chain";
 import BridgeSelect from "./bridge-select";
 import SwitchCross from "./switch-cross";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { from, Subscription } from "rxjs";
 
 const {
   defaultTargetChainTokens,
@@ -39,6 +40,8 @@ export default function Transfer() {
   );
   const [category, setCategory] = useState<BridgeCategory | null | undefined>(defaultCategory);
   const [bridge, setBridge] = useState<BaseBridge | null>();
+  const [allowance, setAllowance] = useState(0n);
+  const [fee, setFee] = useState(0n);
   const [amount, setAmount] = useState(0n);
   const deferredAmount = useDeferredValue(amount);
 
@@ -86,6 +89,24 @@ export default function Transfer() {
       setBridge(null);
     }
   }, [category, sourceValue, targetValue, publicClient, walletClient]);
+
+  useEffect(() => {
+    let sub$$: Subscription | undefined;
+
+    if (address && bridge) {
+      sub$$ = from(bridge.getAllowance(address)).subscribe({
+        next: setAllowance,
+        error: (err) => {
+          console.error(err);
+          setAllowance(0n);
+        },
+      });
+    } else {
+      setAllowance(0n);
+    }
+
+    return () => sub$$?.unsubscribe();
+  }, [address, bridge]);
 
   return (
     <div className="p-middle bg-component gap-large mx-auto flex w-full flex-col rounded lg:w-[40rem] lg:gap-5 lg:p-5">
@@ -163,6 +184,7 @@ export default function Transfer() {
           bridge={bridge}
           relayer={relayers?.sortedLnv20RelayInfos?.at(0)}
           externalLoading={loading}
+          onFeeChange={setFee}
         />
       </Section>
 
@@ -171,6 +193,25 @@ export default function Transfer() {
         sourceChainConfig && chain.id !== sourceChainConfig.id ? (
           <ActionButton onClick={() => switchNetwork && switchNetwork(sourceChainConfig.id)}>
             Switch Network
+          </ActionButton>
+        ) : deferredAmount + fee > allowance ? (
+          <ActionButton
+            onClick={async () => {
+              if (bridge) {
+                try {
+                  const receipt = await bridge.approve(deferredAmount + fee);
+                  if (receipt?.status === "success") {
+                    alert("success");
+                  } else {
+                    alert("failed");
+                  }
+                } catch (err) {
+                  console.error(err);
+                }
+              }
+            }}
+          >
+            Approve
           </ActionButton>
         ) : (
           <ActionButton>Transfer</ActionButton>

@@ -12,9 +12,17 @@ interface Props {
   bridge?: BaseBridge | null;
   relayer?: RelayerInfo | null;
   externalLoading?: boolean;
+  onFeeChange?: (value: bigint) => void;
 }
 
-export default function CrossChainInfo({ amount, token, bridge, relayer, externalLoading }: Props) {
+export default function CrossChainInfo({
+  amount,
+  token,
+  bridge,
+  relayer,
+  externalLoading,
+  onFeeChange = () => undefined,
+}: Props) {
   const [loading, setLoading] = useState(false);
   const [fee, setFee] = useState(0n);
 
@@ -27,10 +35,12 @@ export default function CrossChainInfo({ amount, token, bridge, relayer, externa
       from(bridge.getFee(BigInt(relayer.baseFee || 0), BigInt(relayer.liquidityFeeRate || 0), amount)).subscribe({
         next: (res) => {
           setFee(res || 0n);
+          onFeeChange(res || 0n);
         },
         error: (err) => {
           console.error(err);
           setFee(0n);
+          onFeeChange(0n);
         },
         complete: () => {
           setLoading(false);
@@ -39,7 +49,7 @@ export default function CrossChainInfo({ amount, token, bridge, relayer, externa
     }
 
     return () => sub$$?.unsubscribe();
-  }, [amount, bridge, relayer]);
+  }, [amount, bridge, relayer, onFeeChange]);
 
   return (
     <div className="bg-app-bg p-middle gap-small flex flex-col rounded border border-transparent">
