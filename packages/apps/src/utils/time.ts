@@ -13,5 +13,5 @@ export function formatTime(timestamp: number, options?: { compact?: boolean }) {
   // compact: true => 2023-09-08 09:54:23
   return options?.compact
     ? formatInTimeZone(timestamp, "Africa/Abidjan", "yyyy-MM-dd hh:mm:ss")
-    : `${formatInTimeZone(timestamp, "Africa/Abidjan", "MMM-dd-yyyy hh:mm:ss a..aa")} +UTC`;
+    : `${formatInTimeZone(timestamp, "Africa/Abidjan", "MMM-dd-yyyy hh:mm:ss aa")} +UTC`;
 }
