@@ -6,7 +6,7 @@ import CrossChainInfo from "./cross-chain-info";
 import { getCrossChain, getParsedCrossChain } from "@/utils/cross-chain";
 import { BaseBridge } from "@/bridges/base";
 import { BridgeCategory } from "@/types/bridge";
-import { usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, useBalance, usePublicClient, useWalletClient } from "wagmi";
 import { bridgeFactory } from "@/utils/bridge";
 import { useQuery } from "@apollo/client";
 import { RelayersResponseData, RelayersVariables } from "@/types/graphql";
@@ -28,9 +28,6 @@ const {
 const crossChain = getCrossChain();
 
 export default function Transfer() {
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
-
   const [sourceValue, setSourceValue] = useState(defaultSourceValue);
   const [targetValue, setTargetValue] = useState(defaultTargetValue);
   const [targetItems, setTargetItems] = useState(defaultTargetChainTokens);
@@ -44,6 +41,14 @@ export default function Transfer() {
     () => getChainConfig(sourceValue?.network)?.tokens.find(({ symbol }) => sourceValue?.symbol === symbol),
     [sourceValue],
   );
+
+  const { address } = useAccount();
+  const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
+  const { data: balanceData, refetch: refetchBalance } = useBalance({
+    address,
+    token: token?.type === "erc20" ? token.address : undefined,
+  });
 
   const { loading, data: relayers } = useQuery<RelayersResponseData, RelayersVariables>(QUERY_RELAYERS, {
     variables: {
@@ -85,6 +90,7 @@ export default function Transfer() {
       <Section label="From" className="mt-8">
         <TransferInput
           items={sourceChainTokens}
+          balance={balanceData?.value}
           value={sourceValue}
           onAmountChange={setAmount}
           onTokenChange={(value) => {
