@@ -13,7 +13,7 @@ export function formatRecordStatus(status: RecordStatus) {
     case RecordStatus.Success:
       return "Success";
     default:
-      return "-";
+      return "Unknown";
   }
 }
 

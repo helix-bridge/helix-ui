@@ -1,3 +1,4 @@
+import { UrlSearchParam } from "@/types/url";
 import { toShortAdrress } from "@/utils/address";
 import {
   FloatingPortal,
@@ -66,7 +67,7 @@ export default function User({ className, onClose = () => undefined }: Props) {
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
             <div style={styles} className="bg-component border-line py-small flex flex-col rounded border">
               <Link
-                href="/records"
+                href={`/records?${UrlSearchParam.Address}=${address}`}
                 onClick={() => {
                   setIsOpen(false);
                   onClose();
