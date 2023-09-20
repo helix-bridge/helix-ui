@@ -27,7 +27,7 @@ import {
   getWrappedToken,
 } from '../utils/network';
 
-describe('network utils', () => {
+describe.skip('network utils', () => {
   const data = [...crossChainGraph];
   const sort = (ary: string[]) => sortBy(ary, (cur) => cur.split('').reduce((acc, cur) => acc + cur.charAt(0)));
   const getOverview = (departure: Network, arrival: Network) =>

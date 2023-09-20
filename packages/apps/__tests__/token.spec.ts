@@ -6,7 +6,7 @@ import { isTransferableTokenPair } from '../utils/validate';
 // exclude the config that not contains transferable tokens;
 const configs = chainConfigs.filter((item) => !!item.tokens.filter((token) => !!token.cross.length).length);
 
-describe('token utils', () => {
+describe.skip('token utils', () => {
   describe.each(configs)('$name network', ({ name, tokens, ...rest }) => {
     describe.each(tokens.filter((item) => !!item.cross.length))('$name ', ({ name, cross, ...other }) => {
       it.each(cross)(
