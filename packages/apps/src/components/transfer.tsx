@@ -202,7 +202,7 @@ export default function Transfer() {
           ) : deferredAmount + fee > allowance ? (
             <ActionButton
               onClick={async () => {
-                if (bridge) {
+                if (bridge && address) {
                   try {
                     setBusy(true);
                     const receipt = await bridge.approve(deferredAmount + fee);
@@ -225,6 +225,10 @@ export default function Transfer() {
                           </a>
                         ),
                       });
+
+                      const _allowance = await bridge.getAllowance(address);
+                      setBusy(false);
+                      setAllowance(_allowance);
                     } else if (receipt?.status === "reverted") {
                       notification.warn({
                         title: "Approved failed",
