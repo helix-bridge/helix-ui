@@ -65,6 +65,7 @@ export interface ChainConfig {
   tokens: TokenWithBridgesInfo[];
   wallets: SupportedWallet[];
   fullName?: string;
+  hidden?: boolean;
 }
 
 export interface EthereumChainConfig extends ChainConfig {

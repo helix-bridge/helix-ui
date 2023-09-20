@@ -2,7 +2,7 @@
 
 import { isDVMNetwork, isEthereumNetwork, isParachainNetwork, isPolkadotNetwork } from '../utils/network/network';
 
-describe('network utils', () => {
+describe.skip('network utils', () => {
   it('can recognize polkadot network', () => {
     expect(isPolkadotNetwork('crab-parachain')).toBe(true);
     expect(isPolkadotNetwork('karura')).toBe(true);

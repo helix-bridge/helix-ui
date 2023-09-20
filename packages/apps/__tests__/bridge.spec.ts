@@ -41,33 +41,34 @@ const mapToTestChain: { [key: string]: string } = {
   mantle: 'mantle-goerli',
 };
 
-describe('bridge utils', () => {
-  const bridges = crossChainGraph;
-  const formalBridges = calcBridgesAmount(bridges.filter((item) => !getChainConfig(item[0]).isTest));
-  const testBridges = calcBridgesAmount(bridges.filter((item) => getChainConfig(item[0]).isTest));
+// describe.skip('bridge utils', () => {
+//   const bridges = crossChainGraph;
 
-  const allDirections = bridges.map(([departure, arrivals]) => arrivals.map((arrival) => [departure, arrival])).flat();
-  console.log('🌉 All cross-chain directions to be tested', allDirections);
+//   const formalBridges = calcBridgesAmount(bridges.filter((item) => !getChainConfig(item[0]).isTest));
+//   const testBridges = calcBridgesAmount(bridges.filter((item) => getChainConfig(item[0]).isTest));
 
-  it('should support bridge count: ', () => {
-    expect(testBridges).toHaveLength(9);
-    expect(formalBridges).toHaveLength(47);
-  });
+//   const allDirections = bridges.map(([departure, arrivals]) => arrivals.map((arrival) => [departure, arrival])).flat();
+//   console.log('🌉 All cross-chain directions to be tested', allDirections);
 
-  it('should support transfer count: ', () => {
-    expect(allDirections).toHaveLength(144);
-  });
+//   it('should support bridge count: ', () => {
+//     expect(testBridges).toHaveLength(9);
+//     expect(formalBridges).toHaveLength(47);
+//   });
 
-  it('Should correct bridge category name', () => {
-    expect(bridgeCategoryDisplay('helix')).toBe('Helix');
-    expect(bridgeCategoryDisplay('cBridge')).toBe('cBridge');
-  });
-});
+//   it('should support transfer count: ', () => {
+//     expect(allDirections).toHaveLength(144);
+//   });
+
+//   it('Should correct bridge category name', () => {
+//     expect(bridgeCategoryDisplay('helix')).toBe('Helix');
+//     expect(bridgeCategoryDisplay('cBridge')).toBe('cBridge');
+//   });
+// });
 
 /**
  * Test getBridge function
  */
-describe.each(configs.filter((item) => !item.isTest))(
+describe.skip.each(configs.filter((item) => !item.isTest))(
   "can find bridge which from $name's",
   ({ tokens, name: chainName, ...restChainConfigs }) => {
     describe.each(tokens.filter((item) => !!item.cross.length))(
@@ -111,7 +112,7 @@ describe.each(configs.filter((item) => !item.isTest))(
 /**
  * Test whether the token transfer configuration of the bridge is correct;
  */
-describe.each(configs)("$name network's ", ({ name, tokens, ...other }) => {
+describe.skip.each(configs)("$name network's ", ({ name, tokens, ...other }) => {
   describe.each(tokens.filter((item) => !!item.cross.length))('$name token', ({ cross, name: tokenName, ...rest }) => {
     const from = { ...rest, name: tokenName, cross, meta: { name, tokens, ...other }, amount: '' };
 

@@ -68,7 +68,7 @@ export const chainConfigs = (() => {
     return config;
   });
 
-  return sortBy(data, (item) => item.name);
+  return sortBy(data, (item) => item.name).filter(({ hidden }) => !hidden);
 })();
 
 function getConfig(name: Network | null | undefined, source = chainConfigs): ChainConfig {
