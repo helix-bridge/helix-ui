@@ -19,6 +19,7 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { from, Subscription } from "rxjs";
 import { useToggle } from "@/hooks/use-toggle";
 import ConfirmTransferModal from "./confirm-transfer-modal";
+import { notification } from "@/ui/notification";
 
 const {
   defaultTargetChainTokens,
@@ -32,6 +33,7 @@ const {
 const crossChain = getCrossChain();
 
 export default function Transfer() {
+  const [busy, setBusy] = useState(false);
   const [isOpen, _, setIsOpenTrue, setIsOpenFalse] = useToggle(false);
   const [sourceValue, setSourceValue] = useState(defaultSourceValue);
   const [targetValue, setTargetValue] = useState(defaultTargetValue);
@@ -202,22 +204,58 @@ export default function Transfer() {
               onClick={async () => {
                 if (bridge) {
                   try {
+                    setBusy(true);
                     const receipt = await bridge.approve(deferredAmount + fee);
+                    const href = new URL(
+                      `tx/${receipt?.transactionHash}`,
+                      sourceChainConfig?.blockExplorers?.default.url,
+                    ).href;
+
                     if (receipt?.status === "success") {
-                      alert("success");
-                    } else {
-                      alert("failed");
+                      notification.success({
+                        title: "Approved successfully",
+                        description: (
+                          <a
+                            target="_blank"
+                            rel="noopener"
+                            className="text-primary break-all hover:underline"
+                            href={href}
+                          >
+                            {receipt.transactionHash}
+                          </a>
+                        ),
+                      });
+                    } else if (receipt?.status === "reverted") {
+                      notification.warn({
+                        title: "Approved failed",
+                        description: (
+                          <a
+                            target="_blank"
+                            rel="noopener"
+                            className="text-primary break-all hover:underline"
+                            href={href}
+                          >
+                            {receipt.transactionHash}
+                          </a>
+                        ),
+                      });
                     }
                   } catch (err) {
                     console.error(err);
+                    notification.error({ title: "Approved failed", description: (err as Error).message });
+                  } finally {
+                    setBusy(false);
                   }
                 }
               }}
+              busy={busy}
             >
               Approve
             </ActionButton>
           ) : (
-            <ActionButton onClick={setIsOpenTrue}>Transfer</ActionButton>
+            <ActionButton onClick={setIsOpenTrue} busy={busy}>
+              Transfer
+            </ActionButton>
           )
         ) : (
           <ActionButton onClick={openConnectModal}>Connect Wallet</ActionButton>
@@ -245,12 +283,25 @@ function Section({ children, label, className }: PropsWithChildren<{ label: stri
   );
 }
 
-function ActionButton({ children, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>) {
+function ActionButton({
+  children,
+  busy,
+  disabled,
+  ...rest
+}: ButtonHTMLAttributes<HTMLButtonElement> & { busy?: boolean }) {
   return (
     <button
-      className="bg-primary inline-flex h-10 shrink-0 items-center justify-center rounded transition hover:opacity-80 active:translate-y-1 disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+      className={`bg-primary relative inline-flex h-10 shrink-0 items-center justify-center rounded transition disabled:translate-y-0 disabled:cursor-not-allowed ${
+        busy ? "" : "hover:opacity-80 active:translate-y-1 disabled:opacity-60"
+      }`}
+      disabled={disabled || busy}
       {...rest}
     >
+      {busy && (
+        <div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center">
+          <div className="h-5 w-5 animate-spin rounded-full border-[3px] border-b-white/50 border-l-white/50 border-r-white border-t-white" />
+        </div>
+      )}
       <span className="text-sm font-medium text-white">{children}</span>
     </button>
   );

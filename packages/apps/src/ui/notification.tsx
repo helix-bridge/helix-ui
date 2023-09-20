@@ -22,7 +22,7 @@ const createContainer = () => {
 
 const createItem = (config: Config, status: Status, onClose: () => void) => {
   const domNode = document.createElement("div");
-  domNode.className = `border border-primary p-middle lg:p-5 flex items-center gap-middle mb-middle animate-notification-enter relative bg-component w-[82vw] lg:w-96 ${config.className}`;
+  domNode.className = `rounded border border-primary p-middle lg:p-5 flex items-center gap-middle mb-middle animate-notification-enter relative bg-component w-[82vw] lg:w-96 ${config.className}`;
 
   const root = createRoot(domNode);
 
