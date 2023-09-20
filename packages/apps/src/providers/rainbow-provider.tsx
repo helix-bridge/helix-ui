@@ -4,7 +4,18 @@ import "@rainbow-me/rainbowkit/styles.css";
 import { RainbowKitProvider, connectorsForWallets, getDefaultWallets, darkTheme } from "@rainbow-me/rainbowkit";
 import { imTokenWallet, okxWallet, talismanWallet } from "@rainbow-me/rainbowkit/wallets";
 import { PropsWithChildren } from "react";
-import { mainnet, goerli, arbitrum, arbitrumGoerli, zkSync, zkSyncTestnet, linea, lineaTestnet } from "viem/chains";
+import {
+  mainnet,
+  goerli,
+  arbitrum,
+  arbitrumGoerli,
+  zkSync,
+  zkSyncTestnet,
+  linea,
+  lineaTestnet,
+  mantle,
+  mantleTestnet,
+} from "wagmi/chains";
 import { WagmiConfig, configureChains, createConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 
@@ -13,7 +24,7 @@ const appName = "Helix Bridge";
 
 export default function RainbowProvider({ children }: PropsWithChildren<unknown>) {
   const { chains, publicClient } = configureChains(
-    [mainnet, goerli, arbitrum, arbitrumGoerli, zkSync, zkSyncTestnet, linea, lineaTestnet],
+    [mainnet, goerli, arbitrum, arbitrumGoerli, zkSync, zkSyncTestnet, linea, lineaTestnet, mantle, mantleTestnet],
     [publicProvider()],
   );
 
