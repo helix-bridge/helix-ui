@@ -17,6 +17,8 @@ import BridgeSelect from "./bridge-select";
 import SwitchCross from "./switch-cross";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { from, Subscription } from "rxjs";
+import { useToggle } from "@/hooks/use-toggle";
+import ConfirmTransferModal from "./confirm-transfer-modal";
 
 const {
   defaultTargetChainTokens,
@@ -30,10 +32,10 @@ const {
 const crossChain = getCrossChain();
 
 export default function Transfer() {
+  const [isOpen, _, setIsOpenTrue, setIsOpenFalse] = useToggle(false);
   const [sourceValue, setSourceValue] = useState(defaultSourceValue);
   const [targetValue, setTargetValue] = useState(defaultTargetValue);
   const [targetItems, setTargetItems] = useState(defaultTargetChainTokens);
-
   const [sourceChainConfig, setSourceChainConfig] = useState(getChainConfig(defaultSourceValue?.network));
   const [transferToken, setTransferToken] = useState(
     getChainConfig(defaultSourceValue?.network)?.tokens.find(({ symbol }) => sourceValue?.symbol === symbol),
@@ -109,117 +111,126 @@ export default function Transfer() {
   }, [address, bridge]);
 
   return (
-    <div className="p-middle bg-component gap-large mx-auto flex w-full flex-col rounded lg:w-[40rem] lg:gap-5 lg:p-5">
-      {/* source */}
-      <Section label="From" className="mt-8">
-        <TransferInput
-          items={sourceChainTokens}
-          balance={balanceData?.value}
-          value={sourceValue}
-          onAmountChange={setAmount}
-          onTokenChange={(value) => {
-            setSourceValue(value);
-            setSourceChainConfig(getChainConfig(value.network));
-            setTransferToken(getChainConfig(value.network)?.tokens.find(({ symbol }) => value.symbol === symbol));
+    <>
+      <div className="p-middle bg-component gap-large mx-auto flex w-full flex-col rounded lg:w-[40rem] lg:gap-5 lg:p-5">
+        {/* source */}
+        <Section label="From" className="mt-8">
+          <TransferInput
+            items={sourceChainTokens}
+            balance={balanceData?.value}
+            value={sourceValue}
+            onAmountChange={setAmount}
+            onTokenChange={(value) => {
+              setSourceValue(value);
+              setSourceChainConfig(getChainConfig(value.network));
+              setTransferToken(getChainConfig(value.network)?.tokens.find(({ symbol }) => value.symbol === symbol));
 
-            const network = availableTargetChainTokens[value.network]?.[value.symbol]?.at(0)?.network;
-            const symbol = availableTargetChainTokens[value.network]?.[value.symbol]?.at(0)?.symbols.at(0);
-            setTargetValue(network && symbol ? { network, symbol } : undefined);
-            setTargetItems(availableTargetChainTokens[value.network]?.[value.symbol] || []);
-          }}
-        />
-      </Section>
+              const network = availableTargetChainTokens[value.network]?.[value.symbol]?.at(0)?.network;
+              const symbol = availableTargetChainTokens[value.network]?.[value.symbol]?.at(0)?.symbols.at(0);
+              setTargetValue(network && symbol ? { network, symbol } : undefined);
+              setTargetItems(availableTargetChainTokens[value.network]?.[value.symbol] || []);
+            }}
+          />
+        </Section>
 
-      {/* switch */}
-      <div className="flex justify-center">
-        <SwitchCross
-          disabled={
-            !(
-              sourceValue &&
-              targetValue &&
-              availableBridges[targetValue.network]?.[sourceValue.network]?.[targetValue.symbol]?.length
-            )
-          }
-          onClick={() => {
-            sourceValueRef.current = sourceValue;
-            targetValueRef.current = targetValue;
-            setSourceValue(targetValueRef.current);
-            setTargetValue(sourceValueRef.current);
-            setTargetItems(
-              targetValueRef.current
-                ? availableTargetChainTokens[targetValueRef.current.network]?.[targetValueRef.current.symbol] || []
-                : [],
-            );
-            setTransferToken(
-              getChainConfig(targetValueRef.current?.network)?.tokens.find(
-                ({ symbol }) => targetValueRef.current?.symbol === symbol,
-              ),
-            );
-            setSourceChainConfig(getChainConfig(targetValueRef.current?.network));
-          }}
-        />
+        {/* switch */}
+        <div className="flex justify-center">
+          <SwitchCross
+            disabled={
+              !(
+                sourceValue &&
+                targetValue &&
+                availableBridges[targetValue.network]?.[sourceValue.network]?.[targetValue.symbol]?.length
+              )
+            }
+            onClick={() => {
+              sourceValueRef.current = sourceValue;
+              targetValueRef.current = targetValue;
+              setSourceValue(targetValueRef.current);
+              setTargetValue(sourceValueRef.current);
+              setTargetItems(
+                targetValueRef.current
+                  ? availableTargetChainTokens[targetValueRef.current.network]?.[targetValueRef.current.symbol] || []
+                  : [],
+              );
+              setTransferToken(
+                getChainConfig(targetValueRef.current?.network)?.tokens.find(
+                  ({ symbol }) => targetValueRef.current?.symbol === symbol,
+                ),
+              );
+              setSourceChainConfig(getChainConfig(targetValueRef.current?.network));
+            }}
+          />
+        </div>
+
+        {/* target */}
+        <Section label="To">
+          <TransferInput items={targetItems} value={targetValue} isTarget onTokenChange={setTargetValue} />
+        </Section>
+
+        {/* bridge */}
+        <Section label="Bridge" className="mt-8">
+          <BridgeSelect
+            sourceChain={sourceValue?.network}
+            targetChain={targetValue?.network}
+            token={sourceValue?.symbol}
+            value={category}
+            onChange={setCategory}
+          />
+        </Section>
+
+        {/* information */}
+        <Section label="Information" className="mt-8">
+          <CrossChainInfo
+            amount={deferredAmount}
+            token={transferToken}
+            bridge={bridge}
+            relayer={relayers?.sortedLnv20RelayInfos?.at(0)}
+            externalLoading={loading}
+            onFeeChange={setFee}
+          />
+        </Section>
+
+        {/* action */}
+        {chain ? (
+          sourceChainConfig && chain.id !== sourceChainConfig.id ? (
+            <ActionButton onClick={() => switchNetwork && switchNetwork(sourceChainConfig.id)}>
+              Switch Network
+            </ActionButton>
+          ) : deferredAmount + fee > allowance ? (
+            <ActionButton
+              onClick={async () => {
+                if (bridge) {
+                  try {
+                    const receipt = await bridge.approve(deferredAmount + fee);
+                    if (receipt?.status === "success") {
+                      alert("success");
+                    } else {
+                      alert("failed");
+                    }
+                  } catch (err) {
+                    console.error(err);
+                  }
+                }
+              }}
+            >
+              Approve
+            </ActionButton>
+          ) : (
+            <ActionButton onClick={setIsOpenTrue}>Transfer</ActionButton>
+          )
+        ) : (
+          <ActionButton onClick={openConnectModal}>Connect Wallet</ActionButton>
+        )}
       </div>
 
-      {/* target */}
-      <Section label="To">
-        <TransferInput items={targetItems} value={targetValue} isTarget onTokenChange={setTargetValue} />
-      </Section>
-
-      {/* bridge */}
-      <Section label="Bridge" className="mt-8">
-        <BridgeSelect
-          sourceChain={sourceValue?.network}
-          targetChain={targetValue?.network}
-          token={sourceValue?.symbol}
-          value={category}
-          onChange={setCategory}
-        />
-      </Section>
-
-      {/* information */}
-      <Section label="Information" className="mt-8">
-        <CrossChainInfo
-          amount={deferredAmount}
-          token={transferToken}
-          bridge={bridge}
-          relayer={relayers?.sortedLnv20RelayInfos?.at(0)}
-          externalLoading={loading}
-          onFeeChange={setFee}
-        />
-      </Section>
-
-      {/* action */}
-      {chain ? (
-        sourceChainConfig && chain.id !== sourceChainConfig.id ? (
-          <ActionButton onClick={() => switchNetwork && switchNetwork(sourceChainConfig.id)}>
-            Switch Network
-          </ActionButton>
-        ) : deferredAmount + fee > allowance ? (
-          <ActionButton
-            onClick={async () => {
-              if (bridge) {
-                try {
-                  const receipt = await bridge.approve(deferredAmount + fee);
-                  if (receipt?.status === "success") {
-                    alert("success");
-                  } else {
-                    alert("failed");
-                  }
-                } catch (err) {
-                  console.error(err);
-                }
-              }
-            }}
-          >
-            Approve
-          </ActionButton>
-        ) : (
-          <ActionButton>Transfer</ActionButton>
-        )
-      ) : (
-        <ActionButton onClick={openConnectModal}>Connect Wallet</ActionButton>
-      )}
-    </div>
+      <ConfirmTransferModal
+        isOpen={isOpen}
+        onClose={setIsOpenFalse}
+        onCancel={setIsOpenFalse}
+        onConfirm={setIsOpenFalse}
+      />
+    </>
   );
 }
 

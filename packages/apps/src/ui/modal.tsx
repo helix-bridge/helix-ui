@@ -47,19 +47,19 @@ export default function Modal({
       <div
         ref={nodeRef}
         onClick={() => maskClosable && onClose()}
-        className="p-middle bg-app-bg/80 fixed left-0 top-0 z-20 flex items-center justify-center"
+        className="p-middle bg-app-bg/80 fixed left-0 top-0 z-20 flex h-screen w-screen items-center justify-center"
       >
         {/* modal */}
         <div
-          className={`p-middle relative flex flex-col gap-5 lg:p-7 ${className}`}
+          className={`p-middle bg-component relative flex flex-col gap-5 rounded-md lg:p-7 ${className}`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* close icon */}
           <button
             onClick={onClose}
-            className="absolute right-2 top-2 rounded-full bg-transparent p-[2px] transition hover:scale-105 hover:bg-white/80 active:scale-95"
+            className="absolute right-2 top-2 rounded-full bg-transparent p-[2px] transition hover:scale-105 hover:bg-white/10 active:scale-95"
           >
-            <Image width={24} height={24} alt="Close" src="/images/close-white.svg" />
+            <Image width={20} height={20} alt="Close" src="/images/close-white.svg" />
           </button>
 
           {/* header */}
@@ -75,11 +75,23 @@ export default function Modal({
             <>
               <div className="bg-line h-[1px]" />
 
-              <div className="gap-large flex items-center justify-between">
+              <div className="flex items-center justify-between gap-5">
                 {onCancel && (
-                  <button className="border-primary h-9 rounded border bg-transparent">{cancelText || "Cancel"}</button>
+                  <button
+                    className="border-primary h-9 flex-1 rounded border bg-transparent transition hover:opacity-80 active:translate-y-1"
+                    onClick={onCancel}
+                  >
+                    {cancelText || "Cancel"}
+                  </button>
                 )}
-                {onOk && <button className="border-primary bg-primary h-9 rounded border">{okText || "Ok"}</button>}
+                {onOk && (
+                  <button
+                    className="border-primary bg-primary h-9 flex-1 rounded border transition hover:opacity-80 active:translate-y-1"
+                    onClick={onOk}
+                  >
+                    {okText || "Ok"}
+                  </button>
+                )}
               </div>
             </>
           )}
