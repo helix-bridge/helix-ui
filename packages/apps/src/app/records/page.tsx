@@ -29,8 +29,8 @@ export default function Records() {
     variables: {
       row: pageSize,
       page: currentPagge,
-      sender: searchParams.get(UrlSearchParam.Address) || undefined,
-      recipient: searchParams.get(UrlSearchParam.Address) || undefined,
+      sender: searchParams.get(UrlSearchParam.Address)?.toLowerCase(),
+      recipient: searchParams.get(UrlSearchParam.Address)?.toLowerCase(),
       results:
         activeKey === AllStatus.All
           ? undefined
