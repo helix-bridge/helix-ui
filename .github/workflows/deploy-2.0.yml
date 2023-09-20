@@ -25,7 +25,7 @@ jobs:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
-          alias_domain: "helix-2.0"
-          project_name: "helix-apps"
+          alias_domain: 'helix-stg-test'
+          project_name: 'helix-apps-test'
           script_run: false
           dist_path: .
