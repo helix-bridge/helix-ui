@@ -27,8 +27,10 @@ export class LnBridgeDefault extends LnBridgeCommon {
     receiver: string,
     amount: bigint,
     options: {
+      remoteChainId: bigint;
       relayer: string;
       sourceToken: string;
+      targetToken: string;
       transferId: string;
       totalFee: bigint;
       withdrawNonce: bigint;
@@ -40,21 +42,23 @@ export class LnBridgeDefault extends LnBridgeCommon {
       if (token) {
         const abi = (await import(`../abi/lnbridgev20-default.json`)).default;
         const snapshot = [
+          options.remoteChainId,
           options.relayer,
           options.sourceToken,
+          options.targetToken,
           options.transferId,
           options.totalFee,
           options.withdrawNonce,
         ];
 
-        const { request } = await this.publicClient.simulateContract({
+        const hash = await this.walletClient.writeContract({
           address: this.contract.sourceAddress,
           abi,
           functionName: "transferAndLockMargin",
-          args: [snapshot, amount, receiver, { gasLimit: 1000000 }],
+          args: [snapshot, amount, receiver],
           value: token.type === "native" ? amount + options.totalFee : undefined,
+          gas: this.sourceChain === "arbitrum" || this.sourceChain === "arbitrum-goerli" ? 1000000n : undefined,
         });
-        const hash = await this.walletClient.writeContract(request);
         return await this.publicClient.waitForTransactionReceipt({ hash });
       }
     }

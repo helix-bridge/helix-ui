@@ -52,7 +52,7 @@ export default function Transfer() {
   const { address } = useAccount();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
-  const { data: balanceData } = useBalance({
+  const { data: balanceData, refetch: refetchBalance } = useBalance({
     address,
     token: transferToken?.type === "erc20" ? transferToken.address : undefined,
   });
@@ -60,7 +60,11 @@ export default function Transfer() {
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
 
-  const { loading, data: relayers } = useQuery<RelayersResponseData, RelayersVariables>(QUERY_RELAYERS, {
+  const {
+    loading,
+    data: relayers,
+    refetch: refetchRelayers,
+  } = useQuery<RelayersResponseData, RelayersVariables>(QUERY_RELAYERS, {
     variables: {
       amount: deferredAmount.toString(),
       decimals: transferToken?.decimals || 0,
@@ -257,7 +261,11 @@ export default function Transfer() {
               Approve
             </ActionButton>
           ) : (
-            <ActionButton onClick={setIsOpenTrue} busy={busy}>
+            <ActionButton
+              onClick={setIsOpenTrue}
+              busy={busy}
+              disabled={!(sourceValue && targetValue && bridge && deferredAmount > 0)}
+            >
               Transfer
             </ActionButton>
           )
@@ -268,9 +276,73 @@ export default function Transfer() {
 
       <ConfirmTransferModal
         isOpen={isOpen}
+        fee={fee}
+        sourceValue={sourceValue}
+        targetValue={targetValue}
+        amount={deferredAmount}
+        sender={address}
+        recipient={address}
+        bridge={bridge}
         onClose={setIsOpenFalse}
         onCancel={setIsOpenFalse}
-        onConfirm={setIsOpenFalse}
+        onConfirm={async () => {
+          setIsOpenFalse();
+
+          try {
+            setBusy(true);
+            const relayer = (await refetchRelayers()).data.sortedLnv20RelayInfos?.at(0);
+            const targetChainId = getChainConfig(targetValue?.network)?.id;
+            const targetTokenAddr = getChainConfig(targetValue?.network)?.tokens.find(
+              ({ symbol }) => targetValue && targetValue.symbol === symbol,
+            )?.address;
+
+            if (relayer && bridge && address && targetChainId) {
+              const receipt = await bridge.transfer("", address, deferredAmount, {
+                remoteChainId: BigInt(targetChainId),
+                relayer: relayer.relayer,
+                sourceToken: relayer.sendToken,
+                targetToken: targetTokenAddr,
+                transferId: relayer.lastTransferId,
+                totalFee: await bridge.getFee(
+                  BigInt(relayer.baseFee || 0),
+                  BigInt(relayer.liquidityFeeRate || 0),
+                  deferredAmount,
+                ),
+                withdrawNonce: BigInt(relayer.withdrawNonce || 0),
+                depositedMargin: BigInt(relayer.margin || 0),
+              });
+              const href = new URL(`tx/${receipt?.transactionHash}`, sourceChainConfig?.blockExplorers?.default.url)
+                .href;
+
+              if (receipt?.status === "success") {
+                notification.success({
+                  title: "Transfer successfully",
+                  description: (
+                    <a target="_blank" rel="noopener" className="text-primary break-all hover:underline" href={href}>
+                      {receipt.transactionHash}
+                    </a>
+                  ),
+                });
+
+                await refetchBalance();
+              } else if (receipt?.status === "reverted") {
+                notification.warn({
+                  title: "Transfer failed",
+                  description: (
+                    <a target="_blank" rel="noopener" className="text-primary break-all hover:underline" href={href}>
+                      {receipt.transactionHash}
+                    </a>
+                  ),
+                });
+              }
+            }
+          } catch (err) {
+            console.error(err);
+            notification.error({ title: "Transfer failed", description: (err as Error).message });
+          } finally {
+            setBusy(false);
+          }
+        }}
       />
     </>
   );
