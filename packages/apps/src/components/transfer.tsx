@@ -116,6 +116,14 @@ export default function Transfer() {
     return () => sub$$?.unsubscribe();
   }, [address, bridge]);
 
+  useEffect(() => {
+    if (sourceValue && targetValue) {
+      setCategory(availableBridges[sourceValue.network]?.[targetValue.network]?.[sourceValue.symbol]?.at(0)?.category);
+    } else {
+      setCategory(null);
+    }
+  }, [sourceValue, targetValue]);
+
   return (
     <>
       <div className="p-middle bg-component gap-large mx-auto flex w-full flex-col rounded lg:w-[40rem] lg:gap-5 lg:p-5">
