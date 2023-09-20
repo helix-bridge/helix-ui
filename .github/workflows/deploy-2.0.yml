@@ -2,7 +2,7 @@ name: Deploy 2.0
 
 on:
   pull_request:
-    branches: ["helix-ui-2.0"]
+    branches: ['helix-ui-2.0']
   workflow_dispatch:
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
           repository: itering/actions
           path: .github/actions
           persist-credentials: false
-          ssh-key: "${{ secrets.ITERING_ACTIONS_DEPLOY_KEY }}"
+          ssh-key: '${{ secrets.ITERING_ACTIONS_DEPLOY_KEY }}'
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy helix-2.0
@@ -25,7 +25,7 @@ jobs:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
-          alias_domain: "helix-2.0"
-          project_name: "helix-apps"
+          alias_domain: 'helix-stg-test'
+          project_name: 'helix-apps-test'
           script_run: false
           dist_path: .
