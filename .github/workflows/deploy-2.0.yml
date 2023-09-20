@@ -2,7 +2,7 @@ name: Deploy 2.0
 
 on:
   pull_request:
-    branches: ["main"]
+    branches: ["helix-ui-2.0"]
   workflow_dispatch:
 
 jobs:
