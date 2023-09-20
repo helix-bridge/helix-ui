@@ -43,7 +43,7 @@ export default function TransferInput({
         placeholder={
           isTarget
             ? undefined
-            : balance && token
+            : balance !== undefined && token
             ? `Balance ${formatBalance(balance, token.decimals, { keepZero: false })}`
             : "Enter an amount"
         }
