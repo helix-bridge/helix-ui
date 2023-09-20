@@ -160,7 +160,10 @@ function Information({
       <Item label="Bridge" value={bridge.getName()} />
       <Item label="From" value={sender} />
       <Item label="To" value={recipient} />
-      <Item label="Transaction Fee" value={`${formatBalance(fee, decimals, { keepZero: false })} ${symbol}`} />
+      <Item
+        label="Transaction Fee"
+        value={`${formatBalance(fee, decimals, { precision: 6, keepZero: false })} ${symbol}`}
+      />
       <Item label="Estimated Arrival Time" value={bridge.getEstimateTime()} />
     </div>
   );
