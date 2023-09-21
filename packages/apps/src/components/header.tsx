@@ -111,7 +111,7 @@ export default function Header() {
 
           <div className="flex justify-center">
             <User
-              className="px-large gap-middle inline-flex h-8 items-center justify-center"
+              className="px-large gap-middle inline-flex h-9 items-center justify-center"
               onClose={setDrawerClose}
             />
           </div>
