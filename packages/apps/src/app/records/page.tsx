@@ -73,10 +73,10 @@ export default function Records() {
   return (
     <main className="app-main">
       <div className="px-middle container mx-auto py-5">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-5">
           <SearchInput
             placeholder="Search by address"
-            className="w-[26.5rem]"
+            className="w-full lg:w-[26.5rem]"
             value={searchValue}
             onChange={(value) => {
               setSearchValue(value);
