@@ -37,13 +37,11 @@ export const darwiniaDVMConfig: DVMChainConfig = {
           basefee: 1.1,
         },
         */
-        /*
         {
           category: 'helix',
           bridge: 'darwiniaDVM-crabDVM',
           partner: { name: 'crab-dvm', role: 'issuing', symbol: 'xWRING' },
         },
-        */
         {
           category: 'helix',
           bridge: 'substrateDVM-ethereum',
@@ -80,7 +78,6 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       symbol: 'KTON',
       address: '0x0000000000000000000000000000000000000402',
     },
-    /*
     {
       name: 'xWCRAB',
       cross: [
@@ -97,7 +94,6 @@ export const darwiniaDVMConfig: DVMChainConfig = {
       symbol: 'xWCRAB',
       address: '0x656567Eb75b765FC320783cc6EDd86bD854b2305',
     },
-    */
   ],
   ss58Prefix: 18,
   specVersion: 6402,
