@@ -4,10 +4,12 @@ import { QUERY_RECORDS } from "@/config/gql";
 import { RecordStatus, RecordsResponseData, RecordsVariables } from "@/types/graphql";
 import Tabs, { TabsProps } from "@/ui/tabs";
 import { useQuery } from "@apollo/client";
-import { useEffect, useState } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import RecordsTable from "@/components/records-table";
 import { UrlSearchParam } from "@/types/url";
+import SearchInput from "@/ui/search-input";
+import { isAddress } from "viem";
 
 enum AllStatus {
   All = -1,
@@ -22,15 +24,17 @@ export default function Records() {
   const router = useRouter();
 
   const [activeKey, setActiveKey] = useState<TabsProps<TabKey>["activeKey"]>(AllStatus.All);
-  const [currentPagge, setCurrentPage] = useState(0);
   const [records, setRecords] = useState<RecordsResponseData>();
+  const [currentPage, setCurrentPage] = useState(0);
+  const [searchValue, setSearchValue] = useState(searchParams.get(UrlSearchParam.Address) || "");
+  const deferredSearchValue = useDeferredValue(searchValue);
 
   const { loading, data, refetch } = useQuery<RecordsResponseData, RecordsVariables>(QUERY_RECORDS, {
     variables: {
       row: pageSize,
-      page: currentPagge,
-      sender: searchParams.get(UrlSearchParam.Address)?.toLowerCase(),
-      recipient: searchParams.get(UrlSearchParam.Address)?.toLowerCase(),
+      page: currentPage,
+      sender: deferredSearchValue.toLowerCase(),
+      recipient: deferredSearchValue.toLowerCase(),
       results:
         activeKey === AllStatus.All
           ? undefined
@@ -55,7 +59,7 @@ export default function Records() {
       loading={loading}
       total={records?.historyRecords?.total}
       pageSize={pageSize}
-      currentPage={currentPagge}
+      currentPage={currentPage}
       onPageChange={setCurrentPage}
       onRowClick={(_, { id }) => router.push(`${pathName}/${id}`)}
     />
@@ -64,7 +68,37 @@ export default function Records() {
   return (
     <main className="app-main">
       <div className="px-middle container mx-auto py-5">
+        <div className="">
+          <SearchInput
+            placeholder="Search by address"
+            className="w-[26.5rem]"
+            value={searchValue}
+            onChange={(value) => {
+              setSearchValue(value);
+
+              const params = new URLSearchParams(searchParams.toString());
+              if (isAddress(value)) {
+                params.set(UrlSearchParam.Address, value);
+                router.push(`?${params.toString()}`);
+              } else if (params.has(UrlSearchParam.Address)) {
+                params.delete(UrlSearchParam.Address);
+                router.push(`?${params.toString()}`);
+              }
+            }}
+            onReset={() => {
+              setSearchValue("");
+
+              const params = new URLSearchParams(searchParams.toString());
+              if (params.has(UrlSearchParam.Address)) {
+                params.delete(UrlSearchParam.Address);
+                router.push(`?${params.toString()}`);
+              }
+            }}
+          />
+        </div>
+
         <Tabs
+          className="mt-5"
           items={[
             {
               key: AllStatus.All,

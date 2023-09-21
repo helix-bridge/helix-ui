@@ -9,10 +9,16 @@ export interface TabsProps<K> {
     label: ReactElement;
     children: ReactElement;
   }[];
+  className?: string;
   onChange?: (key: K) => void;
 }
 
-export default function Tabs<K extends Key = string>({ items, activeKey, onChange = () => undefined }: TabsProps<K>) {
+export default function Tabs<K extends Key = string>({
+  items,
+  activeKey,
+  className,
+  onChange = () => undefined,
+}: TabsProps<K>) {
   const [dividerWidth, setDividerWidth] = useState<number | undefined>();
 
   const labelRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -37,7 +43,7 @@ export default function Tabs<K extends Key = string>({ items, activeKey, onChang
   }, [items, activeKey]);
 
   return (
-    <div className="">
+    <div className={className}>
       {/* labels */}
       <div className="overflow-x-auto">
         <div className="relative flex items-center gap-5" ref={(node) => setDividerWidth(node?.scrollWidth)}>
