@@ -10,6 +10,9 @@ interface Props {
   okText?: string;
   maskClosable?: boolean;
   className?: string;
+  disabledCancel?: boolean;
+  disabledOk?: boolean;
+  busy?: boolean;
   onClose?: () => void;
   onCancel?: () => void;
   onOk?: () => void;
@@ -23,6 +26,9 @@ export default function Modal({
   cancelText,
   okText,
   className,
+  disabledCancel,
+  disabledOk,
+  busy,
   onClose = () => undefined,
   onCancel,
   onOk,
@@ -77,20 +83,14 @@ export default function Modal({
 
               <div className="flex items-center justify-between gap-5">
                 {onCancel && (
-                  <button
-                    className="border-primary h-9 flex-1 rounded border bg-transparent transition hover:opacity-80 active:translate-y-1"
-                    onClick={onCancel}
-                  >
+                  <Button type="default" onClick={onCancel} disabled={disabledCancel}>
                     {cancelText || "Cancel"}
-                  </button>
+                  </Button>
                 )}
                 {onOk && (
-                  <button
-                    className="border-primary bg-primary h-9 flex-1 rounded border transition hover:opacity-80 active:translate-y-1"
-                    onClick={onOk}
-                  >
+                  <Button type="primary" onClick={onOk} disabled={disabledOk} busy={busy}>
                     {okText || "Ok"}
-                  </button>
+                  </Button>
                 )}
               </div>
             </>
@@ -99,5 +99,30 @@ export default function Modal({
       </div>
     </CSSTransition>,
     document.body,
+  );
+}
+
+function Button({
+  children,
+  type,
+  busy,
+  disabled,
+  onClick,
+}: PropsWithChildren<{ type: "primary" | "default"; busy?: boolean; disabled?: boolean; onClick?: () => void }>) {
+  return (
+    <button
+      className={`border-primary relative h-9 flex-1 rounded border transition ${
+        type === "primary" ? "bg-primary" : "bg-transparent"
+      } ${busy ? "" : "hover:opacity-80 active:translate-y-1 disabled:opacity-60"}`}
+      disabled={disabled || busy}
+      onClick={onClick}
+    >
+      {busy && (
+        <div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center">
+          <div className="h-5 w-5 animate-spin rounded-full border-[3px] border-b-white/50 border-l-white/50 border-r-white border-t-white" />
+        </div>
+      )}
+      <span className="text-sm font-medium text-white">{children}</span>
+    </button>
   );
 }

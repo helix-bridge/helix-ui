@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=test next dev",
+    "dev": "NODE_ENV=test next dev -p 3030",
     "build": "NODE_ENV=test next build",
     "start": "NODE_ENV=test next start",
     "lint": "next lint"
