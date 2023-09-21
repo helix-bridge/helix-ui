@@ -11,6 +11,7 @@ import { UrlSearchParam } from "@/types/url";
 import SearchInput from "@/ui/search-input";
 import { isAddress } from "viem";
 import CountdownRefresh from "@/ui/countdown-refresh";
+import { useApp } from "@/hooks/use-app";
 
 enum AllStatus {
   All = -1,
@@ -20,6 +21,9 @@ type TabKey = RecordStatus | AllStatus;
 const pageSize = 10;
 
 export default function Records() {
+  const { recordsSearchValue, setRecordsSearchValue } = useApp();
+  const deferredSearchValue = useDeferredValue(recordsSearchValue);
+
   const searchParams = useSearchParams();
   const pathName = usePathname();
   const router = useRouter();
@@ -27,8 +31,6 @@ export default function Records() {
   const [activeKey, setActiveKey] = useState<TabsProps<TabKey>["activeKey"]>(AllStatus.All);
   const [records, setRecords] = useState<RecordsResponseData>();
   const [currentPage, setCurrentPage] = useState(0);
-  const [searchValue, setSearchValue] = useState(searchParams.get(UrlSearchParam.Address) || "");
-  const deferredSearchValue = useDeferredValue(searchValue);
 
   const [isManualRefresh, setIsManualRefresh] = useState(false);
   const { loading, data, networkStatus, refetch } = useQuery<RecordsResponseData, RecordsVariables>(QUERY_RECORDS, {
@@ -54,6 +56,10 @@ export default function Records() {
     }
   }, [loading, data]);
 
+  useEffect(() => {
+    setRecordsSearchValue(new URLSearchParams(window.location.search).get(UrlSearchParam.Address) || "");
+  }, [setRecordsSearchValue]);
+
   const createChildren = () => (
     <RecordsTable
       dataSource={(records?.historyRecords?.records || []).map((r) => ({ ...r, key: r.id }))}
@@ -77,9 +83,9 @@ export default function Records() {
           <SearchInput
             placeholder="Search by address"
             className="w-full lg:w-[26.5rem]"
-            value={searchValue}
+            value={recordsSearchValue}
             onChange={(value) => {
-              setSearchValue(value);
+              setRecordsSearchValue(value);
 
               const params = new URLSearchParams(searchParams.toString());
               if (isAddress(value)) {
@@ -91,7 +97,7 @@ export default function Records() {
               }
             }}
             onReset={() => {
-              setSearchValue("");
+              setRecordsSearchValue("");
 
               const params = new URLSearchParams(searchParams.toString());
               if (params.has(UrlSearchParam.Address)) {

@@ -1,3 +1,4 @@
+import { useApp } from "@/hooks/use-app";
 import { UrlSearchParam } from "@/types/url";
 import { toShortAdrress } from "@/utils/address";
 import {
@@ -22,6 +23,8 @@ interface Props {
 }
 
 export default function User({ className, onClose = () => undefined }: Props) {
+  const { setRecordsSearchValue } = useApp();
+
   const [isOpen, setIsOpen] = useState(false);
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
@@ -69,6 +72,7 @@ export default function User({ className, onClose = () => undefined }: Props) {
               <Link
                 href={`/records?${UrlSearchParam.Address}=${address}`}
                 onClick={() => {
+                  setRecordsSearchValue(address);
                   setIsOpen(false);
                   onClose();
                 }}

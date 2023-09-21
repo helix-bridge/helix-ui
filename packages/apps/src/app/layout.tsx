@@ -5,6 +5,7 @@ import { IBM_Plex_Sans } from "next/font/google";
 import Header from "@/components/header";
 import RainbowProvider from "@/providers/rainbow-provider";
 import GraphqlProvider from "@/providers/graphql-provider";
+import AppProvider from "@/providers/app-provider";
 
 const ibm_plex_sans = IBM_Plex_Sans({
   subsets: ["latin", "latin-ext"],
@@ -23,9 +24,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="relative min-h-screen">
           <GraphqlProvider>
             <RainbowProvider>
-              <Header />
-              {children}
-              <Footer />
+              <AppProvider>
+                <Header />
+                {children}
+                <Footer />
+              </AppProvider>
             </RainbowProvider>
           </GraphqlProvider>
         </div>
