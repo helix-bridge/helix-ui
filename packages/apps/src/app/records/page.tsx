@@ -3,13 +3,14 @@
 import { QUERY_RECORDS } from "@/config/gql";
 import { RecordStatus, RecordsResponseData, RecordsVariables } from "@/types/graphql";
 import Tabs, { TabsProps } from "@/ui/tabs";
-import { useQuery } from "@apollo/client";
+import { NetworkStatus, useQuery } from "@apollo/client";
 import { useDeferredValue, useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import RecordsTable from "@/components/records-table";
 import { UrlSearchParam } from "@/types/url";
 import SearchInput from "@/ui/search-input";
 import { isAddress } from "viem";
+import CountdownRefresh from "@/ui/countdown-refresh";
 
 enum AllStatus {
   All = -1,
@@ -29,7 +30,8 @@ export default function Records() {
   const [searchValue, setSearchValue] = useState(searchParams.get(UrlSearchParam.Address) || "");
   const deferredSearchValue = useDeferredValue(searchValue);
 
-  const { loading, data, refetch } = useQuery<RecordsResponseData, RecordsVariables>(QUERY_RECORDS, {
+  const [isManualRefresh, setIsManualRefresh] = useState(false);
+  const { loading, data, networkStatus, refetch } = useQuery<RecordsResponseData, RecordsVariables>(QUERY_RECORDS, {
     variables: {
       row: pageSize,
       page: currentPage,
@@ -42,6 +44,7 @@ export default function Records() {
           ? [RecordStatus.Pending, RecordStatus.PendingToRefund, RecordStatus.PendingToClaim]
           : [activeKey],
     },
+    notifyOnNetworkStatusChange: true,
   });
 
   useEffect(() => {
@@ -53,10 +56,12 @@ export default function Records() {
 
   const createChildren = () => (
     <RecordsTable
-      // dataSource={[]}
       dataSource={(records?.historyRecords?.records || []).map((r) => ({ ...r, key: r.id }))}
-      // loading={true}
-      loading={loading}
+      loading={
+        networkStatus === NetworkStatus.loading ||
+        networkStatus === NetworkStatus.setVariables ||
+        (networkStatus === NetworkStatus.refetch && isManualRefresh)
+      }
       total={records?.historyRecords?.total}
       pageSize={pageSize}
       currentPage={currentPage}
@@ -68,7 +73,7 @@ export default function Records() {
   return (
     <main className="app-main">
       <div className="px-middle container mx-auto py-5">
-        <div className="">
+        <div className="flex items-center justify-between">
           <SearchInput
             placeholder="Search by address"
             className="w-[26.5rem]"
@@ -93,6 +98,18 @@ export default function Records() {
                 params.delete(UrlSearchParam.Address);
                 router.push(`?${params.toString()}`);
               }
+            }}
+          />
+
+          <CountdownRefresh
+            isActive={networkStatus === NetworkStatus.ready}
+            onClick={() => {
+              setIsManualRefresh(true);
+              setTimeout(() => refetch(), 0);
+            }}
+            onRefresh={() => {
+              setIsManualRefresh(false);
+              setTimeout(() => refetch(), 0);
             }}
           />
         </div>
