@@ -42,12 +42,25 @@ body {
 
   .app-main {
     /* gap 20px */
-    @apply pt-[84px] pb-[78px];
+    @apply pb-[78px] pt-[84px];
   }
 }
 
 .page-bg {
   background: linear-gradient(180deg, #02061f 0%, #1c1837 100%);
+}
+
+.refresh-countdown {
+  animation: countdown-dash 9.3s linear infinite;
+  animation-delay: 0.7s;
+}
+@keyframes countdown-dash {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -30;
+  }
 }
 
 /* drawer */
