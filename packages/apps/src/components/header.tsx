@@ -21,7 +21,7 @@ export default function Header() {
 
   return (
     <>
-      <div className="bg-app-bg fixed left-0 top-0 z-10 w-full">
+      <div className="bg-app-bg border-b-line fixed left-0 top-0 z-10 w-full border-b lg:border-b-transparent">
         <div className="app-header px-middle container mx-auto flex items-center justify-between">
           {/* left */}
           <div className="flex items-center gap-5">
