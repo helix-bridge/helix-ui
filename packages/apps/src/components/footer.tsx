@@ -11,20 +11,20 @@ export default function Footer() {
         {/* social links */}
         <div className="gap-middle flex shrink-0 items-center lg:gap-5">
           <SocialLink href="https://github.com/helix-bridge">
-            <Image width={22} height={22} alt="Github" src="/images/social/github.svg" />
+            <Image width={18} height={18} alt="Github" src="/images/social/github.svg" />
           </SocialLink>
           <SocialLink href="https://twitter.com/helixbridges">
-            <Image width={23} height={17} alt="Twitter" src="/images/social/twitter.svg" />
+            <Image width={18} height={18} alt="Twitter" src="/images/social/twitter.svg" />
           </SocialLink>
           <SocialLink href="mailto:hello@helixbridge.app">
-            <Image width={21} height={16} alt="Email" src="/images/social/email.svg" />
+            <Image width={18} height={18} alt="Email" src="/images/social/email.svg" />
           </SocialLink>
 
           <div className="block lg:hidden" />
           <div className="h-4 w-[1px] bg-white/30" />
 
           <a
-            className="text-sm font-normal text-white/50 transition hover:text-white/80 active:scale-95"
+            className="text-sm font-light text-white/50 transition hover:text-white/80 active:scale-95"
             href=""
             rel="noopener noreferrer"
             target="_blank"
