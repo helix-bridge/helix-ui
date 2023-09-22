@@ -128,7 +128,7 @@ function Cascader({
           return (
             <div
               key={network}
-              className="px-small lg:px-middle flex items-center justify-between rounded py-[2px] transition-colors hover:cursor-pointer hover:bg-white/10"
+              className="px-small lg:px-middle py-small flex items-center justify-between rounded transition-colors hover:cursor-pointer hover:bg-white/10"
               onMouseEnter={() => {
                 setSymbols(symbols);
                 networkRef.current = network;
@@ -161,7 +161,7 @@ function Cascader({
           return (
             <button
               key={symbol}
-              className="gap-small px-small lg:px-middle flex w-full items-center rounded py-[2px] hover:bg-white/10"
+              className="gap-small px-small lg:px-middle py-small flex w-full items-center rounded hover:bg-white/10"
               onClick={() => {
                 networkRef.current && onChange({ network: networkRef.current, symbol });
                 onClose(false);
