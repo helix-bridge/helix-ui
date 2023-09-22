@@ -51,7 +51,7 @@ const createItem = (config: Config, status: Status, onClose: () => void) => {
       {config.closeIcon && (
         <button
           onClick={onClose}
-          className="absolute right-1 top-1 rounded-full bg-transparent p-[2px] transition-transform hover:scale-105 hover:bg-white/80 active:scale-95 lg:right-2 lg:top-2"
+          className="absolute right-1 top-1 rounded-full bg-transparent p-[2px] transition-transform hover:scale-105 hover:bg-white/10 active:scale-95 lg:right-2 lg:top-2"
         >
           <Image alt="Close" width={16} height={16} src="/images/close-white.svg" />
         </button>
