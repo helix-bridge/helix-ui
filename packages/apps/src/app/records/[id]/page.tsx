@@ -152,7 +152,7 @@ export default function RecordDetail({ params }: Props) {
 
 function Section({ label, tips, children }: PropsWithChildren<{ label: string; tips?: string }>) {
   return (
-    <div className="lg:gap-middle gap-small flex flex-col items-start lg:h-11 lg:flex-row">
+    <div className="lg:gap-middle gap-small flex flex-col items-start lg:h-11 lg:flex-row lg:items-center">
       <RecordLabel text={label} tips={tips} />
       <div className="pl-5 lg:pl-0">{children}</div>
     </div>
