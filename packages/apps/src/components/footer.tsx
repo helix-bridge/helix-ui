@@ -1,7 +1,25 @@
+"use client";
+
 import Image from "next/image";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 
 export default function Footer() {
+  const [mainnetOrTestnet, setMainnetOrTestnet] = useState<{ label: "Mainnet" | "Testnet"; link: string }>();
+
+  useEffect(() => {
+    if (window.location.hostname === "helixbridge.app") {
+      setMainnetOrTestnet({ label: "Testnet", link: "https://helix-apps-test.vercel.app" });
+    } else if (window.location.hostname === "helix-apps-test.vercel.app") {
+      setMainnetOrTestnet({ label: "Mainnet", link: "https://helixbridge.app" });
+    } else if (window.location.hostname === "helix-stg.vercel.app") {
+      setMainnetOrTestnet({ label: "Testnet", link: "https://helix-stg-test.vercel.app" });
+    } else if (window.location.hostname === "helix-stg-test.vercel.app") {
+      setMainnetOrTestnet({ label: "Mainnet", link: "https://helix-stg.vercel.app" });
+    } else if (window.location.hostname === "helix-v2.vercel.app") {
+      setMainnetOrTestnet({ label: "Mainnet", link: "https://helixbridge.app" });
+    }
+  }, []);
+
   return (
     <div className="bg-app-bg absolute bottom-0 left-0 z-10 w-full">
       <div className="app-footer px-middle container mx-auto flex shrink-0 items-center justify-center lg:justify-between">
@@ -20,17 +38,21 @@ export default function Footer() {
             <Image width={18} height={18} alt="Email" src="/images/social/email.svg" />
           </SocialLink>
 
-          <div className="block lg:hidden" />
-          <div className="h-4 w-[1px] bg-white/30" />
+          {mainnetOrTestnet && (
+            <>
+              <div className="block lg:hidden" />
+              <div className="h-4 w-[1px] bg-white/30" />
 
-          <a
-            className="text-sm font-light text-white/50 transition hover:text-white/80 active:scale-95"
-            href=""
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Mainnet
-          </a>
+              <a
+                className="text-sm font-light text-white/50 transition hover:text-white/80 active:scale-95"
+                href={mainnetOrTestnet.link}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                {mainnetOrTestnet.label}
+              </a>
+            </>
+          )}
         </div>
       </div>
     </div>
