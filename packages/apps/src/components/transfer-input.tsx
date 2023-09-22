@@ -1,5 +1,5 @@
 import { getChainConfig } from "@/utils/chain";
-import ChainTokenSelect from "./chain-token-select";
+import TokenSelect from "./token-select";
 import { parseUnits } from "viem";
 import { ChainToken, ChainTokens } from "@/types/cross-chain";
 import { formatBalance } from "@/utils/balance";
@@ -66,7 +66,7 @@ export default function TransferInput({
         }}
         value={transferValue?.value}
       />
-      <ChainTokenSelect options={options} value={chainToken} onChange={onChainTokenChange} />
+      <TokenSelect options={options} value={chainToken} onChange={onChainTokenChange} />
     </div>
   );
 }

@@ -21,7 +21,7 @@ interface Props {
   onChange?: (value: ChainToken) => void;
 }
 
-export default function ChainTokenSelect({ options, value, onChange = () => undefined }: Props) {
+export default function TokenSelect({ options, value, onChange = () => undefined }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const { refs, context, floatingStyles } = useFloating({
