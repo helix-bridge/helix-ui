@@ -108,7 +108,6 @@ export default function Records() {
           />
 
           <CountdownRefresh
-            isActive={networkStatus === NetworkStatus.ready}
             onClick={() => {
               setIsManualRefresh(true);
               setTimeout(() => refetch(), 0);
@@ -117,6 +116,8 @@ export default function Records() {
               setIsManualRefresh(false);
               setTimeout(() => refetch(), 0);
             }}
+            isActive={networkStatus === NetworkStatus.ready}
+            isStartUpAfterClick={true}
           />
         </div>
 

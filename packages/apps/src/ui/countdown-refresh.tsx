@@ -2,11 +2,12 @@ import { useEffect, useRef } from "react";
 
 interface Props {
   isActive?: boolean;
+  isStartUpAfterClick?: boolean;
   onClick?: () => void;
   onRefresh?: () => void;
 }
 
-export default function CountdownRefresh({ isActive, onClick, onRefresh }: Props) {
+export default function CountdownRefresh({ isActive, isStartUpAfterClick, onClick, onRefresh }: Props) {
   const circleRef = useRef<SVGCircleElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -27,9 +28,11 @@ export default function CountdownRefresh({ isActive, onClick, onRefresh }: Props
       onClick={() => {
         circleRef.current?.getAnimations().at(0)?.cancel();
         circleRef.current?.classList.remove("refresh-countdown");
-        setTimeout(() => {
-          circleRef.current?.classList.add("refresh-countdown");
-        }, 300);
+        if (isStartUpAfterClick) {
+          setTimeout(() => {
+            circleRef.current?.classList.add("refresh-countdown");
+          }, 300);
+        }
 
         svgRef.current?.dispatchEvent(new Event("click"));
         onClick && onClick();

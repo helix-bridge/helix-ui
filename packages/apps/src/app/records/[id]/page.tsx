@@ -18,6 +18,7 @@ import ComponentLoading from "@/ui/component-loading";
 import { BaseBridge } from "@/bridges/base";
 import { getCrossChain } from "@/utils/cross-chain";
 import { bridgeFactory } from "@/utils/bridge";
+import CountdownRefresh from "@/ui/countdown-refresh";
 
 const crossChain = getCrossChain();
 
@@ -28,8 +29,13 @@ interface Props {
 }
 
 export default function RecordDetail({ params }: Props) {
-  const { loading, data: record } = useQuery<RecordResponseData, RecordVariables>(QUERY_RECORD_BY_ID, {
+  const {
+    loading,
+    data: record,
+    refetch,
+  } = useQuery<RecordResponseData, RecordVariables>(QUERY_RECORD_BY_ID, {
     variables: { id: params.id },
+    notifyOnNetworkStatusChange: true,
   });
 
   const bridge = useMemo<BaseBridge | undefined>(() => {
@@ -48,7 +54,10 @@ export default function RecordDetail({ params }: Props) {
   return (
     <main className="app-main">
       <div className="px-middle container mx-auto">
-        <h3 className="my-5 text-xl font-semibold text-white">Transaction Detail</h3>
+        <div className="flex items-center justify-between gap-5">
+          <h3 className="my-5 truncate text-xl font-semibold text-white">Transaction Detail</h3>
+          <CountdownRefresh onClick={refetch} />
+        </div>
         <div className="overflow-x-auto">
           <div className="bg-component py-middle gap-middle relative flex min-w-max flex-col rounded px-7">
             {/* loading */}
