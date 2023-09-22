@@ -82,9 +82,9 @@ export interface RelayersResponseData {
 
 export interface RelayersVariables {
   amount: string;
-  decimals: number;
-  bridge: BridgeCategory;
-  token: string;
-  fromChain: Network;
-  toChain: Network;
+  decimals?: number | null;
+  bridge?: BridgeCategory | null;
+  token?: string | null;
+  fromChain?: Network | null;
+  toChain?: Network | null;
 }

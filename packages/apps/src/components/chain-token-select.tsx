@@ -16,12 +16,12 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 
 interface Props {
-  items: ChainTokens[];
+  options: ChainTokens[];
   value?: ChainToken;
   onChange?: (value: ChainToken) => void;
 }
 
-export default function TokenSelect({ items, value, onChange = () => undefined }: Props) {
+export default function ChainTokenSelect({ options, value, onChange = () => undefined }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const { refs, context, floatingStyles } = useFloating({
@@ -94,7 +94,7 @@ export default function TokenSelect({ items, value, onChange = () => undefined }
             className="token-select-dropdown z-20"
           >
             <div style={styles} className="bg-component p-small lg:p-middle rounded border border-white/10 shadow-2xl">
-              <Cascader items={items} onChange={onChange} onClose={setIsOpen} />
+              <Cascader options={options} onChange={onChange} onClose={setIsOpen} />
             </div>
           </div>
         </FloatingPortal>
@@ -104,11 +104,11 @@ export default function TokenSelect({ items, value, onChange = () => undefined }
 }
 
 function Cascader({
-  items,
+  options,
   onChange,
   onClose,
 }: {
-  items: ChainTokens[];
+  options: ChainTokens[];
   onChange: (value: ChainToken) => void;
   onClose: (isOpen: false) => void;
 }) {
@@ -123,7 +123,7 @@ function Cascader({
           symbols.length ? "border-r-white/20" : "border-r-transparent"
         }`}
       >
-        {items.map(({ network, symbols }) => {
+        {options.map(({ network, symbols }) => {
           const chainConfig = getChainConfig(network);
           return (
             <div

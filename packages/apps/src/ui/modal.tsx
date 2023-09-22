@@ -111,7 +111,7 @@ function Button({
 }: PropsWithChildren<{ type: "primary" | "default"; busy?: boolean; disabled?: boolean; onClick?: () => void }>) {
   return (
     <button
-      className={`border-primary relative h-9 flex-1 rounded border transition ${
+      className={`border-primary relative h-9 flex-1 rounded border transition disabled:cursor-not-allowed ${
         type === "primary" ? "bg-primary" : "bg-transparent"
       } ${busy ? "" : "hover:opacity-80 active:translate-y-1 disabled:opacity-60"}`}
       disabled={disabled || busy}

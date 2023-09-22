@@ -1,55 +1,19 @@
 import { BaseBridge } from "@/bridges/base";
-import { RelayerInfo } from "@/types/graphql";
-import { Token } from "@/types/token";
+import { ChainToken } from "@/types/cross-chain";
 import CountLoading from "@/ui/count-loading";
 import { formatBalance } from "@/utils/balance";
-import { PropsWithChildren, useEffect, useState } from "react";
-import { from, Subscription } from "rxjs";
+import { getChainConfig } from "@/utils/chain";
+import { PropsWithChildren } from "react";
 
 interface Props {
-  amount: bigint;
-  token?: Token | null;
+  fee: bigint;
   bridge?: BaseBridge | null;
-  relayer?: RelayerInfo | null;
-  externalLoading?: boolean;
-  onFeeChange?: (value: bigint) => void;
+  loading?: boolean;
+  sourceValue?: ChainToken | null;
 }
 
-export default function CrossChainInfo({
-  amount,
-  token,
-  bridge,
-  relayer,
-  externalLoading,
-  onFeeChange = () => undefined,
-}: Props) {
-  const [loading, setLoading] = useState(false);
-  const [fee, setFee] = useState(0n);
-
-  useEffect(() => {
-    let sub$$: Subscription | undefined;
-
-    if (bridge && relayer) {
-      setLoading(true);
-
-      from(bridge.getFee(BigInt(relayer.baseFee || 0), BigInt(relayer.liquidityFeeRate || 0), amount)).subscribe({
-        next: (res) => {
-          setFee(res || 0n);
-          onFeeChange(res || 0n);
-        },
-        error: (err) => {
-          console.error(err);
-          setFee(0n);
-          onFeeChange(0n);
-        },
-        complete: () => {
-          setLoading(false);
-        },
-      });
-    }
-
-    return () => sub$$?.unsubscribe();
-  }, [amount, bridge, relayer, onFeeChange]);
+export default function CrossChainInfo({ fee, bridge, loading, sourceValue }: Props) {
+  const token = getChainConfig(sourceValue?.network)?.tokens.find(({ symbol }) => sourceValue?.symbol === symbol);
 
   return (
     <div className="bg-app-bg p-middle gap-small flex flex-col rounded border border-transparent">
@@ -63,7 +27,7 @@ export default function CrossChainInfo({
       </Section>
       <Section>
         <span>Transaction Fee</span>
-        {loading || externalLoading ? (
+        {loading ? (
           <CountLoading color="white" />
         ) : token ? (
           <span>

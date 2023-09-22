@@ -21,8 +21,8 @@ type TabKey = RecordStatus | AllStatus;
 const pageSize = 10;
 
 export default function Records() {
-  const { recordsSearchValue, setRecordsSearchValue } = useApp();
-  const deferredSearchValue = useDeferredValue(recordsSearchValue);
+  const { recordsSearch, setRecordsSearch } = useApp();
+  const deferredSearchValue = useDeferredValue(recordsSearch);
 
   const searchParams = useSearchParams();
   const pathName = usePathname();
@@ -57,8 +57,8 @@ export default function Records() {
   }, [loading, data]);
 
   useEffect(() => {
-    setRecordsSearchValue(new URLSearchParams(window.location.search).get(UrlSearchParam.Address) || "");
-  }, [setRecordsSearchValue]);
+    setRecordsSearch(new URLSearchParams(window.location.search).get(UrlSearchParam.Address) || "");
+  }, [setRecordsSearch]);
 
   const createChildren = () => (
     <RecordsTable
@@ -83,9 +83,9 @@ export default function Records() {
           <SearchInput
             placeholder="Search by address"
             className="w-full lg:w-[26.5rem]"
-            value={recordsSearchValue}
+            value={recordsSearch}
             onChange={(value) => {
-              setRecordsSearchValue(value);
+              setRecordsSearch(value);
 
               const params = new URLSearchParams(searchParams.toString());
               if (isAddress(value)) {
@@ -97,7 +97,7 @@ export default function Records() {
               }
             }}
             onReset={() => {
-              setRecordsSearchValue("");
+              setRecordsSearch("");
 
               const params = new URLSearchParams(searchParams.toString());
               if (params.has(UrlSearchParam.Address)) {

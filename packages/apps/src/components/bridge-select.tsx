@@ -1,8 +1,5 @@
 import { BridgeCategory } from "@/types/bridge";
-import { Network } from "@/types/chain";
-import { TokenSymbol } from "@/types/token";
 import { bridgeFactory } from "@/utils/bridge";
-import { getParsedCrossChain } from "@/utils/cross-chain";
 import {
   FloatingPortal,
   offset,
@@ -16,17 +13,13 @@ import {
 import Image from "next/image";
 import { useState } from "react";
 
-const { availableBridges } = getParsedCrossChain();
-
 interface Props {
-  sourceChain?: Network | null;
-  targetChain?: Network | null;
-  token?: TokenSymbol | null;
+  options: BridgeCategory[];
   value?: BridgeCategory | null;
   onChange?: (value: BridgeCategory) => void;
 }
 
-export default function BridgeSelect({ sourceChain, targetChain, token, value, onChange = () => undefined }: Props) {
+export default function BridgeSelect({ options, value, onChange = () => undefined }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const { refs, context, floatingStyles } = useFloating({
@@ -52,10 +45,6 @@ export default function BridgeSelect({ sourceChain, targetChain, token, value, o
   const dismiss = useDismiss(context);
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
 
-  const options =
-    sourceChain && targetChain && token
-      ? availableBridges[sourceChain]?.[targetChain]?.[token]?.map(({ category }) => category) || []
-      : [];
   const active = value ? bridgeFactory({ category: value }) : null;
 
   return (

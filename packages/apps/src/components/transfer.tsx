@@ -1,25 +1,24 @@
 "use client";
 
-import { ButtonHTMLAttributes, PropsWithChildren, useDeferredValue, useEffect, useRef, useState } from "react";
+import { PropsWithChildren, useDeferredValue, useEffect, useRef, useState } from "react";
 import TransferInput from "./transfer-input";
 import CrossChainInfo from "./cross-chain-info";
 import { getCrossChain, getParsedCrossChain } from "@/utils/cross-chain";
 import { BaseBridge } from "@/bridges/base";
 import { BridgeCategory } from "@/types/bridge";
-import { useAccount, useBalance, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
+import { useAccount, useBalance, usePublicClient, useWalletClient } from "wagmi";
 import { bridgeFactory } from "@/utils/bridge";
 import { useQuery } from "@apollo/client";
 import { RelayersResponseData, RelayersVariables } from "@/types/graphql";
 import { QUERY_RELAYERS } from "@/config/gql";
 import { getChainConfig } from "@/utils/chain";
-import { Network } from "@/types/chain";
 import BridgeSelect from "./bridge-select";
 import SwitchCross from "./switch-cross";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { from, Subscription } from "rxjs";
 import { useToggle } from "@/hooks/use-toggle";
-import ConfirmTransferModal from "./confirm-transfer-modal";
-import { notification } from "@/ui/notification";
+import TransferModal from "./transfer-modal";
+import { useApp } from "@/hooks/use-app";
+import TransferAction from "./transfer-action";
 
 const {
   defaultTargetChainTokens,
@@ -33,21 +32,22 @@ const {
 const crossChain = getCrossChain();
 
 export default function Transfer() {
-  const [busy, setBusy] = useState(false);
+  const { transferValue, setTransferValue } = useApp();
+  const deferredTransferValue = useDeferredValue(transferValue);
+
   const [isOpen, _, setIsOpenTrue, setIsOpenFalse] = useToggle(false);
+  const [isFeeLoading, setIsFeeLoading] = useState(false);
+
   const [sourceValue, setSourceValue] = useState(defaultSourceValue);
   const [targetValue, setTargetValue] = useState(defaultTargetValue);
-  const [targetItems, setTargetItems] = useState(defaultTargetChainTokens);
-  const [sourceChainConfig, setSourceChainConfig] = useState(getChainConfig(defaultSourceValue?.network));
-  const [transferToken, setTransferToken] = useState(
-    getChainConfig(defaultSourceValue?.network)?.tokens.find(({ symbol }) => sourceValue?.symbol === symbol),
-  );
+  const [targetOptions, setTargetOptions] = useState(defaultTargetChainTokens);
   const [category, setCategory] = useState<BridgeCategory | null | undefined>(defaultCategory);
   const [bridge, setBridge] = useState<BaseBridge | null>();
   const [allowance, setAllowance] = useState(0n);
   const [fee, setFee] = useState(0n);
-  const [amount, setAmount] = useState(0n);
-  const deferredAmount = useDeferredValue(amount);
+  const [transferToken, setTransferToken] = useState(
+    getChainConfig(defaultSourceValue?.network)?.tokens.find(({ symbol }) => sourceValue?.symbol === symbol),
+  );
 
   const { address } = useAccount();
   const publicClient = usePublicClient();
@@ -56,22 +56,19 @@ export default function Transfer() {
     address,
     token: transferToken?.type === "erc20" ? transferToken.address : undefined,
   });
-  const { openConnectModal } = useConnectModal();
-  const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
 
   const {
-    loading,
-    data: relayers,
+    loading: isRelayersLoading,
+    data: relayersData,
     refetch: refetchRelayers,
   } = useQuery<RelayersResponseData, RelayersVariables>(QUERY_RELAYERS, {
     variables: {
-      amount: deferredAmount.toString(),
-      decimals: transferToken?.decimals || 0,
-      bridge: (category || "") as BridgeCategory,
-      token: transferToken?.address || "",
-      fromChain: (sourceValue?.network || "") as Network,
-      toChain: (targetValue?.network || "") as Network,
+      amount: deferredTransferValue.formatted.toString(),
+      decimals: transferToken?.decimals,
+      bridge: category,
+      token: transferToken?.address,
+      fromChain: sourceValue?.network,
+      toChain: targetValue?.network,
     },
   });
 
@@ -79,12 +76,19 @@ export default function Transfer() {
   const targetValueRef = useRef(targetValue);
 
   useEffect(() => {
+    if (sourceValue && targetValue) {
+      setCategory(availableBridges[sourceValue.network]?.[targetValue.network]?.[sourceValue.symbol]?.at(0)?.category);
+    } else {
+      setCategory(null);
+    }
+  }, [sourceValue, targetValue]);
+
+  useEffect(() => {
     if (sourceValue && targetValue && category) {
-      const contract = crossChain[sourceValue.network]?.[targetValue.network]?.[category]?.contract;
       setBridge(
         bridgeFactory({
           category,
-          contract,
+          contract: crossChain[sourceValue.network]?.[targetValue.network]?.[category]?.contract,
           sourceChain: sourceValue.network,
           targetChain: targetValue.network,
           sourceToken: sourceValue.symbol,
@@ -117,12 +121,35 @@ export default function Transfer() {
   }, [address, bridge]);
 
   useEffect(() => {
-    if (sourceValue && targetValue) {
-      setCategory(availableBridges[sourceValue.network]?.[targetValue.network]?.[sourceValue.symbol]?.at(0)?.category);
-    } else {
-      setCategory(null);
+    let sub$$: Subscription | undefined;
+
+    const relayer = relayersData?.sortedLnv20RelayInfos?.at(0);
+
+    if (bridge && relayer) {
+      setIsFeeLoading(true);
+
+      from(
+        bridge.getFee(
+          BigInt(relayer.baseFee || 0),
+          BigInt(relayer.liquidityFeeRate || 0),
+          deferredTransferValue.formatted,
+        ),
+      ).subscribe({
+        next: (res) => {
+          setFee(res || 0n);
+        },
+        error: (err) => {
+          console.error(err);
+          setFee(0n);
+        },
+        complete: () => {
+          setIsFeeLoading(false);
+        },
+      });
     }
-  }, [sourceValue, targetValue]);
+
+    return () => sub$$?.unsubscribe();
+  }, [bridge, relayersData, deferredTransferValue]);
 
   return (
     <>
@@ -130,20 +157,21 @@ export default function Transfer() {
         {/* source */}
         <Section label="From" className="mt-8">
           <TransferInput
-            items={sourceChainTokens}
+            options={sourceChainTokens}
             balance={balanceData?.value}
-            value={sourceValue}
-            onAmountChange={setAmount}
-            onTokenChange={(value) => {
+            chainToken={sourceValue}
+            transferValue={transferValue}
+            onAmountChange={setTransferValue}
+            onChainTokenChange={(value) => {
               setSourceValue(value);
-              setSourceChainConfig(getChainConfig(value.network));
               setTransferToken(getChainConfig(value.network)?.tokens.find(({ symbol }) => value.symbol === symbol));
 
               const network = availableTargetChainTokens[value.network]?.[value.symbol]?.at(0)?.network;
               const symbol = availableTargetChainTokens[value.network]?.[value.symbol]?.at(0)?.symbols.at(0);
               setTargetValue(network && symbol ? { network, symbol } : undefined);
-              setTargetItems(availableTargetChainTokens[value.network]?.[value.symbol] || []);
+              setTargetOptions(availableTargetChainTokens[value.network]?.[value.symbol] || []);
             }}
+            type="source"
           />
         </Section>
 
@@ -162,7 +190,7 @@ export default function Transfer() {
               targetValueRef.current = targetValue;
               setSourceValue(targetValueRef.current);
               setTargetValue(sourceValueRef.current);
-              setTargetItems(
+              setTargetOptions(
                 targetValueRef.current
                   ? availableTargetChainTokens[targetValueRef.current.network]?.[targetValueRef.current.symbol] || []
                   : [],
@@ -172,22 +200,30 @@ export default function Transfer() {
                   ({ symbol }) => targetValueRef.current?.symbol === symbol,
                 ),
               );
-              setSourceChainConfig(getChainConfig(targetValueRef.current?.network));
             }}
           />
         </div>
 
         {/* target */}
         <Section label="To">
-          <TransferInput items={targetItems} value={targetValue} isTarget onTokenChange={setTargetValue} />
+          <TransferInput
+            options={targetOptions}
+            chainToken={targetValue}
+            onChainTokenChange={setTargetValue}
+            type="target"
+          />
         </Section>
 
         {/* bridge */}
         <Section label="Bridge" className="mt-8">
           <BridgeSelect
-            sourceChain={sourceValue?.network}
-            targetChain={targetValue?.network}
-            token={sourceValue?.symbol}
+            options={
+              sourceValue && targetValue
+                ? (availableBridges[sourceValue.network]?.[targetValue.network]?.[sourceValue.symbol] || []).map(
+                    (b) => b.category,
+                  )
+                : []
+            }
             value={category}
             onChange={setCategory}
           />
@@ -196,161 +232,43 @@ export default function Transfer() {
         {/* information */}
         <Section label="Information" className="mt-8">
           <CrossChainInfo
-            amount={deferredAmount}
-            token={transferToken}
+            fee={fee}
             bridge={bridge}
-            relayer={relayers?.sortedLnv20RelayInfos?.at(0)}
-            externalLoading={loading}
-            onFeeChange={setFee}
+            loading={isFeeLoading || isRelayersLoading}
+            sourceValue={sourceValue}
           />
         </Section>
 
         {/* action */}
-        {chain ? (
-          sourceChainConfig && chain.id !== sourceChainConfig.id ? (
-            <ActionButton onClick={() => switchNetwork && switchNetwork(sourceChainConfig.id)}>
-              Switch Network
-            </ActionButton>
-          ) : deferredAmount + fee > allowance ? (
-            <ActionButton
-              onClick={async () => {
-                if (bridge && address) {
-                  try {
-                    setBusy(true);
-                    const receipt = await bridge.approve(deferredAmount + fee);
-                    const href = new URL(
-                      `tx/${receipt?.transactionHash}`,
-                      sourceChainConfig?.blockExplorers?.default.url,
-                    ).href;
-
-                    if (receipt?.status === "success") {
-                      notification.success({
-                        title: "Approved successfully",
-                        description: (
-                          <a
-                            target="_blank"
-                            rel="noopener"
-                            className="text-primary break-all hover:underline"
-                            href={href}
-                          >
-                            {receipt.transactionHash}
-                          </a>
-                        ),
-                      });
-
-                      const _allowance = await bridge.getAllowance(address);
-                      setBusy(false);
-                      setAllowance(_allowance);
-                    } else if (receipt?.status === "reverted") {
-                      notification.warn({
-                        title: "Approved failed",
-                        description: (
-                          <a
-                            target="_blank"
-                            rel="noopener"
-                            className="text-primary break-all hover:underline"
-                            href={href}
-                          >
-                            {receipt.transactionHash}
-                          </a>
-                        ),
-                      });
-                    }
-                  } catch (err) {
-                    console.error(err);
-                    notification.error({ title: "Approved failed", description: (err as Error).message });
-                  } finally {
-                    setBusy(false);
-                  }
-                }
-              }}
-              busy={busy}
-            >
-              Approve
-            </ActionButton>
-          ) : (
-            <ActionButton
-              onClick={setIsOpenTrue}
-              busy={busy}
-              disabled={!(sourceValue && targetValue && bridge && deferredAmount > 0)}
-            >
-              Transfer
-            </ActionButton>
-          )
-        ) : (
-          <ActionButton onClick={openConnectModal}>Connect Wallet</ActionButton>
-        )}
+        <TransferAction
+          fee={fee}
+          allowance={allowance}
+          bridge={bridge}
+          sourceValue={sourceValue}
+          targetValue={targetValue}
+          transferValue={deferredTransferValue}
+          onAllowanceChange={setAllowance}
+          onTransfer={setIsOpenTrue}
+        />
       </div>
 
-      <ConfirmTransferModal
-        isOpen={isOpen}
+      <TransferModal
         fee={fee}
-        sourceValue={sourceValue}
-        targetValue={targetValue}
-        amount={deferredAmount}
         sender={address}
         recipient={address}
         bridge={bridge}
+        sourceValue={sourceValue}
+        targetValue={targetValue}
+        transferValue={deferredTransferValue}
+        isOpen={isOpen}
         onClose={setIsOpenFalse}
-        onCancel={setIsOpenFalse}
-        onConfirm={async () => {
+        onSuccess={() => {
+          setTransferValue({ value: "", formatted: 0n });
+          refetchBalance();
           setIsOpenFalse();
-
-          try {
-            setBusy(true);
-            const relayer = (await refetchRelayers()).data.sortedLnv20RelayInfos?.at(0);
-            const targetChainId = getChainConfig(targetValue?.network)?.id;
-            const targetTokenAddr = getChainConfig(targetValue?.network)?.tokens.find(
-              ({ symbol }) => targetValue && targetValue.symbol === symbol,
-            )?.address;
-
-            if (relayer && bridge && address && targetChainId) {
-              const receipt = await bridge.transfer("", address, deferredAmount, {
-                remoteChainId: BigInt(targetChainId),
-                relayer: relayer.relayer,
-                sourceToken: relayer.sendToken,
-                targetToken: targetTokenAddr,
-                transferId: relayer.lastTransferId,
-                totalFee: await bridge.getFee(
-                  BigInt(relayer.baseFee || 0),
-                  BigInt(relayer.liquidityFeeRate || 0),
-                  deferredAmount,
-                ),
-                withdrawNonce: BigInt(relayer.withdrawNonce || 0),
-                depositedMargin: BigInt(relayer.margin || 0),
-              });
-              const href = new URL(`tx/${receipt?.transactionHash}`, sourceChainConfig?.blockExplorers?.default.url)
-                .href;
-
-              if (receipt?.status === "success") {
-                notification.success({
-                  title: "Transfer successfully",
-                  description: (
-                    <a target="_blank" rel="noopener" className="text-primary break-all hover:underline" href={href}>
-                      {receipt.transactionHash}
-                    </a>
-                  ),
-                });
-
-                await refetchBalance();
-              } else if (receipt?.status === "reverted") {
-                notification.warn({
-                  title: "Transfer failed",
-                  description: (
-                    <a target="_blank" rel="noopener" className="text-primary break-all hover:underline" href={href}>
-                      {receipt.transactionHash}
-                    </a>
-                  ),
-                });
-              }
-            }
-          } catch (err) {
-            console.error(err);
-            notification.error({ title: "Transfer failed", description: (err as Error).message });
-          } finally {
-            setBusy(false);
-          }
         }}
+        onAllowanceChange={setAllowance}
+        refetchRelayers={refetchRelayers}
       />
     </>
   );
@@ -364,29 +282,5 @@ function Section({ children, label, className }: PropsWithChildren<{ label: stri
       </div>
       {children}
     </div>
-  );
-}
-
-function ActionButton({
-  children,
-  busy,
-  disabled,
-  ...rest
-}: ButtonHTMLAttributes<HTMLButtonElement> & { busy?: boolean }) {
-  return (
-    <button
-      className={`bg-primary relative inline-flex h-10 shrink-0 items-center justify-center rounded transition disabled:translate-y-0 disabled:cursor-not-allowed ${
-        busy ? "" : "hover:opacity-80 active:translate-y-1 disabled:opacity-60"
-      }`}
-      disabled={disabled || busy}
-      {...rest}
-    >
-      {busy && (
-        <div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center">
-          <div className="h-5 w-5 animate-spin rounded-full border-[3px] border-b-white/50 border-l-white/50 border-r-white border-t-white" />
-        </div>
-      )}
-      <span className="text-sm font-medium text-white">{children}</span>
-    </button>
   );
 }

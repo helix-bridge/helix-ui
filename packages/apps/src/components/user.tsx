@@ -23,7 +23,7 @@ interface Props {
 }
 
 export default function User({ className, onClose = () => undefined }: Props) {
-  const { setRecordsSearchValue } = useApp();
+  const { setRecordsSearch } = useApp();
 
   const [isOpen, setIsOpen] = useState(false);
   const { address } = useAccount();
@@ -72,7 +72,7 @@ export default function User({ className, onClose = () => undefined }: Props) {
               <Link
                 href={`/records?${UrlSearchParam.Address}=${address}`}
                 onClick={() => {
-                  setRecordsSearchValue(address);
+                  setRecordsSearch(address);
                   setIsOpen(false);
                   onClose();
                 }}

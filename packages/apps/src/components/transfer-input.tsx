@@ -1,39 +1,44 @@
 import { getChainConfig } from "@/utils/chain";
-import TokenSelect from "./token-select";
+import ChainTokenSelect from "./chain-token-select";
 import { parseUnits } from "viem";
 import { ChainToken, ChainTokens } from "@/types/cross-chain";
 import { formatBalance } from "@/utils/balance";
-import { useState } from "react";
+
+export interface TransferValue {
+  value: string;
+  formatted: bigint;
+}
 
 interface Props {
-  items: ChainTokens[];
+  options: ChainTokens[];
   balance?: bigint;
-  value?: ChainToken;
-  isTarget?: boolean;
-  onAmountChange?: (value: bigint) => void;
-  onTokenChange?: (value: ChainToken) => void;
+  chainToken?: ChainToken;
+  transferValue?: TransferValue;
+  type: "source" | "target";
+
+  onAmountChange?: (value: TransferValue) => void;
+  onChainTokenChange?: (value: ChainToken) => void;
 }
 
 export default function TransferInput({
-  items,
+  options,
   balance,
-  value,
-  isTarget,
+  chainToken,
+  transferValue,
+  type,
   onAmountChange = () => undefined,
-  onTokenChange = () => undefined,
+  onChainTokenChange = () => undefined,
 }: Props) {
-  const [amount, setAmount] = useState(0n);
-  const token = getChainConfig(value?.network)?.tokens.find(({ symbol }) => value?.symbol === symbol);
-
-  const isInsufficient = !!(balance && amount > balance);
+  const token = getChainConfig(chainToken?.network)?.tokens.find(({ symbol }) => chainToken?.symbol === symbol);
+  const insufficient = balance && (transferValue?.formatted || 0n) > balance ? true : false;
 
   return (
     <div
       className={`p-small lg:p-middle gap-small flex items-center justify-between rounded border transition-colors ${
-        isTarget
+        type === "target"
           ? "bg-app-bg/60 border-transparent"
           : `bg-app-bg ${
-              isInsufficient
+              insufficient
                 ? "hover:border-app-red focus-within:border-app-red border-app-red"
                 : "hover:border-line focus-within:border-line border-transparent"
             }`
@@ -41,27 +46,27 @@ export default function TransferInput({
     >
       <input
         placeholder={
-          isTarget
+          type === "target"
             ? undefined
             : balance !== undefined && token
             ? `Balance ${formatBalance(balance, token.decimals, { keepZero: false })}`
             : "Enter an amount"
         }
-        disabled={isTarget}
+        disabled={type === "target"}
         className="px-small h-12 w-full rounded bg-transparent text-base font-thin focus-visible:outline-none disabled:cursor-not-allowed"
-        onChange={(e) => {
-          if (e.target.value) {
-            if (!Number.isNaN(Number(e.target.value)) && token) {
-              const a = parseUnits(e.target.value, token.decimals);
-              onAmountChange(a);
-              setAmount(a);
+        onChange={({ target: { value } }) => {
+          if (value) {
+            if (!Number.isNaN(Number(value)) && token) {
+              const formatted = parseUnits(value, token.decimals);
+              onAmountChange({ value, formatted });
             }
           } else {
-            onAmountChange(0n);
+            onAmountChange({ value, formatted: 0n });
           }
         }}
+        value={transferValue?.value}
       />
-      <TokenSelect items={items} value={value} onChange={onTokenChange} />
+      <ChainTokenSelect options={options} value={chainToken} onChange={onChainTokenChange} />
     </div>
   );
 }
