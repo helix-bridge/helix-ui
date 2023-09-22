@@ -78,13 +78,13 @@ export default function User({ className, onClose = () => undefined }: Props) {
                 }}
                 className="px-large py-small hover:text-primary text-start transition active:translate-y-1"
               >
-                <span className="text-sm font-light">History</span>
+                <span className="text-sm font-medium">History</span>
               </Link>
               <button
                 onClick={() => disconnect()}
                 className="px-large py-small hover:text-primary text-start transition active:translate-y-1"
               >
-                <span className="text-sm font-light">Disconnect</span>
+                <span className="text-sm font-medium">Disconnect</span>
               </button>
             </div>
           </div>
