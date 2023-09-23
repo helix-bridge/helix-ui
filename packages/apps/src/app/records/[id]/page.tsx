@@ -55,10 +55,10 @@ export default function RecordDetail({ params }: Props) {
     <main className="app-main">
       <div className="px-middle container mx-auto">
         <div className="flex items-center justify-between gap-5">
-          <h3 className="my-5 truncate text-xl font-semibold text-white">Transaction Detail</h3>
+          <h3 className="truncate text-xl font-semibold text-white">Transaction Detail</h3>
           <CountdownRefresh onClick={refetch} />
         </div>
-        <div className="overflow-x-auto">
+        <div className="mt-5 overflow-x-auto">
           <div className="bg-component py-middle gap-middle relative flex min-w-max flex-col rounded px-7">
             {/* loading */}
             <ComponentLoading loading={loading} className="rounded" />
