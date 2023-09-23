@@ -41,8 +41,8 @@ body {
   }
 
   .app-main {
-    /* gap 20px */
-    @apply pb-[78px] pt-[84px];
+    min-height: calc(100vh - 64px - 58px);
+    @apply mt-[64px] py-5;
   }
 }
 

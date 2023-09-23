@@ -21,17 +21,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="page-bg text-white">
       <body className={ibm_plex_sans.className}>
-        <div className="relative min-h-screen">
-          <GraphqlProvider>
-            <RainbowProvider>
-              <AppProvider>
-                <Header />
-                {children}
-                <Footer />
-              </AppProvider>
-            </RainbowProvider>
-          </GraphqlProvider>
-        </div>
+        <GraphqlProvider>
+          <RainbowProvider>
+            <AppProvider>
+              <Header />
+              {children}
+              <Footer />
+            </AppProvider>
+          </RainbowProvider>
+        </GraphqlProvider>
       </body>
     </html>
   );
