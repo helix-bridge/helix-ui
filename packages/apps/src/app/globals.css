@@ -50,6 +50,21 @@ body {
   background: linear-gradient(180deg, #02061f 0%, #1c1837 100%);
 }
 
+.loading-bar {
+  background: linear-gradient(90deg, #ffffff 35%, #00b2ff 50%, #ffffff 65%);
+  background-position: 100% 50%;
+  background-size: 40% 100%;
+  animation: bar-loading 2.4s linear infinite;
+}
+@keyframes bar-loading {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
 .refresh-countdown {
   animation: countdown-dash 9.3s linear infinite;
   animation-delay: 0.7s;
