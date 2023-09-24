@@ -19,6 +19,7 @@ import { useToggle } from "@/hooks/use-toggle";
 import TransferModal from "./transfer-modal";
 import { useApp } from "@/hooks/use-app";
 import TransferAction from "./transfer-action";
+import DisclaimerModal from "./disclaimer-modal";
 
 const {
   defaultTargetChainTokens,
@@ -270,6 +271,8 @@ export default function Transfer() {
         onAllowanceChange={setAllowance}
         refetchRelayers={refetchRelayers}
       />
+
+      <DisclaimerModal />
     </>
   );
 }
