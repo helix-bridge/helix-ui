@@ -13,8 +13,8 @@ const ibm_plex_sans = IBM_Plex_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Helix",
-  description: "helix bridge",
+  title: "Helix Bridge",
+  description: "Helix Bridge App",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
