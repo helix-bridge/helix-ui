@@ -22,7 +22,7 @@ export default function SearchInput({ placeholder, className, value, onReset, on
       />
       {value ? (
         <button
-          className="relative h-[20px] w-[20px] shrink-0 rounded-full bg-transparent p-[2px] transition hover:scale-105 hover:bg-white/10 active:scale-95"
+          className="relative h-[20px] w-[20px] shrink-0 rounded-full bg-transparent p-[2px] transition hover:scale-105 hover:bg-white/20 active:scale-95"
           onClick={onReset}
         >
           <Image alt="Close" fill src="/images/close.svg" />
