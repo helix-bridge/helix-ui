@@ -19,6 +19,7 @@ import { BaseBridge } from "@/bridges/base";
 import { getCrossChain } from "@/utils/cross-chain";
 import { bridgeFactory } from "@/utils/bridge";
 import CountdownRefresh from "@/ui/countdown-refresh";
+import TransactionFee from "./transaction-fee";
 
 const crossChain = getCrossChain();
 
@@ -127,7 +128,7 @@ export default function RecordDetail(props: Props) {
             <TransactionValue record={record?.historyRecordById} />
           </Section>
           <Section label="Transaction Fee" tips="Amount paid for processing the cross-chain transaction.">
-            <TransactionValue record={record?.historyRecordById} />
+            <TransactionFee record={record?.historyRecordById} />
           </Section>
 
           <Divider />
