@@ -1,7 +1,6 @@
 import { Network } from "@/types/chain";
 import CopyIcon from "@/ui/copy-icon";
 import { getChainConfig } from "@/utils/chain";
-import path from "path";
 
 interface Props {
   chain?: Network | null;
@@ -16,7 +15,7 @@ export function TransactionHash({ chain, txHash }: Props) {
       {chainConfig?.blockExplorers ? (
         <a
           className="text-primary text-sm font-normal transition hover:underline"
-          href={path.join(chainConfig.blockExplorers.default.url, "tx", txHash)}
+          href={new URL(`tx/${txHash}`, chainConfig.blockExplorers.default.url).href}
           rel="noopener noreferrer"
           target="_blank"
         >
