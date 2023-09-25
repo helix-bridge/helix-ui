@@ -5,19 +5,28 @@ import Tooltip from "@/ui/tooltip";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
+import { ReactElement } from "react";
+import RelayerNavigation from "./relayer-navigation";
 
 const User = dynamic(() => import("@/components/user"), { ssr: false });
 const Drawer = dynamic(() => import("@/ui/drawer"), { ssr: false });
 
-const navigationsConfig: { label: string; href: string; external?: boolean; soon?: boolean }[] = [
-  { href: "/", label: "Transfer" },
-  { href: "/records", label: "Explorer" },
-  { href: "/relayer", label: "Relayer", soon: true },
-  { href: "https://docs.helixbridge.app/", label: "Docs", external: true },
-];
-
 export default function Header() {
   const [isDrawerOpen, _, setDrawerOpen, setDrawerClose] = useToggle(false);
+
+  const navigationsConfig: {
+    label: string;
+    href: string;
+    external?: boolean;
+    soon?: boolean;
+    element?: ReactElement;
+  }[] = [
+    { href: "/", label: "Transfer" },
+    { href: "/records", label: "Explorer" },
+    // { href: "/relayer", label: "Relayer", soon: true },
+    { href: "/relayer", label: "Relayer", element: <RelayerNavigation onClose={setDrawerClose} /> },
+    { href: "https://docs.helixbridge.app/", label: "Docs", external: true },
+  ];
 
   return (
     <>
@@ -87,8 +96,10 @@ export default function Header() {
         <div className="flex h-96 w-full items-start justify-center">
           <div className="flex w-max flex-col items-start gap-10">
             <div className="gap-large flex flex-col">
-              {navigationsConfig.map(({ label, href, external, soon }) =>
-                external ? (
+              {navigationsConfig.map(({ label, href, external, soon, element }) =>
+                element ? (
+                  element
+                ) : external ? (
                   <a
                     rel="noopener noreferrer"
                     target="_blank"
