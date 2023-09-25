@@ -37,10 +37,7 @@ function Mobile({ onClose }: { onClose: () => void }) {
     <div className="lg:hidden">
       <button className="gap-middle inline-flex items-center" onClick={toggle}>
         <span className="font-semibold">Relayer</span>
-        <div
-          className={`w-0 border-x-[5px] border-b-0 border-t-8 border-white border-x-transparent transition-transform duration-300`}
-          style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
-        />
+        <Triangle isOpen={isOpen} />
       </button>
 
       <div
@@ -55,5 +52,14 @@ function Mobile({ onClose }: { onClose: () => void }) {
         ))}
       </div>
     </div>
+  );
+}
+
+function Triangle({ isOpen }: { isOpen?: boolean }) {
+  return (
+    <div
+      className={`w-0 border-x-[5px] border-b-0 border-t-8 border-white border-x-transparent transition-transform duration-300`}
+      style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
+    />
   );
 }
