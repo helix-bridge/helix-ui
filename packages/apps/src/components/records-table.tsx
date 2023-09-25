@@ -80,7 +80,7 @@ export default function RecordsTable({
       title: <Title className="text-end">Status</Title>,
       render: ({ startTime, result, confirmedBlocks }) => (
         <div className="gap-small flex flex-col items-end">
-          <span className="text-xs font-normal text-white">{formatTime(startTime * 1000, { compact: true })}</span>
+          <span className="text-sm font-normal text-white">{formatTime(startTime * 1000, { compact: true })}</span>
           <span
             className={`text-xs font-semibold ${
               result === RecordStatus.Success
