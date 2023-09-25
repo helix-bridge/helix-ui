@@ -24,7 +24,7 @@ export default function Header() {
     { href: "/", label: "Transfer" },
     { href: "/records", label: "Explorer" },
     // { href: "/relayer", label: "Relayer", soon: true },
-    { href: "/relayer", label: "Relayer", element: <RelayerNavigation onClose={setDrawerClose} /> },
+    { href: "", label: "Relayer", element: <RelayerNavigation onClose={setDrawerClose} /> },
     { href: "https://docs.helixbridge.app/", label: "Docs", external: true },
   ];
 
@@ -51,8 +51,10 @@ export default function Header() {
 
             {/* navigations */}
             <div className="gap-middle hidden items-center lg:flex">
-              {navigationsConfig.map(({ href, label, external, soon }) =>
-                external ? (
+              {navigationsConfig.map(({ href, label, external, soon, element }) =>
+                element ? (
+                  element
+                ) : external ? (
                   <a
                     rel="noopener noreferrer"
                     target="_blank"
