@@ -51,7 +51,7 @@ function PC() {
   return (
     <>
       <div
-        className="gap-middle flex items-center rounded-lg px-3 py-1 transition hover:bg-white/10"
+        className="gap-middle hidden items-center rounded-lg px-3 py-1 transition hover:bg-white/10 lg:flex"
         ref={refs.setReference}
         {...getReferenceProps()}
       >
