@@ -84,32 +84,32 @@ export default function Header() {
       </div>
 
       <Drawer maskClosable isOpen={isDrawerOpen} onClose={setDrawerClose}>
-        <div className="flex h-96 w-full flex-col gap-10">
-          <div className="gap-large flex w-full flex-col items-center">
-            {navigationsConfig.map(({ label, href, external, soon }) =>
-              external ? (
-                <a
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  href={href}
-                  key={label}
-                  className="font-semibold hover:underline"
-                >
-                  {label}
-                </a>
-              ) : soon ? (
-                <Tooltip key={label} content={<span className="text-xs font-normal text-white">Coming soon</span>}>
-                  <span className="font-semibold text-white/50">{label}</span>
-                </Tooltip>
-              ) : (
-                <Link key={label} href={href} className="font-semibold hover:underline" onClick={setDrawerClose}>
-                  {label}
-                </Link>
-              ),
-            )}
-          </div>
+        <div className="flex h-96 w-full items-start justify-center">
+          <div className="flex w-max flex-col items-start gap-10">
+            <div className="gap-large flex flex-col">
+              {navigationsConfig.map(({ label, href, external, soon }) =>
+                external ? (
+                  <a
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    href={href}
+                    key={label}
+                    className="font-semibold hover:underline"
+                  >
+                    {label}
+                  </a>
+                ) : soon ? (
+                  <Tooltip key={label} content={<span className="text-xs font-normal text-white">Coming soon</span>}>
+                    <span className="font-semibold text-white/50">{label}</span>
+                  </Tooltip>
+                ) : (
+                  <Link key={label} href={href} className="font-semibold hover:underline" onClick={setDrawerClose}>
+                    {label}
+                  </Link>
+                ),
+              )}
+            </div>
 
-          <div className="flex justify-center">
             <User
               className="px-large gap-middle inline-flex h-9 items-center justify-center"
               onClose={setDrawerClose}
