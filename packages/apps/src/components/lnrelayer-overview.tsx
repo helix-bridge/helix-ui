@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import ChainSelect from "./chain-select";
 import RelayersTable from "./relayers-table";
 
-const pageSize = 10;
+const pageSize = 12;
 
 export default function LnRelayerOverview() {
   const [currentPage, setCurrentPage] = useState(0);
