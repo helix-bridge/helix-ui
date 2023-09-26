@@ -70,7 +70,7 @@ function PC() {
                 <Link
                   key={label}
                   href={href}
-                  className="text-sm font-medium hover:underline"
+                  className="text-sm font-normal hover:underline"
                   onClick={() => setIsOpen(false)}
                 >
                   {label}

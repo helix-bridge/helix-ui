@@ -1,5 +1,4 @@
-// import { Network } from "@/types/chain";
-import { TokenSymbol } from "@/types/token";
+import { Network } from "@/types/chain";
 import {
   FloatingPortal,
   offset,
@@ -14,14 +13,14 @@ import Image from "next/image";
 import { useState } from "react";
 
 interface Props {
-  options: TokenSymbol[];
-  // network?: Network;
-  value?: TokenSymbol;
+  options: Network[];
+  value?: Network;
   placeholder?: string;
-  onChange?: (value: TokenSymbol) => void;
+  className?: string;
+  onChange?: (value: Network) => void;
 }
 
-export default function TokenSelect({ options, value, placeholder, onChange }: Props) {
+export default function ChainSelect({ options, value, placeholder, className, onChange }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const { refs, context, floatingStyles } = useFloating({
@@ -49,7 +48,11 @@ export default function TokenSelect({ options, value, placeholder, onChange }: P
 
   return (
     <>
-      <div className="gap-small flex items-center justify-between" ref={refs.setReference} {...getReferenceProps()}>
+      <button
+        className={`gap-small border-line px-middle py-small flex items-center justify-between rounded border ${className}`}
+        ref={refs.setReference}
+        {...getReferenceProps()}
+      >
         <span className={`text-sm font-normal ${value ? "text-white" : "text-white/50"}`}>{value || placeholder}</span>
         <Image
           src="/images/caret-down.svg"
@@ -58,7 +61,7 @@ export default function TokenSelect({ options, value, placeholder, onChange }: P
           height={16}
           style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
         />
-      </div>
+      </button>
 
       {isMounted && (
         <FloatingPortal>

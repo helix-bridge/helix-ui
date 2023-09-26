@@ -107,3 +107,25 @@ export const QUERY_RELAYERS = gql`
     }
   }
 `;
+
+export const QUERY_LNRELAYERS = gql`
+  query queryLnv20RelayInfos($fromChain: String, $toChain: String, $row: Int, $page: Int) {
+    queryLnv20RelayInfos(fromChain: $fromChain, toChain: $toChain, row: $row, page: $page) {
+      total
+      records {
+        id
+        fromChain
+        toChain
+        bridge
+        relayer
+        sendToken
+        margin
+        baseFee
+        liquidityFeeRate
+        cost
+        profit
+        heartbeatTimestamp
+      }
+    }
+  }
+`;

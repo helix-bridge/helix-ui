@@ -66,18 +66,33 @@ export interface RecordVariables {
   id: string;
 }
 
-export interface RelayerInfo {
-  sendToken?: string | null;
+interface Lnv20RelayInfo {
+  id: string;
+  nonce: string;
+  targetNonce?: string | null;
+  fromChain: Network;
+  toChain: Network;
+  bridge: BridgeCategory;
   relayer: string;
+  sendToken?: string | null;
+  transaction_hash: string;
+  timestamp: number;
   margin?: string | null;
   baseFee?: string | null;
   liquidityFeeRate?: number | null;
+  slashCount?: number | null;
+  withdrawNonce?: string | null;
   lastTransferId?: string | null;
-  withdrawNonce?: string | null; // bigint
+  cost?: string | null;
+  profit?: string | null;
+  heartbeatTimestamp?: number | null;
 }
 
 export interface RelayersResponseData {
-  sortedLnv20RelayInfos?: RelayerInfo[];
+  sortedLnv20RelayInfos?: Pick<
+    Lnv20RelayInfo,
+    "relayer" | "margin" | "baseFee" | "liquidityFeeRate" | "lastTransferId" | "withdrawNonce"
+  >[];
 }
 
 export interface RelayersVariables {
@@ -87,4 +102,34 @@ export interface RelayersVariables {
   token?: string | null;
   fromChain?: Network | null;
   toChain?: Network | null;
+}
+
+export type LnRelayerInfo = Pick<
+  Lnv20RelayInfo,
+  | "id"
+  | "relayer"
+  | "bridge"
+  | "fromChain"
+  | "toChain"
+  | "sendToken"
+  | "baseFee"
+  | "liquidityFeeRate"
+  | "margin"
+  | "cost"
+  | "profit"
+  | "heartbeatTimestamp"
+>;
+
+export interface LnRelayersResponseData {
+  queryLnv20RelayInfos?: {
+    total: number;
+    records: LnRelayerInfo[];
+  };
+}
+
+export interface LnRelayersVariables {
+  fromChain?: Network;
+  toChain?: Network;
+  row: number;
+  page: number;
 }
