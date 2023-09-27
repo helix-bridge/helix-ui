@@ -18,8 +18,12 @@ export default function PrettyAddress({ address, copyable, className, forceShort
         </Tooltip>
       ) : (
         <>
-          <Tooltip enabledSafePolygon content={<span className="text-xs font-normal text-white">{address}</span>}>
-            <span className={`lg:hidden ${className}`}>{toShortAdrress(address)}</span>
+          <Tooltip
+            enabledSafePolygon
+            content={<span className="text-xs font-normal text-white">{address}</span>}
+            className={`lg:hidden ${className}`}
+          >
+            <span>{toShortAdrress(address)}</span>
           </Tooltip>
           <span className={`hidden lg:inline ${className}`}>{address}</span>
         </>
