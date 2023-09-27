@@ -1,19 +1,19 @@
 import { ButtonHTMLAttributes, forwardRef } from "react";
 
 interface Props {
-  type?: "default" | "primary";
+  kind?: "default" | "primary";
   busy?: boolean;
   disabled?: boolean;
 }
 
 export default forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement> & Props>(function Button(
-  { type, busy, disabled, className, children, ...rest },
+  { kind, busy, disabled, className, children, ...rest },
   ref,
 ) {
   return (
     <button
-      className={`border-primary relative rounded border transition disabled:cursor-not-allowed ${
-        type === "primary" ? "bg-primary" : "bg-transparent"
+      className={`border-primary relative rounded border transition disabled:cursor-not-allowed ${className} ${
+        kind === "primary" ? "bg-primary" : "bg-transparent"
       } ${busy ? "" : "hover:opacity-80 active:translate-y-1 disabled:opacity-60"}`}
       disabled={disabled || busy}
       ref={ref}
