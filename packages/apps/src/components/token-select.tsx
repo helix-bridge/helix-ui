@@ -49,7 +49,11 @@ export default function TokenSelect({ options, value, placeholder, onChange }: P
 
   return (
     <>
-      <div className="gap-small flex items-center justify-between" ref={refs.setReference} {...getReferenceProps()}>
+      <div
+        className="gap-small border-line px-middle py-small flex items-center justify-between rounded border"
+        ref={refs.setReference}
+        {...getReferenceProps()}
+      >
         <span className={`text-sm font-normal ${value ? "text-white" : "text-white/50"}`}>{value || placeholder}</span>
         <Image
           src="/images/caret-down.svg"
