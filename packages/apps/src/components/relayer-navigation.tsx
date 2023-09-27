@@ -13,7 +13,7 @@ import { useEffect, useRef, useState } from "react";
 
 const navigationsConfig: { label: string; href: string }[] = [
   { href: "/relayer/overview", label: "Overview" },
-  { href: "/relayer/register", label: "Register" },
+  { href: "/relayer/my-relayers", label: "My relayer(s)" },
 ];
 
 interface Props {
@@ -64,7 +64,7 @@ function PC() {
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
             <div
               style={styles}
-              className="bg-component border-line py-middle px-large gap-small flex w-28 flex-col rounded border"
+              className="bg-component border-line py-middle px-large gap-small flex w-32 flex-col rounded border"
             >
               {navigationsConfig.map(({ href, label }) => (
                 <Link
