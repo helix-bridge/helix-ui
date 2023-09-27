@@ -1,11 +1,12 @@
 import Image from "next/image";
-import { PropsWithChildren, useRef } from "react";
+import { PropsWithChildren, ReactElement, useRef } from "react";
 import { createPortal } from "react-dom";
 import { CSSTransition } from "react-transition-group";
 
 interface Props {
   isOpen: boolean;
   title: string;
+  subTitle?: ReactElement | string;
   cancelText?: string;
   okText?: string;
   maskClosable?: boolean;
@@ -20,6 +21,7 @@ interface Props {
 
 export default function Modal({
   title,
+  subTitle,
   isOpen,
   maskClosable,
   children,
@@ -69,7 +71,16 @@ export default function Modal({
           </button>
 
           {/* header */}
-          <h5 className="text-xl font-semibold text-white">{title}</h5>
+          <div className="gap-middle flex flex-col lg:gap-5">
+            <h3 className="text-xl font-semibold text-white">{title}</h3>
+            {subTitle ? (
+              typeof subTitle === "string" ? (
+                <h5 className="text-base font-normal text-white">{subTitle}</h5>
+              ) : (
+                subTitle
+              )
+            ) : null}
+          </div>
 
           <div className="bg-line h-[1px]" />
 
