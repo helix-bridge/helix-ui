@@ -4,7 +4,7 @@ interface Props {
 
 export default function StepNumber({ number }: Props) {
   return (
-    <div className="inline-flex h-10 w-10 items-center justify-center">
+    <div className="bg-primary inline-flex h-10 w-10 items-center justify-center rounded-full">
       <span className="text-xl font-bold text-white">{number}</span>
     </div>
   );
