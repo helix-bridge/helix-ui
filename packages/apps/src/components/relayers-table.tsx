@@ -141,19 +141,6 @@ const commonColumns: ColumnType<DataSource>[] = [
       );
     },
   },
-  {
-    key: "status",
-    title: <Title title="Status" className="justify-end" />,
-    render: ({ heartbeatTimestamp }) => {
-      const isOnline = !heartbeatTimestamp || Date.now() - heartbeatTimestamp * 1000 < 5 * 60 * 1000;
-      return (
-        <div className="gap-small flex items-center justify-end">
-          <div className={`h-[6px] w-[6px] rounded-full ${isOnline ? "bg-app-green" : "bg-white/50"}`} />
-          <span className="text-sm font-normal text-white">{isOnline ? "Online" : "Offline"}</span>
-        </div>
-      );
-    },
-  },
 ];
 
 export default function RelayersTable({
@@ -171,12 +158,27 @@ export default function RelayersTable({
     ? [
         ...commonColumns,
         {
+          key: "status",
+          title: <Title title="Status" />,
+          render: ({ heartbeatTimestamp }) => {
+            const isOnline = !heartbeatTimestamp || Date.now() - heartbeatTimestamp * 1000 < 5 * 60 * 1000;
+            return (
+              <div className="gap-small flex items-center">
+                <div className={`h-[6px] w-[6px] rounded-full ${isOnline ? "bg-app-green" : "bg-white/50"}`} />
+                <span className="text-sm font-normal text-white">{isOnline ? "Online" : "Offline"}</span>
+              </div>
+            );
+          },
+        },
+        {
           key: "action",
-          title: <Title title="Action" />,
+          title: <Title title="Action" className="justify-end" />,
           render: () => (
-            <Button className="px-middle w-fit py-[2px]" onClick={() => setIsOpen(true)} kind="default">
-              <span className="text-sm font-normal text-white">Manage</span>
-            </Button>
+            <div className="flex justify-end">
+              <Button className="px-middle w-fit py-[2px]" onClick={() => setIsOpen(true)} kind="default">
+                <span className="text-sm font-normal text-white">Manage</span>
+              </Button>
+            </div>
           ),
         },
       ]
@@ -189,6 +191,19 @@ export default function RelayersTable({
           ),
         },
         ...commonColumns,
+        {
+          key: "status",
+          title: <Title title="Status" className="justify-end" />,
+          render: ({ heartbeatTimestamp }) => {
+            const isOnline = !heartbeatTimestamp || Date.now() - heartbeatTimestamp * 1000 < 5 * 60 * 1000;
+            return (
+              <div className="gap-small flex items-center justify-end">
+                <div className={`h-[6px] w-[6px] rounded-full ${isOnline ? "bg-app-green" : "bg-white/50"}`} />
+                <span className="text-sm font-normal text-white">{isOnline ? "Online" : "Offline"}</span>
+              </div>
+            );
+          },
+        },
       ];
 
   return (
