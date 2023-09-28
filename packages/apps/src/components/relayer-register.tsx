@@ -17,6 +17,7 @@ import StepCompleteItem from "./step-complete-item";
 import { BalanceInput } from "./balance-input";
 import Modal from "@/ui/modal";
 import PrettyAddress from "./pretty-address";
+import LiquidityFeeRateInput from "./liquidity-fee-rate-input";
 
 enum Step {
   ONE,
@@ -39,7 +40,7 @@ export default function RelayerRegister() {
 
   return (
     <>
-      <div className="flex w-full flex-col gap-5 lg:w-[38.75rem]">
+      <div className="mx-auto flex w-full flex-col gap-5 lg:w-[38.75rem]">
         {/* step 1 */}
         <div className="bg-component flex flex-col gap-5 p-5 lg:p-[1.875rem]">
           <StepTitle step={1} title="Select Chain and Token" />
@@ -284,36 +285,6 @@ function LabelItem({
         )}
       </div>
       {children}
-    </div>
-  );
-}
-
-function LiquidityFeeRateInput({
-  placeholder,
-  value,
-  onChange = () => undefined,
-}: {
-  placeholder?: string;
-  value?: { formatted: number; value: string };
-  onChange?: (value: { formatted: number; value: string }) => void;
-}) {
-  return (
-    <div className="gap-small bg-app-bg p-small lg:p-middle hover:border-line focus-within:border-line flex items-center justify-between rounded border border-transparent transition-colors">
-      <input
-        className="w-full text-sm font-medium text-white"
-        placeholder={placeholder}
-        onChange={(e) => {
-          if (e.target.value) {
-            if (!Number.isNaN(Number(e.target.value))) {
-              onChange({ value: e.target.value, formatted: Number(e.target.value) });
-            }
-          } else {
-            onChange({ value: e.target.value, formatted: 0 });
-          }
-        }}
-        value={value?.value}
-      />
-      <span className="rounded bg-transparent text-sm font-medium text-white focus-visible:outline-none">%</span>
     </div>
   );
 }

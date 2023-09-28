@@ -45,7 +45,9 @@ export default function SegmentedTabs<K extends Key = string>({
       {/* content */}
       <SwitchTransition>
         <CSSTransition timeout={200} key={activeKey} nodeRef={nodeRef} classNames="tabs-fade" unmountOnExit>
-          <div ref={nodeRef}>{options.find(({ key }) => key === activeKey)?.children}</div>
+          <div ref={nodeRef} className="w-full">
+            {options.find(({ key }) => key === activeKey)?.children}
+          </div>
         </CSSTransition>
       </SwitchTransition>
     </div>

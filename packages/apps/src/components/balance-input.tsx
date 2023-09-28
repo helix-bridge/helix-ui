@@ -54,8 +54,8 @@ export function BalanceInput({
       />
 
       {chainConfig && tokenConfig ? (
-        <div className="p-middle gap-middle flex items-center">
-          <div className="relative w-fit">
+        <div className="p-middle gap-middle bg-component flex shrink-0 items-center rounded">
+          <div className="relative w-fit shrink-0">
             <Image
               width={30}
               height={30}
@@ -71,7 +71,7 @@ export function BalanceInput({
               className="absolute -bottom-1 -right-1 rounded-full"
             />
           </div>
-          <span className="text-sm font-medium text-white">{tokenConfig.symbol}</span>
+          <span className="truncate text-sm font-medium text-white">{tokenConfig.symbol}</span>
         </div>
       ) : null}
     </div>

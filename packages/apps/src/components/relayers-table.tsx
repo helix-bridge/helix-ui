@@ -7,11 +7,15 @@ import { Network } from "@/types/chain";
 import { getChainConfig } from "@/utils/chain";
 import { getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
 import { formatBalance } from "@/utils/balance";
+import { useState } from "react";
+import Button from "@/ui/button";
+import RelayerManageModal from "./relayer-manage-modal";
 
 interface Props {
   total: number;
   records: LnRelayerInfo[];
   loading: boolean;
+  isDashboard?: boolean;
   pageSize: number;
   currentPage: number;
   onPageChange: (value: number) => void;
@@ -21,12 +25,7 @@ interface DataSource extends LnRelayerInfo {
   key: string;
 }
 
-const columns: ColumnType<DataSource>[] = [
-  {
-    key: "relayer",
-    title: <Title title="Relayer" />,
-    render: ({ relayer }) => <PrettyAddress className="text-sm font-normal text-white" address={relayer} forceShort />,
-  },
+const commonColumns: ColumnType<DataSource>[] = [
   {
     key: "bridge type",
     title: <Title title="Bridge Type" />,
@@ -157,17 +156,55 @@ const columns: ColumnType<DataSource>[] = [
   },
 ];
 
-export default function RelayersTable({ total, records, loading, pageSize, currentPage, onPageChange }: Props) {
+export default function RelayersTable({
+  total,
+  records,
+  loading,
+  isDashboard,
+  pageSize,
+  currentPage,
+  onPageChange,
+}: Props) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const columns: ColumnType<DataSource>[] = isDashboard
+    ? [
+        ...commonColumns,
+        {
+          key: "action",
+          title: <Title title="Action" />,
+          render: () => (
+            <Button className="px-middle w-fit py-[2px]" onClick={() => setIsOpen(true)} kind="default">
+              <span className="text-sm font-normal text-white">Manage</span>
+            </Button>
+          ),
+        },
+      ]
+    : [
+        {
+          key: "relayer",
+          title: <Title title="Relayer" />,
+          render: ({ relayer }) => (
+            <PrettyAddress className="text-sm font-normal text-white" address={relayer} forceShort />
+          ),
+        },
+        ...commonColumns,
+      ];
+
   return (
-    <Table
-      columns={columns}
-      dataSource={records.map((item) => ({ ...item, key: item.id }))}
-      loading={loading}
-      total={total}
-      pageSize={pageSize}
-      currentPage={currentPage}
-      onPageChange={onPageChange}
-    />
+    <>
+      <Table
+        columns={columns}
+        dataSource={records.map((item) => ({ ...item, key: item.id }))}
+        loading={loading}
+        total={total}
+        pageSize={pageSize}
+        currentPage={currentPage}
+        onPageChange={onPageChange}
+      />
+
+      {isDashboard && <RelayerManageModal isOpen={isOpen} onClose={() => setIsOpen(false)} />}
+    </>
   );
 }
 

@@ -130,6 +130,7 @@ export interface LnRelayersResponseData {
 export interface LnRelayersVariables {
   fromChain?: Network;
   toChain?: Network;
+  relayer?: string;
   row: number;
   page: number;
 }
