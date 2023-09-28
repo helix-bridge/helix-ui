@@ -113,12 +113,11 @@ const commonColumns: ColumnType<DataSource>[] = [
   {
     key: "cost",
     title: <Title title="Cost" />,
-    render: ({ fromChain, sendToken, cost }) => {
-      const token = getChainConfig(fromChain)?.tokens.find((t) => t.address.toLowerCase() === sendToken?.toLowerCase());
-
-      return token && cost ? (
+    render: ({ cost }) => {
+      // the unit is ETH, so the precision is 18
+      return cost ? (
         <span className="truncate text-sm font-normal text-white">
-          {formatBalance(BigInt(cost), token.decimals, { keepZero: false })}
+          {formatBalance(BigInt(cost), 18, { keepZero: false })}
         </span>
       ) : (
         <span>-</span>
