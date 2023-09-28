@@ -8,6 +8,7 @@ import { useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
 import ChainSelect from "./chain-select";
 import RelayersTable from "./relayers-table";
+import CountdownRefresh from "@/ui/countdown-refresh";
 
 const pageSize = 12;
 
@@ -18,8 +19,9 @@ export default function LnRelayerOverview() {
   const [targetChain, setTargetChain] = useState<Network>();
   const [records, setRecords] = useState<LnRelayerInfo[]>([]);
 
-  const { loading, data } = useQuery<LnRelayersResponseData, LnRelayersVariables>(QUERY_LNRELAYERS, {
+  const { loading, data, refetch } = useQuery<LnRelayersResponseData, LnRelayersVariables>(QUERY_LNRELAYERS, {
     variables: { fromChain: sourceChain, toChain: targetChain, row: pageSize, page: currentPage },
+    notifyOnNetworkStatusChange: true,
   });
 
   useEffect(() => {
@@ -48,6 +50,8 @@ export default function LnRelayerOverview() {
             <span className="text-sm font-normal text-white">To</span>
             <ChainSelect placeholder="Target chain" options={[]} onChange={setTargetChain} />
           </div>
+
+          <CountdownRefresh onClick={refetch} />
         </div>
       </div>
 

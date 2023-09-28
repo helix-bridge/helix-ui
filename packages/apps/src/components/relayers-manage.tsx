@@ -3,15 +3,17 @@ import RelayersTable from "./relayers-table";
 import { LnRelayerInfo, LnRelayersResponseData, LnRelayersVariables } from "@/types/graphql";
 import { useQuery } from "@apollo/client";
 import { QUERY_LNRELAYERS } from "@/config/gql";
+import CountdownRefresh from "@/ui/countdown-refresh";
 
-const pageSize = 12;
+const pageSize = 10;
 
 export default function RelayersManage() {
   const [currentPage, setCurrentPage] = useState(0);
   const [records, setRecords] = useState<LnRelayerInfo[]>([]);
 
-  const { loading, data } = useQuery<LnRelayersResponseData, LnRelayersVariables>(QUERY_LNRELAYERS, {
+  const { loading, data, refetch } = useQuery<LnRelayersResponseData, LnRelayersVariables>(QUERY_LNRELAYERS, {
     variables: { row: pageSize, page: currentPage },
+    notifyOnNetworkStatusChange: true,
   });
 
   useEffect(() => {
@@ -21,14 +23,20 @@ export default function RelayersManage() {
   }, [loading, data]);
 
   return (
-    <RelayersTable
-      loading={loading}
-      records={records}
-      total={data?.queryLnv20RelayInfos?.total || 0}
-      isDashboard={true}
-      pageSize={pageSize}
-      currentPage={currentPage}
-      onPageChange={setCurrentPage}
-    />
+    <>
+      <div className="mb-middle flex items-center justify-between">
+        <span className="font-semibold">Dashboard</span>
+        <CountdownRefresh onClick={refetch} />
+      </div>
+      <RelayersTable
+        loading={loading}
+        records={records}
+        total={data?.queryLnv20RelayInfos?.total || 0}
+        isDashboard={true}
+        pageSize={pageSize}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+      />
+    </>
   );
 }
