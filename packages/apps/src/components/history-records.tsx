@@ -122,7 +122,7 @@ export default function HistoryRecords() {
 
       <Tabs
         className="mt-5"
-        items={[
+        options={[
           {
             key: AllStatus.All,
             label: <span>All</span>,

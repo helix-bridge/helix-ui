@@ -4,7 +4,7 @@ import { CSSTransition, SwitchTransition } from "react-transition-group";
 
 export interface TabsProps<K> {
   activeKey: K;
-  items: {
+  options: {
     key: K;
     label: ReactElement;
     children: ReactElement;
@@ -14,7 +14,7 @@ export interface TabsProps<K> {
 }
 
 export default function Tabs<K extends Key = string>({
-  items,
+  options,
   activeKey,
   className,
   onChange = () => undefined,
@@ -30,24 +30,24 @@ export default function Tabs<K extends Key = string>({
 
   const nodeRef = stateRef.current === activeKey ? currentRef : previousRef;
   stateRef.current = activeKey;
-  const activeItem = items.find(({ key }) => key === activeKey) || items.at(0);
+  const activeItem = options.find(({ key }) => key === activeKey) || options.at(0);
 
   useEffect(() => {
-    const labelElement = labelRefs.current[items.findIndex(({ key }) => key === activeKey)];
+    const labelElement = labelRefs.current[options.findIndex(({ key }) => key === activeKey)];
     const railElement = railRef.current;
 
     if (labelElement && railElement) {
       railElement.style.transform = `translateX(${labelElement.offsetLeft}px)`;
       railElement.style.width = `${labelElement.clientWidth}px`;
     }
-  }, [items, activeKey]);
+  }, [options, activeKey]);
 
   return (
     <div className={className}>
       {/* labels */}
       <div className="overflow-x-auto">
-        <div className="relative flex items-center gap-5" ref={(node) => setDividerWidth(node?.scrollWidth)}>
-          {items.map(({ key, label }, index) => (
+        <div className="options-center relative flex gap-5" ref={(node) => setDividerWidth(node?.scrollWidth)}>
+          {options.map(({ key, label }, index) => (
             <button
               key={key}
               type="button"
@@ -80,7 +80,7 @@ export default function Tabs<K extends Key = string>({
             {activeItem ? (
               activeItem.children
             ) : (
-              <div className="gap-large flex flex-col items-center pt-10">
+              <div className="gap-large options-center flex flex-col pt-10">
                 <Image width={50} height={63} alt="No data" src="/images/no-data.svg" />
                 <span className="text-sm font-light text-white/50">No data</span>
               </div>
