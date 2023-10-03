@@ -5,7 +5,7 @@ import { Network } from "@/types/chain";
 import { LnRelayerInfo, LnRelayersResponseData, LnRelayersVariables } from "@/types/graphql";
 import SearchInput from "@/ui/search-input";
 import { useQuery } from "@apollo/client";
-import { useEffect, useState } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 import ChainSelect from "./chain-select";
 import RelayersTable from "./relayers-table";
 import CountdownRefresh from "@/ui/countdown-refresh";
@@ -13,14 +13,21 @@ import CountdownRefresh from "@/ui/countdown-refresh";
 const pageSize = 12;
 
 export default function LnRelayerOverview() {
-  const [currentPage, setCurrentPage] = useState(0);
-  const [searchValue, setSearchValue] = useState("");
+  const [records, setRecords] = useState<LnRelayerInfo[]>([]);
   const [sourceChain, setSourceChain] = useState<Network>();
   const [targetChain, setTargetChain] = useState<Network>();
-  const [records, setRecords] = useState<LnRelayerInfo[]>([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [searchValue, setSearchValue] = useState("");
+  const deferredSearchValue = useDeferredValue(searchValue);
 
   const { loading, data, refetch } = useQuery<LnRelayersResponseData, LnRelayersVariables>(QUERY_LNRELAYERS, {
-    variables: { fromChain: sourceChain, toChain: targetChain, row: pageSize, page: currentPage },
+    variables: {
+      fromChain: sourceChain,
+      toChain: targetChain,
+      row: pageSize,
+      page: currentPage,
+      relayer: deferredSearchValue.toLowerCase() || undefined,
+    },
     notifyOnNetworkStatusChange: true,
   });
 
