@@ -51,11 +51,21 @@ export default function LnRelayerOverview() {
         <div className="flex items-center gap-5">
           <div className="gap-middle flex items-center">
             <span className="text-sm font-normal text-white">From</span>
-            <ChainSelect placeholder="Source chain" options={[]} onChange={setSourceChain} />
+            <ChainSelect
+              className="px-middle w-40 py-2"
+              placeholder="Source chain"
+              options={[]}
+              onChange={setSourceChain}
+            />
           </div>
           <div className="gap-middle flex items-center">
             <span className="text-sm font-normal text-white">To</span>
-            <ChainSelect placeholder="Target chain" options={[]} onChange={setTargetChain} />
+            <ChainSelect
+              className="px-middle w-40 py-2"
+              placeholder="Target chain"
+              options={[]}
+              onChange={setTargetChain}
+            />
           </div>
 
           <CountdownRefresh onClick={refetch} />

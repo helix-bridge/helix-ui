@@ -49,16 +49,19 @@ export default function ChainSelect({ options, value, placeholder, className, on
   return (
     <>
       <button
-        className={`gap-small border-line px-middle py-small flex items-center justify-between rounded border ${className}`}
+        className={`gap-small border-line hover:border-primary flex items-center justify-between rounded border transition-colors duration-300 ${className}`}
         ref={refs.setReference}
         {...getReferenceProps()}
       >
-        <span className={`text-sm font-normal ${value ? "text-white" : "text-white/50"}`}>{value || placeholder}</span>
+        <span className={`truncate text-sm font-normal ${value ? "text-white" : "text-white/50"}`}>
+          {value || placeholder}
+        </span>
         <Image
           src="/images/caret-down.svg"
           alt="Caret down"
           width={16}
           height={16}
+          className="shrink-0"
           style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
         />
       </button>
