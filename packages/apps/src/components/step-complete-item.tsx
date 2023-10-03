@@ -38,7 +38,13 @@ export default function StepCompleteItem({
       )}
       {!!chainConfig && (
         <div className="gap-small flex items-center">
-          <Image width={16} height={16} alt="Chain" src={getChainLogoSrc(chainConfig.logo)} />
+          <Image
+            width={16}
+            height={16}
+            alt="Chain"
+            src={getChainLogoSrc(chainConfig.logo)}
+            className="shrink-0 rounded-full"
+          />
           <span className="truncate text-sm font-normal text-white">{chainConfig.name}</span>
         </div>
       )}
@@ -49,7 +55,13 @@ export default function StepCompleteItem({
       ) : null}
       {!!token && !balance && (
         <div className="gap-small flex items-center">
-          <Image width={16} height={16} alt="Token" src={getTokenLogoSrc(token.logo)} />
+          <Image
+            width={16}
+            height={16}
+            alt="Token"
+            src={getTokenLogoSrc(token.logo)}
+            className="shrink-0 rounded-full"
+          />
           <span className="text-sm font-normal text-white">{token.symbol}</span>
         </div>
       )}
