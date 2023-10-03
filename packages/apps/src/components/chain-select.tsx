@@ -52,7 +52,7 @@ export default function ChainSelect({ options, value, placeholder, className, on
   return (
     <>
       <button
-        className={`gap-small border-line hover:border-primary flex items-center justify-between rounded border transition-colors duration-300 ${className}`}
+        className={`gap-small flex items-center justify-between rounded border transition-colors duration-300 ${className}`}
         ref={refs.setReference}
         {...getReferenceProps()}
       >
@@ -63,7 +63,7 @@ export default function ChainSelect({ options, value, placeholder, className, on
         <div className="gap-small flex shrink-0 items-center">
           {value ? (
             <button
-              className="relative h-[16px] w-[16px] shrink-0 rounded-full bg-transparent p-[2px] transition hover:scale-105 hover:bg-white/20 active:scale-95"
+              className="relative h-[16px] w-[16px] shrink-0 rounded-full bg-transparent p-[2px] opacity-80 transition hover:scale-105 hover:bg-white/20 hover:opacity-100 active:scale-95"
               onClick={(e) => {
                 e.stopPropagation();
                 onChange(undefined);
