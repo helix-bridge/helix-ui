@@ -5,28 +5,27 @@ import Tooltip from "@/ui/tooltip";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { ReactElement } from "react";
-import RelayerNavigation from "./relayer-navigation";
+import { ComponentType } from "react";
 
 const User = dynamic(() => import("@/components/user"), { ssr: false });
 const Drawer = dynamic(() => import("@/ui/drawer"), { ssr: false });
 
+const navigationsConfig: {
+  label: string;
+  href: string;
+  external?: boolean;
+  soon?: boolean;
+  Component?: ComponentType<{ onClose?: () => void }>;
+}[] = [
+  { href: "/", label: "Transfer" },
+  { href: "/records", label: "Explorer" },
+  // { href: "/relayer", label: "Relayer", soon: true },
+  { href: "", label: "Relayer", Component: dynamic(() => import("./relayer-navigation")) },
+  { href: "https://docs.helixbridge.app/", label: "Docs", external: true },
+];
+
 export default function Header() {
   const [isDrawerOpen, _, setDrawerOpen, setDrawerClose] = useToggle(false);
-
-  const navigationsConfig: {
-    label: string;
-    href: string;
-    external?: boolean;
-    soon?: boolean;
-    element?: ReactElement;
-  }[] = [
-    { href: "/", label: "Transfer" },
-    { href: "/records", label: "Explorer" },
-    // { href: "/relayer", label: "Relayer", soon: true },
-    { href: "", label: "Relayer", element: <RelayerNavigation onClose={setDrawerClose} /> },
-    { href: "https://docs.helixbridge.app/", label: "Docs", external: true },
-  ];
 
   return (
     <>
@@ -51,9 +50,9 @@ export default function Header() {
 
             {/* navigations */}
             <div className="gap-middle hidden items-center lg:flex">
-              {navigationsConfig.map(({ href, label, external, soon, element }) =>
-                element ? (
-                  element
+              {navigationsConfig.map(({ href, label, external, soon, Component }) =>
+                Component ? (
+                  <Component key={label} />
                 ) : external ? (
                   <a
                     rel="noopener noreferrer"
@@ -98,9 +97,9 @@ export default function Header() {
         <div className="flex h-96 w-full items-start justify-center">
           <div className="flex w-max flex-col items-start gap-10">
             <div className="gap-large flex flex-col">
-              {navigationsConfig.map(({ label, href, external, soon, element }) =>
-                element ? (
-                  element
+              {navigationsConfig.map(({ label, href, external, soon, Component }) =>
+                Component ? (
+                  <Component key={label} onClose={setDrawerClose} />
                 ) : external ? (
                   <a
                     rel="noopener noreferrer"
