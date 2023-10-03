@@ -59,13 +59,7 @@ export default function LnRelayerOverview() {
               options={sourceChainTokens.map(({ network }) => network)}
               onChange={(value) => {
                 setSourceChain(value);
-                setTargetChain((prev) => {
-                  if (prev) {
-                    return value ? (Object.keys(getCrossChain()[value] || {}) as Network[]).at(0) : undefined;
-                  } else {
-                    return prev;
-                  }
-                });
+                setTargetChain(undefined);
               }}
               value={sourceChain}
             />
