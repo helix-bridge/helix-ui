@@ -97,7 +97,7 @@ export default function ChainSelect({ options, value, placeholder, className, on
                       onChange(option);
                       setIsOpen(false);
                     }}
-                    className="py-small px-large hover:text-primary text-sm transition-colors"
+                    className="py-small px-large hover:text-primary text-start text-sm transition-colors"
                   >
                     {config?.name || option}
                   </button>
