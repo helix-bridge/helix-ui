@@ -18,7 +18,7 @@ interface Props {
   value?: Network;
   placeholder?: string;
   className?: string;
-  onChange?: (value: Network) => void;
+  onChange?: (value: Network | undefined) => void;
 }
 
 export default function ChainSelect({ options, value, placeholder, className, onChange = () => undefined }: Props) {
@@ -59,14 +59,28 @@ export default function ChainSelect({ options, value, placeholder, className, on
         <span className={`truncate text-sm font-normal ${value ? "text-white" : "text-white/50"}`}>
           {chainConfig?.name || placeholder}
         </span>
-        <Image
-          src="/images/caret-down.svg"
-          alt="Caret down"
-          width={16}
-          height={16}
-          className="shrink-0"
-          style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
-        />
+
+        <div className="gap-small flex shrink-0 items-center">
+          {value ? (
+            <button
+              className="relative h-[16px] w-[16px] shrink-0 rounded-full bg-transparent p-[2px] transition hover:scale-105 hover:bg-white/20 active:scale-95"
+              onClick={(e) => {
+                e.stopPropagation();
+                onChange(undefined);
+              }}
+            >
+              <Image alt="Close" fill src="/images/close.svg" />
+            </button>
+          ) : null}
+          <Image
+            src="/images/caret-down.svg"
+            alt="Caret down"
+            width={16}
+            height={16}
+            className="shrink-0"
+            style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
+          />
+        </div>
       </button>
 
       {isMounted && (

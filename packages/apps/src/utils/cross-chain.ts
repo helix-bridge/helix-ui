@@ -6,6 +6,7 @@ import { TokenSymbol } from "@/types/token";
 
 let defaultTargetChainTokens: ChainTokens[] = [];
 const sourceChainTokens: ChainTokens[] = [];
+const availableTargetChains = new Set<Network>();
 let availableBridges: AvailableBridges = {};
 let availableTargetChainTokens: AvailableTargetChainTokens = {};
 let defaultSourceValue: ChainToken | undefined;
@@ -16,6 +17,8 @@ let defaultCategory: BridgeCategory | undefined;
   const sourceTokens = new Set<TokenSymbol>();
 
   (Object.keys(crossChain[sourceChain] || {}) as Network[]).forEach((targetChain) => {
+    availableTargetChains.add(targetChain);
+
     (Object.keys(crossChain[sourceChain]?.[targetChain] || {}) as BridgeCategory[]).forEach((category) => {
       const contract = crossChain[sourceChain]?.[targetChain]?.[category]?.contract;
       const tokens = crossChain[sourceChain]?.[targetChain]?.[category]?.tokens;
@@ -79,6 +82,7 @@ export function getParsedCrossChain() {
   return {
     defaultTargetChainTokens,
     sourceChainTokens,
+    availableTargetChains: Array.from(availableTargetChains),
     availableBridges,
     availableTargetChainTokens,
     defaultSourceValue,

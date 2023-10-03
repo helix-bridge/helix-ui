@@ -9,7 +9,9 @@ import { useDeferredValue, useEffect, useState } from "react";
 import ChainSelect from "./chain-select";
 import RelayersTable from "./relayers-table";
 import CountdownRefresh from "@/ui/countdown-refresh";
+import { getCrossChain, getParsedCrossChain } from "@/utils/cross-chain";
 
+const { sourceChainTokens, availableTargetChains } = getParsedCrossChain();
 const pageSize = 12;
 
 export default function LnRelayerOverview() {
@@ -54,8 +56,18 @@ export default function LnRelayerOverview() {
             <ChainSelect
               className="px-middle w-40 py-2"
               placeholder="Source chain"
-              options={[]}
-              onChange={setSourceChain}
+              options={sourceChainTokens.map(({ network }) => network)}
+              onChange={(value) => {
+                setSourceChain(value);
+                setTargetChain((prev) => {
+                  if (prev) {
+                    return value ? (Object.keys(getCrossChain()[value] || {}) as Network[]).at(0) : undefined;
+                  } else {
+                    return prev;
+                  }
+                });
+              }}
+              value={sourceChain}
             />
           </div>
           <div className="gap-middle flex items-center">
@@ -63,8 +75,11 @@ export default function LnRelayerOverview() {
             <ChainSelect
               className="px-middle w-40 py-2"
               placeholder="Target chain"
-              options={[]}
+              options={
+                sourceChain ? (Object.keys(getCrossChain()[sourceChain] || {}) as Network[]) : availableTargetChains
+              }
               onChange={setTargetChain}
+              value={targetChain}
             />
           </div>
 
