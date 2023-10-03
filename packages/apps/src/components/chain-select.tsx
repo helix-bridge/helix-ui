@@ -1,4 +1,5 @@
 import { Network } from "@/types/chain";
+import { getChainConfig } from "@/utils/chain";
 import {
   FloatingPortal,
   offset,
@@ -20,7 +21,7 @@ interface Props {
   onChange?: (value: Network) => void;
 }
 
-export default function ChainSelect({ options, value, placeholder, className, onChange }: Props) {
+export default function ChainSelect({ options, value, placeholder, className, onChange = () => undefined }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const { refs, context, floatingStyles } = useFloating({
@@ -46,6 +47,8 @@ export default function ChainSelect({ options, value, placeholder, className, on
   const dismiss = useDismiss(context);
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
 
+  const chainConfig = getChainConfig(value);
+
   return (
     <>
       <button
@@ -54,7 +57,7 @@ export default function ChainSelect({ options, value, placeholder, className, on
         {...getReferenceProps()}
       >
         <span className={`truncate text-sm font-normal ${value ? "text-white" : "text-white/50"}`}>
-          {value || placeholder}
+          {chainConfig?.name || placeholder}
         </span>
         <Image
           src="/images/caret-down.svg"
@@ -70,9 +73,22 @@ export default function ChainSelect({ options, value, placeholder, className, on
         <FloatingPortal>
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
             <div style={styles} className="bg-component border-line py-small flex flex-col rounded border">
-              {options.map((option) => (
-                <button key={option}>{option}</button>
-              ))}
+              {options.map((option) => {
+                const config = getChainConfig(option);
+
+                return (
+                  <button
+                    key={option}
+                    onClick={() => {
+                      onChange(option);
+                      setIsOpen(false);
+                    }}
+                    className="py-small px-large hover:text-primary text-sm transition-colors"
+                  >
+                    {config?.name || option}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </FloatingPortal>
