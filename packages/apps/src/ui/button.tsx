@@ -14,7 +14,7 @@ export default forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElem
     <button
       className={`border-primary relative rounded border transition disabled:cursor-not-allowed ${className} ${
         kind === "primary" ? "bg-primary" : "bg-transparent"
-      } ${busy ? "" : "hover:opacity-80 active:translate-y-1 disabled:opacity-60"}`}
+      } ${busy ? "" : "hover:opacity-80 active:translate-y-1 disabled:translate-y-0 disabled:opacity-60"}`}
       disabled={disabled || busy}
       ref={ref}
       {...rest}
