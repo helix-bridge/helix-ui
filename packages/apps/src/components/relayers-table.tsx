@@ -26,16 +26,16 @@ interface DataSource extends LnRelayerInfo {
 }
 
 const commonColumns: ColumnType<DataSource>[] = [
-  {
-    key: "bridge type",
-    title: <Title title="Bridge Type" />,
-    render: ({ bridge }) => (
-      <span className="text-sm font-normal text-white">
-        {bridge === "lnbridgev20-opposite" ? "Opposite" : "Default"}
-      </span>
-    ),
-    width: "8%",
-  },
+  // {
+  //   key: "bridge type",
+  //   title: <Title title="Bridge Type" />,
+  //   render: ({ bridge }) => (
+  //     <span className="text-sm font-normal text-white">
+  //       {bridge === "lnbridgev20-opposite" ? "Opposite" : "Default"}
+  //     </span>
+  //   ),
+  //   width: "8%",
+  // },
   {
     key: "from",
     title: <Title title="From" />,
@@ -84,7 +84,7 @@ const commonColumns: ColumnType<DataSource>[] = [
     title: (
       <Title
         title="Liquidity Fee Rate"
-        tips="The percentage deducted by the relayer from the transfer amount in a transaction"
+        tips="Liquidity Fee Rate: The percentage deducted by the relayer from the transfer amount in a transaction"
       />
     ),
     render: ({ liquidityFeeRate }) =>
@@ -93,7 +93,7 @@ const commonColumns: ColumnType<DataSource>[] = [
       ) : (
         <span>-</span>
       ),
-    width: "14%",
+    width: "10%",
   },
   {
     key: "margin",
@@ -109,6 +109,7 @@ const commonColumns: ColumnType<DataSource>[] = [
         <span>-</span>
       );
     },
+    width: "12%",
   },
   {
     key: "cost",
@@ -123,7 +124,7 @@ const commonColumns: ColumnType<DataSource>[] = [
         <span>-</span>
       );
     },
-    width: "12%",
+    width: "8%",
   },
   {
     key: "profit",
