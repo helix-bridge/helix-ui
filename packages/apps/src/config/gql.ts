@@ -129,3 +129,11 @@ export const QUERY_LNRELAYERS = gql`
     }
   }
 `;
+
+export const QUERY_SPECIAL_RELAYER = gql`
+  query queryLnv20RelayInfos($fromChain: String, $toChain: String, $bridge: String, $relayer: String) {
+    queryLnv20RelayInfos(fromChain: $fromChain, toChain: $toChain, bridge: $bridge, relayer: $relayer) {
+      total
+    }
+  }
+`;

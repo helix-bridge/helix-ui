@@ -3,21 +3,31 @@
 import Button from "@/ui/button";
 import { Divider } from "@/ui/divider";
 import StepNumber from "@/ui/step-number";
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import ChainSelect from "./chain-select";
 import TokenSelect from "./token-select";
 import { Network } from "@/types/chain";
 import { TokenSymbol } from "@/types/token";
 import { BridgeCategory } from "@/types/bridge";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
 import Image from "next/image";
 import { getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
 import Tooltip from "@/ui/tooltip";
 import StepCompleteItem from "./step-complete-item";
-import { BalanceInput } from "./balance-input";
-import Modal from "@/ui/modal";
+import { BalanceInput, BalanceInputValue } from "./balance-input";
 import PrettyAddress from "./pretty-address";
 import LiquidityFeeRateInput from "./liquidity-fee-rate-input";
+import { getCrossChain, getParsedCrossChain } from "@/utils/cross-chain";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { fetchBalance } from "wagmi/actions";
+import { Subscription, forkJoin, from } from "rxjs";
+import { switchMap } from "rxjs/operators";
+import { getChainConfig } from "@/utils/chain";
+import { formatBalance } from "@/utils/balance";
+import { useApolloClient } from "@apollo/client";
+import { QUERY_SPECIAL_RELAYER } from "@/config/gql";
+import { SpecialRelayerResponseData, SpecialRelayerVariables } from "@/types/graphql";
+import { notification } from "@/ui/notification";
 
 enum Step {
   ONE,
@@ -28,15 +38,131 @@ enum Step {
   COMPLETE_THREE,
 }
 
+const { sourceChainTokens, availableTargetChains } = getParsedCrossChain();
+
 export default function RelayerRegister() {
+  const [defaultMarginBusy, setDefaultMarginBusy] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [completeMargin, setCompleteMargin] = useState(false);
+  const [balance, setBalance] = useState<bigint>();
+  const [allowance, setAllowance] = useState<bigint>(0n);
+  const [depositMargin, setDepositMargin] = useState<BalanceInputValue>({ formatted: 0n, value: "" });
+  const [baseFee, setBaseFee] = useState<BalanceInputValue>({ formatted: 0n, value: "" });
+  const [feeRate, setFeeRate] = useState<{ formatted: number; value: string }>({ formatted: 0, value: "" });
   const [currentStep, setCurrentStep] = useState(Step.ONE);
   const [sourceChain, setSourceChain] = useState<Network>();
   const [targetChain, setTargetChain] = useState<Network>();
-  const [token, setToken] = useState<TokenSymbol>();
+  const [selectedToken, setSelectedToken] = useState<TokenSymbol>();
   const [bridgeCategory, setBridgeCategory] = useState<BridgeCategory>();
-  const [isOpen, setIsOpen] = useState(false);
 
+  const apolloClient = useApolloClient();
   const { address } = useAccount();
+  const { chain } = useNetwork();
+  const { switchNetwork } = useSwitchNetwork();
+  const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
+  const { openConnectModal } = useConnectModal();
+
+  const availableCategories = (
+    sourceChain && targetChain
+      ? (Object.keys(getCrossChain()[sourceChain]?.[targetChain] || {}) as BridgeCategory[])
+      : []
+  ).filter((c) => c === "lnbridgev20-default" || c === "lnbridgev20-opposite");
+
+  const availableTokens = new Set<TokenSymbol>();
+  availableCategories.forEach((category) => {
+    if (sourceChain && targetChain) {
+      getCrossChain()[sourceChain]?.[targetChain]?.[category]?.tokens.forEach((token) =>
+        availableTokens.add(token.sourceToken),
+      );
+    }
+  });
+
+  useEffect(() => {
+    setBridgeCategory(availableCategories.at(0));
+  }, [availableCategories]);
+
+  useEffect(() => {
+    let sub$$: Subscription | undefined;
+
+    if (address && sourceChain && targetChain && selectedToken && bridgeCategory) {
+      const bridgeContract = getCrossChain()[sourceChain]?.[targetChain]?.[bridgeCategory]?.contract;
+
+      if (bridgeCategory === "lnbridgev20-default" && chain?.id === getChainConfig(targetChain)?.id && bridgeContract) {
+        const tokenConfig = getChainConfig(targetChain)?.tokens.find((t) => t.symbol === selectedToken);
+
+        if (tokenConfig && bridgeContract) {
+          sub$$ = from(import("@/abi/erc20.json"))
+            .pipe(
+              switchMap((abi) =>
+                forkJoin([
+                  fetchBalance({ address, token: tokenConfig.address }),
+                  publicClient.readContract({
+                    address: tokenConfig.address,
+                    abi: abi.default,
+                    functionName: "allowance",
+                    args: [address, bridgeContract.targetAddress],
+                  }),
+                ]),
+              ),
+            )
+            .subscribe({
+              next: ([b, a]) => {
+                setBalance(b.value);
+                setAllowance(a as unknown as bigint);
+              },
+              error: (err) => {
+                console.error(err);
+                setBalance(undefined);
+                setAllowance(0n);
+              },
+            });
+        }
+      } else if (
+        bridgeCategory === "lnbridgev20-opposite" &&
+        chain?.id === getChainConfig(sourceChain)?.id &&
+        bridgeContract
+      ) {
+        const tokenConfig = getChainConfig(sourceChain)?.tokens.find((t) => t.symbol === selectedToken);
+
+        if (tokenConfig && bridgeContract) {
+          sub$$ = from(import("@/abi/erc20.json"))
+            .pipe(
+              switchMap((abi) =>
+                forkJoin([
+                  fetchBalance({ address, token: tokenConfig.address }),
+                  publicClient.readContract({
+                    address: tokenConfig.address,
+                    abi: abi.default,
+                    functionName: "allowance",
+                    args: [address, bridgeContract.targetAddress],
+                  }),
+                ]),
+              ),
+            )
+            .subscribe({
+              next: ([b, a]) => {
+                setBalance(b.value);
+                setAllowance(a as unknown as bigint);
+              },
+              error: (err) => {
+                console.error(err);
+                setBalance(undefined);
+                setAllowance(0n);
+              },
+            });
+        }
+      } else {
+        setBalance(undefined);
+        setAllowance(0n);
+      }
+    } else {
+      setBalance(undefined);
+      setAllowance(0n);
+    }
+
+    return () => sub$$?.unsubscribe();
+  }, [chain, address, sourceChain, targetChain, bridgeCategory, selectedToken, publicClient]);
 
   return (
     <>
@@ -53,21 +179,62 @@ export default function RelayerRegister() {
 
               <div className="gap-middle flex items-center lg:gap-5">
                 <LabelItem label="From" className="flex-1">
-                  <ChainSelect options={[]} placeholder="Source chain" />
+                  <ChainSelect
+                    className="px-middle bg-app-bg hover:border-line border-transparent py-2"
+                    options={sourceChainTokens.map(({ network }) => network)}
+                    placeholder="Source chain"
+                    onChange={(value) => {
+                      setSourceChain(value);
+                      setTargetChain(undefined);
+                      setSelectedToken(undefined);
+                    }}
+                    value={sourceChain}
+                  />
                 </LabelItem>
                 <LabelItem label="To" className="flex-1">
-                  <ChainSelect options={[]} placeholder="Target chain" />
+                  <ChainSelect
+                    className="px-middle bg-app-bg hover:border-line border-transparent py-2"
+                    options={
+                      sourceChain
+                        ? (Object.keys(getCrossChain()[sourceChain] || {}) as Network[])
+                        : availableTargetChains
+                    }
+                    placeholder="Target chain"
+                    onChange={(value) => {
+                      setTargetChain(value);
+                      setSelectedToken(undefined);
+                    }}
+                    value={targetChain}
+                  />
                 </LabelItem>
               </div>
 
               <LabelItem label="Token">
-                <TokenSelect options={[]} placeholder="Select token" />
+                <TokenSelect
+                  className="px-middle py-2"
+                  disabled={!availableTokens.size}
+                  options={Array.from(availableTokens)}
+                  placeholder="Select token"
+                  onChange={setSelectedToken}
+                  value={selectedToken}
+                />
               </LabelItem>
 
               <Divider />
 
-              <Button kind="primary" className="flex h-9 items-center justify-center">
-                <span className="text-sm font-medium text-white">Confirm</span>
+              <Button
+                onClick={() => {
+                  if (address) {
+                    setCurrentStep(Step.COMPLETE_ONE);
+                  } else if (openConnectModal) {
+                    openConnectModal();
+                  }
+                }}
+                kind="primary"
+                className="flex h-9 items-center justify-center"
+                disabled={!selectedToken}
+              >
+                <span className="text-sm font-medium text-white">{address ? "Confirm" : "Connect Wallet"}</span>
               </Button>
             </>
           )}
@@ -80,18 +247,33 @@ export default function RelayerRegister() {
                 <StepCompleteItem property="Bridge Type" bridge={bridgeCategory} />
                 <StepCompleteItem property="From" network={sourceChain} />
                 <StepCompleteItem property="To" network={targetChain} />
-                {sourceChain && token ? (
-                  <StepCompleteItem property="Token" chainToken={{ network: sourceChain, symbol: token }} />
+                {sourceChain && selectedToken ? (
+                  <StepCompleteItem property="Token" chainToken={{ network: sourceChain, symbol: selectedToken }} />
                 ) : null}
               </div>
 
               <Divider />
 
               <div className="flex items-center gap-5">
-                <Button kind="default" className="flex h-9 flex-1 items-center justify-center">
+                <Button
+                  kind="default"
+                  onClick={() => {
+                    setSourceChain(undefined);
+                    setTargetChain(undefined);
+                    setSelectedToken(undefined);
+                    setCurrentStep(Step.ONE);
+                    setCompleteMargin(false);
+                  }}
+                  className="flex h-9 flex-1 items-center justify-center"
+                >
                   <span className="text-sm font-medium text-white">Reset</span>
                 </Button>
-                <Button kind="primary" className="flex h-9 flex-1 items-center justify-center">
+                <Button
+                  kind="primary"
+                  onClick={() => setCurrentStep(Step.TWO)}
+                  className="flex h-9 flex-1 items-center justify-center"
+                  disabled={Step.COMPLETE_ONE !== currentStep}
+                >
                   <span className="text-sm font-medium text-white">Next</span>
                 </Button>
               </div>
@@ -110,22 +292,410 @@ export default function RelayerRegister() {
               <Divider />
 
               <LabelItem label="Deposit Margin">
-                <BalanceInput chainToken={{ network: "arbitrum", symbol: "USDC" }} />
+                <BalanceInput
+                  balance={balance}
+                  chainToken={
+                    bridgeCategory === "lnbridgev20-default" && targetChain && selectedToken
+                      ? { network: targetChain, symbol: selectedToken }
+                      : bridgeCategory === "lnbridgev20-opposite" && sourceChain && selectedToken
+                      ? { network: sourceChain, symbol: selectedToken }
+                      : undefined
+                  }
+                  value={depositMargin}
+                  disabled={completeMargin}
+                  onChange={setDepositMargin}
+                />
               </LabelItem>
+
+              {bridgeCategory === "lnbridgev20-default" && (
+                <>
+                  <Button
+                    kind="primary"
+                    onClick={async () => {
+                      if (sourceChain && targetChain && bridgeCategory && address) {
+                        const bridgeConfig = getCrossChain()[sourceChain]?.[targetChain]?.[bridgeCategory];
+
+                        const sourceSymbol = selectedToken;
+                        const targetSymbol = bridgeConfig?.tokens.find((t) => t.sourceToken === sourceSymbol)
+                          ?.targetToken;
+
+                        const sourceChainConfig = getChainConfig(sourceChain);
+                        const targetChainConfig = getChainConfig(targetChain);
+
+                        const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === sourceSymbol);
+                        const targetTokenConfig = targetChainConfig?.tokens.find((t) => t.symbol === targetSymbol);
+
+                        if (targetChainConfig?.id !== chain?.id) {
+                          switchNetwork?.(targetChainConfig?.id);
+                        } else if (depositMargin.formatted > allowance) {
+                          if (targetTokenConfig && bridgeConfig && walletClient) {
+                            try {
+                              setDefaultMarginBusy(true);
+
+                              const { data: relayerData } = await apolloClient.query<
+                                SpecialRelayerResponseData,
+                                SpecialRelayerVariables
+                              >({
+                                query: QUERY_SPECIAL_RELAYER,
+                                variables: {
+                                  fromChain: sourceChain,
+                                  toChain: targetChain,
+                                  bridge: bridgeCategory,
+                                  relayer: address.toLowerCase(),
+                                },
+                                fetchPolicy: "no-cache",
+                              });
+                              if (relayerData.queryLnv20RelayInfos?.total) {
+                                notification.warn({
+                                  title: "Transaction failed",
+                                  description: `You have registered a relayer that supports this cross-chain.`,
+                                });
+                                return;
+                              }
+
+                              const abi = (await import("../abi/erc20.json")).default;
+                              const spender = bridgeConfig.contract.sourceAddress;
+
+                              const { request } = await publicClient.simulateContract({
+                                address: targetTokenConfig.address,
+                                abi,
+                                functionName: "approve",
+                                args: [spender, depositMargin.formatted],
+                                account: address,
+                              });
+                              const hash = await walletClient.writeContract(request);
+                              await publicClient.waitForTransactionReceipt({ hash });
+
+                              setAllowance(
+                                (await publicClient.readContract({
+                                  address: targetTokenConfig.address,
+                                  abi,
+                                  functionName: "allowance",
+                                  args: [address, spender],
+                                })) as unknown as bigint,
+                              );
+                            } catch (err) {
+                              console.error(err);
+                            } finally {
+                              setDefaultMarginBusy(false);
+                            }
+                          }
+                        } else if (
+                          sourceChainConfig &&
+                          sourceTokenConfig &&
+                          targetTokenConfig &&
+                          bridgeConfig &&
+                          walletClient
+                        ) {
+                          try {
+                            setDefaultMarginBusy(true);
+
+                            const { data: relayerData } = await apolloClient.query<
+                              SpecialRelayerResponseData,
+                              SpecialRelayerVariables
+                            >({
+                              query: QUERY_SPECIAL_RELAYER,
+                              variables: {
+                                fromChain: sourceChain,
+                                toChain: targetChain,
+                                bridge: bridgeCategory,
+                                relayer: address.toLowerCase(),
+                              },
+                              fetchPolicy: "no-cache",
+                            });
+                            if (relayerData.queryLnv20RelayInfos?.total) {
+                              notification.warn({
+                                title: "Transaction failed",
+                                description: `You have registered a relayer that supports this cross-chain.`,
+                              });
+                              return;
+                            }
+
+                            const abi = (await import("../abi/lnbridgev20-default.json")).default;
+                            const hash = await walletClient.writeContract({
+                              address: bridgeConfig.contract.targetAddress,
+                              abi,
+                              functionName: "depositProviderMargin",
+                              args: [
+                                BigInt(sourceChainConfig.id),
+                                sourceTokenConfig.address,
+                                targetTokenConfig.address,
+                                depositMargin.formatted,
+                              ],
+                              value: sourceTokenConfig.type === "native" ? depositMargin.formatted : undefined,
+                            });
+                            const receipt = await publicClient.waitForTransactionReceipt({ hash });
+                            if (receipt.status === "success") {
+                              setCompleteMargin(true);
+                            } else {
+                              notification.error({
+                                title: "Transaction failed",
+                                description: <span className="break-all">{receipt.transactionHash}</span>,
+                              });
+                            }
+                          } catch (err) {
+                            console.error(err);
+                            notification.error({ title: "Transaction failed", description: (err as Error).message });
+                          } finally {
+                            setDefaultMarginBusy(false);
+                          }
+                        }
+                      }
+                    }}
+                    className="flex h-9 items-center justify-center"
+                    disabled={
+                      completeMargin ||
+                      (getChainConfig(targetChain)?.id === chain?.id && depositMargin.formatted === 0n)
+                    }
+                    busy={defaultMarginBusy}
+                  >
+                    <span className="text-sm font-medium text-white">
+                      {getChainConfig(targetChain)?.id !== chain?.id
+                        ? "Switch Network"
+                        : depositMargin.formatted > allowance
+                        ? "Approve"
+                        : "Confirm"}
+                    </span>
+                  </Button>
+                  <Divider />
+                </>
+              )}
+
               <LabelItem label="Base Fee" tips="The fixed fee set by the relayer and charged in a transaction">
-                <BalanceInput chainToken={{ network: "arbitrum", symbol: "USDC" }} />
+                <BalanceInput
+                  chainToken={
+                    sourceChain && selectedToken ? { network: sourceChain, symbol: selectedToken } : undefined
+                  }
+                  value={baseFee}
+                  onChange={setBaseFee}
+                />
               </LabelItem>
               <LabelItem
                 label="Liquidity Fee Rate"
                 tips="The percentage deducted by the relayer from the transfer amount in a transaction"
               >
-                <LiquidityFeeRateInput />
+                <LiquidityFeeRateInput placeholder="Enter 0 ~ 100" value={feeRate} onChange={setFeeRate} />
               </LabelItem>
 
               <Divider />
 
-              <Button kind="primary" className="flex h-9 items-center justify-center">
-                <span className="text-sm font-medium text-white">Approve</span>
+              <Button
+                kind="primary"
+                onClick={async () => {
+                  if (sourceChain && targetChain && bridgeCategory && address) {
+                    const bridgeConfig = getCrossChain()[sourceChain]?.[targetChain]?.[bridgeCategory];
+
+                    const sourceSymbol = selectedToken;
+                    const targetSymbol = bridgeConfig?.tokens.find((t) => t.sourceToken === sourceSymbol)?.targetToken;
+
+                    const sourceChainConfig = getChainConfig(sourceChain);
+                    const targetChainConfig = getChainConfig(targetChain);
+
+                    const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === sourceSymbol);
+                    const targetTokenConfig = targetChainConfig?.tokens.find((t) => t.symbol === targetSymbol);
+
+                    if (sourceChainConfig?.id !== chain?.id) {
+                      switchNetwork?.(sourceChainConfig?.id);
+                    } else if (bridgeCategory === "lnbridgev20-opposite" && depositMargin.formatted > allowance) {
+                      if (sourceTokenConfig && bridgeConfig && walletClient) {
+                        try {
+                          setBusy(true);
+
+                          const { data: relayerData } = await apolloClient.query<
+                            SpecialRelayerResponseData,
+                            SpecialRelayerVariables
+                          >({
+                            query: QUERY_SPECIAL_RELAYER,
+                            variables: {
+                              fromChain: sourceChain,
+                              toChain: targetChain,
+                              bridge: bridgeCategory,
+                              relayer: address.toLowerCase(),
+                            },
+                            fetchPolicy: "no-cache",
+                          });
+                          if (relayerData.queryLnv20RelayInfos?.total) {
+                            notification.warn({
+                              title: "Transaction failed",
+                              description: `You have registered a relayer that supports this cross-chain.`,
+                            });
+                            return;
+                          }
+
+                          const abi = (await import("../abi/erc20.json")).default;
+                          const spender = bridgeConfig.contract.sourceAddress;
+
+                          const { request } = await publicClient.simulateContract({
+                            address: sourceTokenConfig.address,
+                            abi,
+                            functionName: "approve",
+                            args: [spender, depositMargin.formatted],
+                            account: address,
+                          });
+                          const hash = await walletClient.writeContract(request);
+                          await publicClient.waitForTransactionReceipt({ hash });
+
+                          setAllowance(
+                            (await publicClient.readContract({
+                              address: sourceTokenConfig.address,
+                              abi,
+                              functionName: "allowance",
+                              args: [address, spender],
+                            })) as unknown as bigint,
+                          );
+                        } catch (err) {
+                          console.error(err);
+                        } finally {
+                          setBusy(false);
+                        }
+                      }
+                    } else if (
+                      bridgeCategory === "lnbridgev20-default" &&
+                      targetChainConfig &&
+                      sourceTokenConfig &&
+                      targetTokenConfig &&
+                      bridgeConfig &&
+                      walletClient
+                    ) {
+                      try {
+                        setBusy(true);
+
+                        const { data: relayerData } = await apolloClient.query<
+                          SpecialRelayerResponseData,
+                          SpecialRelayerVariables
+                        >({
+                          query: QUERY_SPECIAL_RELAYER,
+                          variables: {
+                            fromChain: sourceChain,
+                            toChain: targetChain,
+                            bridge: bridgeCategory,
+                            relayer: address.toLowerCase(),
+                          },
+                          fetchPolicy: "no-cache",
+                        });
+                        if (relayerData.queryLnv20RelayInfos?.total) {
+                          notification.warn({
+                            title: "Transaction failed",
+                            description: `You have registered a relayer that supports this cross-chain.`,
+                          });
+                          return;
+                        }
+
+                        const abi = (await import("../abi/lnbridgev20-default.json")).default;
+                        const hash = await walletClient.writeContract({
+                          address: bridgeConfig.contract.targetAddress,
+                          abi,
+                          functionName: "setProviderFee",
+                          args: [
+                            BigInt(targetChainConfig.id),
+                            sourceTokenConfig.address,
+                            targetTokenConfig.address,
+                            baseFee.formatted,
+                            feeRate.formatted,
+                          ],
+                          gas: sourceChain === "arbitrum" || sourceChain === "arbitrum-goerli" ? 1000000n : undefined,
+                        });
+                        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+                        if (receipt.status === "success") {
+                          setCurrentStep(Step.THREE);
+                        } else {
+                          notification.error({
+                            title: "Transaction failed",
+                            description: <span className="break-all">{receipt.transactionHash}</span>,
+                          });
+                        }
+                      } catch (err) {
+                        console.error(err);
+                        notification.error({ title: "Transaction failed", description: (err as Error).message });
+                      } finally {
+                        setBusy(false);
+                      }
+                    } else if (
+                      bridgeCategory === "lnbridgev20-opposite" &&
+                      targetChainConfig &&
+                      sourceTokenConfig &&
+                      targetTokenConfig &&
+                      bridgeConfig &&
+                      walletClient
+                    ) {
+                      try {
+                        setBusy(true);
+
+                        const { data: relayerData } = await apolloClient.query<
+                          SpecialRelayerResponseData,
+                          SpecialRelayerVariables
+                        >({
+                          query: QUERY_SPECIAL_RELAYER,
+                          variables: {
+                            fromChain: sourceChain,
+                            toChain: targetChain,
+                            bridge: bridgeCategory,
+                            relayer: address.toLowerCase(),
+                          },
+                          fetchPolicy: "no-cache",
+                        });
+                        if (relayerData.queryLnv20RelayInfos?.total) {
+                          notification.warn({
+                            title: "Transaction failed",
+                            description: `You have registered a relayer that supports this cross-chain.`,
+                          });
+                          return;
+                        }
+
+                        const abi = (await import("../abi/lnbridgev20-opposite.json")).default;
+                        const hash = await walletClient.writeContract({
+                          address: bridgeConfig.contract.targetAddress,
+                          abi,
+                          functionName: "updateProviderFeeAndMargin",
+                          args: [
+                            BigInt(targetChainConfig.id),
+                            sourceTokenConfig.address,
+                            targetTokenConfig.address,
+                            depositMargin.formatted,
+                            baseFee.formatted,
+                            feeRate.formatted,
+                          ],
+                          value: sourceTokenConfig.type === "native" ? depositMargin.formatted : undefined,
+                        });
+                        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+                        if (receipt.status === "success") {
+                          setCurrentStep(Step.THREE);
+                        } else {
+                          notification.error({
+                            title: "Transaction failed",
+                            description: <span className="break-all">{receipt.transactionHash}</span>,
+                          });
+                        }
+                      } catch (err) {
+                        console.error(err);
+                        notification.error({ title: "Transaction failed", description: (err as Error).message });
+                      } finally {
+                        setBusy(false);
+                      }
+                    }
+                  }
+                }}
+                disabled={
+                  (getChainConfig(sourceChain)?.id === chain?.id &&
+                    (depositMargin.formatted === 0n || baseFee.formatted === 0n || feeRate.formatted === 0)) ||
+                  (bridgeCategory === "lnbridgev20-default" && completeMargin === false)
+                }
+                busy={busy}
+                className="flex h-9 items-center justify-center"
+              >
+                <span className="text-sm font-medium text-white">
+                  {bridgeCategory === "lnbridgev20-default"
+                    ? getChainConfig(sourceChain)?.id !== chain?.id && completeMargin
+                      ? "Switch Network"
+                      : "Confirm"
+                    : bridgeCategory === "lnbridgev20-opposite"
+                    ? getChainConfig(sourceChain)?.id !== chain?.id
+                      ? "Switch Network"
+                      : depositMargin.formatted > allowance
+                      ? "Approve"
+                      : "Confirm"
+                    : "Confirm"}
+                </span>
               </Button>
             </>
           )}
@@ -135,15 +705,23 @@ export default function RelayerRegister() {
               <div className="gap-small flex items-center justify-between">
                 <StepCompleteItem
                   property="Margin"
-                  chainToken={{ network: "arbitrum", symbol: "USDC" }}
-                  balance={100000n}
+                  chainToken={
+                    bridgeCategory === "lnbridgev20-default" && targetChain && selectedToken
+                      ? { network: targetChain, symbol: selectedToken }
+                      : bridgeCategory === "lnbridgev20-opposite" && sourceChain && selectedToken
+                      ? { network: sourceChain, symbol: selectedToken }
+                      : undefined
+                  }
+                  balance={depositMargin.formatted}
                 />
                 <StepCompleteItem
                   property="Base Fee"
-                  chainToken={{ network: "arbitrum", symbol: "USDC" }}
-                  balance={100000n}
+                  chainToken={
+                    sourceChain && selectedToken ? { network: sourceChain, symbol: selectedToken } : undefined
+                  }
+                  balance={baseFee.formatted}
                 />
-                <StepCompleteItem property="Liquidity Fee Rate" percent={1} />
+                <StepCompleteItem property="Liquidity Fee Rate" percent={feeRate.formatted} />
               </div>
             </>
           )}
@@ -151,96 +729,80 @@ export default function RelayerRegister() {
 
         {/* step 3 */}
         <div className="bg-component flex flex-col gap-5 p-5 lg:p-[1.875rem]">
-          <StepTitle step={3} title="Authorize Token on Target Chain and Run Relayer" />
+          <StepTitle step={3} title="Run a Relayer" />
 
           {Step.THREE === currentStep && (
             <>
-              <Description content="Authorize token on target chain and run relayer to start relaying messages and earn rewards. Please note this step authorizes tokens for the relayer to send to users' target chain address based on transactions. Ensure you authorize enough tokens for multiple transactions as needed." />
+              <Description content="One more step, now run relayer to start relaying messages and earn rewards." />
 
               <Divider />
 
-              <div className="gap-small p-small lg:p-middle flex items-center">
-                <div className="relative w-fit">
-                  <Image
-                    width={30}
-                    height={30}
-                    alt="Token"
-                    src={getTokenLogoSrc("usdt.svg")}
-                    className="rounded-full"
-                  />
-                  <Image
-                    width={16}
-                    height={16}
-                    alt="Chain"
-                    src={getChainLogoSrc("crab.svg")}
-                    className="absolute -bottom-1 -right-1 rounded-full"
-                  />
-                </div>
-                <span className="text-sm font-medium text-white">{"RING"}</span>
+              <div
+                className="gap-x-small grid items-center gap-y-5 text-sm font-normal text-white"
+                style={{ gridTemplateColumns: "130px auto" }}
+              >
+                <span>Address</span>
+                <PrettyAddress address="0x2tJaxND51vBbPwUDHuhVzndY4MeohvvHvn3D9uDejYN" />
+
+                <span>Bridge Type</span>
+                <span>
+                  {bridgeCategory === "lnbridgev20-default"
+                    ? "Default"
+                    : bridgeCategory === "lnbridgev20-opposite"
+                    ? "Opposite"
+                    : "-"}
+                </span>
+
+                <span>From</span>
+                <PrettyChain network={sourceChain} />
+
+                <span>To</span>
+                <PrettyChain network={targetChain} />
+
+                <span>Token</span>
+                <PrettyToken network={sourceChain} symbol={selectedToken} />
+
+                <span>Margin</span>
+                <PrettyMargin
+                  margin={depositMargin.formatted}
+                  category={bridgeCategory}
+                  symbol={selectedToken}
+                  sourceChain={sourceChain}
+                  targetChain={targetChain}
+                />
+
+                <span>Base Fee</span>
+                <PrettyBaseFee fee={baseFee.formatted} symbol={selectedToken} sourceChain={sourceChain} />
+
+                <span>Liquidity Fee Rate</span>
+                <span>{feeRate.formatted}%</span>
               </div>
-              <Button kind="primary" className="flex h-9 items-center justify-center">
-                <span className="text-sm font-medium text-white">Approve</span>
-              </Button>
+
+              <Divider />
+
+              <div className="gap-middle flex items-center lg:gap-5">
+                <RunRelayer className="inline-flex h-8 flex-1 items-center justify-center lg:h-9" />
+                <Button
+                  kind="default"
+                  onClick={() => {
+                    setSourceChain(undefined);
+                    setTargetChain(undefined);
+                    setSelectedToken(undefined);
+                    setDepositMargin({ formatted: 0n, value: "" });
+                    setBaseFee({ formatted: 0n, value: "" });
+                    setFeeRate({ formatted: 0, value: "" });
+                    setCurrentStep(Step.ONE);
+                    setCompleteMargin(false);
+                  }}
+                  className="h-8 flex-1 lg:h-9"
+                >
+                  <span className="text-sm font-normal">Register another Relayer</span>
+                </Button>
+              </div>
             </>
           )}
         </div>
       </div>
-
-      <Modal
-        className="w-full lg:w-[37.5rem]"
-        title="One More Step!"
-        subTitle={
-          <div className="text-sm font-normal text-white">
-            Now <RunRelayer className="lg:py-small px-middle py-1" /> to start relaying messages and earn rewards.
-          </div>
-        }
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-      >
-        <div
-          className="gap-x-small grid items-center gap-y-5 text-sm font-normal text-white"
-          style={{ gridTemplateColumns: "130px auto" }}
-        >
-          <span>Address</span>
-          <PrettyAddress address="0x2tJaxND51vBbPwUDHuhVzndY4MeohvvHvn3D9uDejYN" />
-
-          <span>Bridge Type</span>
-          <span>Default</span>
-
-          <span>From</span>
-          <div className="flex items-center">
-            <span>Ethereum</span>
-          </div>
-
-          <span>To</span>
-          <div className="flex items-center">
-            <span>Darwinia</span>
-          </div>
-
-          <span>Token</span>
-          <div className="flex items-center">
-            <span>RING</span>
-          </div>
-
-          <span>Margin</span>
-          <span>100,000</span>
-
-          <span>Base Fee</span>
-          <span>100,000</span>
-
-          <span>Liquidity Fee Rate</span>
-          <span>1%</span>
-        </div>
-
-        <Divider />
-
-        <div className="gap-middle flex items-center lg:gap-5">
-          <RunRelayer className="inline-flex h-8 flex-1 items-center justify-center lg:h-9" />
-          <Button kind="default" className="h-8 flex-1 lg:h-9">
-            <span className="text-sm font-normal">Register another Relayer</span>
-          </Button>
-        </div>
-      </Modal>
     </>
   );
 }
@@ -279,7 +841,11 @@ function LabelItem({
       <div className="gap-small flex items-center">
         <span className="text-sm font-normal text-white">{label}</span>
         {!!tips && (
-          <Tooltip content={<span className="text-xs font-normal text-white">{tips}</span>} className="w-fit">
+          <Tooltip
+            content={<span className="text-xs font-normal text-white">{tips}</span>}
+            className="w-fit"
+            contentClassName="max-w-[18rem]"
+          >
             <Image width={16} height={16} alt="Info" src="/images/info.svg" />
           </Tooltip>
         )}
@@ -291,4 +857,58 @@ function LabelItem({
 
 function Description({ content }: { content: string }) {
   return <span className="text-xs font-normal text-white/50">{content}</span>;
+}
+
+function PrettyChain({ network }: { network?: Network }) {
+  const config = getChainConfig(network);
+
+  return config ? (
+    <div className="gap-small flex items-center">
+      <Image width={16} height={16} alt="Chain" src={getChainLogoSrc(config.logo)} className="shrink-0 rounded-full" />
+      <span>{config.name}</span>
+    </div>
+  ) : (
+    "-"
+  );
+}
+
+function PrettyToken({ network, symbol }: { network?: Network; symbol?: TokenSymbol }) {
+  const token = getChainConfig(network)?.tokens.find((t) => t.symbol === symbol);
+
+  return token ? (
+    <div className="gap-small flex items-center">
+      <Image width={16} height={16} alt="Chain" src={getTokenLogoSrc(token.logo)} className="shrink-0 rounded-full" />
+      <span>{token.symbol}</span>
+    </div>
+  ) : (
+    "-"
+  );
+}
+
+function PrettyMargin({
+  margin,
+  category,
+  symbol,
+  sourceChain,
+  targetChain,
+}: {
+  margin: bigint;
+  category?: BridgeCategory;
+  symbol?: TokenSymbol;
+  sourceChain?: Network;
+  targetChain?: Network;
+}) {
+  const token =
+    category === "lnbridgev20-default"
+      ? getChainConfig(targetChain)?.tokens.find((t) => t.symbol === symbol)
+      : category === "lnbridgev20-opposite"
+      ? getChainConfig(sourceChain)?.tokens.find((t) => t.symbol === symbol)
+      : null;
+
+  return <span>{token ? formatBalance(margin, token.decimals, { keepZero: false }) : "-"}</span>;
+}
+
+function PrettyBaseFee({ fee, symbol, sourceChain }: { fee: bigint; symbol?: TokenSymbol; sourceChain?: Network }) {
+  const token = getChainConfig(sourceChain)?.tokens.find((t) => t.symbol === symbol);
+  return <span>{token ? formatBalance(fee, token.decimals, { keepZero: false }) : "-"}</span>;
 }

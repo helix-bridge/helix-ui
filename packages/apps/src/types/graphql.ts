@@ -134,3 +134,16 @@ export interface LnRelayersVariables {
   row: number;
   page: number;
 }
+
+export interface SpecialRelayerResponseData {
+  queryLnv20RelayInfos?: {
+    total: number;
+  };
+}
+
+export interface SpecialRelayerVariables {
+  fromChain?: Network;
+  toChain?: Network;
+  bridge?: BridgeCategory;
+  relayer?: string;
+}

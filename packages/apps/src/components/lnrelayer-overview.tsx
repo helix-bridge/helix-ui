@@ -54,7 +54,7 @@ export default function LnRelayerOverview() {
           <div className="gap-middle flex items-center">
             <span className="text-sm font-normal text-white">From</span>
             <ChainSelect
-              className="px-middle w-40 py-2"
+              className="px-middle border-line hover:border-primary w-40 py-2"
               placeholder="Source chain"
               options={sourceChainTokens.map(({ network }) => network)}
               onChange={(value) => {
@@ -67,7 +67,7 @@ export default function LnRelayerOverview() {
           <div className="gap-middle flex items-center">
             <span className="text-sm font-normal text-white">To</span>
             <ChainSelect
-              className="px-middle w-40 py-2"
+              className="px-middle border-line hover:border-primary w-40 py-2"
               placeholder="Target chain"
               options={
                 sourceChain ? (Object.keys(getCrossChain()[sourceChain] || {}) as Network[]) : availableTargetChains

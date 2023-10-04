@@ -12,19 +12,21 @@ export interface BalanceInputValue {
 
 export function BalanceInput({
   balance,
+  disabled,
   value,
   chainToken,
   onChange = () => undefined,
 }: {
   balance?: bigint;
+  disabled?: boolean;
   value?: BalanceInputValue;
-  chainToken: ChainToken;
+  chainToken?: ChainToken;
   onChange?: (value: BalanceInputValue) => void;
 }) {
-  const chainConfig = getChainConfig(chainToken.network);
-  const tokenConfig = chainConfig?.tokens.find((t) => t.symbol === chainToken.symbol);
+  const chainConfig = getChainConfig(chainToken?.network);
+  const tokenConfig = chainConfig?.tokens.find((t) => t.symbol === chainToken?.symbol);
 
-  const insufficient = balance && (value?.formatted || 0n) > balance ? true : false;
+  const insufficient = balance !== undefined && (value?.formatted || 0n) > balance ? true : false;
 
   return (
     <div
@@ -36,11 +38,11 @@ export function BalanceInput({
     >
       <input
         placeholder={
-          balance && tokenConfig
+          balance !== undefined && tokenConfig
             ? `Balance ${formatBalance(balance, tokenConfig.decimals, { keepZero: false })}`
             : "Enter an amount"
         }
-        className="h-12 w-full rounded bg-transparent text-sm font-medium text-white focus-visible:outline-none"
+        className="h-12 w-full rounded bg-transparent text-sm font-medium text-white focus-visible:outline-none disabled:cursor-not-allowed"
         onChange={(e) => {
           if (e.target.value) {
             if (!Number.isNaN(Number(e.target.value)) && tokenConfig) {
@@ -50,6 +52,7 @@ export function BalanceInput({
             onChange({ value: e.target.value, formatted: 0n });
           }
         }}
+        disabled={disabled}
         value={value?.value}
       />
 

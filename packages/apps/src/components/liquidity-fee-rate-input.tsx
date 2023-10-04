@@ -8,7 +8,13 @@ export default function LiquidityFeeRateInput({
   onChange?: (value: { formatted: number; value: string }) => void;
 }) {
   return (
-    <div className="gap-small bg-app-bg p-small lg:p-middle hover:border-line focus-within:border-line flex items-center justify-between rounded border border-transparent transition-colors">
+    <div
+      className={`gap-small bg-app-bg p-small lg:p-middle flex items-center justify-between rounded border transition-colors ${
+        (value?.formatted || 0) < 0 || 100000 < (value?.formatted || 0)
+          ? "border-app-red hover:border-app-red focus-within:border-app-red"
+          : "hover:border-line focus-within:border-line border-transparent"
+      }`}
+    >
       <input
         className="w-full rounded bg-transparent text-sm font-medium text-white focus-visible:outline-none"
         placeholder={placeholder}

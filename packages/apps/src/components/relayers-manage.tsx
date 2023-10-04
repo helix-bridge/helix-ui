@@ -4,6 +4,7 @@ import { LnRelayerInfo, LnRelayersResponseData, LnRelayersVariables } from "@/ty
 import { useQuery } from "@apollo/client";
 import { QUERY_LNRELAYERS } from "@/config/gql";
 import CountdownRefresh from "@/ui/countdown-refresh";
+import { useAccount } from "wagmi";
 
 const pageSize = 10;
 
@@ -11,8 +12,9 @@ export default function RelayersManage() {
   const [currentPage, setCurrentPage] = useState(0);
   const [records, setRecords] = useState<LnRelayerInfo[]>([]);
 
+  const { address } = useAccount();
   const { loading, data, refetch } = useQuery<LnRelayersResponseData, LnRelayersVariables>(QUERY_LNRELAYERS, {
-    variables: { row: pageSize, page: currentPage },
+    variables: { relayer: (address || "").toLowerCase(), row: pageSize, page: currentPage },
     notifyOnNetworkStatusChange: true,
   });
 
