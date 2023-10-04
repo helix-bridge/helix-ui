@@ -18,6 +18,7 @@ interface Props {
   isDashboard?: boolean;
   pageSize: number;
   currentPage: number;
+  onRefetch: () => void;
   onPageChange: (value: number) => void;
 }
 
@@ -150,9 +151,10 @@ export default function RelayersTable({
   isDashboard,
   pageSize,
   currentPage,
+  onRefetch,
   onPageChange,
 }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [relayerInfo, setRelayerInfo] = useState<LnRelayerInfo>();
 
   const columns: ColumnType<DataSource>[] = isDashboard
     ? [
@@ -173,9 +175,9 @@ export default function RelayersTable({
         {
           key: "action",
           title: <Title title="Action" className="justify-end" />,
-          render: () => (
+          render: (row) => (
             <div className="flex justify-end">
-              <Button className="px-middle w-fit py-[2px]" onClick={() => setIsOpen(true)} kind="default">
+              <Button className="px-middle w-fit py-[2px]" onClick={() => setRelayerInfo(row)} kind="default">
                 <span className="text-sm font-normal text-white">Manage</span>
               </Button>
             </div>
@@ -218,7 +220,14 @@ export default function RelayersTable({
         onPageChange={onPageChange}
       />
 
-      {isDashboard && <RelayerManageModal isOpen={isOpen} onClose={() => setIsOpen(false)} />}
+      {isDashboard && (
+        <RelayerManageModal
+          relayerInfo={relayerInfo}
+          isOpen={!!relayerInfo}
+          onClose={() => setRelayerInfo(undefined)}
+          onSuccess={onRefetch}
+        />
+      )}
     </>
   );
 }

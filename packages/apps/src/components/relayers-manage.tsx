@@ -37,6 +37,7 @@ export default function RelayersManage() {
         isDashboard={true}
         pageSize={pageSize}
         currentPage={currentPage}
+        onRefetch={refetch}
         onPageChange={setCurrentPage}
       />
     </>

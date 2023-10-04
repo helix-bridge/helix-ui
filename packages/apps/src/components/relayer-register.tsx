@@ -135,7 +135,7 @@ export default function RelayerRegister() {
                     address: tokenConfig.address,
                     abi: abi.default,
                     functionName: "allowance",
-                    args: [address, bridgeContract.targetAddress],
+                    args: [address, bridgeContract.sourceAddress],
                   }),
                 ]),
               ),
@@ -354,7 +354,7 @@ export default function RelayerRegister() {
                               }
 
                               const abi = (await import("../abi/erc20.json")).default;
-                              const spender = bridgeConfig.contract.sourceAddress;
+                              const spender = bridgeConfig.contract.targetAddress;
 
                               const { request } = await publicClient.simulateContract({
                                 address: targetTokenConfig.address,
