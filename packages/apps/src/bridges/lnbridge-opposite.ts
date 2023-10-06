@@ -1,12 +1,12 @@
 import { TransactionReceipt } from "viem";
-import { LnBridgeCommon } from "./lnbridge-common";
+import { LnBridgeBase } from "./lnbridge-base";
 import { Network } from "@/types/chain";
 import { TokenSymbol } from "@/types/token";
 import { BridgeContract } from "@/types/bridge";
 import { getChainConfig } from "@/utils/chain";
 import { PublicClient, WalletClient } from "wagmi";
 
-export class LnBridgeOpposite extends LnBridgeCommon {
+export class LnBridgeOpposite extends LnBridgeBase {
   constructor(args: {
     contract?: BridgeContract;
     sourceChain?: Network;
@@ -24,7 +24,7 @@ export class LnBridgeOpposite extends LnBridgeCommon {
 
   async transfer(
     _: string,
-    receiver: string,
+    recipient: string,
     amount: bigint,
     options: {
       remoteChainId: bigint;
@@ -55,7 +55,7 @@ export class LnBridgeOpposite extends LnBridgeCommon {
           address: this.contract.sourceAddress,
           abi,
           functionName: "transferAndLockMargin",
-          args: [snapshot, amount, receiver],
+          args: [snapshot, amount, recipient],
           value: token.type === "native" ? amount + options.totalFee : undefined,
           gas: this.sourceChain === "arbitrum" || this.sourceChain === "arbitrum-goerli" ? 1000000n : undefined,
         });

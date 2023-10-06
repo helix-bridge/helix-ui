@@ -21,15 +21,15 @@ export class HelixSub2ethv2 extends BaseBridge {
     super(args);
 
     this.logo = {
-      horizontal: "lnbridge-horizontal.svg",
-      symbol: "lnbridge-symbol.svg",
+      horizontal: "helix-horizontal.svg",
+      symbol: "helix-symbol.svg",
     };
     this.name = "Helix";
   }
 
   async transfer(
     sender: string,
-    receiver: string,
+    recipient: string,
     amount: bigint,
     options?: Object | undefined,
   ): Promise<TransactionReceipt | undefined> {

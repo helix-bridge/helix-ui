@@ -111,13 +111,13 @@ export abstract class BaseBridge {
     return "";
   }
 
-  async getFee(..._: unknown[]): Promise<bigint | undefined> {
+  async getFee(..._: unknown[]): Promise<{ amount: bigint; symbol: TokenSymbol } | undefined> {
     return undefined;
   }
 
   abstract transfer(
     sender: string,
-    receiver: string,
+    recipient: string,
     amount: bigint,
     options?: Object,
   ): Promise<TransactionReceipt | undefined>;

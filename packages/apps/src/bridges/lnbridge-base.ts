@@ -5,7 +5,7 @@ import { TokenSymbol } from "@/types/token";
 import { BridgeCategory, BridgeContract } from "@/types/bridge";
 import { PublicClient, WalletClient } from "wagmi";
 
-export class LnBridgeCommon extends BaseBridge {
+export class LnBridgeBase extends BaseBridge {
   constructor(args: {
     category: BridgeCategory;
     contract?: BridgeContract;
@@ -21,8 +21,8 @@ export class LnBridgeCommon extends BaseBridge {
     super(args);
 
     this.logo = {
-      horizontal: "lnbridge-horizontal.svg",
-      symbol: "lnbridge-symbol.svg",
+      horizontal: "helix-horizontal.svg",
+      symbol: "helix-symbol.svg",
     };
     this.name = "Helix LnBridge";
   }
@@ -31,13 +31,16 @@ export class LnBridgeCommon extends BaseBridge {
     return "1-30 Minutes";
   }
 
-  async getFee(baseFee: bigint, liquidityFeeRate: bigint, sendAmount: bigint): Promise<bigint | undefined> {
-    return baseFee + (liquidityFeeRate * sendAmount) / 100000n;
+  async getFee(baseFee: bigint, liquidityFeeRate: bigint, sendAmount: bigint) {
+    if (this.sourceToken) {
+      return { amount: baseFee + (liquidityFeeRate * sendAmount) / 100000n, symbol: this.sourceToken };
+    }
+    return undefined;
   }
 
   async transfer(
     sender: string,
-    receiver: string,
+    recipient: string,
     amount: bigint,
     options?: Object | undefined,
   ): Promise<TransactionReceipt | undefined> {

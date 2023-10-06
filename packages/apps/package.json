@@ -11,6 +11,7 @@
   "dependencies": {
     "@apollo/client": "^3.8.2",
     "@floating-ui/react": "^0.25.2",
+    "@polkadot/api": "^10.9.1",
     "@rainbow-me/rainbowkit": "^1.0.9",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",

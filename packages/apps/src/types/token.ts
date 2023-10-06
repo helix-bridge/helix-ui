@@ -4,7 +4,7 @@ export interface Token {
   decimals: 18 | 6;
   symbol: TokenSymbol; // Also used as id
   name: string;
-  type: "native" | "erc20";
+  type: "native" | "erc20" | "mapping";
   address: `0x${string}`;
   logo: string; // file name
 }
