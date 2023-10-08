@@ -35,7 +35,7 @@ function PC() {
   const { refs, context, floatingStyles } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
-    middleware: [offset(6)],
+    middleware: [offset(10)],
     placement: "bottom-start",
   });
 
@@ -62,15 +62,12 @@ function PC() {
       {isMounted && (
         <FloatingPortal>
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
-            <div
-              style={styles}
-              className="bg-component border-line py-middle px-large gap-small flex w-32 flex-col rounded border"
-            >
+            <div style={styles} className="px-middle gap-small flex w-32 flex-col rounded">
               {navigationsConfig.map(({ href, label }) => (
                 <Link
                   key={label}
                   href={href}
-                  className="text-sm font-normal hover:underline"
+                  className="text-primary text-sm font-normal hover:underline"
                   onClick={() => setIsOpen(false)}
                 >
                   {label}
