@@ -48,9 +48,12 @@ export abstract class BaseBridge {
   }
 
   async getAllowance(owner: Address) {
-    const token = getChainConfig(this.sourceChain)?.tokens.find(({ symbol }) => symbol === this.sourceToken);
+    const chainConfig = getChainConfig(this.sourceChain);
+    const token = chainConfig?.tokens.find(({ symbol }) => symbol === this.sourceToken);
 
-    if (this.contract && this.publicClient && token) {
+    const chainId = await this.publicClient?.getChainId();
+
+    if (this.contract && this.publicClient && token && chainId === chainConfig?.id) {
       const abi = (await import("../abi/erc20.json")).default;
       const spender = this.contract.sourceAddress;
 
