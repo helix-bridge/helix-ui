@@ -26,17 +26,17 @@ jobs:
           vercel_group: itering
           preview_output: true
           alias_domain: "helix-v2"
-          project_name: "helix-apps-test"
+          project_name: "helix-apps"
           script_run: false
           dist_path: .
 
       - uses: ./.github/actions/smart-vercel
-        name: Deploy stg-test
+        name: Deploy helix-v2-test
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
-          alias_domain: "helix-stg-test"
+          alias_domain: "helix-v2-test"
           project_name: "helix-apps-test"
           script_run: false
           dist_path: .
