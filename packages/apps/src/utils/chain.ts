@@ -13,6 +13,7 @@ import { pangoroChain } from "@/config/chains/pangoro";
 import { zksyncChain } from "@/config/chains/zksync";
 import { zksyncGoerliChain } from "@/config/chains/zksync-goerli";
 import { ChainConfig, Network } from "@/types/chain";
+import { isProduction } from "./env";
 
 export function getChainConfig(network?: Network | null): ChainConfig | undefined {
   switch (network) {
@@ -67,7 +68,7 @@ export function getChainsConfig() {
     zksyncGoerliChain,
   ];
 
-  if (process.env.NODE_ENV === "production") {
+  if (isProduction()) {
     return all.filter((c) => !c.hidden && !c.testnet);
   } else {
     return all.filter((c) => !c.hidden && !!c.testnet);

@@ -4,6 +4,7 @@ import { Network } from "@/types/chain";
 import { TokenSymbol } from "@/types/token";
 import { getChainConfig } from "@/utils/chain";
 import { PublicClient, WalletClient } from "wagmi";
+import { isProduction } from "@/utils/env";
 
 export class LnBridgeDefault extends LnBridgeBase {
   constructor(args: {
@@ -27,7 +28,7 @@ export class LnBridgeDefault extends LnBridgeBase {
         sourceAddress: "0x79e6f452f1e491a7aF0382FA0a6EF9368691960D",
         targetAddress: "0x79e6f452f1e491a7aF0382FA0a6EF9368691960D",
       };
-    } else if (process.env.NODE_ENV !== "production") {
+    } else if (!isProduction()) {
       this.contract = {
         sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
         targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
