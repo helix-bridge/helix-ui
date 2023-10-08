@@ -40,7 +40,7 @@ export default function RecordDetail(props: Props) {
     const category = record?.historyRecordById?.bridge;
 
     if (sourceChain && targetChain && category) {
-      return bridgeFactory({ category });
+      return bridgeFactory({ category, sourceChain, targetChain });
     }
 
     return undefined;
