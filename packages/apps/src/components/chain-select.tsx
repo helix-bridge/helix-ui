@@ -62,7 +62,7 @@ export default function ChainSelect({ options, value, placeholder, className, on
 
         <div className="gap-small flex shrink-0 items-center">
           {value ? (
-            <button
+            <div
               className="relative h-[16px] w-[16px] shrink-0 rounded-full bg-transparent p-[2px] opacity-80 transition hover:scale-105 hover:bg-white/20 hover:opacity-100 active:scale-95"
               onClick={(e) => {
                 e.stopPropagation();
@@ -70,7 +70,7 @@ export default function ChainSelect({ options, value, placeholder, className, on
               }}
             >
               <Image alt="Close" fill src="/images/close.svg" />
-            </button>
+            </div>
           ) : null}
           <Image
             src="/images/caret-down.svg"

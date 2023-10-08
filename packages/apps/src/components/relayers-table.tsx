@@ -119,13 +119,13 @@ const commonColumns: ColumnType<DataSource>[] = [
       // the unit is ETH, so the precision is 18
       return cost ? (
         <span className="truncate text-sm font-normal text-white">
-          {formatBalance(BigInt(cost), 18, { keepZero: false })}
+          {formatBalance(BigInt(cost), 18, { keepZero: false, precision: 5 })}
         </span>
       ) : (
         <span>-</span>
       );
     },
-    width: "8%",
+    width: "10%",
   },
   {
     key: "profit",
@@ -209,7 +209,7 @@ export default function RelayersTable({
       ];
 
   return (
-    <>
+    <div className="overflow-x-auto">
       <Table
         columns={columns}
         dataSource={records.map((item) => ({ ...item, key: item.id }))}
@@ -228,7 +228,7 @@ export default function RelayersTable({
           onSuccess={onRefetch}
         />
       )}
-    </>
+    </div>
   );
 }
 

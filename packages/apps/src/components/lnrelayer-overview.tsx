@@ -50,11 +50,11 @@ export default function LnRelayerOverview() {
           onReset={() => setSearchValue("")}
         />
 
-        <div className="flex items-center gap-5">
+        <div className="gap-small flex items-center lg:gap-5">
           <div className="gap-middle flex items-center">
-            <span className="text-sm font-normal text-white">From</span>
+            <span className="hidden text-sm font-normal text-white lg:inline">From</span>
             <ChainSelect
-              className="px-middle border-line hover:border-primary w-40 py-2"
+              className="px-middle border-line hover:border-primary w-40 py-[7px]"
               placeholder="Source chain"
               options={defaultSourceOptions.map(({ network }) => network)}
               onChange={(value) => {
@@ -65,9 +65,9 @@ export default function LnRelayerOverview() {
             />
           </div>
           <div className="gap-middle flex items-center">
-            <span className="text-sm font-normal text-white">To</span>
+            <span className="hidden text-sm font-normal text-white lg:inline">To</span>
             <ChainSelect
-              className="px-middle border-line hover:border-primary w-40 py-2"
+              className="px-middle border-line hover:border-primary w-40 py-[7px]"
               placeholder="Target chain"
               options={sourceChain ? availableTargetChains[sourceChain] || defaultTargetChains : defaultTargetChains}
               onChange={setTargetChain}

@@ -44,7 +44,7 @@ export function BalanceInput({
             ? `Balance ${formatBalance(balance, tokenConfig.decimals, { keepZero: false })}`
             : placeholder ?? "Enter an amount"
         }
-        className="h-12 w-full rounded bg-transparent text-sm font-medium text-white focus-visible:outline-none disabled:cursor-not-allowed"
+        className="h-10 w-full rounded bg-transparent text-sm font-medium text-white focus-visible:outline-none disabled:cursor-not-allowed"
         onChange={(e) => {
           if (e.target.value) {
             if (!Number.isNaN(Number(e.target.value)) && tokenConfig) {

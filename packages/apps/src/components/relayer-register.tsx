@@ -242,7 +242,7 @@ export default function RelayerRegister() {
 
               <div className="gap-small flex items-center justify-between">
                 <StepCompleteItem property="Address" address={address} />
-                <StepCompleteItem property="Bridge Type" bridge={bridgeCategory} />
+                {/* <StepCompleteItem property="Bridge Type" bridge={bridgeCategory} /> */}
                 <StepCompleteItem property="From" network={sourceChain} />
                 <StepCompleteItem property="To" network={targetChain} />
                 {sourceChain && activeToken ? (
@@ -791,9 +791,9 @@ export default function RelayerRegister() {
                     setCurrentStep(Step.ONE);
                     setCompleteMargin(false);
                   }}
-                  className="h-8 flex-1 lg:h-9"
+                  className="flex h-8 flex-1 items-center justify-center lg:h-9"
                 >
-                  <span className="text-sm font-normal">Register another Relayer</span>
+                  <span className="text-sm font-normal">Register Another</span>
                 </Button>
               </div>
             </>

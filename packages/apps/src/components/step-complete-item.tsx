@@ -62,7 +62,7 @@ export default function StepCompleteItem({
             src={getTokenLogoSrc(token.logo)}
             className="shrink-0 rounded-full"
           />
-          <span className="text-sm font-normal text-white">{token.symbol}</span>
+          <span className="truncate text-sm font-normal text-white">{token.symbol}</span>
         </div>
       )}
       {!!percent && <span className="text-sm font-normal text-white">{percent}%</span>}

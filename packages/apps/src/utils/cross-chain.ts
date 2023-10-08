@@ -35,7 +35,7 @@ getChainsConfig().forEach(({ tokens, network }, sourceChainIndex) => {
         defaultTargetChains.add(cross.target.network);
         availableTargetChains = {
           ...availableTargetChains,
-          [network]: (availableTargetChains[network] || []).concat(cross.target.network),
+          [network]: Array.from(new Set((availableTargetChains[network] || []).concat(cross.target.network))),
         };
 
         availableTargetOptions = {

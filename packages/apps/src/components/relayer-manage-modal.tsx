@@ -219,7 +219,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
   return (
     <Modal
       title="Manage Relayer"
-      className="w-full lg:w-[42.5rem]"
+      className="w-full lg:w-[40rem]"
       okText={okText}
       isOpen={isOpen}
       onClose={onClose}
@@ -442,10 +442,15 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
         options={[
           {
             key: "update",
-            label: "Update Fee",
+            label: (
+              <>
+                <span className="hidden text-sm font-medium lg:inline">Update Fee</span>
+                <span className="text-sm font-medium lg:hidden">Fee</span>
+              </>
+            ),
             children: (
               <div className="flex flex-col gap-5" ref={(node) => setHeight((prev) => node?.clientHeight || prev)}>
-                <LabelSection label="Base Fee Amount">
+                <LabelSection label="Base Fee">
                   <BalanceInput
                     chainToken={
                       sourceChainConfig && sourceTokenConfig
@@ -464,9 +469,14 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
           },
           {
             key: "deposit",
-            label: "Deposit More Margin",
+            label: (
+              <>
+                <span className="hidden text-sm font-medium lg:inline">Deposit More Margin</span>
+                <span className="text-sm font-medium lg:hidden">Margin</span>
+              </>
+            ),
             children: (
-              <LabelSection label="Deposit Amount" height={height}>
+              <LabelSection label="More Margin" height={height}>
                 <BalanceInput
                   balance={balance}
                   chainToken={
@@ -486,7 +496,8 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             key: "withdraw",
             label: (
               <div className="gap-small flex items-center justify-center">
-                <span className="text-sm font-medium">Withdraw Margin</span>
+                <span className="hidden text-sm font-medium lg:inline">Withdraw Margin</span>
+                <span className="text-sm font-medium lg:hidden">Withdraw</span>
                 <Tooltip
                   content={
                     <span className="text-xs font-normal text-white">

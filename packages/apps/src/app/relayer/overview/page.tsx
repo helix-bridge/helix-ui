@@ -1,5 +1,7 @@
-import LnRelayerOverview from "@/components/lnrelayer-overview";
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
+
+const LnRelayerOverview = dynamic(() => import("@/components/lnrelayer-overview"));
 
 export const metadata: Metadata = {
   title: "Relayers Overview | Helix Bridge",
