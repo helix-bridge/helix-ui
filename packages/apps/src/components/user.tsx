@@ -76,14 +76,16 @@ export default function User({ className, onClose = () => undefined }: Props) {
                   setIsOpen(false);
                   onClose();
                 }}
-                className="px-large py-small hover:text-primary text-start transition active:translate-y-1"
+                className="gap-middle px-large py-small flex items-center text-start transition hover:opacity-80 active:translate-y-1"
               >
+                <Image width={18} height={18} alt="History" src="/images/history.svg" className="shrink-0" />
                 <span className="text-sm font-medium">History</span>
               </Link>
               <button
                 onClick={() => disconnect()}
-                className="px-large py-small hover:text-primary text-start transition active:translate-y-1"
+                className="gap-middle px-large py-small flex items-center text-start transition hover:opacity-80 active:translate-y-1"
               >
+                <Image width={18} height={18} alt="History" src="/images/disconnect.svg" className="shrink-0" />
                 <span className="text-sm font-medium">Disconnect</span>
               </button>
             </div>
