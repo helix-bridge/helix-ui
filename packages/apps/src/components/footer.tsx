@@ -22,9 +22,9 @@ export default function Footer() {
 
   useEffect(() => {
     if (window.location.hostname === "helix-v2.vercel.app") {
-      setMainnetOrTestnet({ label: "Testnet", link: "helix-v2-test.vercel.app" });
+      setMainnetOrTestnet({ label: "Testnet", link: "https://helix-v2-test.vercel.app" });
     } else if (window.location.hostname === "helix-v2-test.vercel.app") {
-      setMainnetOrTestnet({ label: "Mainnet", link: "helix-v2.vercel.app" });
+      setMainnetOrTestnet({ label: "Mainnet", link: "https://helix-v2.vercel.app" });
     }
   }, []);
 
