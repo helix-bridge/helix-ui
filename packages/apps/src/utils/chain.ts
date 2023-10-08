@@ -67,11 +67,9 @@ export function getChainsConfig() {
     zksyncGoerliChain,
   ];
 
-  return all.filter((c) => !c.hidden);
-
-  // if (process.env.NODE_ENV === "production") {
-  //   return all.filter((c) => !c.hidden && !c.testnet);
-  // } else {
-  //   return all.filter((c) => !c.hidden && !!c.testnet);
-  // }
+  if (process.env.NODE_ENV === "production") {
+    return all.filter((c) => !c.hidden && !c.testnet);
+  } else {
+    return all.filter((c) => !c.hidden && !!c.testnet);
+  }
 }
