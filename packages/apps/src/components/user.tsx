@@ -44,9 +44,9 @@ export default function User({ className, onClose = () => undefined }: Props) {
   });
 
   const { styles, isMounted } = useTransitionStyles(context, {
-    initial: { transform: "translateY(-20px)", opacity: 0 },
+    initial: { transform: "translateY(-10px)", opacity: 0 },
     open: { transform: "translateY(0)", opacity: 1 },
-    close: { transform: "translateY(-20px)", opacity: 0 },
+    close: { transform: "translateY(-10px)", opacity: 0 },
   });
 
   const click = useClick(context);
