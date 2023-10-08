@@ -68,7 +68,10 @@ export default function User({ className, onClose = () => undefined }: Props) {
       {isMounted && (
         <FloatingPortal>
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
-            <div style={styles} className="bg-component border-line py-small flex flex-col rounded border">
+            <div
+              style={styles}
+              className="bg-component border-line py-small flex flex-col rounded border lg:border-transparent"
+            >
               <Link
                 href={`/records?${UrlSearchParam.ADDRESS}=${address}`}
                 onClick={() => {
