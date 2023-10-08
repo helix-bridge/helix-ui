@@ -190,7 +190,7 @@ export default function TransactionStatus({ record }: Props) {
           </div>
         )}
 
-        {record?.result !== RecordStatus.PENDING && (
+        {record?.result === RecordStatus.PENDING && (
           <div className="gap-small flex items-center">
             <span className="text-sm font-normal text-white/50">
               You can request refund or speed up this transaction.
