@@ -8,12 +8,21 @@ import {
   useInteractions,
   useTransitionStyles,
 } from "@floating-ui/react";
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 
-const navigationsConfig: { label: string; href: string }[] = [
-  { href: "/relayer/overview", label: "Overview" },
-  { href: "/relayer/my-relayers", label: "My relayer(s)" },
+const navigationsConfig: { label: string; href: string; icon: ReactElement }[] = [
+  {
+    href: "/relayer/overview",
+    label: "Overview",
+    icon: <Image width={18} height={18} alt="Overview" src="/images/overview.svg" className="shrink-0" />,
+  },
+  {
+    href: "/relayer/my-relayers",
+    label: "My relayer(s)",
+    icon: <Image width={18} height={18} alt="My relayer(s)" src="/images/my.svg" className="shrink-0" />,
+  },
 ];
 
 interface Props {
@@ -35,7 +44,7 @@ function PC() {
   const { refs, context, floatingStyles } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
-    middleware: [offset(10)],
+    middleware: [offset(6)],
     placement: "bottom-start",
   });
 
@@ -62,14 +71,15 @@ function PC() {
       {isMounted && (
         <FloatingPortal>
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
-            <div style={styles} className="px-middle gap-small flex w-32 flex-col rounded">
-              {navigationsConfig.map(({ href, label }) => (
+            <div style={styles} className="px-large gap-small bg-component py-large flex w-fit flex-col rounded-lg">
+              {navigationsConfig.map(({ href, label, icon }) => (
                 <Link
                   key={label}
                   href={href}
-                  className="text-primary text-sm font-normal hover:underline"
+                  className="text-primary gap-middle flex items-center text-sm font-normal hover:underline"
                   onClick={() => setIsOpen(false)}
                 >
+                  {icon}
                   {label}
                 </Link>
               ))}
@@ -106,9 +116,14 @@ function Mobile({ onClose }: { onClose: () => void }) {
         className="border-l-line gap-small flex flex-col overflow-hidden border-l transition-[height_padding]"
         ref={nodeRef}
       >
-        {navigationsConfig.map(({ href, label }) => (
-          <Link key={label} href={href} className="text-sm font-medium hover:underline" onClick={onClose}>
-            {"> "}
+        {navigationsConfig.map(({ href, label, icon }) => (
+          <Link
+            key={label}
+            href={href}
+            className="gap-small text-primary inline-flex items-center text-sm font-medium hover:underline"
+            onClick={onClose}
+          >
+            {icon}
             {label}
           </Link>
         ))}
