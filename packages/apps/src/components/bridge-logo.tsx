@@ -14,7 +14,7 @@ interface Props {
 export default function BridgeLogo({ width, height, type, bridge, className }: Props) {
   return (
     <Tooltip
-      content={<span className="text-xs font-normal text-white">{bridge?.getName() || "Unknown"}</span>}
+      content={<span className="text-xs font-normal text-white">{bridge?.getInfo().name || "Unknown"}</span>}
       className="w-fit"
     >
       {bridge ? (

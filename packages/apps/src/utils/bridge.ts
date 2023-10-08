@@ -1,15 +1,17 @@
 import { BaseBridge } from "@/bridges/base";
-import { HelixSub2ethv2 } from "@/bridges/helix-sub2ethv2";
+import { HelixLpBridge } from "@/bridges/helix-lpbridge";
+import { HelixBridgeDVMDVM } from "@/bridges/helixbridge-dvmdvm";
+import { HelixBridgeDVMEVM } from "@/bridges/helixbridge-dvmevm";
+import { L2ArbitrumBridge } from "@/bridges/l2bridge";
 import { LnBridgeDefault } from "@/bridges/lnbridge-default";
 import { LnBridgeOpposite } from "@/bridges/lnbridge-opposite";
-import { BridgeCategory, BridgeContract } from "@/types/bridge";
+import { BridgeCategory } from "@/types/bridge";
 import { Network } from "@/types/chain";
 import { TokenSymbol } from "@/types/token";
 import { PublicClient, WalletClient } from "wagmi";
 
 export function bridgeFactory(args: {
   category: BridgeCategory;
-  contract?: BridgeContract;
 
   sourceChain?: Network;
   targetChain?: Network;
@@ -26,7 +28,15 @@ export function bridgeFactory(args: {
       return new LnBridgeOpposite(args);
     case "helix-sub2ethv2(lock)":
     case "helix-sub2ethv2(unlock)":
-      return new HelixSub2ethv2(args);
+      return new HelixBridgeDVMEVM(args);
+    case "helix-sub2subv21(lock)":
+    case "helix-sub2subv21(unlock)":
+      return new HelixBridgeDVMDVM(args);
+    case "lpbridge-darwinia-dvm":
+    case "lpbridge-ethereum":
+      return new HelixLpBridge(args);
+    case "l2arbitrumbridge-ethereum":
+      return new L2ArbitrumBridge(args);
     default:
       return;
   }

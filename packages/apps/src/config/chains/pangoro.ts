@@ -26,5 +26,6 @@ export const pangoroChain: ChainConfig = {
       url: "https://pangoro.subscan.io/",
     },
   },
+  testnet: true,
   tokens: [],
 };

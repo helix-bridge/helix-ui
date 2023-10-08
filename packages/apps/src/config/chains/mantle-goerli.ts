@@ -26,6 +26,7 @@ export const mantleGoerliChain: ChainConfig = {
       url: "https://explorer.testnet.mantle.xyz/",
     },
   },
+  testnet: true,
   tokens: [
     {
       decimals: 6,
@@ -34,6 +35,11 @@ export const mantleGoerliChain: ChainConfig = {
       type: "erc20",
       address: "0x0258Eb547bFEd540ed17843658C018569fe1E328",
       logo: "usdc.svg",
+      cross: [
+        { target: { network: "goerli", symbol: "USDC" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "arbitrum-goerli", symbol: "USDC" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "linea-goerli", symbol: "USDC" }, bridge: { category: "lnbridgev20-default" } },
+      ],
     },
     {
       decimals: 18,
@@ -42,6 +48,11 @@ export const mantleGoerliChain: ChainConfig = {
       type: "erc20",
       address: "0x5F8D4232367759bCe5d9488D3ade77FCFF6B9b6B",
       logo: "usdt.svg",
+      cross: [
+        { target: { network: "goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "arbitrum-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "linea-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+      ],
     },
   ],
 };

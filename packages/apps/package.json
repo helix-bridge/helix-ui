@@ -6,7 +6,8 @@
     "dev": "NODE_ENV=test next dev -p 3030",
     "build": "NODE_ENV=test next build",
     "start": "NODE_ENV=test next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest"
   },
   "dependencies": {
     "@apollo/client": "^3.8.2",
@@ -33,6 +34,7 @@
     "eslint": "^8.47.0",
     "eslint-config-next": "^13.4.16",
     "eslint-config-prettier": "^9.0.0",
+    "jest": "^29.7.0",
     "lokijs": "^1.5.12",
     "pino-pretty": "^10.2.0",
     "postcss": "^8.4.27",

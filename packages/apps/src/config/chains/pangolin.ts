@@ -26,6 +26,7 @@ export const pangolinChain: ChainConfig = {
       url: "https://pangolin.subscan.io/",
     },
   },
+  testnet: true,
   tokens: [
     {
       decimals: 18,
@@ -34,6 +35,7 @@ export const pangolinChain: ChainConfig = {
       type: "erc20",
       address: "0x3F3eDBda6124462a09E071c5D90e072E0d5d4ed4",
       logo: "ring.svg",
+      cross: [],
     },
   ],
 };

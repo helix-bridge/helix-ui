@@ -1,5 +1,5 @@
 import { Network } from "@/types/chain";
-import { ChainToken, ChainTokens } from "@/types/cross-chain";
+import { ChainToken, ChainTokens } from "@/types/misc";
 import { TokenSymbol } from "@/types/token";
 import { getChainConfig } from "@/utils/chain";
 import { getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";

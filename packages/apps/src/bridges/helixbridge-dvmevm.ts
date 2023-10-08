@@ -1,21 +1,21 @@
-import { BridgeCategory, BridgeContract } from "@/types/bridge";
+import { BridgeCategory } from "@/types/bridge";
 import { BaseBridge } from "./base";
 import { Network } from "@/types/chain";
 import { TokenSymbol } from "@/types/token";
 import { PublicClient, WalletClient } from "wagmi";
-import { TransactionReceipt } from "viem";
+import { Address, TransactionReceipt } from "viem";
 import { getChainConfig } from "@/utils/chain";
-import { Record } from "@/types/graphql";
+import { HistoryRecord } from "@/types/graphql";
 
 /**
- * Mapping Token protocol
  * DVM <=> EVM
  */
 
-export class MtBridgeDVMEVM extends BaseBridge {
+export class HelixBridgeDVMEVM extends BaseBridge {
+  private guard: Address | undefined;
+
   constructor(args: {
     category: BridgeCategory;
-    contract?: BridgeContract;
 
     sourceChain?: Network;
     targetChain?: Network;
@@ -26,12 +26,29 @@ export class MtBridgeDVMEVM extends BaseBridge {
     walletClient?: WalletClient | null;
   }) {
     super(args);
+    this.initContract();
 
     this.logo = {
       horizontal: "helix-horizontal.svg",
       symbol: "helix-symbol.svg",
     };
     this.name = "Helix(Legacy)";
+  }
+
+  private initContract() {
+    if (this.sourceChain === "darwinia-dvm" && this.targetChain === "ethereum") {
+      this.contract = {
+        sourceAddress: "0xD1B10B114f1975d8BCc6cb6FC43519160e2AA978",
+        targetAddress: "0xFBAD806Bdf9cEC2943be281FB355Da05068DE925",
+      };
+      this.guard = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1";
+    } else if (this.sourceChain === "ethereum" && this.targetChain === "darwinia-dvm") {
+      this.contract = {
+        sourceAddress: "0xFBAD806Bdf9cEC2943be281FB355Da05068DE925",
+        targetAddress: "0xD1B10B114f1975d8BCc6cb6FC43519160e2AA978",
+      };
+      this.guard = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1";
+    }
   }
 
   async lock(_: string, recipient: string, amount: bigint, options?: { totalFee: bigint }) {
@@ -52,7 +69,6 @@ export class MtBridgeDVMEVM extends BaseBridge {
                 args: [sourceTokenConfig.address, recipient, amount],
                 value: options.totalFee,
               };
-        const gas = this.sourceChain === "arbitrum" || this.sourceChain === "arbitrum-goerli" ? 1000000n : undefined;
         const abi = (await import("@/abi/backing-dvmevm.json")).default;
 
         const hash = await this.walletClient.writeContract({
@@ -61,7 +77,7 @@ export class MtBridgeDVMEVM extends BaseBridge {
           functionName,
           args,
           value,
-          gas,
+          gas: this.getTxGasLimit(),
         });
         return await this.publicClient.waitForTransactionReceipt({ hash });
       }
@@ -86,7 +102,6 @@ export class MtBridgeDVMEVM extends BaseBridge {
                 args: [sourceTokenConfig.address, recipient, amount],
                 value: options.totalFee,
               };
-        const gas = this.sourceChain === "arbitrum" || this.sourceChain === "arbitrum-goerli" ? 1000000n : undefined;
         const abi = (await import("@/abi/mappingtoken-dvmevm.json")).default;
 
         const hash = await this.walletClient.writeContract({
@@ -95,7 +110,7 @@ export class MtBridgeDVMEVM extends BaseBridge {
           functionName,
           args,
           value,
-          gas,
+          gas: this.getTxGasLimit(),
         });
         return await this.publicClient.waitForTransactionReceipt({ hash });
       }
@@ -111,20 +126,26 @@ export class MtBridgeDVMEVM extends BaseBridge {
     const sourceChainConfig = getChainConfig(this.sourceChain);
     const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
 
-    if (sourceTokenConfig?.type === "mapping") {
+    const crossInfo = sourceTokenConfig?.cross.find(
+      (c) =>
+        c.bridge.category === this.category &&
+        c.target.network === this.targetChain &&
+        c.target.symbol === this.targetToken,
+    );
+
+    if (crossInfo?.action === "redeem") {
       return this.burn(sender, recipient, amount, options);
     } else {
       return this.lock(sender, recipient, amount, options);
     }
   }
 
-  async claim(record: Record) {
-    if (this.contract && this.publicClient && this.walletClient) {
-      const gas = this.sourceChain === "arbitrum" || this.sourceChain === "arbitrum-goerli" ? 1000000n : undefined;
+  async claim(record: HistoryRecord) {
+    if (this.guard && this.publicClient && this.walletClient) {
       const abi = (await import("@/abi/guard.json")).default;
 
       const hash = await this.walletClient.writeContract({
-        address: this.contract.sourceAddress,
+        address: this.guard,
         abi,
         functionName: "claim",
         args: [
@@ -135,33 +156,39 @@ export class MtBridgeDVMEVM extends BaseBridge {
           record.recvAmount,
           record.guardSignatures?.split("-").slice(1),
         ],
-        gas,
+        gas: this.getTxGasLimit(),
       });
       return await this.publicClient.waitForTransactionReceipt({ hash });
     }
   }
 
-  async refund(record: Record) {
-    const targetChainConfig = getChainConfig(this.targetChain);
-    const targetTokenConfig = targetChainConfig?.tokens.find((t) => t.symbol === this.targetToken);
+  async refund(record: HistoryRecord) {
+    const sourceChainConfig = getChainConfig(this.sourceChain);
+    const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
+
+    const crossInfo = sourceTokenConfig?.cross.find(
+      (c) =>
+        c.bridge.category === this.category &&
+        c.target.network === this.targetChain &&
+        c.target.symbol === this.targetToken,
+    );
 
     if (this.contract && this.publicClient && this.walletClient) {
       const { abi, functionName } =
-        targetTokenConfig?.type === "mapping"
+        crossInfo?.action === "issue"
           ? {
               abi: (await import("@/abi/backing-dvmevm.json")).default,
               functionName: "remoteIssuingFailure",
             }
           : {
               abi: (await import("@/abi/mappingtoken-dvmevm.json")).default,
-              functionName: targetTokenConfig?.type === "native" ? "remoteUnlockFailureNative" : "remoteUnlockFailure",
+              functionName: sourceTokenConfig?.type === "native" ? "remoteUnlockFailureNative" : "remoteUnlockFailure",
             };
       const args =
-        functionName === "remoteUnlockFailureNative"
+        sourceTokenConfig?.type === "native"
           ? [record.id.split("-").slice(-1), record.sender, record.sendAmount]
           : [record.id.split("-").slice(-1), record.sendTokenAddress, record.sender, record.sendAmount];
-      const value = (await this.getFee())?.amount || 0n;
-      const gas = this.sourceChain === "arbitrum" || this.sourceChain === "arbitrum-goerli" ? 1000000n : undefined;
+      const value = (await this.getFee())?.value || 0n;
 
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,
@@ -169,7 +196,7 @@ export class MtBridgeDVMEVM extends BaseBridge {
         functionName,
         args,
         value,
-        gas,
+        gas: this.getTxGasLimit(),
       });
       return await this.publicClient.waitForTransactionReceipt({ hash });
     }
@@ -181,21 +208,26 @@ export class MtBridgeDVMEVM extends BaseBridge {
     const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
     const sourceNativeTokenConfig = sourceChainConfig?.tokens.find((t) => t.type === "native");
 
+    const crossInfo = sourceTokenConfig?.cross.find(
+      (c) =>
+        c.bridge.category === this.category &&
+        c.target.network === this.targetChain &&
+        c.target.symbol === this.targetToken,
+    );
+
     if (this.contract && this.publicClient && sourceNativeTokenConfig) {
       const abi =
-        sourceTokenConfig?.type === "mapping"
+        crossInfo?.action === "redeem"
           ? (await import("@/abi/mappingtoken-dvmevm.json")).default
           : (await import("@/abi/backing-dvmevm.json")).default;
 
-      const amount = (await this.publicClient.readContract({
+      const value = (await this.publicClient.readContract({
         address: this.contract.sourceAddress,
         abi,
         functionName: "currentFee",
       })) as unknown as bigint;
-      return { amount, symbol: sourceNativeTokenConfig.symbol };
+      return { value, token: sourceNativeTokenConfig };
     }
-
-    return undefined;
   }
 
   async getDailyLimit() {
@@ -205,9 +237,16 @@ export class MtBridgeDVMEVM extends BaseBridge {
     const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
     const targetTokenConfig = targetChainConfig?.tokens.find((t) => t.symbol === this.targetToken);
 
-    if (this.contract && this.publicClient && targetTokenConfig) {
+    const crossInfo = sourceTokenConfig?.cross.find(
+      (c) =>
+        c.bridge.category === this.category &&
+        c.target.network === this.targetChain &&
+        c.target.symbol === this.targetToken,
+    );
+
+    if (this.contract && this.publicClient && sourceTokenConfig && targetTokenConfig) {
       const abi =
-        sourceTokenConfig?.type === "mapping"
+        crossInfo?.action === "redeem"
           ? (await import("@/abi/mappingtoken-dvmevm.json")).default
           : (await import("@/abi/backing-dvmevm.json")).default;
 
@@ -218,9 +257,7 @@ export class MtBridgeDVMEVM extends BaseBridge {
         args: [targetTokenConfig.address],
       })) as unknown as bigint;
 
-      return { limit, spent: 0n };
+      return { limit, spent: 0n, token: sourceTokenConfig };
     }
-
-    return undefined;
   }
 }

@@ -26,5 +26,6 @@ export const zksyncGoerliChain: ChainConfig = {
       url: "https://goerli.explorer.zksync.io/",
     },
   },
+  testnet: true,
   tokens: [],
 };

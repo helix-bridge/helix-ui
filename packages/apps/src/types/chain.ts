@@ -1,5 +1,6 @@
 import type { Chain } from "wagmi";
 import { Token } from "./token";
+import { CrossChain } from "./cross-chain";
 
 export enum ChainID {
   DARWINIA = 46,
@@ -23,6 +24,7 @@ export enum ChainID {
   MANTLE_GOERLI = 5001,
 }
 
+// According to graphql indexer
 export type Network =
   | "darwinia-dvm"
   | "crab-dvm"
@@ -42,6 +44,7 @@ export type Network =
 export interface ChainConfig extends Chain {
   id: ChainID;
   network: Network;
-  logo: string; // file name
-  tokens: Token[];
+  logo: string; // File name
+  tokens: (Token & { cross: CrossChain[] })[];
+  hidden?: boolean;
 }

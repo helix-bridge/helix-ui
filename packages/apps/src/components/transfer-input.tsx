@@ -1,7 +1,7 @@
 import { getChainConfig } from "@/utils/chain";
 import ChainTokenSelect from "./chain-token-select";
 import { parseUnits } from "viem";
-import { ChainToken, ChainTokens } from "@/types/cross-chain";
+import { ChainToken, ChainTokens } from "@/types/misc";
 import { formatBalance } from "@/utils/balance";
 
 export interface TransferValue {

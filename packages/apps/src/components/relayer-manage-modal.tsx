@@ -7,13 +7,14 @@ import { BalanceInput, BalanceInputValue } from "./balance-input";
 import LiquidityFeeRateInput from "./liquidity-fee-rate-input";
 import { LnRelayerInfo } from "@/types/graphql";
 import { getChainConfig } from "@/utils/chain";
-import { getCrossChain } from "@/utils/cross-chain";
 import { Subscription, forkJoin, from } from "rxjs";
 import { switchMap } from "rxjs/operators";
 import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
 import { fetchBalance } from "wagmi/actions";
 import { formatUnits } from "viem";
 import { notification } from "@/ui/notification";
+import { bridgeFactory } from "@/utils/bridge";
+import { BridgeContract } from "@/types/bridge";
 
 type TabKey = "update" | "deposit" | "withdraw";
 
@@ -40,25 +41,26 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
 
-  const { bridgeConfig, bridgeCategory, sourceChainConfig, targetChainConfig, sourceTokenConfig, targetTokenConfig } =
+  const { bridgeContract, bridgeCategory, sourceChainConfig, targetChainConfig, sourceTokenConfig, targetTokenConfig } =
     useMemo(() => {
-      const bridgeConfig =
-        relayerInfo?.fromChain && relayerInfo.toChain && relayerInfo.bridge
-          ? getCrossChain()[relayerInfo.fromChain]?.[relayerInfo.toChain]?.[relayerInfo.bridge]
-          : undefined;
-
       const sourceChainConfig = getChainConfig(relayerInfo?.fromChain);
-      const targetChainConfig = getChainConfig(relayerInfo?.toChain);
-
       const sourceTokenConfig = sourceChainConfig?.tokens.find(
         (t) => t.address.toLowerCase() === relayerInfo?.sendToken?.toLowerCase(),
       );
-      const targetTokenConfig = targetChainConfig?.tokens.find(
-        (t) => t.symbol === bridgeConfig?.tokens.find((t) => t.sourceToken === sourceTokenConfig?.symbol)?.targetToken,
+
+      let bridgeContract: BridgeContract | undefined = undefined;
+      if (relayerInfo?.bridge) {
+        bridgeContract = bridgeFactory({ category: relayerInfo.bridge })?.getInfo().contract;
+      }
+      const cross = sourceTokenConfig?.cross.find(
+        (c) => c.bridge.category === relayerInfo?.bridge && c.target.network === relayerInfo.toChain,
       );
 
+      const targetChainConfig = getChainConfig(relayerInfo?.toChain);
+      const targetTokenConfig = targetChainConfig?.tokens.find((t) => t.symbol === cross?.target.symbol);
+
       return {
-        bridgeConfig,
+        bridgeContract,
         bridgeCategory: relayerInfo?.bridge,
         sourceChainConfig,
         targetChainConfig,
@@ -92,20 +94,21 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
   }, [activeKey, allowance, bridgeCategory, chain, depositMargin, sourceChainConfig, targetChainConfig]);
 
   useEffect(() => {
-    const bridgeConfig =
-      relayerInfo?.fromChain && relayerInfo.toChain && relayerInfo.bridge
-        ? getCrossChain()[relayerInfo.fromChain]?.[relayerInfo.toChain]?.[relayerInfo.bridge]
-        : undefined;
-
     const sourceChainConfig = getChainConfig(relayerInfo?.fromChain);
-    const targetChainConfig = getChainConfig(relayerInfo?.toChain);
-
     const sourceTokenConfig = sourceChainConfig?.tokens.find(
       (t) => t.address.toLowerCase() === relayerInfo?.sendToken?.toLowerCase(),
     );
-    const targetTokenConfig = targetChainConfig?.tokens.find(
-      (t) => t.symbol === bridgeConfig?.tokens.find((t) => t.sourceToken === sourceTokenConfig?.symbol)?.targetToken,
+
+    let bridgeContract: BridgeContract | undefined = undefined;
+    if (relayerInfo?.bridge) {
+      bridgeContract = bridgeFactory({ category: relayerInfo.bridge })?.getInfo().contract;
+    }
+    const cross = sourceTokenConfig?.cross.find(
+      (c) => c.bridge.category === relayerInfo?.bridge && c.target.network === relayerInfo.toChain,
     );
+
+    const targetChainConfig = getChainConfig(relayerInfo?.toChain);
+    const targetTokenConfig = targetChainConfig?.tokens.find((t) => t.symbol === cross?.target.symbol);
 
     if (relayerInfo?.baseFee && sourceTokenConfig) {
       setBaseFee({
@@ -134,7 +137,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
   useEffect(() => {
     let sub$$: Subscription | undefined;
 
-    if (address && chain && bridgeConfig && bridgeCategory) {
+    if (address && chain && bridgeContract && bridgeCategory) {
       if (bridgeCategory === "lnbridgev20-default" && chain.id === targetChainConfig?.id && targetTokenConfig) {
         sub$$ = from(import("@/abi/erc20.json"))
           .pipe(
@@ -145,7 +148,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                   address: targetTokenConfig.address,
                   abi: abi.default,
                   functionName: "allowance",
-                  args: [address, bridgeConfig.contract.targetAddress],
+                  args: [address, bridgeContract.targetAddress],
                 }),
               ]),
             ),
@@ -175,7 +178,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                   address: sourceTokenConfig.address,
                   abi: abi.default,
                   functionName: "allowance",
-                  args: [address, bridgeConfig.contract.sourceAddress],
+                  args: [address, bridgeContract.sourceAddress],
                 }),
               ]),
             ),
@@ -205,7 +208,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     chain,
     address,
     bridgeCategory,
-    bridgeConfig,
+    bridgeContract,
     sourceChainConfig,
     targetChainConfig,
     sourceTokenConfig,
@@ -226,12 +229,12 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             if (chain?.id !== sourceChainConfig?.id) {
               switchNetwork?.(sourceChainConfig?.id);
             } else if (bridgeCategory === "lnbridgev20-default") {
-              if (walletClient && bridgeConfig && targetChainConfig && sourceTokenConfig && targetTokenConfig) {
+              if (walletClient && bridgeContract && targetChainConfig && sourceTokenConfig && targetTokenConfig) {
                 setBusy(true);
 
                 const abi = (await import("../abi/lnbridgev20-default.json")).default;
                 const hash = await walletClient.writeContract({
-                  address: bridgeConfig.contract.targetAddress,
+                  address: bridgeContract.targetAddress,
                   abi,
                   functionName: "setProviderFee",
                   args: [
@@ -258,12 +261,12 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                 }
               }
             } else if (bridgeCategory === "lnbridgev20-opposite") {
-              if (walletClient && bridgeConfig && targetChainConfig && sourceTokenConfig && targetTokenConfig) {
+              if (walletClient && bridgeContract && targetChainConfig && sourceTokenConfig && targetTokenConfig) {
                 setBusy(true);
 
                 const abi = (await import("../abi/lnbridgev20-opposite.json")).default;
                 const hash = await walletClient.writeContract({
-                  address: bridgeConfig.contract.sourceAddress,
+                  address: bridgeContract.sourceAddress,
                   abi,
                   functionName: "updateProviderFeeAndMargin",
                   args: [
@@ -293,11 +296,11 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
               if (chain?.id !== targetChainConfig?.id) {
                 switchNetwork?.(targetChainConfig?.id);
               } else if (depositMargin.formatted > allowance) {
-                if (bridgeConfig && targetTokenConfig && walletClient) {
+                if (bridgeContract && targetTokenConfig && walletClient) {
                   setBusy(true);
 
                   const abi = (await import("../abi/erc20.json")).default;
-                  const spender = bridgeConfig.contract.targetAddress;
+                  const spender = bridgeContract.targetAddress;
 
                   const { request } = await publicClient.simulateContract({
                     address: targetTokenConfig.address,
@@ -318,12 +321,18 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                     })) as unknown as bigint,
                   );
                 }
-              } else if (walletClient && bridgeConfig && sourceChainConfig && sourceTokenConfig && targetTokenConfig) {
+              } else if (
+                walletClient &&
+                bridgeContract &&
+                sourceChainConfig &&
+                sourceTokenConfig &&
+                targetTokenConfig
+              ) {
                 setBusy(true);
 
                 const abi = (await import("../abi/lnbridgev20-default.json")).default;
                 const hash = await walletClient.writeContract({
-                  address: bridgeConfig.contract.targetAddress,
+                  address: bridgeContract.targetAddress,
                   abi,
                   functionName: "depositProviderMargin",
                   args: [
@@ -349,11 +358,11 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
               if (chain?.id !== sourceChainConfig?.id) {
                 switchNetwork?.(sourceChainConfig?.id);
               } else if (depositMargin.formatted > allowance) {
-                if (bridgeConfig && sourceTokenConfig && walletClient) {
+                if (bridgeContract && sourceTokenConfig && walletClient) {
                   setBusy(true);
 
                   const abi = (await import("../abi/erc20.json")).default;
-                  const spender = bridgeConfig.contract.sourceAddress;
+                  const spender = bridgeContract.sourceAddress;
 
                   const { request } = await publicClient.simulateContract({
                     address: sourceTokenConfig.address,
@@ -374,12 +383,18 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                     })) as unknown as bigint,
                   );
                 }
-              } else if (walletClient && bridgeConfig && targetChainConfig && sourceTokenConfig && targetTokenConfig) {
+              } else if (
+                walletClient &&
+                bridgeContract &&
+                targetChainConfig &&
+                sourceTokenConfig &&
+                targetTokenConfig
+              ) {
                 setBusy(true);
 
                 const abi = (await import("../abi/lnbridgev20-opposite.json")).default;
                 const hash = await walletClient.writeContract({
-                  address: bridgeConfig.contract.sourceAddress,
+                  address: bridgeContract.sourceAddress,
                   abi,
                   functionName: "updateProviderFeeAndMargin",
                   args: [

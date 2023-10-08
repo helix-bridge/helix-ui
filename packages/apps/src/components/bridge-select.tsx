@@ -54,7 +54,7 @@ export default function BridgeSelect({ options, value, onChange = () => undefine
         {...getReferenceProps()}
         className="bg-app-bg hover:border-line p-middle flex items-center justify-between rounded border border-transparent transition-colors"
       >
-        <span className="text-sm font-normal text-white">{active?.getName() || "Select a bridge"}</span>
+        <span className="text-sm font-normal text-white">{active?.getInfo().name || "Select a bridge"}</span>
         <Image
           src="/images/caret-down.svg"
           alt="Caret down"
@@ -78,7 +78,7 @@ export default function BridgeSelect({ options, value, onChange = () => undefine
                     }}
                     className="hover:text-primary px-middle py-small text-start text-sm font-light text-white transition-colors"
                   >
-                    {b?.getName() || "Unknown"}
+                    {b?.getInfo().name || "Unknown"}
                   </button>
                 );
               })}

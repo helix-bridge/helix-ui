@@ -1,38 +1,40 @@
-import { TokenSymbol } from "./token";
-import { BridgeCategory, BridgeContract } from "./bridge";
-import { Network } from "./chain";
+import { L2BridgeCategory, LnBridgeCategory, HelixLpBridgeCategory, HelixBridgeCategory } from "./bridge";
+import { ChainToken } from "./misc";
 
-export type CrossChain = {
-  [sourceChain in Network]?: {
-    [targetChain in Network]?: {
-      [bridge in BridgeCategory]?: {
-        contract: BridgeContract;
-        tokens: { sourceToken: TokenSymbol; targetToken: TokenSymbol; deprecated?: boolean }[];
-      };
+export type CrossChain =
+  | {
+      target: ChainToken;
+      bridge: { category: LnBridgeCategory };
+      index?: never;
+      price?: never;
+      baseFee?: never;
+      action?: never;
+      hidden?: boolean;
+    }
+  | {
+      target: ChainToken;
+      bridge: { category: HelixBridgeCategory };
+      index?: never;
+      price?: never;
+      baseFee?: never;
+      action: "issue" | "redeem";
+      hidden?: boolean;
+    }
+  | {
+      target: ChainToken;
+      bridge: { category: HelixLpBridgeCategory };
+      index: number; // One of the bridge contract transfer parameters
+      price?: bigint; // When transferring native token, we need to set the price
+      baseFee: bigint;
+      action: "issue" | "redeem";
+      hidden?: boolean;
+    }
+  | {
+      target: ChainToken;
+      bridge: { category: L2BridgeCategory };
+      index?: never;
+      price?: never;
+      baseFee?: never;
+      action?: never;
+      hidden?: boolean;
     };
-  };
-};
-
-export interface ChainTokens {
-  network: Network;
-  symbols: TokenSymbol[];
-}
-
-export interface ChainToken {
-  network: Network;
-  symbol: TokenSymbol;
-}
-
-export type AvailableBridges = {
-  [sourceChain in Network]?: {
-    [targetChain in Network]?: {
-      [token in TokenSymbol]?: { category: BridgeCategory; contract: BridgeContract }[];
-    };
-  };
-};
-
-export type AvailableTargetChainTokens = {
-  [sourceChain in Network]?: {
-    [token in TokenSymbol]?: ChainTokens[];
-  };
-};

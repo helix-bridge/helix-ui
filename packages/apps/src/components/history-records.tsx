@@ -42,8 +42,8 @@ export default function HistoryRecords() {
       results:
         activeKey === AllStatus.All
           ? undefined
-          : activeKey === RecordStatus.Pending
-          ? [RecordStatus.Pending, RecordStatus.PendingToRefund, RecordStatus.PendingToClaim]
+          : activeKey === RecordStatus.PENDING
+          ? [RecordStatus.PENDING, RecordStatus.PENDING_TO_REFUND, RecordStatus.PENDING_TO_CLAIM]
           : [activeKey],
     },
     notifyOnNetworkStatusChange: true,
@@ -57,7 +57,7 @@ export default function HistoryRecords() {
   }, [loading, data]);
 
   useEffect(() => {
-    setRecordsSearch(new URLSearchParams(window.location.search).get(UrlSearchParam.Address) || "");
+    setRecordsSearch(new URLSearchParams(window.location.search).get(UrlSearchParam.ADDRESS) || "");
   }, [setRecordsSearch]);
 
   const createChildren = () => (
@@ -88,10 +88,10 @@ export default function HistoryRecords() {
 
             const params = new URLSearchParams(searchParams.toString());
             if (isAddress(value)) {
-              params.set(UrlSearchParam.Address, value);
+              params.set(UrlSearchParam.ADDRESS, value);
               router.push(`?${params.toString()}`);
-            } else if (params.has(UrlSearchParam.Address)) {
-              params.delete(UrlSearchParam.Address);
+            } else if (params.has(UrlSearchParam.ADDRESS)) {
+              params.delete(UrlSearchParam.ADDRESS);
               router.push(`?${params.toString()}`);
             }
           }}
@@ -99,8 +99,8 @@ export default function HistoryRecords() {
             setRecordsSearch("");
 
             const params = new URLSearchParams(searchParams.toString());
-            if (params.has(UrlSearchParam.Address)) {
-              params.delete(UrlSearchParam.Address);
+            if (params.has(UrlSearchParam.ADDRESS)) {
+              params.delete(UrlSearchParam.ADDRESS);
               router.push(`?${params.toString()}`);
             }
           }}
@@ -129,17 +129,17 @@ export default function HistoryRecords() {
             children: createChildren(),
           },
           {
-            key: RecordStatus.Pending,
+            key: RecordStatus.PENDING,
             label: <span>Pending</span>,
             children: createChildren(),
           },
           {
-            key: RecordStatus.Success,
+            key: RecordStatus.SUCCESS,
             label: <span>Success</span>,
             children: createChildren(),
           },
           {
-            key: RecordStatus.Refunded,
+            key: RecordStatus.REFUNDED,
             label: <span>Refunded</span>,
             children: createChildren(),
           },

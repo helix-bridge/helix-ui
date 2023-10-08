@@ -1,11 +1,11 @@
-import { Record } from "@/types/graphql";
+import { HistoryRecord } from "@/types/graphql";
 import PrettyAddress from "./pretty-address";
 import Image from "next/image";
 import { getTokenLogoSrc } from "@/utils/misc";
 import { getChainConfig } from "@/utils/chain";
 
 interface Props {
-  record?: Record | null;
+  record?: HistoryRecord | null;
 }
 
 export default function TokenToReceive({ record }: Props) {

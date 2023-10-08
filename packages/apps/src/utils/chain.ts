@@ -48,3 +48,30 @@ export function getChainConfig(network?: Network | null): ChainConfig | undefine
       return;
   }
 }
+
+export function getChainsConfig() {
+  const all = [
+    arbitrumChain,
+    arbitrumGoerliChain,
+    crabChain,
+    darwiniaChain,
+    ethereumChain,
+    goerliChain,
+    lineaChain,
+    lineaGoerliChain,
+    mantleChain,
+    mantleGoerliChain,
+    pangolinChain,
+    pangoroChain,
+    zksyncChain,
+    zksyncGoerliChain,
+  ];
+
+  return all.filter((c) => !c.hidden);
+
+  // if (process.env.NODE_ENV === "production") {
+  //   return all.filter((c) => !c.hidden && !c.testnet);
+  // } else {
+  //   return all.filter((c) => !c.hidden && !!c.testnet);
+  // }
+}

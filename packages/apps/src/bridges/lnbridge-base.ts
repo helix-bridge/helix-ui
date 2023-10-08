@@ -2,13 +2,13 @@ import { Network } from "@/types/chain";
 import { BaseBridge } from "./base";
 import { TransactionReceipt } from "viem";
 import { TokenSymbol } from "@/types/token";
-import { BridgeCategory, BridgeContract } from "@/types/bridge";
+import { BridgeCategory } from "@/types/bridge";
 import { PublicClient, WalletClient } from "wagmi";
+import { getChainConfig } from "@/utils/chain";
 
 export class LnBridgeBase extends BaseBridge {
   constructor(args: {
     category: BridgeCategory;
-    contract?: BridgeContract;
 
     sourceChain?: Network;
     targetChain?: Network;
@@ -25,24 +25,27 @@ export class LnBridgeBase extends BaseBridge {
       symbol: "helix-symbol.svg",
     };
     this.name = "Helix LnBridge";
+    this.estimateTime = { min: 1, max: 30 };
   }
 
-  getEstimateTime(): string {
-    return "1-30 Minutes";
-  }
+  async getFee(args?: { baseFee?: bigint; liquidityFeeRate?: bigint; transferAmount?: bigint }) {
+    const sourceChainConfig = getChainConfig(this.sourceChain);
+    const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
 
-  async getFee(baseFee: bigint, liquidityFeeRate: bigint, sendAmount: bigint) {
-    if (this.sourceToken) {
-      return { amount: baseFee + (liquidityFeeRate * sendAmount) / 100000n, symbol: this.sourceToken };
+    if (sourceTokenConfig) {
+      return {
+        value: (args?.baseFee || 0n) + ((args?.liquidityFeeRate || 0n) * (args?.transferAmount || 0n)) / 100000n,
+        token: sourceTokenConfig,
+      };
     }
     return undefined;
   }
 
   async transfer(
-    sender: string,
-    recipient: string,
-    amount: bigint,
-    options?: Object | undefined,
+    _sender: string,
+    _recipient: string,
+    _amount: bigint,
+    _options?: Object | undefined,
   ): Promise<TransactionReceipt | undefined> {
     return;
   }

@@ -1,6 +1,6 @@
 import { BridgeCategory } from "@/types/bridge";
 import { Network } from "@/types/chain";
-import { ChainToken } from "@/types/cross-chain";
+import { ChainToken } from "@/types/misc";
 import { getChainConfig } from "@/utils/chain";
 import PrettyAddress from "./pretty-address";
 import Image from "next/image";

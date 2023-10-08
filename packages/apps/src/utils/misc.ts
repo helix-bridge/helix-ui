@@ -2,15 +2,15 @@ import { RecordStatus } from "@/types/graphql";
 
 export function formatRecordStatus(status: RecordStatus) {
   switch (status) {
-    case RecordStatus.Pending:
+    case RecordStatus.PENDING:
       return "Pending";
-    case RecordStatus.PendingToRefund:
+    case RecordStatus.PENDING_TO_REFUND:
       return "Pending to Refund";
-    case RecordStatus.PendingToClaim:
+    case RecordStatus.PENDING_TO_CLAIM:
       return "Pending to Claim";
-    case RecordStatus.Refunded:
+    case RecordStatus.REFUNDED:
       return "Refunded";
-    case RecordStatus.Success:
+    case RecordStatus.SUCCESS:
       return "Success";
     default:
       return "Unknown";

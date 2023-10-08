@@ -1,11 +1,10 @@
 "use client";
 
-import { PropsWithChildren, useDeferredValue, useEffect, useRef, useState } from "react";
+import { PropsWithChildren, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import TransferInput from "./transfer-input";
 import CrossChainInfo from "./cross-chain-info";
-import { getCrossChain, getParsedCrossChain } from "@/utils/cross-chain";
+import { getParsedCrossChain } from "@/utils/cross-chain";
 import { BaseBridge } from "@/bridges/base";
-import { BridgeCategory } from "@/types/bridge";
 import { useAccount, useBalance, usePublicClient, useWalletClient } from "wagmi";
 import { bridgeFactory } from "@/utils/bridge";
 import { useQuery } from "@apollo/client";
@@ -20,17 +19,17 @@ import TransferModal from "./transfer-modal";
 import { useApp } from "@/hooks/use-app";
 import TransferAction from "./transfer-action";
 import DisclaimerModal from "./disclaimer-modal";
+import { Token } from "@/types/token";
 
 const {
-  defaultTargetChainTokens,
-  sourceChainTokens,
-  availableBridges,
-  availableTargetChainTokens,
+  defaultSourceOptions,
+  defaultTargetOptions,
   defaultSourceValue,
   defaultTargetValue,
-  defaultCategory,
+  defaultBridge,
+  availableBridges,
+  availableTargetOptions,
 } = getParsedCrossChain();
-const crossChain = getCrossChain();
 
 export default function Transfer() {
   const { transferValue, setTransferValue } = useApp();
@@ -41,14 +40,15 @@ export default function Transfer() {
 
   const [sourceValue, setSourceValue] = useState(defaultSourceValue);
   const [targetValue, setTargetValue] = useState(defaultTargetValue);
-  const [targetOptions, setTargetOptions] = useState(defaultTargetChainTokens);
-  const [category, setCategory] = useState<BridgeCategory | null | undefined>(defaultCategory);
-  const [bridge, setBridge] = useState<BaseBridge | null>();
+  const [targetOptions, setTargetOptions] = useState(defaultTargetOptions);
+  const [category, setCategory] = useState(defaultBridge);
+  const [bridge, setBridge] = useState<BaseBridge>();
   const [allowance, setAllowance] = useState(0n);
-  const [fee, setFee] = useState(0n);
-  const [transferToken, setTransferToken] = useState(
-    getChainConfig(defaultSourceValue?.network)?.tokens.find(({ symbol }) => sourceValue?.symbol === symbol),
-  );
+  const [fee, setFee] = useState<{ value: bigint; token: Token }>();
+
+  const transferToken = useMemo(() => {
+    return getChainConfig(sourceValue?.network)?.tokens.find((t) => t.symbol === sourceValue?.symbol);
+  }, [sourceValue]);
 
   const { address } = useAccount();
   const publicClient = usePublicClient();
@@ -78,9 +78,9 @@ export default function Transfer() {
 
   useEffect(() => {
     if (sourceValue && targetValue) {
-      setCategory(availableBridges[sourceValue.network]?.[targetValue.network]?.[sourceValue.symbol]?.at(0)?.category);
+      setCategory(availableBridges[sourceValue.network]?.[targetValue.network]?.[sourceValue.symbol]?.at(0));
     } else {
-      setCategory(null);
+      setCategory(undefined);
     }
   }, [sourceValue, targetValue]);
 
@@ -89,7 +89,6 @@ export default function Transfer() {
       setBridge(
         bridgeFactory({
           category,
-          contract: crossChain[sourceValue.network]?.[targetValue.network]?.[category]?.contract,
           sourceChain: sourceValue.network,
           targetChain: targetValue.network,
           sourceToken: sourceValue.symbol,
@@ -99,7 +98,7 @@ export default function Transfer() {
         }),
       );
     } else {
-      setBridge(null);
+      setBridge(undefined);
     }
   }, [category, sourceValue, targetValue, publicClient, walletClient]);
 
@@ -123,25 +122,22 @@ export default function Transfer() {
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
-
     const relayer = relayersData?.sortedLnv20RelayInfos?.at(0);
 
     if (bridge && relayer) {
       setIsFeeLoading(true);
 
-      from(
-        bridge.getFee(
-          BigInt(relayer.baseFee || 0),
-          BigInt(relayer.liquidityFeeRate || 0),
-          deferredTransferValue.formatted,
-        ),
+      sub$$ = from(
+        bridge.getFee({
+          baseFee: relayer.baseFee ? BigInt(relayer.baseFee) : undefined,
+          liquidityFeeRate: relayer.liquidityFeeRate ? BigInt(relayer.liquidityFeeRate) : undefined,
+          transferAmount: deferredTransferValue.formatted,
+        }),
       ).subscribe({
-        next: (res) => {
-          setFee(res || 0n);
-        },
+        next: setFee,
         error: (err) => {
           console.error(err);
-          setFee(0n);
+          setFee(undefined);
         },
         complete: () => {
           setIsFeeLoading(false);
@@ -158,19 +154,19 @@ export default function Transfer() {
         {/* source */}
         <Section label="From" className="mt-8">
           <TransferInput
-            options={sourceChainTokens}
+            options={defaultSourceOptions}
             balance={balanceData?.value}
             chainToken={sourceValue}
             transferValue={transferValue}
             onAmountChange={setTransferValue}
             onChainTokenChange={(value) => {
-              setSourceValue(value);
-              setTransferToken(getChainConfig(value.network)?.tokens.find(({ symbol }) => value.symbol === symbol));
+              const targetOpts = availableTargetOptions[value.network]?.[value.symbol] || [];
+              const network = targetOpts.at(0)?.network;
+              const symbol = targetOpts.at(0)?.symbols.at(0);
 
-              const network = availableTargetChainTokens[value.network]?.[value.symbol]?.at(0)?.network;
-              const symbol = availableTargetChainTokens[value.network]?.[value.symbol]?.at(0)?.symbols.at(0);
               setTargetValue(network && symbol ? { network, symbol } : undefined);
-              setTargetOptions(availableTargetChainTokens[value.network]?.[value.symbol] || []);
+              setSourceValue(value);
+              setTargetOptions(targetOpts);
             }}
             type="source"
           />
@@ -189,18 +185,15 @@ export default function Transfer() {
             onClick={() => {
               sourceValueRef.current = sourceValue;
               targetValueRef.current = targetValue;
+
+              if (sourceValueRef.current && targetValueRef.current) {
+                const targetOpts =
+                  availableTargetOptions[targetValueRef.current.network]?.[targetValueRef.current.symbol] || [];
+                setTargetOptions(targetOpts);
+              }
+
               setSourceValue(targetValueRef.current);
               setTargetValue(sourceValueRef.current);
-              setTargetOptions(
-                targetValueRef.current
-                  ? availableTargetChainTokens[targetValueRef.current.network]?.[targetValueRef.current.symbol] || []
-                  : [],
-              );
-              setTransferToken(
-                getChainConfig(targetValueRef.current?.network)?.tokens.find(
-                  ({ symbol }) => targetValueRef.current?.symbol === symbol,
-                ),
-              );
             }}
           />
         </div>
@@ -220,9 +213,7 @@ export default function Transfer() {
           <BridgeSelect
             options={
               sourceValue && targetValue
-                ? (availableBridges[sourceValue.network]?.[targetValue.network]?.[sourceValue.symbol] || []).map(
-                    (b) => b.category,
-                  )
+                ? availableBridges[sourceValue.network]?.[targetValue.network]?.[sourceValue.symbol] || []
                 : []
             }
             value={category}
@@ -232,17 +223,12 @@ export default function Transfer() {
 
         {/* information */}
         <Section label="Information" className="mt-8">
-          <CrossChainInfo
-            fee={fee}
-            bridge={bridge}
-            loading={isFeeLoading || isRelayersLoading}
-            sourceValue={sourceValue}
-          />
+          <CrossChainInfo fee={fee} bridge={bridge} loading={isFeeLoading || isRelayersLoading} />
         </Section>
 
         {/* action */}
         <TransferAction
-          fee={fee}
+          fee={fee?.value || 0n}
           allowance={allowance}
           bridge={bridge}
           sourceValue={sourceValue}

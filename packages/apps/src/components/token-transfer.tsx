@@ -1,4 +1,4 @@
-import { Record } from "@/types/graphql";
+import { HistoryRecord } from "@/types/graphql";
 import Tooltip from "@/ui/tooltip";
 import Image from "next/image";
 import PrettyAddress from "./pretty-address";
@@ -10,12 +10,12 @@ import { getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
 import { formatBalance } from "@/utils/balance";
 
 interface Props {
-  record?: Record | null;
+  record?: HistoryRecord | null;
   bridge?: BaseBridge | null;
 }
 
 export default function TokenTransfer({ record, bridge }: Props) {
-  const contract = bridge?.getContract();
+  const contract = bridge?.getInfo().contract;
 
   return record && contract ? (
     <div className="flex flex-col items-start justify-between">

@@ -1,42 +1,59 @@
 import { BaseBridge } from "@/bridges/base";
-import { ChainToken } from "@/types/cross-chain";
+import { Token } from "@/types/token";
 import CountLoading from "@/ui/count-loading";
 import { formatBalance } from "@/utils/balance";
-import { getChainConfig } from "@/utils/chain";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
+import { Subscription, from } from "rxjs";
 
 interface Props {
-  fee: bigint;
+  fee?: { value: bigint; token: Token };
   bridge?: BaseBridge | null;
   loading?: boolean;
-  sourceValue?: ChainToken | null;
 }
 
-export default function CrossChainInfo({ fee, bridge, loading, sourceValue }: Props) {
-  const token = getChainConfig(sourceValue?.network)?.tokens.find(({ symbol }) => sourceValue?.symbol === symbol);
+export default function CrossChainInfo({ fee, bridge, loading }: Props) {
+  const [dailyLimit, setDailyLimit] = useState<{ limit: bigint; spent: bigint; token: Token }>();
+
+  useEffect(() => {
+    let sub$$: Subscription | undefined;
+    if (bridge) {
+      sub$$ = from(bridge.getDailyLimit()).subscribe(setDailyLimit);
+    } else {
+      setDailyLimit(undefined);
+    }
+    return () => sub$$?.unsubscribe();
+  }, [bridge]);
 
   return (
     <div className="bg-app-bg p-middle gap-small flex flex-col rounded border border-transparent">
       <Section>
         <span>Bridge</span>
-        <span>{bridge?.getName() || "-"}</span>
+        <span>{bridge?.getInfo().name || "-"}</span>
       </Section>
       <Section>
         <span>Estimated Arrival Time</span>
-        <span>{bridge?.getEstimateTime() || "-"}</span>
+        <span>{bridge?.formatEstimateTime() || "-"}</span>
       </Section>
       <Section>
         <span>Transaction Fee</span>
         {loading ? (
           <CountLoading color="white" />
-        ) : token ? (
+        ) : fee ? (
           <span>
-            {formatBalance(fee, token.decimals, { keepZero: false })} {token.symbol}
+            {formatBalance(fee.value, fee.token.decimals)} {fee.token.symbol}
           </span>
         ) : (
           <span>-</span>
         )}
       </Section>
+      {!!dailyLimit && (
+        <Section>
+          <span>Daily Limit</span>
+          <span>
+            {formatBalance(dailyLimit.limit, dailyLimit.token.decimals)} {dailyLimit.token.symbol}
+          </span>
+        </Section>
+      )}
     </div>
   );
 }

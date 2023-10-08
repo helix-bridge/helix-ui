@@ -9,9 +9,9 @@ import { useDeferredValue, useEffect, useState } from "react";
 import ChainSelect from "./chain-select";
 import RelayersTable from "./relayers-table";
 import CountdownRefresh from "@/ui/countdown-refresh";
-import { getCrossChain, getParsedCrossChain } from "@/utils/cross-chain";
+import { getParsedCrossChain } from "@/utils/cross-chain";
 
-const { sourceChainTokens, availableTargetChains } = getParsedCrossChain();
+const { defaultSourceOptions, defaultTargetChains, availableTargetChains } = getParsedCrossChain();
 const pageSize = 12;
 
 export default function LnRelayerOverview() {
@@ -56,7 +56,7 @@ export default function LnRelayerOverview() {
             <ChainSelect
               className="px-middle border-line hover:border-primary w-40 py-2"
               placeholder="Source chain"
-              options={sourceChainTokens.map(({ network }) => network)}
+              options={defaultSourceOptions.map(({ network }) => network)}
               onChange={(value) => {
                 setSourceChain(value);
                 setTargetChain(undefined);
@@ -69,9 +69,7 @@ export default function LnRelayerOverview() {
             <ChainSelect
               className="px-middle border-line hover:border-primary w-40 py-2"
               placeholder="Target chain"
-              options={
-                sourceChain ? (Object.keys(getCrossChain()[sourceChain] || {}) as Network[]) : availableTargetChains
-              }
+              options={sourceChain ? availableTargetChains[sourceChain] || defaultTargetChains : defaultTargetChains}
               onChange={setTargetChain}
               value={targetChain}
             />
@@ -87,6 +85,7 @@ export default function LnRelayerOverview() {
         total={data?.queryLnv20RelayInfos?.total || 0}
         pageSize={pageSize}
         currentPage={currentPage}
+        onRefetch={refetch}
         onPageChange={setCurrentPage}
       />
     </>

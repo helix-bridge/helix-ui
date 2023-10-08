@@ -1,10 +1,10 @@
-import { Record } from "@/types/graphql";
+import { HistoryRecord } from "@/types/graphql";
 import { formatTime, toTimeAgo } from "@/utils/time";
 import { formatDistanceStrict } from "date-fns";
 import Image from "next/image";
 
 interface Props {
-  record?: Record | null;
+  record?: HistoryRecord | null;
 }
 
 export default function TransactionTimestamp({ record }: Props) {

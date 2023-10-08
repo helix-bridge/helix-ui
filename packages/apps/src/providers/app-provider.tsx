@@ -24,8 +24,9 @@ export const AppContext = createContext(defaultValue);
 export default function AppProvider({ children }: PropsWithChildren<unknown>) {
   const [recordsSearch, setRecordsSearch] = useState(defaultValue.recordsSearch);
 
-  // why we define here
-  // https://react.dev/reference/react/useDeferredValue#caveats
+  /**
+   * Why we define here: https://react.dev/reference/react/useDeferredValue#caveats
+   */
   const [transferValue, setTransferValue] = useState(defaultValue.transferValue);
 
   return (

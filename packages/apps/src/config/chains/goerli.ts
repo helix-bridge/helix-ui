@@ -26,6 +26,7 @@ export const goerliChain: ChainConfig = {
       url: "https://goerli.etherscan.io/",
     },
   },
+  testnet: true,
   tokens: [
     {
       decimals: 6,
@@ -34,6 +35,11 @@ export const goerliChain: ChainConfig = {
       type: "erc20",
       address: "0x1a70127284B774fF4A4dbfe0115114642f0eca65",
       logo: "usdc.svg",
+      cross: [
+        { target: { network: "arbitrum-goerli", symbol: "USDC" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "linea-goerli", symbol: "USDC" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "mantle-goerli", symbol: "USDC" }, bridge: { category: "lnbridgev20-default" } },
+      ],
     },
     {
       decimals: 18,
@@ -42,6 +48,11 @@ export const goerliChain: ChainConfig = {
       type: "erc20",
       address: "0x2303e4d55BF16a897Cb5Ab71c6225399509d9314",
       logo: "usdt.svg",
+      cross: [
+        { target: { network: "arbitrum-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "linea-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "mantle-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+      ],
     },
     {
       decimals: 18,
@@ -50,6 +61,7 @@ export const goerliChain: ChainConfig = {
       type: "erc20",
       address: "0xeb93165E3CDb354c977A182AbF4fad3238E04319",
       logo: "ring.svg",
+      cross: [],
     },
   ],
 };

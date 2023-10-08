@@ -3,11 +3,11 @@ import { getChainConfig } from "@/utils/chain";
 import { getChainLogoSrc } from "@/utils/misc";
 import Image from "next/image";
 import BridgeLogo from "./bridge-logo";
-import { Record } from "@/types/graphql";
+import { HistoryRecord } from "@/types/graphql";
 import { bridgeFactory } from "@/utils/bridge";
 
 interface Props {
-  record?: Record | null;
+  record?: HistoryRecord | null;
 }
 
 export default function TransferRoute({ record }: Props) {

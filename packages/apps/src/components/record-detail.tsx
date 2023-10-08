@@ -16,12 +16,9 @@ import TokenToReceive from "@/components/token-to-receive";
 import TokenTransfer from "@/components/token-transfer";
 import ComponentLoading from "@/ui/component-loading";
 import { BaseBridge } from "@/bridges/base";
-import { getCrossChain } from "@/utils/cross-chain";
 import { bridgeFactory } from "@/utils/bridge";
 import CountdownRefresh from "@/ui/countdown-refresh";
 import TransactionFee from "./transaction-fee";
-
-const crossChain = getCrossChain();
 
 interface Props {
   id: string;
@@ -43,8 +40,7 @@ export default function RecordDetail(props: Props) {
     const category = record?.historyRecordById?.bridge;
 
     if (sourceChain && targetChain && category) {
-      const contract = crossChain[sourceChain]?.[targetChain]?.[category]?.contract;
-      return contract ? bridgeFactory({ category, contract }) : undefined;
+      return bridgeFactory({ category });
     }
 
     return undefined;

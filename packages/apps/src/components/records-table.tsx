@@ -1,4 +1,4 @@
-import { Record, RecordStatus } from "@/types/graphql";
+import { HistoryRecord, RecordStatus } from "@/types/graphql";
 import PrettyAddress from "@/components/pretty-address";
 import Table, { ColumnType } from "@/ui/table";
 import Image from "next/image";
@@ -83,17 +83,17 @@ export default function RecordsTable({
           <span className="text-sm font-normal text-white">{formatTime(startTime * 1000, { compact: true })}</span>
           <span
             className={`text-xs font-semibold ${
-              result === RecordStatus.Success
+              result === RecordStatus.SUCCESS
                 ? "text-app-green"
-                : result === RecordStatus.Refunded
+                : result === RecordStatus.REFUNDED
                 ? "text-app-orange"
-                : result === RecordStatus.Pending
+                : result === RecordStatus.PENDING
                 ? "text-primary"
                 : "text-white/50"
             }`}
           >
             {formatRecordStatus(result)}
-            {result === RecordStatus.Pending && confirmedBlocks ? ` (${confirmedBlocks})` : ""}
+            {result === RecordStatus.PENDING && confirmedBlocks ? ` (${confirmedBlocks})` : ""}
           </span>
         </div>
       ),
@@ -114,7 +114,7 @@ export default function RecordsTable({
   );
 }
 
-export interface DataSource extends Record {
+export interface DataSource extends HistoryRecord {
   key: Key;
 }
 

@@ -1,5 +1,5 @@
 import { BaseBridge } from "@/bridges/base";
-import { ChainToken } from "@/types/cross-chain";
+import { ChainToken } from "@/types/misc";
 import { RelayersResponseData } from "@/types/graphql";
 import Modal from "@/ui/modal";
 import { formatBalance } from "@/utils/balance";
@@ -11,9 +11,10 @@ import { useCallback, useState } from "react";
 import { TransferValue } from "./transfer-input";
 import { notification } from "@/ui/notification";
 import { parseUnits } from "viem";
+import { Token } from "@/types/token";
 
 interface Props {
-  fee: bigint;
+  fee?: { value: bigint; token: Token };
   sender?: `0x${string}` | null;
   recipient?: `0x${string}` | null;
   bridge?: BaseBridge | null;
@@ -54,47 +55,43 @@ export default function TransferModal({
       try {
         setBusy(true);
         const relayer = (await refetchRelayers()).data.sortedLnv20RelayInfos?.at(0);
-        if (relayer) {
-          const receipt = await bridge.transfer("", recipient, transferValue.formatted, {
-            remoteChainId: BigInt(targetChain.id),
-            relayer: relayer.relayer,
-            sourceToken: sourceToken.address,
-            targetToken: targetToken.address,
-            transferId: relayer.lastTransferId,
-            totalFee: await bridge.getFee(
-              BigInt(relayer.baseFee || 0),
-              BigInt(relayer.liquidityFeeRate || 0),
-              transferValue.formatted,
+        const receipt = await bridge.transfer(sender, recipient, transferValue.formatted, {
+          remoteChainId: BigInt(targetChain.id),
+          relayer: relayer?.relayer,
+          sourceToken: sourceToken.address,
+          targetToken: targetToken.address,
+          transferId: relayer?.lastTransferId,
+          totalFee: await bridge.getFee({
+            baseFee: BigInt(relayer?.baseFee || 0),
+            liquidityFeeRate: BigInt(relayer?.liquidityFeeRate || 0),
+            transferAmount: transferValue.formatted,
+          }),
+          withdrawNonce: BigInt(relayer?.withdrawNonce || 0),
+          depositedMargin: BigInt(relayer?.margin || 0),
+        });
+        const href = new URL(`tx/${receipt?.transactionHash}`, sourceChain?.blockExplorers?.default.url).href;
+
+        if (receipt?.status === "success") {
+          notification.success({
+            title: "Transfer successfully",
+            description: (
+              <a target="_blank" rel="noopener" className="text-primary break-all hover:underline" href={href}>
+                {receipt.transactionHash}
+              </a>
             ),
-            withdrawNonce: BigInt(relayer.withdrawNonce || 0),
-            depositedMargin: BigInt(relayer.margin || 0),
           });
-          const href = new URL(`tx/${receipt?.transactionHash}`, sourceChain?.blockExplorers?.default.url).href;
 
-          if (receipt?.status === "success") {
-            notification.success({
-              title: "Transfer successfully",
-              description: (
-                <a target="_blank" rel="noopener" className="text-primary break-all hover:underline" href={href}>
-                  {receipt.transactionHash}
-                </a>
-              ),
-            });
-
-            bridge.getAllowance(sender).then(onAllowanceChange).catch(console.error);
-            onSuccess();
-          } else if (receipt?.status === "reverted") {
-            notification.warn({
-              title: "Transfer failed",
-              description: (
-                <a target="_blank" rel="noopener" className="text-primary break-all hover:underline" href={href}>
-                  {receipt.transactionHash}
-                </a>
-              ),
-            });
-          }
-        } else {
-          notification.warn({ title: "Transfer failed", description: "Failed to refetch relayer" });
+          bridge.getAllowance(sender).then(onAllowanceChange).catch(console.error);
+          onSuccess();
+        } else if (receipt?.status === "reverted") {
+          notification.warn({
+            title: "Transfer failed",
+            description: (
+              <a target="_blank" rel="noopener" className="text-primary break-all hover:underline" href={href}>
+                {receipt.transactionHash}
+              </a>
+            ),
+          });
         }
       } catch (err) {
         console.error(err);
@@ -141,7 +138,7 @@ export default function TransferModal({
       {/* information */}
       <div className="gap-middle flex flex-col">
         <span className="text-sm font-normal text-white">Information</span>
-        <Information fee={fee} bridge={bridge} sender={sender} recipient={recipient} sourceValue={sourceValue} />
+        <Information fee={fee} bridge={bridge} sender={sender} recipient={recipient} />
       </div>
     </Modal>
   );
@@ -195,28 +192,26 @@ function Information({
   bridge,
   sender,
   recipient,
-  sourceValue,
 }: {
-  fee: bigint;
+  fee?: { value: bigint; token: Token };
   bridge?: BaseBridge | null;
   sender?: string | null;
   recipient?: string | null;
-  sourceValue?: ChainToken | null;
 }) {
-  const token = getChainConfig(sourceValue?.network)?.tokens.find(({ symbol }) => sourceValue?.symbol === symbol);
-
   return (
     <div className="p-middle bg-app-bg gap-small flex flex-col rounded">
-      <Item label="Bridge" value={bridge?.getName()} />
+      <Item label="Bridge" value={bridge?.getInfo().name} />
       <Item label="From" value={sender} />
       <Item label="To" value={recipient} />
       <Item
         label="Transaction Fee"
         value={
-          token ? `${formatBalance(fee, token.decimals, { precision: 6, keepZero: false })} ${token.symbol}` : null
+          fee
+            ? `${formatBalance(fee.value, fee.token.decimals, { precision: 6, keepZero: false })} ${fee.token.symbol}`
+            : null
         }
       />
-      <Item label="Estimated Arrival Time" value={bridge?.getEstimateTime()} />
+      <Item label="Estimated Arrival Time" value={bridge?.formatEstimateTime()} />
     </div>
   );
 }

@@ -1,9 +1,9 @@
-import { Record } from "@/types/graphql";
+import { HistoryRecord } from "@/types/graphql";
 import { formatBalance } from "@/utils/balance";
 import { getChainConfig } from "@/utils/chain";
 
 interface Props {
-  record?: Record | null;
+  record?: HistoryRecord | null;
 }
 
 export default function TransactionFee({ record }: Props) {

@@ -3,16 +3,16 @@ import { BridgeCategory } from "./bridge";
 import { Network } from "./chain";
 
 export enum RecordStatus {
-  Pending,
-  PendingToRefund,
-  PendingToClaim,
-  Success,
-  Refunded,
-  PendingToConfirmRefund,
-  Failed,
+  PENDING,
+  PENDING_TO_REFUND,
+  PENDING_TO_CLAIM,
+  SUCCESS,
+  REFUNDED,
+  PENDING_TO_CONFIRM_REFUND,
+  FAILED,
 }
 
-export interface Record {
+export interface HistoryRecord {
   sendAmount: string;
   recvAmount: string;
   bridge: BridgeCategory;
@@ -42,7 +42,7 @@ export interface Record {
 export interface RecordsResponseData {
   historyRecords?: {
     total: number;
-    records: Record[];
+    records: HistoryRecord[];
   } | null;
 }
 
@@ -59,7 +59,7 @@ export interface RecordsVariables {
 }
 
 export interface RecordResponseData {
-  historyRecordById?: Record | null;
+  historyRecordById?: HistoryRecord | null;
 }
 
 export interface RecordVariables {

@@ -9,18 +9,18 @@ export function StatusTag({ status }: { status?: RecordStatus | null }) {
     let color = "#00B2FF";
 
     if (
-      status === RecordStatus.Pending ||
-      status === RecordStatus.PendingToRefund ||
-      status === RecordStatus.PendingToClaim
+      status === RecordStatus.PENDING ||
+      status === RecordStatus.PENDING_TO_REFUND ||
+      status === RecordStatus.PENDING_TO_CLAIM
     ) {
       icon = "pending.svg";
       text = "Pending";
       color = "#00B2FF";
-    } else if (status === RecordStatus.Refunded) {
+    } else if (status === RecordStatus.REFUNDED) {
       icon = "refunded.svg";
       text = "Refunded";
       color = "#FAAD14";
-    } else if (status === RecordStatus.Success) {
+    } else if (status === RecordStatus.SUCCESS) {
       icon = "success.svg";
       text = "Success";
       color = "#52C41A";

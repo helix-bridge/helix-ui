@@ -1,5 +1,5 @@
 import { BaseBridge } from "@/bridges/base";
-import { ChainToken } from "@/types/cross-chain";
+import { ChainToken } from "@/types/misc";
 import { ButtonHTMLAttributes, useState } from "react";
 import { TransferValue } from "./transfer-input";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
@@ -38,7 +38,7 @@ export default function TransferAction({
     if (bridge && address) {
       try {
         setBusy(true);
-        const receipt = await bridge.approve(transferValue.formatted + fee);
+        const receipt = await bridge.approve(transferValue.formatted + fee, address);
         const href = new URL(`tx/${receipt?.transactionHash}`, sourceChain?.blockExplorers?.default.url).href;
 
         if (receipt?.status === "success") {

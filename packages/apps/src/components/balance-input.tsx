@@ -1,4 +1,4 @@
-import { ChainToken } from "@/types/cross-chain";
+import { ChainToken } from "@/types/misc";
 import { formatBalance } from "@/utils/balance";
 import { getChainConfig } from "@/utils/chain";
 import { getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
@@ -11,12 +11,14 @@ export interface BalanceInputValue {
 }
 
 export function BalanceInput({
+  placeholder,
   balance,
   disabled,
   value,
   chainToken,
   onChange = () => undefined,
 }: {
+  placeholder?: string;
   balance?: bigint;
   disabled?: boolean;
   value?: BalanceInputValue;
@@ -40,7 +42,7 @@ export function BalanceInput({
         placeholder={
           balance !== undefined && tokenConfig
             ? `Balance ${formatBalance(balance, tokenConfig.decimals, { keepZero: false })}`
-            : "Enter an amount"
+            : placeholder ?? "Enter an amount"
         }
         className="h-12 w-full rounded bg-transparent text-sm font-medium text-white focus-visible:outline-none disabled:cursor-not-allowed"
         onChange={(e) => {

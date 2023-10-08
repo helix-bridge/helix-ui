@@ -70,7 +70,7 @@ export default function User({ className, onClose = () => undefined }: Props) {
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
             <div style={styles} className="bg-component border-line py-small flex flex-col rounded border">
               <Link
-                href={`/records?${UrlSearchParam.Address}=${address}`}
+                href={`/records?${UrlSearchParam.ADDRESS}=${address}`}
                 onClick={() => {
                   setRecordsSearch(address);
                   setIsOpen(false);

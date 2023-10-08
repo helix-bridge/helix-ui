@@ -1,9 +1,9 @@
-import { BridgeCategory, BridgeContract } from "@/types/bridge";
+import { BridgeCategory } from "@/types/bridge";
 import { BaseBridge } from "./base";
 import { Network } from "@/types/chain";
 import { TokenSymbol } from "@/types/token";
 import { PublicClient, WalletClient } from "wagmi";
-import { TransactionReceipt, createPublicClient, encodeAbiParameters, http } from "viem";
+import { Address, TransactionReceipt, createPublicClient, encodeAbiParameters, http } from "viem";
 import { getChainConfig } from "@/utils/chain";
 
 /**
@@ -14,13 +14,11 @@ export class L2ArbitrumBridge extends BaseBridge {
   private readonly l2GasLimit = 600000n;
   private readonly l2FixedDataSize = 1600n;
   private readonly feeScaler = 1.1;
-  // To ensure a successful transaction, we set the scaler to be 3 times
-  private readonly l2GasPriceScaler = 3n;
-  private readonly helixDaoAddress = "0x3B9E571AdeCB0c277486036D6097E9C2CCcfa9d9";
+  private readonly l2GasPriceScaler = 3n; // To ensure a successful transaction, we set the scaler to be 3 times
+  private helixDaoAddress: Address | undefined;
 
   constructor(args: {
     category: BridgeCategory;
-    contract?: BridgeContract;
 
     sourceChain?: Network;
     targetChain?: Network;
@@ -31,12 +29,30 @@ export class L2ArbitrumBridge extends BaseBridge {
     walletClient?: WalletClient | null;
   }) {
     super(args);
+    this.initContract();
 
     this.logo = {
       horizontal: "l2arbitrum-horizontal.png",
       symbol: "l2arbitrum-symbol.png",
     };
     this.name = "L2Bridge";
+    this.estimateTime = { min: 15, max: 20 };
+  }
+
+  private initContract() {
+    if (this.sourceChain === "goerli" && this.targetChain === "arbitrum-goerli") {
+      this.contract = {
+        sourceAddress: "0x0000000000000000000000000000000000000000",
+        targetAddress: "0x4c7708168395aea569453fc36862d2ffcdac588c",
+      };
+      this.helixDaoAddress = "0x3B9E571AdeCB0c277486036D6097E9C2CCcfa9d9";
+    } else if (this.sourceChain === "ethereum" && this.targetChain === "arbitrum") {
+      this.contract = {
+        sourceAddress: "0x0000000000000000000000000000000000000000",
+        targetAddress: "0x72ce9c846789fdb6fc1f34ac4ad25dd9ef7031ef",
+      };
+      this.helixDaoAddress = "0x3B9E571AdeCB0c277486036D6097E9C2CCcfa9d9";
+    }
   }
 
   async transfer(
@@ -58,8 +74,6 @@ export class L2ArbitrumBridge extends BaseBridge {
         ],
         [params.maxSubmissionCost, "0x"],
       );
-
-      const gas = this.sourceChain === "arbitrum" || this.sourceChain === "arbitrum-goerli" ? 1000000n : undefined;
       const abi = (await import("@/abi/l1-gateway-router.json")).default;
 
       const hash = await this.walletClient.writeContract({
@@ -76,7 +90,7 @@ export class L2ArbitrumBridge extends BaseBridge {
           innerData,
         ],
         value: params.gasPrice,
-        gas,
+        gas: this.getTxGasLimit(),
       });
       return await this.publicClient.waitForTransactionReceipt({ hash });
     }
@@ -119,20 +133,14 @@ export class L2ArbitrumBridge extends BaseBridge {
     }
   }
 
-  async getFee(..._: unknown[]) {
+  async getFee() {
     const params = await this.getL1toL2Params();
 
     const sourceChainConfig = getChainConfig(this.sourceChain);
     const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
 
     if (params && sourceTokenConfig) {
-      return { amount: params.deposit, symbol: sourceTokenConfig.symbol };
+      return { value: params.deposit, token: sourceTokenConfig };
     }
-
-    return undefined;
-  }
-
-  getEstimateTime() {
-    return "15-20 Minutes";
   }
 }
