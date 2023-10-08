@@ -5,7 +5,7 @@ import TransferInput from "./transfer-input";
 import CrossChainInfo from "./cross-chain-info";
 import { getParsedCrossChain } from "@/utils/cross-chain";
 import { BaseBridge } from "@/bridges/base";
-import { useAccount, useBalance, usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, useBalance, useNetwork, usePublicClient, useWalletClient } from "wagmi";
 import { bridgeFactory } from "@/utils/bridge";
 import { useQuery } from "@apollo/client";
 import { RelayersResponseData, RelayersVariables } from "@/types/graphql";
@@ -46,15 +46,19 @@ export default function Transfer() {
   const [allowance, setAllowance] = useState(0n);
   const [fee, setFee] = useState<{ value: bigint; token: Token }>();
 
-  const transferToken = useMemo(() => {
-    return getChainConfig(sourceValue?.network)?.tokens.find((t) => t.symbol === sourceValue?.symbol);
+  const { transferToken, sourceChainConfig } = useMemo(() => {
+    const sourceChainConfig = getChainConfig(sourceValue?.network);
+    const transferToken = sourceChainConfig?.tokens.find((t) => t.symbol === sourceValue?.symbol);
+    return { transferToken, sourceChainConfig };
   }, [sourceValue]);
 
+  const { chain } = useNetwork();
   const { address } = useAccount();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { data: balanceData, refetch: refetchBalance } = useBalance({
     address,
+    enabled: chain && chain.id === sourceChainConfig?.id,
     token: transferToken?.type === "erc20" ? transferToken.address : undefined,
   });
 
