@@ -9,6 +9,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 
+const ChainIdentity = dynamic(() => import("@/components/chain-identity"), { ssr: false });
 const User = dynamic(() => import("@/components/user"), { ssr: false });
 const Drawer = dynamic(() => import("@/ui/drawer"), { ssr: false });
 
@@ -94,7 +95,10 @@ export default function Header() {
           </div>
 
           {/* right */}
-          <User className="px-large hover:bg-primary/90 gap-middle hidden h-8 items-center justify-center lg:inline-flex" />
+          <div className="gap-middle hidden items-center lg:flex">
+            <ChainIdentity />
+            <User className="px-large hover:bg-primary/90 gap-middle inline-flex h-8 items-center justify-center" />
+          </div>
           <Image
             width={24}
             height={24}

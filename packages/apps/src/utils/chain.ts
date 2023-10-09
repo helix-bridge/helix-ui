@@ -12,37 +12,51 @@ import { pangolinChain } from "@/config/chains/pangolin";
 import { pangoroChain } from "@/config/chains/pangoro";
 import { zksyncChain } from "@/config/chains/zksync";
 import { zksyncGoerliChain } from "@/config/chains/zksync-goerli";
-import { ChainConfig, Network } from "@/types/chain";
+import { ChainConfig, ChainID, Network } from "@/types/chain";
 import { isProduction } from "./env";
 
-export function getChainConfig(network?: Network | null): ChainConfig | undefined {
-  switch (network) {
+export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
+  switch (chainIdOrNetwork) {
+    case ChainID.DARWINIA:
     case "darwinia-dvm":
       return darwiniaChain;
+    case ChainID.CRAB:
     case "crab-dvm":
       return crabChain;
+    case ChainID.PANGOLIN:
     case "pangolin-dvm":
       return pangolinChain;
+    case ChainID.PANGORO:
     case "pangoro-dvm":
       return pangoroChain;
+    case ChainID.ETHEREUM:
     case "ethereum":
       return ethereumChain;
+    case ChainID.GOERLI:
     case "goerli":
       return goerliChain;
+    case ChainID.ARBITRUM:
     case "arbitrum":
       return arbitrumChain;
+    case ChainID.ARBITRUM_GOERLI:
     case "arbitrum-goerli":
       return arbitrumGoerliChain;
+    case ChainID.ZKSYNC:
     case "zksync":
       return zksyncChain;
+    case ChainID.ZKSYNC_GOERLI:
     case "zksync-goerli":
       return zksyncGoerliChain;
+    case ChainID.LINEA:
     case "linea":
       return lineaChain;
+    case ChainID.LINEA_GOERLI:
     case "linea-goerli":
       return lineaGoerliChain;
+    case ChainID.MANTLE:
     case "mantle":
       return mantleChain;
+    case ChainID.MANTLE_GOERLI:
     case "mantle-goerli":
       return mantleGoerliChain;
     default:
