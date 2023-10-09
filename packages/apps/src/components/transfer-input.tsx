@@ -53,7 +53,9 @@ export default function TransferInput({
             : "Enter an amount"
         }
         disabled={type === "target"}
-        className="px-small h-12 w-full rounded bg-transparent text-base font-extralight text-white focus-visible:outline-none disabled:cursor-not-allowed"
+        className={`px-small h-12 w-full rounded bg-transparent text-white focus-visible:outline-none disabled:cursor-not-allowed ${
+          transferValue?.value ? "text-lg font-medium" : "text-base font-extralight"
+        }`}
         onChange={({ target: { value } }) => {
           if (value) {
             if (!Number.isNaN(Number(value)) && token) {
