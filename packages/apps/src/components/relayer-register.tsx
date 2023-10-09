@@ -3,7 +3,7 @@
 import Button from "@/ui/button";
 import { Divider } from "@/ui/divider";
 import StepNumber from "@/ui/step-number";
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import ChainSelect from "./chain-select";
 import TokenSelect from "./token-select";
 import { Network } from "@/types/chain";
@@ -29,6 +29,8 @@ import { QUERY_SPECIAL_RELAYER } from "@/config/gql";
 import { SpecialRelayerResponseData, SpecialRelayerVariables } from "@/types/graphql";
 import { notification } from "@/ui/notification";
 import { bridgeFactory } from "@/utils/bridge";
+import Modal from "@/ui/modal";
+import { notifyTransaction } from "@/utils/notification";
 
 enum Step {
   ONE,
@@ -44,9 +46,12 @@ const { availableTargetChains, defaultTargetChains, availableBridges, defaultSou
 export default function RelayerRegister() {
   const [defaultMarginBusy, setDefaultMarginBusy] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [completeMargin, setCompleteMargin] = useState(false);
   const [balance, setBalance] = useState<bigint>();
   const [allowance, setAllowance] = useState<bigint>(0n);
+  const [targetBalance, setTargetBalance] = useState<bigint>();
+  const [targetAllowance, setTargetAllowance] = useState<BalanceInputValue>({ formatted: 0n, value: "" });
   const [depositMargin, setDepositMargin] = useState<BalanceInputValue>({ formatted: 0n, value: "" });
   const [baseFee, setBaseFee] = useState<BalanceInputValue>({ formatted: 0n, value: "" });
   const [feeRate, setFeeRate] = useState<{ formatted: number; value: string }>({ formatted: 0, value: "" });
@@ -64,6 +69,22 @@ export default function RelayerRegister() {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { openConnectModal } = useConnectModal();
+
+  const { bridgeContract, sourceChainConfig, targetChainConfig, sourceTokenConfig, targetTokenConfig } = useMemo(() => {
+    const sourceChainConfig = getChainConfig(sourceChain);
+    const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === activeToken);
+
+    const cross = sourceTokenConfig?.cross.find(
+      (c) => c.bridge.category === bridgeCategory && c.target.network === targetChain,
+    );
+    const bridgeContract =
+      bridgeCategory && bridgeFactory({ category: bridgeCategory, sourceChain, targetChain })?.getInfo().contract;
+
+    const targetChainConfig = getChainConfig(targetChain);
+    const targetTokenConfig = targetChainConfig?.tokens.find((t) => t.symbol === cross?.target.symbol);
+
+    return { bridgeContract, sourceChainConfig, targetChainConfig, sourceTokenConfig, targetTokenConfig };
+  }, [activeToken, bridgeCategory, sourceChain, targetChain]);
 
   useEffect(() => {
     const availableCategories = new Set<BridgeCategory>();
@@ -87,73 +108,103 @@ export default function RelayerRegister() {
   useEffect(() => {
     let sub$$: Subscription | undefined;
 
-    if (address && sourceChain && targetChain && activeToken && bridgeCategory) {
-      const bridgeContract = bridgeFactory({ category: bridgeCategory })?.getInfo().contract;
-
-      if (bridgeCategory === "lnbridgev20-default" && chain?.id === getChainConfig(targetChain)?.id && bridgeContract) {
-        const tokenConfig = getChainConfig(targetChain)?.tokens.find((t) => t.symbol === activeToken);
-
-        if (tokenConfig) {
-          sub$$ = from(import("@/abi/erc20.json"))
-            .pipe(
-              switchMap((abi) =>
-                forkJoin([
-                  fetchBalance({ address, token: tokenConfig.address }),
-                  publicClient.readContract({
-                    address: tokenConfig.address,
-                    abi: abi.default,
-                    functionName: "allowance",
-                    args: [address, bridgeContract.targetAddress],
-                  }),
-                ]),
-              ),
-            )
-            .subscribe({
-              next: ([b, a]) => {
-                setBalance(b.value);
-                setAllowance(a as unknown as bigint);
-              },
-              error: (err) => {
-                console.error(err);
-                setBalance(undefined);
-                setAllowance(0n);
-              },
+    if (address && bridgeContract && targetTokenConfig && chain?.id === targetChainConfig?.id) {
+      sub$$ = from(import("@/abi/erc20.json"))
+        .pipe(
+          switchMap((abi) =>
+            forkJoin([
+              publicClient.readContract({
+                address: targetTokenConfig.address,
+                abi: abi.default,
+                functionName: "allowance",
+                args: [address, bridgeContract.targetAddress],
+              }),
+              fetchBalance({ address, token: targetTokenConfig.address }),
+            ]),
+          ),
+        )
+        .subscribe({
+          next: ([a, b]) => {
+            setTargetAllowance({
+              formatted: a as unknown as bigint,
+              value: formatBalance(a as unknown as bigint, targetTokenConfig.decimals, { keepZero: true }),
             });
-        }
+            setTargetBalance(b.value);
+          },
+          error: (err) => {
+            console.error(err);
+            setTargetAllowance({ formatted: 0n, value: "" });
+            setTargetBalance(undefined);
+          },
+        });
+    } else {
+      setTargetAllowance({ formatted: 0n, value: "" });
+      setTargetBalance(undefined);
+    }
+
+    return () => sub$$?.unsubscribe();
+  }, [chain, address, bridgeContract, targetChainConfig, targetTokenConfig, publicClient]);
+
+  useEffect(() => {
+    let sub$$: Subscription | undefined;
+
+    if (address && bridgeCategory && bridgeContract) {
+      if (bridgeCategory === "lnbridgev20-default" && targetTokenConfig && chain?.id === targetChainConfig?.id) {
+        sub$$ = from(import("@/abi/erc20.json"))
+          .pipe(
+            switchMap((abi) =>
+              forkJoin([
+                fetchBalance({ address, token: targetTokenConfig.address }),
+                publicClient.readContract({
+                  address: targetTokenConfig.address,
+                  abi: abi.default,
+                  functionName: "allowance",
+                  args: [address, bridgeContract.targetAddress],
+                }),
+              ]),
+            ),
+          )
+          .subscribe({
+            next: ([b, a]) => {
+              setBalance(b.value);
+              setAllowance(a as unknown as bigint);
+            },
+            error: (err) => {
+              console.error(err);
+              setBalance(undefined);
+              setAllowance(0n);
+            },
+          });
       } else if (
         bridgeCategory === "lnbridgev20-opposite" &&
-        chain?.id === getChainConfig(sourceChain)?.id &&
-        bridgeContract
+        sourceTokenConfig &&
+        chain?.id === sourceChainConfig?.id
       ) {
-        const tokenConfig = getChainConfig(sourceChain)?.tokens.find((t) => t.symbol === activeToken);
-
-        if (tokenConfig) {
-          sub$$ = from(import("@/abi/erc20.json"))
-            .pipe(
-              switchMap((abi) =>
-                forkJoin([
-                  fetchBalance({ address, token: tokenConfig.address }),
-                  publicClient.readContract({
-                    address: tokenConfig.address,
-                    abi: abi.default,
-                    functionName: "allowance",
-                    args: [address, bridgeContract.sourceAddress],
-                  }),
-                ]),
-              ),
-            )
-            .subscribe({
-              next: ([b, a]) => {
-                setBalance(b.value);
-                setAllowance(a as unknown as bigint);
-              },
-              error: (err) => {
-                console.error(err);
-                setBalance(undefined);
-                setAllowance(0n);
-              },
-            });
-        }
+        sub$$ = from(import("@/abi/erc20.json"))
+          .pipe(
+            switchMap((abi) =>
+              forkJoin([
+                fetchBalance({ address, token: sourceTokenConfig.address }),
+                publicClient.readContract({
+                  address: sourceTokenConfig.address,
+                  abi: abi.default,
+                  functionName: "allowance",
+                  args: [address, bridgeContract.sourceAddress],
+                }),
+              ]),
+            ),
+          )
+          .subscribe({
+            next: ([b, a]) => {
+              setBalance(b.value);
+              setAllowance(a as unknown as bigint);
+            },
+            error: (err) => {
+              console.error(err);
+              setBalance(undefined);
+              setAllowance(0n);
+            },
+          });
       } else {
         setBalance(undefined);
         setAllowance(0n);
@@ -164,7 +215,17 @@ export default function RelayerRegister() {
     }
 
     return () => sub$$?.unsubscribe();
-  }, [chain, address, sourceChain, targetChain, bridgeCategory, activeToken, publicClient]);
+  }, [
+    chain,
+    address,
+    bridgeCategory,
+    bridgeContract,
+    sourceChainConfig,
+    targetChainConfig,
+    sourceTokenConfig,
+    targetTokenConfig,
+    publicClient,
+  ]);
 
   return (
     <>
@@ -242,7 +303,7 @@ export default function RelayerRegister() {
 
               <div className="gap-small flex items-center justify-between">
                 <StepCompleteItem property="Address" address={address} />
-                {/* <StepCompleteItem property="Bridge Type" bridge={bridgeCategory} /> */}
+                <StepCompleteItem property="Bridge Type" bridge={bridgeCategory} />
                 <StepCompleteItem property="From" network={sourceChain} />
                 <StepCompleteItem property="To" network={targetChain} />
                 {sourceChain && activeToken ? (
@@ -487,7 +548,11 @@ export default function RelayerRegister() {
                     const cross = sourceTokenConfig?.cross.find(
                       (c) => c.bridge.category === bridgeCategory && c.target.network === targetChain,
                     );
-                    const bridgeContract = bridgeFactory({ category: bridgeCategory })?.getInfo().contract;
+                    const bridgeContract = bridgeFactory({
+                      category: bridgeCategory,
+                      sourceChain,
+                      targetChain,
+                    })?.getInfo().contract;
 
                     const targetSymbol = cross?.target.symbol;
                     const targetChainConfig = getChainConfig(targetChain);
@@ -726,80 +791,186 @@ export default function RelayerRegister() {
 
         {/* step 3 */}
         <div className="bg-component flex flex-col gap-5 p-5 lg:p-[1.875rem]">
-          <StepTitle step={3} title="Run a Relayer" />
+          <StepTitle step={3} title="Authorize Token on Target Chain and Run Relayer" />
 
           {Step.THREE === currentStep && (
             <>
-              <Description content="One more step, now run relayer to start relaying messages and earn rewards." />
+              <Description content="Authorize token on target chain and run relayer to start relaying messages and earn rewards. Please note this step authorizes tokens for the relayer to send to users' target chain address based on transactions. Ensure you authorize enough tokens for multiple transactions as needed." />
 
               <Divider />
 
-              <div
-                className="gap-x-small grid items-center gap-y-5 text-sm font-normal text-white"
-                style={{ gridTemplateColumns: "130px auto" }}
-              >
-                <span>Address</span>
-                <PrettyAddress address="0x2tJaxND51vBbPwUDHuhVzndY4MeohvvHvn3D9uDejYN" />
-
-                <span>Bridge Type</span>
-                <span>
-                  {bridgeCategory === "lnbridgev20-default"
-                    ? "Default"
-                    : bridgeCategory === "lnbridgev20-opposite"
-                    ? "Opposite"
-                    : "-"}
-                </span>
-
-                <span>From</span>
-                <PrettyChain network={sourceChain} />
-
-                <span>To</span>
-                <PrettyChain network={targetChain} />
-
-                <span>Token</span>
-                <PrettyToken network={sourceChain} symbol={activeToken} />
-
-                <span>Margin</span>
-                <PrettyMargin
-                  margin={depositMargin.formatted}
-                  category={bridgeCategory}
-                  symbol={activeToken}
-                  sourceChain={sourceChain}
-                  targetChain={targetChain}
+              <LabelItem label="Current Allowance">
+                <BalanceInput
+                  chainToken={
+                    targetChainConfig &&
+                    targetTokenConfig && { network: targetChainConfig.network, symbol: targetTokenConfig.symbol }
+                  }
+                  disabled
+                  placeholder="-"
+                  value={targetAllowance}
                 />
-
-                <span>Base Fee</span>
-                <PrettyBaseFee fee={baseFee.formatted} symbol={activeToken} sourceChain={sourceChain} />
-
-                <span>Liquidity Fee Rate</span>
-                <span>{feeRate.formatted}%</span>
-              </div>
-
-              <Divider />
+              </LabelItem>
 
               <div className="gap-middle flex items-center lg:gap-5">
-                <RunRelayer className="inline-flex h-8 flex-1 items-center justify-center lg:h-9" />
+                <Button
+                  kind="primary"
+                  onClick={async () => {
+                    if (chain?.id !== getChainConfig(targetChain)?.id) {
+                      switchNetwork?.(getChainConfig(targetChain)?.id);
+                    } else if (bridgeCategory) {
+                      const sourceChainConfig = getChainConfig(sourceChain);
+                      const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === activeToken);
+
+                      const cross = sourceTokenConfig?.cross.find(
+                        (c) => c.bridge.category === bridgeCategory && c.target.network === targetChain,
+                      );
+                      const bridgeContract = bridgeFactory({
+                        category: bridgeCategory,
+                        sourceChain,
+                        targetChain,
+                      })?.getInfo().contract;
+
+                      const targetChainConfig = getChainConfig(targetChain);
+                      const targetTokenConfig = targetChainConfig?.tokens.find(
+                        (t) => t.symbol === cross?.target.symbol,
+                      );
+
+                      if (bridgeContract && walletClient && targetTokenConfig) {
+                        try {
+                          setBusy(true);
+
+                          const abi = (await import("../abi/erc20.json")).default;
+                          const spender = bridgeContract.targetAddress;
+
+                          const { request } = await publicClient.simulateContract({
+                            address: targetTokenConfig.address,
+                            abi,
+                            functionName: "approve",
+                            args: [spender, targetBalance],
+                            account: address,
+                          });
+                          const hash = await walletClient.writeContract(request);
+                          const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+                          notifyTransaction(receipt, targetChain);
+
+                          if (receipt.status === "success") {
+                            const formatted = (await publicClient.readContract({
+                              address: targetTokenConfig.address,
+                              abi,
+                              functionName: "allowance",
+                              args: [address, spender],
+                            })) as unknown as bigint;
+                            setTargetAllowance({
+                              formatted,
+                              value: formatBalance(formatted, targetTokenConfig.decimals, { keepZero: true }),
+                            });
+                          }
+                        } catch (err) {
+                          console.error(err);
+                          notification.error({ title: "Approve failed", description: (err as Error).message });
+                        } finally {
+                          setBusy(false);
+                        }
+                      }
+                    }
+                  }}
+                  className="flex h-9 flex-1 items-center justify-center"
+                  busy={busy}
+                >
+                  <span className="text-sm font-normal">
+                    {chain?.id === getChainConfig(targetChain)?.id ? "Approve More" : "Switch Network"}
+                  </span>
+                </Button>
                 <Button
                   kind="default"
-                  onClick={() => {
-                    setSourceChain(undefined);
-                    setTargetChain(undefined);
-                    setActiveToken(undefined);
-                    setDepositMargin({ formatted: 0n, value: "" });
-                    setBaseFee({ formatted: 0n, value: "" });
-                    setFeeRate({ formatted: 0, value: "" });
-                    setCurrentStep(Step.ONE);
-                    setCompleteMargin(false);
-                  }}
-                  className="flex h-8 flex-1 items-center justify-center lg:h-9"
+                  onClick={() => setIsOpen(true)}
+                  className="flex h-9 flex-1 items-center justify-center"
                 >
-                  <span className="text-sm font-normal">Register Another</span>
+                  <span className="text-sm font-normal">Next</span>
                 </Button>
               </div>
             </>
           )}
         </div>
       </div>
+
+      <Modal
+        title="One More Step!"
+        subTitle={
+          <div className="flex flex-wrap items-center text-sm">
+            Now&nbsp;
+            <RunRelayer className="px-small py-[2px]" />
+            &nbsp;to start relaying messages and earn rewards.
+          </div>
+        }
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      >
+        <div
+          className="gap-x-small grid items-center gap-y-5 text-sm font-normal text-white"
+          style={{ gridTemplateColumns: "130px auto" }}
+        >
+          <span>Address</span>
+          <PrettyAddress address={address || ""} />
+
+          <span>Bridge Type</span>
+          <span>
+            {bridgeCategory === "lnbridgev20-default"
+              ? "Default"
+              : bridgeCategory === "lnbridgev20-opposite"
+              ? "Opposite"
+              : "-"}
+          </span>
+
+          <span>From</span>
+          <PrettyChain network={sourceChain} />
+
+          <span>To</span>
+          <PrettyChain network={targetChain} />
+
+          <span>Token</span>
+          <PrettyToken network={sourceChain} symbol={activeToken} />
+
+          <span>Margin</span>
+          <PrettyMargin
+            margin={depositMargin.formatted}
+            category={bridgeCategory}
+            symbol={activeToken}
+            sourceChain={sourceChain}
+            targetChain={targetChain}
+          />
+
+          <span>Base Fee</span>
+          <PrettyBaseFee fee={baseFee.formatted} symbol={activeToken} sourceChain={sourceChain} />
+
+          <span>Liquidity Fee Rate</span>
+          <span>{feeRate.formatted}%</span>
+        </div>
+
+        <Divider />
+
+        <div className="gap-middle flex items-center lg:gap-5">
+          <RunRelayer className="inline-flex h-8 flex-1 items-center justify-center lg:h-9" />
+          <Button
+            kind="default"
+            onClick={() => {
+              setIsOpen(false);
+              setSourceChain(undefined);
+              setTargetChain(undefined);
+              setActiveToken(undefined);
+              setDepositMargin({ formatted: 0n, value: "" });
+              setBaseFee({ formatted: 0n, value: "" });
+              setFeeRate({ formatted: 0, value: "" });
+              setCurrentStep(Step.ONE);
+              setCompleteMargin(false);
+            }}
+            className="flex h-8 flex-1 items-center justify-center lg:h-9"
+          >
+            <span className="text-sm font-normal">Register Another</span>
+          </Button>
+        </div>
+      </Modal>
     </>
   );
 }
@@ -807,8 +978,8 @@ export default function RelayerRegister() {
 function RunRelayer({ className, onClick = () => undefined }: { className?: string; onClick?: () => void }) {
   return (
     <a
-      href="https://github.com/helix-bridge/relayer/tree/lnv2"
-      className={`bg-primary rounded text-sm font-medium text-white transition hover:opacity-80 active:translate-y-1 ${className}`}
+      href="https://github.com/helix-bridge/relayer/tree/main"
+      className={`bg-primary inline-flex items-center justify-center rounded text-sm font-medium text-white transition hover:opacity-80 active:translate-y-1 ${className}`}
       rel="noopener"
       target="_blank"
       onClick={onClick}

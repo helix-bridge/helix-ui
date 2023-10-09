@@ -11,10 +11,10 @@ import { Subscription, forkJoin, from } from "rxjs";
 import { switchMap } from "rxjs/operators";
 import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
 import { fetchBalance } from "wagmi/actions";
-import { formatUnits } from "viem";
 import { notification } from "@/ui/notification";
 import { bridgeFactory } from "@/utils/bridge";
 import { BridgeContract } from "@/types/bridge";
+import { formatBalance } from "@/utils/balance";
 
 type TabKey = "update" | "deposit" | "withdraw";
 
@@ -113,7 +113,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     if (relayerInfo?.baseFee && sourceTokenConfig) {
       setBaseFee({
         formatted: BigInt(relayerInfo.baseFee),
-        value: formatUnits(BigInt(relayerInfo.baseFee), sourceTokenConfig.decimals),
+        value: formatBalance(BigInt(relayerInfo.baseFee), sourceTokenConfig.decimals),
       });
     }
 
@@ -124,12 +124,12 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     if (relayerInfo?.bridge === "lnbridgev20-default" && targetTokenConfig && relayerInfo.margin) {
       setDepositMargin({
         formatted: BigInt(relayerInfo.margin),
-        value: formatUnits(BigInt(relayerInfo.margin), targetTokenConfig.decimals),
+        value: formatBalance(BigInt(relayerInfo.margin), targetTokenConfig.decimals),
       });
     } else if (relayerInfo?.bridge === "lnbridgev20-opposite" && sourceTokenConfig && relayerInfo.margin) {
       setDepositMargin({
         formatted: BigInt(relayerInfo.margin),
-        value: formatUnits(BigInt(relayerInfo.margin), sourceTokenConfig.decimals),
+        value: formatBalance(BigInt(relayerInfo.margin), sourceTokenConfig.decimals),
       });
     }
   }, [relayerInfo]);

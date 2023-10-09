@@ -27,6 +27,11 @@ export class LnBridgeOpposite extends LnBridgeBase {
         sourceAddress: "0xD1B10B114f1975d8BCc6cb6FC43519160e2AA978",
         targetAddress: "0xeAb1F01a8f4A2687023B159c2063639Adad5304E",
       };
+    } else if (this.sourceChain === "linea-goerli" && this.targetChain === "goerli") {
+      this.contract = {
+        sourceAddress: "0x79e6f452f1e491a7aF0382FA0a6EF9368691960D",
+        targetAddress: "0x79e6f452f1e491a7aF0382FA0a6EF9368691960D",
+      };
     }
   }
 

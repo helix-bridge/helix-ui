@@ -45,7 +45,7 @@ export default function StepCompleteItem({
             src={getChainLogoSrc(chainConfig.logo)}
             className="shrink-0 rounded-full"
           />
-          <span className="truncate text-sm font-normal text-white">{chainConfig.name}</span>
+          <span className="hidden truncate text-sm font-normal text-white lg:inline">{chainConfig.name}</span>
         </div>
       )}
       {!!token && balance ? (
@@ -62,7 +62,7 @@ export default function StepCompleteItem({
             src={getTokenLogoSrc(token.logo)}
             className="shrink-0 rounded-full"
           />
-          <span className="truncate text-sm font-normal text-white">{token.symbol}</span>
+          <span className="hidden truncate text-sm font-normal text-white lg:inline">{token.symbol}</span>
         </div>
       )}
       {!!percent && <span className="text-sm font-normal text-white">{percent}%</span>}

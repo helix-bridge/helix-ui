@@ -11,7 +11,7 @@ import { notification } from "@/ui/notification";
 import { notifyTransaction } from "@/utils/notification";
 import Modal from "@/ui/modal";
 import { BalanceInput } from "./balance-input";
-import { formatUnits } from "viem";
+import { formatBalance } from "@/utils/balance";
 
 interface Props {
   record?: HistoryRecord | null;
@@ -134,7 +134,7 @@ export default function TransactionStatus({ record }: Props) {
       const formatted = BigInt(record.fee);
 
       if (token) {
-        setSpeedUpFee({ formatted, value: formatUnits(formatted, token.decimals) });
+        setSpeedUpFee({ formatted, value: formatBalance(formatted, token.decimals) });
       }
       setCountdown(minTime);
       setIsTimeout(Date.now() - startTime > minTime);

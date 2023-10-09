@@ -32,10 +32,12 @@ export function BalanceInput({
 
   return (
     <div
-      className={`p-small lg:p-middle gap-small bg-app-bg flex items-center justify-between rounded border transition-colors ${
+      className={`p-small lg:p-middle gap-small bg-app-bg flex items-center justify-between rounded border border-transparent transition-colors ${
         insufficient
           ? "hover:border-app-red focus-within:border-app-red border-app-red"
-          : "hover:border-line focus-within:border-line border-transparent"
+          : disabled
+          ? ""
+          : "hover:border-line focus-within:border-line"
       }`}
     >
       <input
@@ -44,7 +46,9 @@ export function BalanceInput({
             ? `Balance ${formatBalance(balance, tokenConfig.decimals, { keepZero: false })}`
             : placeholder ?? "Enter an amount"
         }
-        className="h-10 w-full rounded bg-transparent text-sm font-medium text-white focus-visible:outline-none disabled:cursor-not-allowed"
+        className={`h-10 w-full rounded bg-transparent font-medium text-white focus-visible:outline-none disabled:cursor-not-allowed ${
+          value?.value ? "text-lg" : "text-sm"
+        }`}
         onChange={(e) => {
           if (e.target.value) {
             if (!Number.isNaN(Number(e.target.value)) && tokenConfig) {
