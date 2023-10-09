@@ -42,10 +42,12 @@ getChainsConfig().forEach(({ tokens, network }, sourceChainIndex) => {
           ...availableTargetOptions,
           [network]: {
             ...availableTargetOptions[network],
-            [token.symbol]: (availableTargetOptions[network]?.[token.symbol] || []).concat({
-              network: cross.target.network,
-              symbols: [cross.target.symbol],
-            }),
+            [token.symbol]: (availableTargetOptions[network]?.[token.symbol] || [])
+              .filter((t) => t.network !== cross.target.network)
+              .concat({
+                network: cross.target.network,
+                symbols: [cross.target.symbol],
+              }),
           },
         };
 
