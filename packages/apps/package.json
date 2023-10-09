@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3030",
-    "dev:test": "NODE_ENV=test next dev -p 3030",
     "build": "next build",
-    "build:test": "NODE_ENV=test next build",
     "start": "next start",
+    "dev:test": "NODE_ENV=test next dev -p 3030",
+    "build:test": "NODE_ENV=test next build",
     "start:test": "NODE_ENV=test next start",
     "lint": "next lint",
     "test": "jest"

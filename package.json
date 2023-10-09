@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev:apps": "npm run dev -w apps",
-    "dev:apps:test": "npm run dev:test -w apps",
     "build:apps": "npm run build -w apps",
-    "build:apps:test": "npm run build:test -w apps",
     "start:apps": "npm run start -w apps",
+    "dev:apps:test": "npm run dev:test -w apps",
+    "build:apps:test": "npm run build:test -w apps",
     "start:apps:test": "npm run start:test -w apps",
     "prettier": "prettier '**/*.{js,jsx,ts,tsx,json}' --write",
     "lint": "npm run lint -w apps",
