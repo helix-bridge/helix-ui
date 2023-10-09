@@ -2,6 +2,7 @@
 
 import { useToggle } from "@/hooks/use-toggle";
 import Tooltip from "@/ui/tooltip";
+import { isProduction } from "@/utils/env";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
@@ -54,8 +55,11 @@ export default function Header() {
                   <span className="text-xs font-light">Helix is in beta. Please use at your own risk level</span>
                 }
                 className="w-fit"
+                enabled={isProduction()}
               >
-                <Image width={35} height={18} alt="Beta" src="/images/beta.svg" />
+                <div className="bg-primary inline-flex items-center justify-center rounded-sm px-1 py-[1px]">
+                  <span className="text-xs font-bold text-black">{isProduction() ? "beta" : "testnet"}</span>
+                </div>
               </Tooltip>
             </div>
 
