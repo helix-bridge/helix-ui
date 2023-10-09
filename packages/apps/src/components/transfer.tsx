@@ -1,6 +1,6 @@
 "use client";
 
-import { PropsWithChildren, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { PropsWithChildren, ReactElement, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import TransferInput from "./transfer-input";
 import CrossChainInfo from "./cross-chain-info";
 import { getParsedCrossChain } from "@/utils/cross-chain";
@@ -20,6 +20,8 @@ import { useApp } from "@/hooks/use-app";
 import TransferAction from "./transfer-action";
 import DisclaimerModal from "./disclaimer-modal";
 import { Token } from "@/types/token";
+import Faucet from "./faucet";
+import { isProduction } from "@/utils/env";
 
 const {
   defaultSourceOptions,
@@ -156,7 +158,15 @@ export default function Transfer() {
     <>
       <div className="p-middle bg-component gap-large mx-auto flex w-full flex-col rounded lg:w-[40rem] lg:gap-5 lg:p-5">
         {/* source */}
-        <Section label="From" className="mt-8">
+        <Section
+          label="From"
+          extra={
+            isProduction() ? undefined : (
+              <Faucet sourceChain={sourceValue?.network} sourceToken={sourceValue?.symbol} onSuccess={refetchBalance} />
+            )
+          }
+          className="mt-8"
+        >
           <TransferInput
             options={defaultSourceOptions}
             balance={balanceData?.value}
@@ -267,11 +277,17 @@ export default function Transfer() {
   );
 }
 
-function Section({ children, label, className }: PropsWithChildren<{ label: string; className?: string }>) {
+function Section({
+  children,
+  label,
+  extra,
+  className,
+}: PropsWithChildren<{ label: string; extra?: ReactElement; className?: string }>) {
   return (
     <div className={`gap-small lg:gap-middle relative flex flex-col ${className}`}>
-      <div className="absolute -top-8 left-0">
+      <div className="absolute -top-8 left-0 flex w-full items-center justify-between">
         <span className="text-sm font-normal text-white">{label}</span>
+        {extra}
       </div>
       {children}
     </div>
