@@ -163,7 +163,7 @@ export default function RelayersTable({
           key: "status",
           title: <Title title="Status" />,
           render: ({ heartbeatTimestamp }) => {
-            const isOnline = !heartbeatTimestamp || Date.now() - heartbeatTimestamp * 1000 < 5 * 60 * 1000;
+            const isOnline = Date.now() - (heartbeatTimestamp ?? 0) * 1000 < 5 * 60 * 1000;
             return (
               <div className="gap-small flex items-center">
                 <div className={`h-[6px] w-[6px] rounded-full ${isOnline ? "bg-app-green" : "bg-white/50"}`} />
@@ -197,7 +197,7 @@ export default function RelayersTable({
           key: "status",
           title: <Title title="Status" className="justify-end" />,
           render: ({ heartbeatTimestamp }) => {
-            const isOnline = !heartbeatTimestamp || Date.now() - heartbeatTimestamp * 1000 < 5 * 60 * 1000;
+            const isOnline = Date.now() - (heartbeatTimestamp ?? 0) * 1000 < 5 * 60 * 1000;
             return (
               <div className="gap-small flex items-center justify-end">
                 <div className={`h-[6px] w-[6px] rounded-full ${isOnline ? "bg-app-green" : "bg-white/50"}`} />
