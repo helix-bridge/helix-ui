@@ -3,7 +3,7 @@ import { BaseBridge } from "./base";
 import { Network } from "@/types/chain";
 import { TokenSymbol } from "@/types/token";
 import { PublicClient, WalletClient } from "wagmi";
-import { Address, TransactionReceipt } from "viem";
+import { Address, TransactionReceipt, createPublicClient, http } from "viem";
 import { getChainConfig } from "@/utils/chain";
 import { HistoryRecord } from "@/types/graphql";
 
@@ -243,15 +243,16 @@ export class HelixBridgeDVMEVM extends BaseBridge {
         c.target.network === this.targetChain &&
         c.target.symbol === this.targetToken,
     );
+    const publicClient = createPublicClient({ chain: targetChainConfig, transport: http() });
 
-    if (this.contract && this.publicClient && sourceTokenConfig && targetTokenConfig) {
-      const abi =
-        crossInfo?.action === "redeem"
-          ? (await import("@/abi/mappingtoken-dvmevm.json")).default
-          : (await import("@/abi/backing-dvmevm.json")).default;
+    if (this.contract && sourceTokenConfig && targetTokenConfig) {
+      const { abi, address } =
+        crossInfo?.action === "issue"
+          ? { abi: (await import("@/abi/mappingtoken-dvmevm.json")).default, address: this.contract.targetAddress }
+          : { abi: (await import("@/abi/backing-dvmevm.json")).default, address: this.contract.sourceAddress };
 
-      const limit = (await this.publicClient.readContract({
-        address: this.contract.sourceAddress,
+      const limit = (await publicClient.readContract({
+        address,
         abi,
         functionName: "calcMaxWithdraw",
         args: [targetTokenConfig.address],
