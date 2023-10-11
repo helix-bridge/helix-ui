@@ -25,13 +25,13 @@ export class LnBridgeDefault extends LnBridgeBase {
   private initContract() {
     if (this.sourceChain === "linea-goerli" && this.targetChain === "goerli") {
       this.contract = {
-        sourceAddress: "0x79e6f452f1e491a7aF0382FA0a6EF9368691960D",
-        targetAddress: "0x79e6f452f1e491a7aF0382FA0a6EF9368691960D",
+        sourceAddress: "0x4C538EfA6e3f9Dfb939AA4F0B224577DA665923a",
+        targetAddress: "0x4C538EfA6e3f9Dfb939AA4F0B224577DA665923a",
       };
     } else if (!isProduction()) {
       this.contract = {
-        sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-        targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+        sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+        targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
       };
     }
   }

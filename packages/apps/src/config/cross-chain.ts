@@ -7,8 +7,8 @@
 //     bridge: {
 //       category: "lnbridgev20-default",
 //       contract: {
-//         sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-//         targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+//         sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+//         targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
 //       },
 //     },
 //     tokens: [
@@ -22,8 +22,8 @@
 //     bridge: {
 //       category: "lnbridgev20-default",
 //       contract: {
-//         sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-//         targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+//         sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+//         targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
 //       },
 //     },
 //     tokens: [
@@ -37,8 +37,8 @@
 //     bridge: {
 //       category: "lnbridgev20-default",
 //       contract: {
-//         sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-//         targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+//         sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+//         targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
 //       },
 //     },
 //     tokens: [
@@ -52,8 +52,8 @@
 //     bridge: {
 //       category: "lnbridgev20-default",
 //       contract: {
-//         sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-//         targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+//         sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+//         targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
 //       },
 //     },
 //     tokens: [
@@ -67,8 +67,8 @@
 //     bridge: {
 //       category: "lnbridgev20-default",
 //       contract: {
-//         sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-//         targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+//         sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+//         targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
 //       },
 //     },
 //     tokens: [
@@ -82,8 +82,8 @@
 //     bridge: {
 //       category: "lnbridgev20-opposite",
 //       contract: {
-//         sourceAddress: "0x79e6f452f1e491a7aF0382FA0a6EF9368691960D",
-//         targetAddress: "0x79e6f452f1e491a7aF0382FA0a6EF9368691960D",
+//         sourceAddress: "0x4C538EfA6e3f9Dfb939AA4F0B224577DA665923a",
+//         targetAddress: "0x4C538EfA6e3f9Dfb939AA4F0B224577DA665923a",
 //       },
 //     },
 //     tokens: [
@@ -97,8 +97,8 @@
 //     bridge: {
 //       category: "lnbridgev20-default",
 //       contract: {
-//         sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-//         targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+//         sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+//         targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
 //       },
 //     },
 //     tokens: [
@@ -112,8 +112,8 @@
 //     bridge: {
 //       category: "lnbridgev20-default",
 //       contract: {
-//         sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-//         targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+//         sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+//         targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
 //       },
 //     },
 //     tokens: [
@@ -127,8 +127,8 @@
 //     bridge: {
 //       category: "lnbridgev20-default",
 //       contract: {
-//         sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-//         targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+//         sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+//         targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
 //       },
 //     },
 //     tokens: [
@@ -142,8 +142,8 @@
 //     bridge: {
 //       category: "lnbridgev20-default",
 //       contract: {
-//         sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-//         targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+//         sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+//         targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
 //       },
 //     },
 //     tokens: [
@@ -157,8 +157,8 @@
 //     bridge: {
 //       category: "lnbridgev20-default",
 //       contract: {
-//         sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-//         targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+//         sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+//         targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
 //       },
 //     },
 //     tokens: [
@@ -190,8 +190,8 @@ export const crossChain = {
     "linea-goerli": {
       "lnbridgev20-default": {
         contract: {
-          sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-          targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+          sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+          targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
         },
         tokens: [
           { sourceToken: "USDC", targetToken: "USDC" },
@@ -202,8 +202,8 @@ export const crossChain = {
     "mantle-goerli": {
       "lnbridgev20-default": {
         contract: {
-          sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-          targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+          sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+          targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
         },
         tokens: [
           { sourceToken: "USDC", targetToken: "USDC" },
@@ -216,8 +216,8 @@ export const crossChain = {
     "arbitrum-goerli": {
       "lnbridgev20-default": {
         contract: {
-          sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-          targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+          sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+          targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
         },
         tokens: [
           { sourceToken: "USDC", targetToken: "USDC" },
@@ -228,8 +228,8 @@ export const crossChain = {
     "linea-goerli": {
       "lnbridgev20-default": {
         contract: {
-          sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-          targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+          sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+          targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
         },
         tokens: [
           { sourceToken: "USDC", targetToken: "USDC" },
@@ -240,8 +240,8 @@ export const crossChain = {
     "mantle-goerli": {
       "lnbridgev20-default": {
         contract: {
-          sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-          targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+          sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+          targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
         },
         tokens: [
           { sourceToken: "USDC", targetToken: "USDC" },
@@ -254,8 +254,8 @@ export const crossChain = {
     goerli: {
       "lnbridgev20-opposite": {
         contract: {
-          sourceAddress: "0x79e6f452f1e491a7aF0382FA0a6EF9368691960D",
-          targetAddress: "0x79e6f452f1e491a7aF0382FA0a6EF9368691960D",
+          sourceAddress: "0x4C538EfA6e3f9Dfb939AA4F0B224577DA665923a",
+          targetAddress: "0x4C538EfA6e3f9Dfb939AA4F0B224577DA665923a",
         },
         tokens: [
           { sourceToken: "USDC", targetToken: "USDC" },
@@ -266,8 +266,8 @@ export const crossChain = {
     "arbitrum-goerli": {
       "lnbridgev20-default": {
         contract: {
-          sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-          targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+          sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+          targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
         },
         tokens: [
           { sourceToken: "USDC", targetToken: "USDC" },
@@ -278,8 +278,8 @@ export const crossChain = {
     "mantle-goerli": {
       "lnbridgev20-default": {
         contract: {
-          sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-          targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+          sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+          targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
         },
         tokens: [
           { sourceToken: "USDC", targetToken: "USDC" },
@@ -292,8 +292,8 @@ export const crossChain = {
     goerli: {
       "lnbridgev20-default": {
         contract: {
-          sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-          targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+          sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+          targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
         },
         tokens: [
           { sourceToken: "USDC", targetToken: "USDC" },
@@ -304,8 +304,8 @@ export const crossChain = {
     "arbitrum-goerli": {
       "lnbridgev20-default": {
         contract: {
-          sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-          targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+          sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+          targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
         },
         tokens: [
           { sourceToken: "USDC", targetToken: "USDC" },
@@ -316,8 +316,8 @@ export const crossChain = {
     "linea-goerli": {
       "lnbridgev20-default": {
         contract: {
-          sourceAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
-          targetAddress: "0x54cc9716905ba8ebdD01E6364125cA338Cd0054E",
+          sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+          targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
         },
         tokens: [
           { sourceToken: "USDC", targetToken: "USDC" },
