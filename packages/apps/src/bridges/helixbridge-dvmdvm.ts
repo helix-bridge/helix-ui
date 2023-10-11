@@ -231,15 +231,16 @@ export class HelixBridgeDVMDVM extends BaseBridge {
         c.target.network === this.targetChain &&
         c.target.symbol === this.targetToken,
     );
+    const publicClient = createPublicClient({ chain: sourceChainConfig, transport: http() });
 
-    if (this.contract && this.publicClient && sourceNativeTokenConfig) {
-      const abi =
-        crossInfo?.action === "redeem"
-          ? (await import("@/abi/mappingtoken-dvmdvm.json")).default
-          : (await import("@/abi/backing-dvmdvm.json")).default;
+    if (this.contract && sourceNativeTokenConfig) {
+      const { abi, address } =
+        crossInfo?.action === "issue"
+          ? { abi: (await import("@/abi/backing-dvmdvm.json")).default, address: this.contract.sourceAddress }
+          : { abi: (await import("@/abi/mappingtoken-dvmdvm.json")).default, address: this.contract.targetAddress };
 
-      const value = (await this.publicClient.readContract({
-        address: this.contract.sourceAddress,
+      const value = (await publicClient.readContract({
+        address,
         abi,
         functionName: "fee",
       })) as unknown as bigint;

@@ -38,7 +38,7 @@ export default function Transfer() {
   const deferredTransferValue = useDeferredValue(transferValue);
 
   const [isOpen, _, setIsOpenTrue, setIsOpenFalse] = useToggle(false);
-  const [isFeeLoading, setIsFeeLoading] = useState(false);
+  const [isLoadingFee, setIsLoadingFee] = useState(false);
 
   const [sourceValue, setSourceValue] = useState(defaultSourceValue);
   const [targetValue, setTargetValue] = useState(defaultTargetValue);
@@ -65,7 +65,7 @@ export default function Transfer() {
   });
 
   const {
-    loading: isRelayersLoading,
+    loading: isLoadingRelayers,
     data: relayersData,
     refetch: refetchRelayers,
   } = useQuery<RelayersResponseData, RelayersVariables>(QUERY_RELAYERS, {
@@ -130,13 +130,13 @@ export default function Transfer() {
     let sub$$: Subscription | undefined;
     const relayer = relayersData?.sortedLnv20RelayInfos?.at(0);
 
-    if (bridge && relayer) {
-      setIsFeeLoading(true);
+    if (bridge) {
+      setIsLoadingFee(true);
 
       sub$$ = from(
         bridge.getFee({
-          baseFee: relayer.baseFee ? BigInt(relayer.baseFee) : undefined,
-          liquidityFeeRate: relayer.liquidityFeeRate ? BigInt(relayer.liquidityFeeRate) : undefined,
+          baseFee: relayer?.baseFee ? BigInt(relayer.baseFee) : undefined,
+          liquidityFeeRate: relayer?.liquidityFeeRate ? BigInt(relayer.liquidityFeeRate) : undefined,
           transferAmount: deferredTransferValue.formatted,
         }),
       ).subscribe({
@@ -144,11 +144,12 @@ export default function Transfer() {
         error: (err) => {
           console.error(err);
           setFee(undefined);
+          setIsLoadingFee(false);
         },
-        complete: () => {
-          setIsFeeLoading(false);
-        },
+        complete: () => setIsLoadingFee(false),
       });
+    } else {
+      setFee(undefined);
     }
 
     return () => sub$$?.unsubscribe();
@@ -237,7 +238,7 @@ export default function Transfer() {
 
         {/* information */}
         <Section label="Information" className="mt-8">
-          <CrossChainInfo fee={fee} bridge={bridge} loading={isFeeLoading || isRelayersLoading} />
+          <CrossChainInfo fee={fee} bridge={bridge} loading={isLoadingFee || isLoadingRelayers} />
         </Section>
 
         {/* action */}

@@ -24,6 +24,7 @@ export default function CrossChainInfo({ fee, bridge, loading }: Props) {
         error: (err) => {
           console.error(err);
           setDailyLimit(undefined);
+          setIsLoadingDailyLimit(false);
         },
         complete: () => setIsLoadingDailyLimit(false),
       });
@@ -37,11 +38,11 @@ export default function CrossChainInfo({ fee, bridge, loading }: Props) {
     <div className="bg-app-bg p-middle gap-small flex flex-col rounded border border-transparent">
       <Section>
         <span>Bridge</span>
-        <span>{bridge?.getInfo().name || "-"}</span>
+        <span>{bridge?.getInfo().name || ""}</span>
       </Section>
       <Section>
         <span>Estimated Arrival Time</span>
-        <span>{bridge?.formatEstimateTime() || "-"}</span>
+        <span>{bridge?.formatEstimateTime() || ""}</span>
       </Section>
       <Section>
         <span>Transaction Fee</span>
@@ -52,7 +53,7 @@ export default function CrossChainInfo({ fee, bridge, loading }: Props) {
             {formatBalance(fee.value, fee.token.decimals)} {fee.token.symbol}
           </span>
         ) : (
-          <span>-</span>
+          <span></span>
         )}
       </Section>
       {!!dailyLimit && (
