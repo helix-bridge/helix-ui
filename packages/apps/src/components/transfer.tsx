@@ -16,12 +16,12 @@ import SwitchCross from "./switch-cross";
 import { from, Subscription } from "rxjs";
 import { useToggle } from "@/hooks/use-toggle";
 import TransferModal from "./transfer-modal";
-import { useApp } from "@/hooks/use-app";
 import TransferAction from "./transfer-action";
 import DisclaimerModal from "./disclaimer-modal";
 import { Token } from "@/types/token";
 import Faucet from "./faucet";
 import { isProduction } from "@/utils/env";
+import { useTransfer } from "@/hooks/use-transfer";
 
 const {
   defaultSourceOptions,
@@ -34,7 +34,7 @@ const {
 } = getParsedCrossChain();
 
 export default function Transfer() {
-  const { transferValue, setTransferValue } = useApp();
+  const { transferValue, setTransferValue } = useTransfer();
   const deferredTransferValue = useDeferredValue(transferValue);
 
   const [isOpen, _, setIsOpenTrue, setIsOpenFalse] = useToggle(false);
