@@ -42,12 +42,6 @@ export class HelixBridgeDVMEVM extends BaseBridge {
         targetAddress: "0xFBAD806Bdf9cEC2943be281FB355Da05068DE925",
       };
       this.guard = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1";
-    } else if (this.sourceChain === "ethereum" && this.targetChain === "darwinia-dvm") {
-      this.contract = {
-        sourceAddress: "0xFBAD806Bdf9cEC2943be281FB355Da05068DE925",
-        targetAddress: "0xD1B10B114f1975d8BCc6cb6FC43519160e2AA978",
-      };
-      this.guard = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1";
     }
   }
 
@@ -214,15 +208,16 @@ export class HelixBridgeDVMEVM extends BaseBridge {
         c.target.network === this.targetChain &&
         c.target.symbol === this.targetToken,
     );
+    const publicClient = createPublicClient({ chain: sourceChainConfig, transport: http() });
 
-    if (this.contract && this.publicClient && sourceNativeTokenConfig) {
-      const abi =
-        crossInfo?.action === "redeem"
-          ? (await import("@/abi/mappingtoken-dvmevm.json")).default
-          : (await import("@/abi/backing-dvmevm.json")).default;
+    if (this.contract && sourceNativeTokenConfig) {
+      const { abi, address } =
+        crossInfo?.action === "issue"
+          ? { abi: (await import("@/abi/backing-dvmevm.json")).default, address: this.contract.sourceAddress }
+          : { abi: (await import("@/abi/mappingtoken-dvmevm.json")).default, address: this.contract.targetAddress };
 
-      const value = (await this.publicClient.readContract({
-        address: this.contract.sourceAddress,
+      const value = (await publicClient.readContract({
+        address,
         abi,
         functionName: "currentFee",
       })) as unknown as bigint;
