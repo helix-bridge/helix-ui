@@ -3,7 +3,7 @@ import { BaseBridge } from "./base";
 import { Network } from "@/types/chain";
 import { TokenSymbol } from "@/types/token";
 import { PublicClient, WalletClient } from "wagmi";
-import { TransactionReceipt } from "viem";
+import { TransactionReceipt, createPublicClient, http } from "viem";
 import { getChainConfig } from "@/utils/chain";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { SpecVersion } from "@polkadot/types/interfaces";
@@ -38,15 +38,15 @@ export class HelixBridgeDVMDVM extends BaseBridge {
   }
 
   private initContract() {
-    if (this.sourceChain === "crab-dvm" && this.targetChain === "darwinia-dvm") {
-      this.contract = {
-        sourceAddress: "0xCF8923ebF4244cedC647936a0281dd10bDFCBF18",
-        targetAddress: "0x8c585F9791EE5b4B23fe82888cE576DBB69607eB",
-      };
-    } else if (this.sourceChain === "darwinia-dvm" && this.targetChain === "crab-dvm") {
+    if (this.sourceToken === "RING" || this.sourceToken === "xWRING") {
       this.contract = {
         sourceAddress: "0xF3c1444CD449bD66Ef6DA7CA6c3E7884840A3995",
         targetAddress: "0x8738A64392b71617aF4C685d0E827855c741fDF7",
+      };
+    } else if (this.sourceToken === "CRAB" || this.sourceToken === "xWCRAB") {
+      this.contract = {
+        sourceAddress: "0xCF8923ebF4244cedC647936a0281dd10bDFCBF18",
+        targetAddress: "0x8c585F9791EE5b4B23fe82888cE576DBB69607eB",
       };
     }
   }
@@ -260,15 +260,16 @@ export class HelixBridgeDVMDVM extends BaseBridge {
         c.target.network === this.targetChain &&
         c.target.symbol === this.targetToken,
     );
+    const publicClient = createPublicClient({ chain: targetChainConfig, transport: http() });
 
-    if (this.contract && this.publicClient && sourceTokenConfig && targetTokenConfig) {
-      const abi =
+    if (this.contract && sourceTokenConfig && targetTokenConfig) {
+      const { abi, address } =
         crossInfo?.action === "redeem"
-          ? (await import("@/abi/mappingtoken-dvmdvm.json")).default
-          : (await import("@/abi/backing-dvmdvm.json")).default;
+          ? { abi: (await import("@/abi/backing-dvmdvm.json")).default, address: this.contract.sourceAddress }
+          : { abi: (await import("@/abi/mappingtoken-dvmdvm.json")).default, address: this.contract.targetAddress };
 
-      const limit = (await this.publicClient.readContract({
-        address: this.contract.sourceAddress,
+      const limit = (await publicClient.readContract({
+        address,
         abi,
         functionName: "calcMaxWithdraw",
         args: [targetTokenConfig.address],

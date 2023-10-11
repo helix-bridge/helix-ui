@@ -12,12 +12,21 @@ interface Props {
 }
 
 export default function CrossChainInfo({ fee, bridge, loading }: Props) {
+  const [isLoadingDailyLimit, setIsLoadingDailyLimit] = useState(false);
   const [dailyLimit, setDailyLimit] = useState<{ limit: bigint; spent: bigint; token: Token }>();
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
     if (bridge) {
-      sub$$ = from(bridge.getDailyLimit()).subscribe(setDailyLimit);
+      setIsLoadingDailyLimit(true);
+      sub$$ = from(bridge.getDailyLimit()).subscribe({
+        next: setDailyLimit,
+        error: (err) => {
+          console.error(err);
+          setDailyLimit(undefined);
+        },
+        complete: () => setIsLoadingDailyLimit(false),
+      });
     } else {
       setDailyLimit(undefined);
     }
@@ -49,9 +58,13 @@ export default function CrossChainInfo({ fee, bridge, loading }: Props) {
       {!!dailyLimit && (
         <Section>
           <span>Daily Limit</span>
-          <span>
-            {formatBalance(dailyLimit.limit, dailyLimit.token.decimals)} {dailyLimit.token.symbol}
-          </span>
+          {isLoadingDailyLimit ? (
+            <CountLoading color="white" />
+          ) : (
+            <span>
+              {formatBalance(dailyLimit.limit, dailyLimit.token.decimals)} {dailyLimit.token.symbol}
+            </span>
+          )}
         </Section>
       )}
     </div>
