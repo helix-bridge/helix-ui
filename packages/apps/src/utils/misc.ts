@@ -24,3 +24,7 @@ export function getTokenLogoSrc(fileName?: string | null) {
 export function getChainLogoSrc(fileName?: string | null) {
   return `/images/network/${fileName || "unknown.png"}`;
 }
+
+export function getBridgeLogoSrc(fileName: string) {
+  return `/images/bridge/${fileName}`;
+}

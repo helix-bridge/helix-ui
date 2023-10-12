@@ -1,10 +1,9 @@
-import { BridgeCategory, BridgeContract } from "@/types/bridge";
+import { BridgeCategory, BridgeLogo } from "@/types/bridge";
 import { BaseBridge } from "./base";
-import { Network } from "@/types/chain";
-import { TokenSymbol } from "@/types/token";
-import { PublicClient, WalletClient } from "wagmi";
+import { ChainConfig } from "@/types/chain";
+import { Token } from "@/types/token";
+import { WalletClient, PublicClient } from "wagmi";
 import { TransactionReceipt } from "viem";
-import { getChainConfig } from "@/utils/chain";
 import { HistoryRecord } from "@/types/graphql";
 
 export class HelixLpBridge extends BaseBridge {
@@ -13,39 +12,34 @@ export class HelixLpBridge extends BaseBridge {
   private readonly relayGasLimit = 100000n;
 
   constructor(args: {
-    category: BridgeCategory;
-
-    sourceChain?: Network;
-    targetChain?: Network;
-    sourceToken?: TokenSymbol;
-    targetToken?: TokenSymbol;
-
-    publicClient?: PublicClient;
     walletClient?: WalletClient | null;
+    publicClient?: PublicClient;
+    category: BridgeCategory;
+    logo?: BridgeLogo;
+
+    sourceChain?: ChainConfig;
+    targetChain?: ChainConfig;
+    sourceToken?: Token;
+    targetToken?: Token;
   }) {
     super(args);
     this.initContract();
 
-    this.logo = {
-      horizontal: "helix-horizontal.svg",
-      symbol: "helix-symbol.svg",
-    };
+    if (!args.logo) {
+      this.logo = {
+        horizontal: "helix-horizontal.svg",
+        symbol: "helix-symbol.svg",
+      };
+    }
     this.name = "Helix(Fusion)";
     this.estimateTime = { min: 1, max: 3 };
   }
 
   private initContract() {
-    if (this.sourceChain === "darwinia-dvm" && this.targetChain === "ethereum") {
-      this.contract = {
-        sourceAddress: "0x84f7a56483C100ECb12CbB4A31b7873dAE0d8E9B",
-        targetAddress: "0x5F8D4232367759bCe5d9488D3ade77FCFF6B9b6B",
-      };
-    } else if (this.sourceChain === "ethereum" && this.targetChain === "darwinia-dvm") {
-      this.contract = {
-        sourceAddress: "0x5F8D4232367759bCe5d9488D3ade77FCFF6B9b6B",
-        targetAddress: "0x84f7a56483C100ECb12CbB4A31b7873dAE0d8E9B",
-      };
-    }
+    this.contract = {
+      sourceAddress: "0x84f7a56483C100ECb12CbB4A31b7873dAE0d8E9B",
+      targetAddress: "0x5F8D4232367759bCe5d9488D3ade77FCFF6B9b6B",
+    };
   }
 
   async transfer(
@@ -54,27 +48,14 @@ export class HelixLpBridge extends BaseBridge {
     amount: bigint,
     options?: { totalFee: bigint },
   ): Promise<TransactionReceipt | undefined> {
-    const sourceChainConfig = getChainConfig(this.sourceChain);
-    const targetChainConfig = getChainConfig(this.targetChain);
-
-    const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
-    const targetTokenConfig = targetChainConfig?.tokens.find((t) => t.symbol === this.targetToken);
-
-    const crossInfo = sourceTokenConfig?.cross.find(
-      (c) =>
-        c.bridge.category === this.category &&
-        c.target.network === this.targetChain &&
-        c.target.symbol === this.targetToken,
-    );
-
-    if (this.contract && this.publicClient && this.walletClient && options) {
+    if (options && this.contract && this.crossInfo && this.walletClient) {
       const nonce = BigInt(Date.now()) + this.prefix;
 
       const { args, value, functionName } =
-        sourceTokenConfig?.type === "native"
+        this.sourceToken?.type === "native"
           ? {
               functionName: "lockNativeAndRemoteIssuing",
-              args: [amount, options.totalFee, recipient, nonce, targetTokenConfig?.type === "native"],
+              args: [amount, options.totalFee, recipient, nonce, this.targetToken?.type === "native"],
               value: amount + options.totalFee,
             }
           : {
@@ -84,135 +65,124 @@ export class HelixLpBridge extends BaseBridge {
                 recipient,
                 amount,
                 options.totalFee,
-                crossInfo?.index,
-                targetTokenConfig?.type === "native",
+                this.crossInfo?.index,
+                this.targetToken?.type === "native",
               ],
               value: undefined,
             };
+      const address = this.crossInfo.action === "issue" ? this.contract.sourceAddress : this.contract.targetAddress;
       const abi = (await import("@/abi/lpbridge.json")).default;
 
       const hash = await this.walletClient.writeContract({
-        address: this.contract.sourceAddress,
+        address,
         abi,
         functionName,
         args,
         value,
         gas: this.getTxGasLimit(),
       });
-      return await this.publicClient.waitForTransactionReceipt({ hash });
+      return await this.sourcePublicClient.waitForTransactionReceipt({ hash });
     }
   }
 
+  /**
+   * On target chain
+   */
   async refund(record: HistoryRecord) {
-    const sourceChainConfig = getChainConfig(this.sourceChain);
-    const targetChainConfig = getChainConfig(this.targetChain);
-
-    const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
-    const targetTokenConfig = targetChainConfig?.tokens.find((t) => t.symbol === this.targetToken);
+    if (this.targetChain?.id !== (await this.publicClient?.getChainId())) {
+      throw new Error("Wrong network");
+    }
 
     if (this.contract && this.publicClient && this.walletClient) {
+      const { address } =
+        this.crossInfo?.action === "issue"
+          ? { address: this.contract.targetAddress }
+          : { address: this.contract.sourceAddress };
       const args = [
         record.messageNonce,
-        targetTokenConfig?.type === "native",
+        this.targetToken?.type === "native",
         record.recvTokenAddress,
         record.sender,
         record.recipient,
         record.sendAmount,
         record.id.split("-").at(1),
-        sourceTokenConfig?.type === "native",
+        this.sourceToken?.type === "native",
       ];
       const value = await this.getBridgeFee();
       const abi = (await import("@/abi/lpbridge-sub2eth.json")).default;
 
       const hash = await this.walletClient.writeContract({
-        address: this.contract.sourceAddress,
+        address,
         abi,
         functionName: "requestCancelIssuing",
         args,
         value,
         gas: this.getTxGasLimit(),
       });
-      return await this.publicClient.waitForTransactionReceipt({ hash });
+      return this.publicClient.waitForTransactionReceipt({ hash });
     }
   }
 
   private async getBridgeFee() {
-    if (this.contract && this.publicClient) {
-      const abi = (await import("@/abi/lpbridge-sub2eth.json")).default;
-      const fee = this.publicClient.readContract({
-        address: this.contract.sourceAddress,
+    if (this.contract) {
+      const address = this.crossInfo?.action === "issue" ? this.contract.sourceAddress : this.contract.targetAddress;
+      const abi = (await import("@/abi/lpbridge.json")).default;
+      return this.sourcePublicClient.readContract({
+        address,
         abi,
         functionName: "fee",
-      }) as unknown as bigint;
-
-      return fee;
+      }) as unknown as bigint; // Native token
     }
   }
 
-  async speedUp(record: HistoryRecord, newFee: bigint) {
-    const sourceChainConfig = getChainConfig(this.sourceChain);
-    const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
+  async speedUp(record: HistoryRecord, fee: bigint) {
+    if (this.contract && this.walletClient) {
+      const transferId = record.id.split("-").slice(-1);
 
-    if (this.contract && this.publicClient && this.walletClient) {
       const { args, value, functionName } =
-        sourceTokenConfig?.type === "native"
+        this.sourceToken?.type === "native"
           ? {
               functionName: "increaseNativeFee",
-              args: [record.id.split("-").slice(-1)],
-              value: newFee,
+              args: [transferId],
+              value: fee,
             }
           : {
               functionName: "increaseFee",
-              args: [record.id.split("-").slice(-1), newFee],
+              args: [transferId, fee],
               value: undefined,
             };
+      const address = this.crossInfo?.action === "issue" ? this.contract.sourceAddress : this.contract.targetAddress;
       const abi = (await import("@/abi/lpbridge.json")).default;
 
       const hash = await this.walletClient.writeContract({
-        address: this.contract.sourceAddress,
+        address,
         abi,
         functionName,
         args,
         value,
         gas: this.getTxGasLimit(),
       });
-      return await this.publicClient.waitForTransactionReceipt({ hash });
+      return await this.sourcePublicClient.waitForTransactionReceipt({ hash });
     }
   }
 
   async getFee(args?: { baseFee?: bigint; liquidityFeeRate?: bigint; transferAmount?: bigint }) {
-    const sourceChainConfig = getChainConfig(this.sourceChain);
-    const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
+    if (this.sourceToken && this.crossInfo?.baseFee) {
+      let value = ((args?.transferAmount || 0n) * BigInt(this.feePercent * 1000)) / 1000n + this.crossInfo.baseFee;
 
-    const crossInfo = sourceTokenConfig?.cross.find(
-      (c) =>
-        c.bridge.category === this.category &&
-        c.target.network === this.targetChain &&
-        c.target.symbol === this.targetToken,
-    );
-
-    if (sourceTokenConfig && this.publicClient && crossInfo?.baseFee) {
-      let value = ((args?.transferAmount || 0n) * BigInt(this.feePercent * 1000)) / 1000n + crossInfo.baseFee;
-
-      if (crossInfo.price) {
-        const gasPrice = await this.publicClient.getGasPrice();
-        const dynamicFee = gasPrice * crossInfo.price * this.relayGasLimit;
+      if (this.crossInfo.price) {
+        const gasPrice = await this.sourcePublicClient.getGasPrice();
+        const dynamicFee = gasPrice * this.crossInfo.price * this.relayGasLimit;
         value += dynamicFee;
       }
 
-      return {
-        value,
-        token: sourceTokenConfig,
-      };
+      return { value, token: this.sourceToken };
     }
   }
 
   async getDailyLimit() {
     if (this.sourceToken) {
-      const token = getChainConfig(this.sourceChain)?.tokens.find((t) => t.symbol === this.sourceToken);
-      if (token) {
-        return { limit: BigInt("500000000000000000000000"), spent: 0n, token };
-      }
+      return { limit: BigInt("500000000000000000000000"), spent: 0n, token: this.sourceToken };
     }
   }
 }

@@ -1,10 +1,9 @@
-import { BridgeCategory } from "@/types/bridge";
+import { BridgeCategory, BridgeLogo } from "@/types/bridge";
 import { BaseBridge } from "./base";
-import { Network } from "@/types/chain";
-import { TokenSymbol } from "@/types/token";
+import { ChainConfig } from "@/types/chain";
+import { Token } from "@/types/token";
 import { PublicClient, WalletClient } from "wagmi";
-import { Address, TransactionReceipt, createPublicClient, http } from "viem";
-import { getChainConfig } from "@/utils/chain";
+import { Address, TransactionReceipt } from "viem";
 import { HistoryRecord } from "@/types/graphql";
 
 /**
@@ -15,99 +14,96 @@ export class HelixBridgeDVMEVM extends BaseBridge {
   private guard: Address | undefined;
 
   constructor(args: {
-    category: BridgeCategory;
-
-    sourceChain?: Network;
-    targetChain?: Network;
-    sourceToken?: TokenSymbol;
-    targetToken?: TokenSymbol;
-
-    publicClient?: PublicClient;
     walletClient?: WalletClient | null;
+    publicClient?: PublicClient;
+    category: BridgeCategory;
+    logo?: BridgeLogo;
+
+    sourceChain?: ChainConfig;
+    targetChain?: ChainConfig;
+    sourceToken?: Token;
+    targetToken?: Token;
   }) {
     super(args);
     this.initContract();
 
-    this.logo = {
-      horizontal: "helix-horizontal.svg",
-      symbol: "helix-symbol.svg",
-    };
+    if (args.logo) {
+      this.logo = {
+        horizontal: "helix-horizontal.svg",
+        symbol: "helix-symbol.svg",
+      };
+    }
     this.name = "Helix(Legacy)";
   }
 
   private initContract() {
-    if (this.sourceChain === "darwinia-dvm" && this.targetChain === "ethereum") {
-      this.contract = {
-        sourceAddress: "0xD1B10B114f1975d8BCc6cb6FC43519160e2AA978",
-        targetAddress: "0xFBAD806Bdf9cEC2943be281FB355Da05068DE925",
-      };
-      this.guard = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1";
-    }
+    this.contract = {
+      sourceAddress: "0xD1B10B114f1975d8BCc6cb6FC43519160e2AA978",
+      targetAddress: "0xFBAD806Bdf9cEC2943be281FB355Da05068DE925",
+    };
+    this.guard = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1";
   }
 
   async lock(_: string, recipient: string, amount: bigint, options?: { totalFee: bigint }) {
-    if (this.contract && this.publicClient && this.walletClient && options) {
-      const sourceChainConfig = getChainConfig(this.sourceChain);
-      const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
+    if ((await this.publicClient?.getChainId()) !== this.sourceChain?.id) {
+      throw new Error("Wrong network");
+    }
 
-      if (sourceTokenConfig) {
-        const { args, value, functionName } =
-          sourceTokenConfig?.type === "native"
-            ? {
-                functionName: "lockAndRemoteIssuingNative",
-                args: [recipient, amount],
-                value: amount + options.totalFee,
-              }
-            : {
-                functionName: "lockAndRemoteIssuing",
-                args: [sourceTokenConfig.address, recipient, amount],
-                value: options.totalFee,
-              };
-        const abi = (await import("@/abi/backing-dvmevm.json")).default;
+    if (options && this.contract && this.sourceToken && this.publicClient && this.walletClient) {
+      const { args, value, functionName } =
+        this.sourceToken.type === "native"
+          ? {
+              functionName: "lockAndRemoteIssuingNative",
+              args: [recipient, amount],
+              value: amount + options.totalFee,
+            }
+          : {
+              functionName: "lockAndRemoteIssuing",
+              args: [this.sourceToken.address, recipient, amount],
+              value: options.totalFee,
+            };
+      const abi = (await import("@/abi/backing-dvmevm.json")).default;
 
-        const hash = await this.walletClient.writeContract({
-          address: this.contract.sourceAddress,
-          abi,
-          functionName,
-          args,
-          value,
-          gas: this.getTxGasLimit(),
-        });
-        return await this.publicClient.waitForTransactionReceipt({ hash });
-      }
+      const hash = await this.walletClient.writeContract({
+        address: this.contract.sourceAddress,
+        abi,
+        functionName,
+        args,
+        value,
+        gas: this.getTxGasLimit(),
+      });
+      return this.publicClient.waitForTransactionReceipt({ hash });
     }
   }
 
   async burn(_: string, recipient: string, amount: bigint, options?: { totalFee: bigint }) {
-    if (this.contract && this.publicClient && this.walletClient && options) {
-      const sourceChainConfig = getChainConfig(this.sourceChain);
-      const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
+    if ((await this.publicClient?.getChainId()) !== this.sourceChain?.id) {
+      throw new Error("Wrong network");
+    }
 
-      if (sourceTokenConfig) {
-        const { args, value, functionName } =
-          sourceTokenConfig?.type === "native"
-            ? {
-                functionName: "burnAndRemoteUnlockNative",
-                args: [recipient, amount],
-                value: amount + options.totalFee,
-              }
-            : {
-                functionName: "burnAndRemoteUnlock",
-                args: [sourceTokenConfig.address, recipient, amount],
-                value: options.totalFee,
-              };
-        const abi = (await import("@/abi/mappingtoken-dvmevm.json")).default;
+    if (options && this.contract && this.sourceToken && this.publicClient && this.walletClient) {
+      const { args, functionName } =
+        this.sourceToken.type === "native"
+          ? {
+              functionName: "burnAndRemoteUnlockNative",
+              args: [recipient, amount],
+            }
+          : {
+              functionName: "burnAndRemoteUnlock",
+              args: [this.sourceToken.address, recipient, amount],
+            };
+      const abi = (await import("@/abi/mappingtoken-dvmevm.json")).default;
+      const value = options.totalFee;
 
-        const hash = await this.walletClient.writeContract({
-          address: this.contract.sourceAddress,
-          abi,
-          functionName,
-          args,
-          value,
-          gas: this.getTxGasLimit(),
-        });
-        return await this.publicClient.waitForTransactionReceipt({ hash });
-      }
+      const hash = await this.walletClient.writeContract({
+        address: this.contract.targetAddress,
+        abi,
+        functionName,
+        args,
+        value,
+        gas: this.getTxGasLimit(),
+      });
+      return this.publicClient.waitForTransactionReceipt({ hash });
     }
   }
 
@@ -117,17 +113,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
     amount: bigint,
     options?: { totalFee: bigint },
   ): Promise<TransactionReceipt | undefined> {
-    const sourceChainConfig = getChainConfig(this.sourceChain);
-    const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
-
-    const crossInfo = sourceTokenConfig?.cross.find(
-      (c) =>
-        c.bridge.category === this.category &&
-        c.target.network === this.targetChain &&
-        c.target.symbol === this.targetToken,
-    );
-
-    if (crossInfo?.action === "redeem") {
+    if (this.crossInfo?.action === "redeem") {
       return this.burn(sender, recipient, amount, options);
     } else {
       return this.lock(sender, recipient, amount, options);
@@ -135,6 +121,10 @@ export class HelixBridgeDVMEVM extends BaseBridge {
   }
 
   async claim(record: HistoryRecord) {
+    if ((await this.publicClient?.getChainId()) !== this.targetChain?.id) {
+      throw new Error("Wrong network");
+    }
+
     if (this.guard && this.publicClient && this.walletClient) {
       const abi = (await import("@/abi/guard.json")).default;
 
@@ -152,40 +142,36 @@ export class HelixBridgeDVMEVM extends BaseBridge {
         ],
         gas: this.getTxGasLimit(),
       });
-      return await this.publicClient.waitForTransactionReceipt({ hash });
+      return this.publicClient.waitForTransactionReceipt({ hash });
     }
   }
 
   async refund(record: HistoryRecord) {
-    const sourceChainConfig = getChainConfig(this.sourceChain);
-    const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
-
-    const crossInfo = sourceTokenConfig?.cross.find(
-      (c) =>
-        c.bridge.category === this.category &&
-        c.target.network === this.targetChain &&
-        c.target.symbol === this.targetToken,
-    );
+    if ((await this.publicClient?.getChainId()) !== this.targetChain?.id) {
+      throw new Error("Wrong network");
+    }
 
     if (this.contract && this.publicClient && this.walletClient) {
-      const { abi, functionName } =
-        crossInfo?.action === "issue"
+      const { abi, address, functionName } =
+        this.crossInfo?.action === "issue"
           ? {
-              abi: (await import("@/abi/backing-dvmevm.json")).default,
-              functionName: "remoteIssuingFailure",
+              abi: (await import("@/abi/mappingtoken-dvmevm.json")).default,
+              address: this.contract.targetAddress,
+              functionName: this.sourceToken?.type === "native" ? "remoteUnlockFailureNative" : "remoteUnlockFailure",
             }
           : {
-              abi: (await import("@/abi/mappingtoken-dvmevm.json")).default,
-              functionName: sourceTokenConfig?.type === "native" ? "remoteUnlockFailureNative" : "remoteUnlockFailure",
+              abi: (await import("@/abi/backing-dvmevm.json")).default,
+              address: this.contract.sourceAddress,
+              functionName: "remoteIssuingFailure",
             };
       const args =
-        sourceTokenConfig?.type === "native"
+        this.sourceToken?.type === "native"
           ? [record.id.split("-").slice(-1), record.sender, record.sendAmount]
           : [record.id.split("-").slice(-1), record.sendTokenAddress, record.sender, record.sendAmount];
-      const value = (await this.getFee())?.value || 0n;
+      const value = (await this.getFee())?.value;
 
       const hash = await this.walletClient.writeContract({
-        address: this.contract.sourceAddress,
+        address,
         abi,
         functionName,
         args,
@@ -197,63 +183,36 @@ export class HelixBridgeDVMEVM extends BaseBridge {
   }
 
   async getFee() {
-    const sourceChainConfig = getChainConfig(this.sourceChain);
-
-    const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
-    const sourceNativeTokenConfig = sourceChainConfig?.tokens.find((t) => t.type === "native");
-
-    const crossInfo = sourceTokenConfig?.cross.find(
-      (c) =>
-        c.bridge.category === this.category &&
-        c.target.network === this.targetChain &&
-        c.target.symbol === this.targetToken,
-    );
-    const publicClient = createPublicClient({ chain: sourceChainConfig, transport: http() });
-
-    if (this.contract && sourceNativeTokenConfig) {
+    if (this.contract && this.sourceNativeToken) {
       const { abi, address } =
-        crossInfo?.action === "issue"
+        this.crossInfo?.action === "issue"
           ? { abi: (await import("@/abi/backing-dvmevm.json")).default, address: this.contract.sourceAddress }
           : { abi: (await import("@/abi/mappingtoken-dvmevm.json")).default, address: this.contract.targetAddress };
 
-      const value = (await publicClient.readContract({
+      const value = (await this.sourcePublicClient.readContract({
         address,
         abi,
         functionName: "currentFee",
       })) as unknown as bigint;
-      return { value, token: sourceNativeTokenConfig };
+      return { value, token: this.sourceNativeToken };
     }
   }
 
   async getDailyLimit() {
-    const sourceChainConfig = getChainConfig(this.sourceChain);
-    const targetChainConfig = getChainConfig(this.targetChain);
-
-    const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
-    const targetTokenConfig = targetChainConfig?.tokens.find((t) => t.symbol === this.targetToken);
-
-    const crossInfo = sourceTokenConfig?.cross.find(
-      (c) =>
-        c.bridge.category === this.category &&
-        c.target.network === this.targetChain &&
-        c.target.symbol === this.targetToken,
-    );
-    const publicClient = createPublicClient({ chain: targetChainConfig, transport: http() });
-
-    if (this.contract && sourceTokenConfig && targetTokenConfig) {
+    if (this.contract && this.sourceToken && this.targetToken) {
       const { abi, address } =
-        crossInfo?.action === "issue"
+        this.crossInfo?.action === "issue"
           ? { abi: (await import("@/abi/mappingtoken-dvmevm.json")).default, address: this.contract.targetAddress }
           : { abi: (await import("@/abi/backing-dvmevm.json")).default, address: this.contract.sourceAddress };
 
-      const limit = (await publicClient.readContract({
+      const limit = (await this.targetPublicClient.readContract({
         address,
         abi,
         functionName: "calcMaxWithdraw",
-        args: [targetTokenConfig.address],
+        args: [this.targetToken.address],
       })) as unknown as bigint;
 
-      return { limit, spent: 0n, token: sourceTokenConfig };
+      return { limit, spent: 0n, token: this.sourceToken };
     }
   }
 }

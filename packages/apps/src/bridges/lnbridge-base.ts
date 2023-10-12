@@ -1,44 +1,41 @@
-import { Network } from "@/types/chain";
+import { ChainConfig } from "@/types/chain";
 import { BaseBridge } from "./base";
 import { TransactionReceipt } from "viem";
-import { TokenSymbol } from "@/types/token";
-import { BridgeCategory } from "@/types/bridge";
+import { Token } from "@/types/token";
+import { BridgeCategory, BridgeLogo } from "@/types/bridge";
 import { PublicClient, WalletClient } from "wagmi";
-import { getChainConfig } from "@/utils/chain";
 
 export class LnBridgeBase extends BaseBridge {
   constructor(args: {
-    category: BridgeCategory;
-
-    sourceChain?: Network;
-    targetChain?: Network;
-    sourceToken?: TokenSymbol;
-    targetToken?: TokenSymbol;
-
-    publicClient?: PublicClient;
     walletClient?: WalletClient | null;
+    publicClient?: PublicClient;
+    category: BridgeCategory;
+    logo?: BridgeLogo;
+
+    sourceChain?: ChainConfig;
+    targetChain?: ChainConfig;
+    sourceToken?: Token;
+    targetToken?: Token;
   }) {
     super(args);
 
-    this.logo = {
-      horizontal: "helix-horizontal.svg",
-      symbol: "helix-symbol.svg",
-    };
+    if (args.logo) {
+      this.logo = {
+        horizontal: "helix-horizontal.svg",
+        symbol: "helix-symbol.svg",
+      };
+    }
     this.name = "Helix LnBridge";
     this.estimateTime = { min: 1, max: 30 };
   }
 
   async getFee(args?: { baseFee?: bigint; liquidityFeeRate?: bigint; transferAmount?: bigint }) {
-    const sourceChainConfig = getChainConfig(this.sourceChain);
-    const sourceTokenConfig = sourceChainConfig?.tokens.find((t) => t.symbol === this.sourceToken);
-
-    if (sourceTokenConfig) {
+    if (this.sourceToken) {
       return {
         value: (args?.baseFee || 0n) + ((args?.liquidityFeeRate || 0n) * (args?.transferAmount || 0n)) / 100000n,
-        token: sourceTokenConfig,
+        token: this.sourceToken,
       };
     }
-    return undefined;
   }
 
   async transfer(

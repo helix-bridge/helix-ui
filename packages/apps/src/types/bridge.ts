@@ -19,3 +19,7 @@ export interface BridgeContract {
 }
 
 export type BridgeLogoType = "symbol" | "horizontal";
+
+export type BridgeLogo = {
+  [key in BridgeLogoType]: string;
+};

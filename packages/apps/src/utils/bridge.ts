@@ -6,20 +6,19 @@ import { L2ArbitrumBridge } from "@/bridges/l2bridge";
 import { LnBridgeDefault } from "@/bridges/lnbridge-default";
 import { LnBridgeOpposite } from "@/bridges/lnbridge-opposite";
 import { BridgeCategory } from "@/types/bridge";
-import { Network } from "@/types/chain";
-import { TokenSymbol } from "@/types/token";
+import { ChainConfig } from "@/types/chain";
+import { Token } from "@/types/token";
 import { PublicClient, WalletClient } from "wagmi";
 
 export function bridgeFactory(args: {
+  walletClient?: WalletClient | null;
+  publicClient?: PublicClient;
   category: BridgeCategory;
 
-  sourceChain?: Network;
-  targetChain?: Network;
-  sourceToken?: TokenSymbol;
-  targetToken?: TokenSymbol;
-
-  publicClient?: PublicClient;
-  walletClient?: WalletClient | null;
+  sourceChain?: ChainConfig;
+  targetChain?: ChainConfig;
+  sourceToken?: Token;
+  targetToken?: Token;
 }): BaseBridge | undefined {
   switch (args.category) {
     case "lnbridgev20-default":
