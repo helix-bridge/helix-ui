@@ -79,4 +79,38 @@ export class LnBridgeOpposite extends LnBridgeBase {
       return this.publicClient.waitForTransactionReceipt({ hash });
     }
   }
+
+  async updateFeeAndMargin(margin: bigint, baseFee: bigint, feeRate: number) {
+    if ((await this.publicClient?.getChainId()) !== this.sourceChain?.id) {
+      throw new Error("Wrong network");
+    }
+
+    if (
+      this.contract &&
+      this.targetChain &&
+      this.sourceToken &&
+      this.targetToken &&
+      this.publicClient &&
+      this.walletClient
+    ) {
+      const abi = (await import(`../abi/lnbridgev20-opposite.json`)).default;
+
+      const hash = await this.walletClient.writeContract({
+        address: this.contract.sourceAddress,
+        abi,
+        functionName: "updateProviderFeeAndMargin",
+        args: [
+          BigInt(this.targetChain.id),
+          this.sourceToken.address,
+          this.targetToken.address,
+          margin,
+          baseFee,
+          feeRate,
+        ],
+        value: this.sourceToken.type === "native" ? margin : undefined,
+        gas: this.getTxGasLimit(),
+      });
+      return this.publicClient.waitForTransactionReceipt({ hash });
+    }
+  }
 }

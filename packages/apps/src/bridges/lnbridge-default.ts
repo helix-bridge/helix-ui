@@ -80,4 +80,57 @@ export class LnBridgeDefault extends LnBridgeBase {
       return this.publicClient.waitForTransactionReceipt({ hash });
     }
   }
+
+  async depositMargin(margin: bigint) {
+    if ((await this.publicClient?.getChainId()) !== this.targetChain?.id) {
+      throw new Error("Wrong network");
+    }
+
+    if (
+      this.contract &&
+      this.sourceChain &&
+      this.sourceToken &&
+      this.targetToken &&
+      this.publicClient &&
+      this.walletClient
+    ) {
+      const abi = (await import(`../abi/lnbridgev20-default.json`)).default;
+
+      const hash = await this.walletClient.writeContract({
+        address: this.contract.targetAddress,
+        abi,
+        functionName: "depositProviderMargin",
+        args: [BigInt(this.sourceChain.id), this.sourceToken.address, this.targetToken.address, margin],
+        value: this.sourceToken.type === "native" ? margin : undefined,
+        gas: this.getTxGasLimit(),
+      });
+      return this.publicClient.waitForTransactionReceipt({ hash });
+    }
+  }
+
+  async setFeeAndRate(baseFee: bigint, feeRate: number) {
+    if ((await this.publicClient?.getChainId()) !== this.sourceChain?.id) {
+      throw new Error("Wrong network");
+    }
+
+    if (
+      this.contract &&
+      this.targetChain &&
+      this.sourceToken &&
+      this.targetToken &&
+      this.publicClient &&
+      this.walletClient
+    ) {
+      const abi = (await import(`../abi/lnbridgev20-default.json`)).default;
+
+      const hash = await this.walletClient.writeContract({
+        address: this.contract.sourceAddress,
+        abi,
+        functionName: "setProviderFee",
+        args: [BigInt(this.targetChain.id), this.sourceToken.address, this.targetToken.address, baseFee, feeRate],
+        gas: this.getTxGasLimit(),
+      });
+      return this.publicClient.waitForTransactionReceipt({ hash });
+    }
+  }
 }
