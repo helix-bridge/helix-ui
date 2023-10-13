@@ -14,10 +14,8 @@ jobs:
 
       - uses: actions/checkout@v2
         with:
-          repository: itering/actions
-          path: .github/actions
-          persist-credentials: false
-          ssh-key: "${{ secrets.ITERING_ACTIONS_DEPLOY_KEY }}"
+          repository: darwinia-network/devops
+          path: .github
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy helix
@@ -39,7 +37,7 @@ jobs:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
-          alias_domain: "helix-stg-test"
+          alias_domain: "helix-stg-test,testnet.helixbridge.app"
           project_name: "helix-apps-test"
           script_run: false
           dist_path: .
