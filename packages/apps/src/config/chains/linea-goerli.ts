@@ -29,11 +29,11 @@ export const lineaGoerliChain: ChainConfig = {
   testnet: true,
   tokens: [
     {
-      decimals: 6,
+      decimals: 18,
       symbol: "USDC",
       name: "USDC",
       type: "erc20",
-      address: "0xb5E028f980dF5533cB0e8F04530B76637383d993",
+      address: "0xeC89AF5FF618bbF667755BE9d63C69F21F1c00C8",
       logo: "usdc.svg",
       cross: [
         { target: { network: "goerli", symbol: "USDC" }, bridge: { category: "lnbridgev20-opposite" } },
@@ -42,11 +42,11 @@ export const lineaGoerliChain: ChainConfig = {
       ],
     },
     {
-      decimals: 6,
+      decimals: 18,
       symbol: "USDT",
       name: "USDT",
       type: "erc20",
-      address: "0xBC1A2f123Dc9CD2ec8d3cE42eF16c28F3C9bA686",
+      address: "0x8f3663930211f3DE17619FEB2eeB44c9c3F44a06",
       logo: "usdt.svg",
       cross: [
         { target: { network: "goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-opposite" } },

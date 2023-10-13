@@ -33,7 +33,7 @@ export const goerliChain: ChainConfig = {
       symbol: "USDC",
       name: "USDC",
       type: "erc20",
-      address: "0x1a70127284B774fF4A4dbfe0115114642f0eca65",
+      address: "0xe9784E0d9A939dbe966b021DE3cd877284DB1B99",
       logo: "usdc.svg",
       cross: [
         { target: { network: "arbitrum-goerli", symbol: "USDC" }, bridge: { category: "lnbridgev20-default" } },
@@ -42,11 +42,11 @@ export const goerliChain: ChainConfig = {
       ],
     },
     {
-      decimals: 18,
+      decimals: 6,
       symbol: "USDT",
       name: "USDT",
       type: "erc20",
-      address: "0x2303e4d55BF16a897Cb5Ab71c6225399509d9314",
+      address: "0xa39cffE89567eBfb5c306a07dfb6e5B3ba41F358",
       logo: "usdt.svg",
       cross: [
         { target: { network: "arbitrum-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
