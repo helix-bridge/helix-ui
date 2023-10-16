@@ -56,16 +56,20 @@ export class HelixBridgeDVMDVM extends BaseBridge {
     const sourceRpc = this.sourceChain?.rpcUrls.default.webSocket?.at(0);
     const targetRpc = this.targetChain?.rpcUrls.default.webSocket?.at(0);
 
-    const source = (
-      (await ApiPromise.create({ provider: new WsProvider(sourceRpc) })).consts.system.version as unknown as {
-        specVersion: SpecVersion;
-      }
-    ).specVersion.toNumber();
-    const target = (
-      (await ApiPromise.create({ provider: new WsProvider(targetRpc) })).consts.system.version as unknown as {
-        specVersion: SpecVersion;
-      }
-    ).specVersion.toNumber();
+    const source = sourceRpc
+      ? (
+          (await ApiPromise.create({ provider: new WsProvider(sourceRpc) })).consts.system.version as unknown as {
+            specVersion: SpecVersion;
+          }
+        ).specVersion.toNumber()
+      : 0;
+    const target = targetRpc
+      ? (
+          (await ApiPromise.create({ provider: new WsProvider(targetRpc) })).consts.system.version as unknown as {
+            specVersion: SpecVersion;
+          }
+        ).specVersion.toNumber()
+      : 0;
 
     this.specVersion = { source, target };
   }
