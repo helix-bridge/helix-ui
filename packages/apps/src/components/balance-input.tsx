@@ -1,8 +1,6 @@
-import { ChainToken } from "@/types/misc";
+import { Token } from "@/types/token";
+import Input from "@/ui/input";
 import { formatBalance } from "@/utils/balance";
-import { getChainConfig } from "@/utils/chain";
-import { getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
-import Image from "next/image";
 import { parseUnits } from "viem";
 
 export interface BalanceInputValue {
@@ -13,46 +11,46 @@ export interface BalanceInputValue {
 export function BalanceInput({
   placeholder,
   balance,
+  limit,
   disabled,
+  suffix,
   value,
-  chainToken,
+  token,
   onChange = () => undefined,
 }: {
   placeholder?: string;
   balance?: bigint;
+  limit?: bigint;
   disabled?: boolean;
+  suffix?: boolean;
   value?: BalanceInputValue;
-  chainToken?: ChainToken;
+  token?: Token;
   onChange?: (value: BalanceInputValue) => void;
 }) {
-  const chainConfig = getChainConfig(chainToken?.network);
-  const tokenConfig = chainConfig?.tokens.find((t) => t.symbol === chainToken?.symbol);
-
   const insufficient = balance !== undefined && (value?.formatted || 0n) > balance ? true : false;
+  const exceeded = limit !== undefined && (value?.formatted || 0n) > limit ? true : false;
 
   return (
     <div
-      className={`p-small lg:p-middle gap-small bg-app-bg flex items-center justify-between rounded border border-transparent transition-colors ${
-        insufficient
+      className={`lg:px-middle px-small py-small gap-small bg-app-bg relative flex items-center justify-between rounded border border-transparent transition-colors ${
+        insufficient || exceeded
           ? "hover:border-app-red focus-within:border-app-red border-app-red"
           : disabled
           ? ""
           : "hover:border-line focus-within:border-line"
       }`}
     >
-      <input
+      <Input
         placeholder={
-          balance !== undefined && tokenConfig
-            ? `Balance ${formatBalance(balance, tokenConfig.decimals, { keepZero: false })}`
+          balance !== undefined
+            ? `Balance ${formatBalance(balance, token?.decimals || 0)}`
             : placeholder ?? "Enter an amount"
         }
-        className={`h-10 w-full rounded bg-transparent font-medium text-white focus-visible:outline-none disabled:cursor-not-allowed ${
-          value?.value ? "text-lg" : "text-sm"
-        }`}
+        className="h-12 w-full rounded bg-transparent text-sm font-medium text-white"
         onChange={(e) => {
           if (e.target.value) {
-            if (!Number.isNaN(Number(e.target.value)) && tokenConfig) {
-              onChange({ value: e.target.value, formatted: parseUnits(e.target.value, tokenConfig.decimals) });
+            if (!Number.isNaN(Number(e.target.value))) {
+              onChange({ value: e.target.value, formatted: parseUnits(e.target.value, token?.decimals || 0) });
             }
           } else {
             onChange({ value: e.target.value, formatted: 0n });
@@ -62,27 +60,18 @@ export function BalanceInput({
         value={value?.value}
       />
 
-      {chainConfig && tokenConfig ? (
-        <div className="p-middle gap-middle bg-component flex shrink-0 items-center rounded">
-          <div className="relative w-fit shrink-0">
-            <Image
-              width={30}
-              height={30}
-              alt="Token"
-              src={getTokenLogoSrc(tokenConfig.logo)}
-              className="rounded-full"
-            />
-            <Image
-              width={16}
-              height={16}
-              alt="Chain"
-              src={getChainLogoSrc(chainConfig.logo)}
-              className="absolute -bottom-1 -right-1 rounded-full"
-            />
-          </div>
-          <span className="truncate text-sm font-medium text-white">{tokenConfig.symbol}</span>
-        </div>
-      ) : null}
+      {!!(token && suffix) && <span className="text-sm">{token.symbol}</span>}
+
+      {insufficient && <Message text="* Insufficient" />}
+      {exceeded && <Message text="* Limit exceeded" />}
+    </div>
+  );
+}
+
+function Message({ text }: { text: string }) {
+  return (
+    <div className="absolute -bottom-5 left-0 w-full">
+      <span className="text-app-red text-xs font-light">{text}</span>
     </div>
   );
 }

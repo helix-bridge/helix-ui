@@ -10,6 +10,7 @@ import { formatBalance } from "@/utils/balance";
 import { useState } from "react";
 import Button from "@/ui/button";
 import RelayerManageModal from "./relayer-manage-modal";
+import RelayerProvider from "@/providers/relayer-provider";
 
 interface Props {
   total: number;
@@ -57,7 +58,7 @@ const commonColumns: ColumnType<DataSource>[] = [
 
       return token ? (
         <Tooltip content={<span className="text-xs font-normal text-white">{token.symbol}</span>} className="w-fit">
-          <Image width={24} height={24} alt="Token" src={getTokenLogoSrc(token.logo)} />
+          <Image width={24} height={24} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
         </Tooltip>
       ) : (
         <span>-</span>

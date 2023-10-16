@@ -19,20 +19,21 @@ export class LnBridgeBase extends BaseBridge {
   }) {
     super(args);
 
-    if (args.logo) {
-      this.logo = {
-        horizontal: "helix-horizontal.svg",
-        symbol: "helix-symbol.svg",
-      };
-    }
+    this.logo = args.logo ?? {
+      horizontal: "helix-horizontal.svg",
+      symbol: "helix-symbol.svg",
+    };
     this.name = "Helix LnBridge";
     this.estimateTime = { min: 1, max: 30 };
   }
 
-  async getFee(args?: { baseFee?: bigint; liquidityFeeRate?: bigint; transferAmount?: bigint }) {
+  async getFee(args?: { baseFee?: bigint; protocolFee?: bigint; liquidityFeeRate?: bigint; transferAmount?: bigint }) {
     if (this.sourceToken) {
       return {
-        value: (args?.baseFee || 0n) + ((args?.liquidityFeeRate || 0n) * (args?.transferAmount || 0n)) / 100000n,
+        value:
+          (args?.baseFee || 0n) +
+          (args?.protocolFee || 0n) +
+          ((args?.liquidityFeeRate || 0n) * (args?.transferAmount || 0n)) / 100000n,
         token: this.sourceToken,
       };
     }

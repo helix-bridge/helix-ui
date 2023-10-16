@@ -5,10 +5,10 @@ interface Props {
   className?: string;
   value?: string;
   onChange?: (value: string) => void;
-  onReset?: () => void;
+  onClear?: () => void;
 }
 
-export default function SearchInput({ placeholder, className, value, onReset, onChange = () => undefined }: Props) {
+export default function Search({ placeholder, className, value, onClear, onChange = () => undefined }: Props) {
   return (
     <div
       className={`gap-small border-line px-middle hover:border-primary focus-within:border-primary flex items-center justify-between rounded border py-2 transition-colors duration-300 ${className}`}
@@ -23,7 +23,7 @@ export default function SearchInput({ placeholder, className, value, onReset, on
       {value ? (
         <button
           className="relative h-[20px] w-[20px] shrink-0 rounded-full bg-transparent p-[2px] transition hover:scale-105 hover:bg-white/20 active:scale-95"
-          onClick={onReset}
+          onClick={onClear}
         >
           <Image alt="Close" fill src="/images/close.svg" />
         </button>

@@ -3,6 +3,7 @@ import PrettyAddress from "./pretty-address";
 import Image from "next/image";
 import { getTokenLogoSrc } from "@/utils/misc";
 import { getChainConfig } from "@/utils/chain";
+import Button from "@/ui/button";
 
 interface Props {
   record?: HistoryRecord | null;
@@ -23,8 +24,8 @@ export default function TokenToReceive({ record }: Props) {
 
       {/* add to metamask */}
       {!!(window.ethereum && token.address) && (
-        <button
-          className="border-primary px-middle rounded border py-[1px] transition hover:opacity-80 active:translate-y-1 disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+        <Button
+          className="px-middle py-[1px]"
           onClick={async () => {
             try {
               await window.ethereum.request({
@@ -45,7 +46,7 @@ export default function TokenToReceive({ record }: Props) {
           }}
         >
           <span className="text-sm font-normal text-white">Add to MetaMask</span>
-        </button>
+        </Button>
       )}
     </div>
   ) : null;

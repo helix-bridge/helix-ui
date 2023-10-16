@@ -25,8 +25,8 @@ export abstract class BaseBridge {
   protected readonly targetNativeToken?: Token;
   protected readonly crossInfo?: CrossChain;
 
-  protected readonly sourcePublicClient: ViemPublicClient;
-  protected readonly targetPublicClient: ViemPublicClient;
+  protected readonly sourcePublicClient: ViemPublicClient | undefined;
+  protected readonly targetPublicClient: ViemPublicClient | undefined;
   protected readonly publicClient?: WagmiPublicClient; // The public client to which the wallet is connected
   protected readonly walletClient?: WalletClient | null;
 
@@ -50,9 +50,6 @@ export abstract class BaseBridge {
           c.target.network === args.targetChain?.network &&
           c.target.symbol === args.targetToken?.symbol,
       );
-    if (args.logo) {
-      this.logo = args.logo;
-    }
 
     this.sourceChain = args.sourceChain;
     this.targetChain = args.targetChain;
@@ -63,8 +60,10 @@ export abstract class BaseBridge {
 
     this.walletClient = args.walletClient;
     this.publicClient = args.publicClient;
-    this.sourcePublicClient = createPublicClient({ chain: args.sourceChain, transport: http() });
-    this.targetPublicClient = createPublicClient({ chain: args.targetChain, transport: http() });
+    if (args.sourceChain && args.targetChain) {
+      this.sourcePublicClient = createPublicClient({ chain: args.sourceChain, transport: http() });
+      this.targetPublicClient = createPublicClient({ chain: args.targetChain, transport: http() });
+    }
   }
 
   getLogo() {
@@ -97,8 +96,16 @@ export abstract class BaseBridge {
       : undefined;
   }
 
+  protected async validateNetwork(position: "source" | "target") {
+    const chain = position === "source" ? this.sourceChain : this.targetChain;
+    if (chain?.id !== (await this.publicClient?.getChainId())) {
+      throw new Error("Wrong network");
+    }
+  }
+
   async getFee(_?: {
     baseFee?: bigint;
+    protocolFee?: bigint;
     liquidityFeeRate?: bigint;
     transferAmount?: bigint;
   }): Promise<{ value: bigint; token: Token } | undefined> {
@@ -140,36 +147,38 @@ export abstract class BaseBridge {
   }
 
   async getSourceBalance(address: Address) {
-    if (this.sourceToken) {
+    if (this.sourceToken && this.sourcePublicClient) {
       return this.getBalance(address, this.sourceToken, this.sourcePublicClient);
     }
   }
 
   async getTargetBalance(address: Address) {
-    if (this.targetToken) {
+    if (this.targetToken && this.targetPublicClient) {
       return this.getBalance(address, this.targetToken, this.targetPublicClient);
     }
   }
 
   private async getAllowance(owner: Address, spender: Address, token: Token, publicClient: ViemPublicClient) {
-    const abi = (await import("../abi/erc20.json")).default;
-    const value = (await publicClient.readContract({
-      address: token.address,
-      abi,
-      functionName: "allowance",
-      args: [owner, spender],
-    })) as unknown as bigint;
-    return { value, token };
+    if (token.type === "erc20") {
+      const abi = (await import("../abi/erc20.json")).default;
+      const value = (await publicClient.readContract({
+        address: token.address,
+        abi,
+        functionName: "allowance",
+        args: [owner, spender],
+      })) as unknown as bigint;
+      return { value, token };
+    }
   }
 
   async getSourceAllowance(owner: Address) {
-    if (this.contract && this.sourceToken) {
+    if (this.contract && this.sourceToken && this.sourcePublicClient) {
       return await this.getAllowance(owner, this.contract.sourceAddress, this.sourceToken, this.sourcePublicClient);
     }
   }
 
   async getTargetAllowance(owner: Address) {
-    if (this.contract && this.targetToken) {
+    if (this.contract && this.targetToken && this.targetPublicClient) {
       return await this.getAllowance(owner, this.contract.targetAddress, this.targetToken, this.targetPublicClient);
     }
   }
@@ -190,18 +199,14 @@ export abstract class BaseBridge {
   }
 
   async sourceApprove(amount: bigint, owner: Address) {
-    if (this.sourceChain?.id !== (await this.publicClient?.getChainId())) {
-      throw new Error("Wrong network");
-    }
+    await this.validateNetwork("source");
     if (this.sourceToken && this.contract) {
       return this.approve(amount, owner, this.contract.sourceAddress, this.sourceToken);
     }
   }
 
   async targetApprove(amount: bigint, owner: Address) {
-    if (this.targetChain?.id !== (await this.publicClient?.getChainId())) {
-      throw new Error("Wrong network");
-    }
+    await this.validateNetwork("target");
     if (this.targetToken && this.contract) {
       return this.approve(amount, owner, this.contract.targetAddress, this.targetToken);
     }

@@ -1,9 +1,9 @@
 "use client";
 
 import { QUERY_LNRELAYERS } from "@/config/gql";
-import { Network } from "@/types/chain";
+import { ChainConfig } from "@/types/chain";
 import { LnRelayerInfo, LnRelayersResponseData, LnRelayersVariables } from "@/types/graphql";
-import SearchInput from "@/ui/search-input";
+import Search from "@/ui/search";
 import { useQuery } from "@apollo/client";
 import { useDeferredValue, useEffect, useState } from "react";
 import ChainSelect from "./chain-select";
@@ -16,16 +16,16 @@ const pageSize = 12;
 
 export default function LnRelayerOverview() {
   const [records, setRecords] = useState<LnRelayerInfo[]>([]);
-  const [sourceChain, setSourceChain] = useState<Network>();
-  const [targetChain, setTargetChain] = useState<Network>();
+  const [sourceChain, setSourceChain] = useState<ChainConfig>();
+  const [targetChain, setTargetChain] = useState<ChainConfig>();
   const [currentPage, setCurrentPage] = useState(0);
   const [searchValue, setSearchValue] = useState("");
   const deferredSearchValue = useDeferredValue(searchValue);
 
   const { loading, data, refetch } = useQuery<LnRelayersResponseData, LnRelayersVariables>(QUERY_LNRELAYERS, {
     variables: {
-      fromChain: sourceChain,
-      toChain: targetChain,
+      fromChain: sourceChain?.network,
+      toChain: targetChain?.network,
       row: pageSize,
       page: currentPage,
       relayer: deferredSearchValue.toLowerCase() || undefined,
@@ -42,12 +42,12 @@ export default function LnRelayerOverview() {
   return (
     <>
       <div className="gap-middle mb-5 flex flex-col items-start justify-between lg:flex-row lg:items-center">
-        <SearchInput
+        <Search
           className="w-full lg:w-[21.5rem]"
           placeholder="Search by address"
           value={searchValue}
           onChange={setSearchValue}
-          onReset={() => setSearchValue("")}
+          onClear={() => setSearchValue("")}
         />
 
         <div className="gap-small flex items-center lg:gap-5">
@@ -56,7 +56,7 @@ export default function LnRelayerOverview() {
             <ChainSelect
               className="px-middle border-line hover:border-primary w-40 py-[7px]"
               placeholder="Source chain"
-              options={defaultSourceOptions.map(({ network }) => network)}
+              options={defaultSourceOptions.map(({ chain }) => chain)}
               onChange={(value) => {
                 setSourceChain(value);
                 setTargetChain(undefined);
@@ -69,7 +69,9 @@ export default function LnRelayerOverview() {
             <ChainSelect
               className="px-middle border-line hover:border-primary w-40 py-[7px]"
               placeholder="Target chain"
-              options={sourceChain ? availableTargetChains[sourceChain] || defaultTargetChains : defaultTargetChains}
+              options={
+                sourceChain ? availableTargetChains[sourceChain.network] || defaultTargetChains : defaultTargetChains
+              }
               onChange={setTargetChain}
               value={targetChain}
             />

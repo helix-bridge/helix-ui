@@ -17,6 +17,10 @@ import {
 } from "react";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { Subscription, forkJoin } from "rxjs";
+import { notification } from "@/ui/notification";
+import { notifyTransaction } from "@/utils/notification";
+import { TransactionReceipt } from "viem";
+import { getChainConfig } from "@/utils/chain";
 
 interface RelayerCtx {
   margin: { formatted: bigint; value: string };
@@ -29,7 +33,8 @@ interface RelayerCtx {
   bridgeCategory: BridgeCategory | undefined;
   sourceChain: ChainConfig | undefined;
   targetChain: ChainConfig | undefined;
-  transferToken: Token | undefined;
+  sourceToken: Token | undefined;
+  targetToken: Token | undefined;
   defaultBridge: LnBridgeDefault | undefined;
   oppositeBridge: LnBridgeOpposite | undefined;
 
@@ -39,11 +44,12 @@ interface RelayerCtx {
   setBridgeCategory: Dispatch<SetStateAction<BridgeCategory | undefined>>;
   setSourceChain: Dispatch<SetStateAction<ChainConfig | undefined>>;
   setTargetChain: Dispatch<SetStateAction<ChainConfig | undefined>>;
-  setTransferToken: Dispatch<SetStateAction<Token | undefined>>;
-  sourceApprove: (amount: bigint) => Promise<void>;
-  targetApprove: (amount: bigint) => Promise<void>;
-  depositMargin: (margin: bigint) => Promise<void>;
-  updateFeeAndMargin: (margin: bigint, baseFee: bigint, feeRate: number) => Promise<void>;
+  setSourceToken: Dispatch<SetStateAction<Token | undefined>>;
+  sourceApprove: (amount: bigint) => Promise<TransactionReceipt | undefined>;
+  targetApprove: (amount: bigint) => Promise<TransactionReceipt | undefined>;
+  depositMargin: (margin: bigint) => Promise<TransactionReceipt | undefined>;
+  updateFeeAndMargin: (margin: bigint, baseFee: bigint, feeRate: number) => Promise<TransactionReceipt | undefined>;
+  setFeeAndRate: (baseFee: bigint, feeRate: number) => Promise<TransactionReceipt | undefined>;
 }
 
 const defaultValue: RelayerCtx = {
@@ -57,7 +63,8 @@ const defaultValue: RelayerCtx = {
   bridgeCategory: undefined,
   sourceChain: undefined,
   targetChain: undefined,
-  transferToken: undefined,
+  sourceToken: undefined,
+  targetToken: undefined,
   defaultBridge: undefined,
   oppositeBridge: undefined,
   setMargin: () => undefined,
@@ -66,11 +73,12 @@ const defaultValue: RelayerCtx = {
   setBridgeCategory: () => undefined,
   setSourceChain: () => undefined,
   setTargetChain: () => undefined,
-  setTransferToken: () => undefined,
+  setSourceToken: () => undefined,
   sourceApprove: async () => undefined,
   targetApprove: async () => undefined,
   depositMargin: async () => undefined,
   updateFeeAndMargin: async () => undefined,
+  setFeeAndRate: async () => undefined,
 };
 
 export const RelayerContext = createContext(defaultValue);
@@ -92,7 +100,14 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
   const [bridgeCategory, setBridgeCategory] = useState(defaultValue.bridgeCategory);
   const [sourceChain, setSourceChain] = useState(defaultValue.sourceChain);
   const [targetChain, setTargetChain] = useState(defaultValue.targetChain);
-  const [transferToken, setTransferToken] = useState(defaultValue.transferToken);
+  const [sourceToken, setSourceToken] = useState(defaultValue.sourceToken);
+
+  const targetToken = useMemo(() => {
+    const cross = sourceChain?.tokens
+      .find((t) => t.symbol === sourceToken?.symbol)
+      ?.cross.find((c) => c.bridge.category === bridgeCategory && c.target.network === targetChain?.network);
+    return getChainConfig(cross?.target.network)?.tokens.find((t) => t.symbol === cross?.target.symbol);
+  }, [bridgeCategory, sourceChain, targetChain, sourceToken]);
 
   const { defaultBridge, oppositeBridge, bridgeClient } = useMemo(() => {
     let defaultBridge: LnBridgeDefault | undefined;
@@ -103,6 +118,8 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
         category: bridgeCategory,
         sourceChain,
         targetChain,
+        sourceToken,
+        targetToken,
         walletClient,
         publicClient,
       });
@@ -111,74 +128,112 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
         category: bridgeCategory,
         sourceChain,
         targetChain,
+        sourceToken,
+        targetToken,
         walletClient,
         publicClient,
       });
     }
 
     return { defaultBridge, oppositeBridge, bridgeClient: defaultBridge ?? oppositeBridge };
-  }, [sourceChain, targetChain, bridgeCategory, walletClient, publicClient]);
+  }, [sourceChain, targetChain, sourceToken, targetToken, bridgeCategory, walletClient, publicClient]);
 
   const sourceApprove = useCallback(
     async (amount: bigint) => {
       if (address && bridgeClient) {
         try {
-          await bridgeClient.sourceApprove(amount, address);
+          const receipt = await bridgeClient.sourceApprove(amount, address);
+          notifyTransaction(receipt, sourceChain);
+
           setSourceAllowance(await bridgeClient.getSourceAllowance(address));
+
+          return receipt;
         } catch (err) {
           console.error(err);
+          notification.error({ title: "Approve failed", description: (err as Error).message });
         }
       }
     },
-    [address, bridgeClient],
+    [address, bridgeClient, sourceChain],
   );
 
   const targetApprove = useCallback(
     async (amount: bigint) => {
       if (address && bridgeClient) {
         try {
-          await bridgeClient.targetApprove(amount, address);
+          const receipt = await bridgeClient.targetApprove(amount, address);
+          notifyTransaction(receipt, sourceChain);
+
           setTargetAllowance(await bridgeClient.getTargetAllowance(address));
+
+          return receipt;
         } catch (err) {
           console.error(err);
+          notification.error({ title: "Approve failed", description: (err as Error).message });
         }
       }
     },
-    [address, bridgeClient],
+    [address, bridgeClient, sourceChain],
   );
 
   const depositMargin = useCallback(
     async (margin: bigint) => {
       if (address && defaultBridge) {
         try {
-          await defaultBridge.depositMargin(margin);
+          const receipt = await defaultBridge.depositMargin(margin);
+          notifyTransaction(receipt, sourceChain);
+
           const a = await defaultBridge.getTargetAllowance(address);
           const b = await defaultBridge.getTargetBalance(address);
           setTargetAllowance(a);
           setTargetBalance(b);
+
+          return receipt;
         } catch (err) {
           console.error(err);
+          notification.error({ title: "Deposit failed", description: (err as Error).message });
         }
       }
     },
-    [address, defaultBridge],
+    [address, defaultBridge, sourceChain],
+  );
+
+  const setFeeAndRate = useCallback(
+    async (baseFee: bigint, feeRate: number) => {
+      if (defaultBridge) {
+        try {
+          const receipt = await defaultBridge.setFeeAndRate(baseFee, feeRate);
+          notifyTransaction(receipt, sourceChain);
+          return receipt;
+        } catch (err) {
+          console.error(err);
+          notification.error({ title: "Setting failed", description: (err as Error).message });
+        }
+      }
+    },
+    [sourceChain, defaultBridge],
   );
 
   const updateFeeAndMargin = useCallback(
     async (margin: bigint, baseFee: bigint, feeRate: number) => {
       if (address && oppositeBridge) {
         try {
-          await oppositeBridge.updateFeeAndMargin(margin, baseFee, feeRate);
+          const receipt = await oppositeBridge.updateFeeAndMargin(margin, baseFee, feeRate);
+          notifyTransaction(receipt, sourceChain);
+
           const a = await oppositeBridge.getSourceAllowance(address);
           const b = await oppositeBridge.getSourceBalance(address);
           setSourceAllowance(a);
           setSourceBalance(b);
+
+          return receipt;
         } catch (err) {
           console.error(err);
+          notification.error({ title: "Transfer failed", description: (err as Error).message });
         }
       }
     },
-    [address, oppositeBridge],
+    [address, oppositeBridge, sourceChain],
   );
 
   useEffect(() => {
@@ -228,7 +283,8 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
         bridgeCategory,
         sourceChain,
         targetChain,
-        transferToken,
+        sourceToken,
+        targetToken,
         defaultBridge,
         oppositeBridge,
         setMargin,
@@ -237,11 +293,12 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
         setBridgeCategory,
         setSourceChain,
         setTargetChain,
-        setTransferToken,
+        setSourceToken,
         sourceApprove,
         targetApprove,
         depositMargin,
         updateFeeAndMargin,
+        setFeeAndRate,
       }}
     >
       {children}

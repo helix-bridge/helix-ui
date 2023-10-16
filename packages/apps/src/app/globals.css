@@ -44,6 +44,22 @@ body {
     min-height: calc(100vh - 64px - 58px);
     @apply mt-[64px] py-5;
   }
+
+  .user-connect-wallet {
+    @apply bg-primary gap-middle px-large flex h-9 shrink-0 items-center rounded transition hover:opacity-80 lg:h-8 lg:hover:opacity-80 lg:active:translate-y-1;
+  }
+
+  .user-dropdown-item {
+    @apply gap-middle px-large py-small inline-flex items-center text-start transition hover:bg-white/10 lg:active:translate-y-1;
+  }
+
+  .tooltip-text {
+    @apply text-xs font-normal text-white;
+  }
+
+  .button {
+    @apply flex h-8 items-center justify-center lg:h-9 text-sm;
+  }
 }
 
 .page-bg {

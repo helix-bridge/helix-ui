@@ -1,7 +1,5 @@
-import { Network } from "@/types/chain";
-import { Token, TokenSymbol } from "@/types/token";
-import { getChainConfig } from "@/utils/chain";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Token } from "@/types/token";
+import { useCallback, useEffect, useState } from "react";
 import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
 import { Subscription, forkJoin, from } from "rxjs";
 import { switchMap } from "rxjs/operators";
@@ -10,54 +8,46 @@ import Modal from "@/ui/modal";
 import { formatBalance } from "@/utils/balance";
 import { notification } from "@/ui/notification";
 import { notifyTransaction } from "@/utils/notification";
+import Label from "@/ui/label";
+import { useTransfer } from "@/hooks/use-transfer";
+import { parseUnits } from "viem";
 
-interface Props {
-  sourceChain?: Network;
-  sourceToken?: TokenSymbol;
-  onSuccess?: () => void;
-}
+export default function Faucet() {
+  const { sourceChain, sourceToken, updateBalance } = useTransfer();
 
-export default function Faucet({ sourceChain, sourceToken, onSuccess = () => undefined }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [allow, setAllow] = useState(0n);
   const [max, setMax] = useState(0n);
 
-  const { chainConfig, tokenConfig } = useMemo(() => {
-    const chainConfig = getChainConfig(sourceChain);
-    const tokenConfig = chainConfig?.tokens.find((t) => t.symbol === sourceToken);
-
-    return { chainConfig, tokenConfig };
-  }, [sourceChain, sourceToken]);
-
   const { switchNetwork } = useSwitchNetwork();
   const { data: walletClient } = useWalletClient();
-  const publicClient = usePublicClient({ chainId: chainConfig?.id });
+  const publicClient = usePublicClient({ chainId: sourceChain?.id });
   const { address } = useAccount();
   const { chain } = useNetwork();
 
   const handleClaim = useCallback(async () => {
-    if (chain?.id !== chainConfig?.id) {
-      switchNetwork?.(chainConfig?.id);
-    } else if (tokenConfig && publicClient && walletClient) {
+    if (chain?.id !== sourceChain?.id) {
+      switchNetwork?.(sourceChain?.id);
+    } else if (sourceToken && publicClient && walletClient) {
       try {
         setBusy(true);
 
         const abi = (await import("@/abi/faucet.json")).default;
         const hash = await walletClient.writeContract({
-          address: tokenConfig.address,
+          address: sourceToken.address,
           abi,
-          functionName: "fault",
-          args: [allow],
+          functionName: "faucet",
+          args: [allow > 0 ? allow - 1n : allow],
         });
         const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
-        notifyTransaction(receipt, chainConfig?.network);
+        notifyTransaction(receipt, sourceChain);
         if (receipt.status === "success") {
           setAllow(0n);
           setBusy(false);
           setIsOpen(false);
-          onSuccess();
+          updateBalance();
         }
       } catch (err) {
         console.error(err);
@@ -66,29 +56,29 @@ export default function Faucet({ sourceChain, sourceToken, onSuccess = () => und
         setBusy(false);
       }
     }
-  }, [allow, chain, chainConfig, tokenConfig, publicClient, walletClient, switchNetwork, onSuccess]);
+  }, [allow, chain, sourceChain, sourceToken, publicClient, walletClient, switchNetwork, updateBalance]);
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
 
-    if (address && tokenConfig && publicClient) {
+    if (address && sourceToken?.type === "erc20" && publicClient) {
       sub$$ = from(import("@/abi/faucet.json"))
         .pipe(
           switchMap((abi) =>
             forkJoin([
               from(
                 publicClient.readContract({
-                  address: tokenConfig.address,
+                  address: sourceToken.address,
                   abi: abi.default,
-                  functionName: "allowFault",
+                  functionName: "allowFaucet",
                   args: [address],
                 }) as Promise<bigint>,
               ),
               from(
                 publicClient.readContract({
-                  address: tokenConfig.address,
+                  address: sourceToken.address,
                   abi: abi.default,
-                  functionName: "maxFaultAllowed",
+                  functionName: "maxFaucetAllowed",
                 }) as Promise<bigint>,
               ),
             ]),
@@ -96,8 +86,9 @@ export default function Faucet({ sourceChain, sourceToken, onSuccess = () => und
         )
         .subscribe({
           next: ([a, m]) => {
-            setAllow(a);
-            setMax(m);
+            const _max = parseUnits(m.toString(), sourceToken.decimals);
+            setAllow(_max - a);
+            setMax(_max);
           },
           error: (err) => {
             console.error(err);
@@ -111,59 +102,45 @@ export default function Faucet({ sourceChain, sourceToken, onSuccess = () => und
     }
 
     return () => sub$$?.unsubscribe();
-  }, [address, tokenConfig, publicClient]);
+  }, [address, sourceToken, publicClient]);
 
   return (
     <>
-      <Tooltip
-        content={<span className="text-xs font-normal text-white">It is temporarily unavailable</span>}
-        enabled={!(allow > 0)}
+      <button
+        className="text-white/50 transition-colors hover:text-white disabled:cursor-not-allowed disabled:text-white/50"
+        onClick={() => setIsOpen(true)}
       >
-        <button
-          className="text-white/50 transition-colors hover:text-white disabled:cursor-not-allowed disabled:text-white/50"
-          disabled={!(allow > 0)}
-          onClick={() => setIsOpen(true)}
-        >
-          <span className="text-sm font-normal">Faucet</span>
-        </button>
-      </Tooltip>
+        <span className="text-sm font-normal">Faucet</span>
+      </button>
 
       <Modal
         className="w-full lg:w-[30rem]"
         title="Faucet"
-        okText={chain?.id === chainConfig?.id ? "Claim" : "Switch Network"}
+        okText={chain?.id === sourceChain?.id ? "Claim" : "Switch Network"}
         isOpen={isOpen}
         disabledCancel={busy}
+        disabledOk={allow <= 1n}
         busy={busy}
         onClose={() => setIsOpen(false)}
         onCancel={() => setIsOpen(false)}
         onOk={handleClaim}
       >
-        <Section label="Max" formated value={max} token={tokenConfig} />
-        <Section label="Allow" value={allow} token={tokenConfig} />
+        <Label text="Max" tips="The maximum you can claim">
+          <Item value={max} token={sourceToken} />
+        </Label>
+        <Label text="Allow" tips="Currently available for claiming">
+          <Item value={allow} token={sourceToken} />
+        </Label>
       </Modal>
     </>
   );
 }
 
-function Section({
-  label,
-  value,
-  formated,
-  token,
-}: {
-  label: string;
-  value: bigint;
-  formated?: boolean;
-  token?: Token;
-}) {
+function Item({ value, token }: { value: bigint; token?: Token }) {
   return (
-    <div className="gap-middle flex flex-col">
-      <span className="text-sm">{label}</span>
-      <div className="px-middle bg-app-bg py-middle flex items-center justify-between rounded">
-        <span className="text-sm">{token && formatBalance(value, formated ? 0 : token.decimals)}</span>
-        <span className="text-sm">{token?.symbol}</span>
-      </div>
+    <div className="px-middle bg-app-bg py-middle flex items-center justify-between rounded">
+      <span className="text-sm">{token && formatBalance(value, token.decimals)}</span>
+      <span className="text-sm">{token?.symbol}</span>
     </div>
   );
 }

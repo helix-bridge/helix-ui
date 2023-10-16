@@ -31,11 +31,11 @@ export default function CopyIcon({ text }: Props) {
   }, [copied]);
 
   return copied ? (
-    <Image width={18} height={18} alt="Copied" src="/images/checked.svg" className="shrink-0" />
+    <Image width={16} height={16} alt="Copied" src="/images/checked.svg" className="shrink-0" />
   ) : (
     <Image
-      width={18}
-      height={18}
+      width={16}
+      height={16}
       alt="Copy"
       src="/images/copy.svg"
       className="shrink-0 transition hover:scale-105 hover:cursor-pointer hover:opacity-80 active:scale-105"

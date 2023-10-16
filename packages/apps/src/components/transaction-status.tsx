@@ -1,6 +1,6 @@
 import { HistoryRecord, RecordStatus } from "@/types/graphql";
 import { StatusTag } from "./status-tag";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { bridgeFactory } from "@/utils/bridge";
 import { interval } from "rxjs";
 import { formatCountdown } from "@/utils/time";
@@ -29,18 +29,24 @@ export default function TransactionStatus({ record }: Props) {
   const { data: walletClient } = useWalletClient();
   const { switchNetwork } = useSwitchNetwork();
 
-  const handleClaim = useCallback(async () => {
-    const chainConfig = getChainConfig(record?.toChain);
+  const { sourceChain, targetChain, sourceToken, targetToken } = useMemo(() => {
+    const sourceChain = getChainConfig(record?.fromChain);
+    const targetChain = getChainConfig(record?.toChain);
+    const sourceToken = sourceChain?.tokens.find((t) => t.symbol === record?.sendToken);
+    const targetToken = targetChain?.tokens.find((t) => t.symbol === record?.recvToken);
+    return { sourceChain, targetChain, sourceToken, targetToken };
+  }, [record]);
 
-    if (chain?.id !== chainConfig?.id) {
-      switchNetwork?.(chainConfig?.id);
+  const handleClaim = useCallback(async () => {
+    if (chain?.id !== targetChain?.id) {
+      switchNetwork?.(targetChain?.id);
     } else if (record?.bridge) {
       const bridge = bridgeFactory({
         category: record.bridge,
-        sourceChain: record.fromChain,
-        targetChain: record.toChain,
-        sourceToken: record.sendToken,
-        targetToken: record.recvToken,
+        sourceChain,
+        targetChain,
+        sourceToken,
+        targetToken,
         publicClient,
         walletClient,
       });
@@ -48,7 +54,7 @@ export default function TransactionStatus({ record }: Props) {
       try {
         setBusy(true);
         const receipt = await bridge?.claim(record);
-        notifyTransaction(receipt, record.toChain);
+        notifyTransaction(receipt, targetChain);
       } catch (err) {
         console.error(err);
         notification.error({ title: "Claim failed", description: (err as Error).message });
@@ -56,20 +62,18 @@ export default function TransactionStatus({ record }: Props) {
         setBusy(false);
       }
     }
-  }, [chain, record, publicClient, walletClient, switchNetwork]);
+  }, [chain, record, sourceChain, targetChain, sourceToken, targetToken, publicClient, walletClient, switchNetwork]);
 
   const handleRefund = useCallback(async () => {
-    const chainConfig = getChainConfig(record?.fromChain);
-
-    if (chain?.id !== chainConfig?.id) {
-      switchNetwork?.(chainConfig?.id);
+    if (chain?.id !== targetChain?.id) {
+      switchNetwork?.(targetChain?.id);
     } else if (record?.bridge) {
       const bridge = bridgeFactory({
         category: record.bridge,
-        sourceChain: record.fromChain,
-        targetChain: record.toChain,
-        sourceToken: record.sendToken,
-        targetToken: record.recvToken,
+        sourceChain,
+        targetChain,
+        sourceToken,
+        targetToken,
         publicClient,
         walletClient,
       });
@@ -77,7 +81,7 @@ export default function TransactionStatus({ record }: Props) {
       try {
         setBusy(true);
         const receipt = await bridge?.refund(record);
-        notifyTransaction(receipt, record.toChain);
+        notifyTransaction(receipt, targetChain);
       } catch (err) {
         console.error(err);
         notification.error({ title: "Refund failed", description: (err as Error).message });
@@ -85,20 +89,18 @@ export default function TransactionStatus({ record }: Props) {
         setBusy(false);
       }
     }
-  }, [chain, record, publicClient, walletClient, switchNetwork]);
+  }, [chain, record, sourceChain, targetChain, sourceToken, targetToken, publicClient, walletClient, switchNetwork]);
 
   const handleSpeedUp = useCallback(async () => {
-    const chainConfig = getChainConfig(record?.fromChain);
-
-    if (chain?.id !== chainConfig?.id) {
-      switchNetwork?.(chainConfig?.id);
+    if (chain?.id !== sourceChain?.id) {
+      switchNetwork?.(sourceChain?.id);
     } else if (record?.bridge) {
       const bridge = bridgeFactory({
         category: record.bridge,
-        sourceChain: record.fromChain,
-        targetChain: record.toChain,
-        sourceToken: record.sendToken,
-        targetToken: record.recvToken,
+        sourceChain,
+        targetChain,
+        sourceToken,
+        targetToken,
         publicClient,
         walletClient,
       });
@@ -108,7 +110,7 @@ export default function TransactionStatus({ record }: Props) {
       try {
         setBusy(true);
         const receipt = await bridge?.speedUp(record, n > o ? n - o : 0n);
-        notifyTransaction(receipt, record.toChain);
+        notifyTransaction(receipt, sourceChain);
         if (receipt?.status === "success") {
           setIsOpen(false);
         }
@@ -119,7 +121,18 @@ export default function TransactionStatus({ record }: Props) {
         setBusy(false);
       }
     }
-  }, [chain, record, speedUpFee, publicClient, walletClient, switchNetwork]);
+  }, [
+    chain,
+    record,
+    sourceChain,
+    targetChain,
+    sourceToken,
+    targetToken,
+    speedUpFee,
+    publicClient,
+    walletClient,
+    switchNetwork,
+  ]);
 
   useEffect(() => {
     const sub$$ = interval(1000).subscribe(() => setCountdown((prev) => (prev > 0 ? prev - 1000 : 0)));
@@ -129,7 +142,7 @@ export default function TransactionStatus({ record }: Props) {
   useEffect(() => {
     if (record?.bridge) {
       const startTime = record ? record.startTime * 1000 : Date.now();
-      const minTime = (bridgeFactory({ category: record.bridge })?.getInfo().estimateTime.min || 3) * 60 * 1000;
+      const minTime = (bridgeFactory({ category: record.bridge })?.getEstimateTime().min || 3) * 60 * 1000;
       const token = getChainConfig(record.fromChain)?.tokens.find((t) => t.symbol === record.sendToken);
       const formatted = BigInt(record.fee);
 
@@ -190,7 +203,7 @@ export default function TransactionStatus({ record }: Props) {
           </div>
         )}
 
-        {record?.result === RecordStatus.PENDING && (
+        {record?.result === RecordStatus.PENDING && record.bridge.startsWith("lpbridge") && (
           <div className="gap-small flex items-center">
             <span className="text-sm font-normal text-white/50">
               You can request refund or speed up this transaction.
@@ -216,12 +229,7 @@ export default function TransactionStatus({ record }: Props) {
         onCancel={() => setIsOpen(false)}
         onOk={handleSpeedUp}
       >
-        <BalanceInput
-          placeholder="Enter new fee"
-          value={speedUpFee}
-          chainToken={record ? { network: record.fromChain, symbol: record.sendToken } : undefined}
-          onChange={setSpeedUpFee}
-        />
+        <BalanceInput placeholder="Enter new fee" value={speedUpFee} token={sourceToken} onChange={setSpeedUpFee} />
       </Modal>
     </>
   );

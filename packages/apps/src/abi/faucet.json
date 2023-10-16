@@ -39,7 +39,7 @@
   },
   {
     "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "allowFault",
+    "name": "allowFaucet",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -100,7 +100,7 @@
   },
   {
     "inputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }],
-    "name": "fault",
+    "name": "faucet",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -117,7 +117,7 @@
   },
   {
     "inputs": [],
-    "name": "maxFaultAllowed",
+    "name": "maxFaucetAllowed",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -149,7 +149,7 @@
   { "inputs": [], "name": "renounceOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
   {
     "inputs": [{ "internalType": "uint256", "name": "allowed", "type": "uint256" }],
-    "name": "setMaxFaultAllowed",
+    "name": "setMaxFaucetAllowed",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

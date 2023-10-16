@@ -69,7 +69,7 @@ export default function Tooltip({
               style={styles}
               className={`border-line bg-component px-middle py-small flex items-center rounded border ${contentClassName}`}
             >
-              {content}
+              {typeof content === "string" ? <span className="tooltip-text">{content}</span> : content}
             </div>
           </div>
         </FloatingPortal>

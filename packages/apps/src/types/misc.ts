@@ -1,15 +1,15 @@
 import { BridgeCategory } from "./bridge";
-import { Network } from "./chain";
-import { TokenSymbol } from "./token";
+import { ChainConfig, Network } from "./chain";
+import { Token, TokenSymbol } from "./token";
 
 export interface ChainTokens {
-  network: Network;
-  symbols: TokenSymbol[];
+  chain: ChainConfig;
+  tokens: Token[];
 }
 
 export interface ChainToken {
-  network: Network;
-  symbol: TokenSymbol;
+  chain: ChainConfig;
+  token: Token;
 }
 
 /**
@@ -33,5 +33,11 @@ export type AvailableTargets = {
 };
 
 export type AvailableTargetChains = {
-  [sourceChain in Network]?: Network[];
+  [sourceChain in Network]?: ChainConfig[];
+};
+
+export type AvailableTokens = {
+  [sourceChain in Network]?: {
+    [targetChain in Network]?: Token[];
+  };
 };

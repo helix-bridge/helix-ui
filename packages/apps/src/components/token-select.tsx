@@ -1,26 +1,17 @@
-// import { Network } from "@/types/chain";
-import { TokenSymbol } from "@/types/token";
-import {
-  FloatingPortal,
-  offset,
-  size,
-  useClick,
-  useDismiss,
-  useFloating,
-  useInteractions,
-  useTransitionStyles,
-} from "@floating-ui/react";
+import { Token } from "@/types/token";
+import ISelect from "@/ui/i-select";
+import { toShortAdrress } from "@/utils/address";
+import { getTokenLogoSrc } from "@/utils/misc";
 import Image from "next/image";
-import { useState } from "react";
+import PrettyAddress from "./pretty-address";
 
 interface Props {
-  options: TokenSymbol[];
-  // network?: Network;
+  options: Token[];
   disabled?: boolean;
-  value?: TokenSymbol;
+  value?: Token;
   placeholder?: string;
   className?: string;
-  onChange?: (value: TokenSymbol | undefined) => void;
+  onChange?: (value: Token | undefined) => void;
 }
 
 export default function TokenSelect({
@@ -31,84 +22,32 @@ export default function TokenSelect({
   className,
   onChange = () => undefined,
 }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const { refs, context, floatingStyles } = useFloating({
-    open: isOpen,
-    onOpenChange: setIsOpen,
-    middleware: [
-      offset(6),
-      size({
-        apply({ rects, elements }) {
-          Object.assign(elements.floating.style, { width: `${rects.reference.width}px` });
-        },
-      }),
-    ],
-  });
-
-  const { styles, isMounted } = useTransitionStyles(context, {
-    initial: { transform: "translateY(-20px)", opacity: 0 },
-    open: { transform: "translateY(0)", opacity: 1 },
-    close: { transform: "translateY(-20px)", opacity: 0 },
-  });
-
-  const click = useClick(context);
-  const dismiss = useDismiss(context);
-  const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
-
   return (
-    <>
-      <button
-        className={`gap-small bg-app-bg hover:border-line flex items-center justify-between rounded border border-transparent transition-colors duration-300 disabled:cursor-not-allowed disabled:border-transparent ${className}`}
-        ref={refs.setReference}
-        {...getReferenceProps()}
-        disabled={disabled}
-      >
-        <span className={`text-sm font-normal ${value ? "text-white" : "text-white/50"}`}>{value || placeholder}</span>
-
-        <div className="gap-small flex shrink-0 items-center">
-          {value ? (
-            <div
-              className="relative h-[16px] w-[16px] shrink-0 rounded-full bg-transparent p-[2px] opacity-80 transition hover:scale-105 hover:bg-white/20 hover:opacity-100 active:scale-95"
-              onClick={(e) => {
-                e.stopPropagation();
-                onChange(undefined);
-              }}
-            >
-              <Image alt="Close" fill src="/images/close.svg" />
-            </div>
-          ) : null}
-          <Image
-            src="/images/caret-down.svg"
-            alt="Caret down"
-            width={16}
-            height={16}
-            className="shrink-0"
-            style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
-          />
-        </div>
-      </button>
-
-      {isMounted && (
-        <FloatingPortal>
-          <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
-            <div style={styles} className="bg-component border-line py-small flex flex-col rounded border">
-              {options.map((option) => (
-                <button
-                  key={option}
-                  onClick={() => {
-                    onChange(option);
-                    setIsOpen(false);
-                  }}
-                  className="py-small px-large hover:text-primary text-start text-sm transition-colors"
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
+    <ISelect
+      labelClassName={`gap-small flex items-center justify-between rounded border border-transparent transition-colors duration-300 ${className}`}
+      childClassName="bg-component border-line py-small flex flex-col rounded border"
+      label={value ? <span className="text-sm font-normal text-white">{value.symbol}</span> : undefined}
+      placeholder={<span className="text-sm font-normal text-white/50">{placeholder}</span>}
+      disabled={disabled}
+      clearable
+      sameWidth
+      onClear={() => onChange(undefined)}
+    >
+      {options.map((option) => (
+        <button
+          key={option.symbol}
+          onClick={() => {
+            onChange(option);
+          }}
+          className="py-small px-large hover:text-primary gap-middle flex items-center text-start text-sm transition hover:opacity-80"
+        >
+          <Image width={28} height={28} alt="Token" src={getTokenLogoSrc(option.logo)} className="rounded-full" />
+          <div className="flex flex-col">
+            <span>{option.symbol}</span>
+            <PrettyAddress address={option.address} copyable className="text-xs font-light text-white/50" />
           </div>
-        </FloatingPortal>
-      )}
-    </>
+        </button>
+      ))}
+    </ISelect>
   );
 }

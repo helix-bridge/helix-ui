@@ -79,6 +79,7 @@ interface Lnv20RelayInfo {
   timestamp: number;
   margin?: string | null;
   baseFee?: string | null;
+  protocolFee?: string | null;
   liquidityFeeRate?: number | null;
   slashCount?: number | null;
   withdrawNonce?: string | null;
@@ -91,7 +92,7 @@ interface Lnv20RelayInfo {
 export interface RelayersResponseData {
   sortedLnv20RelayInfos?: Pick<
     Lnv20RelayInfo,
-    "relayer" | "margin" | "baseFee" | "liquidityFeeRate" | "lastTransferId" | "withdrawNonce"
+    "relayer" | "margin" | "baseFee" | "protocolFee" | "liquidityFeeRate" | "lastTransferId" | "withdrawNonce"
   >[];
 }
 
@@ -138,6 +139,7 @@ export interface LnRelayersVariables {
 export interface SpecialRelayerResponseData {
   queryLnv20RelayInfos?: {
     total: number;
+    records: Pick<LnRelayerInfo, "sendToken">[];
   };
 }
 

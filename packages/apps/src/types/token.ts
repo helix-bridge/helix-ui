@@ -4,6 +4,7 @@ export type TokenSymbol =
   | "ETH"
   | "GoerliETH"
   | "lineaETH"
+  | "zkETH"
   | "RING"
   | "USDC"
   | "USDT"
@@ -12,7 +13,9 @@ export type TokenSymbol =
   | "CRAB"
   | "KTON"
   | "xWRING"
-  | "xWCRAB";
+  | "xWCRAB"
+  | "ARB"
+  | "MNT";
 
 export type TokenType = "native" | "erc20" | "mapping";
 

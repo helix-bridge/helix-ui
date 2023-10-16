@@ -3,7 +3,6 @@ import { ChainToken } from "@/types/misc";
 import { RelayersResponseData } from "@/types/graphql";
 import Modal from "@/ui/modal";
 import { formatBalance } from "@/utils/balance";
-import { getChainConfig } from "@/utils/chain";
 import { getChainLogoSrc } from "@/utils/misc";
 import { ApolloQueryResult } from "@apollo/client";
 import Image from "next/image";
@@ -12,86 +11,56 @@ import { TransferValue } from "./transfer-input";
 import { notification } from "@/ui/notification";
 import { parseUnits } from "viem";
 import { Token } from "@/types/token";
+import { useTransfer } from "@/hooks/use-transfer";
 
 interface Props {
-  fee?: { value: bigint; token: Token };
   sender?: `0x${string}` | null;
   recipient?: `0x${string}` | null;
-  bridge?: BaseBridge | null;
-  sourceValue?: ChainToken | null;
-  targetValue?: ChainToken | null;
   transferValue: TransferValue;
   isOpen: boolean;
-
   onClose: () => void;
   onSuccess: () => void;
-  onAllowanceChange: (value: bigint) => void;
   refetchRelayers: () => Promise<ApolloQueryResult<RelayersResponseData>>;
 }
 
 export default function TransferModal({
-  fee,
   sender,
   recipient,
-  bridge,
-  sourceValue,
-  targetValue,
   transferValue,
   isOpen,
   onClose,
   onSuccess,
-  onAllowanceChange,
   refetchRelayers,
 }: Props) {
+  const { bridgeClient, sourceValue, targetValue, fee, targetChain, sourceToken, targetToken, transfer } =
+    useTransfer();
   const [busy, setBusy] = useState(false);
 
   const handleTransfer = useCallback(async () => {
-    const sourceChain = getChainConfig(sourceValue?.network);
-    const targetChain = getChainConfig(targetValue?.network);
-    const sourceToken = sourceChain?.tokens.find(({ symbol }) => sourceValue?.symbol === symbol);
-    const targetToken = targetChain?.tokens.find(({ symbol }) => targetValue?.symbol === symbol);
-
-    if (bridge && sender && recipient && sourceChain && targetChain && sourceToken && targetToken) {
+    if (sender && recipient && targetChain && bridgeClient) {
       try {
         setBusy(true);
         const relayer = (await refetchRelayers()).data.sortedLnv20RelayInfos?.at(0);
-        const receipt = await bridge.transfer(sender, recipient, transferValue.formatted, {
+        const receipt = await transfer(sender, recipient, transferValue.formatted, {
           remoteChainId: BigInt(targetChain.id),
           relayer: relayer?.relayer,
-          sourceToken: sourceToken.address,
-          targetToken: targetToken.address,
+          sourceToken: sourceToken?.address,
+          targetToken: targetToken?.address,
           transferId: relayer?.lastTransferId,
-          totalFee: await bridge.getFee({
-            baseFee: BigInt(relayer?.baseFee || 0),
-            liquidityFeeRate: BigInt(relayer?.liquidityFeeRate || 0),
-            transferAmount: transferValue.formatted,
-          }),
+          totalFee: (
+            await bridgeClient.getFee({
+              baseFee: BigInt(relayer?.baseFee || 0),
+              protocolFee: BigInt(relayer?.protocolFee || 0),
+              liquidityFeeRate: BigInt(relayer?.liquidityFeeRate || 0),
+              transferAmount: transferValue.formatted,
+            })
+          )?.value,
           withdrawNonce: BigInt(relayer?.withdrawNonce || 0),
           depositedMargin: BigInt(relayer?.margin || 0),
         });
-        const href = new URL(`tx/${receipt?.transactionHash}`, sourceChain?.blockExplorers?.default.url).href;
 
         if (receipt?.status === "success") {
-          notification.success({
-            title: "Transfer successfully",
-            description: (
-              <a target="_blank" rel="noopener" className="text-primary break-all hover:underline" href={href}>
-                {receipt.transactionHash}
-              </a>
-            ),
-          });
-
-          bridge.getAllowance(sender).then(onAllowanceChange).catch(console.error);
           onSuccess();
-        } else if (receipt?.status === "reverted") {
-          notification.warn({
-            title: "Transfer failed",
-            description: (
-              <a target="_blank" rel="noopener" className="text-primary break-all hover:underline" href={href}>
-                {receipt.transactionHash}
-              </a>
-            ),
-          });
         }
       } catch (err) {
         console.error(err);
@@ -101,15 +70,16 @@ export default function TransferModal({
       }
     }
   }, [
-    bridge,
-    sender,
-    recipient,
-    transferValue,
-    sourceValue,
-    targetValue,
+    bridgeClient,
     onSuccess,
-    onAllowanceChange,
+    recipient,
     refetchRelayers,
+    sender,
+    sourceToken,
+    targetChain,
+    targetToken,
+    transfer,
+    transferValue,
   ]);
 
   return (
@@ -138,7 +108,7 @@ export default function TransferModal({
       {/* information */}
       <div className="gap-middle flex flex-col">
         <span className="text-sm font-normal text-white">Information</span>
-        <Information fee={fee} bridge={bridge} sender={sender} recipient={recipient} />
+        <Information fee={fee} bridge={bridgeClient} sender={sender} recipient={recipient} />
       </div>
     </Modal>
   );
@@ -153,10 +123,7 @@ function SourceTarget({
   transferValue: TransferValue;
   chainToken?: ChainToken | null;
 }) {
-  const chainConfig = getChainConfig(chainToken?.network);
-  const token = chainConfig?.tokens.find(({ symbol }) => chainToken?.symbol === symbol);
-
-  return chainConfig && token ? (
+  return chainToken ? (
     <div className="bg-app-bg p-middle flex items-center justify-between rounded lg:p-5">
       {/* left */}
       <div className="gap-middle flex items-center">
@@ -164,11 +131,11 @@ function SourceTarget({
           width={36}
           height={36}
           alt="Chain"
-          src={getChainLogoSrc(chainConfig.logo)}
+          src={getChainLogoSrc(chainToken.chain.logo)}
           className="shrink-0 rounded-full"
         />
         <div className="flex flex-col items-start">
-          <span className="text-base font-medium text-white">{chainConfig.name}</span>
+          <span className="text-base font-medium text-white">{chainToken.chain.name}</span>
           <span className="text-sm font-medium text-white/40">
             {type === "source" ? "Source Chain" : "Target Chain"}
           </span>
@@ -179,9 +146,9 @@ function SourceTarget({
       <div className="flex flex-col items-end">
         <span className={`text-base font-medium ${type === "source" ? "text-app-red" : "text-app-green"}`}>
           {type === "source" ? "-" : "+"}
-          {formatBalance(parseUnits(transferValue.value, token.decimals), token.decimals, { keepZero: false })}
+          {formatBalance(parseUnits(transferValue.value, chainToken.token.decimals), chainToken.token.decimals)}
         </span>
-        <span className="text-sm font-medium text-white">{token.symbol}</span>
+        <span className="text-sm font-medium text-white">{chainToken.token.symbol}</span>
       </div>
     </div>
   ) : null;
@@ -200,7 +167,7 @@ function Information({
 }) {
   return (
     <div className="p-middle bg-app-bg gap-small flex flex-col rounded">
-      <Item label="Bridge" value={bridge?.getInfo().name} />
+      <Item label="Bridge" value={bridge?.getName()} />
       <Item label="From" value={sender} />
       <Item label="To" value={recipient} />
       <Item

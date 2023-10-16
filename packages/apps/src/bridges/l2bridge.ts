@@ -30,12 +30,10 @@ export class L2ArbitrumBridge extends BaseBridge {
     super(args);
     this.initContract();
 
-    if (args.logo) {
-      this.logo = {
-        horizontal: "l2arbitrum-horizontal.png",
-        symbol: "l2arbitrum-symbol.png",
-      };
-    }
+    this.logo = args.logo ?? {
+      horizontal: "l2arbitrum-horizontal.png",
+      symbol: "l2arbitrum-symbol.png",
+    };
     this.name = "L2Bridge";
     this.estimateTime = { min: 15, max: 20 };
   }
@@ -61,9 +59,7 @@ export class L2ArbitrumBridge extends BaseBridge {
     amount: bigint,
     // options?: Object | undefined,
   ): Promise<TransactionReceipt | undefined> {
-    if ((await this.publicClient?.getChainId()) !== this.sourceChain?.id) {
-      throw new Error("Wrong network");
-    }
+    await this.validateNetwork("source");
 
     const params = await this.getL1toL2Params();
     if (params && this.contract && this.sourceToken && this.publicClient && this.walletClient) {
@@ -98,14 +94,14 @@ export class L2ArbitrumBridge extends BaseBridge {
   }
 
   private async getL1toL2Params() {
-    if (this.contract) {
+    if (this.contract && this.sourcePublicClient && this.targetPublicClient) {
       const address = this.crossInfo?.action === "issue" ? this.contract.sourceAddress : this.contract.targetAddress;
       const l1Client = this.sourcePublicClient;
       const l2Client = this.targetPublicClient;
 
       const l1BaseFee = (await l1Client.getBlock({ blockTag: "latest" })).baseFeePerGas || 0n;
       const l2GasPrice = await l2Client.getGasPrice();
-      const scaleL1BaseFee = (l1BaseFee * BigInt(this.feeScaler * 100)) / 100n;
+      const scaleL1BaseFee = (l1BaseFee * BigInt(Math.floor(this.feeScaler * 100))) / 100n;
       const scaleL2GasPrice = l2GasPrice * this.l2GasPriceScaler;
 
       const inboxAddress = (await l1Client.readContract({
@@ -122,7 +118,7 @@ export class L2ArbitrumBridge extends BaseBridge {
       })) as unknown as bigint;
 
       const deposit = this.l2GasLimit * scaleL2GasPrice + maxSubmissionCost;
-      const scaleDeposit = (deposit * BigInt(this.feeScaler * 100)) / 100n;
+      const scaleDeposit = (deposit * BigInt(Math.floor(this.feeScaler * 100))) / 100n;
 
       return {
         maxSubmissionCost,

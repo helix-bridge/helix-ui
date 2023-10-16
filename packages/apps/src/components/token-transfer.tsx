@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default function TokenTransfer({ record, bridge }: Props) {
-  const contract = bridge?.getInfo().contract;
+  const contract = bridge?.getContract();
 
   return record && contract ? (
     <div className="flex flex-col items-start justify-between">

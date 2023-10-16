@@ -2,6 +2,7 @@ import Image from "next/image";
 import { PropsWithChildren, ReactElement, useRef } from "react";
 import { createPortal } from "react-dom";
 import { CSSTransition } from "react-transition-group";
+import Button from "./button";
 
 interface Props {
   isOpen: boolean;
@@ -94,12 +95,12 @@ export default function Modal({
 
               <div className="flex items-center justify-between gap-5">
                 {onCancel && (
-                  <Button type="default" onClick={onCancel} disabled={disabledCancel}>
+                  <Button kind="default" onClick={onCancel} disabled={disabledCancel} className="button flex-1">
                     {cancelText || "Cancel"}
                   </Button>
                 )}
                 {onOk && (
-                  <Button type="primary" onClick={onOk} disabled={disabledOk} busy={busy}>
+                  <Button kind="primary" onClick={onOk} disabled={disabledOk} busy={busy} className="button flex-1">
                     {okText || "Ok"}
                   </Button>
                 )}
@@ -110,30 +111,5 @@ export default function Modal({
       </div>
     </CSSTransition>,
     document.body,
-  );
-}
-
-function Button({
-  children,
-  type,
-  busy,
-  disabled,
-  onClick,
-}: PropsWithChildren<{ type: "primary" | "default"; busy?: boolean; disabled?: boolean; onClick?: () => void }>) {
-  return (
-    <button
-      className={`border-primary relative h-9 flex-1 rounded border transition disabled:cursor-not-allowed ${
-        type === "primary" ? "bg-primary" : "bg-transparent"
-      } ${busy ? "" : "hover:opacity-80 active:translate-y-1 disabled:opacity-60"}`}
-      disabled={disabled || busy}
-      onClick={onClick}
-    >
-      {busy && (
-        <div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center">
-          <div className="h-5 w-5 animate-spin rounded-full border-[3px] border-b-white/50 border-l-white/50 border-r-white border-t-white" />
-        </div>
-      )}
-      <span className="text-sm font-medium text-white">{children}</span>
-    </button>
   );
 }

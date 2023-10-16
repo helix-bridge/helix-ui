@@ -1,8 +1,8 @@
-import { getChainConfig } from "@/utils/chain";
 import ChainTokenSelect from "./chain-token-select";
 import { parseUnits } from "viem";
 import { ChainToken, ChainTokens } from "@/types/misc";
 import { formatBalance } from "@/utils/balance";
+import Input from "@/ui/input";
 
 export interface TransferValue {
   value: string;
@@ -29,7 +29,6 @@ export default function TransferInput({
   onAmountChange = () => undefined,
   onChainTokenChange = () => undefined,
 }: Props) {
-  const token = getChainConfig(chainToken?.network)?.tokens.find(({ symbol }) => chainToken?.symbol === symbol);
   const insufficient = balance && (transferValue?.formatted || 0n) > balance ? true : false;
 
   return (
@@ -44,22 +43,22 @@ export default function TransferInput({
             }`
       }`}
     >
-      <input
+      <Input
         placeholder={
           type === "target"
             ? undefined
-            : balance !== undefined && token
-            ? `Balance ${formatBalance(balance, token.decimals, { keepZero: false })}`
+            : balance !== undefined && chainToken
+            ? `Balance ${formatBalance(balance, chainToken.token.decimals)}`
             : "Enter an amount"
         }
         disabled={type === "target"}
-        className={`px-small h-12 w-full rounded bg-transparent text-white focus-visible:outline-none disabled:cursor-not-allowed ${
+        className={`px-small h-12 w-full rounded bg-transparent text-white ${
           transferValue?.value ? "text-lg font-medium" : "text-base font-extralight"
         }`}
         onChange={({ target: { value } }) => {
           if (value) {
-            if (!Number.isNaN(Number(value)) && token) {
-              const formatted = parseUnits(value, token.decimals);
+            if (!Number.isNaN(Number(value)) && chainToken) {
+              const formatted = parseUnits(value, chainToken.token.decimals);
               onAmountChange({ value, formatted });
             }
           } else {
@@ -68,7 +67,9 @@ export default function TransferInput({
         }}
         value={transferValue?.value}
       />
-      <ChainTokenSelect options={options} value={chainToken} onChange={onChainTokenChange} />
+      {!!chainToken && (
+        <ChainTokenSelect width={0} options={options} value={chainToken} onChange={onChainTokenChange} />
+      )}
     </div>
   );
 }

@@ -1,10 +1,9 @@
-import { Network } from "@/types/chain";
+import { ChainConfig } from "@/types/chain";
 import { notification } from "@/ui/notification";
 import { TransactionReceipt } from "viem";
-import { getChainConfig } from "./chain";
 
-export function notifyTransaction(receipt?: TransactionReceipt, network?: Network) {
-  const explorer = getChainConfig(network)?.blockExplorers?.default.url;
+export function notifyTransaction(receipt?: TransactionReceipt, chain?: ChainConfig) {
+  const explorer = chain?.blockExplorers?.default.url;
 
   if (receipt?.status === "success" && explorer) {
     notification.success({

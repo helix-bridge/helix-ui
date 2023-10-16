@@ -30,6 +30,15 @@ export const ethereumChain: ChainConfig = {
   tokens: [
     {
       decimals: 18,
+      symbol: "ETH",
+      name: "ETH",
+      type: "native",
+      address: "0x0000000000000000000000000000000000000000",
+      logo: "eth.svg",
+      cross: [],
+    },
+    {
+      decimals: 18,
       symbol: "RING",
       name: "RING",
       type: "erc20",

@@ -97,7 +97,7 @@ export default function Header() {
           {/* right */}
           <div className="gap-middle hidden items-center lg:flex">
             <ChainIdentity />
-            <User className="px-large hover:bg-primary/90 gap-middle inline-flex h-8 items-center justify-center" />
+            <User />
           </div>
           <Image
             width={24}
@@ -137,10 +137,7 @@ export default function Header() {
               )}
             </div>
 
-            <User
-              className="px-large gap-middle inline-flex h-9 items-center justify-center"
-              onClose={setDrawerClose}
-            />
+            <User onComplete={setDrawerClose} />
           </div>
         </div>
 

@@ -8,7 +8,7 @@ export default function ChainIdentity() {
   const config = getChainConfig(chain?.id);
 
   return chain ? (
-    <div className="gap-middle bg-component px-middle border-primary hidden h-8 max-w-[8.5rem] items-center rounded border lg:flex">
+    <div className="gap-middle bg-component px-middle border-primary hidden h-8 max-w-[8.5rem] items-center rounded-2xl border lg:flex">
       {!!config && (
         <Image
           width={20}

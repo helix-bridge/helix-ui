@@ -25,12 +25,10 @@ export class HelixLpBridge extends BaseBridge {
     super(args);
     this.initContract();
 
-    if (!args.logo) {
-      this.logo = {
-        horizontal: "helix-horizontal.svg",
-        symbol: "helix-symbol.svg",
-      };
-    }
+    this.logo = args.logo ?? {
+      horizontal: "helix-horizontal.svg",
+      symbol: "helix-symbol.svg",
+    };
     this.name = "Helix(Fusion)";
     this.estimateTime = { min: 1, max: 3 };
   }
@@ -48,7 +46,7 @@ export class HelixLpBridge extends BaseBridge {
     amount: bigint,
     options?: { totalFee: bigint },
   ): Promise<TransactionReceipt | undefined> {
-    if (options && this.contract && this.crossInfo && this.walletClient) {
+    if (options && this.contract && this.crossInfo && this.walletClient && this.publicClient) {
       const nonce = BigInt(Date.now()) + this.prefix;
 
       const { args, value, functionName } =
@@ -81,7 +79,7 @@ export class HelixLpBridge extends BaseBridge {
         value,
         gas: this.getTxGasLimit(),
       });
-      return await this.sourcePublicClient.waitForTransactionReceipt({ hash });
+      return await this.publicClient.waitForTransactionReceipt({ hash });
     }
   }
 
@@ -89,9 +87,7 @@ export class HelixLpBridge extends BaseBridge {
    * On target chain
    */
   async refund(record: HistoryRecord) {
-    if (this.targetChain?.id !== (await this.publicClient?.getChainId())) {
-      throw new Error("Wrong network");
-    }
+    await this.validateNetwork("target");
 
     if (this.contract && this.publicClient && this.walletClient) {
       const { address } =
@@ -124,7 +120,7 @@ export class HelixLpBridge extends BaseBridge {
   }
 
   private async getBridgeFee() {
-    if (this.contract) {
+    if (this.contract && this.sourcePublicClient) {
       const address = this.crossInfo?.action === "issue" ? this.contract.sourceAddress : this.contract.targetAddress;
       const abi = (await import("@/abi/lpbridge.json")).default;
       return this.sourcePublicClient.readContract({
@@ -136,7 +132,7 @@ export class HelixLpBridge extends BaseBridge {
   }
 
   async speedUp(record: HistoryRecord, fee: bigint) {
-    if (this.contract && this.walletClient) {
+    if (this.contract && this.walletClient && this.publicClient) {
       const transferId = record.id.split("-").slice(-1);
 
       const { args, value, functionName } =
@@ -162,16 +158,17 @@ export class HelixLpBridge extends BaseBridge {
         value,
         gas: this.getTxGasLimit(),
       });
-      return await this.sourcePublicClient.waitForTransactionReceipt({ hash });
+      return await this.publicClient.waitForTransactionReceipt({ hash });
     }
   }
 
   async getFee(args?: { baseFee?: bigint; liquidityFeeRate?: bigint; transferAmount?: bigint }) {
-    if (this.sourceToken && this.crossInfo?.baseFee) {
-      let value = ((args?.transferAmount || 0n) * BigInt(this.feePercent * 1000)) / 1000n + this.crossInfo.baseFee;
+    if (this.sourceToken && this.crossInfo?.baseFee && this.targetPublicClient) {
+      let value =
+        ((args?.transferAmount || 0n) * BigInt(Math.floor(this.feePercent * 1000))) / 1000n + this.crossInfo.baseFee;
 
       if (this.crossInfo.price) {
-        const gasPrice = await this.sourcePublicClient.getGasPrice();
+        const gasPrice = await this.targetPublicClient.getGasPrice();
         const dynamicFee = gasPrice * this.crossInfo.price * this.relayGasLimit;
         value += dynamicFee;
       }

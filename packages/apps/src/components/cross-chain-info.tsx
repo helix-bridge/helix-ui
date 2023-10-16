@@ -6,27 +6,25 @@ import { PropsWithChildren, useEffect, useState } from "react";
 import { Subscription, from } from "rxjs";
 
 interface Props {
-  fee?: { value: bigint; token: Token };
-  bridge?: BaseBridge | null;
-  loading?: boolean;
+  fee: { loading: boolean; value: bigint; token?: Token } | undefined;
+  bridge: BaseBridge | undefined;
 }
 
-export default function CrossChainInfo({ fee, bridge, loading }: Props) {
-  const [isLoadingDailyLimit, setIsLoadingDailyLimit] = useState(false);
-  const [dailyLimit, setDailyLimit] = useState<{ limit: bigint; spent: bigint; token: Token }>();
+export default function CrossChainInfo({ fee, bridge }: Props) {
+  const [dailyLimit, setDailyLimit] = useState<{ loading: boolean; limit: bigint; spent: bigint; token: Token }>();
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
     if (bridge) {
-      setIsLoadingDailyLimit(true);
+      setDailyLimit((prev) => (prev ? { ...prev, loading: true } : undefined));
       sub$$ = from(bridge.getDailyLimit()).subscribe({
-        next: setDailyLimit,
+        next: (res) => {
+          setDailyLimit(res ? { ...res, loading: false } : undefined);
+        },
         error: (err) => {
           console.error(err);
           setDailyLimit(undefined);
-          setIsLoadingDailyLimit(false);
         },
-        complete: () => setIsLoadingDailyLimit(false),
       });
     } else {
       setDailyLimit(undefined);
@@ -36,42 +34,42 @@ export default function CrossChainInfo({ fee, bridge, loading }: Props) {
 
   return (
     <div className="bg-app-bg p-middle gap-small flex flex-col rounded border border-transparent">
-      <Section>
+      <Item>
         <span>Bridge</span>
-        <span>{bridge?.getInfo().name || ""}</span>
-      </Section>
-      <Section>
+        <span>{bridge?.getName()}</span>
+      </Item>
+      <Item>
         <span>Estimated Arrival Time</span>
-        <span>{bridge?.formatEstimateTime() || ""}</span>
-      </Section>
-      <Section>
+        <span>{bridge?.formatEstimateTime()}</span>
+      </Item>
+      <Item>
         <span>Transaction Fee</span>
-        {loading ? (
+        {fee?.loading ? (
           <CountLoading color="white" />
-        ) : fee ? (
+        ) : fee?.token ? (
           <span>
-            {formatBalance(fee.value, fee.token.decimals)} {fee.token.symbol}
+            {formatBalance(fee.value, fee.token.decimals, { precision: 6 })} {fee.token.symbol}
           </span>
         ) : (
-          <span></span>
+          <span />
         )}
-      </Section>
+      </Item>
       {!!dailyLimit && (
-        <Section>
+        <Item>
           <span>Daily Limit</span>
-          {isLoadingDailyLimit ? (
+          {dailyLimit.loading ? (
             <CountLoading color="white" />
           ) : (
             <span>
               {formatBalance(dailyLimit.limit, dailyLimit.token.decimals)} {dailyLimit.token.symbol}
             </span>
           )}
-        </Section>
+        </Item>
       )}
     </div>
   );
 }
 
-function Section({ children }: PropsWithChildren<unknown>) {
+function Item({ children }: PropsWithChildren<unknown>) {
   return <div className="flex items-center justify-between text-sm font-normal text-white">{children}</div>;
 }

@@ -1,4 +1,6 @@
-export default function LiquidityFeeRateInput({
+import Input from "@/ui/input";
+
+export default function FeeRateInput({
   placeholder,
   value,
   onChange = () => undefined,
@@ -10,13 +12,13 @@ export default function LiquidityFeeRateInput({
   return (
     <div
       className={`gap-small bg-app-bg p-small lg:p-middle flex items-center justify-between rounded border transition-colors ${
-        (value?.formatted || 0) < 0 || 100000 < (value?.formatted || 0)
+        (value?.formatted || 0) < 0 || 100 < (value?.formatted || 0)
           ? "border-app-red hover:border-app-red focus-within:border-app-red"
           : "hover:border-line focus-within:border-line border-transparent"
       }`}
     >
-      <input
-        className="w-full rounded bg-transparent text-sm font-medium text-white focus-visible:outline-none"
+      <Input
+        className="w-full rounded bg-transparent text-sm font-medium text-white"
         placeholder={placeholder}
         onChange={(e) => {
           if (e.target.value) {
@@ -29,7 +31,7 @@ export default function LiquidityFeeRateInput({
         }}
         value={value?.value}
       />
-      <span className="rounded bg-transparent text-sm font-medium text-white focus-visible:outline-none">%</span>
+      <span className="rounded bg-transparent text-sm font-medium text-white">%</span>
     </div>
   );
 }

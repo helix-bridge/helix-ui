@@ -30,7 +30,7 @@ export class LnBridgeOpposite extends LnBridgeBase {
         sourceAddress: "0xD1B10B114f1975d8BCc6cb6FC43519160e2AA978",
         targetAddress: "0xeAb1F01a8f4A2687023B159c2063639Adad5304E",
       };
-    } else if (this.sourceChain?.id === ChainID.LINEA_GOERLI && this.targetChain?.id === ChainID.GOERLI) {
+    } else {
       this.contract = {
         sourceAddress: "0x4C538EfA6e3f9Dfb939AA4F0B224577DA665923a",
         targetAddress: "0x4C538EfA6e3f9Dfb939AA4F0B224577DA665923a",
@@ -52,9 +52,7 @@ export class LnBridgeOpposite extends LnBridgeBase {
       depositedMargin: bigint;
     },
   ): Promise<TransactionReceipt | undefined> {
-    if ((await this.publicClient?.getChainId()) !== this.sourceChain?.id) {
-      throw new Error("Wrong network");
-    }
+    await this.validateNetwork("source");
 
     if (this.contract && this.sourceToken && this.publicClient && this.walletClient) {
       const abi = (await import(`../abi/lnbridgev20-opposite.json`)).default;
@@ -81,9 +79,7 @@ export class LnBridgeOpposite extends LnBridgeBase {
   }
 
   async updateFeeAndMargin(margin: bigint, baseFee: bigint, feeRate: number) {
-    if ((await this.publicClient?.getChainId()) !== this.sourceChain?.id) {
-      throw new Error("Wrong network");
-    }
+    await this.validateNetwork("source");
 
     if (
       this.contract &&

@@ -19,6 +19,7 @@ import { BaseBridge } from "@/bridges/base";
 import { bridgeFactory } from "@/utils/bridge";
 import CountdownRefresh from "@/ui/countdown-refresh";
 import TransactionFee from "./transaction-fee";
+import { getChainConfig } from "@/utils/chain";
 
 interface Props {
   id: string;
@@ -34,9 +35,9 @@ export default function RecordDetail(props: Props) {
     notifyOnNetworkStatusChange: true,
   });
 
-  const bridge = useMemo<BaseBridge | undefined>(() => {
-    const sourceChain = record?.historyRecordById?.fromChain;
-    const targetChain = record?.historyRecordById?.toChain;
+  const bridgeClient = useMemo<BaseBridge | undefined>(() => {
+    const sourceChain = getChainConfig(record?.historyRecordById?.fromChain);
+    const targetChain = getChainConfig(record?.historyRecordById?.toChain);
     const category = record?.historyRecordById?.bridge;
 
     if (sourceChain && targetChain && category) {
@@ -57,16 +58,16 @@ export default function RecordDetail(props: Props) {
           {/* loading */}
           <ComponentLoading loading={loading} className="rounded" />
 
-          <Section label="Transfer Route">
+          <Item label="Transfer Route">
             <TransferRoute record={record?.historyRecordById} />
-          </Section>
+          </Item>
 
           <Divider />
 
-          <Section label="Status" tips="The status of the cross-chain transaction: Success, Pending, or Refunded.">
+          <Item label="Status" tips="The status of the cross-chain transaction: Success, Pending, or Refunded.">
             <TransactionStatus record={record?.historyRecordById} />
-          </Section>
-          <Section
+          </Item>
+          <Item
             label="Source Tx Hash"
             tips="Unique character string (TxID) assigned to every verified transaction on the Source Chain."
           >
@@ -74,8 +75,8 @@ export default function RecordDetail(props: Props) {
               chain={record?.historyRecordById?.fromChain}
               txHash={record?.historyRecordById?.requestTxHash}
             />
-          </Section>
-          <Section
+          </Item>
+          <Item
             label="Target Tx Hash"
             tips="Unique character string (TxID) assigned to every verified transaction on the Target Chain."
           >
@@ -83,17 +84,17 @@ export default function RecordDetail(props: Props) {
               chain={record?.historyRecordById?.toChain}
               txHash={record?.historyRecordById?.responseTxHash}
             />
-          </Section>
-          <Section
+          </Item>
+          <Item
             label="Timestamp"
             tips="The date and time at which a transaction is mined. And the time period elapsed for the completion of the cross-chain."
           >
             <TransactionTimestamp record={record?.historyRecordById} />
-          </Section>
+          </Item>
 
           <Divider />
 
-          <Section label="Sender" tips="Address (external or contract) sending the transaction.">
+          <Item label="Sender" tips="Address (external or contract) sending the transaction.">
             {record?.historyRecordById?.sender ? (
               <PrettyAddress
                 address={record.historyRecordById.sender}
@@ -101,8 +102,8 @@ export default function RecordDetail(props: Props) {
                 copyable
               />
             ) : null}
-          </Section>
-          <Section label="Receiver" tips="Address (external or contract) receiving the transaction.">
+          </Item>
+          <Item label="Receiver" tips="Address (external or contract) receiving the transaction.">
             {record?.historyRecordById?.recipient ? (
               <PrettyAddress
                 address={record.historyRecordById.recipient}
@@ -110,37 +111,37 @@ export default function RecordDetail(props: Props) {
                 copyable
               />
             ) : null}
-          </Section>
-          <Section label="Token Transfer" tips="List of tokens transferred in this cross-chain transaction.">
-            <TokenTransfer record={record?.historyRecordById} bridge={bridge} />
-          </Section>
-          <Section label="Token To Receive">
+          </Item>
+          <Item label="Token Transfer" tips="List of tokens transferred in this cross-chain transaction.">
+            <TokenTransfer record={record?.historyRecordById} bridge={bridgeClient} />
+          </Item>
+          <Item label="Token To Receive">
             <TokenToReceive record={record?.historyRecordById} />
-          </Section>
+          </Item>
 
           <Divider />
 
-          <Section label="Value" tips="The amount to be transferred to the recipient with the cross-chain transaction.">
+          <Item label="Value" tips="The amount to be transferred to the recipient with the cross-chain transaction.">
             <TransactionValue record={record?.historyRecordById} />
-          </Section>
-          <Section label="Transaction Fee" tips="Amount paid for processing the cross-chain transaction.">
+          </Item>
+          <Item label="Transaction Fee" tips="Amount paid for processing the cross-chain transaction.">
             <TransactionFee record={record?.historyRecordById} />
-          </Section>
+          </Item>
 
           <Divider />
 
-          <Section label="Nonce" tips="A unique number of cross-chain transaction in Bridge.">
+          <Item label="Nonce" tips="A unique number of cross-chain transaction in Bridge.">
             {record?.historyRecordById?.nonce ? (
               <span className="text-sm font-normal text-white">{record.historyRecordById.nonce}</span>
             ) : null}
-          </Section>
+          </Item>
         </div>
       </div>
     </>
   );
 }
 
-function Section({ label, tips, children }: PropsWithChildren<{ label: string; tips?: string }>) {
+function Item({ label, tips, children }: PropsWithChildren<{ label: string; tips?: string }>) {
   return (
     <div className="lg:gap-middle gap-small flex flex-col items-start lg:h-11 lg:flex-row lg:items-center">
       <RecordLabel text={label} tips={tips} />

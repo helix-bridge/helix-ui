@@ -1,113 +1,67 @@
-import { BaseBridge } from "@/bridges/base";
-import { ChainToken } from "@/types/misc";
-import { ButtonHTMLAttributes, useState } from "react";
+import { useCallback, useState } from "react";
 import { TransferValue } from "./transfer-input";
-import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { Address, useNetwork, useSwitchNetwork } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { getChainConfig } from "@/utils/chain";
-import { notification } from "@/ui/notification";
+import Button from "@/ui/button";
+import { useTransfer } from "@/hooks/use-transfer";
+import { isAddress } from "viem";
 
 export default function TransferAction({
-  fee,
-  allowance,
-  bridge,
-  sourceValue,
-  targetValue,
+  recipient,
   transferValue,
-  onAllowanceChange,
   onTransfer,
 }: {
-  fee: bigint;
-  allowance: bigint;
-  bridge?: BaseBridge | null;
-  sourceValue?: ChainToken;
-  targetValue?: ChainToken;
+  recipient: Address | undefined;
   transferValue: TransferValue;
-  onAllowanceChange: (value: bigint) => void;
   onTransfer: () => void;
 }) {
+  const { sourceAllowance, sourceValue, targetValue, bridgeClient, fee, approve } = useTransfer();
   const [busy, setBusy] = useState(false);
   const { chain } = useNetwork();
-  const { address } = useAccount();
   const { switchNetwork } = useSwitchNetwork();
   const { openConnectModal } = useConnectModal();
 
-  const sourceChain = getChainConfig(sourceValue?.network);
-
-  const handleApprove = async () => {
-    if (bridge && address) {
-      try {
-        setBusy(true);
-        const receipt = await bridge.approve(transferValue.formatted + fee, address);
-        const href = new URL(`tx/${receipt?.transactionHash}`, sourceChain?.blockExplorers?.default.url).href;
-
-        if (receipt?.status === "success") {
-          notification.success({
-            title: "Approved successfully",
-            description: (
-              <a target="_blank" rel="noopener" className="text-primary break-all hover:underline" href={href}>
-                {receipt.transactionHash}
-              </a>
-            ),
-          });
-
-          const allowance = await bridge.getAllowance(address);
-          onAllowanceChange(allowance);
-        } else if (receipt?.status === "reverted") {
-          notification.warn({
-            title: "Approved failed",
-            description: (
-              <a target="_blank" rel="noopener" className="text-primary break-all hover:underline" href={href}>
-                {receipt.transactionHash}
-              </a>
-            ),
-          });
-        }
-      } catch (err) {
-        console.error(err);
-        notification.error({ title: "Approved failed", description: (err as Error).message });
-      } finally {
-        setBusy(false);
-      }
-    }
-  };
+  const handleApprove = useCallback(async () => {
+    setBusy(true);
+    await approve();
+    setBusy(false);
+  }, [approve]);
 
   if (chain) {
-    if (sourceChain && sourceChain.id !== chain.id) {
-      return <Button onClick={() => switchNetwork && switchNetwork(sourceChain.id)}>Switch Network</Button>;
-    } else if (transferValue.formatted + fee > allowance) {
+    if (sourceValue?.chain.id !== chain.id) {
       return (
-        <Button onClick={handleApprove} busy={busy}>
+        <Button kind="primary" onClick={() => switchNetwork && switchNetwork(sourceValue?.chain.id)} className="button">
+          Switch Network
+        </Button>
+      );
+    } else if (
+      sourceValue.token.type !== "native" &&
+      transferValue.formatted + (fee?.value || 0n) > (sourceAllowance?.value || 0n)
+    ) {
+      return (
+        <Button kind="primary" onClick={handleApprove} busy={busy} className="button">
           Approve
         </Button>
       );
     } else {
       return (
-        <Button disabled={!(sourceValue && targetValue && bridge && transferValue.formatted > 0)} onClick={onTransfer}>
+        <Button
+          kind="primary"
+          disabled={
+            !(sourceValue && targetValue && bridgeClient && transferValue.formatted > 0 && isAddress(recipient || ""))
+          }
+          className="button"
+          onClick={onTransfer}
+        >
           Transfer
         </Button>
       );
     }
   } else {
-    return <Button onClick={openConnectModal}>Connect Wallet</Button>;
+    return (
+      <Button kind="primary" onClick={openConnectModal} className="button">
+        Connect Wallet
+      </Button>
+    );
   }
-}
-
-function Button({ children, busy, disabled, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { busy?: boolean }) {
-  return (
-    <button
-      className={`bg-primary relative inline-flex h-10 shrink-0 items-center justify-center rounded transition disabled:translate-y-0 disabled:cursor-not-allowed ${
-        busy ? "" : "hover:opacity-80 active:translate-y-1 disabled:opacity-60"
-      }`}
-      disabled={disabled || busy}
-      {...rest}
-    >
-      {busy && (
-        <div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center">
-          <div className="h-5 w-5 animate-spin rounded-full border-[3px] border-b-white/50 border-l-white/50 border-r-white border-t-white" />
-        </div>
-      )}
-      <span className="text-sm font-medium text-white">{children}</span>
-    </button>
-  );
 }

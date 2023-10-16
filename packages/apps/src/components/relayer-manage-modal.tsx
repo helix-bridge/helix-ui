@@ -3,18 +3,13 @@ import SegmentedTabs, { SegmentedTabsProps } from "@/ui/segmented-tabs";
 import Tooltip from "@/ui/tooltip";
 import Image from "next/image";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
-import { BalanceInput, BalanceInputValue } from "./balance-input";
-import LiquidityFeeRateInput from "./liquidity-fee-rate-input";
+import { BalanceInput } from "./balance-input";
+import FeeRateInput from "./fee-rate-input";
 import { LnRelayerInfo } from "@/types/graphql";
 import { getChainConfig } from "@/utils/chain";
-import { Subscription, forkJoin, from } from "rxjs";
-import { switchMap } from "rxjs/operators";
-import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
-import { fetchBalance } from "wagmi/actions";
-import { notification } from "@/ui/notification";
-import { bridgeFactory } from "@/utils/bridge";
-import { BridgeContract } from "@/types/bridge";
+import { useNetwork, useSwitchNetwork } from "wagmi";
 import { formatBalance } from "@/utils/balance";
+import { useRelayer } from "@/hooks/use-relayer";
 
 type TabKey = "update" | "deposit" | "withdraw";
 
@@ -26,94 +21,54 @@ interface Props {
 }
 
 export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuccess }: Props) {
+  const {
+    bridgeCategory,
+    sourceAllowance,
+    targetAllowance,
+    sourceBalance,
+    targetBalance,
+    sourceChain,
+    targetChain,
+    sourceToken,
+    margin,
+    baseFee,
+    feeRate,
+    setMargin,
+    setBaseFee,
+    setFeeRate,
+    setSourceChain,
+    setTargetChain,
+    setSourceToken,
+    setBridgeCategory,
+    setFeeAndRate,
+    depositMargin,
+    updateFeeAndMargin,
+    sourceApprove,
+    targetApprove,
+  } = useRelayer();
   const [activeKey, setActiveKey] = useState<SegmentedTabsProps<TabKey>["activeKey"]>("update");
   const [height, setHeight] = useState<number>();
   const [busy, setBusy] = useState(false);
-  const [balance, setBalance] = useState<bigint>();
-  const [allowance, setAllowance] = useState<bigint>(0n);
-  const [depositMargin, setDepositMargin] = useState<BalanceInputValue>({ formatted: 0n, value: "" });
-  const [baseFee, setBaseFee] = useState<BalanceInputValue>({ formatted: 0n, value: "" });
-  const [feeRate, setFeeRate] = useState<{ formatted: number; value: string }>({ formatted: 0, value: "" });
 
-  const { address } = useAccount();
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
-
-  const { bridgeContract, bridgeCategory, sourceChainConfig, targetChainConfig, sourceTokenConfig, targetTokenConfig } =
-    useMemo(() => {
-      const sourceChainConfig = getChainConfig(relayerInfo?.fromChain);
-      const sourceTokenConfig = sourceChainConfig?.tokens.find(
-        (t) => t.address.toLowerCase() === relayerInfo?.sendToken?.toLowerCase(),
-      );
-
-      let bridgeContract: BridgeContract | undefined = undefined;
-      if (relayerInfo?.bridge) {
-        bridgeContract = bridgeFactory({ category: relayerInfo.bridge })?.getInfo().contract;
-      }
-      const cross = sourceTokenConfig?.cross.find(
-        (c) => c.bridge.category === relayerInfo?.bridge && c.target.network === relayerInfo.toChain,
-      );
-
-      const targetChainConfig = getChainConfig(relayerInfo?.toChain);
-      const targetTokenConfig = targetChainConfig?.tokens.find((t) => t.symbol === cross?.target.symbol);
-
-      return {
-        bridgeContract,
-        bridgeCategory: relayerInfo?.bridge,
-        sourceChainConfig,
-        targetChainConfig,
-        sourceTokenConfig,
-        targetTokenConfig,
-      };
-    }, [relayerInfo]);
-
-  const okText = useMemo(() => {
-    let text = "Confirm";
-
-    if (activeKey === "deposit") {
-      if (bridgeCategory === "lnbridgev20-default") {
-        if (chain?.id !== targetChainConfig?.id) {
-          text = "Switch Network";
-        } else if (depositMargin.formatted > allowance) {
-          text = "Approve";
-        }
-      } else if (bridgeCategory === "lnbridgev20-opposite") {
-        if (chain?.id !== sourceChainConfig?.id) {
-          text = "Switch Network";
-        } else if (depositMargin.formatted > allowance) {
-          text = "Approve";
-        }
-      }
-    } else if (chain?.id !== sourceChainConfig?.id) {
-      text = "Switch Network";
-    }
-
-    return text;
-  }, [activeKey, allowance, bridgeCategory, chain, depositMargin, sourceChainConfig, targetChainConfig]);
 
   useEffect(() => {
-    const sourceChainConfig = getChainConfig(relayerInfo?.fromChain);
-    const sourceTokenConfig = sourceChainConfig?.tokens.find(
+    const _category = relayerInfo?.bridge;
+    const _sourceChain = getChainConfig(relayerInfo?.fromChain);
+    const _targetChain = getChainConfig(relayerInfo?.toChain);
+    const _sourceToken = _sourceChain?.tokens.find(
       (t) => t.address.toLowerCase() === relayerInfo?.sendToken?.toLowerCase(),
     );
-
-    let bridgeContract: BridgeContract | undefined = undefined;
-    if (relayerInfo?.bridge) {
-      bridgeContract = bridgeFactory({ category: relayerInfo.bridge })?.getInfo().contract;
-    }
-    const cross = sourceTokenConfig?.cross.find(
-      (c) => c.bridge.category === relayerInfo?.bridge && c.target.network === relayerInfo.toChain,
+    const _cross = _sourceToken?.cross.find(
+      (c) => c.bridge.category === _category && c.target.network === _targetChain?.network,
     );
+    const _targetToken = getChainConfig(_cross?.target.network)?.tokens.find((t) => t.symbol === _cross?.target.symbol);
 
-    const targetChainConfig = getChainConfig(relayerInfo?.toChain);
-    const targetTokenConfig = targetChainConfig?.tokens.find((t) => t.symbol === cross?.target.symbol);
-
-    if (relayerInfo?.baseFee && sourceTokenConfig) {
+    if (relayerInfo?.baseFee && _sourceToken) {
       setBaseFee({
         formatted: BigInt(relayerInfo.baseFee),
-        value: formatBalance(BigInt(relayerInfo.baseFee), sourceTokenConfig.decimals),
+        value: formatBalance(BigInt(relayerInfo.baseFee), _sourceToken.decimals),
       });
     }
 
@@ -121,99 +76,63 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
       setFeeRate({ formatted: Number(relayerInfo.liquidityFeeRate), value: `${relayerInfo.liquidityFeeRate}` });
     }
 
-    if (relayerInfo?.bridge === "lnbridgev20-default" && targetTokenConfig && relayerInfo.margin) {
-      setDepositMargin({
+    if (relayerInfo?.bridge === "lnbridgev20-default" && _targetToken && relayerInfo.margin) {
+      setMargin({
         formatted: BigInt(relayerInfo.margin),
-        value: formatBalance(BigInt(relayerInfo.margin), targetTokenConfig.decimals),
+        value: formatBalance(BigInt(relayerInfo.margin), _targetToken.decimals),
       });
-    } else if (relayerInfo?.bridge === "lnbridgev20-opposite" && sourceTokenConfig && relayerInfo.margin) {
-      setDepositMargin({
+    } else if (relayerInfo?.bridge === "lnbridgev20-opposite" && _sourceToken && relayerInfo.margin) {
+      setMargin({
         formatted: BigInt(relayerInfo.margin),
-        value: formatBalance(BigInt(relayerInfo.margin), sourceTokenConfig.decimals),
+        value: formatBalance(BigInt(relayerInfo.margin), _sourceToken.decimals),
       });
     }
-  }, [relayerInfo]);
 
-  useEffect(() => {
-    let sub$$: Subscription | undefined;
+    setBridgeCategory(_category);
+    setSourceChain(_sourceChain);
+    setTargetChain(_targetChain);
+    setSourceToken(_sourceToken);
+  }, [
+    relayerInfo,
+    setBaseFee,
+    setFeeRate,
+    setMargin,
+    setSourceChain,
+    setTargetChain,
+    setSourceToken,
+    setBridgeCategory,
+  ]);
 
-    if (address && chain && bridgeContract && bridgeCategory) {
-      if (bridgeCategory === "lnbridgev20-default" && chain.id === targetChainConfig?.id && targetTokenConfig) {
-        sub$$ = from(import("@/abi/erc20.json"))
-          .pipe(
-            switchMap((abi) =>
-              forkJoin([
-                fetchBalance({ address, token: targetTokenConfig.address }),
-                publicClient.readContract({
-                  address: targetTokenConfig.address,
-                  abi: abi.default,
-                  functionName: "allowance",
-                  args: [address, bridgeContract.targetAddress],
-                }),
-              ]),
-            ),
-          )
-          .subscribe({
-            next: ([b, a]) => {
-              setBalance(b.value);
-              setAllowance(a as unknown as bigint);
-            },
-            error: (err) => {
-              console.error(err);
-              setBalance(undefined);
-              setAllowance(0n);
-            },
-          });
-      } else if (
-        bridgeCategory === "lnbridgev20-opposite" &&
-        chain?.id === sourceChainConfig?.id &&
-        sourceTokenConfig
-      ) {
-        sub$$ = from(import("@/abi/erc20.json"))
-          .pipe(
-            switchMap((abi) =>
-              forkJoin([
-                fetchBalance({ address, token: sourceTokenConfig.address }),
-                publicClient.readContract({
-                  address: sourceTokenConfig.address,
-                  abi: abi.default,
-                  functionName: "allowance",
-                  args: [address, bridgeContract.sourceAddress],
-                }),
-              ]),
-            ),
-          )
-          .subscribe({
-            next: ([b, a]) => {
-              setBalance(b.value);
-              setAllowance(a as unknown as bigint);
-            },
-            error: (err) => {
-              console.error(err);
-              setBalance(undefined);
-              setAllowance(0n);
-            },
-          });
-      } else {
-        setBalance(undefined);
-        setAllowance(0n);
+  const okText = useMemo(() => {
+    let text = "Confirm";
+    if (activeKey === "deposit") {
+      if (bridgeCategory === "lnbridgev20-default") {
+        if (chain?.id !== targetChain?.id) {
+          text = "Switch Network";
+        } else if (sourceToken?.type !== "native" && margin.formatted > (targetAllowance?.value || 0n)) {
+          text = "Approve";
+        }
+      } else if (bridgeCategory === "lnbridgev20-opposite") {
+        if (chain?.id !== sourceChain?.id) {
+          text = "Switch Network";
+        } else if (sourceToken?.type !== "native" && margin.formatted > (sourceAllowance?.value || 0n)) {
+          text = "Approve";
+        }
       }
-    } else {
-      setBalance(undefined);
-      setAllowance(0n);
+    } else if (chain?.id !== sourceChain?.id) {
+      text = "Switch Network";
     }
-
-    return () => sub$$?.unsubscribe();
+    return text;
   }, [
     chain,
-    address,
+    margin,
+    activeKey,
     bridgeCategory,
-    bridgeContract,
-    sourceChainConfig,
-    targetChainConfig,
-    sourceTokenConfig,
-    targetTokenConfig,
-    publicClient,
+    sourceChain,
+    targetChain,
+    sourceToken,
+    sourceAllowance,
+    targetAllowance,
   ]);
 
   return (
@@ -226,203 +145,56 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
       onOk={async () => {
         try {
           if (activeKey === "update") {
-            if (chain?.id !== sourceChainConfig?.id) {
-              switchNetwork?.(sourceChainConfig?.id);
+            if (chain?.id !== sourceChain?.id) {
+              switchNetwork?.(sourceChain?.id);
             } else if (bridgeCategory === "lnbridgev20-default") {
-              if (walletClient && bridgeContract && targetChainConfig && sourceTokenConfig && targetTokenConfig) {
-                setBusy(true);
-
-                const abi = (await import("../abi/lnbridgev20-default.json")).default;
-                const hash = await walletClient.writeContract({
-                  address: bridgeContract.targetAddress,
-                  abi,
-                  functionName: "setProviderFee",
-                  args: [
-                    BigInt(targetChainConfig.id),
-                    sourceTokenConfig.address,
-                    targetTokenConfig.address,
-                    baseFee.formatted,
-                    feeRate.formatted,
-                  ],
-                  gas:
-                    sourceChainConfig?.network === "arbitrum" || sourceChainConfig?.network === "arbitrum-goerli"
-                      ? 1000000n
-                      : undefined,
-                });
-                const receipt = await publicClient.waitForTransactionReceipt({ hash });
-                if (receipt.status === "success") {
-                  onSuccess();
-                  onClose();
-                } else {
-                  notification.error({
-                    title: "Transaction failed",
-                    description: <span className="break-all">{receipt.transactionHash}</span>,
-                  });
-                }
+              setBusy(true);
+              const receipt = await setFeeAndRate(baseFee.formatted, feeRate.formatted);
+              if (receipt?.status === "success") {
+                onSuccess();
+                onClose();
               }
             } else if (bridgeCategory === "lnbridgev20-opposite") {
-              if (walletClient && bridgeContract && targetChainConfig && sourceTokenConfig && targetTokenConfig) {
-                setBusy(true);
-
-                const abi = (await import("../abi/lnbridgev20-opposite.json")).default;
-                const hash = await walletClient.writeContract({
-                  address: bridgeContract.sourceAddress,
-                  abi,
-                  functionName: "updateProviderFeeAndMargin",
-                  args: [
-                    BigInt(targetChainConfig.id),
-                    sourceTokenConfig.address,
-                    targetTokenConfig.address,
-                    depositMargin.formatted,
-                    baseFee.formatted,
-                    feeRate.formatted,
-                  ],
-                  value: sourceTokenConfig.type === "native" ? depositMargin.formatted : undefined,
-                });
-                const receipt = await publicClient.waitForTransactionReceipt({ hash });
-                if (receipt.status === "success") {
-                  onSuccess();
-                  onClose();
-                } else {
-                  notification.error({
-                    title: "Transaction failed",
-                    description: <span className="break-all">{receipt.transactionHash}</span>,
-                  });
-                }
+              setBusy(true);
+              const receipt = await updateFeeAndMargin(margin.formatted, baseFee.formatted, feeRate.formatted);
+              if (receipt?.status === "success") {
+                onSuccess();
+                onClose();
               }
             }
           } else if (activeKey === "deposit") {
             if (bridgeCategory === "lnbridgev20-default") {
-              if (chain?.id !== targetChainConfig?.id) {
-                switchNetwork?.(targetChainConfig?.id);
-              } else if (depositMargin.formatted > allowance) {
-                if (bridgeContract && targetTokenConfig && walletClient) {
-                  setBusy(true);
-
-                  const abi = (await import("../abi/erc20.json")).default;
-                  const spender = bridgeContract.targetAddress;
-
-                  const { request } = await publicClient.simulateContract({
-                    address: targetTokenConfig.address,
-                    abi,
-                    functionName: "approve",
-                    args: [spender, depositMargin.formatted],
-                    account: address,
-                  });
-                  const hash = await walletClient.writeContract(request);
-                  await publicClient.waitForTransactionReceipt({ hash });
-
-                  setAllowance(
-                    (await publicClient.readContract({
-                      address: targetTokenConfig.address,
-                      abi,
-                      functionName: "allowance",
-                      args: [address, spender],
-                    })) as unknown as bigint,
-                  );
-                }
-              } else if (
-                walletClient &&
-                bridgeContract &&
-                sourceChainConfig &&
-                sourceTokenConfig &&
-                targetTokenConfig
-              ) {
+              if (chain?.id !== targetChain?.id) {
+                switchNetwork?.(targetChain?.id);
+              } else if (sourceToken?.type !== "native" && margin.formatted > (targetAllowance?.value || 0n)) {
                 setBusy(true);
-
-                const abi = (await import("../abi/lnbridgev20-default.json")).default;
-                const hash = await walletClient.writeContract({
-                  address: bridgeContract.targetAddress,
-                  abi,
-                  functionName: "depositProviderMargin",
-                  args: [
-                    BigInt(sourceChainConfig.id),
-                    sourceTokenConfig.address,
-                    targetTokenConfig.address,
-                    depositMargin.formatted,
-                  ],
-                  value: sourceTokenConfig.type === "native" ? depositMargin.formatted : undefined,
-                });
-                const receipt = await publicClient.waitForTransactionReceipt({ hash });
-                if (receipt.status === "success") {
+                await targetApprove(margin.formatted);
+              } else {
+                setBusy(true);
+                const receipt = await depositMargin(margin.formatted);
+                if (receipt?.status === "success") {
                   onSuccess();
                   onClose();
-                } else {
-                  notification.error({
-                    title: "Transaction failed",
-                    description: <span className="break-all">{receipt.transactionHash}</span>,
-                  });
                 }
               }
             } else if (bridgeCategory === "lnbridgev20-opposite") {
-              if (chain?.id !== sourceChainConfig?.id) {
-                switchNetwork?.(sourceChainConfig?.id);
-              } else if (depositMargin.formatted > allowance) {
-                if (bridgeContract && sourceTokenConfig && walletClient) {
-                  setBusy(true);
-
-                  const abi = (await import("../abi/erc20.json")).default;
-                  const spender = bridgeContract.sourceAddress;
-
-                  const { request } = await publicClient.simulateContract({
-                    address: sourceTokenConfig.address,
-                    abi,
-                    functionName: "approve",
-                    args: [spender, depositMargin.formatted],
-                    account: address,
-                  });
-                  const hash = await walletClient.writeContract(request);
-                  await publicClient.waitForTransactionReceipt({ hash });
-
-                  setAllowance(
-                    (await publicClient.readContract({
-                      address: sourceTokenConfig.address,
-                      abi,
-                      functionName: "allowance",
-                      args: [address, spender],
-                    })) as unknown as bigint,
-                  );
-                }
-              } else if (
-                walletClient &&
-                bridgeContract &&
-                targetChainConfig &&
-                sourceTokenConfig &&
-                targetTokenConfig
-              ) {
+              if (chain?.id !== sourceChain?.id) {
+                switchNetwork?.(sourceChain?.id);
+              } else if (sourceToken?.type !== "native" && margin.formatted > (sourceAllowance?.value || 0n)) {
                 setBusy(true);
-
-                const abi = (await import("../abi/lnbridgev20-opposite.json")).default;
-                const hash = await walletClient.writeContract({
-                  address: bridgeContract.sourceAddress,
-                  abi,
-                  functionName: "updateProviderFeeAndMargin",
-                  args: [
-                    BigInt(targetChainConfig.id),
-                    sourceTokenConfig.address,
-                    targetTokenConfig.address,
-                    depositMargin.formatted,
-                    baseFee.formatted,
-                    feeRate.formatted,
-                  ],
-                  value: sourceTokenConfig.type === "native" ? depositMargin.formatted : undefined,
-                });
-                const receipt = await publicClient.waitForTransactionReceipt({ hash });
-                if (receipt.status === "success") {
+                await sourceApprove(margin.formatted);
+              } else {
+                setBusy(true);
+                const receipt = await updateFeeAndMargin(margin.formatted, baseFee.formatted, feeRate.formatted);
+                if (receipt?.status === "success") {
                   onSuccess();
                   onClose();
-                } else {
-                  notification.error({
-                    title: "Transaction failed",
-                    description: <span className="break-all">{receipt.transactionHash}</span>,
-                  });
                 }
               }
             }
           }
         } catch (err) {
           console.error(err);
-          notification.error({ title: "Transaction failed", description: (err as Error).message });
         } finally {
           setBusy(false);
         }
@@ -432,7 +204,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
       disabledOk={
         activeKey === "update" && baseFee.formatted === 0n && feeRate.formatted === 0
           ? true
-          : activeKey === "deposit" && depositMargin.formatted === 0n
+          : activeKey === "deposit" && margin.formatted === 0n
           ? true
           : false
       }
@@ -451,18 +223,10 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             children: (
               <div className="flex flex-col gap-5" ref={(node) => setHeight((prev) => node?.clientHeight || prev)}>
                 <LabelSection label="Base Fee">
-                  <BalanceInput
-                    chainToken={
-                      sourceChainConfig && sourceTokenConfig
-                        ? { network: sourceChainConfig.network, symbol: sourceTokenConfig.symbol }
-                        : undefined
-                    }
-                    value={baseFee}
-                    onChange={setBaseFee}
-                  />
+                  <BalanceInput token={sourceToken} value={baseFee} onChange={setBaseFee} />
                 </LabelSection>
                 <LabelSection label="Liquidity Fee Rate">
-                  <LiquidityFeeRateInput value={feeRate} onChange={setFeeRate} />
+                  <FeeRateInput value={feeRate} onChange={setFeeRate} />
                 </LabelSection>
               </div>
             ),
@@ -478,16 +242,21 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             children: (
               <LabelSection label="More Margin" height={height}>
                 <BalanceInput
-                  balance={balance}
-                  chainToken={
-                    bridgeCategory === "lnbridgev20-default" && targetChainConfig && targetTokenConfig
-                      ? { network: targetChainConfig.network, symbol: targetTokenConfig.symbol }
-                      : bridgeCategory === "lnbridgev20-opposite" && sourceChainConfig && sourceTokenConfig
-                      ? { network: sourceChainConfig.network, symbol: sourceTokenConfig.symbol }
+                  balance={
+                    bridgeCategory === "lnbridgev20-default"
+                      ? targetBalance?.value
+                      : bridgeCategory === "lnbridgev20-opposite"
+                      ? sourceBalance?.value
                       : undefined
                   }
-                  value={depositMargin}
-                  onChange={setDepositMargin}
+                  token={
+                    bridgeCategory === "lnbridgev20-default"
+                      ? targetBalance?.token
+                      : bridgeCategory === "lnbridgev20-opposite"
+                      ? sourceBalance?.token
+                      : undefined
+                  }
+                  onChange={setMargin}
                 />
               </LabelSection>
             ),
@@ -513,7 +282,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             ),
             children: (
               <LabelSection label="Withdraw Amount" height={height}>
-                <BalanceInput chainToken={{ network: "goerli", symbol: "USDC" }} />
+                <BalanceInput token={undefined} />
               </LabelSection>
             ),
             disabled: true,

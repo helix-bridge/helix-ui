@@ -9,7 +9,7 @@ import { TokenSymbol } from "@/types/token";
 import { getChainConfig } from "@/utils/chain";
 import { formatRecordStatus, getChainLogoSrc } from "@/utils/misc";
 import { formatTime } from "@/utils/time";
-import BridgeLogo from "./bridge-logo";
+import PrettyBridge from "./pretty-bridge";
 import { bridgeFactory } from "@/utils/bridge";
 
 interface Props {
@@ -38,7 +38,7 @@ export default function RecordsTable({
       key: "from",
       title: <Title>From</Title>,
       render: ({ fromChain, sendAmount, sendToken }) => (
-        <FromTo chain={fromChain} amount={BigInt(sendAmount)} symbol={sendToken} />
+        <FromTo network={fromChain} amount={BigInt(sendAmount)} symbol={sendToken} />
       ),
       width: "18%",
     },
@@ -46,7 +46,7 @@ export default function RecordsTable({
       key: "to",
       title: <Title>To</Title>,
       render: ({ toChain, recvAmount, recvToken }) => (
-        <FromTo chain={toChain} amount={BigInt(recvAmount)} symbol={recvToken} />
+        <FromTo network={toChain} amount={BigInt(recvAmount)} symbol={recvToken} />
       ),
       width: "18%",
     },
@@ -69,7 +69,7 @@ export default function RecordsTable({
         const bridge = bridgeFactory({ category: row.bridge });
         return (
           <div className="flex justify-center">
-            <BridgeLogo width={36} height={36} type="symbol" bridge={bridge} className="bg-component" />
+            <PrettyBridge width={36} height={36} type="symbol" bridge={bridge} />
           </div>
         );
       },
@@ -122,18 +122,18 @@ function Title({ children, className }: PropsWithChildren<{ className?: string }
   return <span className={`text-sm font-normal text-white ${className}`}>{children}</span>;
 }
 
-function FromTo({ chain, amount, symbol }: { chain: Network; amount: bigint; symbol: TokenSymbol }) {
-  const chainConfig = getChainConfig(chain);
-  const token = chainConfig?.tokens.find((t) => t.symbol === symbol);
+function FromTo({ network, amount, symbol }: { network: Network; amount: bigint; symbol: TokenSymbol }) {
+  const chain = getChainConfig(network);
+  const token = chain?.tokens.find((t) => t.symbol === symbol);
 
-  return token && chainConfig ? (
+  return token && chain ? (
     <div className="gap-middle flex items-start">
-      <Image width={32} height={32} alt="Logo" src={getChainLogoSrc(chainConfig.logo)} className="rounded-full" />
+      <Image width={32} height={32} alt="Logo" src={getChainLogoSrc(chain.logo)} className="rounded-full" />
       <div className="flex flex-col items-start">
         <span className="truncate text-sm font-medium text-white">
           {formatBalance(amount, token.decimals, { keepZero: false })} {symbol}
         </span>
-        <span className="text-xs font-normal text-white/50">{chainConfig.name}</span>
+        <span className="text-xs font-normal text-white/50">{chain.name}</span>
       </div>
     </div>
   ) : (

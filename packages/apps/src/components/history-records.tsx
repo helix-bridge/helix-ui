@@ -8,7 +8,7 @@ import { useDeferredValue, useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import RecordsTable from "@/components/records-table";
 import { UrlSearchParam } from "@/types/url";
-import SearchInput from "@/ui/search-input";
+import Search from "@/ui/search";
 import { isAddress } from "viem";
 import CountdownRefresh from "@/ui/countdown-refresh";
 import { useApp } from "@/hooks/use-app";
@@ -60,6 +60,13 @@ export default function HistoryRecords() {
     setRecordsSearch(new URLSearchParams(window.location.search).get(UrlSearchParam.ADDRESS) || "");
   }, [setRecordsSearch]);
 
+  useEffect(() => {
+    const page = Number(new URLSearchParams(window.location.search).get(UrlSearchParam.PAGE));
+    if (!Number.isNaN(page) && page > 0) {
+      setCurrentPage(page - 1);
+    }
+  }, []);
+
   const createChildren = () => (
     <RecordsTable
       dataSource={(records?.historyRecords?.records || []).map((r) => ({ ...r, key: r.id }))}
@@ -71,7 +78,12 @@ export default function HistoryRecords() {
       total={records?.historyRecords?.total}
       pageSize={pageSize}
       currentPage={currentPage}
-      onPageChange={setCurrentPage}
+      onPageChange={(page) => {
+        setCurrentPage(page);
+        const params = new URLSearchParams(searchParams.toString());
+        params.set(UrlSearchParam.PAGE, (page + 1).toString());
+        router.push(`?${params.toString()}`);
+      }}
       onRowClick={(_, { id }) => router.push(`${pathName}/${id}`)}
     />
   );
@@ -79,7 +91,7 @@ export default function HistoryRecords() {
   return (
     <>
       <div className="flex items-center justify-between gap-5">
-        <SearchInput
+        <Search
           placeholder="Search by address"
           className="w-full lg:w-[26.5rem]"
           value={recordsSearch}
@@ -95,7 +107,7 @@ export default function HistoryRecords() {
               router.push(`?${params.toString()}`);
             }
           }}
-          onReset={() => {
+          onClear={() => {
             setRecordsSearch("");
 
             const params = new URLSearchParams(searchParams.toString());

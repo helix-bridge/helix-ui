@@ -1,5 +1,6 @@
 "use client";
 
+import Button from "@/ui/button";
 import Modal from "@/ui/modal";
 import { useState } from "react";
 
@@ -21,15 +22,16 @@ export default function DisclaimerModal() {
 
       <div />
 
-      <button
-        className="bg-primary py-small px-large mx-auto w-fit rounded transition hover:opacity-80 active:translate-y-1"
+      <Button
+        className="button py-small px-large mx-auto w-fit"
+        kind="primary"
         onClick={() => {
           setIsOpen(false);
           localStorage.setItem(KEY, "agree");
         }}
       >
         <span className="text-sm font-semibold text-white">Agree and Continue</span>
-      </button>
+      </Button>
     </Modal>
   );
 }

@@ -31,12 +31,10 @@ export class HelixBridgeDVMDVM extends BaseBridge {
     this.initContract();
     this.initSpecVersion();
 
-    if (args.logo) {
-      this.logo = {
-        horizontal: "helix-horizontal.svg",
-        symbol: "helix-symbol.svg",
-      };
-    }
+    this.logo = args.logo ?? {
+      horizontal: "helix-horizontal.svg",
+      symbol: "helix-symbol.svg",
+    };
     this.name = "Helix(Legacy)";
   }
 
@@ -73,9 +71,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
   }
 
   async lock(_: string, recipient: string, amount: bigint, options?: { totalFee: bigint }) {
-    if ((await this.publicClient?.getChainId()) !== this.sourceChain?.id) {
-      throw new Error("Wrong network");
-    }
+    await this.validateNetwork("source");
 
     if (options && this.contract && this.specVersion && this.sourceToken && this.publicClient && this.walletClient) {
       const { args, value, functionName } =
@@ -105,9 +101,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
   }
 
   async burn(_: string, recipient: string, amount: bigint, options?: { totalFee: bigint }) {
-    if ((await this.publicClient?.getChainId()) !== this.sourceChain?.id) {
-      throw new Error("Wrong network");
-    }
+    await this.validateNetwork("target");
 
     if (options && this.contract && this.specVersion && this.sourceToken && this.publicClient && this.walletClient) {
       const { args, value, functionName } =
@@ -150,9 +144,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
   }
 
   async refund(record: HistoryRecord) {
-    if (this.targetChain?.id !== (await this.publicClient?.getChainId())) {
-      throw new Error("Wrong network");
-    }
+    await this.validateNetwork("target");
 
     if (this.contract && this.specVersion && this.publicClient && this.walletClient) {
       const { abi, address, functionName } =
@@ -193,7 +185,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
   }
 
   async getFee() {
-    if (this.contract && this.sourceNativeToken) {
+    if (this.contract && this.sourceNativeToken && this.sourcePublicClient) {
       const { abi, address } =
         this.crossInfo?.action === "issue"
           ? { abi: (await import("@/abi/backing-dvmdvm.json")).default, address: this.contract.sourceAddress }
@@ -209,7 +201,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
   }
 
   async getDailyLimit() {
-    if (this.contract && this.sourceToken && this.targetToken) {
+    if (this.contract && this.sourceToken && this.targetToken && this.targetPublicClient) {
       const { abi, address } =
         this.crossInfo?.action === "redeem"
           ? { abi: (await import("@/abi/backing-dvmdvm.json")).default, address: this.contract.sourceAddress }
