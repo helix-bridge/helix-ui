@@ -228,7 +228,7 @@ export default function Transfer() {
           />
         </Section>
 
-        <Section label="Recipient" className="mt-8">
+        <Section label="Recipient" className="mt-8 hidden">
           <AddressInput
             placeholder={address}
             value={recipient}
