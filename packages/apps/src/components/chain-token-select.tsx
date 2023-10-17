@@ -85,6 +85,11 @@ function Cascader({
                 setTokens(tokens);
                 chainRef.current = chain;
               }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setTokens(tokens);
+                chainRef.current = chain;
+              }}
             >
               <div className="gap-small flex items-center">
                 <Image
