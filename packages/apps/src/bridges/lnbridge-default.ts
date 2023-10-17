@@ -32,10 +32,17 @@ export class LnBridgeDefault extends LnBridgeBase {
         targetAddress: "0x4C538EfA6e3f9Dfb939AA4F0B224577DA665923a",
       };
     } else if (this.sourceChain?.id === ChainID.ZKSYNC_GOERLI || this.targetChain?.id === ChainID.ZKSYNC_GOERLI) {
-      this.contract = {
-        sourceAddress: "0xe8d55759c32fb608fD092aB2C0ef8A1F52B254d4",
-        targetAddress: "0xe8d55759c32fb608fD092aB2C0ef8A1F52B254d4",
-      };
+      if (this.sourceChain?.id === ChainID.ZKSYNC_GOERLI) {
+        this.contract = {
+          sourceAddress: "0xe8d55759c32fb608fD092aB2C0ef8A1F52B254d4",
+          targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+        };
+      } else {
+        this.contract = {
+          sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+          targetAddress: "0xe8d55759c32fb608fD092aB2C0ef8A1F52B254d4",
+        };
+      }
     } else if (!isProduction()) {
       this.contract = {
         sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
