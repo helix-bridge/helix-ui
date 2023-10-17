@@ -32,8 +32,12 @@ export function BalanceInput({
 
   return (
     <div
-      className={`lg:px-middle px-small py-small gap-small bg-app-bg normal-input-wrap relative flex items-center justify-between border-transparent ${
-        insufficient || exceeded ? "invalid-input-wrap" : disabled ? "" : "valid-input-wrap"
+      className={`lg:px-middle px-small py-small gap-small bg-app-bg normal-input-wrap relative flex items-center justify-between ${
+        insufficient || exceeded
+          ? "invalid-input-wrap"
+          : disabled
+          ? "border-transparent"
+          : "valid-input-wrap border-transparent"
       }`}
     >
       <Input

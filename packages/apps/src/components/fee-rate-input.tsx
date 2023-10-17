@@ -13,7 +13,7 @@ export default function FeeRateInput({
   return (
     <div
       className={`gap-small bg-app-bg p-small lg:p-middle normal-input-wrap flex items-center justify-between ${
-        invalid ? "invalid-input-wrap" : "valid-input-wrap"
+        invalid ? "invalid-input-wrap" : "valid-input-wrap border-transparent"
       }`}
     >
       <Input

@@ -10,8 +10,8 @@ export default forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement
 
   return (
     <div
-      className={`bg-app-bg lg:px-middle px-small normal-input-wrap relative border-transparent py-1 ${
-        invalid ? "invalid-input-wrap" : "valid-input-wrap"
+      className={`bg-app-bg lg:px-middle px-small normal-input-wrap relative py-1 ${
+        invalid ? "invalid-input-wrap" : "valid-input-wrap border-transparent"
       }`}
     >
       <Input
