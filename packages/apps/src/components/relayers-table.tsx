@@ -10,7 +10,6 @@ import { formatBalance } from "@/utils/balance";
 import { useState } from "react";
 import Button from "@/ui/button";
 import RelayerManageModal from "./relayer-manage-modal";
-import RelayerProvider from "@/providers/relayer-provider";
 
 interface Props {
   total: number;

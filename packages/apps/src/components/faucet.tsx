@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
 import { Subscription, forkJoin, from } from "rxjs";
 import { switchMap } from "rxjs/operators";
-import Tooltip from "@/ui/tooltip";
 import Modal from "@/ui/modal";
 import { formatBalance } from "@/utils/balance";
 import { notification } from "@/ui/notification";
