@@ -460,6 +460,7 @@ export default function RelayerRegister() {
                   }}
                   className="flex h-9 flex-1 items-center justify-center"
                   busy={busy}
+                  disabled={sourceToken?.type === "native"}
                 >
                   <span className="text-sm font-normal">
                     {chain?.id === targetChain?.id ? "Approve More" : "Switch Network"}
