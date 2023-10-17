@@ -6,15 +6,21 @@ export default forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement
   { className, value, ...rest },
   ref,
 ) {
+  const invalid = !!value && !(typeof value === "string" && isAddress(value));
+
   return (
-    <div className="bg-app-bg lg:px-middle px-small py-small relative rounded">
+    <div
+      className={`bg-app-bg lg:px-middle px-small normal-input-wrap relative border-transparent py-1 ${
+        invalid ? "invalid-input-wrap" : "valid-input-wrap"
+      }`}
+    >
       <Input
         className={`h-8 w-full rounded bg-transparent text-sm text-white ${className}`}
         value={value}
         ref={ref}
         {...rest}
       />
-      {!!value && !(typeof value === "string" && isAddress(value)) && <Message text="* Invalid recipient" />}
+      {invalid && <Message text="* Invalid recipient" />}
     </div>
   );
 });

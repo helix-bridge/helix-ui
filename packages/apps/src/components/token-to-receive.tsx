@@ -19,7 +19,7 @@ export default function TokenToReceive({ record }: Props) {
   return token ? (
     <div className="gap-middle flex items-center">
       {token.address && <PrettyAddress address={token.address} copyable className="text-primary text-sm font-normal" />}
-      <Image width={20} height={20} alt="Token" src={getTokenLogoSrc(token.logo)} className="shrink-0" />
+      <Image width={20} height={20} alt="Token" src={getTokenLogoSrc(token.logo)} className="shrink-0 rounded-full" />
       <span className="text-sm font-normal text-white">{token.symbol}</span>
 
       {/* add to metamask */}

@@ -19,7 +19,7 @@ interface Props {
 export default function ChainTokenSelect({ options, value, width, placement, onChange = () => undefined }: Props) {
   return (
     <ISelect
-      labelClassName="p-middle bg-app-bg hover:border-line flex shrink-0 items-center justify-between rounded border border-transparent transition active:translate-y-1"
+      labelClassName="p-middle bg-app-bg flex shrink-0 items-center justify-between border-transparent"
       childClassName="bg-component rounded border border-white/10 shadow-2xl"
       label={
         value ? (

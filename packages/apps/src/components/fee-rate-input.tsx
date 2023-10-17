@@ -9,12 +9,11 @@ export default function FeeRateInput({
   value?: { formatted: number; value: string };
   onChange?: (value: { formatted: number; value: string }) => void;
 }) {
+  const invalid = (value?.formatted || 0) < 0 || 100 < (value?.formatted || 0);
   return (
     <div
-      className={`gap-small bg-app-bg p-small lg:p-middle flex items-center justify-between rounded border transition-colors ${
-        (value?.formatted || 0) < 0 || 100 < (value?.formatted || 0)
-          ? "border-app-red hover:border-app-red focus-within:border-app-red"
-          : "hover:border-line focus-within:border-line border-transparent"
+      className={`gap-small bg-app-bg p-small lg:p-middle normal-input-wrap flex items-center justify-between ${
+        invalid ? "invalid-input-wrap" : "valid-input-wrap"
       }`}
     >
       <Input

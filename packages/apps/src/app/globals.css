@@ -58,7 +58,23 @@ body {
   }
 
   .button {
-    @apply flex h-8 items-center justify-center lg:h-9 text-sm;
+    @apply flex h-8 items-center justify-center text-sm lg:h-9;
+  }
+
+  .normal-input-wrap {
+    @apply rounded border transition-colors duration-300;
+  }
+
+  .valid-input-wrap {
+    @apply hover:border-primary focus-within:border-primary;
+  }
+
+  .invalid-input-wrap {
+    @apply hover:border-app-red focus-within:border-app-red border-app-red;
+  }
+
+  .select {
+    @apply hover:border-primary focus-within:border-primary rounded border transition duration-300 disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1;
   }
 }
 

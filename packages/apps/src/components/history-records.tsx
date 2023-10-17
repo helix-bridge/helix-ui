@@ -97,6 +97,8 @@ export default function HistoryRecords() {
           value={recordsSearch}
           onChange={(value) => {
             setRecordsSearch(value);
+            setCurrentPage(0);
+            setActiveKey(AllStatus.All);
 
             const params = new URLSearchParams(searchParams.toString());
             if (isAddress(value)) {

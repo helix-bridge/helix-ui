@@ -13,7 +13,7 @@ export default function BridgeSelect({ options, value, onChange = () => undefine
 
   return (
     <ISelect
-      labelClassName="bg-app-bg hover:border-line p-middle flex items-center justify-between rounded border border-transparent transition-colors"
+      labelClassName="bg-app-bg p-middle flex items-center justify-between border-transparent"
       childClassName="bg-component border-line py-small flex flex-col rounded border"
       label={active ? <span className="text-sm font-normal text-white">{active.getName()}</span> : undefined}
       placeholder={<span className="text-sm font-normal text-white/50">Select a bridge</span>}

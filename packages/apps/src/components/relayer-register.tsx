@@ -143,7 +143,7 @@ export default function RelayerRegister() {
               <div className="gap-middle flex items-center lg:gap-5">
                 <LabelItem label="From" className="flex-1">
                   <ChainSelect
-                    className="px-middle bg-app-bg hover:border-line border-transparent py-2"
+                    className="px-middle bg-app-bg border-transparent py-2"
                     options={defaultSourceOptions.map(({ chain }) => chain)}
                     placeholder="Source chain"
                     onChange={(value) => {
@@ -156,7 +156,7 @@ export default function RelayerRegister() {
                 </LabelItem>
                 <LabelItem label="To" className="flex-1">
                   <ChainSelect
-                    className="px-middle bg-app-bg hover:border-line border-transparent py-2"
+                    className="px-middle bg-app-bg border-transparent py-2"
                     options={sourceChain ? availableTargetChains[sourceChain.network] || [] : defaultTargetChains}
                     placeholder="Target chain"
                     onChange={(value) => {

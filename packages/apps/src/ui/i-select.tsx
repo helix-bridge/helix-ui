@@ -71,7 +71,7 @@ export default function ISelect({
   return (
     <>
       <button
-        className={`disabled:cursor-not-allowed disabled:opacity-60 ${labelClassName}`}
+        className={`select ${labelClassName}`}
         ref={refs.setReference}
         {...getReferenceProps()}
         disabled={disabled}

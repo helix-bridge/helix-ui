@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Input from "./input";
 
 interface Props {
   placeholder?: string;
@@ -11,14 +12,14 @@ interface Props {
 export default function Search({ placeholder, className, value, onClear, onChange = () => undefined }: Props) {
   return (
     <div
-      className={`gap-small border-line px-middle hover:border-primary focus-within:border-primary flex items-center justify-between rounded border py-2 transition-colors duration-300 ${className}`}
+      className={`gap-small border-line px-middle normal-input-wrap valid-input-wrap flex items-center justify-between py-2 ${className}`}
     >
-      <input
+      <Input
         placeholder={placeholder}
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded bg-transparent text-sm font-medium text-white focus-visible:outline-none"
+        className="w-full rounded bg-transparent text-sm font-medium text-white"
       />
       {value ? (
         <button
