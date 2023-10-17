@@ -223,6 +223,7 @@ export default function Transfer() {
             token={sourceBalance?.token}
             value={transferValue}
             suffix
+            dynamic
             onChange={setTransferValue}
           />
         </Section>
