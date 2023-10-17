@@ -42,9 +42,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
     this.guard = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1";
   }
 
-  async lock(_: string, recipient: string, amount: bigint, options?: { totalFee: bigint }) {
-    await this.validateNetwork("source");
-
+  private async lock(_: string, recipient: string, amount: bigint, options?: { totalFee: bigint }) {
     if (options && this.contract && this.sourceToken && this.publicClient && this.walletClient) {
       const { args, value, functionName } =
         this.sourceToken.type === "native"
@@ -72,9 +70,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
     }
   }
 
-  async burn(_: string, recipient: string, amount: bigint, options?: { totalFee: bigint }) {
-    await this.validateNetwork("target");
-
+  private async burn(_: string, recipient: string, amount: bigint, options?: { totalFee: bigint }) {
     if (options && this.contract && this.sourceToken && this.publicClient && this.walletClient) {
       const { args, functionName } =
         this.sourceToken.type === "native"
@@ -107,6 +103,8 @@ export class HelixBridgeDVMEVM extends BaseBridge {
     amount: bigint,
     options?: { totalFee: bigint },
   ): Promise<TransactionReceipt | undefined> {
+    await this.validateNetwork("source");
+
     if (this.crossInfo?.action === "redeem") {
       return this.burn(sender, recipient, amount, options);
     } else {
