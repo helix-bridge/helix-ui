@@ -65,6 +65,7 @@ export default function Transfer() {
       fromChain: sourceValue?.chain.network,
       toChain: targetValue?.chain.network,
     },
+    skip: !bridgeClient?.isLnBridge(),
   });
 
   const searchParams = useSearchParams();
