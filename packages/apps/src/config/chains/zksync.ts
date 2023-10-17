@@ -6,8 +6,8 @@ export const zksyncChain: ChainConfig = {
   name: "Zksync",
   logo: "zksync.png",
   nativeCurrency: {
-    name: "zkETH",
-    symbol: "zkETH",
+    name: "ETH",
+    symbol: "ETH",
     decimals: 18,
   },
   rpcUrls: {

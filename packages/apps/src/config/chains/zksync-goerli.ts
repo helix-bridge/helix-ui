@@ -6,8 +6,8 @@ export const zksyncGoerliChain: ChainConfig = {
   name: "Zksync Era Testnet",
   logo: "zksync.png",
   nativeCurrency: {
-    name: "zkETH",
-    symbol: "zkETH",
+    name: "ETH",
+    symbol: "ETH",
     decimals: 18,
   },
   rpcUrls: {
@@ -30,15 +30,15 @@ export const zksyncGoerliChain: ChainConfig = {
   tokens: [
     {
       decimals: 18,
-      symbol: "zkETH",
-      name: "zkETH",
+      symbol: "ETH",
+      name: "ETH",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
       logo: "eth.svg",
       cross: [
         { target: { network: "goerli", symbol: "ETH" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "arbitrum-goerli", symbol: "ETH" }, bridge: { category: "lnbridgev20-default" } },
-        { target: { network: "linea-goerli", symbol: "lineaETH" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "linea-goerli", symbol: "ETH" }, bridge: { category: "lnbridgev20-default" } },
       ],
     },
     {

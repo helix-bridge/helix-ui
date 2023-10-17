@@ -2,9 +2,6 @@ import { Address } from "viem";
 
 export type TokenSymbol =
   | "ETH"
-  | "GoerliETH"
-  | "lineaETH"
-  | "zkETH"
   | "RING"
   | "USDC"
   | "USDT"
@@ -14,7 +11,6 @@ export type TokenSymbol =
   | "KTON"
   | "xWRING"
   | "xWCRAB"
-  | "ARB"
   | "MNT";
 
 export type TokenType = "native" | "erc20" | "mapping";

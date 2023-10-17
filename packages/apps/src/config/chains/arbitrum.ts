@@ -6,8 +6,8 @@ export const arbitrumChain: ChainConfig = {
   name: "Arbitrum One",
   logo: "arbitrum.png",
   nativeCurrency: {
-    name: "ARB",
-    symbol: "ARB",
+    name: "ETH",
+    symbol: "ETH",
     decimals: 18,
   },
   rpcUrls: {

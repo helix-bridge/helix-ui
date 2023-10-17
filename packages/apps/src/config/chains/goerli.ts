@@ -30,15 +30,15 @@ export const goerliChain: ChainConfig = {
   tokens: [
     {
       decimals: 18,
-      symbol: "GoerliETH",
-      name: "GoerliETH",
+      symbol: "ETH",
+      name: "ETH",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
       logo: "eth.svg",
       cross: [
         { target: { network: "arbitrum-goerli", symbol: "ETH" }, bridge: { category: "lnbridgev20-default" } },
-        { target: { network: "linea-goerli", symbol: "lineaETH" }, bridge: { category: "lnbridgev20-default" } },
-        { target: { network: "zksync-goerli", symbol: "zkETH" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "linea-goerli", symbol: "ETH" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "zksync-goerli", symbol: "ETH" }, bridge: { category: "lnbridgev20-default" } },
       ],
     },
     {

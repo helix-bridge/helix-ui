@@ -6,8 +6,8 @@ export const arbitrumGoerliChain: ChainConfig = {
   name: "Arbitrum Goerli",
   logo: "arbitrum.png",
   nativeCurrency: {
-    name: "ARB",
-    symbol: "ARB",
+    name: "ETH",
+    symbol: "ETH",
     decimals: 18,
   },
   rpcUrls: {
@@ -35,8 +35,8 @@ export const arbitrumGoerliChain: ChainConfig = {
       logo: "eth.svg",
       cross: [
         { target: { network: "goerli", symbol: "ETH" }, bridge: { category: "lnbridgev20-opposite" } },
-        { target: { network: "linea-goerli", symbol: "lineaETH" }, bridge: { category: "lnbridgev20-default" } },
-        { target: { network: "zksync-goerli", symbol: "zkETH" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "linea-goerli", symbol: "ETH" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "zksync-goerli", symbol: "ETH" }, bridge: { category: "lnbridgev20-default" } },
       ],
     },
     {

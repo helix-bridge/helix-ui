@@ -6,8 +6,8 @@ export const lineaGoerliChain: ChainConfig = {
   name: "Linea Goerli",
   logo: "linea.png",
   nativeCurrency: {
-    name: "lineaETH",
-    symbol: "lineaETH",
+    name: "ETH",
+    symbol: "ETH",
     decimals: 18,
   },
   rpcUrls: {
@@ -30,15 +30,15 @@ export const lineaGoerliChain: ChainConfig = {
   tokens: [
     {
       decimals: 18,
-      symbol: "lineaETH",
-      name: "lineaETH",
+      symbol: "ETH",
+      name: "ETH",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
       logo: "eth.svg",
       cross: [
         { target: { network: "goerli", symbol: "ETH" }, bridge: { category: "lnbridgev20-opposite" } },
         { target: { network: "arbitrum-goerli", symbol: "ETH" }, bridge: { category: "lnbridgev20-default" } },
-        { target: { network: "zksync-goerli", symbol: "zkETH" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "zksync-goerli", symbol: "ETH" }, bridge: { category: "lnbridgev20-default" } },
       ],
     },
     {
