@@ -17,10 +17,7 @@ export class LnBridgeOpposite extends LnBridgeBase {
     sourceToken?: Token;
     targetToken?: Token;
   }) {
-    super({
-      ...args,
-      category: "lnbridgev20-opposite",
-    });
+    super(args);
     this.initContract();
   }
 

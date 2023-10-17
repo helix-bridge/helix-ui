@@ -18,10 +18,7 @@ export class LnBridgeDefault extends LnBridgeBase {
     sourceToken?: Token;
     targetToken?: Token;
   }) {
-    super({
-      ...args,
-      category: "lnbridgev20-default",
-    });
+    super(args);
     this.initContract();
   }
 
