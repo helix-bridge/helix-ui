@@ -256,6 +256,8 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                       ? sourceBalance?.token
                       : undefined
                   }
+                  suffix
+                  value={margin}
                   onChange={setMargin}
                 />
               </LabelSection>
