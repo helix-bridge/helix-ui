@@ -484,7 +484,7 @@ export default function RelayerRegister() {
         subTitle={
           <div className="flex flex-wrap items-center text-sm">
             Now&nbsp;
-            <RunRelayer className="px-small py-[2px]" />
+            <RunRelayer style="link" />
             &nbsp;to start relaying messages and earn rewards.
           </div>
         }
@@ -532,7 +532,7 @@ export default function RelayerRegister() {
         <Divider />
 
         <div className="gap-middle flex items-center lg:gap-5">
-          <RunRelayer className="inline-flex h-8 flex-1 items-center justify-center lg:h-9" />
+          <RunRelayer style="button" />
           <Button
             kind="default"
             onClick={() => {
@@ -556,16 +556,20 @@ export default function RelayerRegister() {
   );
 }
 
-function RunRelayer({ className, onClick = () => undefined }: { className?: string; onClick?: () => void }) {
+function RunRelayer({ style, onClick = () => undefined }: { style: "button" | "link"; onClick?: () => void }) {
   return (
     <a
       href="https://github.com/helix-bridge/relayer/tree/main"
-      className={`bg-primary inline-flex items-center justify-center rounded text-sm font-medium text-white transition hover:opacity-80 active:translate-y-1 ${className}`}
+      className={`inline-flex items-center justify-center text-sm font-medium ${
+        style === "button"
+          ? `bg-primary h-8 flex-1 items-center justify-center rounded text-white transition hover:opacity-80 active:translate-y-1 lg:h-9`
+          : "text-primary hover:underline"
+      }`}
       rel="noopener"
       target="_blank"
       onClick={onClick}
     >
-      Run Relayer
+      {style === "button" ? "Run Relayer" : "Run a Relayer"}
     </a>
   );
 }
