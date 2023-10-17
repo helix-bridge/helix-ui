@@ -66,6 +66,10 @@ export abstract class BaseBridge {
     }
   }
 
+  isLnBridge() {
+    return false;
+  }
+
   getLogo() {
     return this.logo;
   }

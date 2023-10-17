@@ -27,6 +27,10 @@ export class LnBridgeBase extends BaseBridge {
     this.estimateTime = { min: 1, max: 30 };
   }
 
+  isLnBridge() {
+    return true;
+  }
+
   async getFee(args?: { baseFee?: bigint; protocolFee?: bigint; liquidityFeeRate?: bigint; transferAmount?: bigint }) {
     if (this.sourceToken) {
       return {

@@ -40,7 +40,9 @@ export default function TransferModal({
     if (sender && recipient && targetChain && bridgeClient) {
       try {
         setBusy(true);
-        const relayer = (await refetchRelayers()).data.sortedLnv20RelayInfos?.at(0);
+        const relayer = bridgeClient.isLnBridge()
+          ? (await refetchRelayers()).data.sortedLnv20RelayInfos?.at(0)
+          : undefined;
         const receipt = await transfer(sender, recipient, transferValue.formatted, {
           remoteChainId: BigInt(targetChain.id),
           relayer: relayer?.relayer,
