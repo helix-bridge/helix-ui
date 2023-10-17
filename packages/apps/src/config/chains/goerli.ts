@@ -38,7 +38,6 @@ export const goerliChain: ChainConfig = {
       cross: [
         { target: { network: "arbitrum-goerli", symbol: "ETH" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "linea-goerli", symbol: "lineaETH" }, bridge: { category: "lnbridgev20-default" } },
-        { target: { network: "mantle-goerli", symbol: "MNT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "zksync-goerli", symbol: "zkETH" }, bridge: { category: "lnbridgev20-default" } },
       ],
     },
