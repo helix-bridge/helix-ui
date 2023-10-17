@@ -24,7 +24,7 @@ export default function TokenSelect({
 }: Props) {
   return (
     <ISelect
-      labelClassName={`gap-small flex items-center justify-between rounded border border-transparent transition-colors duration-300 ${className}`}
+      labelClassName={`gap-small flex items-center justify-between border-transparent disabled:border-transparent ${className}`}
       childClassName="bg-component border-line py-small flex flex-col rounded border"
       label={value ? <span className="text-sm font-normal text-white">{value.symbol}</span> : undefined}
       placeholder={<span className="text-sm font-normal text-white/50">{placeholder}</span>}

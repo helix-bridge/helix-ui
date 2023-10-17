@@ -170,7 +170,7 @@ export default function RelayerRegister() {
 
               <LabelItem label="Token">
                 <TokenSelect
-                  className="px-middle bg-app-bg hover:border-line border-transparent py-2 disabled:border-transparent"
+                  className="px-middle bg-app-bg py-2"
                   disabled={!tokenOptions.length}
                   options={tokenOptions}
                   placeholder="Select token"
