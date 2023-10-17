@@ -35,7 +35,7 @@ export const mantleGoerliChain: ChainConfig = {
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
       logo: "mnt.svg",
-      cross: [{ target: { network: "goerli", symbol: "ETH" }, bridge: { category: "lnbridgev20-default" } }],
+      cross: [{ target: { network: "goerli", symbol: "MNT" }, bridge: { category: "lnbridgev20-default" } }],
     },
     {
       decimals: 18,
