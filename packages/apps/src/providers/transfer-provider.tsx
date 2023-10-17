@@ -216,6 +216,7 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
       _targetChain &&
       _sourceToken &&
       _targetToken &&
+      !_cross.hidden &&
       !_sourceChain?.hidden &&
       !_targetChain?.hidden
     ) {
