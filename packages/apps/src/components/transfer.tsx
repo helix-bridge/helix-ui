@@ -1,6 +1,6 @@
 "use client";
 
-import { PropsWithChildren, ReactElement, useDeferredValue, useEffect, useState } from "react";
+import { PropsWithChildren, ReactElement, useDeferredValue, useEffect, useMemo, useState } from "react";
 import CrossChainInfo from "./cross-chain-info";
 import { getParsedCrossChain } from "@/utils/cross-chain";
 import { Address, useAccount } from "wagmi";
@@ -51,6 +51,13 @@ export default function Transfer() {
   const [targetOptions, setTargetOptions] = useState(defaultTargetOptions);
 
   const [isOpen, _, setIsOpenTrue, setIsOpenFalse] = useToggle(false);
+  const bridgeOptions = useMemo(
+    () =>
+      sourceValue && targetValue
+        ? availableBridges[sourceValue.chain.network]?.[targetValue.chain.network]?.[sourceValue.token.symbol] || []
+        : [],
+    [sourceValue, targetValue],
+  );
 
   const {
     loading: isLoadingRelayers,
@@ -237,15 +244,9 @@ export default function Transfer() {
         </Section>
 
         {/* bridge */}
-        <Section label="Bridge" className="mt-8">
+        <Section label="Bridge" className={`mt-8 ${bridgeOptions.length > 1 ? "" : "hidden"}`}>
           <BridgeSelect
-            options={
-              sourceValue && targetValue
-                ? availableBridges[sourceValue.chain.network]?.[targetValue.chain.network]?.[
-                    sourceValue.token.symbol
-                  ] || []
-                : []
-            }
+            options={bridgeOptions}
             value={bridgeCategory}
             onChange={(_category) => {
               setBridgeCategory(_category);
