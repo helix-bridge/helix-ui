@@ -253,6 +253,7 @@ export default function RelayerRegister() {
                   balance={bridgeCategory === "lnbridgev20-default" ? targetBalance?.value : sourceBalance?.value}
                   token={bridgeCategory === "lnbridgev20-default" ? targetBalance?.token : sourceBalance?.token}
                   value={margin}
+                  suffix
                   disabled={completeMargin}
                   onChange={setMargin}
                 />
@@ -313,7 +314,7 @@ export default function RelayerRegister() {
               )}
 
               <LabelItem label="Base Fee" tips="The fixed fee set by the relayer and charged in a transaction">
-                <BalanceInput token={sourceToken} value={baseFee} onChange={setBaseFee} />
+                <BalanceInput token={sourceToken} suffix value={baseFee} onChange={setBaseFee} />
               </LabelItem>
               <LabelItem
                 label="Liquidity Fee Rate"
