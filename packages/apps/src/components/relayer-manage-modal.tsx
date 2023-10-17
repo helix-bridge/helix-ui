@@ -223,7 +223,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             children: (
               <div className="flex flex-col gap-5" ref={(node) => setHeight((prev) => node?.clientHeight || prev)}>
                 <LabelSection label="Base Fee">
-                  <BalanceInput token={sourceToken} value={baseFee} onChange={setBaseFee} />
+                  <BalanceInput token={sourceToken} suffix value={baseFee} onChange={setBaseFee} />
                 </LabelSection>
                 <LabelSection label="Liquidity Fee Rate">
                   <FeeRateInput value={feeRate} onChange={setFeeRate} />
