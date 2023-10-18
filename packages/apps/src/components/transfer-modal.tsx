@@ -1,7 +1,6 @@
 import { BaseBridge } from "@/bridges/base";
 import { ChainToken } from "@/types/misc";
 import { RelayersResponseData } from "@/types/graphql";
-import Modal from "@/ui/modal";
 import { formatBalance } from "@/utils/balance";
 import { getChainLogoSrc } from "@/utils/misc";
 import { ApolloQueryResult } from "@apollo/client";
@@ -12,7 +11,9 @@ import { notification } from "@/ui/notification";
 import { parseUnits } from "viem";
 import { Token } from "@/types/token";
 import { useTransfer } from "@/hooks/use-transfer";
+import dynamic from "next/dynamic";
 
+const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 interface Props {
   sender?: `0x${string}` | null;
   recipient?: `0x${string}` | null;

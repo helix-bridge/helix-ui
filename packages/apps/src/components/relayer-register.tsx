@@ -24,8 +24,8 @@ import { useApolloClient } from "@apollo/client";
 import { QUERY_SPECIAL_RELAYER } from "@/config/gql";
 import { SpecialRelayerResponseData, SpecialRelayerVariables } from "@/types/graphql";
 import { notification } from "@/ui/notification";
-import Modal from "@/ui/modal";
 import { useRelayer } from "@/hooks/use-relayer";
+import dynamic from "next/dynamic";
 
 enum Step {
   ONE,
@@ -35,6 +35,7 @@ enum Step {
   THREE,
   COMPLETE_THREE,
 }
+const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
 const { availableTargetChains, defaultTargetChains, availableBridges, availableTokens, defaultSourceOptions } =
   getParsedCrossChain();

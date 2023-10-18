@@ -1,10 +1,11 @@
 "use client";
 
 import Button from "@/ui/button";
-import Modal from "@/ui/modal";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 
 const KEY = "disclaimer";
+const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
 export default function DisclaimerModal() {
   const [isOpen, setIsOpen] = useState(!localStorage.getItem(KEY));

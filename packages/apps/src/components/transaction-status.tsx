@@ -9,10 +9,11 @@ import { useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "
 import { getChainConfig } from "@/utils/chain";
 import { notification } from "@/ui/notification";
 import { notifyTransaction } from "@/utils/notification";
-import Modal from "@/ui/modal";
 import { BalanceInput } from "./balance-input";
 import { formatBalance } from "@/utils/balance";
+import dynamic from "next/dynamic";
 
+const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 interface Props {
   record?: HistoryRecord | null;
 }
