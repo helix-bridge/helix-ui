@@ -1,8 +1,8 @@
-name: Deploy 2.0
+name: Deploy staging
 
 on:
-  pull_request:
-    branches: ["helix-ui-2.0"]
+  push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -14,29 +14,33 @@ jobs:
 
       - uses: actions/checkout@v3
         with:
-          repository: itering/actions
-          path: .github/actions
-          persist-credentials: false
-          ssh-key: "${{ secrets.ITERING_ACTIONS_DEPLOY_KEY }}"
+          repository: darwinia-network/devops
+          path: .github
 
       - uses: ./.github/actions/smart-vercel
-        name: Deploy helix-v2
+        name: Deploy helix
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
-          alias_domain: "helix-v2"
+          alias_domain: "helix-stg"
           project_name: "helix-apps"
           script_run: false
           dist_path: .
+          enable_notify_slack: true
+          slack_channel: helix-ui
+          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
       - uses: ./.github/actions/smart-vercel
-        name: Deploy helix-v2-test
+        name: Deploy helix (test)
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
-          alias_domain: "helix-v2-test"
+          alias_domain: "helix-stg-test"
           project_name: "helix-apps-test"
           script_run: false
           dist_path: .
+          enable_notify_slack: true
+          slack_channel: helix-ui
+          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
