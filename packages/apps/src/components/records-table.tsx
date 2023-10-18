@@ -131,7 +131,7 @@ function FromTo({ network, amount, symbol }: { network: Network; amount: bigint;
       <Image width={32} height={32} alt="Logo" src={getChainLogoSrc(chain.logo)} className="rounded-full" />
       <div className="flex flex-col items-start">
         <span className="truncate text-sm font-medium text-white">
-          {formatBalance(amount, token.decimals, { keepZero: false })} {symbol}
+          {formatBalance(amount, token.decimals, { precision: 4 })} {symbol}
         </span>
         <span className="text-xs font-normal text-white/50">{chain.name}</span>
       </div>
