@@ -36,6 +36,9 @@ export default function Footer() {
           <SocialLink href="https://twitter.com/helixbridges">
             <Image width={18} height={18} alt="Twitter" src="/images/social/twitter.svg" />
           </SocialLink>
+          <SocialLink href="https://discord.gg/6XyyNGugdE">
+            <Image width={20} height={20} alt="Discord" src="/images/social/discord.svg" />
+          </SocialLink>
           <SocialLink href="mailto:hello@helixbridge.app">
             <Image width={18} height={18} alt="Email" src="/images/social/email.svg" />
           </SocialLink>

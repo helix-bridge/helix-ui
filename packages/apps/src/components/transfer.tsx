@@ -265,6 +265,7 @@ export default function Transfer() {
 
         {/* action */}
         <TransferAction
+          fee={fee}
           transferValue={deferredTransferValue}
           recipient={recipient || address}
           onTransfer={setIsOpenTrue}

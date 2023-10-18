@@ -3,13 +3,15 @@ import { useCallback, useEffect, useState } from "react";
 import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
 import { Subscription, forkJoin, from } from "rxjs";
 import { switchMap } from "rxjs/operators";
-import Modal from "@/ui/modal";
 import { formatBalance } from "@/utils/balance";
 import { notification } from "@/ui/notification";
 import { notifyTransaction } from "@/utils/notification";
 import Label from "@/ui/label";
 import { useTransfer } from "@/hooks/use-transfer";
 import { parseUnits } from "viem";
+import dynamic from "next/dynamic";
+
+const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
 export default function Faucet() {
   const { sourceChain, sourceToken, updateBalance } = useTransfer();

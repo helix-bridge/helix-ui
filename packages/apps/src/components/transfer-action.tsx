@@ -6,15 +6,14 @@ import Button from "@/ui/button";
 import { useTransfer } from "@/hooks/use-transfer";
 import { isAddress } from "viem";
 
-export default function TransferAction({
-  recipient,
-  transferValue,
-  onTransfer,
-}: {
+interface Props {
+  fee: { value: bigint } | undefined;
   recipient: Address | undefined;
   transferValue: TransferValue;
   onTransfer: () => void;
-}) {
+}
+
+export default function TransferAction({ recipient, transferValue, onTransfer }: Props) {
   const { sourceAllowance, sourceValue, targetValue, bridgeClient, fee, approve } = useTransfer();
   const [busy, setBusy] = useState(false);
   const { chain } = useNetwork();
@@ -48,7 +47,14 @@ export default function TransferAction({
         <Button
           kind="primary"
           disabled={
-            !(sourceValue && targetValue && bridgeClient && transferValue.formatted > 0 && isAddress(recipient || ""))
+            !(
+              sourceValue &&
+              targetValue &&
+              bridgeClient &&
+              fee?.value &&
+              transferValue.formatted &&
+              isAddress(recipient || "")
+            )
           }
           className="button"
           onClick={onTransfer}

@@ -1,4 +1,3 @@
-import Modal from "@/ui/modal";
 import SegmentedTabs, { SegmentedTabsProps } from "@/ui/segmented-tabs";
 import Tooltip from "@/ui/tooltip";
 import Image from "next/image";
@@ -10,8 +9,10 @@ import { getChainConfig } from "@/utils/chain";
 import { useNetwork, useSwitchNetwork } from "wagmi";
 import { formatBalance } from "@/utils/balance";
 import { useRelayer } from "@/hooks/use-relayer";
+import dynamic from "next/dynamic";
 
 type TabKey = "update" | "deposit" | "withdraw";
+const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
 interface Props {
   relayerInfo?: LnRelayerInfo;

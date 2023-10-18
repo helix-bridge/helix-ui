@@ -1,7 +1,9 @@
 import { BaseBridge } from "@/bridges/base";
 import { Token } from "@/types/token";
 import CountLoading from "@/ui/count-loading";
+import Tooltip from "@/ui/tooltip";
 import { formatBalance } from "@/utils/balance";
+import Image from "next/image";
 import { PropsWithChildren, useEffect, useState } from "react";
 import { Subscription, from } from "rxjs";
 
@@ -46,12 +48,14 @@ export default function CrossChainInfo({ fee, bridge }: Props) {
         <span>Transaction Fee</span>
         {fee?.loading ? (
           <CountLoading color="white" />
-        ) : fee?.token ? (
+        ) : fee?.token && fee.value ? (
           <span>
             {formatBalance(fee.value, fee.token.decimals, { precision: 6 })} {fee.token.symbol}
           </span>
         ) : (
-          <span />
+          <Tooltip content="No relayer available, please check the transfer amount">
+            <Image width={16} height={16} alt="Fee" src="/images/warning.svg" />
+          </Tooltip>
         )}
       </Item>
       {!!dailyLimit && (
