@@ -1,0 +1,41 @@
+{
+  "name": "helix-ui",
+  "description": "Helix UI",
+  "private": true,
+  "scripts": {
+    "dev:apps": "npm run dev -w apps",
+    "build:apps": "npm run build -w apps",
+    "start:apps": "npm run start -w apps",
+    "dev:apps:test": "npm run dev:test -w apps",
+    "build:apps:test": "npm run build:test -w apps",
+    "start:apps:test": "npm run start:test -w apps",
+    "prettier": "prettier '**/*.{js,jsx,ts,tsx,json}' --write",
+    "lint": "npm run lint -w apps",
+    "test": "npm run test -w apps",
+    "bootstrap": "npm install",
+    "prepare": "husky install"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helix-bridge/helix-ui.git"
+  },
+  "keywords": [
+    "helix",
+    "helix-ui",
+    "helix.js"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/helix-bridge/helix-ui/issues"
+  },
+  "homepage": "https://github.com/helix-bridge/helix-ui#readme",
+  "devDependencies": {
+    "husky": "^8.0.0",
+    "lint-staged": "^14.0.0",
+    "prettier": "3.0.1",
+    "prettier-plugin-tailwindcss": "^0.5.2"
+  }
+}
