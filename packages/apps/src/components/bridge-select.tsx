@@ -14,26 +14,32 @@ export default function BridgeSelect({ options, value, onChange = () => undefine
   return (
     <ISelect
       labelClassName="bg-app-bg p-middle flex items-center justify-between border-transparent"
-      childClassName="bg-component border-line py-small flex flex-col rounded border"
+      childClassName="bg-app-bg border-primary/50 py-small flex flex-col rounded border"
       label={active ? <span className="text-sm font-normal text-white">{active.getName()}</span> : undefined}
       placeholder={<span className="text-sm font-normal text-white/50">Select a bridge</span>}
       sameWidth
       onClear={() => onChange(undefined)}
     >
-      {options.map((c) => {
-        const b = bridgeFactory({ category: c });
-        return (
-          <button
-            key={c}
-            onClick={() => {
-              onChange(c);
-            }}
-            className="px-middle py-small text-start text-sm font-light text-white transition-colors hover:bg-white/10"
-          >
-            {b?.getName() || "-"}
-          </button>
-        );
-      })}
+      {options.length ? (
+        options.map((c) => {
+          const b = bridgeFactory({ category: c });
+          return (
+            <button
+              key={c}
+              onClick={() => {
+                onChange(c);
+              }}
+              className="px-middle py-small text-start text-sm font-light text-white transition-colors hover:bg-white/10"
+            >
+              {b?.getName() || "-"}
+            </button>
+          );
+        })
+      ) : (
+        <div className="px-middle py-small">
+          <span className="text-sm text-white/50">No data</span>
+        </div>
+      )}
     </ISelect>
   );
 }
