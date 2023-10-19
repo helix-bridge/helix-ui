@@ -14,5 +14,5 @@
 
 ### Development
 
-- mainnet: https://helix-dev.vercel.app/
+- mainnet: https://helix-dev-main.vercel.app/
 - testnet: https://helix-dev-test.vercel.app/

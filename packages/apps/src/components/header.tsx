@@ -34,7 +34,7 @@ export default function Header() {
       return [
         { href: "/", label: "Transfer" },
         { href: "/records", label: "Explorer" },
-        { href: "/relayer/overview", label: "Relayer", soon: isProduction() },
+        { href: "/relayer/overview", label: "Relayer" },
         { href: "https://docs.helixbridge.app/", label: "Docs", external: true },
       ];
     }
