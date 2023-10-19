@@ -28,7 +28,7 @@ export default function BridgeSelect({ options, value, onChange = () => undefine
             onClick={() => {
               onChange(c);
             }}
-            className="px-middle py-small text-start text-sm font-light text-white transition-colors hover:bg-white/10"
+            className="px-middle py-small text-start text-sm text-white transition-colors hover:bg-white/10"
           >
             {b?.getName() || "-"}
           </button>
