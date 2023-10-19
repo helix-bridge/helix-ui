@@ -68,7 +68,8 @@ export function BalanceInput({
   }, [value, dynamic]);
 
   useEffect(() => {
-    if (!tokenRef.current && token) {
+    // Fire onChange to update `formatted`
+    if (tokenRef.current?.decimals !== token?.decimals) {
       onChange({ value: value?.value || "", formatted: parseUnits(value?.value || "0", token?.decimals || 0) });
     }
     tokenRef.current = token;
