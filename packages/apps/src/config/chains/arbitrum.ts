@@ -41,9 +41,7 @@ export const arbitrumChain: ChainConfig = {
       type: "erc20",
       address: "0x9e523234D36973f9e38642886197D023C88e307e",
       logo: "ring.svg",
-      cross: [
-        { target: { network: "ethereum", symbol: "RING" }, bridge: { category: "lnbridgev20-opposite" }, hidden: true },
-      ],
+      cross: [{ target: { network: "ethereum", symbol: "RING" }, bridge: { category: "lnbridgev20-opposite" } }],
     },
   ],
 };

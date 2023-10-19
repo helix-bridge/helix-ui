@@ -24,8 +24,8 @@ export class LnBridgeOpposite extends LnBridgeBase {
   private initContract() {
     if (this.sourceChain?.id === ChainID.ARBITRUM && this.targetChain?.id === ChainID.ETHEREUM) {
       this.contract = {
-        sourceAddress: "0xD1B10B114f1975d8BCc6cb6FC43519160e2AA978",
-        targetAddress: "0xeAb1F01a8f4A2687023B159c2063639Adad5304E",
+        sourceAddress: "0x9e523234D36973f9e38642886197D023C88e307e",
+        targetAddress: "0x9469D013805bFfB7D3DEBe5E7839237e535ec483",
       };
     } else {
       this.contract = {
