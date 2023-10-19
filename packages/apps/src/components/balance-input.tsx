@@ -30,6 +30,7 @@ export function BalanceInput({
   token?: Token;
   onChange?: (value: BalanceInputValue) => void;
 }) {
+  const tokenRef = useRef(token);
   const spanRef = useRef<HTMLSpanElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [dynamicStyle, setDynamicStyle] = useState("text-sm font-normal");
@@ -65,6 +66,14 @@ export function BalanceInput({
       }
     }
   }, [value, dynamic]);
+
+  useEffect(() => {
+    // Fire onChange to update `formatted`
+    if (tokenRef.current?.decimals !== token?.decimals) {
+      onChange({ value: value?.value || "", formatted: parseUnits(value?.value || "0", token?.decimals || 0) });
+    }
+    tokenRef.current = token;
+  }, [value, token, onChange]);
 
   return (
     <div
