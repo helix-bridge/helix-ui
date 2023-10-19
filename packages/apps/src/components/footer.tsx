@@ -16,7 +16,7 @@ export default function Footer() {
     } else if (window.location.hostname === "helix-stg-test.vercel.app") {
       setMainnetOrTestnet({ label: "Mainnet", link: "https://helix-stg.vercel.app" });
     } else if (window.location.hostname === "helix-dev-main.vercel.app") {
-      setMainnetOrTestnet({ label: "Mainnet", link: "https://helix-dev-test.vercel.app" });
+      setMainnetOrTestnet({ label: "Testnet", link: "https://helix-dev-test.vercel.app" });
     } else if (window.location.hostname === "helix-dev-test.vercel.app") {
       setMainnetOrTestnet({ label: "Mainnet", link: "https://helix-dev-main.vercel.app" });
     }
