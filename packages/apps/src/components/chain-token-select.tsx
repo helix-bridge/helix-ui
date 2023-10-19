@@ -20,7 +20,7 @@ export default function ChainTokenSelect({ options, value, width, placement, onC
   return (
     <ISelect
       labelClassName="p-middle bg-app-bg flex shrink-0 items-center justify-between border-transparent"
-      childClassName="bg-component rounded border border-white/10 shadow-2xl"
+      childClassName="bg-app-bg rounded border border-primary/50 shadow-2xl"
       label={
         value ? (
           <div className="gap-middle lg:gap-large flex items-center">

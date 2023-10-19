@@ -73,7 +73,9 @@ export default function Header() {
                     target="_blank"
                     href={href}
                     key={label}
-                    className="rounded-lg px-3 py-1 text-base font-medium transition hover:bg-white/10 active:translate-y-1"
+                    className={`rounded-lg px-3 py-1 text-base font-medium transition hover:bg-white/10 active:translate-y-1 ${
+                      pathname === href ? "text-primary underline" : ""
+                    }`}
                   >
                     {label}
                   </a>
@@ -85,7 +87,9 @@ export default function Header() {
                   <Link
                     key={label}
                     href={href}
-                    className="rounded-lg px-3 py-1 text-base font-medium transition hover:bg-white/10 active:translate-y-1"
+                    className={`rounded-lg px-3 py-1 text-base font-medium transition-all hover:bg-white/10 active:translate-y-1 ${
+                      pathname === href ? "text-primary underline underline-offset-8" : ""
+                    }`}
                   >
                     {label}
                   </Link>
@@ -121,7 +125,7 @@ export default function Header() {
                     target="_blank"
                     href={href}
                     key={label}
-                    className="font-semibold hover:underline"
+                    className={`font-semibold ${pathname === href ? "text-primary underline underline-offset-4" : ""}`}
                   >
                     {label}
                   </a>
@@ -130,7 +134,12 @@ export default function Header() {
                     <span className="font-semibold text-white/50">{label}</span>
                   </Tooltip>
                 ) : (
-                  <Link key={label} href={href} className="font-semibold hover:underline" onClick={setDrawerClose}>
+                  <Link
+                    key={label}
+                    href={href}
+                    className={`font-semibold ${pathname === href ? "text-primary underline underline-offset-4" : ""}`}
+                    onClick={setDrawerClose}
+                  >
                     {label}
                   </Link>
                 ),

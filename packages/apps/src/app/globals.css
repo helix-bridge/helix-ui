@@ -78,8 +78,10 @@ body {
   }
 }
 
-.page-bg {
-  background: linear-gradient(180deg, #02061f 0%, #1c1837 100%);
+@layer utilities {
+  .page-bg {
+    background: linear-gradient(180deg, #02061f 0%, #1c1837 100%);
+  }
 }
 
 .loading-bar {
