@@ -19,8 +19,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="page-bg text-white">
-      <body className={ibm_plex_sans.className}>
+    <html lang="en" style={{ backgroundColor: "#000421" }}>
+      <body className={`${ibm_plex_sans.className} page-bg text-white`}>
         <GraphqlProvider>
           <RainbowProvider>
             <AppProvider>
