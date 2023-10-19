@@ -74,7 +74,7 @@ body {
   }
 
   .select {
-    @apply hover:border-primary focus-within:border-primary rounded border transition duration-300 disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1;
+    @apply hover:border-primary focus-within:border-primary rounded border transition duration-300 disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1 lg:disabled:translate-y-0;
   }
 }
 
