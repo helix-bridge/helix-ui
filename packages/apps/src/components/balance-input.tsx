@@ -32,7 +32,7 @@ export function BalanceInput({
 }) {
   const spanRef = useRef<HTMLSpanElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [textStyle, setTextStyle] = useState("text-sm font-normal");
+  const [dynamicStyle, setDynamicStyle] = useState("text-sm font-normal");
 
   const insufficient = balance !== undefined && (value?.formatted || 0n) > balance ? true : false;
   const exceeded = limit !== undefined && (value?.formatted || 0n) > limit ? true : false;
@@ -43,25 +43,25 @@ export function BalanceInput({
       const spanWidth = spanRef.current?.clientWidth || 0;
       const percent = (spanWidth / inputWidth) * 100;
       if (percent < 10) {
-        setTextStyle("text-[3.75rem] font-extralight");
+        setDynamicStyle("text-[3.75rem] font-extralight");
       } else if (percent < 20) {
-        setTextStyle("text-[3rem] font-extralight");
+        setDynamicStyle("text-[3rem] font-extralight");
       } else if (percent < 30) {
-        setTextStyle("text-[2.25rem] font-extralight");
+        setDynamicStyle("text-[2.25rem] font-extralight");
       } else if (percent < 40) {
-        setTextStyle("text-[1.875rem] font-light");
+        setDynamicStyle("text-[1.875rem] font-light");
       } else if (percent < 50) {
-        setTextStyle("text-[1.5rem] font-light");
+        setDynamicStyle("text-[1.5rem] font-light");
       } else if (percent < 60) {
-        setTextStyle("text-[1.25rem] font-light");
+        setDynamicStyle("text-[1.25rem] font-light");
       } else if (percent < 70) {
-        setTextStyle("text-[1.125rem] font-normal");
+        setDynamicStyle("text-[1.125rem] font-normal");
       } else if (percent < 80) {
-        setTextStyle("text-[1rem] font-normal");
+        setDynamicStyle("text-[1rem] font-normal");
       } else if (percent < 90) {
-        setTextStyle("text-[0.875rem] font-medium");
+        setDynamicStyle("text-[0.875rem] font-medium");
       } else {
-        setTextStyle("text-[0.75rem] font-medium");
+        setDynamicStyle("text-[0.75rem] font-medium");
       }
     }
   }, [value, dynamic]);
@@ -83,7 +83,7 @@ export function BalanceInput({
             : placeholder ?? "Enter an amount"
         }
         className={`h-12 w-full rounded bg-transparent text-white transition-[font-size,font-weight,line-height] duration-300 ${
-          dynamic && value?.value ? `leading-none ${textStyle}` : "text-sm font-normal"
+          dynamic && value?.value ? `leading-none ${dynamicStyle}` : "text-sm font-normal"
         }`}
         onChange={(e) => {
           if (e.target.value) {

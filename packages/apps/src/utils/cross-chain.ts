@@ -20,8 +20,10 @@ let defaultBridge: BridgeCategory | undefined;
 
 let availableTargetOptions: AvailableTargets = {};
 let availableBridges: AvailableBridges = {};
-let availableTokens: AvailableTokens = {};
 
+// For LnRelayer (LnBridge)
+let availableTokens: AvailableTokens = {};
+let defaultSourceChains: ChainConfig[] = [];
 let defaultTargetChains: ChainConfig[] = [];
 let availableTargetChains: AvailableTargetChains = {};
 
@@ -40,13 +42,26 @@ getChainsConfig().forEach((sourceChain) => {
         defaultTargetValue = defaultTargetValue ?? { chain: targetChain, token: targetToken };
         defaultBridge = defaultBridge ?? cross.bridge.category;
 
-        defaultTargetChains = defaultTargetChains.filter((c) => c.id !== targetChain.id).concat(targetChain);
-        availableTargetChains = {
-          ...availableTargetChains,
-          [sourceChain.network]: (availableTargetChains[sourceChain.network] || [])
-            .filter((c) => c.network !== cross.target.network)
-            .concat(targetChain),
-        };
+        if (cross.bridge.category === "lnbridgev20-default" || cross.bridge.category === "lnbridgev20-opposite") {
+          defaultSourceChains = defaultSourceChains.filter((c) => c.id !== sourceChain.id).concat(sourceChain);
+          defaultTargetChains = defaultTargetChains.filter((c) => c.id !== targetChain.id).concat(targetChain);
+          availableTargetChains = {
+            ...availableTargetChains,
+            [sourceChain.network]: (availableTargetChains[sourceChain.network] || [])
+              .filter((c) => c.network !== cross.target.network)
+              .concat(targetChain),
+          };
+
+          availableTokens = {
+            ...availableTokens,
+            [sourceChain.network]: {
+              ...availableTokens[sourceChain.network],
+              [cross.target.network]: (availableTokens[sourceChain.network]?.[cross.target.network] || [])
+                .filter((t) => t.symbol !== sourceToken.symbol)
+                .concat(sourceToken),
+            },
+          };
+        }
 
         availableTargetOptions = {
           ...availableTargetOptions,
@@ -73,16 +88,6 @@ getChainsConfig().forEach((sourceChain) => {
             },
           },
         };
-
-        availableTokens = {
-          ...availableTokens,
-          [sourceChain.network]: {
-            ...availableTokens[sourceChain.network],
-            [cross.target.network]: (availableTokens[sourceChain.network]?.[cross.target.network] || [])
-              .filter((t) => t.symbol !== sourceToken.symbol)
-              .concat(sourceToken),
-          },
-        };
       }
     });
   });
@@ -99,6 +104,7 @@ if (defaultSourceValue) {
 
 defaultSourceOptions.sort((a, b) => a.chain.network.localeCompare(b.chain.network));
 defaultTargetOptions.sort((a, b) => a.chain.network.localeCompare(b.chain.network));
+defaultSourceChains.sort((a, b) => a.network.localeCompare(b.network));
 defaultTargetChains.sort((a, b) => a.network.localeCompare(b.network));
 
 export function getParsedCrossChain() {
@@ -111,6 +117,7 @@ export function getParsedCrossChain() {
     availableTargetOptions,
     availableBridges,
     availableTokens,
+    defaultSourceChains,
     defaultTargetChains,
     availableTargetChains,
   };

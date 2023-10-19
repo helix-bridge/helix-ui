@@ -11,7 +11,7 @@ import RelayersTable from "./relayers-table";
 import CountdownRefresh from "@/ui/countdown-refresh";
 import { getParsedCrossChain } from "@/utils/cross-chain";
 
-const { defaultSourceOptions, defaultTargetChains, availableTargetChains } = getParsedCrossChain();
+const { defaultSourceChains, defaultTargetChains, availableTargetChains } = getParsedCrossChain();
 const pageSize = 12;
 
 export default function LnRelayerOverview() {
@@ -59,7 +59,7 @@ export default function LnRelayerOverview() {
             <ChainSelect
               className="px-middle border-line w-40 py-[7px]"
               placeholder="Source chain"
-              options={defaultSourceOptions.map(({ chain }) => chain)}
+              options={defaultSourceChains}
               onChange={(value) => {
                 setSourceChain(value);
                 setTargetChain(undefined);

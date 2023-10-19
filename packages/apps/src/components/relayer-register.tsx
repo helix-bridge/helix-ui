@@ -37,7 +37,7 @@ enum Step {
 }
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
-const { availableTargetChains, defaultTargetChains, availableBridges, availableTokens, defaultSourceOptions } =
+const { availableTargetChains, defaultSourceChains, defaultTargetChains, availableBridges, availableTokens } =
   getParsedCrossChain();
 
 export default function RelayerRegister() {
@@ -145,7 +145,7 @@ export default function RelayerRegister() {
                 <LabelItem label="From" className="flex-1">
                   <ChainSelect
                     className="px-middle bg-app-bg border-transparent py-2"
-                    options={defaultSourceOptions.map(({ chain }) => chain)}
+                    options={defaultSourceChains}
                     placeholder="Source chain"
                     onChange={(value) => {
                       setSourceChain(value);

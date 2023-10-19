@@ -32,21 +32,27 @@ export default function TokenSelect({
       sameWidth
       onClear={() => onChange(undefined)}
     >
-      {options.map((option) => (
-        <button
-          key={option.symbol}
-          onClick={() => {
-            onChange(option);
-          }}
-          className="py-small px-large hover:text-primary gap-middle flex items-center text-start text-sm transition hover:opacity-80"
-        >
-          <Image width={28} height={28} alt="Token" src={getTokenLogoSrc(option.logo)} className="rounded-full" />
-          <div className="flex flex-col">
-            <span>{option.symbol}</span>
-            <PrettyAddress address={option.address} copyable className="text-xs font-light text-white/50" />
-          </div>
-        </button>
-      ))}
+      {options.length ? (
+        options.map((option) => (
+          <button
+            key={option.symbol}
+            onClick={() => {
+              onChange(option);
+            }}
+            className="py-small px-large hover:text-primary gap-middle flex items-center text-start text-sm transition hover:opacity-80"
+          >
+            <Image width={28} height={28} alt="Token" src={getTokenLogoSrc(option.logo)} className="rounded-full" />
+            <div className="flex flex-col">
+              <span>{option.symbol}</span>
+              <PrettyAddress address={option.address} copyable className="text-xs font-light text-white/50" />
+            </div>
+          </button>
+        ))
+      ) : (
+        <div className="py-small px-large">
+          <span className="text-sm text-white/50">No data</span>
+        </div>
+      )}
     </ISelect>
   );
 }
