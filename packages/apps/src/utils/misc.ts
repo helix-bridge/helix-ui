@@ -1,3 +1,4 @@
+import { FEE_RATE_BASE } from "@/config/constant";
 import { RecordStatus } from "@/types/graphql";
 
 export function formatRecordStatus(status: RecordStatus) {
@@ -27,4 +28,12 @@ export function getChainLogoSrc(fileName?: string | null) {
 
 export function getBridgeLogoSrc(fileName: string) {
   return `/images/bridge/${fileName}`;
+}
+
+export function parseFeeRate(rate: string) {
+  return Math.round(Number(rate) * FEE_RATE_BASE);
+}
+
+export function formatFeeRate(rate: number) {
+  return Number((rate / FEE_RATE_BASE).toFixed(3));
 }

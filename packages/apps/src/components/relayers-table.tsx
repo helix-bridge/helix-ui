@@ -5,7 +5,7 @@ import Image from "next/image";
 import PrettyAddress from "./pretty-address";
 import { Network } from "@/types/chain";
 import { getChainConfig } from "@/utils/chain";
-import { getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
+import { formatFeeRate, getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
 import { formatBalance } from "@/utils/balance";
 import { useState } from "react";
 import Button from "@/ui/button";
@@ -89,8 +89,8 @@ const commonColumns: ColumnType<DataSource>[] = [
       />
     ),
     render: ({ liquidityFeeRate }) =>
-      liquidityFeeRate ? (
-        <span className="text-sm font-normal text-white">{`${liquidityFeeRate}%`}</span>
+      typeof liquidityFeeRate === "number" ? (
+        <span className="text-sm font-normal text-white">{`${formatFeeRate(liquidityFeeRate)}%`}</span>
       ) : (
         <span>-</span>
       ),

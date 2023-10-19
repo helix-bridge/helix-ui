@@ -11,7 +11,7 @@ import { Token, TokenSymbol } from "@/types/token";
 import { BridgeCategory } from "@/types/bridge";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import Image from "next/image";
-import { getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
+import { formatFeeRate, getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
 import Tooltip from "@/ui/tooltip";
 import StepCompleteItem from "./step-complete-item";
 import { BalanceInput } from "./balance-input";
@@ -410,7 +410,7 @@ export default function RelayerRegister() {
                   balance={margin.formatted}
                 />
                 <StepCompleteItem property="Base Fee" token={sourceToken} balance={baseFee.formatted} />
-                <StepCompleteItem property="Liquidity Fee Rate" percent={feeRate.formatted} />
+                <StepCompleteItem property="Liquidity Fee Rate" percent={formatFeeRate(feeRate.formatted)} />
               </div>
             </>
           )}
@@ -527,7 +527,7 @@ export default function RelayerRegister() {
           <PrettyBaseFee fee={baseFee.formatted} token={sourceToken} />
 
           <span>Liquidity Fee Rate</span>
-          <span>{feeRate.formatted}%</span>
+          <span>{formatFeeRate(feeRate.formatted)}%</span>
         </div>
 
         <Divider />
