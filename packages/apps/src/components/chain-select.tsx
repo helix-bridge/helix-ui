@@ -20,19 +20,25 @@ export default function ChainSelect({ options, value, placeholder, className, on
       sameWidth
       onClear={() => onChange(undefined)}
     >
-      {options.map((option) => {
-        return (
-          <button
-            key={option.id}
-            onClick={() => {
-              onChange(option);
-            }}
-            className="py-small px-large text-start text-sm transition-colors hover:bg-white/10"
-          >
-            {option.name}
-          </button>
-        );
-      })}
+      {options.length ? (
+        options.map((option) => {
+          return (
+            <button
+              key={option.id}
+              onClick={() => {
+                onChange(option);
+              }}
+              className="py-small px-large text-start text-sm transition-colors hover:bg-white/10"
+            >
+              {option.name}
+            </button>
+          );
+        })
+      ) : (
+        <div className="py-small px-large">
+          <span className="text-sm text-white/50">No data</span>
+        </div>
+      )}
     </ISelect>
   );
 }
