@@ -108,7 +108,7 @@ export default function Faucet() {
   return (
     <>
       <button
-        className="text-white/50 transition-colors hover:text-white disabled:cursor-not-allowed disabled:text-white/50"
+        className="text-primary transition-[color,transform] hover:text-white lg:active:translate-y-1"
         onClick={() => setIsOpen(true)}
       >
         <span className="text-sm font-normal">Faucet</span>

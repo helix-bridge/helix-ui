@@ -10,6 +10,7 @@ import { useNetwork, useSwitchNetwork } from "wagmi";
 import { formatBalance } from "@/utils/balance";
 import { useRelayer } from "@/hooks/use-relayer";
 import dynamic from "next/dynamic";
+import { formatFeeRate } from "@/utils/misc";
 
 type TabKey = "update" | "deposit" | "withdraw";
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
@@ -74,7 +75,10 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     }
 
     if (relayerInfo?.liquidityFeeRate) {
-      setFeeRate({ formatted: Number(relayerInfo.liquidityFeeRate), value: `${relayerInfo.liquidityFeeRate}` });
+      setFeeRate({
+        formatted: Number(relayerInfo.liquidityFeeRate),
+        value: `${formatFeeRate(relayerInfo.liquidityFeeRate)}`,
+      });
     }
 
     if (relayerInfo?.bridge === "lnbridgev20-default" && _targetToken && relayerInfo.margin) {

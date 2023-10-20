@@ -299,7 +299,7 @@ function Section({
   return (
     <div className={`gap-small lg:gap-middle relative flex flex-col ${className}`}>
       <div className="absolute -top-8 left-0 flex w-full items-center justify-between">
-        <span className="text-sm font-normal text-white">{label}</span>
+        <span className="text-sm font-normal text-white/50">{label}</span>
         {extra}
       </div>
       {children}

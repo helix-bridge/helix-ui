@@ -1,4 +1,5 @@
 import Input from "@/ui/input";
+import { parseFeeRate } from "@/utils/misc";
 
 export default function FeeRateInput({
   placeholder,
@@ -9,7 +10,7 @@ export default function FeeRateInput({
   value?: { formatted: number; value: string };
   onChange?: (value: { formatted: number; value: string }) => void;
 }) {
-  const invalid = (value?.formatted || 0) < 0 || 100 < (value?.formatted || 0);
+  const invalid = (value?.formatted || 0) < 0 || 100000 < (value?.formatted || 0);
   return (
     <div
       className={`gap-small bg-app-bg p-small lg:p-middle normal-input-wrap flex items-center justify-between ${
@@ -22,7 +23,7 @@ export default function FeeRateInput({
         onChange={(e) => {
           if (e.target.value) {
             if (!Number.isNaN(Number(e.target.value))) {
-              onChange({ value: e.target.value, formatted: Number(e.target.value) });
+              onChange({ value: e.target.value, formatted: parseFeeRate(e.target.value) });
             }
           } else {
             onChange({ value: e.target.value, formatted: 0 });
