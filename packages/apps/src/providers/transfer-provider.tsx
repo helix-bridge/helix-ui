@@ -155,7 +155,8 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
   const approve = useCallback(async () => {
     if (address && bridgeClient) {
       try {
-        const receipt = await bridgeClient.sourceApprove(transferValue.formatted + (fee?.value || 0n), address);
+        const feeValue = fee?.token.type === "native" ? 0n : fee?.value || 0n;
+        const receipt = await bridgeClient.sourceApprove(transferValue.formatted + feeValue, address);
         notifyTransaction(receipt, sourceChain);
 
         setSourceAllowance(await bridgeClient.getSourceAllowance(address));

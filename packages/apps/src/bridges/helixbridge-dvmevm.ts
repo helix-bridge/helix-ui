@@ -35,10 +35,9 @@ export class HelixBridgeDVMEVM extends BaseBridge {
   }
 
   private initContract() {
-    this.contract = {
-      sourceAddress: "0xD1B10B114f1975d8BCc6cb6FC43519160e2AA978",
-      targetAddress: "0xFBAD806Bdf9cEC2943be281FB355Da05068DE925",
-    };
+    const backing = "0xD1B10B114f1975d8BCc6cb6FC43519160e2AA978";
+    const issuing = "0xFBAD806Bdf9cEC2943be281FB355Da05068DE925";
+    this.initContractFromBackingIssuing(backing, issuing);
     this.guard = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1";
   }
 
@@ -86,7 +85,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
       const value = options.totalFee;
 
       const hash = await this.walletClient.writeContract({
-        address: this.contract.targetAddress,
+        address: this.contract.sourceAddress,
         abi,
         functionName,
         args,
@@ -140,16 +139,14 @@ export class HelixBridgeDVMEVM extends BaseBridge {
     await this.validateNetwork("target");
 
     if (this.contract && this.publicClient && this.walletClient) {
-      const { abi, address, functionName } =
+      const { abi, functionName } =
         this.crossInfo?.action === "issue"
           ? {
               abi: (await import("@/abi/mappingtoken-dvmevm.json")).default,
-              address: this.contract.targetAddress,
               functionName: this.sourceToken?.type === "native" ? "remoteUnlockFailureNative" : "remoteUnlockFailure",
             }
           : {
               abi: (await import("@/abi/backing-dvmevm.json")).default,
-              address: this.contract.sourceAddress,
               functionName: "remoteIssuingFailure",
             };
       const args =
@@ -159,7 +156,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
       const value = (await this.getFee())?.value;
 
       const hash = await this.walletClient.writeContract({
-        address,
+        address: this.contract.targetAddress,
         abi,
         functionName,
         args,
@@ -172,12 +169,12 @@ export class HelixBridgeDVMEVM extends BaseBridge {
 
   async getFee() {
     if (this.contract && this.sourceNativeToken && this.sourcePublicClient) {
-      const { abi, address } =
+      const { abi } =
         this.crossInfo?.action === "issue"
-          ? { abi: (await import("@/abi/backing-dvmevm.json")).default, address: this.contract.sourceAddress }
-          : { abi: (await import("@/abi/mappingtoken-dvmevm.json")).default, address: this.contract.targetAddress };
+          ? { abi: (await import("@/abi/backing-dvmevm.json")).default }
+          : { abi: (await import("@/abi/mappingtoken-dvmevm.json")).default };
       const value = (await this.sourcePublicClient.readContract({
-        address,
+        address: this.contract.sourceAddress,
         abi,
         functionName: "currentFee",
       })) as unknown as bigint;
@@ -187,13 +184,13 @@ export class HelixBridgeDVMEVM extends BaseBridge {
 
   async getDailyLimit() {
     if (this.contract && this.sourceToken && this.targetToken && this.targetPublicClient) {
-      const { abi, address } =
+      const { abi } =
         this.crossInfo?.action === "issue"
-          ? { abi: (await import("@/abi/mappingtoken-dvmevm.json")).default, address: this.contract.targetAddress }
-          : { abi: (await import("@/abi/backing-dvmevm.json")).default, address: this.contract.sourceAddress };
+          ? { abi: (await import("@/abi/mappingtoken-dvmevm.json")).default }
+          : { abi: (await import("@/abi/backing-dvmevm.json")).default };
 
       const limit = (await this.targetPublicClient.readContract({
-        address,
+        address: this.contract.targetAddress,
         abi,
         functionName: "calcMaxWithdraw",
         args: [this.targetToken.address],
