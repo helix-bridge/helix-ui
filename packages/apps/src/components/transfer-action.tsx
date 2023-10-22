@@ -27,6 +27,8 @@ export default function TransferAction({ recipient, transferValue, onTransfer }:
   }, [approve]);
 
   if (chain) {
+    const feeValue = fee?.token.type === "native" ? 0n : fee?.value || 0n;
+
     if (sourceValue?.chain.id !== chain.id) {
       return (
         <Button kind="primary" onClick={() => switchNetwork && switchNetwork(sourceValue?.chain.id)} className="button">
@@ -35,7 +37,7 @@ export default function TransferAction({ recipient, transferValue, onTransfer }:
       );
     } else if (
       sourceValue.token.type !== "native" &&
-      transferValue.formatted + (fee?.value || 0n) > (sourceAllowance?.value || 0n)
+      transferValue.formatted + feeValue > (sourceAllowance?.value || 0n)
     ) {
       return (
         <Button kind="primary" onClick={handleApprove} busy={busy} className="button">

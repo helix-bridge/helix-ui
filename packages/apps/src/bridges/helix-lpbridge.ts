@@ -34,10 +34,9 @@ export class HelixLpBridge extends BaseBridge {
   }
 
   private initContract() {
-    this.contract = {
-      sourceAddress: "0x84f7a56483C100ECb12CbB4A31b7873dAE0d8E9B",
-      targetAddress: "0x5F8D4232367759bCe5d9488D3ade77FCFF6B9b6B",
-    };
+    const backing = "0x84f7a56483C100ECb12CbB4A31b7873dAE0d8E9B";
+    const issuing = "0x5F8D4232367759bCe5d9488D3ade77FCFF6B9b6B";
+    this.initContractFromBackingIssuing(backing, issuing);
   }
 
   async transfer(
@@ -63,16 +62,15 @@ export class HelixLpBridge extends BaseBridge {
                 recipient,
                 amount,
                 options.totalFee,
-                this.crossInfo?.index,
+                this.crossInfo.index,
                 this.targetToken?.type === "native",
               ],
               value: undefined,
             };
-      const address = this.crossInfo.action === "issue" ? this.contract.sourceAddress : this.contract.targetAddress;
       const abi = (await import("@/abi/lpbridge.json")).default;
 
       const hash = await this.walletClient.writeContract({
-        address,
+        address: this.contract.sourceAddress,
         abi,
         functionName,
         args,
@@ -90,10 +88,6 @@ export class HelixLpBridge extends BaseBridge {
     await this.validateNetwork("target");
 
     if (this.contract && this.publicClient && this.walletClient) {
-      const { address } =
-        this.crossInfo?.action === "issue"
-          ? { address: this.contract.targetAddress }
-          : { address: this.contract.sourceAddress };
       const args = [
         record.messageNonce,
         this.targetToken?.type === "native",
@@ -108,7 +102,7 @@ export class HelixLpBridge extends BaseBridge {
       const abi = (await import("@/abi/lpbridge-sub2eth.json")).default;
 
       const hash = await this.walletClient.writeContract({
-        address,
+        address: this.contract.targetAddress,
         abi,
         functionName: "requestCancelIssuing",
         args,
@@ -121,10 +115,9 @@ export class HelixLpBridge extends BaseBridge {
 
   private async getBridgeFee() {
     if (this.contract && this.sourcePublicClient) {
-      const address = this.crossInfo?.action === "issue" ? this.contract.sourceAddress : this.contract.targetAddress;
       const abi = (await import("@/abi/lpbridge.json")).default;
       return this.sourcePublicClient.readContract({
-        address,
+        address: this.contract.sourceAddress,
         abi,
         functionName: "fee",
       }) as unknown as bigint; // Native token
@@ -147,11 +140,10 @@ export class HelixLpBridge extends BaseBridge {
               args: [transferId, fee],
               value: undefined,
             };
-      const address = this.crossInfo?.action === "issue" ? this.contract.sourceAddress : this.contract.targetAddress;
       const abi = (await import("@/abi/lpbridge.json")).default;
 
       const hash = await this.walletClient.writeContract({
-        address,
+        address: this.contract.sourceAddress,
         abi,
         functionName,
         args,

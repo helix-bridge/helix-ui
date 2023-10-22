@@ -70,11 +70,10 @@ export class L2ArbitrumBridge extends BaseBridge {
         ],
         [params.maxSubmissionCost, "0x"],
       );
-      const address = this.crossInfo?.action === "issue" ? this.contract.sourceAddress : this.contract.targetAddress;
       const abi = (await import("@/abi/l1-gateway-router.json")).default;
 
       const hash = await this.walletClient.writeContract({
-        address,
+        address: this.contract.sourceAddress,
         abi,
         functionName: "outboundTransferCustomRefund",
         args: [
@@ -95,7 +94,6 @@ export class L2ArbitrumBridge extends BaseBridge {
 
   private async getL1toL2Params() {
     if (this.contract && this.sourcePublicClient && this.targetPublicClient) {
-      const address = this.crossInfo?.action === "issue" ? this.contract.sourceAddress : this.contract.targetAddress;
       const l1Client = this.sourcePublicClient;
       const l2Client = this.targetPublicClient;
 
@@ -105,7 +103,7 @@ export class L2ArbitrumBridge extends BaseBridge {
       const scaleL2GasPrice = l2GasPrice * this.l2GasPriceScaler;
 
       const inboxAddress = (await l1Client.readContract({
-        address,
+        address: this.contract.sourceAddress,
         abi: (await import("@/abi/l1-gateway-router.json")).default,
         functionName: "inbox",
       })) as unknown as Address;

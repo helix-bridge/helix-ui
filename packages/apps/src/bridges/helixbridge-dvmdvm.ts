@@ -40,15 +40,13 @@ export class HelixBridgeDVMDVM extends BaseBridge {
 
   private initContract() {
     if (this.sourceToken?.symbol === "RING" || this.sourceToken?.symbol === "xWRING") {
-      this.contract = {
-        sourceAddress: "0xF3c1444CD449bD66Ef6DA7CA6c3E7884840A3995",
-        targetAddress: "0x8738A64392b71617aF4C685d0E827855c741fDF7",
-      };
+      const backing = "0xF3c1444CD449bD66Ef6DA7CA6c3E7884840A3995";
+      const issuing = "0x8738A64392b71617aF4C685d0E827855c741fDF7";
+      this.initContractFromBackingIssuing(backing, issuing);
     } else if (this.sourceToken?.symbol === "CRAB" || this.sourceToken?.symbol === "xWCRAB") {
-      this.contract = {
-        sourceAddress: "0xCF8923ebF4244cedC647936a0281dd10bDFCBF18",
-        targetAddress: "0x8c585F9791EE5b4B23fe82888cE576DBB69607eB",
-      };
+      const backing = "0xCF8923ebF4244cedC647936a0281dd10bDFCBF18";
+      const issuing = "0x8c585F9791EE5b4B23fe82888cE576DBB69607eB";
+      this.initContractFromBackingIssuing(backing, issuing);
     }
   }
 
@@ -119,7 +117,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
       const abi = (await import("@/abi/mappingtoken-dvmdvm.json")).default;
 
       const hash = await this.walletClient.writeContract({
-        address: this.contract.targetAddress,
+        address: this.contract.sourceAddress,
         abi,
         functionName,
         args,
@@ -149,16 +147,14 @@ export class HelixBridgeDVMDVM extends BaseBridge {
     await this.validateNetwork("target");
 
     if (this.contract && this.specVersion && this.publicClient && this.walletClient) {
-      const { abi, address, functionName } =
+      const { abi, functionName } =
         this.crossInfo?.action === "issue"
           ? {
               abi: (await import("@/abi/mappingtoken-dvmdvm.json")).default,
-              address: this.contract.targetAddress,
               functionName: "remoteIssuingFailure",
             }
           : {
               abi: (await import("@/abi/backing-dvmdvm.json")).default,
-              address: this.contract.sourceAddress,
               functionName: this.sourceToken?.type === "native" ? "remoteUnlockFailureNative" : "remoteUnlockFailure",
             };
       const args =
@@ -175,7 +171,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
       const value = (await this.getFee())?.value;
 
       const hash = await this.walletClient.writeContract({
-        address,
+        address: this.contract.targetAddress,
         abi,
         functionName,
         args,
@@ -188,13 +184,13 @@ export class HelixBridgeDVMDVM extends BaseBridge {
 
   async getFee() {
     if (this.contract && this.sourceNativeToken && this.sourcePublicClient) {
-      const { abi, address } =
+      const { abi } =
         this.crossInfo?.action === "issue"
-          ? { abi: (await import("@/abi/backing-dvmdvm.json")).default, address: this.contract.sourceAddress }
-          : { abi: (await import("@/abi/mappingtoken-dvmdvm.json")).default, address: this.contract.targetAddress };
+          ? { abi: (await import("@/abi/backing-dvmdvm.json")).default }
+          : { abi: (await import("@/abi/mappingtoken-dvmdvm.json")).default };
 
       const value = (await this.sourcePublicClient.readContract({
-        address,
+        address: this.contract.sourceAddress,
         abi,
         functionName: "fee",
       })) as unknown as bigint;
@@ -204,13 +200,13 @@ export class HelixBridgeDVMDVM extends BaseBridge {
 
   async getDailyLimit() {
     if (this.contract && this.sourceToken && this.targetToken && this.targetPublicClient) {
-      const { abi, address } =
+      const { abi } =
         this.crossInfo?.action === "redeem"
-          ? { abi: (await import("@/abi/backing-dvmdvm.json")).default, address: this.contract.sourceAddress }
-          : { abi: (await import("@/abi/mappingtoken-dvmdvm.json")).default, address: this.contract.targetAddress };
+          ? { abi: (await import("@/abi/backing-dvmdvm.json")).default }
+          : { abi: (await import("@/abi/mappingtoken-dvmdvm.json")).default };
 
       const limit = (await this.targetPublicClient.readContract({
-        address,
+        address: this.contract.targetAddress,
         abi,
         functionName: "calcMaxWithdraw",
         args: [this.targetToken.address],
