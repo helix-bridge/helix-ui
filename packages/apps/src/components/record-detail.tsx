@@ -36,12 +36,14 @@ export default function RecordDetail(props: Props) {
   });
 
   const bridgeClient = useMemo<BaseBridge | undefined>(() => {
+    const category = record?.historyRecordById?.bridge;
     const sourceChain = getChainConfig(record?.historyRecordById?.fromChain);
     const targetChain = getChainConfig(record?.historyRecordById?.toChain);
-    const category = record?.historyRecordById?.bridge;
+    const sourceToken = sourceChain?.tokens.find((t) => t.symbol === record?.historyRecordById?.sendToken);
+    const targetToken = targetChain?.tokens.find((t) => t.symbol === record?.historyRecordById?.recvToken);
 
-    if (sourceChain && targetChain && category) {
-      return bridgeFactory({ category, sourceChain, targetChain });
+    if (category) {
+      return bridgeFactory({ category, sourceChain, targetChain, sourceToken, targetToken });
     }
 
     return undefined;

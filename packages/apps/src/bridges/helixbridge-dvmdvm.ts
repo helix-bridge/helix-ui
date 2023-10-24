@@ -101,9 +101,17 @@ export class HelixBridgeDVMDVM extends BaseBridge {
   }
 
   private async burn(_: string, recipient: string, amount: bigint, options?: { totalFee: bigint }) {
-    if (options && this.contract && this.specVersion && this.sourceToken && this.publicClient && this.walletClient) {
+    if (
+      options &&
+      this.contract &&
+      this.specVersion &&
+      this.sourceToken &&
+      this.targetToken &&
+      this.publicClient &&
+      this.walletClient
+    ) {
       const { args, value, functionName } =
-        this.sourceToken.type === "native"
+        this.targetToken.type === "native"
           ? {
               functionName: "burnAndRemoteUnlockNative",
               args: [this.specVersion.target, this.gasLimit, recipient, amount],

@@ -9,6 +9,7 @@ export type TokenSymbol =
   | "ORING"
   | "CRAB"
   | "KTON"
+  | "WRING"
   | "xWRING"
   | "xWCRAB"
   | "MNT";
