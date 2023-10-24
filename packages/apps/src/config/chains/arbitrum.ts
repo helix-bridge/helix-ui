@@ -44,7 +44,7 @@ export const arbitrumChain: ChainConfig = {
       cross: [{ target: { network: "ethereum", symbol: "RING" }, bridge: { category: "lnbridgev20-opposite" } }],
     },
     {
-      decimals: 18,
+      decimals: 6,
       symbol: "USDT",
       name: "USDT",
       type: "erc20",

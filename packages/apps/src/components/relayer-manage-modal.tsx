@@ -10,7 +10,7 @@ import { useNetwork, useSwitchNetwork } from "wagmi";
 import { formatBalance } from "@/utils/balance";
 import { useRelayer } from "@/hooks/use-relayer";
 import dynamic from "next/dynamic";
-import { formatFeeRate } from "@/utils/misc";
+import { formatFeeRate, isValidFeeRate } from "@/utils/misc";
 
 type TabKey = "update" | "deposit" | "withdraw";
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
@@ -207,7 +207,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
       busy={busy}
       disabledCancel={busy}
       disabledOk={
-        activeKey === "update" && baseFee.formatted === 0n && feeRate.formatted === 0
+        activeKey === "update" && !(baseFee.value && feeRate.value && isValidFeeRate(feeRate.formatted))
           ? true
           : activeKey === "deposit" && margin.formatted === 0n
           ? true
