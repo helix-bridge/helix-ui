@@ -26,5 +26,15 @@ export const mantleChain: ChainConfig = {
       url: "https://explorer.mantle.xyz/",
     },
   },
-  tokens: [],
+  tokens: [
+    {
+      decimals: 18,
+      symbol: "USDT",
+      name: "USDT",
+      type: "erc20",
+      address: "0x201EBa5CC46D216Ce6DC03F6a759e8E766e956aE",
+      logo: "usdt.svg",
+      cross: [{ target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } }],
+    },
+  ],
 };
