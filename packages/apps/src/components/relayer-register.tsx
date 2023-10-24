@@ -321,7 +321,7 @@ export default function RelayerRegister() {
                 label="Liquidity Fee Rate"
                 tips="The percentage deducted by the relayer from the transfer amount in a transaction"
               >
-                <FeeRateInput placeholder="Enter 0 ~ 100" value={feeRate} onChange={setFeeRate} />
+                <FeeRateInput placeholder="Enter 0 ~ 0.25" value={feeRate} onChange={setFeeRate} />
               </LabelItem>
 
               <Divider />
