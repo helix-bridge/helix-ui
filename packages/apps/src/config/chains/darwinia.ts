@@ -58,6 +58,15 @@ export const darwiniaChain: ChainConfig = {
     },
     {
       decimals: 18,
+      symbol: "WRING",
+      name: "WRING",
+      type: "erc20",
+      address: "0x",
+      logo: "ring.svg",
+      cross: [],
+    },
+    {
+      decimals: 18,
       symbol: "KTON",
       name: "KTON",
       type: "erc20",
