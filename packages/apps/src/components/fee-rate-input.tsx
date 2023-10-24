@@ -1,5 +1,5 @@
 import Input from "@/ui/input";
-import { parseFeeRate } from "@/utils/misc";
+import { isValidFeeRate, parseFeeRate } from "@/utils/misc";
 
 export default function FeeRateInput({
   placeholder,
@@ -10,7 +10,7 @@ export default function FeeRateInput({
   value?: { formatted: number; value: string };
   onChange?: (value: { formatted: number; value: string }) => void;
 }) {
-  const invalid = (value?.formatted || 0) < 0 || 100000 < (value?.formatted || 0);
+  const invalid = !isValidFeeRate(value?.formatted || 0);
   return (
     <div
       className={`gap-small bg-app-bg p-small lg:p-middle normal-input-wrap flex items-center justify-between ${

@@ -1,4 +1,4 @@
-import { FEE_RATE_BASE } from "@/config/constant";
+import { FEE_RATE_BASE, FEE_RATE_MAX, FEE_RATE_MIN } from "@/config/constant";
 import { RecordStatus } from "@/types/graphql";
 
 export function formatRecordStatus(status: RecordStatus) {
@@ -36,4 +36,8 @@ export function parseFeeRate(rate: string) {
 
 export function formatFeeRate(rate: number) {
   return Number((rate / FEE_RATE_BASE).toFixed(3));
+}
+
+export function isValidFeeRate(formatted: number) {
+  return FEE_RATE_MIN <= formatted && formatted <= FEE_RATE_MAX;
 }

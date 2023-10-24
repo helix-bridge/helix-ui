@@ -11,7 +11,7 @@ import { Token, TokenSymbol } from "@/types/token";
 import { BridgeCategory } from "@/types/bridge";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import Image from "next/image";
-import { formatFeeRate, getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
+import { formatFeeRate, getChainLogoSrc, getTokenLogoSrc, isValidFeeRate } from "@/utils/misc";
 import Tooltip from "@/ui/tooltip";
 import StepCompleteItem from "./step-complete-item";
 import { BalanceInput } from "./balance-input";
@@ -372,7 +372,8 @@ export default function RelayerRegister() {
                   }
                 }}
                 disabled={
-                  (sourceChain?.id === chain?.id && (!margin.formatted || !baseFee.formatted || !feeRate.formatted)) ||
+                  (sourceChain?.id === chain?.id &&
+                    !(margin.value && baseFee.value && feeRate.value && isValidFeeRate(feeRate.formatted))) ||
                   (bridgeCategory === "lnbridgev20-default" && !completeMargin)
                 }
                 busy={busy}
