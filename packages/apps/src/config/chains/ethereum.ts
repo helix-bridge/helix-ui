@@ -48,15 +48,15 @@ export const ethereumChain: ChainConfig = {
         { target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnbridgev20-default" } },
         {
           target: { network: "darwinia-dvm", symbol: "RING" },
-          bridge: { category: "helix-sub2ethv2(unlock)" },
-          action: "redeem",
-        },
-        {
-          target: { network: "darwinia-dvm", symbol: "RING" },
           bridge: { category: "lpbridge-ethereum" },
           action: "redeem",
           baseFee: parseUnits("3000", 18),
           index: 0,
+        },
+        {
+          target: { network: "darwinia-dvm", symbol: "RING" },
+          bridge: { category: "helix-sub2ethv2(unlock)" },
+          action: "redeem",
         },
       ],
     },
