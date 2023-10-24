@@ -43,16 +43,16 @@ export const darwiniaChain: ChainConfig = {
         },
         {
           target: { network: "ethereum", symbol: "RING" },
-          bridge: { category: "helix-sub2ethv2(lock)" },
-          action: "issue",
-        },
-        {
-          target: { network: "ethereum", symbol: "RING" },
           bridge: { category: "lpbridge-darwinia-dvm" },
           action: "issue",
           baseFee: parseUnits("3000", 18),
           index: 0,
           price: 440000n,
+        },
+        {
+          target: { network: "ethereum", symbol: "RING" },
+          bridge: { category: "helix-sub2ethv2(lock)" },
+          action: "issue",
         },
       ],
     },
