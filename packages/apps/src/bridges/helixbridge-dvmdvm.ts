@@ -29,7 +29,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
   }) {
     super(args);
     this.initContract();
-    this.initSpecVersion();
+    this.ensureSpecVersion();
 
     this.logo = args.logo ?? {
       horizontal: "helix-horizontal.svg",
@@ -50,26 +50,28 @@ export class HelixBridgeDVMDVM extends BaseBridge {
     }
   }
 
-  private async initSpecVersion() {
-    const sourceRpc = this.sourceChain?.rpcUrls.default.webSocket?.at(0);
-    const targetRpc = this.targetChain?.rpcUrls.default.webSocket?.at(0);
+  private async ensureSpecVersion() {
+    if (!this.specVersion) {
+      const sourceRpc = this.sourceChain?.rpcUrls.default.webSocket?.at(0);
+      const targetRpc = this.targetChain?.rpcUrls.default.webSocket?.at(0);
 
-    const source = sourceRpc
-      ? (
-          (await ApiPromise.create({ provider: new WsProvider(sourceRpc) })).consts.system.version as unknown as {
-            specVersion: SpecVersion;
-          }
-        ).specVersion.toNumber()
-      : 0;
-    const target = targetRpc
-      ? (
-          (await ApiPromise.create({ provider: new WsProvider(targetRpc) })).consts.system.version as unknown as {
-            specVersion: SpecVersion;
-          }
-        ).specVersion.toNumber()
-      : 0;
+      const source = sourceRpc
+        ? (
+            (await ApiPromise.create({ provider: new WsProvider(sourceRpc) })).consts.system.version as unknown as {
+              specVersion: SpecVersion;
+            }
+          ).specVersion.toNumber()
+        : 0;
+      const target = targetRpc
+        ? (
+            (await ApiPromise.create({ provider: new WsProvider(targetRpc) })).consts.system.version as unknown as {
+              specVersion: SpecVersion;
+            }
+          ).specVersion.toNumber()
+        : 0;
 
-    this.specVersion = { source, target };
+      this.specVersion = { source, target };
+    }
   }
 
   private async lock(_: string, recipient: string, amount: bigint, options?: { totalFee: bigint }) {
@@ -110,17 +112,15 @@ export class HelixBridgeDVMDVM extends BaseBridge {
       this.publicClient &&
       this.walletClient
     ) {
-      const { args, value, functionName } =
+      const { args, functionName } =
         this.targetToken.type === "native"
           ? {
               functionName: "burnAndRemoteUnlockNative",
               args: [this.specVersion.target, this.gasLimit, recipient, amount],
-              value: amount + options.totalFee,
             }
           : {
               functionName: "burnAndRemoteUnlock",
               args: [this.specVersion.target, this.gasLimit, this.sourceToken.address, recipient, amount],
-              value: options.totalFee,
             };
       const abi = (await import("@/abi/mappingtoken-dvmdvm.json")).default;
 
@@ -129,7 +129,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
         abi,
         functionName,
         args,
-        value,
+        value: options.totalFee,
         gas: this.getTxGasLimit(),
       });
       return this.publicClient.waitForTransactionReceipt({ hash });
@@ -143,6 +143,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
     options?: { totalFee: bigint },
   ): Promise<TransactionReceipt | undefined> {
     await this.validateNetwork("source");
+    await this.ensureSpecVersion();
 
     if (this.crossInfo?.action === "redeem") {
       return this.burn(sender, recipient, amount, options);
@@ -153,6 +154,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
 
   async refund(record: HistoryRecord) {
     await this.validateNetwork("target");
+    await this.ensureSpecVersion();
 
     if (this.contract && this.specVersion && this.publicClient && this.walletClient) {
       const { abi, functionName } =
