@@ -112,17 +112,15 @@ export class HelixBridgeDVMDVM extends BaseBridge {
       this.publicClient &&
       this.walletClient
     ) {
-      const { args, value, functionName } =
+      const { args, functionName } =
         this.targetToken.type === "native"
           ? {
               functionName: "burnAndRemoteUnlockNative",
               args: [this.specVersion.target, this.gasLimit, recipient, amount],
-              value: amount + options.totalFee,
             }
           : {
               functionName: "burnAndRemoteUnlock",
               args: [this.specVersion.target, this.gasLimit, this.sourceToken.address, recipient, amount],
-              value: options.totalFee,
             };
       const abi = (await import("@/abi/mappingtoken-dvmdvm.json")).default;
 
@@ -131,7 +129,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
         abi,
         functionName,
         args,
-        value,
+        value: options.totalFee,
         gas: this.getTxGasLimit(),
       });
       return this.publicClient.waitForTransactionReceipt({ hash });
