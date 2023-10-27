@@ -1,6 +1,7 @@
 import { TokenSymbol } from "./token";
 import { BridgeCategory } from "./bridge";
 import { Network } from "./chain";
+import { Address } from "viem";
 
 export enum RecordStatus {
   PENDING,
@@ -73,7 +74,7 @@ interface Lnv20RelayInfo {
   fromChain: Network;
   toChain: Network;
   bridge: BridgeCategory;
-  relayer: string;
+  relayer: Address;
   sendToken?: string | null;
   transaction_hash: string;
   timestamp: number;

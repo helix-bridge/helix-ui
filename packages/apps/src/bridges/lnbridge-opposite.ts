@@ -3,7 +3,7 @@ import { LnBridgeBase } from "./lnbridge-base";
 import { ChainConfig, ChainID } from "@/types/chain";
 import { Token } from "@/types/token";
 import { PublicClient, WalletClient } from "wagmi";
-import { BridgeCategory, BridgeLogo } from "@/types/bridge";
+import { BridgeCategory, BridgeLogo, TransferOptions } from "@/types/bridge";
 
 export class LnBridgeOpposite extends LnBridgeBase {
   constructor(args: {
@@ -39,36 +39,29 @@ export class LnBridgeOpposite extends LnBridgeBase {
     _: string,
     recipient: string,
     amount: bigint,
-    options: {
-      remoteChainId: bigint;
-      relayer: string;
-      sourceToken: string;
-      targetToken: string;
-      transferId: string;
-      totalFee: bigint;
-      depositedMargin: bigint;
-    },
+    options: Pick<TransferOptions, "relayer" | "transferId" | "totalFee" | "depositedMargin">,
   ): Promise<TransactionReceipt | undefined> {
     await this.validateNetwork("source");
 
-    if (this.contract && this.sourceToken && this.publicClient && this.walletClient) {
+    if (this.contract && this.publicClient && this.walletClient) {
       const abi = (await import(`../abi/lnbridgev20-opposite.json`)).default;
       const snapshot = [
-        options.remoteChainId,
+        this.targetChain?.id,
         options.relayer,
-        options.sourceToken,
-        options.targetToken,
+        this.sourceToken?.address,
+        this.targetToken?.address,
         options.transferId,
         options.totalFee,
         options.depositedMargin,
       ];
+      console.log("snapshot:", snapshot);
 
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,
         abi,
         functionName: "transferAndLockMargin",
         args: [snapshot, amount, recipient],
-        value: this.sourceToken.type === "native" ? amount + options.totalFee : undefined,
+        value: this.sourceToken?.type === "native" ? amount + options.totalFee : undefined,
         gas: this.getTxGasLimit(),
       });
       return this.publicClient.waitForTransactionReceipt({ hash });

@@ -1,4 +1,4 @@
-import { BridgeCategory, BridgeLogo } from "@/types/bridge";
+import { BridgeCategory, BridgeLogo, TransferOptions } from "@/types/bridge";
 import { BaseBridge } from "./base";
 import { ChainConfig } from "@/types/chain";
 import { Token } from "@/types/token";
@@ -100,7 +100,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
     sender: string,
     recipient: string,
     amount: bigint,
-    options?: { totalFee: bigint },
+    options?: Pick<TransferOptions, "totalFee">,
   ): Promise<TransactionReceipt | undefined> {
     await this.validateNetwork("source");
 

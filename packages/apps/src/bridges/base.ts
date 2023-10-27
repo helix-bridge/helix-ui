@@ -1,4 +1,4 @@
-import { BridgeCategory, BridgeContract, BridgeLogo } from "@/types/bridge";
+import { BridgeCategory, BridgeContract, BridgeLogo, TransferOptions } from "@/types/bridge";
 import { ChainConfig, ChainID } from "@/types/chain";
 import { CrossChain } from "@/types/cross-chain";
 import { HistoryRecord } from "@/types/graphql";
@@ -228,6 +228,6 @@ export abstract class BaseBridge {
     sender: string,
     recipient: string,
     amount: bigint,
-    options?: Object,
+    options?: Partial<TransferOptions>,
   ): Promise<TransactionReceipt | undefined>;
 }

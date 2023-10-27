@@ -1,4 +1,4 @@
-import { BridgeCategory, BridgeLogo } from "@/types/bridge";
+import { BridgeCategory, BridgeLogo, TransferOptions } from "@/types/bridge";
 import { BaseBridge } from "./base";
 import { ChainConfig } from "@/types/chain";
 import { Token } from "@/types/token";
@@ -43,7 +43,7 @@ export class HelixLpBridge extends BaseBridge {
     _: string,
     recipient: string,
     amount: bigint,
-    options?: { totalFee: bigint },
+    options?: Pick<TransferOptions, "totalFee">,
   ): Promise<TransactionReceipt | undefined> {
     if (options && this.contract && this.crossInfo && this.walletClient && this.publicClient) {
       const nonce = BigInt(Date.now()) + this.prefix;

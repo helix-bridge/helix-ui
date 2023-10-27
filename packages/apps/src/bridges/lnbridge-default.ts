@@ -4,7 +4,7 @@ import { ChainConfig, ChainID } from "@/types/chain";
 import { Token } from "@/types/token";
 import { PublicClient, WalletClient } from "wagmi";
 import { isProduction } from "@/utils/env";
-import { BridgeCategory, BridgeLogo } from "@/types/bridge";
+import { BridgeCategory, BridgeLogo, TransferOptions } from "@/types/bridge";
 
 export class LnBridgeDefault extends LnBridgeBase {
   constructor(args: {
@@ -58,25 +58,17 @@ export class LnBridgeDefault extends LnBridgeBase {
     _: string,
     recipient: string,
     amount: bigint,
-    options: {
-      remoteChainId: bigint;
-      relayer: string;
-      sourceToken: string;
-      targetToken: string;
-      transferId: string;
-      totalFee: bigint;
-      withdrawNonce: bigint;
-    },
+    options: Pick<TransferOptions, "relayer" | "transferId" | "totalFee" | "withdrawNonce">,
   ): Promise<TransactionReceipt | undefined> {
     await this.validateNetwork("source");
 
-    if (this.contract && this.sourceToken && this.publicClient && this.walletClient) {
+    if (this.contract && this.publicClient && this.walletClient) {
       const abi = (await import(`../abi/lnbridgev20-default.json`)).default;
       const snapshot = [
-        options.remoteChainId,
+        this.targetChain?.id,
         options.relayer,
-        options.sourceToken,
-        options.targetToken,
+        this.sourceToken?.address,
+        this.targetToken?.address,
         options.transferId,
         options.totalFee,
         options.withdrawNonce,
@@ -87,7 +79,7 @@ export class LnBridgeDefault extends LnBridgeBase {
         abi,
         functionName: "transferAndLockMargin",
         args: [snapshot, amount, recipient],
-        value: this.sourceToken.type === "native" ? amount + options.totalFee : undefined,
+        value: this.sourceToken?.type === "native" ? amount + options.totalFee : undefined,
         gas: this.getTxGasLimit(),
       });
       return this.publicClient.waitForTransactionReceipt({ hash });
