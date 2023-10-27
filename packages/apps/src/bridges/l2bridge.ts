@@ -14,7 +14,7 @@ export class L2ArbitrumBridge extends BaseBridge {
   private readonly l2FixedDataSize = 1600n;
   private readonly feeScaler = 1.1;
   private readonly l2GasPriceScaler = 3n; // To ensure a successful transaction, we set the scaler to be 3 times
-  private helixDaoAddress: Address | undefined;
+  private helixDAO: Address | undefined;
 
   constructor(args: {
     walletClient?: WalletClient | null;
@@ -50,19 +50,19 @@ export class L2ArbitrumBridge extends BaseBridge {
         targetAddress: "0x72ce9c846789fdb6fc1f34ac4ad25dd9ef7031ef",
       };
     }
-    this.helixDaoAddress = "0x3B9E571AdeCB0c277486036D6097E9C2CCcfa9d9";
+    this.helixDAO = "0x3B9E571AdeCB0c277486036D6097E9C2CCcfa9d9";
   }
 
   async transfer(
-    _: string,
-    recipient: string,
+    _: Address,
+    recipient: Address,
     amount: bigint,
     // options?: Object | undefined,
   ): Promise<TransactionReceipt | undefined> {
     await this.validateNetwork("source");
 
     const params = await this.getL1toL2Params();
-    if (params && this.contract && this.sourceToken && this.publicClient && this.walletClient) {
+    if (params && this.contract && this.sourceToken && this.publicClient && this.walletClient && this.helixDAO) {
       const innerData = encodeAbiParameters(
         [
           { name: "x", type: "uint256" },
@@ -70,21 +70,12 @@ export class L2ArbitrumBridge extends BaseBridge {
         ],
         [params.maxSubmissionCost, "0x"],
       );
-      const abi = (await import("@/abi/l1-gateway-router.json")).default;
 
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,
-        abi,
+        abi: (await import("@/abi/l1-gateway-router")).default,
         functionName: "outboundTransferCustomRefund",
-        args: [
-          this.sourceToken.address,
-          this.helixDaoAddress,
-          recipient,
-          amount,
-          this.l2GasLimit,
-          params.gasPrice,
-          innerData,
-        ],
+        args: [this.sourceToken.address, this.helixDAO, recipient, amount, this.l2GasLimit, params.gasPrice, innerData],
         value: params.deposit,
         gas: this.getTxGasLimit(),
       });
@@ -104,13 +95,13 @@ export class L2ArbitrumBridge extends BaseBridge {
 
       const inboxAddress = (await l1Client.readContract({
         address: this.contract.sourceAddress,
-        abi: (await import("@/abi/l1-gateway-router.json")).default,
+        abi: (await import("@/abi/l1-gateway-router")).default,
         functionName: "inbox",
       })) as unknown as Address;
 
       const maxSubmissionCost = (await l1Client.readContract({
         address: inboxAddress,
-        abi: (await import("@/abi/inbox.json")).default,
+        abi: (await import("@/abi/inbox")).default,
         functionName: "calculateRetryableSubmissionFee",
         args: [this.l2FixedDataSize, scaleL1BaseFee],
       })) as unknown as bigint;

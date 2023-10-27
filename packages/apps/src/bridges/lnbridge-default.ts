@@ -1,4 +1,4 @@
-import { TransactionReceipt } from "viem";
+import { Address, TransactionReceipt } from "viem";
 import { LnBridgeBase } from "./lnbridge-base";
 import { ChainConfig, ChainID } from "@/types/chain";
 import { Token } from "@/types/token";
@@ -55,28 +55,34 @@ export class LnBridgeDefault extends LnBridgeBase {
   }
 
   async transfer(
-    _: string,
-    recipient: string,
+    _: Address,
+    recipient: Address,
     amount: bigint,
     options: Pick<TransferOptions, "relayer" | "transferId" | "totalFee" | "withdrawNonce">,
   ): Promise<TransactionReceipt | undefined> {
     await this.validateNetwork("source");
 
-    if (this.contract && this.publicClient && this.walletClient) {
-      const abi = (await import(`../abi/lnbridgev20-default.json`)).default;
-      const snapshot = [
-        this.targetChain?.id,
-        options.relayer,
-        this.sourceToken?.address,
-        this.targetToken?.address,
-        options.transferId,
-        options.totalFee,
-        options.withdrawNonce,
-      ];
+    if (
+      this.contract &&
+      this.publicClient &&
+      this.walletClient &&
+      this.targetChain &&
+      this.sourceToken &&
+      this.targetToken
+    ) {
+      const snapshot = {
+        remoteChainId: BigInt(this.targetChain.id),
+        provider: options.relayer,
+        sourceToken: this.sourceToken.address,
+        targetToken: this.targetToken.address,
+        transferId: options.transferId || "0x",
+        totalFee: options.totalFee,
+        withdrawNonce: options.withdrawNonce,
+      };
 
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,
-        abi,
+        abi: (await import(`../abi/lnbridgev20-default`)).default,
         functionName: "transferAndLockMargin",
         args: [snapshot, amount, recipient],
         value: this.sourceToken?.type === "native" ? amount + options.totalFee : undefined,
@@ -97,7 +103,7 @@ export class LnBridgeDefault extends LnBridgeBase {
       this.publicClient &&
       this.walletClient
     ) {
-      const abi = (await import(`../abi/lnbridgev20-default.json`)).default;
+      const abi = (await import(`../abi/lnbridgev20-default`)).default;
 
       const hash = await this.walletClient.writeContract({
         address: this.contract.targetAddress,
@@ -122,7 +128,7 @@ export class LnBridgeDefault extends LnBridgeBase {
       this.publicClient &&
       this.walletClient
     ) {
-      const abi = (await import(`../abi/lnbridgev20-default.json`)).default;
+      const abi = (await import(`../abi/lnbridgev20-default`)).default;
 
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,

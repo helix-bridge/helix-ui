@@ -1,4 +1,4 @@
-import { TransactionReceipt } from "viem";
+import { Address, TransactionReceipt } from "viem";
 import { LnBridgeBase } from "./lnbridge-base";
 import { ChainConfig, ChainID } from "@/types/chain";
 import { Token } from "@/types/token";
@@ -36,25 +36,31 @@ export class LnBridgeOpposite extends LnBridgeBase {
   }
 
   async transfer(
-    _: string,
-    recipient: string,
+    _: Address,
+    recipient: Address,
     amount: bigint,
     options: Pick<TransferOptions, "relayer" | "transferId" | "totalFee" | "depositedMargin">,
   ): Promise<TransactionReceipt | undefined> {
     await this.validateNetwork("source");
 
-    if (this.contract && this.publicClient && this.walletClient) {
-      const abi = (await import(`../abi/lnbridgev20-opposite.json`)).default;
-      const snapshot = [
-        this.targetChain?.id,
-        options.relayer,
-        this.sourceToken?.address,
-        this.targetToken?.address,
-        options.transferId,
-        options.totalFee,
-        options.depositedMargin,
-      ];
-      console.log("snapshot:", snapshot);
+    if (
+      this.contract &&
+      this.publicClient &&
+      this.walletClient &&
+      this.sourceToken &&
+      this.targetToken &&
+      this.targetChain
+    ) {
+      const abi = (await import(`../abi/lnbridgev20-opposite`)).default;
+      const snapshot = {
+        remoteChainId: BigInt(this.targetChain.id),
+        provider: options.relayer,
+        sourceToken: this.sourceToken.address,
+        targetToken: this.targetToken.address,
+        transferId: options.transferId || "0x",
+        totalFee: options.totalFee,
+        depositedMargin: options.depositedMargin,
+      };
 
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,
@@ -79,7 +85,7 @@ export class LnBridgeOpposite extends LnBridgeBase {
       this.publicClient &&
       this.walletClient
     ) {
-      const abi = (await import(`../abi/lnbridgev20-opposite.json`)).default;
+      const abi = (await import(`../abi/lnbridgev20-opposite`)).default;
 
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,

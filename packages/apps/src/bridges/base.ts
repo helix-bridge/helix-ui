@@ -146,7 +146,7 @@ export abstract class BaseBridge {
     if (token.type === "native") {
       value = await publicClient.getBalance({ address });
     } else {
-      const abi = (await import("../abi/erc20.json")).default;
+      const abi = (await import("../abi/erc20")).default;
       value = (await publicClient.readContract({
         address: token.address,
         abi,
@@ -172,7 +172,7 @@ export abstract class BaseBridge {
 
   private async getAllowance(owner: Address, spender: Address, token: Token, publicClient: ViemPublicClient) {
     if (token.type === "erc20") {
-      const abi = (await import("../abi/erc20.json")).default;
+      const abi = (await import("../abi/erc20")).default;
       const value = (await publicClient.readContract({
         address: token.address,
         abi,
@@ -197,7 +197,7 @@ export abstract class BaseBridge {
 
   private async approve(amount: bigint, owner: Address, spender: Address, token: Token) {
     if (this.publicClient && this.walletClient) {
-      const abi = (await import("../abi/erc20.json")).default;
+      const abi = (await import("../abi/erc20")).default;
       const { request } = await this.publicClient.simulateContract({
         address: token.address,
         abi,
@@ -225,8 +225,8 @@ export abstract class BaseBridge {
   }
 
   abstract transfer(
-    sender: string,
-    recipient: string,
+    sender: Address,
+    recipient: Address,
     amount: bigint,
     options?: Partial<TransferOptions>,
   ): Promise<TransactionReceipt | undefined>;

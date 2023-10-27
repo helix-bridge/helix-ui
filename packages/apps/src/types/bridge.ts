@@ -26,7 +26,7 @@ export type BridgeLogo = {
 
 export interface TransferOptions {
   relayer: Address;
-  transferId: string | null;
+  transferId: Address | null;
   totalFee: bigint;
   withdrawNonce: bigint;
   depositedMargin: bigint;

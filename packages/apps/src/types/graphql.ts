@@ -25,18 +25,18 @@ export interface HistoryRecord {
   id: string;
   nonce: string;
   messageNonce?: string | null;
-  recipient: string;
+  recipient: Address;
   requestTxHash: string;
   responseTxHash?: string | null;
   reason?: string | null;
   result: RecordStatus;
-  sender: string;
+  sender: Address;
   startTime: number;
   toChain: Network;
   sendToken: TokenSymbol;
   recvToken: TokenSymbol;
-  sendTokenAddress?: string | null;
-  recvTokenAddress?: string | null;
+  sendTokenAddress?: Address | null;
+  recvTokenAddress?: Address | null;
   confirmedBlocks?: string | null;
 }
 
@@ -84,7 +84,7 @@ interface Lnv20RelayInfo {
   liquidityFeeRate?: number | null;
   slashCount?: number | null;
   withdrawNonce?: string | null;
-  lastTransferId?: string | null;
+  lastTransferId?: Address | null;
   cost?: string | null;
   profit?: string | null;
   heartbeatTimestamp?: number | null;

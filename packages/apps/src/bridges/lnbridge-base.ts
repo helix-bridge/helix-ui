@@ -1,6 +1,6 @@
 import { ChainConfig } from "@/types/chain";
 import { BaseBridge } from "./base";
-import { TransactionReceipt } from "viem";
+import { Address, TransactionReceipt } from "viem";
 import { Token } from "@/types/token";
 import { BridgeCategory, BridgeLogo } from "@/types/bridge";
 import { PublicClient, WalletClient } from "wagmi";
@@ -44,8 +44,8 @@ export class LnBridgeBase extends BaseBridge {
   }
 
   async transfer(
-    _sender: string,
-    _recipient: string,
+    _sender: Address,
+    _recipient: Address,
     _amount: bigint,
     _options?: Object | undefined,
   ): Promise<TransactionReceipt | undefined> {
