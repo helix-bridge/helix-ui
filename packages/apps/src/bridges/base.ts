@@ -108,6 +108,12 @@ export abstract class BaseBridge {
       : undefined;
   }
 
+  protected async getSigner() {
+    if (this.walletClient) {
+      return (await this.walletClient.getAddresses()).at(0);
+    }
+  }
+
   protected async validateNetwork(position: "source" | "target") {
     const chain = position === "source" ? this.sourceChain : this.targetChain;
     if (chain?.id !== (await this.publicClient?.getChainId())) {
