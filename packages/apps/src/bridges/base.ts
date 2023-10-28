@@ -239,6 +239,14 @@ export abstract class BaseBridge {
     return this._transfer(sender, recipient, amount, { ...options, estimateGas: true }) as Promise<bigint | undefined>;
   }
 
+  async estimateTransferFee(sender: Address, recipient: Address, amount: bigint, options?: TransferOptions) {
+    const estimateGas = await this.estimateTransferGas(sender, recipient, amount, options);
+    if (estimateGas && this.sourcePublicClient) {
+      const { maxFeePerGas } = await this.sourcePublicClient.estimateFeesPerGas();
+      return maxFeePerGas && maxFeePerGas * estimateGas;
+    }
+  }
+
   protected abstract _transfer(
     sender: Address,
     recipient: Address,
