@@ -1,4 +1,4 @@
-import { BridgeCategory, BridgeLogo } from "@/types/bridge";
+import { BridgeCategory, BridgeLogo, TransferOptions } from "@/types/bridge";
 import { BaseBridge } from "./base";
 import { ChainConfig, ChainID } from "@/types/chain";
 import { Token } from "@/types/token";
@@ -53,16 +53,16 @@ export class L2ArbitrumBridge extends BaseBridge {
     this.helixDAO = "0x3B9E571AdeCB0c277486036D6097E9C2CCcfa9d9";
   }
 
-  async transfer(
-    _: Address,
+  protected async _transfer(
+    _sender: Address,
     recipient: Address,
     amount: bigint,
-    // options?: Object | undefined,
-  ): Promise<TransactionReceipt | undefined> {
-    await this.validateNetwork("source");
-
+    options?: TransferOptions & { estimateGas?: boolean },
+  ): Promise<bigint | TransactionReceipt | undefined> {
     const params = await this.getL1toL2Params();
-    if (params && this.contract && this.sourceToken && this.publicClient && this.walletClient && this.helixDAO) {
+    const account = await this.getSigner();
+
+    if (params && account && this.contract && this.sourceToken && this.sourcePublicClient && this.helixDAO) {
       const innerData = encodeAbiParameters(
         [
           { name: "x", type: "uint256" },
@@ -70,16 +70,24 @@ export class L2ArbitrumBridge extends BaseBridge {
         ],
         [params.maxSubmissionCost, "0x"],
       );
+      const estimateGas = options?.estimateGas ?? false;
 
-      const hash = await this.walletClient.writeContract({
+      const defaultParams = {
         address: this.contract.sourceAddress,
         abi: (await import("@/abi/l1-gateway-router")).default,
         functionName: "outboundTransferCustomRefund",
         args: [this.sourceToken.address, this.helixDAO, recipient, amount, this.l2GasLimit, params.gasPrice, innerData],
         value: params.deposit,
         gas: this.getTxGasLimit(),
-      });
-      return this.publicClient.waitForTransactionReceipt({ hash });
+        account,
+      } as const;
+
+      if (estimateGas) {
+        return this.sourcePublicClient.estimateContractGas(defaultParams);
+      } else if (this.walletClient) {
+        const hash = await this.walletClient.writeContract(defaultParams);
+        return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+      }
     }
   }
 

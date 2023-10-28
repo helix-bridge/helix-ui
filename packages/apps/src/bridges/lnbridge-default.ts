@@ -54,41 +54,50 @@ export class LnBridgeDefault extends LnBridgeBase {
     }
   }
 
-  async transfer(
-    _: Address,
+  protected async _transfer(
+    _sender: Address,
     recipient: Address,
     amount: bigint,
-    options: Pick<TransferOptions, "relayer" | "transferId" | "totalFee" | "withdrawNonce">,
-  ): Promise<TransactionReceipt | undefined> {
-    await this.validateNetwork("source");
+    options?: TransferOptions & { estimateGas?: boolean },
+  ): Promise<bigint | TransactionReceipt | undefined> {
+    const account = await this.getSigner();
 
     if (
+      account &&
       this.contract &&
-      this.publicClient &&
-      this.walletClient &&
+      this.sourcePublicClient &&
       this.targetChain &&
       this.sourceToken &&
       this.targetToken
     ) {
+      const estimateGas = options?.estimateGas ?? false;
+      const totalFee = options?.totalFee ?? 0n;
       const snapshot = {
         remoteChainId: BigInt(this.targetChain.id),
-        provider: options.relayer,
+        provider: options?.relayer || "0x",
         sourceToken: this.sourceToken.address,
         targetToken: this.targetToken.address,
-        transferId: options.transferId || "0x",
-        totalFee: options.totalFee,
-        withdrawNonce: options.withdrawNonce,
+        transferId: options?.transferId || "0x",
+        totalFee: totalFee,
+        withdrawNonce: options?.withdrawNonce || 0n,
       };
 
-      const hash = await this.walletClient.writeContract({
+      const defaultParams = {
         address: this.contract.sourceAddress,
         abi: (await import(`../abi/lnbridgev20-default`)).default,
         functionName: "transferAndLockMargin",
         args: [snapshot, amount, recipient],
-        value: this.sourceToken?.type === "native" ? amount + options.totalFee : undefined,
+        value: this.sourceToken.type === "native" ? amount + totalFee : undefined,
         gas: this.getTxGasLimit(),
-      });
-      return this.publicClient.waitForTransactionReceipt({ hash });
+        account,
+      } as const;
+
+      if (estimateGas) {
+        return this.sourcePublicClient.estimateContractGas(defaultParams);
+      } else if (this.walletClient) {
+        const hash = await this.walletClient.writeContract(defaultParams);
+        return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+      }
     }
   }
 

@@ -39,43 +39,51 @@ export class HelixLpBridge extends BaseBridge {
     this.initContractFromBackingIssuing(backing, issuing);
   }
 
-  async transfer(
-    _: Address,
+  protected async _transfer(
+    _sender: Address,
     recipient: Address,
     amount: bigint,
-    options?: Pick<TransferOptions, "totalFee">,
-  ): Promise<TransactionReceipt | undefined> {
-    if (options && this.contract && this.crossInfo?.index !== undefined && this.walletClient && this.publicClient) {
+    options?: TransferOptions & { estimateGas?: boolean },
+  ): Promise<bigint | TransactionReceipt | undefined> {
+    const account = await this.getSigner();
+    if (account && this.contract && this.sourcePublicClient) {
       const nonce = BigInt(Date.now()) + this.prefix;
+      const tokenIndex = this.crossInfo?.index ?? 0;
+      const totalFee = options?.totalFee ?? 0n;
+      const estimateGas = options?.estimateGas ?? false;
 
       const abi = (await import("@/abi/lpbridge")).default;
       const address = this.contract.sourceAddress;
       const gas = this.getTxGasLimit();
 
-      const hash = await (this.sourceToken?.type === "native"
-        ? this.walletClient.writeContract({
-            address,
-            abi,
-            gas,
-            functionName: "lockNativeAndRemoteIssuing",
-            args: [amount, options.totalFee, recipient, nonce, this.targetToken?.type === "native"],
-            value: amount + options.totalFee,
-          })
-        : this.walletClient.writeContract({
-            address,
-            abi,
-            gas,
-            functionName: "lockAndRemoteIssuing",
-            args: [
-              nonce,
-              recipient,
-              amount,
-              options.totalFee,
-              this.crossInfo.index,
-              this.targetToken?.type === "native",
-            ],
-          }));
-      return await this.publicClient.waitForTransactionReceipt({ hash });
+      const defaultParams = {
+        address,
+        abi,
+        gas,
+        functionName: "lockAndRemoteIssuing",
+        args: [nonce, recipient, amount, totalFee, tokenIndex, this.targetToken?.type === "native"],
+        account,
+      } as const;
+      const nativeParams = {
+        address,
+        abi,
+        gas,
+        functionName: "lockNativeAndRemoteIssuing",
+        args: [amount, totalFee, recipient, nonce, this.targetToken?.type === "native"],
+        value: amount + totalFee,
+        account,
+      } as const;
+
+      if (estimateGas) {
+        return this.sourceToken?.type === "native"
+          ? this.sourcePublicClient.estimateContractGas(nativeParams)
+          : this.sourcePublicClient.estimateContractGas(defaultParams);
+      } else if (this.walletClient) {
+        const hash = await (this.sourceToken?.type === "native"
+          ? this.walletClient.writeContract(nativeParams)
+          : this.walletClient.writeContract(defaultParams));
+        return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+      }
     }
   }
 

@@ -74,74 +74,112 @@ export class HelixBridgeDVMDVM extends BaseBridge {
     }
   }
 
-  private async lock(_: string, recipient: Address, amount: bigint, options?: { totalFee: bigint }) {
-    if (options && this.contract && this.specVersion && this.sourceToken && this.publicClient && this.walletClient) {
+  private async lock(
+    account: Address,
+    _: Address,
+    recipient: Address,
+    amount: bigint,
+    options?: TransferOptions & { estimateGas?: boolean },
+  ) {
+    if (this.contract && this.specVersion && this.sourceToken && this.sourcePublicClient) {
+      const totalFee = options?.totalFee ?? 0n;
+      const estimateGas = options?.estimateGas ?? false;
+
       const abi = (await import("@/abi/backing-dvmdvm")).default;
       const address = this.contract.sourceAddress;
       const gas = this.getTxGasLimit();
 
-      const hash = await (this.sourceToken.type === "native"
-        ? this.walletClient.writeContract({
-            address,
-            abi,
-            gas,
-            functionName: "lockAndRemoteIssuingNative",
-            args: [this.specVersion.target, this.gasLimit, recipient, amount],
-            value: amount + options.totalFee,
-          })
-        : this.walletClient.writeContract({
-            address,
-            abi,
-            gas,
-            functionName: "lockAndRemoteIssuing",
-            args: [this.specVersion.target, this.gasLimit, this.sourceToken.address, recipient, amount],
-            value: options.totalFee,
-          }));
-      return this.publicClient.waitForTransactionReceipt({ hash });
+      const defaultParams = {
+        address,
+        abi,
+        gas,
+        functionName: "lockAndRemoteIssuing",
+        args: [this.specVersion.target, this.gasLimit, this.sourceToken.address, recipient, amount],
+        value: totalFee,
+        account,
+      } as const;
+      const nativeParams = {
+        address,
+        abi,
+        gas,
+        functionName: "lockAndRemoteIssuingNative",
+        args: [this.specVersion.target, this.gasLimit, recipient, amount],
+        value: amount + totalFee,
+        account,
+      } as const;
+
+      if (estimateGas) {
+        return this.sourceToken.type === "native"
+          ? this.sourcePublicClient.estimateContractGas(nativeParams)
+          : this.sourcePublicClient.estimateContractGas(defaultParams);
+      } else if (this.walletClient) {
+        const hash = await (this.sourceToken.type === "native"
+          ? this.walletClient.writeContract(nativeParams)
+          : this.walletClient.writeContract(defaultParams));
+        return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+      }
     }
   }
 
-  private async burn(_: string, recipient: Address, amount: bigint, options?: { totalFee: bigint }) {
-    if (options && this.contract && this.specVersion && this.sourceToken && this.publicClient && this.walletClient) {
+  private async burn(
+    account: Address,
+    _: Address,
+    recipient: Address,
+    amount: bigint,
+    options?: TransferOptions & { estimateGas?: boolean },
+  ) {
+    if (this.contract && this.specVersion && this.sourceToken && this.sourcePublicClient) {
       const abi = (await import("@/abi/mappingtoken-dvmdvm")).default;
       const address = this.contract.sourceAddress;
       const gas = this.getTxGasLimit();
-      const value = options.totalFee;
+      const value = options?.totalFee ?? 0n;
+      const estimateGas = options?.estimateGas ?? false;
 
-      const hash = await (this.targetToken?.type === "native"
-        ? this.walletClient.writeContract({
-            address,
-            abi,
-            gas,
-            value,
-            functionName: "burnAndRemoteUnlockNative",
-            args: [this.specVersion.target, this.gasLimit, recipient, amount],
-          })
-        : this.walletClient.writeContract({
-            address,
-            abi,
-            gas,
-            value,
-            functionName: "burnAndRemoteUnlock",
-            args: [this.specVersion.target, this.gasLimit, this.sourceToken.address, recipient, amount],
-          }));
-      return this.publicClient.waitForTransactionReceipt({ hash });
+      const defaultParams = {
+        address,
+        abi,
+        gas,
+        value,
+        functionName: "burnAndRemoteUnlock",
+        args: [this.specVersion.target, this.gasLimit, this.sourceToken.address, recipient, amount],
+        account,
+      } as const;
+      const nativeParams = {
+        address,
+        abi,
+        gas,
+        value,
+        functionName: "burnAndRemoteUnlockNative",
+        args: [this.specVersion.target, this.gasLimit, recipient, amount],
+        account,
+      } as const;
+
+      if (estimateGas) {
+        return this.targetToken?.type === "native"
+          ? this.sourcePublicClient.estimateContractGas(nativeParams)
+          : this.sourcePublicClient.estimateContractGas(defaultParams);
+      } else if (this.walletClient) {
+        const hash = await (this.targetToken?.type === "native"
+          ? this.walletClient.writeContract(nativeParams)
+          : this.walletClient.writeContract(defaultParams));
+        return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+      }
     }
   }
 
-  async transfer(
+  protected async _transfer(
     sender: Address,
     recipient: Address,
     amount: bigint,
-    options?: Pick<TransferOptions, "totalFee">,
-  ): Promise<TransactionReceipt | undefined> {
-    await this.validateNetwork("source");
+    options?: TransferOptions & { estimateGas?: boolean },
+  ): Promise<bigint | TransactionReceipt | undefined> {
     await this.ensureSpecVersion();
+    const account = await this.getSigner();
 
     if (this.crossInfo?.action === "redeem") {
-      return this.burn(sender, recipient, amount, options);
+      return account && this.burn(account, sender, recipient, amount, options);
     } else {
-      return this.lock(sender, recipient, amount, options);
+      return account && this.lock(account, sender, recipient, amount, options);
     }
   }
 

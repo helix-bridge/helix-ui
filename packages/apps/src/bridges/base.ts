@@ -230,10 +230,19 @@ export abstract class BaseBridge {
     }
   }
 
-  abstract transfer(
+  async transfer(sender: Address, recipient: Address, amount: bigint, options?: TransferOptions) {
+    await this.validateNetwork("source");
+    return this._transfer(sender, recipient, amount, options) as Promise<TransactionReceipt | undefined>;
+  }
+
+  async estimateTransferGas(sender: Address, recipient: Address, amount: bigint, options?: TransferOptions) {
+    return this._transfer(sender, recipient, amount, { ...options, estimateGas: true }) as Promise<bigint | undefined>;
+  }
+
+  protected abstract _transfer(
     sender: Address,
     recipient: Address,
     amount: bigint,
-    options?: Partial<TransferOptions>,
-  ): Promise<TransactionReceipt | undefined>;
+    options?: TransferOptions & { estimateGas?: boolean },
+  ): Promise<TransactionReceipt | bigint | undefined>;
 }
