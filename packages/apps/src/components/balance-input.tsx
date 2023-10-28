@@ -70,7 +70,7 @@ export function BalanceInput({
   useEffect(() => {
     // Fire onChange to update `formatted`
     if (tokenRef.current?.decimals !== token?.decimals) {
-      onChange({ value: value?.value || "", formatted: parseUnits(value?.value || "0", token?.decimals || 0) });
+      onChange(parseValue(value?.value || "", token?.decimals || 0));
     }
     tokenRef.current = token;
   }, [value, token, onChange]);
@@ -96,8 +96,8 @@ export function BalanceInput({
         }`}
         onChange={(e) => {
           if (e.target.value) {
-            if (!Number.isNaN(Number(e.target.value))) {
-              onChange({ value: e.target.value, formatted: parseUnits(e.target.value, token?.decimals || 0) });
+            if (!Number.isNaN(Number(e.target.value)) && token) {
+              onChange(parseValue(e.target.value, token.decimals));
             }
           } else {
             onChange({ value: e.target.value, formatted: 0n });
@@ -126,4 +126,15 @@ function Message({ text }: { text: string }) {
       <span className="text-app-red text-xs font-light">{text}</span>
     </div>
   );
+}
+
+function parseValue(origin: string, decimals: number) {
+  let value = "";
+  let formatted = 0n;
+  const [i, d] = origin.split(".").concat("-1");
+  if (i) {
+    value = d === "-1" ? i : d ? `${i}.${d.slice(0, decimals)}` : `${i}.`;
+    formatted = parseUnits(value, decimals);
+  }
+  return { value, formatted };
 }
