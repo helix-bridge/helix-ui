@@ -48,6 +48,7 @@ export default function Transfer() {
   const [width, setWidth] = useState(0);
   const [recipient, setRecipient] = useState<Address>();
   const [isLoadingFee, setIsLoadingFee] = useState(false);
+  const [estimateGasFee, setEstimateGasFee] = useState(0n);
   const [targetOptions, setTargetOptions] = useState(defaultTargetOptions);
 
   const [isOpen, _, setIsOpenTrue, setIsOpenFalse] = useToggle(false);
@@ -144,6 +145,35 @@ export default function Transfer() {
 
     return () => sub$$?.unsubscribe();
   }, [bridgeClient, relayersData, deferredTransferValue, setFee]);
+
+  useEffect(() => {
+    let sub$$: Subscription | undefined;
+    const relayer = relayersData?.sortedLnv20RelayInfos?.at(0);
+
+    if (bridgeClient && sourceValue?.token.type === "native" && address) {
+      sub$$ = from(
+        bridgeClient.estimateTransferGasFee(address, recipient ?? address, deferredTransferValue.formatted, {
+          relayer: relayer?.relayer,
+          transferId: relayer?.lastTransferId,
+          totalFee: fee?.value,
+          withdrawNonce: BigInt(relayer?.withdrawNonce || 0),
+          depositedMargin: BigInt(relayer?.margin || 0),
+        }),
+      ).subscribe({
+        next: (gasFee) => {
+          setEstimateGasFee(gasFee ?? 0n);
+        },
+        error: (err) => {
+          console.error(err);
+          setEstimateGasFee(0n);
+        },
+      });
+    } else {
+      setEstimateGasFee(0n);
+    }
+
+    return () => sub$$?.unsubscribe();
+  }, [relayersData, bridgeClient, sourceValue, fee, deferredTransferValue, address, recipient]);
 
   return (
     <>
