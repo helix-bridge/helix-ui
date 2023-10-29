@@ -256,10 +256,11 @@ export default function Transfer() {
         {/* amount */}
         <Section label="Amount" className="mt-8" extra={isProduction() ? undefined : <Faucet />}>
           <BalanceInput
-            balance={sourceBalance?.value}
+            max={sourceBalance?.value} // TODO
             token={sourceBalance?.token}
             value={transferValue}
-            suffix
+            suffix="max"
+            availableTips="Transferable"
             dynamic
             onChange={setTransferValue}
           />

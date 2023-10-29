@@ -1,42 +1,53 @@
 import { Token } from "@/types/token";
 import Input from "@/ui/input";
 import { formatBalance } from "@/utils/balance";
-import { useEffect, useRef, useState } from "react";
-import { parseUnits } from "viem";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { formatUnits, parseUnits } from "viem";
 
-export interface BalanceInputValue {
+interface Value {
   formatted: bigint;
   value: string;
+}
+
+interface Props {
+  placeholder?: string;
+  availableTips?: string;
+  balance?: bigint;
+  max?: bigint;
+  disabled?: boolean;
+  suffix?: "symbol" | "max";
+  dynamic?: boolean;
+  value?: Value;
+  token?: Token;
+  onChange?: (value: Value) => void;
 }
 
 export function BalanceInput({
   placeholder,
   balance,
-  limit,
+  max,
+  availableTips = "Balance",
   disabled,
   suffix,
   dynamic,
   value,
   token,
   onChange = () => undefined,
-}: {
-  placeholder?: string;
-  balance?: bigint;
-  limit?: bigint;
-  disabled?: boolean;
-  suffix?: boolean;
-  dynamic?: boolean;
-  value?: BalanceInputValue;
-  token?: Token;
-  onChange?: (value: BalanceInputValue) => void;
-}) {
+}: Props) {
   const tokenRef = useRef(token);
   const spanRef = useRef<HTMLSpanElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [dynamicStyle, setDynamicStyle] = useState("text-sm font-normal");
 
-  const insufficient = balance !== undefined && (value?.formatted || 0n) > balance ? true : false;
-  const exceeded = limit !== undefined && (value?.formatted || 0n) > limit ? true : false;
+  const insufficient = balance !== undefined && balance < (value?.formatted || 0n) ? true : false;
+  const exceeded = max !== undefined && max < (value?.formatted || 0n) ? true : false;
+
+  const _placeholder = useMemo(() => {
+    if ((balance !== undefined || max !== undefined) && token) {
+      return `${availableTips} ${formatBalance(balance || max || 0n, token.decimals || 0)}`;
+    }
+    return placeholder ?? "Enter an amount";
+  }, [balance, max, availableTips, placeholder, token]);
 
   useEffect(() => {
     if (dynamic) {
@@ -86,11 +97,7 @@ export function BalanceInput({
       }`}
     >
       <Input
-        placeholder={
-          balance !== undefined
-            ? `Balance ${formatBalance(balance, token?.decimals || 0)}`
-            : placeholder ?? "Enter an amount"
-        }
+        placeholder={_placeholder}
         className={`h-12 w-full rounded bg-transparent text-white transition-[font-size,font-weight,line-height] duration-300 ${
           dynamic && value?.value ? `leading-none ${dynamicStyle}` : "text-sm font-normal"
         }`}
@@ -108,10 +115,24 @@ export function BalanceInput({
         value={value?.value}
       />
 
-      {!!(token && suffix) && <span className="text-sm">{token.symbol}</span>}
+      {!!(token && suffix === "symbol") && <span className="text-sm">{token.symbol}</span>}
+      {suffix === "max" && (
+        <button
+          className="inline-flex items-center rounded bg-transparent px-1 transition-[transform,color] hover:scale-105 hover:bg-white/10 active:scale-95 disabled:scale-100 disabled:cursor-not-allowed"
+          onClick={(e) => {
+            e.stopPropagation();
+            const decimals = token?.decimals ?? 0;
+            const origin = formatUnits(max ?? 0n, decimals);
+            onChange(parseValue(origin, decimals));
+          }}
+          disabled={max === undefined || token?.decimals === undefined}
+        >
+          <span className="text-sm">Max</span>
+        </button>
+      )}
 
-      {insufficient && <Message text="* Insufficient" />}
-      {exceeded && <Message text="* Limit exceeded" />}
+      {insufficient && <Message text="* insufficient" />}
+      {exceeded && <Message text={`* exceeding ${availableTips}`} />}
 
       <span className="invisible fixed left-0 top-0 -z-50" ref={spanRef}>
         {value?.value}
@@ -122,8 +143,8 @@ export function BalanceInput({
 
 function Message({ text }: { text: string }) {
   return (
-    <div className="absolute -bottom-5 left-0 w-full">
-      <span className="text-app-red text-xs font-light">{text}</span>
+    <div className="absolute -bottom-5 left-0 inline-flex w-full">
+      <span className="text-app-red text-xs font-light lowercase">{text}</span>
     </div>
   );
 }
