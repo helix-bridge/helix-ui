@@ -37,6 +37,7 @@ export function BalanceInput({
   const tokenRef = useRef(token);
   const spanRef = useRef<HTMLSpanElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [enablingMax, setEnablingMax] = useState(false);
   const [dynamicStyle, setDynamicStyle] = useState("text-sm font-normal");
 
   const insufficient = balance !== undefined && balance < (value?.formatted || 0n) ? true : false;
@@ -86,6 +87,14 @@ export function BalanceInput({
     tokenRef.current = token;
   }, [value, token, onChange]);
 
+  useEffect(() => {
+    if (enablingMax && exceeded) {
+      const decimals = token?.decimals ?? 0;
+      const origin = formatUnits(max ?? 0n, decimals);
+      onChange(parseValue(origin, decimals));
+    }
+  }, [token?.decimals, max, onChange, enablingMax, exceeded]);
+
   return (
     <div
       className={`lg:px-middle px-small py-small gap-small bg-app-bg normal-input-wrap relative flex items-center justify-between ${
@@ -102,6 +111,7 @@ export function BalanceInput({
           dynamic && value?.value ? `leading-none ${dynamicStyle}` : "text-sm font-normal"
         }`}
         onChange={(e) => {
+          setEnablingMax(false);
           if (e.target.value) {
             if (!Number.isNaN(Number(e.target.value)) && token) {
               onChange(parseValue(e.target.value, token.decimals));
@@ -124,6 +134,7 @@ export function BalanceInput({
             const decimals = token?.decimals ?? 0;
             const origin = formatUnits(max ?? 0n, decimals);
             onChange(parseValue(origin, decimals));
+            setEnablingMax(true);
           }}
           disabled={max === undefined || token?.decimals === undefined}
         >

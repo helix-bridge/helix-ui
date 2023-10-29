@@ -76,6 +76,20 @@ export default function Transfer() {
     skip: !bridgeClient?.isLnBridge(),
   });
 
+  const transferable = useMemo(() => {
+    let min: bigint | undefined;
+
+    if (sourceBalance) {
+      min = min && min < sourceBalance.value ? min : sourceBalance.value;
+    }
+
+    if (min !== undefined) {
+      const fees = (fee?.value ?? 0n) + estimateGasFee;
+      min = fees < min ? min - fees : 0n;
+    }
+    return min;
+  }, [sourceBalance, estimateGasFee, fee?.value]);
+
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -127,7 +141,7 @@ export default function Transfer() {
         bridgeClient.getFee({
           baseFee: BigInt(relayer?.baseFee || 0),
           protocolFee: BigInt(relayer?.protocolFee || 0),
-          liquidityFeeRate: relayer?.liquidityFeeRate ? BigInt(relayer.liquidityFeeRate) : undefined,
+          liquidityFeeRate: BigInt(relayer?.liquidityFeeRate || 0),
           transferAmount: deferredTransferValue.formatted,
         }),
       ).subscribe({
@@ -150,7 +164,9 @@ export default function Transfer() {
     let sub$$: Subscription | undefined;
     const relayer = relayersData?.sortedLnv20RelayInfos?.at(0);
 
-    if (bridgeClient && sourceValue?.token.type === "native" && address) {
+    // Note: native token
+
+    if (bridgeClient && sourceValue?.token.type === "native" && address && deferredTransferValue.formatted) {
       sub$$ = from(
         bridgeClient.estimateTransferGasFee(address, recipient ?? address, deferredTransferValue.formatted, {
           relayer: relayer?.relayer,
@@ -173,7 +189,7 @@ export default function Transfer() {
     }
 
     return () => sub$$?.unsubscribe();
-  }, [relayersData, bridgeClient, sourceValue, fee, deferredTransferValue, address, recipient]);
+  }, [bridgeClient, sourceValue, fee, address, recipient, deferredTransferValue, relayersData]);
 
   return (
     <>
@@ -256,10 +272,10 @@ export default function Transfer() {
         {/* amount */}
         <Section label="Amount" className="mt-8" extra={isProduction() ? undefined : <Faucet />}>
           <BalanceInput
-            max={sourceBalance?.value} // TODO
             token={sourceBalance?.token}
             value={transferValue}
             suffix="max"
+            max={transferable}
             availableTips="Transferable"
             dynamic
             onChange={setTransferValue}

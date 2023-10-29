@@ -61,9 +61,13 @@ export class LnBridgeDefault extends LnBridgeBase {
     options?: TransferOptions & { estimateGas?: boolean },
   ): Promise<bigint | TransactionReceipt | undefined> {
     const account = await this.getSigner();
+    const provider = options?.relayer;
+    const transferId = options?.transferId;
 
     if (
       account &&
+      provider &&
+      transferId &&
       this.contract &&
       this.sourcePublicClient &&
       this.targetChain &&
@@ -74,10 +78,10 @@ export class LnBridgeDefault extends LnBridgeBase {
       const totalFee = options?.totalFee ?? 0n;
       const snapshot = {
         remoteChainId: BigInt(this.targetChain.id),
-        provider: options?.relayer || "0x",
+        provider,
         sourceToken: this.sourceToken.address,
         targetToken: this.targetToken.address,
-        transferId: options?.transferId || "0x",
+        transferId,
         totalFee: totalFee,
         withdrawNonce: options?.withdrawNonce || 0n,
       };
