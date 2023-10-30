@@ -1,10 +1,10 @@
-import { TransactionReceipt } from "viem";
+import { Address, TransactionReceipt } from "viem";
 import { LnBridgeBase } from "./lnbridge-base";
 import { ChainConfig, ChainID } from "@/types/chain";
 import { Token } from "@/types/token";
 import { PublicClient, WalletClient } from "wagmi";
 import { isProduction } from "@/utils/env";
-import { BridgeCategory, BridgeLogo } from "@/types/bridge";
+import { BridgeCategory, BridgeLogo, TransferOptions } from "@/types/bridge";
 
 export class LnBridgeDefault extends LnBridgeBase {
   constructor(args: {
@@ -54,43 +54,54 @@ export class LnBridgeDefault extends LnBridgeBase {
     }
   }
 
-  async transfer(
-    _: string,
-    recipient: string,
+  protected async _transfer(
+    _sender: Address,
+    recipient: Address,
     amount: bigint,
-    options: {
-      remoteChainId: bigint;
-      relayer: string;
-      sourceToken: string;
-      targetToken: string;
-      transferId: string;
-      totalFee: bigint;
-      withdrawNonce: bigint;
-    },
-  ): Promise<TransactionReceipt | undefined> {
-    await this.validateNetwork("source");
+    options?: TransferOptions & { estimateGas?: boolean },
+  ): Promise<bigint | TransactionReceipt | undefined> {
+    const account = await this.getSigner();
+    const provider = options?.relayer;
+    const transferId = options?.transferId;
 
-    if (this.contract && this.sourceToken && this.publicClient && this.walletClient) {
-      const abi = (await import(`../abi/lnbridgev20-default.json`)).default;
-      const snapshot = [
-        options.remoteChainId,
-        options.relayer,
-        options.sourceToken,
-        options.targetToken,
-        options.transferId,
-        options.totalFee,
-        options.withdrawNonce,
-      ];
+    if (
+      account &&
+      provider &&
+      transferId &&
+      this.contract &&
+      this.sourcePublicClient &&
+      this.targetChain &&
+      this.sourceToken &&
+      this.targetToken
+    ) {
+      const estimateGas = options?.estimateGas ?? false;
+      const totalFee = options?.totalFee ?? 0n;
+      const snapshot = {
+        remoteChainId: BigInt(this.targetChain.id),
+        provider,
+        sourceToken: this.sourceToken.address,
+        targetToken: this.targetToken.address,
+        transferId,
+        totalFee: totalFee,
+        withdrawNonce: options?.withdrawNonce || 0n,
+      };
 
-      const hash = await this.walletClient.writeContract({
+      const defaultParams = {
         address: this.contract.sourceAddress,
-        abi,
+        abi: (await import(`../abi/lnbridgev20-default`)).default,
         functionName: "transferAndLockMargin",
         args: [snapshot, amount, recipient],
-        value: this.sourceToken.type === "native" ? amount + options.totalFee : undefined,
+        value: this.sourceToken.type === "native" ? amount + totalFee : undefined,
         gas: this.getTxGasLimit(),
-      });
-      return this.publicClient.waitForTransactionReceipt({ hash });
+        account,
+      } as const;
+
+      if (estimateGas) {
+        return this.sourcePublicClient.estimateContractGas(defaultParams);
+      } else if (this.walletClient) {
+        const hash = await this.walletClient.writeContract(defaultParams);
+        return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+      }
     }
   }
 
@@ -105,7 +116,7 @@ export class LnBridgeDefault extends LnBridgeBase {
       this.publicClient &&
       this.walletClient
     ) {
-      const abi = (await import(`../abi/lnbridgev20-default.json`)).default;
+      const abi = (await import(`../abi/lnbridgev20-default`)).default;
 
       const hash = await this.walletClient.writeContract({
         address: this.contract.targetAddress,
@@ -130,7 +141,7 @@ export class LnBridgeDefault extends LnBridgeBase {
       this.publicClient &&
       this.walletClient
     ) {
-      const abi = (await import(`../abi/lnbridgev20-default.json`)).default;
+      const abi = (await import(`../abi/lnbridgev20-default`)).default;
 
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,

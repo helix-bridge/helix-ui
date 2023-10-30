@@ -1,9 +1,9 @@
-import { BridgeCategory, BridgeLogo } from "@/types/bridge";
+import { BridgeCategory, BridgeLogo, TransferOptions } from "@/types/bridge";
 import { BaseBridge } from "./base";
 import { ChainConfig } from "@/types/chain";
 import { Token } from "@/types/token";
 import { WalletClient, PublicClient } from "wagmi";
-import { TransactionReceipt } from "viem";
+import { Address, TransactionReceipt } from "viem";
 import { HistoryRecord } from "@/types/graphql";
 
 export class HelixLpBridge extends BaseBridge {
@@ -39,45 +39,51 @@ export class HelixLpBridge extends BaseBridge {
     this.initContractFromBackingIssuing(backing, issuing);
   }
 
-  async transfer(
-    _: string,
-    recipient: string,
+  protected async _transfer(
+    _sender: Address,
+    recipient: Address,
     amount: bigint,
-    options?: { totalFee: bigint },
-  ): Promise<TransactionReceipt | undefined> {
-    if (options && this.contract && this.crossInfo && this.walletClient && this.publicClient) {
+    options?: TransferOptions & { estimateGas?: boolean },
+  ): Promise<bigint | TransactionReceipt | undefined> {
+    const account = await this.getSigner();
+    if (account && this.contract && this.sourcePublicClient) {
       const nonce = BigInt(Date.now()) + this.prefix;
+      const tokenIndex = this.crossInfo?.index ?? 0;
+      const totalFee = options?.totalFee ?? 0n;
+      const estimateGas = options?.estimateGas ?? false;
 
-      const { args, value, functionName } =
-        this.sourceToken?.type === "native"
-          ? {
-              functionName: "lockNativeAndRemoteIssuing",
-              args: [amount, options.totalFee, recipient, nonce, this.targetToken?.type === "native"],
-              value: amount + options.totalFee,
-            }
-          : {
-              functionName: "lockAndRemoteIssuing",
-              args: [
-                nonce,
-                recipient,
-                amount,
-                options.totalFee,
-                this.crossInfo.index,
-                this.targetToken?.type === "native",
-              ],
-              value: undefined,
-            };
-      const abi = (await import("@/abi/lpbridge.json")).default;
+      const abi = (await import("@/abi/lpbridge")).default;
+      const address = this.contract.sourceAddress;
+      const gas = this.getTxGasLimit();
 
-      const hash = await this.walletClient.writeContract({
-        address: this.contract.sourceAddress,
+      const defaultParams = {
+        address,
         abi,
-        functionName,
-        args,
-        value,
-        gas: this.getTxGasLimit(),
-      });
-      return await this.publicClient.waitForTransactionReceipt({ hash });
+        gas,
+        functionName: "lockAndRemoteIssuing",
+        args: [nonce, recipient, amount, totalFee, tokenIndex, this.targetToken?.type === "native"],
+        account,
+      } as const;
+      const nativeParams = {
+        address,
+        abi,
+        gas,
+        functionName: "lockNativeAndRemoteIssuing",
+        args: [amount, totalFee, recipient, nonce, this.targetToken?.type === "native"],
+        value: amount + totalFee,
+        account,
+      } as const;
+
+      if (estimateGas) {
+        return this.sourceToken?.type === "native"
+          ? this.sourcePublicClient.estimateContractGas(nativeParams)
+          : this.sourcePublicClient.estimateContractGas(defaultParams);
+      } else if (this.walletClient) {
+        const hash = await (this.sourceToken?.type === "native"
+          ? this.walletClient.writeContract(nativeParams)
+          : this.walletClient.writeContract(defaultParams));
+        return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+      }
     }
   }
 
@@ -88,26 +94,27 @@ export class HelixLpBridge extends BaseBridge {
     await this.validateNetwork("target");
 
     if (this.contract && this.publicClient && this.walletClient) {
-      const args = [
-        record.messageNonce,
-        this.targetToken?.type === "native",
-        record.recvTokenAddress,
-        record.sender,
-        record.recipient,
-        record.sendAmount,
-        record.id.split("-").at(1),
-        this.sourceToken?.type === "native",
-      ];
       const value = await this.getBridgeFee();
-      const abi = (await import("@/abi/lpbridge-sub2eth.json")).default;
+      const abi = (await import("@/abi/lpbridge-sub2eth")).default;
+      const address = this.contract.targetAddress;
+      const gas = this.getTxGasLimit();
 
       const hash = await this.walletClient.writeContract({
-        address: this.contract.targetAddress,
+        address,
         abi,
         functionName: "requestCancelIssuing",
-        args,
+        args: [
+          BigInt(record.messageNonce || 0),
+          this.targetToken?.type === "native",
+          record.recvTokenAddress || "0x",
+          record.sender,
+          record.recipient,
+          BigInt(record.sendAmount),
+          BigInt(record.id.split("-").at(1) || 0),
+          this.sourceToken?.type === "native",
+        ],
         value,
-        gas: this.getTxGasLimit(),
+        gas,
       });
       return this.publicClient.waitForTransactionReceipt({ hash });
     }
@@ -115,7 +122,7 @@ export class HelixLpBridge extends BaseBridge {
 
   private async getBridgeFee() {
     if (this.contract && this.sourcePublicClient) {
-      const abi = (await import("@/abi/lpbridge.json")).default;
+      const abi = (await import("@/abi/lpbridge")).default;
       return this.sourcePublicClient.readContract({
         address: this.contract.sourceAddress,
         abi,
@@ -126,30 +133,22 @@ export class HelixLpBridge extends BaseBridge {
 
   async speedUp(record: HistoryRecord, fee: bigint) {
     if (this.contract && this.walletClient && this.publicClient) {
-      const transferId = record.id.split("-").slice(-1);
+      const transferId = record.id.split("-").slice(-1).join("") as Address;
 
-      const { args, value, functionName } =
-        this.sourceToken?.type === "native"
-          ? {
-              functionName: "increaseNativeFee",
-              args: [transferId],
-              value: fee,
-            }
-          : {
-              functionName: "increaseFee",
-              args: [transferId, fee],
-              value: undefined,
-            };
-      const abi = (await import("@/abi/lpbridge.json")).default;
+      const abi = (await import("@/abi/lpbridge")).default;
+      const address = this.contract.sourceAddress;
+      const gas = this.getTxGasLimit();
 
-      const hash = await this.walletClient.writeContract({
-        address: this.contract.sourceAddress,
-        abi,
-        functionName,
-        args,
-        value,
-        gas: this.getTxGasLimit(),
-      });
+      const hash = await (this.sourceToken?.type === "native"
+        ? this.walletClient.writeContract({
+            address,
+            abi,
+            gas,
+            functionName: "increaseNativeFee",
+            args: [transferId],
+            value: fee,
+          })
+        : this.walletClient.writeContract({ address, abi, gas, functionName: "increaseFee", args: [transferId, fee] }));
       return await this.publicClient.waitForTransactionReceipt({ hash });
     }
   }

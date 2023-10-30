@@ -2,7 +2,7 @@
 
 import { BaseBridge } from "@/bridges/base";
 import { TransferValue } from "@/components/transfer-input";
-import { BridgeCategory } from "@/types/bridge";
+import { BridgeCategory, TransferOptions } from "@/types/bridge";
 import { ChainConfig, Network } from "@/types/chain";
 import { Token, TokenSymbol } from "@/types/token";
 import { bridgeFactory } from "@/utils/bridge";
@@ -51,7 +51,7 @@ interface TransferCtx {
     sender: Address,
     recipient: Address,
     amount: bigint,
-    options?: Object,
+    options?: Partial<TransferOptions>,
   ) => Promise<TransactionReceipt | undefined>;
   approve: () => Promise<TransactionReceipt | undefined>;
   updateBalance: () => Promise<void>;
@@ -131,7 +131,7 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
   }, [address, bridgeClient]);
 
   const transfer = useCallback(
-    async (sender: Address, recipient: Address, amount: bigint, options?: Object) => {
+    async (sender: Address, recipient: Address, amount: bigint, options?: Partial<TransferOptions>) => {
       if (address && bridgeClient) {
         try {
           const receipt = await bridgeClient.transfer(sender, recipient, amount, options);

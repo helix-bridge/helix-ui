@@ -1,4 +1,4 @@
-import { BridgeCategory, BridgeContract, BridgeLogo } from "@/types/bridge";
+import { BridgeCategory, BridgeContract, BridgeLogo, TransferOptions } from "@/types/bridge";
 import { ChainConfig, ChainID } from "@/types/chain";
 import { CrossChain } from "@/types/cross-chain";
 import { HistoryRecord } from "@/types/graphql";
@@ -108,6 +108,12 @@ export abstract class BaseBridge {
       : undefined;
   }
 
+  protected async getSigner() {
+    if (this.walletClient) {
+      return (await this.walletClient.getAddresses()).at(0);
+    }
+  }
+
   protected async validateNetwork(position: "source" | "target") {
     const chain = position === "source" ? this.sourceChain : this.targetChain;
     if (chain?.id !== (await this.publicClient?.getChainId())) {
@@ -146,7 +152,7 @@ export abstract class BaseBridge {
     if (token.type === "native") {
       value = await publicClient.getBalance({ address });
     } else {
-      const abi = (await import("../abi/erc20.json")).default;
+      const abi = (await import("../abi/erc20")).default;
       value = (await publicClient.readContract({
         address: token.address,
         abi,
@@ -172,7 +178,7 @@ export abstract class BaseBridge {
 
   private async getAllowance(owner: Address, spender: Address, token: Token, publicClient: ViemPublicClient) {
     if (token.type === "erc20") {
-      const abi = (await import("../abi/erc20.json")).default;
+      const abi = (await import("../abi/erc20")).default;
       const value = (await publicClient.readContract({
         address: token.address,
         abi,
@@ -197,7 +203,7 @@ export abstract class BaseBridge {
 
   private async approve(amount: bigint, owner: Address, spender: Address, token: Token) {
     if (this.publicClient && this.walletClient) {
-      const abi = (await import("../abi/erc20.json")).default;
+      const abi = (await import("../abi/erc20")).default;
       const { request } = await this.publicClient.simulateContract({
         address: token.address,
         abi,
@@ -224,10 +230,27 @@ export abstract class BaseBridge {
     }
   }
 
-  abstract transfer(
-    sender: string,
-    recipient: string,
+  async transfer(sender: Address, recipient: Address, amount: bigint, options?: TransferOptions) {
+    await this.validateNetwork("source");
+    return this._transfer(sender, recipient, amount, options) as Promise<TransactionReceipt | undefined>;
+  }
+
+  async estimateTransferGas(sender: Address, recipient: Address, amount: bigint, options?: TransferOptions) {
+    return this._transfer(sender, recipient, amount, { ...options, estimateGas: true }) as Promise<bigint | undefined>;
+  }
+
+  async estimateTransferGasFee(sender: Address, recipient: Address, amount: bigint, options?: TransferOptions) {
+    const estimateGas = await this.estimateTransferGas(sender, recipient, amount, options);
+    if (estimateGas && this.sourcePublicClient) {
+      const { maxFeePerGas } = await this.sourcePublicClient.estimateFeesPerGas();
+      return maxFeePerGas && maxFeePerGas * estimateGas;
+    }
+  }
+
+  protected abstract _transfer(
+    sender: Address,
+    recipient: Address,
     amount: bigint,
-    options?: Object,
-  ): Promise<TransactionReceipt | undefined>;
+    options?: TransferOptions & { estimateGas?: boolean },
+  ): Promise<TransactionReceipt | bigint | undefined>;
 }

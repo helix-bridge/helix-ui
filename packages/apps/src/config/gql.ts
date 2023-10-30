@@ -97,14 +97,17 @@ export const QUERY_RELAYERS = gql`
       fromChain: $fromChain
       toChain: $toChain
     ) {
-      sendToken
-      relayer
-      margin
-      baseFee
-      protocolFee
-      liquidityFeeRate
-      lastTransferId
-      withdrawNonce
+      maxMargin
+      records {
+        sendToken
+        relayer
+        margin
+        baseFee
+        protocolFee
+        liquidityFeeRate
+        lastTransferId
+        withdrawNonce
+      }
     }
   }
 `;

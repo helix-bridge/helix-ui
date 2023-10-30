@@ -23,3 +23,11 @@ export type BridgeLogoType = "symbol" | "horizontal";
 export type BridgeLogo = {
   [key in BridgeLogoType]: string;
 };
+
+export interface TransferOptions {
+  relayer?: Address;
+  transferId?: Address | null;
+  totalFee?: bigint;
+  withdrawNonce?: bigint;
+  depositedMargin?: bigint;
+}

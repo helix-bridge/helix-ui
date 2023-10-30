@@ -1,6 +1,7 @@
 import { TokenSymbol } from "./token";
 import { BridgeCategory } from "./bridge";
 import { Network } from "./chain";
+import { Address } from "viem";
 
 export enum RecordStatus {
   PENDING,
@@ -24,18 +25,18 @@ export interface HistoryRecord {
   id: string;
   nonce: string;
   messageNonce?: string | null;
-  recipient: string;
+  recipient: Address;
   requestTxHash: string;
   responseTxHash?: string | null;
   reason?: string | null;
   result: RecordStatus;
-  sender: string;
+  sender: Address;
   startTime: number;
   toChain: Network;
   sendToken: TokenSymbol;
   recvToken: TokenSymbol;
-  sendTokenAddress?: string | null;
-  recvTokenAddress?: string | null;
+  sendTokenAddress?: Address | null;
+  recvTokenAddress?: Address | null;
   confirmedBlocks?: string | null;
 }
 
@@ -73,7 +74,7 @@ interface Lnv20RelayInfo {
   fromChain: Network;
   toChain: Network;
   bridge: BridgeCategory;
-  relayer: string;
+  relayer: Address;
   sendToken?: string | null;
   transaction_hash: string;
   timestamp: number;
@@ -83,17 +84,20 @@ interface Lnv20RelayInfo {
   liquidityFeeRate?: number | null;
   slashCount?: number | null;
   withdrawNonce?: string | null;
-  lastTransferId?: string | null;
+  lastTransferId?: Address | null;
   cost?: string | null;
   profit?: string | null;
   heartbeatTimestamp?: number | null;
 }
 
 export interface RelayersResponseData {
-  sortedLnv20RelayInfos?: Pick<
-    Lnv20RelayInfo,
-    "relayer" | "margin" | "baseFee" | "protocolFee" | "liquidityFeeRate" | "lastTransferId" | "withdrawNonce"
-  >[];
+  sortedLnv20RelayInfos?: {
+    maxMargin: string;
+    records: Pick<
+      Lnv20RelayInfo,
+      "relayer" | "margin" | "baseFee" | "protocolFee" | "liquidityFeeRate" | "lastTransferId" | "withdrawNonce"
+    >[];
+  };
 }
 
 export interface RelayersVariables {

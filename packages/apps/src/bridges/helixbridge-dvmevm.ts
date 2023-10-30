@@ -1,4 +1,4 @@
-import { BridgeCategory, BridgeLogo } from "@/types/bridge";
+import { BridgeCategory, BridgeLogo, TransferOptions } from "@/types/bridge";
 import { BaseBridge } from "./base";
 import { ChainConfig } from "@/types/chain";
 import { Token } from "@/types/token";
@@ -41,73 +41,111 @@ export class HelixBridgeDVMEVM extends BaseBridge {
     this.guard = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1";
   }
 
-  private async lock(_: string, recipient: string, amount: bigint, options?: { totalFee: bigint }) {
-    if (options && this.contract && this.sourceToken && this.publicClient && this.walletClient) {
-      const { args, value, functionName } =
-        this.sourceToken.type === "native"
-          ? {
-              functionName: "lockAndRemoteIssuingNative",
-              args: [recipient, amount],
-              value: amount + options.totalFee,
-            }
-          : {
-              functionName: "lockAndRemoteIssuing",
-              args: [this.sourceToken.address, recipient, amount],
-              value: options.totalFee,
-            };
-      const abi = (await import("@/abi/backing-dvmevm.json")).default;
-
-      const hash = await this.walletClient.writeContract({
-        address: this.contract.sourceAddress,
-        abi,
-        functionName,
-        args,
-        value,
-        gas: this.getTxGasLimit(),
-      });
-      return this.publicClient.waitForTransactionReceipt({ hash });
-    }
-  }
-
-  private async burn(_: string, recipient: string, amount: bigint, options?: { totalFee: bigint }) {
-    if (options && this.contract && this.sourceToken && this.targetToken && this.publicClient && this.walletClient) {
-      const { args, functionName } =
-        this.targetToken.type === "native"
-          ? {
-              functionName: "burnAndRemoteUnlockNative",
-              args: [recipient, amount],
-            }
-          : {
-              functionName: "burnAndRemoteUnlock",
-              args: [this.sourceToken.address, recipient, amount],
-            };
-      const abi = (await import("@/abi/mappingtoken-dvmevm.json")).default;
-      const value = options.totalFee;
-
-      const hash = await this.walletClient.writeContract({
-        address: this.contract.sourceAddress,
-        abi,
-        functionName,
-        args,
-        value,
-        gas: this.getTxGasLimit(),
-      });
-      return this.publicClient.waitForTransactionReceipt({ hash });
-    }
-  }
-
-  async transfer(
-    sender: string,
-    recipient: string,
+  private async lock(
+    account: Address,
+    _: Address,
+    recipient: Address,
     amount: bigint,
-    options?: { totalFee: bigint },
-  ): Promise<TransactionReceipt | undefined> {
-    await this.validateNetwork("source");
+    options?: TransferOptions & { estimateGas?: boolean },
+  ) {
+    if (this.contract && this.sourceToken && this.sourcePublicClient) {
+      const totalFee = options?.totalFee ?? 0n;
+      const estimateGas = options?.estimateGas ?? false;
+
+      const abi = (await import("@/abi/backing-dvmevm")).default;
+      const address = this.contract.sourceAddress;
+      const gas = this.getTxGasLimit();
+
+      const defaultParams = {
+        abi,
+        address,
+        gas,
+        functionName: "lockAndRemoteIssuing",
+        args: [this.sourceToken.address, recipient, amount],
+        value: totalFee,
+        account,
+      } as const;
+      const nativeParams = {
+        abi,
+        address,
+        gas,
+        functionName: "lockAndRemoteIssuingNative",
+        args: [recipient, amount],
+        value: amount + totalFee,
+        account,
+      } as const;
+
+      if (estimateGas) {
+        return this.sourceToken.type === "native"
+          ? this.sourcePublicClient.estimateContractGas(nativeParams)
+          : this.sourcePublicClient.estimateContractGas(defaultParams);
+      } else if (this.walletClient) {
+        const hash = await (this.sourceToken.type === "native"
+          ? this.walletClient.writeContract(nativeParams)
+          : this.walletClient.writeContract(defaultParams));
+        return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+      }
+    }
+  }
+
+  private async burn(
+    account: Address,
+    _: Address,
+    recipient: Address,
+    amount: bigint,
+    options?: TransferOptions & { estimateGas?: boolean },
+  ) {
+    if (this.contract && this.sourceToken && this.targetToken && this.sourcePublicClient) {
+      const abi = (await import("@/abi/mappingtoken-dvmevm")).default;
+      const address = this.contract.sourceAddress;
+      const gas = this.getTxGasLimit();
+      const value = options?.totalFee ?? 0n;
+      const estimateGas = options?.estimateGas ?? false;
+
+      const defaultParams = {
+        address,
+        abi,
+        value,
+        gas,
+        functionName: "burnAndRemoteUnlock",
+        args: [this.sourceToken.address, recipient, amount],
+        account,
+      } as const;
+      const nativeParams = {
+        address,
+        abi,
+        value,
+        gas,
+        functionName: "burnAndRemoteUnlockNative",
+        args: [recipient, amount],
+        account,
+      } as const;
+
+      if (estimateGas) {
+        return this.targetToken.type === "native"
+          ? this.sourcePublicClient.estimateContractGas(nativeParams)
+          : this.sourcePublicClient.estimateContractGas(defaultParams);
+      } else if (this.walletClient) {
+        const hash = await (this.targetToken.type === "native"
+          ? this.walletClient.writeContract(nativeParams)
+          : this.walletClient.writeContract(defaultParams));
+        return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+      }
+    }
+  }
+
+  protected async _transfer(
+    sender: Address,
+    recipient: Address,
+    amount: bigint,
+    options?: TransferOptions & { estimateGas?: boolean },
+  ): Promise<bigint | TransactionReceipt | undefined> {
+    const account = await this.getSigner();
 
     if (this.crossInfo?.action === "redeem") {
-      return this.burn(sender, recipient, amount, options);
+      return account && this.burn(account, sender, recipient, amount, options);
     } else {
-      return this.lock(sender, recipient, amount, options);
+      return account && this.lock(account, sender, recipient, amount, options);
     }
   }
 
@@ -115,19 +153,17 @@ export class HelixBridgeDVMEVM extends BaseBridge {
     await this.validateNetwork("target");
 
     if (this.guard && this.publicClient && this.walletClient) {
-      const abi = (await import("@/abi/guard.json")).default;
-
       const hash = await this.walletClient.writeContract({
         address: this.guard,
-        abi,
+        abi: (await import("@/abi/guard")).default,
         functionName: "claim",
         args: [
-          record.messageNonce,
-          record.endTime,
-          record.recvTokenAddress,
+          BigInt(record.messageNonce || 0),
+          BigInt(record.endTime),
+          record.recvTokenAddress || "0x",
           record.recipient,
-          record.recvAmount,
-          record.guardSignatures?.split("-").slice(1),
+          BigInt(record.recvAmount),
+          record.guardSignatures?.split("-").slice(1) as Address[],
         ],
         gas: this.getTxGasLimit(),
       });
@@ -139,63 +175,90 @@ export class HelixBridgeDVMEVM extends BaseBridge {
     await this.validateNetwork("target");
 
     if (this.contract && this.publicClient && this.walletClient) {
-      const { abi, functionName } =
-        this.crossInfo?.action === "issue"
-          ? {
-              abi: (await import("@/abi/mappingtoken-dvmevm.json")).default,
-              functionName: this.sourceToken?.type === "native" ? "remoteUnlockFailureNative" : "remoteUnlockFailure",
-            }
-          : {
-              abi: (await import("@/abi/backing-dvmevm.json")).default,
-              functionName: "remoteIssuingFailure",
-            };
-      const args =
-        this.sourceToken?.type === "native"
-          ? [record.id.split("-").slice(-1), record.sender, record.sendAmount]
-          : [record.id.split("-").slice(-1), record.sendTokenAddress, record.sender, record.sendAmount];
-      const value = (await this.getFee())?.value;
+      const sendAmount = BigInt(record.sendAmount);
+      const sendTokenAddress = record.sendTokenAddress || "0x";
+      const transferId = BigInt(record.id.split("-").slice(-1).join(""));
 
-      const hash = await this.walletClient.writeContract({
-        address: this.contract.targetAddress,
-        abi,
-        functionName,
-        args,
-        value,
-        gas: this.getTxGasLimit(),
-      });
-      return await this.publicClient.waitForTransactionReceipt({ hash });
+      const value = (await this.getFee())?.value;
+      const address = this.contract.targetAddress;
+      const gas = this.getTxGasLimit();
+      let hash: Address | undefined;
+
+      if (this.crossInfo?.action === "issue") {
+        const abi = (await import("@/abi/mappingtoken-dvmevm")).default;
+        if (this.sourceToken?.type === "native") {
+          hash = await this.walletClient.writeContract({
+            address,
+            value,
+            gas,
+            abi,
+            functionName: "remoteUnlockFailureNative",
+            args: [transferId, record.sender, sendAmount],
+          });
+        } else {
+          hash = await this.walletClient.writeContract({
+            address,
+            value,
+            gas,
+            abi,
+            functionName: "remoteUnlockFailure",
+            args: [transferId, sendTokenAddress, record.sender, sendAmount],
+          });
+        }
+      } else {
+        const abi = (await import("@/abi/backing-dvmevm")).default;
+        hash = await this.walletClient.writeContract({
+          address,
+          value,
+          gas,
+          abi,
+          functionName: "remoteIssuingFailure",
+          args: [transferId, sendTokenAddress, record.sender, sendAmount],
+        });
+      }
+      return hash && this.publicClient.waitForTransactionReceipt({ hash });
     }
   }
 
   async getFee() {
     if (this.contract && this.sourceNativeToken && this.sourcePublicClient) {
-      const { abi } =
-        this.crossInfo?.action === "issue"
-          ? { abi: (await import("@/abi/backing-dvmevm.json")).default }
-          : { abi: (await import("@/abi/mappingtoken-dvmevm.json")).default };
-      const value = (await this.sourcePublicClient.readContract({
-        address: this.contract.sourceAddress,
-        abi,
-        functionName: "currentFee",
-      })) as unknown as bigint;
+      const address = this.contract.sourceAddress;
+      const functionName = "currentFee" as const;
+
+      const value = await (this.crossInfo?.action === "issue"
+        ? this.sourcePublicClient.readContract({
+            address,
+            functionName,
+            abi: (await import("@/abi/backing-dvmevm")).default,
+          })
+        : this.sourcePublicClient.readContract({
+            address,
+            functionName,
+            abi: (await import("@/abi/mappingtoken-dvmevm")).default,
+          }));
       return { value, token: this.sourceNativeToken };
     }
   }
 
   async getDailyLimit() {
     if (this.contract && this.sourceToken && this.targetToken && this.targetPublicClient) {
-      const { abi } =
-        this.crossInfo?.action === "issue"
-          ? { abi: (await import("@/abi/mappingtoken-dvmevm.json")).default }
-          : { abi: (await import("@/abi/backing-dvmevm.json")).default };
+      const address = this.contract.targetAddress;
+      const functionName = "calcMaxWithdraw" as const;
+      const args = [this.targetToken.address] as const;
 
-      const limit = (await this.targetPublicClient.readContract({
-        address: this.contract.targetAddress,
-        abi,
-        functionName: "calcMaxWithdraw",
-        args: [this.targetToken.address],
-      })) as unknown as bigint;
-
+      const limit = await (this.crossInfo?.action === "issue"
+        ? this.targetPublicClient.readContract({
+            address,
+            functionName,
+            args,
+            abi: (await import("@/abi/mappingtoken-dvmevm")).default,
+          })
+        : this.targetPublicClient.readContract({
+            address,
+            functionName,
+            args,
+            abi: (await import("@/abi/backing-dvmevm")).default,
+          }));
       return { limit, spent: 0n, token: this.sourceToken };
     }
   }

@@ -48,6 +48,7 @@ export default function Transfer() {
   const [width, setWidth] = useState(0);
   const [recipient, setRecipient] = useState<Address>();
   const [isLoadingFee, setIsLoadingFee] = useState(false);
+  const [estimateGasFee, setEstimateGasFee] = useState(0n);
   const [targetOptions, setTargetOptions] = useState(defaultTargetOptions);
 
   const [isOpen, _, setIsOpenTrue, setIsOpenFalse] = useToggle(false);
@@ -74,6 +75,29 @@ export default function Transfer() {
     },
     skip: !bridgeClient?.isLnBridge(),
   });
+
+  const transferable = useMemo(() => {
+    let result: bigint | undefined;
+    const maxMargin = relayersData?.sortedLnv20RelayInfos?.maxMargin;
+
+    if (sourceBalance) {
+      const { token, value: balance } = sourceBalance;
+      result = result === undefined ? balance : result < balance ? result : balance;
+      if (fee?.token.symbol === token.symbol) {
+        result = fee.value < result ? result - fee.value : 0n;
+      }
+    }
+
+    if (maxMargin) {
+      const mm = BigInt(maxMargin);
+      result = result === undefined ? mm : result < mm ? result : mm;
+    }
+
+    if (result !== undefined) {
+      result = estimateGasFee < result ? result - estimateGasFee : 0n;
+    }
+    return result;
+  }, [sourceBalance, estimateGasFee, fee, relayersData]);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -118,7 +142,7 @@ export default function Transfer() {
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
-    const relayer = relayersData?.sortedLnv20RelayInfos?.at(0);
+    const relayer = relayersData?.sortedLnv20RelayInfos?.records.at(0);
 
     if (bridgeClient) {
       setIsLoadingFee(true);
@@ -126,7 +150,7 @@ export default function Transfer() {
         bridgeClient.getFee({
           baseFee: BigInt(relayer?.baseFee || 0),
           protocolFee: BigInt(relayer?.protocolFee || 0),
-          liquidityFeeRate: relayer?.liquidityFeeRate ? BigInt(relayer.liquidityFeeRate) : undefined,
+          liquidityFeeRate: BigInt(relayer?.liquidityFeeRate || 0),
           transferAmount: deferredTransferValue.formatted,
         }),
       ).subscribe({
@@ -144,6 +168,37 @@ export default function Transfer() {
 
     return () => sub$$?.unsubscribe();
   }, [bridgeClient, relayersData, deferredTransferValue, setFee]);
+
+  useEffect(() => {
+    let sub$$: Subscription | undefined;
+    const relayer = relayersData?.sortedLnv20RelayInfos?.records.at(0);
+
+    // Note: native token
+
+    if (bridgeClient && sourceValue?.token.type === "native" && address && deferredTransferValue.formatted) {
+      sub$$ = from(
+        bridgeClient.estimateTransferGasFee(address, recipient ?? address, deferredTransferValue.formatted, {
+          relayer: relayer?.relayer,
+          transferId: relayer?.lastTransferId,
+          totalFee: fee?.value,
+          withdrawNonce: BigInt(relayer?.withdrawNonce || 0),
+          depositedMargin: BigInt(relayer?.margin || 0),
+        }),
+      ).subscribe({
+        next: (gasFee) => {
+          setEstimateGasFee(gasFee ?? 0n);
+        },
+        error: (err) => {
+          console.error(err);
+          setEstimateGasFee(0n);
+        },
+      });
+    } else {
+      setEstimateGasFee(0n);
+    }
+
+    return () => sub$$?.unsubscribe();
+  }, [bridgeClient, sourceValue, fee, address, recipient, deferredTransferValue, relayersData]);
 
   return (
     <>
@@ -229,7 +284,9 @@ export default function Transfer() {
             balance={sourceBalance?.value}
             token={sourceBalance?.token}
             value={transferValue}
-            suffix
+            suffix="max"
+            max={transferable}
+            availableTips="Transferable"
             dynamic
             onChange={setTransferValue}
           />
@@ -265,7 +322,7 @@ export default function Transfer() {
 
         {/* action */}
         <TransferAction
-          fee={fee}
+          transferable={transferable}
           transferValue={deferredTransferValue}
           recipient={recipient || address}
           onTransfer={setIsOpenTrue}

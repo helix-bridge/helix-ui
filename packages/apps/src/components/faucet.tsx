@@ -34,7 +34,7 @@ export default function Faucet() {
       try {
         setBusy(true);
 
-        const abi = (await import("@/abi/faucet.json")).default;
+        const abi = (await import("@/abi/faucet")).default;
         const hash = await walletClient.writeContract({
           address: sourceToken.address,
           abi,
@@ -63,7 +63,7 @@ export default function Faucet() {
     let sub$$: Subscription | undefined;
 
     if (address && sourceToken?.type === "erc20" && publicClient) {
-      sub$$ = from(import("@/abi/faucet.json"))
+      sub$$ = from(import("@/abi/faucet"))
         .pipe(
           switchMap((abi) =>
             forkJoin([

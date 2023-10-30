@@ -33,22 +33,18 @@ export default function TransferModal({
   onSuccess,
   refetchRelayers,
 }: Props) {
-  const { bridgeClient, sourceValue, targetValue, fee, targetChain, sourceToken, targetToken, transfer } =
-    useTransfer();
+  const { bridgeClient, sourceValue, targetValue, fee, transfer } = useTransfer();
   const [busy, setBusy] = useState(false);
 
   const handleTransfer = useCallback(async () => {
-    if (sender && recipient && targetChain && bridgeClient) {
+    if (sender && recipient && bridgeClient) {
       try {
         setBusy(true);
         const relayer = bridgeClient.isLnBridge()
-          ? (await refetchRelayers()).data.sortedLnv20RelayInfos?.at(0)
+          ? (await refetchRelayers()).data.sortedLnv20RelayInfos?.records.at(0)
           : undefined;
         const receipt = await transfer(sender, recipient, transferValue.formatted, {
-          remoteChainId: BigInt(targetChain.id),
           relayer: relayer?.relayer,
-          sourceToken: sourceToken?.address,
-          targetToken: targetToken?.address,
           transferId: relayer?.lastTransferId,
           totalFee: (
             await bridgeClient.getFee({
@@ -72,18 +68,7 @@ export default function TransferModal({
         setBusy(false);
       }
     }
-  }, [
-    bridgeClient,
-    onSuccess,
-    recipient,
-    refetchRelayers,
-    sender,
-    sourceToken,
-    targetChain,
-    targetToken,
-    transfer,
-    transferValue,
-  ]);
+  }, [bridgeClient, onSuccess, recipient, refetchRelayers, sender, transfer, transferValue]);
 
   return (
     <Modal
