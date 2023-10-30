@@ -91,10 +91,13 @@ interface Lnv20RelayInfo {
 }
 
 export interface RelayersResponseData {
-  sortedLnv20RelayInfos?: Pick<
-    Lnv20RelayInfo,
-    "relayer" | "margin" | "baseFee" | "protocolFee" | "liquidityFeeRate" | "lastTransferId" | "withdrawNonce"
-  >[];
+  sortedLnv20RelayInfos?: {
+    maxMargin: string;
+    records: Pick<
+      Lnv20RelayInfo,
+      "relayer" | "margin" | "baseFee" | "protocolFee" | "liquidityFeeRate" | "lastTransferId" | "withdrawNonce"
+    >[];
+  };
 }
 
 export interface RelayersVariables {

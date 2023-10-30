@@ -77,18 +77,27 @@ export default function Transfer() {
   });
 
   const transferable = useMemo(() => {
-    let min: bigint | undefined;
+    let result: bigint | undefined;
+    const maxMargin = relayersData?.sortedLnv20RelayInfos?.maxMargin;
 
     if (sourceBalance) {
-      min = min && min < sourceBalance.value ? min : sourceBalance.value;
+      const { token, value: balance } = sourceBalance;
+      result = result === undefined ? balance : result < balance ? result : balance;
+      if (fee?.token.symbol === token.symbol) {
+        result = fee.value < result ? result - fee.value : 0n;
+      }
     }
 
-    if (min !== undefined) {
-      const fees = (fee?.value ?? 0n) + estimateGasFee;
-      min = fees < min ? min - fees : 0n;
+    if (maxMargin) {
+      const mm = BigInt(maxMargin);
+      result = result === undefined ? mm : result < mm ? result : mm;
     }
-    return min;
-  }, [sourceBalance, estimateGasFee, fee?.value]);
+
+    if (result !== undefined) {
+      result = estimateGasFee < result ? result - estimateGasFee : 0n;
+    }
+    return result;
+  }, [sourceBalance, estimateGasFee, fee, relayersData]);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -133,7 +142,7 @@ export default function Transfer() {
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
-    const relayer = relayersData?.sortedLnv20RelayInfos?.at(0);
+    const relayer = relayersData?.sortedLnv20RelayInfos?.records.at(0);
 
     if (bridgeClient) {
       setIsLoadingFee(true);
@@ -162,7 +171,7 @@ export default function Transfer() {
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
-    const relayer = relayersData?.sortedLnv20RelayInfos?.at(0);
+    const relayer = relayersData?.sortedLnv20RelayInfos?.records.at(0);
 
     // Note: native token
 

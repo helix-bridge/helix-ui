@@ -41,7 +41,7 @@ export default function TransferModal({
       try {
         setBusy(true);
         const relayer = bridgeClient.isLnBridge()
-          ? (await refetchRelayers()).data.sortedLnv20RelayInfos?.at(0)
+          ? (await refetchRelayers()).data.sortedLnv20RelayInfos?.records.at(0)
           : undefined;
         const receipt = await transfer(sender, recipient, transferValue.formatted, {
           relayer: relayer?.relayer,
