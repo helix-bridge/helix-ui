@@ -26,7 +26,7 @@ export function BalanceInput({
   placeholder,
   balance,
   max,
-  availableTips = "Balance",
+  availableTips = "Max",
   disabled,
   suffix,
   dynamic,
@@ -44,11 +44,11 @@ export function BalanceInput({
   const exceeded = max !== undefined && max < (value?.formatted || 0n) ? true : false;
 
   const _placeholder = useMemo(() => {
-    if ((balance !== undefined || max !== undefined) && token) {
-      return `${availableTips} ${formatBalance(balance || max || 0n, token.decimals || 0)}`;
+    if (balance !== undefined && token) {
+      return `Balance ${formatBalance(balance, token.decimals)}`;
     }
     return placeholder ?? "Enter an amount";
-  }, [balance, max, availableTips, placeholder, token]);
+  }, [balance, placeholder, token]);
 
   useEffect(() => {
     if (dynamic) {
@@ -142,8 +142,11 @@ export function BalanceInput({
         </button>
       )}
 
-      {insufficient && <Message text="* insufficient" />}
-      {exceeded && <Message text={`* exceeding ${availableTips}`} />}
+      {exceeded ? (
+        <Message text={`* ${availableTips}: ${formatBalance(max || 0n, token?.decimals || 0, { precision: 6 })}`} />
+      ) : insufficient ? (
+        <Message text="* insufficient" />
+      ) : null}
 
       <span className="invisible fixed left-0 top-0 -z-50" ref={spanRef}>
         {value?.value}
