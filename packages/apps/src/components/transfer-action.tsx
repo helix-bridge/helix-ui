@@ -7,13 +7,13 @@ import { useTransfer } from "@/hooks/use-transfer";
 import { isAddress } from "viem";
 
 interface Props {
-  fee: { value: bigint } | undefined;
   recipient: Address | undefined;
+  transferable: bigint | undefined;
   transferValue: TransferValue;
   onTransfer: () => void;
 }
 
-export default function TransferAction({ recipient, transferValue, onTransfer }: Props) {
+export default function TransferAction({ recipient, transferable, transferValue, onTransfer }: Props) {
   const { sourceAllowance, sourceValue, targetValue, bridgeClient, fee, approve } = useTransfer();
   const [busy, setBusy] = useState(false);
   const { chain } = useNetwork();
@@ -55,6 +55,8 @@ export default function TransferAction({ recipient, transferValue, onTransfer }:
               bridgeClient &&
               fee?.value &&
               transferValue.formatted &&
+              transferable !== undefined &&
+              transferValue.formatted <= transferable &&
               isAddress(recipient || "")
             )
           }
