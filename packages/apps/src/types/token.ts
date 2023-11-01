@@ -12,7 +12,8 @@ export type TokenSymbol =
   | "WRING"
   | "xWRING"
   | "xWCRAB"
-  | "MNT";
+  | "MNT"
+  | "MATIC";
 
 export type TokenType = "native" | "erc20" | "mapping";
 

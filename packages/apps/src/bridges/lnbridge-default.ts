@@ -41,6 +41,18 @@ export class LnBridgeDefault extends LnBridgeBase {
         sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
         targetAddress: "0xe8d55759c32fb608fD092aB2C0ef8A1F52B254d4",
       };
+    } else if (this.sourceChain?.id === ChainID.ZKSYNC) {
+      // zkSync era => *
+      this.contract = {
+        sourceAddress: "0x767Bc046c989f5e63683fB530f939DD34b91ceAC",
+        targetAddress: "0x94C614DAeFDbf151E1BB53d6A201ae5fF56A9337",
+      };
+    } else if (this.targetChain?.id === ChainID.ZKSYNC) {
+      // * => zkSync era
+      this.contract = {
+        sourceAddress: "0x94C614DAeFDbf151E1BB53d6A201ae5fF56A9337",
+        targetAddress: "0x767Bc046c989f5e63683fB530f939DD34b91ceAC",
+      };
     } else if (isProduction()) {
       this.contract = {
         sourceAddress: "0x94C614DAeFDbf151E1BB53d6A201ae5fF56A9337",

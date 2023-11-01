@@ -305,7 +305,9 @@ export default function RelayerRegister() {
                     <span className="text-sm font-medium text-white">
                       {!completeMargin && targetChain?.id !== chain?.id
                         ? "Switch Network"
-                        : !completeMargin && margin.formatted > (targetAllowance?.value || 0n)
+                        : !completeMargin &&
+                          sourceToken?.type !== "native" &&
+                          margin.formatted > (targetAllowance?.value || 0n)
                         ? "Approve"
                         : "Confirm"}
                     </span>
@@ -372,16 +374,15 @@ export default function RelayerRegister() {
                   }
                 }}
                 disabled={
-                  (sourceChain?.id === chain?.id &&
-                    !(margin.value && baseFee.value && feeRate.value && isValidFeeRate(feeRate.formatted))) ||
-                  (bridgeCategory === "lnbridgev20-default" && !completeMargin)
+                  sourceChain?.id === chain?.id &&
+                  !(margin.value && baseFee.value && feeRate.value && isValidFeeRate(feeRate.formatted))
                 }
                 busy={busy}
                 className="flex h-9 items-center justify-center"
               >
                 <span className="text-sm font-medium text-white">
                   {bridgeCategory === "lnbridgev20-default"
-                    ? sourceChain?.id !== chain?.id && completeMargin
+                    ? sourceChain?.id !== chain?.id
                       ? "Switch Network"
                       : "Confirm"
                     : bridgeCategory === "lnbridgev20-opposite"

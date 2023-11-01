@@ -14,6 +14,8 @@ import { zksyncChain } from "@/config/chains/zksync";
 import { zksyncGoerliChain } from "@/config/chains/zksync-goerli";
 import { ChainConfig, ChainID, Network } from "@/types/chain";
 import { isProduction } from "./env";
+import { polygonChain } from "@/config/chains/polygon";
+import { mumbaiChain } from "@/config/chains/mumbai";
 
 export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
   switch (chainIdOrNetwork) {
@@ -59,6 +61,12 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.MANTLE_GOERLI:
     case "mantle-goerli":
       return mantleGoerliChain;
+    case ChainID.POLYGON:
+    case "polygon":
+      return polygonChain;
+    case ChainID.MUMBAI:
+    case "mumbai":
+      return mumbaiChain;
     default:
       return;
   }
@@ -80,6 +88,8 @@ export function getChainsConfig() {
     pangoroChain,
     zksyncChain,
     zksyncGoerliChain,
+    mumbaiChain,
+    polygonChain,
   ];
 
   if (isProduction()) {
