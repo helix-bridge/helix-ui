@@ -3,7 +3,7 @@ import { ChainConfig, ChainID } from "@/types/chain";
 export const zksyncChain: ChainConfig = {
   id: ChainID.ZKSYNC,
   network: "zksync",
-  name: "Zksync",
+  name: "zkSync era",
   logo: "zksync.png",
   nativeCurrency: {
     name: "ETH",
