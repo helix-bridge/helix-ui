@@ -60,21 +60,15 @@ export function BalanceInput({
       } else if (percent < 20) {
         setDynamicStyle("text-[3rem] font-extralight");
       } else if (percent < 30) {
-        setDynamicStyle("text-[2.25rem] font-extralight");
+        setDynamicStyle("text-[2.25rem] font-light");
       } else if (percent < 40) {
         setDynamicStyle("text-[1.875rem] font-light");
       } else if (percent < 50) {
-        setDynamicStyle("text-[1.5rem] font-light");
+        setDynamicStyle("text-[1.5rem] font-normal");
       } else if (percent < 60) {
-        setDynamicStyle("text-[1.25rem] font-light");
-      } else if (percent < 70) {
-        setDynamicStyle("text-[1.125rem] font-normal");
-      } else if (percent < 80) {
-        setDynamicStyle("text-[1rem] font-normal");
-      } else if (percent < 90) {
-        setDynamicStyle("text-[0.875rem] font-medium");
+        setDynamicStyle("text-[1.25rem] font-normal");
       } else {
-        setDynamicStyle("text-[0.75rem] font-medium");
+        setDynamicStyle("text-[1.125rem] font-medium");
       }
     }
   }, [value, dynamic]);
