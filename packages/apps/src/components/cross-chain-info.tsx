@@ -37,10 +37,6 @@ export default function CrossChainInfo({ fee, bridge }: Props) {
   return (
     <div className="bg-app-bg p-middle gap-small flex flex-col rounded border border-transparent">
       <Item>
-        <span>Bridge</span>
-        <span>{bridge?.getName()}</span>
-      </Item>
-      <Item>
         <span>Estimated Arrival Time</span>
         <span>{bridge?.formatEstimateTime()}</span>
       </Item>
