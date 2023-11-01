@@ -282,7 +282,7 @@ export default function Transfer() {
         <Section label="Amount" className="mt-8" extra={isProduction() ? undefined : <Faucet />}>
           <BalanceInput
             balance={sourceBalance?.value}
-            token={sourceBalance?.token}
+            token={sourceValue?.token}
             value={transferValue}
             suffix="max"
             max={transferable}
