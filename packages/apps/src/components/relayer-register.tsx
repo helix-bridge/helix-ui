@@ -305,7 +305,9 @@ export default function RelayerRegister() {
                     <span className="text-sm font-medium text-white">
                       {!completeMargin && targetChain?.id !== chain?.id
                         ? "Switch Network"
-                        : !completeMargin && margin.formatted > (targetAllowance?.value || 0n)
+                        : !completeMargin &&
+                          sourceToken?.type !== "native" &&
+                          margin.formatted > (targetAllowance?.value || 0n)
                         ? "Approve"
                         : "Confirm"}
                     </span>
