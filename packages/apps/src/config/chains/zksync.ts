@@ -26,5 +26,15 @@ export const zksyncChain: ChainConfig = {
       url: "https://explorer.zksync.io/",
     },
   },
-  tokens: [],
+  tokens: [
+    {
+      decimals: 6,
+      symbol: "USDT",
+      name: "USDT",
+      type: "erc20",
+      address: "0x493257fD37EDB34451f62EDf8D2a0C418852bA4C",
+      logo: "usdt.svg",
+      cross: [{ target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } }],
+    },
+  ],
 };
