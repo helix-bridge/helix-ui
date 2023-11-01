@@ -20,12 +20,16 @@ import { WagmiConfig, configureChains, createConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { darwiniaChain } from "@/config/chains/darwinia";
 import { crabChain } from "@/config/chains/crab";
+import { polygonChain } from "@/config/chains/polygon";
+import { mumbaiChain } from "@/config/chains/mumbai";
 
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID || "";
 const appName = "Helix Bridge";
 
 const { tokens: _1, ...darwinia } = darwiniaChain;
 const { tokens: _2, ...crab } = crabChain;
+const { tokens: _3, ...polygon } = polygonChain;
+const { tokens: _4, ...mumbai } = mumbaiChain;
 
 export default function RainbowProvider({ children }: PropsWithChildren<unknown>) {
   const { chains, publicClient } = configureChains(
@@ -42,6 +46,8 @@ export default function RainbowProvider({ children }: PropsWithChildren<unknown>
       mantleTestnet,
       darwinia,
       crab,
+      polygon,
+      mumbai,
     ],
     [publicProvider()],
   );
