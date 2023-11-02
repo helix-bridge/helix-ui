@@ -10,10 +10,24 @@ import { Subscription, from } from "rxjs";
 interface Props {
   fee: { loading: boolean; value: bigint; token?: Token } | undefined;
   bridge: BaseBridge | undefined;
+  maxMargin: string | undefined;
+  isLoadingMaxMargin: boolean;
 }
 
-export default function CrossChainInfo({ fee, bridge }: Props) {
+export default function CrossChainInfo({ fee, bridge, maxMargin, isLoadingMaxMargin }: Props) {
+  const [transferLimit, setTransferLimit] = useState<{ token: Token; value: bigint }>();
   const [dailyLimit, setDailyLimit] = useState<{ loading: boolean; limit: bigint; spent: bigint; token: Token }>();
+
+  useEffect(() => {
+    if (!isLoadingMaxMargin) {
+      const token = bridge?.getSourceToken();
+      if (maxMargin && token) {
+        setTransferLimit({ token, value: BigInt(maxMargin) });
+      } else {
+        setTransferLimit(undefined);
+      }
+    }
+  }, [bridge, maxMargin, isLoadingMaxMargin]);
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
@@ -54,6 +68,14 @@ export default function CrossChainInfo({ fee, bridge }: Props) {
           </Tooltip>
         )}
       </Item>
+      {!!transferLimit && (
+        <Item>
+          <span>Transfer Limit</span>
+          <span>
+            {formatBalance(transferLimit.value, transferLimit.token.decimals)} {transferLimit.token.symbol}
+          </span>
+        </Item>
+      )}
       {!!dailyLimit && (
         <Item>
           <span>Daily Limit</span>

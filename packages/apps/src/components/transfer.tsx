@@ -317,6 +317,8 @@ export default function Transfer() {
           <CrossChainInfo
             fee={fee ? { ...fee, loading: isLoadingFee || isLoadingRelayers } : undefined}
             bridge={bridgeClient}
+            maxMargin={relayersData?.sortedLnv20RelayInfos?.maxMargin}
+            isLoadingMaxMargin={isLoadingRelayers}
           />
         </Section>
 
