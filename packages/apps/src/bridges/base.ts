@@ -94,6 +94,22 @@ export abstract class BaseBridge {
     return this.contract;
   }
 
+  getSourceToken() {
+    return this.sourceToken;
+  }
+
+  getTargetToken() {
+    return this.targetToken;
+  }
+
+  getSourceChain() {
+    return this.sourceChain;
+  }
+
+  getTargetChain() {
+    return this.targetChain;
+  }
+
   getEstimateTime() {
     return this.estimateTime;
   }

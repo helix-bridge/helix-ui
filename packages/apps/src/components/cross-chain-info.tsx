@@ -34,6 +34,8 @@ export default function CrossChainInfo({ fee, bridge }: Props) {
     return () => sub$$?.unsubscribe();
   }, [bridge]);
 
+  bridge.ge;
+
   return (
     <div className="bg-app-bg p-middle gap-small flex flex-col rounded border border-transparent">
       <Item>
