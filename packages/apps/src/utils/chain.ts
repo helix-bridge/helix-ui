@@ -16,6 +16,7 @@ import { ChainConfig, ChainID, Network } from "@/types/chain";
 import { isProduction } from "./env";
 import { polygonChain } from "@/config/chains/polygon";
 import { mumbaiChain } from "@/config/chains/mumbai";
+import { scrollChain } from "@/config/chains/scroll";
 
 export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
   switch (chainIdOrNetwork) {
@@ -67,6 +68,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.MUMBAI:
     case "mumbai":
       return mumbaiChain;
+    case ChainID.SCROLL:
+    case "scroll":
+      return scrollChain;
     default:
       return;
   }
@@ -90,6 +94,7 @@ export function getChainsConfig() {
     zksyncGoerliChain,
     mumbaiChain,
     polygonChain,
+    scrollChain,
   ];
 
   if (isProduction()) {

@@ -37,6 +37,7 @@ export const mantleChain: ChainConfig = {
       cross: [
         { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "zksync", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
       ],
     },
   ],
