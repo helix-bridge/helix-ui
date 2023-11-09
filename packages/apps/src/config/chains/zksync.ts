@@ -37,6 +37,7 @@ export const zksyncChain: ChainConfig = {
       cross: [
         { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "mantle", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
       ],
     },
   ],
