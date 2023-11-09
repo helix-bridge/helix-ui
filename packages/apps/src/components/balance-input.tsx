@@ -84,8 +84,7 @@ export function BalanceInput({
   useEffect(() => {
     if (enablingMax && exceeded) {
       const decimals = token?.decimals ?? 0;
-      const origin = formatUnits(max ?? 0n, decimals);
-      onChange(parseValue(origin, decimals));
+      onChange(parseValue(formatUnits(max ?? 0n, decimals), decimals));
     }
   }, [token?.decimals, max, onChange, enablingMax, exceeded]);
 
@@ -126,8 +125,7 @@ export function BalanceInput({
           onClick={(e) => {
             e.stopPropagation();
             const decimals = token?.decimals ?? 0;
-            const origin = formatUnits(max ?? 0n, decimals);
-            onChange(parseValue(origin, decimals));
+            onChange(parseValue(formatUnits(max ?? 0n, decimals), decimals));
             setEnablingMax(true);
           }}
           disabled={max === undefined || token?.decimals === undefined}
@@ -157,10 +155,10 @@ function Message({ text }: { text: string }) {
   );
 }
 
-function parseValue(origin: string, decimals: number) {
+function parseValue(source: string, decimals: number) {
   let value = "";
   let formatted = 0n;
-  const [i, d] = origin.split(".").concat("-1");
+  const [i, d] = source.replace(/,/g, "").split(".").concat("-1"); // The commas must be removed or parseUnits will error
   if (i) {
     value = d === "-1" ? i : d ? `${i}.${d.slice(0, decimals)}` : `${i}.`;
     formatted = parseUnits(value, decimals);
