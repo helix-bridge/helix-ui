@@ -129,6 +129,7 @@ export const QUERY_LNRELAYERS = gql`
         cost
         profit
         heartbeatTimestamp
+        messageChannel
       }
     }
   }

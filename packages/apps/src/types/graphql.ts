@@ -67,6 +67,8 @@ export interface RecordVariables {
   id: string;
 }
 
+export type MessageChannel = "layerzero";
+
 interface Lnv20RelayInfo {
   id: string;
   nonce: string;
@@ -88,6 +90,7 @@ interface Lnv20RelayInfo {
   cost?: string | null;
   profit?: string | null;
   heartbeatTimestamp?: number | null;
+  messageChannel?: MessageChannel | null;
 }
 
 export interface RelayersResponseData {
@@ -123,6 +126,7 @@ export type LnRelayerInfo = Pick<
   | "cost"
   | "profit"
   | "heartbeatTimestamp"
+  | "messageChannel"
 >;
 
 export interface LnRelayersResponseData {
