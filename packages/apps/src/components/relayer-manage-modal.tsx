@@ -11,6 +11,7 @@ import { formatBalance } from "@/utils/balance";
 import { useRelayer } from "@/hooks/use-relayer";
 import dynamic from "next/dynamic";
 import { formatFeeRate, isValidFeeRate } from "@/utils/misc";
+import { TransactionReceipt } from "viem";
 
 type TabKey = "update" | "deposit" | "withdraw";
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
@@ -45,12 +46,21 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     setFeeAndRate,
     depositMargin,
     updateFeeAndMargin,
+    withdrawMargin,
     sourceApprove,
     targetApprove,
   } = useRelayer();
   const [activeKey, setActiveKey] = useState<SegmentedTabsProps<TabKey>["activeKey"]>("update");
   const [height, setHeight] = useState<number>();
   const [busy, setBusy] = useState(false);
+  const [depositAmount, setDepositAmount] = useState<{ formatted: bigint; value: string }>({
+    formatted: 0n,
+    value: "",
+  });
+  const [withdrawAmount, setWithdrawAmount] = useState<{ formatted: bigint; value: string }>({
+    formatted: 0n,
+    value: "",
+  });
 
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
@@ -114,13 +124,13 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
       if (bridgeCategory === "lnbridgev20-default") {
         if (chain?.id !== targetChain?.id) {
           text = "Switch Network";
-        } else if (sourceToken?.type !== "native" && margin.formatted > (targetAllowance?.value || 0n)) {
+        } else if (sourceToken?.type !== "native" && depositAmount.formatted > (targetAllowance?.value || 0n)) {
           text = "Approve";
         }
       } else if (bridgeCategory === "lnbridgev20-opposite") {
         if (chain?.id !== sourceChain?.id) {
           text = "Switch Network";
-        } else if (sourceToken?.type !== "native" && margin.formatted > (sourceAllowance?.value || 0n)) {
+        } else if (sourceToken?.type !== "native" && depositAmount.formatted > (sourceAllowance?.value || 0n)) {
           text = "Approve";
         }
       }
@@ -130,7 +140,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     return text;
   }, [
     chain,
-    margin,
+    depositAmount,
     activeKey,
     bridgeCategory,
     sourceChain,
@@ -148,60 +158,56 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
       isOpen={isOpen}
       onClose={onClose}
       onOk={async () => {
+        let receipt: TransactionReceipt | undefined;
         try {
           if (activeKey === "update") {
             if (chain?.id !== sourceChain?.id) {
               switchNetwork?.(sourceChain?.id);
             } else if (bridgeCategory === "lnbridgev20-default") {
               setBusy(true);
-              const receipt = await setFeeAndRate(baseFee.formatted, feeRate.formatted);
-              if (receipt?.status === "success") {
-                onSuccess();
-                onClose();
-              }
+              receipt = await setFeeAndRate(baseFee.formatted, feeRate.formatted);
             } else if (bridgeCategory === "lnbridgev20-opposite") {
               setBusy(true);
-              const receipt = await updateFeeAndMargin(margin.formatted, baseFee.formatted, feeRate.formatted);
-              if (receipt?.status === "success") {
-                onSuccess();
-                onClose();
-              }
+              receipt = await updateFeeAndMargin(margin.formatted, baseFee.formatted, feeRate.formatted);
             }
           } else if (activeKey === "deposit") {
             if (bridgeCategory === "lnbridgev20-default") {
               if (chain?.id !== targetChain?.id) {
                 switchNetwork?.(targetChain?.id);
-              } else if (sourceToken?.type !== "native" && margin.formatted > (targetAllowance?.value || 0n)) {
+              } else if (sourceToken?.type !== "native" && depositAmount.formatted > (targetAllowance?.value || 0n)) {
                 setBusy(true);
-                await targetApprove(margin.formatted);
+                await targetApprove(depositAmount.formatted);
               } else {
                 setBusy(true);
-                const receipt = await depositMargin(margin.formatted);
-                if (receipt?.status === "success") {
-                  onSuccess();
-                  onClose();
-                }
+                receipt = await depositMargin(depositAmount.formatted);
               }
             } else if (bridgeCategory === "lnbridgev20-opposite") {
               if (chain?.id !== sourceChain?.id) {
                 switchNetwork?.(sourceChain?.id);
-              } else if (sourceToken?.type !== "native" && margin.formatted > (sourceAllowance?.value || 0n)) {
+              } else if (sourceToken?.type !== "native" && depositAmount.formatted > (sourceAllowance?.value || 0n)) {
                 setBusy(true);
-                await sourceApprove(margin.formatted);
+                await sourceApprove(depositAmount.formatted);
               } else {
                 setBusy(true);
-                const receipt = await updateFeeAndMargin(margin.formatted, baseFee.formatted, feeRate.formatted);
-                if (receipt?.status === "success") {
-                  onSuccess();
-                  onClose();
-                }
+                receipt = await updateFeeAndMargin(depositAmount.formatted, baseFee.formatted, feeRate.formatted);
               }
+            }
+          } else if (activeKey === "withdraw") {
+            if (chain?.id !== sourceChain?.id) {
+              switchNetwork?.(sourceChain?.id);
+            } else {
+              setBusy(true);
+              receipt = await withdrawMargin(withdrawAmount.formatted);
             }
           }
         } catch (err) {
           console.error(err);
         } finally {
           setBusy(false);
+          if (receipt?.status === "success") {
+            onSuccess();
+            onClose();
+          }
         }
       }}
       busy={busy}
@@ -209,7 +215,9 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
       disabledOk={
         activeKey === "update" && !(baseFee.value && feeRate.value && isValidFeeRate(feeRate.formatted))
           ? true
-          : activeKey === "deposit" && margin.formatted === 0n
+          : activeKey === "deposit" && depositAmount.formatted === 0n
+          ? true
+          : activeKey === "withdraw" && withdrawAmount.formatted === 0n
           ? true
           : false
       }
@@ -262,7 +270,8 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                       : undefined
                   }
                   suffix="symbol"
-                  onChange={setMargin}
+                  value={depositAmount}
+                  onChange={setDepositAmount}
                 />
               </LabelSection>
             ),
@@ -288,10 +297,16 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             ),
             children: (
               <LabelSection label="Withdraw Amount" height={height}>
-                <BalanceInput token={undefined} />
+                <BalanceInput
+                  balance={margin.formatted}
+                  token={sourceToken}
+                  suffix="symbol"
+                  value={withdrawAmount}
+                  onChange={setWithdrawAmount}
+                />
               </LabelSection>
             ),
-            disabled: true,
+            disabled: relayerInfo?.messageChannel !== "layerzero",
           },
         ]}
         activeKey={activeKey}
