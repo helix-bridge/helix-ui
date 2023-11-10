@@ -107,6 +107,9 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     setSourceChain(_sourceChain);
     setTargetChain(_targetChain);
     setSourceToken(_sourceToken);
+    setWithdrawAmount({ formatted: 0n, value: "" });
+    setDepositAmount({ formatted: 0n, value: "" });
+    setActiveKey("update");
   }, [
     relayerInfo,
     setBaseFee,
