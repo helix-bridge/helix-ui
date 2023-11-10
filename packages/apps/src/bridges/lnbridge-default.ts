@@ -1,4 +1,4 @@
-import { Address, TransactionReceipt } from "viem";
+import { Address, TransactionReceipt, bytesToHex } from "viem";
 import { LnBridgeBase } from "./lnbridge-base";
 import { ChainConfig, ChainID } from "@/types/chain";
 import { Token } from "@/types/token";
@@ -161,6 +161,46 @@ export class LnBridgeDefault extends LnBridgeBase {
         functionName: "setProviderFee",
         args: [BigInt(this.targetChain.id), this.sourceToken.address, this.targetToken.address, baseFee, feeRate],
         gas: this.getTxGasLimit(),
+      });
+      return this.publicClient.waitForTransactionReceipt({ hash });
+    }
+  }
+
+  async withdrawMargin(recipient: Address, amount: bigint) {
+    await this.validateNetwork("source");
+
+    if (
+      this.contract &&
+      this.sourceToken &&
+      this.targetToken &&
+      this.targetChain &&
+      this.publicClient &&
+      this.walletClient
+    ) {
+      const bridgeAbi = (await import(`../abi/lnbridgev20-default`)).default;
+      const accessAbi = (await import(`../abi/lnaccess-controller`)).default;
+      const remoteChainId = BigInt(this.targetChain.id);
+
+      const [sendService, _receiveService] = await this.publicClient.readContract({
+        address: this.contract.sourceAddress,
+        abi: bridgeAbi,
+        functionName: "messagers",
+        args: [remoteChainId],
+      });
+      const [nativeFee, _zroFee] = await this.publicClient.readContract({
+        address: sendService,
+        abi: accessAbi,
+        functionName: "fee",
+        args: [remoteChainId, bytesToHex(Uint8Array.from([123]), { size: 500 })],
+      });
+
+      const hash = await this.walletClient.writeContract({
+        address: this.contract.sourceAddress,
+        abi: bridgeAbi,
+        functionName: "requestWithdrawMargin",
+        args: [remoteChainId, this.sourceToken.address, this.targetToken.address, amount, recipient],
+        gas: this.getTxGasLimit(),
+        value: nativeFee,
       });
       return this.publicClient.waitForTransactionReceipt({ hash });
     }
