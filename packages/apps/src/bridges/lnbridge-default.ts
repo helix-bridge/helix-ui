@@ -166,17 +166,8 @@ export class LnBridgeDefault extends LnBridgeBase {
     }
   }
 
-  async withdrawMargin(recipient: Address, amount: bigint) {
-    await this.validateNetwork("source");
-
-    if (
-      this.contract &&
-      this.sourceToken &&
-      this.targetToken &&
-      this.targetChain &&
-      this.publicClient &&
-      this.walletClient
-    ) {
+  async getWithdrawFee() {
+    if (this.contract && this.sourceNativeToken && this.targetChain && this.publicClient) {
       const bridgeAbi = (await import(`../abi/lnbridgev20-default`)).default;
       const accessAbi = (await import(`../abi/lnaccess-controller`)).default;
       const remoteChainId = BigInt(this.targetChain.id);
@@ -194,13 +185,31 @@ export class LnBridgeDefault extends LnBridgeBase {
         args: [remoteChainId, bytesToHex(Uint8Array.from([123]), { size: 500 })],
       });
 
+      return { fee: nativeFee, token: this.sourceNativeToken };
+    }
+  }
+
+  async withdrawMargin(recipient: Address, amount: bigint, fee: bigint) {
+    await this.validateNetwork("source");
+
+    if (
+      this.contract &&
+      this.sourceToken &&
+      this.targetToken &&
+      this.targetChain &&
+      this.publicClient &&
+      this.walletClient
+    ) {
+      const abi = (await import(`../abi/lnbridgev20-default`)).default;
+      const remoteChainId = BigInt(this.targetChain.id);
+
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,
-        abi: bridgeAbi,
+        abi,
         functionName: "requestWithdrawMargin",
         args: [remoteChainId, this.sourceToken.address, this.targetToken.address, amount, recipient],
         gas: this.getTxGasLimit(),
-        value: nativeFee,
+        value: fee,
       });
       return this.publicClient.waitForTransactionReceipt({ hash });
     }

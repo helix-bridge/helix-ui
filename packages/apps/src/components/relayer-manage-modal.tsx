@@ -12,6 +12,8 @@ import { useRelayer } from "@/hooks/use-relayer";
 import dynamic from "next/dynamic";
 import { formatFeeRate, isValidFeeRate } from "@/utils/misc";
 import { TransactionReceipt } from "viem";
+import { Token } from "@/types/token";
+import { Subscription, from } from "rxjs";
 
 type TabKey = "update" | "deposit" | "withdraw";
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
@@ -36,6 +38,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     margin,
     baseFee,
     feeRate,
+    defaultBridge,
     setMargin,
     setBaseFee,
     setFeeRate,
@@ -61,6 +64,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     formatted: 0n,
     value: "",
   });
+  const [withdrawFee, setWithdrawFee] = useState<{ fee: bigint; token: Token }>();
 
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
@@ -120,6 +124,22 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     setSourceToken,
     setBridgeCategory,
   ]);
+
+  useEffect(() => {
+    let sub$$: Subscription | undefined;
+    if (defaultBridge && relayerInfo?.messageChannel === "layerzero") {
+      sub$$ = from(defaultBridge.getWithdrawFee()).subscribe({
+        next: setWithdrawFee,
+        error: (err) => {
+          console.error(err);
+          setWithdrawFee(undefined);
+        },
+      });
+    } else {
+      setWithdrawFee(undefined);
+    }
+    return () => sub$$?.unsubscribe();
+  }, [defaultBridge, relayerInfo]);
 
   const okText = useMemo(() => {
     let text = "Confirm";
@@ -200,7 +220,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
               switchNetwork?.(sourceChain?.id);
             } else {
               setBusy(true);
-              receipt = await withdrawMargin(withdrawAmount.formatted);
+              receipt = await withdrawMargin(withdrawAmount.formatted, withdrawFee?.fee ?? 0n);
             }
           }
         } catch (err) {
@@ -220,9 +240,18 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
           ? true
           : activeKey === "deposit" && depositAmount.formatted === 0n
           ? true
-          : activeKey === "withdraw" && withdrawAmount.formatted === 0n
+          : activeKey === "withdraw" && withdrawAmount.formatted === 0n && !withdrawFee
           ? true
           : false
+      }
+      extra={
+        activeKey === "withdraw" ? (
+          <div className="h-6 self-end">
+            <span className="text-sm text-white/50">Powered by LayerZero & Helix</span>
+          </div>
+        ) : (
+          <div className="h-6" />
+        )
       }
       onCancel={onClose}
     >
@@ -237,7 +266,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
               </>
             ),
             children: (
-              <div className="flex flex-col gap-5" ref={(node) => setHeight((prev) => node?.clientHeight || prev)}>
+              <div className="flex flex-col gap-5" style={{ height: height }}>
                 <LabelSection label="Base Fee">
                   <BalanceInput token={sourceToken} suffix="symbol" value={baseFee} onChange={setBaseFee} />
                 </LabelSection>
@@ -299,15 +328,27 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
               </div>
             ),
             children: (
-              <LabelSection label="Withdraw Amount" height={height}>
-                <BalanceInput
-                  balance={margin.formatted}
-                  token={sourceToken}
-                  suffix="symbol"
-                  value={withdrawAmount}
-                  onChange={setWithdrawAmount}
-                />
-              </LabelSection>
+              <div className="flex flex-col gap-5" ref={(node) => setHeight((prev) => node?.clientHeight || prev)}>
+                <LabelSection label="Withdraw Amount">
+                  <BalanceInput
+                    balance={margin.formatted}
+                    token={sourceToken}
+                    suffix="symbol"
+                    value={withdrawAmount}
+                    onChange={setWithdrawAmount}
+                  />
+                </LabelSection>
+                <LabelSection label="Withdraw Fee">
+                  <div className="bg-app-bg lg:px-middle px-small flex h-10 items-center justify-between rounded">
+                    {withdrawFee ? (
+                      <>
+                        <span>{formatBalance(withdrawFee.fee, withdrawFee.token.decimals, { precision: 6 })}</span>
+                        <span>{withdrawFee.token.symbol}</span>
+                      </>
+                    ) : null}
+                  </div>
+                </LabelSection>
+              </div>
             ),
             disabled: relayerInfo?.messageChannel !== "layerzero",
           },

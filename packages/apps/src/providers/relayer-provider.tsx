@@ -50,7 +50,7 @@ interface RelayerCtx {
   depositMargin: (margin: bigint) => Promise<TransactionReceipt | undefined>;
   updateFeeAndMargin: (margin: bigint, baseFee: bigint, feeRate: number) => Promise<TransactionReceipt | undefined>;
   setFeeAndRate: (baseFee: bigint, feeRate: number) => Promise<TransactionReceipt | undefined>;
-  withdrawMargin: (amount: bigint) => Promise<TransactionReceipt | undefined>;
+  withdrawMargin: (amount: bigint, fee: bigint) => Promise<TransactionReceipt | undefined>;
 }
 
 const defaultValue: RelayerCtx = {
@@ -239,10 +239,10 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
   );
 
   const withdrawMargin = useCallback(
-    async (amount: bigint) => {
+    async (amount: bigint, fee: bigint) => {
       if (address && defaultBridge) {
         try {
-          const receipt = await defaultBridge.withdrawMargin(address, amount);
+          const receipt = await defaultBridge.withdrawMargin(address, amount, fee);
           notifyTransaction(receipt, sourceChain);
           return receipt;
         } catch (err) {
