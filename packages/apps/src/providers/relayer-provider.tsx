@@ -50,6 +50,7 @@ interface RelayerCtx {
   depositMargin: (margin: bigint) => Promise<TransactionReceipt | undefined>;
   updateFeeAndMargin: (margin: bigint, baseFee: bigint, feeRate: number) => Promise<TransactionReceipt | undefined>;
   setFeeAndRate: (baseFee: bigint, feeRate: number) => Promise<TransactionReceipt | undefined>;
+  withdrawMargin: (amount: bigint) => Promise<TransactionReceipt | undefined>;
 }
 
 const defaultValue: RelayerCtx = {
@@ -79,6 +80,7 @@ const defaultValue: RelayerCtx = {
   depositMargin: async () => undefined,
   updateFeeAndMargin: async () => undefined,
   setFeeAndRate: async () => undefined,
+  withdrawMargin: async () => undefined,
 };
 
 export const RelayerContext = createContext(defaultValue);
@@ -229,11 +231,27 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
           return receipt;
         } catch (err) {
           console.error(err);
-          notification.error({ title: "Transfer failed", description: (err as Error).message });
+          notification.error({ title: "Update failed", description: (err as Error).message });
         }
       }
     },
     [address, oppositeBridge, sourceChain],
+  );
+
+  const withdrawMargin = useCallback(
+    async (amount: bigint) => {
+      if (address && defaultBridge) {
+        try {
+          const receipt = await defaultBridge.withdrawMargin(address, amount);
+          notifyTransaction(receipt, sourceChain);
+          return receipt;
+        } catch (err) {
+          console.error(err);
+          notification.error({ title: "Withdraw failed", description: (err as Error).message });
+        }
+      }
+    },
+    [address, defaultBridge, sourceChain],
   );
 
   useEffect(() => {
@@ -299,6 +317,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
         depositMargin,
         updateFeeAndMargin,
         setFeeAndRate,
+        withdrawMargin,
       }}
     >
       {children}
