@@ -56,7 +56,7 @@ const commonColumns: ColumnType<DataSource>[] = [
       const token = getChainConfig(fromChain)?.tokens.find((t) => t.address.toLowerCase() === sendToken?.toLowerCase());
 
       return token ? (
-        <Tooltip content={<span className="text-xs font-normal text-white">{token.symbol}</span>} className="w-fit">
+        <Tooltip content={token.symbol} className="w-fit">
           <Image width={24} height={24} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
         </Tooltip>
       ) : (
@@ -235,16 +235,12 @@ export default function RelayersTable({
 function Title({ title, tips, className }: { title: string; tips?: string; className?: string }) {
   return (
     <div className={`gap-small flex items-center ${className}`}>
-      <span className="truncate text-sm font-normal text-white">{title}</span>
-      {!!tips && (
-        <Tooltip
-          content={<span className="text-xs font-normal text-white">{tips}</span>}
-          className="shrink-0"
-          contentClassName="max-w-[18rem]"
-        >
+      <span className="truncate">{title}</span>
+      {tips ? (
+        <Tooltip content={tips} className="shrink-0" contentClassName="max-w-[18rem]">
           <Image width={16} height={16} alt="Info" src="/images/info.svg" />
         </Tooltip>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -253,7 +249,7 @@ function FromTo({ network }: { network: Network }) {
   const config = getChainConfig(network);
 
   return config ? (
-    <Tooltip content={<span className="text-xs font-normal text-white">{config.name}</span>} className="w-fit">
+    <Tooltip content={config.name} className="w-fit">
       <Image width={24} height={24} alt="Chain" src={getChainLogoSrc(config.logo)} className="my-1 rounded-full" />
     </Tooltip>
   ) : (

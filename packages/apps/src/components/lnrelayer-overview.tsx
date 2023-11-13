@@ -55,7 +55,7 @@ export default function LnRelayerOverview() {
 
         <div className="gap-small flex items-center lg:gap-5">
           <div className="gap-middle flex items-center">
-            <span className="hidden text-sm font-normal text-white lg:inline">From</span>
+            <span className="hidden font-normal text-white lg:inline">From</span>
             <ChainSelect
               className="px-middle border-line w-40 py-[7px]"
               placeholder="Source chain"
@@ -69,7 +69,7 @@ export default function LnRelayerOverview() {
             />
           </div>
           <div className="gap-middle flex items-center">
-            <span className="hidden text-sm font-normal text-white lg:inline">To</span>
+            <span className="hidden font-normal text-white lg:inline">To</span>
             <ChainSelect
               className="px-middle border-line w-40 py-[7px]"
               placeholder="Target chain"
