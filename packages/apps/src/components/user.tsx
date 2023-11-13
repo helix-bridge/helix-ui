@@ -21,7 +21,7 @@ export default function User({ onComplete = () => undefined }: Props) {
 
   return address ? (
     <Dropdown
-      childClassName="bg-component border-line py-middle flex flex-col rounded border lg:border-transparent"
+      childClassName="bg-component border-line py-middle flex flex-col border-radius border lg:border-transparent"
       labelClassName="user-connect-wallet"
       label={<LabelSpan>{toShortAdrress(address)}</LabelSpan>}
       sameWidth

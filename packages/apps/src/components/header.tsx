@@ -52,13 +52,11 @@ export default function Header() {
                 <Image width={90} height={25} alt="Logo" src="/images/logo.svg" />
               </Link>
               <Tooltip
-                content={
-                  <span className="text-xs font-light">Helix is in beta. Please use at your own risk level</span>
-                }
+                content="Helix is in beta. Please use at your own risk level"
                 className="w-fit"
                 enabled={isProduction()}
               >
-                <div className="bg-primary inline-flex items-center justify-center rounded-sm px-1 py-[1px]">
+                <div className="bg-primary inline-flex items-center justify-center rounded px-1 py-[1px]">
                   <span className="text-xs font-bold text-black">{isProduction() ? "beta" : "testnet"}</span>
                 </div>
               </Tooltip>
@@ -73,7 +71,7 @@ export default function Header() {
                     target="_blank"
                     href={href}
                     key={label}
-                    className={`rounded-lg px-3 py-1 text-base font-medium transition hover:bg-white/10 active:translate-y-1 ${
+                    className={`border-radius px-3 py-1 text-base font-medium transition hover:bg-white/10 active:translate-y-1 ${
                       pathname === href ? "text-primary underline" : ""
                     }`}
                   >
@@ -81,13 +79,13 @@ export default function Header() {
                   </a>
                 ) : soon ? (
                   <Tooltip key={label} content={<span className="text-xs font-normal text-white">Coming soon</span>}>
-                    <span className="rounded-lg px-3 py-1 text-base font-medium text-white/50">{label}</span>
+                    <span className="border-radius px-3 py-1 text-base font-medium text-white/50">{label}</span>
                   </Tooltip>
                 ) : (
                   <Link
                     key={label}
                     href={href}
-                    className={`rounded-lg px-3 py-1 text-base font-medium transition-all hover:bg-white/10 active:translate-y-1 ${
+                    className={`border-radius px-3 py-1 text-base font-medium transition-all hover:bg-white/10 active:translate-y-1 ${
                       pathname === href ? "text-primary underline underline-offset-8" : ""
                     }`}
                   >

@@ -50,7 +50,7 @@ body {
   }
 
   .user-connect-wallet {
-    @apply bg-primary gap-middle px-large flex h-9 shrink-0 items-center rounded transition hover:opacity-80 lg:h-8 lg:hover:opacity-80 lg:active:translate-y-1;
+    @apply bg-primary gap-middle px-large flex h-9 shrink-0 items-center border-radius transition hover:opacity-80 lg:h-8 lg:hover:opacity-80 lg:active:translate-y-1;
   }
 
   .user-dropdown-item {
