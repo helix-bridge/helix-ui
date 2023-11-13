@@ -49,7 +49,7 @@ export default function Footer() {
               <div className="h-4 w-[1px] bg-white/30" />
 
               <a
-                className="text-sm font-light text-white/50 transition hover:text-white/80 active:scale-95"
+                className="text-sm text-white/50 transition hover:text-white/100 active:scale-95"
                 href={mainnetOrTestnet.link}
                 rel="noopener noreferrer"
                 target="_blank"
