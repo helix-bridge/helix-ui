@@ -24,9 +24,9 @@ export default function TokenSelect({
   return (
     <ISelect
       labelClassName={`gap-small flex items-center justify-between border-transparent disabled:border-transparent ${className}`}
-      childClassName="bg-component border-line py-small flex flex-col rounded border"
+      childClassName="bg-component border-primary py-small flex flex-col border-radius border"
       label={value ? <span className="text-sm font-normal text-white">{value.symbol}</span> : undefined}
-      placeholder={<span className="text-sm font-normal text-white/50">{placeholder}</span>}
+      placeholder={<span className="text-sm font-normal text-slate-400">{placeholder}</span>}
       disabled={disabled}
       clearable
       sameWidth
@@ -44,7 +44,7 @@ export default function TokenSelect({
             <Image width={28} height={28} alt="Token" src={getTokenLogoSrc(option.logo)} className="rounded-full" />
             <div className="flex flex-col">
               <span>{option.symbol}</span>
-              <PrettyAddress address={option.address} copyable className="text-xs font-light text-white/50" />
+              <PrettyAddress address={option.address} copyable className="text-xs text-white/50" />
             </div>
           </button>
         ))

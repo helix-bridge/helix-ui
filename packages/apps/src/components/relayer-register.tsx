@@ -224,7 +224,7 @@ export default function RelayerRegister() {
                   }}
                   className="flex h-9 flex-1 items-center justify-center"
                 >
-                  <span className="text-sm font-medium text-white">Reset</span>
+                  <span className="text-sm font-medium">Reset</span>
                 </Button>
                 <Button
                   kind="primary"
@@ -232,7 +232,7 @@ export default function RelayerRegister() {
                   className="flex h-9 flex-1 items-center justify-center"
                   disabled={Step.COMPLETE_ONE !== currentStep}
                 >
-                  <span className="text-sm font-medium text-white">Next</span>
+                  <span className="text-sm font-medium">Next</span>
                 </Button>
               </div>
             </>
@@ -465,7 +465,7 @@ export default function RelayerRegister() {
                   busy={busy}
                   disabled={sourceToken?.type === "native"}
                 >
-                  <span className="text-sm font-normal">
+                  <span className="text-sm font-medium">
                     {chain?.id === targetChain?.id ? "Approve More" : "Switch Network"}
                   </span>
                 </Button>
@@ -474,7 +474,7 @@ export default function RelayerRegister() {
                   onClick={() => setIsOpen(true)}
                   className="flex h-9 flex-1 items-center justify-center"
                 >
-                  <span className="text-sm font-normal">Next</span>
+                  <span className="text-sm font-medium">Next</span>
                 </Button>
               </div>
             </>
@@ -565,7 +565,7 @@ function RunRelayer({ style, onClick = () => undefined }: { style: "button" | "l
       href="https://github.com/helix-bridge/relayer/tree/main"
       className={`inline-flex items-center justify-center text-sm font-medium ${
         style === "button"
-          ? `bg-primary h-8 flex-1 items-center justify-center rounded text-white transition hover:opacity-80 active:translate-y-1 lg:h-9`
+          ? `bg-primary border-radius h-8 flex-1 items-center justify-center text-white transition hover:opacity-80 active:translate-y-1 lg:h-9`
           : "text-primary hover:underline"
       }`}
       rel="noopener"
@@ -597,11 +597,7 @@ function LabelItem({
       <div className="gap-small flex items-center">
         <span className="text-sm font-normal text-white">{label}</span>
         {!!tips && (
-          <Tooltip
-            content={<span className="text-xs font-normal text-white">{tips}</span>}
-            className="w-fit"
-            contentClassName="max-w-[18rem]"
-          >
+          <Tooltip content={tips} className="w-fit" contentClassName="max-w-[18rem]">
             <Image width={16} height={16} alt="Info" src="/images/info.svg" />
           </Tooltip>
         )}
@@ -612,7 +608,7 @@ function LabelItem({
 }
 
 function Description({ content }: { content: string }) {
-  return <span className="text-xs font-normal text-white/50">{content}</span>;
+  return <span className="text-xs font-medium text-white/50">{content}</span>;
 }
 
 function PrettyChain({ chain }: { chain?: ChainConfig }) {

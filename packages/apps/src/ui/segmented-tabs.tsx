@@ -35,7 +35,7 @@ export default function SegmentedTabs<K extends Key = string>({
           <Tooltip
             key={key}
             enabled={!!disabled}
-            content={<span className="text-xs font-normal text-white">Coming soon</span>}
+            content="Coming soon"
             className="border-r-primary flex-1 border-r last:border-r-0"
           >
             <button
