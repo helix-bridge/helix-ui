@@ -64,12 +64,12 @@ export default function Tooltip({
       {isMounted && (
         <FloatingPortal>
           <div ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()} className="z-30">
-            <FloatingArrow ref={arrowRef} style={styles} context={context} fill="#343946" />
+            <FloatingArrow ref={arrowRef} style={styles} context={context} fill="#00B2FF" />
             <div
               style={styles}
-              className={`border-line bg-component px-middle py-small flex items-center rounded border ${contentClassName}`}
+              className={`border-primary bg-component px-middle py-small border-radius flex items-center border ${contentClassName}`}
             >
-              {typeof content === "string" ? <span className="tooltip-text">{content}</span> : content}
+              {typeof content === "string" ? <span className="text-xs font-medium">{content}</span> : content}
             </div>
           </div>
         </FloatingPortal>

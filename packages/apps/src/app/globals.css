@@ -27,11 +27,6 @@ body {
 } */
 
 @layer components {
-  .token-select-dropdown {
-    width: calc(100vw - 3rem);
-    @apply lg:w-[36rem];
-  }
-
   .app-header {
     @apply h-[64px];
   }
@@ -45,6 +40,15 @@ body {
     @apply mt-[64px] py-5;
   }
 
+  .border-radius {
+    @apply rounded-xl;
+  }
+
+  .token-select-dropdown {
+    width: calc(100vw - 3rem);
+    @apply lg:w-[36rem];
+  }
+
   .user-connect-wallet {
     @apply bg-primary gap-middle px-large flex h-9 shrink-0 items-center rounded transition hover:opacity-80 lg:h-8 lg:hover:opacity-80 lg:active:translate-y-1;
   }
@@ -53,16 +57,12 @@ body {
     @apply gap-middle px-large py-small inline-flex items-center text-start transition hover:bg-white/10 lg:active:translate-y-1;
   }
 
-  .tooltip-text {
-    @apply text-xs font-normal text-white;
-  }
-
   .button {
-    @apply flex h-8 items-center justify-center text-sm lg:h-9;
+    @apply flex h-8 items-center justify-center lg:h-9;
   }
 
   .normal-input-wrap {
-    @apply rounded border transition-colors duration-300;
+    @apply border-radius border transition-colors duration-300;
   }
 
   .valid-input-wrap {
@@ -74,13 +74,7 @@ body {
   }
 
   .select {
-    @apply hover:border-primary focus-within:border-primary rounded border transition duration-300 disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1 lg:disabled:translate-y-0;
-  }
-}
-
-@layer utilities {
-  .page-bg {
-    background: linear-gradient(180deg, #02061f 0%, #1c1837 100%);
+    @apply hover:border-primary focus-within:border-primary border-radius border transition duration-300 disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1 lg:disabled:translate-y-0;
   }
 }
 

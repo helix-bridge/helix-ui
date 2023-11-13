@@ -4,7 +4,7 @@ import CountLoading from "@/ui/count-loading";
 import Tooltip from "@/ui/tooltip";
 import { formatBalance } from "@/utils/balance";
 import Image from "next/image";
-import { PropsWithChildren, useEffect, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { Subscription, from } from "rxjs";
 
 interface Props {
@@ -49,49 +49,49 @@ export default function CrossChainInfo({ fee, bridge, maxMargin, isLoadingMaxMar
   }, [bridge]);
 
   return (
-    <div className="bg-app-bg p-middle gap-small flex flex-col rounded border border-transparent">
-      <Item>
-        <span>Estimated Arrival Time</span>
-        <span>{bridge?.formatEstimateTime()}</span>
-      </Item>
-      <Item>
-        <span>Transaction Fee</span>
-        {fee?.loading ? (
-          <CountLoading color="white" />
-        ) : fee?.token && fee.value ? (
-          <span>
-            {formatBalance(fee.value, fee.token.decimals, { precision: 6 })} {fee.token.symbol}
-          </span>
-        ) : (
-          <Tooltip content="No relayer available, please check the transfer amount">
-            <Image width={16} height={16} alt="Fee" src="/images/warning.svg" />
-          </Tooltip>
-        )}
-      </Item>
-      {!!transferLimit && (
-        <Item>
-          <span>Transfer Limit</span>
-          <span>
-            {formatBalance(transferLimit.value, transferLimit.token.decimals)} {transferLimit.token.symbol}
-          </span>
-        </Item>
-      )}
-      {!!dailyLimit && (
-        <Item>
-          <span>Daily Limit</span>
-          {dailyLimit.loading ? (
+    <div className="bg-app-bg p-middle gap-small border-radius flex flex-col border border-transparent">
+      <Item label="Estimated arrival time" value={bridge?.formatEstimateTime()} />
+      <Item
+        label="Transaction fee"
+        value={
+          fee?.loading ? (
             <CountLoading color="white" />
+          ) : fee?.token && fee.value ? (
+            `${formatBalance(fee.value, fee.token.decimals, { precision: 6 })} ${fee.token.symbol}`
           ) : (
-            <span>
-              {formatBalance(dailyLimit.limit, dailyLimit.token.decimals)} {dailyLimit.token.symbol}
-            </span>
-          )}
-        </Item>
-      )}
+            <Tooltip content="No relayer available, please check the transfer amount">
+              <Image width={16} height={16} alt="Fee" src="/images/warning.svg" />
+            </Tooltip>
+          )
+        }
+      />
+      {transferLimit ? (
+        <Item
+          label="Transfer limit"
+          value={`${formatBalance(transferLimit.value, transferLimit.token.decimals)} ${transferLimit.token.symbol}`}
+        />
+      ) : null}
+      {dailyLimit ? (
+        <Item
+          label="Daily limit"
+          value={
+            dailyLimit.loading ? (
+              <CountLoading color="white" />
+            ) : (
+              `${formatBalance(dailyLimit.limit, dailyLimit.token.decimals)} ${dailyLimit.token.symbol}`
+            )
+          }
+        />
+      ) : null}
     </div>
   );
 }
 
-function Item({ children }: PropsWithChildren<unknown>) {
-  return <div className="flex items-center justify-between text-sm font-normal text-white">{children}</div>;
+function Item({ label, value }: { label: string; value: ReactElement | string | undefined }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-sm font-medium">{label}</span>
+      {typeof value === "string" ? <span className="text-sm font-medium">{value}</span> : value}
+    </div>
+  );
 }

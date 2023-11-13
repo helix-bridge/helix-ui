@@ -23,10 +23,10 @@ export default function Footer() {
   }, []);
 
   return (
-    <div className="app-footer bg-app-bg w-full">
+    <div className="app-footer w-full">
       <div className="px-middle container mx-auto flex h-full shrink-0 items-center justify-center lg:justify-between">
         {/* copyright */}
-        <span className="text-sm font-light text-white/50">{`© ${new Date().getFullYear()} Helix Bridge`}</span>
+        <span className="text-sm text-white/50">{`© ${new Date().getFullYear()} Helix Bridge`}</span>
 
         {/* social links */}
         <div className="gap-middle flex shrink-0 items-center lg:gap-5">

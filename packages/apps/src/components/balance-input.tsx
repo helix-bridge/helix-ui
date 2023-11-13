@@ -1,5 +1,6 @@
 import { Token } from "@/types/token";
 import Input from "@/ui/input";
+import { InputAlert } from "@/ui/input-alert";
 import { formatBalance } from "@/utils/balance";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { formatUnits, parseUnits } from "viem";
@@ -38,7 +39,7 @@ export function BalanceInput({
   const spanRef = useRef<HTMLSpanElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [enablingMax, setEnablingMax] = useState(false);
-  const [dynamicStyle, setDynamicStyle] = useState("text-sm font-normal");
+  const [dynamicStyle, setDynamicStyle] = useState("text-sm font-medium");
 
   const insufficient = balance !== undefined && balance < (value?.formatted || 0n) ? true : false;
   const exceeded = max !== undefined && max < (value?.formatted || 0n) ? true : false;
@@ -90,7 +91,7 @@ export function BalanceInput({
 
   return (
     <div
-      className={`lg:px-middle px-small py-small gap-small bg-app-bg normal-input-wrap relative flex items-center justify-between ${
+      className={`lg:px-middle px-small py-small gap-small bg-app-bg normal-input-wrap border-radius relative flex items-center justify-between ${
         insufficient || exceeded
           ? "invalid-input-wrap"
           : disabled
@@ -101,7 +102,7 @@ export function BalanceInput({
       <Input
         placeholder={_placeholder}
         className={`h-12 w-full rounded bg-transparent text-white transition-[font-size,font-weight,line-height] duration-300 ${
-          dynamic && value?.value ? `leading-none ${dynamicStyle}` : "text-sm font-normal"
+          dynamic && value?.value ? `leading-none ${dynamicStyle}` : "text-sm font-medium"
         }`}
         onChange={(e) => {
           setEnablingMax(false);
@@ -121,7 +122,7 @@ export function BalanceInput({
       {!!(token && suffix === "symbol") && <span className="text-sm">{token.symbol}</span>}
       {suffix === "max" && (
         <button
-          className="inline-flex items-center rounded bg-transparent px-1 transition-[transform,color] hover:scale-105 hover:bg-white/10 active:scale-95 disabled:scale-100 disabled:cursor-not-allowed"
+          className="border-radius inline-flex items-center bg-transparent px-2 py-1 transition-[transform,color] hover:scale-105 hover:bg-white/20 active:scale-95 disabled:scale-100 disabled:cursor-not-allowed"
           onClick={(e) => {
             e.stopPropagation();
             const decimals = token?.decimals ?? 0;
@@ -130,27 +131,19 @@ export function BalanceInput({
           }}
           disabled={max === undefined || token?.decimals === undefined}
         >
-          <span className="text-sm">Max</span>
+          <span className="text-sm font-medium">Max</span>
         </button>
       )}
 
       {exceeded ? (
-        <Message text={`* ${availableTips}: ${formatBalance(max || 0n, token?.decimals || 0, { precision: 6 })}`} />
+        <InputAlert text={`* ${availableTips}: ${formatBalance(max || 0n, token?.decimals || 0, { precision: 6 })}`} />
       ) : insufficient ? (
-        <Message text="* insufficient" />
+        <InputAlert text="* Insufficient" />
       ) : null}
 
       <span className="invisible fixed left-0 top-0 -z-50" ref={spanRef}>
         {value?.value}
       </span>
-    </div>
-  );
-}
-
-function Message({ text }: { text: string }) {
-  return (
-    <div className="absolute -bottom-5 left-0 inline-flex w-full">
-      <span className="text-app-red text-xs font-light lowercase">{text}</span>
     </div>
   );
 }

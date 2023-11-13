@@ -20,7 +20,7 @@ export default function ChainTokenSelect({ options, value, width, placement, onC
   return (
     <ISelect
       labelClassName="p-middle bg-app-bg flex shrink-0 items-center justify-between border-transparent"
-      childClassName="bg-app-bg rounded border border-primary/50 shadow-2xl"
+      childClassName="bg-component border-radius border border-primary"
       label={
         value ? (
           <div className="gap-middle lg:gap-large flex items-center">
@@ -43,7 +43,7 @@ export default function ChainTokenSelect({ options, value, width, placement, onC
 
             <div className="gap-small flex flex-col items-start truncate">
               <span className="text-sm font-medium text-white">{value.token.symbol}</span>
-              <span className="text-xs font-light text-white/60">{value.chain.name}</span>
+              <span className="text-xs font-medium text-white/60">{value.chain.name}</span>
             </div>
           </div>
         ) : undefined
@@ -99,9 +99,9 @@ function Cascader({
                   src={getChainLogoSrc(chain.logo)}
                   className="rounded-full"
                 />
-                <span className="text-sm font-light">{chain.name}</span>
+                <span className="text-sm">{chain.name}</span>
               </div>
-              <span className="text-sm font-light text-white/50">{`>`}</span>
+              <span className="text-sm text-white/50">{`>`}</span>
             </div>
           );
         })}
@@ -126,9 +126,9 @@ function Cascader({
                   src={getTokenLogoSrc(token.logo)}
                   className="rounded-full"
                 />
-                <span className="text-sm font-light">{token.symbol}</span>
+                <span className="text-sm">{token.symbol}</span>
               </div>
-              <PrettyAddress address={token.address} copyable forceShort className="text-xs font-light text-white/50" />
+              <PrettyAddress address={token.address} copyable forceShort className="text-xs text-white/50" />
             </button>
           );
         })}

@@ -24,6 +24,7 @@ import { BridgeCategory } from "@/types/bridge";
 import { useRouter, useSearchParams } from "next/navigation";
 import { UrlSearchParam } from "@/types/url";
 import AddressInput from "./address-input";
+import Label from "@/ui/label";
 
 const { defaultSourceOptions, defaultTargetOptions, availableBridges, availableTargetOptions } = getParsedCrossChain();
 
@@ -202,13 +203,13 @@ export default function Transfer() {
 
   return (
     <>
-      <div className="p-middle bg-component gap-large mx-auto flex w-full flex-col rounded lg:w-[32rem] lg:gap-5 lg:p-5">
+      <div className="p-middle bg-component gap-large border-radius mx-auto flex w-full flex-col lg:w-[30rem] lg:gap-5 lg:p-5">
         {/* from to */}
         <div
-          className="gap-small mt-8 flex items-center justify-between lg:gap-5"
+          className="gap-small lg:gap-large mt-8 flex items-center justify-between"
           ref={(node) => setWidth(node?.clientWidth || 0)}
         >
-          <Section label="From" className="w-full">
+          <Label text="From" className="w-full" needAbsolute>
             <ChainTokenSelect
               width={width}
               placement="bottom-start"
@@ -233,7 +234,7 @@ export default function Transfer() {
                 handleUrlParams({ _category, _sourceValue, _targetValue });
               }}
             />
-          </Section>
+          </Label>
           <SwitchCross
             disabled={
               !(
@@ -264,7 +265,7 @@ export default function Transfer() {
               handleUrlParams({ _category, _sourceValue, _targetValue });
             }}
           />
-          <Section label="To" className="w-full">
+          <Label text="To" className="w-full" needAbsolute>
             <ChainTokenSelect
               width={width}
               placement="bottom-end"
@@ -275,11 +276,11 @@ export default function Transfer() {
                 handleUrlParams({ _targetValue });
               }}
             />
-          </Section>
+          </Label>
         </div>
 
         {/* amount */}
-        <Section label="Amount" className="mt-8" extra={isProduction() ? undefined : <Faucet />}>
+        <Label text="Amount" extra={isProduction() ? null : <Faucet />}>
           <BalanceInput
             balance={sourceBalance?.value}
             token={sourceValue?.token}
@@ -290,18 +291,18 @@ export default function Transfer() {
             dynamic
             onChange={setTransferValue}
           />
-        </Section>
+        </Label>
 
-        <Section label="Recipient" className="mt-8 hidden">
+        <Label text="Recipient" className="hidden">
           <AddressInput
             placeholder={address}
             value={recipient}
             onChange={(e) => setRecipient(e.target.value as Address)}
           />
-        </Section>
+        </Label>
 
         {/* bridge */}
-        <Section label="Bridge" className={`mt-8 ${bridgeOptions.length > 1 ? "" : "hidden"}`}>
+        <Label text="Bridge" className={`${bridgeOptions.length > 1 ? "" : "hidden"}`}>
           <BridgeSelect
             options={bridgeOptions}
             value={bridgeCategory}
@@ -310,17 +311,17 @@ export default function Transfer() {
               handleUrlParams({ _category });
             }}
           />
-        </Section>
+        </Label>
 
         {/* information */}
-        <Section label="Information" className="mt-8">
+        <Label text="Information">
           <CrossChainInfo
             fee={fee ? { ...fee, loading: isLoadingFee || isLoadingRelayers } : undefined}
             bridge={bridgeClient}
             maxMargin={relayersData?.sortedLnv20RelayInfos?.maxMargin}
             isLoadingMaxMargin={isLoadingRelayers}
           />
-        </Section>
+        </Label>
 
         {/* action */}
         <TransferAction
@@ -346,22 +347,5 @@ export default function Transfer() {
 
       <DisclaimerModal />
     </>
-  );
-}
-
-function Section({
-  children,
-  label,
-  extra,
-  className,
-}: PropsWithChildren<{ label: string; extra?: ReactElement; className?: string }>) {
-  return (
-    <div className={`gap-small lg:gap-middle relative flex flex-col ${className}`}>
-      <div className="absolute -top-8 left-0 flex w-full items-center justify-between">
-        <span className="text-sm font-normal text-white/50">{label}</span>
-        {extra}
-      </div>
-      {children}
-    </div>
   );
 }
