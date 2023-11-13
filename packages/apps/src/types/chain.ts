@@ -27,6 +27,9 @@ export enum ChainID {
   POLYGON = 137,
 
   SCROLL = 534352,
+
+  BASE = 8453,
+  BASE_GOERLI = 84531,
 }
 
 // According to graphql indexer
@@ -47,7 +50,9 @@ export type Network =
   | "mantle-goerli"
   | "polygon"
   | "mumbai"
-  | "scroll";
+  | "scroll"
+  | "base-goerli"
+  | "base";
 
 export interface ChainConfig extends Chain {
   id: ChainID;
