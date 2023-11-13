@@ -80,7 +80,7 @@ function Cascader({
           return (
             <div
               key={chain.id}
-              className="px-small lg:px-middle py-small flex items-center justify-between rounded transition-colors hover:cursor-pointer hover:bg-white/10"
+              className="px-small lg:px-middle py-small border-radius flex items-center justify-between transition-colors hover:cursor-pointer hover:bg-white/10"
               onMouseEnter={() => {
                 setTokens(tokens);
                 chainRef.current = chain;
@@ -113,7 +113,7 @@ function Cascader({
           return (
             <button
               key={token.symbol}
-              className="px-small lg:px-middle py-small flex w-full flex-col items-start rounded hover:bg-white/10"
+              className="px-small lg:px-middle py-small border-radius flex w-full flex-col items-start hover:bg-white/10"
               onClick={() => {
                 chainRef.current && onChange({ chain: chainRef.current, token });
               }}
