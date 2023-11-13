@@ -164,7 +164,7 @@ export default function TransactionStatus({ record }: Props) {
         <StatusTag status={record?.result} />
 
         {record?.result === RecordStatus.PENDING && (
-          <div className="inline text-sm font-normal text-white/50">
+          <div className="inline text-sm text-white/50">
             {isTimeout ? (
               <span>
                 It seems to be taking longer than usual.{" "}

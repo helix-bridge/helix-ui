@@ -55,10 +55,7 @@ function Item({
 
   return token && chainConfig ? (
     <div className="gap-middle flex items-center">
-      <Tooltip
-        content={<span className="text-xs font-normal text-white">{chainConfig.name}</span>}
-        className="shrink-0"
-      >
+      <Tooltip content={chainConfig.name} className="shrink-0">
         <Image
           width={16}
           height={16}
@@ -89,5 +86,5 @@ function Address({ address }: { address: string }) {
 }
 
 function Label({ text }: { text: string }) {
-  return <span className="text-sm font-medium text-white">{text}</span>;
+  return <span className="text-sm font-normal text-white">{text}</span>;
 }

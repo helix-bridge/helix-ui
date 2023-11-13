@@ -79,8 +79,8 @@ export default function RecordsTable({
       key: "status",
       title: <Title className="text-end">Status</Title>,
       render: ({ startTime, result, confirmedBlocks }) => (
-        <div className="gap-small flex flex-col items-end">
-          <span className="text-sm font-normal text-white">{formatTime(startTime * 1000, { compact: true })}</span>
+        <div className="flex flex-col items-end">
+          <span className="text-sm">{formatTime(startTime * 1000, { compact: true })}</span>
           <span
             className={`text-xs font-semibold ${
               result === RecordStatus.SUCCESS
@@ -119,7 +119,7 @@ export interface DataSource extends HistoryRecord {
 }
 
 function Title({ children, className }: PropsWithChildren<{ className?: string }>) {
-  return <span className={`text-sm font-normal text-white ${className}`}>{children}</span>;
+  return <span className={`${className}`}>{children}</span>;
 }
 
 function FromTo({ network, amount, symbol }: { network: Network; amount: bigint; symbol: TokenSymbol }) {
@@ -130,21 +130,21 @@ function FromTo({ network, amount, symbol }: { network: Network; amount: bigint;
     <div className="gap-middle flex items-start">
       <Image width={32} height={32} alt="Logo" src={getChainLogoSrc(chain.logo)} className="rounded-full" />
       <div className="flex flex-col items-start">
-        <span className="truncate text-sm font-medium text-white">
+        <span className="truncate text-sm">
           {formatBalance(amount, token.decimals, { precision: 4 })} {symbol}
         </span>
-        <span className="text-xs font-normal text-white/50">{chain.name}</span>
+        <span className="text-xs font-medium text-white/50">{chain.name}</span>
       </div>
     </div>
   ) : (
-    <span className="text-sm font-medium text-white">-</span>
+    <span className="text-sm">-</span>
   );
 }
 
 function SenderReceiver({ address }: { address?: string | null }) {
   return address ? (
-    <PrettyAddress address={address} className="text-sm font-normal text-white" copyable forceShort />
+    <PrettyAddress address={address} className="text-sm" copyable forceShort />
   ) : (
-    <span className="text-sm font-normal text-white">-</span>
+    <span className="text-sm">-</span>
   );
 }

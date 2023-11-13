@@ -49,7 +49,7 @@ export default function Table<T extends { key: Key }>({
     <div className="min-w-[50rem] overflow-x-auto">
       {/* header */}
       <div
-        className="gap-middle bg-component px-middle py-large grid items-center rounded-t text-sm font-normal text-white"
+        className="gap-middle bg-component px-middle py-large grid items-center rounded-t text-sm font-medium"
         style={{ gridTemplateColumns: templateCols }}
       >
         {columns.map(({ key, title }) => (
@@ -70,7 +70,7 @@ export default function Table<T extends { key: Key }>({
               {dataSource.map((row) => (
                 <div
                   key={row.key}
-                  className={`gap-middle p-middle border-t-line/60 grid items-center border-t text-sm font-light text-white transition-colors ${
+                  className={`gap-middle p-middle border-t-line/60 grid items-center border-t text-sm transition-colors ${
                     onRowClick ? "hover:cursor-pointer hover:bg-white/5" : ""
                   }`}
                   style={{ gridTemplateColumns: templateCols }}
@@ -99,7 +99,7 @@ export default function Table<T extends { key: Key }>({
             {!loading && (
               <>
                 <Image width={50} height={63} alt="No data" src="/images/no-data.svg" />
-                <span className="text-sm font-light text-white/50">No data</span>
+                <span className="text-sm text-white/50">No data</span>
               </>
             )}
           </div>

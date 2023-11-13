@@ -52,13 +52,13 @@ export default function RecordDetail(props: Props) {
   return (
     <>
       <div className="flex items-center justify-between gap-5">
-        <h3 className="truncate text-xl font-semibold text-white">Transaction Detail</h3>
+        <h3 className="truncate text-lg font-medium">Transaction Detail</h3>
         <CountdownRefresh onClick={refetch} />
       </div>
       <div className="mt-5 overflow-x-auto">
-        <div className="bg-component py-middle gap-middle relative flex min-w-max flex-col rounded px-7">
+        <div className="bg-component py-middle gap-middle border-radius relative flex min-w-max flex-col px-7">
           {/* loading */}
-          <ComponentLoading loading={loading} className="rounded" />
+          <ComponentLoading loading={loading} className="border-radius" />
 
           <Item label="Transfer Route">
             <TransferRoute record={record?.historyRecordById} />

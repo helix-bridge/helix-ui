@@ -40,7 +40,7 @@ export function StatusTag({ status }: { status?: RecordStatus | null }) {
         alt="Status"
         src={`/images/status/${icon}`}
       />
-      <span className="text-sm font-medium text-white">{text}</span>
+      <span className="text-sm">{text}</span>
     </div>
   );
 }

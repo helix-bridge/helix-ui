@@ -139,22 +139,22 @@ export default function HistoryRecords() {
         options={[
           {
             key: AllStatus.All,
-            label: <span>All</span>,
+            label: "All",
             children: createChildren(),
           },
           {
             key: RecordStatus.PENDING,
-            label: <span>Pending</span>,
+            label: "Pending",
             children: createChildren(),
           },
           {
             key: RecordStatus.SUCCESS,
-            label: <span>Success</span>,
+            label: "Success",
             children: createChildren(),
           },
           {
             key: RecordStatus.REFUNDED,
-            label: <span>Refunded</span>,
+            label: "Refunded",
             children: createChildren(),
           },
         ]}

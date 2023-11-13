@@ -6,7 +6,7 @@ export interface TabsProps<K> {
   activeKey: K;
   options: {
     key: K;
-    label: ReactElement;
+    label: ReactElement | string;
     children: ReactElement;
   }[];
   className?: string;
@@ -56,11 +56,11 @@ export default function Tabs<K extends Key = string>({
                 e.stopPropagation();
                 onChange(key);
               }}
-              className={`rounded-lg px-3 py-1 text-sm transition duration-200 hover:bg-white/10 ${
-                key === activeKey ? "text-primary font-bold" : "font-light text-white"
+              className={`border-radius px-3 py-1 text-sm transition duration-200 hover:bg-white/10 ${
+                key === activeKey ? "text-primary font-medium" : "text-white"
               }`}
             >
-              {label}
+              {typeof label === "string" ? <span>{label}</span> : label}
             </button>
           ))}
         </div>
@@ -82,7 +82,7 @@ export default function Tabs<K extends Key = string>({
             ) : (
               <div className="gap-large options-center flex flex-col pt-10">
                 <Image width={50} height={63} alt="No data" src="/images/no-data.svg" />
-                <span className="text-sm font-light text-white/50">No data</span>
+                <span className="text-sm font-medium text-white/50">No data</span>
               </div>
             )}
           </div>
