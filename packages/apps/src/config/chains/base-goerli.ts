@@ -29,7 +29,7 @@ export const baseGoerliChain: ChainConfig = {
   testnet: true,
   tokens: [
     {
-      decimals: 6,
+      decimals: 18,
       symbol: "USDT",
       name: "USDT",
       type: "erc20",
