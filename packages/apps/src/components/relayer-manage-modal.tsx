@@ -274,11 +274,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                 <span className="hidden text-sm font-medium lg:inline">Withdraw Margin</span>
                 <span className="text-sm font-medium lg:hidden">Withdraw</span>
                 <Tooltip
-                  content={
-                    <span className="text-xs font-normal text-white">
-                      A cross-chain message is required to perform a `withdraw margin` operation
-                    </span>
-                  }
+                  content="A cross-chain message is required to perform a `withdraw margin` operation"
                   contentClassName="w-60"
                   className="w-fit"
                 >

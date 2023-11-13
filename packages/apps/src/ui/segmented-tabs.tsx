@@ -30,24 +30,24 @@ export default function SegmentedTabs<K extends Key = string>({
   return (
     <div className="flex flex-col items-center gap-5">
       {/* labels */}
-      <div className={`border-primary flex h-10 w-full rounded border ${className}`}>
+      <div className={`flex h-10 w-full ${className}`}>
         {options.map(({ key, label, disabled }) => (
-          <Tooltip
+          <div
             key={key}
-            enabled={!!disabled}
-            content="Coming soon"
-            className="border-r-primary flex-1 border-r last:border-r-0"
+            className={`border-primary flex flex-1 items-center justify-center border-y border-r transition-colors first:rounded-l-xl first:border-l last:rounded-r-xl ${
+              activeKey === key ? "bg-primary" : "bg-transparent"
+            }`}
           >
-            <button
-              onClick={() => onChange(key)}
-              className={`h-full w-full flex-1 transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-60 ${
-                activeKey === key ? "bg-primary" : "bg-transparent"
-              } ${disabled ? "" : "border-r-primary border-r last:border-r-0"}`}
-              disabled={disabled}
-            >
-              {typeof label === "string" ? <span className="text-sm font-medium">{label}</span> : label}
-            </button>
-          </Tooltip>
+            <Tooltip enabled={!!disabled} content="Coming soon">
+              <button
+                onClick={() => onChange(key)}
+                className={`h-full w-full transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-60`}
+                disabled={disabled}
+              >
+                {typeof label === "string" ? <span className="text-sm font-medium">{label}</span> : label}
+              </button>
+            </Tooltip>
+          </div>
         ))}
       </div>
 
