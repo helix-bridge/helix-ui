@@ -122,7 +122,7 @@ export function BalanceInput({
       {!!(token && suffix === "symbol") && <span className="text-sm">{token.symbol}</span>}
       {suffix === "max" && (
         <button
-          className="border-radius inline-flex items-center bg-transparent px-2 py-1 transition-[transform,color] hover:scale-105 hover:bg-white/20 active:scale-95 disabled:scale-100 disabled:cursor-not-allowed"
+          className="border-radius inline-flex items-center bg-transparent px-2 py-1 transition-[transform,color] hover:scale-105 hover:bg-white/[0.15] active:scale-95 disabled:scale-100 disabled:cursor-not-allowed"
           onClick={(e) => {
             e.stopPropagation();
             const decimals = token?.decimals ?? 0;
