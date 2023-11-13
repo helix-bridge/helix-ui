@@ -21,7 +21,7 @@ export default function User({ onComplete = () => undefined }: Props) {
 
   return address ? (
     <Dropdown
-      childClassName="bg-component border-line py-middle flex flex-col border-radius border lg:border-transparent"
+      childClassName="bg-component border-primary py-middle flex flex-col border-radius border"
       labelClassName="user-connect-wallet"
       label={<LabelSpan>{toShortAdrress(address)}</LabelSpan>}
       sameWidth
@@ -54,5 +54,5 @@ function LabelSpan({ children }: PropsWithChildren<unknown>) {
 }
 
 function ChildSpan({ children }: PropsWithChildren<unknown>) {
-  return <span className="text-sm font-medium text-white">{children}</span>;
+  return <span className="text-sm font-medium">{children}</span>;
 }

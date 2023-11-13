@@ -71,21 +71,21 @@ export default function Header() {
                     target="_blank"
                     href={href}
                     key={label}
-                    className={`border-radius px-3 py-1 text-base font-medium transition hover:bg-white/10 active:translate-y-1 ${
+                    className={`border-radius px-3 py-1 font-medium transition hover:bg-white/10 active:translate-y-1 ${
                       pathname === href ? "text-primary underline" : ""
                     }`}
                   >
                     {label}
                   </a>
                 ) : soon ? (
-                  <Tooltip key={label} content={<span className="text-xs font-normal text-white">Coming soon</span>}>
-                    <span className="border-radius px-3 py-1 text-base font-medium text-white/50">{label}</span>
+                  <Tooltip key={label} content="Coming soon">
+                    <span className="border-radius px-3 py-1 font-medium text-white/50">{label}</span>
                   </Tooltip>
                 ) : (
                   <Link
                     key={label}
                     href={href}
-                    className={`border-radius px-3 py-1 text-base font-medium transition-all hover:bg-white/10 active:translate-y-1 ${
+                    className={`border-radius px-3 py-1 font-medium transition-all hover:bg-white/10 active:translate-y-1 ${
                       pathname === href ? "text-primary underline underline-offset-8" : ""
                     }`}
                   >
@@ -128,7 +128,7 @@ export default function Header() {
                     {label}
                   </a>
                 ) : soon ? (
-                  <Tooltip key={label} content={<span className="text-xs font-normal text-white">Coming soon</span>}>
+                  <Tooltip key={label} content="Coming soon">
                     <span className="font-semibold text-white/50">{label}</span>
                   </Tooltip>
                 ) : (

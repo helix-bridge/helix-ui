@@ -18,7 +18,7 @@ export default function ChainIdentity() {
           className="shrink-0 rounded-full"
         />
       )}
-      <span className="truncate text-sm">{config?.name || chain.name}</span>
+      <span className="truncate text-sm font-medium">{config?.name || chain.name}</span>
     </div>
   ) : null;
 }
