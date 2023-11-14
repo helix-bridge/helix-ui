@@ -135,7 +135,7 @@ export class LnBridgeDefault extends LnBridgeBase {
         abi,
         functionName: "depositProviderMargin",
         args: [BigInt(this.sourceChain.id), this.sourceToken.address, this.targetToken.address, margin],
-        value: this.sourceToken.type === "native" ? margin : undefined,
+        value: this.targetToken.type === "native" ? margin : undefined,
         gas: this.getTxGasLimit(),
       });
       return this.publicClient.waitForTransactionReceipt({ hash });
