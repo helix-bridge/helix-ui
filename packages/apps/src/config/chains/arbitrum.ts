@@ -43,6 +43,7 @@ export const arbitrumChain: ChainConfig = {
       logo: "ring.svg",
       cross: [
         { target: { network: "ethereum", symbol: "RING" }, bridge: { category: "lnbridgev20-opposite" } },
+        { target: { network: "darwinia-dvm", symbol: "RING" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "polygon", symbol: "RING" }, bridge: { category: "lnbridgev20-default" } },
       ],
     },
