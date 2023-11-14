@@ -28,6 +28,15 @@ export const mantleChain: ChainConfig = {
   },
   tokens: [
     {
+      decimals: 18,
+      symbol: "MNT",
+      name: "MNT",
+      type: "native",
+      address: "0x0000000000000000000000000000000000000000",
+      logo: "mnt.svg",
+      cross: [],
+    },
+    {
       decimals: 6,
       symbol: "USDT",
       name: "USDT",

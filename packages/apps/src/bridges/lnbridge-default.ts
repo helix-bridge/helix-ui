@@ -167,18 +167,18 @@ export class LnBridgeDefault extends LnBridgeBase {
   }
 
   async getWithdrawFee() {
-    if (this.contract && this.sourceNativeToken && this.targetChain && this.publicClient) {
+    if (this.contract && this.sourceNativeToken && this.targetChain && this.sourcePublicClient) {
       const bridgeAbi = (await import(`../abi/lnbridgev20-default`)).default;
       const accessAbi = (await import(`../abi/lnaccess-controller`)).default;
       const remoteChainId = BigInt(this.targetChain.id);
 
-      const [sendService, _receiveService] = await this.publicClient.readContract({
+      const [sendService, _receiveService] = await this.sourcePublicClient.readContract({
         address: this.contract.sourceAddress,
         abi: bridgeAbi,
         functionName: "messagers",
         args: [remoteChainId],
       });
-      const [nativeFee, _zroFee] = await this.publicClient.readContract({
+      const [nativeFee, _zroFee] = await this.sourcePublicClient.readContract({
         address: sendService,
         abi: accessAbi,
         functionName: "fee",

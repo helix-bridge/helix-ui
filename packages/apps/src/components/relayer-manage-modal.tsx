@@ -240,7 +240,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
           ? true
           : activeKey === "deposit" && depositAmount.formatted === 0n
           ? true
-          : activeKey === "withdraw" && withdrawAmount.formatted === 0n && !withdrawFee
+          : activeKey === "withdraw" && (withdrawAmount.formatted === 0n || !withdrawFee)
           ? true
           : false
       }
@@ -339,13 +339,21 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                   />
                 </LabelSection>
                 <LabelSection label="Withdraw Fee">
-                  <div className="bg-app-bg lg:px-middle px-small flex h-10 items-center justify-between rounded">
+                  <div
+                    className={`bg-app-bg lg:px-middle px-small relative flex h-10 items-center justify-between rounded border ${
+                      withdrawFee ? "border-transparent" : "border-app-red"
+                    }`}
+                  >
                     {withdrawFee ? (
                       <>
                         <span>{formatBalance(withdrawFee.fee, withdrawFee.token.decimals, { precision: 6 })}</span>
                         <span>{withdrawFee.token.symbol}</span>
                       </>
-                    ) : null}
+                    ) : (
+                      <span className="text-app-red absolute -bottom-5 left-0 text-xs">
+                        * Failed to get fee, withdraw is temporarily unavailable
+                      </span>
+                    )}
                   </div>
                 </LabelSection>
               </div>
