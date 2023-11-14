@@ -67,6 +67,7 @@ export const goerliChain: ChainConfig = {
         { target: { network: "linea-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "mantle-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "zksync-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "base-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
       ],
     },
     {
