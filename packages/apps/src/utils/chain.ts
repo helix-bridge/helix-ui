@@ -17,6 +17,8 @@ import { isProduction } from "./env";
 import { polygonChain } from "@/config/chains/polygon";
 import { mumbaiChain } from "@/config/chains/mumbai";
 import { scrollChain } from "@/config/chains/scroll";
+import { baseChain } from "@/config/chains/base";
+import { baseGoerliChain } from "@/config/chains/base-goerli";
 
 export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
   switch (chainIdOrNetwork) {
@@ -71,6 +73,12 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.SCROLL:
     case "scroll":
       return scrollChain;
+    case ChainID.BASE:
+    case "base":
+      return baseChain;
+    case ChainID.BASE_GOERLI:
+    case "base-goerli":
+      return baseGoerliChain;
     default:
       return;
   }
@@ -95,6 +103,8 @@ export function getChainsConfig() {
     mumbaiChain,
     polygonChain,
     scrollChain,
+    baseChain,
+    baseGoerliChain,
   ];
 
   if (isProduction()) {
