@@ -37,16 +37,23 @@ body {
 
   .app-main {
     min-height: calc(100vh - 64px - 58px);
-    @apply mt-[64px] py-5;
+    @apply mt-[64px];
   }
 
-  .border-radius {
-    @apply rounded-xl;
+  .page-container {
+    @apply container mx-auto px-middle py-5;
   }
 
-  .token-select-dropdown {
-    width: calc(100vw - 3rem);
-    @apply lg:w-[36rem];
+  .rounded-small {
+    @apply rounded;
+  }
+
+  .rounded-normal {
+    @apply rounded-lg;
+  }
+
+  .rounded-large {
+    @apply rounded-2xl;
   }
 
   .user-connect-wallet {

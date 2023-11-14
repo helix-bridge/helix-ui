@@ -1,3 +1,4 @@
+import PageWrap from "@/components/page-wrap";
 import TransferProvider from "@/providers/transfer-provider";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
@@ -11,12 +12,10 @@ const Transfer = dynamic(() => import("@/components/transfer"), { ssr: false });
 
 export default function Home() {
   return (
-    <main className="app-main">
-      <div className="px-middle container mx-auto lg:py-12">
-        <TransferProvider>
-          <Transfer />
-        </TransferProvider>
-      </div>
-    </main>
+    <PageWrap>
+      <TransferProvider>
+        <Transfer />
+      </TransferProvider>
+    </PageWrap>
   );
 }

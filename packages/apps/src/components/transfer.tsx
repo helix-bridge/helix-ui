@@ -203,7 +203,7 @@ export default function Transfer() {
 
   return (
     <>
-      <div className="p-middle bg-component gap-large border-radius mx-auto flex w-full flex-col lg:w-[30rem] lg:gap-5 lg:p-5">
+      <div className="p-middle bg-component gap-large border-radius mx-auto flex w-full flex-col lg:mt-16 lg:w-[30rem] lg:gap-5 lg:p-5">
         {/* from to */}
         <div
           className="gap-small lg:gap-large mt-8 flex items-center justify-between"
