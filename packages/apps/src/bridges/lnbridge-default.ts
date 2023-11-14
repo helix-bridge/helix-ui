@@ -1,4 +1,4 @@
-import { Address, TransactionReceipt } from "viem";
+import { Address, TransactionReceipt, bytesToHex } from "viem";
 import { LnBridgeBase } from "./lnbridge-base";
 import { ChainConfig, ChainID } from "@/types/chain";
 import { Token } from "@/types/token";
@@ -161,6 +161,55 @@ export class LnBridgeDefault extends LnBridgeBase {
         functionName: "setProviderFee",
         args: [BigInt(this.targetChain.id), this.sourceToken.address, this.targetToken.address, baseFee, feeRate],
         gas: this.getTxGasLimit(),
+      });
+      return this.publicClient.waitForTransactionReceipt({ hash });
+    }
+  }
+
+  async getWithdrawFee() {
+    if (this.contract && this.sourceNativeToken && this.targetChain && this.sourcePublicClient) {
+      const bridgeAbi = (await import(`../abi/lnbridgev20-default`)).default;
+      const accessAbi = (await import(`../abi/lnaccess-controller`)).default;
+      const remoteChainId = BigInt(this.targetChain.id);
+
+      const [sendService, _receiveService] = await this.sourcePublicClient.readContract({
+        address: this.contract.sourceAddress,
+        abi: bridgeAbi,
+        functionName: "messagers",
+        args: [remoteChainId],
+      });
+      const [nativeFee, _zroFee] = await this.sourcePublicClient.readContract({
+        address: sendService,
+        abi: accessAbi,
+        functionName: "fee",
+        args: [remoteChainId, bytesToHex(Uint8Array.from([123]), { size: 500 })],
+      });
+
+      return { fee: nativeFee, token: this.sourceNativeToken };
+    }
+  }
+
+  async withdrawMargin(recipient: Address, amount: bigint, fee: bigint) {
+    await this.validateNetwork("source");
+
+    if (
+      this.contract &&
+      this.sourceToken &&
+      this.targetToken &&
+      this.targetChain &&
+      this.publicClient &&
+      this.walletClient
+    ) {
+      const abi = (await import(`../abi/lnbridgev20-default`)).default;
+      const remoteChainId = BigInt(this.targetChain.id);
+
+      const hash = await this.walletClient.writeContract({
+        address: this.contract.sourceAddress,
+        abi,
+        functionName: "requestWithdrawMargin",
+        args: [remoteChainId, this.sourceToken.address, this.targetToken.address, amount, recipient],
+        gas: this.getTxGasLimit(),
+        value: fee,
       });
       return this.publicClient.waitForTransactionReceipt({ hash });
     }

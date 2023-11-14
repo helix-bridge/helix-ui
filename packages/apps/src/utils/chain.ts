@@ -84,7 +84,7 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
   }
 }
 
-export function getChainsConfig() {
+export function getChainsConfig(env?: "all") {
   const all = [
     arbitrumChain,
     arbitrumGoerliChain,
@@ -107,7 +107,9 @@ export function getChainsConfig() {
     baseGoerliChain,
   ];
 
-  if (isProduction()) {
+  if (env === "all") {
+    return all;
+  } else if (isProduction()) {
     return all.filter((c) => !c.hidden && !c.testnet);
   } else {
     return all.filter((c) => !c.hidden && !!c.testnet);

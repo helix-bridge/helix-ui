@@ -15,6 +15,7 @@ interface Props {
   disabledCancel?: boolean;
   disabledOk?: boolean;
   busy?: boolean;
+  extra?: ReactElement | null;
   onClose?: () => void;
   onCancel?: () => void;
   onOk?: () => void;
@@ -32,6 +33,7 @@ export default function Modal({
   disabledCancel,
   disabledOk,
   busy,
+  extra,
   onClose = () => undefined,
   onCancel,
   onOk,
@@ -91,7 +93,10 @@ export default function Modal({
           {/* footer */}
           {(onCancel || onOk) && (
             <>
-              <div className="bg-line h-[1px]" />
+              <div className="gap-small flex flex-col">
+                {extra}
+                <div className="bg-line h-[1px]" />
+              </div>
 
               <div className="flex items-center justify-between gap-5">
                 {onCancel && (

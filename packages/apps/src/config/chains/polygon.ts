@@ -29,6 +29,15 @@ export const polygonChain: ChainConfig = {
   tokens: [
     {
       decimals: 18,
+      symbol: "MATIC",
+      name: "MATIC",
+      type: "native",
+      address: "0x0000000000000000000000000000000000000000",
+      logo: "matic.svg",
+      cross: [],
+    },
+    {
+      decimals: 18,
       symbol: "RING",
       name: "RING",
       type: "erc20",
