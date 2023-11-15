@@ -35,6 +35,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     sourceChain,
     targetChain,
     sourceToken,
+    targetToken,
     margin,
     baseFee,
     feeRate,
@@ -147,7 +148,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
       if (bridgeCategory === "lnbridgev20-default") {
         if (chain?.id !== targetChain?.id) {
           text = "Switch Network";
-        } else if (sourceToken?.type !== "native" && depositAmount.formatted > (targetAllowance?.value || 0n)) {
+        } else if (targetToken?.type !== "native" && depositAmount.formatted > (targetAllowance?.value || 0n)) {
           text = "Approve";
         }
       } else if (bridgeCategory === "lnbridgev20-opposite") {
@@ -169,6 +170,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     sourceChain,
     targetChain,
     sourceToken,
+    targetToken,
     sourceAllowance,
     targetAllowance,
   ]);
@@ -197,7 +199,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             if (bridgeCategory === "lnbridgev20-default") {
               if (chain?.id !== targetChain?.id) {
                 switchNetwork?.(targetChain?.id);
-              } else if (sourceToken?.type !== "native" && depositAmount.formatted > (targetAllowance?.value || 0n)) {
+              } else if (targetToken?.type !== "native" && depositAmount.formatted > (targetAllowance?.value || 0n)) {
                 setBusy(true);
                 await targetApprove(depositAmount.formatted);
               } else {
