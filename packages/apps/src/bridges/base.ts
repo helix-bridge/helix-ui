@@ -120,7 +120,7 @@ export abstract class BaseBridge {
 
   getTxGasLimit() {
     return this.sourceChain?.id === ChainID.ARBITRUM || this.sourceChain?.id === ChainID.ARBITRUM_GOERLI
-      ? 1000000n
+      ? 2000000n
       : undefined;
   }
 
