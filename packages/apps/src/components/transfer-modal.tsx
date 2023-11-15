@@ -96,7 +96,7 @@ export default function TransferModal({
       {/* information */}
       <div className="gap-middle flex flex-col">
         <span className="text-sm font-normal text-white">Information</span>
-        <Information fee={fee} bridge={bridgeClient} sender={sender} recipient={recipient} />
+        <Information fee={fee} bridge={bridgeClient} />
       </div>
     </Modal>
   );
@@ -142,22 +142,9 @@ function SourceTarget({
   ) : null;
 }
 
-function Information({
-  fee,
-  bridge,
-  sender,
-  recipient,
-}: {
-  fee?: { value: bigint; token: Token };
-  bridge?: BaseBridge | null;
-  sender?: string | null;
-  recipient?: string | null;
-}) {
+function Information({ fee, bridge }: { fee?: { value: bigint; token: Token }; bridge?: BaseBridge | null }) {
   return (
     <div className="p-middle bg-app-bg gap-small flex flex-col rounded">
-      <Item label="Bridge" value={bridge?.getName()} />
-      <Item label="From" value={sender} />
-      <Item label="To" value={recipient} />
       <Item
         label="Transaction Fee"
         value={
