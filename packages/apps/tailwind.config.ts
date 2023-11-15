@@ -62,17 +62,13 @@ const config: Config = {
         },
         "spinner-rotate-left": {
           "0%": { transform: "rotate(0deg)" },
-          "25%": { transform: "rotate(0deg)" },
           "50%": { transform: "rotate(180deg)" },
-          "75%": { transform: "rotate(180deg)" },
-          "100%": { transform: "rotate(360deg)" },
+          "100%": { transform: "rotate(180deg)" },
         },
         "spinner-rotate-right": {
           "0%": { transform: "rotate(0deg)" },
-          "25%": { transform: "rotate(180deg)" },
           "50%": { transform: "rotate(180deg)" },
-          "75%": { transform: "rotate(360deg)" },
-          "100%": { transform: "rotate(360deg)" },
+          "100%": { transform: "rotate(180deg)" },
         },
       },
       animation: {
@@ -81,8 +77,8 @@ const config: Config = {
         "notification-fadeout": "notificationfadeout 200ms ease-out forwards",
         "count-loading-small": "countloadingsmall 1200ms cubic-bezier(0, 0.5, 0.5, 1) infinite",
         "count-loading-large": "countloadinglarge 1200ms cubic-bezier(0, 0.5, 0.5, 1) infinite",
-        "progress-anim-left": "spinner-rotate-left 3000ms linear 0ms infinite", // Duration: 3s, delay: 0s
-        "progress-anim-right": "spinner-rotate-right 3000ms linear 0ms infinite",
+        "progress-anim-left": "spinner-rotate-left 9000ms linear 4500ms 1 paused forwards", // Duration: 9s, delay: 4.5s
+        "progress-anim-right": "spinner-rotate-right 9000ms linear 0ms 1 paused forwards",
       },
     },
   },
