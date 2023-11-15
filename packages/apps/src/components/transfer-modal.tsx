@@ -72,9 +72,9 @@ export default function TransferModal({
 
   return (
     <Modal
-      title="Confirm Transfer"
+      title="Transfer Summary"
       isOpen={isOpen}
-      className="w-full lg:w-[38rem]"
+      className="w-full lg:w-[34rem]"
       okText="Confirm"
       disabledCancel={busy}
       busy={busy}
