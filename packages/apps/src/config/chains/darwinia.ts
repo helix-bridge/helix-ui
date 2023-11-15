@@ -33,9 +33,10 @@ export const darwiniaChain: ChainConfig = {
       symbol: "RING",
       name: "RING",
       type: "native",
-      address: "0xE7578598Aac020abFB918f33A20faD5B71d670b4",
+      address: "0x0000000000000000000000000000000000000000",
       logo: "ring.svg",
       cross: [
+        { target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnbridgev20-default" } },
         {
           target: { network: "crab-dvm", symbol: "xWRING" },
           bridge: { category: "helix-sub2subv21(lock)" },
