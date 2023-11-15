@@ -5,13 +5,15 @@ import { formatBalance } from "@/utils/balance";
 import { getChainLogoSrc } from "@/utils/misc";
 import { ApolloQueryResult } from "@apollo/client";
 import Image from "next/image";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { TransferValue } from "./transfer-input";
 import { notification } from "@/ui/notification";
 import { Address, parseUnits } from "viem";
 import { Token } from "@/types/token";
 import { useTransfer } from "@/hooks/use-transfer";
 import dynamic from "next/dynamic";
+import { Subscription, interval } from "rxjs";
+import ProgressIcon from "./progress-icon";
 
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 interface Props {
@@ -34,6 +36,7 @@ export default function TransferModal({
   refetchRelayers,
 }: Props) {
   const { bridgeClient, sourceValue, targetValue, fee, transfer } = useTransfer();
+  const [confirmedBlocks, setConfirmedBlocks] = useState<string | null>("1/10");
   const [busy, setBusy] = useState(false);
 
   const handleTransfer = useCallback(async () => {
@@ -70,6 +73,46 @@ export default function TransferModal({
     }
   }, [bridgeClient, onSuccess, recipient, refetchRelayers, sender, transfer, transferValue]);
 
+  useEffect(() => {
+    let sub$$: Subscription | undefined;
+
+    // if (isOpen) {
+    //   sub$$ = interval(1000 * 3).subscribe(() => {
+    //     setConfirmedBlocks((prev) => {
+    //       switch (prev) {
+    //         case undefined:
+    //         case null:
+    //           return "1/10";
+    //         case "1/10":
+    //           return "2/10";
+    //         case "2/10":
+    //           return "3/10";
+    //         case "3/10":
+    //           return "4/10";
+    //         case "4/10":
+    //           return "5/10";
+    //         case "5/10":
+    //           return "6/10";
+    //         case "6/10":
+    //           return "7/10";
+    //         case "7/10":
+    //           return "8/10";
+    //         case "8/10":
+    //           return "9/10";
+    //         case "9/10":
+    //           return "10/10";
+    //         default:
+    //           return prev;
+    //       }
+    //     });
+    //   });
+    // } else {
+    //   setConfirmedBlocks(null);
+    // }
+
+    return () => sub$$?.unsubscribe();
+  }, [isOpen]);
+
   return (
     <Modal
       title="Transfer Summary"
@@ -97,6 +140,10 @@ export default function TransferModal({
       <div className="gap-middle flex flex-col">
         <span className="text-sm font-normal text-white">Information</span>
         <Information fee={fee} bridge={bridgeClient} />
+      </div>
+
+      <div className="px-middle bg-app-bg flex h-10 items-center rounded">
+        <Progress confirmedBlocks={confirmedBlocks} />
       </div>
     </Modal>
   );
@@ -165,4 +212,27 @@ function Item({ label, value }: { label: string; value?: string | null }) {
       <span className="truncate">{value}</span>
     </div>
   );
+}
+
+function Progress({ confirmedBlocks }: { confirmedBlocks: string | null | undefined }) {
+  const splited = confirmedBlocks?.split("/");
+  if (splited) {
+    if (splited.at(0) === splited.at(1)) {
+      return (
+        <div className="flex w-full items-center justify-between">
+          <span className="text-sm font-medium">LnProvider relay finished</span>
+          <Image width={20} height={20} alt="Finished" src="/images/finished.svg" />
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex w-full items-center justify-between">
+          <span className="text-sm font-medium">{`Waiting for LnProvider relay message(${confirmedBlocks})`}</span>
+          <ProgressIcon />
+        </div>
+      );
+    }
+  } else {
+    return <span className="text-sm font-medium">Waiting for indexing...</span>;
+  }
 }
