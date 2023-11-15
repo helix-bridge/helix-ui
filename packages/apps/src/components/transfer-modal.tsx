@@ -8,7 +8,7 @@ import Image from "next/image";
 import { useCallback, useState } from "react";
 import { TransferValue } from "./transfer-input";
 import { notification } from "@/ui/notification";
-import { parseUnits } from "viem";
+import { Address, parseUnits } from "viem";
 import { Token } from "@/types/token";
 import { useTransfer } from "@/hooks/use-transfer";
 import dynamic from "next/dynamic";
@@ -84,13 +84,13 @@ export default function TransferModal({
     >
       {/* from-to */}
       <div className="gap-small flex flex-col">
-        <SourceTarget type="source" chainToken={sourceValue} transferValue={transferValue} />
+        <SourceTarget type="source" address={sender} chainToken={sourceValue} transferValue={transferValue} />
         <div className="relative">
           <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center">
             <Image width={36} height={36} alt="Transfer to" src="images/transfer-to.svg" className="shrink-0" />
           </div>
         </div>
-        <SourceTarget type="target" chainToken={targetValue} transferValue={transferValue} />
+        <SourceTarget type="target" address={recipient} chainToken={targetValue} transferValue={transferValue} />
       </div>
 
       {/* information */}
@@ -104,12 +104,14 @@ export default function TransferModal({
 
 function SourceTarget({
   type,
+  address,
   transferValue,
   chainToken,
 }: {
   type: "source" | "target";
   transferValue: TransferValue;
   chainToken?: ChainToken | null;
+  address?: Address | null;
 }) {
   return chainToken ? (
     <div className="bg-app-bg p-middle flex items-center justify-between rounded lg:p-5">
@@ -124,9 +126,7 @@ function SourceTarget({
         />
         <div className="flex flex-col items-start">
           <span className="text-base font-medium text-white">{chainToken.chain.name}</span>
-          <span className="text-sm font-medium text-white/40">
-            {type === "source" ? "Source Chain" : "Target Chain"}
-          </span>
+          <span className="text-sm font-medium text-white/50">{address}</span>
         </div>
       </div>
 
