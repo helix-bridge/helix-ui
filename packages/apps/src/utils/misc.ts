@@ -12,7 +12,7 @@ export function formatRecordStatus(status: RecordStatus) {
     case RecordStatus.REFUNDED:
       return "Refunded";
     case RecordStatus.SUCCESS:
-      return "Success";
+      return "Finished";
     default:
       return "Unknown";
   }
