@@ -128,7 +128,16 @@ function Cascader({
                 />
                 <span className="text-sm font-light">{token.symbol}</span>
               </div>
-              <PrettyAddress address={token.address} copyable forceShort className="text-xs font-light text-white/50" />
+              {token.type === "native" ? (
+                <span className="mt-1 text-xs font-light text-white/50">Native token</span>
+              ) : (
+                <PrettyAddress
+                  address={token.address}
+                  copyable
+                  forceShort
+                  className="text-xs font-light text-white/50"
+                />
+              )}
             </button>
           );
         })}

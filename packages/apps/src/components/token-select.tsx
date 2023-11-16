@@ -44,7 +44,11 @@ export default function TokenSelect({
             <Image width={28} height={28} alt="Token" src={getTokenLogoSrc(option.logo)} className="rounded-full" />
             <div className="flex flex-col">
               <span>{option.symbol}</span>
-              <PrettyAddress address={option.address} copyable className="text-xs font-light text-white/50" />
+              {option.type === "native" ? (
+                <span className="text-xs font-light text-white/50">Native token</span>
+              ) : (
+                <PrettyAddress address={option.address} copyable className="text-xs font-light text-white/50" />
+              )}
             </div>
           </button>
         ))
