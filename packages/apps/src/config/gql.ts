@@ -145,3 +145,12 @@ export const QUERY_SPECIAL_RELAYER = gql`
     }
   }
 `;
+
+export const QUERY_TX_PROGRESS = gql`
+  query historyRecordByTxHash($txHash: String) {
+    historyRecordByTxHash(txHash: $txHash) {
+      confirmedBlocks
+      result
+    }
+  }
+`;

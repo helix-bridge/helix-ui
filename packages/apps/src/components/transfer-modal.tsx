@@ -1,9 +1,9 @@
 import { BaseBridge } from "@/bridges/base";
 import { ChainToken } from "@/types/misc";
-import { RelayersResponseData } from "@/types/graphql";
+import { RecordStatus, RelayersResponseData, TxProgressResponseData, TxProgressVariables } from "@/types/graphql";
 import { formatBalance } from "@/utils/balance";
 import { getChainLogoSrc } from "@/utils/misc";
-import { ApolloQueryResult } from "@apollo/client";
+import { ApolloQueryResult, useQuery } from "@apollo/client";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { TransferValue } from "./transfer-input";
@@ -12,8 +12,8 @@ import { Address, parseUnits } from "viem";
 import { Token } from "@/types/token";
 import { useTransfer } from "@/hooks/use-transfer";
 import dynamic from "next/dynamic";
-import { Subscription, interval } from "rxjs";
 import ProgressIcon from "./progress-icon";
+import { QUERY_TX_PROGRESS } from "@/config/gql";
 
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 interface Props {
@@ -36,8 +36,15 @@ export default function TransferModal({
   refetchRelayers,
 }: Props) {
   const { bridgeClient, sourceValue, targetValue, fee, transfer } = useTransfer();
-  const [confirmedBlocks, setConfirmedBlocks] = useState<string | null>("1/10");
+  const [txHash, setTxHash] = useState("");
   const [busy, setBusy] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+
+  const { data: txProgressData } = useQuery<TxProgressResponseData, TxProgressVariables>(QUERY_TX_PROGRESS, {
+    variables: { txHash },
+    pollInterval: txHash ? 300 : 0,
+    skip: !txHash,
+  });
 
   const handleTransfer = useCallback(async () => {
     if (sender && recipient && bridgeClient) {
@@ -62,6 +69,8 @@ export default function TransferModal({
         });
 
         if (receipt?.status === "success") {
+          setTxHash(receipt.transactionHash);
+          setDisabled(true);
           onSuccess();
         }
       } catch (err) {
@@ -73,44 +82,15 @@ export default function TransferModal({
     }
   }, [bridgeClient, onSuccess, recipient, refetchRelayers, sender, transfer, transferValue]);
 
+  // Reset state
   useEffect(() => {
-    let sub$$: Subscription | undefined;
-
-    // if (isOpen) {
-    //   sub$$ = interval(1000 * 3).subscribe(() => {
-    //     setConfirmedBlocks((prev) => {
-    //       switch (prev) {
-    //         case undefined:
-    //         case null:
-    //           return "1/10";
-    //         case "1/10":
-    //           return "2/10";
-    //         case "2/10":
-    //           return "3/10";
-    //         case "3/10":
-    //           return "4/10";
-    //         case "4/10":
-    //           return "5/10";
-    //         case "5/10":
-    //           return "6/10";
-    //         case "6/10":
-    //           return "7/10";
-    //         case "7/10":
-    //           return "8/10";
-    //         case "8/10":
-    //           return "9/10";
-    //         case "9/10":
-    //           return "10/10";
-    //         default:
-    //           return prev;
-    //       }
-    //     });
-    //   });
-    // } else {
-    //   setConfirmedBlocks(null);
-    // }
-
-    return () => sub$$?.unsubscribe();
+    if (isOpen) {
+      //
+    } else {
+      setTxHash("");
+      setBusy(false);
+      setDisabled(false);
+    }
   }, [isOpen]);
 
   return (
@@ -119,8 +99,10 @@ export default function TransferModal({
       isOpen={isOpen}
       className="w-full lg:w-[34rem]"
       okText="Confirm"
-      disabledCancel={busy}
+      disabledCancel={busy || disabled}
+      disabledOk={disabled}
       busy={busy}
+      forceFooterHidden={txHash ? true : false}
       onClose={onClose}
       onCancel={onClose}
       onOk={handleTransfer}
@@ -142,9 +124,14 @@ export default function TransferModal({
         <Information fee={fee} bridge={bridgeClient} />
       </div>
 
-      <div className="px-middle bg-app-bg flex h-10 items-center rounded">
-        <Progress confirmedBlocks={confirmedBlocks} />
-      </div>
+      {txHash ? (
+        <div className="px-middle bg-app-bg flex h-10 items-center rounded">
+          <Progress
+            confirmedBlocks={txProgressData?.historyRecordByTxHash?.confirmedBlocks}
+            result={txProgressData?.historyRecordByTxHash?.result}
+          />
+        </div>
+      ) : null}
     </Modal>
   );
 }
@@ -214,10 +201,19 @@ function Item({ label, value }: { label: string; value?: string | null }) {
   );
 }
 
-function Progress({ confirmedBlocks }: { confirmedBlocks: string | null | undefined }) {
+function Progress({
+  confirmedBlocks,
+  result,
+}: {
+  confirmedBlocks: string | null | undefined;
+  result: RecordStatus | null | undefined;
+}) {
   const splited = confirmedBlocks?.split("/");
-  if (splited) {
-    if (splited.at(0) === splited.at(1)) {
+  if (splited?.length === 2) {
+    const finished = Number(splited[0]);
+    const total = Number(splited[1]);
+
+    if (finished === total || result === RecordStatus.SUCCESS) {
       return (
         <div className="flex w-full items-center justify-between">
           <span className="text-sm font-medium">LnProvider relay finished</span>
@@ -228,7 +224,7 @@ function Progress({ confirmedBlocks }: { confirmedBlocks: string | null | undefi
       return (
         <div className="flex w-full items-center justify-between">
           <span className="text-sm font-medium">{`Waiting for LnProvider relay message(${confirmedBlocks})`}</span>
-          <ProgressIcon />
+          <ProgressIcon percent={(finished * 100) / total} />
         </div>
       );
     }
