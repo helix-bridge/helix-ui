@@ -229,6 +229,11 @@ function Progress({
       );
     }
   } else {
-    return <span className="text-sm font-medium">Waiting for indexing...</span>;
+    return (
+      <div className="flex w-full items-center justify-between">
+        <span className="text-sm font-medium">Waiting for indexing...</span>
+        <ProgressIcon percent={10} />
+      </div>
+    );
   }
 }
