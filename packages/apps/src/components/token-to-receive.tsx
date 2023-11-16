@@ -18,12 +18,14 @@ export default function TokenToReceive({ record }: Props) {
 
   return token ? (
     <div className="gap-middle flex items-center">
-      {token.address && <PrettyAddress address={token.address} copyable className="text-primary text-sm font-normal" />}
+      {token.type !== "native" && (
+        <PrettyAddress address={token.address} copyable className="text-primary text-sm font-normal" />
+      )}
       <Image width={20} height={20} alt="Token" src={getTokenLogoSrc(token.logo)} className="shrink-0 rounded-full" />
       <span className="text-sm font-normal text-white">{token.symbol}</span>
 
       {/* add to metamask */}
-      {!!(window.ethereum && token.address) && (
+      {window.ethereum && token.type !== "native" ? (
         <Button
           className="px-middle py-[1px]"
           onClick={async () => {
@@ -47,7 +49,7 @@ export default function TokenToReceive({ record }: Props) {
         >
           <span className="text-sm font-normal text-white">Add to MetaMask</span>
         </Button>
-      )}
+      ) : null}
     </div>
   ) : null;
 }
