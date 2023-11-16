@@ -151,6 +151,7 @@ export const QUERY_TX_PROGRESS = gql`
     historyRecordByTxHash(txHash: $txHash) {
       confirmedBlocks
       result
+      id
     }
   }
 `;

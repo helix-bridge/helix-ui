@@ -14,6 +14,7 @@ import { useTransfer } from "@/hooks/use-transfer";
 import dynamic from "next/dynamic";
 import ProgressIcon from "./progress-icon";
 import { QUERY_TX_PROGRESS } from "@/config/gql";
+import Link from "next/link";
 
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 interface Props {
@@ -129,6 +130,7 @@ export default function TransferModal({
           <Progress
             confirmedBlocks={txProgressData?.historyRecordByTxHash?.confirmedBlocks}
             result={txProgressData?.historyRecordByTxHash?.result}
+            id={txProgressData?.historyRecordByTxHash?.id}
           />
         </div>
       ) : null}
@@ -204,9 +206,11 @@ function Item({ label, value }: { label: string; value?: string | null }) {
 function Progress({
   confirmedBlocks,
   result,
+  id,
 }: {
   confirmedBlocks: string | null | undefined;
   result: RecordStatus | null | undefined;
+  id: string | null | undefined;
 }) {
   const splited = confirmedBlocks?.split("/");
   if (splited?.length === 2) {
@@ -216,7 +220,12 @@ function Progress({
     if (finished === total || result === RecordStatus.SUCCESS) {
       return (
         <div className="flex w-full items-center justify-between">
-          <span className="text-sm font-medium">LnProvider relay finished</span>
+          <div className="inline-flex">
+            <span className="text-sm font-medium">LnProvider relay finished. Go to&nbsp;</span>
+            <Link href={`/records/${id}`} className="text-primary text-sm font-medium hover:underline">
+              Detail
+            </Link>
+          </div>
           <Image width={20} height={20} alt="Finished" src="/images/finished.svg" />
         </div>
       );

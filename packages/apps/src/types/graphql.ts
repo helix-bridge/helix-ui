@@ -159,7 +159,7 @@ export interface SpecialRelayerVariables {
 }
 
 export interface TxProgressResponseData {
-  historyRecordByTxHash: Pick<HistoryRecord, "confirmedBlocks" | "result"> | null;
+  historyRecordByTxHash: Pick<HistoryRecord, "confirmedBlocks" | "result" | "id"> | null;
 }
 
 export interface TxProgressVariables {
