@@ -27,37 +27,44 @@ body {
 } */
 
 @layer components {
+  /* Layout */
   .app-header {
     @apply h-[64px];
   }
-
   .app-footer {
     @apply h-[58px];
   }
-
   .app-main {
     min-height: calc(100vh - 64px - 58px);
     @apply mt-[64px];
   }
 
+  /* Page */
   .page-container {
-    @apply container mx-auto px-middle py-5;
+    @apply px-middle container mx-auto py-5;
   }
 
+  /* Border radius */
   .rounded-small {
     @apply rounded;
   }
-
   .rounded-normal {
     @apply rounded-lg;
   }
-
   .rounded-large {
     @apply rounded-2xl;
   }
 
+  /* Line color */
+  .app-bg-line {
+  }
+  .component-line {
+  }
+  .inner-line {
+  }
+
   .user-connect-wallet {
-    @apply bg-primary gap-middle px-large flex h-9 shrink-0 items-center border-radius transition hover:opacity-80 lg:h-8 lg:hover:opacity-80 lg:active:translate-y-1;
+    @apply bg-primary gap-middle px-large border-radius flex h-9 shrink-0 items-center transition hover:opacity-80 lg:h-8 lg:hover:opacity-80 lg:active:translate-y-1;
   }
 
   .user-dropdown-item {
@@ -85,6 +92,7 @@ body {
   }
 }
 
+/* Page header loading bar */
 .loading-bar {
   background: linear-gradient(90deg, #ffffff 35%, #00b2ff 50%, #ffffff 65%);
   background-position: 100% 50%;
@@ -113,7 +121,7 @@ body {
   }
 }
 
-/* drawer */
+/* Drawer */
 .drawer-fade-enter {
   opacity: 0;
 }
@@ -143,7 +151,7 @@ body {
   transition: transform 300ms;
 }
 
-/* tabs */
+/* Tabs */
 .tabs-fade-enter {
   opacity: 0;
 }
@@ -159,7 +167,7 @@ body {
   transition: opacity 200ms;
 }
 
-/* component loading */
+/* Component loading */
 .component-loading-appear,
 .component-loading-enter {
   background-color: transparent;
@@ -181,17 +189,21 @@ body {
   transition: background-color 300ms;
 }
 
-/* modal */
+/* Modal */
+.modal-fade-appear,
 .modal-fade-enter {
   opacity: 0;
 }
+.modal-fade-appear > div,
 .modal-fade-enter > div {
   transform: scale(0.5);
 }
+.modal-fade-appear-active,
 .modal-fade-enter-active {
   opacity: 1;
   transition: opacity 300ms;
 }
+.modal-fade-appear-active > div,
 .modal-fade-enter-active > div {
   transform: scale(1);
   transition: transform 300ms;
