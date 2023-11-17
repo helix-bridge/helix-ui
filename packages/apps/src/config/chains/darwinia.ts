@@ -37,6 +37,7 @@ export const darwiniaChain: ChainConfig = {
       logo: "ring.svg",
       cross: [
         { target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "crab-dvm", symbol: "xWRING" }, bridge: { category: "lnbridgev20-default" } },
         {
           target: { network: "crab-dvm", symbol: "xWRING" },
           bridge: { category: "helix-sub2subv21(lock)" },
@@ -89,6 +90,7 @@ export const darwiniaChain: ChainConfig = {
       address: "0x656567Eb75b765FC320783cc6EDd86bD854b2305",
       logo: "crab.svg",
       cross: [
+        { target: { network: "crab-dvm", symbol: "CRAB" }, bridge: { category: "lnbridgev20-default" } },
         {
           target: { network: "crab-dvm", symbol: "CRAB" },
           bridge: { category: "helix-sub2subv21(unlock)" },

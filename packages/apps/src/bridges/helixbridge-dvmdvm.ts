@@ -33,6 +33,10 @@ export class HelixBridgeDVMDVM extends BaseBridge {
       sourceToken.address = "0xE7578598Aac020abFB918f33A20faD5B71d670b4";
     } else if (args.targetChain?.network === "darwinia-dvm" && targetToken?.symbol === "RING") {
       targetToken.address = "0xE7578598Aac020abFB918f33A20faD5B71d670b4";
+    } else if (args.sourceChain?.network === "crab-dvm" && sourceToken?.symbol === "CRAB") {
+      sourceToken.address = "0x2D2b97EA380b0185e9fDF8271d1AFB5d2Bf18329";
+    } else if (args.targetChain?.network === "crab-dvm" && targetToken?.symbol === "CRAB") {
+      targetToken.address = "0x2D2b97EA380b0185e9fDF8271d1AFB5d2Bf18329";
     }
     super({ ...args, sourceToken, targetToken });
 
