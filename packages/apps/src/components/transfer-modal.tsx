@@ -23,19 +23,10 @@ interface Props {
   transferValue: TransferValue;
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
   refetchRelayers: () => Promise<ApolloQueryResult<RelayersResponseData>>;
 }
 
-export default function TransferModal({
-  sender,
-  recipient,
-  transferValue,
-  isOpen,
-  onClose,
-  onSuccess,
-  refetchRelayers,
-}: Props) {
+export default function TransferModal({ sender, recipient, transferValue, isOpen, onClose, refetchRelayers }: Props) {
   const { bridgeClient, sourceValue, targetValue, fee, transfer } = useTransfer();
   const [txHash, setTxHash] = useState("");
   const [busy, setBusy] = useState(false);
@@ -72,7 +63,6 @@ export default function TransferModal({
         if (receipt?.status === "success") {
           setTxHash(receipt.transactionHash);
           setDisabled(true);
-          onSuccess();
         }
       } catch (err) {
         console.error(err);
@@ -81,7 +71,7 @@ export default function TransferModal({
         setBusy(false);
       }
     }
-  }, [bridgeClient, onSuccess, recipient, refetchRelayers, sender, transfer, transferValue]);
+  }, [bridgeClient, recipient, refetchRelayers, sender, transfer, transferValue]);
 
   // Reset state
   useEffect(() => {
