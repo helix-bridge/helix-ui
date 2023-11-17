@@ -267,7 +267,7 @@ export default function RelayerRegister() {
                     onClick={async () => {
                       if (targetChain?.id !== chain?.id) {
                         switchNetwork?.(targetChain?.id);
-                      } else if (sourceToken?.type !== "native" && margin.formatted > (targetAllowance?.value || 0n)) {
+                      } else if (targetToken?.type !== "native" && margin.formatted > (targetAllowance?.value || 0n)) {
                         try {
                           setIsSettingDefaultMargin(true);
                           if (await isRegistered()) {
@@ -306,7 +306,7 @@ export default function RelayerRegister() {
                       {!completeMargin && targetChain?.id !== chain?.id
                         ? "Switch Network"
                         : !completeMargin &&
-                          sourceToken?.type !== "native" &&
+                          targetToken?.type !== "native" &&
                           margin.formatted > (targetAllowance?.value || 0n)
                         ? "Approve"
                         : "Confirm"}

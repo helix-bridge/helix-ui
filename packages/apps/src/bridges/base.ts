@@ -115,12 +115,12 @@ export abstract class BaseBridge {
   }
 
   formatEstimateTime() {
-    return `${this.estimateTime.min}-${this.estimateTime.max} Minutes`;
+    return `${this.estimateTime.min}~${this.estimateTime.max} minutes`;
   }
 
   getTxGasLimit() {
     return this.sourceChain?.id === ChainID.ARBITRUM || this.sourceChain?.id === ChainID.ARBITRUM_GOERLI
-      ? 1000000n
+      ? 2000000n
       : undefined;
   }
 

@@ -27,7 +27,15 @@ export class HelixBridgeDVMDVM extends BaseBridge {
     sourceToken?: Token;
     targetToken?: Token;
   }) {
-    super(args);
+    const sourceToken = args.sourceToken;
+    const targetToken = args.targetToken;
+    if (args.sourceChain?.network === "darwinia-dvm" && sourceToken?.symbol === "RING") {
+      sourceToken.address = "0xE7578598Aac020abFB918f33A20faD5B71d670b4";
+    } else if (args.targetChain?.network === "darwinia-dvm" && targetToken?.symbol === "RING") {
+      targetToken.address = "0xE7578598Aac020abFB918f33A20faD5B71d670b4";
+    }
+    super({ ...args, sourceToken, targetToken });
+
     this.initContract();
     this.ensureSpecVersion();
 

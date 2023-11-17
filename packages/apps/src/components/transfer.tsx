@@ -340,7 +340,6 @@ export default function Transfer() {
         onClose={setIsOpenFalse}
         onSuccess={() => {
           setTransferValue({ value: "", formatted: 0n });
-          setIsOpenFalse();
         }}
         refetchRelayers={refetchRelayers}
       />
