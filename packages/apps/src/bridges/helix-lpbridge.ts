@@ -22,8 +22,8 @@ export class HelixLpBridge extends BaseBridge {
     sourceToken?: Token;
     targetToken?: Token;
   }) {
-    const sourceToken = args.sourceToken;
-    const targetToken = args.targetToken;
+    const sourceToken = args.sourceToken ? { ...args.sourceToken } : undefined; // DON'T USE `const sourceToken = args.sourceToken`
+    const targetToken = args.targetToken ? { ...args.targetToken } : undefined;
     if (args.sourceChain?.network === "darwinia-dvm" && sourceToken?.symbol === "RING") {
       sourceToken.address = "0xE7578598Aac020abFB918f33A20faD5B71d670b4";
     } else if (args.targetChain?.network === "darwinia-dvm" && targetToken?.symbol === "RING") {
