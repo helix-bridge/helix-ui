@@ -49,6 +49,7 @@ export default function Modal({
       nodeRef={nodeRef}
       classNames="modal-fade"
       unmountOnExit
+      appear
       onEnter={() => {
         document.body.style.overflow = "hidden";
       }}
