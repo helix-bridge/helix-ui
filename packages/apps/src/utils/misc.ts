@@ -1,17 +1,17 @@
 import { FEE_RATE_BASE, FEE_RATE_MAX, FEE_RATE_MIN } from "@/config/constant";
-import { RecordStatus } from "@/types/graphql";
+import { RecordResult } from "@/types/graphql";
 
-export function formatRecordStatus(status: RecordStatus) {
-  switch (status) {
-    case RecordStatus.PENDING:
+export function parseRecordResult(result: RecordResult) {
+  switch (result) {
+    case RecordResult.PENDING:
       return "Pending";
-    case RecordStatus.PENDING_TO_REFUND:
+    case RecordResult.PENDING_TO_REFUND:
       return "Pending to Refund";
-    case RecordStatus.PENDING_TO_CLAIM:
+    case RecordResult.PENDING_TO_CLAIM:
       return "Pending to Claim";
-    case RecordStatus.REFUNDED:
+    case RecordResult.REFUNDED:
       return "Refunded";
-    case RecordStatus.SUCCESS:
+    case RecordResult.SUCCESS:
       return "Finished";
     default:
       return "Unknown";
@@ -38,6 +38,6 @@ export function formatFeeRate(rate: number) {
   return Number((rate / FEE_RATE_BASE).toFixed(3));
 }
 
-export function isValidFeeRate(formatted: number) {
-  return FEE_RATE_MIN <= formatted && formatted <= FEE_RATE_MAX;
+export function isValidFeeRate(rate: number) {
+  return FEE_RATE_MIN <= rate && rate <= FEE_RATE_MAX;
 }

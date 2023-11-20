@@ -1,25 +1,15 @@
-import { BaseBridge } from "@/bridges/base";
-import { HelixLpBridge } from "@/bridges/helix-lpbridge";
-import { HelixBridgeDVMDVM } from "@/bridges/helixbridge-dvmdvm";
-import { HelixBridgeDVMEVM } from "@/bridges/helixbridge-dvmevm";
-import { L2ArbitrumBridge } from "@/bridges/l2bridge";
-import { LnBridgeDefault } from "@/bridges/lnbridge-default";
-import { LnBridgeOpposite } from "@/bridges/lnbridge-opposite";
-import { BridgeCategory } from "@/types/bridge";
-import { ChainConfig } from "@/types/chain";
-import { Token } from "@/types/token";
-import { PublicClient, WalletClient } from "wagmi";
+import {
+  BaseBridge,
+  HelixBridgeDVMDVM,
+  HelixBridgeDVMEVM,
+  HelixLpBridge,
+  L2ArbitrumBridge,
+  LnBridgeDefault,
+  LnBridgeOpposite,
+} from "@/bridges";
+import { BridgeConstructorArgs } from "@/types";
 
-export function bridgeFactory(args: {
-  walletClient?: WalletClient | null;
-  publicClient?: PublicClient;
-  category: BridgeCategory;
-
-  sourceChain?: ChainConfig;
-  targetChain?: ChainConfig;
-  sourceToken?: Token;
-  targetToken?: Token;
-}): BaseBridge | undefined {
+export function bridgeFactory(args: BridgeConstructorArgs): BaseBridge | undefined {
   switch (args.category) {
     case "lnbridgev20-default":
       return new LnBridgeDefault(args);
