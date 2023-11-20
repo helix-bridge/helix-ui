@@ -57,6 +57,7 @@ export const arbitrumChain: ChainConfig = {
       cross: [
         { target: { network: "mantle", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "zksync", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
       ],
     },
   ],

@@ -26,5 +26,15 @@ export const baseChain: ChainConfig = {
       url: "https://basescan.org",
     },
   },
-  tokens: [],
+  tokens: [
+    {
+      decimals: 6,
+      symbol: "USDC",
+      name: "USDC",
+      type: "erc20",
+      address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      logo: "usdc.svg",
+      cross: [{ target: { network: "bsc", symbol: "USDC" }, bridge: { category: "lnbridgev20-default" } }],
+    },
+  ],
 };
