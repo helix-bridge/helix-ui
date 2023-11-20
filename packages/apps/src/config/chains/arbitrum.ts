@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const arbitrumChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.ARBITRUM,
   network: "arbitrum",
   name: "Arbitrum One",
-  logo: "arbitrum.png",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -24,6 +26,11 @@ export const arbitrumChain: ChainConfig = {
       url: "https://arbiscan.io/",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "arbitrum.png",
   tokens: [
     {
       decimals: 18,

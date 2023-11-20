@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const zksyncGoerliChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.ZKSYNC_GOERLI,
   network: "zksync-goerli",
   name: "Zksync Era Testnet",
-  logo: "zksync.png",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -27,6 +29,11 @@ export const zksyncGoerliChain: ChainConfig = {
     },
   },
   testnet: true,
+
+  /**
+   * Custom
+   */
+  logo: "zksync.png",
   tokens: [
     {
       decimals: 18,

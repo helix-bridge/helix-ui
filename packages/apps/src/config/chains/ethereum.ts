@@ -2,10 +2,12 @@ import { ChainConfig, ChainID } from "@/types/chain";
 import { parseUnits } from "viem";
 
 export const ethereumChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.ETHEREUM,
   network: "ethereum",
   name: "Ethereum",
-  logo: "ethereum.png",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -27,6 +29,11 @@ export const ethereumChain: ChainConfig = {
       url: "https://etherscan.io/",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "ethereum.png",
   tokens: [
     {
       decimals: 18,

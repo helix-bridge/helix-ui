@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const mantleChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.MANTLE,
   network: "mantle",
   name: "Mantle",
-  logo: "mantle.svg",
   nativeCurrency: {
     name: "MNT",
     symbol: "MNT",
@@ -26,6 +28,11 @@ export const mantleChain: ChainConfig = {
       url: "https://explorer.mantle.xyz/",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "mantle.svg",
   tokens: [
     {
       decimals: 18,

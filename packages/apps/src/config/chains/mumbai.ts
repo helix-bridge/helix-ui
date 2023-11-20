@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const mumbaiChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.MUMBAI,
   network: "mumbai",
   name: "Mumbai",
-  logo: "polygon.png",
   nativeCurrency: {
     name: "MATIC",
     symbol: "MATIC",
@@ -27,5 +29,10 @@ export const mumbaiChain: ChainConfig = {
     },
   },
   testnet: true,
+
+  /**
+   * Custom
+   */
+  logo: "polygon.png",
   tokens: [],
 };

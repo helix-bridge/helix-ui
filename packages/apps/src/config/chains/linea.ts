@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const lineaChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.LINEA,
   network: "linea",
   name: "Linea",
-  logo: "linea.png",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -26,5 +28,10 @@ export const lineaChain: ChainConfig = {
       url: "https://explorer.linea.build/",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "linea.png",
   tokens: [],
 };

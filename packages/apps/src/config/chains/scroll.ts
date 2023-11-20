@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const scrollChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.SCROLL,
   network: "scroll",
   name: "Scroll",
-  logo: "scroll.png",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -26,6 +28,11 @@ export const scrollChain: ChainConfig = {
       url: "https://scrollscan.com",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "scroll.png",
   tokens: [
     {
       decimals: 18,

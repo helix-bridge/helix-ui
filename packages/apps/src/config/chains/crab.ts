@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const crabChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.CRAB,
   network: "crab-dvm",
   name: "Crab",
-  logo: "crab.svg",
   nativeCurrency: {
     name: "CRAB",
     symbol: "CRAB",
@@ -26,6 +28,11 @@ export const crabChain: ChainConfig = {
       url: "https://crab.subscan.io/",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "crab.svg",
   tokens: [
     {
       decimals: 18,

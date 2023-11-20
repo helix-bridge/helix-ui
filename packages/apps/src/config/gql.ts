@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const QUERY_RECORDS = gql`
+export const QUERY_HISTORY_RECORDS = gql`
   query historyRecords(
     $row: Int!
     $page: Int!
@@ -50,7 +50,7 @@ export const QUERY_RECORDS = gql`
   }
 `;
 
-export const QUERY_RECORD_BY_ID = gql`
+export const QUERY_HISTORY_RECORD_BY_ID = gql`
   query historyRecordById($id: String!) {
     historyRecordById(id: $id) {
       sendAmount
@@ -80,7 +80,7 @@ export const QUERY_RECORD_BY_ID = gql`
   }
 `;
 
-export const QUERY_RELAYERS = gql`
+export const QUERY_SORTED_LNV20_RELAY_INFOS = gql`
   query sortedLnv20RelayInfos(
     $amount: String
     $decimals: Int
@@ -112,7 +112,7 @@ export const QUERY_RELAYERS = gql`
   }
 `;
 
-export const QUERY_LNRELAYERS = gql`
+export const QUERY_LNV20_RELAY_INFOS = gql`
   query queryLnv20RelayInfos($fromChain: String, $toChain: String, $relayer: String, $row: Int, $page: Int) {
     queryLnv20RelayInfos(fromChain: $fromChain, toChain: $toChain, relayer: $relayer, row: $row, page: $page) {
       total
@@ -135,18 +135,7 @@ export const QUERY_LNRELAYERS = gql`
   }
 `;
 
-export const QUERY_SPECIAL_RELAYER = gql`
-  query queryLnv20RelayInfos($fromChain: String, $toChain: String, $bridge: String, $relayer: String) {
-    queryLnv20RelayInfos(fromChain: $fromChain, toChain: $toChain, bridge: $bridge, relayer: $relayer) {
-      total
-      records {
-        sendToken
-      }
-    }
-  }
-`;
-
-export const QUERY_TX_PROGRESS = gql`
+export const QUERY_HISTORY_RECORD_BY_TX_HASH = gql`
   query historyRecordByTxHash($txHash: String) {
     historyRecordByTxHash(txHash: $txHash) {
       confirmedBlocks

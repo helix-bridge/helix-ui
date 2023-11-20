@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const lineaGoerliChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.LINEA_GOERLI,
   network: "linea-goerli",
   name: "Linea Goerli",
-  logo: "linea.png",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -27,6 +29,11 @@ export const lineaGoerliChain: ChainConfig = {
     },
   },
   testnet: true,
+
+  /**
+   * Custom
+   */
+  logo: "linea.png",
   tokens: [
     {
       decimals: 18,

@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const pangoroChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.PANGORO,
   network: "pangoro-dvm",
   name: "Pangoro",
-  logo: "pangoro.png",
   nativeCurrency: {
     name: "ORING",
     symbol: "ORING",
@@ -27,5 +29,10 @@ export const pangoroChain: ChainConfig = {
     },
   },
   testnet: true,
+
+  /**
+   * Custom
+   */
+  logo: "pangoro.png",
   tokens: [],
 };

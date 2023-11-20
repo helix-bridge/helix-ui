@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const zksyncChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.ZKSYNC,
   network: "zksync",
   name: "zkSync era",
-  logo: "zksync.png",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -26,6 +28,11 @@ export const zksyncChain: ChainConfig = {
       url: "https://explorer.zksync.io/",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "zksync.png",
   tokens: [
     {
       decimals: 18,

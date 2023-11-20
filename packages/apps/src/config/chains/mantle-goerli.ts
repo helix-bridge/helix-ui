@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const mantleGoerliChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.MANTLE_GOERLI,
   network: "mantle-goerli",
   name: "Mantle Testnet",
-  logo: "mantle.svg",
   nativeCurrency: {
     name: "MNT",
     symbol: "MNT",
@@ -27,6 +29,11 @@ export const mantleGoerliChain: ChainConfig = {
     },
   },
   testnet: true,
+
+  /**
+   * Custom
+   */
+  logo: "mantle.svg",
   tokens: [
     {
       decimals: 18,
