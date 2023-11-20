@@ -147,10 +147,20 @@ if (defaultSourceChain) {
   }
 }
 
-defaultSourceChains.sort((a, b) => a.name.localeCompare(b.name));
-defaultTargetChains.sort((a, b) => a.name.localeCompare(b.name));
-defaultSourceTokens.sort((a, b) => (a.type === "native" ? 1 : a.symbol.localeCompare(b.symbol)));
-defaultTargetTokens.sort((a, b) => (a.type === "native" ? 1 : a.symbol.localeCompare(b.symbol)));
+function chainCompareFn(a: ChainConfig, b: ChainConfig) {
+  return a.name.localeCompare(b.name);
+}
+
+function tokenCompareFn(a: Token, b: Token) {
+  return a.type === "native" ? 1 : a.symbol.localeCompare(b.symbol);
+}
+
+defaultSourceChains.sort(chainCompareFn);
+defaultTargetChains.sort(chainCompareFn);
+defaultSourceTokens.sort(tokenCompareFn);
+defaultTargetTokens.sort(tokenCompareFn);
+lnbridgeDefaultSourceChains.sort(chainCompareFn);
+lnbridgeDefaultTargetChains.sort(chainCompareFn);
 
 export function getCrossDefaultValue() {
   return {
@@ -181,14 +191,14 @@ export function getAvailableBridge(
 
 export function getAvailableSourceTokens(sourceChain: Network | undefined, targetChain: Network | undefined) {
   if (sourceChain && targetChain) {
-    return availableSourceTokens[sourceChain]?.[targetChain] || [];
+    return (availableSourceTokens[sourceChain]?.[targetChain] || []).sort(tokenCompareFn);
   }
   return [];
 }
 
 export function getAvailableTargetChains(sourceChain: Network | undefined) {
   if (sourceChain) {
-    return availableTargetChains[sourceChain] || [];
+    return (availableTargetChains[sourceChain] || []).sort(chainCompareFn);
   }
   return [];
 }
@@ -199,7 +209,7 @@ export function getAvailableTargetTokens(
   sourceToken: TokenSymbol | undefined,
 ) {
   if (sourceChain && targetChain && sourceToken) {
-    return availableTargetTokens[sourceChain]?.[targetChain]?.[sourceToken] || [];
+    return (availableTargetTokens[sourceChain]?.[targetChain]?.[sourceToken] || []).sort(tokenCompareFn);
   }
   return [];
 }
@@ -210,14 +220,14 @@ export function getLnBridgeCrossDefaultValue() {
 
 export function getLnBridgeAvailableSourceTokens(sourceChain: Network | undefined, targetChain: Network | undefined) {
   if (sourceChain && targetChain) {
-    return lnbridgeAvailableSourceTokens[sourceChain]?.[targetChain] || [];
+    return (lnbridgeAvailableSourceTokens[sourceChain]?.[targetChain] || []).sort(tokenCompareFn);
   }
   return [];
 }
 
 export function getLnBridgeAvailableTargetChains(sourceChain: Network | undefined) {
   if (sourceChain) {
-    return lnbridgeAvailableTargetChains[sourceChain] || [];
+    return (lnbridgeAvailableTargetChains[sourceChain] || []).sort(chainCompareFn);
   }
   return [];
 }
