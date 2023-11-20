@@ -25,6 +25,7 @@ import { mumbaiChain } from "@/config/chains/mumbai";
 import { scrollChain } from "@/config/chains/scroll";
 import { baseChain } from "@/config/chains/base";
 import { baseGoerliChain } from "@/config/chains/base-goerli";
+import { bscChain } from "@/config/chains/bsc";
 
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID || "";
 const appName = "Helix Bridge";
@@ -36,6 +37,7 @@ const { tokens: _4, ...mumbai } = mumbaiChain;
 const { tokens: _5, ...scroll } = scrollChain;
 const { tokens: _6, ...base } = baseChain;
 const { tokens: _7, ...baseGoerli } = baseGoerliChain;
+const { tokens: _8, ...bsc } = bscChain;
 
 export default function RainbowProvider({ children }: PropsWithChildren<unknown>) {
   const { chains, publicClient } = configureChains(
@@ -57,6 +59,7 @@ export default function RainbowProvider({ children }: PropsWithChildren<unknown>
       scroll,
       base,
       baseGoerli,
+      bsc,
     ],
     [publicProvider()],
   );

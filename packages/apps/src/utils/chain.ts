@@ -19,6 +19,7 @@ import { mumbaiChain } from "@/config/chains/mumbai";
 import { scrollChain } from "@/config/chains/scroll";
 import { baseChain } from "@/config/chains/base";
 import { baseGoerliChain } from "@/config/chains/base-goerli";
+import { bscChain } from "@/config/chains/bsc";
 
 export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
   switch (chainIdOrNetwork) {
@@ -79,6 +80,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.BASE_GOERLI:
     case "base-goerli":
       return baseGoerliChain;
+    case ChainID.BSC:
+    case "bsc":
+      return bscChain;
     default:
       return;
   }
@@ -105,6 +109,7 @@ export function getChainsConfig(env?: "all") {
     scrollChain,
     baseChain,
     baseGoerliChain,
+    bscChain,
   ];
 
   if (env === "all") {

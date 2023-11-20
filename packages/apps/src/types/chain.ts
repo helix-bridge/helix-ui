@@ -30,6 +30,8 @@ export enum ChainID {
 
   BASE = 8453,
   BASE_GOERLI = 84531,
+
+  BSC = 56,
 }
 
 // According to graphql indexer
@@ -52,7 +54,8 @@ export type Network =
   | "mumbai"
   | "scroll"
   | "base-goerli"
-  | "base";
+  | "base"
+  | "bsc";
 
 export interface ChainConfig extends Chain {
   id: ChainID;
