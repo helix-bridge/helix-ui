@@ -1,4 +1,4 @@
-import { Address } from "viem";
+import { Address, Hex } from "viem";
 
 /**
  * lpbridge-darwinia-dvm etc. are named from graphql indexer.
@@ -26,7 +26,7 @@ export type BridgeLogo = {
 
 export interface TransferOptions {
   relayer?: Address;
-  transferId?: Address | null;
+  transferId?: Hex | null;
   totalFee?: bigint;
   withdrawNonce?: bigint;
   depositedMargin?: bigint;

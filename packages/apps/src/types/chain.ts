@@ -1,6 +1,5 @@
 import type { Chain } from "wagmi";
 import { Token } from "./token";
-import { CrossChain } from "./cross-chain";
 
 export enum ChainID {
   DARWINIA = 46,
@@ -55,9 +54,16 @@ export type Network =
   | "base";
 
 export interface ChainConfig extends Chain {
+  /**
+   * Chain
+   */
   id: ChainID;
   network: Network;
+
+  /**
+   * Custom
+   */
   logo: string; // File name
-  tokens: (Token & { cross: CrossChain[] })[];
+  tokens: Token[];
   hidden?: boolean;
 }

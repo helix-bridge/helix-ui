@@ -41,3 +41,9 @@ export type AvailableTokens = {
     [targetChain in Network]?: Token[];
   };
 };
+
+export interface InputValue<T = unknown> {
+  input: string;
+  value: T;
+  valid: false;
+}
