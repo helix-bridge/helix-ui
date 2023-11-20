@@ -28,6 +28,15 @@ export const baseChain: ChainConfig = {
   },
   tokens: [
     {
+      decimals: 18,
+      symbol: "ETH",
+      name: "ETH",
+      type: "native",
+      address: "0x0000000000000000000000000000000000000000",
+      logo: "eth.svg",
+      cross: [],
+    },
+    {
       decimals: 6,
       symbol: "USDC",
       name: "USDC",
