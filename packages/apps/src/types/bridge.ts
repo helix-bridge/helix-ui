@@ -1,4 +1,7 @@
 import { Address, Hex } from "viem";
+import { PublicClient, WalletClient } from "wagmi";
+import { ChainConfig } from "./chain";
+import { Token } from "./token";
 
 /**
  * lpbridge-darwinia-dvm etc. are named from graphql indexer.
@@ -23,6 +26,17 @@ export type BridgeLogoType = "symbol" | "horizontal";
 export type BridgeLogo = {
   [key in BridgeLogoType]: string;
 };
+
+export interface BridgeConstructorArgs {
+  walletClient?: WalletClient | null;
+  publicClient?: PublicClient;
+  category: BridgeCategory;
+
+  sourceChain?: ChainConfig;
+  targetChain?: ChainConfig;
+  sourceToken?: Token;
+  targetToken?: Token;
+}
 
 export interface TransferOptions {
   relayer?: Address;
