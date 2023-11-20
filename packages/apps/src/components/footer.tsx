@@ -23,7 +23,7 @@ export default function Footer() {
   }, []);
 
   return (
-    <div className="app-footer bg-app-bg w-full">
+    <div className="app-footer w-full">
       <div className="px-middle container mx-auto flex h-full shrink-0 items-center justify-center lg:justify-between">
         {/* copyright */}
         <span className="text-sm font-light text-white/50">{`© ${new Date().getFullYear()} Helix Bridge`}</span>
@@ -49,7 +49,7 @@ export default function Footer() {
               <div className="h-4 w-[1px] bg-white/30" />
 
               <a
-                className="text-sm font-light text-white/50 transition hover:text-white/80 active:scale-95"
+                className="text-sm font-light text-white/50 transition hover:text-white active:scale-95"
                 href={mainnetOrTestnet.link}
                 rel="noopener noreferrer"
                 target="_blank"
