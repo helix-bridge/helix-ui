@@ -37,7 +37,7 @@ export const baseChain: ChainConfig = {
       cross: [],
     },
     {
-      decimals: 6,
+      decimals: 18,
       symbol: "USDC",
       name: "USDC",
       type: "erc20",
