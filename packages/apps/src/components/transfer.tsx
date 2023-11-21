@@ -336,10 +336,9 @@ export default function Transfer() {
         recipient={recipient || address}
         transferValue={deferredTransferValue}
         isOpen={isOpen}
-        onClose={setIsOpenFalse}
-        onSuccess={() => {
-          setTransferValue({ value: "", formatted: 0n });
+        onClose={() => {
           setIsOpenFalse();
+          setTransferValue({ value: "", formatted: 0n });
         }}
         refetchRelayers={refetchRelayers}
       />

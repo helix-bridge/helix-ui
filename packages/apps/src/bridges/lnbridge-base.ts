@@ -24,15 +24,11 @@ export class LnBridgeBase extends BaseBridge {
       symbol: "helix-symbol.svg",
     };
     this.name = "Helix LnBridge";
-    this.estimateTime = { min: 0, max: 1 };
+    this.estimateTime = { min: 1, max: 2 };
   }
 
   isLnBridge() {
     return true;
-  }
-
-  formatEstimateTime(): string {
-    return "Within 1 minute";
   }
 
   async getFee(args?: { baseFee?: bigint; protocolFee?: bigint; liquidityFeeRate?: bigint; transferAmount?: bigint }) {

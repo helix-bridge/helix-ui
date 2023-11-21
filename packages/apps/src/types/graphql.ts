@@ -157,3 +157,11 @@ export interface SpecialRelayerVariables {
   bridge?: BridgeCategory;
   relayer?: string;
 }
+
+export interface TxProgressResponseData {
+  historyRecordByTxHash: Pick<HistoryRecord, "confirmedBlocks" | "result" | "id"> | null;
+}
+
+export interface TxProgressVariables {
+  txHash: string;
+}

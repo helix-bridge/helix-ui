@@ -60,6 +60,16 @@ const config: Config = {
             height: "16px",
           },
         },
+        "spinner-rotate-left": {
+          "0%": { transform: "rotate(0deg)" },
+          "50%": { transform: "rotate(180deg)" },
+          "100%": { transform: "rotate(180deg)" },
+        },
+        "spinner-rotate-right": {
+          "0%": { transform: "rotate(0deg)" },
+          "50%": { transform: "rotate(180deg)" },
+          "100%": { transform: "rotate(180deg)" },
+        },
       },
       animation: {
         "notification-enter": "rightenter 400ms ease-out",
@@ -67,6 +77,8 @@ const config: Config = {
         "notification-fadeout": "notificationfadeout 200ms ease-out forwards",
         "count-loading-small": "countloadingsmall 1200ms cubic-bezier(0, 0.5, 0.5, 1) infinite",
         "count-loading-large": "countloadinglarge 1200ms cubic-bezier(0, 0.5, 0.5, 1) infinite",
+        "progress-anim-left": "spinner-rotate-left 9000ms linear 4500ms 1 paused forwards", // Duration: 9s, delay: 4.5s
+        "progress-anim-right": "spinner-rotate-right 9000ms linear 0ms 1 paused forwards",
       },
     },
   },

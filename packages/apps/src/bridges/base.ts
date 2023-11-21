@@ -115,7 +115,7 @@ export abstract class BaseBridge {
   }
 
   formatEstimateTime() {
-    return `${this.estimateTime.min}-${this.estimateTime.max} Minutes`;
+    return `${this.estimateTime.min}~${this.estimateTime.max} minutes`;
   }
 
   getTxGasLimit() {
