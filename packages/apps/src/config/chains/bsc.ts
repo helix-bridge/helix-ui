@@ -43,7 +43,10 @@ export const bscChain: ChainConfig = {
       type: "erc20",
       address: "0x55d398326f99059fF775485246999027B3197955",
       logo: "usdt.svg",
-      cross: [{ target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } }],
+      cross: [
+        { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "op", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+      ],
     },
     {
       decimals: 18,

@@ -20,6 +20,7 @@ import { scrollChain } from "@/config/chains/scroll";
 import { baseChain } from "@/config/chains/base";
 import { baseGoerliChain } from "@/config/chains/base-goerli";
 import { bscChain } from "@/config/chains/bsc";
+import { optimismChain } from "@/config/chains/optimism";
 
 export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
   switch (chainIdOrNetwork) {
@@ -83,6 +84,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.BSC:
     case "bsc":
       return bscChain;
+    case ChainID.OPTIMISM:
+    case "op":
+      return optimismChain;
     default:
       return;
   }
@@ -110,6 +114,7 @@ export function getChainsConfig(env?: "all") {
     baseChain,
     baseGoerliChain,
     bscChain,
+    optimismChain,
   ];
 
   if (env === "all") {
