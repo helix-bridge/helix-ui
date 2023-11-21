@@ -155,3 +155,9 @@ export const QUERY_TX_PROGRESS = gql`
     }
   }
 `;
+
+export const QUERY_CHECK_LNBRIDGE_EXIST = gql`
+  query checkLnBridgeExist($fromChainId: Int, $toChainId: Int, $fromToken: String, $toToken: String) {
+    checkLnBridgeExist(fromChainId: $fromChainId, toChainId: $toChainId, fromToken: $fromToken, toToken: $toToken)
+  }
+`;

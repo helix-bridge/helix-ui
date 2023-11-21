@@ -1,6 +1,6 @@
 import { TokenSymbol } from "./token";
 import { BridgeCategory } from "./bridge";
-import { Network } from "./chain";
+import { ChainID, Network } from "./chain";
 import { Address } from "viem";
 
 export enum RecordStatus {
@@ -164,4 +164,15 @@ export interface TxProgressResponseData {
 
 export interface TxProgressVariables {
   txHash: string;
+}
+
+export interface CheckLnBridgeExistResponseData {
+  checkLnBridgeExist: boolean | null;
+}
+
+export interface CheckLnBridgeExistVariables {
+  fromChainId: ChainID;
+  toChainId: ChainID;
+  fromToken: Address;
+  toToken: Address;
 }

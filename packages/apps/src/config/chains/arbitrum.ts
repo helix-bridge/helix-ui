@@ -60,5 +60,17 @@ export const arbitrumChain: ChainConfig = {
         { target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
       ],
     },
+    {
+      decimals: 6,
+      symbol: "USDC",
+      name: "USDC",
+      type: "erc20",
+      address: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+      logo: "usdc.svg",
+      cross: [
+        { target: { network: "mantle", symbol: "USDC" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "scroll", symbol: "USDC" }, bridge: { category: "lnbridgev20-default" } },
+      ],
+    },
   ],
 };

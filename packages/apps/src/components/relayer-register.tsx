@@ -3,13 +3,13 @@
 import Button from "@/ui/button";
 import { Divider } from "@/ui/divider";
 import StepNumber from "@/ui/step-number";
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useCallback, useEffect, useState } from "react";
 import ChainSelect from "./chain-select";
 import TokenSelect from "./token-select";
-import { ChainConfig } from "@/types/chain";
+import { ChainConfig, ChainID } from "@/types/chain";
 import { Token, TokenSymbol } from "@/types/token";
 import { BridgeCategory } from "@/types/bridge";
-import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { Address, useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import Image from "next/image";
 import { formatFeeRate, getChainLogoSrc, getTokenLogoSrc, isValidFeeRate } from "@/utils/misc";
 import Tooltip from "@/ui/tooltip";
@@ -21,8 +21,13 @@ import { getParsedCrossChain } from "@/utils/cross-chain";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { formatBalance } from "@/utils/balance";
 import { useApolloClient } from "@apollo/client";
-import { QUERY_SPECIAL_RELAYER } from "@/config/gql";
-import { SpecialRelayerResponseData, SpecialRelayerVariables } from "@/types/graphql";
+import { QUERY_CHECK_LNBRIDGE_EXIST, QUERY_SPECIAL_RELAYER } from "@/config/gql";
+import {
+  CheckLnBridgeExistResponseData,
+  CheckLnBridgeExistVariables,
+  SpecialRelayerResponseData,
+  SpecialRelayerVariables,
+} from "@/types/graphql";
 import { notification } from "@/ui/notification";
 import { useRelayer } from "@/hooks/use-relayer";
 import dynamic from "next/dynamic";
@@ -106,6 +111,35 @@ export default function RelayerRegister() {
       return false;
     }
   };
+
+  const isLnBridgeExist = useCallback(async () => {
+    if (sourceChain && targetChain && sourceToken && targetToken) {
+      const { data: lnbridgeData } = await apolloClient.query<
+        CheckLnBridgeExistResponseData,
+        CheckLnBridgeExistVariables
+      >({
+        query: QUERY_CHECK_LNBRIDGE_EXIST,
+        variables: {
+          fromChainId: sourceChain.id,
+          toChainId: targetChain.id,
+          fromToken: sourceToken.address,
+          toToken: targetToken.address,
+        },
+        fetchPolicy: "no-cache",
+      });
+
+      if (lnbridgeData.checkLnBridgeExist) {
+        return true;
+      }
+    }
+
+    notification.warn({
+      title: "Deposit failed",
+      description: `The bridge does not exist.`,
+    });
+    console.warn("[isLnBridgeExist]", sourceChain?.id, targetChain?.id, sourceToken?.address, targetToken?.address);
+    return false;
+  }, [apolloClient, sourceChain, targetChain, sourceToken, targetToken]);
 
   useEffect(() => {
     const availableCategories = new Set<BridgeCategory>();
@@ -219,6 +253,10 @@ export default function RelayerRegister() {
                     setSourceChain(undefined);
                     setTargetChain(undefined);
                     setSourceToken(undefined);
+                    setBridgeCategory(undefined);
+                    setMargin({ formatted: 0n, value: "" });
+                    setBaseFee({ formatted: 0n, value: "" });
+                    setFeeRate({ formatted: 0, value: "" });
                     setCurrentStep(Step.ONE);
                     setCompleteMargin(false);
                   }}
@@ -270,10 +308,6 @@ export default function RelayerRegister() {
                       } else if (targetToken?.type !== "native" && margin.formatted > (targetAllowance?.value || 0n)) {
                         try {
                           setIsSettingDefaultMargin(true);
-                          if (await isRegistered()) {
-                            setIsSettingDefaultMargin(false);
-                            return;
-                          }
                           await targetApprove(margin.formatted);
                         } catch (err) {
                           console.error(err);
@@ -283,7 +317,7 @@ export default function RelayerRegister() {
                       } else {
                         try {
                           setIsSettingDefaultMargin(true);
-                          if (await isRegistered()) {
+                          if ((await isRegistered()) || !(await isLnBridgeExist())) {
                             setIsSettingDefaultMargin(false);
                             return;
                           }
@@ -340,10 +374,6 @@ export default function RelayerRegister() {
                   ) {
                     try {
                       setBusy(true);
-                      if (await isRegistered()) {
-                        setBusy(false);
-                        return;
-                      }
                       await sourceApprove(margin.formatted);
                     } catch (err) {
                       console.error(err);
@@ -353,7 +383,7 @@ export default function RelayerRegister() {
                   } else {
                     try {
                       setBusy(true);
-                      if (await isRegistered()) {
+                      if ((await isRegistered()) || !(await isLnBridgeExist())) {
                         setBusy(false);
                         return;
                       }

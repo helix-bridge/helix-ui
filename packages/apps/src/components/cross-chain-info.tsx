@@ -63,7 +63,7 @@ export default function CrossChainInfo({ fee, bridge, maxMargin, isLoadingMaxMar
             {formatBalance(fee.value, fee.token.decimals, { precision: 6 })} {fee.token.symbol}
           </span>
         ) : (
-          <Tooltip content="No relayer available, please check the transfer amount">
+          <Tooltip content="Liquidity is not enough">
             <Image width={16} height={16} alt="Fee" src="/images/warning.svg" />
           </Tooltip>
         )}

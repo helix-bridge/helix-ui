@@ -49,5 +49,14 @@ export const zksyncChain: ChainConfig = {
         { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
       ],
     },
+    {
+      decimals: 6,
+      symbol: "USDC",
+      name: "USDC",
+      type: "erc20",
+      address: "0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4",
+      logo: "usdc.svg",
+      cross: [],
+    },
   ],
 };
