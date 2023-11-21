@@ -164,7 +164,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
       if (address && bridgeClient) {
         try {
           const receipt = await bridgeClient.targetApprove(amount, address);
-          notifyTransaction(receipt, sourceChain);
+          notifyTransaction(receipt, targetChain);
 
           setTargetAllowance(await bridgeClient.getTargetAllowance(address));
 
@@ -175,7 +175,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
         }
       }
     },
-    [address, bridgeClient, sourceChain],
+    [address, bridgeClient, targetChain],
   );
 
   const depositMargin = useCallback(
@@ -183,7 +183,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
       if (address && defaultBridge) {
         try {
           const receipt = await defaultBridge.depositMargin(margin);
-          notifyTransaction(receipt, sourceChain);
+          notifyTransaction(receipt, targetChain);
 
           const a = await defaultBridge.getTargetAllowance(address);
           const b = await defaultBridge.getTargetBalance(address);
@@ -197,7 +197,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
         }
       }
     },
-    [address, defaultBridge, sourceChain],
+    [address, defaultBridge, targetChain],
   );
 
   const setFeeAndRate = useCallback(
