@@ -1,10 +1,10 @@
 import SegmentedTabs, { SegmentedTabsProps } from "@/ui/segmented-tabs";
 import Tooltip from "@/ui/tooltip";
 import Image from "next/image";
-import { PropsWithChildren, useEffect, useMemo, useState } from "react";
+import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { BalanceInput } from "./balance-input";
 import FeeRateInput from "./fee-rate-input";
-import { LnRelayerInfo } from "@/types/graphql";
+import { CheckLnBridgeExistResponseData, CheckLnBridgeExistVariables, LnRelayerInfo } from "@/types/graphql";
 import { getChainConfig } from "@/utils/chain";
 import { useNetwork, useSwitchNetwork } from "wagmi";
 import { formatBalance } from "@/utils/balance";
@@ -14,6 +14,9 @@ import { formatFeeRate, isValidFeeRate } from "@/utils/misc";
 import { TransactionReceipt } from "viem";
 import { Token } from "@/types/token";
 import { Subscription, from } from "rxjs";
+import { useApolloClient } from "@apollo/client";
+import { QUERY_CHECK_LNBRIDGE_EXIST } from "@/config/gql";
+import { notification } from "@/ui/notification";
 
 type TabKey = "update" | "deposit" | "withdraw";
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
@@ -69,6 +72,36 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
 
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
+  const apolloClient = useApolloClient();
+
+  const isLnBridgeExist = useCallback(async () => {
+    if (sourceChain && targetChain && sourceToken && targetToken) {
+      const { data: lnbridgeData } = await apolloClient.query<
+        CheckLnBridgeExistResponseData,
+        CheckLnBridgeExistVariables
+      >({
+        query: QUERY_CHECK_LNBRIDGE_EXIST,
+        variables: {
+          fromChainId: sourceChain.id,
+          toChainId: targetChain.id,
+          fromToken: sourceToken.address,
+          toToken: targetToken.address,
+        },
+        fetchPolicy: "no-cache",
+      });
+
+      if (lnbridgeData.checkLnBridgeExist) {
+        return true;
+      }
+    }
+
+    notification.warn({
+      title: "Deposit failed",
+      description: `The bridge does not exist.`,
+    });
+    console.warn("[isLnBridgeExist]", sourceChain?.id, targetChain?.id, sourceToken?.address, targetToken?.address);
+    return false;
+  }, [apolloClient, sourceChain, targetChain, sourceToken, targetToken]);
 
   useEffect(() => {
     const _category = relayerInfo?.bridge;
@@ -204,7 +237,9 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                 await targetApprove(depositAmount.formatted);
               } else {
                 setBusy(true);
-                receipt = await depositMargin(depositAmount.formatted);
+                if (await isLnBridgeExist()) {
+                  receipt = await depositMargin(depositAmount.formatted);
+                }
               }
             } else if (bridgeCategory === "lnbridgev20-opposite") {
               if (chain?.id !== sourceChain?.id) {
@@ -214,7 +249,9 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                 await sourceApprove(depositAmount.formatted);
               } else {
                 setBusy(true);
-                receipt = await updateFeeAndMargin(depositAmount.formatted, baseFee.formatted, feeRate.formatted);
+                if (await isLnBridgeExist()) {
+                  receipt = await updateFeeAndMargin(depositAmount.formatted, baseFee.formatted, feeRate.formatted);
+                }
               }
             }
           } else if (activeKey === "withdraw") {
