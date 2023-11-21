@@ -219,6 +219,10 @@ export default function RelayerRegister() {
                     setSourceChain(undefined);
                     setTargetChain(undefined);
                     setSourceToken(undefined);
+                    setBridgeCategory(undefined);
+                    setMargin({ formatted: 0n, value: "" });
+                    setBaseFee({ formatted: 0n, value: "" });
+                    setFeeRate({ formatted: 0, value: "" });
                     setCurrentStep(Step.ONE);
                     setCompleteMargin(false);
                   }}
