@@ -46,6 +46,7 @@ export const bscChain: ChainConfig = {
       cross: [
         { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "op", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "linea", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
       ],
     },
     {
