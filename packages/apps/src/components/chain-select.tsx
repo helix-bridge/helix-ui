@@ -13,7 +13,7 @@ export default function ChainSelect({ options, value, placeholder, className, on
   return (
     <ISelect
       labelClassName={`gap-small flex items-center justify-between ${className}`}
-      childClassName="bg-component border-line py-small flex flex-col rounded border"
+      childClassName="bg-component border-line py-small flex flex-col rounded border max-h-60 overflow-y-auto"
       label={value ? <span className="truncate text-sm font-normal text-white">{value.name}</span> : undefined}
       placeholder={<span className="truncate text-sm font-normal text-white/50">{placeholder}</span>}
       clearable
