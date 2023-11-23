@@ -1,4 +1,4 @@
-import { Address, Hex } from "viem";
+import { Address } from "viem";
 import { PublicClient, WalletClient } from "wagmi";
 import { ChainConfig } from "./chain";
 import { Token } from "./token";
@@ -36,12 +36,4 @@ export interface BridgeConstructorArgs {
   targetChain?: ChainConfig;
   sourceToken?: Token;
   targetToken?: Token;
-}
-
-export interface TransferOptions {
-  relayer?: Address;
-  transferId?: Hex | null;
-  totalFee?: bigint;
-  withdrawNonce?: bigint;
-  depositedMargin?: bigint;
 }

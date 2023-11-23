@@ -1,6 +1,12 @@
-import { L2BridgeCategory, LnBridgeCategory, HelixLpBridgeCategory, HelixBridgeCategory } from "./bridge";
-import { Network } from "./chain";
-import { TokenSymbol } from "./token";
+import {
+  L2BridgeCategory,
+  LnBridgeCategory,
+  HelixLpBridgeCategory,
+  HelixBridgeCategory,
+  BridgeCategory,
+} from "./bridge";
+import { Network, ChainConfig } from "./chain";
+import { TokenSymbol, Token } from "./token";
 
 interface Target {
   network: Network;
@@ -46,3 +52,29 @@ export type CrossChain =
       action?: never;
       hidden?: boolean;
     };
+
+export type AvailableBridges = {
+  [sourceChain in Network]?: {
+    [targetChain in Network]?: {
+      [sourceToken in TokenSymbol]?: BridgeCategory[];
+    };
+  };
+};
+
+export type AvailableSourceTokens = {
+  [sourceChain in Network]?: {
+    [targetChain in Network]?: Token[];
+  };
+};
+
+export type AvailableTargetChains = {
+  [sourceChain in Network]?: ChainConfig[];
+};
+
+export type AvailableTargetTokens = {
+  [sourceChain in Network]?: {
+    [targetChain in Network]?: {
+      [sourceToken in TokenSymbol]?: Token[];
+    };
+  };
+};
