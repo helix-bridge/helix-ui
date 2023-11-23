@@ -20,7 +20,7 @@ export default function ChainTokenSelect({ options, value, width, placement, onC
   return (
     <ISelect
       labelClassName="p-middle bg-app-bg flex shrink-0 items-center justify-between border-transparent"
-      childClassName="bg-component border-radius border border-primary"
+      childClassName="bg-app-bg rounded border border-primary shadow-2xl"
       label={
         value ? (
           <div className="gap-middle lg:gap-large flex items-center">
@@ -72,7 +72,7 @@ function Cascader({
     <div className="py-small p-small lg:p-middle flex" style={{ width: width }}>
       {/* left */}
       <div
-        className={`pr-small gap-small flex flex-1 flex-col overflow-y-auto border-r ${
+        className={`pr-small gap-small flex max-h-60 flex-1 flex-col overflow-y-auto border-r ${
           tokens.length ? "border-r-white/20" : "border-r-transparent"
         }`}
       >
@@ -108,7 +108,7 @@ function Cascader({
       </div>
 
       {/* right */}
-      <div className="pl-small flex-1 overflow-y-auto">
+      <div className="pl-small max-h-60 flex-1 overflow-y-auto">
         {tokens.map((token) => {
           return (
             <button

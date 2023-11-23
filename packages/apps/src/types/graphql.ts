@@ -1,6 +1,6 @@
 import { TokenSymbol } from "./token";
 import { BridgeCategory } from "./bridge";
-import { Network } from "./chain";
+import { Network, ChainID } from "./chain";
 import { Address, Hex } from "viem";
 
 /**
@@ -155,4 +155,19 @@ export interface HistoryRecordByTxHashReqParams {
 
 export interface HistoryRecordByTxHashResData {
   historyRecordByTxHash: Pick<HistoryRecord, "confirmedBlocks" | "result" | "id"> | null;
+}
+
+export interface TxProgressVariables {
+  txHash: string;
+}
+
+export interface CheckLnBridgeExistResponseData {
+  checkLnBridgeExist: boolean | null;
+}
+
+export interface CheckLnBridgeExistVariables {
+  fromChainId: ChainID;
+  toChainId: ChainID;
+  fromToken: Address;
+  toToken: Address;
 }

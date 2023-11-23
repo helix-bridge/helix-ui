@@ -50,16 +50,16 @@ export default function CrossChainInfo({ fee, bridge, maxMargin, isLoadingMaxMar
 
   return (
     <div className="bg-app-bg p-middle gap-small border-radius flex flex-col border border-transparent">
-      <Item label="Estimated arrival time" value={bridge?.formatEstimateTime()} />
+      <Item label="Estimated Arrival Time" value={bridge?.formatEstimateTime()} />
       <Item
-        label="Transaction fee"
+        label="Transaction Fee"
         value={
           fee?.loading ? (
             <CountLoading color="white" />
           ) : fee?.token && fee.value ? (
             `${formatBalance(fee.value, fee.token.decimals, { precision: 6 })} ${fee.token.symbol}`
           ) : (
-            <Tooltip content="No relayer available, please check the transfer amount">
+            <Tooltip content="Liquidity is not enough">
               <Image width={16} height={16} alt="Fee" src="/images/warning.svg" />
             </Tooltip>
           )
@@ -67,13 +67,13 @@ export default function CrossChainInfo({ fee, bridge, maxMargin, isLoadingMaxMar
       />
       {transferLimit ? (
         <Item
-          label="Transfer limit"
+          label="Transfer Limit"
           value={`${formatBalance(transferLimit.value, transferLimit.token.decimals)} ${transferLimit.token.symbol}`}
         />
       ) : null}
       {dailyLimit ? (
         <Item
-          label="Daily limit"
+          label="Daily Limit"
           value={
             dailyLimit.loading ? (
               <CountLoading color="white" />

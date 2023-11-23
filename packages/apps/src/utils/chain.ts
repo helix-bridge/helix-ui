@@ -21,6 +21,8 @@ import {
 } from "@/config/chains";
 import { ChainConfig, ChainID, Network } from "@/types";
 import { isProduction } from "./env";
+import { bscChain } from "@/config/chains/bsc";
+import { optimismChain } from "@/config/chains/optimism";
 
 export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
   switch (chainIdOrNetwork) {
@@ -81,6 +83,12 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.BASE_GOERLI:
     case "base-goerli":
       return baseGoerliChain;
+    case ChainID.BSC:
+    case "bsc":
+      return bscChain;
+    case ChainID.OPTIMISM:
+    case "op":
+      return optimismChain;
     default:
       return;
   }
@@ -107,6 +115,8 @@ export function getChainConfigs(askAll?: boolean) {
     scrollChain,
     baseChain,
     baseGoerliChain,
+    bscChain,
+    optimismChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {

@@ -55,5 +55,17 @@ export const scrollChain: ChainConfig = {
         { target: { network: "zksync", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
       ],
     },
+    {
+      decimals: 6,
+      symbol: "USDC",
+      name: "USDC",
+      type: "erc20",
+      address: "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4",
+      logo: "usdc.svg",
+      cross: [
+        { target: { network: "mantle", symbol: "USDC" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "arbitrum", symbol: "USDC" }, bridge: { category: "lnbridgev20-default" } },
+      ],
+    },
   ],
 };

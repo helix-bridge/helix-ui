@@ -144,3 +144,9 @@ export const QUERY_HISTORY_RECORD_BY_TX_HASH = gql`
     }
   }
 `;
+
+export const QUERY_CHECK_LNBRIDGE_EXIST = gql`
+  query checkLnBridgeExist($fromChainId: Int, $toChainId: Int, $fromToken: String, $toToken: String) {
+    checkLnBridgeExist(fromChainId: $fromChainId, toChainId: $toChainId, fromToken: $fromToken, toToken: $toToken)
+  }
+`;
