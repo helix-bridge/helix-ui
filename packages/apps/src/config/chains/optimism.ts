@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const optimismChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.OPTIMISM,
   network: "op",
   name: "OP Mainnet",
-  logo: "optimism.png",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -26,6 +28,11 @@ export const optimismChain: ChainConfig = {
       url: "https://optimistic.etherscan.io/",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "optimism.png",
   tokens: [
     {
       decimals: 18,

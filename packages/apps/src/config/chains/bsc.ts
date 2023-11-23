@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const bscChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.BSC,
   network: "bsc",
   name: "BSC",
-  logo: "bsc.svg",
   nativeCurrency: {
     name: "BNB",
     symbol: "BNB",
@@ -26,6 +28,11 @@ export const bscChain: ChainConfig = {
       url: "https://bscscan.com/",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "bsc.svg",
   tokens: [
     {
       decimals: 18,
