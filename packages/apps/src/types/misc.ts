@@ -13,3 +13,5 @@ export interface TransferOptions {
   withdrawNonce?: bigint;
   depositedMargin?: bigint;
 }
+
+export type Location = "source" | "target";
