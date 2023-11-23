@@ -157,17 +157,13 @@ export interface HistoryRecordByTxHashResData {
   historyRecordByTxHash: Pick<HistoryRecord, "confirmedBlocks" | "result" | "id"> | null;
 }
 
-export interface TxProgressVariables {
-  txHash: string;
-}
-
-export interface CheckLnBridgeExistResponseData {
-  checkLnBridgeExist: boolean | null;
-}
-
-export interface CheckLnBridgeExistVariables {
+export interface CheckLnBridgeExistReqParams {
   fromChainId: ChainID;
   toChainId: ChainID;
   fromToken: Address;
   toToken: Address;
+}
+
+export interface CheckLnBridgeExistResData {
+  checkLnBridgeExist: boolean | null;
 }
