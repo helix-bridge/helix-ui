@@ -18,11 +18,11 @@ export function parseRecordResult(result: RecordResult) {
   }
 }
 
-export function getTokenLogoSrc(fileName?: string | null) {
+export function getTokenLogoSrc(fileName: string | null | undefined) {
   return `/images/token/${fileName || "unknown.svg"}`;
 }
 
-export function getChainLogoSrc(fileName?: string | null) {
+export function getChainLogoSrc(fileName: string | null | undefined) {
   return `/images/network/${fileName || "unknown.png"}`;
 }
 
