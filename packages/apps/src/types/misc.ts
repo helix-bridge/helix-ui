@@ -1,7 +1,7 @@
 export interface InputValue<T = unknown> {
   input: string;
   value: T;
-  valid: false;
+  valid: boolean;
 }
 
 export type Location = "source" | "target";
