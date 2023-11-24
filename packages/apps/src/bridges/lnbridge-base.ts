@@ -1,25 +1,12 @@
-import { ChainConfig } from "@/types/chain";
 import { BaseBridge } from "./base";
 import { Address, TransactionReceipt } from "viem";
-import { Token } from "@/types/token";
-import { BridgeCategory, BridgeLogo, TransferOptions } from "@/types/bridge";
-import { PublicClient, WalletClient } from "wagmi";
+import { BridgeConstructorArgs, GetFeeArgs, TransferOptions } from "@/types/bridge";
 
 export class LnBridgeBase extends BaseBridge {
-  constructor(args: {
-    walletClient?: WalletClient | null;
-    publicClient?: PublicClient;
-    category: BridgeCategory;
-    logo?: BridgeLogo;
-
-    sourceChain?: ChainConfig;
-    targetChain?: ChainConfig;
-    sourceToken?: Token;
-    targetToken?: Token;
-  }) {
+  constructor(args: BridgeConstructorArgs) {
     super(args);
 
-    this.logo = args.logo ?? {
+    this.logo = {
       horizontal: "helix-horizontal.svg",
       symbol: "helix-symbol.svg",
     };
@@ -31,7 +18,7 @@ export class LnBridgeBase extends BaseBridge {
     return true;
   }
 
-  async getFee(args?: { baseFee?: bigint; protocolFee?: bigint; liquidityFeeRate?: bigint; transferAmount?: bigint }) {
+  async getFee(args?: GetFeeArgs) {
     if (this.sourceToken) {
       return {
         value:
@@ -47,7 +34,7 @@ export class LnBridgeBase extends BaseBridge {
     _sender: Address,
     _recipient: Address,
     _amount: bigint,
-    _options?: TransferOptions & { estimateGas?: boolean },
+    _options?: TransferOptions & { askEstimateGas?: boolean },
   ): Promise<bigint | TransactionReceipt | undefined> {
     return;
   }

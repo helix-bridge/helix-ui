@@ -1,22 +1,10 @@
 import { Address, TransactionReceipt } from "viem";
 import { LnBridgeBase } from "./lnbridge-base";
-import { ChainConfig, ChainID } from "@/types/chain";
-import { Token } from "@/types/token";
-import { PublicClient, WalletClient } from "wagmi";
-import { BridgeCategory, BridgeLogo, TransferOptions } from "@/types/bridge";
+import { ChainID } from "@/types/chain";
+import { BridgeConstructorArgs, TransferOptions } from "@/types/bridge";
 
 export class LnBridgeOpposite extends LnBridgeBase {
-  constructor(args: {
-    walletClient?: WalletClient | null;
-    publicClient?: PublicClient;
-    category: BridgeCategory;
-    logo?: BridgeLogo;
-
-    sourceChain?: ChainConfig;
-    targetChain?: ChainConfig;
-    sourceToken?: Token;
-    targetToken?: Token;
-  }) {
+  constructor(args: BridgeConstructorArgs) {
     super(args);
     this.initContract();
   }
@@ -39,7 +27,7 @@ export class LnBridgeOpposite extends LnBridgeBase {
     _sender: Address,
     recipient: Address,
     amount: bigint,
-    options?: TransferOptions & { estimateGas?: boolean },
+    options?: TransferOptions & { askEstimateGas?: boolean },
   ): Promise<bigint | TransactionReceipt | undefined> {
     const account = await this.getSigner();
     const provider = options?.relayer;
@@ -55,7 +43,7 @@ export class LnBridgeOpposite extends LnBridgeBase {
       this.targetToken &&
       this.targetChain
     ) {
-      const estimateGas = options?.estimateGas ?? false;
+      const askEstimateGas = options?.askEstimateGas ?? false;
       const totalFee = options?.totalFee ?? 0n;
       const snapshot = {
         remoteChainId: BigInt(this.targetChain.id),
@@ -77,7 +65,7 @@ export class LnBridgeOpposite extends LnBridgeBase {
         account,
       } as const;
 
-      if (estimateGas) {
+      if (askEstimateGas) {
         return this.sourcePublicClient.estimateContractGas(defaultParams);
       } else if (this.walletClient) {
         const hash = await this.walletClient.writeContract(defaultParams);
@@ -97,11 +85,9 @@ export class LnBridgeOpposite extends LnBridgeBase {
       this.publicClient &&
       this.walletClient
     ) {
-      const abi = (await import(`../abi/lnbridgev20-opposite`)).default;
-
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,
-        abi,
+        abi: (await import(`../abi/lnbridgev20-opposite`)).default,
         functionName: "updateProviderFeeAndMargin",
         args: [
           BigInt(this.targetChain.id),

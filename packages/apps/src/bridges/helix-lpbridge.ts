@@ -1,8 +1,5 @@
-import { BridgeCategory, BridgeLogo, TransferOptions } from "@/types/bridge";
+import { BridgeConstructorArgs, GetFeeArgs, TransferOptions } from "@/types/bridge";
 import { BaseBridge } from "./base";
-import { ChainConfig } from "@/types/chain";
-import { Token } from "@/types/token";
-import { WalletClient, PublicClient } from "wagmi";
 import { Address, TransactionReceipt } from "viem";
 import { HistoryRecord } from "@/types/graphql";
 
@@ -11,17 +8,7 @@ export class HelixLpBridge extends BaseBridge {
   private readonly feePercent = 0.003; // 0.3%
   private readonly relayGasLimit = 100000n;
 
-  constructor(args: {
-    walletClient?: WalletClient | null;
-    publicClient?: PublicClient;
-    category: BridgeCategory;
-    logo?: BridgeLogo;
-
-    sourceChain?: ChainConfig;
-    targetChain?: ChainConfig;
-    sourceToken?: Token;
-    targetToken?: Token;
-  }) {
+  constructor(args: BridgeConstructorArgs) {
     const sourceToken = args.sourceToken ? { ...args.sourceToken } : undefined; // DON'T USE `const sourceToken = args.sourceToken`
     const targetToken = args.targetToken ? { ...args.targetToken } : undefined;
     if (args.sourceChain?.network === "darwinia-dvm" && sourceToken?.symbol === "RING") {
@@ -33,7 +20,7 @@ export class HelixLpBridge extends BaseBridge {
 
     this.initContract();
 
-    this.logo = args.logo ?? {
+    this.logo = {
       horizontal: "helix-horizontal.svg",
       symbol: "helix-symbol.svg",
     };
@@ -44,21 +31,21 @@ export class HelixLpBridge extends BaseBridge {
   private initContract() {
     const backing = "0x84f7a56483C100ECb12CbB4A31b7873dAE0d8E9B";
     const issuing = "0x5F8D4232367759bCe5d9488D3ade77FCFF6B9b6B";
-    this.initContractFromBackingIssuing(backing, issuing);
+    this.initContractByBackingIssuing(backing, issuing);
   }
 
   protected async _transfer(
     _sender: Address,
     recipient: Address,
     amount: bigint,
-    options?: TransferOptions & { estimateGas?: boolean },
+    options?: TransferOptions & { askEstimateGas?: boolean },
   ): Promise<bigint | TransactionReceipt | undefined> {
     const account = await this.getSigner();
     if (account && this.contract && this.sourcePublicClient) {
       const nonce = BigInt(Date.now()) + this.prefix;
       const tokenIndex = this.crossInfo?.index ?? 0;
       const totalFee = options?.totalFee ?? 0n;
-      const estimateGas = options?.estimateGas ?? false;
+      const askEstimateGas = options?.askEstimateGas ?? false;
 
       const abi = (await import("@/abi/lpbridge")).default;
       const address = this.contract.sourceAddress;
@@ -82,7 +69,7 @@ export class HelixLpBridge extends BaseBridge {
         account,
       } as const;
 
-      if (estimateGas) {
+      if (askEstimateGas) {
         return this.sourceToken?.type === "native"
           ? this.sourcePublicClient.estimateContractGas(nativeParams)
           : this.sourcePublicClient.estimateContractGas(defaultParams);
@@ -102,14 +89,9 @@ export class HelixLpBridge extends BaseBridge {
     await this.validateNetwork("target");
 
     if (this.contract && this.publicClient && this.walletClient) {
-      const value = await this.getBridgeFee();
-      const abi = (await import("@/abi/lpbridge-sub2eth")).default;
-      const address = this.contract.targetAddress;
-      const gas = this.getTxGasLimit();
-
       const hash = await this.walletClient.writeContract({
-        address,
-        abi,
+        address: this.contract.targetAddress,
+        abi: (await import("@/abi/lpbridge-sub2eth")).default,
         functionName: "requestCancelIssuing",
         args: [
           BigInt(record.messageNonce || 0),
@@ -121,8 +103,8 @@ export class HelixLpBridge extends BaseBridge {
           BigInt(record.id.split("-").at(1) || 0),
           this.sourceToken?.type === "native",
         ],
-        value,
-        gas,
+        value: await this.getBridgeFee(),
+        gas: this.getTxGasLimit(),
       });
       return this.publicClient.waitForTransactionReceipt({ hash });
     }
@@ -130,12 +112,11 @@ export class HelixLpBridge extends BaseBridge {
 
   private async getBridgeFee() {
     if (this.contract && this.sourcePublicClient) {
-      const abi = (await import("@/abi/lpbridge")).default;
       return this.sourcePublicClient.readContract({
         address: this.contract.sourceAddress,
-        abi,
+        abi: (await import("@/abi/lpbridge")).default,
         functionName: "fee",
-      }) as unknown as bigint; // Native token
+      }); // Native token
     }
   }
 
@@ -161,7 +142,7 @@ export class HelixLpBridge extends BaseBridge {
     }
   }
 
-  async getFee(args?: { baseFee?: bigint; liquidityFeeRate?: bigint; transferAmount?: bigint }) {
+  async getFee(args?: GetFeeArgs) {
     if (this.sourceToken && this.crossInfo?.baseFee && this.targetPublicClient) {
       let value =
         ((args?.transferAmount || 0n) * BigInt(Math.floor(this.feePercent * 1000))) / 1000n + this.crossInfo.baseFee;

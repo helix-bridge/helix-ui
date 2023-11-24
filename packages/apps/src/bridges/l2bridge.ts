@@ -1,8 +1,5 @@
-import { BridgeCategory, BridgeLogo, TransferOptions } from "@/types/bridge";
+import { BridgeConstructorArgs, TransferOptions } from "@/types/bridge";
 import { BaseBridge } from "./base";
-import { ChainConfig, ChainID } from "@/types/chain";
-import { Token } from "@/types/token";
-import { PublicClient, WalletClient } from "wagmi";
 import { Address, TransactionReceipt, encodeAbiParameters } from "viem";
 
 /**
@@ -16,21 +13,11 @@ export class L2ArbitrumBridge extends BaseBridge {
   private readonly l2GasPriceScaler = 3n; // To ensure a successful transaction, we set the scaler to be 3 times
   private helixDAO: Address | undefined;
 
-  constructor(args: {
-    walletClient?: WalletClient | null;
-    publicClient?: PublicClient;
-    category: BridgeCategory;
-    logo?: BridgeLogo;
-
-    sourceChain?: ChainConfig;
-    targetChain?: ChainConfig;
-    sourceToken?: Token;
-    targetToken?: Token;
-  }) {
+  constructor(args: BridgeConstructorArgs) {
     super(args);
     this.initContract();
 
-    this.logo = args.logo ?? {
+    this.logo = {
       horizontal: "l2arbitrum-horizontal.png",
       symbol: "l2arbitrum-symbol.png",
     };
@@ -39,12 +26,12 @@ export class L2ArbitrumBridge extends BaseBridge {
   }
 
   private initContract() {
-    if (this.sourceChain?.id === ChainID.GOERLI && this.targetChain?.id === ChainID.ARBITRUM_GOERLI) {
+    if (this.sourceChain?.network === "goerli" && this.targetChain?.network === "arbitrum-goerli") {
       this.contract = {
         sourceAddress: "0x0000000000000000000000000000000000000000",
         targetAddress: "0x4c7708168395aea569453fc36862d2ffcdac588c",
       };
-    } else if (this.sourceChain?.id === ChainID.ETHEREUM && this.targetChain?.id === ChainID.ARBITRUM) {
+    } else if (this.sourceChain?.network === "ethereum" && this.targetChain?.network === "arbitrum") {
       this.contract = {
         sourceAddress: "0x0000000000000000000000000000000000000000",
         targetAddress: "0x72ce9c846789fdb6fc1f34ac4ad25dd9ef7031ef",
@@ -57,7 +44,7 @@ export class L2ArbitrumBridge extends BaseBridge {
     _sender: Address,
     recipient: Address,
     amount: bigint,
-    options?: TransferOptions & { estimateGas?: boolean },
+    options?: TransferOptions & { askEstimateGas?: boolean },
   ): Promise<bigint | TransactionReceipt | undefined> {
     const params = await this.getL1toL2Params();
     const account = await this.getSigner();
@@ -70,7 +57,7 @@ export class L2ArbitrumBridge extends BaseBridge {
         ],
         [params.maxSubmissionCost, "0x"],
       );
-      const estimateGas = options?.estimateGas ?? false;
+      const askEstimateGas = options?.askEstimateGas ?? false;
 
       const defaultParams = {
         address: this.contract.sourceAddress,
@@ -82,7 +69,7 @@ export class L2ArbitrumBridge extends BaseBridge {
         account,
       } as const;
 
-      if (estimateGas) {
+      if (askEstimateGas) {
         return this.sourcePublicClient.estimateContractGas(defaultParams);
       } else if (this.walletClient) {
         const hash = await this.walletClient.writeContract(defaultParams);
@@ -101,18 +88,18 @@ export class L2ArbitrumBridge extends BaseBridge {
       const scaleL1BaseFee = (l1BaseFee * BigInt(Math.floor(this.feeScaler * 100))) / 100n;
       const scaleL2GasPrice = l2GasPrice * this.l2GasPriceScaler;
 
-      const inboxAddress = (await l1Client.readContract({
+      const inboxAddress = await l1Client.readContract({
         address: this.contract.sourceAddress,
         abi: (await import("@/abi/l1-gateway-router")).default,
         functionName: "inbox",
-      })) as unknown as Address;
+      });
 
-      const maxSubmissionCost = (await l1Client.readContract({
+      const maxSubmissionCost = await l1Client.readContract({
         address: inboxAddress,
         abi: (await import("@/abi/inbox")).default,
         functionName: "calculateRetryableSubmissionFee",
         args: [this.l2FixedDataSize, scaleL1BaseFee],
-      })) as unknown as bigint;
+      });
 
       const deposit = this.l2GasLimit * scaleL2GasPrice + maxSubmissionCost;
       const scaleDeposit = (deposit * BigInt(Math.floor(this.feeScaler * 100))) / 100n;

@@ -1,8 +1,5 @@
-import { BridgeCategory, BridgeLogo, TransferOptions } from "@/types/bridge";
+import { BridgeConstructorArgs, TransferOptions } from "@/types/bridge";
 import { BaseBridge } from "./base";
-import { ChainConfig } from "@/types/chain";
-import { Token } from "@/types/token";
-import { PublicClient, WalletClient } from "wagmi";
 import { Address, TransactionReceipt } from "viem";
 import { HistoryRecord } from "@/types/graphql";
 
@@ -13,17 +10,7 @@ import { HistoryRecord } from "@/types/graphql";
 export class HelixBridgeDVMEVM extends BaseBridge {
   private guard: Address | undefined;
 
-  constructor(args: {
-    walletClient?: WalletClient | null;
-    publicClient?: PublicClient;
-    category: BridgeCategory;
-    logo?: BridgeLogo;
-
-    sourceChain?: ChainConfig;
-    targetChain?: ChainConfig;
-    sourceToken?: Token;
-    targetToken?: Token;
-  }) {
+  constructor(args: BridgeConstructorArgs) {
     const sourceToken = args.sourceToken ? { ...args.sourceToken } : undefined; // DON'T USE `const sourceToken = args.sourceToken`
     const targetToken = args.targetToken ? { ...args.targetToken } : undefined;
     if (args.sourceChain?.network === "darwinia-dvm" && sourceToken?.symbol === "RING") {
@@ -35,7 +22,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
 
     this.initContract();
 
-    this.logo = args.logo ?? {
+    this.logo = {
       horizontal: "helix-horizontal.svg",
       symbol: "helix-symbol.svg",
     };
@@ -45,7 +32,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
   private initContract() {
     const backing = "0xD1B10B114f1975d8BCc6cb6FC43519160e2AA978";
     const issuing = "0xFBAD806Bdf9cEC2943be281FB355Da05068DE925";
-    this.initContractFromBackingIssuing(backing, issuing);
+    this.initContractByBackingIssuing(backing, issuing);
     this.guard = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1";
   }
 
@@ -54,11 +41,11 @@ export class HelixBridgeDVMEVM extends BaseBridge {
     _: Address,
     recipient: Address,
     amount: bigint,
-    options?: TransferOptions & { estimateGas?: boolean },
+    options?: TransferOptions & { askEstimateGas?: boolean },
   ) {
     if (this.contract && this.sourceToken && this.sourcePublicClient) {
       const totalFee = options?.totalFee ?? 0n;
-      const estimateGas = options?.estimateGas ?? false;
+      const askEstimateGas = options?.askEstimateGas ?? false;
 
       const abi = (await import("@/abi/backing-dvmevm")).default;
       const address = this.contract.sourceAddress;
@@ -83,7 +70,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
         account,
       } as const;
 
-      if (estimateGas) {
+      if (askEstimateGas) {
         return this.sourceToken.type === "native"
           ? this.sourcePublicClient.estimateContractGas(nativeParams)
           : this.sourcePublicClient.estimateContractGas(defaultParams);
@@ -101,14 +88,14 @@ export class HelixBridgeDVMEVM extends BaseBridge {
     _: Address,
     recipient: Address,
     amount: bigint,
-    options?: TransferOptions & { estimateGas?: boolean },
+    options?: TransferOptions & { askEstimateGas?: boolean },
   ) {
     if (this.contract && this.sourceToken && this.targetToken && this.sourcePublicClient) {
       const abi = (await import("@/abi/mappingtoken-dvmevm")).default;
       const address = this.contract.sourceAddress;
       const gas = this.getTxGasLimit();
       const value = options?.totalFee ?? 0n;
-      const estimateGas = options?.estimateGas ?? false;
+      const askEstimateGas = options?.askEstimateGas ?? false;
 
       const defaultParams = {
         address,
@@ -129,7 +116,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
         account,
       } as const;
 
-      if (estimateGas) {
+      if (askEstimateGas) {
         return this.targetToken.type === "native"
           ? this.sourcePublicClient.estimateContractGas(nativeParams)
           : this.sourcePublicClient.estimateContractGas(defaultParams);
@@ -146,13 +133,13 @@ export class HelixBridgeDVMEVM extends BaseBridge {
     sender: Address,
     recipient: Address,
     amount: bigint,
-    options?: TransferOptions & { estimateGas?: boolean },
+    options?: TransferOptions & { askEstimateGas?: boolean },
   ): Promise<bigint | TransactionReceipt | undefined> {
     const account = await this.getSigner();
 
     if (this.crossInfo?.action === "redeem") {
       return account && this.burn(account, sender, recipient, amount, options);
-    } else {
+    } else if (this.crossInfo?.action === "issue") {
       return account && this.lock(account, sender, recipient, amount, options);
     }
   }
@@ -167,10 +154,10 @@ export class HelixBridgeDVMEVM extends BaseBridge {
         functionName: "claim",
         args: [
           BigInt(record.messageNonce || 0),
-          BigInt(record.endTime),
+          BigInt(record.endTime || 0),
           record.recvTokenAddress || "0x",
           record.recipient,
-          BigInt(record.recvAmount),
+          BigInt(record.recvAmount || 0),
           record.guardSignatures?.split("-").slice(1) as Address[],
         ],
         gas: this.getTxGasLimit(),

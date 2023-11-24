@@ -62,7 +62,7 @@ export abstract class BaseBridge {
     }
   }
 
-  protected initContractFromBackingIssuing(backing: Address, issuing: Address) {
+  protected initContractByBackingIssuing(backing: Address, issuing: Address) {
     if (this.crossInfo?.action === "issue") {
       this.contract = { sourceAddress: backing, targetAddress: issuing };
     } else if (this.crossInfo?.action === "redeem") {
