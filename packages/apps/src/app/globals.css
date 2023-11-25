@@ -56,14 +56,12 @@ body {
     @apply flex h-8 items-center justify-center lg:h-9;
   }
 
+  /* Input */
   .normal-input-wrap {
-    @apply border-radius border transition-colors duration-300;
+    @apply border transition-colors duration-300;
   }
-
   .valid-input-wrap {
-    @apply hover:border-primary focus-within:border-primary;
   }
-
   .invalid-input-wrap {
     @apply hover:border-app-red focus-within:border-app-red border-app-red;
   }
