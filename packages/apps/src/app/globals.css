@@ -44,25 +44,6 @@ body {
     @apply px-middle container mx-auto py-5;
   }
 
-  /* Border radius */
-  .rounded-small {
-    @apply rounded;
-  }
-  .rounded-normal {
-    @apply rounded-lg;
-  }
-  .rounded-large {
-    @apply rounded-2xl;
-  }
-
-  /* Line color */
-  .app-bg-line {
-  }
-  .component-line {
-  }
-  .inner-line {
-  }
-
   .user-connect-wallet {
     @apply bg-primary gap-middle px-large border-radius flex h-9 shrink-0 items-center transition hover:opacity-80 lg:h-8 lg:hover:opacity-80 lg:active:translate-y-1;
   }
