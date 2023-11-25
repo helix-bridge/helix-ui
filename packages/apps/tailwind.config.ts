@@ -23,6 +23,11 @@ const config: Config = {
         "app-orange": "#FAAD14",
         "app-red": "#FF4D4F",
       },
+      borderRadius: {
+        small: "0.25rem", // 4px
+        middle: "0.5rem", // 8px
+        large: "1rem", // 16px
+      },
       spacing: {
         small: "0.3125rem", // 5px
         middle: "0.625rem", // 10px
