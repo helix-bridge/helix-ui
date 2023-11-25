@@ -1,58 +1,81 @@
-import { Token } from "@/types/token";
+import { InputValue, Token } from "@/types";
 import Input from "@/ui/input";
-import { InputAlert } from "@/ui/input-alert";
-import { formatBalance } from "@/utils/balance";
-import { useEffect, useMemo, useRef, useState } from "react";
+import InputAlert from "@/ui/input-alert";
+import { formatBalance, getTokenLogoSrc } from "@/utils";
+import Image from "next/image";
+import { ChangeEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { formatUnits, parseUnits } from "viem";
-
-interface Value {
-  formatted: bigint;
-  value: string;
-}
 
 interface Props {
   placeholder?: string;
-  availableTips?: string;
   balance?: bigint;
   max?: bigint;
-  disabled?: boolean;
+  compact?: boolean;
   suffix?: "symbol" | "max";
-  dynamic?: boolean;
-  value?: Value;
-  token?: Token;
-  onChange?: (value: Value) => void;
+  enabledDynamicStyle?: boolean;
+  value: InputValue<bigint>;
+  token: Token | undefined;
+  tokenOptions?: Token[];
+  onChange?: (value: InputValue<bigint>) => void;
+  onTokenChange?: (token: Token) => void;
 }
 
 export function BalanceInput({
   placeholder,
   balance,
   max,
-  availableTips = "Max",
-  disabled,
+  compact,
   suffix,
-  dynamic,
+  enabledDynamicStyle,
   value,
   token,
+  tokenOptions = [],
   onChange = () => undefined,
+  onTokenChange = () => undefined,
 }: Props) {
-  const tokenRef = useRef(token);
+  const tokenRef = useRef<Token>();
   const spanRef = useRef<HTMLSpanElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const insufficientRef = useRef(false);
+  const exceededRef = useRef(false);
+
   const [enablingMax, setEnablingMax] = useState(false);
   const [dynamicStyle, setDynamicStyle] = useState("text-sm font-medium");
 
-  const insufficient = balance !== undefined && balance < (value?.formatted || 0n) ? true : false;
-  const exceeded = max !== undefined && max < (value?.formatted || 0n) ? true : false;
+  const isExceeded = useMemo(() => (max && max < value.value ? true : false), [max, value]);
 
   const _placeholder = useMemo(() => {
-    if (balance !== undefined && token) {
-      return `Balance ${formatBalance(balance, token.decimals)}`;
+    if (token && compact) {
+      if (max !== undefined) {
+        return `Max ${formatBalance(max, token.decimals)}`;
+      } else if (balance !== undefined) {
+        return `Balance ${formatBalance(balance, token.decimals)}`;
+      }
     }
     return placeholder ?? "Enter an amount";
-  }, [balance, placeholder, token]);
+  }, [balance, max, placeholder, token, compact]);
+
+  const handleChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
+    (e) => {
+      const input = e.target.value;
+      let parsed = { value: 0n, input: "" };
+      let valid = true;
+
+      if (input && token && !Number.isNaN(Number(input))) {
+        parsed = parseValue(input, token.decimals);
+        insufficientRef.current = balance !== undefined && balance < parsed.value ? true : false;
+        exceededRef.current = max && max < parsed.value ? true : false;
+        valid = !(insufficientRef.current || exceededRef.current);
+      }
+      setEnablingMax(false);
+
+      onChange({ valid, ...parsed });
+    },
+    [token, max, balance, onChange],
+  );
 
   useEffect(() => {
-    if (dynamic) {
+    if (enabledDynamicStyle) {
       const inputWidth = inputRef.current?.clientWidth || 1;
       const spanWidth = spanRef.current?.clientWidth || 0;
       const percent = (spanWidth / inputWidth) * 100;
@@ -72,89 +95,119 @@ export function BalanceInput({
         setDynamicStyle("text-[1.125rem] font-medium");
       }
     }
-  }, [value, dynamic]);
+  }, [value, enabledDynamicStyle]);
 
   useEffect(() => {
-    // Fire onChange to update `formatted`
-    if (tokenRef.current?.decimals !== token?.decimals) {
-      onChange(parseValue(value?.value || "", token?.decimals || 0));
+    // Fire onChange to update value
+    if (token && token.decimals !== tokenRef.current?.decimals) {
+      const parsed = parseValue(value.input, token.decimals);
+      insufficientRef.current = balance !== undefined && balance < parsed.value ? true : false;
+      exceededRef.current = max && max < parsed.value ? true : false;
+      const valid = !(insufficientRef.current || exceededRef.current);
+      onChange({ valid, ...parsed });
     }
     tokenRef.current = token;
-  }, [value, token, onChange]);
+  }, [value, token, balance, max, onChange]);
 
   useEffect(() => {
-    if (enablingMax && exceeded) {
-      const decimals = token?.decimals ?? 0;
-      onChange(parseValue(formatUnits(max ?? 0n, decimals), decimals));
+    // Recalculate the maximum value
+    if (token && enablingMax && isExceeded) {
+      const decimals = token.decimals;
+      const parsed = parseValue(formatUnits(max ?? 0n, decimals), decimals);
+      insufficientRef.current = balance !== undefined && balance < parsed.value ? true : false;
+      exceededRef.current = max && max < parsed.value ? true : false;
+      const valid = !(insufficientRef.current || exceededRef.current);
+      onChange({ valid, ...parsed });
     }
-  }, [token?.decimals, max, onChange, enablingMax, exceeded]);
+  }, [token, max, balance, enablingMax, isExceeded, onChange]);
 
   return (
     <div
-      className={`lg:px-middle px-small py-small gap-small bg-app-bg normal-input-wrap border-radius relative flex items-center justify-between ${
-        insufficient || exceeded
-          ? "invalid-input-wrap"
-          : disabled
-          ? "border-transparent"
-          : "valid-input-wrap border-transparent"
+      className={`lg:px-middle px-small py-small bg-app-bg normal-input-wrap relative flex flex-col  ${
+        value.valid ? "valid-input-wrap" : "invalid-input-wrap"
       }`}
     >
-      <Input
-        placeholder={_placeholder}
-        className={`h-12 w-full rounded bg-transparent text-white transition-[font-size,font-weight,line-height] duration-300 ${
-          dynamic && value?.value ? `leading-none ${dynamicStyle}` : "text-sm font-medium"
-        }`}
-        onChange={(e) => {
-          setEnablingMax(false);
-          if (e.target.value) {
-            if (!Number.isNaN(Number(e.target.value)) && token) {
-              onChange(parseValue(e.target.value, token.decimals));
-            }
-          } else {
-            onChange({ value: e.target.value, formatted: 0n });
-          }
-        }}
-        ref={inputRef}
-        disabled={disabled}
-        value={value?.value}
-      />
+      <div className="gap-small flex items-center justify-between">
+        <Input
+          placeholder={_placeholder}
+          className={`h-12 w-full rounded bg-transparent text-white transition-[font-size,font-weight,line-height] duration-300 ${
+            enabledDynamicStyle && value.value ? `leading-none ${dynamicStyle}` : "text-sm font-medium"
+          }`}
+          onChange={handleChange}
+          ref={inputRef}
+          value={value.input}
+        />
 
-      {!!(token && suffix === "symbol") && <span className="text-sm">{token.symbol}</span>}
-      {suffix === "max" && (
-        <button
-          className="border-radius inline-flex items-center bg-transparent px-2 py-1 transition-[transform,color] hover:scale-105 hover:bg-white/[0.15] active:scale-95 disabled:scale-100 disabled:cursor-not-allowed"
-          onClick={(e) => {
-            e.stopPropagation();
-            const decimals = token?.decimals ?? 0;
-            onChange(parseValue(formatUnits(max ?? 0n, decimals), decimals));
-            setEnablingMax(true);
-          }}
-          disabled={max === undefined || token?.decimals === undefined}
-        >
-          <span className="text-sm font-medium">Max</span>
-        </button>
-      )}
+        {compact ? (
+          suffix === "symbol" && token ? (
+            <span className="text-sm">{token.symbol}</span>
+          ) : suffix === "max" ? (
+            <button
+              className="inline-flex items-center bg-transparent px-2 py-1 transition-[transform,color] hover:scale-105 hover:bg-white/[0.15] active:scale-95 disabled:scale-100 disabled:cursor-not-allowed"
+              onClick={(e) => {
+                e.stopPropagation();
+                const decimals = token?.decimals || 0;
+                const parsed = parseValue(formatUnits(max ?? 0n, decimals), decimals);
+                insufficientRef.current = balance !== undefined && balance < parsed.value ? true : false;
+                exceededRef.current = max && max < parsed.value ? true : false;
+                const valid = !(insufficientRef.current || exceededRef.current);
+                onChange({ valid, ...parsed });
+                setEnablingMax(true);
+              }}
+              disabled={max === undefined || token === undefined}
+            >
+              <span className="text-sm font-medium">Max</span>
+            </button>
+          ) : null
+        ) : (
+          <div className="gap-small flex items-end">
+            {token ? (
+              <div className="gap-small flex shrink-0 items-center">
+                <Image width={18} height={18} alt="Token" src={getTokenLogoSrc(token.logo)} />
+              </div>
+            ) : null}
+            {tokenOptions.map((t) => (
+              <Image
+                key={t.symbol}
+                width={18}
+                height={18}
+                alt="Token"
+                src={getTokenLogoSrc(t.logo)}
+                className="hover:cursor-pointer"
+                onClick={() => onTokenChange(t)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
-      {exceeded ? (
-        <InputAlert text={`* ${availableTips}: ${formatBalance(max || 0n, token?.decimals || 0, { precision: 6 })}`} />
-      ) : insufficient ? (
+      {!compact && balance !== undefined && token ? (
+        <div className="gap-small flex items-center">
+          <span>Balance: {formatBalance(balance, token.decimals)}</span>
+          <span>Refresh</span>
+        </div>
+      ) : null}
+
+      {value.valid ? null : exceededRef.current ? (
+        <InputAlert text={`* Max: ${formatBalance(max || 0n, token?.decimals || 0, { precision: 6 })}`} />
+      ) : insufficientRef.current ? (
         <InputAlert text="* Insufficient" />
       ) : null}
 
       <span className="invisible fixed left-0 top-0 -z-50" ref={spanRef}>
-        {value?.value}
+        {value.input}
       </span>
     </div>
   );
 }
 
 function parseValue(source: string, decimals: number) {
-  let value = "";
-  let formatted = 0n;
+  let input = "";
+  let value = 0n;
   const [i, d] = source.replace(/,/g, "").split(".").concat("-1"); // The commas must be removed or parseUnits will error
   if (i) {
-    value = d === "-1" ? i : d ? `${i}.${d.slice(0, decimals)}` : `${i}.`;
-    formatted = parseUnits(value, decimals);
+    input = d === "-1" ? i : d ? `${i}.${d.slice(0, decimals)}` : `${i}.`;
+    value = parseUnits(input, decimals);
   }
-  return { value, formatted };
+  return { value, input };
 }
