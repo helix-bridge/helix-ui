@@ -1,3 +1,4 @@
+import { useToggle } from "@/hooks/use-toggle";
 import {
   FloatingPortal,
   Placement,
@@ -11,7 +12,8 @@ import {
   useTransitionStyles,
 } from "@floating-ui/react";
 import Image from "next/image";
-import { PropsWithChildren, ReactElement, useState } from "react";
+import { PropsWithChildren, ReactElement } from "react";
+import Button from "./button";
 
 interface Props {
   label?: ReactElement;
@@ -26,7 +28,7 @@ interface Props {
   onClear?: () => void;
 }
 
-export default function ISelect({
+export default function Select({
   label,
   placeholder,
   disabled,
@@ -39,7 +41,7 @@ export default function ISelect({
   childClassName,
   onClear = () => undefined,
 }: PropsWithChildren<Props>) {
-  const [isOpen, setIsOpen] = useState(false);
+  const { state: isOpen, setState: setIsOpen, setFalse: setIsOpenFalse } = useToggle(false);
 
   const { refs, context, floatingStyles } = useFloating({
     open: isOpen,
@@ -70,12 +72,7 @@ export default function ISelect({
 
   return (
     <>
-      <button
-        className={`select ${labelClassName}`}
-        ref={refs.setReference}
-        {...getReferenceProps()}
-        disabled={disabled}
-      >
+      <Button className={`${labelClassName}`} ref={refs.setReference} {...getReferenceProps()} disabled={disabled}>
         {label || placeholder}
         <div className="gap-small flex shrink-0 items-center">
           {label && clearable ? (
@@ -98,12 +95,12 @@ export default function ISelect({
             height={16}
           />
         </div>
-      </button>
+      </Button>
 
       {isMounted && (
         <FloatingPortal>
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
-            <div className={`${childClassName}`} style={styles} onClick={() => setIsOpen(false)}>
+            <div className={`${childClassName}`} style={styles} onClick={setIsOpenFalse}>
               {children}
             </div>
           </div>

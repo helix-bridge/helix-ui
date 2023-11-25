@@ -7,7 +7,7 @@ import Button from "./button";
 interface Props {
   isOpen: boolean;
   title: string;
-  subTitle?: ReactElement | string;
+  subTitle?: ReactElement | string | null;
   cancelText?: string;
   okText?: string;
   maskClosable?: boolean;
@@ -22,6 +22,9 @@ interface Props {
   onOk?: () => void;
 }
 
+/**
+ * Please note: Disable SSR when importing
+ */
 export default function Modal({
   title,
   subTitle,
@@ -65,7 +68,7 @@ export default function Modal({
       >
         {/* modal */}
         <div
-          className={`p-middle bg-component border-radius relative flex flex-col gap-5 lg:p-7 ${className}`}
+          className={`p-middle bg-component relative flex flex-col gap-5 lg:p-5 ${className}`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* close icon */}
@@ -88,7 +91,7 @@ export default function Modal({
             ) : null}
           </div>
 
-          <div className="bg-line h-[1px]" />
+          <div className="h-[1px] bg-white/10" />
 
           {/* body */}
           {children}
@@ -98,17 +101,17 @@ export default function Modal({
             <>
               <div className="gap-small flex flex-col">
                 {extra}
-                <div className="bg-line h-[1px]" />
+                <div className="h-[1px] bg-white/10" />
               </div>
 
               <div className="flex items-center justify-between gap-5">
                 {onCancel && (
-                  <Button kind="default" onClick={onCancel} disabled={disabledCancel} className="button flex-1">
+                  <Button kind="default" onClick={onCancel} disabled={disabledCancel} className="flex-1">
                     {cancelText || "Cancel"}
                   </Button>
                 )}
                 {onOk && (
-                  <Button kind="primary" onClick={onOk} disabled={disabledOk} busy={busy} className="button flex-1">
+                  <Button kind="primary" onClick={onOk} disabled={disabledOk} busy={busy} className="flex-1">
                     {okText || "Ok"}
                   </Button>
                 )}

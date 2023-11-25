@@ -34,9 +34,9 @@ function PageButton({
 }) {
   return (
     <button
-      className={`disabled:border-line inline-flex h-8 w-8 items-center justify-center rounded border text-sm text-white transition disabled:scale-100 disabled:cursor-not-allowed disabled:opacity-60 ${
+      className={`rounded-small inline-flex h-8 w-8 items-center justify-center border text-sm text-white transition disabled:scale-100 disabled:cursor-not-allowed disabled:border-white/10 disabled:opacity-60 ${
         page === "more" || page === currentPage ? "hover:cursor-default" : "hover:border-primary active:scale-95"
-      } ${page === currentPage ? "bg-primary border-primary" : "bg-component border-line"}`}
+      } ${page === currentPage ? "bg-primary border-primary" : "bg-component border-white/10"}`}
       onClick={onClick}
       disabled={disabled}
     >

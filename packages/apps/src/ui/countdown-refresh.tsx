@@ -1,18 +1,18 @@
 import { useEffect, useRef } from "react";
 
 interface Props {
-  isActive?: boolean;
-  isStartUpAfterClick?: boolean;
+  enabled?: boolean;
+  enabledAfterClick?: boolean;
   onClick?: () => void;
   onRefresh?: () => void;
 }
 
-export default function CountdownRefresh({ isActive, isStartUpAfterClick, onClick, onRefresh }: Props) {
+export default function CountdownRefresh({ enabled, enabledAfterClick, onClick, onRefresh }: Props) {
   const circleRef = useRef<SVGCircleElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
-    if (isActive) {
+    if (enabled) {
       if (!circleRef.current?.classList.contains("refresh-countdown")) {
         circleRef.current?.classList.add("refresh-countdown");
       }
@@ -20,7 +20,7 @@ export default function CountdownRefresh({ isActive, isStartUpAfterClick, onClic
       circleRef.current?.getAnimations().at(0)?.cancel();
       circleRef.current?.classList.remove("refresh-countdown");
     }
-  }, [isActive]);
+  }, [enabled]);
 
   return (
     <button
@@ -28,7 +28,7 @@ export default function CountdownRefresh({ isActive, isStartUpAfterClick, onClic
       onClick={() => {
         circleRef.current?.getAnimations().at(0)?.cancel();
         circleRef.current?.classList.remove("refresh-countdown");
-        if (isStartUpAfterClick) {
+        if (enabledAfterClick) {
           setTimeout(() => {
             circleRef.current?.classList.add("refresh-countdown");
           }, 300);

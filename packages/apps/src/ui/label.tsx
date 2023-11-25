@@ -10,7 +10,7 @@ interface Props {
   needAbsolute?: boolean;
 }
 
-export default function Label({ text, tips, extra, className, needAbsolute, children }: PropsWithChildren<Props>) {
+export default function Label({ text, tips, extra, children, className, needAbsolute }: PropsWithChildren<Props>) {
   return (
     <div className={`gap-small flex flex-col ${needAbsolute ? "relative" : ""} ${className}`}>
       <div className={`flex items-center justify-between ${needAbsolute ? "absolute -top-7 left-0 w-full" : ""}`}>

@@ -1,3 +1,4 @@
+import { useToggle } from "@/hooks/use-toggle";
 import {
   FloatingPortal,
   offset,
@@ -10,7 +11,8 @@ import {
   useTransitionStyles,
 } from "@floating-ui/react";
 import Image from "next/image";
-import { PropsWithChildren, ReactElement, useState } from "react";
+import { PropsWithChildren, ReactElement } from "react";
+import Button from "./button";
 
 interface Props {
   label: ReactElement;
@@ -18,7 +20,6 @@ interface Props {
   sameWidth?: boolean;
   labelClassName?: string;
   childClassName?: string;
-  onClear?: () => void;
 }
 
 export default function Dropdown({
@@ -29,7 +30,7 @@ export default function Dropdown({
   labelClassName,
   childClassName,
 }: PropsWithChildren<Props>) {
-  const [isOpen, setIsOpen] = useState(false);
+  const { state: isOpen, setState: setIsOpen, setFalse: setIsOpenFalse } = useToggle(false);
 
   const { refs, context, floatingStyles } = useFloating({
     open: isOpen,
@@ -59,7 +60,7 @@ export default function Dropdown({
 
   return (
     <>
-      <button className={`${labelClassName}`} ref={refs.setReference} {...getReferenceProps()}>
+      <Button className={`${labelClassName}`} ref={refs.setReference} {...getReferenceProps()}>
         {label}
         <Image
           style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
@@ -69,12 +70,12 @@ export default function Dropdown({
           width={16}
           height={16}
         />
-      </button>
+      </Button>
 
       {isMounted && (
         <FloatingPortal>
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
-            <div className={`${childClassName}`} style={styles} onClick={() => setIsOpen(false)}>
+            <div className={`${childClassName}`} style={styles} onClick={setIsOpenFalse}>
               {children}
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { Fragment, Key, ReactElement } from "react";
+import { Fragment, Key, ReactElement, useMemo } from "react";
 import Image from "next/image";
 import Pagination from "./pagination";
 import ComponentLoading from "@/ui/component-loading";
@@ -35,15 +35,20 @@ export default function Table<T extends { key: Key }>({
   onRowClick,
   onPageChange,
 }: Props<T>) {
-  const templateCols = columns.reduce((acc, cur) => {
-    const width = typeof cur.width === "string" ? cur.width : typeof cur.width === "number" ? `${cur.width}px` : "1fr";
-    if (acc === "auto") {
-      acc = width;
-    } else {
-      acc = `${acc} ${width}`;
-    }
-    return acc;
-  }, "auto");
+  const templateCols = useMemo(
+    () =>
+      columns.reduce((acc, cur) => {
+        const width =
+          typeof cur.width === "string" ? cur.width : typeof cur.width === "number" ? `${cur.width}px` : "1fr";
+        if (acc === "auto") {
+          acc = width;
+        } else {
+          acc = `${acc} ${width}`;
+        }
+        return acc;
+      }, "auto"),
+    [columns],
+  );
 
   return (
     <div className="min-w-[50rem] overflow-x-auto">

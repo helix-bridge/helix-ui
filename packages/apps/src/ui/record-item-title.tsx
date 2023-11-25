@@ -1,0 +1,15 @@
+import Image from "next/image";
+import Tooltip from "./tooltip";
+
+export function RecordItemTitle({ text, tips }: { text: string; tips?: string }) {
+  return (
+    <div className="gap-small flex w-52 items-center justify-start">
+      {tips ? (
+        <Tooltip content={tips} className="shrink-0" contentClassName="max-w-[15rem] lg:max-w-xs">
+          <Image width={16} height={16} alt="Info" src="/images/info.svg" />
+        </Tooltip>
+      ) : null}
+      <span className="text-sm font-medium">{text}</span>
+    </div>
+  );
+}

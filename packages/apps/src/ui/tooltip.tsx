@@ -76,6 +76,6 @@ export default function Tooltip({
       )}
     </>
   ) : (
-    children
+    <div className={className}>{children}</div>
   );
 }
