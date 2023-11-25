@@ -1,11 +1,17 @@
 "use client";
 
-import { BaseBridge } from "@/bridges/base";
-import { TransferValue } from "@/components/transfer-input";
-import { BridgeCategory, TransferOptions } from "@/types/bridge";
-import { ChainConfig, Network } from "@/types/chain";
-import { Token, TokenSymbol } from "@/types/token";
-import { bridgeFactory } from "@/utils/bridge";
+import { BaseBridge } from "@/bridges";
+import {
+  BridgeCategory,
+  ChainConfig,
+  InputValue,
+  Network,
+  Token,
+  TokenSymbol,
+  TransferOptions,
+  UrlSearchParamKey,
+} from "@/types";
+import { bridgeFactory, getChainConfig, getCrossDefaultValue, notifyError, notifyTransaction } from "@/utils";
 import {
   Dispatch,
   PropsWithChildren,
@@ -16,97 +22,103 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Address, useAccount, usePublicClient, useWalletClient } from "wagmi";
+import { Address, TransactionReceipt } from "viem";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { Subscription, forkJoin } from "rxjs";
-import { getParsedCrossChain } from "@/utils/cross-chain";
-import { ChainToken } from "@/types/misc";
-import { notifyTransaction } from "@/utils/notification";
-import { notification } from "@/ui/notification";
-import { TransactionReceipt } from "viem";
-import { UrlSearchParam } from "@/types/url";
-import { getChainConfig } from "@/utils/chain";
-
-const { defaultSourceValue, defaultTargetValue, defaultBridge } = getParsedCrossChain();
 
 interface TransferCtx {
+  bridgeInstance: BaseBridge | undefined;
   bridgeCategory: BridgeCategory | undefined;
-  transferValue: TransferValue;
-  sourceValue: ChainToken | undefined;
-  targetValue: ChainToken | undefined;
+  transferAmount: InputValue<bigint>;
   sourceChain: ChainConfig | undefined;
   targetChain: ChainConfig | undefined;
   sourceToken: Token | undefined;
   targetToken: Token | undefined;
-  bridgeClient: BaseBridge | undefined;
   sourceAllowance: { value: bigint; token: Token } | undefined;
   sourceBalance: { value: bigint; token: Token } | undefined;
-  fee: { value: bigint; token: Token } | undefined;
+  bridgeFee: { value: bigint; token: Token } | undefined;
+  dailyLimit: { limit: bigint; spent: bigint; token: Token } | undefined;
 
-  setTransferValue: Dispatch<SetStateAction<TransferValue>>;
   setBridgeCategory: Dispatch<SetStateAction<BridgeCategory | undefined>>;
-  setSourceValue: Dispatch<SetStateAction<ChainToken | undefined>>;
-  setTargetValue: Dispatch<SetStateAction<ChainToken | undefined>>;
-  setFee: Dispatch<SetStateAction<{ value: bigint; token: Token } | undefined>>;
+  setTransferAmount: Dispatch<SetStateAction<InputValue<bigint>>>;
+  setSourceChain: Dispatch<SetStateAction<ChainConfig | undefined>>;
+  setTargetChain: Dispatch<SetStateAction<ChainConfig | undefined>>;
+  setSourceToken: Dispatch<SetStateAction<Token | undefined>>;
+  setTargetToken: Dispatch<SetStateAction<Token | undefined>>;
+  setSourceAllowance: Dispatch<SetStateAction<{ value: bigint; token: Token } | undefined>>;
+  setSourceBalance: Dispatch<SetStateAction<{ value: bigint; token: Token } | undefined>>;
+  setBridgeFee: Dispatch<SetStateAction<{ value: bigint; token: Token } | undefined>>;
+  setDailyLimit: Dispatch<SetStateAction<{ limit: bigint; spent: bigint; token: Token } | undefined>>;
+
   transfer: (
     sender: Address,
     recipient: Address,
     amount: bigint,
-    options?: Partial<TransferOptions>,
+    bridge: BaseBridge,
+    chain: ChainConfig,
+    options?: TransferOptions,
   ) => Promise<TransactionReceipt | undefined>;
-  approve: () => Promise<TransactionReceipt | undefined>;
-  updateBalance: () => Promise<void>;
+  sourceApprove: (
+    owner: Address,
+    amount: bigint,
+    bridge: BaseBridge,
+    chain: ChainConfig,
+  ) => Promise<TransactionReceipt | undefined>;
+  updateSourceBalance: (sender: Address, bridge: BaseBridge) => Promise<void>;
 }
 
+const { defaultBridgeCategory, defaultSourceChain, defaultTargetChain, defaultSourceToken, defaultTargetToken } =
+  getCrossDefaultValue();
+
 const defaultValue: TransferCtx = {
-  transferValue: { value: "", formatted: 0n },
-  sourceValue: defaultSourceValue,
-  targetValue: defaultTargetValue,
-  sourceChain: defaultSourceValue?.chain,
-  targetChain: defaultTargetValue?.chain,
-  sourceToken: defaultSourceValue?.token,
-  targetToken: defaultTargetValue?.token,
-  bridgeCategory: defaultBridge,
-  bridgeClient: undefined,
+  bridgeInstance: undefined,
+  bridgeCategory: defaultBridgeCategory,
+  transferAmount: { value: 0n, input: "", valid: true },
+  sourceChain: defaultSourceChain,
+  targetChain: defaultTargetChain,
+  sourceToken: defaultSourceToken,
+  targetToken: defaultTargetToken,
   sourceAllowance: undefined,
   sourceBalance: undefined,
-  fee: undefined,
+  bridgeFee: undefined,
+  dailyLimit: undefined,
+
   setBridgeCategory: () => undefined,
-  setTransferValue: () => undefined,
-  setSourceValue: () => undefined,
-  setTargetValue: () => undefined,
-  setFee: () => undefined,
-  approve: async () => undefined,
+  setTransferAmount: () => undefined,
+  setSourceChain: () => undefined,
+  setTargetChain: () => undefined,
+  setSourceToken: () => undefined,
+  setTargetToken: () => undefined,
+  setSourceAllowance: () => undefined,
+  setSourceBalance: () => undefined,
+  setBridgeFee: () => undefined,
+  setDailyLimit: () => undefined,
+
   transfer: async () => undefined,
-  updateBalance: async () => undefined,
+  sourceApprove: async () => undefined,
+  updateSourceBalance: async () => undefined,
 };
 
 export const TransferContext = createContext(defaultValue);
 
 export default function TransferProvider({ children }: PropsWithChildren<unknown>) {
+  const [bridgeCategory, setBridgeCategory] = useState(defaultValue.bridgeCategory);
+  const [transferAmount, setTransferAmount] = useState(defaultValue.transferAmount);
+  const [sourceChain, setSourceChain] = useState(defaultValue.sourceChain);
+  const [targetChain, setTargetChain] = useState(defaultValue.targetChain);
+  const [sourceToken, setSourceToken] = useState(defaultValue.sourceToken);
+  const [targetToken, setTargetToken] = useState(defaultValue.targetToken);
+  const [sourceAllowance, setSourceAllowance] = useState(defaultValue.sourceAllowance);
+  const [sourceBalance, setSourceBalance] = useState(defaultValue.sourceBalance);
+  const [bridgeFee, setBridgeFee] = useState(defaultValue.bridgeFee);
+  const [dailyLimit, setDailyLimit] = useState(defaultValue.dailyLimit);
+
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
   const { address } = useAccount();
 
-  const [sourceAllowance, setSourceAllowance] = useState(defaultValue.sourceAllowance);
-  const [sourceBalance, setSourceBalance] = useState(defaultValue.sourceBalance);
-
-  const [bridgeCategory, setBridgeCategory] = useState(defaultValue.bridgeCategory);
-  const [transferValue, setTransferValue] = useState(defaultValue.transferValue);
-  const [sourceValue, setSourceValue] = useState(defaultValue.sourceValue);
-  const [targetValue, setTargetValue] = useState(defaultValue.targetValue);
-  const [fee, setFee] = useState(defaultValue.fee);
-
-  const { sourceChain, sourceToken } = useMemo(
-    () => ({ sourceChain: sourceValue?.chain, sourceToken: sourceValue?.token }),
-    [sourceValue],
-  );
-  const { targetChain, targetToken } = useMemo(
-    () => ({ targetChain: targetValue?.chain, targetToken: targetValue?.token }),
-    [targetValue],
-  );
-
-  const { bridgeClient } = useMemo(() => {
-    const bridgeClient =
+  const bridgeInstance = useMemo(() => {
+    return (
       bridgeCategory &&
       bridgeFactory({
         category: bridgeCategory,
@@ -116,140 +128,154 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
         targetToken,
         walletClient,
         publicClient,
-      });
-    return { bridgeClient };
+      })
+    );
   }, [sourceChain, targetChain, sourceToken, targetToken, bridgeCategory, walletClient, publicClient]);
 
-  const updateBalance = useCallback(async () => {
-    if (address && bridgeClient) {
-      try {
-        setSourceBalance(await bridgeClient.getSourceBalance(address));
-      } catch (err) {
-        console.error(err);
-      }
-    }
-  }, [address, bridgeClient]);
-
   const transfer = useCallback(
-    async (sender: Address, recipient: Address, amount: bigint, options?: Partial<TransferOptions>) => {
-      if (address && bridgeClient) {
-        try {
-          const receipt = await bridgeClient.transfer(sender, recipient, amount, options);
-          notifyTransaction(receipt, sourceChain);
-
-          const a = await bridgeClient.getSourceAllowance(address);
-          const b = await bridgeClient.getSourceBalance(address);
-          setSourceAllowance(a);
-          setSourceBalance(b);
-
-          return receipt;
-        } catch (err) {
-          console.error(err);
-          notification.error({ title: "Transfer failed", description: (err as Error).message });
-        }
-      }
-    },
-    [address, bridgeClient, sourceChain],
-  );
-
-  const approve = useCallback(async () => {
-    if (address && bridgeClient) {
+    async (
+      sender: Address,
+      recipient: Address,
+      amount: bigint,
+      bridge: BaseBridge,
+      chain: ChainConfig,
+      options?: TransferOptions,
+    ) => {
       try {
-        const feeValue = fee?.token.type === "native" ? 0n : fee?.value || 0n;
-        const receipt = await bridgeClient.sourceApprove(transferValue.formatted + feeValue, address);
-        notifyTransaction(receipt, sourceChain);
+        const receipt = await bridge.transfer(sender, recipient, amount, options);
+        notifyTransaction(receipt, chain);
 
-        setSourceAllowance(await bridgeClient.getSourceAllowance(address));
+        const a = await bridge.getSourceAllowance(sender);
+        const b = await bridge.getSourceBalance(sender);
+        setSourceAllowance(a);
+        setSourceBalance(b);
 
         return receipt;
       } catch (err) {
         console.error(err);
-        notification.error({ title: "Transfer failed", description: (err as Error).message });
+        notifyError(err);
       }
+    },
+    [],
+  );
+
+  const sourceApprove = useCallback(async (owner: Address, amount: bigint, bridge: BaseBridge, chain: ChainConfig) => {
+    try {
+      const receipt = await bridge.sourceApprove(amount, owner);
+      notifyTransaction(receipt, chain);
+      setSourceAllowance(await bridge.getSourceAllowance(owner));
+      return receipt;
+    } catch (err) {
+      console.error(err);
+      notifyError(err);
     }
-  }, [address, bridgeClient, sourceChain, transferValue, fee]);
+  }, []);
+
+  const updateSourceBalance = useCallback(async (sender: Address, bridge: BaseBridge) => {
+    try {
+      setSourceBalance(await bridge.getSourceBalance(sender));
+    } catch (err) {
+      console.error(err);
+      setSourceBalance(undefined);
+    }
+  }, []);
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
 
-    if (address && bridgeClient) {
-      sub$$ = forkJoin([bridgeClient.getSourceAllowance(address), bridgeClient.getSourceBalance(address)]).subscribe({
-        next: ([a, b]) => {
-          setSourceAllowance(a);
-          setSourceBalance(b);
+    if (address && bridgeInstance) {
+      sub$$ = forkJoin([
+        bridgeInstance.getSourceAllowance(address),
+        bridgeInstance.getSourceBalance(address),
+        bridgeInstance.getDailyLimit(),
+      ]).subscribe({
+        next: ([allowance, balance, limit]) => {
+          setSourceAllowance(allowance);
+          setSourceBalance(balance);
+          setDailyLimit(limit);
         },
         error: (err) => {
           console.error(err);
           setSourceAllowance(defaultValue.sourceAllowance);
           setSourceBalance(defaultValue.sourceBalance);
+          setDailyLimit(defaultValue.dailyLimit);
         },
       });
     } else {
       setSourceAllowance(defaultValue.sourceAllowance);
       setSourceBalance(defaultValue.sourceBalance);
+      setDailyLimit(defaultValue.dailyLimit);
     }
 
     return () => sub$$?.unsubscribe();
-  }, [address, bridgeClient]);
+  }, [address, bridgeInstance]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const _category = params.get(UrlSearchParam.BRIDGE) as BridgeCategory;
-    const _sourceChain = getChainConfig(params.get(UrlSearchParam.SOURCE_CHAIN) as Network);
-    const _targetChain = getChainConfig(params.get(UrlSearchParam.TARGET_CHAIN) as Network);
 
-    const sourceSymbol = params.get(UrlSearchParam.SOURCE_TOKEN) as TokenSymbol;
-    const targetSymbol = params.get(UrlSearchParam.TARGET_TOKEN) as TokenSymbol;
+    const urlCategory = params.get(UrlSearchParamKey.BRIDGE) as BridgeCategory;
+    const urlSourceChain = getChainConfig(params.get(UrlSearchParamKey.SOURCE_CHAIN) as Network);
+    const urlTargetChain = getChainConfig(params.get(UrlSearchParamKey.TARGET_CHAIN) as Network);
+    const urlSourceSymbol = params.get(UrlSearchParamKey.SOURCE_TOKEN) as TokenSymbol;
+    const urlTargetSymbol = params.get(UrlSearchParamKey.TARGET_TOKEN) as TokenSymbol;
 
-    const _sourceToken = _sourceChain?.tokens.find((t) => t.symbol === sourceSymbol);
-    const _targetToken = _targetChain?.tokens.find((t) => t.symbol === targetSymbol);
+    const _sourceToken = urlSourceChain?.tokens.find((t) => t.symbol === urlSourceSymbol);
+    const _targetToken = urlTargetChain?.tokens.find((t) => t.symbol === urlTargetSymbol);
 
     const _cross = _sourceToken?.cross.find(
       (c) =>
-        c.bridge.category === _category &&
-        c.target.network === _targetChain?.network &&
-        c.target.symbol === targetSymbol,
+        c.bridge.category === urlCategory &&
+        c.target.network === urlTargetChain?.network &&
+        c.target.symbol === urlTargetSymbol,
     );
 
     if (
       _cross &&
-      _sourceChain &&
-      _targetChain &&
+      urlSourceChain &&
+      urlTargetChain &&
       _sourceToken &&
       _targetToken &&
       !_cross.hidden &&
-      !_sourceChain?.hidden &&
-      !_targetChain?.hidden
+      !urlSourceChain?.hidden &&
+      !urlTargetChain?.hidden
     ) {
-      setBridgeCategory(_category);
-      setSourceValue({ chain: _sourceChain, token: _sourceToken });
-      setTargetValue({ chain: _targetChain, token: _targetToken });
+      setBridgeCategory(urlCategory);
+      setSourceChain(urlSourceChain);
+      setTargetChain(urlTargetChain);
+      setSourceToken(_sourceToken);
+      setTargetToken(_targetToken);
     }
   }, []);
 
   return (
     <TransferContext.Provider
       value={{
-        sourceAllowance,
-        sourceBalance,
+        bridgeInstance,
         bridgeCategory,
-        bridgeClient,
-        transferValue,
-        sourceValue,
-        targetValue,
+        transferAmount,
         sourceChain,
         targetChain,
         sourceToken,
         targetToken,
-        fee,
+        sourceAllowance,
+        sourceBalance,
+        bridgeFee,
+        dailyLimit,
+
         setBridgeCategory,
-        setTransferValue,
-        setSourceValue,
-        setTargetValue,
-        setFee,
-        approve,
-        updateBalance,
+        setTransferAmount,
+        setSourceChain,
+        setTargetChain,
+        setSourceToken,
+        setTargetToken,
+        setSourceAllowance,
+        setSourceBalance,
+        setBridgeFee,
+        setDailyLimit,
+
         transfer,
+        sourceApprove,
+        updateSourceBalance,
       }}
     >
       {children}
