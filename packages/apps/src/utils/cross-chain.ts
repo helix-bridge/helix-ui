@@ -5,9 +5,7 @@ import {
   AvailableTargetChains,
   AvailableTargetTokens,
   ChainConfig,
-  Network,
   Token,
-  TokenSymbol,
 } from "@/types";
 import { getChainConfig, getChainConfigs } from "./chain";
 
@@ -178,45 +176,47 @@ export function getCrossDefaultValue() {
   };
 }
 
-export function getAvailableBridge(
-  sourceChain: Network | undefined,
-  targetChain: Network | undefined,
-  sourceToken: TokenSymbol | undefined,
+export function getAvailableBridges(
+  sourceChain: ChainConfig | undefined,
+  targetChain: ChainConfig | undefined,
+  sourceToken: Token | undefined,
 ) {
   if (sourceChain && targetChain && sourceToken) {
-    return availableBridges[sourceChain]?.[targetChain]?.[sourceToken] || [];
+    return availableBridges[sourceChain.network]?.[targetChain.network]?.[sourceToken.symbol] || [];
   }
   return [];
 }
 
 export function getAvailableSourceTokens(
-  sourceChain: Network | undefined,
-  targetChain: Network | undefined,
+  sourceChain: ChainConfig | undefined,
+  targetChain: ChainConfig | undefined,
   defaultTokens: Token[] = [],
 ) {
   if (sourceChain && targetChain) {
-    const result = (availableSourceTokens[sourceChain]?.[targetChain] || []).sort(tokenCompareFn);
+    const result = (availableSourceTokens[sourceChain.network]?.[targetChain.network] || []).sort(tokenCompareFn);
     return result.length ? result : defaultTokens;
   }
   return defaultTokens;
 }
 
-export function getAvailableTargetChains(sourceChain: Network | undefined, defaultChains: ChainConfig[] = []) {
+export function getAvailableTargetChains(sourceChain: ChainConfig | undefined, defaultChains: ChainConfig[] = []) {
   if (sourceChain) {
-    const result = (availableTargetChains[sourceChain] || []).sort(chainCompareFn);
+    const result = (availableTargetChains[sourceChain.network] || []).sort(chainCompareFn);
     return result.length ? result : defaultChains;
   }
   return defaultChains;
 }
 
 export function getAvailableTargetTokens(
-  sourceChain: Network | undefined,
-  targetChain: Network | undefined,
-  sourceToken: TokenSymbol | undefined,
+  sourceChain: ChainConfig | undefined,
+  targetChain: ChainConfig | undefined,
+  sourceToken: Token | undefined,
   defaultTokens: Token[] = [],
 ) {
   if (sourceChain && targetChain && sourceToken) {
-    const result = (availableTargetTokens[sourceChain]?.[targetChain]?.[sourceToken] || []).sort(tokenCompareFn);
+    const result = (availableTargetTokens[sourceChain.network]?.[targetChain.network]?.[sourceToken.symbol] || []).sort(
+      tokenCompareFn,
+    );
     return result.length ? result : defaultTokens;
   }
   return defaultTokens;
@@ -227,20 +227,25 @@ export function getLnBridgeCrossDefaultValue() {
 }
 
 export function getLnBridgeAvailableSourceTokens(
-  sourceChain: Network | undefined,
-  targetChain: Network | undefined,
+  sourceChain: ChainConfig | undefined,
+  targetChain: ChainConfig | undefined,
   defaultTokens: Token[] = [],
 ) {
   if (sourceChain && targetChain) {
-    const result = (lnbridgeAvailableSourceTokens[sourceChain]?.[targetChain] || []).sort(tokenCompareFn);
+    const result = (lnbridgeAvailableSourceTokens[sourceChain.network]?.[targetChain.network] || []).sort(
+      tokenCompareFn,
+    );
     return result.length ? result : defaultTokens;
   }
   return defaultTokens;
 }
 
-export function getLnBridgeAvailableTargetChains(sourceChain: Network | undefined, defaultChains: ChainConfig[] = []) {
+export function getLnBridgeAvailableTargetChains(
+  sourceChain: ChainConfig | undefined,
+  defaultChains: ChainConfig[] = [],
+) {
   if (sourceChain) {
-    const result = (lnbridgeAvailableTargetChains[sourceChain] || []).sort(chainCompareFn);
+    const result = (lnbridgeAvailableTargetChains[sourceChain.network] || []).sort(chainCompareFn);
     return result.length ? result : defaultChains;
   }
   return defaultChains;
