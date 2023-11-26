@@ -1,10 +1,10 @@
-import PageWrap from "@/components/page-wrap";
+import PageWrap from "@/ui/page-wrap";
 import TransferProvider from "@/providers/transfer-provider";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
 export const metadata: Metadata = {
-  title: "Transfer | Helix Bridge",
+  title: "Helix Bridge - Cross-chain for tokens",
   description: "Perform cross-chain transfers through Helix Bridge",
 };
 
