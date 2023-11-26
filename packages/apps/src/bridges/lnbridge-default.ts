@@ -164,7 +164,7 @@ export class LnBridgeDefault extends LnBridgeBase {
         args: [remoteChainId, bytesToHex(Uint8Array.from([123]), { size: 500 })],
       });
 
-      return { fee: nativeFee, token: this.sourceNativeToken };
+      return { value: nativeFee, token: this.sourceNativeToken };
     }
   }
 
