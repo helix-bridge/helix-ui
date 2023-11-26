@@ -1,7 +1,7 @@
-import { getChainsConfig, getChainConfig } from "../utils/chain";
+import { getChainConfigs, getChainConfig } from "../utils/chain";
 import type { ChainConfig } from "../types/chain";
 
-describe.each(getChainsConfig("all") as ChainConfig[])(
+describe.each(getChainConfigs(true) as ChainConfig[])(
   "Should configure price for HelixLpBridge to cross native token",
   ({ network, tokens }) => {
     if (tokens.length) {
@@ -18,7 +18,7 @@ describe.each(getChainsConfig("all") as ChainConfig[])(
   },
 );
 
-describe.each(getChainsConfig("all") as ChainConfig[])("Should configure target token", ({ network, tokens }) => {
+describe.each(getChainConfigs(true) as ChainConfig[])("Should configure target token", ({ network, tokens }) => {
   if (tokens.length) {
     describe.each(tokens)(`Cross $symbol from ${network}`, (token) => {
       if (token.cross.length) {
