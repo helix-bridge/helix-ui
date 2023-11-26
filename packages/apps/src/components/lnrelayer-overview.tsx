@@ -1,37 +1,39 @@
 "use client";
 
-import { QUERY_LNRELAYERS } from "@/config/gql";
-import { ChainConfig } from "@/types/chain";
-import { LnRelayerInfo, LnRelayersResponseData, LnRelayersVariables } from "@/types/graphql";
+import { GQL_QUERY_LNV20_RELAY_INFOS } from "@/config";
+import { ChainConfig, Lnv20RelayerOverview, QueryLnV20RelayInfosReqParams, QueryLnV20RelayInfosResData } from "@/types";
 import Search from "@/ui/search";
+import { getLnBridgeAvailableTargetChains, getLnBridgeCrossDefaultValue } from "@/utils";
 import { useQuery } from "@apollo/client";
 import { useDeferredValue, useEffect, useState } from "react";
 import ChainSelect from "./chain-select";
-import RelayersTable from "./relayers-table";
 import CountdownRefresh from "@/ui/countdown-refresh";
-import { getParsedCrossChain } from "@/utils/cross-chain";
+import RelayersTable from "./relayers-table";
 
-const { defaultSourceChains, defaultTargetChains, availableTargetChains } = getParsedCrossChain();
+const { defaultSourceChains, defaultTargetChains } = getLnBridgeCrossDefaultValue();
 const pageSize = 12;
 
 export default function LnRelayerOverview() {
-  const [records, setRecords] = useState<LnRelayerInfo[]>([]);
+  const [records, setRecords] = useState<Lnv20RelayerOverview[]>([]);
   const [sourceChain, setSourceChain] = useState<ChainConfig>();
   const [targetChain, setTargetChain] = useState<ChainConfig>();
   const [currentPage, setCurrentPage] = useState(0);
   const [searchValue, setSearchValue] = useState("");
   const deferredSearchValue = useDeferredValue(searchValue);
 
-  const { loading, data, refetch } = useQuery<LnRelayersResponseData, LnRelayersVariables>(QUERY_LNRELAYERS, {
-    variables: {
-      fromChain: sourceChain?.network,
-      toChain: targetChain?.network,
-      row: pageSize,
-      page: currentPage,
-      relayer: deferredSearchValue.toLowerCase() || undefined,
+  const { loading, data, refetch } = useQuery<QueryLnV20RelayInfosResData, QueryLnV20RelayInfosReqParams>(
+    GQL_QUERY_LNV20_RELAY_INFOS,
+    {
+      variables: {
+        fromChain: sourceChain?.network,
+        toChain: targetChain?.network,
+        row: pageSize,
+        page: currentPage,
+        relayer: deferredSearchValue.toLowerCase() || undefined,
+      },
+      notifyOnNetworkStatusChange: true,
     },
-    notifyOnNetworkStatusChange: true,
-  });
+  );
 
   useEffect(() => {
     if (!loading) {
@@ -65,6 +67,7 @@ export default function LnRelayerOverview() {
                 setTargetChain(undefined);
                 setCurrentPage(0);
               }}
+              compact
               value={sourceChain}
             />
           </div>
@@ -73,13 +76,12 @@ export default function LnRelayerOverview() {
             <ChainSelect
               className="px-middle border-line w-40 py-[7px]"
               placeholder="Target chain"
-              options={
-                sourceChain ? availableTargetChains[sourceChain.network] || defaultTargetChains : defaultTargetChains
-              }
+              options={getLnBridgeAvailableTargetChains(sourceChain, defaultTargetChains)}
               onChange={(value) => {
                 setTargetChain(value);
                 setCurrentPage(0);
               }}
+              compact
               value={targetChain}
             />
           </div>

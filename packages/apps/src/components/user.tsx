@@ -1,7 +1,7 @@
-import { useApp } from "@/hooks/use-app";
-import { UrlSearchParam } from "@/types/url";
+import { useApp } from "@/hooks";
+import { UrlSearchParamKey } from "@/types";
 import Dropdown from "@/ui/dropdown";
-import { toShortAdrress } from "@/utils/address";
+import { toShortAdrress } from "@/utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,7 +27,7 @@ export default function User({ onComplete = () => undefined }: Props) {
       sameWidth
     >
       <Link
-        href={`/records?${UrlSearchParam.ADDRESS}=${address}`}
+        href={`/records?${UrlSearchParamKey.ADDRESS}=${address}`}
         onClick={() => {
           setRecordsSearch(address);
           onComplete();

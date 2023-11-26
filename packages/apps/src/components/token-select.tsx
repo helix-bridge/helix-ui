@@ -1,6 +1,6 @@
 import { Token } from "@/types/token";
-import ISelect from "@/ui/i-select";
-import { getTokenLogoSrc } from "@/utils/misc";
+import ISelect from "@/ui/select";
+import { getTokenLogoSrc } from "@/utils";
 import Image from "next/image";
 import PrettyAddress from "./pretty-address";
 

@@ -14,7 +14,7 @@ interface Props {
   isLoadingMaxMargin: boolean;
 }
 
-export default function CrossChainInfo({ fee, bridge, maxMargin, isLoadingMaxMargin }: Props) {
+export default function TransferInfo({ fee, bridge, maxMargin, isLoadingMaxMargin }: Props) {
   const [transferLimit, setTransferLimit] = useState<{ token: Token; value: bigint }>();
   const [dailyLimit, setDailyLimit] = useState<{ loading: boolean; limit: bigint; spent: bigint; token: Token }>();
 

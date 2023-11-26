@@ -1,10 +1,8 @@
-import { BridgeCategory } from "@/types/bridge";
-import { ChainConfig } from "@/types/chain";
+import { BridgeCategory, ChainConfig, Token } from "@/types";
 import PrettyAddress from "./pretty-address";
 import Image from "next/image";
-import { getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
-import { formatBalance } from "@/utils/balance";
-import { Token } from "@/types/token";
+import { formatBalance, getChainLogoSrc, getTokenLogoSrc } from "@/utils";
+import { Address } from "viem";
 
 export default function StepCompleteItem({
   property,
@@ -16,7 +14,7 @@ export default function StepCompleteItem({
   percent,
 }: {
   property: string;
-  address?: string;
+  address?: Address;
   bridge?: BridgeCategory;
   chain?: ChainConfig;
   token?: Token;

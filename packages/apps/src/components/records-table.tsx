@@ -1,16 +1,11 @@
-import { HistoryRecord, RecordStatus } from "@/types/graphql";
-import PrettyAddress from "@/components/pretty-address";
+import { HistoryRecord, Network, RecordResult, TokenSymbol } from "@/types";
 import Table, { ColumnType } from "@/ui/table";
+import { bridgeFactory, formatBalance, formatTime, getChainConfig, getChainLogoSrc, parseRecordResult } from "@/utils";
 import Image from "next/image";
 import { Key, PropsWithChildren } from "react";
-import { formatBalance } from "@/utils/balance";
-import { Network } from "@/types/chain";
-import { TokenSymbol } from "@/types/token";
-import { getChainConfig } from "@/utils/chain";
-import { formatRecordStatus, getChainLogoSrc } from "@/utils/misc";
-import { formatTime } from "@/utils/time";
-import PrettyBridge from "./pretty-bridge";
-import { bridgeFactory } from "@/utils/bridge";
+import PrettyAddress from "./pretty-address";
+import BridgeIdenticon from "./bridge-identicon";
+import { Address } from "viem";
 
 interface Props {
   dataSource: DataSource[];
@@ -46,7 +41,7 @@ export default function RecordsTable({
       key: "to",
       title: <Title>To</Title>,
       render: ({ toChain, recvAmount, recvToken }) => (
-        <FromTo network={toChain} amount={BigInt(recvAmount)} symbol={recvToken} />
+        <FromTo network={toChain} amount={BigInt(recvAmount || 0)} symbol={recvToken} />
       ),
       width: "18%",
     },
@@ -69,7 +64,7 @@ export default function RecordsTable({
         const bridge = bridgeFactory({ category: row.bridge });
         return (
           <div className="flex justify-center">
-            <PrettyBridge width={36} height={36} type="symbol" bridge={bridge} />
+            <BridgeIdenticon width={36} height={36} type="symbol" bridge={bridge} />
           </div>
         );
       },
@@ -83,17 +78,17 @@ export default function RecordsTable({
           <span className="text-sm">{formatTime(startTime * 1000, { compact: true })}</span>
           <span
             className={`text-xs font-semibold ${
-              result === RecordStatus.SUCCESS
+              result === RecordResult.SUCCESS
                 ? "text-app-green"
-                : result === RecordStatus.REFUNDED
+                : result === RecordResult.REFUNDED
                 ? "text-app-orange"
-                : result === RecordStatus.PENDING
+                : result === RecordResult.PENDING
                 ? "text-primary"
                 : "text-white/50"
             }`}
           >
-            {formatRecordStatus(result)}
-            {result === RecordStatus.PENDING && confirmedBlocks ? ` (${confirmedBlocks})` : ""}
+            {parseRecordResult(result)}
+            {result === RecordResult.PENDING && confirmedBlocks ? ` (${confirmedBlocks})` : ""}
           </span>
         </div>
       ),
@@ -141,7 +136,7 @@ function FromTo({ network, amount, symbol }: { network: Network; amount: bigint;
   );
 }
 
-function SenderReceiver({ address }: { address?: string | null }) {
+function SenderReceiver({ address }: { address?: Address | null }) {
   return address ? (
     <PrettyAddress address={address} className="text-sm" copyable forceShort />
   ) : (

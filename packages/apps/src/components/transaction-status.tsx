@@ -1,5 +1,3 @@
-import { HistoryRecord, RecordStatus } from "@/types/graphql";
-import { StatusTag } from "./status-tag";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { bridgeFactory } from "@/utils/bridge";
 import { interval } from "rxjs";
@@ -12,6 +10,8 @@ import { notifyTransaction } from "@/utils/notification";
 import { BalanceInput } from "./balance-input";
 import { formatBalance } from "@/utils/balance";
 import dynamic from "next/dynamic";
+import { HistoryRecord, InputValue, RecordResult } from "@/types";
+import { RecordResultTag } from "@/ui/record-result-tag";
 
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 interface Props {
@@ -19,7 +19,7 @@ interface Props {
 }
 
 export default function TransactionStatus({ record }: Props) {
-  const [speedUpFee, setSpeedUpFee] = useState({ formatted: 0n, value: "" });
+  const [speedUpFee, setSpeedUpFee] = useState<InputValue<bigint>>({ valid: true, input: "", value: 0n });
   const [countdown, setCountdown] = useState(0);
   const [isTimeout, setIsTimeout] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -106,7 +106,7 @@ export default function TransactionStatus({ record }: Props) {
         walletClient,
       });
       const o = BigInt(record.fee); // old
-      const n = speedUpFee.formatted; // new
+      const n = speedUpFee.value; // new
 
       try {
         setBusy(true);
@@ -145,10 +145,10 @@ export default function TransactionStatus({ record }: Props) {
       const startTime = record ? record.startTime * 1000 : Date.now();
       const minTime = (bridgeFactory({ category: record.bridge })?.getEstimateTime().min || 3) * 60 * 1000;
       const token = getChainConfig(record.fromChain)?.tokens.find((t) => t.symbol === record.sendToken);
-      const formatted = BigInt(record.fee);
+      const value = BigInt(record.fee);
 
       if (token) {
-        setSpeedUpFee({ formatted, value: formatBalance(formatted, token.decimals) });
+        setSpeedUpFee({ value, input: formatBalance(value, token.decimals), valid: true });
       }
       setCountdown(minTime);
       setIsTimeout(Date.now() - startTime > minTime);
@@ -161,9 +161,9 @@ export default function TransactionStatus({ record }: Props) {
   return (
     <>
       <div className="gap-middle flex items-center">
-        <StatusTag status={record?.result} />
+        <RecordResultTag result={record?.result} />
 
-        {record?.result === RecordStatus.PENDING && (
+        {record?.result === RecordResult.PENDING && (
           <div className="inline text-sm text-white/50">
             {isTimeout ? (
               <span>
@@ -186,7 +186,7 @@ export default function TransactionStatus({ record }: Props) {
           </div>
         )}
 
-        {record?.result === RecordStatus.PENDING_TO_CLAIM && (
+        {record?.result === RecordResult.PENDING_TO_CLAIM && (
           <div className="gap-small flex items-center">
             <span className="text-sm font-normal text-white/50">Please claim the tokens on the target chain.</span>
             <Button className="px-1" kind="primary" busy={busy} onClick={handleClaim}>
@@ -195,7 +195,7 @@ export default function TransactionStatus({ record }: Props) {
           </div>
         )}
 
-        {record?.result === RecordStatus.PENDING_TO_REFUND && (
+        {record?.result === RecordResult.PENDING_TO_REFUND && (
           <div className="gap-small flex items-center">
             <span className="text-sm font-normal text-white/50">Please request refund on the source chain.</span>
             <Button className="px-1" kind="primary" busy={busy} onClick={handleRefund}>
@@ -204,7 +204,7 @@ export default function TransactionStatus({ record }: Props) {
           </div>
         )}
 
-        {record?.result === RecordStatus.PENDING && record.bridge.startsWith("lpbridge") && (
+        {record?.result === RecordResult.PENDING && record.bridge.startsWith("lpbridge") && (
           <div className="gap-small flex items-center">
             <span className="text-sm font-normal text-white/50">
               You can request refund or speed up this transaction.

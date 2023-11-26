@@ -1,69 +1,112 @@
-import { PropsWithChildren, useCallback, useState } from "react";
-import { TransferValue } from "./transfer-input";
-import { Address, useNetwork, useSwitchNetwork } from "wagmi";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useTransfer } from "@/hooks";
+import { InputValue } from "@/types";
 import BaseButton from "@/ui/button";
-import { useTransfer } from "@/hooks/use-transfer";
-import { isAddress } from "viem";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { PropsWithChildren, useCallback, useMemo, useState } from "react";
+import { Address, isAddress } from "viem";
+import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 
 interface Props {
   recipient: Address | undefined;
   transferable: bigint | undefined;
-  transferValue: TransferValue;
+  transferAmount: InputValue<bigint>;
   onTransfer: () => void;
 }
 
-export default function TransferAction({ recipient, transferable, transferValue, onTransfer }: Props) {
-  const { sourceAllowance, sourceValue, targetValue, bridgeClient, fee, approve } = useTransfer();
+export default function TransferAction({ recipient, transferable, transferAmount, onTransfer }: Props) {
+  const {
+    sourceAllowance,
+    sourceChain,
+    targetChain,
+    sourceToken,
+    targetToken,
+    bridgeInstance,
+    bridgeFee,
+    sourceApprove,
+  } = useTransfer();
   const [busy, setBusy] = useState(false);
+
   const { chain } = useNetwork();
+  const { address } = useAccount();
   const { switchNetwork } = useSwitchNetwork();
   const { openConnectModal } = useConnectModal();
 
-  const handleApprove = useCallback(async () => {
-    setBusy(true);
-    await approve();
-    setBusy(false);
-  }, [approve]);
+  const { btnText, btnDisabled, approveAmount } = useMemo(() => {
+    let btnDisabled = false;
+    let btnText: "Transfer" | "Approve" | "Switch Network" | "Connect Wallet" = "Transfer";
+    const feeValue = bridgeFee ? (bridgeFee.token.type === "native" ? 0n : bridgeFee.value) : 0n;
+    const transferValue = sourceToken?.type === "native" ? 0n : transferAmount.value;
+    const approveAmount = feeValue + transferValue;
 
-  if (chain) {
-    const feeValue = fee?.token.type === "native" ? 0n : fee?.value || 0n;
-
-    if (sourceValue?.chain.id !== chain.id) {
-      return <Button onClick={() => switchNetwork && switchNetwork(sourceValue?.chain.id)}>Switch Network</Button>;
-    } else if (
-      sourceValue.token.type !== "native" &&
-      transferValue.formatted + feeValue > (sourceAllowance?.value || 0n)
-    ) {
-      return (
-        <Button onClick={handleApprove} busy={busy}>
-          Approve
-        </Button>
-      );
+    if (chain) {
+      if (chain.id !== sourceChain?.id) {
+        btnText = "Switch Network";
+      } else if ((sourceAllowance?.value ?? 0n) < approveAmount) {
+        btnText = "Approve";
+      } else if (
+        !(
+          sourceChain &&
+          targetChain &&
+          sourceToken &&
+          targetToken &&
+          bridgeInstance &&
+          bridgeFee &&
+          transferable &&
+          transferAmount.value < transferable &&
+          isAddress(recipient ?? "")
+        )
+      ) {
+        btnDisabled = true;
+      }
     } else {
-      return (
-        <Button
-          disabled={
-            !(
-              sourceValue &&
-              targetValue &&
-              bridgeClient &&
-              fee?.value &&
-              transferValue.formatted &&
-              transferable !== undefined &&
-              transferValue.formatted <= transferable &&
-              isAddress(recipient || "")
-            )
-          }
-          onClick={onTransfer}
-        >
-          Transfer
-        </Button>
-      );
+      btnText = "Connect Wallet";
     }
-  } else {
-    return <Button onClick={openConnectModal}>Connect Wallet</Button>;
-  }
+    return { btnText, btnDisabled, approveAmount };
+  }, [
+    chain,
+    recipient,
+    transferable,
+    bridgeFee,
+    bridgeInstance,
+    sourceChain,
+    targetChain,
+    sourceToken,
+    targetToken,
+    sourceAllowance,
+    transferAmount,
+  ]);
+
+  const handleClick = useCallback(async () => {
+    if (btnText === "Connect Wallet") {
+      openConnectModal?.();
+    } else if (btnText === "Switch Network") {
+      switchNetwork?.(sourceChain?.id);
+    } else if (btnText === "Approve") {
+      if (address && sourceChain && bridgeInstance) {
+        setBusy(true);
+        await sourceApprove(address, approveAmount, bridgeInstance, sourceChain);
+        setBusy(false);
+      }
+    } else if (btnText === "Transfer") {
+      onTransfer();
+    }
+  }, [
+    address,
+    btnText,
+    approveAmount,
+    sourceChain,
+    bridgeInstance,
+    onTransfer,
+    sourceApprove,
+    switchNetwork,
+    openConnectModal,
+  ]);
+
+  return (
+    <Button busy={busy} disabled={btnDisabled} onClick={handleClick}>
+      {btnText}
+    </Button>
+  );
 }
 
 function Button({

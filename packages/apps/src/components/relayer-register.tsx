@@ -1,36 +1,44 @@
 "use client";
 
-import Button from "@/ui/button";
-import { Divider } from "@/ui/divider";
-import StepNumber from "@/ui/step-number";
+import { GQL_QUERY_LNV20_RELAY_INFOS } from "@/config";
+import { useRelayer } from "@/hooks";
+import {
+  BridgeCategory,
+  ChainConfig,
+  InputValue,
+  QueryLnV20RelayInfosReqParams,
+  QueryLnV20RelayInfosResData,
+  Token,
+} from "@/types";
+import { notification } from "@/ui/notification";
+import StepTitle from "@/ui/step-title";
+import Tooltip from "@/ui/tooltip";
+import {
+  formatBalance,
+  formatFeeRate,
+  getAvailableBridges,
+  getChainLogoSrc,
+  getLnBridgeAvailableSourceTokens,
+  getLnBridgeAvailableTargetChains,
+  getLnBridgeCrossDefaultValue,
+  getTokenLogoSrc,
+  isValidFeeRate,
+  notifyError,
+} from "@/utils";
+import { useApolloClient } from "@apollo/client";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import dynamic from "next/dynamic";
+import Image from "next/image";
 import { PropsWithChildren, useCallback, useEffect, useState } from "react";
+import { Address, useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import ChainSelect from "./chain-select";
 import TokenSelect from "./token-select";
-import { ChainConfig, ChainID } from "@/types/chain";
-import { Token, TokenSymbol } from "@/types/token";
-import { BridgeCategory } from "@/types/bridge";
-import { Address, useAccount, useNetwork, useSwitchNetwork } from "wagmi";
-import Image from "next/image";
-import { formatFeeRate, getChainLogoSrc, getTokenLogoSrc, isValidFeeRate } from "@/utils/misc";
-import Tooltip from "@/ui/tooltip";
+import Button from "@/ui/button";
 import StepCompleteItem from "./step-complete-item";
 import { BalanceInput } from "./balance-input";
-import PrettyAddress from "./pretty-address";
 import FeeRateInput from "./fee-rate-input";
-import { getParsedCrossChain } from "@/utils/cross-chain";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { formatBalance } from "@/utils/balance";
-import { useApolloClient } from "@apollo/client";
-import { QUERY_CHECK_LNBRIDGE_EXIST, QUERY_SPECIAL_RELAYER } from "@/config/gql";
-import {
-  CheckLnBridgeExistResponseData,
-  CheckLnBridgeExistVariables,
-  SpecialRelayerResponseData,
-  SpecialRelayerVariables,
-} from "@/types/graphql";
-import { notification } from "@/ui/notification";
-import { useRelayer } from "@/hooks/use-relayer";
-import dynamic from "next/dynamic";
+import { TransactionReceipt } from "viem";
+import PrettyAddress from "./pretty-address";
 
 enum Step {
   ONE,
@@ -42,8 +50,7 @@ enum Step {
 }
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
-const { availableTargetChains, defaultSourceChains, defaultTargetChains, availableBridges, availableTokens } =
-  getParsedCrossChain();
+const { defaultSourceChains, defaultTargetChains } = getLnBridgeCrossDefaultValue();
 
 export default function RelayerRegister() {
   const {
@@ -55,13 +62,9 @@ export default function RelayerRegister() {
     sourceBalance,
     targetAllowance,
     targetBalance,
-    margin,
-    baseFee,
-    feeRate,
     bridgeCategory,
-    setMargin,
-    setBaseFee,
-    setFeeRate,
+    defaultBridge,
+    oppositeBridge,
     setBridgeCategory,
     setSourceChain,
     setTargetChain,
@@ -71,13 +74,17 @@ export default function RelayerRegister() {
     targetApprove,
     depositMargin,
     updateFeeAndMargin,
+    isLnBridgeExist,
   } = useRelayer();
   const [isSettingDefaultMargin, setIsSettingDefaultMargin] = useState(false);
   const [busy, setBusy] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [completeMargin, setCompleteMargin] = useState(false);
   const [currentStep, setCurrentStep] = useState(Step.ONE);
-  const [tokenOptions, setTokenOptions] = useState<Token[]>([]);
+
+  const [marginInput, setMarginInput] = useState<InputValue<bigint>>({ input: "", valid: true, value: 0n });
+  const [baseFeeInput, setBaseFeeInput] = useState<InputValue<bigint>>({ input: "", valid: true, value: 0n });
+  const [feeRateInput, setFeeRateInput] = useState<InputValue<number>>({ input: "", valid: true, value: 0 });
 
   const apolloClient = useApolloClient();
   const { address } = useAccount();
@@ -85,87 +92,55 @@ export default function RelayerRegister() {
   const { switchNetwork } = useSwitchNetwork();
   const { openConnectModal } = useConnectModal();
 
-  const isRegistered = async () => {
-    const { data: relayerData } = await apolloClient.query<SpecialRelayerResponseData, SpecialRelayerVariables>({
-      query: QUERY_SPECIAL_RELAYER,
-      variables: {
-        fromChain: sourceChain?.network,
-        toChain: targetChain?.network,
-        bridge: bridgeCategory,
-        relayer: address?.toLowerCase(),
-      },
-      fetchPolicy: "no-cache",
-    });
-
-    if (
-      relayerData.queryLnv20RelayInfos?.records.some(
-        ({ sendToken }) => sendToken?.toLowerCase() === sourceToken?.address.toLowerCase(),
-      )
-    ) {
-      notification.warn({
-        title: "Transaction failed",
-        description: `You have registered a relayer that supports this cross-chain.`,
-      });
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  const isLnBridgeExist = useCallback(async () => {
-    if (sourceChain && targetChain && sourceToken && targetToken) {
-      const { data: lnbridgeData } = await apolloClient.query<
-        CheckLnBridgeExistResponseData,
-        CheckLnBridgeExistVariables
+  const isRegistered = useCallback(
+    async (
+      relayer: Address,
+      _sourceChain: ChainConfig,
+      _targetChain: ChainConfig,
+      _sourceToken: Token,
+      _category: BridgeCategory,
+    ) => {
+      const { data: relayerData } = await apolloClient.query<
+        QueryLnV20RelayInfosResData,
+        QueryLnV20RelayInfosReqParams
       >({
-        query: QUERY_CHECK_LNBRIDGE_EXIST,
+        query: GQL_QUERY_LNV20_RELAY_INFOS,
         variables: {
-          fromChainId: sourceChain.id,
-          toChainId: targetChain.id,
-          fromToken: sourceToken.address,
-          toToken: targetToken.address,
+          fromChain: _sourceChain.network,
+          toChain: _targetChain.network,
+          bridge: _category,
+          relayer: relayer.toLowerCase(),
+          page: 0,
+          row: 2,
         },
         fetchPolicy: "no-cache",
       });
 
-      if (lnbridgeData.checkLnBridgeExist) {
+      if (
+        relayerData.queryLnv20RelayInfos?.records.some(
+          ({ sendToken }) => sendToken?.toLowerCase() === _sourceToken.address.toLowerCase(),
+        )
+      ) {
+        notification.warn({
+          title: "Transaction failed",
+          description: `You have registered a relayer that supports this cross-chain.`,
+        });
         return true;
+      } else {
+        return false;
       }
-    }
-
-    notification.warn({
-      title: "Deposit failed",
-      description: `The bridge does not exist.`,
-    });
-    console.warn("[isLnBridgeExist]", sourceChain?.id, targetChain?.id, sourceToken?.address, targetToken?.address);
-    return false;
-  }, [apolloClient, sourceChain, targetChain, sourceToken, targetToken]);
+    },
+    [apolloClient],
+  );
 
   useEffect(() => {
-    const availableCategories = new Set<BridgeCategory>();
-
-    if (sourceChain && targetChain) {
-      (Object.keys(availableBridges[sourceChain.network]?.[targetChain.network] || {}) as TokenSymbol[]).forEach(
-        (symbol) => {
-          availableBridges[sourceChain.network]?.[targetChain.network]?.[symbol]?.forEach((category) => {
-            if (category === "lnbridgev20-default" || category === "lnbridgev20-opposite") {
-              availableCategories.add(category);
-            }
-          });
-        },
-      );
-      setTokenOptions(availableTokens[sourceChain.network]?.[targetChain.network] || []);
-    } else {
-      setTokenOptions([]);
-    }
-
-    setBridgeCategory(Array.from(availableCategories).at(0));
-  }, [sourceChain, targetChain, setBridgeCategory]);
+    setBridgeCategory(getAvailableBridges(sourceChain, targetChain, sourceToken).at(0));
+  }, [sourceChain, targetChain, sourceToken, setBridgeCategory]);
 
   return (
     <>
       <div className="mx-auto flex w-full flex-col gap-5 lg:w-[38.75rem]">
-        {/* step 1 */}
+        {/* Step 1 */}
         <div className="bg-component flex flex-col gap-5 p-5 lg:p-[1.875rem]">
           <StepTitle step={1} title="Select Chain and Token" />
 
@@ -178,27 +153,29 @@ export default function RelayerRegister() {
               <div className="gap-middle flex items-center lg:gap-5">
                 <LabelItem label="From" className="flex-1">
                   <ChainSelect
+                    compact
                     className="px-middle bg-app-bg border-transparent py-2"
                     options={defaultSourceChains}
                     placeholder="Source chain"
+                    value={sourceChain}
                     onChange={(value) => {
                       setSourceChain(value);
                       setTargetChain(undefined);
                       setSourceToken(undefined);
                     }}
-                    value={sourceChain}
                   />
                 </LabelItem>
                 <LabelItem label="To" className="flex-1">
                   <ChainSelect
+                    compact
                     className="px-middle bg-app-bg border-transparent py-2"
-                    options={sourceChain ? availableTargetChains[sourceChain.network] || [] : defaultTargetChains}
+                    options={getLnBridgeAvailableTargetChains(sourceChain, defaultTargetChains)}
                     placeholder="Target chain"
+                    value={targetChain}
                     onChange={(value) => {
                       setTargetChain(value);
                       setSourceToken(undefined);
                     }}
-                    value={targetChain}
                   />
                 </LabelItem>
               </div>
@@ -206,11 +183,11 @@ export default function RelayerRegister() {
               <LabelItem label="Token">
                 <TokenSelect
                   className="px-middle bg-app-bg py-2"
-                  disabled={!tokenOptions.length}
-                  options={tokenOptions}
+                  disabled={!getLnBridgeAvailableSourceTokens(sourceChain, targetChain).length}
+                  options={getLnBridgeAvailableSourceTokens(sourceChain, targetChain)}
                   placeholder="Select token"
-                  onChange={setSourceToken}
                   value={sourceToken}
+                  onChange={setSourceToken}
                 />
               </LabelItem>
 
@@ -220,8 +197,8 @@ export default function RelayerRegister() {
                 onClick={() => {
                   if (address) {
                     setCurrentStep(Step.COMPLETE_ONE);
-                  } else if (openConnectModal) {
-                    openConnectModal();
+                  } else {
+                    openConnectModal?.();
                   }
                 }}
                 kind="primary"
@@ -253,10 +230,9 @@ export default function RelayerRegister() {
                     setSourceChain(undefined);
                     setTargetChain(undefined);
                     setSourceToken(undefined);
-                    setBridgeCategory(undefined);
-                    setMargin({ formatted: 0n, value: "" });
-                    setBaseFee({ formatted: 0n, value: "" });
-                    setFeeRate({ formatted: 0, value: "" });
+                    setMarginInput({ input: "", valid: true, value: 0n });
+                    setBaseFeeInput({ input: "", valid: true, value: 0n });
+                    setFeeRateInput({ input: "", valid: true, value: 0 });
                     setCurrentStep(Step.ONE);
                     setCompleteMargin(false);
                   }}
@@ -277,7 +253,7 @@ export default function RelayerRegister() {
           )}
         </div>
 
-        {/* step 2 */}
+        {/* Step 2 */}
         <div className="bg-component flex flex-col gap-5 p-5 lg:p-[1.875rem]">
           <StepTitle step={2} title="Deposit Margin and Set Fee" />
 
@@ -289,12 +265,13 @@ export default function RelayerRegister() {
 
               <LabelItem label="Deposit Margin">
                 <BalanceInput
+                  compact
                   balance={bridgeCategory === "lnbridgev20-default" ? targetBalance?.value : sourceBalance?.value}
                   token={bridgeCategory === "lnbridgev20-default" ? targetBalance?.token : sourceBalance?.token}
-                  value={margin}
+                  value={marginInput}
                   suffix="symbol"
                   disabled={completeMargin}
-                  onChange={setMargin}
+                  onChange={setMarginInput}
                 />
               </LabelItem>
 
@@ -302,46 +279,55 @@ export default function RelayerRegister() {
                 <>
                   <Button
                     kind="primary"
+                    className="flex h-9 items-center justify-center"
+                    disabled={completeMargin || (targetChain?.id === chain?.id && marginInput.value === 0n)}
+                    busy={isSettingDefaultMargin}
                     onClick={async () => {
-                      if (targetChain?.id !== chain?.id) {
-                        switchNetwork?.(targetChain?.id);
-                      } else if (targetToken?.type !== "native" && margin.formatted > (targetAllowance?.value || 0n)) {
+                      if (address && defaultBridge && sourceChain && targetChain && sourceToken && targetToken) {
+                        setIsSettingDefaultMargin(true);
                         try {
-                          setIsSettingDefaultMargin(true);
-                          await targetApprove(margin.formatted);
+                          if (targetChain.id !== chain?.id) {
+                            switchNetwork?.(targetChain.id);
+                          } else if (
+                            targetToken?.type !== "native" &&
+                            marginInput.value > (targetAllowance?.value || 0n)
+                          ) {
+                            await targetApprove(address, marginInput.value, defaultBridge, targetChain);
+                          } else if (
+                            await isLnBridgeExist(apolloClient, sourceChain, targetChain, sourceToken, targetToken)
+                          ) {
+                            if (!(await isRegistered(address, sourceChain, targetChain, sourceToken, bridgeCategory))) {
+                              const receipt = await depositMargin(
+                                address,
+                                marginInput.value,
+                                defaultBridge,
+                                targetChain,
+                              );
+                              if (receipt?.status === "success") {
+                                setCompleteMargin(true);
+                              }
+                            }
+                          } else {
+                            notification.warn({
+                              title: "Deposit failed",
+                              description: `The bridge does not exist.`,
+                            });
+                          }
                         } catch (err) {
                           console.error(err);
-                        } finally {
-                          setIsSettingDefaultMargin(false);
-                        }
-                      } else {
-                        try {
-                          setIsSettingDefaultMargin(true);
-                          if ((await isRegistered()) || !(await isLnBridgeExist())) {
-                            setIsSettingDefaultMargin(false);
-                            return;
-                          }
-                          const receipt = await depositMargin(margin.formatted);
-                          if (receipt?.status === "success") {
-                            setCompleteMargin(true);
-                          }
-                        } catch (err) {
-                          console.error(err);
+                          notifyError(err);
                         } finally {
                           setIsSettingDefaultMargin(false);
                         }
                       }
                     }}
-                    className="flex h-9 items-center justify-center"
-                    disabled={completeMargin || (targetChain?.id === chain?.id && margin.formatted === 0n)}
-                    busy={isSettingDefaultMargin}
                   >
                     <span className="text-sm font-medium text-white">
                       {!completeMargin && targetChain?.id !== chain?.id
                         ? "Switch Network"
                         : !completeMargin &&
                           targetToken?.type !== "native" &&
-                          margin.formatted > (targetAllowance?.value || 0n)
+                          marginInput.value > (targetAllowance?.value || 0n)
                         ? "Approve"
                         : "Confirm"}
                     </span>
@@ -351,64 +337,84 @@ export default function RelayerRegister() {
               )}
 
               <LabelItem label="Base Fee" tips="The fixed fee set by the relayer and charged in a transaction">
-                <BalanceInput token={sourceToken} suffix="symbol" value={baseFee} onChange={setBaseFee} />
+                <BalanceInput
+                  compact
+                  token={sourceToken}
+                  suffix="symbol"
+                  value={baseFeeInput}
+                  onChange={setBaseFeeInput}
+                />
               </LabelItem>
               <LabelItem
                 label="Liquidity Fee Rate"
                 tips="The percentage deducted by the relayer from the transfer amount in a transaction"
               >
-                <FeeRateInput placeholder="Enter 0 ~ 0.25" value={feeRate} onChange={setFeeRate} />
+                <FeeRateInput placeholder="Enter 0 ~ 0.25" value={feeRateInput} onChange={setFeeRateInput} />
               </LabelItem>
 
               <Divider />
 
               <Button
                 kind="primary"
-                onClick={async () => {
-                  if (sourceChain?.id !== chain?.id) {
-                    switchNetwork?.(sourceChain?.id);
-                  } else if (
-                    sourceToken?.type !== "native" &&
-                    bridgeCategory === "lnbridgev20-opposite" &&
-                    margin.formatted > (sourceAllowance?.value || 0n)
-                  ) {
-                    try {
-                      setBusy(true);
-                      await sourceApprove(margin.formatted);
-                    } catch (err) {
-                      console.error(err);
-                    } finally {
-                      setBusy(false);
-                    }
-                  } else {
-                    try {
-                      setBusy(true);
-                      if ((await isRegistered()) || !(await isLnBridgeExist())) {
-                        setBusy(false);
-                        return;
-                      }
-                      const receipt =
-                        bridgeCategory === "lnbridgev20-default"
-                          ? await setFeeAndRate(baseFee.formatted, feeRate.formatted)
-                          : bridgeCategory === "lnbridgev20-opposite"
-                          ? await updateFeeAndMargin(margin.formatted, baseFee.formatted, feeRate.formatted)
-                          : undefined;
-                      if (receipt?.status === "success") {
-                        setCurrentStep(Step.THREE);
-                      }
-                    } catch (err) {
-                      console.error(err);
-                    } finally {
-                      setBusy(false);
-                    }
-                  }
-                }}
                 disabled={
                   sourceChain?.id === chain?.id &&
-                  !(margin.value && baseFee.value && feeRate.value && isValidFeeRate(feeRate.formatted))
+                  !(marginInput.input && baseFeeInput.input && feeRateInput.input && isValidFeeRate(feeRateInput.value))
                 }
                 busy={busy}
                 className="flex h-9 items-center justify-center"
+                onClick={async () => {
+                  let receipt: TransactionReceipt | undefined;
+                  if (address && sourceChain && targetChain && sourceToken && targetToken) {
+                    setBusy(true);
+                    try {
+                      if (sourceChain.id !== chain?.id) {
+                        switchNetwork?.(sourceChain.id);
+                      } else if (
+                        oppositeBridge &&
+                        sourceToken?.type !== "native" &&
+                        bridgeCategory === "lnbridgev20-opposite" &&
+                        marginInput.value > (sourceAllowance?.value || 0n)
+                      ) {
+                        await sourceApprove(address, marginInput.value, oppositeBridge, sourceChain);
+                      } else if (bridgeCategory === "lnbridgev20-default" && defaultBridge) {
+                        receipt = await setFeeAndRate(
+                          baseFeeInput.value,
+                          feeRateInput.value,
+                          defaultBridge,
+                          sourceChain,
+                        );
+                      } else if (
+                        oppositeBridge &&
+                        bridgeCategory &&
+                        (await isLnBridgeExist(apolloClient, sourceChain, targetChain, sourceToken, targetToken))
+                      ) {
+                        if (!(await isRegistered(address, sourceChain, targetChain, sourceToken, bridgeCategory))) {
+                          receipt = await updateFeeAndMargin(
+                            address,
+                            marginInput.value,
+                            baseFeeInput.value,
+                            feeRateInput.value,
+                            oppositeBridge,
+                            sourceChain,
+                          );
+                        }
+                      } else {
+                        notification.warn({
+                          title: "Deposit failed",
+                          description: `The bridge does not exist.`,
+                        });
+                      }
+                    } catch (err) {
+                      console.error(err);
+                      notifyError(err);
+                    } finally {
+                      setBusy(false);
+                      if (receipt?.status === "success") {
+                        setCurrentStep(Step.THREE);
+                      }
+                    }
+                  }
+                }}
               >
                 <span className="text-sm font-medium text-white">
                   {bridgeCategory === "lnbridgev20-default"
@@ -418,7 +424,7 @@ export default function RelayerRegister() {
                     : bridgeCategory === "lnbridgev20-opposite"
                     ? sourceChain?.id !== chain?.id
                       ? "Switch Network"
-                      : sourceToken?.type !== "native" && margin.formatted > (sourceAllowance?.value || 0n)
+                      : sourceToken?.type !== "native" && marginInput.value > (sourceAllowance?.value || 0n)
                       ? "Approve"
                       : "Confirm"
                     : "Confirm"}
@@ -439,16 +445,16 @@ export default function RelayerRegister() {
                       ? sourceToken
                       : undefined
                   }
-                  balance={margin.formatted}
+                  balance={marginInput.value}
                 />
-                <StepCompleteItem property="Base Fee" token={sourceToken} balance={baseFee.formatted} />
-                <StepCompleteItem property="Liquidity Fee Rate" percent={formatFeeRate(feeRate.formatted)} />
+                <StepCompleteItem property="Base Fee" token={sourceToken} balance={baseFeeInput.value} />
+                <StepCompleteItem property="Liquidity Fee Rate" percent={formatFeeRate(feeRateInput.value)} />
               </div>
             </>
           )}
         </div>
 
-        {/* step 3 */}
+        {/* Step 3 */}
         <div className="bg-component flex flex-col gap-5 p-5 lg:p-[1.875rem]">
           <StepTitle step={3} title="Authorize Token on Target Chain and Run Relayer" />
 
@@ -462,14 +468,12 @@ export default function RelayerRegister() {
                 <BalanceInput
                   token={targetToken}
                   disabled
-                  value={
-                    targetAllowance
-                      ? {
-                          formatted: targetAllowance.value,
-                          value: formatBalance(targetAllowance.value, targetAllowance.token.decimals),
-                        }
-                      : undefined
-                  }
+                  value={{
+                    value: targetAllowance?.value ?? 0n,
+                    input: formatBalance(targetAllowance?.value ?? 0n, targetAllowance?.token.decimals ?? 0),
+                    valid: true,
+                  }}
+                  compact
                   placeholder="-"
                 />
               </LabelItem>
@@ -478,14 +482,19 @@ export default function RelayerRegister() {
                 <Button
                   kind="primary"
                   onClick={async () => {
-                    if (chain?.id !== targetChain?.id) {
-                      switchNetwork?.(targetChain?.id);
-                    } else {
+                    if (address && targetChain) {
+                      setBusy(true);
                       try {
-                        setBusy(true);
-                        await targetApprove(targetBalance?.value || 0n);
+                        if (chain?.id !== targetChain.id) {
+                          switchNetwork?.(targetChain.id);
+                        } else if (defaultBridge) {
+                          await targetApprove(address, targetBalance?.value || 0n, defaultBridge, targetChain);
+                        } else if (oppositeBridge) {
+                          await targetApprove(address, targetBalance?.value || 0n, oppositeBridge, targetChain);
+                        }
                       } catch (err) {
                         console.error(err);
+                        notifyError(err);
                       } finally {
                         setBusy(false);
                       }
@@ -529,7 +538,7 @@ export default function RelayerRegister() {
           style={{ gridTemplateColumns: "130px auto" }}
         >
           <span>Address</span>
-          <PrettyAddress address={address || ""} />
+          {address ? <PrettyAddress address={address} /> : null}
 
           <span>Bridge Type</span>
           <span>
@@ -551,15 +560,15 @@ export default function RelayerRegister() {
 
           <span>Margin</span>
           <PrettyMargin
-            margin={margin.formatted}
+            margin={marginInput.value}
             token={bridgeCategory === "lnbridgev20-default" ? targetToken : sourceToken}
           />
 
           <span>Base Fee</span>
-          <PrettyBaseFee fee={baseFee.formatted} token={sourceToken} />
+          <PrettyBaseFee fee={baseFeeInput.value} token={sourceToken} />
 
           <span>Liquidity Fee Rate</span>
-          <span>{formatFeeRate(feeRate.formatted)}%</span>
+          <span>{formatFeeRate(feeRateInput.value)}%</span>
         </div>
 
         <Divider />
@@ -573,9 +582,9 @@ export default function RelayerRegister() {
               setSourceChain(undefined);
               setTargetChain(undefined);
               setSourceToken(undefined);
-              setMargin({ formatted: 0n, value: "" });
-              setBaseFee({ formatted: 0n, value: "" });
-              setFeeRate({ formatted: 0, value: "" });
+              setMarginInput({ input: "", valid: true, value: 0n });
+              setBaseFeeInput({ input: "", valid: true, value: 0n });
+              setFeeRateInput({ input: "", valid: true, value: 0 });
               setCurrentStep(Step.ONE);
               setCompleteMargin(false);
             }}
@@ -607,15 +616,6 @@ function RunRelayer({ style, onClick = () => undefined }: { style: "button" | "l
   );
 }
 
-function StepTitle({ step, title }: { step: number; title: string }) {
-  return (
-    <div className="gap-middle flex items-center">
-      <StepNumber number={step} />
-      <h5 className="text-xl font-semibold text-white">{title}</h5>
-    </div>
-  );
-}
-
 function LabelItem({
   children,
   label,
@@ -626,11 +626,11 @@ function LabelItem({
     <div className={`gap-middle flex flex-col ${className}`}>
       <div className="gap-small flex items-center">
         <span className="text-sm font-normal text-white">{label}</span>
-        {!!tips && (
+        {tips ? (
           <Tooltip content={tips} className="w-fit" contentClassName="max-w-[18rem]">
             <Image width={16} height={16} alt="Info" src="/images/info.svg" />
           </Tooltip>
-        )}
+        ) : null}
       </div>
       {children}
     </div>
@@ -669,4 +669,8 @@ function PrettyMargin({ token, margin }: { token?: Token; margin: bigint }) {
 
 function PrettyBaseFee({ fee, token }: { fee: bigint; token?: Token }) {
   return <span>{token ? formatBalance(fee, token.decimals) : ""}</span>;
+}
+
+function Divider() {
+  return <div className="h-[1px] bg-white/10" />;
 }

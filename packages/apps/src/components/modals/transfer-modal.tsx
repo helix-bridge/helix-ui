@@ -1,59 +1,66 @@
-import { BaseBridge } from "@/bridges/base";
-import { ChainToken } from "@/types/misc";
-import { RecordStatus, RelayersResponseData, TxProgressResponseData, TxProgressVariables } from "@/types/graphql";
-import { formatBalance } from "@/utils/balance";
-import { getChainLogoSrc } from "@/utils/misc";
+import { BaseBridge } from "@/bridges";
+import { GQL_HISTORY_RECORD_BY_TX_HASH } from "@/config";
+import { useTransfer } from "@/hooks";
+import {
+  ChainConfig,
+  HistoryRecordByTxHashReqParams,
+  HistoryRecordByTxHashResData,
+  InputValue,
+  RecordResult,
+  SortedLnV20RelayInfosResData,
+  Token,
+} from "@/types";
+import ProgressIcon from "@/ui/progress-icon";
+import { formatBalance, getChainLogoSrc, notifyError } from "@/utils";
 import { ApolloQueryResult, useQuery } from "@apollo/client";
-import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
-import { TransferValue } from "./transfer-input";
-import { notification } from "@/ui/notification";
-import { Address, parseUnits } from "viem";
-import { Token } from "@/types/token";
-import { useTransfer } from "@/hooks/use-transfer";
 import dynamic from "next/dynamic";
-import ProgressIcon from "./progress-icon";
-import { QUERY_TX_PROGRESS } from "@/config/gql";
+import Image from "next/image";
 import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import { Address, Hex, parseUnits } from "viem";
 
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
+
 interface Props {
   sender?: `0x${string}` | null;
   recipient?: `0x${string}` | null;
-  transferValue: TransferValue;
+  transferAmount: InputValue<bigint>;
   isOpen: boolean;
   onClose: () => void;
-  refetchRelayers: () => Promise<ApolloQueryResult<RelayersResponseData>>;
+  refetchRelayers: () => Promise<ApolloQueryResult<SortedLnV20RelayInfosResData>>;
 }
 
-export default function TransferModal({ sender, recipient, transferValue, isOpen, onClose, refetchRelayers }: Props) {
-  const { bridgeClient, sourceValue, targetValue, fee, transfer } = useTransfer();
-  const [txHash, setTxHash] = useState("");
+export default function TransferModal({ sender, recipient, transferAmount, isOpen, onClose, refetchRelayers }: Props) {
+  const { bridgeInstance, sourceChain, targetChain, sourceToken, targetToken, bridgeFee, transfer } = useTransfer();
+  const [txHash, setTxHash] = useState<Hex>("0x");
   const [busy, setBusy] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
-  const { data: txProgressData } = useQuery<TxProgressResponseData, TxProgressVariables>(QUERY_TX_PROGRESS, {
-    variables: { txHash },
-    pollInterval: txHash ? 300 : 0,
-    skip: !txHash,
-  });
+  const { data: txProgressData } = useQuery<HistoryRecordByTxHashResData, HistoryRecordByTxHashReqParams>(
+    GQL_HISTORY_RECORD_BY_TX_HASH,
+    {
+      variables: { txHash },
+      pollInterval: txHash === "0x" ? 0 : 300,
+      skip: txHash === "0x",
+    },
+  );
 
   const handleTransfer = useCallback(async () => {
-    if (sender && recipient && bridgeClient) {
+    if (sender && recipient && sourceChain && bridgeInstance) {
+      setBusy(true);
       try {
-        setBusy(true);
-        const relayer = bridgeClient.isLnBridge()
+        const relayer = bridgeInstance.isLnBridge()
           ? (await refetchRelayers()).data.sortedLnv20RelayInfos?.records.at(0)
           : undefined;
-        const receipt = await transfer(sender, recipient, transferValue.formatted, {
+        const receipt = await transfer(sender, recipient, transferAmount.value, bridgeInstance, sourceChain, {
           relayer: relayer?.relayer,
           transferId: relayer?.lastTransferId,
           totalFee: (
-            await bridgeClient.getFee({
+            await bridgeInstance.getFee({
               baseFee: BigInt(relayer?.baseFee || 0),
               protocolFee: BigInt(relayer?.protocolFee || 0),
               liquidityFeeRate: BigInt(relayer?.liquidityFeeRate || 0),
-              transferAmount: transferValue.formatted,
+              transferAmount: transferAmount.value,
             })
           )?.value,
           withdrawNonce: BigInt(relayer?.withdrawNonce || 0),
@@ -66,19 +73,19 @@ export default function TransferModal({ sender, recipient, transferValue, isOpen
         }
       } catch (err) {
         console.error(err);
-        notification.error({ title: "Transfer failed", description: (err as Error).message });
+        notifyError(err);
       } finally {
         setBusy(false);
       }
     }
-  }, [bridgeClient, recipient, refetchRelayers, sender, transfer, transferValue]);
+  }, [sender, recipient, sourceChain, transferAmount, bridgeInstance, transfer, refetchRelayers]);
 
   // Reset state
   useEffect(() => {
     if (isOpen) {
       //
     } else {
-      setTxHash("");
+      setTxHash("0x");
       setBusy(false);
       setDisabled(false);
     }
@@ -93,26 +100,38 @@ export default function TransferModal({ sender, recipient, transferValue, isOpen
       disabledCancel={busy || disabled}
       disabledOk={disabled}
       busy={busy}
-      forceFooterHidden={txHash ? true : false}
+      forceFooterHidden={txHash === "0x" ? false : true}
       onClose={onClose}
       onCancel={onClose}
       onOk={handleTransfer}
     >
-      {/* from-to */}
+      {/* From-To */}
       <div className="gap-small flex flex-col">
-        <SourceTarget type="source" address={sender} chainToken={sourceValue} transferValue={transferValue} />
+        <SourceTarget
+          type="source"
+          address={sender}
+          chain={sourceChain}
+          token={sourceToken}
+          transferAmount={transferAmount}
+        />
         <div className="relative">
           <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center">
             <Image width={36} height={36} alt="Transfer to" src="images/transfer-to.svg" className="shrink-0" />
           </div>
         </div>
-        <SourceTarget type="target" address={recipient} chainToken={targetValue} transferValue={transferValue} />
+        <SourceTarget
+          type="target"
+          address={recipient}
+          chain={targetChain}
+          token={targetToken}
+          transferAmount={transferAmount}
+        />
       </div>
 
       {/* information */}
       <div className="gap-middle flex flex-col">
         <span className="text-sm font-normal text-white">Information</span>
-        <Information fee={fee} bridge={bridgeClient} />
+        <Information fee={bridgeFee} bridge={bridgeInstance} />
       </div>
 
       {txHash ? (
@@ -131,38 +150,34 @@ export default function TransferModal({ sender, recipient, transferValue, isOpen
 function SourceTarget({
   type,
   address,
-  transferValue,
-  chainToken,
+  chain,
+  token,
+  transferAmount,
 }: {
   type: "source" | "target";
-  transferValue: TransferValue;
-  chainToken?: ChainToken | null;
+  transferAmount: InputValue<bigint>;
+  chain?: ChainConfig;
+  token?: Token;
   address?: Address | null;
 }) {
-  return chainToken ? (
+  return chain && token ? (
     <div className="bg-app-bg p-middle flex items-center justify-between rounded lg:p-5">
-      {/* left */}
+      {/* Left */}
       <div className="gap-middle flex items-center">
-        <Image
-          width={36}
-          height={36}
-          alt="Chain"
-          src={getChainLogoSrc(chainToken.chain.logo)}
-          className="shrink-0 rounded-full"
-        />
+        <Image width={36} height={36} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
         <div className="flex flex-col items-start">
-          <span className="text-base font-medium text-white">{chainToken.chain.name}</span>
+          <span className="text-base font-medium text-white">{chain.name}</span>
           <span className="text-sm font-medium text-white/50">{address}</span>
         </div>
       </div>
 
-      {/* right */}
+      {/* Right */}
       <div className="flex flex-col items-end">
         <span className={`text-base font-medium ${type === "source" ? "text-app-red" : "text-app-green"}`}>
           {type === "source" ? "-" : "+"}
-          {formatBalance(parseUnits(transferValue.value, chainToken.token.decimals), chainToken.token.decimals)}
+          {formatBalance(parseUnits(transferAmount.input, token.decimals), token.decimals)}
         </span>
-        <span className="text-sm font-medium text-white">{chainToken.token.symbol}</span>
+        <span className="text-sm font-medium text-white">{token.symbol}</span>
       </div>
     </div>
   ) : null;
@@ -199,7 +214,7 @@ function Progress({
   id,
 }: {
   confirmedBlocks: string | null | undefined;
-  result: RecordStatus | null | undefined;
+  result: RecordResult | null | undefined;
   id: string | null | undefined;
 }) {
   const splited = confirmedBlocks?.split("/");
@@ -207,7 +222,7 @@ function Progress({
     const finished = Number(splited[0]);
     const total = Number(splited[1]);
 
-    if (finished === total || result === RecordStatus.SUCCESS) {
+    if (finished === total || result === RecordResult.SUCCESS) {
       return (
         <div className="flex w-full items-center justify-between">
           <div className="inline-flex">

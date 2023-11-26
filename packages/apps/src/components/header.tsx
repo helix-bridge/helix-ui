@@ -1,8 +1,8 @@
 "use client";
 
-import { useToggle } from "@/hooks/use-toggle";
+import { useToggle } from "@/hooks";
 import Tooltip from "@/ui/tooltip";
-import { isProduction } from "@/utils/env";
+import { isProduction } from "@/utils";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,7 +21,7 @@ interface NavigationConfig {
 }
 
 export default function Header() {
-  const [isDrawerOpen, _, setDrawerOpen, setDrawerClose] = useToggle(false);
+  const { state: isOpen, setTrue: setIsOpenTrue, setFalse: setIsOpenFalse } = useToggle(false);
   const pathname = usePathname();
 
   const navigationsConfig = useMemo<NavigationConfig[]>(() => {
@@ -107,12 +107,12 @@ export default function Header() {
             alt="Menu"
             src="/images/menu.svg"
             className="inline transition-transform active:translate-y-1 lg:hidden"
-            onClick={setDrawerOpen}
+            onClick={setIsOpenTrue}
           />
         </div>
       </div>
 
-      <Drawer maskClosable isOpen={isDrawerOpen} onClose={setDrawerClose}>
+      <Drawer maskClosable isOpen={isOpen} onClose={setIsOpenFalse}>
         <div className="flex h-96 w-full items-start justify-center">
           <div className="flex w-max flex-col items-start gap-10">
             <div className="gap-large flex flex-col">
@@ -136,7 +136,7 @@ export default function Header() {
                     key={label}
                     href={href}
                     className={`font-semibold ${pathname === href ? "text-primary underline underline-offset-4" : ""}`}
-                    onClick={setDrawerClose}
+                    onClick={setIsOpenFalse}
                   >
                     {label}
                   </Link>
@@ -144,7 +144,7 @@ export default function Header() {
               )}
             </div>
 
-            <User onComplete={setDrawerClose} />
+            <User onComplete={setIsOpenFalse} />
           </div>
         </div>
 

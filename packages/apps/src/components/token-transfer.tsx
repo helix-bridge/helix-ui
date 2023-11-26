@@ -8,6 +8,7 @@ import { TokenSymbol } from "@/types/token";
 import { getChainConfig } from "@/utils/chain";
 import { getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
 import { formatBalance } from "@/utils/balance";
+import { Address } from "viem";
 
 interface Props {
   record?: HistoryRecord | null;
@@ -45,8 +46,8 @@ function Item({
   amount,
 }: {
   chain: Network;
-  from: string;
-  to: string;
+  from: Address;
+  to: Address;
   symbol: TokenSymbol;
   amount: bigint;
 }) {
@@ -77,7 +78,7 @@ function Item({
   ) : null;
 }
 
-function Address({ address }: { address: string }) {
+function Address({ address }: { address: Address }) {
   return (
     <div className="inline-block w-24 truncate">
       <PrettyAddress address={address} forceShort className="text-primary text-sm font-normal" />

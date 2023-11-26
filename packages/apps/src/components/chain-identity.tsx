@@ -1,5 +1,4 @@
-import { getChainConfig } from "@/utils/chain";
-import { getChainLogoSrc } from "@/utils/misc";
+import { getChainConfig, getChainLogoSrc } from "@/utils";
 import Image from "next/image";
 import { useNetwork } from "wagmi";
 
@@ -9,7 +8,7 @@ export default function ChainIdentity() {
 
   return chain ? (
     <div className="gap-middle bg-component px-middle border-primary hidden h-8 max-w-[8.5rem] items-center rounded-2xl border lg:flex">
-      {!!config && (
+      {config ? (
         <Image
           width={20}
           height={20}
@@ -17,7 +16,7 @@ export default function ChainIdentity() {
           src={getChainLogoSrc(config.logo)}
           className="shrink-0 rounded-full"
         />
-      )}
+      ) : null}
       <span className="truncate text-sm font-medium">{config?.name || chain.name}</span>
     </div>
   ) : null;

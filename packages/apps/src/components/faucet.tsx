@@ -1,22 +1,21 @@
-import { Token } from "@/types/token";
+import { useTransfer } from "@/hooks/use-transfer";
+import { formatBalance, notifyError, notifyTransaction } from "@/utils";
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
 import { Subscription, forkJoin, from } from "rxjs";
 import { switchMap } from "rxjs/operators";
-import { formatBalance } from "@/utils/balance";
-import { notification } from "@/ui/notification";
-import { notifyTransaction } from "@/utils/notification";
-import Label from "@/ui/label";
-import { useTransfer } from "@/hooks/use-transfer";
 import { parseUnits } from "viem";
-import dynamic from "next/dynamic";
+import Label from "@/ui/label";
+import { Token } from "@/types";
+import { useToggle } from "@/hooks/use-toggle";
 
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
 export default function Faucet() {
-  const { sourceChain, sourceToken, updateBalance } = useTransfer();
+  const { sourceChain, sourceToken, bridgeInstance, updateSourceBalance } = useTransfer();
 
-  const [isOpen, setIsOpen] = useState(false);
+  const { state: isOpen, setTrue: setIsOpenTrue, setFalse: setIsOpenFalse } = useToggle(false);
   const [busy, setBusy] = useState(false);
   const [allow, setAllow] = useState(0n);
   const [max, setMax] = useState(0n);
@@ -30,14 +29,13 @@ export default function Faucet() {
   const handleClaim = useCallback(async () => {
     if (chain?.id !== sourceChain?.id) {
       switchNetwork?.(sourceChain?.id);
-    } else if (sourceToken && publicClient && walletClient) {
+    } else if (address && bridgeInstance && sourceToken && publicClient && walletClient) {
       try {
         setBusy(true);
 
-        const abi = (await import("@/abi/faucet")).default;
         const hash = await walletClient.writeContract({
           address: sourceToken.address,
-          abi,
+          abi: (await import("@/abi/faucet")).default,
           functionName: "faucet",
           args: [allow > 0 ? allow - 1n : allow],
         });
@@ -47,17 +45,29 @@ export default function Faucet() {
         if (receipt.status === "success") {
           setAllow(0n);
           setBusy(false);
-          setIsOpen(false);
-          updateBalance();
+          setIsOpenFalse();
+          updateSourceBalance(address, bridgeInstance);
         }
       } catch (err) {
         console.error(err);
-        notification.error({ title: "Calim failed", description: (err as Error).message });
+        notifyError(err);
       } finally {
         setBusy(false);
       }
     }
-  }, [allow, chain, sourceChain, sourceToken, publicClient, walletClient, switchNetwork, updateBalance]);
+  }, [
+    allow,
+    chain,
+    address,
+    bridgeInstance,
+    sourceChain,
+    sourceToken,
+    publicClient,
+    walletClient,
+    setIsOpenFalse,
+    switchNetwork,
+    updateSourceBalance,
+  ]);
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
@@ -73,14 +83,14 @@ export default function Faucet() {
                   abi: abi.default,
                   functionName: "allowFaucet",
                   args: [address],
-                }) as Promise<bigint>,
+                }),
               ),
               from(
                 publicClient.readContract({
                   address: sourceToken.address,
                   abi: abi.default,
                   functionName: "maxFaucetAllowed",
-                }) as Promise<bigint>,
+                }),
               ),
             ]),
           ),
@@ -109,7 +119,7 @@ export default function Faucet() {
     <>
       <button
         className="text-primary transition-[color,transform] hover:text-white lg:active:translate-y-1"
-        onClick={() => setIsOpen(true)}
+        onClick={setIsOpenTrue}
       >
         <span>Faucet</span>
       </button>
@@ -122,8 +132,8 @@ export default function Faucet() {
         disabledCancel={busy}
         disabledOk={allow <= 1n}
         busy={busy}
-        onClose={() => setIsOpen(false)}
-        onCancel={() => setIsOpen(false)}
+        onClose={setIsOpenFalse}
+        onCancel={setIsOpenFalse}
         onOk={handleClaim}
       >
         <Label text="Max" tips="The maximum you can claim">

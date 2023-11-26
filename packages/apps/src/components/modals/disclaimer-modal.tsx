@@ -1,17 +1,22 @@
 "use client";
 
+import { useToggle } from "@/hooks/use-toggle";
 import Button from "@/ui/button";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect } from "react";
 
 const KEY = "disclaimer";
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
 export default function DisclaimerModal() {
-  const [isOpen, setIsOpen] = useState(!localStorage.getItem(KEY));
+  const { state: isOpen, setState: setIsOpen, setFalse: setIsOpenFalse } = useToggle(false);
+
+  useEffect(() => {
+    setIsOpen(!localStorage.getItem(KEY));
+  }, [setIsOpen]);
 
   return (
-    <Modal title="Disclaimer" className="w-full lg:w-[30rem]" isOpen={isOpen} onClose={() => setIsOpen(false)}>
+    <Modal title="Disclaimer" className="w-full lg:w-[30rem]" isOpen={isOpen} onClose={setIsOpenFalse}>
       <div className="gap-middle flex flex-col">
         <Paragraph content="By using Helix, I agree to the following:" />
         <Paragraph content="I understand that Helix is a bridge aggregator and is only responsible for routing the transfer to the selected bridge. Helix does not hold any funds in custody at any point." />
@@ -24,10 +29,10 @@ export default function DisclaimerModal() {
       <div />
 
       <Button
-        className="button py-small px-large mx-auto w-fit"
+        className="py-small px-large mx-auto w-fit"
         kind="primary"
         onClick={() => {
-          setIsOpen(false);
+          setIsOpenFalse();
           localStorage.setItem(KEY, "agree");
         }}
       >

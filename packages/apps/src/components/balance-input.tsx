@@ -11,6 +11,7 @@ interface Props {
   balance?: bigint;
   max?: bigint;
   compact?: boolean;
+  disabled?: boolean;
   suffix?: "symbol" | "max";
   enabledDynamicStyle?: boolean;
   value: InputValue<bigint>;
@@ -25,6 +26,7 @@ export function BalanceInput({
   balance,
   max,
   compact,
+  disabled,
   suffix,
   enabledDynamicStyle,
   value,
@@ -61,15 +63,19 @@ export function BalanceInput({
       let parsed = { value: 0n, input: "" };
       let valid = true;
 
-      if (input && token && !Number.isNaN(Number(input))) {
-        parsed = parseValue(input, token.decimals);
-        insufficientRef.current = balance !== undefined && balance < parsed.value ? true : false;
-        exceededRef.current = max && max < parsed.value ? true : false;
-        valid = !(insufficientRef.current || exceededRef.current);
+      if (input) {
+        if (token && !Number.isNaN(Number(input))) {
+          parsed = parseValue(input, token.decimals);
+          insufficientRef.current = balance !== undefined && balance < parsed.value ? true : false;
+          exceededRef.current = max && max < parsed.value ? true : false;
+          valid = !(insufficientRef.current || exceededRef.current);
+          onChange({ valid, ...parsed });
+        }
+      } else {
+        onChange({ valid, ...parsed });
       }
-      setEnablingMax(false);
 
-      onChange({ valid, ...parsed });
+      setEnablingMax(false);
     },
     [token, max, balance, onChange],
   );
@@ -135,6 +141,7 @@ export function BalanceInput({
           }`}
           onChange={handleChange}
           ref={inputRef}
+          disabled={disabled}
           value={value.input}
         />
 

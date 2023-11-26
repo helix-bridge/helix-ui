@@ -1,22 +1,21 @@
 "use client";
 
-import { QUERY_RECORDS } from "@/config/gql";
-import { RecordStatus, RecordsResponseData, RecordsVariables } from "@/types/graphql";
+import { GQL_HISTORY_RECORDS } from "@/config";
+import { useApp } from "@/hooks";
+import { HistoryRecordsReqParams, HistoryRecordsResData, RecordResult, UrlSearchParamKey } from "@/types";
 import Tabs, { TabsProps } from "@/ui/tabs";
 import { NetworkStatus, useQuery } from "@apollo/client";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDeferredValue, useEffect, useState } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import RecordsTable from "@/components/records-table";
-import { UrlSearchParam } from "@/types/url";
+import RecordsTable from "./records-table";
 import Search from "@/ui/search";
 import { isAddress } from "viem";
 import CountdownRefresh from "@/ui/countdown-refresh";
-import { useApp } from "@/hooks/use-app";
 
-enum AllStatus {
+enum AllResult {
   All = -1,
 }
-type TabKey = RecordStatus | AllStatus;
+type TabKey = RecordResult | AllResult;
 
 const pageSize = 10;
 
@@ -28,40 +27,43 @@ export default function HistoryRecords() {
   const pathName = usePathname();
   const router = useRouter();
 
-  const [activeKey, setActiveKey] = useState<TabsProps<TabKey>["activeKey"]>(AllStatus.All);
-  const [records, setRecords] = useState<RecordsResponseData>();
+  const [activeKey, setActiveKey] = useState<TabsProps<TabKey>["activeKey"]>(AllResult.All);
+  const [records, setRecords] = useState<HistoryRecordsResData>();
   const [currentPage, setCurrentPage] = useState(0);
-
   const [isManualRefresh, setIsManualRefresh] = useState(false);
-  const { loading, data, networkStatus, refetch } = useQuery<RecordsResponseData, RecordsVariables>(QUERY_RECORDS, {
-    variables: {
-      row: pageSize,
-      page: currentPage,
-      sender: deferredSearchValue.toLowerCase(),
-      recipient: deferredSearchValue.toLowerCase(),
-      results:
-        activeKey === AllStatus.All
-          ? undefined
-          : activeKey === RecordStatus.PENDING
-          ? [RecordStatus.PENDING, RecordStatus.PENDING_TO_REFUND, RecordStatus.PENDING_TO_CLAIM]
-          : [activeKey],
+
+  const { loading, data, networkStatus, refetch } = useQuery<HistoryRecordsResData, HistoryRecordsReqParams>(
+    GQL_HISTORY_RECORDS,
+    {
+      variables: {
+        row: pageSize,
+        page: currentPage,
+        sender: deferredSearchValue.toLowerCase(),
+        recipient: deferredSearchValue.toLowerCase(),
+        results:
+          activeKey === AllResult.All
+            ? undefined
+            : activeKey === RecordResult.PENDING
+            ? [RecordResult.PENDING, RecordResult.PENDING_TO_REFUND, RecordResult.PENDING_TO_CLAIM]
+            : [activeKey],
+      },
+      notifyOnNetworkStatusChange: true,
     },
-    notifyOnNetworkStatusChange: true,
-  });
+  );
 
   useEffect(() => {
-    // better user experience
+    // Better user experience
     if (!loading) {
       setRecords(data);
     }
   }, [loading, data]);
 
   useEffect(() => {
-    setRecordsSearch(new URLSearchParams(window.location.search).get(UrlSearchParam.ADDRESS) || "");
+    setRecordsSearch(new URLSearchParams(window.location.search).get(UrlSearchParamKey.ADDRESS) || "");
   }, [setRecordsSearch]);
 
   useEffect(() => {
-    const page = Number(new URLSearchParams(window.location.search).get(UrlSearchParam.PAGE));
+    const page = Number(new URLSearchParams(window.location.search).get(UrlSearchParamKey.PAGE));
     if (!Number.isNaN(page) && page > 0) {
       setCurrentPage(page - 1);
     }
@@ -81,7 +83,7 @@ export default function HistoryRecords() {
       onPageChange={(page) => {
         setCurrentPage(page);
         const params = new URLSearchParams(searchParams.toString());
-        params.set(UrlSearchParam.PAGE, (page + 1).toString());
+        params.set(UrlSearchParamKey.PAGE, (page + 1).toString());
         router.push(`?${params.toString()}`);
       }}
       onRowClick={(_, { id }) => router.push(`${pathName}/${id}`)}
@@ -98,14 +100,14 @@ export default function HistoryRecords() {
           onChange={(value) => {
             setRecordsSearch(value);
             setCurrentPage(0);
-            setActiveKey(AllStatus.All);
+            setActiveKey(AllResult.All);
 
             const params = new URLSearchParams(searchParams.toString());
             if (isAddress(value)) {
-              params.set(UrlSearchParam.ADDRESS, value);
+              params.set(UrlSearchParamKey.ADDRESS, value);
               router.push(`?${params.toString()}`);
-            } else if (params.has(UrlSearchParam.ADDRESS)) {
-              params.delete(UrlSearchParam.ADDRESS);
+            } else if (params.has(UrlSearchParamKey.ADDRESS)) {
+              params.delete(UrlSearchParamKey.ADDRESS);
               router.push(`?${params.toString()}`);
             }
           }}
@@ -113,8 +115,8 @@ export default function HistoryRecords() {
             setRecordsSearch("");
 
             const params = new URLSearchParams(searchParams.toString());
-            if (params.has(UrlSearchParam.ADDRESS)) {
-              params.delete(UrlSearchParam.ADDRESS);
+            if (params.has(UrlSearchParamKey.ADDRESS)) {
+              params.delete(UrlSearchParamKey.ADDRESS);
               router.push(`?${params.toString()}`);
             }
           }}
@@ -129,8 +131,8 @@ export default function HistoryRecords() {
             setIsManualRefresh(false);
             setTimeout(() => refetch(), 0);
           }}
-          isActive={networkStatus === NetworkStatus.ready}
-          isStartUpAfterClick={true}
+          enabled={networkStatus === NetworkStatus.ready}
+          enabledAfterClick={true}
         />
       </div>
 
@@ -138,22 +140,22 @@ export default function HistoryRecords() {
         className="mt-5"
         options={[
           {
-            key: AllStatus.All,
+            key: AllResult.All,
             label: "All",
             children: createChildren(),
           },
           {
-            key: RecordStatus.PENDING,
+            key: RecordResult.PENDING,
             label: "Pending",
             children: createChildren(),
           },
           {
-            key: RecordStatus.SUCCESS,
+            key: RecordResult.SUCCESS,
             label: "Success",
             children: createChildren(),
           },
           {
-            key: RecordStatus.REFUNDED,
+            key: RecordResult.REFUNDED,
             label: "Refunded",
             children: createChildren(),
           },

@@ -2,7 +2,7 @@ import Tooltip from "@/ui/tooltip";
 import { getChainConfig } from "@/utils/chain";
 import { getChainLogoSrc } from "@/utils/misc";
 import Image from "next/image";
-import BridgeLogo from "./pretty-bridge";
+import BridgeLogo from "./bridge-identicon";
 import { HistoryRecord } from "@/types/graphql";
 import { bridgeFactory } from "@/utils/bridge";
 

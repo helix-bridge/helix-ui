@@ -1,25 +1,23 @@
 "use client";
 
-import { QUERY_RECORD_BY_ID } from "@/config/gql";
-import { RecordResponseData, RecordVariables } from "@/types/graphql";
-import { Divider } from "@/ui/divider";
-import { RecordLabel } from "@/components/record-label";
+import { BaseBridge } from "@/bridges";
+import { GQL_HISTORY_RECORD_BY_ID } from "@/config";
+import { HistoryRecordReqParams, HistoryRecordResData } from "@/types";
+import ComponentLoading from "@/ui/component-loading";
+import CountdownRefresh from "@/ui/countdown-refresh";
+import { bridgeFactory, getChainConfig } from "@/utils";
 import { useQuery } from "@apollo/client";
 import { PropsWithChildren, useMemo } from "react";
-import TransferRoute from "@/components/transfer-route";
-import TransactionStatus from "@/components/transaction-status";
-import { TransactionHash } from "@/components/transaction-hash";
-import TransactionTimestamp from "@/components/transaction-timestamp";
-import PrettyAddress from "@/components/pretty-address";
-import TransactionValue from "@/components/transaction-value";
-import TokenToReceive from "@/components/token-to-receive";
-import TokenTransfer from "@/components/token-transfer";
-import ComponentLoading from "@/ui/component-loading";
-import { BaseBridge } from "@/bridges/base";
-import { bridgeFactory } from "@/utils/bridge";
-import CountdownRefresh from "@/ui/countdown-refresh";
+import TransferRoute from "./transfer-route";
+import TransactionStatus from "./transaction-status";
+import { TransactionHash } from "./transaction-hash";
+import TransactionTimestamp from "./transaction-timestamp";
+import PrettyAddress from "./pretty-address";
+import TokenTransfer from "./token-transfer";
+import TokenToReceive from "./token-to-receive";
+import TransactionValue from "./transaction-value";
 import TransactionFee from "./transaction-fee";
-import { getChainConfig } from "@/utils/chain";
+import { RecordItemTitle } from "@/ui/record-item-title";
 
 interface Props {
   id: string;
@@ -30,12 +28,12 @@ export default function RecordDetail(props: Props) {
     loading,
     data: record,
     refetch,
-  } = useQuery<RecordResponseData, RecordVariables>(QUERY_RECORD_BY_ID, {
+  } = useQuery<HistoryRecordResData, HistoryRecordReqParams>(GQL_HISTORY_RECORD_BY_ID, {
     variables: { id: props.id },
     notifyOnNetworkStatusChange: true,
   });
 
-  const bridgeClient = useMemo<BaseBridge | undefined>(() => {
+  const bridgeInstance = useMemo<BaseBridge | undefined>(() => {
     const category = record?.historyRecordById?.bridge;
     const sourceChain = getChainConfig(record?.historyRecordById?.fromChain);
     const targetChain = getChainConfig(record?.historyRecordById?.toChain);
@@ -45,7 +43,6 @@ export default function RecordDetail(props: Props) {
     if (category) {
       return bridgeFactory({ category, sourceChain, targetChain, sourceToken, targetToken });
     }
-
     return undefined;
   }, [record?.historyRecordById]);
 
@@ -115,7 +112,7 @@ export default function RecordDetail(props: Props) {
             ) : null}
           </Item>
           <Item label="Token Transfer" tips="List of tokens transferred in this cross-chain transaction.">
-            <TokenTransfer record={record?.historyRecordById} bridge={bridgeClient} />
+            <TokenTransfer record={record?.historyRecordById} bridge={bridgeInstance} />
           </Item>
           <Item label="Token To Receive">
             <TokenToReceive record={record?.historyRecordById} />
@@ -146,8 +143,12 @@ export default function RecordDetail(props: Props) {
 function Item({ label, tips, children }: PropsWithChildren<{ label: string; tips?: string }>) {
   return (
     <div className="lg:gap-middle gap-small flex flex-col items-start lg:h-11 lg:flex-row lg:items-center">
-      <RecordLabel text={label} tips={tips} />
+      <RecordItemTitle text={label} tips={tips} />
       <div className="pl-5 lg:pl-0">{children}</div>
     </div>
   );
+}
+
+function Divider() {
+  return <div className="h-[1px] w-full bg-white/10" />;
 }

@@ -1,19 +1,16 @@
-import { LnRelayerInfo } from "@/types/graphql";
+import { Lnv20RelayerOverview, Network } from "@/types";
+import Button from "@/ui/button";
 import Table, { ColumnType } from "@/ui/table";
 import Tooltip from "@/ui/tooltip";
+import { formatBalance, formatFeeRate, getChainConfig, getChainLogoSrc, getTokenLogoSrc } from "@/utils";
 import Image from "next/image";
-import PrettyAddress from "./pretty-address";
-import { Network } from "@/types/chain";
-import { getChainConfig } from "@/utils/chain";
-import { formatFeeRate, getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
-import { formatBalance } from "@/utils/balance";
 import { useState } from "react";
-import Button from "@/ui/button";
-import RelayerManageModal from "./relayer-manage-modal";
+import PrettyAddress from "./pretty-address";
+import RelayerManageModal from "./modals/relayer-manage-modal";
 
 interface Props {
   total: number;
-  records: LnRelayerInfo[];
+  records: Lnv20RelayerOverview[];
   loading: boolean;
   isDashboard?: boolean;
   pageSize: number;
@@ -22,7 +19,7 @@ interface Props {
   onPageChange: (value: number) => void;
 }
 
-interface DataSource extends LnRelayerInfo {
+interface DataSource extends Lnv20RelayerOverview {
   key: string;
 }
 
@@ -154,7 +151,7 @@ export default function RelayersTable({
   onRefetch,
   onPageChange,
 }: Props) {
-  const [relayerInfo, setRelayerInfo] = useState<LnRelayerInfo>();
+  const [relayerInfo, setRelayerInfo] = useState<Lnv20RelayerOverview>();
 
   const columns: ColumnType<DataSource>[] = isDashboard
     ? [
