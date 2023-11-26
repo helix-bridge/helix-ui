@@ -1,7 +1,7 @@
 "use client";
 
 import { BaseBridge, LnBridgeDefault, LnBridgeOpposite } from "@/bridges";
-import { BridgeCategory, ChainConfig, InputValue, Token } from "@/types";
+import { BridgeCategory, ChainConfig, CheckLnBridgeExistReqParams, CheckLnBridgeExistResData, Token } from "@/types";
 import { getAvailableTargetTokens, notifyError, notifyTransaction } from "@/utils";
 import {
   Dispatch,
@@ -16,14 +16,13 @@ import {
 import { Address, TransactionReceipt } from "viem";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { Subscription, forkJoin } from "rxjs";
+import { ApolloClient } from "@apollo/client";
+import { GQL_CHECK_LNBRIDGE_EXIST } from "@/config";
 
 interface RelayerCtx {
   margin: bigint | undefined;
   baseFee: bigint | undefined;
   feeRate: number | undefined;
-  marginInput: InputValue<bigint>;
-  baseFeeInput: InputValue<bigint>;
-  feeRateInput: InputValue<number>;
   sourceAllowance: { value: bigint; token: Token } | undefined;
   targetAllowance: { value: bigint; token: Token } | undefined;
   sourceBalance: { value: bigint; token: Token } | undefined;
@@ -39,9 +38,6 @@ interface RelayerCtx {
   setMargin: Dispatch<SetStateAction<bigint | undefined>>;
   setBaseFee: Dispatch<SetStateAction<bigint | undefined>>;
   setFeeRate: Dispatch<SetStateAction<number | undefined>>;
-  setMarginInput: Dispatch<SetStateAction<InputValue<bigint>>>;
-  setBaseFeeInput: Dispatch<SetStateAction<InputValue<bigint>>>;
-  setFeeRateInput: Dispatch<SetStateAction<InputValue<number>>>;
   setSourceAllowance: Dispatch<SetStateAction<{ value: bigint; token: Token } | undefined>>;
   setTargetAllowance: Dispatch<SetStateAction<{ value: bigint; token: Token } | undefined>>;
   setSourceBalance: Dispatch<SetStateAction<{ value: bigint; token: Token } | undefined>>;
@@ -90,15 +86,19 @@ interface RelayerCtx {
     bridge: LnBridgeDefault,
     chain: ChainConfig,
   ) => Promise<TransactionReceipt | undefined>;
+  isLnBridgeExist: (
+    apolloClient: ApolloClient<object>,
+    _sourceChain: ChainConfig,
+    _targetChain: ChainConfig,
+    _sourceToken: Token,
+    _targetToken: Token,
+  ) => Promise<boolean>;
 }
 
 const defaultValue: RelayerCtx = {
   margin: undefined,
   baseFee: undefined,
   feeRate: undefined,
-  marginInput: { input: "", value: 0n, valid: true },
-  baseFeeInput: { input: "", value: 0n, valid: true },
-  feeRateInput: { input: "", value: 0, valid: true },
   sourceAllowance: undefined,
   targetAllowance: undefined,
   sourceBalance: undefined,
@@ -114,9 +114,6 @@ const defaultValue: RelayerCtx = {
   setMargin: () => undefined,
   setBaseFee: () => undefined,
   setFeeRate: () => undefined,
-  setMarginInput: () => undefined,
-  setBaseFeeInput: () => undefined,
-  setFeeRateInput: () => undefined,
   setSourceAllowance: () => undefined,
   setTargetAllowance: () => undefined,
   setSourceBalance: () => undefined,
@@ -132,6 +129,7 @@ const defaultValue: RelayerCtx = {
   updateFeeAndMargin: async () => undefined,
   setFeeAndRate: async () => undefined,
   withdrawMargin: async () => undefined,
+  isLnBridgeExist: async () => false,
 };
 
 export const RelayerContext = createContext(defaultValue);
@@ -140,9 +138,6 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
   const [margin, setMargin] = useState(defaultValue.margin);
   const [baseFee, setBaseFee] = useState(defaultValue.baseFee);
   const [feeRate, setFeeRate] = useState(defaultValue.feeRate);
-  const [marginInput, setMarginInput] = useState(defaultValue.marginInput);
-  const [baseFeeInput, setBaseFeeInput] = useState(defaultValue.baseFeeInput);
-  const [feeRateInput, setFeeRateInput] = useState(defaultValue.feeRateInput);
   const [sourceAllowance, setSourceAllowance] = useState(defaultValue.sourceAllowance);
   const [targetAllowance, setTargetAllowance] = useState(defaultValue.targetAllowance);
   const [sourceBalance, setSourceBalance] = useState(defaultValue.sourceBalance);
@@ -157,7 +152,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
   const { address } = useAccount();
 
   const targetToken = useMemo(
-    () => getAvailableTargetTokens(sourceChain?.network, targetChain?.network, sourceToken?.symbol).at(0),
+    () => getAvailableTargetTokens(sourceChain, targetChain, sourceToken).at(0),
     [sourceChain, targetChain, sourceToken],
   );
 
@@ -180,6 +175,34 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
     }
     return { defaultBridge, oppositeBridge, bridgeInstance: defaultBridge ?? oppositeBridge };
   }, [sourceChain, targetChain, sourceToken, targetToken, bridgeCategory, walletClient, publicClient]);
+
+  const isLnBridgeExist = useCallback(
+    async (
+      apolloClient: ApolloClient<object>,
+      _sourceChain: ChainConfig,
+      _targetChain: ChainConfig,
+      _sourceToken: Token,
+      _targetToken: Token,
+    ) => {
+      const { data: lnbridgeData } = await apolloClient.query<CheckLnBridgeExistResData, CheckLnBridgeExistReqParams>({
+        query: GQL_CHECK_LNBRIDGE_EXIST,
+        variables: {
+          fromChainId: _sourceChain.id,
+          toChainId: _targetChain.id,
+          fromToken: _sourceToken.address,
+          toToken: _targetToken.address,
+        },
+        fetchPolicy: "no-cache",
+      });
+
+      if (lnbridgeData.checkLnBridgeExist) {
+        return true;
+      }
+      console.warn("[isLnBridgeExist]", _sourceChain.id, _targetChain.id, _sourceToken.address, _targetToken.address);
+      return false;
+    },
+    [],
+  );
 
   const sourceApprove = useCallback(async (owner: Address, amount: bigint, bridge: BaseBridge, chain: ChainConfig) => {
     try {
@@ -329,9 +352,6 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
         margin,
         baseFee,
         feeRate,
-        marginInput,
-        baseFeeInput,
-        feeRateInput,
         sourceAllowance,
         targetAllowance,
         sourceBalance,
@@ -347,9 +367,6 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
         setMargin,
         setBaseFee,
         setFeeRate,
-        setMarginInput,
-        setBaseFeeInput,
-        setFeeRateInput,
         setSourceAllowance,
         setTargetAllowance,
         setSourceBalance,
@@ -365,6 +382,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
         updateFeeAndMargin,
         setFeeAndRate,
         withdrawMargin,
+        isLnBridgeExist,
       }}
     >
       {children}
