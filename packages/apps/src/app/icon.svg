@@ -1,5 +1,14 @@
-<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="30" cy="30" r="30" fill="black"/>
-<path opacity="0.6" fill-rule="evenodd" clip-rule="evenodd" d="M29.9834 17.7778V30.0001L8.88672 42.2223V30.0001L29.9834 17.7778ZM51.0801 17.7778V30.0001L29.9834 42.2223V30.0001L51.0801 17.7778Z" fill="#00B2FF"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M8.88672 17.7778L29.9834 30.0001V42.2223L8.88672 30.0001V17.7778ZM29.9834 17.7778L51.0801 30.0001V42.2223L29.9834 30.0001V17.7778Z" fill="#00B2FF"/>
+<svg width="512px" height="512px" viewBox="0 0 512 512" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g fill-rule="nonzero">
+      <rect fill="#000000" x="0" y="0" width="512" height="512" rx="99"></rect>
+      <path
+        d="M95,348 L175.5,301.5 L175.501,301.499 L256,255 L256,162 L175.5,208.5 L95,255 L95,348 Z M256,348 L336.5,301.5 L336.501,301.499 L417,255 L417,162 L336.5,208.5 L256,255 L256,348 Z"
+        fill="#93DAFC"></path>
+      <path
+        d="M256,348 L175.5,301.5 L175.499,301.499 L95,255 L95,162 L175.5,208.5 L256,255 L256,348 Z M417,348 L336.5,301.5 L336.499,301.499 L256,255 L256,162 L336.5,208.5 L417,255 L417,348 Z"
+        fill="#00B2FF"></path>
+    </g>
+  </g>
 </svg>
