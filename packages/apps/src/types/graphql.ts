@@ -30,8 +30,8 @@ export interface HistoryRecord {
   responseTxHash: Hex | null;
   sender: Address;
   recipient: Address;
-  sendToken: Address;
-  recvToken: Address;
+  sendToken: TokenSymbol;
+  recvToken: TokenSymbol;
   sendAmount: string;
   recvAmount: string | null;
   startTime: number;
@@ -79,8 +79,8 @@ export interface Lnv20RelayInfo {
 export interface HistoryRecordsReqParams {
   row: number;
   page: number;
-  sender?: Address;
-  recipient?: Address;
+  sender?: string;
+  recipient?: string;
   results?: RecordResult[];
   fromChains?: Network[];
   toChains?: Network[];
@@ -118,10 +118,27 @@ export interface SortedLnV20RelayInfosResData {
   } | null;
 }
 
+export type Lnv20RelayerOverview = Pick<
+  Lnv20RelayInfo,
+  | "id"
+  | "relayer"
+  | "bridge"
+  | "fromChain"
+  | "toChain"
+  | "sendToken"
+  | "baseFee"
+  | "liquidityFeeRate"
+  | "margin"
+  | "cost"
+  | "profit"
+  | "heartbeatTimestamp"
+  | "messageChannel"
+>;
+
 export interface QueryLnV20RelayInfosReqParams {
   fromChain?: Network;
   toChain?: Network;
-  relayer?: Address;
+  relayer?: string;
   bridge?: BridgeCategory;
   row: number;
   page: number;
@@ -130,22 +147,7 @@ export interface QueryLnV20RelayInfosReqParams {
 export interface QueryLnV20RelayInfosResData {
   queryLnv20RelayInfos: {
     total: number;
-    records: Pick<
-      Lnv20RelayInfo,
-      | "id"
-      | "relayer"
-      | "bridge"
-      | "fromChain"
-      | "toChain"
-      | "sendToken"
-      | "baseFee"
-      | "liquidityFeeRate"
-      | "margin"
-      | "cost"
-      | "profit"
-      | "heartbeatTimestamp"
-      | "messageChannel"
-    >[];
+    records: Lnv20RelayerOverview[];
   } | null;
 }
 
