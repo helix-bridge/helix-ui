@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "View the history of transfers via the Helix Bridge",
 };
 
-export default function Records() {
+export default function RecordsPage() {
   return (
     <PageWrap>
       <HistoryRecords />

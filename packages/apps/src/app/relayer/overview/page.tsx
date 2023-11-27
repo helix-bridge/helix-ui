@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Overview all relayers on Helix Bridge",
 };
 
-export default function RelayerOverview() {
+export default function RelayerOverviewPage() {
   return (
     <PageWrap>
       <LnRelayerOverview />

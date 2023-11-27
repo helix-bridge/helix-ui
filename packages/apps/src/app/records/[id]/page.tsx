@@ -13,7 +13,7 @@ interface Props {
   };
 }
 
-export default function Record({ params }: Props) {
+export default function RecordPage({ params }: Props) {
   return (
     <PageWrap>
       <RecordDetail id={params.id} />

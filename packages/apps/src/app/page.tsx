@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const Transfer = dynamic(() => import("@/components/transfer"), { ssr: false });
 
-export default function Home() {
+export default function HomePage() {
   return (
     <PageWrap>
       <TransferProvider>

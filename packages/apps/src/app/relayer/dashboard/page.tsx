@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Register a relayer on Helix Bridge or manage my relayers registered on Helix Bridge",
 };
 
-export default function MyRelayers() {
+export default function RelayerDashboardPage() {
   return (
     <PageWrap>
       <RelayerRegisterManage />
