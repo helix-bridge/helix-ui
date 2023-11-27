@@ -45,7 +45,7 @@ body {
   }
 
   .user-connect-wallet {
-    @apply bg-primary gap-middle px-large border-radius flex h-9 shrink-0 items-center transition hover:opacity-80 lg:h-8 lg:hover:opacity-80 lg:active:translate-y-1;
+    @apply bg-primary gap-middle px-large flex h-9 shrink-0 items-center transition hover:opacity-80 lg:h-8 lg:hover:opacity-80 lg:active:translate-y-1;
   }
 
   .user-dropdown-item {
@@ -67,7 +67,7 @@ body {
   }
 
   .select {
-    @apply hover:border-primary focus-within:border-primary border-radius border transition duration-300 disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1 lg:disabled:translate-y-0;
+    @apply hover:border-primary focus-within:border-primary border transition duration-300 disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1 lg:disabled:translate-y-0;
   }
 }
 
