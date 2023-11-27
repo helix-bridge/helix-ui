@@ -49,7 +49,7 @@ export default function TransferInfo({ fee, bridge, maxMargin, isLoadingMaxMargi
   }, [bridge]);
 
   return (
-    <div className="bg-app-bg p-middle gap-small border-radius flex flex-col border border-transparent">
+    <div className="bg-inner p-middle gap-small rounded-middle flex flex-col">
       <Item label="Estimated Arrival Time" value={bridge?.formatEstimateTime()} />
       <Item
         label="Transaction Fee"

@@ -129,7 +129,7 @@ export function BalanceInput({
 
   return (
     <div
-      className={`lg:px-middle px-small py-small bg-app-bg normal-input-wrap relative flex flex-col  ${
+      className={`lg:px-middle px-small py-small bg-inner rounded-middle normal-input-wrap relative flex flex-col border-transparent ${
         value.valid ? "valid-input-wrap" : "invalid-input-wrap"
       }`}
     >
@@ -143,6 +143,7 @@ export function BalanceInput({
           ref={inputRef}
           disabled={disabled}
           value={value.input}
+          autoFocus
         />
 
         {compact ? (
@@ -167,31 +168,43 @@ export function BalanceInput({
             </button>
           ) : null
         ) : (
-          <div className="gap-small flex items-end">
+          <div className="gap-middle flex shrink-0 items-center self-end">
             {token ? (
               <div className="gap-small flex shrink-0 items-center">
-                <Image width={18} height={18} alt="Token" src={getTokenLogoSrc(token.logo)} />
+                <Image width={20} height={20} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
+                <span className="text-base font-medium text-white">{token.symbol}</span>
               </div>
             ) : null}
-            {tokenOptions.map((t) => (
-              <Image
-                key={t.symbol}
-                width={18}
-                height={18}
-                alt="Token"
-                src={getTokenLogoSrc(t.logo)}
-                className="hover:cursor-pointer"
-                onClick={() => onTokenChange(t)}
-              />
-            ))}
+            {tokenOptions
+              .filter((t) => t.symbol !== token?.symbol)
+              .map((t) => (
+                <Image
+                  key={t.symbol}
+                  width={20}
+                  height={20}
+                  alt="Token"
+                  src={getTokenLogoSrc(t.logo)}
+                  className="rounded-full opacity-80 transition-transform duration-300 hover:cursor-pointer hover:opacity-100 active:-translate-x-1"
+                  onClick={() => onTokenChange(t)}
+                />
+              ))}
           </div>
         )}
       </div>
 
-      {!compact && balance !== undefined && token ? (
+      {!compact && token ? (
         <div className="gap-small flex items-center">
-          <span>Balance: {formatBalance(balance, token.decimals)}</span>
-          <span>Refresh</span>
+          <span className="text-xs font-medium text-white/50">
+            Balance: {formatBalance(balance ?? 0n, token.decimals)}
+          </span>
+          <button className="animate-spin1 rounded-full bg-white/20 p-[3px] opacity-50 transition hover:bg-white/20 hover:opacity-100 active:scale-95">
+            <Image alt="Refresh" width={14} height={14} src="/images/refresh.svg" />
+          </button>
+          {max ? (
+            <button className="rounded-small inline-flex items-center bg-white/10 px-1 py-[1px] text-xs font-medium text-white/50 transition hover:bg-white/20 hover:text-white active:scale-95">
+              Max
+            </button>
+          ) : null}
         </div>
       ) : null}
 

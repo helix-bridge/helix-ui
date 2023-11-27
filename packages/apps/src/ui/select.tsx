@@ -13,7 +13,6 @@ import {
 } from "@floating-ui/react";
 import Image from "next/image";
 import { PropsWithChildren, ReactElement } from "react";
-import Button from "./button";
 
 interface Props {
   label?: ReactElement;
@@ -72,7 +71,7 @@ export default function Select({
 
   return (
     <>
-      <Button className={`${labelClassName}`} ref={refs.setReference} {...getReferenceProps()} disabled={disabled}>
+      <button className={`${labelClassName}`} ref={refs.setReference} {...getReferenceProps()} disabled={disabled}>
         {label || placeholder}
         <div className="gap-small flex shrink-0 items-center">
           {label && clearable ? (
@@ -95,7 +94,7 @@ export default function Select({
             height={16}
           />
         </div>
-      </Button>
+      </button>
 
       {isMounted && (
         <FloatingPortal>

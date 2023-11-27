@@ -60,7 +60,7 @@ export default function Transfer() {
   const { state: isOpen, setTrue: setIsOpenTrue, setFalse: setIsOpenFalse } = useToggle(false);
   const { address } = useAccount();
 
-  const [recipient, setRecipient] = useState<Address>();
+  const [recipient, _setRecipient] = useState<Address>();
   const [isLoadingFee, setIsLoadingFee] = useState(false);
   const [estimateGasFee, setEstimateGasFee] = useState(0n);
 
@@ -131,8 +131,8 @@ export default function Transfer() {
 
     c && params.set(UrlSearchParamKey.BRIDGE, c);
     sc && params.set(UrlSearchParamKey.SOURCE_CHAIN, sc.network);
-    tc && params.set(UrlSearchParamKey.SOURCE_CHAIN, tc.network);
-    st && params.set(UrlSearchParamKey.TARGET_TOKEN, st.symbol);
+    tc && params.set(UrlSearchParamKey.TARGET_CHAIN, tc.network);
+    st && params.set(UrlSearchParamKey.SOURCE_TOKEN, st.symbol);
     tt && params.set(UrlSearchParamKey.TARGET_TOKEN, tt.symbol);
     router.push(`?${params.toString()}`);
   };
@@ -203,9 +203,9 @@ export default function Transfer() {
 
   return (
     <>
-      <div className="p-middle bg-component gap-large border-radius mx-auto flex w-full flex-col lg:mt-16 lg:w-[30rem] lg:gap-5 lg:p-5">
+      <div className="p-middle bg-component gap-large rounded-large mx-auto flex w-full flex-col lg:mt-20 lg:w-[30rem] lg:gap-5 lg:p-5">
         {/* From-To */}
-        <div className="gap-small lg:gap-large mt-8 flex items-center justify-between">
+        <div className="gap-small lg:gap-large mt-8 flex items-center">
           <Label text="From" className="w-full" needAbsolute>
             <ChainSelect
               placement="bottom-start"
@@ -252,8 +252,17 @@ export default function Transfer() {
               value={targetChain}
               options={getAvailableTargetChains(sourceChain)}
               onChange={(_targetChain) => {
+                const _sourceTokens = getAvailableSourceTokens(sourceChain, _targetChain);
+                const _sourceToken = _sourceTokens.at(0);
+                const _targetTokens = getAvailableTargetTokens(sourceChain, _targetChain, _sourceToken);
+                const _targetToken = _targetTokens.at(0);
+                const _category = getAvailableBridges(sourceChain, _targetChain, _sourceToken).at(0);
+
+                setBridgeCategory(_category);
                 setTargetChain(_targetChain);
-                handleUrlParams({ _targetChain });
+                setSourceToken(_sourceToken);
+                setTargetToken(_targetToken);
+                handleUrlParams({ _category, _targetChain, _sourceToken, _targetToken });
               }}
             />
           </Label>
