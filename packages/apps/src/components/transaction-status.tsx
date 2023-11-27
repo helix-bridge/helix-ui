@@ -164,7 +164,7 @@ export default function TransactionStatus({ record }: Props) {
         <RecordResultTag result={record?.result} />
 
         {record?.result === RecordResult.PENDING && (
-          <div className="inline text-sm text-white/50">
+          <div className="inline text-sm font-medium text-white/50">
             {isTimeout ? (
               <span>
                 It seems to be taking longer than usual.{" "}
@@ -188,32 +188,32 @@ export default function TransactionStatus({ record }: Props) {
 
         {record?.result === RecordResult.PENDING_TO_CLAIM && (
           <div className="gap-small flex items-center">
-            <span className="text-sm font-normal text-white/50">Please claim the tokens on the target chain.</span>
+            <span className="text-sm font-medium text-white/50">Please claim the tokens on the target chain.</span>
             <Button className="px-1" kind="primary" busy={busy} onClick={handleClaim}>
-              <span className="text-sm font-normal text-white">Claim</span>
+              <span className="text-sm font-medium text-white">Claim</span>
             </Button>
           </div>
         )}
 
         {record?.result === RecordResult.PENDING_TO_REFUND && (
           <div className="gap-small flex items-center">
-            <span className="text-sm font-normal text-white/50">Please request refund on the source chain.</span>
+            <span className="text-sm font-medium text-white/50">Please request refund on the source chain.</span>
             <Button className="px-1" kind="primary" busy={busy} onClick={handleRefund}>
-              <span className="text-sm font-normal text-white">Refund</span>
+              <span className="text-sm font-medium text-white">Refund</span>
             </Button>
           </div>
         )}
 
         {record?.result === RecordResult.PENDING && record.bridge.startsWith("lpbridge") && (
           <div className="gap-small flex items-center">
-            <span className="text-sm font-normal text-white/50">
+            <span className="text-sm font-medium text-white/50">
               You can request refund or speed up this transaction.
             </span>
             <Button className="px-1" kind="primary" busy={busy} onClick={handleRefund}>
-              <span className="text-sm font-normal text-white">Refund</span>
+              <span className="text-sm font-medium text-white">Refund</span>
             </Button>
             <Button className="px-1" kind="primary" onClick={() => setIsOpen(true)}>
-              <span className="text-sm font-normal text-white">SpeedUp</span>
+              <span className="text-sm font-medium text-white">SpeedUp</span>
             </Button>
           </div>
         )}
@@ -230,7 +230,13 @@ export default function TransactionStatus({ record }: Props) {
         onCancel={() => setIsOpen(false)}
         onOk={handleSpeedUp}
       >
-        <BalanceInput placeholder="Enter new fee" value={speedUpFee} token={sourceToken} onChange={setSpeedUpFee} />
+        <BalanceInput
+          compact
+          placeholder="Enter new fee"
+          value={speedUpFee}
+          token={sourceToken}
+          onChange={setSpeedUpFee}
+        />
       </Modal>
     </>
   );

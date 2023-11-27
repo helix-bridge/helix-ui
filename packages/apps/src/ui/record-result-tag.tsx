@@ -38,9 +38,9 @@ export function RecordResultTag({ result }: { result?: RecordResult | null }) {
         width={icon === "unknown.svg" ? 16 : 20}
         height={icon === "unknown.svg" ? 16 : 20}
         alt="Result"
-        src={`/images/result/${icon}`}
+        src={`/images/status/${icon}`}
       />
-      <span className="text-sm">{text}</span>
+      <span className="text-sm font-medium">{text}</span>
     </div>
   );
 }

@@ -71,7 +71,7 @@ function Item({
       <Address address={to} />
       <Label text="For" />
       <Image width={16} height={16} alt="Token icon" src={getTokenLogoSrc(token.logo)} className="shrink-0" />
-      <span className="text-sm font-normal text-white">
+      <span className="text-sm font-medium text-white">
         {formatBalance(amount, token.decimals, { keepZero: false, precision: 4 })} {symbol}
       </span>
     </div>
@@ -81,11 +81,11 @@ function Item({
 function Address({ address }: { address: Address }) {
   return (
     <div className="inline-block w-24 truncate">
-      <PrettyAddress address={address} forceShort className="text-primary text-sm font-normal" />
+      <PrettyAddress address={address} forceShort className="text-primary text-sm font-medium" />
     </div>
   );
 }
 
 function Label({ text }: { text: string }) {
-  return <span className="text-sm font-normal text-white">{text}</span>;
+  return <span className="text-sm font-medium text-white">{text}</span>;
 }

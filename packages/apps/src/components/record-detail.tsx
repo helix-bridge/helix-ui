@@ -49,13 +49,13 @@ export default function RecordDetail(props: Props) {
   return (
     <>
       <div className="flex items-center justify-between gap-5">
-        <h3 className="truncate text-lg font-medium">Transaction Detail</h3>
+        <h3 className="text-lg font-medium text-white">Transaction Detail</h3>
         <CountdownRefresh onClick={refetch} />
       </div>
       <div className="mt-5 overflow-x-auto">
-        <div className="bg-component py-middle gap-middle border-radius relative flex min-w-max flex-col px-7">
+        <div className="bg-component py-middle gap-middle rounded-large relative flex min-w-max flex-col px-7">
           {/* loading */}
-          <ComponentLoading loading={loading} className="border-radius" />
+          <ComponentLoading loading={loading} className="rounded-large" />
 
           <Item label="Transfer Route">
             <TransferRoute record={record?.historyRecordById} />
@@ -97,7 +97,7 @@ export default function RecordDetail(props: Props) {
             {record?.historyRecordById?.sender ? (
               <PrettyAddress
                 address={record.historyRecordById.sender}
-                className="text-primary text-sm font-normal"
+                className="text-primary text-sm font-medium"
                 copyable
               />
             ) : null}
@@ -106,7 +106,7 @@ export default function RecordDetail(props: Props) {
             {record?.historyRecordById?.recipient ? (
               <PrettyAddress
                 address={record.historyRecordById.recipient}
-                className="text-primary text-sm font-normal"
+                className="text-primary text-sm font-medium"
                 copyable
               />
             ) : null}
@@ -131,7 +131,7 @@ export default function RecordDetail(props: Props) {
 
           <Item label="Nonce" tips="A unique number of cross-chain transaction in Bridge.">
             {record?.historyRecordById?.nonce ? (
-              <span className="text-sm font-normal text-white">{record.historyRecordById.nonce}</span>
+              <span className="text-sm font-medium text-white">{record.historyRecordById.nonce}</span>
             ) : null}
           </Item>
         </div>

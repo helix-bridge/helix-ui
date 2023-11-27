@@ -9,7 +9,7 @@ export function RecordItemTitle({ text, tips }: { text: string; tips?: string })
           <Image width={16} height={16} alt="Info" src="/images/info.svg" />
         </Tooltip>
       ) : null}
-      <span className="text-sm font-medium">{text}</span>
+      <span className="text-sm font-extrabold">{text}</span>
     </div>
   );
 }
