@@ -15,7 +15,7 @@ export default function Label({ text, tips, extra, children, className, needAbso
     <div className={`${needAbsolute ? "relative" : "gap-small flex flex-col"} ${className}`}>
       <div className={`flex items-center justify-between ${needAbsolute ? "absolute -top-7 left-0 w-full" : ""}`}>
         <div className="gap-small flex items-center">
-          <span className="uppercase text-white/50">{text}</span>
+          <span className="text-white/50">{text}</span>
           {tips ? (
             <Tooltip content={tips} className="w-fit">
               <Image width={16} height={16} alt="Info" src="/images/info.svg" />

@@ -67,9 +67,9 @@ export default function Tooltip({
             <FloatingArrow ref={arrowRef} style={styles} context={context} fill="#00B2FF" />
             <div
               style={styles}
-              className={`border-primary bg-app-bg px-middle py-small rounded-middle flex items-center border ${contentClassName}`}
+              className={`bg-primary px-middle py-small rounded-middle flex items-center ${contentClassName}`}
             >
-              {typeof content === "string" ? <span className="text-xs font-medium">{content}</span> : content}
+              {typeof content === "string" ? <span className="text-xs font-extrabold">{content}</span> : content}
             </div>
           </div>
         </FloatingPortal>

@@ -121,7 +121,7 @@ export default function Faucet() {
         className="text-primary transition-[color,transform] hover:text-white lg:active:translate-y-1"
         onClick={setIsOpenTrue}
       >
-        <span>Faucet</span>
+        <span className="text-base font-normal">Faucet</span>
       </button>
 
       <Modal
@@ -149,7 +149,7 @@ export default function Faucet() {
 
 function Item({ value, token }: { value: bigint; token?: Token }) {
   return (
-    <div className="px-middle bg-app-bg py-middle border-radius flex items-center justify-between">
+    <div className="px-middle bg-inner py-middle rounded-middle flex items-center justify-between">
       <span className="text-sm font-medium">{token && formatBalance(value, token.decimals)}</span>
       <span className="text-sm font-medium">{token?.symbol}</span>
     </div>

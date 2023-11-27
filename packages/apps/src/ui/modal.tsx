@@ -68,7 +68,7 @@ export default function Modal({
       >
         {/* modal */}
         <div
-          className={`p-middle bg-component relative flex flex-col gap-5 lg:p-5 ${className}`}
+          className={`p-middle bg-component rounded-large relative flex flex-col gap-5 lg:p-5 ${className}`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* close icon */}
@@ -106,12 +106,23 @@ export default function Modal({
 
               <div className="flex items-center justify-between gap-5">
                 {onCancel && (
-                  <Button kind="default" onClick={onCancel} disabled={disabledCancel} className="flex-1">
+                  <Button
+                    kind="default"
+                    onClick={onCancel}
+                    disabled={disabledCancel}
+                    className="rounded-middle h-9 flex-1 lg:h-8"
+                  >
                     {cancelText || "Cancel"}
                   </Button>
                 )}
                 {onOk && (
-                  <Button kind="primary" onClick={onOk} disabled={disabledOk} busy={busy} className="flex-1">
+                  <Button
+                    kind="primary"
+                    onClick={onOk}
+                    disabled={disabledOk}
+                    busy={busy}
+                    className="rounded-middle h-9 flex-1 lg:h-8"
+                  >
                     {okText || "Ok"}
                   </Button>
                 )}
