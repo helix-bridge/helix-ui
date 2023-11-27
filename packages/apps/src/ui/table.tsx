@@ -54,7 +54,7 @@ export default function Table<T extends { key: Key }>({
     <div className="min-w-[50rem] overflow-x-auto">
       {/* header */}
       <div
-        className="gap-middle bg-component px-middle py-large grid items-center rounded-t text-sm font-medium"
+        className="gap-middle bg-component px-middle py-large rounded-t-middle grid items-center text-sm font-extrabold text-white"
         style={{ gridTemplateColumns: templateCols }}
       >
         {columns.map(({ key, title }) => (
@@ -65,17 +65,17 @@ export default function Table<T extends { key: Key }>({
       {/* body */}
       <div className="relative">
         {/* loading */}
-        <ComponentLoading loading={!!loading} className="rounded-b" />
+        <ComponentLoading loading={!!loading} className="rounded-b-middle" />
 
         {/* content */}
         {dataSource.length ? (
           <div className="">
             {/* data source */}
-            <div className="mb-middle bg-app-bg rounded-b">
+            <div className="mb-middle bg-inner rounded-b-middle">
               {dataSource.map((row) => (
                 <div
                   key={row.key}
-                  className={`gap-middle p-middle border-t-line/60 grid items-center border-t text-sm transition-colors ${
+                  className={`gap-middle p-middle grid items-center border-t border-t-white/10 text-sm font-medium transition-colors ${
                     onRowClick ? "hover:cursor-pointer hover:bg-white/5" : ""
                   }`}
                   style={{ gridTemplateColumns: templateCols }}
@@ -104,7 +104,7 @@ export default function Table<T extends { key: Key }>({
             {!loading && (
               <>
                 <Image width={50} height={63} alt="No data" src="/images/no-data.svg" />
-                <span className="text-sm text-white/50">No data</span>
+                <span className="text-sm font-medium text-white/50">No data</span>
               </>
             )}
           </div>

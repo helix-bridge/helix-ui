@@ -12,7 +12,7 @@ interface Props {
 export default function Search({ placeholder, className, value, onClear, onChange = () => undefined }: Props) {
   return (
     <div
-      className={`gap-small px-middle normal-input-wrap valid-input-wrap flex items-center justify-between border-white/10 py-2 ${className}`}
+      className={`gap-small px-middle normal-input-wrap rounded-middle focus-within:border-primary valid-input-wrap flex items-center justify-between border-white/20 py-2 ${className}`}
     >
       <Input
         placeholder={placeholder}

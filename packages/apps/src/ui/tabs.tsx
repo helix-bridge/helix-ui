@@ -46,7 +46,7 @@ export default function Tabs<K extends Key = string>({
     <div className={className}>
       {/* labels */}
       <div className="overflow-x-auto">
-        <div className="options-center relative flex gap-5" ref={(node) => setDividerWidth(node?.scrollWidth)}>
+        <div className="options-center gap-middle relative flex" ref={(node) => setDividerWidth(node?.scrollWidth)}>
           {options.map(({ key, label }, index) => (
             <button
               key={key}
@@ -56,8 +56,8 @@ export default function Tabs<K extends Key = string>({
                 e.stopPropagation();
                 onChange(key);
               }}
-              className={`border-radius px-3 py-1 text-sm transition duration-200 hover:bg-white/10 ${
-                key === activeKey ? "text-primary font-medium" : "text-white"
+              className={`rounded-middle px-3 py-1 text-base transition duration-200 hover:bg-white/10 ${
+                key === activeKey ? "text-primary font-medium" : "font-normal text-white"
               }`}
             >
               {typeof label === "string" ? <span>{label}</span> : label}
@@ -69,7 +69,7 @@ export default function Tabs<K extends Key = string>({
         <div className="mt-middle relative" style={{ width: dividerWidth }}>
           <div className="bg-primary absolute h-[2px] w-6 transition-transform duration-200" ref={railRef} />
           <div className="h-[1px] bg-transparent" />
-          <div className="bg-line h-[1px]" />
+          <div className="h-[1px] bg-white/20" />
         </div>
       </div>
 

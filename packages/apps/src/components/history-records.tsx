@@ -95,7 +95,7 @@ export default function HistoryRecords() {
       <div className="flex items-center justify-between gap-5">
         <Search
           placeholder="Search by address"
-          className="w-full lg:w-[26.5rem]"
+          className="hover:border-primary w-full lg:w-[26.5rem]"
           value={recordsSearch}
           onChange={(value) => {
             setRecordsSearch(value);
