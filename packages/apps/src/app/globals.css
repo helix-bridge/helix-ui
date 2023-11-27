@@ -44,10 +44,10 @@ body {
     @apply px-middle container mx-auto py-5;
   }
 
+  /* User */
   .user-connect-wallet {
-    @apply bg-primary gap-middle px-large flex h-9 shrink-0 items-center transition hover:opacity-80 lg:h-8 lg:hover:opacity-80 lg:active:translate-y-1;
+    @apply bg-primary gap-middle rounded-middle px-large lg:hover:bg-primary/80 flex h-9 shrink-0 items-center transition lg:h-8 lg:active:translate-y-1;
   }
-
   .user-dropdown-item {
     @apply gap-middle px-large py-small inline-flex items-center text-start transition hover:bg-white/10 lg:active:translate-y-1;
   }

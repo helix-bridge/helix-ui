@@ -42,11 +42,11 @@ export default function Header() {
 
   return (
     <>
-      <div className="app-header border-b-line fixed left-0 top-0 z-10 w-full border-b lg:border-b-transparent">
+      <div className="app-header fixed left-0 top-0 z-10 w-full border-b border-b-white/25 lg:border-b-transparent">
         <div className="px-middle container mx-auto flex h-full items-center justify-between">
-          {/* left */}
+          {/* Left */}
           <div className="flex items-center gap-5">
-            {/* logo */}
+            {/* Logo */}
             <div className="gap-middle flex items-center">
               <Link href="/">
                 <Image width={90} height={25} alt="Logo" src="/images/logo.svg" />
@@ -56,13 +56,13 @@ export default function Header() {
                 className="w-fit"
                 enabled={isProduction()}
               >
-                <div className="bg-primary inline-flex items-center justify-center rounded px-1 py-[1px]">
+                <div className="bg-primary rounded-small inline-flex items-center justify-center px-1 py-[1px]">
                   <span className="text-xs font-bold text-black">{isProduction() ? "beta" : "testnet"}</span>
                 </div>
               </Tooltip>
             </div>
 
-            {/* navigations */}
+            {/* Navigations */}
             <div className="gap-middle hidden items-center lg:flex">
               {navigationsConfig.map(({ href, label, external, soon }) =>
                 external ? (
@@ -71,22 +71,22 @@ export default function Header() {
                     target="_blank"
                     href={href}
                     key={label}
-                    className={`border-radius px-3 py-1 font-medium transition hover:bg-white/10 active:translate-y-1 ${
-                      pathname === href ? "text-primary underline" : ""
+                    className={`rounded-middle px-3 py-1 text-base font-bold transition hover:bg-white/10 active:translate-y-1 ${
+                      pathname === href ? "text-primary underline" : "text-white"
                     }`}
                   >
                     {label}
                   </a>
                 ) : soon ? (
                   <Tooltip key={label} content="Coming soon">
-                    <span className="border-radius px-3 py-1 font-medium text-white/50">{label}</span>
+                    <span className="rounded-middle px-3 py-1 text-base font-bold text-white/50">{label}</span>
                   </Tooltip>
                 ) : (
                   <Link
                     key={label}
                     href={href}
-                    className={`border-radius px-3 py-1 font-medium transition-all hover:bg-white/10 active:translate-y-1 ${
-                      pathname === href ? "text-primary underline underline-offset-8" : ""
+                    className={`rounded-middle px-3 py-1 text-base font-bold transition-all hover:bg-white/10 active:translate-y-1 ${
+                      pathname === href ? "text-primary underline underline-offset-8" : "text-white"
                     }`}
                   >
                     {label}
@@ -96,7 +96,7 @@ export default function Header() {
             </div>
           </div>
 
-          {/* right */}
+          {/* Right */}
           <div className="gap-middle hidden items-center lg:flex">
             <ChainIdentity />
             <User />
@@ -123,19 +123,23 @@ export default function Header() {
                     target="_blank"
                     href={href}
                     key={label}
-                    className={`font-semibold ${pathname === href ? "text-primary underline underline-offset-4" : ""}`}
+                    className={`text-base font-semibold ${
+                      pathname === href ? "text-primary underline underline-offset-4" : "text-white"
+                    }`}
                   >
                     {label}
                   </a>
                 ) : soon ? (
                   <Tooltip key={label} content="Coming soon">
-                    <span className="font-semibold text-white/50">{label}</span>
+                    <span className="text-base font-semibold text-white/50">{label}</span>
                   </Tooltip>
                 ) : (
                   <Link
                     key={label}
                     href={href}
-                    className={`font-semibold ${pathname === href ? "text-primary underline underline-offset-4" : ""}`}
+                    className={`text-base font-semibold ${
+                      pathname === href ? "text-primary underline underline-offset-4" : "text-white"
+                    }`}
                     onClick={setIsOpenFalse}
                   >
                     {label}

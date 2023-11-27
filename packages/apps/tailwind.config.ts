@@ -17,7 +17,7 @@ const config: Config = {
       colors: {
         primary: "#00B2FF",
         component: "#303A44",
-        inner: "#343946",
+        inner: "#242D30",
         "app-bg": "#00141D",
         "app-green": "#52C41A",
         "app-orange": "#FAAD14",
@@ -27,6 +27,7 @@ const config: Config = {
         small: "0.25rem", // 4px
         middle: "0.5rem", // 8px
         large: "1rem", // 16px
+        extralarge: "1.5rem", // 24px
       },
       spacing: {
         small: "0.3125rem", // 5px

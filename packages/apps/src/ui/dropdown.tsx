@@ -12,7 +12,6 @@ import {
 } from "@floating-ui/react";
 import Image from "next/image";
 import { PropsWithChildren, ReactElement } from "react";
-import Button from "./button";
 
 interface Props {
   label: ReactElement;
@@ -60,7 +59,7 @@ export default function Dropdown({
 
   return (
     <>
-      <Button className={`${labelClassName}`} ref={refs.setReference} {...getReferenceProps()}>
+      <button className={`${labelClassName}`} ref={refs.setReference} {...getReferenceProps()}>
         {label}
         <Image
           style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
@@ -70,7 +69,7 @@ export default function Dropdown({
           width={16}
           height={16}
         />
-      </Button>
+      </button>
 
       {isMounted && (
         <FloatingPortal>

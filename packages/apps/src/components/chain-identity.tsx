@@ -7,7 +7,7 @@ export default function ChainIdentity() {
   const config = getChainConfig(chain?.id);
 
   return chain ? (
-    <div className="gap-middle bg-component px-middle border-primary hidden h-8 max-w-[8.5rem] items-center rounded-2xl border lg:flex">
+    <div className="gap-middle px-middle border-primary rounded-large hidden h-8 max-w-[9rem] items-center border lg:flex">
       {config ? (
         <Image
           width={20}
@@ -17,7 +17,7 @@ export default function ChainIdentity() {
           className="shrink-0 rounded-full"
         />
       ) : null}
-      <span className="truncate text-sm font-medium">{config?.name || chain.name}</span>
+      <span className="truncate text-sm font-semibold">{config?.name || chain.name}</span>
     </div>
   ) : null;
 }
