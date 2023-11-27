@@ -208,6 +208,7 @@ export default function Transfer() {
         <div className="gap-small lg:gap-large mt-8 flex items-center">
           <Label text="From" className="w-full" needAbsolute>
             <ChainSelect
+              className="p-middle bg-inner w-full"
               placement="bottom-start"
               value={sourceChain}
               options={defaultSourceChains}
@@ -248,6 +249,7 @@ export default function Transfer() {
           />
           <Label text="To" className="w-full" needAbsolute>
             <ChainSelect
+              className="p-middle bg-inner w-full"
               placement="bottom-end"
               value={targetChain}
               options={getAvailableTargetChains(sourceChain)}

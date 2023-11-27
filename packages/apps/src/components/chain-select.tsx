@@ -25,25 +25,28 @@ export default function ChainSelect({
 }: Props) {
   return (
     <Select
-      labelClassName={`bg-inner p-middle gap-small rounded-middle flex items-center justify-between w-full transition active:translate-y-1 ${className}`}
+      labelClassName={`gap-small rounded-middle flex items-center justify-between transition active:translate-y-1 ${className}`}
       childClassName={`bg-inner flex flex-col rounded-middle max-h-60 overflow-y-auto border border-component ${
         compact ? "py-small" : "p-middle"
       }`}
       label={
         value ? (
           <div className="gap-middle flex items-center truncate">
-            <Image
-              alt="Chain"
-              width={32}
-              height={32}
-              src={getChainLogoSrc(value.logo)}
-              className="shrink-0 rounded-full"
-            />
+            {compact ? null : (
+              <Image
+                alt="Chain"
+                width={32}
+                height={32}
+                src={getChainLogoSrc(value.logo)}
+                className="shrink-0 rounded-full"
+              />
+            )}
+
             <span className="truncate text-sm font-medium text-white">{value.name}</span>
           </div>
         ) : undefined
       }
-      placeholder={<span className="truncate text-sm font-normal text-slate-400">{placeholder}</span>}
+      placeholder={<span className="truncate text-sm font-medium text-slate-400">{placeholder}</span>}
       placement={placement}
       sameWidth={compact ? true : false}
       clearable={compact ? true : false}
@@ -56,10 +59,16 @@ export default function ChainSelect({
               <button
                 key={option.id}
                 onClick={() => onChange(option)}
-                className="py-small px-large text-start transition-colors hover:bg-white/10"
+                className="py-small px-large gap-small flex items-center text-start transition-colors hover:bg-white/10"
               >
-                <Image width={18} height={18} alt="Chain logo" src={getChainLogoSrc(option.logo)} />
-                <span className="text-sm">{option.name}</span>
+                <Image
+                  width={20}
+                  height={20}
+                  alt="Chain logo"
+                  src={getChainLogoSrc(option.logo)}
+                  className="rounded-full"
+                />
+                <span className="truncate text-sm font-medium text-white">{option.name}</span>
               </button>
             );
           })

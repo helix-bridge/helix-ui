@@ -69,9 +69,7 @@ const commonColumns: ColumnType<DataSource>[] = [
       const token = getChainConfig(fromChain)?.tokens.find((t) => t.address.toLowerCase() === sendToken?.toLowerCase());
 
       return token && baseFee ? (
-        <span className="text-sm font-normal text-white">
-          {formatBalance(BigInt(baseFee), token.decimals, { keepZero: false })}
-        </span>
+        <span className="truncate">{formatBalance(BigInt(baseFee), token.decimals, { keepZero: false })}</span>
       ) : (
         <span>-</span>
       );
@@ -87,7 +85,7 @@ const commonColumns: ColumnType<DataSource>[] = [
     ),
     render: ({ liquidityFeeRate }) =>
       typeof liquidityFeeRate === "number" ? (
-        <span className="text-sm font-normal text-white">{`${formatFeeRate(liquidityFeeRate)}%`}</span>
+        <span className="truncate">{`${formatFeeRate(liquidityFeeRate)}%`}</span>
       ) : (
         <span>-</span>
       ),
@@ -100,9 +98,7 @@ const commonColumns: ColumnType<DataSource>[] = [
       const token = getChainConfig(fromChain)?.tokens.find((t) => t.address.toLowerCase() === sendToken?.toLowerCase());
 
       return margin && token ? (
-        <span className="text-sm font-normal text-white">
-          {formatBalance(BigInt(margin), token.decimals, { keepZero: false })}
-        </span>
+        <span className="truncate">{formatBalance(BigInt(margin), token.decimals, { keepZero: false })}</span>
       ) : (
         <span>-</span>
       );
@@ -115,9 +111,7 @@ const commonColumns: ColumnType<DataSource>[] = [
     render: ({ cost }) => {
       // the unit is ETH, so the precision is 18
       return cost ? (
-        <span className="truncate text-sm font-normal text-white">
-          {formatBalance(BigInt(cost), 18, { keepZero: false, precision: 5 })}
-        </span>
+        <span className="truncate">{formatBalance(BigInt(cost), 18, { keepZero: false, precision: 5 })}</span>
       ) : (
         <span>-</span>
       );
@@ -131,9 +125,7 @@ const commonColumns: ColumnType<DataSource>[] = [
       const token = getChainConfig(fromChain)?.tokens.find((t) => t.address.toLowerCase() === sendToken?.toLowerCase());
 
       return token && profit ? (
-        <span className="text-sm font-normal text-white">
-          {formatBalance(BigInt(profit), token.decimals, { keepZero: false })}
-        </span>
+        <span className="truncate">{formatBalance(BigInt(profit), token.decimals, { keepZero: false })}</span>
       ) : (
         <span>-</span>
       );
@@ -164,7 +156,7 @@ export default function RelayersTable({
             return (
               <div className="gap-small flex items-center">
                 <div className={`h-[6px] w-[6px] rounded-full ${isOnline ? "bg-app-green" : "bg-white/50"}`} />
-                <span className="text-sm font-normal text-white">{isOnline ? "Online" : "Offline"}</span>
+                <span>{isOnline ? "Online" : "Offline"}</span>
               </div>
             );
           },
@@ -175,7 +167,7 @@ export default function RelayersTable({
           render: (row) => (
             <div className="flex justify-end">
               <Button className="px-middle w-fit py-[2px]" onClick={() => setRelayerInfo(row)} kind="default">
-                <span className="text-sm font-normal text-white">Manage</span>
+                <span>Manage</span>
               </Button>
             </div>
           ),
@@ -186,7 +178,9 @@ export default function RelayersTable({
           key: "relayer",
           title: <Title title="Relayer" />,
           render: ({ relayer }) => (
-            <PrettyAddress className="text-sm font-normal text-white" address={relayer} forceShort />
+            <div className="truncate">
+              <PrettyAddress address={relayer} forceShort copyable />
+            </div>
           ),
         },
         ...commonColumns,
@@ -198,7 +192,7 @@ export default function RelayersTable({
             return (
               <div className="gap-small flex items-center justify-end">
                 <div className={`h-[6px] w-[6px] rounded-full ${isOnline ? "bg-app-green" : "bg-white/50"}`} />
-                <span className="text-sm font-normal text-white">{isOnline ? "Online" : "Offline"}</span>
+                <span>{isOnline ? "Online" : "Offline"}</span>
               </div>
             );
           },
