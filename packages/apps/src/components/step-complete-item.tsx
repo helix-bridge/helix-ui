@@ -23,10 +23,10 @@ export default function StepCompleteItem({
 }) {
   return (
     <div className="gap-small flex flex-col items-start">
-      <span className="text-sm font-normal text-white/50">{property}</span>
-      {!!address && <PrettyAddress address={address} forceShort className="text-sm font-normal text-white" />}
+      <span className="text-sm font-extrabold text-white/50">{property}</span>
+      {!!address && <PrettyAddress address={address} forceShort className="text-sm font-medium text-white" />}
       {!!bridge && (
-        <span className="text-sm font-normal text-white">
+        <span className="text-sm font-medium text-white">
           {bridge === "lnbridgev20-opposite" ? "Opposite" : "Default"}
         </span>
       )}
@@ -39,11 +39,11 @@ export default function StepCompleteItem({
             src={getChainLogoSrc(chain.logo)}
             className="shrink-0 rounded-full"
           />
-          <span className="hidden truncate text-sm font-normal text-white lg:inline">{chain.name}</span>
+          <span className="hidden truncate text-sm font-medium text-white lg:inline">{chain.name}</span>
         </div>
       )}
       {!!token && balance ? (
-        <span className="truncate text-sm font-normal text-white">{formatBalance(balance, token.decimals)}</span>
+        <span className="truncate text-sm font-medium text-white">{formatBalance(balance, token.decimals)}</span>
       ) : null}
       {!!token && !balance && (
         <div className="gap-small flex items-center">
@@ -54,10 +54,10 @@ export default function StepCompleteItem({
             src={getTokenLogoSrc(token.logo)}
             className="shrink-0 rounded-full"
           />
-          <span className="hidden truncate text-sm font-normal text-white lg:inline">{token.symbol}</span>
+          <span className="hidden truncate text-sm font-medium text-white lg:inline">{token.symbol}</span>
         </div>
       )}
-      {!!percent && <span className="text-sm font-normal text-white">{percent}%</span>}
+      {!!percent && <span className="text-sm font-medium text-white">{percent}%</span>}
     </div>
   );
 }

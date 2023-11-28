@@ -141,7 +141,7 @@ export default function RelayerRegister() {
     <>
       <div className="mx-auto flex w-full flex-col gap-5 lg:w-[38.75rem]">
         {/* Step 1 */}
-        <div className="bg-component flex flex-col gap-5 p-5 lg:p-[1.875rem]">
+        <div className="bg-component rounded-large flex flex-col gap-5 p-5 lg:p-[1.875rem]">
           <StepTitle step={1} title="Select Chain and Token" />
 
           {Step.ONE === currentStep && (
@@ -154,7 +154,7 @@ export default function RelayerRegister() {
                 <LabelItem label="From" className="flex-1">
                   <ChainSelect
                     compact
-                    className="px-middle bg-app-bg border-transparent py-2"
+                    className="px-middle bg-inner py-middle"
                     options={defaultSourceChains}
                     placeholder="Source chain"
                     value={sourceChain}
@@ -168,7 +168,7 @@ export default function RelayerRegister() {
                 <LabelItem label="To" className="flex-1">
                   <ChainSelect
                     compact
-                    className="px-middle bg-app-bg border-transparent py-2"
+                    className="px-middle bg-inner py-middle"
                     options={getLnBridgeAvailableTargetChains(sourceChain, defaultTargetChains)}
                     placeholder="Target chain"
                     value={targetChain}
@@ -182,7 +182,7 @@ export default function RelayerRegister() {
 
               <LabelItem label="Token">
                 <TokenSelect
-                  className="px-middle bg-app-bg py-2"
+                  className="px-middle bg-inner py-middle"
                   disabled={!getLnBridgeAvailableSourceTokens(sourceChain, targetChain).length}
                   options={getLnBridgeAvailableSourceTokens(sourceChain, targetChain)}
                   placeholder="Select token"
@@ -202,10 +202,10 @@ export default function RelayerRegister() {
                   }
                 }}
                 kind="primary"
-                className="flex h-9 items-center justify-center"
+                className="rounded-middle flex h-9 items-center justify-center"
                 disabled={!sourceToken}
               >
-                <span className="text-sm font-medium text-white">{address ? "Confirm" : "Connect Wallet"}</span>
+                <span className="text-base font-normal text-white">{address ? "Confirm" : "Connect Wallet"}</span>
               </Button>
             </>
           )}
@@ -236,17 +236,17 @@ export default function RelayerRegister() {
                     setCurrentStep(Step.ONE);
                     setCompleteMargin(false);
                   }}
-                  className="flex h-9 flex-1 items-center justify-center"
+                  className="rounded-middle flex h-9 flex-1 items-center justify-center"
                 >
-                  <span className="text-sm font-medium">Reset</span>
+                  <span className="text-base font-normal">Reset</span>
                 </Button>
                 <Button
                   kind="primary"
                   onClick={() => setCurrentStep(Step.TWO)}
-                  className="flex h-9 flex-1 items-center justify-center"
+                  className="rounded-middle flex h-9 flex-1 items-center justify-center"
                   disabled={Step.COMPLETE_ONE !== currentStep}
                 >
-                  <span className="text-sm font-medium">Next</span>
+                  <span className="text-base font-normal">Next</span>
                 </Button>
               </div>
             </>
@@ -254,7 +254,7 @@ export default function RelayerRegister() {
         </div>
 
         {/* Step 2 */}
-        <div className="bg-component flex flex-col gap-5 p-5 lg:p-[1.875rem]">
+        <div className="bg-component rounded-large flex flex-col gap-5 p-5 lg:p-[1.875rem]">
           <StepTitle step={2} title="Deposit Margin and Set Fee" />
 
           {Step.TWO === currentStep && (
@@ -279,7 +279,7 @@ export default function RelayerRegister() {
                 <>
                   <Button
                     kind="primary"
-                    className="flex h-9 items-center justify-center"
+                    className="rounded-middle flex h-9 items-center justify-center"
                     disabled={completeMargin || (targetChain?.id === chain?.id && marginInput.value === 0n)}
                     busy={isSettingDefaultMargin}
                     onClick={async () => {
@@ -322,7 +322,7 @@ export default function RelayerRegister() {
                       }
                     }}
                   >
-                    <span className="text-sm font-medium text-white">
+                    <span className="text-base font-normal">
                       {!completeMargin && targetChain?.id !== chain?.id
                         ? "Switch Network"
                         : !completeMargin &&
@@ -361,7 +361,7 @@ export default function RelayerRegister() {
                   !(marginInput.input && baseFeeInput.input && feeRateInput.input && isValidFeeRate(feeRateInput.value))
                 }
                 busy={busy}
-                className="flex h-9 items-center justify-center"
+                className="rounded-middle flex h-9 items-center justify-center"
                 onClick={async () => {
                   let receipt: TransactionReceipt | undefined;
                   if (address && sourceChain && targetChain && sourceToken && targetToken) {
@@ -416,7 +416,7 @@ export default function RelayerRegister() {
                   }
                 }}
               >
-                <span className="text-sm font-medium text-white">
+                <span className="text-base font-normal">
                   {bridgeCategory === "lnbridgev20-default"
                     ? sourceChain?.id !== chain?.id
                       ? "Switch Network"
@@ -455,7 +455,7 @@ export default function RelayerRegister() {
         </div>
 
         {/* Step 3 */}
-        <div className="bg-component flex flex-col gap-5 p-5 lg:p-[1.875rem]">
+        <div className="bg-component rounded-large flex flex-col gap-5 p-5 lg:p-[1.875rem]">
           <StepTitle step={3} title="Authorize Token on Target Chain and Run Relayer" />
 
           {Step.THREE === currentStep && (
@@ -474,6 +474,7 @@ export default function RelayerRegister() {
                     valid: true,
                   }}
                   compact
+                  suffix="symbol"
                   placeholder="-"
                 />
               </LabelItem>
@@ -500,20 +501,20 @@ export default function RelayerRegister() {
                       }
                     }
                   }}
-                  className="flex h-9 flex-1 items-center justify-center"
+                  className="rounded-middle flex h-9 flex-1 items-center justify-center"
                   busy={busy}
                   disabled={sourceToken?.type === "native"}
                 >
-                  <span className="text-sm font-medium">
+                  <span className="text-base font-normal">
                     {chain?.id === targetChain?.id ? "Approve More" : "Switch Network"}
                   </span>
                 </Button>
                 <Button
                   kind="default"
                   onClick={() => setIsOpen(true)}
-                  className="flex h-9 flex-1 items-center justify-center"
+                  className="rounded-middle flex h-9 flex-1 items-center justify-center"
                 >
-                  <span className="text-sm font-medium">Next</span>
+                  <span className="text-base font-normal">Next</span>
                 </Button>
               </div>
             </>
@@ -524,7 +525,7 @@ export default function RelayerRegister() {
       <Modal
         title="One More Step!"
         subTitle={
-          <div className="flex flex-wrap items-center text-sm">
+          <div className="flex flex-wrap items-center text-sm font-extrabold text-white">
             Now&nbsp;
             <RunRelayer style="link" />
             &nbsp;to start relaying messages and earn rewards.
@@ -537,10 +538,10 @@ export default function RelayerRegister() {
           className="gap-x-small grid items-center gap-y-5 text-sm font-normal text-white"
           style={{ gridTemplateColumns: "130px auto" }}
         >
-          <span>Address</span>
+          <span className="text-sm font-medium text-white">Address</span>
           {address ? <PrettyAddress address={address} /> : null}
 
-          <span>Bridge Type</span>
+          <span className="text-sm font-medium text-white">Bridge Type</span>
           <span>
             {bridgeCategory === "lnbridgev20-default"
               ? "Default"
@@ -549,25 +550,25 @@ export default function RelayerRegister() {
               : "-"}
           </span>
 
-          <span>From</span>
+          <span className="text-sm font-medium text-white">From</span>
           <PrettyChain chain={sourceChain} />
 
-          <span>To</span>
+          <span className="text-sm font-medium text-white">To</span>
           <PrettyChain chain={targetChain} />
 
-          <span>Token</span>
+          <span className="text-sm font-medium text-white">Token</span>
           <PrettyToken token={sourceToken} />
 
-          <span>Margin</span>
+          <span className="text-sm font-medium text-white">Margin</span>
           <PrettyMargin
             margin={marginInput.value}
             token={bridgeCategory === "lnbridgev20-default" ? targetToken : sourceToken}
           />
 
-          <span>Base Fee</span>
+          <span className="text-sm font-medium text-white">Base Fee</span>
           <PrettyBaseFee fee={baseFeeInput.value} token={sourceToken} />
 
-          <span>Liquidity Fee Rate</span>
+          <span className="text-sm font-medium text-white">Liquidity Fee Rate</span>
           <span>{formatFeeRate(feeRateInput.value)}%</span>
         </div>
 
@@ -588,9 +589,9 @@ export default function RelayerRegister() {
               setCurrentStep(Step.ONE);
               setCompleteMargin(false);
             }}
-            className="flex h-8 flex-1 items-center justify-center lg:h-9"
+            className="rounded-middle flex h-8 flex-1 items-center justify-center lg:h-9"
           >
-            <span className="text-sm font-normal">Register Another</span>
+            <span className="text-base font-normal">Register Another</span>
           </Button>
         </div>
       </Modal>
@@ -602,10 +603,10 @@ function RunRelayer({ style, onClick = () => undefined }: { style: "button" | "l
   return (
     <a
       href="https://github.com/helix-bridge/relayer/tree/main"
-      className={`inline-flex items-center justify-center text-sm font-medium ${
+      className={`inline-flex items-center justify-center ${
         style === "button"
-          ? `bg-primary border-radius h-8 flex-1 items-center justify-center text-white transition hover:opacity-80 active:translate-y-1 lg:h-9`
-          : "text-primary hover:underline"
+          ? `bg-primary border-radius rounded-middle h-8 flex-1 items-center justify-center text-base font-normal text-white transition hover:opacity-80 active:translate-y-1 lg:h-9`
+          : "text-primary text-sm font-extrabold hover:underline"
       }`}
       rel="noopener"
       target="_blank"
@@ -625,7 +626,7 @@ function LabelItem({
   return (
     <div className={`gap-middle flex flex-col ${className}`}>
       <div className="gap-small flex items-center">
-        <span className="text-sm font-normal text-white">{label}</span>
+        <span className="text-sm font-extrabold text-white">{label}</span>
         {tips ? (
           <Tooltip content={tips} className="w-fit" contentClassName="max-w-[18rem]">
             <Image width={16} height={16} alt="Info" src="/images/info.svg" />
@@ -638,7 +639,7 @@ function LabelItem({
 }
 
 function Description({ content }: { content: string }) {
-  return <span className="text-xs font-medium text-white/50">{content}</span>;
+  return <span className="text-sm font-medium text-white/50">{content}</span>;
 }
 
 function PrettyChain({ chain }: { chain?: ChainConfig }) {

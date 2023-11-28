@@ -71,7 +71,12 @@ export default function Select({
 
   return (
     <>
-      <button className={`${labelClassName}`} ref={refs.setReference} {...getReferenceProps()} disabled={disabled}>
+      <button
+        className={`disabled:cursor-not-allowed disabled:opacity-60 ${labelClassName}`}
+        ref={refs.setReference}
+        {...getReferenceProps()}
+        disabled={disabled}
+      >
         {label || placeholder}
         <div className="gap-small flex shrink-0 items-center">
           {label && clearable ? (

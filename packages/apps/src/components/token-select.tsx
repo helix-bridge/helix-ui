@@ -1,5 +1,5 @@
 import { Token } from "@/types/token";
-import ISelect from "@/ui/select";
+import Select from "@/ui/select";
 import { getTokenLogoSrc } from "@/utils";
 import Image from "next/image";
 import PrettyAddress from "./pretty-address";
@@ -22,11 +22,11 @@ export default function TokenSelect({
   onChange = () => undefined,
 }: Props) {
   return (
-    <ISelect
-      labelClassName={`gap-small flex items-center justify-between border-transparent disabled:border-transparent ${className}`}
-      childClassName="bg-component border-primary py-small flex flex-col border-radius border"
-      label={value ? <span className="text-sm font-normal text-white">{value.symbol}</span> : undefined}
-      placeholder={<span className="text-sm font-normal text-slate-400">{placeholder}</span>}
+    <Select
+      labelClassName={`gap-small flex items-center justify-between rounded-middle ${className}`}
+      childClassName="bg-inner py-middle flex flex-col rounded-middle border border-component"
+      label={value ? <span className="text-sm font-medium text-white">{value.symbol}</span> : undefined}
+      placeholder={<span className="text-sm font-medium text-slate-400">{placeholder}</span>}
       disabled={disabled}
       clearable
       sameWidth
@@ -39,24 +39,24 @@ export default function TokenSelect({
             onClick={() => {
               onChange(option);
             }}
-            className="py-small px-large hover:text-primary gap-middle flex items-center text-start text-sm transition hover:opacity-80"
+            className="py-small px-large gap-middle flex items-center transition hover:bg-white/5"
           >
-            <Image width={28} height={28} alt="Token" src={getTokenLogoSrc(option.logo)} className="rounded-full" />
-            <div className="flex flex-col">
-              <span>{option.symbol}</span>
+            <Image width={26} height={26} alt="Token" src={getTokenLogoSrc(option.logo)} className="rounded-full" />
+            <div className="flex flex-col items-start">
+              <span className="text-sm font-medium text-white">{option.symbol}</span>
               {option.type === "native" ? (
-                <span className="text-xs text-white/50">Native token</span>
+                <span className="text-xs font-medium text-white/50">Native token</span>
               ) : (
-                <PrettyAddress address={option.address} copyable className="text-xs text-white/50" />
+                <PrettyAddress address={option.address} copyable className="text-xs font-medium text-white/50" />
               )}
             </div>
           </button>
         ))
       ) : (
-        <div className="py-small px-large">
-          <span className="text-sm text-white/50">No data</span>
+        <div className="py-small px-large text-center">
+          <span className="text-sm font-medium text-white/50">No data</span>
         </div>
       )}
-    </ISelect>
+    </Select>
   );
 }
