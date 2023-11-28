@@ -171,7 +171,7 @@ export function BalanceInput({
           <div className="gap-middle flex shrink-0 items-center self-end">
             {token ? (
               <div className="gap-small flex shrink-0 items-center">
-                <Image width={20} height={20} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
+                <Image width={26} height={26} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
                 <span className="text-base font-medium text-white">{token.symbol}</span>
               </div>
             ) : null}
@@ -180,8 +180,8 @@ export function BalanceInput({
               .map((t) => (
                 <Image
                   key={t.symbol}
-                  width={20}
-                  height={20}
+                  width={26}
+                  height={26}
                   alt="Token"
                   src={getTokenLogoSrc(t.logo)}
                   className="rounded-full opacity-80 transition-transform duration-300 hover:cursor-pointer hover:opacity-100 active:-translate-x-1"
