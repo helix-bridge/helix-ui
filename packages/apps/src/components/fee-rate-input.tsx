@@ -1,5 +1,6 @@
 import { InputValue } from "@/types";
 import Input from "@/ui/input";
+import InputAlert from "@/ui/input-alert";
 import { isValidFeeRate, parseFeeRate } from "@/utils";
 import { ChangeEventHandler, useCallback } from "react";
 
@@ -30,7 +31,7 @@ export default function FeeRateInput({ placeholder, value, onChange = () => unde
 
   return (
     <div
-      className={`gap-small bg-app-bg p-small lg:p-middle normal-input-wrap flex items-center justify-between ${
+      className={`gap-small bg-inner p-small lg:p-middle normal-input-wrap rounded-middle relative flex items-center justify-between ${
         value.valid ? "valid-input-wrap border-transparent" : "invalid-input-wrap"
       }`}
     >
@@ -38,9 +39,11 @@ export default function FeeRateInput({ placeholder, value, onChange = () => unde
         className="w-full rounded bg-transparent text-sm font-medium text-white"
         placeholder={placeholder}
         onChange={handleChange}
-        value={value.value}
+        value={value.input}
       />
       <span className="rounded bg-transparent text-sm font-medium text-white">%</span>
+
+      {value.valid ? null : <InputAlert text="* Please enter 0 ~ 0.25" />}
     </div>
   );
 }

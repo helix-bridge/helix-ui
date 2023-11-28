@@ -30,7 +30,7 @@ export default function RelayersManage() {
   return (
     <>
       <div className="mb-middle flex items-center justify-between">
-        <span className="font-semibold">Dashboard</span>
+        <span className="text-base font-semibold text-white">Dashboard</span>
         <CountdownRefresh onClick={refetch} />
       </div>
       <RelayersTable

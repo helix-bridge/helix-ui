@@ -88,15 +88,15 @@ export function BalanceInput({
       if (percent < 10) {
         setDynamicStyle("text-[3.75rem] font-extralight");
       } else if (percent < 20) {
-        setDynamicStyle("text-[3rem] font-extralight");
+        setDynamicStyle("text-[3rem] font-light");
       } else if (percent < 30) {
         setDynamicStyle("text-[2.25rem] font-light");
       } else if (percent < 40) {
-        setDynamicStyle("text-[1.875rem] font-light");
+        setDynamicStyle("text-[1.875rem] font-normal");
       } else if (percent < 50) {
         setDynamicStyle("text-[1.5rem] font-normal");
       } else if (percent < 60) {
-        setDynamicStyle("text-[1.25rem] font-normal");
+        setDynamicStyle("text-[1.25rem] font-medium");
       } else {
         setDynamicStyle("text-[1.125rem] font-medium");
       }
@@ -129,8 +129,8 @@ export function BalanceInput({
 
   return (
     <div
-      className={`lg:px-middle px-small py-small bg-inner rounded-middle normal-input-wrap relative flex flex-col border-transparent ${
-        value.valid ? "valid-input-wrap" : "invalid-input-wrap"
+      className={`lg:px-middle px-small py-small bg-inner rounded-middle normal-input-wrap relative flex flex-col ${
+        value.valid ? "valid-input-wrap border-transparent" : "invalid-input-wrap"
       }`}
     >
       <div className="gap-small flex items-center justify-between">

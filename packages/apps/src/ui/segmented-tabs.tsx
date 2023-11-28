@@ -34,17 +34,21 @@ export default function SegmentedTabs<K extends Key = string>({
         {options.map(({ key, label, disabled }) => (
           <div
             key={key}
-            className={`border-primary flex flex-1 items-center justify-center border-y border-r transition-colors first:rounded-l-xl first:border-l last:rounded-r-xl ${
-              activeKey === key ? "bg-primary" : "bg-transparent"
-            }`}
+            className={`border-primary hover:border-primary/80 first:rounded-l-middle last:rounded-r-middle flex flex-1 items-center justify-center border-y border-r transition-colors duration-150 first:border-l ${
+              activeKey === key ? "bg-primary hover:bg-primary/80" : "hover:text-primary bg-transparent"
+            } ${disabled ? "opacity-60" : ""}`}
           >
-            <Tooltip enabled={!!disabled} content="Coming soon">
+            <Tooltip enabled={!!disabled} content="Coming soon" className="h-full w-full">
               <button
                 onClick={() => onChange(key)}
-                className={`h-full w-full transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-60`}
+                className={`h-full w-full transition disabled:cursor-not-allowed`}
                 disabled={disabled}
               >
-                {typeof label === "string" ? <span className="text-sm font-medium">{label}</span> : label}
+                {typeof label === "string" ? (
+                  <span className="text-sm font-medium lg:font-extrabold">{label}</span>
+                ) : (
+                  label
+                )}
               </button>
             </Tooltip>
           </div>

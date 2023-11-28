@@ -166,7 +166,11 @@ export default function RelayersTable({
           title: <Title title="Action" className="justify-end" />,
           render: (row) => (
             <div className="flex justify-end">
-              <Button className="px-middle w-fit py-[2px]" onClick={() => setRelayerInfo(row)} kind="default">
+              <Button
+                className="px-middle rounded-middle w-fit py-[2px]"
+                onClick={() => setRelayerInfo(row)}
+                kind="default"
+              >
                 <span>Manage</span>
               </Button>
             </div>

@@ -267,7 +267,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
       extra={
         activeKey === "withdraw" ? (
           <div className="h-6 self-end">
-            <span className="text-sm text-white/50">Powered by LayerZero & Helix</span>
+            <span className="text-sm font-extrabold text-white/50">Powered by LayerZero & Helix</span>
           </div>
         ) : (
           <div className="h-6" />
@@ -281,8 +281,8 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             key: "update",
             label: (
               <>
-                <span className="hidden text-sm font-medium lg:inline">Update Fee</span>
-                <span className="text-sm font-medium lg:hidden">Fee</span>
+                <span className="hidden text-sm font-extrabold lg:inline">Update Fee</span>
+                <span className="text-sm font-extrabold lg:hidden">Fee</span>
               </>
             ),
             children: (
@@ -310,8 +310,8 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             key: "deposit",
             label: (
               <>
-                <span className="hidden text-sm font-medium lg:inline">Deposit More Margin</span>
-                <span className="text-sm font-medium lg:hidden">Margin</span>
+                <span className="hidden text-sm font-extrabold lg:inline">Deposit More Margin</span>
+                <span className="text-sm font-extrabold lg:hidden">Margin</span>
               </>
             ),
             children: (
@@ -343,8 +343,8 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             key: "withdraw",
             label: (
               <div className="gap-small flex items-center justify-center">
-                <span className="hidden text-sm font-medium lg:inline">Withdraw Margin</span>
-                <span className="text-sm font-medium lg:hidden">Withdraw</span>
+                <span className="hidden text-sm font-extrabold lg:inline">Withdraw Margin</span>
+                <span className="text-sm font-extrabold lg:hidden">Withdraw</span>
                 <Tooltip
                   content="A cross-chain message is required to perform a `withdraw margin` operation"
                   contentClassName="w-60"
@@ -368,17 +368,19 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                 </LabelSection>
                 <LabelSection label="Withdraw Fee">
                   <div
-                    className={`bg-app-bg lg:px-middle px-small relative flex h-10 items-center justify-between rounded border ${
+                    className={`bg-inner lg:px-middle px-small rounded-middle relative flex h-10 items-center justify-between border ${
                       withdrawFee ? "border-transparent" : "border-app-red"
                     }`}
                   >
                     {withdrawFee ? (
                       <>
-                        <span>{formatBalance(withdrawFee.value, withdrawFee.token.decimals, { precision: 6 })}</span>
-                        <span>{withdrawFee.token.symbol}</span>
+                        <span className="text-sm font-medium text-white">
+                          {formatBalance(withdrawFee.value, withdrawFee.token.decimals, { precision: 6 })}
+                        </span>
+                        <span className="text-sm font-medium text-white">{withdrawFee.token.symbol}</span>
                       </>
                     ) : (
-                      <span className="text-app-red absolute -bottom-5 left-0 text-xs">
+                      <span className="text-app-red absolute -bottom-5 left-0 text-xs font-medium">
                         * Failed to get fee, withdraw is temporarily unavailable
                       </span>
                     )}
@@ -399,7 +401,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
 function LabelSection({ label, children, height }: PropsWithChildren<{ label: string; height?: number }>) {
   return (
     <div className="gap-middle flex flex-col" style={{ height }}>
-      <span className="text-sm font-normal">{label}</span>
+      <span className="text-sm font-extrabold">{label}</span>
       {children}
     </div>
   );
