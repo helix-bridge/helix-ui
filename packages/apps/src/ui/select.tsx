@@ -47,7 +47,7 @@ export default function Select({
     onOpenChange: setIsOpen,
     placement,
     middleware: [
-      offset(6),
+      offset(4),
       sameWidth
         ? size({
             apply({ rects, elements }) {

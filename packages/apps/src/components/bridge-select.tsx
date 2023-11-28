@@ -13,7 +13,7 @@ export default function BridgeSelect({ value, options = [], onChange = () => und
 
   return (
     <Select
-      labelClassName="bg-inner p-middle flex items-center justify-between rounded-middle"
+      labelClassName="bg-inner p-middle flex items-center justify-between rounded-middle transition-transform lg:active:translate-y-1"
       childClassName="bg-inner p-middle flex flex-col rounded-middle gap-small border border-component"
       label={bridge ? <span className="text-sm font-medium text-white">{bridge.getName()}</span> : undefined}
       placeholder={<span className="text-sm font-medium text-slate-400">Select a bridge</span>}
