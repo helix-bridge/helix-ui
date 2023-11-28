@@ -22,7 +22,7 @@ const createContainer = () => {
 
 const createItem = (config: Config, status: Status, onClose: () => void) => {
   const domNode = document.createElement("div");
-  domNode.className = `rounded-normal border border-primary p-middle lg:p-5 flex items-center gap-middle mb-middle animate-notification-enter relative bg-component w-[82vw] lg:w-96 ${config.className}`;
+  domNode.className = `rounded-middle border-component border bg-inner p-middle lg:p-5 flex items-center gap-middle mb-middle animate-notification-enter relative w-[82vw] lg:w-96 ${config.className}`;
 
   const root = createRoot(domNode);
   root.render(
@@ -42,10 +42,8 @@ const createItem = (config: Config, status: Status, onClose: () => void) => {
         className="hidden shrink-0 self-start lg:inline"
       />
       <div className="gap-small flex flex-col">
-        {config.title && <div className="break-all text-xs font-bold text-white lg:text-sm">{config.title}</div>}
-        {config.description && (
-          <div className="break-all text-xs font-light text-white lg:text-sm">{config.description}</div>
-        )}
+        {config.title && <div className="break-all text-base font-medium text-white">{config.title}</div>}
+        {config.description && <div className="break-all text-sm font-medium text-white">{config.description}</div>}
       </div>
       {config.closeable && (
         <button
