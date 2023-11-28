@@ -66,7 +66,7 @@ export const arbitrumGoerliChain: ChainConfig = {
       name: "USDT",
       type: "erc20",
       address: "0x543bf1AC41485dc78039b9351563E4Dd13A288cb",
-      logo: "usdt.svg",
+      logo: "usdt.png",
       cross: [
         { target: { network: "linea-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "mantle-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },

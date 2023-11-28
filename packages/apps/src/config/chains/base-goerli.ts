@@ -50,7 +50,7 @@ export const baseGoerliChain: ChainConfig = {
       name: "USDT",
       type: "erc20",
       address: "0x876A4f6eCF13EEb101F9E75FCeF58f19Ff383eEB",
-      logo: "usdt.svg",
+      logo: "usdt.png",
       cross: [{ target: { network: "goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } }],
     },
   ],

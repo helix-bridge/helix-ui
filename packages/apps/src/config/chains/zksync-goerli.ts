@@ -68,7 +68,7 @@ export const zksyncGoerliChain: ChainConfig = {
       name: "USDT",
       type: "erc20",
       address: "0xb5372ed3bb2CbA63e7908066ac10ee94d30eA839",
-      logo: "usdt.svg",
+      logo: "usdt.png",
       cross: [
         { target: { network: "arbitrum-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "linea-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },

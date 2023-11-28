@@ -49,7 +49,7 @@ export const zksyncChain: ChainConfig = {
       name: "USDT",
       type: "erc20",
       address: "0x493257fD37EDB34451f62EDf8D2a0C418852bA4C",
-      logo: "usdt.svg",
+      logo: "usdt.png",
       cross: [
         { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "mantle", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
