@@ -52,6 +52,7 @@ export default function TransferAction({ recipient, transferable, transferAmount
           bridgeInstance &&
           bridgeFee &&
           transferable &&
+          transferAmount.input &&
           transferAmount.value < transferable &&
           isAddress(recipient ?? "")
         )

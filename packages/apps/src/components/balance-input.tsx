@@ -17,6 +17,8 @@ interface Props {
   value: InputValue<bigint>;
   token: Token | undefined;
   tokenOptions?: Token[];
+  balanceLoading?: boolean;
+  onBalanceRefresh?: () => void;
   onChange?: (value: InputValue<bigint>) => void;
   onTokenChange?: (token: Token) => void;
 }
@@ -31,7 +33,9 @@ export function BalanceInput({
   enabledDynamicStyle,
   value,
   token,
+  balanceLoading,
   tokenOptions = [],
+  onBalanceRefresh = () => undefined,
   onChange = () => undefined,
   onTokenChange = () => undefined,
 }: Props) {
@@ -197,7 +201,12 @@ export function BalanceInput({
           <span className="text-xs font-medium text-white/50">
             Balance: {formatBalance(balance ?? 0n, token.decimals)}
           </span>
-          <button className="animate-spin1 rounded-full bg-white/20 p-[3px] opacity-50 transition hover:bg-white/20 hover:opacity-100 active:scale-95">
+          <button
+            className={`rounded-full bg-white/20 p-[3px] opacity-50 transition hover:bg-white/20 hover:opacity-100 active:scale-95 ${
+              balanceLoading ? "animate-spin" : ""
+            }`}
+            onClick={onBalanceRefresh}
+          >
             <Image alt="Refresh" width={14} height={14} src="/images/refresh.svg" />
           </button>
           {max ? (

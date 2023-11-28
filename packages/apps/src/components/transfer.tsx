@@ -20,7 +20,7 @@ import {
 } from "@/utils";
 import { useQuery } from "@apollo/client";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useDeferredValue, useEffect, useMemo, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { Address, useAccount } from "wagmi";
 import { Subscription, from } from "rxjs";
 import Label from "@/ui/label";
@@ -54,6 +54,7 @@ export default function Transfer() {
     setTransferAmount,
     setBridgeFee,
     setBridgeCategory,
+    updateSourceBalance,
   } = useTransfer();
   const deferredTransferAmount = useDeferredValue(transferAmount);
 
@@ -63,6 +64,7 @@ export default function Transfer() {
   const [recipient, _setRecipient] = useState<Address>();
   const [isLoadingFee, setIsLoadingFee] = useState(false);
   const [estimateGasFee, setEstimateGasFee] = useState(0n);
+  const [balanceLoading, setBalanceLoading] = useState(false);
 
   const bridgeOptions = useMemo(
     () => getAvailableBridges(sourceChain, targetChain, sourceToken),
@@ -136,6 +138,14 @@ export default function Transfer() {
     tt && params.set(UrlSearchParamKey.TARGET_TOKEN, tt.symbol);
     router.push(`?${params.toString()}`);
   };
+
+  const refreshBalance = useCallback(async () => {
+    if (address && bridgeInstance) {
+      setBalanceLoading(true);
+      await updateSourceBalance(address, bridgeInstance);
+      setBalanceLoading(false);
+    }
+  }, [address, bridgeInstance, updateSourceBalance]);
 
   useEffect(() => {
     setBridgeCategory(bridgeOptions.at(0));
@@ -278,7 +288,9 @@ export default function Transfer() {
             max={transferable}
             value={transferAmount}
             token={sourceToken}
+            balanceLoading={balanceLoading}
             tokenOptions={getAvailableSourceTokens(sourceChain, targetChain)}
+            onBalanceRefresh={refreshBalance}
             onChange={setTransferAmount}
             onTokenChange={setSourceToken}
           />
