@@ -3,7 +3,7 @@ import Input from "@/ui/input";
 import InputAlert from "@/ui/input-alert";
 import { formatBalance, getTokenLogoSrc } from "@/utils";
 import Image from "next/image";
-import { ChangeEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { formatUnits, parseUnits } from "viem";
 
 interface Props {
@@ -84,6 +84,22 @@ export function BalanceInput({
     [token, max, balance, onChange],
   );
 
+  const handleMax = useCallback<MouseEventHandler<HTMLButtonElement>>(
+    (e) => {
+      e.stopPropagation();
+      if (typeof max === "bigint" && token) {
+        const decimals = token.decimals;
+        const parsed = parseValue(formatUnits(max, decimals), decimals);
+        insufficientRef.current = balance !== undefined && balance < parsed.value ? true : false;
+        exceededRef.current = max && max < parsed.value ? true : false;
+        const valid = !(insufficientRef.current || exceededRef.current);
+        onChange({ valid, ...parsed });
+        setEnablingMax(true);
+      }
+    },
+    [max, token, balance, onChange],
+  );
+
   useEffect(() => {
     if (enabledDynamicStyle) {
       const inputWidth = inputRef.current?.clientWidth || 1;
@@ -156,16 +172,7 @@ export function BalanceInput({
           ) : suffix === "max" ? (
             <button
               className="inline-flex items-center bg-transparent px-2 py-1 transition-[transform,color] hover:scale-105 hover:bg-white/[0.15] active:scale-95 disabled:scale-100 disabled:cursor-not-allowed"
-              onClick={(e) => {
-                e.stopPropagation();
-                const decimals = token?.decimals || 0;
-                const parsed = parseValue(formatUnits(max ?? 0n, decimals), decimals);
-                insufficientRef.current = balance !== undefined && balance < parsed.value ? true : false;
-                exceededRef.current = max && max < parsed.value ? true : false;
-                const valid = !(insufficientRef.current || exceededRef.current);
-                onChange({ valid, ...parsed });
-                setEnablingMax(true);
-              }}
+              onClick={handleMax}
               disabled={max === undefined || token === undefined}
             >
               <span className="text-sm font-medium">Max</span>
@@ -210,7 +217,10 @@ export function BalanceInput({
             <Image alt="Refresh" width={14} height={14} src="/images/refresh.svg" />
           </button>
           {max ? (
-            <button className="rounded-small inline-flex items-center bg-white/10 px-1 py-[1px] text-xs font-medium text-white/50 transition hover:bg-white/20 hover:text-white active:scale-95">
+            <button
+              className="rounded-small inline-flex items-center bg-white/10 px-1 py-[1px] text-xs font-medium text-white/50 transition hover:bg-white/20 hover:text-white active:scale-95"
+              onClick={handleMax}
+            >
               Max
             </button>
           ) : null}
