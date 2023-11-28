@@ -32,6 +32,7 @@ export default function LnRelayerOverview() {
         relayer: deferredSearchValue.toLowerCase() || undefined,
       },
       notifyOnNetworkStatusChange: true,
+      fetchPolicy: "no-cache",
     },
   );
 

@@ -18,6 +18,7 @@ export default function RelayersManage() {
     {
       variables: { relayer: (address || "").toLowerCase(), row: pageSize, page: currentPage },
       notifyOnNetworkStatusChange: true,
+      fetchPolicy: "no-cache",
     },
   );
 
