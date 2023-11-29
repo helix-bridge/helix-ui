@@ -92,7 +92,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
         }
       }
 
-      disableOk = !(depositAmount.input && depositAmount.valid) && okText === "Confirm";
+      disableOk = !(depositAmount.value && depositAmount.valid) && okText === "Confirm";
     } else if (chain?.id !== sourceChain?.id) {
       okText = "Switch Network";
       switchChainId = sourceChain?.id;
@@ -102,7 +102,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
       disableOk =
         !(baseFeeInput.input && baseFeeInput.valid && feeRateInput.input && feeRateInput.valid) && okText === "Confirm";
     } else if (activeKey === "withdraw") {
-      disableOk = !(withdrawAmount.input && withdrawAmount.valid && withdrawFee?.value) && okText === "Confirm";
+      disableOk = !(withdrawAmount.value && withdrawAmount.valid && withdrawFee?.value) && okText === "Confirm";
     }
     return { okText, disableOk, switchChainId };
   }, [
