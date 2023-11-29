@@ -48,7 +48,7 @@ export function BalanceInput({
   const [enablingMax, setEnablingMax] = useState(false);
   const [dynamicStyle, setDynamicStyle] = useState("text-sm font-medium");
 
-  const isExceeded = useMemo(() => (max && max < value.value ? true : false), [max, value]);
+  const isExceeded = useMemo(() => (typeof max === "bigint" && max < value.value ? true : false), [max, value]);
 
   const _placeholder = useMemo(() => {
     if (token && compact) {
@@ -216,7 +216,7 @@ export function BalanceInput({
           >
             <Image alt="Refresh" width={14} height={14} src="/images/refresh.svg" />
           </button>
-          {max ? (
+          {typeof max === "bigint" ? (
             <button
               className="rounded-small inline-flex items-center bg-white/10 px-1 py-[1px] text-xs font-medium text-white/50 transition hover:bg-white/20 hover:text-white active:scale-95"
               onClick={handleMax}
