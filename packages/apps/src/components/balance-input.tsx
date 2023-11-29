@@ -150,15 +150,15 @@ export function BalanceInput({
   return (
     <div
       className={`lg:px-middle px-small py-small bg-inner rounded-middle normal-input-wrap relative flex flex-col ${
-        value.valid ? "valid-input-wrap border-transparent" : "invalid-input-wrap"
-      }`}
+        compact ? "lg:py-middle" : ""
+      } ${value.valid ? "valid-input-wrap border-transparent" : "invalid-input-wrap"}`}
     >
       <div className="gap-small flex items-center justify-between">
         <Input
           placeholder={_placeholder}
-          className={`h-12 w-full rounded bg-transparent text-white transition-[font-size,font-weight,line-height] duration-300 ${
-            enabledDynamicStyle && value.input ? `leading-none ${dynamicStyle}` : "text-sm font-medium"
-          }`}
+          className={`w-full rounded bg-transparent text-white transition-[font-size,font-weight,line-height] duration-300 ${
+            compact ? "" : "h-12"
+          } ${enabledDynamicStyle && value.input ? `leading-none ${dynamicStyle}` : "text-sm font-medium"}`}
           onChange={handleChange}
           ref={inputRef}
           disabled={disabled}
