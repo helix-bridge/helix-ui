@@ -54,7 +54,7 @@ export default function Table<T extends { key: Key }>({
     <div className="min-w-[50rem] overflow-x-auto">
       {/* header */}
       <div
-        className="gap-middle bg-component px-middle py-large rounded-t-middle grid items-center text-sm font-extrabold text-white"
+        className="gap-middle bg-component px-middle py-large lg:px-large rounded-t-middle grid items-center text-sm font-extrabold text-white"
         style={{ gridTemplateColumns: templateCols }}
       >
         {columns.map(({ key, title }) => (
@@ -75,7 +75,7 @@ export default function Table<T extends { key: Key }>({
               {dataSource.map((row) => (
                 <div
                   key={row.key}
-                  className={`gap-middle p-middle grid items-center border-t border-t-white/10 text-sm font-medium transition-colors ${
+                  className={`gap-middle p-middle lg:px-large grid items-center border-t border-t-white/10 text-sm font-medium transition-colors ${
                     onRowClick ? "hover:cursor-pointer hover:bg-white/5" : ""
                   }`}
                   style={{ gridTemplateColumns: templateCols }}
