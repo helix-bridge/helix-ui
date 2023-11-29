@@ -178,7 +178,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
   return (
     <Modal
       title="Manage Relayer"
-      className="w-full lg:w-[40rem]"
+      className="w-full lg:w-[32rem]"
       okText={okText}
       isOpen={isOpen}
       onClose={onClose}
