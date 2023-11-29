@@ -157,7 +157,7 @@ export function BalanceInput({
         <Input
           placeholder={_placeholder}
           className={`h-12 w-full rounded bg-transparent text-white transition-[font-size,font-weight,line-height] duration-300 ${
-            enabledDynamicStyle && value.value ? `leading-none ${dynamicStyle}` : "text-sm font-medium"
+            enabledDynamicStyle && value.input ? `leading-none ${dynamicStyle}` : "text-sm font-medium"
           }`}
           onChange={handleChange}
           ref={inputRef}
