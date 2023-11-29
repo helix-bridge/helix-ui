@@ -59,7 +59,7 @@ export default function ChainSelect({
               <button
                 key={option.id}
                 onClick={() => onChange(option)}
-                className="py-small px-large gap-small flex items-center text-start transition-colors hover:bg-white/10"
+                className="py-small px-large gap-middle flex items-center text-start transition-colors hover:bg-white/10"
               >
                 <Image
                   width={20}
