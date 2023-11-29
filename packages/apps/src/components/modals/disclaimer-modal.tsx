@@ -29,7 +29,7 @@ export default function DisclaimerModal() {
       <div />
 
       <Button
-        className="py-small px-large mx-auto w-fit"
+        className="py-small px-large rounded-middle mx-auto w-fit"
         kind="primary"
         onClick={() => {
           setIsOpenFalse();
@@ -43,5 +43,5 @@ export default function DisclaimerModal() {
 }
 
 function Paragraph({ content }: { content: string }) {
-  return <p className="text-sm font-normal text-white">{content}</p>;
+  return <p className="text-sm font-medium text-white">{content}</p>;
 }
