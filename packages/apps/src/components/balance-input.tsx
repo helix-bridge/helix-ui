@@ -71,7 +71,7 @@ export function BalanceInput({
         if (token && !Number.isNaN(Number(input))) {
           parsed = parseValue(input, token.decimals);
           insufficientRef.current = balance !== undefined && balance < parsed.value ? true : false;
-          exceededRef.current = max && max < parsed.value ? true : false;
+          exceededRef.current = typeof max === "bigint" && max < parsed.value ? true : false;
           valid = !(insufficientRef.current || exceededRef.current);
           onChange({ valid, ...parsed });
         }
@@ -128,7 +128,7 @@ export function BalanceInput({
     if (token && token.decimals !== tokenRef.current?.decimals) {
       const parsed = parseValue(value.input, token.decimals);
       insufficientRef.current = balance !== undefined && balance < parsed.value ? true : false;
-      exceededRef.current = max && max < parsed.value ? true : false;
+      exceededRef.current = typeof max === "bigint" && max < parsed.value ? true : false;
       const valid = !(insufficientRef.current || exceededRef.current);
       onChange({ valid, ...parsed });
     }
@@ -141,7 +141,7 @@ export function BalanceInput({
       const decimals = token.decimals;
       const parsed = parseValue(formatUnits(max ?? 0n, decimals), decimals);
       insufficientRef.current = balance !== undefined && balance < parsed.value ? true : false;
-      exceededRef.current = max && max < parsed.value ? true : false;
+      exceededRef.current = typeof max === "bigint" && max < parsed.value ? true : false;
       const valid = !(insufficientRef.current || exceededRef.current);
       onChange({ valid, ...parsed });
     }
