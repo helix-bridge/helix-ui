@@ -18,6 +18,7 @@ interface NavigationConfig {
   href: string;
   external?: boolean;
   soon?: boolean;
+  disabled?: boolean;
 }
 
 export default function Header() {
@@ -28,7 +29,7 @@ export default function Header() {
     if (pathname.startsWith("/relayer")) {
       return [
         { href: "/relayer/overview", label: "Overview" },
-        { href: "/relayer/dashboard", label: "Dashboard" },
+        { href: "/relayer/dashboard", label: "Dashboard", disabled: true },
       ];
     } else {
       return [
@@ -64,7 +65,7 @@ export default function Header() {
 
             {/* Navigations */}
             <div className="gap-middle hidden items-center lg:flex">
-              {navigationsConfig.map(({ href, label, external, soon }) =>
+              {navigationsConfig.map(({ href, label, external, soon, disabled }) =>
                 external ? (
                   <a
                     rel="noopener noreferrer"
@@ -77,8 +78,8 @@ export default function Header() {
                   >
                     {label}
                   </a>
-                ) : soon ? (
-                  <Tooltip key={label} content="Coming soon">
+                ) : soon || disabled ? (
+                  <Tooltip key={label} content={soon ? "Coming soon" : "This feature is temporarily under maintenance"}>
                     <span className="rounded-middle px-3 py-1 text-base font-bold text-white/50">{label}</span>
                   </Tooltip>
                 ) : (
@@ -116,7 +117,7 @@ export default function Header() {
         <div className="flex h-96 w-full items-start justify-center">
           <div className="flex w-max flex-col items-start gap-10">
             <div className="gap-large flex flex-col">
-              {navigationsConfig.map(({ label, href, external, soon }) =>
+              {navigationsConfig.map(({ label, href, external, soon, disabled }) =>
                 external ? (
                   <a
                     rel="noopener noreferrer"
@@ -129,8 +130,8 @@ export default function Header() {
                   >
                     {label}
                   </a>
-                ) : soon ? (
-                  <Tooltip key={label} content="Coming soon">
+                ) : soon || disabled ? (
+                  <Tooltip key={label} content={soon ? "Coming soon" : "This feature is temporarily under maintenance"}>
                     <span className="text-base font-semibold text-white/50">{label}</span>
                   </Tooltip>
                 ) : (
