@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const bscChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.BSC,
   network: "bsc",
   name: "BSC",
-  logo: "bsc.svg",
   nativeCurrency: {
     name: "BNB",
     symbol: "BNB",
@@ -26,6 +28,11 @@ export const bscChain: ChainConfig = {
       url: "https://bscscan.com/",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "bsc.svg",
   tokens: [
     {
       decimals: 18,
@@ -42,7 +49,7 @@ export const bscChain: ChainConfig = {
       name: "USDT",
       type: "erc20",
       address: "0x55d398326f99059fF775485246999027B3197955",
-      logo: "usdt.svg",
+      logo: "usdt.png",
       cross: [
         { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "op", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },

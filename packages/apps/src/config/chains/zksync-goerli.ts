@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const zksyncGoerliChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.ZKSYNC_GOERLI,
   network: "zksync-goerli",
   name: "Zksync Era Testnet",
-  logo: "zksync.png",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -27,6 +29,11 @@ export const zksyncGoerliChain: ChainConfig = {
     },
   },
   testnet: true,
+
+  /**
+   * Custom
+   */
+  logo: "zksync.png",
   tokens: [
     {
       decimals: 18,
@@ -61,7 +68,7 @@ export const zksyncGoerliChain: ChainConfig = {
       name: "USDT",
       type: "erc20",
       address: "0xb5372ed3bb2CbA63e7908066ac10ee94d30eA839",
-      logo: "usdt.svg",
+      logo: "usdt.png",
       cross: [
         { target: { network: "arbitrum-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "linea-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },

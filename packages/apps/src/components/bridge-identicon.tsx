@@ -11,7 +11,7 @@ interface Props {
   bridge?: BaseBridge;
 }
 
-export default function PrettyBridge({ width, height, type, bridge }: Props) {
+export default function BridgeIdenticon({ width, height, type, bridge }: Props) {
   return bridge ? (
     <Tooltip content={bridge.getName()} className="w-fit">
       <Image

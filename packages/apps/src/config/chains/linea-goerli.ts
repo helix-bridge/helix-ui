@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const lineaGoerliChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.LINEA_GOERLI,
   network: "linea-goerli",
   name: "Linea Goerli",
-  logo: "linea.png",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -27,6 +29,11 @@ export const lineaGoerliChain: ChainConfig = {
     },
   },
   testnet: true,
+
+  /**
+   * Custom
+   */
+  logo: "linea.png",
   tokens: [
     {
       decimals: 18,
@@ -61,7 +68,7 @@ export const lineaGoerliChain: ChainConfig = {
       name: "USDT",
       type: "erc20",
       address: "0x8f3663930211f3DE17619FEB2eeB44c9c3F44a06",
-      logo: "usdt.svg",
+      logo: "usdt.png",
       cross: [
         { target: { network: "goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-opposite" } },
         { target: { network: "arbitrum-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },

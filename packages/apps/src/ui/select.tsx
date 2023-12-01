@@ -1,3 +1,4 @@
+import { useToggle } from "@/hooks/use-toggle";
 import {
   FloatingPortal,
   Placement,
@@ -11,7 +12,7 @@ import {
   useTransitionStyles,
 } from "@floating-ui/react";
 import Image from "next/image";
-import { PropsWithChildren, ReactElement, useState } from "react";
+import { PropsWithChildren, ReactElement } from "react";
 
 interface Props {
   label?: ReactElement;
@@ -26,7 +27,7 @@ interface Props {
   onClear?: () => void;
 }
 
-export default function ISelect({
+export default function Select({
   label,
   placeholder,
   disabled,
@@ -39,14 +40,14 @@ export default function ISelect({
   childClassName,
   onClear = () => undefined,
 }: PropsWithChildren<Props>) {
-  const [isOpen, setIsOpen] = useState(false);
+  const { state: isOpen, setState: setIsOpen, setFalse: setIsOpenFalse } = useToggle(false);
 
   const { refs, context, floatingStyles } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
     placement,
     middleware: [
-      offset(6),
+      offset(4),
       sameWidth
         ? size({
             apply({ rects, elements }) {
@@ -71,7 +72,7 @@ export default function ISelect({
   return (
     <>
       <button
-        className={`select ${labelClassName}`}
+        className={`disabled:cursor-not-allowed disabled:opacity-60 ${labelClassName}`}
         ref={refs.setReference}
         {...getReferenceProps()}
         disabled={disabled}
@@ -103,7 +104,7 @@ export default function ISelect({
       {isMounted && (
         <FloatingPortal>
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
-            <div className={`${childClassName}`} style={styles} onClick={() => setIsOpen(false)}>
+            <div className={`${childClassName}`} style={styles} onClick={setIsOpenFalse}>
               {children}
             </div>
           </div>

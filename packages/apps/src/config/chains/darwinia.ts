@@ -2,10 +2,12 @@ import { ChainConfig, ChainID } from "@/types/chain";
 import { parseUnits } from "viem";
 
 export const darwiniaChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.DARWINIA,
   network: "darwinia-dvm",
   name: "Darwinia",
-  logo: "darwinia.png",
   nativeCurrency: {
     name: "RING",
     symbol: "RING",
@@ -27,6 +29,11 @@ export const darwiniaChain: ChainConfig = {
       url: "https://darwinia.subscan.io/",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "darwinia.png",
   tokens: [
     {
       decimals: 18,

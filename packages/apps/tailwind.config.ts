@@ -4,6 +4,7 @@ const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/utils/**/*.{jsx,tsx}",
     "./src/ui/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
@@ -15,12 +16,18 @@ const config: Config = {
       },
       colors: {
         primary: "#00B2FF",
-        component: "#151D35",
-        line: "#343946",
-        "app-bg": "#000421",
+        component: "#303A44",
+        inner: "#242D30",
+        "app-bg": "#00141D",
         "app-green": "#52C41A",
         "app-orange": "#FAAD14",
         "app-red": "#FF4D4F",
+      },
+      borderRadius: {
+        small: "0.25rem", // 4px
+        middle: "0.5rem", // 8px
+        large: "1rem", // 16px
+        extralarge: "1.5rem", // 24px
       },
       spacing: {
         small: "0.3125rem", // 5px
@@ -32,19 +39,19 @@ const config: Config = {
         "2xl": "1200px",
       },
       keyframes: {
-        rightenter: {
+        "right-enter": {
           "0%": { opacity: "0", transform: "translateX(100%)" },
           "1%": { opacity: "1" },
           "100%": { transform: "translateX(0)" },
         },
-        rightleave: {
+        "right-leave": {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(100%)" },
         },
-        notificationfadeout: {
+        "notification-fade-out": {
           "100%": { height: "0" },
         },
-        countloadingsmall: {
+        "count-loading-small": {
           "0%": {
             height: "16px",
           },
@@ -52,7 +59,7 @@ const config: Config = {
             height: "8px",
           },
         },
-        countloadinglarge: {
+        "count-loading-large": {
           "0%": {
             height: "32px",
           },
@@ -72,11 +79,11 @@ const config: Config = {
         },
       },
       animation: {
-        "notification-enter": "rightenter 400ms ease-out",
-        "notification-leave": "rightleave 400ms ease-out forwards",
-        "notification-fadeout": "notificationfadeout 200ms ease-out forwards",
-        "count-loading-small": "countloadingsmall 1200ms cubic-bezier(0, 0.5, 0.5, 1) infinite",
-        "count-loading-large": "countloadinglarge 1200ms cubic-bezier(0, 0.5, 0.5, 1) infinite",
+        "notification-enter": "right-enter 400ms ease-out",
+        "notification-leave": "right-leave 400ms ease-out forwards",
+        "notification-fadeout": "notification-fade-out 200ms ease-out forwards",
+        "count-loading-small": "count-loading-small 1200ms cubic-bezier(0, 0.5, 0.5, 1) infinite",
+        "count-loading-large": "count-loading-large 1200ms cubic-bezier(0, 0.5, 0.5, 1) infinite",
         "progress-anim-left": "spinner-rotate-left 9000ms linear 4500ms 1 paused forwards", // Duration: 9s, delay: 4.5s
         "progress-anim-right": "spinner-rotate-right 9000ms linear 0ms 1 paused forwards",
       },

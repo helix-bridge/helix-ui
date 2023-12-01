@@ -1,19 +1,16 @@
-import { LnRelayerInfo } from "@/types/graphql";
+import { Lnv20RelayerOverview, Network } from "@/types";
+import Button from "@/ui/button";
 import Table, { ColumnType } from "@/ui/table";
 import Tooltip from "@/ui/tooltip";
+import { formatBalance, formatFeeRate, getChainConfig, getChainLogoSrc, getTokenLogoSrc } from "@/utils";
 import Image from "next/image";
-import PrettyAddress from "./pretty-address";
-import { Network } from "@/types/chain";
-import { getChainConfig } from "@/utils/chain";
-import { formatFeeRate, getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
-import { formatBalance } from "@/utils/balance";
 import { useState } from "react";
-import Button from "@/ui/button";
-import RelayerManageModal from "./relayer-manage-modal";
+import PrettyAddress from "./pretty-address";
+import RelayerManageModal from "./modals/relayer-manage-modal";
 
 interface Props {
   total: number;
-  records: LnRelayerInfo[];
+  records: Lnv20RelayerOverview[];
   loading: boolean;
   isDashboard?: boolean;
   pageSize: number;
@@ -22,7 +19,7 @@ interface Props {
   onPageChange: (value: number) => void;
 }
 
-interface DataSource extends LnRelayerInfo {
+interface DataSource extends Lnv20RelayerOverview {
   key: string;
 }
 
@@ -56,7 +53,7 @@ const commonColumns: ColumnType<DataSource>[] = [
       const token = getChainConfig(fromChain)?.tokens.find((t) => t.address.toLowerCase() === sendToken?.toLowerCase());
 
       return token ? (
-        <Tooltip content={<span className="text-xs font-normal text-white">{token.symbol}</span>} className="w-fit">
+        <Tooltip content={token.symbol} className="w-fit">
           <Image width={24} height={24} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
         </Tooltip>
       ) : (
@@ -72,9 +69,7 @@ const commonColumns: ColumnType<DataSource>[] = [
       const token = getChainConfig(fromChain)?.tokens.find((t) => t.address.toLowerCase() === sendToken?.toLowerCase());
 
       return token && baseFee ? (
-        <span className="text-sm font-normal text-white">
-          {formatBalance(BigInt(baseFee), token.decimals, { keepZero: false })}
-        </span>
+        <span className="truncate">{formatBalance(BigInt(baseFee), token.decimals, { keepZero: false })}</span>
       ) : (
         <span>-</span>
       );
@@ -90,7 +85,7 @@ const commonColumns: ColumnType<DataSource>[] = [
     ),
     render: ({ liquidityFeeRate }) =>
       typeof liquidityFeeRate === "number" ? (
-        <span className="text-sm font-normal text-white">{`${formatFeeRate(liquidityFeeRate)}%`}</span>
+        <span className="truncate">{`${formatFeeRate(liquidityFeeRate)}%`}</span>
       ) : (
         <span>-</span>
       ),
@@ -103,9 +98,7 @@ const commonColumns: ColumnType<DataSource>[] = [
       const token = getChainConfig(fromChain)?.tokens.find((t) => t.address.toLowerCase() === sendToken?.toLowerCase());
 
       return margin && token ? (
-        <span className="text-sm font-normal text-white">
-          {formatBalance(BigInt(margin), token.decimals, { keepZero: false })}
-        </span>
+        <span className="truncate">{formatBalance(BigInt(margin), token.decimals, { keepZero: false })}</span>
       ) : (
         <span>-</span>
       );
@@ -118,9 +111,7 @@ const commonColumns: ColumnType<DataSource>[] = [
     render: ({ cost }) => {
       // the unit is ETH, so the precision is 18
       return cost ? (
-        <span className="truncate text-sm font-normal text-white">
-          {formatBalance(BigInt(cost), 18, { keepZero: false, precision: 5 })}
-        </span>
+        <span className="truncate">{formatBalance(BigInt(cost), 18, { keepZero: false, precision: 5 })}</span>
       ) : (
         <span>-</span>
       );
@@ -134,9 +125,7 @@ const commonColumns: ColumnType<DataSource>[] = [
       const token = getChainConfig(fromChain)?.tokens.find((t) => t.address.toLowerCase() === sendToken?.toLowerCase());
 
       return token && profit ? (
-        <span className="text-sm font-normal text-white">
-          {formatBalance(BigInt(profit), token.decimals, { keepZero: false })}
-        </span>
+        <span className="truncate">{formatBalance(BigInt(profit), token.decimals, { keepZero: false })}</span>
       ) : (
         <span>-</span>
       );
@@ -154,7 +143,7 @@ export default function RelayersTable({
   onRefetch,
   onPageChange,
 }: Props) {
-  const [relayerInfo, setRelayerInfo] = useState<LnRelayerInfo>();
+  const [relayerInfo, setRelayerInfo] = useState<Lnv20RelayerOverview>();
 
   const columns: ColumnType<DataSource>[] = isDashboard
     ? [
@@ -167,7 +156,7 @@ export default function RelayersTable({
             return (
               <div className="gap-small flex items-center">
                 <div className={`h-[6px] w-[6px] rounded-full ${isOnline ? "bg-app-green" : "bg-white/50"}`} />
-                <span className="text-sm font-normal text-white">{isOnline ? "Online" : "Offline"}</span>
+                <span>{isOnline ? "Online" : "Offline"}</span>
               </div>
             );
           },
@@ -177,8 +166,12 @@ export default function RelayersTable({
           title: <Title title="Action" className="justify-end" />,
           render: (row) => (
             <div className="flex justify-end">
-              <Button className="px-middle w-fit py-[2px]" onClick={() => setRelayerInfo(row)} kind="default">
-                <span className="text-sm font-normal text-white">Manage</span>
+              <Button
+                className="px-middle rounded-middle w-fit py-[2px]"
+                onClick={() => setRelayerInfo(row)}
+                kind="default"
+              >
+                <span>Manage</span>
               </Button>
             </div>
           ),
@@ -189,7 +182,9 @@ export default function RelayersTable({
           key: "relayer",
           title: <Title title="Relayer" />,
           render: ({ relayer }) => (
-            <PrettyAddress className="text-sm font-normal text-white" address={relayer} forceShort />
+            <div className="truncate">
+              <PrettyAddress address={relayer} forceShort copyable />
+            </div>
           ),
         },
         ...commonColumns,
@@ -201,7 +196,7 @@ export default function RelayersTable({
             return (
               <div className="gap-small flex items-center justify-end">
                 <div className={`h-[6px] w-[6px] rounded-full ${isOnline ? "bg-app-green" : "bg-white/50"}`} />
-                <span className="text-sm font-normal text-white">{isOnline ? "Online" : "Offline"}</span>
+                <span>{isOnline ? "Online" : "Offline"}</span>
               </div>
             );
           },
@@ -235,16 +230,12 @@ export default function RelayersTable({
 function Title({ title, tips, className }: { title: string; tips?: string; className?: string }) {
   return (
     <div className={`gap-small flex items-center ${className}`}>
-      <span className="truncate text-sm font-normal text-white">{title}</span>
-      {!!tips && (
-        <Tooltip
-          content={<span className="text-xs font-normal text-white">{tips}</span>}
-          className="shrink-0"
-          contentClassName="max-w-[18rem]"
-        >
+      <span className="truncate">{title}</span>
+      {tips ? (
+        <Tooltip content={tips} className="shrink-0" contentClassName="max-w-[18rem]">
           <Image width={16} height={16} alt="Info" src="/images/info.svg" />
         </Tooltip>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -253,7 +244,7 @@ function FromTo({ network }: { network: Network }) {
   const config = getChainConfig(network);
 
   return config ? (
-    <Tooltip content={<span className="text-xs font-normal text-white">{config.name}</span>} className="w-fit">
+    <Tooltip content={config.name} className="w-fit">
       <Image width={24} height={24} alt="Chain" src={getChainLogoSrc(config.logo)} className="my-1 rounded-full" />
     </Tooltip>
   ) : (

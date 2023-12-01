@@ -1,4 +1,5 @@
 import { Address } from "viem";
+import { CrossChain } from "./cross-chain";
 
 export type TokenSymbol =
   | "ETH"
@@ -25,4 +26,5 @@ export interface Token {
   type: TokenType;
   address: Address;
   logo: string; // File name
+  cross: CrossChain[];
 }

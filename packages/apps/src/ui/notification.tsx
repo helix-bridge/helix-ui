@@ -3,10 +3,10 @@ import { ReactElement } from "react";
 import { createRoot } from "react-dom/client";
 
 interface Config {
-  title?: ReactElement | string;
-  description?: ReactElement | string;
-  duration?: number; // millisecond
-  closeIcon?: boolean;
+  title?: ReactElement | string | null;
+  description?: ReactElement | string | null;
+  duration?: number; // In millisecond
+  closeable?: boolean;
   className?: string;
   onClose?: () => void;
 }
@@ -22,10 +22,9 @@ const createContainer = () => {
 
 const createItem = (config: Config, status: Status, onClose: () => void) => {
   const domNode = document.createElement("div");
-  domNode.className = `rounded border border-primary p-middle lg:p-5 flex items-center gap-middle mb-middle animate-notification-enter relative bg-component w-[82vw] lg:w-96 ${config.className}`;
+  domNode.className = `rounded-middle border-component border bg-inner p-middle lg:p-5 flex items-center gap-middle mb-middle animate-notification-enter relative w-[82vw] lg:w-96 ${config.className}`;
 
   const root = createRoot(domNode);
-
   root.render(
     <>
       <Image
@@ -43,12 +42,10 @@ const createItem = (config: Config, status: Status, onClose: () => void) => {
         className="hidden shrink-0 self-start lg:inline"
       />
       <div className="gap-small flex flex-col">
-        {config.title && <div className="break-all text-xs font-bold text-white lg:text-sm">{config.title}</div>}
-        {config.description && (
-          <div className="break-all text-xs font-light text-white lg:text-sm">{config.description}</div>
-        )}
+        {config.title && <div className="break-all text-base font-medium text-white">{config.title}</div>}
+        {config.description && <div className="break-all text-sm font-medium text-white">{config.description}</div>}
       </div>
-      {config.closeIcon && (
+      {config.closeable && (
         <button
           onClick={onClose}
           className="absolute right-1 top-1 rounded-full bg-transparent p-[2px] transition-transform hover:scale-105 hover:bg-white/10 active:scale-95 lg:right-2 lg:top-2"
@@ -58,7 +55,6 @@ const createItem = (config: Config, status: Status, onClose: () => void) => {
       )}
     </>,
   );
-
   return { domNode, root };
 };
 

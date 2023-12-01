@@ -1,4 +1,4 @@
-export enum UrlSearchParam {
+export enum UrlSearchParamKey {
   ADDRESS = "address",
   PAGE = "page",
   TAB = "tab",

@@ -12,6 +12,9 @@ interface Props {
   onClose?: () => void;
 }
 
+/**
+ * Please note: Disable SSR when importing
+ */
 export default function Drawer({
   children,
   isOpen,

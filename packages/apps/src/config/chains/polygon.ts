@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const polygonChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.POLYGON,
   network: "polygon",
   name: "Polygon PoS",
-  logo: "polygon.png",
   nativeCurrency: {
     name: "MATIC",
     symbol: "MATIC",
@@ -26,6 +28,11 @@ export const polygonChain: ChainConfig = {
       url: "https://polygonscan.com/",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "polygon.png",
   tokens: [
     {
       decimals: 18,

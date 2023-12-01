@@ -2,7 +2,7 @@ import Tooltip from "@/ui/tooltip";
 import { getChainConfig } from "@/utils/chain";
 import { getChainLogoSrc } from "@/utils/misc";
 import Image from "next/image";
-import BridgeLogo from "./pretty-bridge";
+import BridgeLogo from "./bridge-identicon";
 import { HistoryRecord } from "@/types/graphql";
 import { bridgeFactory } from "@/utils/bridge";
 
@@ -28,8 +28,8 @@ export default function TransferRoute({ record }: Props) {
 
 function ChainIcon({ logo, name }: { logo: string; name: string }) {
   return (
-    <Tooltip content={<span className="text-xs font-normal text-white">{name}</span>} className="shrink-0">
-      <Image width={40} height={40} alt={name} src={logo} className="rounded-full" />
+    <Tooltip content={name} className="shrink-0">
+      <Image width={32} height={32} alt={name} src={logo} className="rounded-full" />
     </Tooltip>
   );
 }

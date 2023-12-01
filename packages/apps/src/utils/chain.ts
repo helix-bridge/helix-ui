@@ -1,24 +1,26 @@
-import { arbitrumChain } from "@/config/chains/arbitrum";
-import { arbitrumGoerliChain } from "@/config/chains/arbitrum-goerli";
-import { crabChain } from "@/config/chains/crab";
-import { darwiniaChain } from "@/config/chains/darwinia";
-import { ethereumChain } from "@/config/chains/ethereum";
-import { goerliChain } from "@/config/chains/goerli";
-import { lineaChain } from "@/config/chains/linea";
-import { lineaGoerliChain } from "@/config/chains/linea-goerli";
-import { mantleChain } from "@/config/chains/mantle";
-import { mantleGoerliChain } from "@/config/chains/mantle-goerli";
-import { pangolinChain } from "@/config/chains/pangolin";
-import { pangoroChain } from "@/config/chains/pangoro";
-import { zksyncChain } from "@/config/chains/zksync";
-import { zksyncGoerliChain } from "@/config/chains/zksync-goerli";
-import { ChainConfig, ChainID, Network } from "@/types/chain";
+import {
+  arbitrumChain,
+  arbitrumGoerliChain,
+  baseChain,
+  baseGoerliChain,
+  crabChain,
+  darwiniaChain,
+  ethereumChain,
+  goerliChain,
+  lineaChain,
+  lineaGoerliChain,
+  mantleChain,
+  mantleGoerliChain,
+  mumbaiChain,
+  pangolinChain,
+  pangoroChain,
+  polygonChain,
+  scrollChain,
+  zksyncChain,
+  zksyncGoerliChain,
+} from "@/config/chains";
+import { ChainConfig, ChainID, Network } from "@/types";
 import { isProduction } from "./env";
-import { polygonChain } from "@/config/chains/polygon";
-import { mumbaiChain } from "@/config/chains/mumbai";
-import { scrollChain } from "@/config/chains/scroll";
-import { baseChain } from "@/config/chains/base";
-import { baseGoerliChain } from "@/config/chains/base-goerli";
 import { bscChain } from "@/config/chains/bsc";
 import { optimismChain } from "@/config/chains/optimism";
 
@@ -92,7 +94,7 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
   }
 }
 
-export function getChainsConfig(env?: "all") {
+export function getChainConfigs(askAll?: boolean) {
   const all = [
     arbitrumChain,
     arbitrumGoerliChain,
@@ -115,9 +117,9 @@ export function getChainsConfig(env?: "all") {
     baseGoerliChain,
     bscChain,
     optimismChain,
-  ];
+  ].sort((a, b) => a.name.localeCompare(b.name));
 
-  if (env === "all") {
+  if (askAll) {
     return all;
   } else if (isProduction()) {
     return all.filter((c) => !c.hidden && !c.testnet);

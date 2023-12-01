@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const scrollChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.SCROLL,
   network: "scroll",
   name: "Scroll",
-  logo: "scroll.png",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -26,6 +28,11 @@ export const scrollChain: ChainConfig = {
       url: "https://scrollscan.com",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "scroll.png",
   tokens: [
     {
       decimals: 18,
@@ -42,7 +49,7 @@ export const scrollChain: ChainConfig = {
       name: "USDT",
       type: "erc20",
       address: "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df",
-      logo: "usdt.svg",
+      logo: "usdt.png",
       cross: [
         { target: { network: "mantle", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "zksync", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },

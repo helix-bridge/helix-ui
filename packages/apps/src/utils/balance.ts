@@ -1,13 +1,9 @@
-import { formatUnits } from "viem";
+import { Token } from "@/types";
+import { Address, formatUnits, PublicClient } from "viem";
 
-interface Options {
-  precision?: number;
-  keepZero?: boolean;
-}
-
-export function formatBalance(value: bigint, decimals = 18, options: Options = { precision: 3, keepZero: false }) {
-  const precision = options.precision === undefined ? 3 : options.precision;
-  const keepZero = options.keepZero === undefined ? false : options.keepZero;
+export function formatBalance(value: bigint, decimals = 18, options?: { precision?: number; keepZero?: boolean }) {
+  const precision = options?.precision ?? 4;
+  const keepZero = options?.keepZero ?? false;
 
   const [i, d] = formatUnits(value, decimals).split(".");
 
@@ -19,4 +15,19 @@ export function formatBalance(value: bigint, decimals = 18, options: Options = {
   }
 
   return `${_integers}${_decimals.slice(1)}`;
+}
+
+export async function getBalance(address: Address, token: Token, publicClient: PublicClient) {
+  let value = 0n;
+  if (token.type === "native") {
+    value = await publicClient.getBalance({ address });
+  } else {
+    value = await publicClient.readContract({
+      address: token.address,
+      abi: (await import("@/abi/erc20")).default,
+      functionName: "balanceOf",
+      args: [address],
+    });
+  }
+  return { value, token };
 }

@@ -1,34 +1,34 @@
+import { InputValue } from "@/types";
 import Input from "@/ui/input";
-import { InputHTMLAttributes, forwardRef } from "react";
+import InputAlert from "@/ui/input-alert";
+import { ChangeEventHandler, useCallback } from "react";
 import { isAddress } from "viem";
 
-export default forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(function AddressInput(
-  { className, value, ...rest },
-  ref,
-) {
-  const invalid = !!value && !(typeof value === "string" && isAddress(value));
+interface Props {
+  value: InputValue<string>;
+  placeholder?: string;
+  className?: string;
+  onChange?: (value: InputValue<string>) => void;
+}
+
+export default function AddressInput({ value, placeholder, className, onChange = () => undefined }: Props) {
+  const handleChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
+    (e) => {
+      const input = e.target.value;
+      const valid = input ? isAddress(input) : true;
+      onChange({ input, value: input, valid });
+    },
+    [onChange],
+  );
 
   return (
     <div
-      className={`bg-app-bg lg:px-middle px-small normal-input-wrap relative py-1 ${
-        invalid ? "invalid-input-wrap" : "valid-input-wrap border-transparent"
-      }`}
+      className={`lg:px-middle px-small normal-input-wrap relative ${
+        value.valid ? "valid-input-wrap" : "invalid-input-wrap"
+      } ${className}`}
     >
-      <Input
-        className={`h-8 w-full rounded bg-transparent text-sm text-white ${className}`}
-        value={value}
-        ref={ref}
-        {...rest}
-      />
-      {invalid && <Message text="* Invalid recipient" />}
-    </div>
-  );
-});
-
-function Message({ text }: { text: string }) {
-  return (
-    <div className="absolute -bottom-5 left-0 w-full">
-      <span className="text-app-red text-xs font-light">{text}</span>
+      <Input value={value.input} placeholder={placeholder} onChange={handleChange} />
+      {value.valid ? null : <InputAlert text="* Invalid address" />}
     </div>
   );
 }

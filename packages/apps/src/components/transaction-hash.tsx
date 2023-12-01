@@ -14,7 +14,7 @@ export function TransactionHash({ chain, txHash }: Props) {
     <div className="gap-middle flex items-center">
       {chainConfig?.blockExplorers ? (
         <a
-          className="text-primary text-sm font-normal transition hover:underline"
+          className="text-primary text-sm font-medium transition hover:underline"
           href={new URL(`tx/${txHash}`, chainConfig.blockExplorers.default.url).href}
           rel="noopener noreferrer"
           target="_blank"
@@ -22,11 +22,11 @@ export function TransactionHash({ chain, txHash }: Props) {
           {txHash}
         </a>
       ) : (
-        <span className="text-sm font-normal text-white">{txHash}</span>
+        <span className="text-sm font-medium text-white">{txHash}</span>
       )}
       <CopyIcon text={txHash} />
     </div>
   ) : (
-    <span className="text-sm font-normal text-white">Waiting for the transaction...</span>
+    <span className="text-sm font-medium text-white">Waiting for the transaction...</span>
   );
 }

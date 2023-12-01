@@ -1,16 +1,19 @@
-import { HistoryRecord, RecordStatus } from "@/types/graphql";
-import PrettyAddress from "@/components/pretty-address";
+import { HistoryRecord, Network, RecordResult, TokenSymbol } from "@/types";
 import Table, { ColumnType } from "@/ui/table";
+import {
+  bridgeFactory,
+  formatBalance,
+  formatTime,
+  getChainConfig,
+  getChainLogoSrc,
+  getTokenLogoSrc,
+  parseRecordResult,
+} from "@/utils";
 import Image from "next/image";
 import { Key, PropsWithChildren } from "react";
-import { formatBalance } from "@/utils/balance";
-import { Network } from "@/types/chain";
-import { TokenSymbol } from "@/types/token";
-import { getChainConfig } from "@/utils/chain";
-import { formatRecordStatus, getChainLogoSrc } from "@/utils/misc";
-import { formatTime } from "@/utils/time";
-import PrettyBridge from "./pretty-bridge";
-import { bridgeFactory } from "@/utils/bridge";
+import PrettyAddress from "./pretty-address";
+import BridgeIdenticon from "./bridge-identicon";
+import { Address } from "viem";
 
 interface Props {
   dataSource: DataSource[];
@@ -37,18 +40,14 @@ export default function RecordsTable({
     {
       key: "from",
       title: <Title>From</Title>,
-      render: ({ fromChain, sendAmount, sendToken }) => (
-        <FromTo network={fromChain} amount={BigInt(sendAmount)} symbol={sendToken} />
-      ),
-      width: "18%",
+      render: ({ fromChain }) => <FromTo network={fromChain} />,
+      width: "16%",
     },
     {
       key: "to",
       title: <Title>To</Title>,
-      render: ({ toChain, recvAmount, recvToken }) => (
-        <FromTo network={toChain} amount={BigInt(recvAmount)} symbol={recvToken} />
-      ),
-      width: "18%",
+      render: ({ toChain }) => <FromTo network={toChain} />,
+      width: "16%",
     },
     {
       key: "sender",
@@ -63,37 +62,42 @@ export default function RecordsTable({
       width: "16%",
     },
     {
-      key: "bridge",
-      title: <Title className="text-center">Bridge</Title>,
-      render: (row) => {
-        const bridge = bridgeFactory({ category: row.bridge });
-        return (
-          <div className="flex justify-center">
-            <PrettyBridge width={36} height={36} type="symbol" bridge={bridge} />
+      key: "amount",
+      title: <Title>Amount</Title>,
+      render: ({ fromChain, sendAmount, sendToken }) => {
+        const token = getChainConfig(fromChain)?.tokens.find((t) => t.symbol === sendToken);
+        return token ? (
+          <div className="gap-middle flex items-center justify-start">
+            <Image width={32} height={32} alt="Token" src={getTokenLogoSrc(token.logo)} />
+            <span className="truncate">
+              {formatBalance(BigInt(sendAmount), token.decimals, { precision: 4 })} {token.symbol}
+            </span>
           </div>
+        ) : (
+          <span>-</span>
         );
       },
-      width: "10%",
+      width: "18%",
     },
     {
       key: "status",
       title: <Title className="text-end">Status</Title>,
       render: ({ startTime, result, confirmedBlocks }) => (
-        <div className="gap-small flex flex-col items-end">
-          <span className="text-sm font-normal text-white">{formatTime(startTime * 1000, { compact: true })}</span>
+        <div className="flex flex-col items-end truncate">
+          <span>{formatTime(startTime * 1000, { compact: true })}</span>
           <span
             className={`text-xs font-semibold ${
-              result === RecordStatus.SUCCESS
+              result === RecordResult.SUCCESS
                 ? "text-app-green"
-                : result === RecordStatus.REFUNDED
+                : result === RecordResult.REFUNDED
                 ? "text-app-orange"
-                : result === RecordStatus.PENDING
+                : result === RecordResult.PENDING
                 ? "text-primary"
                 : "text-white/50"
             }`}
           >
-            {formatRecordStatus(result)}
-            {result === RecordStatus.PENDING && confirmedBlocks ? ` (${confirmedBlocks})` : ""}
+            {parseRecordResult(result)}
+            {result === RecordResult.PENDING && confirmedBlocks ? ` (${confirmedBlocks})` : ""}
           </span>
         </div>
       ),
@@ -119,32 +123,22 @@ export interface DataSource extends HistoryRecord {
 }
 
 function Title({ children, className }: PropsWithChildren<{ className?: string }>) {
-  return <span className={`text-sm font-normal text-white ${className}`}>{children}</span>;
+  return <span className={`${className}`}>{children}</span>;
 }
 
-function FromTo({ network, amount, symbol }: { network: Network; amount: bigint; symbol: TokenSymbol }) {
+function FromTo({ network }: { network: Network }) {
   const chain = getChainConfig(network);
-  const token = chain?.tokens.find((t) => t.symbol === symbol);
 
-  return token && chain ? (
-    <div className="gap-middle flex items-start">
+  return chain ? (
+    <div className="gap-middle flex items-center">
       <Image width={32} height={32} alt="Logo" src={getChainLogoSrc(chain.logo)} className="rounded-full" />
-      <div className="flex flex-col items-start">
-        <span className="truncate text-sm font-medium text-white">
-          {formatBalance(amount, token.decimals, { precision: 4 })} {symbol}
-        </span>
-        <span className="text-xs font-normal text-white/50">{chain.name}</span>
-      </div>
+      <span className="truncate">{chain.name}</span>
     </div>
   ) : (
-    <span className="text-sm font-medium text-white">-</span>
+    <span>-</span>
   );
 }
 
-function SenderReceiver({ address }: { address?: string | null }) {
-  return address ? (
-    <PrettyAddress address={address} className="text-sm font-normal text-white" copyable forceShort />
-  ) : (
-    <span className="text-sm font-normal text-white">-</span>
-  );
+function SenderReceiver({ address }: { address?: Address | null }) {
+  return address ? <PrettyAddress address={address} copyable forceShort /> : <span>-</span>;
 }

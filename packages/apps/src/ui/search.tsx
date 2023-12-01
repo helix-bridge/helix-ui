@@ -4,7 +4,7 @@ import Input from "./input";
 interface Props {
   placeholder?: string;
   className?: string;
-  value?: string;
+  value: string;
   onChange?: (value: string) => void;
   onClear?: () => void;
 }
@@ -12,14 +12,14 @@ interface Props {
 export default function Search({ placeholder, className, value, onClear, onChange = () => undefined }: Props) {
   return (
     <div
-      className={`gap-small border-line px-middle normal-input-wrap valid-input-wrap flex items-center justify-between py-2 ${className}`}
+      className={`gap-small px-middle normal-input-wrap rounded-middle focus-within:border-primary valid-input-wrap flex items-center justify-between border-white/20 py-2 ${className}`}
     >
       <Input
         placeholder={placeholder}
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded bg-transparent text-sm font-medium text-white"
+        className="rounded-small w-full bg-transparent text-sm font-medium text-white"
       />
       {value ? (
         <button

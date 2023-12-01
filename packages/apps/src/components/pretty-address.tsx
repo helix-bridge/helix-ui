@@ -1,9 +1,10 @@
 import CopyIcon from "@/ui/copy-icon";
 import Tooltip from "@/ui/tooltip";
 import { toShortAdrress } from "@/utils/address";
+import { Address } from "viem";
 
 interface Props {
-  address: string;
+  address: Address;
   copyable?: boolean;
   className?: string;
   forceShort?: boolean;
@@ -13,16 +14,12 @@ export default function PrettyAddress({ address, copyable, className, forceShort
   return (
     <div className="gap-small inline-flex items-center">
       {forceShort ? (
-        <Tooltip enabledSafePolygon content={<span className="text-xs font-normal text-white">{address}</span>}>
+        <Tooltip enabledSafePolygon content={address}>
           <span className={className}>{toShortAdrress(address)}</span>
         </Tooltip>
       ) : (
         <>
-          <Tooltip
-            enabledSafePolygon
-            content={<span className="text-xs font-normal text-white">{address}</span>}
-            className={`lg:hidden ${className}`}
-          >
+          <Tooltip enabledSafePolygon content={address} className={`lg:hidden ${className}`}>
             <span>{toShortAdrress(address)}</span>
           </Tooltip>
           <span className={`hidden lg:inline ${className}`}>{address}</span>

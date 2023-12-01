@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const arbitrumChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.ARBITRUM,
   network: "arbitrum",
   name: "Arbitrum One",
-  logo: "arbitrum.png",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -24,6 +26,11 @@ export const arbitrumChain: ChainConfig = {
       url: "https://arbiscan.io/",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "arbitrum.png",
   tokens: [
     {
       decimals: 18,
@@ -53,7 +60,7 @@ export const arbitrumChain: ChainConfig = {
       name: "USDT",
       type: "erc20",
       address: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
-      logo: "usdt.svg",
+      logo: "usdt.png",
       cross: [
         { target: { network: "mantle", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "zksync", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },

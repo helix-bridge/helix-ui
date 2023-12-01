@@ -1,8 +1,8 @@
 "use client";
 
-import { useToggle } from "@/hooks/use-toggle";
+import { useToggle } from "@/hooks";
 import Tooltip from "@/ui/tooltip";
-import { isProduction } from "@/utils/env";
+import { isProduction } from "@/utils";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,21 +22,20 @@ interface NavigationConfig {
 }
 
 export default function Header() {
-  const [isDrawerOpen, _, setDrawerOpen, setDrawerClose] = useToggle(false);
+  const { state: isOpen, setTrue: setIsOpenTrue, setFalse: setIsOpenFalse } = useToggle(false);
   const pathname = usePathname();
 
   const navigationsConfig = useMemo<NavigationConfig[]>(() => {
-    if (false && pathname.startsWith("/relayer")) {
+    if (pathname.startsWith("/relayer")) {
       return [
         { href: "/relayer/overview", label: "Overview" },
-        { href: "/relayer/dashboard", label: "Dashboard" },
+        { href: "/relayer/dashboard", label: "Dashboard", disabled: true },
       ];
     } else {
       return [
         { href: "/", label: "Transfer" },
         { href: "/records", label: "Explorer" },
-        { href: "#", label: "Relayer", disabled: true },
-        // { href: "/relayer/overview", label: "Relayer" },
+        { href: "/relayer/overview", label: "Relayer" },
         { href: "https://docs.helixbridge.app/", label: "Docs", external: true },
       ];
     }
@@ -44,29 +43,27 @@ export default function Header() {
 
   return (
     <>
-      <div className="app-header bg-app-bg border-b-line fixed left-0 top-0 z-10 w-full border-b lg:border-b-transparent">
+      <div className="app-header bg-app-bg fixed left-0 top-0 z-10 w-full border-b border-b-white/25 lg:border-b-transparent">
         <div className="px-middle container mx-auto flex h-full items-center justify-between">
-          {/* left */}
+          {/* Left */}
           <div className="flex items-center gap-5">
-            {/* logo */}
+            {/* Logo */}
             <div className="gap-middle flex items-center">
               <Link href="/">
                 <Image width={90} height={25} alt="Logo" src="/images/logo.svg" />
               </Link>
               <Tooltip
-                content={
-                  <span className="text-xs font-light">Helix is in beta. Please use at your own risk level</span>
-                }
+                content="Helix is in beta. Please use at your own risk level"
                 className="w-fit"
                 enabled={isProduction()}
               >
-                <div className="bg-primary inline-flex items-center justify-center rounded-sm px-1 py-[1px]">
+                <div className="bg-primary rounded-small inline-flex items-center justify-center px-1 py-[1px]">
                   <span className="text-xs font-bold text-black">{isProduction() ? "beta" : "testnet"}</span>
                 </div>
               </Tooltip>
             </div>
 
-            {/* navigations */}
+            {/* Navigations */}
             <div className="gap-middle hidden items-center lg:flex">
               {navigationsConfig.map(({ href, label, external, soon, disabled }) =>
                 external ? (
@@ -75,22 +72,22 @@ export default function Header() {
                     target="_blank"
                     href={href}
                     key={label}
-                    className={`rounded-lg px-3 py-1 text-base font-medium transition hover:bg-white/10 active:translate-y-1 ${
-                      pathname === href ? "text-primary underline" : ""
+                    className={`rounded-middle px-3 py-1 text-base font-bold transition hover:bg-white/10 active:translate-y-1 ${
+                      pathname === href ? "text-primary underline" : "text-white"
                     }`}
                   >
                     {label}
                   </a>
                 ) : soon || disabled ? (
                   <Tooltip key={label} content={soon ? "Coming soon" : "This feature is temporarily under maintenance"}>
-                    <span className="rounded-lg px-3 py-1 text-base font-medium text-white/50">{label}</span>
+                    <span className="rounded-middle px-3 py-1 text-base font-bold text-white/50">{label}</span>
                   </Tooltip>
                 ) : (
                   <Link
                     key={label}
                     href={href}
-                    className={`rounded-lg px-3 py-1 text-base font-medium transition-all hover:bg-white/10 active:translate-y-1 ${
-                      pathname === href ? "text-primary underline underline-offset-8" : ""
+                    className={`rounded-middle px-3 py-1 text-base font-bold transition-all hover:bg-white/10 active:translate-y-1 ${
+                      pathname === href ? "text-primary underline underline-offset-8" : "text-white"
                     }`}
                   >
                     {label}
@@ -100,7 +97,7 @@ export default function Header() {
             </div>
           </div>
 
-          {/* right */}
+          {/* Right */}
           <div className="gap-middle hidden items-center lg:flex">
             <ChainIdentity />
             <User />
@@ -111,12 +108,12 @@ export default function Header() {
             alt="Menu"
             src="/images/menu.svg"
             className="inline transition-transform active:translate-y-1 lg:hidden"
-            onClick={setDrawerOpen}
+            onClick={setIsOpenTrue}
           />
         </div>
       </div>
 
-      <Drawer maskClosable isOpen={isDrawerOpen} onClose={setDrawerClose}>
+      <Drawer maskClosable isOpen={isOpen} onClose={setIsOpenFalse}>
         <div className="flex h-96 w-full items-start justify-center">
           <div className="flex w-max flex-col items-start gap-10">
             <div className="gap-large flex flex-col">
@@ -127,20 +124,24 @@ export default function Header() {
                     target="_blank"
                     href={href}
                     key={label}
-                    className={`font-semibold ${pathname === href ? "text-primary underline underline-offset-4" : ""}`}
+                    className={`text-base font-semibold ${
+                      pathname === href ? "text-primary underline underline-offset-4" : "text-white"
+                    }`}
                   >
                     {label}
                   </a>
                 ) : soon || disabled ? (
                   <Tooltip key={label} content={soon ? "Coming soon" : "This feature is temporarily under maintenance"}>
-                    <span className="font-semibold text-white/50">{label}</span>
+                    <span className="text-base font-semibold text-white/50">{label}</span>
                   </Tooltip>
                 ) : (
                   <Link
                     key={label}
                     href={href}
-                    className={`font-semibold ${pathname === href ? "text-primary underline underline-offset-4" : ""}`}
-                    onClick={setDrawerClose}
+                    className={`text-base font-semibold ${
+                      pathname === href ? "text-primary underline underline-offset-4" : "text-white"
+                    }`}
+                    onClick={setIsOpenFalse}
                   >
                     {label}
                   </Link>
@@ -148,7 +149,7 @@ export default function Header() {
               )}
             </div>
 
-            <User onComplete={setDrawerClose} />
+            <User onComplete={setIsOpenFalse} />
           </div>
         </div>
 

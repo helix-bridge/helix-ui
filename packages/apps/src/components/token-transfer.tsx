@@ -8,6 +8,7 @@ import { TokenSymbol } from "@/types/token";
 import { getChainConfig } from "@/utils/chain";
 import { getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
 import { formatBalance } from "@/utils/balance";
+import { Address } from "viem";
 
 interface Props {
   record?: HistoryRecord | null;
@@ -45,8 +46,8 @@ function Item({
   amount,
 }: {
   chain: Network;
-  from: string;
-  to: string;
+  from: Address;
+  to: Address;
   symbol: TokenSymbol;
   amount: bigint;
 }) {
@@ -55,10 +56,7 @@ function Item({
 
   return token && chainConfig ? (
     <div className="gap-middle flex items-center">
-      <Tooltip
-        content={<span className="text-xs font-normal text-white">{chainConfig.name}</span>}
-        className="shrink-0"
-      >
+      <Tooltip content={chainConfig.name} className="shrink-0">
         <Image
           width={16}
           height={16}
@@ -73,17 +71,17 @@ function Item({
       <Address address={to} />
       <Label text="For" />
       <Image width={16} height={16} alt="Token icon" src={getTokenLogoSrc(token.logo)} className="shrink-0" />
-      <span className="text-sm font-normal text-white">
+      <span className="text-sm font-medium text-white">
         {formatBalance(amount, token.decimals, { keepZero: false, precision: 4 })} {symbol}
       </span>
     </div>
   ) : null;
 }
 
-function Address({ address }: { address: string }) {
+function Address({ address }: { address: Address }) {
   return (
     <div className="inline-block w-24 truncate">
-      <PrettyAddress address={address} forceShort className="text-primary text-sm font-normal" />
+      <PrettyAddress address={address} forceShort className="text-primary text-sm font-medium" />
     </div>
   );
 }

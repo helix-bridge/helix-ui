@@ -4,9 +4,6 @@
   "private": true,
   "description": "helix.js",
   "main": "dist/index.js",
-  "devDependencies": {
-    "typescript": "^5.1.6"
-  },
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -23,8 +20,5 @@
   "bugs": {
     "url": "https://github.com/helix-bridge/helix-ui/issues"
   },
-  "homepage": "https://github.com/helix-bridge/helix-ui#readme",
-  "dependencies": {
-    "viem": "^1.6.7"
-  }
+  "homepage": "https://github.com/helix-bridge/helix-ui#readme"
 }

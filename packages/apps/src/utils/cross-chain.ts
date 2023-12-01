@@ -1,33 +1,42 @@
 import { BridgeCategory } from "@/types/bridge";
 import {
   AvailableBridges,
+  AvailableSourceTokens,
   AvailableTargetChains,
-  AvailableTargets,
-  AvailableTokens,
-  ChainToken,
-  ChainTokens,
-} from "@/types/misc";
-import { Token } from "@/types/token";
-import { getChainConfig, getChainsConfig } from "./chain";
-import { ChainConfig } from "@/types/chain";
+  AvailableTargetTokens,
+  ChainConfig,
+  Token,
+} from "@/types";
+import { getChainConfig, getChainConfigs } from "./chain";
 
-const defaultSourceOptions: ChainTokens[] = [];
-const defaultTargetOptions: ChainTokens[] = [];
+let defaultBridgeCategory: BridgeCategory | undefined;
 
-let defaultSourceValue: ChainToken | undefined;
-let defaultTargetValue: ChainToken | undefined;
-let defaultBridge: BridgeCategory | undefined;
+let defaultSourceChain: ChainConfig | undefined;
+let defaultTargetChain: ChainConfig | undefined;
 
-let availableTargetOptions: AvailableTargets = {};
-let availableBridges: AvailableBridges = {};
+let defaultSourceToken: Token | undefined;
+let defaultTargetToken: Token | undefined;
 
-// For LnRelayer (LnBridge)
-let availableTokens: AvailableTokens = {};
 let defaultSourceChains: ChainConfig[] = [];
 let defaultTargetChains: ChainConfig[] = [];
-let availableTargetChains: AvailableTargetChains = {};
 
-getChainsConfig().forEach((sourceChain) => {
+let defaultSourceTokens: Token[] = [];
+let defaultTargetTokens: Token[] = [];
+
+let availableSourceTokens: AvailableSourceTokens = {};
+let availableTargetChains: AvailableTargetChains = {};
+let availableTargetTokens: AvailableTargetTokens = {};
+let availableBridges: AvailableBridges = {};
+
+/**
+ * For LnBridge relayer
+ */
+let lnbridgeDefaultSourceChains: ChainConfig[] = [];
+let lnbridgeDefaultTargetChains: ChainConfig[] = [];
+let lnbridgeAvailableSourceTokens: AvailableSourceTokens = {};
+let lnbridgeAvailableTargetChains: AvailableTargetChains = {};
+
+getChainConfigs().forEach((sourceChain) => {
   let sourceTokens: Token[] = [];
 
   sourceChain.tokens.forEach((sourceToken) => {
@@ -38,41 +47,39 @@ getChainsConfig().forEach((sourceChain) => {
       if (!cross.hidden && targetChain && targetToken) {
         sourceTokens = sourceTokens.filter((t) => t.symbol !== sourceToken.symbol).concat(sourceToken);
 
-        defaultSourceValue = defaultSourceValue ?? { chain: sourceChain, token: sourceToken };
-        defaultTargetValue = defaultTargetValue ?? { chain: targetChain, token: targetToken };
-        defaultBridge = defaultBridge ?? cross.bridge.category;
+        defaultBridgeCategory = defaultBridgeCategory ?? cross.bridge.category;
+        defaultTargetChain = defaultTargetChain ?? targetChain;
+        defaultTargetToken = defaultTargetToken ?? targetToken;
 
-        if (cross.bridge.category === "lnbridgev20-default" || cross.bridge.category === "lnbridgev20-opposite") {
-          defaultSourceChains = defaultSourceChains.filter((c) => c.id !== sourceChain.id).concat(sourceChain);
-          defaultTargetChains = defaultTargetChains.filter((c) => c.id !== targetChain.id).concat(targetChain);
-          availableTargetChains = {
-            ...availableTargetChains,
-            [sourceChain.network]: (availableTargetChains[sourceChain.network] || [])
-              .filter((c) => c.network !== cross.target.network)
-              .concat(targetChain),
-          };
-
-          availableTokens = {
-            ...availableTokens,
-            [sourceChain.network]: {
-              ...availableTokens[sourceChain.network],
-              [cross.target.network]: (availableTokens[sourceChain.network]?.[cross.target.network] || [])
-                .filter((t) => t.symbol !== sourceToken.symbol)
-                .concat(sourceToken),
-            },
-          };
-        }
-
-        availableTargetOptions = {
-          ...availableTargetOptions,
+        availableSourceTokens = {
+          ...availableSourceTokens,
           [sourceChain.network]: {
-            ...availableTargetOptions[sourceChain.network],
-            [sourceToken.symbol]: (availableTargetOptions[sourceChain.network]?.[sourceToken.symbol] || [])
-              .filter((t) => t.chain.network !== cross.target.network)
-              .concat({
-                chain: targetChain,
-                tokens: [targetToken],
-              }),
+            ...availableSourceTokens[sourceChain.network],
+            [targetChain.network]: (availableSourceTokens[sourceChain.network]?.[targetChain.network] || [])
+              .filter((t) => t.symbol !== sourceToken.symbol)
+              .concat(sourceToken),
+          },
+        };
+
+        availableTargetChains = {
+          ...availableTargetChains,
+          [sourceChain.network]: (availableTargetChains[sourceChain.network] || [])
+            .filter((c) => c.id != targetChain.id)
+            .concat(targetChain),
+        };
+
+        availableTargetTokens = {
+          ...availableTargetTokens,
+          [sourceChain.network]: {
+            ...availableTargetTokens[sourceChain.network],
+            [targetChain.network]: {
+              ...availableTargetTokens[sourceChain.network]?.[targetChain.network],
+              [sourceToken.symbol]: (
+                availableTargetTokens[sourceChain.network]?.[targetChain.network]?.[sourceToken.symbol] || []
+              )
+                .filter((t) => t.symbol !== targetToken.symbol)
+                .concat(targetToken),
+            },
           },
         };
 
@@ -80,45 +87,166 @@ getChainsConfig().forEach((sourceChain) => {
           ...availableBridges,
           [sourceChain.network]: {
             ...availableBridges[sourceChain.network],
-            [cross.target.network]: {
-              ...availableBridges[sourceChain.network]?.[cross.target.network],
+            [targetChain.network]: {
+              ...availableBridges[sourceChain.network]?.[targetChain.network],
               [sourceToken.symbol]: (
-                availableBridges[sourceChain.network]?.[cross.target.network]?.[sourceToken.symbol] || []
-              ).concat(cross.bridge.category),
+                availableBridges[sourceChain.network]?.[targetChain.network]?.[sourceToken.symbol] || []
+              )
+                .filter((category) => category !== cross.bridge.category)
+                .concat(cross.bridge.category),
             },
           },
         };
+
+        if (cross.bridge.category === "lnbridgev20-default" || cross.bridge.category === "lnbridgev20-opposite") {
+          lnbridgeDefaultSourceChains = lnbridgeDefaultSourceChains
+            .filter((c) => c.id !== sourceChain.id)
+            .concat(sourceChain);
+          lnbridgeDefaultTargetChains = lnbridgeDefaultTargetChains
+            .filter((c) => c.id !== targetChain.id)
+            .concat(targetChain);
+
+          lnbridgeAvailableSourceTokens = {
+            ...lnbridgeAvailableSourceTokens,
+            [sourceChain.network]: {
+              ...lnbridgeAvailableSourceTokens[sourceChain.network],
+              [targetChain.network]: (lnbridgeAvailableSourceTokens[sourceChain.network]?.[targetChain.network] || [])
+                .filter((t) => t.symbol !== sourceToken.symbol)
+                .concat(sourceToken),
+            },
+          };
+
+          lnbridgeAvailableTargetChains = {
+            ...lnbridgeAvailableTargetChains,
+            [sourceChain.network]: (lnbridgeAvailableTargetChains[sourceChain.network] || [])
+              .filter((c) => c.id !== targetChain.id)
+              .concat(targetChain),
+          };
+        }
       }
     });
   });
 
   if (sourceTokens.length) {
-    defaultSourceOptions.push({ chain: sourceChain, tokens: sourceTokens });
+    defaultSourceChain = defaultSourceChain ?? sourceChain;
+    defaultSourceToken = defaultSourceToken ?? sourceTokens[0];
+    defaultSourceChains = defaultSourceChains.concat(sourceChain);
+    defaultSourceTokens = defaultSourceTokens.length ? defaultSourceTokens : sourceTokens;
   }
 });
 
-if (defaultSourceValue) {
-  const opts = availableTargetOptions[defaultSourceValue.chain.network]?.[defaultSourceValue.token.symbol] || [];
-  defaultTargetOptions.push(...opts);
+if (defaultSourceChain) {
+  defaultTargetChains = availableTargetChains[defaultSourceChain.network] || [];
+
+  if (defaultTargetChain && defaultSourceToken) {
+    defaultTargetTokens =
+      availableTargetTokens[defaultSourceChain.network]?.[defaultTargetChain.network]?.[defaultSourceToken.symbol] ||
+      [];
+  }
 }
 
-defaultSourceOptions.sort((a, b) => a.chain.network.localeCompare(b.chain.network));
-defaultTargetOptions.sort((a, b) => a.chain.network.localeCompare(b.chain.network));
-defaultSourceChains.sort((a, b) => a.network.localeCompare(b.network));
-defaultTargetChains.sort((a, b) => a.network.localeCompare(b.network));
+function chainCompareFn(a: ChainConfig, b: ChainConfig) {
+  return a.name.localeCompare(b.name);
+}
 
-export function getParsedCrossChain() {
+function tokenCompareFn(a: Token, b: Token) {
+  return a.type === "native" ? 1 : a.symbol.localeCompare(b.symbol);
+}
+
+defaultSourceChains.sort(chainCompareFn);
+defaultTargetChains.sort(chainCompareFn);
+defaultSourceTokens.sort(tokenCompareFn);
+defaultTargetTokens.sort(tokenCompareFn);
+lnbridgeDefaultSourceChains.sort(chainCompareFn);
+lnbridgeDefaultTargetChains.sort(chainCompareFn);
+
+export function getCrossDefaultValue() {
   return {
-    defaultSourceOptions,
-    defaultTargetOptions,
-    defaultSourceValue,
-    defaultTargetValue,
-    defaultBridge,
-    availableTargetOptions,
-    availableBridges,
-    availableTokens,
+    defaultBridgeCategory,
+
+    defaultSourceChain,
+    defaultSourceToken,
     defaultSourceChains,
+    defaultSourceTokens,
+
+    defaultTargetChain,
+    defaultTargetToken,
     defaultTargetChains,
-    availableTargetChains,
+    defaultTargetTokens,
   };
+}
+
+export function getAvailableBridges(
+  sourceChain: ChainConfig | undefined,
+  targetChain: ChainConfig | undefined,
+  sourceToken: Token | undefined,
+) {
+  if (sourceChain && targetChain && sourceToken) {
+    return availableBridges[sourceChain.network]?.[targetChain.network]?.[sourceToken.symbol] || [];
+  }
+  return [];
+}
+
+export function getAvailableSourceTokens(
+  sourceChain: ChainConfig | undefined,
+  targetChain: ChainConfig | undefined,
+  defaultTokens: Token[] = [],
+) {
+  if (sourceChain && targetChain) {
+    const result = (availableSourceTokens[sourceChain.network]?.[targetChain.network] || []).sort(tokenCompareFn);
+    return result.length ? result : defaultTokens;
+  }
+  return defaultTokens;
+}
+
+export function getAvailableTargetChains(sourceChain: ChainConfig | undefined, defaultChains: ChainConfig[] = []) {
+  if (sourceChain) {
+    const result = (availableTargetChains[sourceChain.network] || []).sort(chainCompareFn);
+    return result.length ? result : defaultChains;
+  }
+  return defaultChains;
+}
+
+export function getAvailableTargetTokens(
+  sourceChain: ChainConfig | undefined,
+  targetChain: ChainConfig | undefined,
+  sourceToken: Token | undefined,
+  defaultTokens: Token[] = [],
+) {
+  if (sourceChain && targetChain && sourceToken) {
+    const result = (availableTargetTokens[sourceChain.network]?.[targetChain.network]?.[sourceToken.symbol] || []).sort(
+      tokenCompareFn,
+    );
+    return result.length ? result : defaultTokens;
+  }
+  return defaultTokens;
+}
+
+export function getLnBridgeCrossDefaultValue() {
+  return { defaultSourceChains: lnbridgeDefaultSourceChains, defaultTargetChains: lnbridgeDefaultTargetChains };
+}
+
+export function getLnBridgeAvailableSourceTokens(
+  sourceChain: ChainConfig | undefined,
+  targetChain: ChainConfig | undefined,
+  defaultTokens: Token[] = [],
+) {
+  if (sourceChain && targetChain) {
+    const result = (lnbridgeAvailableSourceTokens[sourceChain.network]?.[targetChain.network] || []).sort(
+      tokenCompareFn,
+    );
+    return result.length ? result : defaultTokens;
+  }
+  return defaultTokens;
+}
+
+export function getLnBridgeAvailableTargetChains(
+  sourceChain: ChainConfig | undefined,
+  defaultChains: ChainConfig[] = [],
+) {
+  if (sourceChain) {
+    const result = (lnbridgeAvailableTargetChains[sourceChain.network] || []).sort(chainCompareFn);
+    return result.length ? result : defaultChains;
+  }
+  return defaultChains;
 }

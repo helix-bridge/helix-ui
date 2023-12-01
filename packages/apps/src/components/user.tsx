@@ -1,7 +1,7 @@
-import { useApp } from "@/hooks/use-app";
-import { UrlSearchParam } from "@/types/url";
+import { useApp } from "@/hooks";
+import { UrlSearchParamKey } from "@/types";
 import Dropdown from "@/ui/dropdown";
-import { toShortAdrress } from "@/utils/address";
+import { toShortAdrress } from "@/utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,13 +21,13 @@ export default function User({ onComplete = () => undefined }: Props) {
 
   return address ? (
     <Dropdown
-      childClassName="bg-component border-line py-middle flex flex-col rounded border lg:border-transparent"
+      childClassName="bg-inner lg:bg-component py-middle flex flex-col rounded-middle"
       labelClassName="user-connect-wallet"
       label={<LabelSpan>{toShortAdrress(address)}</LabelSpan>}
       sameWidth
     >
       <Link
-        href={`/records?${UrlSearchParam.ADDRESS}=${address}`}
+        href={`/records?${UrlSearchParamKey.ADDRESS}=${address}`}
         onClick={() => {
           setRecordsSearch(address);
           onComplete();
@@ -50,9 +50,9 @@ export default function User({ onComplete = () => undefined }: Props) {
 }
 
 function LabelSpan({ children }: PropsWithChildren<unknown>) {
-  return <span className="">{children}</span>;
+  return <span className="text-base font-medium text-white">{children}</span>;
 }
 
 function ChildSpan({ children }: PropsWithChildren<unknown>) {
-  return <span className="text-sm font-medium text-white">{children}</span>;
+  return <span className="text-sm font-medium">{children}</span>;
 }

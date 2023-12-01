@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const lineaChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.LINEA,
   network: "linea",
   name: "Linea",
-  logo: "linea.png",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -26,6 +28,11 @@ export const lineaChain: ChainConfig = {
       url: "https://explorer.linea.build/",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "linea.png",
   tokens: [
     {
       decimals: 18,
@@ -42,7 +49,7 @@ export const lineaChain: ChainConfig = {
       name: "USDT",
       type: "erc20",
       address: "0xA219439258ca9da29E9Cc4cE5596924745e12B93",
-      logo: "usdt.svg",
+      logo: "usdt.png",
       cross: [
         { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },

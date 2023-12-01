@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const mantleGoerliChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.MANTLE_GOERLI,
   network: "mantle-goerli",
   name: "Mantle Testnet",
-  logo: "mantle.svg",
   nativeCurrency: {
     name: "MNT",
     symbol: "MNT",
@@ -27,6 +29,11 @@ export const mantleGoerliChain: ChainConfig = {
     },
   },
   testnet: true,
+
+  /**
+   * Custom
+   */
+  logo: "mantle.svg",
   tokens: [
     {
       decimals: 18,
@@ -57,7 +64,7 @@ export const mantleGoerliChain: ChainConfig = {
       name: "USDT",
       type: "erc20",
       address: "0xDb06D904AC5Bdff3b8E6Ac96AFedd3381d94CFDD",
-      logo: "usdt.svg",
+      logo: "usdt.png",
       cross: [
         { target: { network: "goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "arbitrum-goerli", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },

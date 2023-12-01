@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const zksyncChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.ZKSYNC,
   network: "zksync",
   name: "zkSync era",
-  logo: "zksync.png",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -26,6 +28,11 @@ export const zksyncChain: ChainConfig = {
       url: "https://explorer.zksync.io/",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "zksync.png",
   tokens: [
     {
       decimals: 18,
@@ -42,7 +49,7 @@ export const zksyncChain: ChainConfig = {
       name: "USDT",
       type: "erc20",
       address: "0x493257fD37EDB34451f62EDf8D2a0C418852bA4C",
-      logo: "usdt.svg",
+      logo: "usdt.png",
       cross: [
         { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
         { target: { network: "mantle", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },

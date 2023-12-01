@@ -1,17 +1,18 @@
-import HistoryRecords from "@/components/history-records";
+import PageWrap from "@/ui/page-wrap";
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 
 export const metadata: Metadata = {
-  title: "Records | Helix Bridge",
+  title: "History Records - Helix Bridge",
   description: "View the history of transfers via the Helix Bridge",
 };
 
-export default function Records() {
+const HistoryRecords = dynamic(() => import("@/components/history-records"));
+
+export default function RecordsPage() {
   return (
-    <main className="app-main">
-      <div className="px-middle container mx-auto">
-        <HistoryRecords />
-      </div>
-    </main>
+    <PageWrap>
+      <HistoryRecords />
+    </PageWrap>
   );
 }

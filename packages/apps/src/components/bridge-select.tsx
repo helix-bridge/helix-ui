@@ -1,23 +1,24 @@
 import { BridgeCategory } from "@/types/bridge";
-import ISelect from "@/ui/i-select";
+import Select from "@/ui/select";
 import { bridgeFactory } from "@/utils/bridge";
 
 interface Props {
-  options: BridgeCategory[];
+  options?: BridgeCategory[];
   value?: BridgeCategory;
   onChange?: (value: BridgeCategory | undefined) => void;
 }
 
-export default function BridgeSelect({ options, value, onChange = () => undefined }: Props) {
-  const active = value ? bridgeFactory({ category: value }) : undefined;
+export default function BridgeSelect({ value, options = [], onChange = () => undefined }: Props) {
+  const bridge = value ? bridgeFactory({ category: value }) : undefined;
 
   return (
-    <ISelect
-      labelClassName="bg-app-bg p-middle flex items-center justify-between border-transparent"
-      childClassName="bg-app-bg border-primary/50 py-small flex flex-col rounded border"
-      label={active ? <span className="text-sm font-normal text-white">{active.getName()}</span> : undefined}
-      placeholder={<span className="text-sm font-normal text-white/50">Select a bridge</span>}
+    <Select
+      labelClassName="bg-inner p-middle flex items-center justify-between rounded-middle transition-transform lg:active:translate-y-1"
+      childClassName="bg-inner p-middle flex flex-col rounded-middle gap-small border border-component"
+      label={bridge ? <span className="text-sm font-medium text-white">{bridge.getName()}</span> : undefined}
+      placeholder={<span className="text-sm font-medium text-slate-400">Select a bridge</span>}
       sameWidth
+      clearable
       onClear={() => onChange(undefined)}
     >
       {options.length ? (
@@ -29,17 +30,17 @@ export default function BridgeSelect({ options, value, onChange = () => undefine
               onClick={() => {
                 onChange(c);
               }}
-              className="px-middle py-small text-start text-sm text-white transition-colors hover:bg-white/10"
+              className="px-middle py-small bg-component rounded-middle text-start text-sm font-medium text-white transition-colors hover:bg-white/10"
             >
               {b?.getName() || "-"}
             </button>
           );
         })
       ) : (
-        <div className="px-middle py-small">
-          <span className="text-sm text-white/50">No data</span>
+        <div className="px-middle py-small bg-component rounded-middle">
+          <span className="text-sm font-medium text-white/50">No data</span>
         </div>
       )}
-    </ISelect>
+    </Select>
   );
 }

@@ -1,79 +1,90 @@
 "use client";
 
-import { PropsWithChildren, ReactElement, useDeferredValue, useEffect, useMemo, useState } from "react";
-import CrossChainInfo from "./cross-chain-info";
-import { getParsedCrossChain } from "@/utils/cross-chain";
-import { Address, useAccount } from "wagmi";
+import { GQL_SORTED_LNV20_RELAY_INFOS } from "@/config";
+import { useToggle, useTransfer } from "@/hooks";
+import {
+  BridgeCategory,
+  ChainConfig,
+  SortedLnV20RelayInfosReqParams,
+  SortedLnV20RelayInfosResData,
+  Token,
+  UrlSearchParamKey,
+} from "@/types";
+import {
+  getAvailableBridges,
+  getAvailableSourceTokens,
+  getAvailableTargetChains,
+  getAvailableTargetTokens,
+  getCrossDefaultValue,
+  isProduction,
+} from "@/utils";
 import { useQuery } from "@apollo/client";
-import { RelayersResponseData, RelayersVariables } from "@/types/graphql";
-import { QUERY_RELAYERS } from "@/config/gql";
-import BridgeSelect from "./bridge-select";
-import SwitchCross from "./switch-cross";
-import { from, Subscription } from "rxjs";
-import { useToggle } from "@/hooks/use-toggle";
-import TransferModal from "./transfer-modal";
-import TransferAction from "./transfer-action";
-import DisclaimerModal from "./disclaimer-modal";
-import Faucet from "./faucet";
-import { isProduction } from "@/utils/env";
-import { useTransfer } from "@/hooks/use-transfer";
-import ChainTokenSelect from "./chain-token-select";
-import { BalanceInput } from "./balance-input";
-import { ChainToken } from "@/types/misc";
-import { BridgeCategory } from "@/types/bridge";
 import { useRouter, useSearchParams } from "next/navigation";
-import { UrlSearchParam } from "@/types/url";
-import AddressInput from "./address-input";
+import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
+import { Address, useAccount } from "wagmi";
+import { Subscription, from } from "rxjs";
+import Label from "@/ui/label";
+import ChainSelect from "./chain-select";
+import SwitchCrossIcon from "@/ui/switch-cross-icon";
+import Faucet from "./faucet";
+import { BalanceInput } from "./balance-input";
+import BridgeSelect from "./bridge-select";
+import TransferInfo from "./transfer-info";
+import TransferAction from "./transfer-action";
+import TransferModal from "./modals/transfer-modal";
+import DisclaimerModal from "./modals/disclaimer-modal";
 
-const { defaultSourceOptions, defaultTargetOptions, availableBridges, availableTargetOptions } = getParsedCrossChain();
+const { defaultSourceChains } = getCrossDefaultValue();
 
 export default function Transfer() {
   const {
-    bridgeClient,
-    bridgeCategory,
-    transferValue,
-    sourceValue,
-    targetValue,
+    bridgeFee,
+    sourceChain,
+    targetChain,
+    sourceToken,
+    targetToken,
     sourceBalance,
-    fee,
+    bridgeInstance,
+    bridgeCategory,
+    transferAmount,
+    setSourceChain,
+    setTargetChain,
+    setSourceToken,
+    setTargetToken,
+    setTransferAmount,
+    setBridgeFee,
     setBridgeCategory,
-    setTransferValue,
-    setSourceValue,
-    setTargetValue,
-    setFee,
+    updateSourceBalance,
   } = useTransfer();
-  const deferredTransferValue = useDeferredValue(transferValue);
+  const deferredTransferAmount = useDeferredValue(transferAmount);
 
+  const { state: isOpen, setTrue: setIsOpenTrue, setFalse: setIsOpenFalse } = useToggle(false);
   const { address } = useAccount();
-  const [width, setWidth] = useState(0);
-  const [recipient, setRecipient] = useState<Address>();
+
+  const [recipient, _setRecipient] = useState<Address>();
   const [isLoadingFee, setIsLoadingFee] = useState(false);
   const [estimateGasFee, setEstimateGasFee] = useState(0n);
-  const [targetOptions, setTargetOptions] = useState(defaultTargetOptions);
+  const [balanceLoading, setBalanceLoading] = useState(false);
 
-  const [isOpen, _, setIsOpenTrue, setIsOpenFalse] = useToggle(false);
   const bridgeOptions = useMemo(
-    () =>
-      sourceValue && targetValue
-        ? availableBridges[sourceValue.chain.network]?.[targetValue.chain.network]?.[sourceValue.token.symbol] || []
-        : [],
-    [sourceValue, targetValue],
+    () => getAvailableBridges(sourceChain, targetChain, sourceToken),
+    [sourceChain, targetChain, sourceToken],
   );
 
   const {
     loading: isLoadingRelayers,
     data: relayersData,
     refetch: refetchRelayers,
-  } = useQuery<RelayersResponseData, RelayersVariables>(QUERY_RELAYERS, {
+  } = useQuery<SortedLnV20RelayInfosResData, SortedLnV20RelayInfosReqParams>(GQL_SORTED_LNV20_RELAY_INFOS, {
     variables: {
-      amount: deferredTransferValue.formatted.toString(),
-      decimals: sourceValue?.token.decimals,
+      amount: deferredTransferAmount.value.toString(),
+      decimals: sourceToken?.decimals,
       bridge: bridgeCategory,
-      token: sourceValue?.token.address,
-      fromChain: sourceValue?.chain.network,
-      toChain: targetValue?.chain.network,
+      token: sourceToken?.address,
+      fromChain: sourceChain?.network,
+      toChain: targetChain?.network,
     },
-    skip: !bridgeClient?.isLnBridge(),
+    skip: !bridgeInstance?.isLnBridge(),
   });
 
   const transferable = useMemo(() => {
@@ -83,91 +94,91 @@ export default function Transfer() {
     if (sourceBalance) {
       const { token, value: balance } = sourceBalance;
       result = result === undefined ? balance : result < balance ? result : balance;
-      if (fee?.token.symbol === token.symbol) {
-        result = fee.value < result ? result - fee.value : 0n;
+      if (bridgeFee?.token.symbol === token.symbol) {
+        result = bridgeFee.value < result ? result - bridgeFee.value : 0n;
       }
     }
-
     if (maxMargin) {
       const mm = BigInt(maxMargin);
       result = result === undefined ? mm : result < mm ? result : mm;
     }
-
     if (result !== undefined) {
       result = estimateGasFee < result ? result - estimateGasFee : 0n;
     }
     return result;
-  }, [sourceBalance, estimateGasFee, fee, relayersData]);
+  }, [bridgeFee, estimateGasFee, sourceBalance, relayersData]);
 
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const handleUrlParams = ({
     _category,
-    _sourceValue,
-    _targetValue,
+    _sourceChain,
+    _targetChain,
+    _sourceToken,
+    _targetToken,
   }: {
     _category?: BridgeCategory;
-    _sourceValue?: ChainToken;
-    _targetValue?: ChainToken;
+    _sourceChain?: ChainConfig;
+    _targetChain?: ChainConfig;
+    _sourceToken?: Token;
+    _targetToken?: Token;
   }) => {
     const params = new URLSearchParams(searchParams.toString());
     const c = _category || bridgeCategory;
-    const s = _sourceValue || sourceValue;
-    const t = _targetValue || targetValue;
+    const sc = _sourceChain || sourceChain;
+    const tc = _targetChain || targetChain;
+    const st = _sourceToken || sourceToken;
+    const tt = _targetToken || targetToken;
 
-    if (c) {
-      params.set(UrlSearchParam.BRIDGE, c);
-    }
-    if (s) {
-      params.set(UrlSearchParam.SOURCE_CHAIN, s.chain.network);
-      params.set(UrlSearchParam.SOURCE_TOKEN, s.token.symbol);
-    }
-    if (t) {
-      params.set(UrlSearchParam.TARGET_CHAIN, t.chain.network);
-      params.set(UrlSearchParam.TARGET_TOKEN, t.token.symbol);
-    }
+    c && params.set(UrlSearchParamKey.BRIDGE, c);
+    sc && params.set(UrlSearchParamKey.SOURCE_CHAIN, sc.network);
+    tc && params.set(UrlSearchParamKey.TARGET_CHAIN, tc.network);
+    st && params.set(UrlSearchParamKey.SOURCE_TOKEN, st.symbol);
+    tt && params.set(UrlSearchParamKey.TARGET_TOKEN, tt.symbol);
     router.push(`?${params.toString()}`);
   };
 
-  useEffect(() => {
-    if (sourceValue && targetValue) {
-      setBridgeCategory(
-        availableBridges[sourceValue.chain.network]?.[targetValue.chain.network]?.[sourceValue.token.symbol]?.at(0),
-      );
-    } else {
-      setBridgeCategory(undefined);
+  const refreshBalance = useCallback(async () => {
+    if (address && bridgeInstance) {
+      setBalanceLoading(true);
+      await updateSourceBalance(address, bridgeInstance);
+      setBalanceLoading(false);
     }
-  }, [sourceValue, targetValue, setBridgeCategory]);
+  }, [address, bridgeInstance, updateSourceBalance]);
+
+  useEffect(() => {
+    setBridgeCategory(bridgeOptions.at(0));
+  }, [bridgeOptions, setBridgeCategory]);
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
     const relayer = relayersData?.sortedLnv20RelayInfos?.records.at(0);
 
-    if (bridgeClient) {
+    if (bridgeInstance) {
       setIsLoadingFee(true);
       sub$$ = from(
-        bridgeClient.getFee({
+        bridgeInstance.getFee({
           baseFee: BigInt(relayer?.baseFee || 0),
           protocolFee: BigInt(relayer?.protocolFee || 0),
           liquidityFeeRate: BigInt(relayer?.liquidityFeeRate || 0),
-          transferAmount: deferredTransferValue.formatted,
+          transferAmount: deferredTransferAmount.value,
         }),
       ).subscribe({
-        next: setFee,
+        next: setBridgeFee,
         error: (err) => {
           console.error(err);
-          setFee(undefined);
+          setBridgeFee(undefined);
           setIsLoadingFee(false);
         },
         complete: () => setIsLoadingFee(false),
       });
     } else {
-      setFee(undefined);
+      setBridgeFee(undefined);
     }
 
     return () => sub$$?.unsubscribe();
-  }, [bridgeClient, relayersData, deferredTransferValue, setFee]);
+  }, [bridgeInstance, relayersData, deferredTransferAmount, setBridgeFee]);
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
@@ -175,12 +186,12 @@ export default function Transfer() {
 
     // Note: native token
 
-    if (bridgeClient && sourceValue?.token.type === "native" && address && deferredTransferValue.formatted) {
+    if (bridgeInstance && sourceToken?.type === "native" && address && deferredTransferAmount.value) {
       sub$$ = from(
-        bridgeClient.estimateTransferGasFee(address, recipient ?? address, deferredTransferValue.formatted, {
+        bridgeInstance.estimateTransferGasFee(address, recipient ?? address, deferredTransferAmount.value, {
           relayer: relayer?.relayer,
           transferId: relayer?.lastTransferId,
-          totalFee: fee?.value,
+          totalFee: bridgeFee?.value,
           withdrawNonce: BigInt(relayer?.withdrawNonce || 0),
           depositedMargin: BigInt(relayer?.margin || 0),
         }),
@@ -198,110 +209,95 @@ export default function Transfer() {
     }
 
     return () => sub$$?.unsubscribe();
-  }, [bridgeClient, sourceValue, fee, address, recipient, deferredTransferValue, relayersData]);
+  }, [bridgeInstance, sourceToken, bridgeFee, address, recipient, deferredTransferAmount, relayersData]);
 
   return (
     <>
-      <div className="p-middle bg-component gap-large mx-auto flex w-full flex-col rounded lg:w-[32rem] lg:gap-5 lg:p-5">
-        {/* from to */}
-        <div
-          className="gap-small mt-8 flex items-center justify-between lg:gap-5"
-          ref={(node) => setWidth(node?.clientWidth || 0)}
-        >
-          <Section label="From" className="w-full">
-            <ChainTokenSelect
-              width={width}
+      <div className="p-middle bg-component gap-large rounded-large mx-auto flex w-full flex-col lg:mt-20 lg:w-[30rem] lg:gap-5 lg:p-5">
+        {/* From-To */}
+        <div className="gap-small lg:gap-large mt-8 flex items-center">
+          <Label text="From" className="w-full" needAbsolute>
+            <ChainSelect
+              className="p-middle bg-inner w-full"
               placement="bottom-start"
-              options={defaultSourceOptions}
-              value={sourceValue}
-              onChange={(_sourceValue) => {
-                const targetOpts =
-                  availableTargetOptions[_sourceValue.chain.network]?.[_sourceValue.token.symbol] || [];
-                const token = targetOpts.at(0)?.tokens.at(0);
-                const chain = targetOpts.at(0)?.chain;
-                const _targetValue = chain && token ? { chain, token } : undefined;
-                const _category = _targetValue
-                  ? availableBridges[_sourceValue.chain.network]?.[_targetValue.chain.network]?.[
-                      _sourceValue.token.symbol
-                    ]?.at(0)
-                  : undefined;
+              value={sourceChain}
+              options={defaultSourceChains}
+              onChange={(_sourceChain) => {
+                const _targetChains = getAvailableTargetChains(_sourceChain);
+                const _targetChain = _targetChains.at(0);
+                const _sourceTokens = getAvailableSourceTokens(_sourceChain, _targetChain);
+                const _sourceToken = _sourceTokens.at(0);
+                const _targetTokens = getAvailableTargetTokens(_sourceChain, _targetChain, _sourceToken);
+                const _targetToken = _targetTokens.at(0);
+                const _category = getAvailableBridges(_sourceChain, _targetChain, _sourceToken).at(0);
 
                 setBridgeCategory(_category);
-                setTargetOptions(targetOpts);
-                setTargetValue(_targetValue);
-                setSourceValue(_sourceValue);
-                handleUrlParams({ _category, _sourceValue, _targetValue });
+                setSourceChain(_sourceChain);
+                setTargetChain(_targetChain);
+                setSourceToken(_sourceToken);
+                setTargetToken(_targetToken);
+                handleUrlParams({ _category, _sourceChain, _targetChain, _sourceToken, _targetToken });
               }}
             />
-          </Section>
-          <SwitchCross
-            disabled={
-              !(
-                sourceValue &&
-                targetValue &&
-                availableBridges[targetValue.chain.network]?.[sourceValue.chain.network]?.[targetValue.token.symbol]
-                  ?.length
-              )
-            }
+          </Label>
+          <SwitchCrossIcon
+            disabled={!getAvailableBridges(targetChain, sourceChain, targetToken).length}
             onClick={() => {
-              const _sourceValue = targetValue ? { ...targetValue } : undefined;
-              const _targetValue = sourceValue ? { ...sourceValue } : undefined;
-
-              const targetOpts = _sourceValue
-                ? availableTargetOptions[_sourceValue.chain.network]?.[_sourceValue.token.symbol] || []
-                : [];
-              const _category =
-                _sourceValue && _targetValue
-                  ? availableBridges[_sourceValue.chain.network]?.[_targetValue.chain.network]?.[
-                      _sourceValue.token.symbol
-                    ]?.at(0)
-                  : undefined;
+              const _sourceChain = targetChain ? { ...targetChain } : undefined;
+              const _targetChain = sourceChain ? { ...sourceChain } : undefined;
+              const _sourceToken = targetToken ? { ...targetToken } : undefined;
+              const _targetToken = sourceToken ? { ...sourceToken } : undefined;
+              const _category = getAvailableBridges(_sourceChain, _targetChain, _sourceToken).at(0);
 
               setBridgeCategory(_category);
-              setTargetOptions(targetOpts);
-              setTargetValue(_targetValue);
-              setSourceValue(_sourceValue);
-              handleUrlParams({ _category, _sourceValue, _targetValue });
+              setSourceChain(_sourceChain);
+              setTargetChain(_targetChain);
+              setSourceToken(_sourceToken);
+              setTargetToken(_targetToken);
+              handleUrlParams({ _category, _sourceChain, _targetChain, _sourceToken, _targetToken });
             }}
           />
-          <Section label="To" className="w-full">
-            <ChainTokenSelect
-              width={width}
+          <Label text="To" className="w-full" needAbsolute>
+            <ChainSelect
+              className="p-middle bg-inner w-full"
               placement="bottom-end"
-              options={targetOptions}
-              value={targetValue}
-              onChange={(_targetValue) => {
-                setTargetValue(_targetValue);
-                handleUrlParams({ _targetValue });
+              value={targetChain}
+              options={getAvailableTargetChains(sourceChain)}
+              onChange={(_targetChain) => {
+                const _sourceTokens = getAvailableSourceTokens(sourceChain, _targetChain);
+                const _sourceToken = _sourceTokens.at(0);
+                const _targetTokens = getAvailableTargetTokens(sourceChain, _targetChain, _sourceToken);
+                const _targetToken = _targetTokens.at(0);
+                const _category = getAvailableBridges(sourceChain, _targetChain, _sourceToken).at(0);
+
+                setBridgeCategory(_category);
+                setTargetChain(_targetChain);
+                setSourceToken(_sourceToken);
+                setTargetToken(_targetToken);
+                handleUrlParams({ _category, _targetChain, _sourceToken, _targetToken });
               }}
             />
-          </Section>
+          </Label>
         </div>
 
-        {/* amount */}
-        <Section label="Amount" className="mt-8" extra={isProduction() ? undefined : <Faucet />}>
+        {/* Amount */}
+        <Label text="Amount" extra={isProduction() ? null : <Faucet />}>
           <BalanceInput
+            enabledDynamicStyle
             balance={sourceBalance?.value}
-            token={sourceValue?.token}
-            value={transferValue}
-            suffix="max"
             max={transferable}
-            availableTips="Transferable"
-            dynamic
-            onChange={setTransferValue}
+            value={transferAmount}
+            token={sourceToken}
+            balanceLoading={balanceLoading}
+            tokenOptions={getAvailableSourceTokens(sourceChain, targetChain)}
+            onBalanceRefresh={refreshBalance}
+            onChange={setTransferAmount}
+            onTokenChange={setSourceToken}
           />
-        </Section>
+        </Label>
 
-        <Section label="Recipient" className="mt-8 hidden">
-          <AddressInput
-            placeholder={address}
-            value={recipient}
-            onChange={(e) => setRecipient(e.target.value as Address)}
-          />
-        </Section>
-
-        {/* bridge */}
-        <Section label="Bridge" className={`mt-8 ${bridgeOptions.length > 1 ? "" : "hidden"}`}>
+        {/* Bridge */}
+        <Label text="Bridge" className={`${bridgeOptions.length > 1 ? "" : "hidden"}`}>
           <BridgeSelect
             options={bridgeOptions}
             value={bridgeCategory}
@@ -310,22 +306,22 @@ export default function Transfer() {
               handleUrlParams({ _category });
             }}
           />
-        </Section>
+        </Label>
 
-        {/* information */}
-        <Section label="Information" className="mt-8">
-          <CrossChainInfo
-            fee={fee ? { ...fee, loading: isLoadingFee || isLoadingRelayers } : undefined}
-            bridge={bridgeClient}
+        {/* Information */}
+        <Label text="Information">
+          <TransferInfo
+            fee={bridgeFee ? { ...bridgeFee, loading: isLoadingFee || isLoadingRelayers } : undefined}
+            bridge={bridgeInstance}
             maxMargin={relayersData?.sortedLnv20RelayInfos?.maxMargin}
             isLoadingMaxMargin={isLoadingRelayers}
           />
-        </Section>
+        </Label>
 
-        {/* action */}
+        {/* Action */}
         <TransferAction
           transferable={transferable}
-          transferValue={deferredTransferValue}
+          transferAmount={deferredTransferAmount}
           recipient={recipient || address}
           onTransfer={setIsOpenTrue}
         />
@@ -334,33 +330,16 @@ export default function Transfer() {
       <TransferModal
         sender={address}
         recipient={recipient || address}
-        transferValue={deferredTransferValue}
+        transferAmount={deferredTransferAmount}
         isOpen={isOpen}
         onClose={() => {
           setIsOpenFalse();
-          setTransferValue({ value: "", formatted: 0n });
+          setTransferAmount({ input: "", valid: true, value: 0n });
         }}
         refetchRelayers={refetchRelayers}
       />
 
       <DisclaimerModal />
     </>
-  );
-}
-
-function Section({
-  children,
-  label,
-  extra,
-  className,
-}: PropsWithChildren<{ label: string; extra?: ReactElement; className?: string }>) {
-  return (
-    <div className={`gap-small lg:gap-middle relative flex flex-col ${className}`}>
-      <div className="absolute -top-8 left-0 flex w-full items-center justify-between">
-        <span className="text-sm font-normal text-white/50">{label}</span>
-        {extra}
-      </div>
-      {children}
-    </div>
   );
 }

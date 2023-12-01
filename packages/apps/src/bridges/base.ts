@@ -1,16 +1,22 @@
-import { BridgeCategory, BridgeContract, BridgeLogo, TransferOptions } from "@/types/bridge";
-import { ChainConfig, ChainID } from "@/types/chain";
-import { CrossChain } from "@/types/cross-chain";
-import { HistoryRecord } from "@/types/graphql";
-import { Token } from "@/types/token";
+import {
+  BridgeCategory,
+  BridgeConstructorArgs,
+  BridgeContract,
+  BridgeLogo,
+  ChainConfig,
+  CrossChain,
+  GetFeeArgs,
+  HistoryRecord,
+  Location,
+  Token,
+  TransferOptions,
+} from "@/types";
+import { getBalance } from "@/utils";
 import { Address, PublicClient as ViemPublicClient, TransactionReceipt, createPublicClient, http } from "viem";
 import { PublicClient as WagmiPublicClient, WalletClient } from "wagmi";
 
 export abstract class BaseBridge {
-  protected logo: BridgeLogo = {
-    symbol: "",
-    horizontal: "",
-  };
+  protected logo: BridgeLogo = { symbol: "", horizontal: "" };
   protected name: string = "";
   protected estimateTime = { min: 5, max: 20 }; // In minute
 
@@ -30,17 +36,7 @@ export abstract class BaseBridge {
   protected readonly publicClient?: WagmiPublicClient; // The public client to which the wallet is connected
   protected readonly walletClient?: WalletClient | null;
 
-  constructor(args: {
-    publicClient?: WagmiPublicClient;
-    walletClient?: WalletClient | null;
-    category: BridgeCategory;
-    logo?: BridgeLogo;
-
-    sourceChain?: ChainConfig;
-    targetChain?: ChainConfig;
-    sourceToken?: Token;
-    targetToken?: Token;
-  }) {
+  constructor(args: BridgeConstructorArgs) {
     this.category = args.category;
     this.crossInfo = args.sourceChain?.tokens
       .find((t) => t.symbol === args.sourceToken?.symbol)
@@ -66,13 +62,33 @@ export abstract class BaseBridge {
     }
   }
 
-  protected initContractFromBackingIssuing(backing: Address, issuing: Address) {
+  protected initContractByBackingIssuing(backing: Address, issuing: Address) {
     if (this.crossInfo?.action === "issue") {
       this.contract = { sourceAddress: backing, targetAddress: issuing };
     } else if (this.crossInfo?.action === "redeem") {
       this.contract = { sourceAddress: issuing, targetAddress: backing };
     }
   }
+
+  protected async getSigner() {
+    if (this.walletClient) {
+      return (await this.walletClient.getAddresses()).at(0);
+    }
+  }
+
+  protected async validateNetwork(location: Location) {
+    const chain = location === "source" ? this.sourceChain : this.targetChain;
+    if (chain?.id !== (await this.publicClient?.getChainId())) {
+      throw new Error("Wrong network");
+    }
+  }
+
+  protected abstract _transfer(
+    sender: Address,
+    recipient: Address,
+    amount: bigint,
+    options?: TransferOptions & { askEstimateGas?: boolean },
+  ): Promise<TransactionReceipt | bigint | undefined>;
 
   isLnBridge() {
     return false;
@@ -119,30 +135,12 @@ export abstract class BaseBridge {
   }
 
   getTxGasLimit() {
-    return this.sourceChain?.id === ChainID.ARBITRUM || this.sourceChain?.id === ChainID.ARBITRUM_GOERLI
-      ? 2000000n
+    return this.sourceChain?.network === "arbitrum" || this.sourceChain?.network === "arbitrum-goerli"
+      ? 3000000n
       : undefined;
   }
 
-  protected async getSigner() {
-    if (this.walletClient) {
-      return (await this.walletClient.getAddresses()).at(0);
-    }
-  }
-
-  protected async validateNetwork(position: "source" | "target") {
-    const chain = position === "source" ? this.sourceChain : this.targetChain;
-    if (chain?.id !== (await this.publicClient?.getChainId())) {
-      throw new Error("Wrong network");
-    }
-  }
-
-  async getFee(_?: {
-    baseFee?: bigint;
-    protocolFee?: bigint;
-    liquidityFeeRate?: bigint;
-    transferAmount?: bigint;
-  }): Promise<{ value: bigint; token: Token } | undefined> {
+  async getFee(_?: GetFeeArgs): Promise<{ value: bigint; token: Token } | undefined> {
     return undefined;
   }
 
@@ -162,73 +160,53 @@ export abstract class BaseBridge {
     return undefined;
   }
 
-  private async getBalance(address: Address, token: Token, publicClient: ViemPublicClient) {
-    let value = 0n;
-
-    if (token.type === "native") {
-      value = await publicClient.getBalance({ address });
-    } else {
-      const abi = (await import("../abi/erc20")).default;
-      value = (await publicClient.readContract({
-        address: token.address,
-        abi,
-        functionName: "balanceOf",
-        args: [address],
-      })) as unknown as bigint;
-    }
-
-    return { value, token };
-  }
-
   async getSourceBalance(address: Address) {
     if (this.sourceToken && this.sourcePublicClient) {
-      return this.getBalance(address, this.sourceToken, this.sourcePublicClient);
+      return getBalance(address, this.sourceToken, this.sourcePublicClient);
     }
   }
 
   async getTargetBalance(address: Address) {
     if (this.targetToken && this.targetPublicClient) {
-      return this.getBalance(address, this.targetToken, this.targetPublicClient);
+      return getBalance(address, this.targetToken, this.targetPublicClient);
     }
   }
 
   private async getAllowance(owner: Address, spender: Address, token: Token, publicClient: ViemPublicClient) {
     if (token.type === "erc20") {
-      const abi = (await import("../abi/erc20")).default;
-      const value = (await publicClient.readContract({
+      const value = await publicClient.readContract({
         address: token.address,
-        abi,
+        abi: (await import("@/abi/erc20")).default,
         functionName: "allowance",
         args: [owner, spender],
-      })) as unknown as bigint;
+      });
       return { value, token };
     }
   }
 
   async getSourceAllowance(owner: Address) {
     if (this.contract && this.sourceToken && this.sourcePublicClient) {
-      return await this.getAllowance(owner, this.contract.sourceAddress, this.sourceToken, this.sourcePublicClient);
+      return this.getAllowance(owner, this.contract.sourceAddress, this.sourceToken, this.sourcePublicClient);
     }
   }
 
   async getTargetAllowance(owner: Address) {
     if (this.contract && this.targetToken && this.targetPublicClient) {
-      return await this.getAllowance(owner, this.contract.targetAddress, this.targetToken, this.targetPublicClient);
+      return this.getAllowance(owner, this.contract.targetAddress, this.targetToken, this.targetPublicClient);
     }
   }
 
   private async approve(amount: bigint, owner: Address, spender: Address, token: Token) {
     if (this.publicClient && this.walletClient) {
-      const abi = (await import("../abi/erc20")).default;
       const { request } = await this.publicClient.simulateContract({
         address: token.address,
-        abi,
+        abi: (await import("@/abi/erc20")).default,
         functionName: "approve",
         args: [spender, amount],
         account: owner,
       });
       const hash = await this.walletClient.writeContract(request);
-      return await this.publicClient.waitForTransactionReceipt({ hash });
+      return this.publicClient.waitForTransactionReceipt({ hash });
     }
   }
 
@@ -252,21 +230,16 @@ export abstract class BaseBridge {
   }
 
   async estimateTransferGas(sender: Address, recipient: Address, amount: bigint, options?: TransferOptions) {
-    return this._transfer(sender, recipient, amount, { ...options, estimateGas: true }) as Promise<bigint | undefined>;
+    return this._transfer(sender, recipient, amount, { ...options, askEstimateGas: true }) as Promise<
+      bigint | undefined
+    >;
   }
 
   async estimateTransferGasFee(sender: Address, recipient: Address, amount: bigint, options?: TransferOptions) {
     const estimateGas = await this.estimateTransferGas(sender, recipient, amount, options);
     if (estimateGas && this.sourcePublicClient) {
       const { maxFeePerGas } = await this.sourcePublicClient.estimateFeesPerGas();
-      return maxFeePerGas && maxFeePerGas * estimateGas;
+      return maxFeePerGas ? maxFeePerGas * estimateGas : undefined;
     }
   }
-
-  protected abstract _transfer(
-    sender: Address,
-    recipient: Address,
-    amount: bigint,
-    options?: TransferOptions & { estimateGas?: boolean },
-  ): Promise<TransactionReceipt | bigint | undefined>;
 }

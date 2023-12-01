@@ -1,22 +1,21 @@
+import PageWrap from "@/ui/page-wrap";
 import TransferProvider from "@/providers/transfer-provider";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
 export const metadata: Metadata = {
-  title: "Transfer | Helix Bridge",
+  title: "Helix Bridge - Cross-chain for tokens",
   description: "Perform cross-chain transfers through Helix Bridge",
 };
 
 const Transfer = dynamic(() => import("@/components/transfer"), { ssr: false });
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <main className="app-main">
-      <div className="px-middle container mx-auto lg:py-12">
-        <TransferProvider>
-          <Transfer />
-        </TransferProvider>
-      </div>
-    </main>
+    <PageWrap>
+      <TransferProvider>
+        <Transfer />
+      </TransferProvider>
+    </PageWrap>
   );
 }

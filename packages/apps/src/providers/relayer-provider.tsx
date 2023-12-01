@@ -1,10 +1,8 @@
 "use client";
 
-import { LnBridgeDefault } from "@/bridges/lnbridge-default";
-import { LnBridgeOpposite } from "@/bridges/lnbridge-opposite";
-import { BridgeCategory } from "@/types/bridge";
-import { ChainConfig } from "@/types/chain";
-import { Token } from "@/types/token";
+import { BaseBridge, LnBridgeDefault, LnBridgeOpposite } from "@/bridges";
+import { BridgeCategory, ChainConfig, CheckLnBridgeExistReqParams, CheckLnBridgeExistResData, Token } from "@/types";
+import { getAvailableTargetTokens, notifyError, notifyTransaction } from "@/utils";
 import {
   Dispatch,
   PropsWithChildren,
@@ -15,254 +13,314 @@ import {
   useMemo,
   useState,
 } from "react";
+import { Address, TransactionReceipt } from "viem";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { Subscription, forkJoin } from "rxjs";
-import { notification } from "@/ui/notification";
-import { notifyTransaction } from "@/utils/notification";
-import { TransactionReceipt } from "viem";
-import { getChainConfig } from "@/utils/chain";
+import { ApolloClient } from "@apollo/client";
+import { GQL_CHECK_LNBRIDGE_EXIST } from "@/config";
 
 interface RelayerCtx {
-  margin: { formatted: bigint; value: string };
-  baseFee: { formatted: bigint; value: string };
-  feeRate: { formatted: number; value: string };
+  margin: bigint | undefined;
+  baseFee: bigint | undefined;
+  feeRate: number | undefined;
   sourceAllowance: { value: bigint; token: Token } | undefined;
   targetAllowance: { value: bigint; token: Token } | undefined;
   sourceBalance: { value: bigint; token: Token } | undefined;
   targetBalance: { value: bigint; token: Token } | undefined;
-  bridgeCategory: BridgeCategory | undefined;
   sourceChain: ChainConfig | undefined;
   targetChain: ChainConfig | undefined;
   sourceToken: Token | undefined;
   targetToken: Token | undefined;
+  bridgeCategory: BridgeCategory | undefined;
   defaultBridge: LnBridgeDefault | undefined;
   oppositeBridge: LnBridgeOpposite | undefined;
 
-  setMargin: Dispatch<SetStateAction<{ formatted: bigint; value: string }>>;
-  setBaseFee: Dispatch<SetStateAction<{ formatted: bigint; value: string }>>;
-  setFeeRate: Dispatch<SetStateAction<{ formatted: number; value: string }>>;
-  setBridgeCategory: Dispatch<SetStateAction<BridgeCategory | undefined>>;
+  setMargin: Dispatch<SetStateAction<bigint | undefined>>;
+  setBaseFee: Dispatch<SetStateAction<bigint | undefined>>;
+  setFeeRate: Dispatch<SetStateAction<number | undefined>>;
+  setSourceAllowance: Dispatch<SetStateAction<{ value: bigint; token: Token } | undefined>>;
+  setTargetAllowance: Dispatch<SetStateAction<{ value: bigint; token: Token } | undefined>>;
+  setSourceBalance: Dispatch<SetStateAction<{ value: bigint; token: Token } | undefined>>;
+  setTargetBalance: Dispatch<SetStateAction<{ value: bigint; token: Token } | undefined>>;
   setSourceChain: Dispatch<SetStateAction<ChainConfig | undefined>>;
   setTargetChain: Dispatch<SetStateAction<ChainConfig | undefined>>;
   setSourceToken: Dispatch<SetStateAction<Token | undefined>>;
-  sourceApprove: (amount: bigint) => Promise<TransactionReceipt | undefined>;
-  targetApprove: (amount: bigint) => Promise<TransactionReceipt | undefined>;
-  depositMargin: (margin: bigint) => Promise<TransactionReceipt | undefined>;
-  updateFeeAndMargin: (margin: bigint, baseFee: bigint, feeRate: number) => Promise<TransactionReceipt | undefined>;
-  setFeeAndRate: (baseFee: bigint, feeRate: number) => Promise<TransactionReceipt | undefined>;
-  withdrawMargin: (amount: bigint, fee: bigint) => Promise<TransactionReceipt | undefined>;
+  setBridgeCategory: Dispatch<SetStateAction<BridgeCategory | undefined>>;
+
+  sourceApprove: (
+    owner: Address,
+    amount: bigint,
+    bridge: BaseBridge,
+    chain: ChainConfig,
+  ) => Promise<TransactionReceipt | undefined>;
+  targetApprove: (
+    owner: Address,
+    amount: bigint,
+    bridge: BaseBridge,
+    chain: ChainConfig,
+  ) => Promise<TransactionReceipt | undefined>;
+  depositMargin: (
+    relayer: Address,
+    margin: bigint,
+    bridge: LnBridgeDefault,
+    chain: ChainConfig,
+  ) => Promise<TransactionReceipt | undefined>;
+  updateFeeAndMargin: (
+    relayer: Address,
+    margin: bigint,
+    baseFee: bigint,
+    feeRate: number,
+    bridge: LnBridgeOpposite,
+    chain: ChainConfig,
+  ) => Promise<TransactionReceipt | undefined>;
+  setFeeAndRate: (
+    baseFee: bigint,
+    feeRate: number,
+    bridge: LnBridgeDefault,
+    chain: ChainConfig,
+  ) => Promise<TransactionReceipt | undefined>;
+  withdrawMargin: (
+    recipient: Address,
+    amount: bigint,
+    fee: bigint,
+    bridge: LnBridgeDefault,
+    chain: ChainConfig,
+  ) => Promise<TransactionReceipt | undefined>;
+  isLnBridgeExist: (
+    apolloClient: ApolloClient<object>,
+    _sourceChain: ChainConfig,
+    _targetChain: ChainConfig,
+    _sourceToken: Token,
+    _targetToken: Token,
+  ) => Promise<boolean>;
 }
 
 const defaultValue: RelayerCtx = {
-  margin: { formatted: 0n, value: "" },
-  baseFee: { formatted: 0n, value: "" },
-  feeRate: { formatted: 0, value: "" },
+  margin: undefined,
+  baseFee: undefined,
+  feeRate: undefined,
   sourceAllowance: undefined,
   targetAllowance: undefined,
   sourceBalance: undefined,
   targetBalance: undefined,
-  bridgeCategory: undefined,
   sourceChain: undefined,
   targetChain: undefined,
   sourceToken: undefined,
   targetToken: undefined,
+  bridgeCategory: undefined,
   defaultBridge: undefined,
   oppositeBridge: undefined,
+
   setMargin: () => undefined,
   setBaseFee: () => undefined,
   setFeeRate: () => undefined,
-  setBridgeCategory: () => undefined,
+  setSourceAllowance: () => undefined,
+  setTargetAllowance: () => undefined,
+  setSourceBalance: () => undefined,
+  setTargetBalance: () => undefined,
   setSourceChain: () => undefined,
   setTargetChain: () => undefined,
   setSourceToken: () => undefined,
+  setBridgeCategory: () => undefined,
+
   sourceApprove: async () => undefined,
   targetApprove: async () => undefined,
   depositMargin: async () => undefined,
   updateFeeAndMargin: async () => undefined,
   setFeeAndRate: async () => undefined,
   withdrawMargin: async () => undefined,
+  isLnBridgeExist: async () => false,
 };
 
 export const RelayerContext = createContext(defaultValue);
 
 export default function RelayerProvider({ children }: PropsWithChildren<unknown>) {
-  const { data: walletClient } = useWalletClient();
-  const publicClient = usePublicClient();
-  const { address } = useAccount();
-
   const [margin, setMargin] = useState(defaultValue.margin);
   const [baseFee, setBaseFee] = useState(defaultValue.baseFee);
   const [feeRate, setFeeRate] = useState(defaultValue.feeRate);
-
   const [sourceAllowance, setSourceAllowance] = useState(defaultValue.sourceAllowance);
   const [targetAllowance, setTargetAllowance] = useState(defaultValue.targetAllowance);
   const [sourceBalance, setSourceBalance] = useState(defaultValue.sourceBalance);
   const [targetBalance, setTargetBalance] = useState(defaultValue.targetBalance);
-
-  const [bridgeCategory, setBridgeCategory] = useState(defaultValue.bridgeCategory);
   const [sourceChain, setSourceChain] = useState(defaultValue.sourceChain);
   const [targetChain, setTargetChain] = useState(defaultValue.targetChain);
   const [sourceToken, setSourceToken] = useState(defaultValue.sourceToken);
+  const [bridgeCategory, setBridgeCategory] = useState(defaultValue.bridgeCategory);
 
-  const targetToken = useMemo(() => {
-    const cross = sourceChain?.tokens
-      .find((t) => t.symbol === sourceToken?.symbol)
-      ?.cross.find((c) => c.bridge.category === bridgeCategory && c.target.network === targetChain?.network);
-    return getChainConfig(cross?.target.network)?.tokens.find((t) => t.symbol === cross?.target.symbol);
-  }, [bridgeCategory, sourceChain, targetChain, sourceToken]);
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
+  const { address } = useAccount();
 
-  const { defaultBridge, oppositeBridge, bridgeClient } = useMemo(() => {
+  const targetToken = useMemo(
+    () => getAvailableTargetTokens(sourceChain, targetChain, sourceToken).at(0),
+    [sourceChain, targetChain, sourceToken],
+  );
+
+  const { defaultBridge, oppositeBridge, bridgeInstance } = useMemo(() => {
     let defaultBridge: LnBridgeDefault | undefined;
     let oppositeBridge: LnBridgeOpposite | undefined;
+    const args = {
+      sourceChain,
+      targetChain,
+      sourceToken,
+      targetToken,
+      walletClient,
+      publicClient,
+    };
 
     if (bridgeCategory === "lnbridgev20-default") {
-      defaultBridge = new LnBridgeDefault({
-        category: bridgeCategory,
-        sourceChain,
-        targetChain,
-        sourceToken,
-        targetToken,
-        walletClient,
-        publicClient,
-      });
+      defaultBridge = new LnBridgeDefault({ category: bridgeCategory, ...args });
     } else if (bridgeCategory === "lnbridgev20-opposite") {
-      oppositeBridge = new LnBridgeOpposite({
-        category: bridgeCategory,
-        sourceChain,
-        targetChain,
-        sourceToken,
-        targetToken,
-        walletClient,
-        publicClient,
-      });
+      oppositeBridge = new LnBridgeOpposite({ category: bridgeCategory, ...args });
     }
-
-    return { defaultBridge, oppositeBridge, bridgeClient: defaultBridge ?? oppositeBridge };
+    return { defaultBridge, oppositeBridge, bridgeInstance: defaultBridge ?? oppositeBridge };
   }, [sourceChain, targetChain, sourceToken, targetToken, bridgeCategory, walletClient, publicClient]);
 
-  const sourceApprove = useCallback(
-    async (amount: bigint) => {
-      if (address && bridgeClient) {
-        try {
-          const receipt = await bridgeClient.sourceApprove(amount, address);
-          notifyTransaction(receipt, sourceChain);
+  const isLnBridgeExist = useCallback(
+    async (
+      apolloClient: ApolloClient<object>,
+      _sourceChain: ChainConfig,
+      _targetChain: ChainConfig,
+      _sourceToken: Token,
+      _targetToken: Token,
+    ) => {
+      const { data: lnbridgeData } = await apolloClient.query<CheckLnBridgeExistResData, CheckLnBridgeExistReqParams>({
+        query: GQL_CHECK_LNBRIDGE_EXIST,
+        variables: {
+          fromChainId: _sourceChain.id,
+          toChainId: _targetChain.id,
+          fromToken: _sourceToken.address,
+          toToken: _targetToken.address,
+        },
+        fetchPolicy: "no-cache",
+      });
 
-          setSourceAllowance(await bridgeClient.getSourceAllowance(address));
-
-          return receipt;
-        } catch (err) {
-          console.error(err);
-          notification.error({ title: "Approve failed", description: (err as Error).message });
-        }
+      if (lnbridgeData.checkLnBridgeExist) {
+        return true;
       }
+      console.warn("[isLnBridgeExist]", _sourceChain.id, _targetChain.id, _sourceToken.address, _targetToken.address);
+      return false;
     },
-    [address, bridgeClient, sourceChain],
+    [],
   );
 
-  const targetApprove = useCallback(
-    async (amount: bigint) => {
-      if (address && bridgeClient) {
-        try {
-          const receipt = await bridgeClient.targetApprove(amount, address);
-          notifyTransaction(receipt, targetChain);
+  const sourceApprove = useCallback(async (owner: Address, amount: bigint, bridge: BaseBridge, chain: ChainConfig) => {
+    try {
+      const receipt = await bridge.sourceApprove(amount, owner);
+      notifyTransaction(receipt, chain);
+      setSourceAllowance(await bridge.getSourceAllowance(owner));
+      return receipt;
+    } catch (err) {
+      console.error(err);
+      notifyError(err);
+    }
+  }, []);
 
-          setTargetAllowance(await bridgeClient.getTargetAllowance(address));
+  const targetApprove = useCallback(async (owner: Address, amount: bigint, bridge: BaseBridge, chain: ChainConfig) => {
+    try {
+      const receipt = await bridge.targetApprove(amount, owner);
+      notifyTransaction(receipt, chain);
+      setTargetAllowance(await bridge.getTargetAllowance(owner));
+      return receipt;
+    } catch (err) {
+      console.error(err);
+      notifyError(err);
+    }
+  }, []);
 
-          return receipt;
-        } catch (err) {
-          console.error(err);
-          notification.error({ title: "Approve failed", description: (err as Error).message });
-        }
-      }
-    },
-    [address, bridgeClient, targetChain],
-  );
-
+  /**
+   * LnBridgeDefault, on target chain
+   */
   const depositMargin = useCallback(
-    async (margin: bigint) => {
-      if (address && defaultBridge) {
-        try {
-          const receipt = await defaultBridge.depositMargin(margin);
-          notifyTransaction(receipt, targetChain);
+    async (relayer: Address, margin: bigint, bridge: LnBridgeDefault, chain: ChainConfig) => {
+      try {
+        const receipt = await bridge.depositMargin(margin);
+        notifyTransaction(receipt, chain);
 
-          const a = await defaultBridge.getTargetAllowance(address);
-          const b = await defaultBridge.getTargetBalance(address);
-          setTargetAllowance(a);
-          setTargetBalance(b);
+        const a = await bridge.getTargetAllowance(relayer);
+        const b = await bridge.getTargetBalance(relayer);
+        setTargetAllowance(a);
+        setTargetBalance(b);
 
-          return receipt;
-        } catch (err) {
-          console.error(err);
-          notification.error({ title: "Deposit failed", description: (err as Error).message });
-        }
+        return receipt;
+      } catch (err) {
+        console.error(err);
+        notifyError(err);
       }
     },
-    [address, defaultBridge, targetChain],
+    [],
   );
 
+  /**
+   * LnBridgeDefault, on source chain
+   */
   const setFeeAndRate = useCallback(
-    async (baseFee: bigint, feeRate: number) => {
-      if (defaultBridge) {
-        try {
-          const receipt = await defaultBridge.setFeeAndRate(baseFee, feeRate);
-          notifyTransaction(receipt, sourceChain);
-          return receipt;
-        } catch (err) {
-          console.error(err);
-          notification.error({ title: "Setting failed", description: (err as Error).message });
-        }
+    async (baseFee: bigint, feeRate: number, bridge: LnBridgeDefault, chain: ChainConfig) => {
+      try {
+        const receipt = await bridge.setFeeAndRate(baseFee, feeRate);
+        notifyTransaction(receipt, chain);
+        return receipt;
+      } catch (err) {
+        console.error(err);
+        notifyError(err);
       }
     },
-    [sourceChain, defaultBridge],
+    [],
   );
 
+  /**
+   * LnBridgeOppsite, on source chain
+   */
   const updateFeeAndMargin = useCallback(
-    async (margin: bigint, baseFee: bigint, feeRate: number) => {
-      if (address && oppositeBridge) {
-        try {
-          const receipt = await oppositeBridge.updateFeeAndMargin(margin, baseFee, feeRate);
-          notifyTransaction(receipt, sourceChain);
+    async (
+      relayer: Address,
+      margin: bigint,
+      baseFee: bigint,
+      feeRate: number,
+      bridge: LnBridgeOpposite,
+      chain: ChainConfig,
+    ) => {
+      try {
+        const receipt = await bridge.updateFeeAndMargin(margin, baseFee, feeRate);
+        notifyTransaction(receipt, chain);
 
-          const a = await oppositeBridge.getSourceAllowance(address);
-          const b = await oppositeBridge.getSourceBalance(address);
-          setSourceAllowance(a);
-          setSourceBalance(b);
+        const a = await bridge.getSourceAllowance(relayer);
+        const b = await bridge.getSourceBalance(relayer);
+        setSourceAllowance(a);
+        setSourceBalance(b);
 
-          return receipt;
-        } catch (err) {
-          console.error(err);
-          notification.error({ title: "Update failed", description: (err as Error).message });
-        }
+        return receipt;
+      } catch (err) {
+        console.error(err);
+        notifyError(err);
       }
     },
-    [address, oppositeBridge, sourceChain],
+    [],
   );
 
   const withdrawMargin = useCallback(
-    async (amount: bigint, fee: bigint) => {
-      if (address && defaultBridge) {
-        try {
-          const receipt = await defaultBridge.withdrawMargin(address, amount, fee);
-          notifyTransaction(receipt, sourceChain);
-          return receipt;
-        } catch (err) {
-          console.error(err);
-          notification.error({ title: "Withdraw failed", description: (err as Error).message });
-        }
+    async (recipient: Address, amount: bigint, fee: bigint, bridge: LnBridgeDefault, chain: ChainConfig) => {
+      try {
+        const receipt = await bridge.withdrawMargin(recipient, amount, fee);
+        notifyTransaction(receipt, chain);
+        return receipt;
+      } catch (err) {
+        console.error(err);
+        notifyError(err);
       }
     },
-    [address, defaultBridge, sourceChain],
+    [],
   );
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
 
-    if (address && bridgeClient) {
+    if (address && bridgeInstance) {
       sub$$ = forkJoin([
-        bridgeClient.getSourceAllowance(address),
-        bridgeClient.getTargetAllowance(address),
-        bridgeClient.getSourceBalance(address),
-        bridgeClient.getTargetBalance(address),
+        bridgeInstance.getSourceAllowance(address),
+        bridgeInstance.getTargetAllowance(address),
+        bridgeInstance.getSourceBalance(address),
+        bridgeInstance.getTargetBalance(address),
       ]).subscribe({
         next: ([as, at, bs, bt]) => {
           setSourceAllowance(as);
@@ -286,7 +344,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
     }
 
     return () => sub$$?.unsubscribe();
-  }, [address, bridgeClient]);
+  }, [address, bridgeInstance]);
 
   return (
     <RelayerContext.Provider
@@ -294,30 +352,37 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
         margin,
         baseFee,
         feeRate,
-        sourceBalance,
-        targetBalance,
         sourceAllowance,
         targetAllowance,
-        bridgeCategory,
+        sourceBalance,
+        targetBalance,
         sourceChain,
         targetChain,
         sourceToken,
         targetToken,
+        bridgeCategory,
         defaultBridge,
         oppositeBridge,
+
         setMargin,
         setBaseFee,
         setFeeRate,
-        setBridgeCategory,
+        setSourceAllowance,
+        setTargetAllowance,
+        setSourceBalance,
+        setTargetBalance,
         setSourceChain,
         setTargetChain,
         setSourceToken,
+        setBridgeCategory,
+
         sourceApprove,
         targetApprove,
         depositMargin,
         updateFeeAndMargin,
         setFeeAndRate,
         withdrawMargin,
+        isLnBridgeExist,
       }}
     >
       {children}

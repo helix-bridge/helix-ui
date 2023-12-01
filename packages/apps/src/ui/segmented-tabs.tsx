@@ -30,24 +30,28 @@ export default function SegmentedTabs<K extends Key = string>({
   return (
     <div className="flex flex-col items-center gap-5">
       {/* labels */}
-      <div className={`border-primary flex h-10 w-full rounded border ${className}`}>
+      <div className={`flex h-10 w-full ${className}`}>
         {options.map(({ key, label, disabled }) => (
-          <Tooltip
+          <div
             key={key}
-            enabled={!!disabled}
-            content={<span className="text-xs font-normal text-white">Coming soon</span>}
-            className="border-r-primary flex-1 border-r last:border-r-0"
+            className={`border-primary hover:border-primary/80 first:rounded-l-middle last:rounded-r-middle flex flex-1 items-center justify-center border-y border-r transition-colors duration-150 first:border-l ${
+              activeKey === key ? "bg-primary hover:bg-primary/80" : "hover:text-primary bg-transparent"
+            } ${disabled ? "opacity-60" : ""}`}
           >
-            <button
-              onClick={() => onChange(key)}
-              className={`h-full w-full flex-1 transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-60 ${
-                activeKey === key ? "bg-primary" : "bg-transparent"
-              } ${disabled ? "" : "border-r-primary border-r last:border-r-0"}`}
-              disabled={disabled}
-            >
-              {typeof label === "string" ? <span className="text-sm font-medium">{label}</span> : label}
-            </button>
-          </Tooltip>
+            <Tooltip enabled={!!disabled} content="Coming soon" className="h-full w-full">
+              <button
+                onClick={() => onChange(key)}
+                className={`h-full w-full transition disabled:cursor-not-allowed`}
+                disabled={disabled}
+              >
+                {typeof label === "string" ? (
+                  <span className="text-sm font-medium lg:font-extrabold">{label}</span>
+                ) : (
+                  label
+                )}
+              </button>
+            </Tooltip>
+          </div>
         ))}
       </div>
 

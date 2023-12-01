@@ -1,33 +1,33 @@
-import { RecordStatus } from "@/types/graphql";
+import { RecordResult } from "@/types";
 import Image from "next/image";
 import { useMemo } from "react";
 
-export function StatusTag({ status }: { status?: RecordStatus | null }) {
+export function RecordResultTag({ result }: { result?: RecordResult | null }) {
   const { icon, text, color } = useMemo(() => {
     let icon = "unknown.svg";
     let text = "Unknown";
     let color = "#00B2FF";
 
     if (
-      status === RecordStatus.PENDING ||
-      status === RecordStatus.PENDING_TO_REFUND ||
-      status === RecordStatus.PENDING_TO_CLAIM
+      result === RecordResult.PENDING ||
+      result === RecordResult.PENDING_TO_REFUND ||
+      result === RecordResult.PENDING_TO_CLAIM
     ) {
       icon = "pending.svg";
       text = "Pending";
       color = "#00B2FF";
-    } else if (status === RecordStatus.REFUNDED) {
+    } else if (result === RecordResult.REFUNDED) {
       icon = "refunded.svg";
       text = "Refunded";
       color = "#FAAD14";
-    } else if (status === RecordStatus.SUCCESS) {
+    } else if (result === RecordResult.SUCCESS) {
       icon = "success.svg";
       text = "Success";
       color = "#52C41A";
     }
 
     return { icon, text, color };
-  }, [status]);
+  }, [result]);
 
   return (
     <div
@@ -37,10 +37,10 @@ export function StatusTag({ status }: { status?: RecordStatus | null }) {
       <Image
         width={icon === "unknown.svg" ? 16 : 20}
         height={icon === "unknown.svg" ? 16 : 20}
-        alt="Status"
+        alt="Result"
         src={`/images/status/${icon}`}
       />
-      <span className="text-sm font-medium text-white">{text}</span>
+      <span className="text-sm font-medium">{text}</span>
     </div>
   );
 }

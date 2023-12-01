@@ -1,10 +1,12 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
 export const baseChain: ChainConfig = {
+  /**
+   * Chain
+   */
   id: ChainID.BASE,
   network: "base",
   name: "Base",
-  logo: "base.png",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -26,6 +28,11 @@ export const baseChain: ChainConfig = {
       url: "https://basescan.org",
     },
   },
+
+  /**
+   * Custom
+   */
+  logo: "base.png",
   tokens: [
     {
       decimals: 18,
