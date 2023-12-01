@@ -148,7 +148,7 @@ export default function Transfer() {
   }, [address, bridgeInstance, updateSourceBalance]);
 
   useEffect(() => {
-    setBridgeCategory(bridgeOptions.at(0));
+    setBridgeCategory((prevValue) => prevValue ?? bridgeOptions.at(0));
   }, [bridgeOptions, setBridgeCategory]);
 
   useEffect(() => {
@@ -292,7 +292,15 @@ export default function Transfer() {
             tokenOptions={getAvailableSourceTokens(sourceChain, targetChain)}
             onBalanceRefresh={refreshBalance}
             onChange={setTransferAmount}
-            onTokenChange={setSourceToken}
+            onTokenChange={(_sourceToken) => {
+              const _targetTokens = getAvailableTargetTokens(sourceChain, targetChain, _sourceToken);
+              const _targetToken = _targetTokens.at(0);
+              const _category = getAvailableBridges(sourceChain, targetChain, _sourceToken).at(0);
+              setBridgeCategory(_category);
+              setSourceToken(_sourceToken);
+              setTargetToken(_targetToken);
+              handleUrlParams({ _category, _sourceToken, _targetToken });
+            }}
           />
         </Label>
 
