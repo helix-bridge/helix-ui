@@ -52,5 +52,14 @@ export const polygonChain: ChainConfig = {
       logo: "ring.svg",
       cross: [{ target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnbridgev20-default" } }],
     },
+    {
+      decimals: 18,
+      symbol: "USDT",
+      name: "USDT",
+      type: "erc20",
+      address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      logo: "usdt.png",
+      cross: [{ target: { network: "polygon-zkEvm", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } }],
+    },
   ],
 };

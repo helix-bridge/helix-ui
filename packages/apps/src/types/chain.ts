@@ -24,6 +24,7 @@ export enum ChainID {
 
   MUMBAI = 80001,
   POLYGON = 137,
+  POLYGON_ZKEVM = 1101,
 
   BASE = 8453,
   BASE_GOERLI = 84531,
@@ -31,6 +32,7 @@ export enum ChainID {
   SCROLL = 534352,
   BSC = 56,
   OPTIMISM = 10,
+  GNOSIS = 100,
 }
 
 // According to graphql indexer
@@ -50,6 +52,8 @@ export type Network =
   | "mantle"
   | "mantle-goerli"
   | "polygon"
+  | "polygon-zkEvm"
+  | "gnosis"
   | "mumbai"
   | "scroll"
   | "base-goerli"

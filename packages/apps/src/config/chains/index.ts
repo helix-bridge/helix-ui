@@ -16,6 +16,8 @@ export * from "./optimism";
 export * from "./pangolin";
 export * from "./pangoro";
 export * from "./polygon";
+export * from "./polygon-zkevm";
 export * from "./scroll";
 export * from "./zksync";
 export * from "./zksync-goerli";
+export * from "./gnosis";
