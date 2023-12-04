@@ -6,6 +6,7 @@ import {
   crabChain,
   darwiniaChain,
   ethereumChain,
+  gnosisChain,
   goerliChain,
   lineaChain,
   lineaGoerliChain,
@@ -15,6 +16,7 @@ import {
   pangolinChain,
   pangoroChain,
   polygonChain,
+  polygonZkEvmChain,
   scrollChain,
   zksyncChain,
   zksyncGoerliChain,
@@ -71,6 +73,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.POLYGON:
     case "polygon":
       return polygonChain;
+    case ChainID.POLYGON_ZKEVM:
+    case "polygon-zkEvm":
+      return polygonZkEvmChain;
     case ChainID.MUMBAI:
     case "mumbai":
       return mumbaiChain;
@@ -89,6 +94,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.OPTIMISM:
     case "op":
       return optimismChain;
+    case ChainID.GNOSIS:
+    case "gnosis":
+      return gnosisChain;
     default:
       return;
   }
@@ -112,11 +120,13 @@ export function getChainConfigs(askAll?: boolean) {
     zksyncGoerliChain,
     mumbaiChain,
     polygonChain,
+    polygonZkEvmChain,
     scrollChain,
     baseChain,
     baseGoerliChain,
     bscChain,
     optimismChain,
+    gnosisChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {

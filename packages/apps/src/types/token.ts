@@ -15,7 +15,8 @@ export type TokenSymbol =
   | "xWCRAB"
   | "MNT"
   | "MATIC"
-  | "BNB";
+  | "BNB"
+  | "xDai";
 
 export type TokenType = "native" | "erc20" | "mapping";
 
