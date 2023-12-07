@@ -283,6 +283,7 @@ export default function Transfer() {
         {/* Amount */}
         <Label text="Amount" extra={isProduction() ? null : <Faucet />}>
           <BalanceInput
+            placeholder="0"
             enabledDynamicStyle
             balance={sourceBalance?.value}
             max={transferable}
