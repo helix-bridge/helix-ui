@@ -158,7 +158,7 @@ export function BalanceInput({
           placeholder={_placeholder}
           className={`w-full rounded bg-transparent text-white transition-[font-size,font-weight,line-height] duration-300 ${
             compact ? "" : "h-12"
-          } ${enabledDynamicStyle && value.input ? `leading-none ${dynamicStyle}` : "text-sm font-medium"}`}
+          } ${enabledDynamicStyle ? `leading-none ${dynamicStyle}` : "text-sm font-medium"}`}
           onChange={handleChange}
           ref={inputRef}
           disabled={disabled}
