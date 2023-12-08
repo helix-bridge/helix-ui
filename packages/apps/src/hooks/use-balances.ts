@@ -1,9 +1,9 @@
 "use client";
 
 import { getChainConfigs } from "@/utils";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Address, createPublicClient, getContract, http } from "viem";
-import { Subscription, forkJoin, map, of, merge, mergeAll } from "rxjs";
+import { forkJoin, map, of, merge, mergeAll, EMPTY } from "rxjs";
 import abi from "@/abi/erc20";
 import { ChainConfig, Token } from "@/types";
 
@@ -15,14 +15,12 @@ interface BalanceState {
   balance: bigint;
 }
 
-export function useBalances(address: Address | null | undefined, enabled: boolean) {
+export function useBalances(address: Address | null | undefined) {
   const [balances, setBalances] = useState<BalanceState[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    let sub$$: Subscription | undefined;
-
-    if (address && enabled) {
+  const updateBalances = useCallback(() => {
+    if (address) {
       setBalances((prev) => (prev.length ? [] : prev));
       setLoading(true);
 
@@ -44,7 +42,7 @@ export function useBalances(address: Address | null | undefined, enabled: boolea
           : of([]);
       });
 
-      sub$$ = merge(chainObs, 3)
+      return merge(chainObs, 3)
         .pipe(mergeAll())
         .subscribe({
           next: (res) => {
@@ -65,8 +63,13 @@ export function useBalances(address: Address | null | undefined, enabled: boolea
       setBalances((prev) => (prev.length ? [] : prev));
     }
 
-    return () => sub$$?.unsubscribe();
-  }, [address, enabled]);
+    return EMPTY.subscribe();
+  }, [address]);
 
-  return { loading, balances };
+  useEffect(() => {
+    const sub$$ = updateBalances();
+    return () => sub$$.unsubscribe();
+  }, [updateBalances]);
+
+  return { loading, balances, updateBalances };
 }
