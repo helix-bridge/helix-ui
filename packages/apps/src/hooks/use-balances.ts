@@ -3,7 +3,7 @@
 import { getChainConfigs } from "@/utils";
 import { useEffect, useState } from "react";
 import { Address, createPublicClient, getContract, http } from "viem";
-import { Subscription, combineLatest, forkJoin, map, of } from "rxjs";
+import { Subscription, forkJoin, map, of, merge, mergeAll } from "rxjs";
 import abi from "@/abi/erc20";
 import { ChainConfig, Token } from "@/types";
 
@@ -23,6 +23,7 @@ export function useBalances(address: Address | null | undefined, enabled: boolea
     let sub$$: Subscription | undefined;
 
     if (address && enabled) {
+      setBalances((prev) => (prev.length ? [] : prev));
       setLoading(true);
 
       const chainObs = chains.map(({ tokens, ...chain }) => {
@@ -43,21 +44,25 @@ export function useBalances(address: Address | null | undefined, enabled: boolea
           : of([]);
       });
 
-      sub$$ = combineLatest(chainObs).subscribe({
-        next: (res) => {
-          setBalances(res.reduce((acc, cur) => acc.concat(cur), [] as BalanceState[]));
-        },
-        error: (err) => {
-          console.error(err);
-          setLoading(false);
-          setBalances([]);
-        },
-        complete: () => {
-          setLoading(false);
-        },
-      });
+      sub$$ = merge(chainObs, 3)
+        .pipe(mergeAll())
+        .subscribe({
+          next: (res) => {
+            setBalances((prev) =>
+              res.reduce((acc, cur) => acc.concat(cur).sort((a, b) => a.chain.name.localeCompare(b.chain.name)), prev),
+            );
+          },
+          error: (err) => {
+            console.error(err);
+            setLoading(false);
+            setBalances((prev) => (prev.length ? [] : prev));
+          },
+          complete: () => {
+            setLoading(false);
+          },
+        });
     } else {
-      setBalances([]);
+      setBalances((prev) => (prev.length ? [] : prev));
     }
 
     return () => sub$$?.unsubscribe();
