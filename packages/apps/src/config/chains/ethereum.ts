@@ -1,34 +1,14 @@
-import { ChainConfig, ChainID } from "@/types/chain";
+import { ChainConfig } from "@/types/chain";
 import { parseUnits } from "viem";
+import { mainnet } from "wagmi";
 
 export const ethereumChain: ChainConfig = {
   /**
    * Chain
    */
-  id: ChainID.ETHEREUM,
+  ...mainnet,
   network: "ethereum",
   name: "Ethereum",
-  nativeCurrency: {
-    name: "ETH",
-    symbol: "ETH",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://mainnet.infura.io/v3/5350449ccd2349afa007061e62ee1409"],
-      webSocket: ["wss://mainnet.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409"],
-    },
-    public: {
-      http: ["https://mainnet.infura.io/v3/5350449ccd2349afa007061e62ee1409"],
-      webSocket: ["wss://mainnet.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Etherscan",
-      url: "https://etherscan.io/",
-    },
-  },
 
   /**
    * Custom

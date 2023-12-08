@@ -1,33 +1,13 @@
-import { ChainConfig, ChainID } from "@/types/chain";
+import { ChainConfig } from "@/types/chain";
+import { optimism } from "viem/chains";
 
 export const optimismChain: ChainConfig = {
   /**
    * Chain
    */
-  id: ChainID.OPTIMISM,
+  ...optimism,
   network: "op",
   name: "OP Mainnet",
-  nativeCurrency: {
-    name: "ETH",
-    symbol: "ETH",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://mainnet.optimism.io"],
-      webSocket: ["wss://optimism.publicnode.com"],
-    },
-    public: {
-      http: ["https://mainnet.optimism.io"],
-      webSocket: ["wss://optimism.publicnode.com"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Etherscan",
-      url: "https://optimistic.etherscan.io/",
-    },
-  },
 
   /**
    * Custom

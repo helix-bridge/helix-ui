@@ -1,32 +1,13 @@
-import { ChainConfig, ChainID } from "@/types/chain";
+import { ChainConfig } from "@/types/chain";
+import { arbitrumGoerli } from "viem/chains";
 
 export const arbitrumGoerliChain: ChainConfig = {
   /**
    * Chain
    */
-  id: ChainID.ARBITRUM_GOERLI,
+  ...arbitrumGoerli,
   network: "arbitrum-goerli",
   name: "Arbitrum Goerli",
-  nativeCurrency: {
-    name: "ETH",
-    symbol: "ETH",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://goerli-rollup.arbitrum.io/rpc"],
-    },
-    public: {
-      http: ["https://goerli-rollup.arbitrum.io/rpc"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Arbiscan",
-      url: "https://goerli.arbiscan.io/",
-    },
-  },
-  testnet: true,
 
   /**
    * Custom

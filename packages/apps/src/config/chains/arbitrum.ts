@@ -1,31 +1,13 @@
-import { ChainConfig, ChainID } from "@/types/chain";
+import { ChainConfig } from "@/types/chain";
+import { arbitrum } from "viem/chains";
 
 export const arbitrumChain: ChainConfig = {
   /**
    * Chain
    */
-  id: ChainID.ARBITRUM,
+  ...arbitrum,
   network: "arbitrum",
   name: "Arbitrum One",
-  nativeCurrency: {
-    name: "ETH",
-    symbol: "ETH",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://arb1.arbitrum.io/rpc"],
-    },
-    public: {
-      http: ["https://arb1.arbitrum.io/rpc"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Arbiscan",
-      url: "https://arbiscan.io/",
-    },
-  },
 
   /**
    * Custom

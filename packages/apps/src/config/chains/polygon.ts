@@ -1,33 +1,13 @@
-import { ChainConfig, ChainID } from "@/types/chain";
+import { ChainConfig } from "@/types/chain";
+import { polygon } from "viem/chains";
 
 export const polygonChain: ChainConfig = {
   /**
    * Chain
    */
-  id: ChainID.POLYGON,
+  ...polygon,
   network: "polygon",
   name: "Polygon PoS",
-  nativeCurrency: {
-    name: "MATIC",
-    symbol: "MATIC",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://polygon-rpc.com/"],
-      webSocket: ["wss://polygon-bor.publicnode.com"],
-    },
-    public: {
-      http: ["https://polygon-rpc.com/"],
-      webSocket: ["wss://polygon-bor.publicnode.com"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Polygonscan",
-      url: "https://polygonscan.com/",
-    },
-  },
 
   /**
    * Custom

@@ -1,33 +1,13 @@
-import { ChainConfig, ChainID } from "@/types/chain";
+import { ChainConfig } from "@/types/chain";
+import { base } from "viem/chains";
 
 export const baseChain: ChainConfig = {
   /**
    * Chain
    */
-  id: ChainID.BASE,
+  ...base,
   network: "base",
   name: "Base",
-  nativeCurrency: {
-    name: "ETH",
-    symbol: "ETH",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://mainnet.base.org"],
-      webSocket: ["wss://base.publicnode.com"],
-    },
-    public: {
-      http: ["https://mainnet.base.org"],
-      webSocket: ["wss://base.publicnode.com"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Basescan",
-      url: "https://basescan.org",
-    },
-  },
 
   /**
    * Custom

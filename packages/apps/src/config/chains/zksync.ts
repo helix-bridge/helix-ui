@@ -1,33 +1,13 @@
-import { ChainConfig, ChainID } from "@/types/chain";
+import { ChainConfig } from "@/types/chain";
+import { zkSync } from "viem/chains";
 
 export const zksyncChain: ChainConfig = {
   /**
    * Chain
    */
-  id: ChainID.ZKSYNC,
+  ...zkSync,
   network: "zksync",
   name: "zkSync era",
-  nativeCurrency: {
-    name: "ETH",
-    symbol: "ETH",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://mainnet.era.zksync.io"],
-      webSocket: ["wss://mainnet.era.zksync.io/ws"],
-    },
-    public: {
-      http: ["https://mainnet.era.zksync.io"],
-      webSocket: ["wss://mainnet.era.zksync.io/ws"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Zksync",
-      url: "https://explorer.zksync.io/",
-    },
-  },
 
   /**
    * Custom

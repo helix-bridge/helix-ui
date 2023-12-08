@@ -1,33 +1,13 @@
-import { ChainConfig, ChainID } from "@/types";
+import { ChainConfig } from "@/types";
+import { polygonZkEvm } from "viem/chains";
 
 export const polygonZkEvmChain: ChainConfig = {
   /**
    * Chain
    */
-  id: ChainID.POLYGON_ZKEVM,
+  ...polygonZkEvm,
   network: "polygon-zkEvm",
   name: "Polygon zkEVM",
-  nativeCurrency: {
-    name: "ETH",
-    symbol: "ETH",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://zkevm-rpc.com"],
-      webSocket: [],
-    },
-    public: {
-      http: ["https://zkevm-rpc.com"],
-      webSocket: [],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Polygonscan",
-      url: "https://zkevm.polygonscan.com/",
-    },
-  },
 
   /**
    * Custom

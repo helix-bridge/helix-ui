@@ -1,33 +1,13 @@
-import { ChainConfig, ChainID } from "@/types/chain";
+import { ChainConfig } from "@/types/chain";
+import { bsc } from "viem/chains";
 
 export const bscChain: ChainConfig = {
   /**
    * Chain
    */
-  id: ChainID.BSC,
+  ...bsc,
   network: "bsc",
   name: "BSC",
-  nativeCurrency: {
-    name: "BNB",
-    symbol: "BNB",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://bsc-dataseed1.binance.org"],
-      webSocket: ["wss://bsc.publicnode.com"],
-    },
-    public: {
-      http: ["https://bsc-dataseed1.binance.org"],
-      webSocket: ["wss://bsc.publicnode.com"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "BscScan",
-      url: "https://bscscan.com/",
-    },
-  },
 
   /**
    * Custom

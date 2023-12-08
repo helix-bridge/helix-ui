@@ -1,34 +1,13 @@
-import { ChainConfig, ChainID } from "@/types/chain";
+import { ChainConfig } from "@/types/chain";
+import { baseGoerli } from "viem/chains";
 
 export const baseGoerliChain: ChainConfig = {
   /**
    * Chain
    */
-  id: ChainID.BASE_GOERLI,
+  ...baseGoerli,
   network: "base-goerli",
   name: "Base Goerli",
-  nativeCurrency: {
-    name: "ETH",
-    symbol: "ETH",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://goerli.base.org"],
-      webSocket: ["wss://base-goerli.publicnode.com"],
-    },
-    public: {
-      http: ["https://goerli.base.org"],
-      webSocket: ["wss://base-goerli.publicnode.com"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Basescan",
-      url: "https://goerli.basescan.org",
-    },
-  },
-  testnet: true,
 
   /**
    * Custom

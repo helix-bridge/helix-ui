@@ -1,34 +1,13 @@
-import { ChainConfig, ChainID } from "@/types/chain";
+import { ChainConfig } from "@/types/chain";
+import { zkSyncTestnet } from "viem/chains";
 
 export const zksyncGoerliChain: ChainConfig = {
   /**
    * Chain
    */
-  id: ChainID.ZKSYNC_GOERLI,
+  ...zkSyncTestnet,
   network: "zksync-goerli",
   name: "Zksync Era Testnet",
-  nativeCurrency: {
-    name: "ETH",
-    symbol: "ETH",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://testnet.era.zksync.dev"],
-      webSocket: ["wss://testnet.era.zksync.dev/ws"],
-    },
-    public: {
-      http: ["https://testnet.era.zksync.dev"],
-      webSocket: ["wss://testnet.era.zksync.dev/ws"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Zksync",
-      url: "https://goerli.explorer.zksync.io/",
-    },
-  },
-  testnet: true,
 
   /**
    * Custom

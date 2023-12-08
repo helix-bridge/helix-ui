@@ -1,33 +1,13 @@
-import { ChainConfig, ChainID } from "@/types/chain";
+import { ChainConfig } from "@/types/chain";
+import { scroll } from "viem/chains";
 
 export const scrollChain: ChainConfig = {
   /**
    * Chain
    */
-  id: ChainID.SCROLL,
+  ...scroll,
   network: "scroll",
   name: "Scroll",
-  nativeCurrency: {
-    name: "ETH",
-    symbol: "ETH",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://rpc.scroll.io"],
-      webSocket: [],
-    },
-    public: {
-      http: ["https://rpc.scroll.io"],
-      webSocket: [],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Scrollscan",
-      url: "https://scrollscan.com",
-    },
-  },
 
   /**
    * Custom

@@ -1,33 +1,13 @@
-import { ChainConfig, ChainID } from "@/types";
+import { ChainConfig } from "@/types";
+import { gnosis } from "viem/chains";
 
 export const gnosisChain: ChainConfig = {
   /**
    * Chain
    */
-  id: ChainID.GNOSIS,
+  ...gnosis,
   network: "gnosis",
   name: "Gnosis Chain",
-  nativeCurrency: {
-    name: "xDai",
-    symbol: "xDai",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://rpc.gnosischain.com/"],
-      webSocket: [],
-    },
-    public: {
-      http: ["https://rpc.gnosischain.com/"],
-      webSocket: [],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "GnosisScan",
-      url: "https://gnosisscan.io/",
-    },
-  },
 
   /**
    * Custom

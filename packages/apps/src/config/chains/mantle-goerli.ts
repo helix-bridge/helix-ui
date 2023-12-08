@@ -1,34 +1,13 @@
-import { ChainConfig, ChainID } from "@/types/chain";
+import { ChainConfig } from "@/types/chain";
+import { mantleTestnet } from "viem/chains";
 
 export const mantleGoerliChain: ChainConfig = {
   /**
    * Chain
    */
-  id: ChainID.MANTLE_GOERLI,
+  ...mantleTestnet,
   network: "mantle-goerli",
   name: "Mantle Testnet",
-  nativeCurrency: {
-    name: "MNT",
-    symbol: "MNT",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://rpc.testnet.mantle.xyz"],
-      webSocket: ["wss://rpc.testnet.mantle.xyz"],
-    },
-    public: {
-      http: ["https://rpc.testnet.mantle.xyz"],
-      webSocket: ["wss://rpc.testnet.mantle.xyz"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Mantle",
-      url: "https://explorer.testnet.mantle.xyz/",
-    },
-  },
-  testnet: true,
 
   /**
    * Custom

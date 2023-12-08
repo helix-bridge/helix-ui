@@ -1,34 +1,13 @@
-import { ChainConfig, ChainID } from "@/types/chain";
+import { ChainConfig } from "@/types/chain";
+import { goerli } from "viem/chains";
 
 export const goerliChain: ChainConfig = {
   /**
    * Chain
    */
-  id: ChainID.GOERLI,
+  ...goerli,
   network: "goerli",
   name: "Goerli",
-  nativeCurrency: {
-    name: "goerliETH",
-    symbol: "goerliETH",
-    decimals: 18,
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://goerli.infura.io/v3/5350449ccd2349afa007061e62ee1409"],
-      webSocket: ["wss://goerli.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409"],
-    },
-    public: {
-      http: ["https://goerli.infura.io/v3/5350449ccd2349afa007061e62ee1409"],
-      webSocket: ["wss://goerli.infura.io/ws/v3/5350449ccd2349afa007061e62ee1409"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Etherscan",
-      url: "https://goerli.etherscan.io/",
-    },
-  },
-  testnet: true,
 
   /**
    * Custom
