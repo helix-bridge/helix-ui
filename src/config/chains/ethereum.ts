@@ -1,6 +1,6 @@
 import { ChainConfig } from "@/types/chain";
 import { parseUnits } from "viem";
-import { mainnet } from "wagmi";
+import { mainnet } from "viem/chains";
 
 export const ethereumChain: ChainConfig = {
   /**
