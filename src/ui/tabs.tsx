@@ -56,8 +56,8 @@ export default function Tabs<K extends Key = string>({
                 e.stopPropagation();
                 onChange(key);
               }}
-              className={`rounded-middle px-3 py-1 text-base transition duration-200 hover:bg-white/10 ${
-                key === activeKey ? "font-medium text-primary" : "font-normal text-white"
+              className={`rounded-middle px-3 py-1 text-sm transition duration-200 hover:bg-white/10 ${
+                key === activeKey ? "font-extrabold text-primary" : "font-medium text-white"
               }`}
             >
               {typeof label === "string" ? <span>{label}</span> : label}
