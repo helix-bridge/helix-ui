@@ -1,7 +1,15 @@
-import { useApp, useBalances } from "@/hooks";
+import { useApp, useTransfer } from "@/hooks";
 import { UrlSearchParamKey } from "@/types";
 import Dropdown from "@/ui/dropdown";
-import { formatBalance, getChainLogoSrc, getTokenLogoSrc, toShortAdrress } from "@/utils";
+import {
+  formatBalance,
+  getAvailableBridges,
+  getAvailableTargetChains,
+  getAvailableTargetTokens,
+  getChainLogoSrc,
+  getTokenLogoSrc,
+  toShortAdrress,
+} from "@/utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,6 +18,7 @@ import { useAccount, useDisconnect } from "wagmi";
 import PrettyAddress from "./pretty-address";
 import AddressIdenticon from "./address-identicon";
 import { Placement } from "@floating-ui/react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Props {
   placement: Placement;
@@ -19,12 +28,16 @@ interface Props {
 }
 
 export default function User({ placement, prefixLength = 10, suffixLength = 8, onComplete = () => undefined }: Props) {
-  const { setRecordsSearch } = useApp();
+  const { setBridgeCategory, setSourceChain, setTargetChain, setSourceToken, setTargetToken, updateUrlParams } =
+    useTransfer();
+  const { balances, setRecordsSearch } = useApp();
 
   const { address } = useAccount();
-  const { balances } = useBalances(address);
   const { disconnect } = useDisconnect();
   const { openConnectModal } = useConnectModal();
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   return address ? (
     <Dropdown
@@ -65,11 +78,36 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8, o
 
       <div className="mx-5 h-[1px] bg-white/10" />
 
-      <div className="flex max-h-[40vh] flex-col gap-large overflow-y-auto px-5 lg:max-h-[70vh]">
+      <div className="relative flex max-h-[40vh] flex-col overflow-y-auto px-2 lg:max-h-[72vh]">
         {balances
           .filter(({ balance }) => 0 < balance)
           .map((balance) => (
-            <div key={`${balance.chain.network}-${balance.token.symbol}`} className="flex items-center gap-large">
+            <button
+              key={`${balance.chain.network}-${balance.token.symbol}`}
+              className="flex items-center gap-large rounded-middle px-3 py-2 transition-colors hover:bg-white/10 lg:py-middle"
+              onClick={() => {
+                const _sourceChain = balance.chain;
+                const _sourceToken = balance.token;
+                const _targetChains = getAvailableTargetChains(_sourceChain);
+                const _targetChain = _targetChains.at(0);
+                const _targetTokens = getAvailableTargetTokens(_sourceChain, _targetChain, _sourceToken);
+                const _targetToken = _targetTokens.at(0);
+                const _category = getAvailableBridges(_sourceChain, _targetChain, _sourceToken).at(0);
+
+                setBridgeCategory(_category);
+                setSourceChain(_sourceChain);
+                setTargetChain(_targetChain);
+                setSourceToken(_sourceToken);
+                setTargetToken(_targetToken);
+                updateUrlParams(router, searchParams, {
+                  _category,
+                  _sourceChain,
+                  _targetChain,
+                  _sourceToken,
+                  _targetToken,
+                });
+              }}
+            >
               <div className="relative">
                 <Image
                   alt="Token"
@@ -86,13 +124,13 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8, o
                   className="absolute -bottom-1 -right-1 rounded-full"
                 />
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col items-start">
                 <span className="text-sm font-semibold text-white">
                   {formatBalance(balance.balance, balance.token.decimals)} {balance.token.symbol}
                 </span>
                 <span className="text-xs font-medium text-white/50">{balance.chain.name}</span>
               </div>
-            </div>
+            </button>
           ))}
       </div>
     </Dropdown>

@@ -6,6 +6,7 @@ import Header from "@/components/header";
 import RainbowProvider from "@/providers/rainbow-provider";
 import GraphqlProvider from "@/providers/graphql-provider";
 import AppProvider from "@/providers/app-provider";
+import TransferProvider from "@/providers/transfer-provider";
 
 const ibm_plex_sans = IBM_Plex_Sans({
   subsets: ["latin", "latin-ext"],
@@ -24,9 +25,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <GraphqlProvider>
           <RainbowProvider>
             <AppProvider>
-              <Header />
-              {children}
-              <Footer />
+              <TransferProvider>
+                <Header />
+                {children}
+                <Footer />
+              </TransferProvider>
             </AppProvider>
           </RainbowProvider>
         </GraphqlProvider>

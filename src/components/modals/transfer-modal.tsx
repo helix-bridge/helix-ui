@@ -1,6 +1,6 @@
 import { BaseBridge } from "@/bridges";
 import { GQL_HISTORY_RECORD_BY_TX_HASH } from "@/config";
-import { useTransfer } from "@/hooks";
+import { useApp, useTransfer } from "@/hooks";
 import {
   ChainConfig,
   HistoryRecordByTxHashReqParams,
@@ -31,6 +31,7 @@ interface Props {
 }
 
 export default function TransferModal({ sender, recipient, transferAmount, isOpen, onClose, refetchRelayers }: Props) {
+  const { updateBalances } = useApp();
   const { bridgeInstance, sourceChain, targetChain, sourceToken, targetToken, bridgeFee, transfer } = useTransfer();
   const [txHash, setTxHash] = useState<Hex>("0x");
   const [busy, setBusy] = useState(false);
@@ -69,6 +70,7 @@ export default function TransferModal({ sender, recipient, transferAmount, isOpe
 
         if (receipt?.status === "success") {
           setTxHash(receipt.transactionHash);
+          updateBalances();
           setDisabled(true);
         }
       } catch (err) {
@@ -78,7 +80,7 @@ export default function TransferModal({ sender, recipient, transferAmount, isOpe
         setBusy(false);
       }
     }
-  }, [sender, recipient, sourceChain, transferAmount, bridgeInstance, transfer, refetchRelayers]);
+  }, [sender, recipient, sourceChain, transferAmount, bridgeInstance, transfer, refetchRelayers, updateBalances]);
 
   // Reset state
   useEffect(() => {
@@ -140,6 +142,7 @@ export default function TransferModal({ sender, recipient, transferAmount, isOpe
             confirmedBlocks={txProgressData?.historyRecordByTxHash?.confirmedBlocks}
             result={txProgressData?.historyRecordByTxHash?.result}
             id={txProgressData?.historyRecordByTxHash?.id}
+            onFinished={updateBalances}
           />
         </div>
       ) : null}
@@ -212,10 +215,12 @@ function Progress({
   confirmedBlocks,
   result,
   id,
+  onFinished = () => undefined,
 }: {
   confirmedBlocks: string | null | undefined;
   result: RecordResult | null | undefined;
   id: string | null | undefined;
+  onFinished?: () => void;
 }) {
   const splited = confirmedBlocks?.split("/");
   if (splited?.length === 2) {
@@ -223,6 +228,7 @@ function Progress({
     const total = Number(splited[1]);
 
     if (finished === total || result === RecordResult.SUCCESS) {
+      onFinished();
       return (
         <div className="flex w-full items-center justify-between">
           <div className="inline-flex">

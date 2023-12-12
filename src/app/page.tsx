@@ -1,5 +1,4 @@
 import PageWrap from "@/ui/page-wrap";
-import TransferProvider from "@/providers/transfer-provider";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
@@ -13,9 +12,7 @@ const Transfer = dynamic(() => import("@/components/transfer"), { ssr: false });
 export default function HomePage() {
   return (
     <PageWrap>
-      <TransferProvider>
-        <Transfer />
-      </TransferProvider>
+      <Transfer />
     </PageWrap>
   );
 }

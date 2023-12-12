@@ -2,14 +2,7 @@
 
 import { GQL_SORTED_LNV20_RELAY_INFOS } from "@/config";
 import { useToggle, useTransfer } from "@/hooks";
-import {
-  BridgeCategory,
-  ChainConfig,
-  SortedLnV20RelayInfosReqParams,
-  SortedLnV20RelayInfosResData,
-  Token,
-  UrlSearchParamKey,
-} from "@/types";
+import { SortedLnV20RelayInfosReqParams, SortedLnV20RelayInfosResData } from "@/types";
 import {
   getAvailableBridges,
   getAvailableSourceTokens,
@@ -55,6 +48,7 @@ export default function Transfer() {
     setBridgeFee,
     setBridgeCategory,
     updateSourceBalance,
+    updateUrlParams,
   } = useTransfer();
   const deferredTransferAmount = useDeferredValue(transferAmount);
 
@@ -110,34 +104,6 @@ export default function Transfer() {
 
   const searchParams = useSearchParams();
   const router = useRouter();
-
-  const handleUrlParams = ({
-    _category,
-    _sourceChain,
-    _targetChain,
-    _sourceToken,
-    _targetToken,
-  }: {
-    _category?: BridgeCategory;
-    _sourceChain?: ChainConfig;
-    _targetChain?: ChainConfig;
-    _sourceToken?: Token;
-    _targetToken?: Token;
-  }) => {
-    const params = new URLSearchParams(searchParams.toString());
-    const c = _category || bridgeCategory;
-    const sc = _sourceChain || sourceChain;
-    const tc = _targetChain || targetChain;
-    const st = _sourceToken || sourceToken;
-    const tt = _targetToken || targetToken;
-
-    c && params.set(UrlSearchParamKey.BRIDGE, c);
-    sc && params.set(UrlSearchParamKey.SOURCE_CHAIN, sc.network);
-    tc && params.set(UrlSearchParamKey.TARGET_CHAIN, tc.network);
-    st && params.set(UrlSearchParamKey.SOURCE_TOKEN, st.symbol);
-    tt && params.set(UrlSearchParamKey.TARGET_TOKEN, tt.symbol);
-    router.push(`?${params.toString()}`);
-  };
 
   const refreshBalance = useCallback(async () => {
     if (address && bridgeInstance) {
@@ -236,7 +202,13 @@ export default function Transfer() {
                 setTargetChain(_targetChain);
                 setSourceToken(_sourceToken);
                 setTargetToken(_targetToken);
-                handleUrlParams({ _category, _sourceChain, _targetChain, _sourceToken, _targetToken });
+                updateUrlParams(router, searchParams, {
+                  _category,
+                  _sourceChain,
+                  _targetChain,
+                  _sourceToken,
+                  _targetToken,
+                });
               }}
             />
           </Label>
@@ -254,7 +226,13 @@ export default function Transfer() {
               setTargetChain(_targetChain);
               setSourceToken(_sourceToken);
               setTargetToken(_targetToken);
-              handleUrlParams({ _category, _sourceChain, _targetChain, _sourceToken, _targetToken });
+              updateUrlParams(router, searchParams, {
+                _category,
+                _sourceChain,
+                _targetChain,
+                _sourceToken,
+                _targetToken,
+              });
             }}
           />
           <Label text="To" className="w-full" needAbsolute>
@@ -274,7 +252,7 @@ export default function Transfer() {
                 setTargetChain(_targetChain);
                 setSourceToken(_sourceToken);
                 setTargetToken(_targetToken);
-                handleUrlParams({ _category, _targetChain, _sourceToken, _targetToken });
+                updateUrlParams(router, searchParams, { _category, _targetChain, _sourceToken, _targetToken });
               }}
             />
           </Label>
@@ -300,7 +278,7 @@ export default function Transfer() {
               setBridgeCategory(_category);
               setSourceToken(_sourceToken);
               setTargetToken(_targetToken);
-              handleUrlParams({ _category, _sourceToken, _targetToken });
+              updateUrlParams(router, searchParams, { _category, _sourceToken, _targetToken });
             }}
           />
         </Label>
@@ -312,7 +290,7 @@ export default function Transfer() {
             value={bridgeCategory}
             onChange={(_category) => {
               setBridgeCategory(_category);
-              handleUrlParams({ _category });
+              updateUrlParams(router, searchParams, { _category });
             }}
           />
         </Label>

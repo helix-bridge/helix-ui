@@ -10,7 +10,7 @@ import { ChainConfig, Token } from "@/types";
 const chains = getChainConfigs();
 
 interface BalanceState {
-  chain: Omit<ChainConfig, "tokens">;
+  chain: ChainConfig;
   token: Token;
   balance: bigint;
 }
@@ -24,10 +24,10 @@ export function useBalances(address: Address | null | undefined) {
       setBalances((prev) => (prev.length ? [] : prev));
       setLoading(true);
 
-      const chainObs = chains.map(({ tokens, ...chain }) => {
+      const chainObs = chains.map((chain) => {
         const publicClient = createPublicClient({ chain, batch: { multicall: true }, transport: http() });
 
-        const balancesObs = tokens.map((token) => {
+        const balancesObs = chain.tokens.map((token) => {
           if (token.type === "native") {
             return publicClient.getBalance({ address });
           } else {
@@ -37,7 +37,7 @@ export function useBalances(address: Address | null | undefined) {
         });
         return balancesObs.length
           ? forkJoin(balancesObs).pipe(
-              map((_balances) => _balances.map((balance, index) => ({ chain, token: tokens[index], balance }))),
+              map((_balances) => _balances.map((balance, index) => ({ chain, token: chain.tokens[index], balance }))),
             )
           : of([]);
       });

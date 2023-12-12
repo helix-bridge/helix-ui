@@ -25,6 +25,16 @@ import {
 import { Address, TransactionReceipt } from "viem";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { Subscription, forkJoin } from "rxjs";
+import { ReadonlyURLSearchParams } from "next/navigation";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+
+interface UpdateUrlParamsOptions {
+  _category?: BridgeCategory | undefined;
+  _sourceChain?: ChainConfig | undefined;
+  _targetChain?: ChainConfig | undefined;
+  _sourceToken?: Token | undefined;
+  _targetToken?: Token | undefined;
+}
 
 interface TransferCtx {
   bridgeInstance: BaseBridge | undefined;
@@ -65,6 +75,11 @@ interface TransferCtx {
     chain: ChainConfig,
   ) => Promise<TransactionReceipt | undefined>;
   updateSourceBalance: (sender: Address, bridge: BaseBridge) => Promise<void>;
+  updateUrlParams: (
+    router: AppRouterInstance,
+    searchParams: ReadonlyURLSearchParams,
+    options: UpdateUrlParamsOptions,
+  ) => void;
 }
 
 const { defaultBridgeCategory, defaultSourceChain, defaultTargetChain, defaultSourceToken, defaultTargetToken } =
@@ -97,6 +112,7 @@ const defaultValue: TransferCtx = {
   transfer: async () => undefined,
   sourceApprove: async () => undefined,
   updateSourceBalance: async () => undefined,
+  updateUrlParams: () => undefined,
 };
 
 export const TransferContext = createContext(defaultValue);
@@ -179,6 +195,29 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
       setSourceBalance(undefined);
     }
   }, []);
+
+  const updateUrlParams = useCallback(
+    (
+      router: AppRouterInstance,
+      searchParams: ReadonlyURLSearchParams,
+      { _category, _sourceChain, _targetChain, _sourceToken, _targetToken }: UpdateUrlParamsOptions,
+    ) => {
+      const params = new URLSearchParams(searchParams.toString());
+      const c = _category || bridgeCategory;
+      const sc = _sourceChain || sourceChain;
+      const tc = _targetChain || targetChain;
+      const st = _sourceToken || sourceToken;
+      const tt = _targetToken || targetToken;
+
+      c && params.set(UrlSearchParamKey.BRIDGE, c);
+      sc && params.set(UrlSearchParamKey.SOURCE_CHAIN, sc.network);
+      tc && params.set(UrlSearchParamKey.TARGET_CHAIN, tc.network);
+      st && params.set(UrlSearchParamKey.SOURCE_TOKEN, st.symbol);
+      tt && params.set(UrlSearchParamKey.TARGET_TOKEN, tt.symbol);
+      router.push(`?${params.toString()}`);
+    },
+    [bridgeCategory, sourceChain, targetChain, sourceToken, targetToken],
+  );
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
@@ -276,6 +315,7 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
         transfer,
         sourceApprove,
         updateSourceBalance,
+        updateUrlParams,
       }}
     >
       {children}
