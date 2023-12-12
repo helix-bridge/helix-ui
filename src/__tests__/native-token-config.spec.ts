@@ -1,3 +1,4 @@
+import { describe, expect, it } from "@jest/globals";
 import { getChainConfigs } from "../utils/chain";
 import type { ChainConfig } from "../types/chain";
 

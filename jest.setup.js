@@ -76,7 +76,7 @@ const config = {
   // An enum that specifies notification mode. Requires { notify: true }
   // notifyMode: "failure-change",
   // A preset that is used as a base for Jest's configuration
-  // preset: undefined,
+  preset: "ts-jest",
   // Run tests from one or more projects
   // projects: undefined,
   // Use this configuration option to add custom reporters to Jest
@@ -106,7 +106,7 @@ const config = {
   // A list of paths to snapshot serializer modules Jest should use for snapshot testing
   // snapshotSerializers: [],
   // The test environment that will be used for testing
-  // testEnvironment: "jsdom",
+  testEnvironment: "node",
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
   // Adds a location field to test results
