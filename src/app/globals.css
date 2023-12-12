@@ -41,15 +41,15 @@ body {
 
   /* Page */
   .page-container {
-    @apply px-middle container mx-auto py-5;
+    @apply container mx-auto px-middle py-5;
   }
 
   /* User */
   .user-connect-wallet {
-    @apply bg-primary gap-middle rounded-middle px-large lg:hover:bg-primary/80 flex h-9 shrink-0 items-center transition lg:h-8 lg:active:translate-y-1;
+    @apply flex h-9 shrink-0 items-center gap-middle rounded-middle bg-primary px-large transition lg:h-8 lg:hover:bg-primary/80 lg:active:translate-y-1;
   }
   .user-dropdown-item {
-    @apply gap-middle px-large py-small inline-flex items-center text-start transition hover:bg-white/10 lg:active:translate-y-1;
+    @apply inline-flex items-center gap-middle rounded-middle px-middle py-small text-start transition hover:bg-white/10 lg:active:translate-y-1;
   }
 
   .button {
@@ -63,11 +63,11 @@ body {
   .valid-input-wrap {
   }
   .invalid-input-wrap {
-    @apply hover:border-app-red focus-within:border-app-red border-app-red;
+    @apply border-app-red focus-within:border-app-red hover:border-app-red;
   }
 
   .select {
-    @apply hover:border-primary focus-within:border-primary border transition duration-300 disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1 lg:disabled:translate-y-0;
+    @apply border transition duration-300 focus-within:border-primary hover:border-primary disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1 lg:disabled:translate-y-0;
   }
 }
 

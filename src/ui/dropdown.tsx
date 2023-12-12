@@ -1,6 +1,7 @@
 import { useToggle } from "@/hooks/use-toggle";
 import {
   FloatingPortal,
+  Placement,
   offset,
   size,
   useClick,
@@ -15,6 +16,7 @@ import { PropsWithChildren, ReactElement } from "react";
 
 interface Props {
   label: ReactElement;
+  placement?: Placement;
   hoverable?: boolean;
   sameWidth?: boolean;
   labelClassName?: string;
@@ -24,6 +26,7 @@ interface Props {
 export default function Dropdown({
   label,
   children,
+  placement,
   hoverable,
   sameWidth,
   labelClassName,
@@ -44,6 +47,7 @@ export default function Dropdown({
           })
         : undefined,
     ],
+    placement,
   });
 
   const { styles, isMounted } = useTransitionStyles(context, {

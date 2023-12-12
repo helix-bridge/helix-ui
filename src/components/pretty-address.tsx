@@ -8,19 +8,21 @@ interface Props {
   copyable?: boolean;
   className?: string;
   forceShort?: boolean;
+  prefixLength?: number;
+  suffixLength?: number;
 }
 
-export default function PrettyAddress({ address, copyable, className, forceShort }: Props) {
+export default function PrettyAddress({ address, copyable, className, forceShort, prefixLength, suffixLength }: Props) {
   return (
     <div className="inline-flex items-center gap-small">
       {forceShort ? (
         <Tooltip enabledSafePolygon content={address}>
-          <span className={className}>{toShortAdrress(address)}</span>
+          <span className={className}>{toShortAdrress(address, prefixLength, suffixLength)}</span>
         </Tooltip>
       ) : (
         <>
           <Tooltip enabledSafePolygon content={address} className={`lg:hidden ${className}`}>
-            <span>{toShortAdrress(address)}</span>
+            <span>{toShortAdrress(address, prefixLength, suffixLength)}</span>
           </Tooltip>
           <span className={`hidden lg:inline ${className}`}>{address}</span>
         </>

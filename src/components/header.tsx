@@ -100,7 +100,7 @@ export default function Header() {
           {/* Right */}
           <div className="hidden items-center gap-middle lg:flex">
             <ChainIdentity />
-            <User />
+            <User placement="bottom-end" prefixLength={14} suffixLength={10} />
           </div>
           <Image
             width={24}
@@ -114,7 +114,7 @@ export default function Header() {
       </div>
 
       <Drawer maskClosable isOpen={isOpen} onClose={setIsOpenFalse}>
-        <div className="flex h-96 w-full items-start justify-center">
+        <div className="flex w-full items-start justify-center" style={{ marginTop: "20%" }}>
           <div className="flex w-max flex-col items-start gap-10">
             <div className="flex flex-col gap-large">
               {navigationsConfig.map(({ label, href, external, soon, disabled }) =>
@@ -149,11 +149,9 @@ export default function Header() {
               )}
             </div>
 
-            <User onComplete={setIsOpenFalse} />
+            <User placement="bottom" onComplete={setIsOpenFalse} />
           </div>
         </div>
-
-        <div />
       </Drawer>
     </>
   );

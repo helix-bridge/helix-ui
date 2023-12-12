@@ -47,7 +47,10 @@ export function useBalances(address: Address | null | undefined) {
         .subscribe({
           next: (res) => {
             setBalances((prev) =>
-              res.reduce((acc, cur) => acc.concat(cur).sort((a, b) => a.chain.name.localeCompare(b.chain.name)), prev),
+              res.reduce(
+                (acc, cur) => acc.concat(cur).sort((a, b) => a.token.symbol.localeCompare(b.token.symbol)),
+                prev,
+              ),
             );
           },
           error: (err) => {
