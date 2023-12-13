@@ -29,7 +29,7 @@ export default function Header() {
     if (pathname.startsWith("/relayer")) {
       return [
         { href: "/relayer/overview", label: "Overview" },
-        { href: "/relayer/dashboard", label: "Dashboard", disabled: true },
+        { href: "/relayer/dashboard", label: "Dashboard" },
       ];
     } else {
       return [
