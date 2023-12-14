@@ -19,7 +19,7 @@ type Action = "issue" | "redeem";
 export type CrossChain =
   | {
       target: Target;
-      bridge: { category: LnBridgeCategory | L2BridgeCategory | XTokenBridgeCategory };
+      bridge: { category: LnBridgeCategory | L2BridgeCategory };
       index?: never;
       price?: never;
       baseFee?: never;
@@ -28,7 +28,7 @@ export type CrossChain =
     }
   | {
       target: Target;
-      bridge: { category: HelixBridgeCategory };
+      bridge: { category: HelixBridgeCategory | XTokenBridgeCategory };
       index?: never;
       price?: never;
       baseFee?: never;

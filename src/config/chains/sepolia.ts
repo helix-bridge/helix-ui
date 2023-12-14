@@ -30,7 +30,9 @@ export const sepoliaChain: ChainConfig = {
       type: "erc20",
       address: "0xe8835bb0735fbfd5ecac1e20835d5b7c39622ba3",
       logo: "crab.svg",
-      cross: [{ target: { network: "crab-dvm", symbol: "CRAB" }, bridge: { category: "xtoken-sepolia" } }],
+      cross: [
+        { target: { network: "crab-dvm", symbol: "CRAB" }, bridge: { category: "xtoken-sepolia" }, action: "redeem" },
+      ],
     },
   ],
 };
