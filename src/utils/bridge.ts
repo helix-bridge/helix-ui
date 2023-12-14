@@ -6,6 +6,7 @@ import {
   L2ArbitrumBridge,
   LnBridgeDefault,
   LnBridgeOpposite,
+  XTokenV3Bridge,
 } from "@/bridges";
 import { BridgeConstructorArgs } from "@/types";
 
@@ -26,6 +27,9 @@ export function bridgeFactory(args: BridgeConstructorArgs): BaseBridge | undefin
       return new HelixLpBridge(args);
     case "l2arbitrumbridge-ethereum":
       return new L2ArbitrumBridge(args);
+    case "xtoken-crab-dvm":
+    case "xtoken-sepolia":
+      return new XTokenV3Bridge(args);
     default:
       return;
   }
