@@ -9,6 +9,7 @@ export enum ChainID {
 
   ETHEREUM = 1,
   GOERLI = 5,
+  SEPOLIA = 11155111,
 
   ARBITRUM = 42161,
   ARBITRUM_GOERLI = 421613,
@@ -43,6 +44,7 @@ export type Network =
   | "pangoro-dvm"
   | "ethereum"
   | "goerli"
+  | "sepolia"
   | "arbitrum"
   | "arbitrum-goerli"
   | "zksync"
