@@ -6,3 +6,4 @@ export * from "./l2bridge";
 export * from "./lnbridge-base";
 export * from "./lnbridge-default";
 export * from "./lnbridge-opposite";
+export * from "./xtoken-v3";
