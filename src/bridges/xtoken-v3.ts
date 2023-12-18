@@ -47,6 +47,8 @@ export class XTokenV3Bridge extends BaseBridge {
           abi: (await import("@/abi/xtoken-backing")).default,
           functionName: "lockAndRemoteIssuing",
           args: [BigInt(this.targetChain.id), this.sourceToken.address, recipient, amount, feeAndParams.extParams],
+          value: feeAndParams.fee,
+          gas: this.getTxGasLimit(),
           account,
         } as const;
 
@@ -62,6 +64,8 @@ export class XTokenV3Bridge extends BaseBridge {
           abi: (await import("@/abi/xtoken-issuing")).default,
           functionName: "burnAndRemoteUnlock",
           args: [this.sourceToken.address, recipient, amount, feeAndParams.extParams],
+          value: feeAndParams.fee,
+          gas: this.getTxGasLimit(),
           account,
         } as const;
 
@@ -122,12 +126,12 @@ export class XTokenV3Bridge extends BaseBridge {
   }
 
   async getFee(args?: GetFeeArgs | undefined): Promise<{ value: bigint; token: Token } | undefined> {
-    if (this.sourceToken) {
+    if (this.sourceNativeToken) {
       const sender = args?.sender ?? "0x0000000000000000000000000000000000000000";
       const recipient = args?.recipient ?? "0x0000000000000000000000000000000000000000";
       const feeAndParams = await this._getMsgportFeeAndParams(sender, recipient, args?.transferAmount ?? 0n);
       if (feeAndParams) {
-        return { value: feeAndParams.fee, token: this.sourceToken };
+        return { value: feeAndParams.fee, token: this.sourceNativeToken };
       }
     }
   }
