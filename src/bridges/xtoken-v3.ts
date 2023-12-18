@@ -47,7 +47,7 @@ export class XTokenV3Bridge extends BaseBridge {
           abi: (await import("@/abi/xtoken-backing")).default,
           functionName: "lockAndRemoteIssuing",
           args: [BigInt(this.targetChain.id), this.sourceToken.address, recipient, amount, feeAndParams.extParams],
-          value: feeAndParams.fee,
+          value: this.sourceToken.type === "native" ? amount + feeAndParams.fee : feeAndParams.fee,
           gas: this.getTxGasLimit(),
           account,
         } as const;
@@ -64,7 +64,7 @@ export class XTokenV3Bridge extends BaseBridge {
           abi: (await import("@/abi/xtoken-issuing")).default,
           functionName: "burnAndRemoteUnlock",
           args: [this.sourceToken.address, recipient, amount, feeAndParams.extParams],
-          value: feeAndParams.fee,
+          value: this.sourceToken.type === "native" ? amount + feeAndParams.fee : feeAndParams.fee,
           gas: this.getTxGasLimit(),
           account,
         } as const;
