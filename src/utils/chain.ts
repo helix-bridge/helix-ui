@@ -25,6 +25,7 @@ import { ChainConfig, ChainID, Network } from "@/types";
 import { isProduction } from "./env";
 import { bscChain } from "@/config/chains/bsc";
 import { optimismChain } from "@/config/chains/optimism";
+import { sepoliaChain } from "@/config/chains/sepolia";
 
 export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
   switch (chainIdOrNetwork) {
@@ -97,6 +98,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.GNOSIS:
     case "gnosis":
       return gnosisChain;
+    case ChainID.SEPOLIA:
+    case "sepolia":
+      return sepoliaChain;
     default:
       return;
   }
@@ -110,6 +114,7 @@ export function getChainConfigs(askAll?: boolean) {
     darwiniaChain,
     ethereumChain,
     goerliChain,
+    sepoliaChain,
     lineaChain,
     lineaGoerliChain,
     mantleChain,
@@ -132,8 +137,8 @@ export function getChainConfigs(askAll?: boolean) {
   if (askAll) {
     return all;
   } else if (isProduction()) {
-    return all.filter((c) => !c.hidden && !c.testnet);
+    return all.filter((c) => (!c.hidden && !c.testnet) || c.network === "crab-dvm");
   } else {
-    return all.filter((c) => !c.hidden && !!c.testnet);
+    return all.filter((c) => (!c.hidden && !!c.testnet) || c.network === "crab-dvm");
   }
 }

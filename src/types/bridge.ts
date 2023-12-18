@@ -14,7 +14,13 @@ export type HelixBridgeCategory =
   | "helix-sub2ethv2(unlock)"
   | "helix-sub2subv21(unlock)"
   | "helix-sub2subv21(lock)";
-export type BridgeCategory = LnBridgeCategory | L2BridgeCategory | HelixLpBridgeCategory | HelixBridgeCategory;
+export type XTokenBridgeCategory = "xtoken-sepolia" | "xtoken-crab-dvm";
+export type BridgeCategory =
+  | LnBridgeCategory
+  | L2BridgeCategory
+  | HelixLpBridgeCategory
+  | HelixBridgeCategory
+  | XTokenBridgeCategory;
 
 export interface BridgeContract {
   sourceAddress: Address;
@@ -43,6 +49,8 @@ export interface GetFeeArgs {
   protocolFee?: bigint;
   liquidityFeeRate?: bigint;
   transferAmount?: bigint;
+  sender?: Address;
+  recipient?: Address;
 }
 
 export interface TransferOptions {

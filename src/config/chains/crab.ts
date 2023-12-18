@@ -54,6 +54,7 @@ export const crabChain: ChainConfig = {
           bridge: { category: "helix-sub2subv21(lock)" },
           action: "issue",
         },
+        { target: { network: "sepolia", symbol: "xCRAB" }, bridge: { category: "xtoken-crab-dvm" }, action: "issue" },
       ],
     },
     {
@@ -73,4 +74,7 @@ export const crabChain: ChainConfig = {
       ],
     },
   ],
+  messager: {
+    msgline: "0xCAb1f69C671f1548fd3dE5d63852E9B9181a0D0E",
+  },
 };

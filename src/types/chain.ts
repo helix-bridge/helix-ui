@@ -1,4 +1,4 @@
-import type { Chain } from "wagmi";
+import type { Address, Chain } from "wagmi";
 import { Token } from "./token";
 
 export enum ChainID {
@@ -9,6 +9,7 @@ export enum ChainID {
 
   ETHEREUM = 1,
   GOERLI = 5,
+  SEPOLIA = 11155111,
 
   ARBITRUM = 42161,
   ARBITRUM_GOERLI = 421613,
@@ -43,6 +44,7 @@ export type Network =
   | "pangoro-dvm"
   | "ethereum"
   | "goerli"
+  | "sepolia"
   | "arbitrum"
   | "arbitrum-goerli"
   | "zksync"
@@ -73,5 +75,6 @@ export interface ChainConfig extends Chain {
    */
   logo: string; // File name
   tokens: Token[];
+  messager?: { msgline?: Address };
   hidden?: boolean;
 }

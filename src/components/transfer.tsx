@@ -125,6 +125,8 @@ export default function Transfer() {
       setIsLoadingFee(true);
       sub$$ = from(
         bridgeInstance.getFee({
+          sender: address,
+          recipient,
           baseFee: BigInt(relayer?.baseFee || 0),
           protocolFee: BigInt(relayer?.protocolFee || 0),
           liquidityFeeRate: BigInt(relayer?.liquidityFeeRate || 0),
@@ -144,7 +146,7 @@ export default function Transfer() {
     }
 
     return () => sub$$?.unsubscribe();
-  }, [bridgeInstance, relayersData, deferredTransferAmount, setBridgeFee]);
+  }, [address, recipient, bridgeInstance, relayersData, deferredTransferAmount, setBridgeFee]);
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
