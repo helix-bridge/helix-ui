@@ -49,6 +49,8 @@ export interface GetFeeArgs {
   protocolFee?: bigint;
   liquidityFeeRate?: bigint;
   transferAmount?: bigint;
+  sender?: Address;
+  recipient?: Address;
 }
 
 export interface TransferOptions {

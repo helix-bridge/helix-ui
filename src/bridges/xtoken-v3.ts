@@ -1,6 +1,6 @@
-import { BridgeConstructorArgs, TransferOptions } from "@/types";
+import { BridgeConstructorArgs, GetFeeArgs, Token, TransferOptions } from "@/types";
 import { BaseBridge } from ".";
-import { Address, TransactionReceipt } from "viem";
+import { Address, Hex, TransactionReceipt } from "viem";
 
 export class XTokenV3Bridge extends BaseBridge {
   constructor(args: BridgeConstructorArgs) {
@@ -27,19 +27,66 @@ export class XTokenV3Bridge extends BaseBridge {
     amount: bigint,
     options?: TransferOptions & { askEstimateGas?: boolean },
   ): Promise<bigint | TransactionReceipt | undefined> {
-    const sourceMessager = this.sourceChain?.messager?.msgline;
-    const targetMessager = this.targetChain?.messager?.msgline;
+    const feeAndParams = await this._getMsgportFeeAndParams(sender, recipient, amount);
     const account = await this.getSigner();
 
     if (
       account &&
+      feeAndParams &&
+      this.contract &&
+      this.targetChain &&
+      this.sourceToken &&
+      this.sourcePublicClient &&
+      this.walletClient
+    ) {
+      const askEstimateGas = options?.askEstimateGas ?? false;
+
+      if (this.crossInfo?.action === "issue") {
+        const defaultParams = {
+          address: this.contract.sourceAddress,
+          abi: (await import("@/abi/xtoken-backing")).default,
+          functionName: "lockAndRemoteIssuing",
+          args: [BigInt(this.targetChain.id), this.sourceToken.address, recipient, amount, feeAndParams.extParams],
+          account,
+        } as const;
+
+        if (askEstimateGas) {
+          return this.sourcePublicClient.estimateContractGas(defaultParams);
+        } else if (this.walletClient) {
+          const hash = await this.walletClient.writeContract(defaultParams);
+          return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+        }
+      } else if (this.crossInfo?.action === "redeem") {
+        const defaultParams = {
+          address: this.contract.sourceAddress,
+          abi: (await import("@/abi/xtoken-issuing")).default,
+          functionName: "burnAndRemoteUnlock",
+          args: [this.sourceToken.address, recipient, amount, feeAndParams.extParams],
+          account,
+        } as const;
+
+        if (askEstimateGas) {
+          return this.sourcePublicClient.estimateContractGas(defaultParams);
+        } else if (this.walletClient) {
+          const hash = await this.walletClient.writeContract(defaultParams);
+          return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+        }
+      }
+    }
+    return;
+  }
+
+  private async _getMsgportFeeAndParams(sender: Address, recipient: Address, amount: bigint) {
+    const sourceMessager = this.sourceChain?.messager?.msgline;
+    const targetMessager = this.targetChain?.messager?.msgline;
+
+    if (
       sourceMessager &&
       targetMessager &&
       this.contract &&
       this.sourceToken &&
       this.targetToken &&
-      this.sourcePublicClient &&
-      this.walletClient
+      this.sourcePublicClient
     ) {
       const message = await (this.crossInfo?.action === "issue"
         ? this.sourcePublicClient.readContract({
@@ -67,42 +114,21 @@ export class XTokenV3Bridge extends BaseBridge {
       );
       const feeJson = await feeData.json();
       if (feeData.ok && feeJson.code === 0) {
-        const askEstimateGas = options?.askEstimateGas ?? false;
-        const extParams = feeJson.data.params;
-
-        if (this.crossInfo?.action === "issue") {
-          const defaultParams = {
-            address: this.contract.sourceAddress,
-            abi: (await import("@/abi/xtoken-backing")).default,
-            functionName: "lockAndRemoteIssuing",
-            args: [BigInt(this.targetChain.id), this.sourceToken.address, recipient, amount, extParams],
-            account,
-          } as const;
-
-          if (askEstimateGas) {
-            return this.sourcePublicClient.estimateContractGas(defaultParams);
-          } else if (this.walletClient) {
-            const hash = await this.walletClient.writeContract(defaultParams);
-            return this.sourcePublicClient.waitForTransactionReceipt({ hash });
-          }
-        } else if (this.crossInfo?.action === "redeem") {
-          const defaultParams = {
-            address: this.contract.sourceAddress,
-            abi: (await import("@/abi/xtoken-issuing")).default,
-            functionName: "burnAndRemoteUnlock",
-            args: [this.sourceToken.address, recipient, amount, extParams],
-            account,
-          } as const;
-
-          if (askEstimateGas) {
-            return this.sourcePublicClient.estimateContractGas(defaultParams);
-          } else if (this.walletClient) {
-            const hash = await this.walletClient.writeContract(defaultParams);
-            return this.sourcePublicClient.waitForTransactionReceipt({ hash });
-          }
-        }
+        const fee = BigInt(feeJson.data.fee);
+        const extParams = feeJson.data.params as Hex;
+        return { fee, extParams };
       }
     }
-    return;
+  }
+
+  async getFee(args?: GetFeeArgs | undefined): Promise<{ value: bigint; token: Token } | undefined> {
+    if (this.sourceToken) {
+      const sender = args?.sender ?? "0x0000000000000000000000000000000000000000";
+      const recipient = args?.recipient ?? "0x0000000000000000000000000000000000000000";
+      const feeAndParams = await this._getMsgportFeeAndParams(sender, recipient, args?.transferAmount ?? 0n);
+      if (feeAndParams) {
+        return { value: feeAndParams.fee, token: this.sourceToken };
+      }
+    }
   }
 }
