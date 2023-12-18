@@ -1,4 +1,4 @@
-import type { Chain } from "wagmi";
+import type { Address, Chain } from "wagmi";
 import { Token } from "./token";
 
 export enum ChainID {
@@ -75,5 +75,6 @@ export interface ChainConfig extends Chain {
    */
   logo: string; // File name
   tokens: Token[];
+  messager?: { msgline?: Address };
   hidden?: boolean;
 }

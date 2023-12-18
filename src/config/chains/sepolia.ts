@@ -35,4 +35,7 @@ export const sepoliaChain: ChainConfig = {
       ],
     },
   ],
+  messager: {
+    msgline: "0x527B67a61C6E1344C359Af2e241aAFeb0c3a9DE9",
+  },
 };
