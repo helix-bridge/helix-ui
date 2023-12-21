@@ -2,6 +2,8 @@ name: Deploy development
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
 
 jobs:
   deploy-package:
@@ -10,35 +12,43 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/checkout@v3
+      - name: Deploy test site
+        id: deploy
+        uses: fleekhq/action-deploy@v1
         with:
-          repository: darwinia-network/devops
-          path: .github
+          apiKey: ${{ secrets.FLEEK_TOKEN }}
+      - name: Get the output url
+        run: echo "Deploy url is ${{ steps.deploy.outputs.deployUrl }}"
 
-      - uses: ./.github/actions/smart-vercel
-        name: Deploy helix
-        with:
-          vercel_token: ${{ secrets.VERCEL_TOKEN }}
-          vercel_group: itering
-          preview_output: true
-          alias_domain: "helix-dev-main"
-          project_name: "helix-apps"
-          script_run: false
-          dist_path: .
-          enable_notify_slack: true
-          slack_channel: helix-ui
-          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+      # - uses: actions/checkout@v3
+      #   with:
+      #     repository: darwinia-network/devops
+      #     path: .github
 
-      - uses: ./.github/actions/smart-vercel
-        name: Deploy helix (test)
-        with:
-          vercel_token: ${{ secrets.VERCEL_TOKEN }}
-          vercel_group: itering
-          preview_output: true
-          alias_domain: "helix-dev-test"
-          project_name: "helix-apps-test"
-          script_run: false
-          dist_path: .
-          enable_notify_slack: true
-          slack_channel: helix-ui
-          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+      # - uses: ./.github/actions/smart-vercel
+      #   name: Deploy helix
+      #   with:
+      #     vercel_token: ${{ secrets.VERCEL_TOKEN }}
+      #     vercel_group: itering
+      #     preview_output: true
+      #     alias_domain: "helix-dev-main"
+      #     project_name: "helix-apps"
+      #     script_run: false
+      #     dist_path: .
+      #     enable_notify_slack: true
+      #     slack_channel: helix-ui
+      #     slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+
+      # - uses: ./.github/actions/smart-vercel
+      #   name: Deploy helix (test)
+      #   with:
+      #     vercel_token: ${{ secrets.VERCEL_TOKEN }}
+      #     vercel_group: itering
+      #     preview_output: true
+      #     alias_domain: "helix-dev-test"
+      #     project_name: "helix-apps-test"
+      #     script_run: false
+      #     dist_path: .
+      #     enable_notify_slack: true
+      #     slack_channel: helix-ui
+      #     slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
