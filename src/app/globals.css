@@ -41,7 +41,7 @@ body {
 
   /* Page */
   .page-container {
-    @apply container mx-auto px-middle py-5;
+    @apply max-w-8xl w-full mx-auto px-middle py-5;
   }
 
   /* User */
