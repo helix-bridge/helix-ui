@@ -25,6 +25,7 @@ jobs:
         uses: aquiladev/ipfs-action@master
         with:
           host: ipfs.network.thegraph.com
+          port: 443
           path: ./out
 
       # - uses: actions/checkout@v3
