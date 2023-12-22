@@ -24,6 +24,7 @@ jobs:
       - name: Upload ipsf
         uses: aquiladev/ipfs-action@master
         with:
+          host: https://ipfs.network.thegraph.com
           path: ./out
 
       # - uses: actions/checkout@v3
