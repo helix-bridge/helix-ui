@@ -121,7 +121,7 @@ export default function Faucet() {
         className="text-primary transition-[color,transform] hover:text-white lg:active:translate-y-1"
         onClick={setIsOpenTrue}
       >
-        <span className="text-base font-normal">Faucet</span>
+        <span className="text-base font-medium">Faucet</span>
       </button>
 
       <Modal
