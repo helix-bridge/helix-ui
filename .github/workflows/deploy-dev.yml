@@ -12,13 +12,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Deploy test site
-        id: deploy
-        uses: fleekhq/action-deploy@v1
+      - uses: actions/setup-node@v4
         with:
-          apiKey: ${{ secrets.FLEEK_TOKEN }}
-      - name: Get the output url
-        run: echo "Deploy url is ${{ steps.deploy.outputs.deployUrl }}"
+          node-version: 20
+
+      - name: Build
+        run: |
+          npm install
+          npm run build
+
+      - name: Upload ipsf
+        uses: aquiladev/ipfs-action@master
+        with:
+          path: ./out
 
       # - uses: actions/checkout@v3
       #   with:
