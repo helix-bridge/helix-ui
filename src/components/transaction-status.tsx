@@ -189,7 +189,7 @@ export default function TransactionStatus({ record }: Props) {
         {record?.result === RecordResult.PENDING_TO_CLAIM && (
           <div className="flex items-center gap-small">
             <span className="text-sm font-medium text-white/50">Please claim the tokens on the target chain.</span>
-            <Button className="px-1" kind="primary" busy={busy} onClick={handleClaim}>
+            <Button className="rounded-middle px-1" kind="primary" busy={busy} onClick={handleClaim}>
               <span className="text-sm font-medium text-white">Claim</span>
             </Button>
           </div>
@@ -198,7 +198,7 @@ export default function TransactionStatus({ record }: Props) {
         {record?.result === RecordResult.PENDING_TO_REFUND && (
           <div className="flex items-center gap-small">
             <span className="text-sm font-medium text-white/50">Please request refund on the source chain.</span>
-            <Button className="px-1" kind="primary" busy={busy} onClick={handleRefund}>
+            <Button className="rounded-middle px-1" kind="primary" busy={busy} onClick={handleRefund}>
               <span className="text-sm font-medium text-white">Refund</span>
             </Button>
           </div>
@@ -209,10 +209,10 @@ export default function TransactionStatus({ record }: Props) {
             <span className="text-sm font-medium text-white/50">
               You can request refund or speed up this transaction.
             </span>
-            <Button className="px-1" kind="primary" busy={busy} onClick={handleRefund}>
+            <Button className="rounded-middle px-1" kind="primary" busy={busy} onClick={handleRefund}>
               <span className="text-sm font-medium text-white">Refund</span>
             </Button>
-            <Button className="px-1" kind="primary" onClick={() => setIsOpen(true)}>
+            <Button className="rounded-middle px-1" kind="primary" onClick={() => setIsOpen(true)}>
               <span className="text-sm font-medium text-white">SpeedUp</span>
             </Button>
           </div>
