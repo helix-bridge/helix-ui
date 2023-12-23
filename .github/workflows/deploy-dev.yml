@@ -24,9 +24,10 @@ jobs:
       - name: Upload ipsf
         uses: aquiladev/ipfs-action@master
         with:
-          host: ipfs.network.thegraph.com
-          port: 443
           path: ./out
+          service: pinata
+          pinataKey: ${{ secrets.PINATA_KEY }}
+          pinataSecret: ${{ secrets.PINATA_SECRET }}
 
       # - uses: actions/checkout@v3
       #   with:
