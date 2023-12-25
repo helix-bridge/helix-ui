@@ -43,7 +43,7 @@ export function isValidFeeRate(rate: number) {
   return FEE_RATE_MIN <= rate && rate <= FEE_RATE_MAX;
 }
 
-export async function fetchMsgportFeeAndParams(
+export async function fetchMsglineFeeAndParams(
   sourceChainId: number,
   targetChainId: number,
   sourceMessager: Address,

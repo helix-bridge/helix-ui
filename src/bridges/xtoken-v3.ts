@@ -1,7 +1,7 @@
 import { BridgeConstructorArgs, GetFeeArgs, Token, TransferOptions } from "@/types";
 import { BaseBridge } from ".";
-import { Address, Hex, TransactionReceipt, encodeFunctionData } from "viem";
-import { fetchMsgportFeeAndParams } from "@/utils";
+import { Address, TransactionReceipt, encodeFunctionData } from "viem";
+import { fetchMsglineFeeAndParams } from "@/utils";
 
 export class XTokenV3Bridge extends BaseBridge {
   constructor(args: BridgeConstructorArgs) {
@@ -28,7 +28,7 @@ export class XTokenV3Bridge extends BaseBridge {
     amount: bigint,
     options?: TransferOptions & { askEstimateGas?: boolean },
   ): Promise<bigint | TransactionReceipt | undefined> {
-    const feeAndParams = await this._getMsgportFeeAndParams(sender, recipient, amount);
+    const feeAndParams = await this._getMsglineFeeAndParams(sender, recipient, amount);
     const account = await this.getSigner();
 
     if (
@@ -81,7 +81,7 @@ export class XTokenV3Bridge extends BaseBridge {
     return;
   }
 
-  private async _getMsgportFeeAndParams(sender: Address, recipient: Address, amount: bigint) {
+  private async _getMsglineFeeAndParams(sender: Address, recipient: Address, amount: bigint) {
     const sourceMessager = this.sourceChain?.messager?.msgline;
     const targetMessager = this.targetChain?.messager?.msgline;
 
@@ -112,7 +112,7 @@ export class XTokenV3Bridge extends BaseBridge {
         args: [BigInt(this.sourceChain.id), sourceMessager, targetMessager, message],
       });
 
-      return fetchMsgportFeeAndParams(
+      return fetchMsglineFeeAndParams(
         this.sourceChain.id,
         this.targetChain.id,
         sourceMessager,
@@ -127,7 +127,7 @@ export class XTokenV3Bridge extends BaseBridge {
     if (this.sourceNativeToken) {
       const sender = args?.sender ?? "0x0000000000000000000000000000000000000000";
       const recipient = args?.recipient ?? "0x0000000000000000000000000000000000000000";
-      const feeAndParams = await this._getMsgportFeeAndParams(sender, recipient, args?.transferAmount ?? 0n);
+      const feeAndParams = await this._getMsglineFeeAndParams(sender, recipient, args?.transferAmount ?? 0n);
       if (feeAndParams) {
         return { value: feeAndParams.fee, token: this.sourceNativeToken };
       }
