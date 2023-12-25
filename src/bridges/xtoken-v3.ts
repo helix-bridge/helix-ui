@@ -1,6 +1,7 @@
 import { BridgeConstructorArgs, GetFeeArgs, Token, TransferOptions } from "@/types";
 import { BaseBridge } from ".";
 import { Address, Hex, TransactionReceipt, encodeFunctionData } from "viem";
+import { fetchMsgportFeeAndParams } from "@/utils";
 
 export class XTokenV3Bridge extends BaseBridge {
   constructor(args: BridgeConstructorArgs) {
@@ -90,8 +91,6 @@ export class XTokenV3Bridge extends BaseBridge {
       this.contract &&
       this.sourceToken &&
       this.targetToken &&
-      this.sourceChain &&
-      this.targetChain &&
       this.sourcePublicClient
     ) {
       const message =
@@ -113,15 +112,14 @@ export class XTokenV3Bridge extends BaseBridge {
         args: [BigInt(this.sourceChain.id), sourceMessager, targetMessager, message],
       });
 
-      const feeData = await fetch(
-        `https://msgport-api.darwinia.network/ormp_ext/fee?from_chain_id=${this.sourceChain.id}&to_chain_id=${this.targetChain.id}&payload=${payload}&from_address=${sourceMessager}&to_address=${targetMessager}&refund_address=${sender}`,
+      return fetchMsgportFeeAndParams(
+        this.sourceChain.id,
+        this.targetChain.id,
+        sourceMessager,
+        targetMessager,
+        sender,
+        payload,
       );
-      const feeJson = await feeData.json();
-      if (feeData.ok && feeJson.code === 0) {
-        const fee = BigInt(feeJson.data.fee);
-        const extParams = feeJson.data.params as Hex;
-        return { fee, extParams };
-      }
     }
   }
 
