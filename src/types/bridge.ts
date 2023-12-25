@@ -2,6 +2,7 @@ import { Address, Hex } from "viem";
 import { PublicClient, WalletClient } from "wagmi";
 import { ChainConfig } from "./chain";
 import { Token } from "./token";
+import { MessageChannel } from ".";
 
 /**
  * lpbridge-darwinia-dvm etc. are named from graphql indexer.
@@ -59,4 +60,13 @@ export interface TransferOptions {
   totalFee?: bigint;
   withdrawNonce?: bigint;
   depositedMargin?: bigint;
+}
+
+export interface GetWithdrawFeeArgs {
+  amount: bigint;
+  sender?: Address;
+  relayer?: Address;
+  transferId?: Hex | null;
+  withdrawNonce?: string | null;
+  messageChannel?: MessageChannel | null;
 }

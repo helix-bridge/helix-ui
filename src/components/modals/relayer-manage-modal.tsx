@@ -5,7 +5,7 @@ import SegmentedTabs, { SegmentedTabsProps } from "@/ui/segmented-tabs";
 import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "@/utils";
 import { useApolloClient } from "@apollo/client";
 import dynamic from "next/dynamic";
-import { PropsWithChildren, useEffect, useMemo, useState } from "react";
+import { PropsWithChildren, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import { Subscription, from } from "rxjs";
 import { TransactionReceipt } from "viem";
@@ -40,6 +40,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     margin,
     baseFee,
     feeRate,
+    withdrawAmount,
     setMargin,
     setBaseFee,
     setFeeRate,
@@ -48,6 +49,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     setSourceToken,
     setBridgeCategory,
     setFeeAndRate,
+    setWithdrawAmount,
     depositMargin,
     updateFeeAndMargin,
     withdrawMargin,
@@ -59,11 +61,10 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
   const [height, setHeight] = useState<number>();
   const [busy, setBusy] = useState(false);
   const [withdrawFee, setWithdrawFee] = useState<{ value: bigint; token: Token }>();
-
   const [depositAmount, setDepositAmount] = useState<InputValue<bigint>>({ input: "", valid: true, value: 0n });
-  const [withdrawAmount, setWithdrawAmount] = useState<InputValue<bigint>>({ input: "", valid: true, value: 0n });
   const [baseFeeInput, setBaseFeeInput] = useState<InputValue<bigint>>({ input: "", valid: true, value: 0n });
   const [feeRateInput, setFeeRateInput] = useState<InputValue<number>>({ input: "", valid: true, value: 0 });
+  const deferredWithdrawAmount = useDeferredValue(withdrawAmount);
 
   const { switchNetwork } = useSwitchNetwork();
   const { chain } = useNetwork();
@@ -157,12 +158,22 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     setSourceChain,
     setTargetChain,
     setSourceToken,
+    setWithdrawAmount,
   ]);
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
-    if (defaultBridge && relayerInfo?.messageChannel === "layerzero") {
-      sub$$ = from(defaultBridge.getWithdrawFee()).subscribe({
+    if (defaultBridge && (relayerInfo?.messageChannel === "layerzero" || relayerInfo?.messageChannel === "msgline")) {
+      sub$$ = from(
+        defaultBridge.getWithdrawFee({
+          amount: deferredWithdrawAmount.value,
+          sender: address,
+          relayer: relayerInfo.relayer,
+          transferId: relayerInfo.lastTransferId,
+          withdrawNonce: relayerInfo.withdrawNonce,
+          messageChannel: relayerInfo.messageChannel,
+        }),
+      ).subscribe({
         next: setWithdrawFee,
         error: (err) => {
           console.error(err);
@@ -173,7 +184,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
       setWithdrawFee(undefined);
     }
     return () => sub$$?.unsubscribe();
-  }, [defaultBridge, relayerInfo]);
+  }, [defaultBridge, relayerInfo, address, deferredWithdrawAmount]);
 
   return (
     <Modal
@@ -267,7 +278,11 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
       extra={
         activeKey === "withdraw" ? (
           <div className="h-6 self-end">
-            <span className="text-sm font-extrabold text-white/50">Powered by LayerZero & Helix</span>
+            <span className="text-sm font-extrabold text-white/50">
+              {relayerInfo?.messageChannel === "layerzero"
+                ? "Powered by LayerZero & Helix"
+                : "Powered by Msgport & Helix"}
+            </span>
           </div>
         ) : (
           <div className="h-6" />
@@ -388,7 +403,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                 </LabelSection>
               </div>
             ),
-            disabled: relayerInfo?.messageChannel !== "layerzero",
+            disabled: !(relayerInfo?.messageChannel === "layerzero" || relayerInfo?.messageChannel === "msgline"),
           },
         ]}
         activeKey={activeKey}

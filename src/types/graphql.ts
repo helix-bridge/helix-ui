@@ -133,6 +133,8 @@ export type Lnv20RelayerOverview = Pick<
   | "profit"
   | "heartbeatTimestamp"
   | "messageChannel"
+  | "lastTransferId"
+  | "withdrawNonce"
 >;
 
 export interface QueryLnV20RelayInfosReqParams {

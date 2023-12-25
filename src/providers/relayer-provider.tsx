@@ -1,7 +1,14 @@
 "use client";
 
 import { BaseBridge, LnBridgeDefault, LnBridgeOpposite } from "@/bridges";
-import { BridgeCategory, ChainConfig, CheckLnBridgeExistReqParams, CheckLnBridgeExistResData, Token } from "@/types";
+import {
+  BridgeCategory,
+  ChainConfig,
+  CheckLnBridgeExistReqParams,
+  CheckLnBridgeExistResData,
+  InputValue,
+  Token,
+} from "@/types";
 import { getAvailableTargetTokens, notifyError, notifyTransaction } from "@/utils";
 import {
   Dispatch,
@@ -34,6 +41,7 @@ interface RelayerCtx {
   bridgeCategory: BridgeCategory | undefined;
   defaultBridge: LnBridgeDefault | undefined;
   oppositeBridge: LnBridgeOpposite | undefined;
+  withdrawAmount: InputValue<bigint>;
 
   setMargin: Dispatch<SetStateAction<bigint | undefined>>;
   setBaseFee: Dispatch<SetStateAction<bigint | undefined>>;
@@ -46,6 +54,7 @@ interface RelayerCtx {
   setTargetChain: Dispatch<SetStateAction<ChainConfig | undefined>>;
   setSourceToken: Dispatch<SetStateAction<Token | undefined>>;
   setBridgeCategory: Dispatch<SetStateAction<BridgeCategory | undefined>>;
+  setWithdrawAmount: Dispatch<SetStateAction<InputValue<bigint>>>;
 
   sourceApprove: (
     owner: Address,
@@ -110,6 +119,7 @@ const defaultValue: RelayerCtx = {
   bridgeCategory: undefined,
   defaultBridge: undefined,
   oppositeBridge: undefined,
+  withdrawAmount: { input: "", valid: true, value: 0n },
 
   setMargin: () => undefined,
   setBaseFee: () => undefined,
@@ -122,6 +132,7 @@ const defaultValue: RelayerCtx = {
   setTargetChain: () => undefined,
   setSourceToken: () => undefined,
   setBridgeCategory: () => undefined,
+  setWithdrawAmount: () => undefined,
 
   sourceApprove: async () => undefined,
   targetApprove: async () => undefined,
@@ -146,6 +157,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
   const [targetChain, setTargetChain] = useState(defaultValue.targetChain);
   const [sourceToken, setSourceToken] = useState(defaultValue.sourceToken);
   const [bridgeCategory, setBridgeCategory] = useState(defaultValue.bridgeCategory);
+  const [withdrawAmount, setWithdrawAmount] = useState(defaultValue.withdrawAmount);
 
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
@@ -363,6 +375,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
         bridgeCategory,
         defaultBridge,
         oppositeBridge,
+        withdrawAmount,
 
         setMargin,
         setBaseFee,
@@ -375,6 +388,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
         setTargetChain,
         setSourceToken,
         setBridgeCategory,
+        setWithdrawAmount,
 
         sourceApprove,
         targetApprove,
