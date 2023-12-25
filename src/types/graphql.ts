@@ -17,7 +17,7 @@ export enum RecordResult {
   FAILED,
 }
 
-export type MessageChannel = "layerzero";
+export type MessageChannel = "layerzero" | "msgline" | "sub2sub" | "arbitrum-l2";
 
 export interface HistoryRecord {
   id: string;
