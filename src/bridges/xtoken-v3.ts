@@ -17,8 +17,8 @@ export class XTokenV3Bridge extends BaseBridge {
   }
 
   private initContract() {
-    const backing = "0xb137BDf1Ad5392027832f54a4409685Ef52Aa9dA";
-    const issuing = "0x44A001aF6AcD2d5f5cB82FCB14Af3d497D56faB4";
+    const backing = "0xbdC7bbF408931C5d666b4F0520E0D9E9A0B04e99";
+    const issuing = "0xf22D0bb66b39745Ae6e3fEa3E5859d7f0b367Fd1";
     this.initContractByBackingIssuing(backing, issuing);
   }
 
@@ -28,7 +28,8 @@ export class XTokenV3Bridge extends BaseBridge {
     amount: bigint,
     options?: TransferOptions & { askEstimateGas?: boolean },
   ): Promise<bigint | TransactionReceipt | undefined> {
-    const feeAndParams = await this._getMsglineFeeAndParams(sender, recipient, amount);
+    const nonce = BigInt(Date.now());
+    const feeAndParams = await this._getMsglineFeeAndParams(sender, recipient, amount, nonce);
     const account = await this.getSigner();
 
     if (
@@ -47,7 +48,14 @@ export class XTokenV3Bridge extends BaseBridge {
           address: this.contract.sourceAddress,
           abi: (await import("@/abi/xtoken-backing")).default,
           functionName: "lockAndRemoteIssuing",
-          args: [BigInt(this.targetChain.id), this.sourceToken.address, recipient, amount, feeAndParams.extParams],
+          args: [
+            BigInt(this.targetChain.id),
+            this.sourceToken.address,
+            recipient,
+            amount,
+            nonce,
+            feeAndParams.extParams,
+          ],
           value: this.sourceToken.type === "native" ? amount + feeAndParams.fee : feeAndParams.fee,
           gas: this.getTxGasLimit(),
           account,
@@ -64,7 +72,7 @@ export class XTokenV3Bridge extends BaseBridge {
           address: this.contract.sourceAddress,
           abi: (await import("@/abi/xtoken-issuing")).default,
           functionName: "burnAndRemoteUnlock",
-          args: [this.sourceToken.address, recipient, amount, feeAndParams.extParams],
+          args: [this.sourceToken.address, recipient, amount, nonce, feeAndParams.extParams],
           value: this.sourceToken.type === "native" ? amount + feeAndParams.fee : feeAndParams.fee,
           gas: this.getTxGasLimit(),
           account,
@@ -81,7 +89,7 @@ export class XTokenV3Bridge extends BaseBridge {
     return;
   }
 
-  private async _getMsglineFeeAndParams(sender: Address, recipient: Address, amount: bigint) {
+  private async _getMsglineFeeAndParams(sender: Address, recipient: Address, amount: bigint, nonce: bigint) {
     const sourceMessager = this.sourceChain?.messager?.msgline;
     const targetMessager = this.targetChain?.messager?.msgline;
 
@@ -98,12 +106,12 @@ export class XTokenV3Bridge extends BaseBridge {
           ? encodeFunctionData({
               abi: (await import("@/abi/xtoken-issuing")).default,
               functionName: "issuexToken",
-              args: [BigInt(this.sourceChain.id), this.sourceToken.address, recipient, amount],
+              args: [BigInt(this.sourceChain.id), this.sourceToken.address, sender, recipient, amount, nonce],
             })
           : encodeFunctionData({
               abi: (await import("@/abi/xtoken-backing")).default,
               functionName: "unlockFromRemote",
-              args: [BigInt(this.sourceChain.id), this.targetToken.address, recipient, amount],
+              args: [BigInt(this.sourceChain.id), this.targetToken.address, sender, recipient, amount, nonce],
             });
 
       const payload = encodeFunctionData({
@@ -125,9 +133,10 @@ export class XTokenV3Bridge extends BaseBridge {
 
   async getFee(args?: GetFeeArgs | undefined): Promise<{ value: bigint; token: Token } | undefined> {
     if (this.sourceNativeToken) {
+      const nonce = BigInt(Date.now());
       const sender = args?.sender ?? "0x0000000000000000000000000000000000000000";
       const recipient = args?.recipient ?? "0x0000000000000000000000000000000000000000";
-      const feeAndParams = await this._getMsglineFeeAndParams(sender, recipient, args?.transferAmount ?? 0n);
+      const feeAndParams = await this._getMsglineFeeAndParams(sender, recipient, args?.transferAmount ?? 0n, nonce);
       if (feeAndParams) {
         return { value: feeAndParams.fee, token: this.sourceNativeToken };
       }
