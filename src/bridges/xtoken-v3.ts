@@ -1,6 +1,6 @@
 import { BridgeConstructorArgs, GetFeeArgs, Token, TransferOptions } from "@/types";
 import { BaseBridge } from ".";
-import { Address, Hex, TransactionReceipt } from "viem";
+import { Address, Hex, TransactionReceipt, encodeFunctionData } from "viem";
 
 export class XTokenV3Bridge extends BaseBridge {
   constructor(args: BridgeConstructorArgs) {
@@ -90,27 +90,27 @@ export class XTokenV3Bridge extends BaseBridge {
       this.contract &&
       this.sourceToken &&
       this.targetToken &&
+      this.sourceChain &&
+      this.targetChain &&
       this.sourcePublicClient
     ) {
-      const message = await (this.crossInfo?.action === "issue"
-        ? this.sourcePublicClient.readContract({
-            address: this.contract.sourceAddress,
-            abi: (await import("@/abi/xtoken-backing")).default,
-            functionName: "encodeIssuexToken",
-            args: [this.sourceToken.address, recipient, amount],
-          })
-        : this.sourcePublicClient.readContract({
-            address: this.contract.sourceAddress,
-            abi: (await import("@/abi/xtoken-issuing")).default,
-            functionName: "encodeUnlockFromRemote",
-            args: [this.targetToken.address, recipient, amount],
-          }));
+      const message =
+        this.crossInfo?.action === "issue"
+          ? encodeFunctionData({
+              abi: (await import("@/abi/xtoken-issuing")).default,
+              functionName: "issuexToken",
+              args: [BigInt(this.sourceChain.id), this.sourceToken.address, recipient, amount],
+            })
+          : encodeFunctionData({
+              abi: (await import("@/abi/xtoken-backing")).default,
+              functionName: "unlockFromRemote",
+              args: [BigInt(this.sourceChain.id), this.targetToken.address, recipient, amount],
+            });
 
-      const payload = await this.sourcePublicClient.readContract({
-        address: sourceMessager,
+      const payload = encodeFunctionData({
         abi: (await import("@/abi/msgline-messager")).default,
-        functionName: "messagePayload",
-        args: [sourceMessager, targetMessager, message],
+        functionName: "receiveMessage",
+        args: [BigInt(this.sourceChain.id), sourceMessager, targetMessager, message],
       });
 
       const feeData = await fetch(
