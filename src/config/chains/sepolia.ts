@@ -28,7 +28,7 @@ export const sepoliaChain: ChainConfig = {
       symbol: "xCRAB",
       name: "xCRAB",
       type: "erc20",
-      address: "0xe8835bb0735fbfd5ecac1e20835d5b7c39622ba3",
+      address: "0x9Da7E18441f26515CC713290BE846E726d41781d",
       logo: "crab.svg",
       cross: [
         { target: { network: "crab-dvm", symbol: "CRAB" }, bridge: { category: "xtoken-sepolia" }, action: "redeem" },
@@ -36,6 +36,6 @@ export const sepoliaChain: ChainConfig = {
     },
   ],
   messager: {
-    msgline: "0x527B67a61C6E1344C359Af2e241aAFeb0c3a9DE9",
+    msgline: "0xc876D0873e4060472334E297b2db200Ca10cc806",
   },
 };
