@@ -153,13 +153,13 @@ export class XTokenV3Bridge extends BaseBridge {
         guardContract = await this.publicClient.readContract({
           abi: (await import("@/abi/xtoken-issuing")).default,
           functionName: "guard",
-          address: this.contract.sourceAddress,
+          address: this.contract.targetAddress,
         });
       } else if (this.crossInfo?.action === "redeem") {
         guardContract = await this.publicClient.readContract({
           abi: (await import("@/abi/xtoken-backing")).default,
           functionName: "guard",
-          address: this.contract.sourceAddress,
+          address: this.contract.targetAddress,
         });
       }
 
@@ -229,7 +229,7 @@ export class XTokenV3Bridge extends BaseBridge {
             abi,
             functionName: "requestRemoteUnlockForIssuingFailure",
             args: [...commonArgs, feeAndParams.extParams],
-            address: this.contract.sourceAddress,
+            address: this.contract.targetAddress,
             gas: this.getTxGasLimit(),
             value: feeAndParams.fee,
           });
@@ -269,7 +269,7 @@ export class XTokenV3Bridge extends BaseBridge {
             abi,
             functionName: "requestRemoteIssuingForUnlockFailure",
             args: [...commonArgs, feeAndParams.extParams],
-            address: this.contract.sourceAddress,
+            address: this.contract.targetAddress,
             gas: this.getTxGasLimit(),
             value: feeAndParams.fee,
           });
