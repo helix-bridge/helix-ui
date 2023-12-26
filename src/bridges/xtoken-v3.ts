@@ -213,13 +213,13 @@ export class XTokenV3Bridge extends BaseBridge {
         const payload = encodeFunctionData({
           abi: (await import("@/abi/msgline-messager")).default,
           functionName: "receiveMessage",
-          args: [BigInt(this.sourceChain.id), sourceMessager, targetMessager, message],
+          args: [BigInt(this.targetChain.id), sourceMessager, targetMessager, message],
         });
         const feeAndParams = await fetchMsglineFeeAndParams(
-          this.sourceChain.id,
           this.targetChain.id,
-          sourceMessager,
+          this.sourceChain.id,
           targetMessager,
+          sourceMessager,
           record.sender,
           payload,
         );
@@ -253,13 +253,13 @@ export class XTokenV3Bridge extends BaseBridge {
         const payload = encodeFunctionData({
           abi: (await import("@/abi/msgline-messager")).default,
           functionName: "receiveMessage",
-          args: [BigInt(this.sourceChain.id), sourceMessager, targetMessager, message],
+          args: [BigInt(this.targetChain.id), sourceMessager, targetMessager, message],
         });
         const feeAndParams = await fetchMsglineFeeAndParams(
-          this.sourceChain.id,
           this.targetChain.id,
-          sourceMessager,
+          this.sourceChain.id,
           targetMessager,
+          sourceMessager,
           record.sender,
           payload,
         );
