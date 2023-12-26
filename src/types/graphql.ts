@@ -40,7 +40,7 @@ export interface HistoryRecord {
   fee: string;
   feeToken: TokenSymbol;
   messageNonce: string | null;
-  sendTokenAddress: Address | null;
+  sendTokenAddress: Address;
   recvTokenAddress: Address | null;
   guardSignatures: string | null;
   relayer: Address | null;

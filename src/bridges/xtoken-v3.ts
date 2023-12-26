@@ -1,4 +1,4 @@
-import { BridgeConstructorArgs, GetFeeArgs, Token, TransferOptions } from "@/types";
+import { BridgeConstructorArgs, GetFeeArgs, HistoryRecord, Token, TransferOptions } from "@/types";
 import { BaseBridge } from ".";
 import { Address, TransactionReceipt, encodeFunctionData } from "viem";
 import { fetchMsglineFeeAndParams } from "@/utils";
@@ -29,7 +29,7 @@ export class XTokenV3Bridge extends BaseBridge {
     options?: TransferOptions & { askEstimateGas?: boolean },
   ): Promise<bigint | TransactionReceipt | undefined> {
     const nonce = BigInt(Date.now());
-    const feeAndParams = await this._getMsglineFeeAndParams(sender, recipient, amount, nonce);
+    const feeAndParams = await this._getTransferFeeAndParams(sender, recipient, amount, nonce);
     const account = await this.getSigner();
 
     if (
@@ -89,7 +89,7 @@ export class XTokenV3Bridge extends BaseBridge {
     return;
   }
 
-  private async _getMsglineFeeAndParams(sender: Address, recipient: Address, amount: bigint, nonce: bigint) {
+  private async _getTransferFeeAndParams(sender: Address, recipient: Address, amount: bigint, nonce: bigint) {
     const sourceMessager = this.sourceChain?.messager?.msgline;
     const targetMessager = this.targetChain?.messager?.msgline;
 
@@ -136,10 +136,104 @@ export class XTokenV3Bridge extends BaseBridge {
       const nonce = BigInt(Date.now());
       const sender = args?.sender ?? "0x0000000000000000000000000000000000000000";
       const recipient = args?.recipient ?? "0x0000000000000000000000000000000000000000";
-      const feeAndParams = await this._getMsglineFeeAndParams(sender, recipient, args?.transferAmount ?? 0n, nonce);
+      const feeAndParams = await this._getTransferFeeAndParams(sender, recipient, args?.transferAmount ?? 0n, nonce);
       if (feeAndParams) {
         return { value: feeAndParams.fee, token: this.sourceNativeToken };
       }
+    }
+  }
+
+  async refund(record: HistoryRecord): Promise<TransactionReceipt | undefined> {
+    await this.validateNetwork("target");
+    const sourceMessager = this.sourceChain?.messager?.msgline;
+    const targetMessager = this.targetChain?.messager?.msgline;
+
+    if (this.contract && sourceMessager && targetMessager && this.publicClient && this.walletClient) {
+      let hash: Address | undefined;
+
+      if (this.crossInfo?.action === "issue") {
+        const abi = (await import("@/abi/xtoken-issuing")).default;
+        const commonArgs = [
+          BigInt(this.sourceChain.id),
+          record.sendTokenAddress,
+          record.sender,
+          record.recipient,
+          BigInt(record.sendAmount),
+          BigInt(record.nonce),
+        ] as const;
+
+        const message = encodeFunctionData({
+          abi,
+          functionName: "handleIssuingForUnlockFailureFromRemote",
+          args: commonArgs,
+        });
+        const payload = encodeFunctionData({
+          abi: (await import("@/abi/msgline-messager")).default,
+          functionName: "receiveMessage",
+          args: [BigInt(this.sourceChain.id), sourceMessager, targetMessager, message],
+        });
+        const feeAndParams = await fetchMsglineFeeAndParams(
+          this.sourceChain.id,
+          this.targetChain.id,
+          sourceMessager,
+          targetMessager,
+          record.sender,
+          payload,
+        );
+
+        if (feeAndParams) {
+          hash = await this.walletClient.writeContract({
+            abi,
+            functionName: "requestRemoteUnlockForIssuingFailure",
+            args: [...commonArgs, feeAndParams.extParams],
+            address: this.contract.sourceAddress,
+            gas: this.getTxGasLimit(),
+            value: feeAndParams.fee,
+          });
+        }
+      } else if (this.crossInfo?.action === "redeem" && record.recvTokenAddress) {
+        const abi = (await import("@/abi/xtoken-backing")).default;
+        const commonArgs = [
+          BigInt(this.sourceChain.id),
+          record.recvTokenAddress,
+          record.sender,
+          record.recipient,
+          BigInt(record.sendAmount),
+          BigInt(record.nonce),
+        ] as const;
+
+        const message = encodeFunctionData({
+          abi,
+          functionName: "handleUnlockForIssuingFailureFromRemote",
+          args: commonArgs,
+        });
+        const payload = encodeFunctionData({
+          abi: (await import("@/abi/msgline-messager")).default,
+          functionName: "receiveMessage",
+          args: [BigInt(this.sourceChain.id), sourceMessager, targetMessager, message],
+        });
+        const feeAndParams = await fetchMsglineFeeAndParams(
+          this.sourceChain.id,
+          this.targetChain.id,
+          sourceMessager,
+          targetMessager,
+          record.sender,
+          payload,
+        );
+
+        if (feeAndParams) {
+          hash = await this.walletClient.writeContract({
+            abi,
+            functionName: "requestRemoteIssuingForUnlockFailure",
+            args: [...commonArgs, feeAndParams.extParams],
+            address: this.contract.sourceAddress,
+            gas: this.getTxGasLimit(),
+            value: feeAndParams.fee,
+          });
+        }
+      }
+
+      return hash && this.publicClient.waitForTransactionReceipt({ hash });
     }
   }
 }
