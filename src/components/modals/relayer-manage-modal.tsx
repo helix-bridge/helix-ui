@@ -13,6 +13,7 @@ import { BalanceInput } from "../balance-input";
 import FeeRateInput from "../fee-rate-input";
 import Tooltip from "@/ui/tooltip";
 import Image from "next/image";
+import CountLoading from "@/ui/count-loading";
 
 type TabKey = "update" | "deposit" | "withdraw";
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
@@ -60,6 +61,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
   const [activeKey, setActiveKey] = useState<SegmentedTabsProps<TabKey>["activeKey"]>("update");
   const [height, setHeight] = useState<number>();
   const [busy, setBusy] = useState(false);
+  const [loadingWithdrawFee, setLoadingWithdrawFee] = useState(false);
   const [withdrawFee, setWithdrawFee] = useState<{ value: bigint; token: Token }>();
   const [depositAmount, setDepositAmount] = useState<InputValue<bigint>>({ input: "", valid: true, value: 0n });
   const [baseFeeInput, setBaseFeeInput] = useState<InputValue<bigint>>({ input: "", valid: true, value: 0n });
@@ -163,7 +165,12 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
-    if (defaultBridge && (relayerInfo?.messageChannel === "layerzero" || relayerInfo?.messageChannel === "msgline")) {
+    if (
+      activeKey === "withdraw" &&
+      defaultBridge &&
+      (relayerInfo?.messageChannel === "layerzero" || relayerInfo?.messageChannel === "msgline")
+    ) {
+      setLoadingWithdrawFee(true);
       sub$$ = from(
         defaultBridge.getWithdrawFee({
           amount: deferredWithdrawAmount.value,
@@ -178,13 +185,15 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
         error: (err) => {
           console.error(err);
           setWithdrawFee(undefined);
+          setLoadingWithdrawFee(false);
         },
+        complete: () => setLoadingWithdrawFee(false),
       });
     } else {
       setWithdrawFee(undefined);
     }
     return () => sub$$?.unsubscribe();
-  }, [defaultBridge, relayerInfo, address, deferredWithdrawAmount]);
+  }, [defaultBridge, relayerInfo, address, activeKey, deferredWithdrawAmount]);
 
   return (
     <Modal
@@ -274,7 +283,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
       }}
       busy={busy}
       disabledCancel={busy}
-      disabledOk={disableOk}
+      disabledOk={disableOk || (activeKey === "withdraw" && okText === "Confirm" && loadingWithdrawFee)}
       extra={
         activeKey === "withdraw" ? (
           <div className="h-6 self-end">
@@ -384,10 +393,12 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                 <LabelSection label="Withdraw Fee" tips="This value is calculated and does not require input">
                   <div
                     className={`relative flex h-10 items-center justify-between rounded-middle border bg-inner px-small lg:px-middle ${
-                      withdrawFee ? "border-transparent" : "border-app-red"
+                      withdrawFee || loadingWithdrawFee ? "border-transparent" : "border-app-red"
                     }`}
                   >
-                    {withdrawFee ? (
+                    {loadingWithdrawFee ? (
+                      <CountLoading size="small" color="white" />
+                    ) : withdrawFee ? (
                       <>
                         <span className="text-sm font-medium text-white">
                           {formatBalance(withdrawFee.value, withdrawFee.token.decimals, { precision: 6 })}
