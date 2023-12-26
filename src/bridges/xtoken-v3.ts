@@ -147,6 +147,7 @@ export class XTokenV3Bridge extends BaseBridge {
     await this.validateNetwork("target");
     const sourceMessager = this.sourceChain?.messager?.msgline;
     const targetMessager = this.targetChain?.messager?.msgline;
+    const nonce = record.messageNonce?.split("-").at(0);
 
     if (this.contract && sourceMessager && targetMessager && this.publicClient && this.walletClient) {
       let hash: Address | undefined;
@@ -159,7 +160,7 @@ export class XTokenV3Bridge extends BaseBridge {
           record.sender,
           record.recipient,
           BigInt(record.sendAmount),
-          BigInt(record.nonce),
+          BigInt(nonce ?? 0),
         ] as const;
 
         const message = encodeFunctionData({
@@ -199,7 +200,7 @@ export class XTokenV3Bridge extends BaseBridge {
           record.sender,
           record.recipient,
           BigInt(record.sendAmount),
-          BigInt(record.nonce),
+          BigInt(nonce ?? 0),
         ] as const;
 
         const message = encodeFunctionData({
