@@ -1,6 +1,6 @@
 import { BridgeConstructorArgs, GetFeeArgs, HistoryRecord, Token, TransferOptions } from "@/types";
 import { BaseBridge } from ".";
-import { Address, TransactionReceipt, encodeFunctionData } from "viem";
+import { Address, Hex, TransactionReceipt, encodeFunctionData, isAddressEqual } from "viem";
 import { fetchMsglineFeeAndParams } from "@/utils";
 
 export class XTokenV3Bridge extends BaseBridge {
@@ -141,6 +141,48 @@ export class XTokenV3Bridge extends BaseBridge {
         return { value: feeAndParams.fee, token: this.sourceNativeToken };
       }
     }
+  }
+
+  async claim(record: HistoryRecord): Promise<TransactionReceipt | undefined> {
+    await this.validateNetwork("target");
+
+    if (record.relayer && record.recvTokenAddress && this.contract && this.publicClient && this.walletClient) {
+      let guardContract: Address = "0x0000000000000000000000000000000000000000";
+
+      if (this.crossInfo?.action === "issue") {
+        guardContract = await this.publicClient.readContract({
+          abi: (await import("@/abi/xtoken-issuing")).default,
+          functionName: "guard",
+          address: this.contract.sourceAddress,
+        });
+      } else if (this.crossInfo?.action === "redeem") {
+        guardContract = await this.publicClient.readContract({
+          abi: (await import("@/abi/xtoken-backing")).default,
+          functionName: "guard",
+          address: this.contract.sourceAddress,
+        });
+      }
+
+      if (!isAddressEqual(guardContract, "0x0000000000000000000000000000000000000000")) {
+        const hash = await this.walletClient.writeContract({
+          abi: (await import("@/abi/guard-v3")).default,
+          functionName: "claim",
+          args: [
+            this.contract.sourceAddress,
+            BigInt(record.messageNonce || 0),
+            BigInt(record.endTime || 0),
+            record.recvTokenAddress,
+            record.recipient,
+            BigInt(record.recvAmount || 0),
+            record.guardSignatures?.split("-").slice(1) as Hex[],
+          ],
+          address: guardContract,
+          gas: this.getTxGasLimit(),
+        });
+        return this.publicClient.waitForTransactionReceipt({ hash });
+      }
+    }
+    return;
   }
 
   async refund(record: HistoryRecord): Promise<TransactionReceipt | undefined> {
