@@ -168,7 +168,7 @@ export class XTokenV3Bridge extends BaseBridge {
           abi: (await import("@/abi/guard-v3")).default,
           functionName: "claim",
           args: [
-            this.contract.sourceAddress,
+            this.contract.targetAddress,
             BigInt(record.id.split("-").slice(-1)[0]),
             BigInt(record.endTime || 0),
             record.recvTokenAddress,
