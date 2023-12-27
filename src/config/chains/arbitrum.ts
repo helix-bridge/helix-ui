@@ -63,4 +63,5 @@ export const arbitrumChain: ChainConfig = {
       ],
     },
   ],
+  messager: { msgline: "0x3d33856dcf74f110690f5a2647c7dfb9bb5ff2d0" },
 };

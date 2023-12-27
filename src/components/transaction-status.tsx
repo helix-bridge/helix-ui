@@ -197,7 +197,7 @@ export default function TransactionStatus({ record }: Props) {
 
         {record?.result === RecordResult.PENDING_TO_REFUND && (
           <div className="flex items-center gap-small">
-            <span className="text-sm font-medium text-white/50">Please request refund on the source chain.</span>
+            <span className="text-sm font-medium text-white/50">Please request refund on the target chain.</span>
             <Button className="px-1" kind="primary" busy={busy} onClick={handleRefund}>
               <span className="text-sm font-medium text-white">Refund</span>
             </Button>

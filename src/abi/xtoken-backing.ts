@@ -49,19 +49,13 @@ const abi = [
     type: "event",
     inputs: [
       {
-        name: "refundId",
-        type: "bytes32",
-        indexed: false,
-        internalType: "bytes32",
-      },
-      {
         name: "transferId",
         type: "bytes32",
         indexed: false,
         internalType: "bytes32",
       },
       {
-        name: "mappingToken",
+        name: "xToken",
         type: "address",
         indexed: false,
         internalType: "address",
@@ -96,6 +90,12 @@ const abi = [
         type: "bytes32",
         indexed: false,
         internalType: "bytes32",
+      },
+      {
+        name: "nonce",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
       },
       {
         name: "remoteChainId",
@@ -250,6 +250,45 @@ const abi = [
     stateMutability: "view",
   },
   {
+    name: "TRANSFER_DELIVERED",
+    type: "function",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    name: "TRANSFER_REFUNDED",
+    type: "function",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    name: "TRANSFER_UNFILLED",
+    type: "function",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
     name: "_slotReserved",
     type: "function",
     inputs: [
@@ -336,12 +375,22 @@ const abi = [
         internalType: "address",
       },
       {
+        name: "_originalSender",
+        type: "address",
+        internalType: "address",
+      },
+      {
         name: "_recipient",
         type: "address",
         internalType: "address",
       },
       {
         name: "_amount",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "_nonce",
         type: "uint256",
         internalType: "uint256",
       },
@@ -360,11 +409,6 @@ const abi = [
     type: "function",
     inputs: [
       {
-        name: "_transferId",
-        type: "bytes32",
-        internalType: "bytes32",
-      },
-      {
         name: "_originalToken",
         type: "address",
         internalType: "address",
@@ -375,7 +419,17 @@ const abi = [
         internalType: "address",
       },
       {
+        name: "_recipient",
+        type: "address",
+        internalType: "address",
+      },
+      {
         name: "_amount",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "_nonce",
         type: "uint256",
         internalType: "uint256",
       },
@@ -388,6 +442,74 @@ const abi = [
       },
     ],
     stateMutability: "view",
+  },
+  {
+    name: "filledTransfers",
+    type: "function",
+    inputs: [
+      {
+        name: "",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    name: "getTransferId",
+    type: "function",
+    inputs: [
+      {
+        name: "_nonce",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "_sourceChainId",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "_targetChainId",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "_originalToken",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "_originalSender",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "_recipient",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "_amount",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
+    ],
+    stateMutability: "pure",
   },
   {
     name: "guard",
@@ -412,22 +534,27 @@ const abi = [
         internalType: "uint256",
       },
       {
-        name: "_transferId",
-        type: "bytes32",
-        internalType: "bytes32",
-      },
-      {
         name: "_originalToken",
         type: "address",
         internalType: "address",
       },
       {
-        name: "_originSender",
+        name: "_originalSender",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "_recipient",
         type: "address",
         internalType: "address",
       },
       {
         name: "_amount",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "_nonce",
         type: "uint256",
         internalType: "uint256",
       },
@@ -478,6 +605,11 @@ const abi = [
         internalType: "uint256",
       },
       {
+        name: "_nonce",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
         name: "_extParams",
         type: "bytes",
         internalType: "bytes",
@@ -485,30 +617,6 @@ const abi = [
     ],
     outputs: [],
     stateMutability: "payable",
-  },
-  {
-    name: "lockedMessages",
-    type: "function",
-    inputs: [
-      {
-        name: "",
-        type: "bytes32",
-        internalType: "bytes32",
-      },
-    ],
-    outputs: [
-      {
-        name: "hash",
-        type: "bytes32",
-        internalType: "bytes32",
-      },
-      {
-        name: "hasRefundForFailed",
-        type: "bool",
-        internalType: "bool",
-      },
-    ],
-    stateMutability: "view",
   },
   {
     name: "messagers",
@@ -654,14 +762,33 @@ const abi = [
     stateMutability: "nonpayable",
   },
   {
-    name: "requestRemoteIssuingForUnlockFailure",
+    name: "requestInfos",
     type: "function",
     inputs: [
       {
-        name: "_transferId",
+        name: "",
         type: "bytes32",
         internalType: "bytes32",
       },
+    ],
+    outputs: [
+      {
+        name: "isRequested",
+        type: "bool",
+        internalType: "bool",
+      },
+      {
+        name: "hasRefundForFailed",
+        type: "bool",
+        internalType: "bool",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    name: "requestRemoteIssuingForUnlockFailure",
+    type: "function",
+    inputs: [
       {
         name: "_remoteChainId",
         type: "uint256",
@@ -678,7 +805,17 @@ const abi = [
         internalType: "address",
       },
       {
+        name: "_recipient",
+        type: "address",
+        internalType: "address",
+      },
+      {
         name: "_amount",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "_nonce",
         type: "uint256",
         internalType: "uint256",
       },
@@ -841,6 +978,11 @@ const abi = [
         internalType: "address",
       },
       {
+        name: "_originSender",
+        type: "address",
+        internalType: "address",
+      },
+      {
         name: "_recipient",
         type: "address",
         internalType: "address",
@@ -850,28 +992,14 @@ const abi = [
         type: "uint256",
         internalType: "uint256",
       },
+      {
+        name: "_nonce",
+        type: "uint256",
+        internalType: "uint256",
+      },
     ],
     outputs: [],
     stateMutability: "nonpayable",
-  },
-  {
-    name: "unlockedTransferIds",
-    type: "function",
-    inputs: [
-      {
-        name: "",
-        type: "bytes32",
-        internalType: "bytes32",
-      },
-    ],
-    outputs: [
-      {
-        name: "",
-        type: "bool",
-        internalType: "bool",
-      },
-    ],
-    stateMutability: "view",
   },
   {
     name: "unpause",

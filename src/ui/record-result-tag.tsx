@@ -24,6 +24,10 @@ export function RecordResultTag({ result }: { result?: RecordResult | null }) {
       icon = "success.svg";
       text = "Success";
       color = "#52C41A";
+    } else if (result === RecordResult.PENDING_TO_CONFIRM_REFUND) {
+      icon = "pending.svg";
+      text = "Refunding";
+      color = "#00B2FF";
     }
 
     return { icon, text, color };

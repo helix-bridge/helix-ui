@@ -17,7 +17,7 @@ export enum RecordResult {
   FAILED,
 }
 
-export type MessageChannel = "layerzero";
+export type MessageChannel = "layerzero" | "msgline" | "sub2sub" | "arbitrum-l2";
 
 export interface HistoryRecord {
   id: string;
@@ -40,7 +40,7 @@ export interface HistoryRecord {
   fee: string;
   feeToken: TokenSymbol;
   messageNonce: string | null;
-  sendTokenAddress: Address | null;
+  sendTokenAddress: Address;
   recvTokenAddress: Address | null;
   guardSignatures: string | null;
   relayer: Address | null;
@@ -133,6 +133,8 @@ export type Lnv20RelayerOverview = Pick<
   | "profit"
   | "heartbeatTimestamp"
   | "messageChannel"
+  | "lastTransferId"
+  | "withdrawNonce"
 >;
 
 export interface QueryLnV20RelayInfosReqParams {
