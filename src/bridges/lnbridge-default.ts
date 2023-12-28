@@ -201,7 +201,7 @@ export class LnBridgeDefault extends LnBridgeBase {
       const payload = encodeFunctionData({
         abi: (await import("@/abi/msgline-messager")).default,
         functionName: "receiveMessage",
-        args: [BigInt(this.sourceChain.id), sourceMessager, targetMessager, message],
+        args: [BigInt(this.sourceChain.id), this.contract.sourceAddress, this.contract.targetAddress, message],
       });
 
       const feeAndParams = await fetchMsglineFeeAndParams(
