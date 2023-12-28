@@ -176,6 +176,7 @@ export class LnBridgeDefault extends LnBridgeBase {
     if (
       sourceMessager &&
       targetMessager &&
+      this.contract &&
       this.sourceNativeToken &&
       this.sourceToken &&
       this.targetToken &&
