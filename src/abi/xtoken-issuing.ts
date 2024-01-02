@@ -3,11 +3,11 @@ const abi = [
     anonymous: false,
     inputs: [
       { indexed: false, internalType: "bytes32", name: "transferId", type: "bytes32" },
+      { indexed: false, internalType: "uint256", name: "nonce", type: "uint256" },
       { indexed: false, internalType: "uint256", name: "remoteChainId", type: "uint256" },
       { indexed: false, internalType: "address", name: "sender", type: "address" },
       { indexed: false, internalType: "address", name: "recipient", type: "address" },
       { indexed: false, internalType: "address", name: "originalToken", type: "address" },
-      { indexed: false, internalType: "address", name: "xToken", type: "address" },
       { indexed: false, internalType: "uint256", name: "amount", type: "uint256" },
       { indexed: false, internalType: "uint256", name: "fee", type: "uint256" },
     ],
@@ -59,7 +59,6 @@ const abi = [
   {
     anonymous: false,
     inputs: [
-      { indexed: false, internalType: "bytes32", name: "refundId", type: "bytes32" },
       { indexed: false, internalType: "bytes32", name: "transferId", type: "bytes32" },
       { indexed: false, internalType: "address", name: "originalToken", type: "address" },
       { indexed: false, internalType: "address", name: "originalSender", type: "address" },
@@ -116,6 +115,27 @@ const abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "TRANSFER_DELIVERED",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "TRANSFER_REFUNDED",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "TRANSFER_UNFILLED",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [{ internalType: "address", name: "", type: "address" }],
     name: "_slotReserved",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
@@ -124,25 +144,23 @@ const abi = [
   },
   { inputs: [], name: "acceptOwnership", outputs: [], stateMutability: "nonpayable", type: "function" },
   {
+    inputs: [{ internalType: "address", name: "_xToken", type: "address" }],
+    name: "acceptxTokenOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       { internalType: "address", name: "_xToken", type: "address" },
       { internalType: "address", name: "_recipient", type: "address" },
       { internalType: "uint256", name: "_amount", type: "uint256" },
+      { internalType: "uint256", name: "_nonce", type: "uint256" },
       { internalType: "bytes", name: "_extParams", type: "bytes" },
     ],
     name: "burnAndRemoteUnlock",
     outputs: [],
     stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
-    name: "burnMessages",
-    outputs: [
-      { internalType: "bytes32", name: "hash", type: "bytes32" },
-      { internalType: "bool", name: "hasRefundForFailed", type: "bool" },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -168,10 +186,11 @@ const abi = [
   },
   {
     inputs: [
-      { internalType: "bytes32", name: "_transferId", type: "bytes32" },
       { internalType: "address", name: "_originalToken", type: "address" },
       { internalType: "address", name: "_originalSender", type: "address" },
+      { internalType: "address", name: "_recipient", type: "address" },
       { internalType: "uint256", name: "_amount", type: "uint256" },
+      { internalType: "uint256", name: "_nonce", type: "uint256" },
     ],
     name: "encodeUnlockForIssuingFailureFromRemote",
     outputs: [{ internalType: "bytes", name: "", type: "bytes" }],
@@ -181,12 +200,36 @@ const abi = [
   {
     inputs: [
       { internalType: "address", name: "_originalToken", type: "address" },
+      { internalType: "address", name: "_originalSender", type: "address" },
       { internalType: "address", name: "_recipient", type: "address" },
       { internalType: "uint256", name: "_amount", type: "uint256" },
+      { internalType: "uint256", name: "_nonce", type: "uint256" },
     ],
     name: "encodeUnlockFromRemote",
     outputs: [{ internalType: "bytes", name: "", type: "bytes" }],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
+    name: "filledTransfers",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_nonce", type: "uint256" },
+      { internalType: "uint256", name: "_sourceChainId", type: "uint256" },
+      { internalType: "uint256", name: "_targetChainId", type: "uint256" },
+      { internalType: "address", name: "_originalToken", type: "address" },
+      { internalType: "address", name: "_originalSender", type: "address" },
+      { internalType: "address", name: "_recipient", type: "address" },
+      { internalType: "uint256", name: "_amount", type: "uint256" },
+    ],
+    name: "getTransferId",
+    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
+    stateMutability: "pure",
     type: "function",
   },
   {
@@ -199,10 +242,11 @@ const abi = [
   {
     inputs: [
       { internalType: "uint256", name: "_originalChainId", type: "uint256" },
-      { internalType: "bytes32", name: "_transferId", type: "bytes32" },
       { internalType: "address", name: "_originalToken", type: "address" },
       { internalType: "address", name: "_originalSender", type: "address" },
+      { internalType: "address", name: "_recipient", type: "address" },
       { internalType: "uint256", name: "_amount", type: "uint256" },
+      { internalType: "uint256", name: "_nonce", type: "uint256" },
     ],
     name: "handleIssuingForUnlockFailureFromRemote",
     outputs: [],
@@ -220,18 +264,13 @@ const abi = [
     type: "function",
   },
   {
-    inputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
-    name: "issueTransferIds",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       { internalType: "uint256", name: "_remoteChainId", type: "uint256" },
       { internalType: "address", name: "_originalToken", type: "address" },
+      { internalType: "address", name: "_originalSender", type: "address" },
       { internalType: "address", name: "_recipient", type: "address" },
       { internalType: "uint256", name: "_amount", type: "uint256" },
+      { internalType: "uint256", name: "_nonce", type: "uint256" },
     ],
     name: "issuexToken",
     outputs: [],
@@ -310,12 +349,23 @@ const abi = [
     type: "function",
   },
   {
+    inputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
+    name: "requestInfos",
+    outputs: [
+      { internalType: "bool", name: "isRequested", type: "bool" },
+      { internalType: "bool", name: "hasRefundForFailed", type: "bool" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
-      { internalType: "bytes32", name: "_transferId", type: "bytes32" },
       { internalType: "uint256", name: "_originalChainId", type: "uint256" },
       { internalType: "address", name: "_originalToken", type: "address" },
       { internalType: "address", name: "_originalSender", type: "address" },
+      { internalType: "address", name: "_recipient", type: "address" },
       { internalType: "uint256", name: "_amount", type: "uint256" },
+      { internalType: "uint256", name: "_nonce", type: "uint256" },
       { internalType: "bytes", name: "_extParams", type: "bytes" },
     ],
     name: "requestRemoteUnlockForIssuingFailure",
@@ -379,6 +429,16 @@ const abi = [
   {
     inputs: [{ internalType: "address", name: "_dao", type: "address" }],
     name: "transferOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "_xToken", type: "address" },
+      { internalType: "address", name: "_newOwner", type: "address" },
+    ],
+    name: "transferxTokenOwnership",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

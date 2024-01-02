@@ -1,5 +1,6 @@
 import { FEE_RATE_BASE, FEE_RATE_MAX, FEE_RATE_MIN } from "@/config/constant";
 import { RecordResult } from "@/types/graphql";
+import { Address, Hex } from "viem";
 
 export function parseRecordResult(result: RecordResult) {
   switch (result) {
@@ -40,4 +41,23 @@ export function formatFeeRate(rate: number) {
 
 export function isValidFeeRate(rate: number) {
   return FEE_RATE_MIN <= rate && rate <= FEE_RATE_MAX;
+}
+
+export async function fetchMsglineFeeAndParams(
+  fromChainId: number,
+  toChainId: number,
+  fromMessager: Address,
+  toMessager: Address,
+  sender: Address,
+  payload: Hex,
+) {
+  const feeData = await fetch(
+    `https://msgport-api.darwinia.network/ormp/fee?from_chain_id=${fromChainId}&to_chain_id=${toChainId}&payload=${payload}&from_address=${fromMessager}&to_address=${toMessager}&refund_address=${sender}`,
+  );
+  const feeJson = await feeData.json();
+  if (feeData.ok && feeJson.code === 0) {
+    const fee = BigInt(feeJson.data.fee);
+    const extParams = feeJson.data.params as Hex;
+    return { fee, extParams };
+  }
 }

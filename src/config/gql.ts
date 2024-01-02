@@ -130,6 +130,8 @@ export const GQL_QUERY_LNV20_RELAY_INFOS = gql`
         profit
         heartbeatTimestamp
         messageChannel
+        lastTransferId
+        withdrawNonce
       }
     }
   }

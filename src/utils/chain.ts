@@ -137,8 +137,8 @@ export function getChainConfigs(askAll?: boolean) {
   if (askAll) {
     return all;
   } else if (isProduction()) {
-    return all.filter((c) => (!c.hidden && !c.testnet) || c.network === "crab-dvm");
+    return all.filter((c) => (!c.hidden && !c.testnet) || c.network === "crab-dvm" || c.network === "sepolia");
   } else {
-    return all.filter((c) => (!c.hidden && !!c.testnet) || c.network === "crab-dvm");
+    return all.filter((c) => (!c.hidden && !!c.testnet) || c.network === "crab-dvm" || c.network === "sepolia");
   }
 }

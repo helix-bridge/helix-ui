@@ -1,8 +1,9 @@
-import { Address, TransactionReceipt, bytesToHex } from "viem";
+import { Address, TransactionReceipt, bytesToHex, encodeFunctionData } from "viem";
 import { LnBridgeBase } from "./lnbridge-base";
 import { ChainID } from "@/types/chain";
 import { isProduction } from "@/utils/env";
-import { BridgeConstructorArgs, TransferOptions } from "@/types/bridge";
+import { BridgeConstructorArgs, GetWithdrawFeeArgs, TransferOptions } from "@/types/bridge";
+import { fetchMsglineFeeAndParams } from "@/utils";
 
 export class LnBridgeDefault extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {
@@ -145,7 +146,7 @@ export class LnBridgeDefault extends LnBridgeBase {
     }
   }
 
-  async getWithdrawFee() {
+  private async _getLayerzeroWithdrawFee(_args: GetWithdrawFeeArgs) {
     if (this.contract && this.sourceNativeToken && this.targetChain && this.sourcePublicClient) {
       const bridgeAbi = (await import(`../abi/lnbridgev20-default`)).default;
       const accessAbi = (await import(`../abi/lnaccess-controller`)).default;
@@ -165,6 +166,63 @@ export class LnBridgeDefault extends LnBridgeBase {
       });
 
       return { value: nativeFee, token: this.sourceNativeToken };
+    }
+  }
+
+  private async _getMsglineWithdrawFee(args: GetWithdrawFeeArgs) {
+    const sourceMessager = this.sourceChain?.messager?.msgline;
+    const targetMessager = this.targetChain?.messager?.msgline;
+
+    if (
+      sourceMessager &&
+      targetMessager &&
+      this.contract &&
+      this.sourceNativeToken &&
+      this.sourceToken &&
+      this.targetToken &&
+      args.transferId &&
+      args.withdrawNonce &&
+      args.sender &&
+      args.relayer
+    ) {
+      const message = encodeFunctionData({
+        abi: (await import(`../abi/lnbridgev20-default`)).default,
+        functionName: "withdraw",
+        args: [
+          BigInt(this.sourceChain.id),
+          args.transferId,
+          BigInt(args.withdrawNonce),
+          args.relayer,
+          this.sourceToken.address,
+          this.targetToken.address,
+          args.amount,
+        ],
+      });
+
+      const payload = encodeFunctionData({
+        abi: (await import("@/abi/msgline-messager")).default,
+        functionName: "receiveMessage",
+        args: [BigInt(this.sourceChain.id), this.contract.sourceAddress, this.contract.targetAddress, message],
+      });
+
+      const feeAndParams = await fetchMsglineFeeAndParams(
+        this.sourceChain.id,
+        this.targetChain.id,
+        sourceMessager,
+        targetMessager,
+        args.sender,
+        payload,
+      );
+
+      return feeAndParams && { value: feeAndParams.fee, token: this.sourceNativeToken };
+    }
+  }
+
+  async getWithdrawFee(args: GetWithdrawFeeArgs) {
+    if (args.messageChannel === "layerzero") {
+      return this._getLayerzeroWithdrawFee(args);
+    } else if (args.messageChannel === "msgline") {
+      return this._getMsglineWithdrawFee(args);
     }
   }
 

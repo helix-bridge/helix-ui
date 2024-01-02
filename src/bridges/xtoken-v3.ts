@@ -1,6 +1,7 @@
-import { BridgeConstructorArgs, GetFeeArgs, Token, TransferOptions } from "@/types";
+import { BridgeConstructorArgs, GetFeeArgs, HistoryRecord, Token, TransferOptions } from "@/types";
 import { BaseBridge } from ".";
-import { Address, Hex, TransactionReceipt } from "viem";
+import { Address, Hex, TransactionReceipt, encodeFunctionData, isAddressEqual } from "viem";
+import { fetchMsglineFeeAndParams } from "@/utils";
 
 export class XTokenV3Bridge extends BaseBridge {
   constructor(args: BridgeConstructorArgs) {
@@ -16,8 +17,8 @@ export class XTokenV3Bridge extends BaseBridge {
   }
 
   private initContract() {
-    const backing = "0xb137BDf1Ad5392027832f54a4409685Ef52Aa9dA";
-    const issuing = "0x44A001aF6AcD2d5f5cB82FCB14Af3d497D56faB4";
+    const backing = "0xbdC7bbF408931C5d666b4F0520E0D9E9A0B04e99";
+    const issuing = "0xf22D0bb66b39745Ae6e3fEa3E5859d7f0b367Fd1";
     this.initContractByBackingIssuing(backing, issuing);
   }
 
@@ -27,7 +28,8 @@ export class XTokenV3Bridge extends BaseBridge {
     amount: bigint,
     options?: TransferOptions & { askEstimateGas?: boolean },
   ): Promise<bigint | TransactionReceipt | undefined> {
-    const feeAndParams = await this._getMsgportFeeAndParams(sender, recipient, amount);
+    const nonce = BigInt(Date.now());
+    const feeAndParams = await this._getTransferFeeAndParams(sender, recipient, amount, nonce);
     const account = await this.getSigner();
 
     if (
@@ -46,7 +48,14 @@ export class XTokenV3Bridge extends BaseBridge {
           address: this.contract.sourceAddress,
           abi: (await import("@/abi/xtoken-backing")).default,
           functionName: "lockAndRemoteIssuing",
-          args: [BigInt(this.targetChain.id), this.sourceToken.address, recipient, amount, feeAndParams.extParams],
+          args: [
+            BigInt(this.targetChain.id),
+            this.sourceToken.address,
+            recipient,
+            amount,
+            nonce,
+            feeAndParams.extParams,
+          ],
           value: this.sourceToken.type === "native" ? amount + feeAndParams.fee : feeAndParams.fee,
           gas: this.getTxGasLimit(),
           account,
@@ -63,7 +72,7 @@ export class XTokenV3Bridge extends BaseBridge {
           address: this.contract.sourceAddress,
           abi: (await import("@/abi/xtoken-issuing")).default,
           functionName: "burnAndRemoteUnlock",
-          args: [this.sourceToken.address, recipient, amount, feeAndParams.extParams],
+          args: [this.sourceToken.address, recipient, amount, nonce, feeAndParams.extParams],
           value: this.sourceToken.type === "native" ? amount + feeAndParams.fee : feeAndParams.fee,
           gas: this.getTxGasLimit(),
           account,
@@ -80,7 +89,7 @@ export class XTokenV3Bridge extends BaseBridge {
     return;
   }
 
-  private async _getMsgportFeeAndParams(sender: Address, recipient: Address, amount: bigint) {
+  private async _getTransferFeeAndParams(sender: Address, recipient: Address, amount: bigint, nonce: bigint) {
     const sourceMessager = this.sourceChain?.messager?.msgline;
     const targetMessager = this.targetChain?.messager?.msgline;
 
@@ -92,47 +101,181 @@ export class XTokenV3Bridge extends BaseBridge {
       this.targetToken &&
       this.sourcePublicClient
     ) {
-      const message = await (this.crossInfo?.action === "issue"
-        ? this.sourcePublicClient.readContract({
-            address: this.contract.sourceAddress,
-            abi: (await import("@/abi/xtoken-backing")).default,
-            functionName: "encodeIssuexToken",
-            args: [this.sourceToken.address, recipient, amount],
-          })
-        : this.sourcePublicClient.readContract({
-            address: this.contract.sourceAddress,
-            abi: (await import("@/abi/xtoken-issuing")).default,
-            functionName: "encodeUnlockFromRemote",
-            args: [this.targetToken.address, recipient, amount],
-          }));
+      const message =
+        this.crossInfo?.action === "issue"
+          ? encodeFunctionData({
+              abi: (await import("@/abi/xtoken-issuing")).default,
+              functionName: "issuexToken",
+              args: [BigInt(this.sourceChain.id), this.sourceToken.address, sender, recipient, amount, nonce],
+            })
+          : encodeFunctionData({
+              abi: (await import("@/abi/xtoken-backing")).default,
+              functionName: "unlockFromRemote",
+              args: [BigInt(this.sourceChain.id), this.targetToken.address, sender, recipient, amount, nonce],
+            });
 
-      const payload = await this.sourcePublicClient.readContract({
-        address: sourceMessager,
+      const payload = encodeFunctionData({
         abi: (await import("@/abi/msgline-messager")).default,
-        functionName: "messagePayload",
-        args: [sourceMessager, targetMessager, message],
+        functionName: "receiveMessage",
+        args: [BigInt(this.sourceChain.id), this.contract.sourceAddress, this.contract.targetAddress, message],
       });
 
-      const feeData = await fetch(
-        `https://msgport-api.darwinia.network/ormp_ext/fee?from_chain_id=${this.sourceChain.id}&to_chain_id=${this.targetChain.id}&payload=${payload}&from_address=${sourceMessager}&to_address=${targetMessager}&refund_address=${sender}`,
+      return fetchMsglineFeeAndParams(
+        this.sourceChain.id,
+        this.targetChain.id,
+        sourceMessager,
+        targetMessager,
+        sender,
+        payload,
       );
-      const feeJson = await feeData.json();
-      if (feeData.ok && feeJson.code === 0) {
-        const fee = BigInt(feeJson.data.fee);
-        const extParams = feeJson.data.params as Hex;
-        return { fee, extParams };
-      }
     }
   }
 
   async getFee(args?: GetFeeArgs | undefined): Promise<{ value: bigint; token: Token } | undefined> {
     if (this.sourceNativeToken) {
+      const nonce = BigInt(Date.now());
       const sender = args?.sender ?? "0x0000000000000000000000000000000000000000";
       const recipient = args?.recipient ?? "0x0000000000000000000000000000000000000000";
-      const feeAndParams = await this._getMsgportFeeAndParams(sender, recipient, args?.transferAmount ?? 0n);
+      const feeAndParams = await this._getTransferFeeAndParams(sender, recipient, args?.transferAmount ?? 0n, nonce);
       if (feeAndParams) {
         return { value: feeAndParams.fee, token: this.sourceNativeToken };
       }
+    }
+  }
+
+  async claim(record: HistoryRecord): Promise<TransactionReceipt | undefined> {
+    await this.validateNetwork("target");
+
+    if (record.recvTokenAddress && this.contract && this.publicClient && this.walletClient) {
+      let guardContract: Address = "0x0000000000000000000000000000000000000000";
+
+      if (this.crossInfo?.action === "issue") {
+        guardContract = await this.publicClient.readContract({
+          abi: (await import("@/abi/xtoken-issuing")).default,
+          functionName: "guard",
+          address: this.contract.targetAddress,
+        });
+      } else if (this.crossInfo?.action === "redeem") {
+        guardContract = await this.publicClient.readContract({
+          abi: (await import("@/abi/xtoken-backing")).default,
+          functionName: "guard",
+          address: this.contract.targetAddress,
+        });
+      }
+
+      if (!isAddressEqual(guardContract, "0x0000000000000000000000000000000000000000")) {
+        const hash = await this.walletClient.writeContract({
+          abi: (await import("@/abi/guard-v3")).default,
+          functionName: "claim",
+          args: [
+            this.contract.targetAddress,
+            BigInt(record.id.split("-").slice(-1)[0]),
+            BigInt(record.endTime || 0),
+            record.recvTokenAddress,
+            record.recipient,
+            BigInt(record.recvAmount || 0),
+            record.guardSignatures?.split("-").slice(1) as Hex[],
+          ],
+          address: guardContract,
+          gas: this.getTxGasLimit(),
+        });
+        return this.publicClient.waitForTransactionReceipt({ hash });
+      }
+    }
+  }
+
+  async refund(record: HistoryRecord): Promise<TransactionReceipt | undefined> {
+    await this.validateNetwork("target");
+    const sourceMessager = this.sourceChain?.messager?.msgline;
+    const targetMessager = this.targetChain?.messager?.msgline;
+    const nonce = record.messageNonce?.split("-").at(0);
+
+    if (this.contract && sourceMessager && targetMessager && this.publicClient && this.walletClient) {
+      let hash: Address | undefined;
+
+      if (this.crossInfo?.action === "issue") {
+        const abi = (await import("@/abi/xtoken-issuing")).default;
+        const commonArgs = [
+          BigInt(this.sourceChain.id),
+          record.sendTokenAddress,
+          record.sender,
+          record.recipient,
+          BigInt(record.sendAmount),
+          BigInt(nonce ?? 0),
+        ] as const;
+
+        const message = encodeFunctionData({
+          abi,
+          functionName: "handleIssuingForUnlockFailureFromRemote",
+          args: commonArgs,
+        });
+        const payload = encodeFunctionData({
+          abi: (await import("@/abi/msgline-messager")).default,
+          functionName: "receiveMessage",
+          args: [BigInt(this.targetChain.id), this.contract.targetAddress, this.contract.sourceAddress, message],
+        });
+        const feeAndParams = await fetchMsglineFeeAndParams(
+          this.targetChain.id,
+          this.sourceChain.id,
+          targetMessager,
+          sourceMessager,
+          record.sender,
+          payload,
+        );
+
+        if (feeAndParams) {
+          hash = await this.walletClient.writeContract({
+            abi,
+            functionName: "requestRemoteUnlockForIssuingFailure",
+            args: [...commonArgs, feeAndParams.extParams],
+            address: this.contract.targetAddress,
+            gas: this.getTxGasLimit(),
+            value: feeAndParams.fee,
+          });
+        }
+      } else if (this.crossInfo?.action === "redeem" && record.recvTokenAddress) {
+        const abi = (await import("@/abi/xtoken-backing")).default;
+        const commonArgs = [
+          BigInt(this.sourceChain.id),
+          record.recvTokenAddress,
+          record.sender,
+          record.recipient,
+          BigInt(record.sendAmount),
+          BigInt(nonce ?? 0),
+        ] as const;
+
+        const message = encodeFunctionData({
+          abi,
+          functionName: "handleUnlockForIssuingFailureFromRemote",
+          args: commonArgs,
+        });
+        const payload = encodeFunctionData({
+          abi: (await import("@/abi/msgline-messager")).default,
+          functionName: "receiveMessage",
+          args: [BigInt(this.targetChain.id), this.contract.targetAddress, this.contract.sourceAddress, message],
+        });
+        const feeAndParams = await fetchMsglineFeeAndParams(
+          this.targetChain.id,
+          this.sourceChain.id,
+          targetMessager,
+          sourceMessager,
+          record.sender,
+          payload,
+        );
+
+        if (feeAndParams) {
+          hash = await this.walletClient.writeContract({
+            abi,
+            functionName: "requestRemoteIssuingForUnlockFailure",
+            args: [...commonArgs, feeAndParams.extParams],
+            address: this.contract.targetAddress,
+            gas: this.getTxGasLimit(),
+            value: feeAndParams.fee,
+          });
+        }
+      }
+
+      return hash && this.publicClient.waitForTransactionReceipt({ hash });
     }
   }
 }

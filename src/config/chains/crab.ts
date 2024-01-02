@@ -75,6 +75,6 @@ export const crabChain: ChainConfig = {
     },
   ],
   messager: {
-    msgline: "0xCAb1f69C671f1548fd3dE5d63852E9B9181a0D0E",
+    msgline: "0xf85638B61E0425D6BB91981190B73246e3AF3CA9",
   },
 };
