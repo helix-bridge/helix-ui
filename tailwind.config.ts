@@ -34,6 +34,9 @@ const config: Config = {
         middle: "0.625rem", // 10px
         large: "0.9375rem", // 15px
       },
+      maxWidth: {
+        "8xl": "90rem",
+      },
       screens: {
         xl: "1200px",
         "2xl": "1200px",

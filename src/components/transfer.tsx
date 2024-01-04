@@ -184,7 +184,7 @@ export default function Transfer() {
       <div className="mx-auto flex w-full flex-col gap-large rounded-large bg-component p-middle lg:mt-20 lg:w-[30rem] lg:gap-5 lg:p-5">
         {/* From-To */}
         <div className="mt-8 flex items-center gap-small lg:gap-large">
-          <Label text="From" className="w-full" needAbsolute>
+          <Label text="From" className="w-full" textClassName="font-medium" needAbsolute>
             <ChainSelect
               className="w-full bg-inner p-middle"
               placement="bottom-start"
@@ -237,7 +237,7 @@ export default function Transfer() {
               });
             }}
           />
-          <Label text="To" className="w-full" needAbsolute>
+          <Label text="To" className="w-full" textClassName="font-medium" needAbsolute>
             <ChainSelect
               className="w-full bg-inner p-middle"
               placement="bottom-end"
@@ -261,7 +261,7 @@ export default function Transfer() {
         </div>
 
         {/* Amount */}
-        <Label text="Amount" extra={isProduction() ? null : <Faucet />}>
+        <Label text="Amount" textClassName="font-medium" extra={isProduction() ? null : <Faucet />}>
           <BalanceInput
             placeholder="0"
             enabledDynamicStyle
@@ -286,7 +286,7 @@ export default function Transfer() {
         </Label>
 
         {/* Bridge */}
-        <Label text="Bridge" className={`${bridgeOptions.length > 1 ? "" : "hidden"}`}>
+        <Label text="Bridge" className={`${bridgeOptions.length > 1 ? "" : "hidden"}`} textClassName="font-medium">
           <BridgeSelect
             options={bridgeOptions}
             value={bridgeCategory}
@@ -298,7 +298,7 @@ export default function Transfer() {
         </Label>
 
         {/* Information */}
-        <Label text="Information">
+        <Label text="Information" textClassName="font-medium">
           <TransferInfo
             fee={bridgeFee ? { ...bridgeFee, loading: isLoadingFee || isLoadingRelayers } : undefined}
             bridge={bridgeInstance}

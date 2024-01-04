@@ -27,7 +27,7 @@ export default function Footer() {
 
   return (
     <div className="app-footer w-full">
-      <div className="container mx-auto flex h-full shrink-0 items-center justify-center px-middle lg:justify-between">
+      <div className="mx-auto flex h-full max-w-8xl shrink-0 items-center justify-center px-middle lg:justify-between">
         {/* Copyright */}
         <span className="text-sm font-medium text-white/50">{`© ${new Date().getFullYear()} Helix Bridge`}</span>
 

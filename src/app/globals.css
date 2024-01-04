@@ -41,12 +41,12 @@ body {
 
   /* Page */
   .page-container {
-    @apply container mx-auto px-middle py-5;
+    @apply max-w-8xl w-full mx-auto px-middle py-5;
   }
 
   /* User */
   .user-connect-wallet {
-    @apply flex h-9 shrink-0 items-center gap-middle rounded-middle bg-primary px-large transition lg:h-8 lg:hover:bg-primary/80 lg:active:translate-y-1;
+    @apply flex h-9 shrink-0 items-center gap-middle rounded-middle bg-primary px-large transition lg:hover:bg-primary/80 lg:active:translate-y-1;
   }
   .user-dropdown-item {
     @apply inline-flex items-center gap-middle rounded-middle px-middle py-small text-start transition hover:bg-white/10 lg:active:translate-y-1;
