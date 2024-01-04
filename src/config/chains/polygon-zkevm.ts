@@ -31,8 +31,8 @@ export const polygonZkEvmChain: ChainConfig = {
       address: "0x1E4a5963aBFD975d8c9021ce480b42188849D41d",
       logo: "usdt.png",
       cross: [
-        { target: { network: "polygon", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
-        { target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "polygon", symbol: "USDT" }, bridge: { category: "lnv2-default" } },
+        { target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnv2-default" } },
       ],
     },
   ],

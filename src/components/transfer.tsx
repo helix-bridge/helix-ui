@@ -1,8 +1,8 @@
 "use client";
 
-import { GQL_SORTED_LNV20_RELAY_INFOS } from "@/config";
+import { GQL_SORTED_LNBRIDGE_RELAY_INFOS } from "@/config";
 import { useToggle, useTransfer } from "@/hooks";
-import { SortedLnV20RelayInfosReqParams, SortedLnV20RelayInfosResData } from "@/types";
+import { SortedLnBridgeRelayInfosReqParams, SortedLnBridgeRelayInfosResData } from "@/types";
 import {
   getAvailableBridges,
   getAvailableSourceTokens,
@@ -69,7 +69,7 @@ export default function Transfer() {
     loading: isLoadingRelayers,
     data: relayersData,
     refetch: refetchRelayers,
-  } = useQuery<SortedLnV20RelayInfosResData, SortedLnV20RelayInfosReqParams>(GQL_SORTED_LNV20_RELAY_INFOS, {
+  } = useQuery<SortedLnBridgeRelayInfosResData, SortedLnBridgeRelayInfosReqParams>(GQL_SORTED_LNBRIDGE_RELAY_INFOS, {
     variables: {
       amount: deferredTransferAmount.value.toString(),
       decimals: sourceToken?.decimals,
@@ -83,7 +83,7 @@ export default function Transfer() {
 
   const transferable = useMemo(() => {
     let result: bigint | undefined;
-    const maxMargin = relayersData?.sortedLnv20RelayInfos?.maxMargin;
+    const transferLimit = relayersData?.sortedLnBridgeRelayInfos?.transferLimit;
 
     if (sourceBalance) {
       const { token, value: balance } = sourceBalance;
@@ -92,8 +92,8 @@ export default function Transfer() {
         result = bridgeFee.value < result ? result - bridgeFee.value : 0n;
       }
     }
-    if (maxMargin) {
-      const mm = BigInt(maxMargin);
+    if (transferLimit) {
+      const mm = BigInt(transferLimit);
       result = result === undefined ? mm : result < mm ? result : mm;
     }
     if (result !== undefined) {
@@ -119,7 +119,7 @@ export default function Transfer() {
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
-    const relayer = relayersData?.sortedLnv20RelayInfos?.records.at(0);
+    const relayer = relayersData?.sortedLnBridgeRelayInfos?.records.at(0);
 
     if (bridgeInstance) {
       setIsLoadingFee(true);
@@ -150,7 +150,7 @@ export default function Transfer() {
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
-    const relayer = relayersData?.sortedLnv20RelayInfos?.records.at(0);
+    const relayer = relayersData?.sortedLnBridgeRelayInfos?.records.at(0);
 
     // Note: native token
 
@@ -302,8 +302,8 @@ export default function Transfer() {
           <TransferInfo
             fee={bridgeFee ? { ...bridgeFee, loading: isLoadingFee || isLoadingRelayers } : undefined}
             bridge={bridgeInstance}
-            maxMargin={relayersData?.sortedLnv20RelayInfos?.maxMargin}
-            isLoadingMaxMargin={isLoadingRelayers}
+            transferLimit={relayersData?.sortedLnBridgeRelayInfos?.transferLimit}
+            isLoadingTransferLimit={isLoadingRelayers}
           />
         </Label>
 

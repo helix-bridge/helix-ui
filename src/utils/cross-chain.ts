@@ -98,7 +98,7 @@ getChainConfigs().forEach((sourceChain) => {
           },
         };
 
-        if (cross.bridge.category === "lnbridgev20-default" || cross.bridge.category === "lnbridgev20-opposite") {
+        if (cross.bridge.category === "lnv2-default" || cross.bridge.category === "lnv2-opposite") {
           lnbridgeDefaultSourceChains = lnbridgeDefaultSourceChains
             .filter((c) => c.id !== sourceChain.id)
             .concat(sourceChain);

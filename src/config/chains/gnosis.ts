@@ -30,7 +30,7 @@ export const gnosisChain: ChainConfig = {
       type: "erc20",
       address: "0x4ECaBa5870353805a9F068101A40E0f32ed605C6",
       logo: "usdt.png",
-      cross: [{ target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } }],
+      cross: [{ target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnv2-default" } }],
     },
   ],
 };

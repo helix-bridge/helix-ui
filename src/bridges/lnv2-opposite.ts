@@ -3,7 +3,7 @@ import { LnBridgeBase } from "./lnbridge-base";
 import { ChainID } from "@/types/chain";
 import { BridgeConstructorArgs, TransferOptions } from "@/types/bridge";
 
-export class LnBridgeOpposite extends LnBridgeBase {
+export class LnBridgeV2Opposite extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {
     super(args);
     this.initContract();
@@ -57,7 +57,7 @@ export class LnBridgeOpposite extends LnBridgeBase {
 
       const defaultParams = {
         address: this.contract.sourceAddress,
-        abi: (await import(`../abi/lnbridgev20-opposite`)).default,
+        abi: (await import(`../abi/lnv2-opposite`)).default,
         functionName: "transferAndLockMargin",
         args: [snapshot, amount, recipient],
         value: this.sourceToken.type === "native" ? amount + totalFee : undefined,
@@ -87,7 +87,7 @@ export class LnBridgeOpposite extends LnBridgeBase {
     ) {
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,
-        abi: (await import(`../abi/lnbridgev20-opposite`)).default,
+        abi: (await import(`../abi/lnv2-opposite`)).default,
         functionName: "updateProviderFeeAndMargin",
         args: [
           BigInt(this.targetChain.id),

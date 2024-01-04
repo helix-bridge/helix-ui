@@ -1,13 +1,13 @@
 "use client";
 
-import { GQL_QUERY_LNV20_RELAY_INFOS } from "@/config";
+import { GQL_QUERY_LNBRIDGE_RELAY_INFOS } from "@/config";
 import { useRelayer } from "@/hooks";
 import {
   BridgeCategory,
   ChainConfig,
   InputValue,
-  QueryLnV20RelayInfosReqParams,
-  QueryLnV20RelayInfosResData,
+  QueryLnBridgeRelayInfosReqParams,
+  QueryLnBridgeRelayInfosResData,
   Token,
 } from "@/types";
 import { notification } from "@/ui/notification";
@@ -101,10 +101,10 @@ export default function RelayerRegister() {
       _category: BridgeCategory,
     ) => {
       const { data: relayerData } = await apolloClient.query<
-        QueryLnV20RelayInfosResData,
-        QueryLnV20RelayInfosReqParams
+        QueryLnBridgeRelayInfosResData,
+        QueryLnBridgeRelayInfosReqParams
       >({
-        query: GQL_QUERY_LNV20_RELAY_INFOS,
+        query: GQL_QUERY_LNBRIDGE_RELAY_INFOS,
         variables: {
           fromChain: _sourceChain.network,
           toChain: _targetChain.network,
@@ -117,7 +117,7 @@ export default function RelayerRegister() {
       });
 
       if (
-        relayerData.queryLnv20RelayInfos?.records.some(
+        relayerData.queryLnBridgeRelayInfos?.records.some(
           ({ sendToken }) => sendToken?.toLowerCase() === _sourceToken.address.toLowerCase(),
         )
       ) {
@@ -266,8 +266,8 @@ export default function RelayerRegister() {
               <LabelItem label="Deposit Margin">
                 <BalanceInput
                   compact
-                  balance={bridgeCategory === "lnbridgev20-default" ? targetBalance?.value : sourceBalance?.value}
-                  token={bridgeCategory === "lnbridgev20-default" ? targetBalance?.token : sourceBalance?.token}
+                  balance={bridgeCategory === "lnv2-default" ? targetBalance?.value : sourceBalance?.value}
+                  token={bridgeCategory === "lnv2-default" ? targetBalance?.token : sourceBalance?.token}
                   value={marginInput}
                   suffix="symbol"
                   disabled={completeMargin}
@@ -275,7 +275,7 @@ export default function RelayerRegister() {
                 />
               </LabelItem>
 
-              {bridgeCategory === "lnbridgev20-default" && (
+              {bridgeCategory === "lnv2-default" && (
                 <>
                   <Button
                     kind="primary"
@@ -372,11 +372,11 @@ export default function RelayerRegister() {
                       } else if (
                         oppositeBridge &&
                         sourceToken?.type !== "native" &&
-                        bridgeCategory === "lnbridgev20-opposite" &&
+                        bridgeCategory === "lnv2-opposite" &&
                         marginInput.value > (sourceAllowance?.value || 0n)
                       ) {
                         await sourceApprove(address, marginInput.value, oppositeBridge, sourceChain);
-                      } else if (bridgeCategory === "lnbridgev20-default" && defaultBridge) {
+                      } else if (bridgeCategory === "lnv2-default" && defaultBridge) {
                         receipt = await setFeeAndRate(
                           baseFeeInput.value,
                           feeRateInput.value,
@@ -417,11 +417,11 @@ export default function RelayerRegister() {
                 }}
               >
                 <span className="text-base font-normal">
-                  {bridgeCategory === "lnbridgev20-default"
+                  {bridgeCategory === "lnv2-default"
                     ? sourceChain?.id !== chain?.id
                       ? "Switch Network"
                       : "Confirm"
-                    : bridgeCategory === "lnbridgev20-opposite"
+                    : bridgeCategory === "lnv2-opposite"
                     ? sourceChain?.id !== chain?.id
                       ? "Switch Network"
                       : sourceToken?.type !== "native" && marginInput.value > (sourceAllowance?.value || 0n)
@@ -439,9 +439,9 @@ export default function RelayerRegister() {
                 <StepCompleteItem
                   property="Margin"
                   token={
-                    bridgeCategory === "lnbridgev20-default"
+                    bridgeCategory === "lnv2-default"
                       ? targetToken
-                      : bridgeCategory === "lnbridgev20-opposite"
+                      : bridgeCategory === "lnv2-opposite"
                       ? sourceToken
                       : undefined
                   }
@@ -543,11 +543,7 @@ export default function RelayerRegister() {
 
           <span className="text-sm font-medium text-white">Bridge Type</span>
           <span>
-            {bridgeCategory === "lnbridgev20-default"
-              ? "Default"
-              : bridgeCategory === "lnbridgev20-opposite"
-              ? "Opposite"
-              : "-"}
+            {bridgeCategory === "lnv2-default" ? "Default" : bridgeCategory === "lnv2-opposite" ? "Opposite" : "-"}
           </span>
 
           <span className="text-sm font-medium text-white">From</span>
@@ -562,7 +558,7 @@ export default function RelayerRegister() {
           <span className="text-sm font-medium text-white">Margin</span>
           <PrettyMargin
             margin={marginInput.value}
-            token={bridgeCategory === "lnbridgev20-default" ? targetToken : sourceToken}
+            token={bridgeCategory === "lnv2-default" ? targetToken : sourceToken}
           />
 
           <span className="text-sm font-medium text-white">Base Fee</span>

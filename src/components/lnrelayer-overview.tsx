@@ -1,7 +1,12 @@
 "use client";
 
-import { GQL_QUERY_LNV20_RELAY_INFOS } from "@/config";
-import { ChainConfig, Lnv20RelayerOverview, QueryLnV20RelayInfosReqParams, QueryLnV20RelayInfosResData } from "@/types";
+import { GQL_QUERY_LNBRIDGE_RELAY_INFOS } from "@/config";
+import {
+  ChainConfig,
+  LnBridgeRelayerOverview,
+  QueryLnBridgeRelayInfosReqParams,
+  QueryLnBridgeRelayInfosResData,
+} from "@/types";
 import Search from "@/ui/search";
 import { getLnBridgeAvailableTargetChains, getLnBridgeCrossDefaultValue } from "@/utils";
 import { useQuery } from "@apollo/client";
@@ -14,15 +19,15 @@ const { defaultSourceChains, defaultTargetChains } = getLnBridgeCrossDefaultValu
 const pageSize = 12;
 
 export default function LnRelayerOverview() {
-  const [records, setRecords] = useState<Lnv20RelayerOverview[]>([]);
+  const [records, setRecords] = useState<LnBridgeRelayerOverview[]>([]);
   const [sourceChain, setSourceChain] = useState<ChainConfig>();
   const [targetChain, setTargetChain] = useState<ChainConfig>();
   const [currentPage, setCurrentPage] = useState(0);
   const [searchValue, setSearchValue] = useState("");
   const deferredSearchValue = useDeferredValue(searchValue);
 
-  const { loading, data, refetch } = useQuery<QueryLnV20RelayInfosResData, QueryLnV20RelayInfosReqParams>(
-    GQL_QUERY_LNV20_RELAY_INFOS,
+  const { loading, data, refetch } = useQuery<QueryLnBridgeRelayInfosResData, QueryLnBridgeRelayInfosReqParams>(
+    GQL_QUERY_LNBRIDGE_RELAY_INFOS,
     {
       variables: {
         fromChain: sourceChain?.network,
@@ -38,7 +43,7 @@ export default function LnRelayerOverview() {
 
   useEffect(() => {
     if (!loading) {
-      setRecords(data?.queryLnv20RelayInfos?.records || []);
+      setRecords(data?.queryLnBridgeRelayInfos?.records || []);
     }
   }, [loading, data]);
 
@@ -94,7 +99,7 @@ export default function LnRelayerOverview() {
       <RelayersTable
         loading={loading}
         records={records}
-        total={data?.queryLnv20RelayInfos?.total || 0}
+        total={data?.queryLnBridgeRelayInfos?.total || 0}
         pageSize={pageSize}
         currentPage={currentPage}
         onRefetch={refetch}

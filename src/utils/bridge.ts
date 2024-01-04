@@ -4,18 +4,18 @@ import {
   HelixBridgeDVMEVM,
   HelixLpBridge,
   L2ArbitrumBridge,
-  LnBridgeDefault,
-  LnBridgeOpposite,
+  LnBridgeV2Default,
+  LnBridgeV2Opposite,
   XTokenV3Bridge,
 } from "@/bridges";
 import { BridgeConstructorArgs } from "@/types";
 
 export function bridgeFactory(args: BridgeConstructorArgs): BaseBridge | undefined {
   switch (args.category) {
-    case "lnbridgev20-default":
-      return new LnBridgeDefault(args);
-    case "lnbridgev20-opposite":
-      return new LnBridgeOpposite(args);
+    case "lnv2-default":
+      return new LnBridgeV2Default(args);
+    case "lnv2-opposite":
+      return new LnBridgeV2Opposite(args);
     case "helix-sub2ethv2(lock)":
     case "helix-sub2ethv2(unlock)":
       return new HelixBridgeDVMEVM(args);

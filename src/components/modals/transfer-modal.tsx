@@ -7,7 +7,7 @@ import {
   HistoryRecordByTxHashResData,
   InputValue,
   RecordResult,
-  SortedLnV20RelayInfosResData,
+  SortedLnBridgeRelayInfosResData,
   Token,
 } from "@/types";
 import ProgressIcon from "@/ui/progress-icon";
@@ -27,7 +27,7 @@ interface Props {
   transferAmount: InputValue<bigint>;
   isOpen: boolean;
   onClose: () => void;
-  refetchRelayers: () => Promise<ApolloQueryResult<SortedLnV20RelayInfosResData>>;
+  refetchRelayers: () => Promise<ApolloQueryResult<SortedLnBridgeRelayInfosResData>>;
 }
 
 export default function TransferModal({ sender, recipient, transferAmount, isOpen, onClose, refetchRelayers }: Props) {
@@ -51,7 +51,7 @@ export default function TransferModal({ sender, recipient, transferAmount, isOpe
       setBusy(true);
       try {
         const relayer = bridgeInstance.isLnBridge()
-          ? (await refetchRelayers()).data.sortedLnv20RelayInfos?.records.at(0)
+          ? (await refetchRelayers()).data.sortedLnBridgeRelayInfos?.records.at(0)
           : undefined;
         const receipt = await transfer(sender, recipient, transferAmount.value, bridgeInstance, sourceChain, {
           relayer: relayer?.relayer,

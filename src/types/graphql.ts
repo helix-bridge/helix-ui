@@ -48,8 +48,9 @@ export interface HistoryRecord {
   confirmedBlocks: string | null;
 }
 
-export interface Lnv20RelayInfo {
+export interface LnBridgeRelayInfo {
   id: string;
+  version: "lnv2" | "lnv3";
   nonce: string;
   targetNonce: string | null;
   fromChain: Network;
@@ -70,6 +71,7 @@ export interface Lnv20RelayInfo {
   profit: string | null;
   heartbeatTimestamp: number | null;
   messageChannel: MessageChannel | null;
+  transferLimit: string | null;
 }
 
 /**
@@ -99,7 +101,7 @@ export interface HistoryRecordResData {
   historyRecordById: HistoryRecord | null;
 }
 
-export interface SortedLnV20RelayInfosReqParams {
+export interface SortedLnBridgeRelayInfosReqParams {
   amount: string;
   decimals?: number;
   bridge?: BridgeCategory;
@@ -108,18 +110,18 @@ export interface SortedLnV20RelayInfosReqParams {
   toChain?: Network;
 }
 
-export interface SortedLnV20RelayInfosResData {
-  sortedLnv20RelayInfos: {
-    maxMargin: string;
+export interface SortedLnBridgeRelayInfosResData {
+  sortedLnBridgeRelayInfos: {
+    transferLimit: string;
     records: Pick<
-      Lnv20RelayInfo,
+      LnBridgeRelayInfo,
       "relayer" | "margin" | "baseFee" | "protocolFee" | "liquidityFeeRate" | "lastTransferId" | "withdrawNonce"
     >[];
   } | null;
 }
 
-export type Lnv20RelayerOverview = Pick<
-  Lnv20RelayInfo,
+export type LnBridgeRelayerOverview = Pick<
+  LnBridgeRelayInfo,
   | "id"
   | "relayer"
   | "bridge"
@@ -137,7 +139,7 @@ export type Lnv20RelayerOverview = Pick<
   | "withdrawNonce"
 >;
 
-export interface QueryLnV20RelayInfosReqParams {
+export interface QueryLnBridgeRelayInfosReqParams {
   fromChain?: Network;
   toChain?: Network;
   relayer?: string;
@@ -146,10 +148,10 @@ export interface QueryLnV20RelayInfosReqParams {
   page: number;
 }
 
-export interface QueryLnV20RelayInfosResData {
-  queryLnv20RelayInfos: {
+export interface QueryLnBridgeRelayInfosResData {
+  queryLnBridgeRelayInfos: {
     total: number;
-    records: Lnv20RelayerOverview[];
+    records: LnBridgeRelayerOverview[];
   } | null;
 }
 

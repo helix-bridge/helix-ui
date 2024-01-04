@@ -31,9 +31,9 @@ export const mantleChain: ChainConfig = {
       address: "0x201EBa5CC46D216Ce6DC03F6a759e8E766e956aE",
       logo: "usdt.png",
       cross: [
-        { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
-        { target: { network: "zksync", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
-        { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnv2-default" } },
+        { target: { network: "zksync", symbol: "USDT" }, bridge: { category: "lnv2-default" } },
+        { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnv2-default" } },
       ],
     },
     {
@@ -44,8 +44,8 @@ export const mantleChain: ChainConfig = {
       address: "0x09Bc4E0D864854c6aFB6eB9A9cdF58aC190D0dF9",
       logo: "usdc.svg",
       cross: [
-        { target: { network: "arbitrum", symbol: "USDC" }, bridge: { category: "lnbridgev20-default" } },
-        { target: { network: "scroll", symbol: "USDC" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "arbitrum", symbol: "USDC" }, bridge: { category: "lnv2-default" } },
+        { target: { network: "scroll", symbol: "USDC" }, bridge: { category: "lnv2-default" } },
       ],
     },
   ],

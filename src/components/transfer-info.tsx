@@ -10,24 +10,24 @@ import { Subscription, from } from "rxjs";
 interface Props {
   fee: { loading: boolean; value: bigint; token?: Token } | undefined;
   bridge: BaseBridge | undefined;
-  maxMargin: string | undefined;
-  isLoadingMaxMargin: boolean;
+  transferLimit: string | undefined;
+  isLoadingTransferLimit: boolean;
 }
 
-export default function TransferInfo({ fee, bridge, maxMargin, isLoadingMaxMargin }: Props) {
+export default function TransferInfo({ fee, bridge, transferLimit: propTransferLimit, isLoadingTransferLimit }: Props) {
   const [transferLimit, setTransferLimit] = useState<{ token: Token; value: bigint }>();
   const [dailyLimit, setDailyLimit] = useState<{ loading: boolean; limit: bigint; spent: bigint; token: Token }>();
 
   useEffect(() => {
-    if (!isLoadingMaxMargin) {
+    if (!isLoadingTransferLimit) {
       const token = bridge?.getSourceToken();
-      if (maxMargin && token) {
-        setTransferLimit({ token, value: BigInt(maxMargin) });
+      if (propTransferLimit && token) {
+        setTransferLimit({ token, value: BigInt(propTransferLimit) });
       } else {
         setTransferLimit(undefined);
       }
     }
-  }, [bridge, maxMargin, isLoadingMaxMargin]);
+  }, [bridge, propTransferLimit, isLoadingTransferLimit]);
 
   useEffect(() => {
     let sub$$: Subscription | undefined;

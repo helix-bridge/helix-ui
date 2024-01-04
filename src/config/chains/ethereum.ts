@@ -32,7 +32,7 @@ export const ethereumChain: ChainConfig = {
       address: "0x9469d013805bffb7d3debe5e7839237e535ec483",
       logo: "ring.svg",
       cross: [
-        { target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnv2-default" } },
         {
           target: { network: "darwinia-dvm", symbol: "RING" },
           bridge: { category: "lpbridge-ethereum" },

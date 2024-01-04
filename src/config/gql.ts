@@ -80,8 +80,8 @@ export const GQL_HISTORY_RECORD_BY_ID = gql`
   }
 `;
 
-export const GQL_SORTED_LNV20_RELAY_INFOS = gql`
-  query sortedLnv20RelayInfos(
+export const GQL_SORTED_LNBRIDGE_RELAY_INFOS = gql`
+  query sortedLnBridgeRelayInfos(
     $amount: String
     $decimals: Int
     $bridge: String
@@ -89,7 +89,7 @@ export const GQL_SORTED_LNV20_RELAY_INFOS = gql`
     $fromChain: String
     $toChain: String
   ) {
-    sortedLnv20RelayInfos(
+    sortedLnBridgeRelayInfos(
       amount: $amount
       decimals: $decimals
       bridge: $bridge
@@ -97,7 +97,7 @@ export const GQL_SORTED_LNV20_RELAY_INFOS = gql`
       fromChain: $fromChain
       toChain: $toChain
     ) {
-      maxMargin
+      transferLimit
       records {
         sendToken
         relayer
@@ -112,9 +112,9 @@ export const GQL_SORTED_LNV20_RELAY_INFOS = gql`
   }
 `;
 
-export const GQL_QUERY_LNV20_RELAY_INFOS = gql`
-  query queryLnv20RelayInfos($fromChain: String, $toChain: String, $relayer: String, $row: Int, $page: Int) {
-    queryLnv20RelayInfos(fromChain: $fromChain, toChain: $toChain, relayer: $relayer, row: $row, page: $page) {
+export const GQL_QUERY_LNBRIDGE_RELAY_INFOS = gql`
+  query queryLnBridgeRelayInfos($fromChain: String, $toChain: String, $relayer: String, $row: Int, $page: Int) {
+    queryLnBridgeRelayInfos(fromChain: $fromChain, toChain: $toChain, relayer: $relayer, row: $row, page: $page) {
       total
       records {
         id

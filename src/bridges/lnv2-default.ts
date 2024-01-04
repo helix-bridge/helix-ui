@@ -5,7 +5,7 @@ import { isProduction } from "@/utils/env";
 import { BridgeConstructorArgs, GetWithdrawFeeArgs, TransferOptions } from "@/types/bridge";
 import { fetchMsglineFeeAndParams } from "@/utils";
 
-export class LnBridgeDefault extends LnBridgeBase {
+export class LnBridgeV2Default extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {
     super(args);
     this.initContract();
@@ -84,7 +84,7 @@ export class LnBridgeDefault extends LnBridgeBase {
 
       const defaultParams = {
         address: this.contract.sourceAddress,
-        abi: (await import(`../abi/lnbridgev20-default`)).default,
+        abi: (await import(`../abi/lnv2-default`)).default,
         functionName: "transferAndLockMargin",
         args: [snapshot, amount, recipient],
         value: this.sourceToken.type === "native" ? amount + totalFee : undefined,
@@ -114,7 +114,7 @@ export class LnBridgeDefault extends LnBridgeBase {
     ) {
       const hash = await this.walletClient.writeContract({
         address: this.contract.targetAddress,
-        abi: (await import(`../abi/lnbridgev20-default`)).default,
+        abi: (await import(`../abi/lnv2-default`)).default,
         functionName: "depositProviderMargin",
         args: [BigInt(this.sourceChain.id), this.sourceToken.address, this.targetToken.address, margin],
         value: this.targetToken.type === "native" ? margin : undefined,
@@ -137,7 +137,7 @@ export class LnBridgeDefault extends LnBridgeBase {
     ) {
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,
-        abi: (await import(`../abi/lnbridgev20-default`)).default,
+        abi: (await import(`../abi/lnv2-default`)).default,
         functionName: "setProviderFee",
         args: [BigInt(this.targetChain.id), this.sourceToken.address, this.targetToken.address, baseFee, feeRate],
         gas: this.getTxGasLimit(),
@@ -148,7 +148,7 @@ export class LnBridgeDefault extends LnBridgeBase {
 
   private async _getLayerzeroWithdrawFee(_args: GetWithdrawFeeArgs) {
     if (this.contract && this.sourceNativeToken && this.targetChain && this.sourcePublicClient) {
-      const bridgeAbi = (await import(`../abi/lnbridgev20-default`)).default;
+      const bridgeAbi = (await import(`../abi/lnv2-default`)).default;
       const accessAbi = (await import(`../abi/lnaccess-controller`)).default;
       const remoteChainId = BigInt(this.targetChain.id);
 
@@ -186,7 +186,7 @@ export class LnBridgeDefault extends LnBridgeBase {
       args.relayer
     ) {
       const message = encodeFunctionData({
-        abi: (await import(`../abi/lnbridgev20-default`)).default,
+        abi: (await import(`../abi/lnv2-default`)).default,
         functionName: "withdraw",
         args: [
           BigInt(this.sourceChain.id),
@@ -241,7 +241,7 @@ export class LnBridgeDefault extends LnBridgeBase {
 
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,
-        abi: (await import(`../abi/lnbridgev20-default`)).default,
+        abi: (await import(`../abi/lnv2-default`)).default,
         functionName: "requestWithdrawMargin",
         args: [remoteChainId, this.sourceToken.address, this.targetToken.address, amount, recipient],
         gas: this.getTxGasLimit(),

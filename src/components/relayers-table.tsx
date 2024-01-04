@@ -1,4 +1,4 @@
-import { Lnv20RelayerOverview, Network } from "@/types";
+import { LnBridgeRelayerOverview, Network } from "@/types";
 import Button from "@/ui/button";
 import Table, { ColumnType } from "@/ui/table";
 import Tooltip from "@/ui/tooltip";
@@ -10,7 +10,7 @@ import RelayerManageModal from "./modals/relayer-manage-modal";
 
 interface Props {
   total: number;
-  records: Lnv20RelayerOverview[];
+  records: LnBridgeRelayerOverview[];
   loading: boolean;
   isDashboard?: boolean;
   pageSize: number;
@@ -19,7 +19,7 @@ interface Props {
   onPageChange: (value: number) => void;
 }
 
-interface DataSource extends Lnv20RelayerOverview {
+interface DataSource extends LnBridgeRelayerOverview {
   key: string;
 }
 
@@ -29,7 +29,7 @@ const commonColumns: ColumnType<DataSource>[] = [
   //   title: <Title title="Bridge Type" />,
   //   render: ({ bridge }) => (
   //     <span className="text-sm font-normal text-white">
-  //       {bridge === "lnbridgev20-opposite" ? "Opposite" : "Default"}
+  //       {bridge === "lnv2-opposite" ? "Opposite" : "Default"}
   //     </span>
   //   ),
   //   width: "8%",
@@ -143,7 +143,7 @@ export default function RelayersTable({
   onRefetch,
   onPageChange,
 }: Props) {
-  const [relayerInfo, setRelayerInfo] = useState<Lnv20RelayerOverview>();
+  const [relayerInfo, setRelayerInfo] = useState<LnBridgeRelayerOverview>();
 
   const columns: ColumnType<DataSource>[] = isDashboard
     ? [
