@@ -6,12 +6,15 @@ import {
   L2ArbitrumBridge,
   LnBridgeV2Default,
   LnBridgeV2Opposite,
+  LnBridgeV3,
   XTokenV3Bridge,
 } from "@/bridges";
 import { BridgeConstructorArgs } from "@/types";
 
 export function bridgeFactory(args: BridgeConstructorArgs): BaseBridge | undefined {
   switch (args.category) {
+    case "lnv3":
+      return new LnBridgeV3(args);
     case "lnv2-default":
       return new LnBridgeV2Default(args);
     case "lnv2-opposite":

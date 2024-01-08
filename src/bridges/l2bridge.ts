@@ -15,7 +15,7 @@ export class L2ArbitrumBridge extends BaseBridge {
 
   constructor(args: BridgeConstructorArgs) {
     super(args);
-    this.initContract();
+    this._initContract();
 
     this.logo = {
       horizontal: "l2arbitrum-horizontal.png",
@@ -25,7 +25,7 @@ export class L2ArbitrumBridge extends BaseBridge {
     this.estimateTime = { min: 15, max: 20 };
   }
 
-  private initContract() {
+  private _initContract() {
     if (this.sourceChain?.network === "goerli" && this.targetChain?.network === "arbitrum-goerli") {
       this.contract = {
         sourceAddress: "0x0000000000000000000000000000000000000000",

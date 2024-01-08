@@ -6,10 +6,10 @@ import { BridgeConstructorArgs, TransferOptions } from "@/types/bridge";
 export class LnBridgeV2Opposite extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {
     super(args);
-    this.initContract();
+    this._initContract();
   }
 
-  private initContract() {
+  private _initContract() {
     if (this.sourceChain?.id === ChainID.ARBITRUM && this.targetChain?.id === ChainID.ETHEREUM) {
       this.contract = {
         sourceAddress: "0x48d769d5C7ff75703cDd1543A1a2ed9bC9044A23",

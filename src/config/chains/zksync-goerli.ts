@@ -23,6 +23,7 @@ export const zksyncGoerliChain: ChainConfig = {
       logo: "eth.svg",
       cross: [
         { target: { network: "goerli", symbol: "ETH" }, bridge: { category: "lnv2-default" } },
+        { target: { network: "goerli", symbol: "ETH" }, bridge: { category: "lnv3" } },
         { target: { network: "arbitrum-goerli", symbol: "ETH" }, bridge: { category: "lnv2-default" } },
         { target: { network: "linea-goerli", symbol: "ETH" }, bridge: { category: "lnv2-default" } },
       ],
@@ -39,6 +40,7 @@ export const zksyncGoerliChain: ChainConfig = {
         { target: { network: "linea-goerli", symbol: "USDC" }, bridge: { category: "lnv2-default" } },
         { target: { network: "mantle-goerli", symbol: "USDC" }, bridge: { category: "lnv2-default" } },
         { target: { network: "goerli", symbol: "USDC" }, bridge: { category: "lnv2-default" } },
+        { target: { network: "goerli", symbol: "USDC" }, bridge: { category: "lnv3" } },
       ],
     },
     {
@@ -53,6 +55,7 @@ export const zksyncGoerliChain: ChainConfig = {
         { target: { network: "linea-goerli", symbol: "USDT" }, bridge: { category: "lnv2-default" } },
         { target: { network: "mantle-goerli", symbol: "USDT" }, bridge: { category: "lnv2-default" } },
         { target: { network: "goerli", symbol: "USDT" }, bridge: { category: "lnv2-default" } },
+        { target: { network: "goerli", symbol: "USDT" }, bridge: { category: "lnv3" } },
       ],
     },
   ],

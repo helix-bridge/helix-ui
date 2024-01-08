@@ -10,7 +10,7 @@ export class LnBridgeBase extends BaseBridge {
       horizontal: "helix-horizontal.svg",
       symbol: "helix-symbol.svg",
     };
-    this.name = "Helix LnBridge";
+    this.name = "Helix LnBridge(v2)";
     this.estimateTime = { min: 1, max: 2 };
   }
 

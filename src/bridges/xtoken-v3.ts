@@ -13,10 +13,10 @@ export class XTokenV3Bridge extends BaseBridge {
     };
     this.name = "XTokenV3";
 
-    this.initContract();
+    this._initContract();
   }
 
-  private initContract() {
+  private _initContract() {
     const backing = "0xbdC7bbF408931C5d666b4F0520E0D9E9A0B04e99";
     const issuing = "0xf22D0bb66b39745Ae6e3fEa3E5859d7f0b367Fd1";
     this.initContractByBackingIssuing(backing, issuing);

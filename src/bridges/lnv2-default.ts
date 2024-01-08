@@ -8,10 +8,10 @@ import { fetchMsglineFeeAndParams } from "@/utils";
 export class LnBridgeV2Default extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {
     super(args);
-    this.initContract();
+    this._initContract();
   }
 
-  private initContract() {
+  private _initContract() {
     if (this.sourceChain?.id === ChainID.LINEA_GOERLI && this.targetChain?.id === ChainID.GOERLI) {
       this.contract = {
         sourceAddress: "0x4C538EfA6e3f9Dfb939AA4F0B224577DA665923a",

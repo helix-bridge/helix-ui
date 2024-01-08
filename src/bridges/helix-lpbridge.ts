@@ -18,7 +18,7 @@ export class HelixLpBridge extends BaseBridge {
     }
     super({ ...args, sourceToken, targetToken });
 
-    this.initContract();
+    this._initContract();
 
     this.logo = {
       horizontal: "helix-horizontal.svg",
@@ -28,7 +28,7 @@ export class HelixLpBridge extends BaseBridge {
     this.estimateTime = { min: 1, max: 3 };
   }
 
-  private initContract() {
+  private _initContract() {
     const backing = "0x84f7a56483C100ECb12CbB4A31b7873dAE0d8E9B";
     const issuing = "0x5F8D4232367759bCe5d9488D3ade77FCFF6B9b6B";
     this.initContractByBackingIssuing(backing, issuing);

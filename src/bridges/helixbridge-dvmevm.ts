@@ -20,7 +20,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
     }
     super({ ...args, sourceToken, targetToken });
 
-    this.initContract();
+    this._initContract();
 
     this.logo = {
       horizontal: "helix-horizontal.svg",
@@ -29,7 +29,7 @@ export class HelixBridgeDVMEVM extends BaseBridge {
     this.name = "Helix(Legacy)";
   }
 
-  private initContract() {
+  private _initContract() {
     const backing = "0xD1B10B114f1975d8BCc6cb6FC43519160e2AA978";
     const issuing = "0xFBAD806Bdf9cEC2943be281FB355Da05068DE925";
     this.initContractByBackingIssuing(backing, issuing);

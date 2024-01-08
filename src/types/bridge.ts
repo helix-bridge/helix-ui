@@ -7,7 +7,7 @@ import { MessageChannel } from ".";
 /**
  * lpbridge-darwinia-dvm etc. are named from graphql indexer.
  */
-export type LnBridgeCategory = "lnv2-default" | "lnv2-opposite";
+export type LnBridgeCategory = "lnv2-default" | "lnv2-opposite" | "lnv3";
 export type L2BridgeCategory = "l2arbitrumbridge-ethereum";
 export type HelixLpBridgeCategory = "lpbridge-darwinia-dvm" | "lpbridge-ethereum";
 export type HelixBridgeCategory =

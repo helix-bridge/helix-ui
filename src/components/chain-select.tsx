@@ -38,7 +38,7 @@ export default function ChainSelect({
                 width={32}
                 height={32}
                 src={getChainLogoSrc(value.logo)}
-                className="shrink-0 rounded-full"
+                className="h-8 w-8 shrink-0 rounded-full"
               />
             )}
 
