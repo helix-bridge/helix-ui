@@ -14,11 +14,11 @@ import { BridgeConstructorArgs } from "@/types";
 export function bridgeFactory(args: BridgeConstructorArgs): BaseBridge | undefined {
   switch (args.category) {
     case "lnv3":
-      return new LnBridgeV3(args);
+      return new LnBridgeV3({ ...args, category: "lnbridge" });
     case "lnv2-default":
-      return new LnBridgeV2Default(args);
+      return new LnBridgeV2Default({ ...args, category: "lnbridge" });
     case "lnv2-opposite":
-      return new LnBridgeV2Opposite(args);
+      return new LnBridgeV2Opposite({ ...args, category: "lnbridge" });
     case "helix-sub2ethv2(lock)":
     case "helix-sub2ethv2(unlock)":
       return new HelixBridgeDVMEVM(args);

@@ -2,8 +2,9 @@
 
 import { GQL_SORTED_LNBRIDGE_RELAY_INFOS } from "@/config";
 import { useToggle, useTransfer } from "@/hooks";
-import { SortedLnBridgeRelayInfosReqParams, SortedLnBridgeRelayInfosResData } from "@/types";
+import { BridgeCategory, SortedLnBridgeRelayInfosReqParams, SortedLnBridgeRelayInfosResData } from "@/types";
 import {
+  bridgeFactory,
   getAvailableBridges,
   getAvailableSourceTokens,
   getAvailableTargetChains,
@@ -14,8 +15,8 @@ import {
 import { useQuery } from "@apollo/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
-import { Address, useAccount } from "wagmi";
-import { Subscription, from } from "rxjs";
+import { Address, useAccount, usePublicClient, useWalletClient } from "wagmi";
+import { Subscription, from, timer } from "rxjs";
 import Label from "@/ui/label";
 import ChainSelect from "./chain-select";
 import SwitchCrossIcon from "@/ui/switch-cross-icon";
@@ -47,6 +48,7 @@ export default function Transfer() {
     setTransferAmount,
     setBridgeFee,
     setBridgeCategory,
+    setBridgeInstance,
     updateSourceBalance,
     updateUrlParams,
   } = useTransfer();
@@ -54,11 +56,14 @@ export default function Transfer() {
 
   const { state: isOpen, setTrue: setIsOpenTrue, setFalse: setIsOpenFalse } = useToggle(false);
   const { address } = useAccount();
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
 
   const [recipient, _setRecipient] = useState<Address>();
   const [isLoadingFee, setIsLoadingFee] = useState(false);
   const [estimateGasFee, setEstimateGasFee] = useState(0n);
   const [balanceLoading, setBalanceLoading] = useState(false);
+  const [indexerCategory, setIndexerCategory] = useState<BridgeCategory>();
 
   const bridgeOptions = useMemo(
     () => getAvailableBridges(sourceChain, targetChain, sourceToken),
@@ -73,12 +78,11 @@ export default function Transfer() {
     variables: {
       amount: deferredTransferAmount.value.toString(),
       decimals: sourceToken?.decimals,
-      bridge: bridgeCategory,
       token: sourceToken?.address,
       fromChain: sourceChain?.network,
       toChain: targetChain?.network,
     },
-    skip: !bridgeInstance?.isLnBridge(),
+    skip: bridgeCategory !== "lnbridge",
   });
 
   const transferable = useMemo(() => {
@@ -119,34 +123,77 @@ export default function Transfer() {
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
+    if (!isLoadingRelayers) {
+      sub$$ = timer(40).subscribe(() => {
+        const c = relayersData?.sortedLnBridgeRelayInfos?.records.at(0)?.bridge;
+        setIndexerCategory((prev) => (prev === c ? prev : c));
+      });
+    }
+    return () => {
+      sub$$?.unsubscribe();
+    };
+  }, [isLoadingRelayers, relayersData?.sortedLnBridgeRelayInfos?.records]);
+
+  useEffect(() => {
+    const category = indexerCategory ?? bridgeCategory;
+    setBridgeInstance(
+      category
+        ? bridgeFactory({
+            category,
+            sourceChain,
+            targetChain,
+            sourceToken,
+            targetToken,
+            walletClient,
+            publicClient,
+          })
+        : undefined,
+    );
+  }, [
+    sourceChain,
+    targetChain,
+    sourceToken,
+    targetToken,
+    walletClient,
+    publicClient,
+    bridgeCategory,
+    indexerCategory,
+    setBridgeInstance,
+  ]);
+
+  useEffect(() => {
+    let sub$$: Subscription | undefined;
     const relayer = relayersData?.sortedLnBridgeRelayInfos?.records.at(0);
 
     if (bridgeInstance) {
-      setIsLoadingFee(true);
-      sub$$ = from(
-        bridgeInstance.getFee({
-          sender: address,
-          recipient,
-          baseFee: BigInt(relayer?.baseFee || 0),
-          protocolFee: BigInt(relayer?.protocolFee || 0),
-          liquidityFeeRate: BigInt(relayer?.liquidityFeeRate || 0),
-          transferAmount: deferredTransferAmount.value,
-        }),
-      ).subscribe({
-        next: setBridgeFee,
-        error: (err) => {
-          console.error(err);
-          setBridgeFee(undefined);
-          setIsLoadingFee(false);
-        },
-        complete: () => setIsLoadingFee(false),
-      });
+      if (!isLoadingRelayers) {
+        setIsLoadingFee(true);
+        sub$$ = from(
+          bridgeInstance.getFee({
+            sender: address,
+            recipient,
+            relayer: relayer?.relayer,
+            baseFee: BigInt(relayer?.baseFee || 0),
+            protocolFee: BigInt(relayer?.protocolFee || 0),
+            liquidityFeeRate: BigInt(relayer?.liquidityFeeRate || 0),
+            transferAmount: deferredTransferAmount.value,
+          }),
+        ).subscribe({
+          next: setBridgeFee,
+          error: (err) => {
+            console.error(err);
+            setBridgeFee(undefined);
+            setIsLoadingFee(false);
+          },
+          complete: () => setIsLoadingFee(false),
+        });
+      }
     } else {
       setBridgeFee(undefined);
     }
 
     return () => sub$$?.unsubscribe();
-  }, [address, recipient, bridgeInstance, relayersData, deferredTransferAmount, setBridgeFee]);
+  }, [address, recipient, bridgeInstance, relayersData, deferredTransferAmount, isLoadingRelayers, setBridgeFee]);
 
   useEffect(() => {
     let sub$$: Subscription | undefined;

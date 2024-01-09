@@ -107,6 +107,7 @@ export const GQL_SORTED_LNBRIDGE_RELAY_INFOS = gql`
         liquidityFeeRate
         lastTransferId
         withdrawNonce
+        bridge
       }
     }
   }

@@ -31,8 +31,8 @@ export const scrollChain: ChainConfig = {
       address: "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df",
       logo: "usdt.png",
       cross: [
-        { target: { network: "mantle", symbol: "USDT" }, bridge: { category: "lnv2-default" } },
-        { target: { network: "zksync", symbol: "USDT" }, bridge: { category: "lnv2-default" } },
+        { target: { network: "mantle", symbol: "USDT" }, bridge: { category: "lnbridge" } },
+        { target: { network: "zksync", symbol: "USDT" }, bridge: { category: "lnbridge" } },
       ],
     },
     {
@@ -43,8 +43,8 @@ export const scrollChain: ChainConfig = {
       address: "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4",
       logo: "usdc.svg",
       cross: [
-        { target: { network: "mantle", symbol: "USDC" }, bridge: { category: "lnv2-default" } },
-        { target: { network: "arbitrum", symbol: "USDC" }, bridge: { category: "lnv2-default" } },
+        { target: { network: "mantle", symbol: "USDC" }, bridge: { category: "lnbridge" } },
+        { target: { network: "arbitrum", symbol: "USDC" }, bridge: { category: "lnbridge" } },
       ],
     },
   ],

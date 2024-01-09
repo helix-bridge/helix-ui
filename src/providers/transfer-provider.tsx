@@ -11,19 +11,10 @@ import {
   TransferOptions,
   UrlSearchParamKey,
 } from "@/types";
-import { bridgeFactory, getChainConfig, getCrossDefaultValue, notifyError, notifyTransaction } from "@/utils";
-import {
-  Dispatch,
-  PropsWithChildren,
-  SetStateAction,
-  createContext,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { getChainConfig, getCrossDefaultValue, notifyError, notifyTransaction } from "@/utils";
+import { Dispatch, PropsWithChildren, SetStateAction, createContext, useCallback, useEffect, useState } from "react";
 import { Address, TransactionReceipt } from "viem";
-import { useAccount, usePublicClient, useWalletClient } from "wagmi";
+import { useAccount } from "wagmi";
 import { Subscription, forkJoin } from "rxjs";
 import { ReadonlyURLSearchParams } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
@@ -49,6 +40,7 @@ interface TransferCtx {
   bridgeFee: { value: bigint; token: Token } | undefined;
   dailyLimit: { limit: bigint; spent: bigint; token: Token } | undefined;
 
+  setBridgeInstance: Dispatch<SetStateAction<BaseBridge | undefined>>;
   setBridgeCategory: Dispatch<SetStateAction<BridgeCategory | undefined>>;
   setTransferAmount: Dispatch<SetStateAction<InputValue<bigint>>>;
   setSourceChain: Dispatch<SetStateAction<ChainConfig | undefined>>;
@@ -98,6 +90,7 @@ const defaultValue: TransferCtx = {
   bridgeFee: undefined,
   dailyLimit: undefined,
 
+  setBridgeInstance: () => undefined,
   setBridgeCategory: () => undefined,
   setTransferAmount: () => undefined,
   setSourceChain: () => undefined,
@@ -118,6 +111,9 @@ const defaultValue: TransferCtx = {
 export const TransferContext = createContext(defaultValue);
 
 export default function TransferProvider({ children }: PropsWithChildren<unknown>) {
+  const { address } = useAccount();
+
+  const [bridgeInstance, setBridgeInstance] = useState(defaultValue.bridgeInstance);
   const [bridgeCategory, setBridgeCategory] = useState(defaultValue.bridgeCategory);
   const [transferAmount, setTransferAmount] = useState(defaultValue.transferAmount);
   const [sourceChain, setSourceChain] = useState(defaultValue.sourceChain);
@@ -128,25 +124,6 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
   const [sourceBalance, setSourceBalance] = useState(defaultValue.sourceBalance);
   const [bridgeFee, setBridgeFee] = useState(defaultValue.bridgeFee);
   const [dailyLimit, setDailyLimit] = useState(defaultValue.dailyLimit);
-
-  const { data: walletClient } = useWalletClient();
-  const publicClient = usePublicClient();
-  const { address } = useAccount();
-
-  const bridgeInstance = useMemo(() => {
-    return (
-      bridgeCategory &&
-      bridgeFactory({
-        category: bridgeCategory,
-        sourceChain,
-        targetChain,
-        sourceToken,
-        targetToken,
-        walletClient,
-        publicClient,
-      })
-    );
-  }, [sourceChain, targetChain, sourceToken, targetToken, bridgeCategory, walletClient, publicClient]);
 
   const transfer = useCallback(
     async (
@@ -301,6 +278,7 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
         bridgeFee,
         dailyLimit,
 
+        setBridgeInstance,
         setBridgeCategory,
         setTransferAmount,
         setSourceChain,

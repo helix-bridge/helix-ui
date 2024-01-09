@@ -58,10 +58,13 @@ export default function TransferModal({ sender, recipient, transferAmount, isOpe
           transferId: relayer?.lastTransferId,
           totalFee: (
             await bridgeInstance.getFee({
+              sender,
+              recipient,
               baseFee: BigInt(relayer?.baseFee || 0),
               protocolFee: BigInt(relayer?.protocolFee || 0),
               liquidityFeeRate: BigInt(relayer?.liquidityFeeRate || 0),
               transferAmount: transferAmount.value,
+              relayer: relayer?.relayer,
             })
           )?.value,
           withdrawNonce: BigInt(relayer?.withdrawNonce || 0),

@@ -115,7 +115,14 @@ export interface SortedLnBridgeRelayInfosResData {
     transferLimit: string;
     records: Pick<
       LnBridgeRelayInfo,
-      "relayer" | "margin" | "baseFee" | "protocolFee" | "liquidityFeeRate" | "lastTransferId" | "withdrawNonce"
+      | "relayer"
+      | "margin"
+      | "baseFee"
+      | "protocolFee"
+      | "liquidityFeeRate"
+      | "lastTransferId"
+      | "withdrawNonce"
+      | "bridge"
     >[];
   } | null;
 }

@@ -30,7 +30,7 @@ export const polygonChain: ChainConfig = {
       type: "erc20",
       address: "0x9C1C23E60B72Bc88a043bf64aFdb16A02540Ae8f",
       logo: "ring.svg",
-      cross: [{ target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnv2-default" } }],
+      cross: [{ target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnbridge" } }],
     },
     {
       decimals: 18,
@@ -39,7 +39,7 @@ export const polygonChain: ChainConfig = {
       type: "erc20",
       address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
       logo: "usdt.png",
-      cross: [{ target: { network: "polygon-zkEvm", symbol: "USDT" }, bridge: { category: "lnv2-default" } }],
+      cross: [{ target: { network: "polygon-zkEvm", symbol: "USDT" }, bridge: { category: "lnbridge" } }],
     },
   ],
 };

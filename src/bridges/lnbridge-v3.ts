@@ -1,4 +1,4 @@
-import { BridgeConstructorArgs, TransferOptions } from "@/types";
+import { BridgeConstructorArgs, GetFeeArgs, Token, TransferOptions } from "@/types";
 import { LnBridgeBase } from "./lnbridge-base";
 import { TransactionReceipt } from "viem";
 
@@ -68,16 +68,37 @@ export class LnBridgeV3 extends LnBridgeBase {
       if (askEstimateGas) {
         return this.sourcePublicClient.estimateContractGas(defaultParams);
       } else if (this.walletClient) {
-        // TODO: remove
-        // try {
-        //   const result = await this.sourcePublicClient.simulateContract(defaultParams);
-        //   console.log("result:", result);
-        // } catch (err) {
-        //   console.error("error:", err);
-        // }
         const hash = await this.walletClient.writeContract(defaultParams);
         return this.sourcePublicClient.waitForTransactionReceipt({ hash });
       }
+    }
+  }
+
+  async getFee(args?: GetFeeArgs | undefined): Promise<{ value: bigint; token: Token } | undefined> {
+    const provider = args?.relayer;
+    if (
+      provider &&
+      this.sourcePublicClient &&
+      this.contract &&
+      this.targetChain &&
+      this.sourceToken &&
+      this.targetToken
+    ) {
+      return {
+        value: await this.sourcePublicClient.readContract({
+          address: this.contract.sourceAddress,
+          abi: (await import("@/abi/lnbridge-v3")).default,
+          functionName: "totalFee",
+          args: [
+            BigInt(this.targetChain.id),
+            provider,
+            this.sourceToken.address,
+            this.targetToken.address,
+            args.transferAmount ?? 0n,
+          ],
+        }),
+        token: this.sourceToken,
+      };
     }
   }
 }
