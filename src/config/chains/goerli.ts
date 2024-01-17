@@ -75,4 +75,5 @@ export const goerliChain: ChainConfig = {
       cross: [],
     },
   ],
+  hidden: true,
 };

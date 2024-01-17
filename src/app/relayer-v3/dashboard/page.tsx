@@ -6,13 +6,13 @@ const RelayerDashboardTabs = dynamic(() => import("@/components/relayer-dashboar
 
 export const metadata: Metadata = {
   title: "Relayer Dashboard - Helix Bridge",
-  description: "Registration and management of v2 relayer for Helix Bridge",
+  description: "Registration and management of v3 relayer for Helix Bridge",
 };
 
 export default function RelayerDashboardPage() {
   return (
     <PageWrap>
-      <RelayerDashboardTabs bridgeVersion="lnv2" />
+      <RelayerDashboardTabs bridgeVersion="lnv3" />
     </PageWrap>
   );
 }

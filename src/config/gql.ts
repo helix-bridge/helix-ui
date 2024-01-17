@@ -114,8 +114,22 @@ export const GQL_SORTED_LNBRIDGE_RELAY_INFOS = gql`
 `;
 
 export const GQL_QUERY_LNBRIDGE_RELAY_INFOS = gql`
-  query queryLnBridgeRelayInfos($fromChain: String, $toChain: String, $relayer: String, $row: Int, $page: Int) {
-    queryLnBridgeRelayInfos(fromChain: $fromChain, toChain: $toChain, relayer: $relayer, row: $row, page: $page) {
+  query queryLnBridgeRelayInfos(
+    $fromChain: String
+    $toChain: String
+    $relayer: String
+    $row: Int
+    $page: Int
+    $version: String
+  ) {
+    queryLnBridgeRelayInfos(
+      fromChain: $fromChain
+      toChain: $toChain
+      relayer: $relayer
+      row: $row
+      page: $page
+      version: $version
+    ) {
       total
       records {
         id
@@ -133,6 +147,7 @@ export const GQL_QUERY_LNBRIDGE_RELAY_INFOS = gql`
         messageChannel
         lastTransferId
         withdrawNonce
+        transferLimit
       }
     }
   }

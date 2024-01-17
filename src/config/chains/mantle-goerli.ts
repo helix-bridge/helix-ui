@@ -52,4 +52,5 @@ export const mantleGoerliChain: ChainConfig = {
       ],
     },
   ],
+  hidden: true,
 };

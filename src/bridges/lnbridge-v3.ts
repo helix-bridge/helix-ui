@@ -10,15 +10,20 @@ export class LnBridgeV3 extends LnBridgeBase {
   }
 
   private _initContract() {
-    if (this.sourceChain?.network === "zksync-goerli") {
+    if (this.sourceChain?.network === "zksync-sepolia") {
       this.contract = {
-        sourceAddress: "0xab38D0030cC28e413C4DD2B7D0ac2b6984e6d3f0",
-        targetAddress: "0xb0Ce2498C2526cceA1D7792e4B62C3066Eb5529B",
+        sourceAddress: "0xDc55fF59F82AA50D8A4A61dB8CcaDffD26Fb7dD2",
+        targetAddress: "0x38627Cb033De66a1E07e73f5D0a7a7adFB6741fa",
       };
-    } else if (this.targetChain?.network === "zksync-goerli") {
+    } else if (this.targetChain?.network === "zksync-sepolia") {
       this.contract = {
-        sourceAddress: "0xb0Ce2498C2526cceA1D7792e4B62C3066Eb5529B",
-        targetAddress: "0xab38D0030cC28e413C4DD2B7D0ac2b6984e6d3f0",
+        sourceAddress: "0x38627Cb033De66a1E07e73f5D0a7a7adFB6741fa",
+        targetAddress: "0xDc55fF59F82AA50D8A4A61dB8CcaDffD26Fb7dD2",
+      };
+    } else {
+      this.contract = {
+        sourceAddress: "0x38627Cb033De66a1E07e73f5D0a7a7adFB6741fa",
+        targetAddress: "0x38627Cb033De66a1E07e73f5D0a7a7adFB6741fa",
       };
     }
   }
@@ -57,7 +62,7 @@ export class LnBridgeV3 extends LnBridgeBase {
             totalFee,
             amount,
             receiver: recipient,
-            nonce: options?.withdrawNonce || 0n,
+            timestamp: BigInt(Math.floor(Date.now() / 1000)),
           },
         ],
         value: this.sourceToken.type === "native" ? amount + totalFee : undefined,
@@ -99,6 +104,51 @@ export class LnBridgeV3 extends LnBridgeBase {
         }),
         token: this.sourceToken,
       };
+    }
+  }
+
+  async registerLnProvider(baseFee: bigint, feeRate: number, transferLimit: bigint) {
+    await this.validateNetwork("source");
+
+    if (
+      this.contract &&
+      this.publicClient &&
+      this.walletClient &&
+      this.targetChain &&
+      this.sourceToken &&
+      this.targetToken
+    ) {
+      const hash = await this.walletClient.writeContract({
+        address: this.contract.sourceAddress,
+        abi: (await import("@/abi/lnbridge-v3")).default,
+        functionName: "registerLnProvider",
+        args: [
+          BigInt(this.targetChain.id),
+          this.sourceToken.address,
+          this.targetToken.address,
+          baseFee,
+          feeRate,
+          transferLimit,
+        ],
+        gas: this.getTxGasLimit(),
+      });
+      return this.publicClient.waitForTransactionReceipt({ hash });
+    }
+  }
+
+  async depositPenaltyReserve(amount: bigint) {
+    await this.validateNetwork("source");
+
+    if (this.contract && this.publicClient && this.walletClient && this.sourceToken) {
+      const hash = await this.walletClient.writeContract({
+        address: this.contract.sourceAddress,
+        abi: (await import("@/abi/lnbridge-v3")).default,
+        functionName: "depositPenaltyReserve",
+        args: [this.sourceToken.address, amount],
+        value: this.sourceToken.type === "native" ? amount : undefined,
+        gas: this.getTxGasLimit(),
+      });
+      return this.publicClient.waitForTransactionReceipt({ hash });
     }
   }
 }

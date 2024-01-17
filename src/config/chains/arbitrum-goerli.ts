@@ -56,4 +56,5 @@ export const arbitrumGoerliChain: ChainConfig = {
       ],
     },
   ],
+  hidden: true,
 };

@@ -6,13 +6,13 @@ const LnRelayersOverview = dynamic(() => import("@/components/lnrelayers-overvie
 
 export const metadata: Metadata = {
   title: "Relayers Overview - Helix Bridge",
-  description: "All v2 version relayers of Helix Bridge",
+  description: "All v3 version relayers of Helix Bridge",
 };
 
-export default function RelayerOverviewPage() {
+export default function LnV3RelayersOverviewPage() {
   return (
     <PageWrap>
-      <LnRelayersOverview bridgeVersion="lnv2" />
+      <LnRelayersOverview bridgeVersion="lnv3" />
     </PageWrap>
   );
 }

@@ -56,4 +56,5 @@ export const zksyncGoerliChain: ChainConfig = {
       ],
     },
   ],
+  hidden: true,
 };

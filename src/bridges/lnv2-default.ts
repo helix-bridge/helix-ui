@@ -1,6 +1,5 @@
 import { Address, TransactionReceipt, bytesToHex, encodeFunctionData } from "viem";
 import { LnBridgeBase } from "./lnbridge-base";
-import { ChainID } from "@/types/chain";
 import { isProduction } from "@/utils/env";
 import { BridgeConstructorArgs, GetWithdrawFeeArgs, TransferOptions } from "@/types/bridge";
 import { fetchMsglineFeeAndParams } from "@/utils";
@@ -12,27 +11,22 @@ export class LnBridgeV2Default extends LnBridgeBase {
   }
 
   private _initContract() {
-    if (this.sourceChain?.id === ChainID.LINEA_GOERLI && this.targetChain?.id === ChainID.GOERLI) {
+    if (this.sourceChain?.network === "zksync-sepolia") {
       this.contract = {
-        sourceAddress: "0x4C538EfA6e3f9Dfb939AA4F0B224577DA665923a",
-        targetAddress: "0x4C538EfA6e3f9Dfb939AA4F0B224577DA665923a",
+        sourceAddress: "0xBe23e871318E49C747CB909AC65aCCFAEAac3a37",
+        targetAddress: "0x8429D7Dfd91D6F970ba89fFC005e67D15f1E4739",
       };
-    } else if (this.sourceChain?.id === ChainID.ZKSYNC_GOERLI) {
+    } else if (this.targetChain?.network === "zksync-sepolia") {
       this.contract = {
-        sourceAddress: "0xe8d55759c32fb608fD092aB2C0ef8A1F52B254d4",
-        targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+        sourceAddress: "0x8429D7Dfd91D6F970ba89fFC005e67D15f1E4739",
+        targetAddress: "0xBe23e871318E49C747CB909AC65aCCFAEAac3a37",
       };
-    } else if (this.targetChain?.id === ChainID.ZKSYNC_GOERLI) {
-      this.contract = {
-        sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
-        targetAddress: "0xe8d55759c32fb608fD092aB2C0ef8A1F52B254d4",
-      };
-    } else if (this.sourceChain?.id === ChainID.ZKSYNC) {
+    } else if (this.sourceChain?.network === "zksync") {
       this.contract = {
         sourceAddress: "0x767Bc046c989f5e63683fB530f939DD34b91ceAC",
         targetAddress: "0x94C614DAeFDbf151E1BB53d6A201ae5fF56A9337",
       };
-    } else if (this.targetChain?.id === ChainID.ZKSYNC) {
+    } else if (this.targetChain?.network === "zksync") {
       this.contract = {
         sourceAddress: "0x94C614DAeFDbf151E1BB53d6A201ae5fF56A9337",
         targetAddress: "0x767Bc046c989f5e63683fB530f939DD34b91ceAC",
@@ -44,8 +38,8 @@ export class LnBridgeV2Default extends LnBridgeBase {
       };
     } else {
       this.contract = {
-        sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
-        targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+        sourceAddress: "0x8429D7Dfd91D6F970ba89fFC005e67D15f1E4739",
+        targetAddress: "0x8429D7Dfd91D6F970ba89fFC005e67D15f1E4739",
       };
     }
   }

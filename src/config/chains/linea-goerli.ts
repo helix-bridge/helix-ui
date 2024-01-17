@@ -56,4 +56,5 @@ export const lineaGoerliChain: ChainConfig = {
       ],
     },
   ],
+  hidden: true,
 };

@@ -4,6 +4,7 @@ import { GQL_QUERY_LNBRIDGE_RELAY_INFOS } from "@/config";
 import {
   ChainConfig,
   LnBridgeRelayerOverview,
+  LnBridgeVersion,
   QueryLnBridgeRelayInfosReqParams,
   QueryLnBridgeRelayInfosResData,
 } from "@/types";
@@ -18,7 +19,11 @@ import RelayersTable from "./relayers-table";
 const { defaultSourceChains, defaultTargetChains } = getLnBridgeCrossDefaultValue();
 const pageSize = 12;
 
-export default function LnRelayerOverview() {
+interface Props {
+  bridgeVersion: LnBridgeVersion;
+}
+
+export default function LnRelayersOverview({ bridgeVersion }: Props) {
   const [records, setRecords] = useState<LnBridgeRelayerOverview[]>([]);
   const [sourceChain, setSourceChain] = useState<ChainConfig>();
   const [targetChain, setTargetChain] = useState<ChainConfig>();
@@ -35,6 +40,7 @@ export default function LnRelayerOverview() {
         row: pageSize,
         page: currentPage,
         relayer: deferredSearchValue.toLowerCase() || undefined,
+        version: bridgeVersion,
       },
       notifyOnNetworkStatusChange: true,
       fetchPolicy: "no-cache",
@@ -98,6 +104,7 @@ export default function LnRelayerOverview() {
 
       <RelayersTable
         loading={loading}
+        bridgeVersion={bridgeVersion}
         records={records}
         total={data?.queryLnBridgeRelayInfos?.total || 0}
         pageSize={pageSize}

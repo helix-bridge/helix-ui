@@ -11,6 +11,7 @@ interface Props {
   balance?: bigint;
   max?: bigint;
   compact?: boolean;
+  autoFocus?: boolean;
   disabled?: boolean;
   suffix?: "symbol" | "max";
   enabledDynamicStyle?: boolean;
@@ -28,6 +29,7 @@ export function BalanceInput({
   balance,
   max,
   compact,
+  autoFocus,
   disabled,
   suffix,
   enabledDynamicStyle,
@@ -163,7 +165,7 @@ export function BalanceInput({
           ref={inputRef}
           disabled={disabled}
           value={value.input}
-          autoFocus
+          autoFocus={autoFocus}
         />
 
         {compact ? (

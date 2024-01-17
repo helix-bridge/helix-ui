@@ -1,5 +1,5 @@
 import { TokenSymbol } from "./token";
-import { BridgeCategory } from "./bridge";
+import { BridgeCategory, LnBridgeVersion } from "./bridge";
 import { Network, ChainID } from "./chain";
 import { Address, Hex } from "viem";
 
@@ -50,7 +50,7 @@ export interface HistoryRecord {
 
 export interface LnBridgeRelayInfo {
   id: string;
-  version: "lnv2" | "lnv3";
+  version: LnBridgeVersion;
   nonce: string;
   targetNonce: string | null;
   fromChain: Network;
@@ -144,6 +144,7 @@ export type LnBridgeRelayerOverview = Pick<
   | "messageChannel"
   | "lastTransferId"
   | "withdrawNonce"
+  | "transferLimit"
 >;
 
 export interface QueryLnBridgeRelayInfosReqParams {
@@ -151,6 +152,7 @@ export interface QueryLnBridgeRelayInfosReqParams {
   toChain?: Network;
   relayer?: string;
   bridge?: BridgeCategory;
+  version?: LnBridgeVersion;
   row: number;
   page: number;
 }
@@ -171,10 +173,10 @@ export interface HistoryRecordByTxHashResData {
 }
 
 export interface CheckLnBridgeExistReqParams {
-  fromChainId: ChainID;
-  toChainId: ChainID;
-  fromToken: Address;
-  toToken: Address;
+  fromChainId: ChainID | undefined;
+  toChainId: ChainID | undefined;
+  fromToken: Address | undefined;
+  toToken: Address | undefined;
 }
 
 export interface CheckLnBridgeExistResData {

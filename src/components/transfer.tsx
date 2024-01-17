@@ -230,8 +230,8 @@ export default function Transfer() {
     <>
       <div className="mx-auto flex w-full flex-col gap-large rounded-large bg-component p-middle lg:mt-20 lg:w-[30rem] lg:gap-5 lg:p-5">
         {/* From-To */}
-        <div className="mt-8 flex items-center gap-small lg:gap-large">
-          <Label text="From" className="w-full" textClassName="font-medium" needAbsolute>
+        <div className="mt-8 flex items-center justify-between gap-small lg:gap-large">
+          <Label text="From" className="w-[45%] lg:w-full" textClassName="font-medium" needAbsolute>
             <ChainSelect
               className="w-full bg-inner p-middle"
               placement="bottom-start"
@@ -284,7 +284,7 @@ export default function Transfer() {
               });
             }}
           />
-          <Label text="To" className="w-full" textClassName="font-medium" needAbsolute>
+          <Label text="To" className="w-[45%] lg:w-full" textClassName="font-medium" needAbsolute>
             <ChainSelect
               className="w-full bg-inner p-middle"
               placement="bottom-end"
@@ -310,6 +310,7 @@ export default function Transfer() {
         {/* Amount */}
         <Label text="Amount" textClassName="font-medium" extra={isProduction() ? null : <Faucet />}>
           <BalanceInput
+            autoFocus
             placeholder="0"
             enabledDynamicStyle
             balance={sourceBalance?.value}

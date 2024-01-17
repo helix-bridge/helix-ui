@@ -26,16 +26,22 @@ export default function Header() {
   const pathname = usePathname();
 
   const navigationsConfig = useMemo<NavigationConfig[]>(() => {
-    if (pathname.startsWith("/relayer")) {
+    if (pathname.startsWith("/relayer/")) {
       return [
         { href: "/relayer/overview", label: "Overview" },
         { href: "/relayer/dashboard", label: "Dashboard" },
+      ];
+    } else if (pathname.startsWith("/relayer-v3/")) {
+      return [
+        { href: "/relayer-v3/overview", label: "Overview" },
+        { href: "/relayer-v3/dashboard", label: "Dashboard" },
       ];
     } else {
       return [
         { href: "/", label: "Transfer" },
         { href: "/records", label: "Explorer" },
-        { href: "/relayer/overview", label: "Relayer" },
+        { href: "/relayer/overview", label: "Relayer(v2)" },
+        { href: "/relayer-v3/overview", label: "Relayer(v3)" },
         { href: "https://docs.helixbridge.app/", label: "Docs", external: true },
       ];
     }

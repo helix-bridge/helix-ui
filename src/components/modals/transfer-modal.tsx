@@ -11,7 +11,7 @@ import {
   Token,
 } from "@/types";
 import ProgressIcon from "@/ui/progress-icon";
-import { formatBalance, getChainLogoSrc, notifyError } from "@/utils";
+import { formatBalance, getChainLogoSrc, notifyError, toShortAdrress } from "@/utils";
 import { ApolloQueryResult, useQuery } from "@apollo/client";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -173,7 +173,10 @@ function SourceTarget({
         <Image width={36} height={36} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
         <div className="flex flex-col items-start">
           <span className="text-base font-medium text-white">{chain.name}</span>
-          <span className="text-sm font-medium text-white/50">{address}</span>
+          <span className="hidden text-sm font-medium text-white/50 lg:inline">{address}</span>
+          {address ? (
+            <span className="text-sm font-medium text-white/50 lg:hidden">{toShortAdrress(address, 8, 6)}</span>
+          ) : null}
         </div>
       </div>
 

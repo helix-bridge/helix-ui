@@ -19,14 +19,27 @@ export class LnBridgeBase extends BaseBridge {
   }
 
   async getFee(args?: GetFeeArgs) {
-    if (this.sourceToken) {
-      return {
-        value:
-          (args?.baseFee || 0n) +
-          (args?.protocolFee || 0n) +
-          ((args?.liquidityFeeRate || 0n) * (args?.transferAmount || 0n)) / 100000n,
-        token: this.sourceToken,
-      };
+    if (
+      args?.relayer &&
+      this.contract &&
+      this.targetChain &&
+      this.sourceToken &&
+      this.targetToken &&
+      this.sourcePublicClient
+    ) {
+      const value = await this.sourcePublicClient.readContract({
+        address: this.contract.sourceAddress,
+        abi: (await import("@/abi/lnv2-default")).default,
+        functionName: "totalFee",
+        args: [
+          BigInt(this.targetChain.id),
+          args.relayer,
+          this.sourceToken.address,
+          this.targetToken.address,
+          args.transferAmount ?? 0n,
+        ],
+      });
+      return { value, token: this.sourceToken };
     }
   }
 

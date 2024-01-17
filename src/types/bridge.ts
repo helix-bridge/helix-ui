@@ -2,7 +2,9 @@ import { Address, Hex } from "viem";
 import { PublicClient, WalletClient } from "wagmi";
 import { ChainConfig } from "./chain";
 import { Token } from "./token";
-import { MessageChannel } from ".";
+import { MessageChannel } from "./graphql";
+
+export type LnBridgeVersion = "lnv2" | "lnv3";
 
 /**
  * `lpbridge-darwinia-dvm` etc. are named from graphql indexer, except `lnbridge`.

@@ -21,7 +21,34 @@ export const sepoliaChain: ChainConfig = {
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
       logo: "eth.svg",
-      cross: [],
+      cross: [
+        { target: { network: "arbitrum-sepolia", symbol: "ETH" }, bridge: { category: "lnbridge" } },
+        { target: { network: "zksync-sepolia", symbol: "ETH" }, bridge: { category: "lnbridge" } },
+      ],
+    },
+    {
+      decimals: 18,
+      symbol: "USDC",
+      name: "USDC",
+      type: "erc20",
+      address: "0x0ac58Df0cc3542beC4cDa71B16D06C3cCc39f405",
+      logo: "usdc.svg",
+      cross: [
+        { target: { network: "arbitrum-sepolia", symbol: "USDC" }, bridge: { category: "lnbridge" } },
+        { target: { network: "zksync-sepolia", symbol: "USDC" }, bridge: { category: "lnbridge" } },
+      ],
+    },
+    {
+      decimals: 18,
+      symbol: "USDT",
+      name: "USDT",
+      type: "erc20",
+      address: "0x876A4f6eCF13EEb101F9E75FCeF58f19Ff383eEB",
+      logo: "usdt.png",
+      cross: [
+        { target: { network: "arbitrum-sepolia", symbol: "USDT" }, bridge: { category: "lnbridge" } },
+        { target: { network: "zksync-sepolia", symbol: "USDT" }, bridge: { category: "lnbridge" } },
+      ],
     },
     {
       decimals: 18,

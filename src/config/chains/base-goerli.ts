@@ -33,4 +33,5 @@ export const baseGoerliChain: ChainConfig = {
       cross: [{ target: { network: "goerli", symbol: "USDT" }, bridge: { category: "lnbridge" } }],
     },
   ],
+  hidden: true,
 };
