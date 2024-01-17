@@ -1,5 +1,10 @@
 import { GQL_QUERY_LNBRIDGE_RELAY_INFOS } from "@/config";
-import { LnBridgeRelayerOverview, QueryLnBridgeRelayInfosReqParams, QueryLnBridgeRelayInfosResData } from "@/types";
+import {
+  LnBridgeRelayerOverview,
+  LnBridgeVersion,
+  QueryLnBridgeRelayInfosReqParams,
+  QueryLnBridgeRelayInfosResData,
+} from "@/types";
 import CountdownRefresh from "@/ui/countdown-refresh";
 import { useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
@@ -8,7 +13,11 @@ import RelayersTable from "./relayers-table";
 
 const pageSize = 10;
 
-export default function RelayersManage() {
+interface Props {
+  bridgeVersion: LnBridgeVersion;
+}
+
+export default function RelayersManage({ bridgeVersion }: Props) {
   const [currentPage, setCurrentPage] = useState(0);
   const [records, setRecords] = useState<LnBridgeRelayerOverview[]>([]);
 
@@ -36,6 +45,7 @@ export default function RelayersManage() {
       </div>
       <RelayersTable
         loading={loading}
+        bridgeVersion={bridgeVersion}
         records={records}
         total={data?.queryLnBridgeRelayInfos?.total || 0}
         isDashboard={true}
