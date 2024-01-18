@@ -27,7 +27,7 @@ export default function StepCompleteItem({
       {!!address && <PrettyAddress address={address} forceShort className="text-sm font-medium text-white" />}
       {!!bridge && (
         <span className="text-sm font-medium text-white">
-          {bridge === "lnv3" ? "LnBridgeV3" : "lnv2-opposite" ? "Opposite" : "Default"}
+          {bridge === "lnv3" ? "LnBridgeV3" : bridge === "lnv2-opposite" ? "Opposite" : "Default"}
         </span>
       )}
       {!!chain && (

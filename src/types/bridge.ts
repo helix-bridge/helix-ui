@@ -5,6 +5,7 @@ import { Token } from "./token";
 import { MessageChannel } from "./graphql";
 
 export type LnBridgeVersion = "lnv2" | "lnv3";
+export type LnBridgeV2Type = "default" | "opposite";
 
 /**
  * `lpbridge-darwinia-dvm` etc. are named from graphql indexer, except `lnbridge`.

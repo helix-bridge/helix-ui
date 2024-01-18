@@ -9,7 +9,7 @@ import {
   LnBridgeV3,
   XTokenV3Bridge,
 } from "@/bridges";
-import { BridgeConstructorArgs } from "@/types";
+import { BridgeConstructorArgs, ChainConfig, Token } from "@/types";
 
 export function bridgeFactory(args: BridgeConstructorArgs): BaseBridge | undefined {
   switch (args.category) {
@@ -36,4 +36,24 @@ export function bridgeFactory(args: BridgeConstructorArgs): BaseBridge | undefin
     default:
       return;
   }
+}
+
+export function isLnV2DefaultBridge(
+  sourceToken: Token | null | undefined,
+  targetChain: ChainConfig | null | undefined,
+) {
+  return !!sourceToken?.cross.some(
+    (c) =>
+      c.target.network === targetChain?.network && c.bridge.category === "lnbridge" && c.bridge.lnv2Type === "default",
+  );
+}
+
+export function isLnV2OppositeBridge(
+  sourceToken: Token | null | undefined,
+  targetChain: ChainConfig | null | undefined,
+) {
+  return !!sourceToken?.cross.some(
+    (c) =>
+      c.target.network === targetChain?.network && c.bridge.category === "lnbridge" && c.bridge.lnv2Type === "opposite",
+  );
 }

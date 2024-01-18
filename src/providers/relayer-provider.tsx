@@ -9,7 +9,13 @@ import {
   InputValue,
   Token,
 } from "@/types";
-import { getAvailableTargetTokens, notifyError, notifyTransaction } from "@/utils";
+import {
+  getAvailableTargetTokens,
+  isLnV2DefaultBridge,
+  isLnV2OppositeBridge,
+  notifyError,
+  notifyTransaction,
+} from "@/utils";
 import {
   Dispatch,
   PropsWithChildren,
@@ -180,13 +186,13 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
       publicClient,
     };
 
-    if (bridgeCategory === "lnv2-default") {
-      defaultBridge = new LnBridgeV2Default({ category: bridgeCategory, ...args });
-    } else if (bridgeCategory === "lnv2-opposite") {
-      oppositeBridge = new LnBridgeV2Opposite({ category: bridgeCategory, ...args });
+    if (isLnV2DefaultBridge(sourceToken, targetChain)) {
+      defaultBridge = new LnBridgeV2Default({ category: "lnv2-default", ...args });
+    } else if (isLnV2OppositeBridge(sourceToken, targetChain)) {
+      oppositeBridge = new LnBridgeV2Opposite({ category: "lnv2-opposite", ...args });
     }
     return { defaultBridge, oppositeBridge, bridgeInstance: defaultBridge ?? oppositeBridge };
-  }, [sourceChain, targetChain, sourceToken, targetToken, bridgeCategory, walletClient, publicClient]);
+  }, [sourceChain, targetChain, sourceToken, targetToken, walletClient, publicClient]);
 
   const isLnBridgeExist = useCallback(
     async (

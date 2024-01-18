@@ -259,9 +259,9 @@ export default function RelayerRegisterV3() {
         {/* Step 2 */}
         <div className="flex flex-col gap-5 rounded-large bg-component p-5 lg:p-[1.875rem]">
           <StepTitle step={2} title="Deposit Penalty Reserve and Set Fee" />
-          <Divider />
           {currentStep === Step.TWO && (
             <>
+              <Divider />
               <Label text="Base Fee" tips="The fixed fee set by the relayer and charged in a transaction">
                 <BalanceInput
                   compact
@@ -344,12 +344,15 @@ export default function RelayerRegisterV3() {
             </>
           )}
           {currentStep >= Step.TWO_SUMMARY && (
-            <div className="flex items-center justify-between gap-small">
-              <StepCompleteItem property="Transfer Limit" token={sourceToken} balance={transferLimitInput.value} />
-              <StepCompleteItem property="Penalty Reserve" token={sourceToken} balance={penaltyReserveInput.value} />
-              <StepCompleteItem property="Base Fee" token={sourceToken} balance={baseFeeInput.value} />
-              <StepCompleteItem property="Liquidity Fee Rate" percent={formatFeeRate(feeRateInput.value)} />
-            </div>
+            <>
+              <Divider />
+              <div className="flex items-center justify-between gap-small">
+                <StepCompleteItem property="Transfer Limit" token={sourceToken} balance={transferLimitInput.value} />
+                <StepCompleteItem property="Penalty Reserve" token={sourceToken} balance={penaltyReserveInput.value} />
+                <StepCompleteItem property="Base Fee" token={sourceToken} balance={baseFeeInput.value} />
+                <StepCompleteItem property="Liquidity Fee Rate" percent={formatFeeRate(feeRateInput.value)} />
+              </div>
+            </>
           )}
         </div>
         {/* Step 3 */}
