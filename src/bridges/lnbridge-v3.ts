@@ -1,6 +1,6 @@
 import { BridgeConstructorArgs, GetFeeArgs, Token, TransferOptions } from "@/types";
 import { LnBridgeBase } from "./lnbridge-base";
-import { TransactionReceipt } from "viem";
+import { Address, TransactionReceipt, encodePacked, keccak256 } from "viem";
 
 export class LnBridgeV3 extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {
@@ -104,6 +104,18 @@ export class LnBridgeV3 extends LnBridgeBase {
         }),
         token: this.sourceToken,
       };
+    }
+  }
+
+  async getPenaltyReserves(relayer: Address | null | undefined) {
+    if (relayer && this.contract && this.sourceToken && this.sourcePublicClient) {
+      const value = await this.sourcePublicClient.readContract({
+        address: this.contract.sourceAddress,
+        abi: (await import("@/abi/lnbridge-v3")).default,
+        functionName: "penaltyReserves",
+        args: [keccak256(encodePacked(["address", "address"], [this.sourceToken.address, relayer]))],
+      });
+      return { value, token: this.sourceToken };
     }
   }
 

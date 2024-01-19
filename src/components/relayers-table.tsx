@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useState } from "react";
 import PrettyAddress from "./pretty-address";
 import RelayerManageModal from "./modals/relayer-manage-modal";
+import RelayerManageV3Modal from "./modals/relayer-manage-v3-modal";
 
 interface Props {
   bridgeVersion: LnBridgeVersion;
@@ -264,14 +265,22 @@ export default function RelayersTable({
         onPageChange={onPageChange}
       />
 
-      {isDashboard && (
-        <RelayerManageModal
-          relayerInfo={relayerInfo}
-          isOpen={!!relayerInfo}
-          onClose={() => setRelayerInfo(undefined)}
-          onSuccess={onRefetch}
-        />
-      )}
+      {isDashboard &&
+        (bridgeVersion === "lnv3" ? (
+          <RelayerManageV3Modal
+            relayerInfo={relayerInfo}
+            isOpen={!!relayerInfo}
+            onClose={() => setRelayerInfo(undefined)}
+            onSuccess={onRefetch}
+          />
+        ) : (
+          <RelayerManageModal
+            relayerInfo={relayerInfo}
+            isOpen={!!relayerInfo}
+            onClose={() => setRelayerInfo(undefined)}
+            onSuccess={onRefetch}
+          />
+        ))}
     </div>
   );
 }

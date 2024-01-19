@@ -306,7 +306,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             label: (
               <>
                 <span className="hidden text-sm font-extrabold lg:inline">Update Fee</span>
-                <span className="text-sm font-extrabold lg:hidden">Fee</span>
+                <span className="text-sm font-extrabold lg:hidden">Update</span>
               </>
             ),
             children: (
@@ -335,7 +335,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             label: (
               <>
                 <span className="hidden text-sm font-extrabold lg:inline">Deposit More Margin</span>
-                <span className="text-sm font-extrabold lg:hidden">Margin</span>
+                <span className="text-sm font-extrabold lg:hidden">Deposit</span>
               </>
             ),
             children: (

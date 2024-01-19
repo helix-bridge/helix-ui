@@ -40,9 +40,9 @@ export default function RelayerDashboardTabs({ bridgeVersion }: Props) {
           label: "Manage",
           children:
             bridgeVersion === "lnv3" ? (
-              <RelayerProvider>
+              <RelayerProviderV3>
                 <RelayersManage bridgeVersion={bridgeVersion} />
-              </RelayerProvider>
+              </RelayerProviderV3>
             ) : (
               <RelayerProvider>
                 <RelayersManage bridgeVersion={bridgeVersion} />

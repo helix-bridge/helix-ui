@@ -51,6 +51,7 @@ interface RelayerCtx {
     transferLimit: bigint,
   ) => Promise<TransactionReceipt | undefined>;
   isLnBridgeExist: (apolloClient: ApolloClient<object>) => Promise<boolean>;
+  updatePenaltyReserves: () => Promise<void>;
 }
 
 const defaultValue: RelayerCtx = {
@@ -81,6 +82,7 @@ const defaultValue: RelayerCtx = {
   targetApprove: async () => undefined,
   depositPenaltyReserve: async () => undefined,
   registerLnProvider: async () => undefined,
+  updatePenaltyReserves: async () => undefined,
 };
 
 export const RelayerContext = createContext(defaultValue);
@@ -176,6 +178,15 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
     [address, bridgeInstance],
   );
 
+  const updatePenaltyReserves = useCallback(async () => {
+    try {
+      const pr = await bridgeInstance.getPenaltyReserves(address);
+      setPenaltyReserve(pr?.value);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [address, bridgeInstance]);
+
   const depositPenaltyReserve = useCallback(
     async (amount: bigint) => {
       try {
@@ -216,12 +227,14 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
         bridgeInstance.getTargetAllowance(address),
         bridgeInstance.getSourceBalance(address),
         bridgeInstance.getTargetBalance(address),
+        bridgeInstance.getPenaltyReserves(address),
       ]).subscribe({
-        next: ([as, at, bs, bt]) => {
+        next: ([as, at, bs, bt, pr]) => {
           setSourceAllowance(as);
           setTargetAllowance(at);
           setSourceBalance(bs);
           setTargetBalance(bt);
+          setPenaltyReserve(pr?.value);
         },
         error: (err) => {
           console.error(err);
@@ -229,6 +242,7 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
           setTargetAllowance(defaultValue.targetAllowance);
           setSourceBalance(defaultValue.sourceBalance);
           setTargetBalance(defaultValue.targetBalance);
+          setPenaltyReserve(defaultValue.penaltyReserve);
         },
       });
     } else {
@@ -236,6 +250,7 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
       setTargetAllowance(defaultValue.targetAllowance);
       setSourceBalance(defaultValue.sourceBalance);
       setTargetBalance(defaultValue.targetBalance);
+      setPenaltyReserve(defaultValue.penaltyReserve);
     }
 
     return () => {
@@ -273,6 +288,7 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
         targetApprove,
         depositPenaltyReserve,
         registerLnProvider,
+        updatePenaltyReserves,
       }}
     >
       {children}
