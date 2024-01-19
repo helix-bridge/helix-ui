@@ -163,4 +163,18 @@ export class LnBridgeV3 extends LnBridgeBase {
       return this.publicClient.waitForTransactionReceipt({ hash });
     }
   }
+
+  async withdrawPenaltyReserve(amount: bigint) {
+    await this.validateNetwork("source");
+
+    if (this.contract && this.sourceToken && this.publicClient && this.walletClient) {
+      const hash = await this.walletClient.writeContract({
+        address: this.contract.sourceAddress,
+        abi: (await import("@/abi/lnbridge-v3")).default,
+        functionName: "withdrawPenaltyReserve",
+        args: [this.sourceToken.address, amount],
+      });
+      return this.publicClient.waitForTransactionReceipt({ hash });
+    }
+  }
 }

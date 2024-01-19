@@ -1,7 +1,7 @@
 import { useRelayerV3 } from "@/hooks";
 import { InputValue, LnBridgeRelayerOverview, Token } from "@/types";
 import SegmentedTabs, { SegmentedTabsProps } from "@/ui/segmented-tabs";
-import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "@/utils";
+import { formatFeeRate, getChainConfig, notifyError } from "@/utils";
 import dynamic from "next/dynamic";
 import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { useNetwork, useSwitchNetwork } from "wagmi";
@@ -25,8 +25,8 @@ interface Props {
   onSuccess: () => void;
 }
 
-function covertToBigIntInputValue(value: bigint, token: Token): InputValue<bigint> {
-  return { valid: true, value, input: (value / 10n ** BigInt(token.decimals)).toString() };
+function covertToBigIntInputValue(value: bigint | undefined, token: Token): InputValue<bigint> {
+  return { valid: true, value: value ?? 0n, input: value ? (value / 10n ** BigInt(token.decimals)).toString() : "" };
 }
 
 export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onSuccess }: Props) {
@@ -36,12 +36,13 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     sourceBalance,
     sourceAllowance,
     penaltyReserve,
+    isGettingPenaltyReserves,
     setSourceChain,
     setTargetChain,
     setSourceToken,
     registerLnProvider,
     depositPenaltyReserve,
-    updatePenaltyReserves,
+    withdrawPenaltyReserve,
   } = useRelayerV3();
   const [penaltyReserveInput, setPenaltyReserveInput] = useState(bigintInputDefaultValue);
   const [transferLimitInput, setTransferLimitInput] = useState(bigintInputDefaultValue);
@@ -51,9 +52,6 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
 
   const [activeKey, setActiveKey] = useState<SegmentedTabsProps<TabKey>["activeKey"]>("update");
   const [busy, setBusy] = useState(false);
-
-  const [withdrawFee] = useState<{ value: bigint; token: Token }>();
-  const [isGettingWithdrawFee] = useState(false);
 
   const { switchNetwork } = useSwitchNetwork();
   const { chain } = useNetwork();
@@ -82,7 +80,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
         okDisabled = true;
       }
     } else if (activeKey === "withdraw") {
-      if (!withdrawFee || !withdrawInput.input || !withdrawInput.valid) {
+      if (penaltyReserve === undefined || isGettingPenaltyReserves || !withdrawInput.input || !withdrawInput.valid) {
         okDisabled = true;
       }
     }
@@ -98,8 +96,9 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     sourceChain?.id,
     sourceToken?.type,
     transferLimitInput,
-    withdrawFee,
     withdrawInput,
+    penaltyReserve,
+    isGettingPenaltyReserves,
   ]);
 
   const { baseFee, feeRate, transferLimit } = useMemo(() => {
@@ -120,11 +119,8 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
         receipt = await registerLnProvider(baseFeeInput.value, feeRateInput.value, transferLimitInput.value);
       } else if (activeKey === "deposit") {
         receipt = await depositPenaltyReserve(penaltyReserveInput.value);
-        if (receipt?.status === "success") {
-          updatePenaltyReserves();
-        }
       } else if (activeKey === "withdraw") {
-        //
+        receipt = await withdrawPenaltyReserve(withdrawInput.value);
       }
     } catch (err) {
       console.error(err);
@@ -145,12 +141,13 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     feeRateInput,
     penaltyReserveInput,
     transferLimitInput,
+    withdrawInput,
     depositPenaltyReserve,
     onClose,
     onSuccess,
     registerLnProvider,
     switchNetwork,
-    updatePenaltyReserves,
+    withdrawPenaltyReserve,
   ]);
 
   useEffect(() => {
@@ -176,7 +173,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     if (sourceToken) {
       setPenaltyReserveInput(bigintInputDefaultValue);
       setTransferLimitInput(covertToBigIntInputValue(transferLimit, sourceToken));
-      setWithdrawInput(covertToBigIntInputValue(penaltyReserve ?? 0n, sourceToken));
+      setWithdrawInput(covertToBigIntInputValue(penaltyReserve, sourceToken));
       setBaseFeeInput(covertToBigIntInputValue(baseFee, sourceToken));
       setFeeRateInput({ valid: true, value: feeRate, input: formatFeeRate(feeRate).toString() });
     }
@@ -193,19 +190,6 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
       busy={busy}
       disabledCancel={busy}
       disabledOk={okDisabled}
-      extra={
-        activeKey === "withdraw" ? (
-          <div className="h-6 self-end">
-            <span className="text-sm font-extrabold text-white/50">
-              {relayerInfo?.messageChannel === "layerzero"
-                ? "Powered by LayerZero & Helix"
-                : "Powered by Msgport & Helix"}
-            </span>
-          </div>
-        ) : (
-          <div className="h-6" />
-        )
-      }
       onCancel={onClose}
     >
       <SegmentedTabs
@@ -265,40 +249,24 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
             children: (
               <div className="flex flex-col gap-5">
                 <Label text="Withdraw Amount">
-                  <BalanceInput
-                    balance={0n}
-                    token={sourceToken}
-                    compact
-                    suffix="symbol"
-                    value={withdrawInput}
-                    onChange={setWithdrawInput}
-                  />
-                </Label>
-                <Label text="Withdraw Fee" tips="This value is calculated and does not require input">
-                  <div
-                    className={`relative flex h-10 items-center justify-between rounded-middle border bg-inner px-small lg:px-middle ${
-                      withdrawFee || isGettingWithdrawFee ? "border-transparent" : "border-app-red"
-                    }`}
-                  >
-                    {isGettingWithdrawFee ? (
-                      <CountLoading size="small" color="white" />
-                    ) : withdrawFee ? (
-                      <>
-                        <span className="text-sm font-medium text-white">
-                          {formatBalance(withdrawFee.value, withdrawFee.token.decimals, { precision: 6 })}
-                        </span>
-                        <span className="text-sm font-medium text-white">{withdrawFee.token.symbol}</span>
-                      </>
-                    ) : (
-                      <span className="absolute -bottom-5 left-0 text-xs font-medium text-app-red">
-                        * Failed to get fee, withdraw is temporarily unavailable
-                      </span>
+                  <div className="relative">
+                    {isGettingPenaltyReserves && (
+                      <div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center pl-2">
+                        <CountLoading size="small" color="white" />
+                      </div>
                     )}
+                    <BalanceInput
+                      balance={penaltyReserve}
+                      token={sourceToken}
+                      compact
+                      suffix="symbol"
+                      value={withdrawInput}
+                      onChange={setWithdrawInput}
+                    />
                   </div>
                 </Label>
               </div>
             ),
-            disabled: true,
           },
         ]}
         activeKey={activeKey}

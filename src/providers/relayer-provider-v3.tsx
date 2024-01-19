@@ -25,12 +25,11 @@ interface RelayerCtx {
   targetChain: ChainConfig | undefined;
   sourceToken: Token | undefined;
   penaltyReserve: bigint | undefined;
-  baseFee: bigint | undefined;
-  feeRate: number | undefined;
   sourceAllowance: { value: bigint; token: Token } | undefined;
   targetAllowance: { value: bigint; token: Token } | undefined;
   sourceBalance: { value: bigint; token: Token } | undefined;
   targetBalance: { value: bigint; token: Token } | undefined;
+  isGettingPenaltyReserves: boolean;
 
   setSourceChain: Dispatch<SetStateAction<ChainConfig | undefined>>;
   setTargetChain: Dispatch<SetStateAction<ChainConfig | undefined>>;
@@ -51,53 +50,21 @@ interface RelayerCtx {
     transferLimit: bigint,
   ) => Promise<TransactionReceipt | undefined>;
   isLnBridgeExist: (apolloClient: ApolloClient<object>) => Promise<boolean>;
-  updatePenaltyReserves: () => Promise<void>;
+  withdrawPenaltyReserve: (amount: bigint) => Promise<TransactionReceipt | undefined>;
 }
 
-const defaultValue: RelayerCtx = {
-  sourceChain: undefined,
-  targetChain: undefined,
-  sourceToken: undefined,
-  penaltyReserve: undefined,
-  baseFee: undefined,
-  feeRate: undefined,
-  sourceAllowance: undefined,
-  targetAllowance: undefined,
-  sourceBalance: undefined,
-  targetBalance: undefined,
-
-  setSourceChain: () => undefined,
-  setTargetChain: () => undefined,
-  setSourceToken: () => undefined,
-  // setPenaltyReserve: () => undefined,
-  // setBaseFee: () => undefined,
-  // setFeeRate: () => undefined,
-  // setSourceAllowance: () => undefined,
-  // setTargetAllowance: () => undefined,
-  // setSourceBalance: () => undefined,
-  // setTargetBalance: () => undefined,
-
-  isLnBridgeExist: async () => false,
-  sourceApprove: async () => undefined,
-  targetApprove: async () => undefined,
-  depositPenaltyReserve: async () => undefined,
-  registerLnProvider: async () => undefined,
-  updatePenaltyReserves: async () => undefined,
-};
-
-export const RelayerContext = createContext(defaultValue);
+export const RelayerContext = createContext({} as RelayerCtx);
 
 export default function RelayerProviderV3({ children }: PropsWithChildren<unknown>) {
-  const [sourceChain, setSourceChain] = useState(defaultValue.sourceChain);
-  const [targetChain, setTargetChain] = useState(defaultValue.targetChain);
-  const [sourceToken, setSourceToken] = useState(defaultValue.sourceToken);
-  const [baseFee, setBaseFee] = useState(defaultValue.baseFee);
-  const [feeRate, setFeeRate] = useState(defaultValue.feeRate);
-  const [penaltyReserve, setPenaltyReserve] = useState(defaultValue.penaltyReserve);
-  const [sourceAllowance, setSourceAllowance] = useState(defaultValue.sourceAllowance);
-  const [targetAllowance, setTargetAllowance] = useState(defaultValue.targetAllowance);
-  const [sourceBalance, setSourceBalance] = useState(defaultValue.sourceBalance);
-  const [targetBalance, setTargetBalance] = useState(defaultValue.targetBalance);
+  const [sourceChain, setSourceChain] = useState<RelayerCtx["sourceChain"]>(undefined);
+  const [targetChain, setTargetChain] = useState<RelayerCtx["targetChain"]>(undefined);
+  const [sourceToken, setSourceToken] = useState<RelayerCtx["sourceToken"]>(undefined);
+  const [penaltyReserve, setPenaltyReserve] = useState<RelayerCtx["penaltyReserve"]>(undefined);
+  const [sourceAllowance, setSourceAllowance] = useState<RelayerCtx["sourceAllowance"]>(undefined);
+  const [targetAllowance, setTargetAllowance] = useState<RelayerCtx["targetAllowance"]>(undefined);
+  const [sourceBalance, setSourceBalance] = useState<RelayerCtx["sourceBalance"]>(undefined);
+  const [targetBalance, setTargetBalance] = useState<RelayerCtx["targetBalance"]>(undefined);
+  const [isGettingPenaltyReserves, setIsGettingPenaltyReserves] = useState(false);
 
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
@@ -178,12 +145,15 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
     [address, bridgeInstance],
   );
 
-  const updatePenaltyReserves = useCallback(async () => {
+  const _updatePenaltyReserves = useCallback(async () => {
     try {
+      setIsGettingPenaltyReserves(true);
       const pr = await bridgeInstance.getPenaltyReserves(address);
+      setIsGettingPenaltyReserves(false);
       setPenaltyReserve(pr?.value);
     } catch (err) {
       console.error(err);
+      setIsGettingPenaltyReserves(false);
     }
   }, [address, bridgeInstance]);
 
@@ -192,16 +162,20 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
       try {
         const receipt = await bridgeInstance.depositPenaltyReserve(amount);
         notifyTransaction(receipt, bridgeInstance.getSourceChain());
-        if (address) {
-          setSourceBalance(await bridgeInstance.getSourceBalance(address));
+        if (receipt?.status === "success") {
+          await _updatePenaltyReserves();
+          if (address) {
+            setSourceBalance(await bridgeInstance.getSourceBalance(address));
+          }
         }
+
         return receipt;
       } catch (err) {
         console.error(err);
         notifyError(err);
       }
     },
-    [address, bridgeInstance],
+    [address, bridgeInstance, _updatePenaltyReserves],
   );
 
   const registerLnProvider = useCallback(
@@ -218,10 +192,32 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
     [bridgeInstance],
   );
 
+  const withdrawPenaltyReserve = useCallback(
+    async (amount: bigint) => {
+      try {
+        const receipt = await bridgeInstance.withdrawPenaltyReserve(amount);
+        notifyTransaction(receipt, bridgeInstance.getSourceChain());
+
+        if (receipt?.status === "success") {
+          await _updatePenaltyReserves();
+          if (address) {
+            setSourceBalance(await bridgeInstance.getSourceBalance(address));
+          }
+        }
+        return receipt;
+      } catch (err) {
+        console.error(err);
+        notifyError(err);
+      }
+    },
+    [bridgeInstance, address, _updatePenaltyReserves],
+  );
+
   useEffect(() => {
     let sub$$: Subscription | undefined;
 
     if (address && bridgeInstance) {
+      setIsGettingPenaltyReserves(true);
       sub$$ = forkJoin([
         bridgeInstance.getSourceAllowance(address),
         bridgeInstance.getTargetAllowance(address),
@@ -230,6 +226,7 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
         bridgeInstance.getPenaltyReserves(address),
       ]).subscribe({
         next: ([as, at, bs, bt, pr]) => {
+          setIsGettingPenaltyReserves(false);
           setSourceAllowance(as);
           setTargetAllowance(at);
           setSourceBalance(bs);
@@ -238,19 +235,20 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
         },
         error: (err) => {
           console.error(err);
-          setSourceAllowance(defaultValue.sourceAllowance);
-          setTargetAllowance(defaultValue.targetAllowance);
-          setSourceBalance(defaultValue.sourceBalance);
-          setTargetBalance(defaultValue.targetBalance);
-          setPenaltyReserve(defaultValue.penaltyReserve);
+          setIsGettingPenaltyReserves(false);
+          setSourceAllowance(undefined);
+          setTargetAllowance(undefined);
+          setSourceBalance(undefined);
+          setTargetBalance(undefined);
+          setPenaltyReserve(undefined);
         },
       });
     } else {
-      setSourceAllowance(defaultValue.sourceAllowance);
-      setTargetAllowance(defaultValue.targetAllowance);
-      setSourceBalance(defaultValue.sourceBalance);
-      setTargetBalance(defaultValue.targetBalance);
-      setPenaltyReserve(defaultValue.penaltyReserve);
+      setSourceAllowance(undefined);
+      setTargetAllowance(undefined);
+      setSourceBalance(undefined);
+      setTargetBalance(undefined);
+      setPenaltyReserve(undefined);
     }
 
     return () => {
@@ -265,19 +263,16 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
         targetChain,
         sourceToken,
         penaltyReserve,
-        baseFee,
-        feeRate,
         sourceAllowance,
         targetAllowance,
         sourceBalance,
         targetBalance,
+        isGettingPenaltyReserves,
 
         setSourceChain,
         setTargetChain,
         setSourceToken,
         // setPenaltyReserve,
-        // setBaseFee,
-        // setFeeRate,
         // setSourceAllowance,
         // setTargetAllowance,
         // setSourceBalance,
@@ -288,7 +283,7 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
         targetApprove,
         depositPenaltyReserve,
         registerLnProvider,
-        updatePenaltyReserves,
+        withdrawPenaltyReserve,
       }}
     >
       {children}
