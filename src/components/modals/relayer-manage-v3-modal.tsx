@@ -207,7 +207,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     setSourceChain(_sourceChain);
     setTargetChain(_targetChain);
     setSourceToken(_sourceToken);
-    setActiveKey("withdraw liquidity");
+    setActiveKey("update");
   }, [relayerInfo, setSourceChain, setTargetChain, setSourceToken]);
 
   useEffect(() => {
