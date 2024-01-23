@@ -1,6 +1,6 @@
-import { BridgeConstructorArgs, GetFeeArgs, Token, TransferOptions } from "@/types";
+import { BridgeConstructorArgs, GetFeeArgs, MessageChannel, Token, TransferOptions } from "@/types";
 import { LnBridgeBase } from "./lnbridge-base";
-import { Address, TransactionReceipt, encodePacked, keccak256 } from "viem";
+import { Address, Hex, TransactionReceipt, encodeFunctionData, encodePacked, keccak256 } from "viem";
 
 export class LnBridgeV3 extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {
@@ -173,6 +173,64 @@ export class LnBridgeV3 extends LnBridgeBase {
         abi: (await import("@/abi/lnbridge-v3")).default,
         functionName: "withdrawPenaltyReserve",
         args: [this.sourceToken.address, amount],
+      });
+      return this.publicClient.waitForTransactionReceipt({ hash });
+    }
+  }
+
+  async getWithdrawLiquidityFee(relayer: Address, transferIds: Hex[], messageChannel: MessageChannel) {
+    if (messageChannel === "layerzero") {
+      if (this.contract && this.targetChain && this.sourceNativeToken && this.sourcePublicClient) {
+        const [sendService, _receiveService] = await this.sourcePublicClient.readContract({
+          address: this.contract.sourceAddress,
+          abi: (await import("@/abi/lnbridge-v3")).default,
+          functionName: "messagers",
+          args: [BigInt(this.targetChain.id)],
+        });
+        const value = await this._getLayerzeroFee(sendService);
+        return typeof value === "bigint" ? { value, token: this.sourceNativeToken } : undefined;
+      }
+    } else if (messageChannel === "msgline") {
+      if (this.sourceNativeToken && this.targetChain) {
+        const message = encodeFunctionData({
+          abi: (await import("@/abi/lnbridge-v3")).default,
+          functionName: "withdrawLiquidity",
+          args: [transferIds, BigInt(this.targetChain.id), relayer],
+        });
+        const feeAndParams = await this._getMsglineFeeAndParams(message, relayer);
+        return feeAndParams ? { value: feeAndParams.fee, token: this.sourceNativeToken } : undefined;
+      }
+    }
+  }
+
+  async requestWithdrawLiquidity(relayer: Address, transferIds: Hex[], messageFee: bigint) {
+    await this.validateNetwork("source");
+
+    if (this.contract && this.targetChain && this.publicClient && this.walletClient) {
+      const message = encodeFunctionData({
+        abi: (await import("@/abi/lnbridge-v3")).default,
+        functionName: "withdrawLiquidity",
+        args: [transferIds, BigInt(this.targetChain.id), relayer],
+      });
+
+      // TODO: remove
+      await this.publicClient.simulateContract({
+        address: this.contract.sourceAddress,
+        abi: (await import("@/abi/lnbridge-v3")).default,
+        functionName: "requestWithdrawLiquidity",
+        args: [BigInt(this.targetChain.id), transferIds, relayer, message],
+        value: messageFee,
+        gas: this.getTxGasLimit(),
+        account: relayer,
+      });
+
+      const hash = await this.walletClient.writeContract({
+        address: this.contract.sourceAddress,
+        abi: (await import("@/abi/lnbridge-v3")).default,
+        functionName: "requestWithdrawLiquidity",
+        args: [BigInt(this.targetChain.id), transferIds, relayer, message],
+        value: messageFee,
+        gas: this.getTxGasLimit(),
       });
       return this.publicClient.waitForTransactionReceipt({ hash });
     }

@@ -2,7 +2,7 @@
 
 import { LnBridgeV3 } from "@/bridges";
 import { ChainConfig, CheckLnBridgeExistReqParams, CheckLnBridgeExistResData, Token } from "@/types";
-import { getAvailableTargetTokens, notifyError, notifyTransaction } from "@/utils";
+import { extractTransferIds, getAvailableTargetTokens, notifyError, notifyTransaction } from "@/utils";
 import {
   Dispatch,
   PropsWithChildren,
@@ -13,7 +13,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { TransactionReceipt } from "viem";
+import { Address, Hex, TransactionReceipt } from "viem";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { Subscription, forkJoin } from "rxjs";
 import { ApolloClient } from "@apollo/client";
@@ -21,9 +21,11 @@ import { GQL_CHECK_LNBRIDGE_EXIST } from "@/config";
 import { notification } from "@/ui/notification";
 
 interface RelayerCtx {
+  bridgeInstance: LnBridgeV3;
   sourceChain: ChainConfig | undefined;
   targetChain: ChainConfig | undefined;
   sourceToken: Token | undefined;
+  targetToken: Token | undefined;
   penaltyReserve: bigint | undefined;
   sourceAllowance: { value: bigint; token: Token } | undefined;
   targetAllowance: { value: bigint; token: Token } | undefined;
@@ -51,6 +53,7 @@ interface RelayerCtx {
   ) => Promise<TransactionReceipt | undefined>;
   isLnBridgeExist: (apolloClient: ApolloClient<object>) => Promise<boolean>;
   withdrawPenaltyReserve: (amount: bigint) => Promise<TransactionReceipt | undefined>;
+  withdrawLiquidity: (ids: { id: string }[], messageFee: bigint) => Promise<TransactionReceipt | undefined>;
 }
 
 export const RelayerContext = createContext({} as RelayerCtx);
@@ -213,6 +216,26 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
     [bridgeInstance, address, _updatePenaltyReserves],
   );
 
+  const withdrawLiquidity = useCallback(
+    async (ids: { id: string }[], messageFee: bigint) => {
+      if (address) {
+        try {
+          const receipt = await bridgeInstance.requestWithdrawLiquidity(
+            address,
+            extractTransferIds(ids.map(({ id }) => id)),
+            messageFee,
+          );
+          notifyTransaction(receipt, bridgeInstance.getSourceChain());
+          return receipt;
+        } catch (err) {
+          console.error(err);
+          notifyError(err);
+        }
+      }
+    },
+    [bridgeInstance, address],
+  );
+
   useEffect(() => {
     let sub$$: Subscription | undefined;
 
@@ -259,9 +282,11 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
   return (
     <RelayerContext.Provider
       value={{
+        bridgeInstance,
         sourceChain,
         targetChain,
         sourceToken,
+        targetToken,
         penaltyReserve,
         sourceAllowance,
         targetAllowance,
@@ -284,6 +309,7 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
         depositPenaltyReserve,
         registerLnProvider,
         withdrawPenaltyReserve,
+        withdrawLiquidity,
       }}
     >
       {children}

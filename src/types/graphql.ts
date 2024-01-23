@@ -1,5 +1,5 @@
 import { TokenSymbol } from "./token";
-import { BridgeCategory, LnBridgeVersion } from "./bridge";
+import { BridgeCategory, LnBridgeCategory, LnBridgeVersion } from "./bridge";
 import { Network, ChainID } from "./chain";
 import { Address, Hex } from "viem";
 
@@ -181,4 +181,34 @@ export interface CheckLnBridgeExistReqParams {
 
 export interface CheckLnBridgeExistResData {
   checkLnBridgeExist: boolean | null;
+}
+
+export interface LnV3MessageChannelReqParams {
+  bridge: LnBridgeCategory | null | undefined;
+  fromChain: Network | null | undefined;
+  toChain: Network | null | undefined;
+}
+
+export interface LnV3MessageChannelResData {
+  queryLnBridgeRelayInfos: {
+    records: { messageChannel: MessageChannel }[];
+  };
+}
+
+export interface WithdrawableLiquiditiesReqParams {
+  page: number;
+  relayer: Address | null | undefined;
+  recvTokenAddress: Address | null | undefined;
+  fromChain: Network | null | undefined;
+  toChain: Network | null | undefined;
+}
+
+export interface WithdrawableLiquiditiesResData {
+  historyRecords: {
+    total: number;
+    records: {
+      id: string;
+      lastRequestWithdraw: string; // Timestamp
+    }[];
+  };
 }

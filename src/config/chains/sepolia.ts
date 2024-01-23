@@ -8,6 +8,16 @@ export const sepoliaChain: ChainConfig = {
   ...sepolia,
   network: "sepolia",
   name: "Sepolia",
+  rpcUrls: {
+    default: {
+      http: ["https://1rpc.io/sepolia"],
+      webSocket: ["wss://ethereum-sepolia.publicnode.com"],
+    },
+    public: {
+      http: ["https://1rpc.io/sepolia"],
+      webSocket: ["wss://ethereum-sepolia.publicnode.com"],
+    },
+  },
 
   /**
    * Custom

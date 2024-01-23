@@ -1,7 +1,7 @@
-import { useRelayerV3 } from "@/hooks";
+import { useLiquidityWithdrawFee, useRelayerV3, useWithdrawableLiquidities } from "@/hooks";
 import { InputValue, LnBridgeRelayerOverview, Token } from "@/types";
 import SegmentedTabs, { SegmentedTabsProps } from "@/ui/segmented-tabs";
-import { formatFeeRate, getChainConfig, notifyError } from "@/utils";
+import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "@/utils";
 import dynamic from "next/dynamic";
 import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { useNetwork, useSwitchNetwork } from "wagmi";
@@ -11,8 +11,9 @@ import FeeRateInput from "../fee-rate-input";
 import Tooltip from "@/ui/tooltip";
 import Image from "next/image";
 import CountLoading from "@/ui/count-loading";
+import WithdrawableLiquiditiesSelect from "../withdrawable-liquidities-select";
 
-type TabKey = "update" | "deposit" | "withdraw";
+type TabKey = "update" | "deposit" | "withdraw penalty reserve" | "withdraw liquidity";
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
 const bigintInputDefaultValue: InputValue<bigint> = { input: "", valid: true, value: 0n };
@@ -33,6 +34,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
   const {
     sourceChain,
     sourceToken,
+    targetToken,
     sourceBalance,
     sourceAllowance,
     penaltyReserve,
@@ -43,6 +45,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     registerLnProvider,
     depositPenaltyReserve,
     withdrawPenaltyReserve,
+    withdrawLiquidity,
   } = useRelayerV3();
   const [penaltyReserveInput, setPenaltyReserveInput] = useState(bigintInputDefaultValue);
   const [transferLimitInput, setTransferLimitInput] = useState(bigintInputDefaultValue);
@@ -55,6 +58,25 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
 
   const { switchNetwork } = useSwitchNetwork();
   const { chain } = useNetwork();
+
+  const {
+    loading: isLoadingWithdrawableLiquidities,
+    total: totalWithdrawableLiquidities,
+    data: withdrawableLiquidities,
+    refetch: refetchWithdrawableLiquidities,
+    fetchMore: fetchMoreWithdrawableLiquidities,
+  } = useWithdrawableLiquidities(
+    relayerInfo?.relayer,
+    targetToken?.address,
+    relayerInfo?.fromChain,
+    relayerInfo?.toChain,
+  );
+  const [selectedLiquidities, setSelectedLiquidities] = useState<{ id: string }[]>([]);
+  const { fee: withdrawFee, loading: isLoadingWithdrawFee } = useLiquidityWithdrawFee(
+    selectedLiquidities,
+    relayerInfo?.relayer,
+    relayerInfo?.messageChannel,
+  );
 
   const { okText, okDisabled } = useMemo(() => {
     let okText: "Confirm" | "Approve" | "Switch Network" = "Confirm";
@@ -79,8 +101,12 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
       ) {
         okDisabled = true;
       }
-    } else if (activeKey === "withdraw") {
+    } else if (activeKey === "withdraw penalty reserve") {
       if (penaltyReserve === undefined || isGettingPenaltyReserves || !withdrawInput.input || !withdrawInput.valid) {
+        okDisabled = true;
+      }
+    } else if (activeKey === "withdraw liquidity") {
+      if (!selectedLiquidities.length || isLoadingWithdrawFee || !withdrawFee) {
         okDisabled = true;
       }
     }
@@ -99,6 +125,9 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     withdrawInput,
     penaltyReserve,
     isGettingPenaltyReserves,
+    selectedLiquidities.length,
+    isLoadingWithdrawFee,
+    withdrawFee,
   ]);
 
   const { baseFee, feeRate, transferLimit } = useMemo(() => {
@@ -119,8 +148,13 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
         receipt = await registerLnProvider(baseFeeInput.value, feeRateInput.value, transferLimitInput.value);
       } else if (activeKey === "deposit") {
         receipt = await depositPenaltyReserve(penaltyReserveInput.value);
-      } else if (activeKey === "withdraw") {
+      } else if (activeKey === "withdraw penalty reserve") {
         receipt = await withdrawPenaltyReserve(withdrawInput.value);
+      } else if (activeKey === "withdraw liquidity") {
+        receipt = await withdrawLiquidity(selectedLiquidities, withdrawFee?.value ?? 0n);
+        if (receipt?.status === "success") {
+          refetchWithdrawableLiquidities();
+        }
       }
     } catch (err) {
       console.error(err);
@@ -142,15 +176,28 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     penaltyReserveInput,
     transferLimitInput,
     withdrawInput,
+    selectedLiquidities,
+    withdrawFee,
     depositPenaltyReserve,
     onClose,
     onSuccess,
     registerLnProvider,
     switchNetwork,
     withdrawPenaltyReserve,
+    withdrawLiquidity,
+    refetchWithdrawableLiquidities,
   ]);
 
+  useEffect(() => {}, []);
+
   useEffect(() => {
+    setPenaltyReserveInput(bigintInputDefaultValue);
+    setTransferLimitInput(bigintInputDefaultValue);
+    setWithdrawInput(bigintInputDefaultValue);
+    setBaseFeeInput(bigintInputDefaultValue);
+    setFeeRateInput(numberInputDefaultValue);
+    setSelectedLiquidities([]);
+
     const _sourceChain = getChainConfig(relayerInfo?.fromChain);
     const _targetChain = getChainConfig(relayerInfo?.toChain);
     const _sourceToken = _sourceChain?.tokens.find(
@@ -160,13 +207,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     setSourceChain(_sourceChain);
     setTargetChain(_targetChain);
     setSourceToken(_sourceToken);
-
-    setPenaltyReserveInput(bigintInputDefaultValue);
-    setTransferLimitInput(bigintInputDefaultValue);
-    setWithdrawInput(bigintInputDefaultValue);
-    setBaseFeeInput(bigintInputDefaultValue);
-    setFeeRateInput(numberInputDefaultValue);
-    setActiveKey("update");
+    setActiveKey("withdraw liquidity");
   }, [relayerInfo, setSourceChain, setTargetChain, setSourceToken]);
 
   useEffect(() => {
@@ -231,7 +272,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
             key: "deposit",
             label: <span className="text-sm font-extrabold">Deposit</span>,
             children: (
-              <Label text="More Penalty Reserve">
+              <Label text="More Penalty Reserves">
                 <BalanceInput
                   compact
                   balance={sourceBalance?.value}
@@ -244,11 +285,11 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
             ),
           },
           {
-            key: "withdraw",
-            label: <span className="text-sm font-extrabold">Withdraw</span>,
+            key: "withdraw penalty reserve",
+            label: <span className="text-sm font-extrabold">Penalty</span>,
             children: (
               <div className="flex flex-col gap-5">
-                <Label text="Withdraw Amount">
+                <Label text="Withdraw Penalty Reserves">
                   <div className="relative">
                     {isGettingPenaltyReserves && (
                       <div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center pl-2">
@@ -265,6 +306,48 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
                     />
                   </div>
                 </Label>
+              </div>
+            ),
+          },
+          {
+            key: "withdraw liquidity",
+            label: <span className="text-sm font-extrabold">Liquidity</span>,
+            children: (
+              <div className="flex flex-col gap-5">
+                <Label text="Withdrawable Liquidity">
+                  <WithdrawableLiquiditiesSelect
+                    loading={isLoadingWithdrawableLiquidities}
+                    total={totalWithdrawableLiquidities}
+                    value={selectedLiquidities}
+                    options={withdrawableLiquidities}
+                    onChange={setSelectedLiquidities}
+                    onLoadMore={fetchMoreWithdrawableLiquidities}
+                  />
+                </Label>
+                {selectedLiquidities.length ? (
+                  <Label text="Withdraw Fee" tips="This value is calculated and does not require input">
+                    <div
+                      className={`relative flex h-10 items-center justify-between rounded-middle border bg-inner px-small lg:px-middle ${
+                        withdrawFee || isLoadingWithdrawFee ? "border-transparent" : "border-app-red"
+                      }`}
+                    >
+                      {isLoadingWithdrawFee ? (
+                        <CountLoading size="small" color="white" />
+                      ) : withdrawFee ? (
+                        <>
+                          <span className="text-sm font-medium text-white">
+                            {formatBalance(withdrawFee.value, withdrawFee.token.decimals, { precision: 6 })}
+                          </span>
+                          <span className="text-sm font-medium text-white">{withdrawFee.token.symbol}</span>
+                        </>
+                      ) : (
+                        <span className="absolute -bottom-5 left-0 text-xs font-medium text-app-red">
+                          * Failed to get fee, withdraw is temporarily unavailable
+                        </span>
+                      )}
+                    </div>
+                  </Label>
+                ) : null}
               </div>
             ),
           },

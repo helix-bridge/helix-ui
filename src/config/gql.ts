@@ -168,3 +168,39 @@ export const GQL_CHECK_LNBRIDGE_EXIST = gql`
     checkLnBridgeExist(fromChainId: $fromChainId, toChainId: $toChainId, fromToken: $fromToken, toToken: $toToken)
   }
 `;
+
+export const GQL_GET_LN_BRIDGE_MESSAGE_CHANNEL = gql`
+  query GetLnBridgeMessageChannel($bridge: String = "", $fromChain: String = "", $toChain: String = "") {
+    queryLnBridgeRelayInfos(row: 1, page: 0, bridge: $bridge, fromChain: $fromChain, toChain: $toChain) {
+      records {
+        messageChannel
+      }
+    }
+  }
+`;
+
+export const GQL_GET_WITHDRAWABLE_LIQUIDITIES = gql`
+  query GetWithdrawableLiquidities(
+    $page: Int!
+    $relayer: String = ""
+    $recvTokenAddress: String = ""
+    $fromChain: String = ""
+    $toChain: String = ""
+  ) {
+    historyRecords(
+      row: 2
+      page: $page
+      relayer: $relayer
+      recvTokenAddress: $recvTokenAddress
+      fromChains: [$fromChain]
+      toChains: [$toChain]
+      needWithdrawLiquidity: true
+    ) {
+      total
+      records {
+        id
+        lastRequestWithdraw
+      }
+    }
+  }
+`;

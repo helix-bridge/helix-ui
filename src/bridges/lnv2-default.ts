@@ -1,8 +1,7 @@
-import { Address, TransactionReceipt, bytesToHex, encodeFunctionData } from "viem";
+import { Address, TransactionReceipt, encodeFunctionData } from "viem";
 import { LnBridgeBase } from "./lnbridge-base";
 import { isProduction } from "@/utils/env";
 import { BridgeConstructorArgs, GetWithdrawFeeArgs, TransferOptions } from "@/types/bridge";
-import { fetchMsglineFeeAndParams } from "@/utils";
 
 export class LnBridgeV2Default extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {
@@ -140,43 +139,27 @@ export class LnBridgeV2Default extends LnBridgeBase {
     }
   }
 
-  private async _getLayerzeroWithdrawFee(_args: GetWithdrawFeeArgs) {
-    if (this.contract && this.sourceNativeToken && this.targetChain && this.sourcePublicClient) {
-      const bridgeAbi = (await import(`../abi/lnv2-default`)).default;
-      const accessAbi = (await import(`../abi/lnaccess-controller`)).default;
-      const remoteChainId = BigInt(this.targetChain.id);
-
+  private async _getLayerzeroWithdrawFee() {
+    if (this.contract && this.targetChain && this.sourceNativeToken && this.sourcePublicClient) {
       const [sendService, _receiveService] = await this.sourcePublicClient.readContract({
         address: this.contract.sourceAddress,
-        abi: bridgeAbi,
+        abi: (await import(`../abi/lnv2-default`)).default,
         functionName: "messagers",
-        args: [remoteChainId],
+        args: [BigInt(this.targetChain.id)],
       });
-      const [nativeFee, _zroFee] = await this.sourcePublicClient.readContract({
-        address: sendService,
-        abi: accessAbi,
-        functionName: "fee",
-        args: [remoteChainId, bytesToHex(Uint8Array.from([123]), { size: 500 })],
-      });
-
-      return { value: nativeFee, token: this.sourceNativeToken };
+      const value = await this._getLayerzeroFee(sendService);
+      return typeof value === "bigint" ? { value, token: this.sourceNativeToken } : undefined;
     }
   }
 
   private async _getMsglineWithdrawFee(args: GetWithdrawFeeArgs) {
-    const sourceMessager = this.sourceChain?.messager?.msgline;
-    const targetMessager = this.targetChain?.messager?.msgline;
-
     if (
-      sourceMessager &&
-      targetMessager &&
-      this.contract &&
-      this.sourceNativeToken &&
+      this.sourceChain &&
       this.sourceToken &&
       this.targetToken &&
+      this.sourceNativeToken &&
       args.transferId &&
       args.withdrawNonce &&
-      args.sender &&
       args.relayer
     ) {
       const message = encodeFunctionData({
@@ -192,29 +175,14 @@ export class LnBridgeV2Default extends LnBridgeBase {
           args.amount,
         ],
       });
-
-      const payload = encodeFunctionData({
-        abi: (await import("@/abi/msgline-messager")).default,
-        functionName: "receiveMessage",
-        args: [BigInt(this.sourceChain.id), this.contract.sourceAddress, this.contract.targetAddress, message],
-      });
-
-      const feeAndParams = await fetchMsglineFeeAndParams(
-        this.sourceChain.id,
-        this.targetChain.id,
-        sourceMessager,
-        targetMessager,
-        args.sender,
-        payload,
-      );
-
-      return feeAndParams && { value: feeAndParams.fee, token: this.sourceNativeToken };
+      const feeAndParams = await this._getMsglineFeeAndParams(message, args.sender);
+      return feeAndParams ? { value: feeAndParams.fee, token: this.sourceNativeToken } : undefined;
     }
   }
 
   async getWithdrawFee(args: GetWithdrawFeeArgs) {
     if (args.messageChannel === "layerzero") {
-      return this._getLayerzeroWithdrawFee(args);
+      return this._getLayerzeroWithdrawFee();
     } else if (args.messageChannel === "msgline") {
       return this._getMsglineWithdrawFee(args);
     }

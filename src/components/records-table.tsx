@@ -1,7 +1,6 @@
-import { HistoryRecord, Network, RecordResult, TokenSymbol } from "@/types";
+import { HistoryRecord, Network, RecordResult } from "@/types";
 import Table, { ColumnType } from "@/ui/table";
 import {
-  bridgeFactory,
   formatBalance,
   formatTime,
   getChainConfig,
@@ -12,7 +11,6 @@ import {
 import Image from "next/image";
 import { Key, PropsWithChildren } from "react";
 import PrettyAddress from "./pretty-address";
-import BridgeIdenticon from "./bridge-identicon";
 import { Address } from "viem";
 
 interface Props {
