@@ -147,7 +147,7 @@ export class LnBridgeV2Default extends LnBridgeBase {
         functionName: "messagers",
         args: [BigInt(this.targetChain.id)],
       });
-      const value = await this._getLayerzeroFee(sendService);
+      const value = await this._getLayerzeroFee(sendService, this.targetChain, this.sourcePublicClient);
       return typeof value === "bigint" ? { value, token: this.sourceNativeToken } : undefined;
     }
   }
@@ -155,12 +155,15 @@ export class LnBridgeV2Default extends LnBridgeBase {
   private async _getMsglineWithdrawFee(args: GetWithdrawFeeArgs) {
     if (
       this.sourceChain &&
+      this.targetChain &&
       this.sourceToken &&
       this.targetToken &&
+      this.contract &&
       this.sourceNativeToken &&
       args.transferId &&
       args.withdrawNonce &&
-      args.relayer
+      args.relayer &&
+      args.sender
     ) {
       const message = encodeFunctionData({
         abi: (await import(`../abi/lnv2-default`)).default,
@@ -175,7 +178,14 @@ export class LnBridgeV2Default extends LnBridgeBase {
           args.amount,
         ],
       });
-      const feeAndParams = await this._getMsglineFeeAndParams(message, args.sender);
+      const feeAndParams = await this._getMsglineFeeAndParams(
+        message,
+        args.sender,
+        this.sourceChain,
+        this.targetChain,
+        this.contract.sourceAddress,
+        this.contract.targetAddress,
+      );
       return feeAndParams ? { value: feeAndParams.fee, token: this.sourceNativeToken } : undefined;
     }
   }

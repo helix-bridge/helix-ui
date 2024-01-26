@@ -225,7 +225,7 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
             extractTransferIds(ids.map(({ id }) => id)),
             messageFee,
           );
-          notifyTransaction(receipt, bridgeInstance.getSourceChain());
+          notifyTransaction(receipt, bridgeInstance.getTargetChain());
           return receipt;
         } catch (err) {
           console.error(err);

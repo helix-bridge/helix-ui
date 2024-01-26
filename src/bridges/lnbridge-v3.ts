@@ -180,25 +180,32 @@ export class LnBridgeV3 extends LnBridgeBase {
 
   async getWithdrawLiquidityFee(relayer: Address, transferIds: Hex[], messageChannel: MessageChannel) {
     if (messageChannel === "layerzero") {
-      if (this.contract && this.targetChain && this.sourceNativeToken && this.sourcePublicClient) {
-        const [sendService, _receiveService] = await this.sourcePublicClient.readContract({
-          address: this.contract.sourceAddress,
+      if (this.contract && this.sourceChain && this.targetNativeToken && this.targetPublicClient) {
+        const [sendService, _receiveService] = await this.targetPublicClient.readContract({
+          address: this.contract.targetAddress,
           abi: (await import("@/abi/lnbridge-v3")).default,
           functionName: "messagers",
-          args: [BigInt(this.targetChain.id)],
+          args: [BigInt(this.sourceChain.id)],
         });
-        const value = await this._getLayerzeroFee(sendService);
-        return typeof value === "bigint" ? { value, token: this.sourceNativeToken } : undefined;
+        const value = await this._getLayerzeroFee(sendService, this.sourceChain, this.targetPublicClient);
+        return typeof value === "bigint" ? { value, token: this.targetNativeToken } : undefined;
       }
     } else if (messageChannel === "msgline") {
-      if (this.sourceNativeToken && this.targetChain) {
+      if (this.targetNativeToken && this.sourceChain && this.targetChain && this.contract) {
         const message = encodeFunctionData({
           abi: (await import("@/abi/lnbridge-v3")).default,
           functionName: "withdrawLiquidity",
-          args: [transferIds, BigInt(this.targetChain.id), relayer],
+          args: [transferIds, BigInt(this.sourceChain.id), relayer],
         });
-        const feeAndParams = await this._getMsglineFeeAndParams(message, relayer);
-        return feeAndParams ? { value: feeAndParams.fee, token: this.sourceNativeToken } : undefined;
+        const feeAndParams = await this._getMsglineFeeAndParams(
+          message,
+          relayer,
+          this.targetChain,
+          this.sourceChain,
+          this.contract.targetAddress,
+          this.contract.sourceAddress,
+        );
+        return feeAndParams ? { value: feeAndParams.fee, token: this.targetNativeToken } : undefined;
       }
     }
   }

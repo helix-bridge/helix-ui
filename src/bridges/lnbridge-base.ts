@@ -1,7 +1,8 @@
 import { BaseBridge } from "./base";
-import { Address, Hex, TransactionReceipt, bytesToHex, encodeFunctionData } from "viem";
+import { Address, Hex, PublicClient, TransactionReceipt, bytesToHex, encodeFunctionData } from "viem";
 import { BridgeConstructorArgs, GetFeeArgs, TransferOptions } from "@/types/bridge";
 import { fetchMsglineFeeAndParams } from "@/utils";
+import { ChainConfig, Token } from "@/types";
 
 export class LnBridgeBase extends BaseBridge {
   constructor(args: BridgeConstructorArgs) {
@@ -44,37 +45,35 @@ export class LnBridgeBase extends BaseBridge {
     }
   }
 
-  protected async _getLayerzeroFee(sendService: Address) {
-    if (this.targetChain && this.sourcePublicClient) {
-      const [nativeFee, _zroFee] = await this.sourcePublicClient.readContract({
-        address: sendService,
-        abi: (await import(`../abi/lnaccess-controller`)).default,
-        functionName: "fee",
-        args: [BigInt(this.targetChain.id), bytesToHex(Uint8Array.from([123]), { size: 500 })],
-      });
-      return nativeFee;
-    }
+  protected async _getLayerzeroFee(sendService: Address, remoteChain: ChainConfig, localPublicClient: PublicClient) {
+    const [nativeFee, _zroFee] = await localPublicClient.readContract({
+      address: sendService,
+      abi: (await import(`../abi/lnaccess-controller`)).default,
+      functionName: "fee",
+      args: [BigInt(remoteChain.id), bytesToHex(Uint8Array.from([123]), { size: 500 })],
+    });
+    return nativeFee;
   }
 
-  protected async _getMsglineFeeAndParams(message: Hex, sender: Address | null | undefined) {
-    const sourceMessager = this.sourceChain?.messager?.msgline;
-    const targetMessager = this.targetChain?.messager?.msgline;
+  protected async _getMsglineFeeAndParams(
+    message: Hex,
+    sender: Address,
+    localChain: ChainConfig,
+    remoteChain: ChainConfig,
+    localContract: Address,
+    remoteContract: Address,
+  ) {
+    const localMessager = localChain?.messager?.msgline;
+    const remoteMessager = remoteChain?.messager?.msgline;
 
-    if (sender && sourceMessager && targetMessager && this.contract && this.sourceChain && this.sourceNativeToken) {
+    if (sender && localMessager && remoteMessager && localContract && remoteContract) {
       const payload = encodeFunctionData({
         abi: (await import("@/abi/msgline-messager")).default,
         functionName: "receiveMessage",
-        args: [BigInt(this.sourceChain.id), this.contract.sourceAddress, this.contract.targetAddress, message],
+        args: [BigInt(localChain.id), localContract, remoteContract, message],
       });
 
-      return fetchMsglineFeeAndParams(
-        this.sourceChain.id,
-        this.targetChain.id,
-        sourceMessager,
-        targetMessager,
-        sender,
-        payload,
-      );
+      return fetchMsglineFeeAndParams(localChain.id, remoteChain.id, localMessager, remoteMessager, sender, payload);
     }
   }
 
