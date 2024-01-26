@@ -25,7 +25,7 @@ export default function RelayersManage({ bridgeVersion }: Props) {
   const { loading, data, refetch } = useQuery<QueryLnBridgeRelayInfosResData, QueryLnBridgeRelayInfosReqParams>(
     GQL_QUERY_LNBRIDGE_RELAY_INFOS,
     {
-      variables: { relayer: (address || "").toLowerCase(), row: pageSize, page: currentPage },
+      variables: { relayer: (address || "").toLowerCase(), version: bridgeVersion, row: pageSize, page: currentPage },
       notifyOnNetworkStatusChange: true,
       fetchPolicy: "no-cache",
     },
