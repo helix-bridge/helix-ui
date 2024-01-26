@@ -33,6 +33,7 @@ function covertToBigIntInputValue(value: bigint | undefined, token: Token): Inpu
 export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onSuccess }: Props) {
   const {
     sourceChain,
+    targetChain,
     sourceToken,
     targetToken,
     sourceBalance,
@@ -82,7 +83,13 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     let okText: "Confirm" | "Approve" | "Switch Network" = "Confirm";
     let okDisabled = false;
 
-    if (chain?.id !== sourceChain?.id) {
+    if (activeKey === "withdraw liquidity") {
+      if (chain?.id !== targetChain?.id) {
+        okText = "Switch Network";
+      } else if (!selectedLiquidities.length || isLoadingWithdrawFee || !withdrawFee) {
+        okDisabled = true;
+      }
+    } else if (chain?.id !== sourceChain?.id) {
       okText = "Switch Network";
     } else if (activeKey === "deposit") {
       if (!penaltyReserveInput.input || !penaltyReserveInput.valid) {
@@ -105,10 +112,6 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
       if (penaltyReserve === undefined || isGettingPenaltyReserves || !withdrawInput.input || !withdrawInput.valid) {
         okDisabled = true;
       }
-    } else if (activeKey === "withdraw liquidity") {
-      if (!selectedLiquidities.length || isLoadingWithdrawFee || !withdrawFee) {
-        okDisabled = true;
-      }
     }
 
     return { okText, okDisabled };
@@ -120,6 +123,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     penaltyReserveInput,
     sourceAllowance?.value,
     sourceChain?.id,
+    targetChain?.id,
     sourceToken?.type,
     transferLimitInput,
     withdrawInput,
@@ -142,7 +146,16 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     setBusy(true);
 
     try {
-      if (chain?.id !== sourceChain?.id) {
+      if (activeKey === "withdraw liquidity") {
+        if (chain?.id !== targetChain?.id) {
+          switchNetwork?.(sourceChain?.id);
+        } else {
+          receipt = await withdrawLiquidity(selectedLiquidities, withdrawFee?.value ?? 0n);
+          if (receipt?.status === "success") {
+            refetchWithdrawableLiquidities();
+          }
+        }
+      } else if (chain?.id !== sourceChain?.id) {
         switchNetwork?.(sourceChain?.id);
       } else if (activeKey === "update") {
         receipt = await registerLnProvider(baseFeeInput.value, feeRateInput.value, transferLimitInput.value);
@@ -150,11 +163,6 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
         receipt = await depositPenaltyReserve(penaltyReserveInput.value);
       } else if (activeKey === "withdraw penalty reserve") {
         receipt = await withdrawPenaltyReserve(withdrawInput.value);
-      } else if (activeKey === "withdraw liquidity") {
-        receipt = await withdrawLiquidity(selectedLiquidities, withdrawFee?.value ?? 0n);
-        if (receipt?.status === "success") {
-          refetchWithdrawableLiquidities();
-        }
       }
     } catch (err) {
       console.error(err);
@@ -170,6 +178,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
   }, [
     chain?.id,
     sourceChain?.id,
+    targetChain?.id,
     activeKey,
     baseFeeInput,
     feeRateInput,

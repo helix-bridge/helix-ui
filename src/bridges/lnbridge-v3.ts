@@ -204,13 +204,14 @@ export class LnBridgeV3 extends LnBridgeBase {
   }
 
   async requestWithdrawLiquidity(relayer: Address, transferIds: Hex[], messageFee: bigint) {
-    await this.validateNetwork("source");
+    await this.validateNetwork("target");
 
-    if (this.contract && this.targetChain && this.publicClient && this.walletClient) {
+    if (this.contract && this.sourceChain && this.publicClient && this.walletClient) {
+      const remoteChainId = BigInt(this.sourceChain.id);
       const message = encodeFunctionData({
         abi: (await import("@/abi/lnbridge-v3")).default,
         functionName: "withdrawLiquidity",
-        args: [transferIds, BigInt(this.targetChain.id), relayer],
+        args: [transferIds, remoteChainId, relayer],
       });
 
       // TODO: remove
@@ -218,7 +219,7 @@ export class LnBridgeV3 extends LnBridgeBase {
         address: this.contract.sourceAddress,
         abi: (await import("@/abi/lnbridge-v3")).default,
         functionName: "requestWithdrawLiquidity",
-        args: [BigInt(this.targetChain.id), transferIds, relayer, message],
+        args: [remoteChainId, transferIds, relayer, message],
         value: messageFee,
         gas: this.getTxGasLimit(),
         account: relayer,
@@ -228,7 +229,7 @@ export class LnBridgeV3 extends LnBridgeBase {
         address: this.contract.sourceAddress,
         abi: (await import("@/abi/lnbridge-v3")).default,
         functionName: "requestWithdrawLiquidity",
-        args: [BigInt(this.targetChain.id), transferIds, relayer, message],
+        args: [remoteChainId, transferIds, relayer, message],
         value: messageFee,
         gas: this.getTxGasLimit(),
       });
