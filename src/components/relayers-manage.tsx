@@ -1,5 +1,10 @@
-import { GQL_QUERY_LNV20_RELAY_INFOS } from "@/config";
-import { Lnv20RelayerOverview, QueryLnV20RelayInfosReqParams, QueryLnV20RelayInfosResData } from "@/types";
+import { GQL_QUERY_LNBRIDGE_RELAY_INFOS } from "@/config";
+import {
+  LnBridgeRelayerOverview,
+  LnBridgeVersion,
+  QueryLnBridgeRelayInfosReqParams,
+  QueryLnBridgeRelayInfosResData,
+} from "@/types";
 import CountdownRefresh from "@/ui/countdown-refresh";
 import { useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
@@ -8,15 +13,19 @@ import RelayersTable from "./relayers-table";
 
 const pageSize = 10;
 
-export default function RelayersManage() {
+interface Props {
+  bridgeVersion: LnBridgeVersion;
+}
+
+export default function RelayersManage({ bridgeVersion }: Props) {
   const [currentPage, setCurrentPage] = useState(0);
-  const [records, setRecords] = useState<Lnv20RelayerOverview[]>([]);
+  const [records, setRecords] = useState<LnBridgeRelayerOverview[]>([]);
 
   const { address } = useAccount();
-  const { loading, data, refetch } = useQuery<QueryLnV20RelayInfosResData, QueryLnV20RelayInfosReqParams>(
-    GQL_QUERY_LNV20_RELAY_INFOS,
+  const { loading, data, refetch } = useQuery<QueryLnBridgeRelayInfosResData, QueryLnBridgeRelayInfosReqParams>(
+    GQL_QUERY_LNBRIDGE_RELAY_INFOS,
     {
-      variables: { relayer: (address || "").toLowerCase(), row: pageSize, page: currentPage },
+      variables: { relayer: (address || "").toLowerCase(), version: bridgeVersion, row: pageSize, page: currentPage },
       notifyOnNetworkStatusChange: true,
       fetchPolicy: "no-cache",
     },
@@ -24,7 +33,7 @@ export default function RelayersManage() {
 
   useEffect(() => {
     if (!loading) {
-      setRecords(data?.queryLnv20RelayInfos?.records || []);
+      setRecords(data?.queryLnBridgeRelayInfos?.records || []);
     }
   }, [loading, data]);
 
@@ -36,8 +45,9 @@ export default function RelayersManage() {
       </div>
       <RelayersTable
         loading={loading}
+        bridgeVersion={bridgeVersion}
         records={records}
-        total={data?.queryLnv20RelayInfos?.total || 0}
+        total={data?.queryLnBridgeRelayInfos?.total || 0}
         isDashboard={true}
         pageSize={pageSize}
         currentPage={currentPage}

@@ -1,5 +1,5 @@
 import { TokenSymbol } from "./token";
-import { BridgeCategory } from "./bridge";
+import { BridgeCategory, LnBridgeCategory, LnBridgeVersion } from "./bridge";
 import { Network, ChainID } from "./chain";
 import { Address, Hex } from "viem";
 
@@ -48,8 +48,9 @@ export interface HistoryRecord {
   confirmedBlocks: string | null;
 }
 
-export interface Lnv20RelayInfo {
+export interface LnBridgeRelayInfo {
   id: string;
+  version: LnBridgeVersion;
   nonce: string;
   targetNonce: string | null;
   fromChain: Network;
@@ -70,6 +71,7 @@ export interface Lnv20RelayInfo {
   profit: string | null;
   heartbeatTimestamp: number | null;
   messageChannel: MessageChannel | null;
+  transferLimit: string | null;
 }
 
 /**
@@ -99,7 +101,7 @@ export interface HistoryRecordResData {
   historyRecordById: HistoryRecord | null;
 }
 
-export interface SortedLnV20RelayInfosReqParams {
+export interface SortedLnBridgeRelayInfosReqParams {
   amount: string;
   decimals?: number;
   bridge?: BridgeCategory;
@@ -108,18 +110,25 @@ export interface SortedLnV20RelayInfosReqParams {
   toChain?: Network;
 }
 
-export interface SortedLnV20RelayInfosResData {
-  sortedLnv20RelayInfos: {
-    maxMargin: string;
+export interface SortedLnBridgeRelayInfosResData {
+  sortedLnBridgeRelayInfos: {
+    transferLimit: string;
     records: Pick<
-      Lnv20RelayInfo,
-      "relayer" | "margin" | "baseFee" | "protocolFee" | "liquidityFeeRate" | "lastTransferId" | "withdrawNonce"
+      LnBridgeRelayInfo,
+      | "relayer"
+      | "margin"
+      | "baseFee"
+      | "protocolFee"
+      | "liquidityFeeRate"
+      | "lastTransferId"
+      | "withdrawNonce"
+      | "bridge"
     >[];
   } | null;
 }
 
-export type Lnv20RelayerOverview = Pick<
-  Lnv20RelayInfo,
+export type LnBridgeRelayerOverview = Pick<
+  LnBridgeRelayInfo,
   | "id"
   | "relayer"
   | "bridge"
@@ -135,21 +144,23 @@ export type Lnv20RelayerOverview = Pick<
   | "messageChannel"
   | "lastTransferId"
   | "withdrawNonce"
+  | "transferLimit"
 >;
 
-export interface QueryLnV20RelayInfosReqParams {
+export interface QueryLnBridgeRelayInfosReqParams {
   fromChain?: Network;
   toChain?: Network;
   relayer?: string;
   bridge?: BridgeCategory;
+  version?: LnBridgeVersion;
   row: number;
   page: number;
 }
 
-export interface QueryLnV20RelayInfosResData {
-  queryLnv20RelayInfos: {
+export interface QueryLnBridgeRelayInfosResData {
+  queryLnBridgeRelayInfos: {
     total: number;
-    records: Lnv20RelayerOverview[];
+    records: LnBridgeRelayerOverview[];
   } | null;
 }
 
@@ -162,12 +173,42 @@ export interface HistoryRecordByTxHashResData {
 }
 
 export interface CheckLnBridgeExistReqParams {
-  fromChainId: ChainID;
-  toChainId: ChainID;
-  fromToken: Address;
-  toToken: Address;
+  fromChainId: ChainID | undefined;
+  toChainId: ChainID | undefined;
+  fromToken: Address | undefined;
+  toToken: Address | undefined;
 }
 
 export interface CheckLnBridgeExistResData {
   checkLnBridgeExist: boolean | null;
+}
+
+export interface LnV3MessageChannelReqParams {
+  bridge: LnBridgeCategory | null | undefined;
+  fromChain: Network | null | undefined;
+  toChain: Network | null | undefined;
+}
+
+export interface LnV3MessageChannelResData {
+  queryLnBridgeRelayInfos: {
+    records: { messageChannel: MessageChannel }[];
+  };
+}
+
+export interface WithdrawableLiquiditiesReqParams {
+  page: number;
+  relayer: Address | null | undefined;
+  recvTokenAddress: Address | null | undefined;
+  fromChain: Network | null | undefined;
+  toChain: Network | null | undefined;
+}
+
+export interface WithdrawableLiquiditiesResData {
+  historyRecords: {
+    total: number;
+    records: {
+      id: string;
+      lastRequestWithdraw: string; // Timestamp
+    }[];
+  };
 }

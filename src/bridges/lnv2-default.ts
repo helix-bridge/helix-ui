@@ -1,38 +1,31 @@
-import { Address, TransactionReceipt, bytesToHex, encodeFunctionData } from "viem";
+import { Address, TransactionReceipt, encodeFunctionData } from "viem";
 import { LnBridgeBase } from "./lnbridge-base";
-import { ChainID } from "@/types/chain";
 import { isProduction } from "@/utils/env";
 import { BridgeConstructorArgs, GetWithdrawFeeArgs, TransferOptions } from "@/types/bridge";
-import { fetchMsglineFeeAndParams } from "@/utils";
 
-export class LnBridgeDefault extends LnBridgeBase {
+export class LnBridgeV2Default extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {
     super(args);
-    this.initContract();
+    this._initContract();
   }
 
-  private initContract() {
-    if (this.sourceChain?.id === ChainID.LINEA_GOERLI && this.targetChain?.id === ChainID.GOERLI) {
+  private _initContract() {
+    if (this.sourceChain?.network === "zksync-sepolia") {
       this.contract = {
-        sourceAddress: "0x4C538EfA6e3f9Dfb939AA4F0B224577DA665923a",
-        targetAddress: "0x4C538EfA6e3f9Dfb939AA4F0B224577DA665923a",
+        sourceAddress: "0xBe23e871318E49C747CB909AC65aCCFAEAac3a37",
+        targetAddress: "0x8429D7Dfd91D6F970ba89fFC005e67D15f1E4739",
       };
-    } else if (this.sourceChain?.id === ChainID.ZKSYNC_GOERLI) {
+    } else if (this.targetChain?.network === "zksync-sepolia") {
       this.contract = {
-        sourceAddress: "0xe8d55759c32fb608fD092aB2C0ef8A1F52B254d4",
-        targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+        sourceAddress: "0x8429D7Dfd91D6F970ba89fFC005e67D15f1E4739",
+        targetAddress: "0xBe23e871318E49C747CB909AC65aCCFAEAac3a37",
       };
-    } else if (this.targetChain?.id === ChainID.ZKSYNC_GOERLI) {
-      this.contract = {
-        sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
-        targetAddress: "0xe8d55759c32fb608fD092aB2C0ef8A1F52B254d4",
-      };
-    } else if (this.sourceChain?.id === ChainID.ZKSYNC) {
+    } else if (this.sourceChain?.network === "zksync") {
       this.contract = {
         sourceAddress: "0x767Bc046c989f5e63683fB530f939DD34b91ceAC",
         targetAddress: "0x94C614DAeFDbf151E1BB53d6A201ae5fF56A9337",
       };
-    } else if (this.targetChain?.id === ChainID.ZKSYNC) {
+    } else if (this.targetChain?.network === "zksync") {
       this.contract = {
         sourceAddress: "0x94C614DAeFDbf151E1BB53d6A201ae5fF56A9337",
         targetAddress: "0x767Bc046c989f5e63683fB530f939DD34b91ceAC",
@@ -44,8 +37,8 @@ export class LnBridgeDefault extends LnBridgeBase {
       };
     } else {
       this.contract = {
-        sourceAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
-        targetAddress: "0x7e101911E5FB461d78FBde3992f76F3Bf8BbA829",
+        sourceAddress: "0x8429D7Dfd91D6F970ba89fFC005e67D15f1E4739",
+        targetAddress: "0x8429D7Dfd91D6F970ba89fFC005e67D15f1E4739",
       };
     }
   }
@@ -84,7 +77,7 @@ export class LnBridgeDefault extends LnBridgeBase {
 
       const defaultParams = {
         address: this.contract.sourceAddress,
-        abi: (await import(`../abi/lnbridgev20-default`)).default,
+        abi: (await import(`../abi/lnv2-default`)).default,
         functionName: "transferAndLockMargin",
         args: [snapshot, amount, recipient],
         value: this.sourceToken.type === "native" ? amount + totalFee : undefined,
@@ -114,7 +107,7 @@ export class LnBridgeDefault extends LnBridgeBase {
     ) {
       const hash = await this.walletClient.writeContract({
         address: this.contract.targetAddress,
-        abi: (await import(`../abi/lnbridgev20-default`)).default,
+        abi: (await import(`../abi/lnv2-default`)).default,
         functionName: "depositProviderMargin",
         args: [BigInt(this.sourceChain.id), this.sourceToken.address, this.targetToken.address, margin],
         value: this.targetToken.type === "native" ? margin : undefined,
@@ -137,7 +130,7 @@ export class LnBridgeDefault extends LnBridgeBase {
     ) {
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,
-        abi: (await import(`../abi/lnbridgev20-default`)).default,
+        abi: (await import(`../abi/lnv2-default`)).default,
         functionName: "setProviderFee",
         args: [BigInt(this.targetChain.id), this.sourceToken.address, this.targetToken.address, baseFee, feeRate],
         gas: this.getTxGasLimit(),
@@ -146,47 +139,34 @@ export class LnBridgeDefault extends LnBridgeBase {
     }
   }
 
-  private async _getLayerzeroWithdrawFee(_args: GetWithdrawFeeArgs) {
-    if (this.contract && this.sourceNativeToken && this.targetChain && this.sourcePublicClient) {
-      const bridgeAbi = (await import(`../abi/lnbridgev20-default`)).default;
-      const accessAbi = (await import(`../abi/lnaccess-controller`)).default;
-      const remoteChainId = BigInt(this.targetChain.id);
-
+  private async _getLayerzeroWithdrawFee() {
+    if (this.contract && this.targetChain && this.sourceNativeToken && this.sourcePublicClient) {
       const [sendService, _receiveService] = await this.sourcePublicClient.readContract({
         address: this.contract.sourceAddress,
-        abi: bridgeAbi,
+        abi: (await import(`../abi/lnv2-default`)).default,
         functionName: "messagers",
-        args: [remoteChainId],
+        args: [BigInt(this.targetChain.id)],
       });
-      const [nativeFee, _zroFee] = await this.sourcePublicClient.readContract({
-        address: sendService,
-        abi: accessAbi,
-        functionName: "fee",
-        args: [remoteChainId, bytesToHex(Uint8Array.from([123]), { size: 500 })],
-      });
-
-      return { value: nativeFee, token: this.sourceNativeToken };
+      const value = await this._getLayerzeroFee(sendService, this.targetChain, this.sourcePublicClient);
+      return typeof value === "bigint" ? { value, token: this.sourceNativeToken } : undefined;
     }
   }
 
   private async _getMsglineWithdrawFee(args: GetWithdrawFeeArgs) {
-    const sourceMessager = this.sourceChain?.messager?.msgline;
-    const targetMessager = this.targetChain?.messager?.msgline;
-
     if (
-      sourceMessager &&
-      targetMessager &&
-      this.contract &&
-      this.sourceNativeToken &&
+      this.sourceChain &&
+      this.targetChain &&
       this.sourceToken &&
       this.targetToken &&
+      this.contract &&
+      this.sourceNativeToken &&
       args.transferId &&
       args.withdrawNonce &&
-      args.sender &&
-      args.relayer
+      args.relayer &&
+      args.sender
     ) {
       const message = encodeFunctionData({
-        abi: (await import(`../abi/lnbridgev20-default`)).default,
+        abi: (await import(`../abi/lnv2-default`)).default,
         functionName: "withdraw",
         args: [
           BigInt(this.sourceChain.id),
@@ -198,29 +178,21 @@ export class LnBridgeDefault extends LnBridgeBase {
           args.amount,
         ],
       });
-
-      const payload = encodeFunctionData({
-        abi: (await import("@/abi/msgline-messager")).default,
-        functionName: "receiveMessage",
-        args: [BigInt(this.sourceChain.id), this.contract.sourceAddress, this.contract.targetAddress, message],
-      });
-
-      const feeAndParams = await fetchMsglineFeeAndParams(
-        this.sourceChain.id,
-        this.targetChain.id,
-        sourceMessager,
-        targetMessager,
+      const feeAndParams = await this._getMsglineFeeAndParams(
+        message,
         args.sender,
-        payload,
+        this.sourceChain,
+        this.targetChain,
+        this.contract.sourceAddress,
+        this.contract.targetAddress,
       );
-
-      return feeAndParams && { value: feeAndParams.fee, token: this.sourceNativeToken };
+      return feeAndParams ? { value: feeAndParams.fee, token: this.sourceNativeToken } : undefined;
     }
   }
 
   async getWithdrawFee(args: GetWithdrawFeeArgs) {
     if (args.messageChannel === "layerzero") {
-      return this._getLayerzeroWithdrawFee(args);
+      return this._getLayerzeroWithdrawFee();
     } else if (args.messageChannel === "msgline") {
       return this._getMsglineWithdrawFee(args);
     }
@@ -241,7 +213,7 @@ export class LnBridgeDefault extends LnBridgeBase {
 
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,
-        abi: (await import(`../abi/lnbridgev20-default`)).default,
+        abi: (await import(`../abi/lnv2-default`)).default,
         functionName: "requestWithdrawMargin",
         args: [remoteChainId, this.sourceToken.address, this.targetToken.address, amount, recipient],
         gas: this.getTxGasLimit(),

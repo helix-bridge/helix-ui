@@ -2,17 +2,17 @@ import PageWrap from "@/ui/page-wrap";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
-const LnRelayerOverview = dynamic(() => import("@/components/lnrelayer-overview"));
+const LnRelayersOverview = dynamic(() => import("@/components/lnrelayers-overview"));
 
 export const metadata: Metadata = {
-  title: "Relayer Overview - Helix Bridge",
-  description: "Overview all relayers on Helix Bridge",
+  title: "Relayers Overview - Helix Bridge",
+  description: "All v2 version relayers of Helix Bridge",
 };
 
 export default function RelayerOverviewPage() {
   return (
     <PageWrap>
-      <LnRelayerOverview />
+      <LnRelayersOverview bridgeVersion="lnv2" />
     </PageWrap>
   );
 }

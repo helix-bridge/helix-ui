@@ -1,9 +1,10 @@
 "use client";
 
-import { GQL_SORTED_LNV20_RELAY_INFOS } from "@/config";
+import { GQL_SORTED_LNBRIDGE_RELAY_INFOS } from "@/config";
 import { useToggle, useTransfer } from "@/hooks";
-import { SortedLnV20RelayInfosReqParams, SortedLnV20RelayInfosResData } from "@/types";
+import { BridgeCategory, SortedLnBridgeRelayInfosReqParams, SortedLnBridgeRelayInfosResData } from "@/types";
 import {
+  bridgeFactory,
   getAvailableBridges,
   getAvailableSourceTokens,
   getAvailableTargetChains,
@@ -14,8 +15,8 @@ import {
 import { useQuery } from "@apollo/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
-import { Address, useAccount } from "wagmi";
-import { Subscription, from } from "rxjs";
+import { Address, useAccount, usePublicClient, useWalletClient } from "wagmi";
+import { Subscription, from, timer } from "rxjs";
 import Label from "@/ui/label";
 import ChainSelect from "./chain-select";
 import SwitchCrossIcon from "@/ui/switch-cross-icon";
@@ -47,6 +48,7 @@ export default function Transfer() {
     setTransferAmount,
     setBridgeFee,
     setBridgeCategory,
+    setBridgeInstance,
     updateSourceBalance,
     updateUrlParams,
   } = useTransfer();
@@ -54,11 +56,14 @@ export default function Transfer() {
 
   const { state: isOpen, setTrue: setIsOpenTrue, setFalse: setIsOpenFalse } = useToggle(false);
   const { address } = useAccount();
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
 
   const [recipient, _setRecipient] = useState<Address>();
   const [isLoadingFee, setIsLoadingFee] = useState(false);
   const [estimateGasFee, setEstimateGasFee] = useState(0n);
   const [balanceLoading, setBalanceLoading] = useState(false);
+  const [indexerCategory, setIndexerCategory] = useState<BridgeCategory>();
 
   const bridgeOptions = useMemo(
     () => getAvailableBridges(sourceChain, targetChain, sourceToken),
@@ -69,21 +74,20 @@ export default function Transfer() {
     loading: isLoadingRelayers,
     data: relayersData,
     refetch: refetchRelayers,
-  } = useQuery<SortedLnV20RelayInfosResData, SortedLnV20RelayInfosReqParams>(GQL_SORTED_LNV20_RELAY_INFOS, {
+  } = useQuery<SortedLnBridgeRelayInfosResData, SortedLnBridgeRelayInfosReqParams>(GQL_SORTED_LNBRIDGE_RELAY_INFOS, {
     variables: {
       amount: deferredTransferAmount.value.toString(),
       decimals: sourceToken?.decimals,
-      bridge: bridgeCategory,
       token: sourceToken?.address,
       fromChain: sourceChain?.network,
       toChain: targetChain?.network,
     },
-    skip: !bridgeInstance?.isLnBridge(),
+    skip: bridgeCategory !== "lnbridge",
   });
 
   const transferable = useMemo(() => {
     let result: bigint | undefined;
-    const maxMargin = relayersData?.sortedLnv20RelayInfos?.maxMargin;
+    const transferLimit = relayersData?.sortedLnBridgeRelayInfos?.transferLimit;
 
     if (sourceBalance) {
       const { token, value: balance } = sourceBalance;
@@ -92,8 +96,8 @@ export default function Transfer() {
         result = bridgeFee.value < result ? result - bridgeFee.value : 0n;
       }
     }
-    if (maxMargin) {
-      const mm = BigInt(maxMargin);
+    if (transferLimit) {
+      const mm = BigInt(transferLimit);
       result = result === undefined ? mm : result < mm ? result : mm;
     }
     if (result !== undefined) {
@@ -119,38 +123,81 @@ export default function Transfer() {
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
-    const relayer = relayersData?.sortedLnv20RelayInfos?.records.at(0);
+    if (!isLoadingRelayers) {
+      sub$$ = timer(40).subscribe(() => {
+        const c = relayersData?.sortedLnBridgeRelayInfos?.records.at(0)?.bridge;
+        setIndexerCategory((prev) => (prev === c ? prev : c));
+      });
+    }
+    return () => {
+      sub$$?.unsubscribe();
+    };
+  }, [isLoadingRelayers, relayersData?.sortedLnBridgeRelayInfos?.records]);
+
+  useEffect(() => {
+    const category = indexerCategory ?? bridgeCategory;
+    setBridgeInstance(
+      category
+        ? bridgeFactory({
+            category,
+            sourceChain,
+            targetChain,
+            sourceToken,
+            targetToken,
+            walletClient,
+            publicClient,
+          })
+        : undefined,
+    );
+  }, [
+    sourceChain,
+    targetChain,
+    sourceToken,
+    targetToken,
+    walletClient,
+    publicClient,
+    bridgeCategory,
+    indexerCategory,
+    setBridgeInstance,
+  ]);
+
+  useEffect(() => {
+    let sub$$: Subscription | undefined;
+    const relayer = relayersData?.sortedLnBridgeRelayInfos?.records.at(0);
 
     if (bridgeInstance) {
-      setIsLoadingFee(true);
-      sub$$ = from(
-        bridgeInstance.getFee({
-          sender: address,
-          recipient,
-          baseFee: BigInt(relayer?.baseFee || 0),
-          protocolFee: BigInt(relayer?.protocolFee || 0),
-          liquidityFeeRate: BigInt(relayer?.liquidityFeeRate || 0),
-          transferAmount: deferredTransferAmount.value,
-        }),
-      ).subscribe({
-        next: setBridgeFee,
-        error: (err) => {
-          console.error(err);
-          setBridgeFee(undefined);
-          setIsLoadingFee(false);
-        },
-        complete: () => setIsLoadingFee(false),
-      });
+      if (!isLoadingRelayers) {
+        setIsLoadingFee(true);
+        sub$$ = from(
+          bridgeInstance.getFee({
+            sender: address,
+            recipient,
+            relayer: relayer?.relayer,
+            baseFee: BigInt(relayer?.baseFee || 0),
+            protocolFee: BigInt(relayer?.protocolFee || 0),
+            liquidityFeeRate: BigInt(relayer?.liquidityFeeRate || 0),
+            transferAmount: deferredTransferAmount.value,
+          }),
+        ).subscribe({
+          next: setBridgeFee,
+          error: (err) => {
+            console.error(err);
+            setBridgeFee(undefined);
+            setIsLoadingFee(false);
+          },
+          complete: () => setIsLoadingFee(false),
+        });
+      }
     } else {
       setBridgeFee(undefined);
     }
 
     return () => sub$$?.unsubscribe();
-  }, [address, recipient, bridgeInstance, relayersData, deferredTransferAmount, setBridgeFee]);
+  }, [address, recipient, bridgeInstance, relayersData, deferredTransferAmount, isLoadingRelayers, setBridgeFee]);
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
-    const relayer = relayersData?.sortedLnv20RelayInfos?.records.at(0);
+    const relayer = relayersData?.sortedLnBridgeRelayInfos?.records.at(0);
 
     // Note: native token
 
@@ -183,8 +230,8 @@ export default function Transfer() {
     <>
       <div className="mx-auto flex w-full flex-col gap-large rounded-large bg-component p-middle lg:mt-20 lg:w-[30rem] lg:gap-5 lg:p-5">
         {/* From-To */}
-        <div className="mt-8 flex items-center gap-small lg:gap-large">
-          <Label text="From" className="w-full" textClassName="font-medium" needAbsolute>
+        <div className="mt-8 flex items-center justify-between gap-small lg:gap-large">
+          <Label text="From" className="w-[45%] lg:w-full" textClassName="font-medium" needAbsolute>
             <ChainSelect
               className="w-full bg-inner p-middle"
               placement="bottom-start"
@@ -237,7 +284,7 @@ export default function Transfer() {
               });
             }}
           />
-          <Label text="To" className="w-full" textClassName="font-medium" needAbsolute>
+          <Label text="To" className="w-[45%] lg:w-full" textClassName="font-medium" needAbsolute>
             <ChainSelect
               className="w-full bg-inner p-middle"
               placement="bottom-end"
@@ -263,6 +310,7 @@ export default function Transfer() {
         {/* Amount */}
         <Label text="Amount" textClassName="font-medium" extra={isProduction() ? null : <Faucet />}>
           <BalanceInput
+            autoFocus
             placeholder="0"
             enabledDynamicStyle
             balance={sourceBalance?.value}
@@ -302,8 +350,8 @@ export default function Transfer() {
           <TransferInfo
             fee={bridgeFee ? { ...bridgeFee, loading: isLoadingFee || isLoadingRelayers } : undefined}
             bridge={bridgeInstance}
-            maxMargin={relayersData?.sortedLnv20RelayInfos?.maxMargin}
-            isLoadingMaxMargin={isLoadingRelayers}
+            transferLimit={relayersData?.sortedLnBridgeRelayInfos?.transferLimit}
+            isLoadingTransferLimit={isLoadingRelayers}
           />
         </Label>
 

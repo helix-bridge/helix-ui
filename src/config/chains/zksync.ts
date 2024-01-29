@@ -31,9 +31,9 @@ export const zksyncChain: ChainConfig = {
       address: "0x493257fD37EDB34451f62EDf8D2a0C418852bA4C",
       logo: "usdt.png",
       cross: [
-        { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
-        { target: { network: "mantle", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
-        { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
+        { target: { network: "mantle", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
+        { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
     },
     {

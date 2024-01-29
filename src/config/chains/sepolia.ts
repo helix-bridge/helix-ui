@@ -8,6 +8,16 @@ export const sepoliaChain: ChainConfig = {
   ...sepolia,
   network: "sepolia",
   name: "Sepolia",
+  rpcUrls: {
+    default: {
+      http: ["https://1rpc.io/sepolia"],
+      webSocket: ["wss://ethereum-sepolia.publicnode.com"],
+    },
+    public: {
+      http: ["https://1rpc.io/sepolia"],
+      webSocket: ["wss://ethereum-sepolia.publicnode.com"],
+    },
+  },
 
   /**
    * Custom
@@ -21,7 +31,49 @@ export const sepoliaChain: ChainConfig = {
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
       logo: "eth.svg",
-      cross: [],
+      cross: [
+        {
+          target: { network: "arbitrum-sepolia", symbol: "ETH" },
+          bridge: { category: "lnbridge", lnv2Type: "default" },
+        },
+        { target: { network: "zksync-sepolia", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
+      ],
+    },
+    {
+      decimals: 18,
+      symbol: "USDC",
+      name: "USDC",
+      type: "erc20",
+      address: "0x0ac58Df0cc3542beC4cDa71B16D06C3cCc39f405",
+      logo: "usdc.svg",
+      cross: [
+        {
+          target: { network: "arbitrum-sepolia", symbol: "USDC" },
+          bridge: { category: "lnbridge", lnv2Type: "default" },
+        },
+        {
+          target: { network: "zksync-sepolia", symbol: "USDC" },
+          bridge: { category: "lnbridge", lnv2Type: "default" },
+        },
+      ],
+    },
+    {
+      decimals: 18,
+      symbol: "USDT",
+      name: "USDT",
+      type: "erc20",
+      address: "0x876A4f6eCF13EEb101F9E75FCeF58f19Ff383eEB",
+      logo: "usdt.png",
+      cross: [
+        {
+          target: { network: "arbitrum-sepolia", symbol: "USDT" },
+          bridge: { category: "lnbridge", lnv2Type: "default" },
+        },
+        {
+          target: { network: "zksync-sepolia", symbol: "USDT" },
+          bridge: { category: "lnbridge", lnv2Type: "default" },
+        },
+      ],
     },
     {
       decimals: 18,
@@ -31,7 +83,7 @@ export const sepoliaChain: ChainConfig = {
       address: "0x9Da7E18441f26515CC713290BE846E726d41781d",
       logo: "crab.svg",
       cross: [
-        { target: { network: "crab-dvm", symbol: "CRAB" }, bridge: { category: "xtoken-sepolia" }, action: "redeem" },
+        // { target: { network: "crab-dvm", symbol: "CRAB" }, bridge: { category: "xtoken-sepolia" }, action: "redeem" },
       ],
     },
   ],

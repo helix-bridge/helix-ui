@@ -7,11 +7,11 @@ import {
   HistoryRecordByTxHashResData,
   InputValue,
   RecordResult,
-  SortedLnV20RelayInfosResData,
+  SortedLnBridgeRelayInfosResData,
   Token,
 } from "@/types";
 import ProgressIcon from "@/ui/progress-icon";
-import { formatBalance, getChainLogoSrc, notifyError } from "@/utils";
+import { formatBalance, getChainLogoSrc, notifyError, toShortAdrress } from "@/utils";
 import { ApolloQueryResult, useQuery } from "@apollo/client";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -27,7 +27,7 @@ interface Props {
   transferAmount: InputValue<bigint>;
   isOpen: boolean;
   onClose: () => void;
-  refetchRelayers: () => Promise<ApolloQueryResult<SortedLnV20RelayInfosResData>>;
+  refetchRelayers: () => Promise<ApolloQueryResult<SortedLnBridgeRelayInfosResData>>;
 }
 
 export default function TransferModal({ sender, recipient, transferAmount, isOpen, onClose, refetchRelayers }: Props) {
@@ -51,17 +51,20 @@ export default function TransferModal({ sender, recipient, transferAmount, isOpe
       setBusy(true);
       try {
         const relayer = bridgeInstance.isLnBridge()
-          ? (await refetchRelayers()).data.sortedLnv20RelayInfos?.records.at(0)
+          ? (await refetchRelayers()).data.sortedLnBridgeRelayInfos?.records.at(0)
           : undefined;
         const receipt = await transfer(sender, recipient, transferAmount.value, bridgeInstance, sourceChain, {
           relayer: relayer?.relayer,
           transferId: relayer?.lastTransferId,
           totalFee: (
             await bridgeInstance.getFee({
+              sender,
+              recipient,
               baseFee: BigInt(relayer?.baseFee || 0),
               protocolFee: BigInt(relayer?.protocolFee || 0),
               liquidityFeeRate: BigInt(relayer?.liquidityFeeRate || 0),
               transferAmount: transferAmount.value,
+              relayer: relayer?.relayer,
             })
           )?.value,
           withdrawNonce: BigInt(relayer?.withdrawNonce || 0),
@@ -170,7 +173,10 @@ function SourceTarget({
         <Image width={36} height={36} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
         <div className="flex flex-col items-start">
           <span className="text-base font-medium text-white">{chain.name}</span>
-          <span className="text-sm font-medium text-white/50">{address}</span>
+          <span className="hidden text-sm font-medium text-white/50 lg:inline">{address}</span>
+          {address ? (
+            <span className="text-sm font-medium text-white/50 lg:hidden">{toShortAdrress(address, 8, 6)}</span>
+          ) : null}
         </div>
       </div>
 

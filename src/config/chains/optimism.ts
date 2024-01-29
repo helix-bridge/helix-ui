@@ -30,7 +30,7 @@ export const optimismChain: ChainConfig = {
       type: "erc20",
       address: "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",
       logo: "usdt.png",
-      cross: [{ target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } }],
+      cross: [{ target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } }],
     },
   ],
 };

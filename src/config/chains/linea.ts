@@ -31,8 +31,8 @@ export const lineaChain: ChainConfig = {
       address: "0xA219439258ca9da29E9Cc4cE5596924745e12B93",
       logo: "usdt.png",
       cross: [
-        { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
-        { target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnbridgev20-default" } },
+        { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
+        { target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
     },
   ],

@@ -2,12 +2,15 @@ import { Address, Hex } from "viem";
 import { PublicClient, WalletClient } from "wagmi";
 import { ChainConfig } from "./chain";
 import { Token } from "./token";
-import { MessageChannel } from ".";
+import { MessageChannel } from "./graphql";
+
+export type LnBridgeVersion = "lnv2" | "lnv3";
+export type LnBridgeV2Type = "default" | "opposite";
 
 /**
- * lpbridge-darwinia-dvm etc. are named from graphql indexer.
+ * `lpbridge-darwinia-dvm` etc. are named from graphql indexer, except `lnbridge`.
  */
-export type LnBridgeCategory = "lnbridgev20-default" | "lnbridgev20-opposite";
+export type LnBridgeCategory = "lnbridge" | "lnv2-default" | "lnv2-opposite" | "lnv3";
 export type L2BridgeCategory = "l2arbitrumbridge-ethereum";
 export type HelixLpBridgeCategory = "lpbridge-darwinia-dvm" | "lpbridge-ethereum";
 export type HelixBridgeCategory =
@@ -52,6 +55,7 @@ export interface GetFeeArgs {
   transferAmount?: bigint;
   sender?: Address;
   recipient?: Address;
+  relayer?: Address;
 }
 
 export interface TransferOptions {

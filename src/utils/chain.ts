@@ -1,6 +1,7 @@
 import {
   arbitrumChain,
   arbitrumGoerliChain,
+  arbitrumSepoliaChain,
   baseChain,
   baseGoerliChain,
   crabChain,
@@ -18,14 +19,15 @@ import {
   polygonChain,
   polygonZkEvmChain,
   scrollChain,
+  sepoliaChain,
   zksyncChain,
   zksyncGoerliChain,
+  zksyncSepoliaChain,
 } from "@/config/chains";
 import { ChainConfig, ChainID, Network } from "@/types";
 import { isProduction } from "./env";
 import { bscChain } from "@/config/chains/bsc";
 import { optimismChain } from "@/config/chains/optimism";
-import { sepoliaChain } from "@/config/chains/sepolia";
 
 export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
   switch (chainIdOrNetwork) {
@@ -53,12 +55,18 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.ARBITRUM_GOERLI:
     case "arbitrum-goerli":
       return arbitrumGoerliChain;
+    case ChainID.ARBITRUM_SEPOLIA:
+    case "arbitrum-sepolia":
+      return arbitrumSepoliaChain;
     case ChainID.ZKSYNC:
     case "zksync":
       return zksyncChain;
     case ChainID.ZKSYNC_GOERLI:
     case "zksync-goerli":
       return zksyncGoerliChain;
+    case ChainID.ZKSYNC_SEPOLIA:
+    case "zksync-sepolia":
+      return zksyncSepoliaChain;
     case ChainID.LINEA:
     case "linea":
       return lineaChain;
@@ -110,6 +118,7 @@ export function getChainConfigs(askAll?: boolean) {
   const all = [
     arbitrumChain,
     arbitrumGoerliChain,
+    arbitrumSepoliaChain,
     crabChain,
     darwiniaChain,
     ethereumChain,
@@ -123,6 +132,7 @@ export function getChainConfigs(askAll?: boolean) {
     pangoroChain,
     zksyncChain,
     zksyncGoerliChain,
+    zksyncSepoliaChain,
     mumbaiChain,
     polygonChain,
     polygonZkEvmChain,
@@ -137,8 +147,8 @@ export function getChainConfigs(askAll?: boolean) {
   if (askAll) {
     return all;
   } else if (isProduction()) {
-    return all.filter((c) => (!c.hidden && !c.testnet) || c.network === "crab-dvm" || c.network === "sepolia");
+    return all.filter((c) => !c.hidden && !c.testnet);
   } else {
-    return all.filter((c) => (!c.hidden && !!c.testnet) || c.network === "crab-dvm" || c.network === "sepolia");
+    return all.filter((c) => !c.hidden && !!c.testnet);
   }
 }

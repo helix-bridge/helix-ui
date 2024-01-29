@@ -80,8 +80,8 @@ export const GQL_HISTORY_RECORD_BY_ID = gql`
   }
 `;
 
-export const GQL_SORTED_LNV20_RELAY_INFOS = gql`
-  query sortedLnv20RelayInfos(
+export const GQL_SORTED_LNBRIDGE_RELAY_INFOS = gql`
+  query sortedLnBridgeRelayInfos(
     $amount: String
     $decimals: Int
     $bridge: String
@@ -89,7 +89,7 @@ export const GQL_SORTED_LNV20_RELAY_INFOS = gql`
     $fromChain: String
     $toChain: String
   ) {
-    sortedLnv20RelayInfos(
+    sortedLnBridgeRelayInfos(
       amount: $amount
       decimals: $decimals
       bridge: $bridge
@@ -97,7 +97,7 @@ export const GQL_SORTED_LNV20_RELAY_INFOS = gql`
       fromChain: $fromChain
       toChain: $toChain
     ) {
-      maxMargin
+      transferLimit
       records {
         sendToken
         relayer
@@ -107,14 +107,29 @@ export const GQL_SORTED_LNV20_RELAY_INFOS = gql`
         liquidityFeeRate
         lastTransferId
         withdrawNonce
+        bridge
       }
     }
   }
 `;
 
-export const GQL_QUERY_LNV20_RELAY_INFOS = gql`
-  query queryLnv20RelayInfos($fromChain: String, $toChain: String, $relayer: String, $row: Int, $page: Int) {
-    queryLnv20RelayInfos(fromChain: $fromChain, toChain: $toChain, relayer: $relayer, row: $row, page: $page) {
+export const GQL_QUERY_LNBRIDGE_RELAY_INFOS = gql`
+  query queryLnBridgeRelayInfos(
+    $fromChain: String
+    $toChain: String
+    $relayer: String
+    $row: Int
+    $page: Int
+    $version: String
+  ) {
+    queryLnBridgeRelayInfos(
+      fromChain: $fromChain
+      toChain: $toChain
+      relayer: $relayer
+      row: $row
+      page: $page
+      version: $version
+    ) {
       total
       records {
         id
@@ -132,6 +147,7 @@ export const GQL_QUERY_LNV20_RELAY_INFOS = gql`
         messageChannel
         lastTransferId
         withdrawNonce
+        transferLimit
       }
     }
   }
@@ -150,5 +166,41 @@ export const GQL_HISTORY_RECORD_BY_TX_HASH = gql`
 export const GQL_CHECK_LNBRIDGE_EXIST = gql`
   query checkLnBridgeExist($fromChainId: Int, $toChainId: Int, $fromToken: String, $toToken: String) {
     checkLnBridgeExist(fromChainId: $fromChainId, toChainId: $toChainId, fromToken: $fromToken, toToken: $toToken)
+  }
+`;
+
+export const GQL_GET_LN_BRIDGE_MESSAGE_CHANNEL = gql`
+  query GetLnBridgeMessageChannel($bridge: String = "", $fromChain: String = "", $toChain: String = "") {
+    queryLnBridgeRelayInfos(row: 1, page: 0, bridge: $bridge, fromChain: $fromChain, toChain: $toChain) {
+      records {
+        messageChannel
+      }
+    }
+  }
+`;
+
+export const GQL_GET_WITHDRAWABLE_LIQUIDITIES = gql`
+  query GetWithdrawableLiquidities(
+    $page: Int!
+    $relayer: String = ""
+    $recvTokenAddress: String = ""
+    $fromChain: String = ""
+    $toChain: String = ""
+  ) {
+    historyRecords(
+      row: 10
+      page: $page
+      relayer: $relayer
+      recvTokenAddress: $recvTokenAddress
+      fromChains: [$fromChain]
+      toChains: [$toChain]
+      needWithdrawLiquidity: true
+    ) {
+      total
+      records {
+        id
+        lastRequestWithdraw
+      }
+    }
   }
 `;

@@ -5,6 +5,7 @@ import {
   HelixBridgeCategory,
   BridgeCategory,
   XTokenBridgeCategory,
+  LnBridgeV2Type,
 } from "./bridge";
 import { Network, ChainConfig } from "./chain";
 import { TokenSymbol, Token } from "./token";
@@ -19,7 +20,7 @@ type Action = "issue" | "redeem";
 export type CrossChain =
   | {
       target: Target;
-      bridge: { category: LnBridgeCategory | L2BridgeCategory };
+      bridge: { category: LnBridgeCategory; lnv2Type: LnBridgeV2Type };
       index?: never;
       price?: never;
       baseFee?: never;
@@ -28,7 +29,16 @@ export type CrossChain =
     }
   | {
       target: Target;
-      bridge: { category: HelixBridgeCategory | XTokenBridgeCategory };
+      bridge: { category: L2BridgeCategory; lnv2Type?: never };
+      index?: never;
+      price?: never;
+      baseFee?: never;
+      action?: never;
+      hidden?: boolean;
+    }
+  | {
+      target: Target;
+      bridge: { category: HelixBridgeCategory | XTokenBridgeCategory; lnv2Type?: never };
       index?: never;
       price?: never;
       baseFee?: never;
@@ -37,7 +47,7 @@ export type CrossChain =
     }
   | {
       target: Target;
-      bridge: { category: HelixLpBridgeCategory };
+      bridge: { category: HelixLpBridgeCategory; lnv2Type?: never };
       index: number; // One of the bridge contract transfer parameters
       price?: bigint; // When transferring native token, we need to set the price
       baseFee: bigint;

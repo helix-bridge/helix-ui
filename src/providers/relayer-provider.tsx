@@ -1,6 +1,6 @@
 "use client";
 
-import { BaseBridge, LnBridgeDefault, LnBridgeOpposite } from "@/bridges";
+import { BaseBridge, LnBridgeV2Default, LnBridgeV2Opposite } from "@/bridges";
 import {
   BridgeCategory,
   ChainConfig,
@@ -9,7 +9,13 @@ import {
   InputValue,
   Token,
 } from "@/types";
-import { getAvailableTargetTokens, notifyError, notifyTransaction } from "@/utils";
+import {
+  getAvailableTargetTokens,
+  isLnV2DefaultBridge,
+  isLnV2OppositeBridge,
+  notifyError,
+  notifyTransaction,
+} from "@/utils";
 import {
   Dispatch,
   PropsWithChildren,
@@ -39,8 +45,8 @@ interface RelayerCtx {
   sourceToken: Token | undefined;
   targetToken: Token | undefined;
   bridgeCategory: BridgeCategory | undefined;
-  defaultBridge: LnBridgeDefault | undefined;
-  oppositeBridge: LnBridgeOpposite | undefined;
+  defaultBridge: LnBridgeV2Default | undefined;
+  oppositeBridge: LnBridgeV2Opposite | undefined;
   withdrawAmount: InputValue<bigint>;
 
   setMargin: Dispatch<SetStateAction<bigint | undefined>>;
@@ -71,7 +77,7 @@ interface RelayerCtx {
   depositMargin: (
     relayer: Address,
     margin: bigint,
-    bridge: LnBridgeDefault,
+    bridge: LnBridgeV2Default,
     chain: ChainConfig,
   ) => Promise<TransactionReceipt | undefined>;
   updateFeeAndMargin: (
@@ -79,20 +85,20 @@ interface RelayerCtx {
     margin: bigint,
     baseFee: bigint,
     feeRate: number,
-    bridge: LnBridgeOpposite,
+    bridge: LnBridgeV2Opposite,
     chain: ChainConfig,
   ) => Promise<TransactionReceipt | undefined>;
   setFeeAndRate: (
     baseFee: bigint,
     feeRate: number,
-    bridge: LnBridgeDefault,
+    bridge: LnBridgeV2Default,
     chain: ChainConfig,
   ) => Promise<TransactionReceipt | undefined>;
   withdrawMargin: (
     recipient: Address,
     amount: bigint,
     fee: bigint,
-    bridge: LnBridgeDefault,
+    bridge: LnBridgeV2Default,
     chain: ChainConfig,
   ) => Promise<TransactionReceipt | undefined>;
   isLnBridgeExist: (
@@ -169,8 +175,8 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
   );
 
   const { defaultBridge, oppositeBridge, bridgeInstance } = useMemo(() => {
-    let defaultBridge: LnBridgeDefault | undefined;
-    let oppositeBridge: LnBridgeOpposite | undefined;
+    let defaultBridge: LnBridgeV2Default | undefined;
+    let oppositeBridge: LnBridgeV2Opposite | undefined;
     const args = {
       sourceChain,
       targetChain,
@@ -180,13 +186,13 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
       publicClient,
     };
 
-    if (bridgeCategory === "lnbridgev20-default") {
-      defaultBridge = new LnBridgeDefault({ category: bridgeCategory, ...args });
-    } else if (bridgeCategory === "lnbridgev20-opposite") {
-      oppositeBridge = new LnBridgeOpposite({ category: bridgeCategory, ...args });
+    if (isLnV2DefaultBridge(sourceToken, targetChain)) {
+      defaultBridge = new LnBridgeV2Default({ category: "lnv2-default", ...args });
+    } else if (isLnV2OppositeBridge(sourceToken, targetChain)) {
+      oppositeBridge = new LnBridgeV2Opposite({ category: "lnv2-opposite", ...args });
     }
     return { defaultBridge, oppositeBridge, bridgeInstance: defaultBridge ?? oppositeBridge };
-  }, [sourceChain, targetChain, sourceToken, targetToken, bridgeCategory, walletClient, publicClient]);
+  }, [sourceChain, targetChain, sourceToken, targetToken, walletClient, publicClient]);
 
   const isLnBridgeExist = useCallback(
     async (
@@ -241,10 +247,10 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
   }, []);
 
   /**
-   * LnBridgeDefault, on target chain
+   * LnBridgeV2Default, on target chain
    */
   const depositMargin = useCallback(
-    async (relayer: Address, margin: bigint, bridge: LnBridgeDefault, chain: ChainConfig) => {
+    async (relayer: Address, margin: bigint, bridge: LnBridgeV2Default, chain: ChainConfig) => {
       try {
         const receipt = await bridge.depositMargin(margin);
         notifyTransaction(receipt, chain);
@@ -264,10 +270,10 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
   );
 
   /**
-   * LnBridgeDefault, on source chain
+   * LnBridgeV2Default, on source chain
    */
   const setFeeAndRate = useCallback(
-    async (baseFee: bigint, feeRate: number, bridge: LnBridgeDefault, chain: ChainConfig) => {
+    async (baseFee: bigint, feeRate: number, bridge: LnBridgeV2Default, chain: ChainConfig) => {
       try {
         const receipt = await bridge.setFeeAndRate(baseFee, feeRate);
         notifyTransaction(receipt, chain);
@@ -289,7 +295,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
       margin: bigint,
       baseFee: bigint,
       feeRate: number,
-      bridge: LnBridgeOpposite,
+      bridge: LnBridgeV2Opposite,
       chain: ChainConfig,
     ) => {
       try {
@@ -311,7 +317,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
   );
 
   const withdrawMargin = useCallback(
-    async (recipient: Address, amount: bigint, fee: bigint, bridge: LnBridgeDefault, chain: ChainConfig) => {
+    async (recipient: Address, amount: bigint, fee: bigint, bridge: LnBridgeV2Default, chain: ChainConfig) => {
       try {
         const receipt = await bridge.withdrawMargin(recipient, amount, fee);
         notifyTransaction(receipt, chain);

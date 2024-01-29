@@ -1,6 +1,6 @@
 import { FEE_RATE_BASE, FEE_RATE_MAX, FEE_RATE_MIN } from "@/config/constant";
 import { RecordResult } from "@/types/graphql";
-import { Address, Hex } from "viem";
+import { Address, Hex, isHex } from "viem";
 
 export function parseRecordResult(result: RecordResult) {
   switch (result) {
@@ -56,8 +56,23 @@ export async function fetchMsglineFeeAndParams(
   );
   const feeJson = await feeData.json();
   if (feeData.ok && feeJson.code === 0) {
-    const fee = BigInt(feeJson.data.fee);
+    const fee = BigInt(feeJson.data.fee); // In native token
     const extParams = feeJson.data.params as Hex;
     return { fee, extParams };
   }
+}
+
+/**
+ * Extract transfer IDs
+ * @param ids IDs from history records
+ * @returns Hex[]
+ */
+export function extractTransferIds(ids: string[]): Hex[] {
+  return ids.map((id) => {
+    const transferId = id.split("-").slice(-1).at(0);
+    if (!transferId || !isHex(transferId)) {
+      throw new Error(`Failed to extract transfer id, id: ${id}`);
+    }
+    return transferId;
+  });
 }

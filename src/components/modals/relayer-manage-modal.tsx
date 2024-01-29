@@ -1,5 +1,5 @@
 import { useRelayer } from "@/hooks";
-import { ChainID, InputValue, Lnv20RelayerOverview, Token } from "@/types";
+import { ChainID, InputValue, LnBridgeRelayerOverview, Token } from "@/types";
 import { notification } from "@/ui/notification";
 import SegmentedTabs, { SegmentedTabsProps } from "@/ui/segmented-tabs";
 import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "@/utils";
@@ -19,7 +19,7 @@ type TabKey = "update" | "deposit" | "withdraw";
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
 interface Props {
-  relayerInfo?: Lnv20RelayerOverview;
+  relayerInfo?: LnBridgeRelayerOverview;
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
@@ -79,14 +79,14 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     let disableOk = false;
 
     if (activeKey === "deposit") {
-      if (bridgeCategory === "lnbridgev20-default") {
+      if (bridgeCategory === "lnv2-default") {
         if (chain?.id !== targetChain?.id) {
           okText = "Switch Network";
           switchChainId = targetChain?.id;
         } else if (targetToken?.type !== "native" && depositAmount.value > (targetAllowance?.value || 0n)) {
           okText = "Approve";
         }
-      } else if (bridgeCategory === "lnbridgev20-opposite") {
+      } else if (bridgeCategory === "lnv2-opposite") {
         if (chain?.id !== sourceChain?.id) {
           okText = "Switch Network";
           switchChainId = sourceChain?.id;
@@ -211,15 +211,15 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             if (okText === "Switch Network") {
               switchNetwork?.(switchChainId);
             } else if (okText === "Approve") {
-              if (bridgeCategory === "lnbridgev20-default" && defaultBridge) {
+              if (bridgeCategory === "lnv2-default" && defaultBridge) {
                 await targetApprove(address, depositAmount.value, defaultBridge, targetChain);
-              } else if (bridgeCategory === "lnbridgev20-opposite" && oppositeBridge) {
+              } else if (bridgeCategory === "lnv2-opposite" && oppositeBridge) {
                 await sourceApprove(address, depositAmount.value, oppositeBridge, sourceChain);
               }
             } else if (activeKey === "update") {
-              if (bridgeCategory === "lnbridgev20-default" && defaultBridge) {
+              if (bridgeCategory === "lnv2-default" && defaultBridge) {
                 receipt = await setFeeAndRate(baseFeeInput.value, feeRateInput.value, defaultBridge, sourceChain);
-              } else if (bridgeCategory === "lnbridgev20-opposite" && oppositeBridge) {
+              } else if (bridgeCategory === "lnv2-opposite" && oppositeBridge) {
                 receipt = await updateFeeAndMargin(
                   address,
                   margin ?? 0n,
@@ -230,7 +230,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                 );
               }
             } else if (activeKey === "deposit") {
-              if (bridgeCategory === "lnbridgev20-default" && defaultBridge) {
+              if (bridgeCategory === "lnv2-default" && defaultBridge) {
                 if (await isLnBridgeExist(apolloClient, sourceChain, targetChain, sourceToken, targetToken)) {
                   receipt = await depositMargin(address, depositAmount.value, defaultBridge, targetChain);
                 } else {
@@ -239,7 +239,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                     description: `The bridge does not exist.`,
                   });
                 }
-              } else if (bridgeCategory === "lnbridgev20-opposite" && oppositeBridge) {
+              } else if (bridgeCategory === "lnv2-opposite" && oppositeBridge) {
                 if (await isLnBridgeExist(apolloClient, sourceChain, targetChain, sourceToken, targetToken)) {
                   receipt = await updateFeeAndMargin(
                     address,
@@ -257,7 +257,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                 }
               }
             } else if (activeKey === "withdraw") {
-              if (bridgeCategory === "lnbridgev20-default" && defaultBridge) {
+              if (bridgeCategory === "lnv2-default" && defaultBridge) {
                 receipt = await withdrawMargin(
                   address,
                   withdrawAmount.value,
@@ -265,7 +265,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                   defaultBridge,
                   sourceChain,
                 );
-              } else if (bridgeCategory === "lnbridgev20-opposite" && oppositeBridge) {
+              } else if (bridgeCategory === "lnv2-opposite" && oppositeBridge) {
                 //
               }
             }
@@ -306,7 +306,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             label: (
               <>
                 <span className="hidden text-sm font-extrabold lg:inline">Update Fee</span>
-                <span className="text-sm font-extrabold lg:hidden">Fee</span>
+                <span className="text-sm font-extrabold lg:hidden">Update</span>
               </>
             ),
             children: (
@@ -335,23 +335,23 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             label: (
               <>
                 <span className="hidden text-sm font-extrabold lg:inline">Deposit More Margin</span>
-                <span className="text-sm font-extrabold lg:hidden">Margin</span>
+                <span className="text-sm font-extrabold lg:hidden">Deposit</span>
               </>
             ),
             children: (
               <LabelSection label="More Margin" height={height}>
                 <BalanceInput
                   balance={
-                    bridgeCategory === "lnbridgev20-default"
+                    bridgeCategory === "lnv2-default"
                       ? targetBalance?.value
-                      : bridgeCategory === "lnbridgev20-opposite"
+                      : bridgeCategory === "lnv2-opposite"
                       ? sourceBalance?.value
                       : undefined
                   }
                   token={
-                    bridgeCategory === "lnbridgev20-default"
+                    bridgeCategory === "lnv2-default"
                       ? targetBalance?.token
-                      : bridgeCategory === "lnbridgev20-opposite"
+                      : bridgeCategory === "lnv2-opposite"
                       ? sourceBalance?.token
                       : undefined
                   }

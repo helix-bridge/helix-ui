@@ -1,13 +1,13 @@
 "use client";
 
-import { GQL_QUERY_LNV20_RELAY_INFOS } from "@/config";
+import { GQL_QUERY_LNBRIDGE_RELAY_INFOS } from "@/config";
 import { useRelayer } from "@/hooks";
 import {
   BridgeCategory,
   ChainConfig,
   InputValue,
-  QueryLnV20RelayInfosReqParams,
-  QueryLnV20RelayInfosResData,
+  QueryLnBridgeRelayInfosReqParams,
+  QueryLnBridgeRelayInfosResData,
   Token,
 } from "@/types";
 import { notification } from "@/ui/notification";
@@ -62,7 +62,6 @@ export default function RelayerRegister() {
     sourceBalance,
     targetAllowance,
     targetBalance,
-    bridgeCategory,
     defaultBridge,
     oppositeBridge,
     setBridgeCategory,
@@ -101,10 +100,10 @@ export default function RelayerRegister() {
       _category: BridgeCategory,
     ) => {
       const { data: relayerData } = await apolloClient.query<
-        QueryLnV20RelayInfosResData,
-        QueryLnV20RelayInfosReqParams
+        QueryLnBridgeRelayInfosResData,
+        QueryLnBridgeRelayInfosReqParams
       >({
-        query: GQL_QUERY_LNV20_RELAY_INFOS,
+        query: GQL_QUERY_LNBRIDGE_RELAY_INFOS,
         variables: {
           fromChain: _sourceChain.network,
           toChain: _targetChain.network,
@@ -117,7 +116,7 @@ export default function RelayerRegister() {
       });
 
       if (
-        relayerData.queryLnv20RelayInfos?.records.some(
+        relayerData.queryLnBridgeRelayInfos?.records.some(
           ({ sendToken }) => sendToken?.toLowerCase() === _sourceToken.address.toLowerCase(),
         )
       ) {
@@ -215,7 +214,7 @@ export default function RelayerRegister() {
 
               <div className="flex items-center justify-between gap-small">
                 <StepCompleteItem property="Address" address={address} />
-                <StepCompleteItem property="Bridge Type" bridge={bridgeCategory} />
+                <StepCompleteItem property="Bridge Type" bridge={oppositeBridge ? "lnv2-opposite" : "lnv2-default"} />
                 <StepCompleteItem property="From" chain={sourceChain} />
                 <StepCompleteItem property="To" chain={targetChain} />
                 <StepCompleteItem property="Token" token={sourceToken} />
@@ -266,8 +265,8 @@ export default function RelayerRegister() {
               <LabelItem label="Deposit Margin">
                 <BalanceInput
                   compact
-                  balance={bridgeCategory === "lnbridgev20-default" ? targetBalance?.value : sourceBalance?.value}
-                  token={bridgeCategory === "lnbridgev20-default" ? targetBalance?.token : sourceBalance?.token}
+                  balance={defaultBridge ? targetBalance?.value : sourceBalance?.value}
+                  token={defaultBridge ? targetBalance?.token : sourceBalance?.token}
                   value={marginInput}
                   suffix="symbol"
                   disabled={completeMargin}
@@ -275,7 +274,7 @@ export default function RelayerRegister() {
                 />
               </LabelItem>
 
-              {bridgeCategory === "lnbridgev20-default" && (
+              {defaultBridge ? (
                 <>
                   <Button
                     kind="primary"
@@ -296,7 +295,7 @@ export default function RelayerRegister() {
                           } else if (
                             await isLnBridgeExist(apolloClient, sourceChain, targetChain, sourceToken, targetToken)
                           ) {
-                            if (!(await isRegistered(address, sourceChain, targetChain, sourceToken, bridgeCategory))) {
+                            if (!(await isRegistered(address, sourceChain, targetChain, sourceToken, "lnv2-default"))) {
                               const receipt = await depositMargin(
                                 address,
                                 marginInput.value,
@@ -334,7 +333,7 @@ export default function RelayerRegister() {
                   </Button>
                   <Divider />
                 </>
-              )}
+              ) : null}
 
               <LabelItem label="Base Fee" tips="The fixed fee set by the relayer and charged in a transaction">
                 <BalanceInput
@@ -372,11 +371,10 @@ export default function RelayerRegister() {
                       } else if (
                         oppositeBridge &&
                         sourceToken?.type !== "native" &&
-                        bridgeCategory === "lnbridgev20-opposite" &&
                         marginInput.value > (sourceAllowance?.value || 0n)
                       ) {
                         await sourceApprove(address, marginInput.value, oppositeBridge, sourceChain);
-                      } else if (bridgeCategory === "lnbridgev20-default" && defaultBridge) {
+                      } else if (defaultBridge) {
                         receipt = await setFeeAndRate(
                           baseFeeInput.value,
                           feeRateInput.value,
@@ -385,10 +383,9 @@ export default function RelayerRegister() {
                         );
                       } else if (
                         oppositeBridge &&
-                        bridgeCategory &&
                         (await isLnBridgeExist(apolloClient, sourceChain, targetChain, sourceToken, targetToken))
                       ) {
-                        if (!(await isRegistered(address, sourceChain, targetChain, sourceToken, bridgeCategory))) {
+                        if (!(await isRegistered(address, sourceChain, targetChain, sourceToken, "lnv2-opposite"))) {
                           receipt = await updateFeeAndMargin(
                             address,
                             marginInput.value,
@@ -417,11 +414,11 @@ export default function RelayerRegister() {
                 }}
               >
                 <span className="text-base font-normal">
-                  {bridgeCategory === "lnbridgev20-default"
+                  {defaultBridge
                     ? sourceChain?.id !== chain?.id
                       ? "Switch Network"
                       : "Confirm"
-                    : bridgeCategory === "lnbridgev20-opposite"
+                    : oppositeBridge
                     ? sourceChain?.id !== chain?.id
                       ? "Switch Network"
                       : sourceToken?.type !== "native" && marginInput.value > (sourceAllowance?.value || 0n)
@@ -438,13 +435,7 @@ export default function RelayerRegister() {
               <div className="flex items-center justify-between gap-small">
                 <StepCompleteItem
                   property="Margin"
-                  token={
-                    bridgeCategory === "lnbridgev20-default"
-                      ? targetToken
-                      : bridgeCategory === "lnbridgev20-opposite"
-                      ? sourceToken
-                      : undefined
-                  }
+                  token={defaultBridge ? targetToken : oppositeBridge ? sourceToken : undefined}
                   balance={marginInput.value}
                 />
                 <StepCompleteItem property="Base Fee" token={sourceToken} balance={baseFeeInput.value} />
@@ -542,13 +533,7 @@ export default function RelayerRegister() {
           {address ? <PrettyAddress address={address} /> : null}
 
           <span className="text-sm font-medium text-white">Bridge Type</span>
-          <span>
-            {bridgeCategory === "lnbridgev20-default"
-              ? "Default"
-              : bridgeCategory === "lnbridgev20-opposite"
-              ? "Opposite"
-              : "-"}
-          </span>
+          <span>{defaultBridge ? "Default" : oppositeBridge ? "Opposite" : "-"}</span>
 
           <span className="text-sm font-medium text-white">From</span>
           <PrettyChain chain={sourceChain} />
@@ -560,10 +545,7 @@ export default function RelayerRegister() {
           <PrettyToken token={sourceToken} />
 
           <span className="text-sm font-medium text-white">Margin</span>
-          <PrettyMargin
-            margin={marginInput.value}
-            token={bridgeCategory === "lnbridgev20-default" ? targetToken : sourceToken}
-          />
+          <PrettyMargin margin={marginInput.value} token={defaultBridge ? targetToken : sourceToken} />
 
           <span className="text-sm font-medium text-white">Base Fee</span>
           <PrettyBaseFee fee={baseFeeInput.value} token={sourceToken} />

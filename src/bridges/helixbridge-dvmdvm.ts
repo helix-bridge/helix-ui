@@ -27,7 +27,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
     }
     super({ ...args, sourceToken, targetToken });
 
-    this.initContract();
+    this._initContract();
     this.ensureSpecVersion();
 
     this.logo = {
@@ -37,7 +37,7 @@ export class HelixBridgeDVMDVM extends BaseBridge {
     this.name = "Helix(Legacy)";
   }
 
-  private initContract() {
+  private _initContract() {
     if (this.sourceToken?.symbol === "RING" || this.sourceToken?.symbol === "xWRING") {
       const backing = "0xF3c1444CD449bD66Ef6DA7CA6c3E7884840A3995";
       const issuing = "0x8738A64392b71617aF4C685d0E827855c741fDF7";

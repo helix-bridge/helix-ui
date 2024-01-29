@@ -13,9 +13,11 @@ export enum ChainID {
 
   ARBITRUM = 42161,
   ARBITRUM_GOERLI = 421613,
+  ARBITRUM_SEPOLIA = 421614,
 
   ZKSYNC = 324,
   ZKSYNC_GOERLI = 280,
+  ZKSYNC_SEPOLIA = 300,
 
   LINEA = 59144,
   LINEA_GOERLI = 59140,
@@ -47,8 +49,10 @@ export type Network =
   | "sepolia"
   | "arbitrum"
   | "arbitrum-goerli"
+  | "arbitrum-sepolia"
   | "zksync"
   | "zksync-goerli"
+  | "zksync-sepolia"
   | "linea"
   | "linea-goerli"
   | "mantle"

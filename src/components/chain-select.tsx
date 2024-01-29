@@ -38,7 +38,7 @@ export default function ChainSelect({
                 width={32}
                 height={32}
                 src={getChainLogoSrc(value.logo)}
-                className="shrink-0 rounded-full"
+                className="h-8 w-8 shrink-0 rounded-full"
               />
             )}
 
@@ -59,7 +59,7 @@ export default function ChainSelect({
               <button
                 key={option.id}
                 onClick={() => onChange(option)}
-                className="flex items-center gap-middle px-large py-small text-start transition-colors hover:bg-white/10"
+                className="flex items-center gap-middle px-large py-2 text-start transition-colors hover:bg-white/10"
               >
                 <Image
                   width={20}

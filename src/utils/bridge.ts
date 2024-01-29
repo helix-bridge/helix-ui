@@ -4,18 +4,21 @@ import {
   HelixBridgeDVMEVM,
   HelixLpBridge,
   L2ArbitrumBridge,
-  LnBridgeDefault,
-  LnBridgeOpposite,
+  LnBridgeV2Default,
+  LnBridgeV2Opposite,
+  LnBridgeV3,
   XTokenV3Bridge,
 } from "@/bridges";
-import { BridgeConstructorArgs } from "@/types";
+import { BridgeConstructorArgs, ChainConfig, Token } from "@/types";
 
 export function bridgeFactory(args: BridgeConstructorArgs): BaseBridge | undefined {
   switch (args.category) {
-    case "lnbridgev20-default":
-      return new LnBridgeDefault(args);
-    case "lnbridgev20-opposite":
-      return new LnBridgeOpposite(args);
+    case "lnv3":
+      return new LnBridgeV3({ ...args, category: "lnbridge" });
+    case "lnv2-default":
+      return new LnBridgeV2Default({ ...args, category: "lnbridge" });
+    case "lnv2-opposite":
+      return new LnBridgeV2Opposite({ ...args, category: "lnbridge" });
     case "helix-sub2ethv2(lock)":
     case "helix-sub2ethv2(unlock)":
       return new HelixBridgeDVMEVM(args);
@@ -33,4 +36,24 @@ export function bridgeFactory(args: BridgeConstructorArgs): BaseBridge | undefin
     default:
       return;
   }
+}
+
+export function isLnV2DefaultBridge(
+  sourceToken: Token | null | undefined,
+  targetChain: ChainConfig | null | undefined,
+) {
+  return !!sourceToken?.cross.some(
+    (c) =>
+      c.target.network === targetChain?.network && c.bridge.category === "lnbridge" && c.bridge.lnv2Type === "default",
+  );
+}
+
+export function isLnV2OppositeBridge(
+  sourceToken: Token | null | undefined,
+  targetChain: ChainConfig | null | undefined,
+) {
+  return !!sourceToken?.cross.some(
+    (c) =>
+      c.target.network === targetChain?.network && c.bridge.category === "lnbridge" && c.bridge.lnv2Type === "opposite",
+  );
 }
