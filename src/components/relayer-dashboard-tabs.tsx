@@ -16,7 +16,9 @@ interface Props {
 }
 
 export default function RelayerDashboardTabs({ bridgeVersion }: Props) {
-  const [activeKey, setActiveKey] = useState<SegmentedTabsProps<TabKey>["activeKey"]>("register");
+  const [activeKey, setActiveKey] = useState<SegmentedTabsProps<TabKey>["activeKey"]>(
+    bridgeVersion === "lnv3" ? "manage" : "register",
+  );
 
   return (
     <SegmentedTabs
@@ -34,6 +36,7 @@ export default function RelayerDashboardTabs({ bridgeVersion }: Props) {
                 <RelayerRegister />
               </RelayerProvider>
             ),
+          disabled: bridgeVersion === "lnv3",
         },
         {
           key: "manage",
