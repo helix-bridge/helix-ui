@@ -211,7 +211,7 @@ export class LnBridgeV3 extends LnBridgeBase {
             { name: "y", type: "address" },
             { name: "z", type: "string" },
           ],
-          [relayer, "0x0000000000000000000000000000000000000000", message],
+          [relayer, "0xffffffffffffffffffffffffffffffffffffffff", message],
         );
         const feeAndParams = await this._getMsglineFeeAndParams(
           payload,
