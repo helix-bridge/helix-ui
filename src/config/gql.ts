@@ -188,7 +188,7 @@ export const GQL_GET_WITHDRAWABLE_LIQUIDITIES = gql`
     $toChain: String = ""
   ) {
     historyRecords(
-      row: 5
+      row: 10
       page: $page
       relayer: $relayer
       recvTokenAddress: $recvTokenAddress
