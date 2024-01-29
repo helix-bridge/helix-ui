@@ -1,6 +1,14 @@
 import { BridgeConstructorArgs, GetFeeArgs, MessageChannel, Token, TransferOptions } from "@/types";
 import { LnBridgeBase } from "./lnbridge-base";
-import { Address, Hex, TransactionReceipt, encodeFunctionData, encodePacked, keccak256 } from "viem";
+import {
+  Address,
+  Hex,
+  TransactionReceipt,
+  encodeAbiParameters,
+  encodeFunctionData,
+  encodePacked,
+  keccak256,
+} from "viem";
 
 export class LnBridgeV3 extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {
@@ -197,8 +205,16 @@ export class LnBridgeV3 extends LnBridgeBase {
           functionName: "withdrawLiquidity",
           args: [transferIds, BigInt(this.sourceChain.id), relayer],
         });
+        const payload = encodeAbiParameters(
+          [
+            { name: "x", type: "address" },
+            { name: "y", type: "address" },
+            { name: "z", type: "string" },
+          ],
+          [relayer, "0x0000000000000000000000000000000000000000", message],
+        );
         const feeAndParams = await this._getMsglineFeeAndParams(
-          message,
+          payload,
           relayer,
           this.targetChain,
           this.sourceChain,
