@@ -148,7 +148,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     try {
       if (activeKey === "withdraw liquidity") {
         if (chain?.id !== targetChain?.id) {
-          switchNetwork?.(sourceChain?.id);
+          switchNetwork?.(targetChain?.id);
         } else {
           receipt = await withdrawLiquidity(selectedLiquidities, withdrawFee?.value ?? 0n);
           if (receipt?.status === "success") {
