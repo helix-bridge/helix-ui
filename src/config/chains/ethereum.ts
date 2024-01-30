@@ -39,6 +39,7 @@ export const ethereumChain: ChainConfig = {
           action: "redeem",
           baseFee: parseUnits("3000", 18),
           index: 0,
+          hidden: true,
         },
         {
           target: { network: "darwinia-dvm", symbol: "RING" },
