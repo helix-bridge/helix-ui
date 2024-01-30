@@ -1,3 +1,4 @@
+import { isProduction } from "@/utils/env";
 import { BridgeConstructorArgs, GetFeeArgs, MessageChannel, Token, TransferOptions } from "@/types";
 import { LnBridgeBase } from "./lnbridge-base";
 import { Address, Hex, TransactionReceipt, encodeFunctionData, encodePacked, keccak256 } from "viem";
@@ -19,6 +20,11 @@ export class LnBridgeV3 extends LnBridgeBase {
       this.contract = {
         sourceAddress: "0x38627Cb033De66a1E07e73f5D0a7a7adFB6741fa",
         targetAddress: "0xDc55fF59F82AA50D8A4A61dB8CcaDffD26Fb7dD2",
+      };
+    } else if (isProduction()) {
+      this.contract = {
+        sourceAddress: "0xbA5D580B18b6436411562981e02c8A9aA1776D10",
+        targetAddress: "0xbA5D580B18b6436411562981e02c8A9aA1776D10",
       };
     } else {
       this.contract = {
