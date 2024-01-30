@@ -63,6 +63,7 @@ export const darwiniaChain: ChainConfig = {
           baseFee: parseUnits("3000", 18),
           index: 0,
           price: 440000n,
+          hidden: true,
         },
         {
           target: { network: "ethereum", symbol: "RING" },
