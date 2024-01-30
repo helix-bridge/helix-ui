@@ -9,13 +9,11 @@ interface Props {
 }
 
 export default function BridgeSelect({ value, options = [], onChange = () => undefined }: Props) {
-  const bridge = value ? bridgeFactory({ category: value }) : undefined;
-
   return (
     <Select
       labelClassName="bg-inner p-middle flex items-center justify-between rounded-middle transition-transform lg:active:translate-y-1"
       childClassName="bg-inner p-middle flex flex-col rounded-middle gap-small border border-component"
-      label={bridge ? <span className="text-sm font-medium text-white">{bridge.getName()}</span> : undefined}
+      label={<span className="text-sm font-medium text-white">{bridgeName(value)}</span>}
       placeholder={<span className="text-sm font-medium text-slate-400">Select a bridge</span>}
       sameWidth
       clearable
@@ -23,7 +21,6 @@ export default function BridgeSelect({ value, options = [], onChange = () => und
     >
       {options.length ? (
         options.map((c) => {
-          const b = bridgeFactory({ category: c });
           return (
             <button
               key={c}
@@ -32,7 +29,7 @@ export default function BridgeSelect({ value, options = [], onChange = () => und
               }}
               className="rounded-middle bg-component px-middle py-small text-start text-sm font-medium text-white transition-colors hover:bg-white/10"
             >
-              {b?.getName() || "-"}
+              {bridgeName(c) || "-"}
             </button>
           );
         })
@@ -43,4 +40,12 @@ export default function BridgeSelect({ value, options = [], onChange = () => und
       )}
     </Select>
   );
+}
+
+function bridgeName(category: BridgeCategory | null | undefined) {
+  if (category) {
+    const bridge = bridgeFactory({ category });
+    return bridge ? bridge.getName() : category === "lnbridge" ? "Helix LnBridge" : undefined;
+  }
+  return undefined;
 }
