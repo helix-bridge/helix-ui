@@ -177,6 +177,7 @@ export interface CheckLnBridgeExistReqParams {
   toChainId: ChainID | undefined;
   fromToken: Address | undefined;
   toToken: Address | undefined;
+  version: string | undefined;
 }
 
 export interface CheckLnBridgeExistResData {

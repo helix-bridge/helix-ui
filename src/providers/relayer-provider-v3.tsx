@@ -101,6 +101,7 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
           toChainId: targetChain?.id,
           fromToken: sourceToken?.address,
           toToken: targetToken?.address,
+          version: "lnv3",
         },
         fetchPolicy: "no-cache",
       });
