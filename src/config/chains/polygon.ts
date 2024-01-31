@@ -35,7 +35,7 @@ export const polygonChain: ChainConfig = {
       ],
     },
     {
-      decimals: 18,
+      decimals: 6,
       symbol: "USDT",
       name: "USDT",
       type: "erc20",
