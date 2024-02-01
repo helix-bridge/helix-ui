@@ -7,4 +7,5 @@ export enum UrlSearchParamKey {
   TARGET_CHAIN = "target_chain",
   SOURCE_TOKEN = "source_token",
   TARGET_TOKEN = "target_token",
+  ID = "id",
 }

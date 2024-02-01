@@ -7,16 +7,10 @@ export const metadata: Metadata = {
   description: "View Helix Bridge transfer details",
 };
 
-interface Props {
-  params: {
-    id: string;
-  };
-}
-
-export default function RecordPage({ params }: Props) {
+export default function RecordPage() {
   return (
     <PageWrap>
-      <RecordDetail id={params.id} />
+      <RecordDetail />
     </PageWrap>
   );
 }

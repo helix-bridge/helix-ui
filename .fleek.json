@@ -1,0 +1,14 @@
+{
+    "site": {
+      "id": "0991882f-3be7-482d-9208-89899a3632e7",
+      "team": "fewensa-team",
+      "platform": "ipfs",
+      "source": "ipfs",
+      "name": "divine-butterfly-5417"
+    },
+    "build": {
+      "baseDir": "",
+      "publicDir": "out",
+      "rootDir": ""
+    }
+  }

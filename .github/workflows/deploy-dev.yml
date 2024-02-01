@@ -2,6 +2,8 @@ name: Deploy development
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
 
 jobs:
   deploy-package:
@@ -10,35 +12,52 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
         with:
-          repository: darwinia-network/devops
-          path: .github
+          node-version: 20
 
-      - uses: ./.github/actions/smart-vercel
-        name: Deploy helix
-        with:
-          vercel_token: ${{ secrets.VERCEL_TOKEN }}
-          vercel_group: itering
-          preview_output: true
-          alias_domain: "helix-dev-main"
-          project_name: "helix-apps"
-          script_run: false
-          dist_path: .
-          enable_notify_slack: true
-          slack_channel: helix-ui
-          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+      - name: Build
+        run: |
+          npm install
+          npm run build
 
-      - uses: ./.github/actions/smart-vercel
-        name: Deploy helix (test)
+      - name: Upload ipsf
+        uses: aquiladev/ipfs-action@master
         with:
-          vercel_token: ${{ secrets.VERCEL_TOKEN }}
-          vercel_group: itering
-          preview_output: true
-          alias_domain: "helix-dev-test"
-          project_name: "helix-apps-test"
-          script_run: false
-          dist_path: .
-          enable_notify_slack: true
-          slack_channel: helix-ui
-          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+          path: ./out
+          service: pinata
+          pinataKey: ${{ secrets.PINATA_KEY }}
+          pinataSecret: ${{ secrets.PINATA_SECRET }}
+
+      # - uses: actions/checkout@v3
+      #   with:
+      #     repository: darwinia-network/devops
+      #     path: .github
+
+      # - uses: ./.github/actions/smart-vercel
+      #   name: Deploy helix
+      #   with:
+      #     vercel_token: ${{ secrets.VERCEL_TOKEN }}
+      #     vercel_group: itering
+      #     preview_output: true
+      #     alias_domain: "helix-dev-main"
+      #     project_name: "helix-apps"
+      #     script_run: false
+      #     dist_path: .
+      #     enable_notify_slack: true
+      #     slack_channel: helix-ui
+      #     slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+
+      # - uses: ./.github/actions/smart-vercel
+      #   name: Deploy helix (test)
+      #   with:
+      #     vercel_token: ${{ secrets.VERCEL_TOKEN }}
+      #     vercel_group: itering
+      #     preview_output: true
+      #     alias_domain: "helix-dev-test"
+      #     project_name: "helix-apps-test"
+      #     script_run: false
+      #     dist_path: .
+      #     enable_notify_slack: true
+      #     slack_channel: helix-ui
+      #     slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}

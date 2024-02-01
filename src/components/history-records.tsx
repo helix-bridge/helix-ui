@@ -5,7 +5,7 @@ import { useApp } from "@/hooks";
 import { HistoryRecordsReqParams, HistoryRecordsResData, RecordResult, UrlSearchParamKey } from "@/types";
 import Tabs, { TabsProps } from "@/ui/tabs";
 import { NetworkStatus, useQuery } from "@apollo/client";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useDeferredValue, useEffect, useState } from "react";
 import RecordsTable from "./records-table";
 import Search from "@/ui/search";
@@ -24,7 +24,6 @@ export default function HistoryRecords() {
   const deferredSearchValue = useDeferredValue(recordsSearch);
 
   const searchParams = useSearchParams();
-  const pathName = usePathname();
   const router = useRouter();
 
   const [activeKey, setActiveKey] = useState<TabsProps<TabKey>["activeKey"]>(AllResult.All);
@@ -86,7 +85,7 @@ export default function HistoryRecords() {
         params.set(UrlSearchParamKey.PAGE, (page + 1).toString());
         router.push(`?${params.toString()}`);
       }}
-      onRowClick={(_, { id }) => router.push(`${pathName}/${id}`)}
+      onRowClick={(_, { id }) => router.push(`record?${UrlSearchParamKey.ID}=${id}`)}
     />
   );
 
