@@ -24,7 +24,7 @@ export const gnosisChain: ChainConfig = {
       cross: [],
     },
     {
-      decimals: 18,
+      decimals: 6,
       symbol: "USDT",
       name: "USDT",
       type: "erc20",
