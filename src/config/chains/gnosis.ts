@@ -20,7 +20,7 @@ export const gnosisChain: ChainConfig = {
       name: "xDai",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
-      logo: "xdai.svg",
+      logo: "xdai.png",
       cross: [],
     },
     {
