@@ -11,7 +11,7 @@ import {
 import Image from "next/image";
 import { Key, PropsWithChildren } from "react";
 import PrettyAddress from "./pretty-address";
-import { Address } from "viem";
+import { Address, isHash } from "viem";
 
 interface Props {
   dataSource: DataSource[];
@@ -94,8 +94,13 @@ export default function RecordsTable({
                 : "text-white/50"
             }`}
           >
-            {parseRecordResult(result)}
-            {result === RecordResult.PENDING && confirmedBlocks ? ` (${confirmedBlocks})` : ""}
+            {result === RecordResult.PENDING
+              ? confirmedBlocks
+                ? isHash(confirmedBlocks)
+                  ? "Confirming"
+                  : `Pending (${confirmedBlocks})`
+                : "Pending"
+              : parseRecordResult(result)}
           </span>
         </div>
       ),
