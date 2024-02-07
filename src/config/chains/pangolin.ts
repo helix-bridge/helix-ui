@@ -34,5 +34,17 @@ export const pangolinChain: ChainConfig = {
    * Custom
    */
   logo: "pangolin.png",
-  tokens: [],
+  tokens: [
+    {
+      decimals: 18,
+      symbol: "PRING",
+      name: "PRING",
+      type: "native",
+      address: "0x0000000000000000000000000000000000000000",
+      logo: "ring.svg",
+      cross: [
+        { target: { network: "sepolia", symbol: "xPRING" }, bridge: { category: "xtoken-pangolin" }, action: "issue" },
+      ],
+    },
+  ],
 };
