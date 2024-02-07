@@ -43,7 +43,11 @@ export const pangolinChain: ChainConfig = {
       address: "0x0000000000000000000000000000000000000000",
       logo: "ring.svg",
       cross: [
-        { target: { network: "sepolia", symbol: "xPRING" }, bridge: { category: "xtoken-pangolin" }, action: "issue" },
+        {
+          target: { network: "sepolia", symbol: "xPRING" },
+          bridge: { category: "xtoken-pangolin-dvm" },
+          action: "issue",
+        },
       ],
     },
   ],
