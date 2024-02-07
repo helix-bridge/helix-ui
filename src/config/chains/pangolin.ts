@@ -47,4 +47,7 @@ export const pangolinChain: ChainConfig = {
       ],
     },
   ],
+  messager: {
+    msgline: "0xf7F461728DC89de5EF6615715678b5f5b12bb98A",
+  },
 };
