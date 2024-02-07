@@ -143,6 +143,18 @@ export class XTokenV3Bridge extends BaseBridge {
     }
   }
 
+  async getDailyLimit(): Promise<{ limit: bigint; spent: bigint; token: Token } | undefined> {
+    if (this.contract && this.sourceToken && this.targetToken && this.targetPublicClient) {
+      const limit = await this.targetPublicClient.readContract({
+        address: this.contract.targetAddress,
+        abi: (await import("@/abi/xtoken-issuing")).default,
+        functionName: "dailyLimit",
+        args: [this.targetToken.address],
+      });
+      return { limit, spent: 0n, token: this.sourceToken };
+    }
+  }
+
   async claim(record: HistoryRecord): Promise<TransactionReceipt | undefined> {
     await this.validateNetwork("target");
 
