@@ -113,5 +113,5 @@ export const darwiniaChain: ChainConfig = {
       ],
     },
   ],
-  messager: { msgline: "0x6035Eb7783d7Aab8d0a57a7b154f5DD5D5477Ff2" },
+  messager: { msgline: "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0" },
 };
