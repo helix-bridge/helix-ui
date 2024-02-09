@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 import { PropsWithChildren, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import { Subscription, from } from "rxjs";
-import { TransactionReceipt } from "viem";
+import { Hex, TransactionReceipt } from "viem";
 import { BalanceInput } from "../balance-input";
 import FeeRateInput from "../fee-rate-input";
 import Tooltip from "@/ui/tooltip";
@@ -62,7 +62,11 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
   const [height, setHeight] = useState<number>();
   const [busy, setBusy] = useState(false);
   const [loadingWithdrawFee, setLoadingWithdrawFee] = useState(false);
-  const [withdrawFee, setWithdrawFee] = useState<{ value: bigint; token: Token }>();
+  const [withdrawFeeParams, setWithdrawFeeParams] = useState<{
+    value: bigint;
+    token: Token;
+    params: Hex | undefined;
+  }>();
   const [depositAmount, setDepositAmount] = useState<InputValue<bigint>>({ input: "", valid: true, value: 0n });
   const [baseFeeInput, setBaseFeeInput] = useState<InputValue<bigint>>({ input: "", valid: true, value: 0n });
   const [feeRateInput, setFeeRateInput] = useState<InputValue<number>>({ input: "", valid: true, value: 0 });
@@ -105,13 +109,13 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
       disableOk =
         !(baseFeeInput.input && baseFeeInput.valid && feeRateInput.input && feeRateInput.valid) && okText === "Confirm";
     } else if (activeKey === "withdraw") {
-      disableOk = !(withdrawAmount.value && withdrawAmount.valid && withdrawFee?.value) && okText === "Confirm";
+      disableOk = !(withdrawAmount.value && withdrawAmount.valid && withdrawFeeParams?.value) && okText === "Confirm";
     }
     return { okText, disableOk, switchChainId };
   }, [
     chain,
     activeKey,
-    withdrawFee,
+    withdrawFeeParams,
     baseFeeInput,
     feeRateInput,
     depositAmount,
@@ -172,7 +176,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     ) {
       setLoadingWithdrawFee(true);
       sub$$ = from(
-        defaultBridge.getWithdrawFee({
+        defaultBridge.getWithdrawFeeParams({
           amount: deferredWithdrawAmount.value,
           sender: address,
           relayer: relayerInfo.relayer,
@@ -181,16 +185,16 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
           messageChannel: relayerInfo.messageChannel,
         }),
       ).subscribe({
-        next: setWithdrawFee,
+        next: setWithdrawFeeParams,
         error: (err) => {
           console.error(err);
-          setWithdrawFee(undefined);
+          setWithdrawFeeParams(undefined);
           setLoadingWithdrawFee(false);
         },
         complete: () => setLoadingWithdrawFee(false),
       });
     } else {
-      setWithdrawFee(undefined);
+      setWithdrawFeeParams(undefined);
     }
     return () => sub$$?.unsubscribe();
   }, [defaultBridge, relayerInfo, address, activeKey, deferredWithdrawAmount]);
@@ -259,9 +263,9 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             } else if (activeKey === "withdraw") {
               if (bridgeCategory === "lnv2-default" && defaultBridge) {
                 receipt = await withdrawMargin(
-                  address,
+                  withdrawFeeParams?.params ?? address,
                   withdrawAmount.value,
-                  withdrawFee?.value ?? 0n,
+                  withdrawFeeParams?.value ?? 0n,
                   defaultBridge,
                   sourceChain,
                 );
@@ -393,17 +397,17 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                 <LabelSection label="Withdraw Fee" tips="This value is calculated and does not require input">
                   <div
                     className={`relative flex h-10 items-center justify-between rounded-middle border bg-inner px-small lg:px-middle ${
-                      withdrawFee || loadingWithdrawFee ? "border-transparent" : "border-app-red"
+                      withdrawFeeParams || loadingWithdrawFee ? "border-transparent" : "border-app-red"
                     }`}
                   >
                     {loadingWithdrawFee ? (
                       <CountLoading size="small" color="white" />
-                    ) : withdrawFee ? (
+                    ) : withdrawFeeParams ? (
                       <>
                         <span className="text-sm font-medium text-white">
-                          {formatBalance(withdrawFee.value, withdrawFee.token.decimals, { precision: 6 })}
+                          {formatBalance(withdrawFeeParams.value, withdrawFeeParams.token.decimals, { precision: 6 })}
                         </span>
-                        <span className="text-sm font-medium text-white">{withdrawFee.token.symbol}</span>
+                        <span className="text-sm font-medium text-white">{withdrawFeeParams.token.symbol}</span>
                       </>
                     ) : (
                       <span className="absolute -bottom-5 left-0 text-xs font-medium text-app-red">

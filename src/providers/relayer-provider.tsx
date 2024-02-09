@@ -26,7 +26,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Address, TransactionReceipt } from "viem";
+import { Address, Hex, TransactionReceipt } from "viem";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { Subscription, forkJoin } from "rxjs";
 import { ApolloClient } from "@apollo/client";
@@ -318,9 +318,15 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
   );
 
   const withdrawMargin = useCallback(
-    async (recipient: Address, amount: bigint, fee: bigint, bridge: LnBridgeV2Default, chain: ChainConfig) => {
+    async (
+      recipientOrParams: Address | Hex,
+      amount: bigint,
+      fee: bigint,
+      bridge: LnBridgeV2Default,
+      chain: ChainConfig,
+    ) => {
       try {
-        const receipt = await bridge.withdrawMargin(recipient, amount, fee);
+        const receipt = await bridge.withdrawMargin(recipientOrParams, amount, fee);
         notifyTransaction(receipt, chain);
         return receipt;
       } catch (err) {
