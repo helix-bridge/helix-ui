@@ -1,4 +1,4 @@
-import { FEE_RATE_BASE, FEE_RATE_MAX, FEE_RATE_MIN } from "@/config/constant";
+import { FEE_RATE_BASE, FEE_RATE_MAX, FEE_RATE_MAX_V3, FEE_RATE_MIN } from "@/config/constant";
 import { RecordResult } from "@/types/graphql";
 import { Address, Hex, isHex } from "viem";
 
@@ -39,8 +39,10 @@ export function formatFeeRate(rate: number) {
   return Number((rate / FEE_RATE_BASE).toFixed(3));
 }
 
-export function isValidFeeRate(rate: number) {
-  return FEE_RATE_MIN <= rate && rate <= FEE_RATE_MAX;
+export function isValidFeeRate(rate: number, isV3?: boolean) {
+  const min = FEE_RATE_MIN;
+  const max = isV3 ? FEE_RATE_MAX_V3 : FEE_RATE_MAX;
+  return min <= rate && rate <= max;
 }
 
 export async function fetchMsglineFeeAndParams(

@@ -260,6 +260,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
                 </Label>
                 <Label text="Liquidity Fee Rate">
                   <FeeRateInput
+                    isV3
                     value={feeRateInput}
                     placeholder={feeRate === undefined ? undefined : `${formatFeeRate(feeRate)}%`}
                     onChange={setFeeRateInput}

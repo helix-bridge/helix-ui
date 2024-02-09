@@ -5,12 +5,13 @@ import { isValidFeeRate, parseFeeRate } from "@/utils";
 import { ChangeEventHandler, useCallback } from "react";
 
 interface Props {
+  isV3?: boolean;
   placeholder?: string;
   value: InputValue<number>;
   onChange?: (value: InputValue<number>) => void;
 }
 
-export default function FeeRateInput({ placeholder, value, onChange = () => undefined }: Props) {
+export default function FeeRateInput({ isV3, placeholder, value, onChange = () => undefined }: Props) {
   const handleChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
     (e) => {
       const input = e.target.value;
@@ -19,14 +20,14 @@ export default function FeeRateInput({ placeholder, value, onChange = () => unde
       if (input) {
         if (!Number.isNaN(Number(input))) {
           value = parseFeeRate(input);
-          valid = isValidFeeRate(value);
+          valid = isValidFeeRate(value, isV3);
           onChange({ valid, value, input });
         }
       } else {
         onChange({ valid, value, input });
       }
     },
-    [onChange],
+    [isV3, onChange],
   );
 
   return (
@@ -43,7 +44,7 @@ export default function FeeRateInput({ placeholder, value, onChange = () => unde
       />
       <span className="rounded bg-transparent text-sm font-medium text-white">%</span>
 
-      {value.valid ? null : <InputAlert text="* Please enter 0 ~ 0.25" />}
+      {value.valid ? null : <InputAlert text={`* Please enter 0 ~ ${isV3 ? "100" : "0.25"}`} />}
     </div>
   );
 }

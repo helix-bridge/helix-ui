@@ -276,7 +276,7 @@ export default function RelayerRegisterV3() {
                 text="Liquidity Fee Rate"
                 tips="The percentage deducted by the relayer from the transfer amount in a transaction"
               >
-                <FeeRateInput placeholder="Enter 0 ~ 0.25" value={feeRateInput} onChange={setFeeRateInput} />
+                <FeeRateInput isV3 placeholder="Enter 0 ~ 100" value={feeRateInput} onChange={setFeeRateInput} />
               </Label>
               <Label text="Transfer Limit">
                 <BalanceInput
