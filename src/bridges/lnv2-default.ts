@@ -1,4 +1,4 @@
-import { Address, TransactionReceipt, encodeFunctionData } from "viem";
+import { Address, Hex, TransactionReceipt, encodeFunctionData } from "viem";
 import { LnBridgeBase } from "./lnbridge-base";
 import { isProduction } from "@/utils/env";
 import { BridgeConstructorArgs, GetWithdrawFeeArgs, TransferOptions } from "@/types/bridge";
@@ -148,11 +148,11 @@ export class LnBridgeV2Default extends LnBridgeBase {
         args: [BigInt(this.targetChain.id)],
       });
       const value = await this._getLayerzeroFee(sendService, this.targetChain, this.sourcePublicClient);
-      return typeof value === "bigint" ? { value, token: this.sourceNativeToken } : undefined;
+      return typeof value === "bigint" ? { value, token: this.sourceNativeToken, params: undefined } : undefined;
     }
   }
 
-  private async _getMsglineWithdrawFee(args: GetWithdrawFeeArgs) {
+  private async _getMsglineWithdrawFeeAndParams(args: GetWithdrawFeeArgs) {
     if (
       this.sourceChain &&
       this.targetChain &&
@@ -186,19 +186,21 @@ export class LnBridgeV2Default extends LnBridgeBase {
         this.contract.sourceAddress,
         this.contract.targetAddress,
       );
-      return feeAndParams ? { value: feeAndParams.fee, token: this.sourceNativeToken } : undefined;
+      return feeAndParams
+        ? { value: feeAndParams.fee, token: this.sourceNativeToken, params: feeAndParams.extParams }
+        : undefined;
     }
   }
 
-  async getWithdrawFee(args: GetWithdrawFeeArgs) {
+  async getWithdrawFeeParams(args: GetWithdrawFeeArgs) {
     if (args.messageChannel === "layerzero") {
       return this._getLayerzeroWithdrawFee();
     } else if (args.messageChannel === "msgline") {
-      return this._getMsglineWithdrawFee(args);
+      return this._getMsglineWithdrawFeeAndParams(args);
     }
   }
 
-  async withdrawMargin(recipient: Address, amount: bigint, fee: bigint) {
+  async withdrawMargin(recipientOrParams: Address | Hex, amount: bigint, fee: bigint) {
     await this.validateNetwork("source");
 
     if (
@@ -215,7 +217,7 @@ export class LnBridgeV2Default extends LnBridgeBase {
         address: this.contract.sourceAddress,
         abi: (await import(`../abi/lnv2-default`)).default,
         functionName: "requestWithdrawMargin",
-        args: [remoteChainId, this.sourceToken.address, this.targetToken.address, amount, recipient],
+        args: [remoteChainId, this.sourceToken.address, this.targetToken.address, amount, recipientOrParams],
         gas: this.getTxGasLimit(),
         value: fee,
       });
