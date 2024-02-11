@@ -36,7 +36,7 @@ export default function RelayerDashboardTabs({ bridgeVersion }: Props) {
                 <RelayerRegister />
               </RelayerProvider>
             ),
-          disabled: bridgeVersion === "lnv3",
+          disabled: false,
         },
         {
           key: "manage",
