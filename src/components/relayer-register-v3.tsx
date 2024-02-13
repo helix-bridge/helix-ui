@@ -301,7 +301,7 @@ export default function RelayerRegisterV3() {
                       feeRateInput.valid &&
                       transferLimitInput.input &&
                       transferLimitInput.valid &&
-                      isValidFeeRate(feeRateInput.value)
+                      isValidFeeRate(feeRateInput.value, true)
                     ))
                 }
                 busy={isRegistering}
