@@ -13,7 +13,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Address, Hex, TransactionReceipt } from "viem";
+import { Hex, TransactionReceipt } from "viem";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { Subscription, forkJoin } from "rxjs";
 import { ApolloClient } from "@apollo/client";
@@ -53,7 +53,11 @@ interface RelayerCtx {
   ) => Promise<TransactionReceipt | undefined>;
   isLnBridgeExist: (apolloClient: ApolloClient<object>) => Promise<boolean>;
   withdrawPenaltyReserve: (amount: bigint) => Promise<TransactionReceipt | undefined>;
-  withdrawLiquidity: (ids: { id: string }[], messageFee: bigint) => Promise<TransactionReceipt | undefined>;
+  withdrawLiquidity: (
+    ids: { id: string }[],
+    messageFee: bigint,
+    params: Hex | undefined,
+  ) => Promise<TransactionReceipt | undefined>;
 }
 
 export const RelayerContext = createContext({} as RelayerCtx);
@@ -218,13 +222,14 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
   );
 
   const withdrawLiquidity = useCallback(
-    async (ids: { id: string }[], messageFee: bigint) => {
+    async (ids: { id: string }[], messageFee: bigint, params: Hex | undefined) => {
       if (address) {
         try {
           const receipt = await bridgeInstance.requestWithdrawLiquidity(
             address,
             extractTransferIds(ids.map(({ id }) => id)),
             messageFee,
+            params ?? address,
           );
           notifyTransaction(receipt, bridgeInstance.getTargetChain());
           return receipt;
