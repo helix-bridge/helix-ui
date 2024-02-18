@@ -51,7 +51,7 @@ export default function WithdrawableLiquiditiesSelect({
               </div>
               {option.lastRequestWithdraw.length > 1 ? (
                 <Tooltip
-                  content={`Last request withdraw at ${formatTime(Number(option.lastRequestWithdraw), {
+                  content={`Last request withdraw at ${formatTime(Number(option.lastRequestWithdraw) * 1000, {
                     compact: true,
                   })}`}
                 >
