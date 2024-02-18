@@ -209,7 +209,7 @@ export interface WithdrawableLiquiditiesResData {
     total: number;
     records: {
       id: string;
-      lastRequestWithdraw: string; // Timestamp
+      lastRequestWithdraw: string; // Timestamp in Seconds
     }[];
   };
 }
