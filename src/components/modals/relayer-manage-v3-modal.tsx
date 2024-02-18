@@ -1,4 +1,4 @@
-import { useLiquidityWithdrawFee, useRelayerV3, useWithdrawableLiquidities } from "@/hooks";
+import { useLiquidityWithdrawFeeParams, useRelayerV3, useWithdrawableLiquidities } from "@/hooks";
 import { InputValue, LnBridgeRelayerOverview, Token } from "@/types";
 import SegmentedTabs, { SegmentedTabsProps } from "@/ui/segmented-tabs";
 import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "@/utils";
@@ -73,7 +73,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     relayerInfo?.toChain,
   );
   const [selectedLiquidities, setSelectedLiquidities] = useState<{ id: string }[]>([]);
-  const { fee: withdrawFee, loading: isLoadingWithdrawFee } = useLiquidityWithdrawFee(
+  const { feeAndParams: withdrawFeeAndParams, loading: isLoadingWithdrawFee } = useLiquidityWithdrawFeeParams(
     selectedLiquidities,
     relayerInfo?.relayer,
     relayerInfo?.messageChannel,
@@ -86,7 +86,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     if (activeKey === "withdraw liquidity") {
       if (chain?.id !== targetChain?.id) {
         okText = "Switch Network";
-      } else if (!selectedLiquidities.length || isLoadingWithdrawFee || !withdrawFee) {
+      } else if (!selectedLiquidities.length || isLoadingWithdrawFee || !withdrawFeeAndParams) {
         okDisabled = true;
       }
     } else if (chain?.id !== sourceChain?.id) {
@@ -131,7 +131,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     isGettingPenaltyReserves,
     selectedLiquidities.length,
     isLoadingWithdrawFee,
-    withdrawFee,
+    withdrawFeeAndParams,
   ]);
 
   const { baseFee, feeRate, transferLimit } = useMemo(() => {
@@ -150,7 +150,11 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
         if (chain?.id !== targetChain?.id) {
           switchNetwork?.(targetChain?.id);
         } else {
-          receipt = await withdrawLiquidity(selectedLiquidities, withdrawFee?.value ?? 0n);
+          receipt = await withdrawLiquidity(
+            selectedLiquidities,
+            withdrawFeeAndParams?.value ?? 0n,
+            withdrawFeeAndParams?.params,
+          );
           if (receipt?.status === "success") {
             refetchWithdrawableLiquidities();
           }
@@ -186,7 +190,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     transferLimitInput,
     withdrawInput,
     selectedLiquidities,
-    withdrawFee,
+    withdrawFeeAndParams,
     depositPenaltyReserve,
     onClose,
     onSuccess,
@@ -338,17 +342,19 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
                   <Label text="Withdraw Fee" tips="This value is calculated and does not require input">
                     <div
                       className={`relative flex h-10 items-center justify-between rounded-middle border bg-inner px-small lg:px-middle ${
-                        withdrawFee || isLoadingWithdrawFee ? "border-transparent" : "border-app-red"
+                        withdrawFeeAndParams || isLoadingWithdrawFee ? "border-transparent" : "border-app-red"
                       }`}
                     >
                       {isLoadingWithdrawFee ? (
                         <CountLoading size="small" color="white" />
-                      ) : withdrawFee ? (
+                      ) : withdrawFeeAndParams ? (
                         <>
                           <span className="text-sm font-medium text-white">
-                            {formatBalance(withdrawFee.value, withdrawFee.token.decimals, { precision: 6 })}
+                            {formatBalance(withdrawFeeAndParams.value, withdrawFeeAndParams.token.decimals, {
+                              precision: 6,
+                            })}
                           </span>
-                          <span className="text-sm font-medium text-white">{withdrawFee.token.symbol}</span>
+                          <span className="text-sm font-medium text-white">{withdrawFeeAndParams.token.symbol}</span>
                         </>
                       ) : (
                         <span className="absolute -bottom-5 left-0 text-xs font-medium text-app-red">
