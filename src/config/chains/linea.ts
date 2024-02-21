@@ -16,12 +16,14 @@ export const lineaChain: ChainConfig = {
   tokens: [
     {
       decimals: 18,
-      symbol: "BNB",
-      name: "BNB",
+      symbol: "ETH",
+      name: "ETH",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
-      logo: "bnb.svg",
-      cross: [],
+      logo: "eth.svg",
+      cross: [
+        { target: { network: "arbitrum", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
+      ],
     },
     {
       decimals: 6,
