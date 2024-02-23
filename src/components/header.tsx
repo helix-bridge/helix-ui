@@ -7,7 +7,6 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo } from "react";
 
 const ChainIdentity = dynamic(() => import("@/components/chain-identity"), { ssr: false });
 const User = dynamic(() => import("@/components/user"), { ssr: false });
@@ -21,29 +20,14 @@ interface NavigationConfig {
   disabled?: boolean;
 }
 
+const navigationsConfig: NavigationConfig[] = [
+  { href: "/", label: "Transfer" },
+  { href: "/relayer", label: "Relayer" },
+];
+
 export default function Header() {
   const { state: isOpen, setTrue: setIsOpenTrue, setFalse: setIsOpenFalse } = useToggle(false);
   const pathname = usePathname();
-
-  const navigationsConfig = useMemo<NavigationConfig[]>(() => {
-    if (pathname.startsWith("/relayer/")) {
-      return [
-        { href: "/relayer/overview", label: "Overview" },
-        { href: "/relayer/dashboard", label: "Dashboard" },
-      ];
-    } else if (pathname.startsWith("/relayer-v3/")) {
-      return [
-        { href: "/relayer-v3/overview", label: "Overview" },
-        { href: "/relayer-v3/dashboard", label: "Dashboard" },
-      ];
-    } else {
-      return [
-        { href: "/", label: "Transfer" },
-        { href: "/relayer/overview", label: "Relayer(v2)" },
-        { href: "/relayer-v3/overview", label: "Relayer(v3)" },
-      ];
-    }
-  }, [pathname]);
 
   return (
     <>
