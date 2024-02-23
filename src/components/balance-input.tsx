@@ -184,7 +184,7 @@ export function BalanceInput({
           <div className="flex shrink-0 items-center gap-middle self-end">
             {token ? (
               <div className="flex shrink-0 items-center gap-small">
-                <Image width={26} height={26} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
+                <Image width={32} height={32} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
                 <span className="text-base font-medium text-white">{token.symbol}</span>
               </div>
             ) : null}
