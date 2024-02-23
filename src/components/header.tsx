@@ -56,15 +56,13 @@ export default function Header() {
               <Link href="/">
                 <Image width={90} height={25} alt="Logo" src="/images/logo.svg" />
               </Link>
-              <Tooltip
-                content="Helix is in beta. Please use at your own risk level"
-                className="w-fit"
-                enabled={isProduction()}
-              >
-                <div className="inline-flex items-center justify-center rounded-small bg-primary px-1 py-[1px]">
-                  <span className="text-xs font-bold text-black">{isProduction() ? "beta" : "testnet"}</span>
-                </div>
-              </Tooltip>
+              {isProduction() && (
+                <Tooltip content="Helix is in beta. Please use at your own risk level" className="w-fit">
+                  <div className="inline-flex items-center justify-center rounded-small bg-primary px-1 py-[1px]">
+                    <span className="text-xs font-bold text-black">testnet</span>
+                  </div>
+                </Tooltip>
+              )}
             </div>
 
             {/* Navigations */}
