@@ -138,7 +138,7 @@ export default function RelayerRegister() {
 
   return (
     <>
-      <div className="mx-auto flex w-full flex-col gap-5 lg:w-[38.75rem]">
+      <div className="mx-auto flex w-full flex-col gap-5 lg:w-[40rem]">
         {/* Step 1 */}
         <div className="flex flex-col gap-5 rounded-large bg-component p-5 lg:p-[1.875rem]">
           <StepTitle step={1} title="Select Chain and Token" />
