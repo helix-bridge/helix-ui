@@ -39,10 +39,8 @@ export default function Header() {
     } else {
       return [
         { href: "/", label: "Transfer" },
-        { href: "/records", label: "Explorer" },
         { href: "/relayer/overview", label: "Relayer(v2)" },
         { href: "/relayer-v3/overview", label: "Relayer(v3)" },
-        { href: "https://docs.helixbridge.app/", label: "Docs", external: true },
       ];
     }
   }, [pathname]);
