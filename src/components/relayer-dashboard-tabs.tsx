@@ -53,7 +53,7 @@ export default function RelayerDashboardTabs({ bridgeVersion }: Props) {
             ),
         },
       ]}
-      className="lg:w-[38.75rem]"
+      className="lg:w-[40rem]"
       activeKey={activeKey}
       onChange={setActiveKey}
     />
