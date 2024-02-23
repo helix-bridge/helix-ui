@@ -47,7 +47,7 @@ export default function RecordDetail(props: Props) {
   }, [record?.historyRecordById]);
 
   return (
-    <>
+    <div className="container mx-auto">
       <div className="flex items-center justify-between gap-5">
         <h3 className="text-lg font-medium text-white">Transaction Detail</h3>
         <CountdownRefresh onClick={refetch} />
@@ -136,7 +136,7 @@ export default function RecordDetail(props: Props) {
           </Item>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
