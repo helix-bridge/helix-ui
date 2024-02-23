@@ -91,7 +91,7 @@ export default function HistoryRecords() {
   );
 
   return (
-    <>
+    <div className="container mx-auto">
       <div className="flex items-center justify-between gap-5">
         <Search
           placeholder="Search by address"
@@ -167,6 +167,6 @@ export default function HistoryRecords() {
           setActiveKey(key);
         }}
       />
-    </>
+    </div>
   );
 }
