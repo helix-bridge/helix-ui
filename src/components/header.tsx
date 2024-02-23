@@ -9,6 +9,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const ChainIdentity = dynamic(() => import("@/components/chain-identity"), { ssr: false });
+const HistoryNav = dynamic(() => import("@/components/history-nav"), { ssr: false });
 const User = dynamic(() => import("@/components/user"), { ssr: false });
 const Drawer = dynamic(() => import("@/ui/drawer"), { ssr: false });
 
@@ -86,6 +87,7 @@ export default function Header() {
           {/* Right */}
           <div className="hidden items-center gap-middle lg:flex">
             <ChainIdentity />
+            <HistoryNav />
             <User placement="bottom-end" prefixLength={14} suffixLength={10} />
           </div>
           <Image
