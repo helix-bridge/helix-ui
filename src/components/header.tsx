@@ -7,9 +7,9 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo } from "react";
 
 const ChainIdentity = dynamic(() => import("@/components/chain-identity"), { ssr: false });
+const HistoryNav = dynamic(() => import("@/components/history-nav"), { ssr: false });
 const User = dynamic(() => import("@/components/user"), { ssr: false });
 const Drawer = dynamic(() => import("@/ui/drawer"), { ssr: false });
 
@@ -21,31 +21,14 @@ interface NavigationConfig {
   disabled?: boolean;
 }
 
+const navigationsConfig: NavigationConfig[] = [
+  { href: "/", label: "Transfer" },
+  { href: "/relayer", label: "Relayer" },
+];
+
 export default function Header() {
   const { state: isOpen, setTrue: setIsOpenTrue, setFalse: setIsOpenFalse } = useToggle(false);
   const pathname = usePathname();
-
-  const navigationsConfig = useMemo<NavigationConfig[]>(() => {
-    if (pathname.startsWith("/relayer/")) {
-      return [
-        { href: "/relayer/overview", label: "Overview" },
-        { href: "/relayer/dashboard", label: "Dashboard" },
-      ];
-    } else if (pathname.startsWith("/relayer-v3/")) {
-      return [
-        { href: "/relayer-v3/overview", label: "Overview" },
-        { href: "/relayer-v3/dashboard", label: "Dashboard" },
-      ];
-    } else {
-      return [
-        { href: "/", label: "Transfer" },
-        { href: "/records", label: "Explorer" },
-        { href: "/relayer/overview", label: "Relayer(v2)" },
-        { href: "/relayer-v3/overview", label: "Relayer(v3)" },
-        { href: "https://docs.helixbridge.app/", label: "Docs", external: true },
-      ];
-    }
-  }, [pathname]);
 
   return (
     <>
@@ -58,15 +41,13 @@ export default function Header() {
               <Link href="/">
                 <Image width={90} height={25} alt="Logo" src="/images/logo.svg" />
               </Link>
-              <Tooltip
-                content="Helix is in beta. Please use at your own risk level"
-                className="w-fit"
-                enabled={isProduction()}
-              >
-                <div className="inline-flex items-center justify-center rounded-small bg-primary px-1 py-[1px]">
-                  <span className="text-xs font-bold text-black">{isProduction() ? "beta" : "testnet"}</span>
-                </div>
-              </Tooltip>
+              {isProduction() && (
+                <Tooltip content="Helix is in beta. Please use at your own risk level" className="w-fit">
+                  <div className="inline-flex items-center justify-center rounded-small bg-primary px-1 py-[1px]">
+                    <span className="text-xs font-bold text-black">testnet</span>
+                  </div>
+                </Tooltip>
+              )}
             </div>
 
             {/* Navigations */}
@@ -106,6 +87,7 @@ export default function Header() {
           {/* Right */}
           <div className="hidden items-center gap-middle lg:flex">
             <ChainIdentity />
+            <HistoryNav />
             <User placement="bottom-end" prefixLength={14} suffixLength={10} />
           </div>
           <Image

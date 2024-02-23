@@ -11,6 +11,7 @@ export interface SegmentedTabsProps<K> {
     disabled?: boolean;
   }[];
   className?: string;
+  wrapClassName?: string;
   onChange?: (key: K) => void;
 }
 
@@ -18,6 +19,7 @@ export default function SegmentedTabs<K extends Key = string>({
   options,
   activeKey,
   className,
+  wrapClassName,
   onChange = () => undefined,
 }: SegmentedTabsProps<K>) {
   const previousRef = useRef<HTMLDivElement | null>(null);
@@ -28,7 +30,7 @@ export default function SegmentedTabs<K extends Key = string>({
   stateRef.current = activeKey;
 
   return (
-    <div className="flex flex-col items-center gap-5">
+    <div className={`flex flex-col items-center gap-5 ${wrapClassName}`}>
       {/* labels */}
       <div className={`flex h-10 w-full ${className}`}>
         {options.map(({ key, label, disabled }) => (

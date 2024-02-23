@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { PropsWithChildren, useEffect, useState } from "react";
 
 export default function Footer() {
@@ -27,9 +28,11 @@ export default function Footer() {
 
   return (
     <div className="app-footer w-full">
-      <div className="mx-auto flex h-full max-w-8xl shrink-0 items-center justify-center px-middle lg:justify-between">
+      <div className="mx-auto flex h-full max-w-8xl shrink-0 items-center justify-center px-middle">
         {/* Copyright */}
         <span className="text-sm font-medium text-white/50">{`© ${new Date().getFullYear()} Helix Bridge`}</span>
+
+        <div className="hidden px-5 lg:block" />
 
         {/* Social links */}
         <div className="flex shrink-0 items-center gap-middle lg:gap-5">
@@ -46,20 +49,33 @@ export default function Footer() {
             <Image width={20} height={20} alt="Email" src="/images/social/email.svg" />
           </SocialLink>
 
-          {mainnetOrTestnet && (
-            <>
-              <div className="block lg:hidden" />
-              <div className="h-4 w-[1px] bg-white/30" />
+          <div className="block lg:hidden" />
+          <div className="h-4 w-[1px] bg-white/30" />
 
-              <a
-                className="text-sm font-medium text-white/50 transition hover:text-white active:scale-95"
-                href={mainnetOrTestnet.link}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                {mainnetOrTestnet.label}
-              </a>
-            </>
+          <Link
+            className="text-sm font-medium text-white/50 transition hover:text-white active:scale-95"
+            href="/records"
+          >
+            Explorer
+          </Link>
+          <a
+            className="text-sm font-medium text-white/50 transition hover:text-white active:scale-95"
+            href="https://docs.helixbridge.app/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Docs
+          </a>
+
+          {mainnetOrTestnet && (
+            <a
+              className="text-sm font-medium text-white/50 transition hover:text-white active:scale-95"
+              href={mainnetOrTestnet.link}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {mainnetOrTestnet.label}
+            </a>
           )}
         </div>
       </div>
