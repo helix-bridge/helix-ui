@@ -28,9 +28,11 @@ export default function Footer() {
 
   return (
     <div className="app-footer w-full">
-      <div className="mx-auto flex h-full max-w-8xl shrink-0 items-center justify-center px-middle lg:justify-between">
+      <div className="mx-auto flex h-full max-w-8xl shrink-0 items-center justify-center px-middle">
         {/* Copyright */}
         <span className="text-sm font-medium text-white/50">{`© ${new Date().getFullYear()} Helix Bridge`}</span>
+
+        <div className="hidden px-5 lg:block" />
 
         {/* Social links */}
         <div className="flex shrink-0 items-center gap-middle lg:gap-5">
