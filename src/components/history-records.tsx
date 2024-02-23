@@ -2,8 +2,7 @@
 
 import { GQL_HISTORY_RECORDS } from "@/config";
 import { useApp } from "@/hooks";
-import { HistoryRecordsReqParams, HistoryRecordsResData, RecordResult, UrlSearchParamKey } from "@/types";
-import Tabs, { TabsProps } from "@/ui/tabs";
+import { HistoryRecordsReqParams, HistoryRecordsResData, UrlSearchParamKey } from "@/types";
 import { NetworkStatus, useQuery } from "@apollo/client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDeferredValue, useEffect, useState } from "react";
@@ -11,11 +10,6 @@ import RecordsTable from "./records-table";
 import Search from "@/ui/search";
 import { isAddress } from "viem";
 import CountdownRefresh from "@/ui/countdown-refresh";
-
-enum AllResult {
-  All = -1,
-}
-type TabKey = RecordResult | AllResult;
 
 const pageSize = 10;
 
@@ -27,7 +21,6 @@ export default function HistoryRecords() {
   const pathName = usePathname();
   const router = useRouter();
 
-  const [activeKey, setActiveKey] = useState<TabsProps<TabKey>["activeKey"]>(AllResult.All);
   const [records, setRecords] = useState<HistoryRecordsResData>();
   const [currentPage, setCurrentPage] = useState(0);
   const [isManualRefresh, setIsManualRefresh] = useState(false);
@@ -40,12 +33,6 @@ export default function HistoryRecords() {
         page: currentPage,
         sender: deferredSearchValue.toLowerCase(),
         recipient: deferredSearchValue.toLowerCase(),
-        results:
-          activeKey === AllResult.All
-            ? undefined
-            : activeKey === RecordResult.PENDING
-            ? [RecordResult.PENDING, RecordResult.PENDING_TO_REFUND, RecordResult.PENDING_TO_CLAIM]
-            : [activeKey],
       },
       notifyOnNetworkStatusChange: true,
     },
@@ -69,30 +56,9 @@ export default function HistoryRecords() {
     }
   }, []);
 
-  const createChildren = () => (
-    <RecordsTable
-      dataSource={(records?.historyRecords?.records || []).map((r) => ({ ...r, key: r.id }))}
-      loading={
-        networkStatus === NetworkStatus.loading ||
-        networkStatus === NetworkStatus.setVariables ||
-        (networkStatus === NetworkStatus.refetch && isManualRefresh)
-      }
-      total={records?.historyRecords?.total}
-      pageSize={pageSize}
-      currentPage={currentPage}
-      onPageChange={(page) => {
-        setCurrentPage(page);
-        const params = new URLSearchParams(searchParams.toString());
-        params.set(UrlSearchParamKey.PAGE, (page + 1).toString());
-        router.push(`?${params.toString()}`);
-      }}
-      onRowClick={(_, { id }) => router.push(`${pathName}/${id}`)}
-    />
-  );
-
   return (
-    <>
-      <div className="flex items-center justify-between gap-5">
+    <div className="container mx-auto">
+      <div className="mb-5 flex items-center justify-between gap-5">
         <Search
           placeholder="Search by address"
           className="w-full hover:border-primary lg:w-[26.5rem]"
@@ -100,7 +66,6 @@ export default function HistoryRecords() {
           onChange={(value) => {
             setRecordsSearch(value);
             setCurrentPage(0);
-            setActiveKey(AllResult.All);
 
             const params = new URLSearchParams(searchParams.toString());
             if (isAddress(value)) {
@@ -136,37 +101,24 @@ export default function HistoryRecords() {
         />
       </div>
 
-      <Tabs
-        className="mt-5"
-        options={[
-          {
-            key: AllResult.All,
-            label: "All",
-            children: createChildren(),
-          },
-          {
-            key: RecordResult.PENDING,
-            label: "Pending",
-            children: createChildren(),
-          },
-          {
-            key: RecordResult.SUCCESS,
-            label: "Success",
-            children: createChildren(),
-          },
-          {
-            key: RecordResult.REFUNDED,
-            label: "Refunded",
-            children: createChildren(),
-          },
-        ]}
-        activeKey={activeKey}
-        onChange={(key) => {
-          setRecords(undefined);
-          setCurrentPage(0);
-          setActiveKey(key);
+      <RecordsTable
+        dataSource={(records?.historyRecords?.records || []).map((r) => ({ ...r, key: r.id }))}
+        loading={
+          networkStatus === NetworkStatus.loading ||
+          networkStatus === NetworkStatus.setVariables ||
+          (networkStatus === NetworkStatus.refetch && isManualRefresh)
+        }
+        total={records?.historyRecords?.total}
+        pageSize={pageSize}
+        currentPage={currentPage}
+        onPageChange={(page) => {
+          setCurrentPage(page);
+          const params = new URLSearchParams(searchParams.toString());
+          params.set(UrlSearchParamKey.PAGE, (page + 1).toString());
+          router.push(`?${params.toString()}`);
         }}
+        onRowClick={(_, { id }) => router.push(`${pathName}/${id}`)}
       />
-    </>
+    </div>
   );
 }
