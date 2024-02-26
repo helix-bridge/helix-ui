@@ -13,7 +13,7 @@ import Image from "next/image";
 import CountLoading from "@/ui/count-loading";
 import WithdrawableLiquiditiesSelect from "../withdrawable-liquidities-select";
 
-type TabKey = "update" | "deposit" | "withdraw penalty reserve" | "withdraw liquidity";
+type TabKey = "update" | "deposit" | "withdraw penalty reserve" | "withdraw liquidity" | "allowance";
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
 const bigintInputDefaultValue: InputValue<bigint> = { input: "", valid: true, value: 0n };
@@ -37,6 +37,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     sourceToken,
     targetToken,
     sourceBalance,
+    targetBalance,
     sourceAllowance,
     penaltyReserve,
     isGettingPenaltyReserves,
@@ -47,12 +48,14 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     depositPenaltyReserve,
     withdrawPenaltyReserve,
     withdrawLiquidity,
+    targetApprove,
   } = useRelayerV3();
   const [penaltyReserveInput, setPenaltyReserveInput] = useState(bigintInputDefaultValue);
   const [transferLimitInput, setTransferLimitInput] = useState(bigintInputDefaultValue);
   const [withdrawInput, setWithdrawInput] = useState(bigintInputDefaultValue);
   const [baseFeeInput, setBaseFeeInput] = useState(bigintInputDefaultValue);
   const [feeRateInput, setFeeRateInput] = useState(numberInputDefaultValue);
+  const [allowanceInput, setAllowanceInput] = useState(bigintInputDefaultValue);
 
   const [activeKey, setActiveKey] = useState<SegmentedTabsProps<TabKey>["activeKey"]>("update");
   const [busy, setBusy] = useState(false);
@@ -83,7 +86,13 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     let okText: "Confirm" | "Approve" | "Switch Network" = "Confirm";
     let okDisabled = false;
 
-    if (activeKey === "withdraw liquidity") {
+    if (activeKey === "allowance") {
+      if (chain?.id !== targetChain?.id) {
+        okText = "Switch Network";
+      } else if (!allowanceInput.input || !allowanceInput.valid) {
+        okDisabled = true;
+      }
+    } else if (activeKey === "withdraw liquidity") {
       if (chain?.id !== targetChain?.id) {
         okText = "Switch Network";
       } else if (!selectedLiquidities.length || isLoadingWithdrawFee || !withdrawFeeAndParams) {
@@ -132,6 +141,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     selectedLiquidities.length,
     isLoadingWithdrawFee,
     withdrawFeeAndParams,
+    allowanceInput,
   ]);
 
   const { baseFee, feeRate, transferLimit } = useMemo(() => {
@@ -146,7 +156,13 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     setBusy(true);
 
     try {
-      if (activeKey === "withdraw liquidity") {
+      if (activeKey === "allowance") {
+        if (chain?.id !== targetChain?.id) {
+          switchNetwork?.(targetChain?.id);
+        } else {
+          receipt = await targetApprove(allowanceInput.value);
+        }
+      } else if (activeKey === "withdraw liquidity") {
         if (chain?.id !== targetChain?.id) {
           switchNetwork?.(targetChain?.id);
         } else {
@@ -191,6 +207,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     withdrawInput,
     selectedLiquidities,
     withdrawFeeAndParams,
+    allowanceInput,
     depositPenaltyReserve,
     onClose,
     onSuccess,
@@ -199,6 +216,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     withdrawPenaltyReserve,
     withdrawLiquidity,
     refetchWithdrawableLiquidities,
+    targetApprove,
   ]);
 
   useEffect(() => {}, []);
@@ -366,6 +384,25 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
                 ) : null}
               </div>
             ),
+          },
+          {
+            key: "allowance",
+            label: <span className="text-sm font-extrabold">Allowance</span>,
+            children: (
+              <div className="flex flex-col gap-5">
+                <Label text="Approve Amount">
+                  <BalanceInput
+                    balance={targetBalance?.value}
+                    token={targetBalance?.token}
+                    value={allowanceInput}
+                    suffix="symbol"
+                    compact
+                    onChange={setAllowanceInput}
+                  />
+                </Label>
+              </div>
+            ),
+            hidden: targetBalance?.token.type === "native",
           },
         ]}
         activeKey={activeKey}
