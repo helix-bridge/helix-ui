@@ -44,5 +44,5 @@ export default function RelayerPenalty({ record }: Props) {
     };
   }, [record]);
 
-  return <span className="truncate">{penalty ? formatBalance(penalty.value, penalty.token.decimals) : null}</span>;
+  return <span className="truncate">{penalty ? formatBalance(penalty.value, penalty.token.decimals) : "-"}</span>;
 }
