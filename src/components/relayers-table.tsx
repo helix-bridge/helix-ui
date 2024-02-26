@@ -8,6 +8,7 @@ import { useState } from "react";
 import PrettyAddress from "./pretty-address";
 import RelayerManageModal from "./modals/relayer-manage-modal";
 import RelayerManageV3Modal from "./modals/relayer-manage-v3-modal";
+import RelayerAllowance from "./relayer-allowance";
 
 interface Props {
   bridgeVersion: LnBridgeVersion;
@@ -41,13 +42,13 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
       key: "from",
       title: <Title title="From" />,
       render: ({ fromChain }) => <FromTo network={fromChain} />,
-      width: "8%",
+      width: "5%",
     },
     {
       key: "to",
       title: <Title title="To" />,
       render: ({ toChain }) => <FromTo network={toChain} />,
-      width: "8%",
+      width: "5%",
     },
     {
       key: "token",
@@ -65,7 +66,7 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
           <span>-</span>
         );
       },
-      width: "8%",
+      width: "5%",
     },
     {
       key: "base fee",
@@ -81,7 +82,7 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
           <span>-</span>
         );
       },
-      width: "10%",
+      width: "8%",
     },
     {
       key: "liquidity fee rate",
@@ -116,7 +117,7 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
           <span>-</span>
         );
       },
-      width: "10%",
+      width: "9%",
     },
     {
       key: "cost",
@@ -196,6 +197,11 @@ export default function RelayersTable({
   const columns: ColumnType<DataSource>[] = isDashboard
     ? [
         ...getColumns(bridgeVersion),
+        {
+          key: "allowance",
+          title: <Title title="Allowance" tips="Allowance on target chain" />,
+          render: (row) => <RelayerAllowance record={row} />,
+        },
         {
           key: "status",
           title: <Title title="Status" />,
