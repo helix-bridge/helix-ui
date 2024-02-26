@@ -32,26 +32,9 @@ export default function Footer() {
         {/* Copyright */}
         <span className="text-sm font-medium text-white/50">{`© ${new Date().getFullYear()} Helix Bridge`}</span>
 
-        <div className="hidden px-5 lg:block" />
+        <div className="mx-3 h-4 w-[1px] bg-white/30 lg:mx-5 lg:bg-transparent" />
 
-        {/* Social links */}
         <div className="flex shrink-0 items-center gap-middle lg:gap-5">
-          <SocialLink href="https://github.com/helix-bridge">
-            <Image width={20} height={20} alt="Github" src="/images/social/github.svg" />
-          </SocialLink>
-          <SocialLink href="https://twitter.com/helixbridges">
-            <Image width={20} height={20} alt="Twitter" src="/images/social/twitter.svg" />
-          </SocialLink>
-          <SocialLink href="https://discord.gg/6XyyNGugdE">
-            <Image width={22} height={22} alt="Discord" src="/images/social/discord.svg" />
-          </SocialLink>
-          <SocialLink href="mailto:hello@helixbridge.app">
-            <Image width={20} height={20} alt="Email" src="/images/social/email.svg" />
-          </SocialLink>
-
-          <div className="block lg:hidden" />
-          <div className="h-4 w-[1px] bg-white/30" />
-
           <Link
             className="text-sm font-medium text-white/50 transition hover:text-white active:scale-95"
             href="/records"
@@ -77,6 +60,21 @@ export default function Footer() {
               {mainnetOrTestnet.label}
             </a>
           )}
+
+          <div className="hidden h-4 w-[1px] bg-white/30 lg:block" />
+
+          <SocialLink href="https://github.com/helix-bridge">
+            <Image width={20} height={20} alt="Github" src="/images/social/github.svg" />
+          </SocialLink>
+          <SocialLink href="https://twitter.com/helixbridges">
+            <Image width={20} height={20} alt="Twitter" src="/images/social/twitter.svg" />
+          </SocialLink>
+          <SocialLink href="https://discord.gg/6XyyNGugdE">
+            <Image width={22} height={22} alt="Discord" src="/images/social/discord.svg" />
+          </SocialLink>
+          <SocialLink href="mailto:hello@helixbridge.app">
+            <Image width={20} height={20} alt="Email" src="/images/social/email.svg" />
+          </SocialLink>
         </div>
       </div>
     </div>
