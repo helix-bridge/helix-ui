@@ -51,7 +51,7 @@ export default function Table<T extends { key: Key }>({
   );
 
   return (
-    <div className="min-w-[50rem] overflow-x-auto">
+    <div className="min-w-[56rem] overflow-x-auto">
       {/* header */}
       <div
         className="grid items-center gap-middle rounded-t-middle bg-component px-middle py-large text-sm font-extrabold text-white lg:px-large"
