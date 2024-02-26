@@ -219,13 +219,12 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     targetApprove,
   ]);
 
-  useEffect(() => {}, []);
-
   useEffect(() => {
     setPenaltyReserveInput(bigintInputDefaultValue);
     setTransferLimitInput(bigintInputDefaultValue);
     setWithdrawInput(bigintInputDefaultValue);
     setBaseFeeInput(bigintInputDefaultValue);
+    setAllowanceInput(bigintInputDefaultValue);
     setFeeRateInput(numberInputDefaultValue);
     setSelectedLiquidities([]);
 
