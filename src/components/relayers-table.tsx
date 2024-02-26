@@ -9,6 +9,7 @@ import PrettyAddress from "./pretty-address";
 import RelayerManageModal from "./modals/relayer-manage-modal";
 import RelayerManageV3Modal from "./modals/relayer-manage-v3-modal";
 import RelayerAllowance from "./relayer-allowance";
+import RelayerPenalty from "./relayer-penalty";
 
 interface Props {
   bridgeVersion: LnBridgeVersion;
@@ -117,7 +118,7 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
           <span>-</span>
         );
       },
-      width: "9%",
+      width: "8%",
     },
     {
       key: "cost",
@@ -130,7 +131,7 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
           <span>-</span>
         );
       },
-      width: "8%",
+      width: "7%",
     },
   ];
 
@@ -156,6 +157,11 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
               );
             },
             width: "10%",
+          },
+          {
+            key: "penalty",
+            title: <Title title="Penalty" />,
+            render: (row) => <RelayerPenalty record={row} />,
           },
         ]
       : [
