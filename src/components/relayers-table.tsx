@@ -27,7 +27,7 @@ interface DataSource extends LnBridgeRelayerOverview {
   key: string;
 }
 
-function getColumns(bridgeVersion: LnBridgeVersion) {
+function getColumns(bridgeVersion: LnBridgeVersion, isDashboard?: boolean) {
   const columns1: ColumnType<DataSource>[] = [
     // {
     //   key: "bridge type",
@@ -43,13 +43,13 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
       key: "from",
       title: <Title title="From" />,
       render: ({ fromChain }) => <FromTo network={fromChain} />,
-      width: bridgeVersion === "lnv3" ? "5%" : "7%",
+      width: isDashboard ? (bridgeVersion === "lnv3" ? "5%" : "7%") : "6%",
     },
     {
       key: "to",
       title: <Title title="To" />,
       render: ({ toChain }) => <FromTo network={toChain} />,
-      width: bridgeVersion === "lnv3" ? "5%" : "7%",
+      width: isDashboard ? (bridgeVersion === "lnv3" ? "5%" : "7%") : "6%",
     },
     {
       key: "token",
@@ -67,7 +67,7 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
           <span>-</span>
         );
       },
-      width: bridgeVersion === "lnv3" ? "5%" : "7%",
+      width: isDashboard ? (bridgeVersion === "lnv3" ? "5%" : "7%") : "6%",
     },
     {
       key: "base fee",
@@ -83,7 +83,7 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
           <span>-</span>
         );
       },
-      width: "8%",
+      width: isDashboard ? "8%" : bridgeVersion === "lnv3" ? "9%" : "10%",
     },
     {
       key: "liquidity fee rate",
@@ -99,7 +99,7 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
         ) : (
           <span>-</span>
         ),
-      width: "8%",
+      width: isDashboard ? "8%" : bridgeVersion === "lnv3" ? "10%" : "11%",
     },
   ];
 
@@ -118,7 +118,7 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
           <span>-</span>
         );
       },
-      width: "8%",
+      width: isDashboard ? "8%" : bridgeVersion === "lnv3" ? "9%" : "12%",
     },
     {
       key: "cost",
@@ -131,7 +131,7 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
           <span>-</span>
         );
       },
-      width: "7%",
+      width: isDashboard ? "7%" : bridgeVersion === "lnv3" ? "8%" : "10%",
     },
   ];
 
@@ -202,7 +202,7 @@ export default function RelayersTable({
 
   const columns: ColumnType<DataSource>[] = isDashboard
     ? [
-        ...getColumns(bridgeVersion),
+        ...getColumns(bridgeVersion, isDashboard),
         {
           key: "allowance",
           title: <Title title="Allowance" tips="Allowance on target chain" />,
@@ -247,9 +247,9 @@ export default function RelayersTable({
               <PrettyAddress address={relayer} forceShort copyable />
             </div>
           ),
-          width: "10%",
+          width: "11%",
         },
-        ...getColumns(bridgeVersion),
+        ...getColumns(bridgeVersion, isDashboard),
         {
           key: "status",
           title: <Title title="Status" className="justify-end" />,
