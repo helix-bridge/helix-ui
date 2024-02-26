@@ -43,13 +43,13 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
       key: "from",
       title: <Title title="From" />,
       render: ({ fromChain }) => <FromTo network={fromChain} />,
-      width: "5%",
+      width: bridgeVersion === "lnv3" ? "5%" : "7%",
     },
     {
       key: "to",
       title: <Title title="To" />,
       render: ({ toChain }) => <FromTo network={toChain} />,
-      width: "5%",
+      width: bridgeVersion === "lnv3" ? "5%" : "7%",
     },
     {
       key: "token",
@@ -67,7 +67,7 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
           <span>-</span>
         );
       },
-      width: "5%",
+      width: bridgeVersion === "lnv3" ? "5%" : "7%",
     },
     {
       key: "base fee",

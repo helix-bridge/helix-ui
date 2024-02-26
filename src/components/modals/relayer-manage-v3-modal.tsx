@@ -54,8 +54,8 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
   const [transferLimitInput, setTransferLimitInput] = useState(bigintInputDefaultValue);
   const [withdrawInput, setWithdrawInput] = useState(bigintInputDefaultValue);
   const [baseFeeInput, setBaseFeeInput] = useState(bigintInputDefaultValue);
-  const [feeRateInput, setFeeRateInput] = useState(numberInputDefaultValue);
   const [allowanceInput, setAllowanceInput] = useState(bigintInputDefaultValue);
+  const [feeRateInput, setFeeRateInput] = useState(numberInputDefaultValue);
 
   const [activeKey, setActiveKey] = useState<SegmentedTabsProps<TabKey>["activeKey"]>("update");
   const [busy, setBusy] = useState(false);
@@ -401,7 +401,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
                 </Label>
               </div>
             ),
-            hidden: targetBalance?.token.type === "native",
+            hidden: targetToken?.type === "native",
           },
         ]}
         activeKey={activeKey}
