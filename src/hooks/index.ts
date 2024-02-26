@@ -6,3 +6,4 @@ export * from "./use-transfer";
 export * from "./use-balances";
 export * from "./use-withdrawable-liquidities";
 export * from "./use-liquidity-withdraw-fee-params";
+export * from "./use-all-allowance";
