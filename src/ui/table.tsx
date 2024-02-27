@@ -7,6 +7,7 @@ export interface ColumnType<T> {
   title: ReactElement;
   key: Key;
   dataIndex?: keyof T;
+  hidden?: boolean;
   width?: string | number;
   align?: "left" | "center" | "right"; // TODO
   render?: (row: T) => ReactElement;
@@ -37,16 +38,18 @@ export default function Table<T extends { key: Key }>({
 }: Props<T>) {
   const templateCols = useMemo(
     () =>
-      columns.reduce((acc, cur) => {
-        const width =
-          typeof cur.width === "string" ? cur.width : typeof cur.width === "number" ? `${cur.width}px` : "1fr";
-        if (acc === "auto") {
-          acc = width;
-        } else {
-          acc = `${acc} ${width}`;
-        }
-        return acc;
-      }, "auto"),
+      columns
+        .filter(({ hidden }) => !hidden)
+        .reduce((acc, cur) => {
+          const width =
+            typeof cur.width === "string" ? cur.width : typeof cur.width === "number" ? `${cur.width}px` : "1fr";
+          if (acc === "auto") {
+            acc = width;
+          } else {
+            acc = `${acc} ${width}`;
+          }
+          return acc;
+        }, "auto"),
     [columns],
   );
 
@@ -57,9 +60,11 @@ export default function Table<T extends { key: Key }>({
         className="grid items-center gap-middle rounded-t-middle bg-component px-middle py-large text-sm font-extrabold text-white lg:px-large"
         style={{ gridTemplateColumns: templateCols }}
       >
-        {columns.map(({ key, title }) => (
-          <Fragment key={key}>{title}</Fragment>
-        ))}
+        {columns
+          .filter(({ hidden }) => !hidden)
+          .map(({ key, title }) => (
+            <Fragment key={key}>{title}</Fragment>
+          ))}
       </div>
 
       {/* body */}
@@ -81,15 +86,17 @@ export default function Table<T extends { key: Key }>({
                   style={{ gridTemplateColumns: templateCols }}
                   onClick={() => onRowClick && onRowClick(row.key, row)}
                 >
-                  {columns.map(({ key, dataIndex, render }) => (
-                    <Fragment key={key}>
-                      {render ? (
-                        render(row)
-                      ) : dataIndex ? (
-                        <span className="truncate">{`${row[dataIndex]}`}</span>
-                      ) : null}
-                    </Fragment>
-                  ))}
+                  {columns
+                    .filter(({ hidden }) => !hidden)
+                    .map(({ key, dataIndex, render }) => (
+                      <Fragment key={key}>
+                        {render ? (
+                          render(row)
+                        ) : dataIndex ? (
+                          <span className="truncate">{`${row[dataIndex]}`}</span>
+                        ) : null}
+                      </Fragment>
+                    ))}
                 </div>
               ))}
             </div>
