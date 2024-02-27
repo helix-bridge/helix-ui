@@ -1,18 +1,19 @@
-import { LnBridgeV3 } from "@/bridges";
 import { LnBridgeRelayerOverview, Token } from "@/types";
 import Tooltip from "@/ui/tooltip";
-import { formatBalance, getChainConfig } from "@/utils";
+import { bridgeFactory, formatBalance, getChainConfig } from "@/utils";
 import { useEffect, useState } from "react";
-import { from } from "rxjs";
+import { from, Subscription } from "rxjs";
 
 interface Props {
   record: LnBridgeRelayerOverview;
 }
 
-export default function RelayerPenalty({ record }: Props) {
-  const [penalty, setPenalty] = useState<{ token: Token; value: bigint } | null>();
+export default function RelayerBalance({ record }: Props) {
+  const [balance, setBalance] = useState<{ value: bigint; token: Token } | null>();
 
   useEffect(() => {
+    let sub$$: Subscription | undefined;
+
     const sourceChain = getChainConfig(record.fromChain);
     const targetChain = getChainConfig(record.toChain);
     const sourceToken = sourceChain?.tokens.find(
@@ -28,26 +29,28 @@ export default function RelayerPenalty({ record }: Props) {
             c.target.network === record.toChain,
         )?.target.symbol,
     );
-    const bridge = new LnBridgeV3({ category: "lnbridge", sourceChain, targetChain, sourceToken, targetToken });
+    const bridge = bridgeFactory({ category: record.bridge, sourceChain, targetChain, sourceToken, targetToken });
 
-    const sub$$ = from(bridge.getPenaltyReserves(record.relayer)).subscribe({
-      next: (res) => {
-        setPenalty(res);
-      },
-      error: (err) => {
-        console.error(err);
-        setPenalty(null);
-      },
-    });
+    if (bridge) {
+      sub$$ = from(bridge.getTargetBalance(record.relayer)).subscribe({
+        next: setBalance,
+        error: (err) => {
+          console.error(err);
+          setBalance(null);
+        },
+      });
+    } else {
+      setBalance(null);
+    }
 
     return () => {
-      sub$$.unsubscribe();
+      sub$$?.unsubscribe();
     };
   }, [record]);
 
-  return penalty ? (
-    <Tooltip content={formatBalance(penalty.value, penalty.token.decimals)} className="w-fit truncate">
-      {formatBalance(penalty.value, penalty.token.decimals)}
+  return balance ? (
+    <Tooltip content={formatBalance(balance.value, balance.token.decimals)} className="w-fit truncate">
+      {formatBalance(balance.value, balance.token.decimals)}
     </Tooltip>
   ) : (
     <span>-</span>

@@ -10,6 +10,7 @@ import RelayerManageModal from "./modals/relayer-manage-modal";
 import RelayerManageV3Modal from "./modals/relayer-manage-v3-modal";
 import RelayerAllowance from "./relayer-allowance";
 import RelayerPenalty from "./relayer-penalty";
+import RelayerBalance from "./relayer-balance";
 
 interface Props {
   bridgeVersion: LnBridgeVersion;
@@ -43,13 +44,13 @@ function getColumns(bridgeVersion: LnBridgeVersion, isDashboard?: boolean) {
       key: "from",
       title: <Title title="From" />,
       render: ({ fromChain }) => <FromTo network={fromChain} />,
-      width: isDashboard ? (bridgeVersion === "lnv3" ? "5%" : "7%") : "6%",
+      width: isDashboard ? (bridgeVersion === "lnv3" ? "4%" : "7%") : "6%",
     },
     {
       key: "to",
       title: <Title title="To" />,
       render: ({ toChain }) => <FromTo network={toChain} />,
-      width: isDashboard ? (bridgeVersion === "lnv3" ? "5%" : "7%") : "6%",
+      width: isDashboard ? (bridgeVersion === "lnv3" ? "4%" : "7%") : "6%",
     },
     {
       key: "token",
@@ -83,7 +84,7 @@ function getColumns(bridgeVersion: LnBridgeVersion, isDashboard?: boolean) {
           <span>-</span>
         );
       },
-      width: isDashboard ? "8%" : bridgeVersion === "lnv3" ? "9%" : "10%",
+      width: isDashboard ? "7%" : bridgeVersion === "lnv3" ? "9%" : "10%",
     },
     {
       key: "liquidity fee rate",
@@ -99,7 +100,7 @@ function getColumns(bridgeVersion: LnBridgeVersion, isDashboard?: boolean) {
         ) : (
           <span>-</span>
         ),
-      width: isDashboard ? "8%" : bridgeVersion === "lnv3" ? "10%" : "11%",
+      width: isDashboard ? "7%" : bridgeVersion === "lnv3" ? "10%" : "11%",
     },
   ];
 
@@ -118,7 +119,7 @@ function getColumns(bridgeVersion: LnBridgeVersion, isDashboard?: boolean) {
           <span>-</span>
         );
       },
-      width: isDashboard ? "8%" : bridgeVersion === "lnv3" ? "9%" : "12%",
+      width: isDashboard ? "7%" : bridgeVersion === "lnv3" ? "9%" : "12%",
     },
     {
       key: "cost",
@@ -131,7 +132,7 @@ function getColumns(bridgeVersion: LnBridgeVersion, isDashboard?: boolean) {
           <span>-</span>
         );
       },
-      width: isDashboard ? "7%" : bridgeVersion === "lnv3" ? "8%" : "10%",
+      width: isDashboard ? "6%" : bridgeVersion === "lnv3" ? "8%" : "10%",
     },
   ];
 
@@ -209,6 +210,11 @@ export default function RelayersTable({
           render: (row) => <RelayerAllowance record={row} />,
         },
         {
+          key: "balance",
+          title: <Title title="Balance" tips="Balance on target chain" />,
+          render: (row) => <RelayerBalance record={row} />,
+        },
+        {
           key: "status",
           title: <Title title="Status" />,
           render: ({ heartbeatTimestamp }) => {
@@ -220,7 +226,7 @@ export default function RelayersTable({
               </div>
             );
           },
-          width: "10%",
+          width: "7%",
         },
         {
           key: "action",

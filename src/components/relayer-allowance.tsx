@@ -1,4 +1,5 @@
 import { LnBridgeRelayerOverview, Token } from "@/types";
+import Tooltip from "@/ui/tooltip";
 import { bridgeFactory, formatBalance, getChainConfig } from "@/utils";
 import { useEffect, useState } from "react";
 import { from, Subscription } from "rxjs";
@@ -49,5 +50,11 @@ export default function RelayerAllowance({ record }: Props) {
     };
   }, [record]);
 
-  return <span className="truncate">{allowance ? formatBalance(allowance.value, allowance.token.decimals) : "-"}</span>;
+  return allowance ? (
+    <Tooltip content={formatBalance(allowance.value, allowance.token.decimals)} className="w-fit truncate">
+      {formatBalance(allowance.value, allowance.token.decimals)}
+    </Tooltip>
+  ) : (
+    <span>-</span>
+  );
 }
