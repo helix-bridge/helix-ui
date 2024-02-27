@@ -11,6 +11,7 @@ import RelayerManageV3Modal from "./modals/relayer-manage-v3-modal";
 import RelayerAllowance from "./relayer-allowance";
 import RelayerPenalty from "./relayer-penalty";
 import RelayerBalance from "./relayer-balance";
+import RelayerTotalLiquidity from "./relayer-total-liquidity";
 
 interface Props {
   bridgeVersion: LnBridgeVersion;
@@ -84,7 +85,7 @@ function getColumns(bridgeVersion: LnBridgeVersion, isDashboard?: boolean) {
           <span>-</span>
         );
       },
-      width: isDashboard ? "7%" : bridgeVersion === "lnv3" ? "9%" : "10%",
+      width: isDashboard ? (bridgeVersion === "lnv3" ? "6%" : "8%") : bridgeVersion === "lnv3" ? "9%" : "10%",
     },
     {
       key: "liquidity fee rate",
@@ -143,7 +144,7 @@ function getColumns(bridgeVersion: LnBridgeVersion, isDashboard?: boolean) {
           ...columns2,
           {
             key: "Transfer limit",
-            title: <Title title="Transfer Limit" />,
+            title: <Title title="Transfer Limit" tips="Transfer limit" />,
             render: ({ transferLimit, fromChain, sendToken }) => {
               const token = getChainConfig(fromChain)?.tokens.find(
                 (t) => t.address.toLowerCase() === sendToken?.toLowerCase(),
@@ -157,7 +158,7 @@ function getColumns(bridgeVersion: LnBridgeVersion, isDashboard?: boolean) {
                 <span>-</span>
               );
             },
-            width: "10%",
+            width: isDashboard ? "7%" : "9%",
           },
           {
             key: "penalty",
@@ -205,9 +206,17 @@ export default function RelayersTable({
     ? [
         ...getColumns(bridgeVersion, isDashboard),
         {
+          key: "liquidity",
+          title: <Title title="Liquidity" tips="Total withdrawable liquidity" />,
+          render: (row) => <RelayerTotalLiquidity record={row} />,
+          hidden: bridgeVersion === "lnv2",
+          width: "7%",
+        },
+        {
           key: "allowance",
           title: <Title title="Allowance" tips="Allowance on target chain" />,
           render: (row) => <RelayerAllowance record={row} />,
+          width: "7%",
         },
         {
           key: "balance",
@@ -216,17 +225,21 @@ export default function RelayersTable({
         },
         {
           key: "status",
-          title: <Title title="Status" />,
+          title: <Title title="Status" tips={bridgeVersion === "lnv3" ? "Relayer status" : undefined} />,
           render: ({ heartbeatTimestamp }) => {
             const isOnline = Date.now() - (heartbeatTimestamp ?? 0) * 1000 < 5 * 60 * 1000;
-            return (
+            return bridgeVersion === "lnv3" ? (
+              <Tooltip content={isOnline ? "Online" : "Offline"} className="w-fit">
+                <div className={`h-[6px] w-[6px] rounded-full ${isOnline ? "bg-app-green" : "bg-white/50"}`} />
+              </Tooltip>
+            ) : (
               <div className="flex items-center gap-small">
                 <div className={`h-[6px] w-[6px] rounded-full ${isOnline ? "bg-app-green" : "bg-white/50"}`} />
                 <span>{isOnline ? "Online" : "Offline"}</span>
               </div>
             );
           },
-          width: "7%",
+          width: bridgeVersion === "lnv3" ? "5%" : "7%",
         },
         {
           key: "action",
