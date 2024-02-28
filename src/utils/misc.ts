@@ -6,6 +6,8 @@ export function parseRecordResult(result: RecordResult) {
   switch (result) {
     case RecordResult.PENDING:
       return "Pending";
+    case RecordResult.PENDING_TO_CONFIRM_REFUND:
+      return "Refunding";
     case RecordResult.PENDING_TO_REFUND:
       return "Pending to Refund";
     case RecordResult.PENDING_TO_CLAIM:

@@ -30,6 +30,7 @@ export function bridgeFactory(args: BridgeConstructorArgs): BaseBridge | undefin
       return new HelixLpBridge(args);
     case "l2arbitrumbridge-ethereum":
       return new L2ArbitrumBridge(args);
+    case "xtoken-darwinia-dvm":
     case "xtoken-crab-dvm":
     case "xtoken-pangolin-dvm":
     case "xtoken-sepolia":

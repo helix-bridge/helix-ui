@@ -1,5 +1,7 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 
+const isProduction = process.env.NEXT_PUBLIC_APP_ENV === "production";
+
 export const crabChain: ChainConfig = {
   /**
    * Chain
@@ -54,8 +56,9 @@ export const crabChain: ChainConfig = {
         },
         {
           target: { network: "darwinia-dvm", symbol: "xWCRAB" },
-          bridge: { category: "helix-sub2subv21(lock)" },
+          bridge: { category: "xtoken-crab-dvm" },
           action: "issue",
+          hidden: isProduction,
         },
         // { target: { network: "sepolia", symbol: "xCRAB" }, bridge: { category: "xtoken-crab-dvm" }, action: "issue" },
       ],
@@ -71,8 +74,9 @@ export const crabChain: ChainConfig = {
         { target: { network: "darwinia-dvm", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         {
           target: { network: "darwinia-dvm", symbol: "RING" },
-          bridge: { category: "helix-sub2subv21(unlock)" },
+          bridge: { category: "xtoken-crab-dvm" },
           action: "redeem",
+          hidden: isProduction,
         },
       ],
     },

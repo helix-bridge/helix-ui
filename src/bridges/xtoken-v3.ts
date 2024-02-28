@@ -11,14 +11,21 @@ export class XTokenV3Bridge extends BaseBridge {
       horizontal: "helix-horizontal.svg",
       symbol: "helix-symbol.svg",
     };
-    this.name = "XTokenV3";
+    this.name = "xToken";
 
     this._initContract();
   }
 
   private _initContract() {
-    const backing = "0x94eAb0CB67AB7edaf9A280aCa097F70e4BD780ac";
-    const issuing = "0x371019523b25Ff4F26d977724f976566b08bf741";
+    let backing: Address = "0x94eAb0CB67AB7edaf9A280aCa097F70e4BD780ac";
+    let issuing: Address = "0x371019523b25Ff4F26d977724f976566b08bf741";
+    if (
+      (this.sourceChain?.network === "darwinia-dvm" && this.targetChain?.network === "crab-dvm") ||
+      (this.sourceChain?.network === "crab-dvm" && this.targetChain?.network === "darwinia-dvm")
+    ) {
+      backing = "0xFd626a860F4d4bDB94aF200c218ce62c9647c8b2";
+      issuing = "0xf16D9682C4883415aee6e78EB0D6ae3507014e42";
+    }
     this.initContractByBackingIssuing(backing, issuing);
   }
 

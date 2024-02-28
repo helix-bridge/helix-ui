@@ -1,6 +1,8 @@
 import { ChainConfig, ChainID } from "@/types/chain";
 import { parseUnits } from "viem";
 
+const isProduction = process.env.NEXT_PUBLIC_APP_ENV === "production";
+
 export const darwiniaChain: ChainConfig = {
   /**
    * Chain
@@ -53,8 +55,9 @@ export const darwiniaChain: ChainConfig = {
         { target: { network: "crab-dvm", symbol: "xWRING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         {
           target: { network: "crab-dvm", symbol: "xWRING" },
-          bridge: { category: "helix-sub2subv21(lock)" },
+          bridge: { category: "xtoken-darwinia-dvm" },
           action: "issue",
+          hidden: isProduction,
         },
         {
           target: { network: "ethereum", symbol: "RING" },
@@ -107,8 +110,9 @@ export const darwiniaChain: ChainConfig = {
         { target: { network: "crab-dvm", symbol: "CRAB" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         {
           target: { network: "crab-dvm", symbol: "CRAB" },
-          bridge: { category: "helix-sub2subv21(unlock)" },
+          bridge: { category: "xtoken-darwinia-dvm" },
           action: "redeem",
+          hidden: isProduction,
         },
       ],
     },
