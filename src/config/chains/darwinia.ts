@@ -57,11 +57,6 @@ export const darwiniaChain: ChainConfig = {
           action: "issue",
         },
         {
-          target: { network: "crab-dvm", symbol: "xWRING" },
-          bridge: { category: "helix-sub2subv21(lock)" },
-          action: "issue",
-        },
-        {
           target: { network: "ethereum", symbol: "RING" },
           bridge: { category: "lpbridge-darwinia-dvm" },
           action: "issue",
@@ -113,11 +108,6 @@ export const darwiniaChain: ChainConfig = {
         {
           target: { network: "crab-dvm", symbol: "CRAB" },
           bridge: { category: "xtoken-darwinia-dvm" },
-          action: "redeem",
-        },
-        {
-          target: { network: "crab-dvm", symbol: "CRAB" },
-          bridge: { category: "helix-sub2subv21(unlock)" },
           action: "redeem",
         },
       ],
