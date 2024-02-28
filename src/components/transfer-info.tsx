@@ -71,6 +71,7 @@ export default function TransferInfo({ fee, bridge, transferLimit: propTransferL
       {transferLimit ? (
         <Item
           label="Transfer Limit"
+          tips="Includes transaction fee"
           value={`${formatBalance(transferLimit.value, transferLimit.token.decimals)} ${transferLimit.token.symbol}`}
         />
       ) : null}
@@ -90,10 +91,17 @@ export default function TransferInfo({ fee, bridge, transferLimit: propTransferL
   );
 }
 
-function Item({ label, value }: { label: string; value: ReactElement | string | undefined }) {
+function Item({ label, value, tips }: { label: string; value: ReactElement | string | undefined; tips?: string }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-sm font-medium">{label}</span>
+      <div className="flex items-center gap-small">
+        <span className="text-sm font-medium">{label}</span>
+        {tips ? (
+          <Tooltip content={tips}>
+            <Image width={14} height={14} alt="Tips" src="/images/info.svg" />
+          </Tooltip>
+        ) : null}
+      </div>
       {typeof value === "string" ? <span className="text-sm font-medium">{value}</span> : value}
     </div>
   );
