@@ -53,6 +53,11 @@ export const darwiniaChain: ChainConfig = {
         { target: { network: "crab-dvm", symbol: "xWRING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         {
           target: { network: "crab-dvm", symbol: "xWRING" },
+          bridge: { category: "xtoken-darwinia-dvm" },
+          action: "issue",
+        },
+        {
+          target: { network: "crab-dvm", symbol: "xWRING" },
           bridge: { category: "helix-sub2subv21(lock)" },
           action: "issue",
         },
@@ -105,6 +110,11 @@ export const darwiniaChain: ChainConfig = {
       logo: "crab.svg",
       cross: [
         { target: { network: "crab-dvm", symbol: "CRAB" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
+        {
+          target: { network: "crab-dvm", symbol: "CRAB" },
+          bridge: { category: "xtoken-darwinia-dvm" },
+          action: "redeem",
+        },
         {
           target: { network: "crab-dvm", symbol: "CRAB" },
           bridge: { category: "helix-sub2subv21(unlock)" },
