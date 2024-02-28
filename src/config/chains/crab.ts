@@ -52,11 +52,12 @@ export const crabChain: ChainConfig = {
           target: { network: "darwinia-dvm", symbol: "xWCRAB" },
           bridge: { category: "lnbridge", lnv2Type: "default" },
         },
-        // {
-        //   target: { network: "darwinia-dvm", symbol: "xWCRAB" },
-        //   bridge: { category: "xtoken-crab-dvm" },
-        //   action: "issue",
-        // },
+        {
+          target: { network: "darwinia-dvm", symbol: "xWCRAB" },
+          bridge: { category: "xtoken-crab-dvm" },
+          action: "issue",
+          hidden: true,
+        },
         // { target: { network: "sepolia", symbol: "xCRAB" }, bridge: { category: "xtoken-crab-dvm" }, action: "issue" },
       ],
     },
@@ -69,11 +70,12 @@ export const crabChain: ChainConfig = {
       logo: "ring.svg",
       cross: [
         { target: { network: "darwinia-dvm", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        // {
-        //   target: { network: "darwinia-dvm", symbol: "RING" },
-        //   bridge: { category: "xtoken-crab-dvm" },
-        //   action: "redeem",
-        // },
+        {
+          target: { network: "darwinia-dvm", symbol: "RING" },
+          bridge: { category: "xtoken-crab-dvm" },
+          action: "redeem",
+          hidden: true,
+        },
       ],
     },
   ],
