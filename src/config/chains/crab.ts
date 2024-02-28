@@ -1,4 +1,5 @@
 import { ChainConfig, ChainID } from "@/types/chain";
+import { isProduction } from "@/utils";
 
 export const crabChain: ChainConfig = {
   /**
@@ -56,6 +57,7 @@ export const crabChain: ChainConfig = {
           target: { network: "darwinia-dvm", symbol: "xWCRAB" },
           bridge: { category: "xtoken-crab-dvm" },
           action: "issue",
+          hidden: isProduction(),
         },
         // { target: { network: "sepolia", symbol: "xCRAB" }, bridge: { category: "xtoken-crab-dvm" }, action: "issue" },
       ],
@@ -73,6 +75,7 @@ export const crabChain: ChainConfig = {
           target: { network: "darwinia-dvm", symbol: "RING" },
           bridge: { category: "xtoken-crab-dvm" },
           action: "redeem",
+          hidden: isProduction(),
         },
       ],
     },
