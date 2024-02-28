@@ -7,7 +7,7 @@ export function parseRecordResult(result: RecordResult) {
     case RecordResult.PENDING:
       return "Pending";
     case RecordResult.PENDING_TO_CONFIRM_REFUND:
-      return "Pending to confirm refund";
+      return "Refunding";
     case RecordResult.PENDING_TO_REFUND:
       return "Pending to Refund";
     case RecordResult.PENDING_TO_CLAIM:
