@@ -11,7 +11,7 @@ export class XTokenV3Bridge extends BaseBridge {
       horizontal: "helix-horizontal.svg",
       symbol: "helix-symbol.svg",
     };
-    this.name = "XTokenV3";
+    this.name = "xToken";
 
     this._initContract();
   }
