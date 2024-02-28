@@ -1,6 +1,7 @@
 import { ChainConfig, ChainID } from "@/types/chain";
-import { isProduction } from "@/utils";
 import { parseUnits } from "viem";
+
+const isProduction = process.env.NEXT_PUBLIC_APP_ENV === "production";
 
 export const darwiniaChain: ChainConfig = {
   /**
@@ -56,7 +57,7 @@ export const darwiniaChain: ChainConfig = {
           target: { network: "crab-dvm", symbol: "xWRING" },
           bridge: { category: "xtoken-darwinia-dvm" },
           action: "issue",
-          hidden: isProduction(),
+          hidden: isProduction,
         },
         {
           target: { network: "ethereum", symbol: "RING" },
@@ -111,7 +112,7 @@ export const darwiniaChain: ChainConfig = {
           target: { network: "crab-dvm", symbol: "CRAB" },
           bridge: { category: "xtoken-darwinia-dvm" },
           action: "redeem",
-          hidden: isProduction(),
+          hidden: isProduction,
         },
       ],
     },
