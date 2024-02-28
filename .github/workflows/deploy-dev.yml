@@ -26,6 +26,7 @@ jobs:
           project_name: "helix-apps"
           script_run: false
           dist_path: .
+          enable_notify_comment: true
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
@@ -40,6 +41,7 @@ jobs:
           project_name: "helix-apps-test"
           script_run: false
           dist_path: .
+          enable_notify_comment: true
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
