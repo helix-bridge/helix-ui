@@ -87,17 +87,19 @@ export default function Transfer() {
 
   const transferable = useMemo(() => {
     let result: bigint | undefined;
-    const transferLimit = relayersData?.sortedLnBridgeRelayInfos?.transferLimit;
+    let fee = 0n;
+    const transferLimit = BigInt(relayersData?.sortedLnBridgeRelayInfos?.transferLimit ?? 0);
 
     if (sourceBalance) {
       const { token, value: balance } = sourceBalance;
       result = result === undefined ? balance : result < balance ? result : balance;
       if (bridgeFee?.token.symbol === token.symbol) {
-        result = bridgeFee.value < result ? result - bridgeFee.value : 0n;
+        fee = bridgeFee.value;
+        result = fee < result ? result - fee : 0n;
       }
     }
     if (transferLimit) {
-      const mm = BigInt(transferLimit);
+      const mm = fee < transferLimit ? transferLimit - fee : 0n;
       result = result === undefined ? mm : result < mm ? result : mm;
     }
     if (result !== undefined) {
@@ -314,7 +316,6 @@ export default function Transfer() {
             placeholder="0"
             enabledDynamicStyle
             balance={sourceBalance?.value}
-            max={transferable}
             value={transferAmount}
             token={sourceToken}
             balanceLoading={balanceLoading}
