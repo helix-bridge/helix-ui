@@ -45,13 +45,13 @@ function getColumns(bridgeVersion: LnBridgeVersion, isDashboard?: boolean) {
       key: "from",
       title: <Title title="From" />,
       render: ({ fromChain }) => <FromTo network={fromChain} />,
-      width: isDashboard ? (bridgeVersion === "lnv3" ? "4%" : "7%") : "6%",
+      width: isDashboard ? (bridgeVersion === "lnv3" ? "4%" : "6%") : "6%",
     },
     {
       key: "to",
       title: <Title title="To" />,
       render: ({ toChain }) => <FromTo network={toChain} />,
-      width: isDashboard ? (bridgeVersion === "lnv3" ? "4%" : "7%") : "6%",
+      width: isDashboard ? (bridgeVersion === "lnv3" ? "4%" : "6%") : "6%",
     },
     {
       key: "token",
@@ -133,7 +133,7 @@ function getColumns(bridgeVersion: LnBridgeVersion, isDashboard?: boolean) {
           <span>-</span>
         );
       },
-      width: isDashboard ? "6%" : bridgeVersion === "lnv3" ? "8%" : "10%",
+      width: isDashboard ? "6%" : bridgeVersion === "lnv3" ? "8%" : "11%",
     },
   ];
 
@@ -144,7 +144,7 @@ function getColumns(bridgeVersion: LnBridgeVersion, isDashboard?: boolean) {
           ...columns2,
           {
             key: "Transfer limit",
-            title: <Title title="Transfer Limit" tips="Transfer limit" />,
+            title: <Title title="Transfer Limit" />,
             render: ({ transferLimit, fromChain, sendToken }) => {
               const token = getChainConfig(fromChain)?.tokens.find(
                 (t) => t.address.toLowerCase() === sendToken?.toLowerCase(),
@@ -158,7 +158,7 @@ function getColumns(bridgeVersion: LnBridgeVersion, isDashboard?: boolean) {
                 <span>-</span>
               );
             },
-            width: isDashboard ? "7%" : "9%",
+            width: isDashboard ? "7%" : "10%",
           },
           {
             key: "penalty",
@@ -225,14 +225,10 @@ export default function RelayersTable({
         },
         {
           key: "status",
-          title: <Title title="Status" tips={bridgeVersion === "lnv3" ? "Relayer status" : undefined} />,
+          title: <Title title="Status" />,
           render: ({ heartbeatTimestamp }) => {
             const isOnline = Date.now() - (heartbeatTimestamp ?? 0) * 1000 < 5 * 60 * 1000;
-            return bridgeVersion === "lnv3" ? (
-              <Tooltip content={isOnline ? "Online" : "Offline"} className="w-fit">
-                <div className={`h-[6px] w-[6px] rounded-full ${isOnline ? "bg-app-green" : "bg-white/50"}`} />
-              </Tooltip>
-            ) : (
+            return (
               <div className="flex items-center gap-small">
                 <div className={`h-[6px] w-[6px] rounded-full ${isOnline ? "bg-app-green" : "bg-white/50"}`} />
                 <span>{isOnline ? "Online" : "Offline"}</span>
@@ -266,7 +262,7 @@ export default function RelayersTable({
               <PrettyAddress address={relayer} forceShort copyable />
             </div>
           ),
-          width: "11%",
+          width: "12%",
         },
         ...getColumns(bridgeVersion, isDashboard),
         {
@@ -285,8 +281,17 @@ export default function RelayersTable({
       ];
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto rounded-middle" style={{ scrollbarWidth: "none" }}>
       <Table
+        className={
+          isDashboard
+            ? bridgeVersion === "lnv3"
+              ? "min-w-[86rem]"
+              : "min-w-[76rem]"
+            : bridgeVersion === "lnv3"
+            ? "min-w-[72rem]"
+            : "min-w-[68rem]"
+        }
         columns={columns}
         dataSource={records.map((item) => ({ ...item, key: item.id }))}
         loading={loading}

@@ -17,6 +17,7 @@ interface Props<T> {
   dataSource: T[];
   columns: ColumnType<T>[];
   loading?: boolean;
+  className?: string;
   onRowClick?: (key: Key, row: T) => void;
 
   // pagination
@@ -30,6 +31,7 @@ export default function Table<T extends { key: Key }>({
   total,
   columns,
   loading,
+  className,
   dataSource,
   pageSize,
   currentPage,
@@ -54,7 +56,7 @@ export default function Table<T extends { key: Key }>({
   );
 
   return (
-    <div className="min-w-[56rem] overflow-x-auto">
+    <div className={`${className} overflow-x-auto`}>
       {/* header */}
       <div
         className="grid items-center gap-middle rounded-t-middle bg-component px-middle py-large text-sm font-extrabold text-white lg:px-large"
@@ -74,9 +76,9 @@ export default function Table<T extends { key: Key }>({
 
         {/* content */}
         {dataSource.length ? (
-          <div className="">
+          <div>
             {/* data source */}
-            <div className="mb-middle rounded-b-middle bg-inner">
+            <div className="rounded-b-middle bg-inner">
               {dataSource.map((row) => (
                 <div
                   key={row.key}
@@ -103,7 +105,13 @@ export default function Table<T extends { key: Key }>({
 
             {/* pagination */}
             {total !== undefined && currentPage !== undefined && (
-              <Pagination total={total} pageSize={pageSize} currentPage={currentPage} onChange={onPageChange} />
+              <Pagination
+                className="mt-middle"
+                total={total}
+                pageSize={pageSize}
+                currentPage={currentPage}
+                onChange={onPageChange}
+              />
             )}
           </div>
         ) : (

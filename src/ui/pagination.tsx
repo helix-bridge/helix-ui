@@ -1,18 +1,25 @@
 import Image from "next/image";
 
 interface Props {
+  className?: string;
   total: number;
   currentPage: number;
   pageSize?: number;
   onChange?: (page: number) => void;
 }
 
-export default function Pagination({ total, currentPage, pageSize = 10, onChange = () => undefined }: Props) {
+export default function Pagination({
+  className,
+  total,
+  currentPage,
+  pageSize = 10,
+  onChange = () => undefined,
+}: Props) {
   const totalPages = Math.ceil(total / pageSize);
 
   return (
     totalPages > 1 && (
-      <div className="flex items-center justify-end gap-small">
+      <div className={`${className} flex items-center justify-end gap-small`}>
         <PageButton page="previous" disabled={currentPage === 0} onClick={() => onChange(currentPage - 1)} />
         {createPageOptions(totalPages, currentPage, onChange)}
         <PageButton page="next" disabled={currentPage + 1 === totalPages} onClick={() => onChange(currentPage + 1)} />
