@@ -281,7 +281,7 @@ export default function RelayersTable({
       ];
 
   return (
-    <div className="overflow-x-auto rounded-middle" style={{ scrollbarWidth: "none" }}>
+    <>
       <Table
         className={
           isDashboard
@@ -317,7 +317,7 @@ export default function RelayersTable({
             onSuccess={onRefetch}
           />
         ))}
-    </div>
+    </>
   );
 }
 
