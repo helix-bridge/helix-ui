@@ -55,7 +55,6 @@ export const darwiniaChain: ChainConfig = {
           target: { network: "crab-dvm", symbol: "xWRING" },
           bridge: { category: "xtoken-darwinia-dvm" },
           action: "issue",
-          hidden: true,
         },
         {
           target: { network: "ethereum", symbol: "RING" },
@@ -110,7 +109,6 @@ export const darwiniaChain: ChainConfig = {
           target: { network: "crab-dvm", symbol: "CRAB" },
           bridge: { category: "xtoken-darwinia-dvm" },
           action: "redeem",
-          hidden: true,
         },
       ],
     },
