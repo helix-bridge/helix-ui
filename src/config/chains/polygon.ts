@@ -32,6 +32,7 @@ export const polygonChain: ChainConfig = {
       logo: "ring.svg",
       cross: [
         { target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
+        { target: { network: "darwinia-dvm", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
     },
     {
