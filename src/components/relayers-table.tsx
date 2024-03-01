@@ -8,6 +8,10 @@ import { useState } from "react";
 import PrettyAddress from "./pretty-address";
 import RelayerManageModal from "./modals/relayer-manage-modal";
 import RelayerManageV3Modal from "./modals/relayer-manage-v3-modal";
+import RelayerAllowance from "./relayer-allowance";
+import RelayerPenalty from "./relayer-penalty";
+import RelayerBalance from "./relayer-balance";
+import RelayerTotalLiquidity from "./relayer-total-liquidity";
 
 interface Props {
   bridgeVersion: LnBridgeVersion;
@@ -25,7 +29,7 @@ interface DataSource extends LnBridgeRelayerOverview {
   key: string;
 }
 
-function getColumns(bridgeVersion: LnBridgeVersion) {
+function getColumns(bridgeVersion: LnBridgeVersion, isDashboard?: boolean) {
   const columns1: ColumnType<DataSource>[] = [
     // {
     //   key: "bridge type",
@@ -41,13 +45,13 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
       key: "from",
       title: <Title title="From" />,
       render: ({ fromChain }) => <FromTo network={fromChain} />,
-      width: "8%",
+      width: isDashboard ? (bridgeVersion === "lnv3" ? "4%" : "6%") : "6%",
     },
     {
       key: "to",
       title: <Title title="To" />,
       render: ({ toChain }) => <FromTo network={toChain} />,
-      width: "8%",
+      width: isDashboard ? (bridgeVersion === "lnv3" ? "4%" : "6%") : "6%",
     },
     {
       key: "token",
@@ -65,7 +69,7 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
           <span>-</span>
         );
       },
-      width: "8%",
+      width: isDashboard ? (bridgeVersion === "lnv3" ? "5%" : "7%") : "6%",
     },
     {
       key: "base fee",
@@ -81,7 +85,7 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
           <span>-</span>
         );
       },
-      width: "10%",
+      width: isDashboard ? (bridgeVersion === "lnv3" ? "6%" : "8%") : bridgeVersion === "lnv3" ? "9%" : "10%",
     },
     {
       key: "liquidity fee rate",
@@ -97,7 +101,7 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
         ) : (
           <span>-</span>
         ),
-      width: "8%",
+      width: isDashboard ? "7%" : bridgeVersion === "lnv3" ? "10%" : "11%",
     },
   ];
 
@@ -116,7 +120,7 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
           <span>-</span>
         );
       },
-      width: "10%",
+      width: isDashboard ? "7%" : bridgeVersion === "lnv3" ? "9%" : "12%",
     },
     {
       key: "cost",
@@ -129,7 +133,7 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
           <span>-</span>
         );
       },
-      width: "8%",
+      width: isDashboard ? "6%" : bridgeVersion === "lnv3" ? "8%" : "11%",
     },
   ];
 
@@ -154,7 +158,12 @@ function getColumns(bridgeVersion: LnBridgeVersion) {
                 <span>-</span>
               );
             },
-            width: "10%",
+            width: isDashboard ? "7%" : "10%",
+          },
+          {
+            key: "penalty",
+            title: <Title title="Penalty" />,
+            render: (row) => <RelayerPenalty record={row} />,
           },
         ]
       : [
@@ -195,7 +204,25 @@ export default function RelayersTable({
 
   const columns: ColumnType<DataSource>[] = isDashboard
     ? [
-        ...getColumns(bridgeVersion),
+        ...getColumns(bridgeVersion, isDashboard),
+        {
+          key: "liquidity",
+          title: <Title title="Liquidity" tips="Total withdrawable liquidity" />,
+          render: (row) => <RelayerTotalLiquidity record={row} />,
+          hidden: bridgeVersion === "lnv2",
+          width: "7%",
+        },
+        {
+          key: "allowance",
+          title: <Title title="Allowance" tips="Allowance on target chain" />,
+          render: (row) => <RelayerAllowance record={row} />,
+          width: "7%",
+        },
+        {
+          key: "balance",
+          title: <Title title="Balance" tips="Balance on target chain" />,
+          render: (row) => <RelayerBalance record={row} />,
+        },
         {
           key: "status",
           title: <Title title="Status" />,
@@ -208,7 +235,7 @@ export default function RelayersTable({
               </div>
             );
           },
-          width: "10%",
+          width: bridgeVersion === "lnv3" ? "5%" : "7%",
         },
         {
           key: "action",
@@ -235,9 +262,9 @@ export default function RelayersTable({
               <PrettyAddress address={relayer} forceShort copyable />
             </div>
           ),
-          width: "10%",
+          width: "12%",
         },
-        ...getColumns(bridgeVersion),
+        ...getColumns(bridgeVersion, isDashboard),
         {
           key: "status",
           title: <Title title="Status" className="justify-end" />,
@@ -254,8 +281,17 @@ export default function RelayersTable({
       ];
 
   return (
-    <div className="overflow-x-auto">
+    <>
       <Table
+        className={
+          isDashboard
+            ? bridgeVersion === "lnv3"
+              ? "min-w-[86rem]"
+              : "min-w-[76rem]"
+            : bridgeVersion === "lnv3"
+            ? "min-w-[72rem]"
+            : "min-w-[68rem]"
+        }
         columns={columns}
         dataSource={records.map((item) => ({ ...item, key: item.id }))}
         loading={loading}
@@ -281,7 +317,7 @@ export default function RelayersTable({
             onSuccess={onRefetch}
           />
         ))}
-    </div>
+    </>
   );
 }
 

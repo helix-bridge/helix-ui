@@ -109,6 +109,7 @@ export default function RecordsTable({
 
   return (
     <Table
+      className="min-w-[56rem]"
       columns={columns}
       dataSource={dataSource}
       loading={loading}

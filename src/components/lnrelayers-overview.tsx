@@ -54,7 +54,7 @@ export default function LnRelayersOverview({ bridgeVersion }: Props) {
   }, [loading, data]);
 
   return (
-    <div className="container mx-auto">
+    <div>
       <div className="mb-5 flex flex-col items-start justify-between gap-middle lg:flex-row lg:items-center">
         <Search
           className="w-full lg:w-[21.5rem]"
