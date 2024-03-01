@@ -51,7 +51,7 @@ export default function RelayerAllowance({ record }: Props) {
   }, [record]);
 
   return allowance ? (
-    <Tooltip content={formatBalance(allowance.value, allowance.token.decimals)} className="w-fit truncate">
+    <Tooltip content={formatBalance(allowance.value, allowance.token.decimals)} className="w-fit max-w-full truncate">
       {formatBalance(allowance.value, allowance.token.decimals)}
     </Tooltip>
   ) : (

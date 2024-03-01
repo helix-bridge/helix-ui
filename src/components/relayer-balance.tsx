@@ -49,7 +49,7 @@ export default function RelayerBalance({ record }: Props) {
   }, [record]);
 
   return balance ? (
-    <Tooltip content={formatBalance(balance.value, balance.token.decimals)} className="w-fit truncate">
+    <Tooltip content={formatBalance(balance.value, balance.token.decimals)} className="w-fit max-w-full truncate">
       {formatBalance(balance.value, balance.token.decimals)}
     </Tooltip>
   ) : (

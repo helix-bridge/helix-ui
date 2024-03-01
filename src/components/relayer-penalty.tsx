@@ -46,7 +46,7 @@ export default function RelayerPenalty({ record }: Props) {
   }, [record]);
 
   return penalty ? (
-    <Tooltip content={formatBalance(penalty.value, penalty.token.decimals)} className="w-fit truncate">
+    <Tooltip content={formatBalance(penalty.value, penalty.token.decimals)} className="w-fit max-w-full truncate">
       {formatBalance(penalty.value, penalty.token.decimals)}
     </Tooltip>
   ) : (

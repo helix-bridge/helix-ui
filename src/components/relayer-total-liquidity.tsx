@@ -41,7 +41,7 @@ export default function RelayerTotalLiquidity({ record }: Props) {
 function DisplayLiquidity({ data, token }: { data: { sendAmount: string }[]; token: Token }) {
   const total = data.reduce((acc, cur) => acc + BigInt(cur.sendAmount), 0n);
   return (
-    <Tooltip content={formatBalance(total, token.decimals)} className="w-fit truncate">
+    <Tooltip content={formatBalance(total, token.decimals)} className="w-fit max-w-full truncate">
       {formatBalance(total, token.decimals)}
     </Tooltip>
   );
