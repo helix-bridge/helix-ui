@@ -70,7 +70,10 @@ export const darwiniaChain: ChainConfig = {
           bridge: { category: "helix-sub2ethv2(lock)" },
           action: "issue",
         },
-        { target: { network: "polygon", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
+        {
+          target: { network: "polygon", symbol: "RING" },
+          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
+        },
       ],
     },
     // {

@@ -50,7 +50,7 @@ enum Step {
 }
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
-const { defaultSourceChains, defaultTargetChains } = getLnBridgeCrossDefaultValue();
+const { defaultSourceChains, defaultTargetChains } = getLnBridgeCrossDefaultValue(true);
 
 export default function RelayerRegister() {
   const {
@@ -168,7 +168,7 @@ export default function RelayerRegister() {
                   <ChainSelect
                     compact
                     className="bg-inner px-middle py-middle"
-                    options={getLnBridgeAvailableTargetChains(sourceChain, defaultTargetChains)}
+                    options={getLnBridgeAvailableTargetChains(sourceChain, defaultTargetChains, true)}
                     placeholder="Target chain"
                     value={targetChain}
                     onChange={(value) => {
@@ -182,8 +182,8 @@ export default function RelayerRegister() {
               <LabelItem label="Token">
                 <TokenSelect
                   className="bg-inner px-middle py-middle"
-                  disabled={!getLnBridgeAvailableSourceTokens(sourceChain, targetChain).length}
-                  options={getLnBridgeAvailableSourceTokens(sourceChain, targetChain)}
+                  disabled={!getLnBridgeAvailableSourceTokens(sourceChain, targetChain, [], true).length}
+                  options={getLnBridgeAvailableSourceTokens(sourceChain, targetChain, [], true)}
                   placeholder="Select token"
                   value={sourceToken}
                   onChange={setSourceToken}
