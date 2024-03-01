@@ -1,6 +1,6 @@
 {
-  "name": "helix-ui",
-  "description": "Helix UI",
+  "name": "helix-xtoken-ui",
+  "description": "Helix xToken UI",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3030",
@@ -17,18 +17,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/helix-bridge/helix-ui.git"
+    "url": "git+https://github.com/helix-bridge/helix-xtoken-ui.git"
   },
   "keywords": [
     "helix",
-    "helix-ui",
+    "helix-xtoken",
     "helixbridge"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/helix-bridge/helix-ui/issues"
+    "url": "https://github.com/helix-bridge/helix-xtoken-ui/issues"
   },
-  "homepage": "https://github.com/helix-bridge/helix-ui#readme",
+  "homepage": "https://github.com/helix-bridge/helix-xtoken-ui#readme",
   "dependencies": {
     "@apollo/client": "^3.8.2",
     "@floating-ui/react": "^0.25.2",
