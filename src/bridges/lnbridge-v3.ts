@@ -201,7 +201,7 @@ export class LnBridgeV3 extends LnBridgeBase {
         const message = encodeFunctionData({
           abi: (await import("@/abi/lnbridge-v3")).default,
           functionName: "withdrawLiquidity",
-          args: [transferIds, BigInt(this.sourceChain.id), relayer],
+          args: [transferIds, BigInt(this.targetChain.id), relayer],
         });
         const feeAndParams = await this._getMsglineFeeAndParams(
           message,

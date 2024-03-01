@@ -33,8 +33,12 @@ let availableBridges: AvailableBridges = {};
  */
 let lnbridgeDefaultSourceChains: ChainConfig[] = [];
 let lnbridgeDefaultTargetChains: ChainConfig[] = [];
+let lnbridgeV2DefaultSourceChains: ChainConfig[] = [];
+let lnbridgeV2DefaultTargetChains: ChainConfig[] = [];
 let lnbridgeAvailableSourceTokens: AvailableSourceTokens = {};
 let lnbridgeAvailableTargetChains: AvailableTargetChains = {};
+let lnbridgeV2AvailableSourceTokens: AvailableSourceTokens = {};
+let lnbridgeV2AvailableTargetChains: AvailableTargetChains = {};
 
 getChainConfigs().forEach((sourceChain) => {
   let sourceTokens: Token[] = [];
@@ -122,6 +126,35 @@ getChainConfigs().forEach((sourceChain) => {
               .filter((c) => c.id !== targetChain.id)
               .concat(targetChain),
           };
+
+          if (!cross.bridge.disableV2) {
+            lnbridgeV2DefaultSourceChains = lnbridgeV2DefaultSourceChains
+              .filter((c) => c.id != sourceChain.id)
+              .concat(sourceChain);
+
+            lnbridgeV2DefaultTargetChains = lnbridgeV2DefaultTargetChains
+              .filter((c) => c.id !== targetChain.id)
+              .concat(targetChain);
+
+            lnbridgeV2AvailableSourceTokens = {
+              ...lnbridgeV2AvailableSourceTokens,
+              [sourceChain.network]: {
+                ...lnbridgeV2AvailableSourceTokens[sourceChain.network],
+                [targetChain.network]: (
+                  lnbridgeV2AvailableSourceTokens[sourceChain.network]?.[targetChain.network] || []
+                )
+                  .filter((t) => t.symbol !== sourceToken.symbol)
+                  .concat(sourceToken),
+              },
+            };
+
+            lnbridgeV2AvailableTargetChains = {
+              ...lnbridgeV2AvailableTargetChains,
+              [sourceChain.network]: (lnbridgeV2AvailableTargetChains[sourceChain.network] || [])
+                .filter((c) => c.id !== targetChain.id)
+                .concat(targetChain),
+            };
+          }
         }
       }
     });
@@ -222,19 +255,22 @@ export function getAvailableTargetTokens(
   return defaultTokens;
 }
 
-export function getLnBridgeCrossDefaultValue() {
-  return { defaultSourceChains: lnbridgeDefaultSourceChains, defaultTargetChains: lnbridgeDefaultTargetChains };
+export function getLnBridgeCrossDefaultValue(isV2?: boolean) {
+  return {
+    defaultSourceChains: isV2 ? lnbridgeV2DefaultSourceChains : lnbridgeDefaultSourceChains,
+    defaultTargetChains: isV2 ? lnbridgeV2DefaultTargetChains : lnbridgeDefaultTargetChains,
+  };
 }
 
 export function getLnBridgeAvailableSourceTokens(
   sourceChain: ChainConfig | undefined,
   targetChain: ChainConfig | undefined,
   defaultTokens: Token[] = [],
+  isV2?: boolean,
 ) {
   if (sourceChain && targetChain) {
-    const result = (lnbridgeAvailableSourceTokens[sourceChain.network]?.[targetChain.network] || []).sort(
-      tokenCompareFn,
-    );
+    const availabledSrcTokens = isV2 ? lnbridgeV2AvailableSourceTokens : lnbridgeAvailableSourceTokens;
+    const result = (availabledSrcTokens[sourceChain.network]?.[targetChain.network] || []).sort(tokenCompareFn);
     return result.length ? result : defaultTokens;
   }
   return defaultTokens;
@@ -243,9 +279,11 @@ export function getLnBridgeAvailableSourceTokens(
 export function getLnBridgeAvailableTargetChains(
   sourceChain: ChainConfig | undefined,
   defaultChains: ChainConfig[] = [],
+  isV2?: boolean,
 ) {
   if (sourceChain) {
-    const result = (lnbridgeAvailableTargetChains[sourceChain.network] || []).sort(chainCompareFn);
+    const availableTarChains = isV2 ? lnbridgeV2AvailableTargetChains : lnbridgeAvailableTargetChains;
+    const result = (availableTarChains[sourceChain.network] || []).sort(chainCompareFn);
     return result.length ? result : defaultChains;
   }
   return defaultChains;
