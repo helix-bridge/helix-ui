@@ -33,11 +33,11 @@ export default function Header() {
   return (
     <>
       <div className="app-header fixed left-0 top-0 z-10 w-full border-b border-b-white/25 bg-app-bg lg:border-b-transparent">
-        <div className="mx-auto flex h-full max-w-8xl items-center justify-between px-middle">
+        <div className="mx-auto flex h-full max-w-8xl items-center justify-between px-medium">
           {/* Left */}
           <div className="flex items-center gap-5">
             {/* Logo */}
-            <div className="flex items-center gap-middle">
+            <div className="flex items-center gap-medium">
               <Link href="/">
                 <Image width={90} height={25} alt="Logo" src="/images/logo.svg" />
               </Link>
@@ -49,7 +49,7 @@ export default function Header() {
             </div>
 
             {/* Navigations */}
-            <div className="hidden items-center gap-middle lg:flex">
+            <div className="hidden items-center gap-medium lg:flex">
               {navigationsConfig.map(({ href, label, external, soon, disabled }) =>
                 external ? (
                   <a
@@ -57,7 +57,7 @@ export default function Header() {
                     target="_blank"
                     href={href}
                     key={label}
-                    className={`rounded-middle px-3 py-1 text-base font-bold transition hover:bg-white/10 active:translate-y-1 ${
+                    className={`rounded-medium px-3 py-1 text-base font-bold transition hover:bg-white/10 active:translate-y-1 ${
                       pathname === href ? "text-primary underline" : "text-white"
                     }`}
                   >
@@ -65,13 +65,13 @@ export default function Header() {
                   </a>
                 ) : soon || disabled ? (
                   <Tooltip key={label} content={soon ? "Coming soon" : "This feature is temporarily under maintenance"}>
-                    <span className="rounded-middle px-3 py-1 text-base font-bold text-white/50">{label}</span>
+                    <span className="rounded-medium px-3 py-1 text-base font-bold text-white/50">{label}</span>
                   </Tooltip>
                 ) : (
                   <Link
                     key={label}
                     href={href}
-                    className={`rounded-middle px-3 py-1 text-base font-bold transition-all hover:bg-white/10 active:translate-y-1 ${
+                    className={`rounded-medium px-3 py-1 text-base font-bold transition-all hover:bg-white/10 active:translate-y-1 ${
                       pathname === href ? "text-primary underline underline-offset-8" : "text-white"
                     }`}
                   >
@@ -83,7 +83,7 @@ export default function Header() {
           </div>
 
           {/* Right */}
-          <div className="hidden items-center gap-middle lg:flex">
+          <div className="hidden items-center gap-medium lg:flex">
             <ChainIdentity />
             <HistoryNav />
             <User placement="bottom-end" prefixLength={14} suffixLength={10} />

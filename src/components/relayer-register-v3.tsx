@@ -163,11 +163,11 @@ export default function RelayerRegisterV3() {
           <Divider />
           {currentStep === Step.ONE && (
             <>
-              <div className="flex items-center gap-middle lg:gap-5">
+              <div className="flex items-center gap-medium lg:gap-5">
                 <Label text="From" className="flex-1">
                   <ChainSelect
                     compact
-                    className="bg-inner px-middle py-middle"
+                    className="bg-inner px-medium py-medium"
                     options={defaultSourceChains}
                     placeholder="Source chain"
                     value={sourceChain}
@@ -181,7 +181,7 @@ export default function RelayerRegisterV3() {
                 <Label text="To" className="flex-1">
                   <ChainSelect
                     compact
-                    className="bg-inner px-middle py-middle"
+                    className="bg-inner px-medium py-medium"
                     options={getLnBridgeAvailableTargetChains(sourceChain, defaultTargetChains)}
                     placeholder="Target chain"
                     value={targetChain}
@@ -194,7 +194,7 @@ export default function RelayerRegisterV3() {
               </div>
               <Label text="Token">
                 <TokenSelect
-                  className="bg-inner px-middle py-middle"
+                  className="bg-inner px-medium py-medium"
                   disabled={!getLnBridgeAvailableSourceTokens(sourceChain, targetChain).length}
                   options={getLnBridgeAvailableSourceTokens(sourceChain, targetChain)}
                   placeholder="Select token"
@@ -208,7 +208,7 @@ export default function RelayerRegisterV3() {
                   address ? setCurrentStep(Step.ONE_SUMMARY) : openConnectModal?.();
                 }}
                 kind="primary"
-                className="flex h-9 items-center justify-center rounded-middle"
+                className="flex h-9 items-center justify-center rounded-medium"
                 disabled={!sourceToken}
               >
                 <span className="text-base font-normal text-white">{address ? "Confirm" : "Connect Wallet"}</span>
@@ -239,14 +239,14 @@ export default function RelayerRegisterV3() {
                     setFeeRateInput(numberInputDefaultValue);
                     setIsRegistered(false);
                   }}
-                  className="flex h-9 flex-1 items-center justify-center rounded-middle"
+                  className="flex h-9 flex-1 items-center justify-center rounded-medium"
                 >
                   <span className="text-base font-normal">Reset</span>
                 </Button>
                 <Button
                   kind="primary"
                   onClick={() => setCurrentStep(Step.TWO)}
-                  className="flex h-9 flex-1 items-center justify-center rounded-middle"
+                  className="flex h-9 flex-1 items-center justify-center rounded-medium"
                   disabled={currentStep !== Step.ONE_SUMMARY}
                 >
                   <span className="text-base font-normal">Next</span>
@@ -305,7 +305,7 @@ export default function RelayerRegisterV3() {
                     ))
                 }
                 busy={isRegistering}
-                className="flex h-9 items-center justify-center rounded-middle"
+                className="flex h-9 items-center justify-center rounded-medium"
                 onClick={handleRegister}
               >
                 <span className="text-base font-normal">
@@ -325,7 +325,7 @@ export default function RelayerRegisterV3() {
               {/* Deposit */}
               <Button
                 kind="primary"
-                className="flex h-9 items-center justify-center rounded-middle"
+                className="flex h-9 items-center justify-center rounded-medium"
                 disabled={
                   !isRegistered ||
                   (sourceChain?.id === chain?.id && !(penaltyReserveInput.input && penaltyReserveInput.valid))
@@ -376,11 +376,11 @@ export default function RelayerRegisterV3() {
                   placeholder="-"
                 />
               </Label>
-              <div className="flex items-center gap-middle lg:gap-5">
+              <div className="flex items-center gap-medium lg:gap-5">
                 <Button
                   kind="primary"
                   onClick={handleApproveMore}
-                  className="flex h-9 flex-1 items-center justify-center rounded-middle"
+                  className="flex h-9 flex-1 items-center justify-center rounded-medium"
                   busy={isApproving}
                   disabled={sourceToken?.type === "native"}
                 >
@@ -391,7 +391,7 @@ export default function RelayerRegisterV3() {
                 <Button
                   kind="default"
                   onClick={setIsOpenTrue}
-                  className="flex h-9 flex-1 items-center justify-center rounded-middle"
+                  className="flex h-9 flex-1 items-center justify-center rounded-medium"
                 >
                   <span className="text-base font-normal">Next</span>
                 </Button>
@@ -445,7 +445,7 @@ export default function RelayerRegisterV3() {
           <span>{formatFeeRate(feeRateInput.value)}%</span>
         </div>
         <Divider />
-        <div className="flex items-center gap-middle lg:gap-5">
+        <div className="flex items-center gap-medium lg:gap-5">
           <RunRelayer style="button" />
           <Button
             kind="default"
@@ -461,7 +461,7 @@ export default function RelayerRegisterV3() {
               setFeeRateInput(numberInputDefaultValue);
               setIsRegistered(false);
             }}
-            className="flex h-8 flex-1 items-center justify-center rounded-middle lg:h-9"
+            className="flex h-8 flex-1 items-center justify-center rounded-medium lg:h-9"
           >
             <span className="text-base font-normal">Register Another</span>
           </Button>
@@ -477,7 +477,7 @@ function RunRelayer({ style, onClick = () => undefined }: { style: "button" | "l
       href="https://github.com/helix-bridge/relayer/tree/main"
       className={`inline-flex items-center justify-center ${
         style === "button"
-          ? `border-radius h-8 flex-1 items-center justify-center rounded-middle bg-primary text-base font-normal text-white transition hover:opacity-80 active:translate-y-1 lg:h-9`
+          ? `border-radius h-8 flex-1 items-center justify-center rounded-medium bg-primary text-base font-normal text-white transition hover:opacity-80 active:translate-y-1 lg:h-9`
           : "text-sm font-extrabold text-primary hover:underline"
       }`}
       rel="noopener"
@@ -496,7 +496,7 @@ function Label({
   className,
 }: PropsWithChildren<{ text: string; tips?: string; className?: string }>) {
   return (
-    <div className={`flex flex-col gap-middle ${className}`}>
+    <div className={`flex flex-col gap-medium ${className}`}>
       <div className="flex items-center gap-small">
         <span className="text-sm font-extrabold text-white">{text}</span>
         {tips ? (

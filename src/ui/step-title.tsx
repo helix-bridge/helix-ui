@@ -5,7 +5,7 @@ interface Props {
 
 export default function StepTitle({ step, title }: Props) {
   return (
-    <div className="flex items-center gap-middle">
+    <div className="flex items-center gap-medium">
       <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary">
         <span className="text-xl font-bold text-white">{step}</span>
       </div>

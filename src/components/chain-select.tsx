@@ -25,13 +25,13 @@ export default function ChainSelect({
 }: Props) {
   return (
     <Select
-      labelClassName={`gap-small rounded-middle flex items-center justify-between transition active:translate-y-1 ${className}`}
-      childClassName={`bg-inner flex flex-col rounded-middle max-h-60 overflow-y-auto border border-component ${
-        compact ? "py-small" : "p-middle"
+      labelClassName={`gap-small rounded-medium flex items-center justify-between transition active:translate-y-1 ${className}`}
+      childClassName={`bg-inner flex flex-col rounded-medium max-h-60 overflow-y-auto border border-component ${
+        compact ? "py-small" : "p-medium"
       }`}
       label={
         value ? (
-          <div className="flex items-center gap-middle truncate">
+          <div className="flex items-center gap-medium truncate">
             {compact ? null : (
               <Image
                 alt="Chain"
@@ -59,7 +59,7 @@ export default function ChainSelect({
               <button
                 key={option.id}
                 onClick={() => onChange(option)}
-                className="flex items-center gap-middle px-large py-2 text-start transition-colors hover:bg-white/10"
+                className="flex items-center gap-medium px-large py-2 text-start transition-colors hover:bg-white/10"
               >
                 <Image
                   width={20}
@@ -77,7 +77,7 @@ export default function ChainSelect({
             {options.map((option) => (
               <button
                 key={option.id}
-                className="flex w-36 shrink-0 items-center gap-small truncate rounded-middle bg-component px-2 py-1 transition-colors hover:bg-white/20"
+                className="flex w-36 shrink-0 items-center gap-small truncate rounded-medium bg-component px-2 py-1 transition-colors hover:bg-white/20"
                 onClick={() => onChange(option)}
               >
                 <Image

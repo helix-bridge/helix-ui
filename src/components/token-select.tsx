@@ -23,8 +23,8 @@ export default function TokenSelect({
 }: Props) {
   return (
     <Select
-      labelClassName={`gap-small flex items-center justify-between rounded-middle ${className}`}
-      childClassName="bg-inner py-middle flex flex-col rounded-middle border border-component"
+      labelClassName={`gap-small flex items-center justify-between rounded-medium ${className}`}
+      childClassName="bg-inner py-medium flex flex-col rounded-medium border border-component"
       label={value ? <span className="text-sm font-medium text-white">{value.symbol}</span> : undefined}
       placeholder={<span className="text-sm font-medium text-slate-400">{placeholder}</span>}
       disabled={disabled}
@@ -39,7 +39,7 @@ export default function TokenSelect({
             onClick={() => {
               onChange(option);
             }}
-            className="flex items-center gap-middle px-large py-small transition hover:bg-white/5"
+            className="flex items-center gap-medium px-large py-small transition hover:bg-white/5"
           >
             <Image width={26} height={26} alt="Token" src={getTokenLogoSrc(option.logo)} className="rounded-full" />
             <div className="flex flex-col items-start">

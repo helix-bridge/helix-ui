@@ -55,7 +55,7 @@ export default function LnRelayersOverview({ bridgeVersion }: Props) {
 
   return (
     <div>
-      <div className="mb-5 flex flex-col items-start justify-between gap-middle lg:flex-row lg:items-center">
+      <div className="mb-5 flex flex-col items-start justify-between gap-medium lg:flex-row lg:items-center">
         <Search
           className="w-full lg:w-[21.5rem]"
           placeholder="Search by address"
@@ -68,10 +68,10 @@ export default function LnRelayersOverview({ bridgeVersion }: Props) {
         />
 
         <div className="flex items-center gap-small lg:gap-5">
-          <div className="flex items-center gap-middle">
+          <div className="flex items-center gap-medium">
             <span className="hidden font-medium text-white lg:inline">From</span>
             <ChainSelect
-              className="w-40 border border-white/20 px-middle py-[7px]"
+              className="w-40 border border-white/20 px-medium py-[7px]"
               placeholder="Source chain"
               options={defaultSourceChains}
               onChange={(value) => {
@@ -83,10 +83,10 @@ export default function LnRelayersOverview({ bridgeVersion }: Props) {
               value={sourceChain}
             />
           </div>
-          <div className="flex items-center gap-middle">
+          <div className="flex items-center gap-medium">
             <span className="hidden font-medium text-white lg:inline">To</span>
             <ChainSelect
-              className="w-40 border border-white/20 px-middle py-[7px]"
+              className="w-40 border border-white/20 px-medium py-[7px]"
               placeholder="Target chain"
               options={getLnBridgeAvailableTargetChains(sourceChain, defaultTargetChains)}
               onChange={(value) => {

@@ -17,7 +17,7 @@ export default function DisclaimerModal() {
 
   return (
     <Modal title="Disclaimer" className="w-full lg:w-[30rem]" isOpen={isOpen} onClose={setIsOpenFalse}>
-      <div className="flex flex-col gap-middle">
+      <div className="flex flex-col gap-medium">
         <Paragraph content="By using Helix, I agree to the following:" />
         <Paragraph content="I understand that Helix is a bridge aggregator and is only responsible for routing the transfer to the selected bridge. Helix does not hold any funds in custody at any point." />
         <Paragraph content="I understand that the fees shown in a route are estimations and may vary." />
@@ -29,7 +29,7 @@ export default function DisclaimerModal() {
       <div />
 
       <Button
-        className="mx-auto w-fit rounded-middle px-large py-small"
+        className="mx-auto w-fit rounded-medium px-large py-small"
         kind="primary"
         onClick={() => {
           setIsOpenFalse();

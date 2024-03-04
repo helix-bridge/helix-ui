@@ -25,13 +25,13 @@ const config: Config = {
       },
       borderRadius: {
         small: "0.25rem", // 4px
-        middle: "0.5rem", // 8px
+        medium: "0.5rem", // 8px
         large: "1rem", // 16px
         extralarge: "1.5rem", // 24px
       },
       spacing: {
         small: "0.3125rem", // 5px
-        middle: "0.625rem", // 10px
+        medium: "0.625rem", // 10px
         large: "0.9375rem", // 15px
       },
       maxWidth: {

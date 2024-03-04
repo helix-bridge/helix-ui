@@ -15,7 +15,7 @@ export default function VersionSwitch({ value, onChange }: Props) {
 
   return (
     <div
-      className="relative h-4 w-12 rounded-middle bg-component hover:cursor-pointer"
+      className="relative h-4 w-12 rounded-medium bg-component hover:cursor-pointer"
       ref={thumbRef}
       onClick={() => onChange(value === "v2" ? "v3" : "v2")}
     >

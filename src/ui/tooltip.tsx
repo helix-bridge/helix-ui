@@ -67,7 +67,7 @@ export default function Tooltip({
             <FloatingArrow ref={arrowRef} style={styles} context={context} fill="#00B2FF" />
             <div
               style={styles}
-              className={`flex items-center rounded-middle bg-primary px-middle py-small ${contentClassName}`}
+              className={`flex items-center rounded-medium bg-primary px-medium py-small ${contentClassName}`}
             >
               {typeof content === "string" ? <span className="text-xs font-extrabold">{content}</span> : content}
             </div>

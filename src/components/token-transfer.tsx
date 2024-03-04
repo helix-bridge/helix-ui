@@ -55,7 +55,7 @@ function Item({
   const token = chainConfig?.tokens.find((t) => t.symbol === symbol);
 
   return token && chainConfig ? (
-    <div className="flex items-center gap-middle">
+    <div className="flex items-center gap-medium">
       <Tooltip content={chainConfig.name} className="shrink-0">
         <Image
           width={16}

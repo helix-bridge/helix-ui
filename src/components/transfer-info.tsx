@@ -49,7 +49,7 @@ export default function TransferInfo({ fee, bridge, transferLimit: propTransferL
   }, [bridge]);
 
   return (
-    <div className="flex flex-col gap-small rounded-middle bg-inner p-middle">
+    <div className="flex flex-col gap-small rounded-medium bg-inner p-medium">
       <Item label="Estimated Arrival Time" value={bridge?.formatEstimateTime()} />
       {bridge?.getCategory().startsWith("xtoken") ? null : (
         <Item
