@@ -1,0 +1,46 @@
+name: Deploy development
+
+on:
+  pull_request:
+
+jobs:
+  deploy-package:
+    name: Deploy package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/checkout@v3
+        with:
+          repository: darwinia-network/devops
+          path: .github
+
+      - uses: ./.github/actions/smart-vercel
+        name: Deploy mainnet
+        with:
+          vercel_token: ${{ secrets.VERCEL_TOKEN }}
+          vercel_group: itering
+          preview_output: true
+          alias_domain: "helix-xtoken-dev"
+          project_name: "helix-xtoken-ui"
+          script_run: false
+          dist_path: .
+          enable_notify_comment: true
+          enable_notify_slack: true
+          slack_channel: helix-ui
+          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+
+      - uses: ./.github/actions/smart-vercel
+        name: Deploy testnet
+        with:
+          vercel_token: ${{ secrets.VERCEL_TOKEN }}
+          vercel_group: itering
+          preview_output: true
+          alias_domain: "helix-xtoken-dev-test"
+          project_name: "helix-xtoken-ui-test"
+          script_run: false
+          dist_path: .
+          enable_notify_comment: true
+          enable_notify_slack: true
+          slack_channel: helix-ui
+          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
