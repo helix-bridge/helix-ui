@@ -15,7 +15,7 @@ import Tooltip from "@/ui/tooltip";
 import Image from "next/image";
 import CountLoading from "@/ui/count-loading";
 
-type TabKey = "update" | "deposit" | "withdraw";
+type TabKey = "update" | "deposit" | "withdraw" | "allowance";
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
 interface Props {
@@ -67,6 +67,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     token: Token;
     params: Hex | undefined;
   }>();
+  const [allowanceInput, setAllowanceInput] = useState<InputValue<bigint>>({ input: "", valid: true, value: 0n });
   const [depositAmount, setDepositAmount] = useState<InputValue<bigint>>({ input: "", valid: true, value: 0n });
   const [baseFeeInput, setBaseFeeInput] = useState<InputValue<bigint>>({ input: "", valid: true, value: 0n });
   const [feeRateInput, setFeeRateInput] = useState<InputValue<number>>({ input: "", valid: true, value: 0 });
@@ -82,7 +83,16 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     let switchChainId: ChainID | undefined;
     let disableOk = false;
 
-    if (activeKey === "deposit") {
+    if (activeKey === "allowance") {
+      if (chain?.id !== targetChain?.id) {
+        okText = "Switch Network";
+        switchChainId = targetChain?.id;
+      } else if (!allowanceInput.input || !allowanceInput.valid) {
+        disableOk = true;
+      } else {
+        okText = "Approve";
+      }
+    } else if (activeKey === "deposit") {
       if (bridgeCategory === "lnv2-default") {
         if (chain?.id !== targetChain?.id) {
           okText = "Switch Network";
@@ -127,6 +137,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     targetToken,
     sourceAllowance,
     targetAllowance,
+    allowanceInput,
   ]);
 
   useEffect(() => {
@@ -150,6 +161,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     setSourceChain(_sourceChain);
     setTargetChain(_targetChain);
     setSourceToken(_sourceToken);
+    setAllowanceInput({ input: "", valid: true, value: 0n });
     setDepositAmount({ input: "", valid: true, value: 0n });
     setWithdrawAmount({ input: "", valid: true, value: 0n });
     setBaseFeeInput({ input: "", valid: true, value: 0n });
@@ -214,6 +226,12 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
           try {
             if (okText === "Switch Network") {
               switchNetwork?.(switchChainId);
+            } else if (activeKey === "allowance") {
+              if (bridgeCategory === "lnv2-default" && defaultBridge) {
+                receipt = await targetApprove(address, allowanceInput.value, defaultBridge, targetChain);
+              } else if (bridgeCategory === "lnv2-opposite" && oppositeBridge) {
+                receipt = await targetApprove(address, allowanceInput.value, oppositeBridge, targetChain);
+              }
             } else if (okText === "Approve") {
               if (bridgeCategory === "lnv2-default" && defaultBridge) {
                 await targetApprove(address, depositAmount.value, defaultBridge, targetChain);
@@ -307,12 +325,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
         options={[
           {
             key: "update",
-            label: (
-              <>
-                <span className="hidden text-sm font-extrabold lg:inline">Update Fee</span>
-                <span className="text-sm font-extrabold lg:hidden">Update</span>
-              </>
-            ),
+            label: <span className="text-sm font-extrabold">Update</span>,
             children: (
               <div className="flex flex-col gap-5" style={{ height: height }}>
                 <LabelSection label="Base Fee">
@@ -336,12 +349,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
           },
           {
             key: "deposit",
-            label: (
-              <>
-                <span className="hidden text-sm font-extrabold lg:inline">Deposit More Margin</span>
-                <span className="text-sm font-extrabold lg:hidden">Deposit</span>
-              </>
-            ),
+            label: <span className="text-sm font-extrabold">Deposit</span>,
             children: (
               <LabelSection label="More Margin" height={height}>
                 <BalanceInput
@@ -371,8 +379,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             key: "withdraw",
             label: (
               <div className="flex items-center justify-center gap-small">
-                <span className="hidden text-sm font-extrabold lg:inline">Withdraw Margin</span>
-                <span className="text-sm font-extrabold lg:hidden">Withdraw</span>
+                <span className="text-sm font-extrabold">Withdraw</span>
                 <Tooltip
                   content="A cross-chain message is required to perform a `withdraw margin` operation"
                   contentClassName="w-60"
@@ -419,6 +426,25 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
               </div>
             ),
             disabled: !(relayerInfo?.messageChannel === "layerzero" || relayerInfo?.messageChannel === "msgline"),
+          },
+          {
+            key: "allowance",
+            label: <span className="text-sm font-extrabold">Allowance</span>,
+            children: (
+              <div className="flex flex-col gap-5">
+                <LabelSection label="Approve More" height={height}>
+                  <BalanceInput
+                    compact
+                    suffix="symbol"
+                    balance={targetBalance?.value}
+                    token={targetBalance?.token}
+                    value={allowanceInput}
+                    onChange={setAllowanceInput}
+                  />
+                </LabelSection>
+              </div>
+            ),
+            hidden: targetToken?.type === "native",
           },
         ]}
         activeKey={activeKey}

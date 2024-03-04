@@ -5,10 +5,7 @@ import Link from "next/link";
 import { PropsWithChildren, useEffect, useState } from "react";
 
 export default function Footer() {
-  const [mainnetOrTestnet, setMainnetOrTestnet] = useState<{ label: "Mainnet" | "Testnet"; link: string }>({
-    label: "Mainnet",
-    link: "",
-  });
+  const [mainnetOrTestnet, setMainnetOrTestnet] = useState<{ label: "Mainnet" | "Testnet"; link: string }>();
 
   useEffect(() => {
     if (window.location.hostname === "helixbridge.app") {

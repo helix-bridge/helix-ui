@@ -38,7 +38,7 @@ export default function RelayersManage({ bridgeVersion }: Props) {
   }, [loading, data]);
 
   return (
-    <div className="container mx-auto">
+    <div>
       <div className="mb-middle flex items-center justify-between">
         <span className="text-base font-semibold text-white">Relayers</span>
         <CountdownRefresh onClick={refetch} />

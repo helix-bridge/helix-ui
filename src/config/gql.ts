@@ -205,6 +205,7 @@ export const GQL_GET_WITHDRAWABLE_LIQUIDITIES = gql`
       total
       records {
         id
+        sendAmount
         lastRequestWithdraw
       }
     }
