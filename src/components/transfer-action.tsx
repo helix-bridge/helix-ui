@@ -121,7 +121,7 @@ function Button({
       kind="primary"
       busy={busy}
       disabled={disabled}
-      className="flex h-10 items-center justify-center rounded-middle"
+      className="flex h-10 items-center justify-center rounded-medium"
       onClick={onClick}
     >
       <span className="text-base font-medium text-white">{children}</span>

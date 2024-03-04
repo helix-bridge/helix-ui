@@ -17,7 +17,7 @@ export default function TokenToReceive({ record }: Props) {
   );
 
   return token ? (
-    <div className="flex items-center gap-middle">
+    <div className="flex items-center gap-medium">
       {token.type !== "native" && (
         <PrettyAddress address={token.address} copyable className="text-sm font-medium text-primary" />
       )}
@@ -27,7 +27,7 @@ export default function TokenToReceive({ record }: Props) {
       {/* add to metamask */}
       {window.ethereum && token.type !== "native" ? (
         <Button
-          className="rounded-middle px-middle py-[1px]"
+          className="rounded-medium px-medium py-[1px]"
           onClick={async () => {
             try {
               await window.ethereum.request({

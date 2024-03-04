@@ -243,7 +243,7 @@ export default function RelayersTable({
           render: (row) => (
             <div className="flex justify-end">
               <Button
-                className="w-fit rounded-middle px-middle py-[2px]"
+                className="w-fit rounded-medium px-medium py-[2px]"
                 onClick={() => setRelayerInfo(row)}
                 kind="default"
               >

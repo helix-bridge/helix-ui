@@ -47,7 +47,7 @@ export default function Drawer({
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex h-full w-full flex-col items-start">
-            <div className="flex w-full items-center justify-between p-middle">
+            <div className="flex w-full items-center justify-between p-medium">
               <Link href="/" onClick={onClose}>
                 <Image width={90} height={25} alt="Logo" src="/images/logo.svg" />
               </Link>

@@ -65,7 +65,7 @@ export default function RecordsTable({
       render: ({ fromChain, sendAmount, sendToken }) => {
         const token = getChainConfig(fromChain)?.tokens.find((t) => t.symbol === sendToken);
         return token ? (
-          <div className="flex items-center justify-start gap-middle">
+          <div className="flex items-center justify-start gap-medium">
             <Image width={32} height={32} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
             <span className="truncate">
               {formatBalance(BigInt(sendAmount), token.decimals, { precision: 4 })} {token.symbol}
@@ -134,7 +134,7 @@ function FromTo({ network }: { network: Network }) {
   const chain = getChainConfig(network);
 
   return chain ? (
-    <div className="flex items-center gap-middle">
+    <div className="flex items-center gap-medium">
       <Image width={32} height={32} alt="Logo" src={getChainLogoSrc(chain.logo)} className="rounded-full" />
       <span className="truncate">{chain.name}</span>
     </div>

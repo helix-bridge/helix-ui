@@ -25,13 +25,13 @@ export default function Footer() {
 
   return (
     <div className="app-footer w-full">
-      <div className="mx-auto flex h-full max-w-8xl shrink-0 items-center justify-center px-middle">
+      <div className="mx-auto flex h-full max-w-8xl shrink-0 items-center justify-center px-medium">
         {/* Copyright */}
         <span className="text-sm font-medium text-white/50">{`© ${new Date().getFullYear()} Helix Bridge`}</span>
 
         <div className="mx-3 h-4 w-[1px] bg-white/30 lg:mx-5 lg:bg-transparent" />
 
-        <div className="flex shrink-0 items-center gap-middle lg:gap-5">
+        <div className="flex shrink-0 items-center gap-medium lg:gap-5">
           <Link
             className="text-sm font-medium text-white/50 transition hover:text-white active:scale-95"
             href="/records"

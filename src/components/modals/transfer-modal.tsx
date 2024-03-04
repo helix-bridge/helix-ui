@@ -134,13 +134,13 @@ export default function TransferModal({ sender, recipient, transferAmount, isOpe
       </div>
 
       {/* information */}
-      <div className="flex flex-col gap-middle">
+      <div className="flex flex-col gap-medium">
         <span className="text-sm font-extrabold text-white">Information</span>
         <Information fee={bridgeFee} bridge={bridgeInstance} />
       </div>
 
       {txHash ? (
-        <div className="flex h-10 items-center rounded-middle bg-inner px-middle">
+        <div className="flex h-10 items-center rounded-medium bg-inner px-medium">
           <Progress
             confirmedBlocks={txProgressData?.historyRecordByTxHash?.confirmedBlocks}
             result={txProgressData?.historyRecordByTxHash?.result}
@@ -167,9 +167,9 @@ function SourceTarget({
   address?: Address | null;
 }) {
   return chain && token ? (
-    <div className="flex items-center justify-between rounded-middle bg-inner p-middle lg:p-5">
+    <div className="flex items-center justify-between rounded-medium bg-inner p-medium lg:p-5">
       {/* Left */}
-      <div className="flex items-center gap-middle">
+      <div className="flex items-center gap-medium">
         <Image width={36} height={36} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
         <div className="flex flex-col items-start">
           <span className="text-base font-medium text-white">{chain.name}</span>
@@ -194,7 +194,7 @@ function SourceTarget({
 
 function Information({ fee, bridge }: { fee?: { value: bigint; token: Token }; bridge?: BaseBridge | null }) {
   return (
-    <div className="flex flex-col gap-small rounded-middle bg-inner p-middle">
+    <div className="flex flex-col gap-small rounded-medium bg-inner p-medium">
       <Item
         label="Transaction Fee"
         value={
@@ -210,7 +210,7 @@ function Information({ fee, bridge }: { fee?: { value: bigint; token: Token }; b
 
 function Item({ label, value }: { label: string; value?: string | null }) {
   return (
-    <div className="flex items-center justify-between gap-middle text-sm font-medium text-white">
+    <div className="flex items-center justify-between gap-medium text-sm font-medium text-white">
       <span>{label}</span>
       <span className="truncate">{value}</span>
     </div>

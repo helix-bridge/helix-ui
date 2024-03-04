@@ -53,7 +53,7 @@ export default function RecordDetail(props: Props) {
         <CountdownRefresh onClick={refetch} />
       </div>
       <div className="mt-5 overflow-x-auto">
-        <div className="relative flex min-w-max flex-col gap-middle rounded-large bg-component px-7 py-middle">
+        <div className="relative flex min-w-max flex-col gap-medium rounded-large bg-component px-7 py-medium">
           {/* loading */}
           <ComponentLoading loading={loading} className="rounded-large" />
 
@@ -142,7 +142,7 @@ export default function RecordDetail(props: Props) {
 
 function Item({ label, tips, children }: PropsWithChildren<{ label: string; tips?: string }>) {
   return (
-    <div className="flex flex-col items-start gap-small lg:h-11 lg:flex-row lg:items-center lg:gap-middle">
+    <div className="flex flex-col items-start gap-small lg:h-11 lg:flex-row lg:items-center lg:gap-medium">
       <RecordItemTitle text={label} tips={tips} />
       <div className="pl-5 lg:pl-0">{children}</div>
     </div>

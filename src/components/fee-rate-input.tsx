@@ -32,7 +32,7 @@ export default function FeeRateInput({ isV3, placeholder, value, onChange = () =
 
   return (
     <div
-      className={`normal-input-wrap relative flex items-center justify-between gap-small rounded-middle bg-inner p-small lg:p-middle ${
+      className={`normal-input-wrap relative flex items-center justify-between gap-small rounded-medium bg-inner p-small lg:p-medium ${
         value.valid ? "valid-input-wrap border-transparent" : "invalid-input-wrap"
       }`}
     >

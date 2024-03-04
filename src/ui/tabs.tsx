@@ -46,7 +46,7 @@ export default function Tabs<K extends Key = string>({
     <div className={className}>
       {/* labels */}
       <div className="overflow-x-auto">
-        <div className="options-center relative flex gap-middle" ref={(node) => setDividerWidth(node?.scrollWidth)}>
+        <div className="options-center relative flex gap-medium" ref={(node) => setDividerWidth(node?.scrollWidth)}>
           {options.map(({ key, label }, index) => (
             <button
               key={key}
@@ -56,7 +56,7 @@ export default function Tabs<K extends Key = string>({
                 e.stopPropagation();
                 onChange(key);
               }}
-              className={`rounded-middle px-3 py-1 text-sm transition duration-200 hover:bg-white/10 ${
+              className={`rounded-medium px-3 py-1 text-sm transition duration-200 hover:bg-white/10 ${
                 key === activeKey ? "font-extrabold text-primary" : "font-medium text-white"
               }`}
             >
@@ -66,7 +66,7 @@ export default function Tabs<K extends Key = string>({
         </div>
 
         {/* divider & rail */}
-        <div className="relative mt-middle" style={{ width: dividerWidth }}>
+        <div className="relative mt-medium" style={{ width: dividerWidth }}>
           <div className="absolute h-[2px] w-6 bg-primary transition-transform duration-200" ref={railRef} />
           <div className="h-[1px] bg-transparent" />
           <div className="h-[1px] bg-white/20" />
@@ -76,7 +76,7 @@ export default function Tabs<K extends Key = string>({
       {/* content */}
       <SwitchTransition>
         <CSSTransition timeout={200} key={activeKey} nodeRef={nodeRef} classNames="tabs-fade" unmountOnExit>
-          <div ref={nodeRef} className="mt-middle overflow-x-auto">
+          <div ref={nodeRef} className="mt-medium overflow-x-auto">
             {activeItem ? (
               activeItem.children
             ) : (

@@ -11,7 +11,7 @@ export function TransactionHash({ chain, txHash }: Props) {
   const chainConfig = getChainConfig(chain);
 
   return txHash ? (
-    <div className="flex items-center gap-middle">
+    <div className="flex items-center gap-medium">
       {chainConfig?.blockExplorers ? (
         <a
           className="text-sm font-medium text-primary transition hover:underline"

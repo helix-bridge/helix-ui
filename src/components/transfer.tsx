@@ -230,12 +230,12 @@ export default function Transfer() {
 
   return (
     <>
-      <div className="mx-auto flex w-full flex-col gap-large rounded-large bg-component p-middle lg:mt-20 lg:w-[30rem] lg:gap-5 lg:p-5">
+      <div className="mx-auto flex w-full flex-col gap-large rounded-large bg-component p-medium lg:mt-20 lg:w-[30rem] lg:gap-5 lg:p-5">
         {/* From-To */}
         <div className="mt-8 flex items-center justify-between gap-small lg:gap-large">
           <Label text="From" className="w-[45%] lg:w-full" textClassName="font-medium" needAbsolute>
             <ChainSelect
-              className="w-full bg-inner p-middle"
+              className="w-full bg-inner p-medium"
               placement="bottom-start"
               value={sourceChain}
               options={defaultSourceChains}
@@ -288,7 +288,7 @@ export default function Transfer() {
           />
           <Label text="To" className="w-[45%] lg:w-full" textClassName="font-medium" needAbsolute>
             <ChainSelect
-              className="w-full bg-inner p-middle"
+              className="w-full bg-inner p-medium"
               placement="bottom-end"
               value={targetChain}
               options={getAvailableTargetChains(sourceChain)}

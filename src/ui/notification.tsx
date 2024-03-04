@@ -15,14 +15,14 @@ type Status = "success" | "info" | "warn" | "error";
 
 const createContainer = () => {
   const container = document.createElement("div");
-  container.className = "fixed top-middle right-middle lg:top-5 lg:right-5 flex flex-col overflow-hidden z-40";
+  container.className = "fixed top-medium right-medium lg:top-5 lg:right-5 flex flex-col overflow-hidden z-40";
   document.body.appendChild(container);
   return container;
 };
 
 const createItem = (config: Config, status: Status, onClose: () => void) => {
   const domNode = document.createElement("div");
-  domNode.className = `rounded-middle border-component border bg-inner p-middle lg:p-5 flex items-center gap-middle mb-middle animate-notification-enter relative w-[82vw] lg:w-96 ${config.className}`;
+  domNode.className = `rounded-medium border-component border bg-inner p-medium lg:p-5 flex items-center gap-medium mb-medium animate-notification-enter relative w-[82vw] lg:w-96 ${config.className}`;
 
   const root = createRoot(domNode);
   root.render(

@@ -9,7 +9,7 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
 
   return (
     <main className="app-main flex items-center justify-center">
-      <div className="flex w-fit flex-col items-start gap-middle">
+      <div className="flex w-fit flex-col items-start gap-medium">
         <h2 className="text-base font-medium text-white">Oops, something went wrong !</h2>
         <button
           onClick={reset}

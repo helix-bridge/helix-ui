@@ -39,7 +39,7 @@ export default function SegmentedTabs<K extends Key = string>({
           .map(({ key, label, disabled }) => (
             <div
               key={key}
-              className={`flex flex-1 items-center justify-center border-y border-r border-primary transition-colors duration-150 first:rounded-l-middle first:border-l last:rounded-r-middle hover:border-primary/80 ${
+              className={`flex flex-1 items-center justify-center border-y border-r border-primary transition-colors duration-150 first:rounded-l-medium first:border-l last:rounded-r-medium hover:border-primary/80 ${
                 activeKey === key ? "bg-primary hover:bg-primary/80" : "bg-transparent hover:text-primary"
               } ${disabled ? "opacity-60" : ""}`}
             >

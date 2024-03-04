@@ -23,7 +23,7 @@ export default function AddressInput({ value, placeholder, className, onChange =
 
   return (
     <div
-      className={`normal-input-wrap relative px-small lg:px-middle ${
+      className={`normal-input-wrap relative px-small lg:px-medium ${
         value.valid ? "valid-input-wrap" : "invalid-input-wrap"
       } ${className}`}
     >

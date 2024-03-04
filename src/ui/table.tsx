@@ -71,20 +71,20 @@ export default function Table<T extends { key: Key }>({
       <div className="relative">
         {isOverflow && (
           <div
-            className="pointer-events-none absolute right-0 top-0 z-[1] h-full w-6 rounded-r-middle lg:w-8"
+            className="pointer-events-none absolute right-0 top-0 z-[1] h-full w-6 rounded-r-medium lg:w-8"
             style={{ background: "linear-gradient(90deg, transparent, rgba(255, 255, 255, .3))" }}
           />
         )}
 
         <div
-          className={`overflow-x-auto rounded-middle ${isOverflow ? "cursor-grab" : ""}`}
+          className={`overflow-x-auto rounded-medium ${isOverflow ? "cursor-grab" : ""}`}
           ref={ref}
           style={{ scrollbarWidth: "none" }}
         >
           <div className={`${className}`}>
             {/* header */}
             <div
-              className="grid items-center gap-middle rounded-t-middle bg-component px-middle py-large text-sm font-extrabold text-white lg:px-large"
+              className="grid items-center gap-medium rounded-t-medium bg-component px-medium py-large text-sm font-extrabold text-white lg:px-large"
               style={{ gridTemplateColumns: templateCols }}
             >
               {columns
@@ -97,15 +97,15 @@ export default function Table<T extends { key: Key }>({
             {/* body */}
             <div className="relative">
               {/* loading */}
-              <ComponentLoading loading={!!loading} className="rounded-b-middle" />
+              <ComponentLoading loading={!!loading} className="rounded-b-medium" />
 
               {/* content */}
               {dataSource.length ? (
-                <div className="rounded-b-middle bg-inner">
+                <div className="rounded-b-medium bg-inner">
                   {dataSource.map((row) => (
                     <div
                       key={row.key}
-                      className={`grid items-center gap-middle border-t border-t-white/10 p-middle text-sm font-medium transition-colors lg:px-large ${
+                      className={`grid items-center gap-medium border-t border-t-white/10 p-medium text-sm font-medium transition-colors lg:px-large ${
                         onRowClick ? "hover:cursor-pointer hover:bg-white/5" : ""
                       }`}
                       style={{ gridTemplateColumns: templateCols }}
@@ -144,7 +144,7 @@ export default function Table<T extends { key: Key }>({
       {total !== undefined && currentPage !== undefined && (
         <div className="overflow-x-auto">
           <Pagination
-            className="mt-middle"
+            className="mt-medium"
             total={total}
             pageSize={pageSize}
             currentPage={currentPage}

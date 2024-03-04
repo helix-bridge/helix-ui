@@ -403,7 +403,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                 </LabelSection>
                 <LabelSection label="Withdraw Fee" tips="This value is calculated and does not require input">
                   <div
-                    className={`relative flex h-10 items-center justify-between rounded-middle border bg-inner px-small lg:px-middle ${
+                    className={`relative flex h-10 items-center justify-between rounded-medium border bg-inner px-small lg:px-medium ${
                       withdrawFeeParams || loadingWithdrawFee ? "border-transparent" : "border-app-red"
                     }`}
                   >
@@ -461,7 +461,7 @@ function LabelSection({
   tips,
 }: PropsWithChildren<{ label: string; height?: number; tips?: string }>) {
   return (
-    <div className="flex flex-col gap-middle" style={{ height }}>
+    <div className="flex flex-col gap-medium" style={{ height }}>
       <div className="flex items-center gap-small">
         <span className="text-sm font-extrabold">{label}</span>
         {tips ? (

@@ -64,11 +64,11 @@ export default function Modal({
       <div
         ref={nodeRef}
         onClick={() => maskClosable && onClose()}
-        className="fixed left-0 top-0 z-20 flex h-screen w-screen items-center justify-center bg-app-bg/80 p-middle"
+        className="fixed left-0 top-0 z-20 flex h-screen w-screen items-center justify-center bg-app-bg/80 p-medium"
       >
         {/* modal */}
         <div
-          className={`relative flex flex-col gap-5 rounded-large bg-component p-middle lg:p-5 ${className}`}
+          className={`relative flex flex-col gap-5 rounded-large bg-component p-medium lg:p-5 ${className}`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* close icon */}
@@ -80,7 +80,7 @@ export default function Modal({
           </button>
 
           {/* header */}
-          <div className="flex flex-col gap-middle lg:gap-5">
+          <div className="flex flex-col gap-medium lg:gap-5">
             <h3 className="text-xl font-semibold text-white">{title}</h3>
             {subTitle ? (
               typeof subTitle === "string" ? (
@@ -110,7 +110,7 @@ export default function Modal({
                     kind="default"
                     onClick={onCancel}
                     disabled={disabledCancel}
-                    className="h-9 flex-1 rounded-middle text-base font-medium"
+                    className="h-9 flex-1 rounded-medium text-base font-medium"
                   >
                     {cancelText || "Cancel"}
                   </Button>
@@ -121,7 +121,7 @@ export default function Modal({
                     onClick={onOk}
                     disabled={disabledOk}
                     busy={busy}
-                    className="h-9 flex-1 rounded-middle text-base font-medium"
+                    className="h-9 flex-1 rounded-medium text-base font-medium"
                   >
                     {okText || "Ok"}
                   </Button>

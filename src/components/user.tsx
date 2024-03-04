@@ -47,7 +47,7 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8, o
       placement={placement}
       label={<LabelSpan>{toShortAdrress(address)}</LabelSpan>}
     >
-      <div className="flex items-center gap-middle px-5">
+      <div className="flex items-center gap-medium px-5">
         <AddressIdenticon address={address} diameter={32} />
         <PrettyAddress
           forceShort
@@ -85,7 +85,7 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8, o
           .map((balance) => (
             <button
               key={`${balance.chain.network}-${balance.token.symbol}`}
-              className="flex items-center gap-large rounded-middle px-3 py-2 transition-colors hover:bg-white/10 disabled:cursor-default lg:py-middle"
+              className="flex items-center gap-large rounded-medium px-3 py-2 transition-colors hover:bg-white/10 disabled:cursor-default lg:py-medium"
               disabled={pathname !== "/"}
               onClick={() => {
                 const _sourceChain = balance.chain;

@@ -9,7 +9,7 @@ interface Props {
 
 export default function TransactionTimestamp({ record }: Props) {
   return (
-    <div className="flex items-center gap-middle">
+    <div className="flex items-center gap-medium">
       <Image width={16} height={16} alt="Confirm time" src="/images/time.svg" className="shrink-0" />
       <span className="text-sm font-medium text-white">
         {record ? `${toTimeAgo(record.startTime * 1000)} (${formatTime(record.startTime * 1000)})` : null}
