@@ -21,7 +21,7 @@ export const arbitrumChain: ChainConfig = {
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
       logo: "eth.svg",
-      cross: [{ target: { network: "linea", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } }],
+      cross: [],
     },
     {
       decimals: 18,
@@ -30,11 +30,7 @@ export const arbitrumChain: ChainConfig = {
       type: "erc20",
       address: "0x9e523234D36973f9e38642886197D023C88e307e",
       logo: "ring.svg",
-      cross: [
-        { target: { network: "ethereum", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "opposite" } },
-        { target: { network: "darwinia-dvm", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "polygon", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-      ],
+      cross: [],
     },
     {
       decimals: 6,
@@ -43,16 +39,7 @@ export const arbitrumChain: ChainConfig = {
       type: "erc20",
       address: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
       logo: "usdt.png",
-      cross: [
-        { target: { network: "mantle", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "zksync", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "linea", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "polygon", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "op", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "gnosis", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-      ],
+      cross: [],
     },
     {
       decimals: 6,
@@ -61,10 +48,7 @@ export const arbitrumChain: ChainConfig = {
       type: "erc20",
       address: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
       logo: "usdc.svg",
-      cross: [
-        { target: { network: "mantle", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "scroll", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-      ],
+      cross: [],
     },
   ],
   messager: { msgline: "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0" },

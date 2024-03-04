@@ -97,32 +97,6 @@ getChainConfigs().forEach((sourceChain) => {
             },
           },
         };
-
-        if (cross.bridge.category === "lnbridge") {
-          lnbridgeDefaultSourceChains = lnbridgeDefaultSourceChains
-            .filter((c) => c.id !== sourceChain.id)
-            .concat(sourceChain);
-          lnbridgeDefaultTargetChains = lnbridgeDefaultTargetChains
-            .filter((c) => c.id !== targetChain.id)
-            .concat(targetChain);
-
-          lnbridgeAvailableSourceTokens = {
-            ...lnbridgeAvailableSourceTokens,
-            [sourceChain.network]: {
-              ...lnbridgeAvailableSourceTokens[sourceChain.network],
-              [targetChain.network]: (lnbridgeAvailableSourceTokens[sourceChain.network]?.[targetChain.network] || [])
-                .filter((t) => t.symbol !== sourceToken.symbol)
-                .concat(sourceToken),
-            },
-          };
-
-          lnbridgeAvailableTargetChains = {
-            ...lnbridgeAvailableTargetChains,
-            [sourceChain.network]: (lnbridgeAvailableTargetChains[sourceChain.network] || [])
-              .filter((c) => c.id !== targetChain.id)
-              .concat(targetChain),
-          };
-        }
       }
     });
   });

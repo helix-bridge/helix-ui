@@ -31,13 +31,7 @@ export const sepoliaChain: ChainConfig = {
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
       logo: "eth.svg",
-      cross: [
-        {
-          target: { network: "arbitrum-sepolia", symbol: "ETH" },
-          bridge: { category: "lnbridge", lnv2Type: "default" },
-        },
-        { target: { network: "zksync-sepolia", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-      ],
+      cross: [],
     },
     {
       decimals: 18,
@@ -46,16 +40,7 @@ export const sepoliaChain: ChainConfig = {
       type: "erc20",
       address: "0x0ac58Df0cc3542beC4cDa71B16D06C3cCc39f405",
       logo: "usdc.svg",
-      cross: [
-        {
-          target: { network: "arbitrum-sepolia", symbol: "USDC" },
-          bridge: { category: "lnbridge", lnv2Type: "default" },
-        },
-        {
-          target: { network: "zksync-sepolia", symbol: "USDC" },
-          bridge: { category: "lnbridge", lnv2Type: "default" },
-        },
-      ],
+      cross: [],
     },
     {
       decimals: 18,
@@ -64,16 +49,7 @@ export const sepoliaChain: ChainConfig = {
       type: "erc20",
       address: "0x876A4f6eCF13EEb101F9E75FCeF58f19Ff383eEB",
       logo: "usdt.png",
-      cross: [
-        {
-          target: { network: "arbitrum-sepolia", symbol: "USDT" },
-          bridge: { category: "lnbridge", lnv2Type: "default" },
-        },
-        {
-          target: { network: "zksync-sepolia", symbol: "USDT" },
-          bridge: { category: "lnbridge", lnv2Type: "default" },
-        },
-      ],
+      cross: [],
     },
     {
       decimals: 18,

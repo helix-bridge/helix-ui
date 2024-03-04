@@ -30,10 +30,7 @@ export const polygonZkEvmChain: ChainConfig = {
       type: "erc20",
       address: "0x1E4a5963aBFD975d8c9021ce480b42188849D41d",
       logo: "usdt.png",
-      cross: [
-        { target: { network: "polygon", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-      ],
+      cross: [],
     },
   ],
 };

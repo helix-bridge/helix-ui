@@ -9,6 +9,7 @@ export const GQL_HISTORY_RECORDS = gql`
     $results: [Int]
     $fromChains: [String]
     $toChains: [String]
+    $bridges: [String]
   ) {
     historyRecords(
       row: $row
@@ -18,6 +19,7 @@ export const GQL_HISTORY_RECORDS = gql`
       results: $results
       fromChains: $fromChains
       toChains: $toChains
+      bridges: $bridges
     ) {
       total
       records {

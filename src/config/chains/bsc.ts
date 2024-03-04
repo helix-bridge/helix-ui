@@ -30,16 +30,7 @@ export const bscChain: ChainConfig = {
       type: "erc20",
       address: "0x55d398326f99059fF775485246999027B3197955",
       logo: "usdt.png",
-      cross: [
-        { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "op", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "linea", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "polygon", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "polygon-zkEvm", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "mantle", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "gnosis", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-      ],
+      cross: [],
     },
     {
       decimals: 18,
@@ -48,7 +39,7 @@ export const bscChain: ChainConfig = {
       type: "erc20",
       address: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
       logo: "usdc.svg",
-      cross: [{ target: { network: "base", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } }],
+      cross: [],
     },
   ],
 };

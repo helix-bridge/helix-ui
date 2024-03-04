@@ -30,9 +30,7 @@ export const polygonChain: ChainConfig = {
       type: "erc20",
       address: "0x9C1C23E60B72Bc88a043bf64aFdb16A02540Ae8f",
       logo: "ring.svg",
-      cross: [
-        { target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-      ],
+      cross: [],
     },
     {
       decimals: 6,
@@ -41,16 +39,7 @@ export const polygonChain: ChainConfig = {
       type: "erc20",
       address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
       logo: "usdt.png",
-      cross: [
-        { target: { network: "polygon-zkEvm", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "linea", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "op", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "mantle", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "gnosis", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-      ],
+      cross: [],
     },
   ],
 };

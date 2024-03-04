@@ -1,11 +1,9 @@
 import {
   L2BridgeCategory,
-  LnBridgeCategory,
   HelixLpBridgeCategory,
   HelixBridgeCategory,
   BridgeCategory,
   XTokenBridgeCategory,
-  LnBridgeV2Type,
 } from "./bridge";
 import { Network, ChainConfig } from "./chain";
 import { TokenSymbol, Token } from "./token";
@@ -18,15 +16,6 @@ interface Target {
 type Action = "issue" | "redeem";
 
 export type CrossChain =
-  | {
-      target: Target;
-      bridge: { category: LnBridgeCategory; lnv2Type: LnBridgeV2Type };
-      index?: never;
-      price?: never;
-      baseFee?: never;
-      action?: never;
-      hidden?: boolean;
-    }
   | {
       target: Target;
       bridge: { category: L2BridgeCategory; lnv2Type?: never };
