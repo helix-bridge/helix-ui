@@ -52,7 +52,8 @@ export default function TransferAction({ recipient, transferable, transferAmount
           bridgeInstance &&
           (bridgeInstance.getCategory().startsWith("xtoken") || bridgeFee) &&
           transferable &&
-          transferAmount.value &&
+          transferAmount.input &&
+          transferAmount.valid &&
           transferAmount.value < transferable &&
           isAddress(recipient ?? "")
         )
