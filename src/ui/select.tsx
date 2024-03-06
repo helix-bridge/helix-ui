@@ -22,6 +22,7 @@ interface Props {
   clearable?: boolean;
   sameWidth?: boolean;
   placement?: Placement;
+  offsetSize?: number;
   labelClassName?: string;
   childClassName?: string;
   onClear?: () => void;
@@ -36,6 +37,7 @@ export default function Select({
   clearable,
   placement,
   sameWidth,
+  offsetSize,
   labelClassName,
   childClassName,
   onClear = () => undefined,
@@ -47,7 +49,7 @@ export default function Select({
     onOpenChange: setIsOpen,
     placement,
     middleware: [
-      offset(4),
+      offset(offsetSize ?? 4),
       sameWidth
         ? size({
             apply({ rects, elements }) {
