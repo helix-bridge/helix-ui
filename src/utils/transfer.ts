@@ -2,16 +2,16 @@ import { ChainConfig, Token, TokenCategory, TokenSymbol } from "@/types";
 import { getChainConfig, getChainConfigs } from ".";
 
 interface TokenOption {
-  image: string;
+  logo: string;
   category: TokenCategory;
   symbol: TokenSymbol;
 }
 const allTokenOptions: Record<Exclude<TokenCategory, "others">, TokenOption> = {
-  crab: { image: "crab.svg", category: "crab", symbol: "CRAB" },
-  eth: { image: "eth.svg", category: "eth", symbol: "ETH" },
-  ring: { image: "ring.svg", category: "ring", symbol: "RING" },
-  usdc: { image: "usdc.svg", category: "usdc", symbol: "USDC" },
-  usdt: { image: "usdt.svg", category: "usdt", symbol: "USDT" },
+  crab: { logo: "crab.svg", category: "crab", symbol: "CRAB" },
+  eth: { logo: "eth.svg", category: "eth", symbol: "ETH" },
+  ring: { logo: "ring.svg", category: "ring", symbol: "RING" },
+  usdc: { logo: "usdc.svg", category: "usdc", symbol: "USDC" },
+  usdt: { logo: "usdt.svg", category: "usdt", symbol: "USDT" },
 };
 const sortedTokenCategories: Exclude<TokenCategory, "others">[] = ["usdt", "usdc", "eth", "ring", "crab"];
 const availableTokenCategories = new Set<TokenCategory>();
