@@ -9,7 +9,7 @@ interface Props {
 
 export default function TransferSection({ children, titleText, titleTips, className }: PropsWithChildren<Props>) {
   return (
-    <div className={`flex flex-col gap-medium rounded-[0.625rem] bg-app-bg p-medium ${className}`}>
+    <div className={`flex flex-col gap-medium rounded-[0.625rem] bg-app-bg py-medium ${className}`}>
       <TransferSectionTitle text={titleText} tips={titleTips} />
       {children}
     </div>
