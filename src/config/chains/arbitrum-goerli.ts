@@ -26,6 +26,7 @@ export const arbitrumGoerliChain: ChainConfig = {
         { target: { network: "linea-goerli", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "zksync-goerli", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "eth",
     },
     {
       decimals: 18,
@@ -40,6 +41,7 @@ export const arbitrumGoerliChain: ChainConfig = {
         { target: { network: "mantle-goerli", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "zksync-goerli", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdc",
     },
     {
       decimals: 18,
@@ -54,6 +56,7 @@ export const arbitrumGoerliChain: ChainConfig = {
         { target: { network: "mantle-goerli", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "zksync-goerli", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdt",
     },
   ],
   hidden: true,

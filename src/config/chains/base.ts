@@ -22,6 +22,7 @@ export const baseChain: ChainConfig = {
       address: "0x0000000000000000000000000000000000000000",
       logo: "eth.svg",
       cross: [],
+      category: "eth",
     },
     {
       decimals: 6,
@@ -31,6 +32,7 @@ export const baseChain: ChainConfig = {
       address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
       logo: "usdc.svg",
       cross: [{ target: { network: "bsc", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } }],
+      category: "usdc",
     },
   ],
 };

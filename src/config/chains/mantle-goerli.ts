@@ -22,6 +22,7 @@ export const mantleGoerliChain: ChainConfig = {
       address: "0x0000000000000000000000000000000000000000",
       logo: "mnt.svg",
       cross: [{ target: { network: "goerli", symbol: "MNT" }, bridge: { category: "lnbridge", lnv2Type: "default" } }],
+      category: "others",
     },
     {
       decimals: 18,
@@ -39,6 +40,7 @@ export const mantleGoerliChain: ChainConfig = {
         { target: { network: "linea-goerli", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "zksync-goerli", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdc",
     },
     {
       decimals: 18,
@@ -56,6 +58,7 @@ export const mantleGoerliChain: ChainConfig = {
         { target: { network: "linea-goerli", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "zksync-goerli", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdt",
     },
   ],
   hidden: true,

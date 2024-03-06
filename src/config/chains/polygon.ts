@@ -22,6 +22,7 @@ export const polygonChain: ChainConfig = {
       address: "0x0000000000000000000000000000000000000000",
       logo: "matic.svg",
       cross: [],
+      category: "others",
     },
     {
       decimals: 18,
@@ -37,6 +38,7 @@ export const polygonChain: ChainConfig = {
           bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
         },
       ],
+      category: "ring",
     },
     {
       decimals: 6,
@@ -55,6 +57,7 @@ export const polygonChain: ChainConfig = {
         { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "gnosis", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdt",
     },
   ],
   messager: { msgline: "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0" },

@@ -29,6 +29,7 @@ export const goerliChain: ChainConfig = {
         { target: { network: "linea-goerli", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "zksync-goerli", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "eth",
     },
     {
       decimals: 6,
@@ -46,6 +47,7 @@ export const goerliChain: ChainConfig = {
         { target: { network: "mantle-goerli", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "zksync-goerli", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdc",
     },
     {
       decimals: 6,
@@ -64,6 +66,7 @@ export const goerliChain: ChainConfig = {
         { target: { network: "zksync-goerli", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "base-goerli", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdt",
     },
     {
       decimals: 18,
@@ -75,6 +78,7 @@ export const goerliChain: ChainConfig = {
       cross: [
         { target: { network: "mantle-goerli", symbol: "MNT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "others",
     },
     {
       decimals: 18,
@@ -84,6 +88,7 @@ export const goerliChain: ChainConfig = {
       address: "0xeb93165E3CDb354c977A182AbF4fad3238E04319",
       logo: "ring.svg",
       cross: [],
+      category: "ring",
     },
   ],
   hidden: true,

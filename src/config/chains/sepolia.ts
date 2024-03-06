@@ -38,6 +38,7 @@ export const sepoliaChain: ChainConfig = {
         },
         { target: { network: "zksync-sepolia", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "eth",
     },
     {
       decimals: 18,
@@ -56,6 +57,7 @@ export const sepoliaChain: ChainConfig = {
           bridge: { category: "lnbridge", lnv2Type: "default" },
         },
       ],
+      category: "usdc",
     },
     {
       decimals: 18,
@@ -74,6 +76,7 @@ export const sepoliaChain: ChainConfig = {
           bridge: { category: "lnbridge", lnv2Type: "default" },
         },
       ],
+      category: "usdt",
     },
     {
       decimals: 18,
@@ -85,6 +88,7 @@ export const sepoliaChain: ChainConfig = {
       cross: [
         // { target: { network: "crab-dvm", symbol: "CRAB" }, bridge: { category: "xtoken-sepolia" }, action: "redeem" },
       ],
+      category: "others",
     },
     {
       decimals: 18,
@@ -100,6 +104,7 @@ export const sepoliaChain: ChainConfig = {
           action: "redeem",
         },
       ],
+      category: "ring",
     },
   ],
   messager: {

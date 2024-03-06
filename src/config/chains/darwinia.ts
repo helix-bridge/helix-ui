@@ -75,6 +75,7 @@ export const darwiniaChain: ChainConfig = {
           bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
         },
       ],
+      category: "ring",
     },
     // {
     //   decimals: 18,
@@ -99,6 +100,7 @@ export const darwiniaChain: ChainConfig = {
           action: "issue",
         },
       ],
+      category: "others",
     },
     {
       decimals: 18,
@@ -115,6 +117,7 @@ export const darwiniaChain: ChainConfig = {
           action: "redeem",
         },
       ],
+      category: "crab",
     },
   ],
   messager: { msgline: "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0" },

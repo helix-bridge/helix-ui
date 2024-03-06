@@ -22,6 +22,7 @@ export const baseGoerliChain: ChainConfig = {
       address: "0x0000000000000000000000000000000000000000",
       logo: "eth.svg",
       cross: [],
+      category: "eth",
     },
     {
       decimals: 18,
@@ -31,6 +32,7 @@ export const baseGoerliChain: ChainConfig = {
       address: "0x876A4f6eCF13EEb101F9E75FCeF58f19Ff383eEB",
       logo: "usdt.png",
       cross: [{ target: { network: "goerli", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } }],
+      category: "usdt",
     },
   ],
   hidden: true,

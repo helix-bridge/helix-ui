@@ -28,6 +28,7 @@ export const zksyncSepoliaChain: ChainConfig = {
           bridge: { category: "lnbridge", lnv2Type: "default" },
         },
       ],
+      category: "eth",
     },
     {
       decimals: 6,
@@ -43,6 +44,7 @@ export const zksyncSepoliaChain: ChainConfig = {
         },
         { target: { network: "sepolia", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdc",
     },
     {
       decimals: 6,
@@ -58,6 +60,7 @@ export const zksyncSepoliaChain: ChainConfig = {
         },
         { target: { network: "sepolia", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdt",
     },
   ],
 };

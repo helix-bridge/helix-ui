@@ -24,6 +24,7 @@ export const lineaChain: ChainConfig = {
       cross: [
         { target: { network: "arbitrum", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "eth",
     },
     {
       decimals: 6,
@@ -41,6 +42,7 @@ export const lineaChain: ChainConfig = {
         { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "gnosis", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdt",
     },
   ],
 };
