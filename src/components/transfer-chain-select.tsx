@@ -21,7 +21,7 @@ export default function TransferChainSelect({
   onTokenChange,
 }: Props) {
   return (
-    <div className="flex items-center gap-medium">
+    <div className="flex items-center">
       <Select
         placeholder={<span className="text-base font-bold text-slate-400">Select a chain</span>}
         label={
@@ -36,8 +36,9 @@ export default function TransferChainSelect({
             <span className="text-base font-bold text-white">{chain.name}</span>
           </div>
         }
-        labelClassName="flex items-center justify-between gap-small w-full"
+        labelClassName="flex items-center justify-between gap-small w-full px-medium transition-opacity hover:opacity-80"
         childClassName="flex flex-col gap-medium p-medium rounded-[0.625rem] bg-[#00141D]"
+        offsetSize={14}
         sameWidth
       >
         {chainOptions.length ? (
@@ -63,11 +64,12 @@ export default function TransferChainSelect({
                 src={getTokenLogoSrc(token.logo)}
                 className="h-[1.5rem] w-[1.5rem] shrink-0 rounded-full"
               />
-              <span className="text-sm font-bold text-white">{token.symbol}</span>
+              <span className="truncate text-sm font-bold text-white">{token.symbol}</span>
             </div>
           }
-          labelClassName="flex items-center justify-between gap-small p-small rounded-[0.625rem] bg-[#1F282C] w-[7.5rem]"
-          childClassName="flex flex-col gap-medium p-small rounded-[0.625rem] bg-[#00141D]"
+          labelClassName="flex items-center justify-between gap-small p-small rounded-[0.625rem] bg-[#1F282C] w-[9.25rem] mr-medium transition-colors hover:bg-white/20"
+          childClassName="flex flex-col gap-small p-small rounded-[0.625rem] bg-[#00141D]"
+          offsetSize={12}
           sameWidth
         >
           {tokenOptions.map((option) => (
@@ -130,13 +132,13 @@ function TokenOption({
       }}
     >
       <Image
-        width={24}
-        height={24}
+        width={20}
+        height={20}
         alt="Chain"
         src={getTokenLogoSrc(option.logo)}
-        className="h-[1.5rem] w-[1.5rem] shrink-0 rounded-full"
+        className="h-[1.25rem] w-[1.25rem] shrink-0 rounded-full"
       />
-      <span className="text-xs font-bold text-white">{option.name}</span>
+      <span className="truncate text-xs font-bold text-white">{option.name}</span>
     </button>
   );
 }
