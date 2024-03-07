@@ -64,7 +64,9 @@ function TokenImage({
       className={`h-[1.875rem] w-[1.875rem] shrink-0 rounded-full transition-[transform,opacity] duration-200 ${
         active
           ? "opacity-100"
-          : `${index <= hoveIndex ? "group-active:-translate-x-2" : ""} opacity-50 hover:cursor-pointer`
+          : `${
+              index <= hoveIndex ? "group-active:-translate-x-2" : ""
+            } opacity-50 hover:cursor-pointer hover:opacity-80`
       }`}
       onClick={() => {
         !active && onClick(token);
