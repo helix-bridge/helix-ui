@@ -12,6 +12,8 @@ interface Props {
   targetChainOptions: ChainConfig[];
   sourceTokenOptions: Token[];
   targetTokenOptions: Token[];
+  disableSwitch?: boolean;
+  onSwitch?: () => void;
   onSourceChainChange?: (chain: ChainConfig) => void;
   onTargetChainChange?: (chain: ChainConfig) => void;
   onSourceTokenChange?: (token: Token) => void;
@@ -19,6 +21,7 @@ interface Props {
 }
 
 export default function TransferChainSection({
+  disableSwitch,
   sourceChain,
   targetChain,
   sourceToken,
@@ -27,6 +30,7 @@ export default function TransferChainSection({
   targetChainOptions,
   sourceTokenOptions,
   targetTokenOptions,
+  onSwitch,
   onSourceChainChange,
   onTargetChainChange,
   onSourceTokenChange,
@@ -44,7 +48,7 @@ export default function TransferChainSection({
           onTokenChange={onSourceTokenChange}
         />
       </TransferSection>
-      <TransferSwitch />
+      <TransferSwitch disabled={disableSwitch} onSwitch={onSwitch} />
       <TransferSection titleText="To">
         <TransferChainSelect
           chain={targetChain}

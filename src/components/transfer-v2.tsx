@@ -6,6 +6,7 @@ import {
   getTargetChainOptions,
   getTargetTokenOptions,
   getTokenOptions,
+  isSwitchAvailable,
 } from "@/utils";
 import TransferChainSection from "./transfer-chain-section";
 import TransferAmountSection from "./transfer-amount-section";
@@ -119,6 +120,29 @@ export default function TransferV2() {
     targetTokenRef.current = _targetToken;
   }, []);
 
+  const handleSwitch = useCallback(() => {
+    const _sourceChain = targetChainRef.current;
+    const _targetChain = sourceChainRef.current;
+
+    const _sourceTokenOptions = getSourceTokenOptions(_sourceChain, tokenRef.current.category);
+    const _sourceToken =
+      _sourceTokenOptions.find(({ symbol }) => symbol === sourceTokenRef.current.symbol) || _sourceTokenOptions[0];
+
+    const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
+    const _targetToken =
+      _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
+
+    setSourceChain(_sourceChain);
+    setSourceToken(_sourceToken);
+    setTargetChain(_targetChain);
+    setTargetToken(_targetToken);
+
+    sourceChainRef.current = _sourceChain;
+    sourceTokenRef.current = _sourceToken;
+    targetChainRef.current = _targetChain;
+    targetTokenRef.current = _targetToken;
+  }, []);
+
   return (
     <div className="flex w-full flex-col gap-medium rounded-large bg-[#1F282C] p-medium lg:w-[27.5rem] lg:gap-5 lg:rounded-[1.25rem] lg:p-5">
       <TransferTokenSection token={token} options={tokenOptions} onChange={handleTokenChange} />
@@ -127,6 +151,7 @@ export default function TransferV2() {
         targetChain={targetChain}
         sourceToken={sourceToken}
         targetToken={targetToken}
+        disableSwitch={!isSwitchAvailable(sourceChain, targetChain, token.category)}
         sourceChainOptions={getSourceChainOptions(token.category)}
         targetChainOptions={getTargetChainOptions(sourceToken)}
         sourceTokenOptions={getSourceTokenOptions(sourceChain, token.category)}
@@ -135,6 +160,7 @@ export default function TransferV2() {
         onSourceTokenChange={handleSourceTokenChange}
         onTargetChainChange={handleTargetChainChange}
         onTargetTokenChange={handleTargetTokenChange}
+        onSwitch={handleSwitch}
       />
       <TransferAmountSection amount={amount} balance={2024n} token={sourceToken} onChange={setAmount} />
       <TransferInformationSection />
