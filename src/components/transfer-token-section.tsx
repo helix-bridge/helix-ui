@@ -1,11 +1,17 @@
-import { Token } from "@/types";
+import { TokenCategory, TokenSymbol } from "@/types";
 import TransferSection from "./transfer-section";
 import TransferTokenSelect from "./transfer-token-select";
 
+interface TokenOption {
+  logo: string;
+  category: TokenCategory;
+  symbol: TokenSymbol;
+}
+
 interface Props {
-  token: Token;
-  options: Token[];
-  onChange?: (token: Token) => void;
+  token: TokenOption;
+  options: TokenOption[];
+  onChange?: (token: TokenOption) => void;
 }
 
 export default function TransferTokenSection({ token, options, onChange }: Props) {

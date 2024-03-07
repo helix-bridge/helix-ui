@@ -1,12 +1,18 @@
-import { Token } from "@/types";
+import { TokenCategory, TokenSymbol } from "@/types";
 import { getTokenLogoSrc } from "@/utils";
 import Image from "next/image";
 import { useState } from "react";
 
+interface Value {
+  logo: string;
+  category: TokenCategory;
+  symbol: TokenSymbol;
+}
+
 interface Props {
-  value: Token;
-  options: Token[];
-  onChange?: (value: Token) => void;
+  value: Value;
+  options: Value[];
+  onChange?: (value: Value) => void;
 }
 
 export default function TransferTokenSelect({ value, options, onChange }: Props) {
@@ -42,11 +48,11 @@ function TokenImage({
   onClick = () => undefined,
   onHoverChange = () => undefined,
 }: {
-  token: Token;
+  token: Value;
   index?: number;
   active?: boolean;
   hoveIndex?: number;
-  onClick?: (token: Token) => void;
+  onClick?: (token: Value) => void;
   onHoverChange?: (index: number) => void;
 }) {
   return (
