@@ -12,6 +12,8 @@ import TransferChainSection from "./transfer-chain-section";
 import TransferAmountSection from "./transfer-amount-section";
 import TransferInformationSection from "./transfer-information-section";
 import Button from "@/ui/button";
+import { useBalance } from "@/hooks";
+import { useAccount } from "wagmi";
 
 const tokenOptions = getTokenOptions();
 
@@ -22,6 +24,9 @@ export default function TransferV2() {
   const [sourceToken, setSourceToken] = useState(getSourceTokenOptions(sourceChain, token.category)[0]);
   const [targetChain, setTargetChain] = useState(getTargetChainOptions(sourceToken)[0]);
   const [targetToken, setTargetToken] = useState(getTargetTokenOptions(sourceToken, targetChain)[0]);
+
+  const account = useAccount();
+  const { loading, balance, refresh } = useBalance(sourceChain, sourceToken, account.address);
 
   const tokenRef = useRef(token);
   const sourceChainRef = useRef(sourceChain);
@@ -163,7 +168,14 @@ export default function TransferV2() {
         onTargetTokenChange={handleTargetTokenChange}
         onSwitch={handleSwitch}
       />
-      <TransferAmountSection amount={amount} balance={2024n} token={sourceToken} onChange={setAmount} />
+      <TransferAmountSection
+        amount={amount}
+        loading={loading}
+        balance={balance}
+        token={sourceToken}
+        onChange={setAmount}
+        onRefresh={refresh}
+      />
       <TransferInformationSection />
       <Button className="inline-flex h-10 items-center justify-center rounded-[0.625rem]" kind="primary">
         <span className="text-sm font-bold text-white">Transfer</span>
