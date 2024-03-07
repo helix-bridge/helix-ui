@@ -20,24 +20,26 @@ const sourceChainOptions = new Map<TokenCategory, ChainConfig[]>();
 getChainConfigs()
   .filter(({ hidden }) => !hidden)
   .forEach((sourceChain) => {
-    sourceChain.tokens.forEach((sourceToken) => {
-      sourceToken.cross
-        .filter(({ hidden, bridge }) => !hidden && bridge.category === "lnbridge")
-        .forEach((cross) => {
-          const targetChain = getChainConfig(cross.target.network);
-          const targetToken = targetChain?.tokens.find(({ symbol }) => symbol === cross.target.symbol);
+    sourceChain.tokens
+      .filter(({ category }) => sortedTokenCategories.some((c) => c === category))
+      .forEach((sourceToken) => {
+        sourceToken.cross
+          .filter(({ hidden, bridge }) => !hidden && bridge.category === "lnbridge")
+          .forEach((cross) => {
+            const targetChain = getChainConfig(cross.target.network);
+            const targetToken = targetChain?.tokens.find(({ symbol }) => symbol === cross.target.symbol);
 
-          if (targetToken) {
-            availableTokenCategories.add(sourceToken.category);
-            sourceChainOptions.set(
-              sourceToken.category,
-              (sourceChainOptions.get(sourceToken.category) || [])
-                .filter(({ id }) => id !== sourceChain.id)
-                .concat(sourceChain),
-            );
-          }
-        });
-    });
+            if (targetToken) {
+              availableTokenCategories.add(sourceToken.category);
+              sourceChainOptions.set(
+                sourceToken.category,
+                (sourceChainOptions.get(sourceToken.category) || [])
+                  .filter(({ id }) => id !== sourceChain.id)
+                  .concat(sourceChain),
+              );
+            }
+          });
+      });
   });
 
 export function getTokenOptions() {
@@ -60,7 +62,7 @@ export function getTargetChainOptions(sourceToken: Token) {
   return sourceToken.cross
     .filter(({ hidden, bridge }) => !hidden && bridge.category === "lnbridge")
     .map(({ target }) => getChainConfig(target.network))
-    .filter((c) => !c) as ChainConfig[];
+    .filter((c) => c) as ChainConfig[];
 }
 
 export function getTargetTokenOptions(sourceToken: Token, targetChain: ChainConfig) {
