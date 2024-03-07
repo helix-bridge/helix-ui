@@ -19,7 +19,7 @@ export default function TransferTokenSelect({ value, options, onChange }: Props)
   const [hoveIndex, setHoverIndex] = useState(-1);
 
   return (
-    <div className="flex items-center gap-medium">
+    <div className="flex items-center gap-medium px-medium">
       <TokenImage token={value} active />
       <span className="text-base font-bold text-white">{value.symbol}</span>
       <div className="group flex items-center gap-medium">
