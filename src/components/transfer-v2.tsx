@@ -11,6 +11,7 @@ import {
 import TransferChainSection from "./transfer-chain-section";
 import TransferAmountSection from "./transfer-amount-section";
 import TransferInformationSection from "./transfer-information-section";
+import Button from "@/ui/button";
 
 const tokenOptions = getTokenOptions();
 
@@ -164,6 +165,9 @@ export default function TransferV2() {
       />
       <TransferAmountSection amount={amount} balance={2024n} token={sourceToken} onChange={setAmount} />
       <TransferInformationSection />
+      <Button className="inline-flex h-10 items-center justify-center rounded-[0.625rem]" kind="primary">
+        <span className="text-sm font-bold text-white">Transfer</span>
+      </Button>
     </div>
   );
 }
