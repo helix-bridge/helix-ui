@@ -19,7 +19,7 @@ interface Props {
 
 export default function TransferAmountSection({ token, amount, balance, loading, onRefresh, onChange }: Props) {
   return (
-    <TransferSection titleText="Amount">
+    <TransferSection titleText="Amount" alert={amount.valid ? undefined : "* Insufficient"}>
       <TransferAmountInput
         loading={loading}
         token={token}
