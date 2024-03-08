@@ -73,7 +73,7 @@ export default function TransferAmountInput({
   }, [value.input]);
 
   useEffect(() => {
-    if (token.decimals !== tokenRef.current.decimals) {
+    if (token.decimals !== tokenRef.current.decimals || token.symbol !== tokenRef.current.symbol) {
       tokenRef.current = token;
       onChange({ input: "", value: 0n, valid: true });
     }
