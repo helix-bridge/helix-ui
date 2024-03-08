@@ -69,6 +69,7 @@ export const darwiniaChain: ChainConfig = {
           target: { network: "ethereum", symbol: "RING" },
           bridge: { category: "helix-sub2ethv2(lock)" },
           action: "issue",
+          min: 1000000000000000000000000n,
         },
         {
           target: { network: "polygon", symbol: "RING" },
