@@ -216,14 +216,16 @@ function Component() {
         onChange={setAmount}
         onRefresh={refreshBalance}
       />
-      <TransferInformationSection
-        bridge={bridge}
-        sourceToken={sourceToken}
-        relayData={relayData}
-        loadingRelayData={loadingRelayData}
-        fee={fee}
-        loadingFee={loadingFee}
-      />
+      {deferredAmount.value ? (
+        <TransferInformationSection
+          bridge={bridge}
+          sourceToken={sourceToken}
+          relayData={relayData}
+          loadingRelayData={loadingRelayData}
+          fee={fee}
+          loadingFee={loadingFee}
+        />
+      ) : null}
       <Button className="inline-flex h-10 items-center justify-center rounded-[0.625rem]" kind="primary">
         <span className="text-sm font-bold text-white">Transfer</span>
       </Button>
