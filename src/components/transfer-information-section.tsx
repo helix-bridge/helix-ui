@@ -1,38 +1,57 @@
 import { SortedLnBridgeRelayInfosResData, Token } from "@/types";
 import TransferInformation from "./transfer-information";
 import TransferSection from "./transfer-section";
+import { BaseBridge } from "@/bridges";
+import { useMemo } from "react";
+import { useDailyLimit } from "@/hooks";
 
 interface Props {
-  transactionFee?: { loading: boolean; value?: bigint; token?: Token; warning?: string };
-  transferLimit?: { loading: boolean; value?: bigint; token?: Token };
-  dailyLimit?: { loading: boolean; value?: bigint; token?: Token };
-  // estimatedTime: { loading: boolean; value?: string };
   sourceToken: Token;
   relayData: SortedLnBridgeRelayInfosResData | undefined;
   loadingRelayData: boolean;
+  bridge: BaseBridge | undefined;
+  fee: { token: Token; value: bigint } | null | undefined;
+  loadingFee: boolean;
 }
 
 export default function TransferInformationSection({
-  transactionFee,
-  transferLimit,
-  dailyLimit,
   sourceToken,
   relayData,
   loadingRelayData,
+  bridge,
+  fee,
+  loadingFee,
 }: Props) {
+  const hasRelayer = useMemo(
+    () => 0 < (relayData?.sortedLnBridgeRelayInfos?.records.length || 0),
+    [relayData?.sortedLnBridgeRelayInfos?.records.length],
+  );
+  const { loading: loadingDailyLimit, dailyLimit } = useDailyLimit(bridge);
+
   return (
     <TransferSection titleText="Information">
       <TransferInformation
-        transactionFee={transactionFee}
-        transferLimit={{
-          loading: loadingRelayData,
-          value: relayData?.sortedLnBridgeRelayInfos?.transferLimit
-            ? BigInt(relayData.sortedLnBridgeRelayInfos.transferLimit)
-            : undefined,
-          token: sourceToken,
+        transferLimit={
+          hasRelayer
+            ? {
+                loading: loadingRelayData,
+                value: relayData?.sortedLnBridgeRelayInfos?.transferLimit
+                  ? BigInt(relayData.sortedLnBridgeRelayInfos.transferLimit)
+                  : undefined,
+                token: sourceToken,
+              }
+            : undefined
+        }
+        estimatedTime={hasRelayer ? { loading: loadingRelayData, value: bridge?.formatEstimateTime() } : undefined}
+        transactionFee={{
+          warning: fee ? undefined : "Liquidity is not enough",
+          loading: loadingFee,
+          value: fee?.value,
+          token: fee?.token,
         }}
-        dailyLimit={dailyLimit}
-        estimatedTime={{ loading: true }}
+        dailyLimit={
+          dailyLimit ? { loading: loadingDailyLimit, value: dailyLimit.limit, token: dailyLimit.token } : undefined
+        }
       />
     </TransferSection>
   );

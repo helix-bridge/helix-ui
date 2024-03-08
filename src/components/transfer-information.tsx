@@ -5,16 +5,18 @@ import { formatBalance } from "@/utils";
 import Image from "next/image";
 
 interface Props {
-  transactionFee?: { loading: boolean; value?: bigint; token?: Token; warning?: string };
+  transactionFee: { loading: boolean; value?: bigint; token?: Token; warning?: string };
   transferLimit?: { loading: boolean; value?: bigint; token?: Token };
   dailyLimit?: { loading: boolean; value?: bigint; token?: Token };
-  estimatedTime: { loading: boolean; value?: string };
+  estimatedTime?: { loading: boolean; value?: string };
 }
 
 export default function TransferInformation({ transactionFee, transferLimit, dailyLimit, estimatedTime }: Props) {
   return (
-    <div className="flex flex-col gap-5 px-medium">
-      <Row name="Estimated Arrival Time" loading={estimatedTime.loading} value={estimatedTime.value} />
+    <div className="flex flex-col gap-medium px-medium">
+      {estimatedTime ? (
+        <Row name="Estimated Arrival Time" loading={estimatedTime.loading} value={estimatedTime.value} />
+      ) : null}
       {transactionFee ? (
         <Row
           name="Transaction Fee"

@@ -1,6 +1,7 @@
-import { useCallback, useDeferredValue, useRef, useState } from "react";
+import { useCallback, useDeferredValue, useMemo, useRef, useState } from "react";
 import TransferTokenSection from "./transfer-token-section";
 import {
+  bridgeFactory,
   getSourceChainOptions,
   getSourceTokenOptions,
   getTargetChainOptions,
@@ -12,8 +13,8 @@ import TransferChainSection from "./transfer-chain-section";
 import TransferAmountSection from "./transfer-amount-section";
 import TransferInformationSection from "./transfer-information-section";
 import Button from "@/ui/button";
-import { useBalance, useSortedRelayData, useTransferV2 } from "@/hooks";
-import { useAccount } from "wagmi";
+import { useBalance, useSortedRelayData, useTransactionFee, useTransferV2 } from "@/hooks";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import TransferProviderV2 from "@/providers/transfer-provider-v2";
 
 const tokenOptions = getTokenOptions();
@@ -34,11 +35,12 @@ function Component() {
   const { amount, setAmount } = useTransferV2();
   const deferredAmount = useDeferredValue(amount);
 
-  const {
-    data: relayData,
-    loading: loadingRelayData,
-    refetch: refetchRelayData,
-  } = useSortedRelayData(deferredAmount.value, sourceToken, sourceChain, targetChain);
+  const { data: relayData, loading: loadingRelayData } = useSortedRelayData(
+    deferredAmount.value,
+    sourceToken,
+    sourceChain,
+    targetChain,
+  );
 
   const account = useAccount();
   const {
@@ -46,6 +48,31 @@ function Component() {
     loading: loadingBalance,
     refresh: refreshBalance,
   } = useBalance(sourceChain, sourceToken, account.address);
+
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
+  const bridge = useMemo(() => {
+    const category = relayData?.sortedLnBridgeRelayInfos?.records.at(0)?.bridge;
+    return category
+      ? bridgeFactory({ category, walletClient, publicClient, sourceChain, sourceToken, targetChain, targetToken })
+      : undefined;
+  }, [
+    relayData?.sortedLnBridgeRelayInfos?.records,
+    walletClient,
+    publicClient,
+    sourceChain,
+    sourceToken,
+    targetChain,
+    targetToken,
+  ]);
+
+  const { loading: loadingFee, fee } = useTransactionFee(
+    bridge,
+    account.address,
+    account.address,
+    deferredAmount.value,
+    relayData,
+  );
 
   const handleTokenChange = useCallback((_token: typeof token) => {
     setToken(_token);
@@ -189,7 +216,14 @@ function Component() {
         onChange={setAmount}
         onRefresh={refreshBalance}
       />
-      <TransferInformationSection sourceToken={sourceToken} relayData={relayData} loadingRelayData={loadingRelayData} />
+      <TransferInformationSection
+        bridge={bridge}
+        sourceToken={sourceToken}
+        relayData={relayData}
+        loadingRelayData={loadingRelayData}
+        fee={fee}
+        loadingFee={loadingFee}
+      />
       <Button className="inline-flex h-10 items-center justify-center rounded-[0.625rem]" kind="primary">
         <span className="text-sm font-bold text-white">Transfer</span>
       </Button>
