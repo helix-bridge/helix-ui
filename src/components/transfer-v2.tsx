@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useDeferredValue, useRef, useState } from "react";
 import TransferTokenSection from "./transfer-token-section";
 import {
   getSourceChainOptions,
@@ -12,27 +12,40 @@ import TransferChainSection from "./transfer-chain-section";
 import TransferAmountSection from "./transfer-amount-section";
 import TransferInformationSection from "./transfer-information-section";
 import Button from "@/ui/button";
-import { useBalance } from "@/hooks";
+import { useBalance, useSortedRelayData, useTransferV2 } from "@/hooks";
 import { useAccount } from "wagmi";
+import TransferProviderV2 from "@/providers/transfer-provider-v2";
 
 const tokenOptions = getTokenOptions();
 
-export default function TransferV2() {
+function Component() {
   const [token, setToken] = useState(tokenOptions[0]);
-  const [amount, setAmount] = useState({ input: "", value: 0n, valid: true });
   const [sourceChain, setSourceChain] = useState(getSourceChainOptions(token.category)[0]);
   const [sourceToken, setSourceToken] = useState(getSourceTokenOptions(sourceChain, token.category)[0]);
   const [targetChain, setTargetChain] = useState(getTargetChainOptions(sourceToken)[0]);
   const [targetToken, setTargetToken] = useState(getTargetTokenOptions(sourceToken, targetChain)[0]);
-
-  const account = useAccount();
-  const { loading, balance, refresh } = useBalance(sourceChain, sourceToken, account.address);
 
   const tokenRef = useRef(token);
   const sourceChainRef = useRef(sourceChain);
   const sourceTokenRef = useRef(sourceToken);
   const targetChainRef = useRef(targetChain);
   const targetTokenRef = useRef(targetToken);
+
+  const { amount, setAmount } = useTransferV2();
+  const deferredAmount = useDeferredValue(amount);
+
+  const {
+    data: relayData,
+    loading: loadingRelayData,
+    refetch: refetchRelayData,
+  } = useSortedRelayData(deferredAmount.value, sourceToken, sourceChain, targetChain);
+
+  const account = useAccount();
+  const {
+    balance,
+    loading: loadingBalance,
+    refresh: refreshBalance,
+  } = useBalance(sourceChain, sourceToken, account.address);
 
   const handleTokenChange = useCallback((_token: typeof token) => {
     setToken(_token);
@@ -170,16 +183,24 @@ export default function TransferV2() {
       />
       <TransferAmountSection
         amount={amount}
-        loading={loading}
+        loading={loadingBalance}
         balance={balance}
         token={sourceToken}
         onChange={setAmount}
-        onRefresh={refresh}
+        onRefresh={refreshBalance}
       />
-      <TransferInformationSection />
+      <TransferInformationSection sourceToken={sourceToken} relayData={relayData} loadingRelayData={loadingRelayData} />
       <Button className="inline-flex h-10 items-center justify-center rounded-[0.625rem]" kind="primary">
         <span className="text-sm font-bold text-white">Transfer</span>
       </Button>
     </div>
+  );
+}
+
+export default function TransferV2() {
+  return (
+    <TransferProviderV2>
+      <Component />
+    </TransferProviderV2>
   );
 }
