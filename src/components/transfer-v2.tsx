@@ -150,7 +150,7 @@ export default function TransferV2() {
   }, []);
 
   return (
-    <div className="flex w-full flex-col gap-medium rounded-large bg-[#1F282C] p-medium lg:w-[27.5rem] lg:gap-5 lg:rounded-[1.25rem] lg:p-5">
+    <div className="flex w-full flex-col gap-medium rounded-large bg-[#1F282C] p-medium lg:w-[27.5rem] lg:rounded-[1.25rem] lg:p-5">
       <TransferTokenSection token={token} options={tokenOptions} onChange={handleTokenChange} />
       <TransferChainSection
         sourceChain={sourceChain}
