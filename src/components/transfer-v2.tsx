@@ -216,7 +216,7 @@ function Component() {
         onChange={setAmount}
         onRefresh={refreshBalance}
       />
-      {deferredAmount.value ? (
+      {deferredAmount.input ? (
         <TransferInformationSection
           bridge={bridge}
           sourceToken={sourceToken}
