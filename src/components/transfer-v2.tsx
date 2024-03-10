@@ -437,7 +437,7 @@ function Component() {
         onClose={() => {
           setIsOpen(false);
           if (txHash) {
-            setAmount({ input: "", valid: true, value: 0n });
+            setAmount({ input: "", valid: true, value: 0n, alert: "" });
           }
           setTxHash(null);
         }}

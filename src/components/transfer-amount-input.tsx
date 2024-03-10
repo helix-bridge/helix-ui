@@ -8,9 +8,11 @@ interface Value {
   input: string;
   value: bigint;
   valid: boolean;
+  alert: string;
 }
 
 interface Props {
+  min?: bigint;
   token: Token;
   value: Value;
   balance: bigint;
@@ -20,6 +22,7 @@ interface Props {
 }
 
 export default function TransferAmountInput({
+  min,
   token,
   value,
   balance,
@@ -37,18 +40,25 @@ export default function TransferAmountInput({
       const input = e.target.value;
       let parsed = { value: 0n, input: "" };
       let valid = true;
+      let alert = "";
 
       if (input) {
         if (!Number.isNaN(Number(input))) {
           parsed = parseAmount(input, token.decimals);
-          valid = parsed.value <= balance;
-          onChange({ valid, ...parsed });
+          if (balance < parsed.value) {
+            valid = false;
+            alert = "* Insufficient s";
+          } else if (typeof min === "bigint" && parsed.value < min) {
+            valid = false;
+            alert = `* Minimum: ${formatBalance(min, token.decimals)}`;
+          }
+          onChange({ valid, alert, ...parsed });
         }
       } else {
-        onChange({ valid, ...parsed });
+        onChange({ valid, alert, ...parsed });
       }
     },
-    [token, balance, onChange],
+    [min, balance, token, onChange],
   );
 
   useEffect(() => {
@@ -75,7 +85,7 @@ export default function TransferAmountInput({
   useEffect(() => {
     if (token.decimals !== tokenRef.current.decimals || token.symbol !== tokenRef.current.symbol) {
       tokenRef.current = token;
-      onChange({ input: "", value: 0n, valid: true });
+      onChange({ input: "", value: 0n, valid: true, alert: "" });
     }
   }, [token, onChange]);
 
