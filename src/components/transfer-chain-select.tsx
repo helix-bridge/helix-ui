@@ -37,7 +37,7 @@ export default function TransferChainSelect({
           </div>
         }
         labelClassName="flex items-center justify-between gap-small w-full px-medium transition-opacity hover:opacity-80"
-        childClassName="flex flex-col gap-medium p-medium rounded-[0.625rem] bg-[#00141D]"
+        childClassName="flex flex-col gap-medium p-medium rounded-[0.625rem] bg-[#00141D] max-h-[40vh] overflow-y-auto"
         offsetSize={14}
         sameWidth
       >
