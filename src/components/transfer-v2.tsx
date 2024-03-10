@@ -8,14 +8,20 @@ import {
   getTargetTokenOptions,
   getTokenOptions,
   isSwitchAvailable,
+  notifyError,
+  notifyTransaction,
 } from "@/utils";
 import TransferChainSection from "./transfer-chain-section";
 import TransferAmountSection from "./transfer-amount-section";
 import TransferInformationSection from "./transfer-information-section";
 import Button from "@/ui/button";
-import { useBalance, useSortedRelayData, useTransactionFee, useTransferV2 } from "@/hooks";
-import { useAccount, usePublicClient, useWalletClient } from "wagmi";
+import { useAllowance, useBalance, useSortedRelayData, useTransactionFee, useTransferV2 } from "@/hooks";
+import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
 import TransferProviderV2 from "@/providers/transfer-provider-v2";
+import DisclaimerModal from "./modals/disclaimer-modal";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { Hex } from "viem";
+import TransferModalV2 from "./modals/transfer-modal-v2";
 
 const tokenOptions = getTokenOptions();
 
@@ -73,6 +79,106 @@ function Component() {
     deferredAmount.value,
     relayData,
   );
+
+  const {
+    allowance,
+    loading: loadingAllowance,
+    busy: isApproving,
+    approve,
+    refresh: refreshAllowance,
+  } = useAllowance(sourceChain, sourceToken, account.address, bridge?.getContract()?.sourceAddress);
+
+  const { chain } = useNetwork();
+  const [actionText, disableAction] = useMemo(() => {
+    let text: "Connect Wallet" | "Switch Chain" | "Approve" | "Transfer" = "Transfer";
+    let disabled = false;
+
+    if (chain?.id) {
+      if (chain.id !== sourceChain.id) {
+        text = "Switch Chain";
+        disabled = false;
+      } else if (
+        allowance < (fee?.token.type === "native" ? deferredAmount.value : deferredAmount.value + (fee?.value ?? 0n))
+      ) {
+        text = "Approve";
+        disabled = false;
+      } else {
+        text = "Transfer";
+        disabled = loadingAllowance || fee?.value === undefined || !deferredAmount.input || !deferredAmount.valid;
+      }
+    } else {
+      text = "Connect Wallet";
+      disabled = false;
+    }
+
+    return [text, disabled];
+  }, [allowance, loadingAllowance, chain?.id, deferredAmount, sourceChain.id, fee?.value, fee?.token.type]);
+
+  const { openConnectModal } = useConnectModal();
+  const { switchNetwork } = useSwitchNetwork();
+  const [txHash, setTxHash] = useState<Hex | null>();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isTransfering, setIsTransfering] = useState(false);
+
+  const handleAction = useCallback(async () => {
+    if (actionText === "Connect Wallet") {
+      openConnectModal?.();
+    } else if (actionText === "Switch Chain") {
+      switchNetwork?.(sourceChain.id);
+    } else if (actionText === "Approve") {
+      const receipt = await approve(
+        fee?.token.type === "native" ? deferredAmount.value : deferredAmount.value + (fee?.value ?? 0n),
+      );
+      notifyTransaction(receipt, sourceChain);
+    } else if (actionText === "Transfer") {
+      setIsOpen(true);
+    }
+  }, [
+    actionText,
+    sourceChain,
+    deferredAmount.value,
+    fee?.value,
+    fee?.token.type,
+    approve,
+    openConnectModal,
+    switchNetwork,
+  ]);
+
+  const handleTransfer = useCallback(async () => {
+    if (bridge && account.address) {
+      const relayInfo = relayData?.sortedLnBridgeRelayInfos?.records.at(0);
+      try {
+        setIsTransfering(true);
+        const receipt = await bridge.transfer(account.address, account.address, deferredAmount.value, {
+          relayer: relayInfo?.relayer,
+          transferId: relayInfo?.lastTransferId,
+          totalFee: fee?.value,
+          withdrawNonce: BigInt(relayInfo?.withdrawNonce ?? 0),
+          depositedMargin: BigInt(relayInfo?.margin ?? 0),
+        });
+        notifyTransaction(receipt, sourceChain);
+        setTxHash(receipt?.transactionHash);
+        if (receipt?.status === "success") {
+          setIsTransfering(false);
+          refreshBalance();
+          refreshAllowance();
+        }
+      } catch (err) {
+        console.error(err);
+        notifyError(err);
+        setIsTransfering(false);
+      }
+    }
+  }, [
+    relayData?.sortedLnBridgeRelayInfos?.records,
+    account.address,
+    bridge,
+    sourceChain,
+    fee?.value,
+    deferredAmount.value,
+    refreshBalance,
+    refreshAllowance,
+  ]);
 
   const handleTokenChange = useCallback((_token: typeof token) => {
     setToken(_token);
@@ -190,46 +296,79 @@ function Component() {
   }, []);
 
   return (
-    <div className="flex w-full flex-col gap-medium rounded-large bg-[#1F282C] p-medium lg:w-[27.5rem] lg:rounded-[1.25rem] lg:p-5">
-      <TransferTokenSection token={token} options={tokenOptions} onChange={handleTokenChange} />
-      <TransferChainSection
-        sourceChain={sourceChain}
-        targetChain={targetChain}
-        sourceToken={sourceToken}
-        targetToken={targetToken}
-        disableSwitch={!isSwitchAvailable(sourceChain, targetChain, token.category)}
-        sourceChainOptions={getSourceChainOptions(token.category)}
-        targetChainOptions={getTargetChainOptions(sourceToken)}
-        sourceTokenOptions={getSourceTokenOptions(sourceChain, token.category)}
-        targetTokenOptions={getTargetTokenOptions(sourceToken, targetChain)}
-        onSourceChainChange={handleSourceChainChange}
-        onSourceTokenChange={handleSourceTokenChange}
-        onTargetChainChange={handleTargetChainChange}
-        onTargetTokenChange={handleTargetTokenChange}
-        onSwitch={handleSwitch}
-      />
-      <TransferAmountSection
-        amount={amount}
-        loading={loadingBalance}
-        balance={balance}
-        token={sourceToken}
-        onChange={setAmount}
-        onRefresh={refreshBalance}
-      />
-      {deferredAmount.input ? (
-        <TransferInformationSection
-          bridge={bridge}
+    <>
+      <div className="flex w-full flex-col gap-medium rounded-large bg-[#1F282C] p-medium lg:w-[27.5rem] lg:rounded-[1.25rem] lg:p-5">
+        <TransferTokenSection token={token} options={tokenOptions} onChange={handleTokenChange} />
+        <TransferChainSection
+          sourceChain={sourceChain}
+          targetChain={targetChain}
           sourceToken={sourceToken}
-          relayData={relayData}
-          loadingRelayData={loadingRelayData}
-          fee={fee}
-          loadingFee={loadingFee}
+          targetToken={targetToken}
+          disableSwitch={!isSwitchAvailable(sourceChain, targetChain, token.category)}
+          sourceChainOptions={getSourceChainOptions(token.category)}
+          targetChainOptions={getTargetChainOptions(sourceToken)}
+          sourceTokenOptions={getSourceTokenOptions(sourceChain, token.category)}
+          targetTokenOptions={getTargetTokenOptions(sourceToken, targetChain)}
+          onSourceChainChange={handleSourceChainChange}
+          onSourceTokenChange={handleSourceTokenChange}
+          onTargetChainChange={handleTargetChainChange}
+          onTargetTokenChange={handleTargetTokenChange}
+          onSwitch={handleSwitch}
         />
-      ) : null}
-      <Button className="inline-flex h-10 items-center justify-center rounded-[0.625rem]" kind="primary">
-        <span className="text-sm font-bold text-white">Transfer</span>
-      </Button>
-    </div>
+        <TransferAmountSection
+          amount={amount}
+          loading={loadingBalance}
+          balance={balance}
+          token={sourceToken}
+          onChange={setAmount}
+          onRefresh={refreshBalance}
+        />
+        {deferredAmount.input ? (
+          <TransferInformationSection
+            bridge={bridge}
+            sourceToken={sourceToken}
+            relayData={relayData}
+            loadingRelayData={loadingRelayData}
+            fee={fee}
+            loadingFee={loadingFee}
+          />
+        ) : null}
+        <Button
+          className="inline-flex h-10 items-center justify-center rounded-[0.625rem]"
+          kind="primary"
+          busy={isApproving}
+          disabled={disableAction}
+          onClick={handleAction}
+        >
+          <span className="text-sm font-bold text-white">{actionText}</span>
+        </Button>
+      </div>
+
+      <TransferModalV2
+        sender={account.address}
+        recipient={account.address}
+        sourceChain={sourceChain}
+        sourceToken={sourceToken}
+        targetChain={targetChain}
+        targetToken={targetToken}
+        txHash={txHash}
+        fee={fee}
+        bridge={bridge}
+        amount={deferredAmount.value}
+        busy={isTransfering}
+        isOpen={isOpen}
+        onClose={() => {
+          setIsOpen(false);
+          if (txHash) {
+            setAmount({ input: "", valid: true, value: 0n });
+          }
+          setTxHash(null);
+        }}
+        onConfirm={handleTransfer}
+      />
+
+      <DisclaimerModal />
+    </>
   );
 }
 

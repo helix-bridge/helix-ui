@@ -4,6 +4,7 @@ import { from } from "rxjs";
 import abi from "@/abi/erc20";
 import { ChainConfig, Token } from "@/types";
 import { usePublicClient, useWalletClient } from "wagmi";
+import { notifyError } from "@/utils";
 
 export function useAllowance(
   chain: ChainConfig,
@@ -48,26 +49,32 @@ export function useAllowance(
     async (amount: bigint) => {
       if (owner && spender && walletClient) {
         setBusy(true);
-        const hash = await walletClient.writeContract({
-          address: token.address,
-          abi,
-          functionName: "approve",
-          args: [spender, amount],
-        });
-        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+        try {
+          const hash = await walletClient.writeContract({
+            address: token.address,
+            abi,
+            functionName: "approve",
+            args: [spender, amount],
+          });
+          const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
-        if (receipt.status === "success") {
-          setAllowance(
-            await publicClient.readContract({
-              address: token.address,
-              abi,
-              functionName: "allowance",
-              args: [owner, spender],
-            }),
-          );
+          if (receipt.status === "success") {
+            setAllowance(
+              await publicClient.readContract({
+                address: token.address,
+                abi,
+                functionName: "allowance",
+                args: [owner, spender],
+              }),
+            );
+          }
+          setBusy(false);
+          return receipt;
+        } catch (err) {
+          console.error(err);
+          notifyError(err);
+          setBusy(false);
         }
-        setBusy(false);
-        return receipt;
       }
     },
     [owner, spender, token.address, publicClient, walletClient],
