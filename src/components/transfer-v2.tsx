@@ -376,7 +376,7 @@ function Component() {
 
   return (
     <>
-      <div className="mx-auto flex w-full flex-col gap-medium rounded-large bg-[#1F282C] p-medium lg:mt-10 lg:w-[27.5rem] lg:rounded-[1.25rem] lg:p-5">
+      <div className="mx-auto flex w-full flex-col gap-medium rounded-large bg-[#1F282C] p-medium lg:mt-10 lg:w-[27.5rem] lg:gap-5 lg:rounded-[1.25rem] lg:p-5">
         <TransferTokenSection token={token} options={tokenOptions} onChange={handleTokenChange} />
         <TransferChainSection
           sourceChain={sourceChain}
