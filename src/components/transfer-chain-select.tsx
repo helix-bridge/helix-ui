@@ -37,16 +37,18 @@ export default function TransferChainSelect({
           </div>
         }
         labelClassName="flex items-center justify-between gap-small w-full px-medium transition-opacity hover:opacity-80"
-        childClassName="flex flex-col gap-medium p-medium rounded-[0.625rem] bg-[#00141D] max-h-[40vh] overflow-y-auto"
-        offsetSize={14}
+        childClassName="py-medium rounded-[0.625rem] bg-[#00141D] border border-white/20"
+        offsetSize={12}
         sameWidth
       >
         {chainOptions.length ? (
-          chainOptions.map((option) => (
-            <ChainOption key={option.id} selected={chain} option={option} onSelect={onChainChange} />
-          ))
+          <div className="flex max-h-[42vh] flex-col gap-medium overflow-y-auto px-medium">
+            {chainOptions.map((option) => (
+              <ChainOption key={option.id} selected={chain} option={option} onSelect={onChainChange} />
+            ))}
+          </div>
         ) : (
-          <div className="inline-flex justify-center py-small">
+          <div className="flex justify-center py-medium">
             <span className="text-sm font-bold text-slate-400">No data</span>
           </div>
         )}
