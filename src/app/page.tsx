@@ -7,12 +7,12 @@ export const metadata: Metadata = {
   description: "Perform cross-chain transfers through Helix Bridge",
 };
 
-const Transfer = dynamic(() => import("@/components/transfer"), { ssr: false });
+const TransferV2 = dynamic(() => import("@/components/transfer-v2"), { ssr: false });
 
 export default function HomePage() {
   return (
     <PageWrap>
-      <Transfer />
+      <TransferV2 />
     </PageWrap>
   );
 }
