@@ -228,7 +228,7 @@ function Component() {
     params.set(UrlSearchParamKey.SOURCE_CHAIN, sourceChainRef.current.network);
     params.set(UrlSearchParamKey.SOURCE_TOKEN, sourceTokenRef.current.symbol);
     params.set(UrlSearchParamKey.TARGET_CHAIN, targetChainRef.current.network);
-    params.set(UrlSearchParamKey.TARGET_CHAIN, targetTokenRef.current.symbol);
+    params.set(UrlSearchParamKey.TARGET_TOKEN, targetTokenRef.current.symbol);
     router.push(`?${params.toString()}`);
   }, [searchParams, router]);
 
