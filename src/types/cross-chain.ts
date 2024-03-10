@@ -26,6 +26,7 @@ export type CrossChain =
       baseFee?: never;
       action?: never;
       hidden?: boolean;
+      min?: bigint; // Minimum transfer amount
     }
   | {
       target: Target;
@@ -35,6 +36,7 @@ export type CrossChain =
       baseFee?: never;
       action?: never;
       hidden?: boolean;
+      min?: bigint; // Minimum transfer amount
     }
   | {
       target: Target;
@@ -44,6 +46,7 @@ export type CrossChain =
       baseFee?: never;
       action: Action;
       hidden?: boolean;
+      min?: bigint; // Minimum transfer amount
     }
   | {
       target: Target;
@@ -53,6 +56,7 @@ export type CrossChain =
       baseFee: bigint;
       action: Action;
       hidden?: boolean;
+      min?: bigint; // Minimum transfer amount
     };
 
 export type AvailableBridges = {
