@@ -397,6 +397,7 @@ function Component() {
           loading={loadingBalance}
           balance={balance}
           token={sourceToken}
+          min={bridge?.getCrossInfo()?.min}
           onChange={setAmount}
           onRefresh={refreshBalance}
         />
