@@ -22,6 +22,8 @@ import DisclaimerModal from "./modals/disclaimer-modal";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { Hex } from "viem";
 import TransferModalV2 from "./modals/transfer-modal-v2";
+import { useRouter, useSearchParams } from "next/navigation";
+import { UrlSearchParamKey } from "@/types";
 
 const tokenOptions = getTokenOptions();
 
@@ -180,97 +182,135 @@ function Component() {
     refreshAllowance,
   ]);
 
-  const handleTokenChange = useCallback((_token: typeof token) => {
-    setToken(_token);
-    tokenRef.current = _token;
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-    const _sourceChainOptions = getSourceChainOptions(_token.category);
-    const _sourceChain =
-      _sourceChainOptions.find(({ id }) => id === sourceChainRef.current.id) || _sourceChainOptions[0];
+  const changeUrl = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set(UrlSearchParamKey.TOKEN_CATEGORY, tokenRef.current.category);
+    params.set(UrlSearchParamKey.SOURCE_CHAIN, sourceChainRef.current.network);
+    params.set(UrlSearchParamKey.SOURCE_TOKEN, sourceTokenRef.current.symbol);
+    params.set(UrlSearchParamKey.TARGET_CHAIN, targetChainRef.current.network);
+    params.set(UrlSearchParamKey.TARGET_CHAIN, targetTokenRef.current.symbol);
+    router.push(`?${params.toString()}`);
+  }, [searchParams, router]);
 
-    const _sourceTokenOptions = getSourceTokenOptions(_sourceChain, _token.category);
-    const _sourceToken =
-      _sourceTokenOptions.find(({ symbol }) => symbol === sourceTokenRef.current.symbol) || _sourceTokenOptions[0];
+  const handleTokenChange = useCallback(
+    (_token: typeof token) => {
+      setToken(_token);
+      tokenRef.current = _token;
 
-    const _targetChainOptions = getTargetChainOptions(_sourceToken);
-    const _targetChain =
-      _targetChainOptions.find(({ id }) => id === targetChainRef.current.id) || _targetChainOptions[0];
+      const _sourceChainOptions = getSourceChainOptions(_token.category);
+      const _sourceChain =
+        _sourceChainOptions.find(({ id }) => id === sourceChainRef.current.id) || _sourceChainOptions[0];
 
-    const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
-    const _targetToken =
-      _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
+      const _sourceTokenOptions = getSourceTokenOptions(_sourceChain, _token.category);
+      const _sourceToken =
+        _sourceTokenOptions.find(({ symbol }) => symbol === sourceTokenRef.current.symbol) || _sourceTokenOptions[0];
 
-    setSourceChain(_sourceChain);
-    setSourceToken(_sourceToken);
-    setTargetChain(_targetChain);
-    setTargetToken(_targetToken);
+      const _targetChainOptions = getTargetChainOptions(_sourceToken);
+      const _targetChain =
+        _targetChainOptions.find(({ id }) => id === targetChainRef.current.id) || _targetChainOptions[0];
 
-    sourceChainRef.current = _sourceChain;
-    sourceTokenRef.current = _sourceToken;
-    targetChainRef.current = _targetChain;
-    targetTokenRef.current = _targetToken;
-  }, []);
+      const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
+      const _targetToken =
+        _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
 
-  const handleSourceChainChange = useCallback((_sourceChain: typeof sourceChain) => {
-    setSourceChain(_sourceChain);
-    sourceChainRef.current = _sourceChain;
+      setSourceChain(_sourceChain);
+      setSourceToken(_sourceToken);
+      setTargetChain(_targetChain);
+      setTargetToken(_targetToken);
 
-    const _sourceTokenOptions = getSourceTokenOptions(_sourceChain, tokenRef.current.category);
-    const _sourceToken =
-      _sourceTokenOptions.find(({ symbol }) => symbol === sourceTokenRef.current.symbol) || _sourceTokenOptions[0];
+      sourceChainRef.current = _sourceChain;
+      sourceTokenRef.current = _sourceToken;
+      targetChainRef.current = _targetChain;
+      targetTokenRef.current = _targetToken;
 
-    const _targetChainOptions = getTargetChainOptions(_sourceToken);
-    const _targetChain =
-      _targetChainOptions.find(({ id }) => id === targetChainRef.current.id) || _targetChainOptions[0];
+      changeUrl();
+    },
+    [changeUrl],
+  );
 
-    const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
-    const _targetToken =
-      _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
+  const handleSourceChainChange = useCallback(
+    (_sourceChain: typeof sourceChain) => {
+      setSourceChain(_sourceChain);
+      sourceChainRef.current = _sourceChain;
 
-    setSourceToken(_sourceToken);
-    setTargetChain(_targetChain);
-    setTargetToken(_targetToken);
+      const _sourceTokenOptions = getSourceTokenOptions(_sourceChain, tokenRef.current.category);
+      const _sourceToken =
+        _sourceTokenOptions.find(({ symbol }) => symbol === sourceTokenRef.current.symbol) || _sourceTokenOptions[0];
 
-    sourceTokenRef.current = _sourceToken;
-    targetChainRef.current = _targetChain;
-    targetTokenRef.current = _targetToken;
-  }, []);
+      const _targetChainOptions = getTargetChainOptions(_sourceToken);
+      const _targetChain =
+        _targetChainOptions.find(({ id }) => id === targetChainRef.current.id) || _targetChainOptions[0];
 
-  const handleSourceTokenChange = useCallback((_sourceToken: typeof sourceToken) => {
-    setSourceToken(_sourceToken);
-    sourceTokenRef.current = _sourceToken;
+      const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
+      const _targetToken =
+        _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
 
-    const _targetChainOptions = getTargetChainOptions(_sourceToken);
-    const _targetChain =
-      _targetChainOptions.find(({ id }) => id === targetChainRef.current.id) || _targetChainOptions[0];
+      setSourceToken(_sourceToken);
+      setTargetChain(_targetChain);
+      setTargetToken(_targetToken);
 
-    const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
-    const _targetToken =
-      _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
+      sourceTokenRef.current = _sourceToken;
+      targetChainRef.current = _targetChain;
+      targetTokenRef.current = _targetToken;
 
-    setTargetChain(_targetChain);
-    setTargetToken(_targetToken);
+      changeUrl();
+    },
+    [changeUrl],
+  );
 
-    targetChainRef.current = _targetChain;
-    targetTokenRef.current = _targetToken;
-  }, []);
+  const handleSourceTokenChange = useCallback(
+    (_sourceToken: typeof sourceToken) => {
+      setSourceToken(_sourceToken);
+      sourceTokenRef.current = _sourceToken;
 
-  const handleTargetChainChange = useCallback((_targetChain: typeof targetChain) => {
-    setTargetChain(_targetChain);
-    targetChainRef.current = _targetChain;
+      const _targetChainOptions = getTargetChainOptions(_sourceToken);
+      const _targetChain =
+        _targetChainOptions.find(({ id }) => id === targetChainRef.current.id) || _targetChainOptions[0];
 
-    const _targetTokenOptions = getTargetTokenOptions(sourceTokenRef.current, _targetChain);
-    const _targetToken =
-      _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
+      const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
+      const _targetToken =
+        _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
 
-    setTargetToken(_targetToken);
-    targetTokenRef.current = _targetToken;
-  }, []);
+      setTargetChain(_targetChain);
+      setTargetToken(_targetToken);
 
-  const handleTargetTokenChange = useCallback((_targetToken: typeof targetToken) => {
-    setTargetToken(_targetToken);
-    targetTokenRef.current = _targetToken;
-  }, []);
+      targetChainRef.current = _targetChain;
+      targetTokenRef.current = _targetToken;
+
+      changeUrl();
+    },
+    [changeUrl],
+  );
+
+  const handleTargetChainChange = useCallback(
+    (_targetChain: typeof targetChain) => {
+      setTargetChain(_targetChain);
+      targetChainRef.current = _targetChain;
+
+      const _targetTokenOptions = getTargetTokenOptions(sourceTokenRef.current, _targetChain);
+      const _targetToken =
+        _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
+
+      setTargetToken(_targetToken);
+      targetTokenRef.current = _targetToken;
+
+      changeUrl();
+    },
+    [changeUrl],
+  );
+
+  const handleTargetTokenChange = useCallback(
+    (_targetToken: typeof targetToken) => {
+      setTargetToken(_targetToken);
+      targetTokenRef.current = _targetToken;
+
+      changeUrl();
+    },
+    [changeUrl],
+  );
 
   const handleSwitch = useCallback(() => {
     const _sourceChain = targetChainRef.current;
@@ -293,7 +333,9 @@ function Component() {
     sourceTokenRef.current = _sourceToken;
     targetChainRef.current = _targetChain;
     targetTokenRef.current = _targetToken;
-  }, []);
+
+    changeUrl();
+  }, [changeUrl]);
 
   return (
     <>
