@@ -40,8 +40,59 @@ function Component() {
   const targetChainRef = useRef(targetChain);
   const targetTokenRef = useRef(targetToken);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    const pT = params.get(UrlSearchParamKey.TOKEN_CATEGORY);
+    const _token = tokenOptions.find(({ category }) => category === pT) || tokenOptions[0];
+
+    const pSC = params.get(UrlSearchParamKey.SOURCE_CHAIN);
+    const _sourceChainOptions = getSourceChainOptions(_token.category);
+    const _sourceChain = _sourceChainOptions.find(({ network }) => network === pSC) || _sourceChainOptions[0];
+
+    const pST = params.get(UrlSearchParamKey.SOURCE_TOKEN);
+    const _sourceTokenOptions = getSourceTokenOptions(_sourceChain, _token.category);
+    const _sourceToken = _sourceTokenOptions.find(({ symbol }) => symbol === pST) || _sourceTokenOptions[0];
+
+    const pTC = params.get(UrlSearchParamKey.TARGET_CHAIN);
+    const _targetChainOptions = getTargetChainOptions(_sourceToken);
+    const _targetChain = _targetChainOptions.find(({ network }) => network === pTC) || _targetChainOptions[0];
+
+    const pTT = params.get(UrlSearchParamKey.TARGET_CHAIN);
+    const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
+    const _targetToken = _targetTokenOptions.find(({ symbol }) => symbol === pTT) || _targetTokenOptions[0];
+
+    setToken(_token);
+    setSourceChain(_sourceChain);
+    setSourceToken(_sourceToken);
+    setTargetChain(_targetChain);
+    setTargetToken(_targetToken);
+
+    tokenRef.current = _token;
+    sourceChainRef.current = _sourceChain;
+    sourceTokenRef.current = _sourceToken;
+    targetChainRef.current = _targetChain;
+    targetTokenRef.current = _targetToken;
+  }, []);
+
   const { amount, setAmount } = useTransferV2();
   const deferredAmount = useDeferredValue(amount);
+  const [txHash, setTxHash] = useState<Hex | null>();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isTransfering, setIsTransfering] = useState(false);
+
+  const account = useAccount();
+  const { chain } = useNetwork();
+  const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
+  const { switchNetwork } = useSwitchNetwork();
+  const { openConnectModal } = useConnectModal();
+
+  const {
+    balance,
+    loading: loadingBalance,
+    refresh: refreshBalance,
+  } = useBalance(sourceChain, sourceToken, account.address);
 
   const { data: relayData, loading: loadingRelayData } = useSortedRelayData(
     deferredAmount.value,
@@ -50,15 +101,6 @@ function Component() {
     targetChain,
   );
 
-  const account = useAccount();
-  const {
-    balance,
-    loading: loadingBalance,
-    refresh: refreshBalance,
-  } = useBalance(sourceChain, sourceToken, account.address);
-
-  const { data: walletClient } = useWalletClient();
-  const publicClient = usePublicClient();
   const bridge = useMemo(() => {
     const category = relayData?.sortedLnBridgeRelayInfos?.records.at(0)?.bridge;
     return category
@@ -90,7 +132,6 @@ function Component() {
     refresh: refreshAllowance,
   } = useAllowance(sourceChain, sourceToken, account.address, bridge?.getContract()?.sourceAddress);
 
-  const { chain } = useNetwork();
   const [actionText, disableAction] = useMemo(() => {
     let text: "Connect Wallet" | "Switch Chain" | "Approve" | "Transfer" = "Transfer";
     let disabled = false;
@@ -115,12 +156,6 @@ function Component() {
 
     return [text, disabled];
   }, [allowance, loadingAllowance, chain?.id, deferredAmount, sourceChain.id, fee?.value, fee?.token.type]);
-
-  const { openConnectModal } = useConnectModal();
-  const { switchNetwork } = useSwitchNetwork();
-  const [txHash, setTxHash] = useState<Hex | null>();
-  const [isOpen, setIsOpen] = useState(false);
-  const [isTransfering, setIsTransfering] = useState(false);
 
   const handleAction = useCallback(async () => {
     if (actionText === "Connect Wallet") {
@@ -181,41 +216,6 @@ function Component() {
     refreshBalance,
     refreshAllowance,
   ]);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    const pT = params.get(UrlSearchParamKey.TOKEN_CATEGORY);
-    const _token = tokenOptions.find(({ category }) => category === pT) || tokenOptions[0];
-
-    const pSC = params.get(UrlSearchParamKey.SOURCE_CHAIN);
-    const _sourceChainOptions = getSourceChainOptions(_token.category);
-    const _sourceChain = _sourceChainOptions.find(({ network }) => network === pSC) || _sourceChainOptions[0];
-
-    const pST = params.get(UrlSearchParamKey.SOURCE_TOKEN);
-    const _sourceTokenOptions = getSourceTokenOptions(_sourceChain, _token.category);
-    const _sourceToken = _sourceTokenOptions.find(({ symbol }) => symbol === pST) || _sourceTokenOptions[0];
-
-    const pTC = params.get(UrlSearchParamKey.TARGET_CHAIN);
-    const _targetChainOptions = getTargetChainOptions(_sourceToken);
-    const _targetChain = _targetChainOptions.find(({ network }) => network === pTC) || _targetChainOptions[0];
-
-    const pTT = params.get(UrlSearchParamKey.TARGET_CHAIN);
-    const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
-    const _targetToken = _targetTokenOptions.find(({ symbol }) => symbol === pTT) || _targetTokenOptions[0];
-
-    setToken(_token);
-    setSourceChain(_sourceChain);
-    setSourceToken(_sourceToken);
-    setTargetChain(_targetChain);
-    setTargetToken(_targetToken);
-
-    tokenRef.current = _token;
-    sourceChainRef.current = _sourceChain;
-    sourceTokenRef.current = _sourceToken;
-    targetChainRef.current = _targetChain;
-    targetTokenRef.current = _targetToken;
-  }, []);
 
   const searchParams = useSearchParams();
   const router = useRouter();
