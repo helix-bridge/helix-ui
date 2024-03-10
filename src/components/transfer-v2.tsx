@@ -222,15 +222,20 @@ function Component() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const changeUrl = useCallback(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set(UrlSearchParamKey.TOKEN_CATEGORY, tokenRef.current.category);
-    params.set(UrlSearchParamKey.SOURCE_CHAIN, sourceChainRef.current.network);
-    params.set(UrlSearchParamKey.SOURCE_TOKEN, sourceTokenRef.current.symbol);
-    params.set(UrlSearchParamKey.TARGET_CHAIN, targetChainRef.current.network);
-    params.set(UrlSearchParamKey.TARGET_TOKEN, targetTokenRef.current.symbol);
-    router.push(`?${params.toString()}`);
-  }, [searchParams, router]);
+  const changeUrl = useCallback(
+    (onlyTokenCategory = false) => {
+      const params = onlyTokenCategory ? new URLSearchParams() : new URLSearchParams(searchParams.toString());
+      params.set(UrlSearchParamKey.TOKEN_CATEGORY, tokenRef.current.category);
+      if (!onlyTokenCategory) {
+        params.set(UrlSearchParamKey.SOURCE_CHAIN, sourceChainRef.current.network);
+        params.set(UrlSearchParamKey.SOURCE_TOKEN, sourceTokenRef.current.symbol);
+        params.set(UrlSearchParamKey.TARGET_CHAIN, targetChainRef.current.network);
+        params.set(UrlSearchParamKey.TARGET_TOKEN, targetTokenRef.current.symbol);
+      }
+      router.push(`?${params.toString()}`);
+    },
+    [searchParams, router],
+  );
 
   const handleTokenChange = useCallback(
     (_token: typeof token) => {
@@ -263,7 +268,7 @@ function Component() {
       targetChainRef.current = _targetChain;
       targetTokenRef.current = _targetToken;
 
-      changeUrl();
+      changeUrl(true);
     },
     [changeUrl],
   );
