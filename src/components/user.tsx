@@ -18,7 +18,7 @@ import { useAccount, useDisconnect } from "wagmi";
 import PrettyAddress from "./pretty-address";
 import AddressIdenticon from "./address-identicon";
 import { Placement } from "@floating-ui/react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Props {
   placement: Placement;
@@ -37,7 +37,6 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8, o
   const { openConnectModal } = useConnectModal();
 
   const searchParams = useSearchParams();
-  const pathname = usePathname();
   const router = useRouter();
 
   return address ? (
@@ -86,7 +85,7 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8, o
             <button
               key={`${balance.chain.network}-${balance.token.symbol}`}
               className="flex items-center gap-large rounded-medium px-3 py-2 transition-colors hover:bg-white/10 disabled:cursor-default lg:py-medium"
-              disabled={pathname !== "/"}
+              disabled={true}
               onClick={() => {
                 const _sourceChain = balance.chain;
                 const _sourceToken = balance.token;
