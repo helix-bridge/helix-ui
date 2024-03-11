@@ -110,7 +110,7 @@ export default function Modal({
                     kind="default"
                     onClick={onCancel}
                     disabled={disabledCancel}
-                    className="h-9 flex-1 rounded-medium text-base font-medium"
+                    className="h-12 flex-1 rounded-[1.25rem] text-base font-medium"
                   >
                     {cancelText || "Cancel"}
                   </Button>
@@ -121,7 +121,7 @@ export default function Modal({
                     onClick={onOk}
                     disabled={disabledOk}
                     busy={busy}
-                    className="h-9 flex-1 rounded-medium text-base font-medium"
+                    className="h-12 flex-1 rounded-[1.25rem] text-base font-medium"
                   >
                     {okText || "Ok"}
                   </Button>
