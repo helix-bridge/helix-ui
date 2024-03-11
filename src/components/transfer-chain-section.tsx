@@ -2,7 +2,6 @@ import { ChainConfig, Token } from "@/types";
 import TransferSection from "./transfer-section";
 import TransferChainSelect from "./transfer-chain-select";
 import TransferSwitch from "./transfer-switch";
-import { arbitrumChain } from "@/config/chains";
 
 interface Props {
   sourceChain: ChainConfig;
@@ -44,7 +43,7 @@ export default function TransferChainSection({
           chain={sourceChain}
           token={sourceToken}
           chainOptions={sourceChainOptions}
-          tokenOptions={arbitrumChain.tokens}
+          tokenOptions={sourceTokenOptions}
           onChainChange={onSourceChainChange}
           onTokenChange={onSourceTokenChange}
         />
