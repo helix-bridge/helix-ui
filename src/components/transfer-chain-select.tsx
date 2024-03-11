@@ -2,6 +2,7 @@ import { ChainConfig, Token } from "@/types";
 import Select from "@/ui/select";
 import { getChainLogoSrc, getTokenLogoSrc } from "@/utils";
 import Image from "next/image";
+import { useState } from "react";
 
 interface Props {
   chain: ChainConfig;
@@ -20,6 +21,8 @@ export default function TransferChainSelect({
   onChainChange,
   onTokenChange,
 }: Props) {
+  const [search, setSearch] = useState("");
+
   return (
     <div className="flex items-center">
       <Select
@@ -37,16 +40,35 @@ export default function TransferChainSelect({
           </div>
         }
         labelClassName="flex items-center justify-between gap-small w-full mx-medium transition-colors hover:bg-white/10 group py-small rounded-[0.625rem]"
-        childClassName="py-medium rounded-[0.625rem] bg-[#00141D] border border-white/20"
+        childClassName="py-medium rounded-large bg-[#00141D] border border-white/20 flex flex-col gap-2"
         offsetSize={12}
         sameWidth
       >
         {chainOptions.length ? (
-          <div className="flex max-h-[20rem] flex-col gap-small overflow-y-auto px-medium">
-            {chainOptions.map((option) => (
-              <ChainOption key={option.id} selected={chain} option={option} onSelect={onChainChange} />
-            ))}
-          </div>
+          <>
+            <div className="mx-medium flex items-center gap-1 rounded-xl bg-[#1F282C] px-medium transition-colors focus-within:bg-white/20 focus-within:outline-none hover:bg-white/20">
+              <Image alt="Search" width={24} height={24} src="/images/search.svg" className="h-6 w-6 opacity-60" />
+              <input
+                className="w-full bg-transparent py-2 text-base font-medium focus-visible:outline-none"
+                placeholder="Search ..."
+                value={search}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+              />
+            </div>
+            <div className="mx-auto h-[1px] w-5 bg-white/50" />
+            <div className="flex max-h-[20rem] flex-col gap-2 overflow-y-auto px-medium">
+              {chainOptions
+                .filter(({ name }) => name.toLowerCase().includes(search.toLowerCase()))
+                .map((option) => (
+                  <ChainOption key={option.id} selected={chain} option={option} onSelect={onChainChange} />
+                ))}
+            </div>
+          </>
         ) : (
           <div className="flex justify-center py-medium">
             <span className="text-sm font-bold text-slate-400">No data</span>
@@ -94,7 +116,7 @@ function ChainOption({
 }) {
   return (
     <button
-      className={`flex items-center gap-large rounded-[0.625rem] p-medium transition-colors ${
+      className={`flex items-center gap-large rounded-large p-medium transition-colors ${
         selected.id === option.id ? "bg-white/20" : "bg-[#1F282C] hover:cursor-pointer hover:bg-white/20"
       }`}
       disabled={selected.id === option.id}
