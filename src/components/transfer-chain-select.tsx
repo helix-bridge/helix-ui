@@ -42,7 +42,7 @@ export default function TransferChainSelect({
         sameWidth
       >
         {chainOptions.length ? (
-          <div className="flex max-h-[20rem] flex-col gap-medium overflow-y-auto px-medium">
+          <div className="flex max-h-[20rem] flex-col gap-small overflow-y-auto px-medium">
             {chainOptions.map((option) => (
               <ChainOption key={option.id} selected={chain} option={option} onSelect={onChainChange} />
             ))}
