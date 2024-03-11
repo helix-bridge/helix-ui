@@ -22,7 +22,7 @@ export default function TransferTokenSelect({ value, options, onChange }: Props)
     <div className="flex items-center gap-medium px-medium">
       <TokenImage token={value} active />
       <span className="text-base font-bold text-white">{value.symbol}</span>
-      <div className="group flex items-center gap-medium">
+      <div className="group ml-2 flex items-center gap-medium">
         {options
           .filter((option) => option.symbol !== value.symbol)
           .map((option, index) => (
@@ -57,16 +57,16 @@ function TokenImage({
 }) {
   return (
     <Image
-      width={30}
-      height={30}
+      width={active ? 32 : 40}
+      height={active ? 32 : 40}
       alt="Token image"
       src={getTokenLogoSrc(token.logo)}
-      className={`h-[1.875rem] w-[1.875rem] shrink-0 rounded-full transition-[transform,opacity] duration-200 ${
+      className={`shrink-0 rounded-full transition-[transform,opacity] duration-200 ${
         active
-          ? "opacity-100"
+          ? "h-[2rem] w-[2rem] opacity-100"
           : `${
               index <= hoveIndex ? "group-active:-translate-x-2" : ""
-            } opacity-50 hover:cursor-pointer hover:opacity-80`
+            } h-[2.5rem] w-[2.5rem] opacity-50 hover:cursor-pointer hover:opacity-80`
       }`}
       onClick={() => {
         !active && onClick(token);
