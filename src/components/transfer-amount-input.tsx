@@ -47,7 +47,7 @@ export default function TransferAmountInput({
           parsed = parseAmount(input, token.decimals);
           if (balance < parsed.value) {
             valid = false;
-            alert = "* Insufficient s";
+            alert = "* Insufficient";
           } else if (typeof min === "bigint" && parsed.value < min) {
             valid = false;
             alert = `* Minimum: ${formatBalance(min, token.decimals)}`;
