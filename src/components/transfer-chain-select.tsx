@@ -25,7 +25,7 @@ export default function TransferChainSelect({
       <Select
         placeholder={<span className="text-base font-bold text-slate-400">Select a chain</span>}
         label={
-          <div className="flex items-center gap-medium">
+          <div className="flex items-center gap-medium transition-transform group-hover:translate-x-2">
             <Image
               width={32}
               height={32}
@@ -36,7 +36,7 @@ export default function TransferChainSelect({
             <span className="text-lg font-extrabold text-white">{chain.name}</span>
           </div>
         }
-        labelClassName="flex items-center justify-between gap-small w-full px-medium transition-opacity hover:opacity-80"
+        labelClassName="flex items-center justify-between gap-small w-full mx-medium transition-colors hover:bg-white/10 group py-small rounded-[0.625rem]"
         childClassName="py-medium rounded-[0.625rem] bg-[#00141D] border border-white/20"
         offsetSize={12}
         sameWidth
@@ -69,7 +69,7 @@ export default function TransferChainSelect({
               <span className="truncate text-sm font-bold text-white">{token.symbol}</span>
             </div>
           }
-          labelClassName="flex items-center justify-between gap-small p-small rounded-[0.625rem] bg-[#1F282C] w-[9.25rem] mr-medium transition-colors hover:bg-white/20"
+          labelClassName="flex items-center justify-between gap-small px-small py-2 rounded-[0.625rem] bg-[#1F282C] w-[9.25rem] mr-medium transition-colors hover:bg-white/20"
           childClassName="flex flex-col gap-small p-small rounded-[0.625rem] bg-[#00141D] border border-white/20"
           offsetSize={12}
           sameWidth
