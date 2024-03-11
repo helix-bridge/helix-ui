@@ -61,7 +61,7 @@ export default function TransferChainSelect({
               />
             </div>
             <div className="mx-auto h-[1px] w-5 bg-white/50" />
-            <div className="flex max-h-[20rem] flex-col gap-2 overflow-y-auto px-medium">
+            <div className="flex max-h-[20rem] flex-col overflow-y-auto">
               {chainOptions
                 .filter(({ name }) => name.toLowerCase().includes(search.toLowerCase()))
                 .map((option) => (
@@ -116,8 +116,8 @@ function ChainOption({
 }) {
   return (
     <button
-      className={`flex items-center gap-large rounded-large p-medium transition-colors ${
-        selected.id === option.id ? "bg-white/20" : "bg-[#1F282C] hover:cursor-pointer hover:bg-white/20"
+      className={`flex items-center gap-large px-5 py-medium transition-colors ${
+        selected.id === option.id ? "bg-white/20" : "hover:bg-[#1F282C]"
       }`}
       disabled={selected.id === option.id}
       onClick={() => {
