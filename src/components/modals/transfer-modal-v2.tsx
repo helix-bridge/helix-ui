@@ -87,12 +87,12 @@ export default function TransferModalV2({
 
       {/* information */}
       <div className="flex flex-col gap-medium">
-        <span className="text-sm font-extrabold text-white">Information</span>
+        <span className="text-sm font-extrabold text-white/50">Information</span>
         <Information fee={fee} bridge={bridge} />
       </div>
 
       {txHash ? (
-        <div className="flex h-10 items-center rounded-medium bg-inner px-medium">
+        <div className="flex h-12 items-center rounded-large bg-inner px-5">
           <Progress
             confirmedBlocks={txProgressData?.historyRecordByTxHash?.confirmedBlocks}
             result={txProgressData?.historyRecordByTxHash?.result}
@@ -119,12 +119,12 @@ function SourceTarget({
   address?: Address | null;
 }) {
   return chain && token ? (
-    <div className="flex items-center justify-between rounded-medium bg-inner p-medium lg:p-5">
+    <div className="flex items-center justify-between rounded-3xl bg-inner p-5">
       {/* Left */}
       <div className="flex items-center gap-medium">
         <Image width={36} height={36} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
         <div className="flex flex-col items-start">
-          <span className="text-base font-medium text-white">{chain.name}</span>
+          <span className="text-base font-extrabold text-white">{chain.name}</span>
           <span className="hidden text-sm font-medium text-white/50 lg:inline">{address}</span>
           {address ? (
             <span className="text-sm font-medium text-white/50 lg:hidden">{toShortAdrress(address, 8, 6)}</span>
@@ -138,7 +138,7 @@ function SourceTarget({
           {type === "source" ? "-" : "+"}
           {formatBalance(amount, token.decimals)}
         </span>
-        <span className="text-sm font-medium text-white">{token.symbol}</span>
+        <span className="text-sm font-extrabold text-white">{token.symbol}</span>
       </div>
     </div>
   ) : null;
@@ -146,7 +146,7 @@ function SourceTarget({
 
 function Information({ fee, bridge }: { fee?: { value: bigint; token: Token } | null; bridge?: BaseBridge | null }) {
   return (
-    <div className="flex flex-col gap-small rounded-medium bg-inner p-medium">
+    <div className="flex flex-col gap-small rounded-3xl bg-inner p-5">
       <Item
         label="Transaction Fee"
         value={fee ? `${formatBalance(fee.value, fee.token.decimals, { precision: 6 })} ${fee.token.symbol}` : null}
@@ -158,7 +158,7 @@ function Information({ fee, bridge }: { fee?: { value: bigint; token: Token } | 
 
 function Item({ label, value }: { label: string; value?: string | null }) {
   return (
-    <div className="flex items-center justify-between gap-medium text-sm font-medium text-white">
+    <div className="flex items-center justify-between gap-medium text-sm font-extrabold text-white">
       <span>{label}</span>
       <span className="truncate">{value}</span>
     </div>
@@ -186,8 +186,8 @@ function Progress({
       return (
         <div className="flex w-full items-center justify-between">
           <div className="inline-flex">
-            <span className="text-sm font-medium">LnProvider relay finished. Go to&nbsp;</span>
-            <Link href={`/records/${id}`} className="text-sm font-medium text-primary hover:underline">
+            <span className="text-sm font-extrabold">LnProvider relay finished. Go to&nbsp;</span>
+            <Link href={`/records/${id}`} className="text-sm font-extrabold text-primary hover:underline">
               Detail
             </Link>
           </div>
@@ -197,7 +197,7 @@ function Progress({
     } else {
       return (
         <div className="flex w-full items-center justify-between">
-          <span className="text-sm font-medium">{`Waiting for LnProvider relay message(${confirmedBlocks})`}</span>
+          <span className="text-sm font-extrabold">{`Waiting for LnProvider relay message(${confirmedBlocks})`}</span>
           <ProgressIcon percent={(finished * 100) / total} />
         </div>
       );
@@ -205,7 +205,7 @@ function Progress({
   } else {
     return (
       <div className="flex w-full items-center justify-between">
-        <span className="text-sm font-medium">Waiting for indexing...</span>
+        <span className="text-sm font-extrabold">Waiting for indexing...</span>
         <ProgressIcon percent={10} />
       </div>
     );

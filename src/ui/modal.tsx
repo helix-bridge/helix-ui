@@ -74,7 +74,7 @@ export default function Modal({
           {/* close icon */}
           <button
             onClick={onClose}
-            className="absolute right-2 top-2 rounded-full bg-transparent p-[2px] transition hover:scale-105 hover:bg-white/10 active:scale-95"
+            className="absolute right-2 top-2 rounded-full bg-transparent p-[4px] transition hover:scale-105 hover:bg-white/10 active:scale-95"
           >
             <Image width={20} height={20} alt="Close" src="/images/close-white.svg" />
           </button>
@@ -110,7 +110,7 @@ export default function Modal({
                     kind="default"
                     onClick={onCancel}
                     disabled={disabledCancel}
-                    className="h-12 flex-1 rounded-[1.25rem] text-base font-medium"
+                    className="h-10 flex-1 rounded-[1.25rem] text-base font-extrabold lg:h-12"
                   >
                     {cancelText || "Cancel"}
                   </Button>
@@ -121,7 +121,7 @@ export default function Modal({
                     onClick={onOk}
                     disabled={disabledOk}
                     busy={busy}
-                    className="h-12 flex-1 rounded-[1.25rem] text-base font-medium"
+                    className="h-10 flex-1 rounded-[1.25rem] text-base font-extrabold lg:h-12"
                   >
                     {okText || "Ok"}
                   </Button>
