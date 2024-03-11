@@ -126,6 +126,10 @@ export abstract class BaseBridge {
     return this.targetChain;
   }
 
+  getCrossInfo() {
+    return this.crossInfo;
+  }
+
   getEstimateTime() {
     return this.estimateTime;
   }
