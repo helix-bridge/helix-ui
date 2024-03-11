@@ -18,7 +18,7 @@ export default function TransferSection({
   return (
     <div className="flex flex-col gap-small">
       <div
-        className={`flex flex-col gap-medium rounded-[0.625rem] bg-app-bg py-medium transition-[outline] duration-200 ${className} ${
+        className={`flex flex-col gap-medium rounded-large bg-app-bg py-medium transition-[outline] duration-200 ${className} ${
           alert ? "outline outline-1 outline-app-red" : "outline-none"
         }`}
       >

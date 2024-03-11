@@ -381,7 +381,7 @@ function Component() {
 
   return (
     <>
-      <div className="mx-auto flex w-full flex-col gap-medium rounded-large bg-[#1F282C] p-medium lg:mt-10 lg:w-[27.5rem] lg:gap-large lg:rounded-[1.25rem] lg:p-5">
+      <div className="mx-auto flex w-full flex-col gap-medium rounded-large bg-[#1F282C] p-medium lg:mt-5 lg:w-[27.5rem] lg:gap-5 lg:rounded-[1.25rem] lg:p-5">
         <TransferTokenSection token={token} options={tokenOptions} onChange={handleTokenChange} />
         <TransferChainSection
           sourceChain={sourceChain}
@@ -408,6 +408,15 @@ function Component() {
           onChange={setAmount}
           onRefresh={refreshBalance}
         />
+        <Button
+          className="inline-flex h-12 items-center justify-center rounded-[1.25rem]"
+          kind="primary"
+          busy={isApproving}
+          disabled={disableAction}
+          onClick={handleAction}
+        >
+          <span className="text-base font-extrabold text-white">{actionText}</span>
+        </Button>
         {deferredAmount.input ? (
           <TransferInformationSection
             bridge={bridge}
@@ -418,15 +427,6 @@ function Component() {
             loadingFee={loadingFee}
           />
         ) : null}
-        <Button
-          className="inline-flex h-10 items-center justify-center rounded-[0.625rem]"
-          kind="primary"
-          busy={isApproving}
-          disabled={disableAction}
-          onClick={handleAction}
-        >
-          <span className="text-sm font-bold text-white">{actionText}</span>
-        </Button>
       </div>
 
       <TransferModalV2

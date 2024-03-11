@@ -30,7 +30,7 @@ export default function TransferAmountInput({
   onRefresh,
   onChange = () => undefined,
 }: Props) {
-  const [dynamicFont, setDynamicFont] = useState("text-[3rem] font-extralight");
+  const [dynamicFont, setDynamicFont] = useState("text-[3rem] font-light");
   const inputRef = useRef<HTMLInputElement>(null);
   const spanRef = useRef<HTMLSpanElement>(null);
   const tokenRef = useRef(token);
@@ -65,20 +65,18 @@ export default function TransferAmountInput({
     const inputWidth = inputRef.current?.clientWidth || 1;
     const spanWidth = spanRef.current?.clientWidth || 0;
     const percent = (spanWidth / inputWidth) * 100;
-    if (percent < 10) {
-      setDynamicFont("text-[3rem] font-extralight");
-    } else if (percent < 20) {
+    if (percent < 20) {
       setDynamicFont("text-[3rem] font-light");
     } else if (percent < 30) {
       setDynamicFont("text-[2.25rem] font-light");
     } else if (percent < 40) {
       setDynamicFont("text-[1.875rem] font-normal");
     } else if (percent < 50) {
-      setDynamicFont("text-[1.5rem] font-normal");
+      setDynamicFont("text-[1.5rem] font-medium");
     } else if (percent < 60) {
-      setDynamicFont("text-[1.25rem] font-medium");
+      setDynamicFont("text-[1.25rem] font-semibold");
     } else {
-      setDynamicFont("text-[1.125rem] font-semibold");
+      setDynamicFont("text-[1.25rem] font-bold");
     }
   }, [value.input]);
 

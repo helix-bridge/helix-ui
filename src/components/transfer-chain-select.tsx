@@ -27,13 +27,13 @@ export default function TransferChainSelect({
         label={
           <div className="flex items-center gap-medium">
             <Image
-              width={30}
-              height={30}
+              width={32}
+              height={32}
               alt="Chain"
               src={getChainLogoSrc(chain.logo)}
-              className="h-[1.875rem] w-[1.875rem] shrink-0 rounded-full"
+              className="h-[2rem] w-[2rem] shrink-0 rounded-full"
             />
-            <span className="text-base font-bold text-white">{chain.name}</span>
+            <span className="text-lg font-extrabold text-white">{chain.name}</span>
           </div>
         }
         labelClassName="flex items-center justify-between gap-small w-full px-medium transition-opacity hover:opacity-80"
@@ -42,7 +42,7 @@ export default function TransferChainSelect({
         sameWidth
       >
         {chainOptions.length ? (
-          <div className="flex max-h-[18rem] flex-col gap-medium overflow-y-auto px-medium">
+          <div className="flex max-h-[20rem] flex-col gap-medium overflow-y-auto px-medium">
             {chainOptions.map((option) => (
               <ChainOption key={option.id} selected={chain} option={option} onSelect={onChainChange} />
             ))}
@@ -60,17 +60,17 @@ export default function TransferChainSelect({
           label={
             <div className="flex items-center gap-small">
               <Image
-                width={24}
-                height={24}
+                width={26}
+                height={26}
                 alt="Token"
                 src={getTokenLogoSrc(token.logo)}
-                className="h-[1.5rem] w-[1.5rem] shrink-0 rounded-full"
+                className="h-[1.625rem] w-[1.625rem] shrink-0 rounded-full"
               />
               <span className="truncate text-sm font-bold text-white">{token.symbol}</span>
             </div>
           }
           labelClassName="flex items-center justify-between gap-small p-small rounded-[0.625rem] bg-[#1F282C] w-[9.25rem] mr-medium transition-colors hover:bg-white/20"
-          childClassName="flex flex-col gap-small p-small rounded-[0.625rem] bg-[#00141D]"
+          childClassName="flex flex-col gap-small p-small rounded-[0.625rem] bg-[#00141D] border border-white/20"
           offsetSize={12}
           sameWidth
         >
@@ -94,7 +94,7 @@ function ChainOption({
 }) {
   return (
     <button
-      className={`flex items-center gap-medium rounded-[0.625rem] p-medium transition-colors ${
+      className={`flex items-center gap-large rounded-[0.625rem] p-medium transition-colors ${
         selected.id === option.id ? "bg-white/20" : "bg-[#1F282C] hover:cursor-pointer hover:bg-white/20"
       }`}
       disabled={selected.id === option.id}
@@ -109,7 +109,7 @@ function ChainOption({
         src={getChainLogoSrc(option.logo)}
         className="h-[1.875rem] w-[1.875rem] shrink-0 rounded-full"
       />
-      <span className="text-sm font-bold text-white">{option.name}</span>
+      <span className="text-base font-extrabold text-white">{option.name}</span>
     </button>
   );
 }
@@ -134,13 +134,13 @@ function TokenOption({
       }}
     >
       <Image
-        width={20}
-        height={20}
+        width={24}
+        height={24}
         alt="Chain"
         src={getTokenLogoSrc(option.logo)}
-        className="h-[1.25rem] w-[1.25rem] shrink-0 rounded-full"
+        className="h-[1.5rem] w-[1.5rem] shrink-0 rounded-full"
       />
-      <span className="truncate text-xs font-bold text-white">{option.name}</span>
+      <span className="truncate text-sm font-bold text-white">{option.name}</span>
     </button>
   );
 }
