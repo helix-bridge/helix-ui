@@ -80,7 +80,7 @@ function getColumns(bridgeVersion: LnBridgeVersion, isDashboard?: boolean) {
         );
 
         return token && baseFee ? (
-          <span className="truncate">{formatBalance(BigInt(baseFee), token.decimals, { keepZero: false })}</span>
+          <span className="truncate">{formatBalance(BigInt(baseFee), token.decimals, { precision: 6 })}</span>
         ) : (
           <span>-</span>
         );
