@@ -77,7 +77,7 @@ function Row({
       {loading ? (
         <CountLoading color="white" />
       ) : warning ? (
-        <Tooltip content={warning}>
+        <Tooltip content={warning} status="warning">
           <Image width={16} height={16} alt="Warning" src="/images/warning.svg" />
         </Tooltip>
       ) : typeof value === "bigint" && token ? (
