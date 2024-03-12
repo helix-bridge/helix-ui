@@ -29,7 +29,7 @@ export default function TransferInformationSection({
   const { loading: loadingDailyLimit, dailyLimit } = useDailyLimit(bridge);
 
   return (
-    <TransferSection titleText="Information">
+    <TransferSection>
       <TransferInformation
         transferLimit={
           hasRelayer

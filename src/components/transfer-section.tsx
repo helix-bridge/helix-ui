@@ -3,7 +3,7 @@ import TransferSectionTitle from "./transfer-section-title";
 
 interface Props {
   className?: string;
-  titleText: string;
+  titleText?: string;
   titleTips?: string | JSX.Element;
   alert?: string;
 }
@@ -22,7 +22,7 @@ export default function TransferSection({
           alert ? "outline outline-1 outline-app-red" : "outline-none"
         }`}
       >
-        <TransferSectionTitle text={titleText} tips={titleTips} />
+        {titleText ? <TransferSectionTitle text={titleText} tips={titleTips} /> : null}
         {children}
       </div>
       {alert ? <span className="text-xs font-normal text-app-red">{alert}</span> : null}
