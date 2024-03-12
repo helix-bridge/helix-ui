@@ -13,7 +13,7 @@ export default function TransferSwitch({ disabled, onSwitch = () => undefined }:
   return (
     <div className="relative h-[2px] lg:h-[4px]">
       <Tooltip
-        className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#21282C] transition-shadow hover:shadow-[0_0_16px_1px_rgba(255,255,255,.8)] ${
+        className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/25 transition-shadow hover:shadow-[0_0_16px_1px_rgba(255,255,255,.8)] ${
           disabled ? "hover:cursor-not-allowed" : "hover:cursor-pointer"
         }`}
         content="This cross-chain is currently unavailable"
