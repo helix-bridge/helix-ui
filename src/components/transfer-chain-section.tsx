@@ -2,8 +2,10 @@ import { ChainConfig, Token } from "@/types";
 import TransferSection from "./transfer-section";
 import TransferChainSelect from "./transfer-chain-select";
 import TransferSwitch from "./transfer-switch";
+import ComponentLoading from "@/ui/component-loading";
 
 interface Props {
+  loading?: boolean;
   sourceChain: ChainConfig;
   targetChain: ChainConfig;
   sourceToken: Token;
@@ -21,6 +23,7 @@ interface Props {
 }
 
 export default function TransferChainSection({
+  loading,
   disableSwitch,
   sourceChain,
   targetChain,
@@ -37,7 +40,8 @@ export default function TransferChainSection({
   onTargetTokenChange,
 }: Props) {
   return (
-    <div className="flex flex-col">
+    <div className="relative flex flex-col">
+      <ComponentLoading loading={loading} color="white" className="rounded-large bg-white/5" />
       <TransferSection titleText="From">
         <TransferChainSelect
           chain={sourceChain}
