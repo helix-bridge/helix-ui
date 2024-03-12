@@ -136,16 +136,6 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
   const { loading: loadingSupportChains, data: supportChains } = useSupportChains(token.category);
   const supportChainsRef = useRef(supportChains);
 
-  const isSwitchAvailable = useCallback(
-    (sourceChain: ChainConfig, targetChain: ChainConfig) =>
-      supportChainsRef.current
-        .find(({ fromChain }) => targetChain.network === fromChain)
-        ?.toChains.includes(sourceChain.network)
-        ? true
-        : false,
-    [],
-  );
-
   useEffect(() => {
     supportChainsRef.current = supportChains;
     const _token = tokenRef.current;
@@ -288,6 +278,16 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
     setTargetToken(_targetToken);
     changeUrl();
   }, [changeUrl, setSourceChain, setSourceToken, setTargetChain, setTargetToken]);
+
+  const isSwitchAvailable = useCallback(
+    (sourceChain: ChainConfig, targetChain: ChainConfig) =>
+      supportChainsRef.current
+        .find(({ fromChain }) => targetChain.network === fromChain)
+        ?.toChains.includes(sourceChain.network)
+        ? true
+        : false,
+    [],
+  );
 
   return (
     <TransferContext.Provider
