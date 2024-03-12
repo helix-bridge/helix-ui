@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 export function useSupportChains(token: TokenCategory) {
   const { loading, data: _data } = useQuery<SupportChainsResData, SupportChainsReqParams>(GQL_GET_SUPPORT_CHAINS, {
     variables: { token: token.toUpperCase() as Uppercase<TokenCategory> },
+    fetchPolicy: "no-cache",
   });
   const [data, setData] = useState(_data?.queryLnBridgeSupportChains || []);
 
