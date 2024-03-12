@@ -22,7 +22,7 @@ export default function WithdrawableLiquiditiesSelect({
 }: Props) {
   return (
     <div className={`relative max-h-60 rounded-medium bg-inner ${loading ? "overflow-y-hidden" : "overflow-y-auto"}`}>
-      <ComponentLoading loading={loading} />
+      <ComponentLoading loading={loading} className="bg-black/30" />
 
       <div className="flex flex-col py-2">
         {options.length ? (

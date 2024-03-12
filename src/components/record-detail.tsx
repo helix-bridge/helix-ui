@@ -55,7 +55,7 @@ export default function RecordDetail(props: Props) {
       <div className="mt-5 overflow-x-auto">
         <div className="relative flex min-w-max flex-col gap-medium rounded-large bg-component px-7 py-medium">
           {/* loading */}
-          <ComponentLoading loading={loading} className="rounded-large" />
+          <ComponentLoading loading={loading} className="rounded-large bg-black/30" />
 
           <Item label="Transfer Route">
             <TransferRoute record={record?.historyRecordById} />
