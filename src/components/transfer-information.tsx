@@ -13,7 +13,7 @@ interface Props {
 
 export default function TransferInformation({ transactionFee, transferLimit, dailyLimit, estimatedTime }: Props) {
   return (
-    <div className="flex flex-col gap-small px-medium">
+    <div className="flex flex-col gap-small px-medium lg:px-3">
       {estimatedTime ? (
         <Row name="Estimated Arrival Time" loading={estimatedTime.loading} value={estimatedTime.value} />
       ) : null}
@@ -60,7 +60,7 @@ function Row({
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-small">
-        <span className="text-base font-extrabold text-white">{name}</span>
+        <span className="text-base font-extrabold text-white/95">{name}</span>
         {tips ? (
           <Tooltip content={tips}>
             <Image
@@ -81,11 +81,11 @@ function Row({
           <Image width={16} height={16} alt="Warning" src="/images/warning.svg" />
         </Tooltip>
       ) : typeof value === "bigint" && token ? (
-        <span className="text-base font-extrabold text-white">
+        <span className="text-base font-extrabold text-white/95">
           {formatBalance(value, token.decimals)} {token.symbol}
         </span>
       ) : typeof value === "string" ? (
-        <span className="text-base font-extrabold text-white">{value}</span>
+        <span className="text-base font-extrabold text-white/95">{value}</span>
       ) : typeof value !== "bigint" ? (
         value
       ) : null}
