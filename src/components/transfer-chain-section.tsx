@@ -41,7 +41,7 @@ export default function TransferChainSection({
 }: Props) {
   return (
     <div className="relative flex flex-col">
-      <ComponentLoading loading={loading} color="white" className="rounded-large bg-white/5" />
+      <ComponentLoading loading={loading} color="white" className="rounded-large bg-white/[.03]" />
       <TransferSection titleText="From">
         <TransferChainSelect
           chain={sourceChain}

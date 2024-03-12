@@ -1,11 +1,6 @@
-import { ChainConfig, Token, TokenCategory, TokenSymbol } from "@/types";
+import { ChainConfig, Token, TokenCategory, TokenOption } from "@/types";
 import { getChainConfig, getChainConfigs } from ".";
 
-interface TokenOption {
-  logo: string;
-  category: TokenCategory;
-  symbol: TokenSymbol;
-}
 const allTokenOptions: Record<Exclude<TokenCategory, "others">, TokenOption> = {
   crab: { logo: "crab.svg", category: "crab", symbol: "CRAB" },
   eth: { logo: "eth.svg", category: "eth", symbol: "ETH" },

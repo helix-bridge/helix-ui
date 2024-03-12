@@ -34,3 +34,9 @@ export interface Token {
   cross: CrossChain[];
   category: TokenCategory;
 }
+
+export interface TokenOption {
+  logo: string;
+  category: TokenCategory;
+  symbol: TokenSymbol;
+}

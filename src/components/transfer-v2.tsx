@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useDeferredValue, useMemo, useState } from "react";
 import TransferTokenSection from "./transfer-token-section";
 import {
   bridgeFactory,
@@ -24,64 +24,28 @@ import DisclaimerModal from "./modals/disclaimer-modal";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { Hex } from "viem";
 import TransferModalV2 from "./modals/transfer-modal-v2";
-import { useRouter, useSearchParams } from "next/navigation";
-import { UrlSearchParamKey } from "@/types";
-
-const tokenOptions = getTokenOptions();
 
 function Component() {
-  const [token, setToken] = useState(tokenOptions[0]);
-  const [sourceChain, setSourceChain] = useState(getSourceChainOptions(token.category)[0]);
-  const [sourceToken, setSourceToken] = useState(getSourceTokenOptions(sourceChain, token.category)[0]);
-  const [targetChain, setTargetChain] = useState(getTargetChainOptions(sourceToken)[0]);
-  const [targetToken, setTargetToken] = useState(getTargetTokenOptions(sourceToken, targetChain)[0]);
-
-  const tokenRef = useRef(token);
-  const sourceChainRef = useRef(sourceChain);
-  const sourceTokenRef = useRef(sourceToken);
-  const targetChainRef = useRef(targetChain);
-  const targetTokenRef = useRef(targetToken);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    const pT = params.get(UrlSearchParamKey.TOKEN_CATEGORY);
-    const _token = tokenOptions.find(({ category }) => category === pT) || tokenOptions[0];
-
-    const pSC = params.get(UrlSearchParamKey.SOURCE_CHAIN);
-    const _sourceChainOptions = getSourceChainOptions(_token.category);
-    const _sourceChain = _sourceChainOptions.find(({ network }) => network === pSC) || _sourceChainOptions[0];
-
-    const pST = params.get(UrlSearchParamKey.SOURCE_TOKEN);
-    const _sourceTokenOptions = getSourceTokenOptions(_sourceChain, _token.category);
-    const _sourceToken = _sourceTokenOptions.find(({ symbol }) => symbol === pST) || _sourceTokenOptions[0];
-
-    const pTC = params.get(UrlSearchParamKey.TARGET_CHAIN);
-    const _targetChainOptions = getTargetChainOptions(_sourceToken);
-    const _targetChain = _targetChainOptions.find(({ network }) => network === pTC) || _targetChainOptions[0];
-
-    const pTT = params.get(UrlSearchParamKey.TARGET_CHAIN);
-    const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
-    const _targetToken = _targetTokenOptions.find(({ symbol }) => symbol === pTT) || _targetTokenOptions[0];
-
-    setToken(_token);
-    setSourceChain(_sourceChain);
-    setSourceToken(_sourceToken);
-    setTargetChain(_targetChain);
-    setTargetToken(_targetToken);
-
-    tokenRef.current = _token;
-    sourceChainRef.current = _sourceChain;
-    sourceTokenRef.current = _sourceToken;
-    targetChainRef.current = _targetChain;
-    targetTokenRef.current = _targetToken;
-  }, []);
-
-  const { amount, setAmount } = useTransferV2();
-  const deferredAmount = useDeferredValue(amount);
   const [txHash, setTxHash] = useState<Hex | null>();
   const [isOpen, setIsOpen] = useState(false);
   const [isTransfering, setIsTransfering] = useState(false);
+  const {
+    amount,
+    token,
+    sourceChain,
+    sourceToken,
+    targetChain,
+    targetToken,
+    loadingSupportChains,
+    setAmount,
+    handleTokenChange,
+    handleSourceChainChange,
+    handleSourceTokenChange,
+    handleTargetChainChange,
+    handleTargetTokenChange,
+    handleSwitch,
+  } = useTransferV2();
+  const deferredAmount = useDeferredValue(amount);
 
   const account = useAccount();
   const { chain } = useNetwork();
@@ -219,171 +183,12 @@ function Component() {
     refreshAllowance,
   ]);
 
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const changeUrl = useCallback(
-    (onlyTokenCategory = false) => {
-      const params = onlyTokenCategory ? new URLSearchParams() : new URLSearchParams(searchParams.toString());
-      params.set(UrlSearchParamKey.TOKEN_CATEGORY, tokenRef.current.category);
-      if (!onlyTokenCategory) {
-        params.set(UrlSearchParamKey.SOURCE_CHAIN, sourceChainRef.current.network);
-        params.set(UrlSearchParamKey.SOURCE_TOKEN, sourceTokenRef.current.symbol);
-        params.set(UrlSearchParamKey.TARGET_CHAIN, targetChainRef.current.network);
-        params.set(UrlSearchParamKey.TARGET_TOKEN, targetTokenRef.current.symbol);
-      }
-      router.push(`?${params.toString()}`);
-    },
-    [searchParams, router],
-  );
-
-  const handleTokenChange = useCallback(
-    (_token: typeof token) => {
-      setToken(_token);
-      tokenRef.current = _token;
-
-      const _sourceChainOptions = getSourceChainOptions(_token.category);
-      const _sourceChain =
-        _sourceChainOptions.find(({ id }) => id === sourceChainRef.current.id) || _sourceChainOptions[0];
-
-      const _sourceTokenOptions = getSourceTokenOptions(_sourceChain, _token.category);
-      const _sourceToken =
-        _sourceTokenOptions.find(({ symbol }) => symbol === sourceTokenRef.current.symbol) || _sourceTokenOptions[0];
-
-      const _targetChainOptions = getTargetChainOptions(_sourceToken);
-      const _targetChain =
-        _targetChainOptions.find(({ id }) => id === targetChainRef.current.id) || _targetChainOptions[0];
-
-      const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
-      const _targetToken =
-        _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
-
-      setSourceChain(_sourceChain);
-      setSourceToken(_sourceToken);
-      setTargetChain(_targetChain);
-      setTargetToken(_targetToken);
-
-      sourceChainRef.current = _sourceChain;
-      sourceTokenRef.current = _sourceToken;
-      targetChainRef.current = _targetChain;
-      targetTokenRef.current = _targetToken;
-
-      changeUrl(true);
-    },
-    [changeUrl],
-  );
-
-  const handleSourceChainChange = useCallback(
-    (_sourceChain: typeof sourceChain) => {
-      setSourceChain(_sourceChain);
-      sourceChainRef.current = _sourceChain;
-
-      const _sourceTokenOptions = getSourceTokenOptions(_sourceChain, tokenRef.current.category);
-      const _sourceToken =
-        _sourceTokenOptions.find(({ symbol }) => symbol === sourceTokenRef.current.symbol) || _sourceTokenOptions[0];
-
-      const _targetChainOptions = getTargetChainOptions(_sourceToken);
-      const _targetChain =
-        _targetChainOptions.find(({ id }) => id === targetChainRef.current.id) || _targetChainOptions[0];
-
-      const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
-      const _targetToken =
-        _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
-
-      setSourceToken(_sourceToken);
-      setTargetChain(_targetChain);
-      setTargetToken(_targetToken);
-
-      sourceTokenRef.current = _sourceToken;
-      targetChainRef.current = _targetChain;
-      targetTokenRef.current = _targetToken;
-
-      changeUrl();
-    },
-    [changeUrl],
-  );
-
-  const handleSourceTokenChange = useCallback(
-    (_sourceToken: typeof sourceToken) => {
-      setSourceToken(_sourceToken);
-      sourceTokenRef.current = _sourceToken;
-
-      const _targetChainOptions = getTargetChainOptions(_sourceToken);
-      const _targetChain =
-        _targetChainOptions.find(({ id }) => id === targetChainRef.current.id) || _targetChainOptions[0];
-
-      const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
-      const _targetToken =
-        _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
-
-      setTargetChain(_targetChain);
-      setTargetToken(_targetToken);
-
-      targetChainRef.current = _targetChain;
-      targetTokenRef.current = _targetToken;
-
-      changeUrl();
-    },
-    [changeUrl],
-  );
-
-  const handleTargetChainChange = useCallback(
-    (_targetChain: typeof targetChain) => {
-      setTargetChain(_targetChain);
-      targetChainRef.current = _targetChain;
-
-      const _targetTokenOptions = getTargetTokenOptions(sourceTokenRef.current, _targetChain);
-      const _targetToken =
-        _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
-
-      setTargetToken(_targetToken);
-      targetTokenRef.current = _targetToken;
-
-      changeUrl();
-    },
-    [changeUrl],
-  );
-
-  const handleTargetTokenChange = useCallback(
-    (_targetToken: typeof targetToken) => {
-      setTargetToken(_targetToken);
-      targetTokenRef.current = _targetToken;
-
-      changeUrl();
-    },
-    [changeUrl],
-  );
-
-  const handleSwitch = useCallback(() => {
-    const _sourceChain = targetChainRef.current;
-    const _targetChain = sourceChainRef.current;
-
-    const _sourceTokenOptions = getSourceTokenOptions(_sourceChain, tokenRef.current.category);
-    const _sourceToken =
-      _sourceTokenOptions.find(({ symbol }) => symbol === sourceTokenRef.current.symbol) || _sourceTokenOptions[0];
-
-    const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
-    const _targetToken =
-      _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
-
-    setSourceChain(_sourceChain);
-    setSourceToken(_sourceToken);
-    setTargetChain(_targetChain);
-    setTargetToken(_targetToken);
-
-    sourceChainRef.current = _sourceChain;
-    sourceTokenRef.current = _sourceToken;
-    targetChainRef.current = _targetChain;
-    targetTokenRef.current = _targetToken;
-
-    changeUrl();
-  }, [changeUrl]);
-
   return (
     <>
       <div className="mx-auto flex w-full flex-col gap-medium rounded-large bg-[#1F282C] p-medium lg:mt-5 lg:w-[27.5rem] lg:gap-5 lg:rounded-[1.25rem] lg:p-5">
-        <TransferTokenSection token={token} options={tokenOptions} onChange={handleTokenChange} />
+        <TransferTokenSection token={token} options={getTokenOptions()} onChange={handleTokenChange} />
         <TransferChainSection
+          loading={loadingSupportChains}
           sourceChain={sourceChain}
           targetChain={targetChain}
           sourceToken={sourceToken}
