@@ -61,7 +61,7 @@ export default function TransferChainSelect({
               />
             </div>
             <div className="mx-auto h-[1px] w-5 bg-white/50" />
-            <div className="flex max-h-[20rem] flex-col overflow-y-auto">
+            <div className="flex max-h-[17.2rem] flex-col overflow-y-auto">
               {chainOptions
                 .filter(({ name }) => name.toLowerCase().includes(search.toLowerCase()))
                 .map((option) => (
