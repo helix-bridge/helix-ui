@@ -1,4 +1,4 @@
-import { TokenSymbol } from "./token";
+import { TokenCategory, TokenSymbol } from "./token";
 import { BridgeCategory, LnBridgeCategory, LnBridgeVersion } from "./bridge";
 import { Network, ChainID } from "./chain";
 import { Address, Hex } from "viem";
@@ -72,6 +72,11 @@ export interface LnBridgeRelayInfo {
   heartbeatTimestamp: number | null;
   messageChannel: MessageChannel | null;
   transferLimit: string | null;
+}
+
+export interface SupportChains {
+  fromChain: Network;
+  toChains: Network[];
 }
 
 /**
@@ -213,4 +218,12 @@ export interface WithdrawableLiquiditiesResData {
       lastRequestWithdraw: string; // Timestamp in Seconds
     }[];
   };
+}
+
+export interface SupportChainsReqParams {
+  token: Uppercase<TokenCategory>;
+}
+
+export interface SupportChainsResData {
+  queryLnBridgeSupportChains: SupportChains[];
 }
