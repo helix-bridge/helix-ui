@@ -29,6 +29,7 @@ interface TransferCtx {
   sourceToken: Token;
   targetToken: Token;
   loadingSupportChains: boolean;
+  isSwitchAvailable: (sourceChain: ChainConfig, targetChain: ChainConfig) => boolean;
   setAmount: Dispatch<SetStateAction<{ input: string; value: bigint; valid: boolean; alert: string }>>;
   handleTokenChange: (value: TokenOption) => void;
   handleSourceChainChange: (value: ChainConfig) => void;
@@ -134,6 +135,16 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
 
   const { loading: loadingSupportChains, data: supportChains } = useSupportChains(token.category);
   const supportChainsRef = useRef(supportChains);
+
+  const isSwitchAvailable = useCallback(
+    (sourceChain: ChainConfig, targetChain: ChainConfig) =>
+      supportChainsRef.current
+        .find(({ fromChain }) => targetChain.network === fromChain)
+        ?.toChains.includes(sourceChain.network)
+        ? true
+        : false,
+    [],
+  );
 
   useEffect(() => {
     supportChainsRef.current = supportChains;
@@ -291,6 +302,7 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
         targetChainOptions,
         loadingSupportChains,
         setAmount,
+        isSwitchAvailable,
         handleTokenChange,
         handleSourceChainChange,
         handleSourceTokenChange,

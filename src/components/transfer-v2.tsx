@@ -4,12 +4,9 @@ import { useCallback, useDeferredValue, useMemo, useState } from "react";
 import TransferTokenSection from "./transfer-token-section";
 import {
   bridgeFactory,
-  getSourceChainOptions,
   getSourceTokenOptions,
-  getTargetChainOptions,
   getTargetTokenOptions,
   getTokenOptions,
-  isSwitchAvailable,
   notifyError,
   notifyTransaction,
 } from "@/utils";
@@ -40,6 +37,7 @@ function Component() {
     targetChainOptions,
     loadingSupportChains,
     setAmount,
+    isSwitchAvailable,
     handleTokenChange,
     handleSourceChainChange,
     handleSourceTokenChange,
@@ -197,7 +195,7 @@ function Component() {
           targetToken={targetToken}
           sourceChainOptions={sourceChainOptions}
           targetChainOptions={targetChainOptions}
-          disableSwitch={!isSwitchAvailable(sourceChain, targetChain, token.category)}
+          disableSwitch={!isSwitchAvailable(sourceChain, targetChain)}
           sourceTokenOptions={getSourceTokenOptions(sourceChain, token.category)}
           targetTokenOptions={getTargetTokenOptions(sourceToken, targetChain)}
           onSourceChainChange={handleSourceChainChange}

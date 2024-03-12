@@ -71,14 +71,3 @@ export function getTargetTokenOptions(sourceToken: Token, targetChain: ChainConf
     ),
   );
 }
-
-export function isSwitchAvailable(sourceChain: ChainConfig, targetChain: ChainConfig, tokenCategory: TokenCategory) {
-  return targetChain.tokens
-    .filter(({ category }) => category === tokenCategory)
-    .some(({ cross }) =>
-      cross.some(
-        ({ hidden, target, bridge }) =>
-          !hidden && target.network === sourceChain.network && bridge.category === "lnbridge",
-      ),
-    );
-}
