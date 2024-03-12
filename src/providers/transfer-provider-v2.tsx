@@ -22,6 +22,8 @@ import {
 interface TransferCtx {
   token: TokenOption;
   amount: { input: string; value: bigint; valid: boolean; alert: string };
+  sourceChainOptions: ChainConfig[];
+  targetChainOptions: ChainConfig[];
   sourceChain: ChainConfig;
   targetChain: ChainConfig;
   sourceToken: Token;
@@ -43,9 +45,11 @@ const tokenOptions = getTokenOptions();
 export default function TransferProviderV2({ children }: PropsWithChildren<unknown>) {
   const [token, _setToken] = useState(tokenOptions[0]);
   const [amount, setAmount] = useState({ input: "", value: 0n, valid: true, alert: "" });
-  const [sourceChain, _setSourceChain] = useState(getSourceChainOptions(token.category)[0]);
+  const [sourceChainOptions, setSourceChainOptions] = useState(getSourceChainOptions(token.category));
+  const [sourceChain, _setSourceChain] = useState(sourceChainOptions[0]);
   const [sourceToken, _setSourceToken] = useState(getSourceTokenOptions(sourceChain, token.category)[0]);
-  const [targetChain, _setTargetChain] = useState(getTargetChainOptions(sourceToken)[0]);
+  const [targetChainOptions, setTargetChainOptions] = useState(getTargetChainOptions(sourceToken));
+  const [targetChain, _setTargetChain] = useState(targetChainOptions[0]);
   const [targetToken, _setTargetToken] = useState(getTargetTokenOptions(sourceToken, targetChain)[0]);
 
   const tokenRef = useRef(token);
@@ -129,7 +133,10 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
   );
 
   const { loading: loadingSupportChains, data: supportChains } = useSupportChains(token.category);
+  const supportChainsRef = useRef(supportChains);
+
   useEffect(() => {
+    supportChainsRef.current = supportChains;
     const _token = tokenRef.current;
 
     const _sourceChainOptions = getSourceChainOptions(_token.category).filter((option) =>
@@ -161,12 +168,14 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
       _targetTokenOptions.at(0) ||
       targetTokenRef.current;
 
+    setSourceChainOptions(_sourceChainOptions);
+    setTargetChainOptions(_targetChainOptions);
     setSourceChain(_sourceChain);
     setSourceToken(_sourceToken);
     setTargetChain(_targetChain);
     setTargetToken(_targetToken);
     changeUrl();
-  }, [supportChains, setSourceChain, setSourceToken, setTargetChain, setTargetToken, changeUrl]);
+  }, [supportChains, changeUrl, setSourceChain, setSourceToken, setTargetChain, setTargetToken]);
 
   const handleTokenChange = useCallback(
     (_token: typeof token) => {
@@ -182,7 +191,12 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
       const _sourceToken =
         _sourceTokenOptions.find(({ symbol }) => symbol === sourceTokenRef.current.symbol) || _sourceTokenOptions[0];
 
-      const _targetChainOptions = getTargetChainOptions(_sourceToken);
+      const _targetChainOptions = getTargetChainOptions(_sourceToken).filter(
+        (option) =>
+          supportChainsRef.current
+            .find(({ fromChain }) => _sourceChain.network === fromChain)
+            ?.toChains.includes(option.network),
+      );
       const _targetChain =
         _targetChainOptions.find(({ id }) => id === targetChainRef.current.id) || _targetChainOptions[0];
 
@@ -190,6 +204,7 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
       const _targetToken =
         _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
 
+      setTargetChainOptions(_targetChainOptions);
       setSourceChain(_sourceChain);
       setSourceToken(_sourceToken);
       setTargetChain(_targetChain);
@@ -201,7 +216,12 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
 
   const handleSourceTokenChange = useCallback(
     (_sourceToken: typeof sourceToken) => {
-      const _targetChainOptions = getTargetChainOptions(_sourceToken);
+      const _targetChainOptions = getTargetChainOptions(_sourceToken).filter(
+        (option) =>
+          supportChainsRef.current
+            .find(({ fromChain }) => sourceChainRef.current.network === fromChain)
+            ?.toChains.includes(option.network),
+      );
       const _targetChain =
         _targetChainOptions.find(({ id }) => id === targetChainRef.current.id) || _targetChainOptions[0];
 
@@ -209,6 +229,7 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
       const _targetToken =
         _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
 
+      setTargetChainOptions(_targetChainOptions);
       setSourceToken(_sourceToken);
       setTargetChain(_targetChain);
       setTargetToken(_targetToken);
@@ -266,6 +287,8 @@ export default function TransferProviderV2({ children }: PropsWithChildren<unkno
         sourceToken,
         targetChain,
         targetToken,
+        sourceChainOptions,
+        targetChainOptions,
         loadingSupportChains,
         setAmount,
         handleTokenChange,

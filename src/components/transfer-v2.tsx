@@ -36,6 +36,8 @@ function Component() {
     sourceToken,
     targetChain,
     targetToken,
+    sourceChainOptions,
+    targetChainOptions,
     loadingSupportChains,
     setAmount,
     handleTokenChange,
@@ -193,9 +195,9 @@ function Component() {
           targetChain={targetChain}
           sourceToken={sourceToken}
           targetToken={targetToken}
+          sourceChainOptions={sourceChainOptions}
+          targetChainOptions={targetChainOptions}
           disableSwitch={!isSwitchAvailable(sourceChain, targetChain, token.category)}
-          sourceChainOptions={getSourceChainOptions(token.category)}
-          targetChainOptions={getTargetChainOptions(sourceToken)}
           sourceTokenOptions={getSourceTokenOptions(sourceChain, token.category)}
           targetTokenOptions={getTargetTokenOptions(sourceToken, targetChain)}
           onSourceChainChange={handleSourceChainChange}
