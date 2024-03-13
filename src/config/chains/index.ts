@@ -24,3 +24,4 @@ export * from "./zksync";
 export * from "./zksync-goerli";
 export * from "./zksync-sepolia";
 export * from "./gnosis";
+export * from "./blast";

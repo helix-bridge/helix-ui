@@ -4,6 +4,7 @@ import {
   arbitrumSepoliaChain,
   baseChain,
   baseGoerliChain,
+  blastChain,
   crabChain,
   darwiniaChain,
   ethereumChain,
@@ -109,6 +110,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.SEPOLIA:
     case "sepolia":
       return sepoliaChain;
+    case ChainID.BLAST:
+    case "blast":
+      return blastChain;
     default:
       return;
   }
@@ -142,6 +146,7 @@ export function getChainConfigs(askAll?: boolean) {
     bscChain,
     optimismChain,
     gnosisChain,
+    blastChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {

@@ -21,7 +21,13 @@ export const arbitrumChain: ChainConfig = {
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
       logo: "eth.svg",
-      cross: [{ target: { network: "linea", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } }],
+      cross: [
+        {
+          target: { network: "blast", symbol: "ETH" },
+          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
+        },
+        { target: { network: "linea", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
+      ],
       category: "eth",
     },
     {

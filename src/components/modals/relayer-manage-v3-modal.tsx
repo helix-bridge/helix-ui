@@ -5,7 +5,7 @@ import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "@/uti
 import dynamic from "next/dynamic";
 import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { useNetwork, useSwitchNetwork } from "wagmi";
-import { TransactionReceipt } from "viem";
+import { TransactionReceipt, formatUnits } from "viem";
 import { BalanceInput } from "../balance-input";
 import FeeRateInput from "../fee-rate-input";
 import Tooltip from "@/ui/tooltip";
@@ -27,7 +27,7 @@ interface Props {
 }
 
 function covertToBigIntInputValue(value: bigint | undefined, token: Token): InputValue<bigint> {
-  return { valid: true, value: value ?? 0n, input: value ? (value / 10n ** BigInt(token.decimals)).toString() : "" };
+  return { valid: true, value: value ?? 0n, input: value ? formatUnits(value, token.decimals) : "" };
 }
 
 export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onSuccess }: Props) {

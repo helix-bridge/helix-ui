@@ -82,7 +82,7 @@ function Row({
         </Tooltip>
       ) : typeof value === "bigint" && token ? (
         <span className="text-base font-extrabold text-white/95">
-          {formatBalance(value, token.decimals)} {token.symbol}
+          {formatBalance(value, token.decimals, { precision: 6 })} {token.symbol}
         </span>
       ) : typeof value === "string" ? (
         <span className="text-base font-extrabold text-white/95">{value}</span>
