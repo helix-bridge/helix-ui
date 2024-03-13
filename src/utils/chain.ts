@@ -4,6 +4,7 @@ import {
   arbitrumSepoliaChain,
   baseChain,
   baseGoerliChain,
+  beraChain,
   blastChain,
   crabChain,
   darwiniaChain,
@@ -21,6 +22,7 @@ import {
   polygonZkEvmChain,
   scrollChain,
   sepoliaChain,
+  taikoChain,
   zksyncChain,
   zksyncGoerliChain,
   zksyncSepoliaChain,
@@ -113,6 +115,12 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.BLAST:
     case "blast":
       return blastChain;
+    case ChainID.BERA:
+    case "bera":
+      return beraChain;
+    case ChainID.TAIKO:
+    case "taiko":
+      return taikoChain;
     default:
       return;
   }
@@ -147,6 +155,8 @@ export function getChainConfigs(askAll?: boolean) {
     optimismChain,
     gnosisChain,
     blastChain,
+    beraChain,
+    taikoChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {

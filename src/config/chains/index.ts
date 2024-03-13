@@ -25,3 +25,5 @@ export * from "./zksync-goerli";
 export * from "./zksync-sepolia";
 export * from "./gnosis";
 export * from "./blast";
+export * from "./bera";
+export * from "./taiko";
