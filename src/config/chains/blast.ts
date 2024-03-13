@@ -38,6 +38,7 @@ export const blastChain: ChainConfig = {
           bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
         },
       ],
+      category: "eth",
     },
   ],
   messager: { msgline: "0x98982b1685a63596834a05C1288dA7fbF27d684E" },
