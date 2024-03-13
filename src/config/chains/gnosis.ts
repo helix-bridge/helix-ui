@@ -22,6 +22,7 @@ export const gnosisChain: ChainConfig = {
       address: "0x0000000000000000000000000000000000000000",
       logo: "xdai.png",
       cross: [],
+      category: "others",
     },
     {
       decimals: 6,
@@ -39,6 +40,7 @@ export const gnosisChain: ChainConfig = {
         { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdt",
     },
   ],
 };

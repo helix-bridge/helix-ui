@@ -22,6 +22,7 @@ export const polygonZkEvmChain: ChainConfig = {
       address: "0x0000000000000000000000000000000000000000",
       logo: "eth.svg",
       cross: [],
+      category: "eth",
     },
     {
       decimals: 18,
@@ -34,6 +35,7 @@ export const polygonZkEvmChain: ChainConfig = {
         { target: { network: "polygon", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdt",
     },
   ],
 };

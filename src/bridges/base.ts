@@ -126,12 +126,16 @@ export abstract class BaseBridge {
     return this.targetChain;
   }
 
+  getCrossInfo() {
+    return this.crossInfo;
+  }
+
   getEstimateTime() {
     return this.estimateTime;
   }
 
   formatEstimateTime() {
-    return `${this.estimateTime.min}~${this.estimateTime.max} minutes`;
+    return `${this.estimateTime.min}~${this.estimateTime.max} Minutes`;
   }
 
   getTxGasLimit() {

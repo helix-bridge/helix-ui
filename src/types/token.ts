@@ -1,6 +1,8 @@
 import { Address } from "viem";
 import { CrossChain } from "./cross-chain";
 
+export type TokenCategory = "ring" | "crab" | "eth" | "usdt" | "usdc" | "others";
+
 export type TokenSymbol =
   | "ETH"
   | "RING"
@@ -30,4 +32,11 @@ export interface Token {
   address: Address;
   logo: string; // File name
   cross: CrossChain[];
+  category: TokenCategory;
+}
+
+export interface TokenOption {
+  logo: string;
+  category: TokenCategory;
+  symbol: TokenSymbol;
 }

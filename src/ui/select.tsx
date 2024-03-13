@@ -22,6 +22,7 @@ interface Props {
   clearable?: boolean;
   sameWidth?: boolean;
   placement?: Placement;
+  offsetSize?: number;
   labelClassName?: string;
   childClassName?: string;
   onClear?: () => void;
@@ -36,6 +37,7 @@ export default function Select({
   clearable,
   placement,
   sameWidth,
+  offsetSize,
   labelClassName,
   childClassName,
   onClear = () => undefined,
@@ -47,7 +49,7 @@ export default function Select({
     onOpenChange: setIsOpen,
     placement,
     middleware: [
-      offset(4),
+      offset(offsetSize ?? 4),
       sameWidth
         ? size({
             apply({ rects, elements }) {
@@ -78,7 +80,7 @@ export default function Select({
         disabled={disabled}
       >
         {label || placeholder}
-        <div className="flex shrink-0 items-center gap-small">
+        <div className="flex shrink-0 items-center gap-small transition-transform group-hover:-translate-x-2">
           {label && clearable ? (
             <div
               className="relative h-[16px] w-[16px] shrink-0 rounded-full bg-transparent p-[2px] opacity-80 transition hover:scale-105 hover:bg-white/20 hover:opacity-100 active:scale-95"

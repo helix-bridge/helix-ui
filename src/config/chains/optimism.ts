@@ -22,6 +22,7 @@ export const optimismChain: ChainConfig = {
       address: "0x0000000000000000000000000000000000000000",
       logo: "eth.svg",
       cross: [],
+      category: "eth",
     },
     {
       decimals: 6,
@@ -39,6 +40,7 @@ export const optimismChain: ChainConfig = {
         { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "gnosis", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdt",
     },
   ],
 };

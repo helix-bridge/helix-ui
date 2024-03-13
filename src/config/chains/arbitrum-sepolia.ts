@@ -25,6 +25,7 @@ export const arbitrumSepoliaChain: ChainConfig = {
         { target: { network: "sepolia", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "opposite" } },
         { target: { network: "zksync-sepolia", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "eth",
     },
     {
       decimals: 18,
@@ -40,6 +41,7 @@ export const arbitrumSepoliaChain: ChainConfig = {
           bridge: { category: "lnbridge", lnv2Type: "default" },
         },
       ],
+      category: "usdc",
     },
     {
       decimals: 18,
@@ -55,6 +57,7 @@ export const arbitrumSepoliaChain: ChainConfig = {
           bridge: { category: "lnbridge", lnv2Type: "default" },
         },
       ],
+      category: "usdt",
     },
   ],
 };

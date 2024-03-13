@@ -59,6 +59,7 @@ export const crabChain: ChainConfig = {
         },
         // { target: { network: "sepolia", symbol: "xCRAB" }, bridge: { category: "xtoken-crab-dvm" }, action: "issue" },
       ],
+      category: "crab",
     },
     {
       decimals: 18,
@@ -75,6 +76,7 @@ export const crabChain: ChainConfig = {
           action: "redeem",
         },
       ],
+      category: "ring",
     },
   ],
   messager: {
