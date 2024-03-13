@@ -40,6 +40,14 @@ export default function Footer() {
           </Link>
           <a
             className="text-sm font-medium text-white/50 transition hover:text-white active:scale-95"
+            href="https://xtoken.helixbridge.app/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            xToken
+          </a>
+          <a
+            className="text-sm font-medium text-white/50 transition hover:text-white active:scale-95"
             href="https://docs.helixbridge.app/"
             rel="noopener noreferrer"
             target="_blank"

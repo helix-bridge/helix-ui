@@ -97,7 +97,7 @@ export default function Table<T extends { key: Key }>({
             {/* body */}
             <div className="relative">
               {/* loading */}
-              <ComponentLoading loading={!!loading} className="rounded-b-medium" />
+              <ComponentLoading loading={!!loading} className="rounded-b-medium bg-black/30" />
 
               {/* content */}
               {dataSource.length ? (

@@ -49,6 +49,7 @@ export const pangolinChain: ChainConfig = {
           action: "issue",
         },
       ],
+      category: "ring",
     },
   ],
   messager: {

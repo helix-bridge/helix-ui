@@ -22,6 +22,7 @@ export const mantleChain: ChainConfig = {
       address: "0x0000000000000000000000000000000000000000",
       logo: "mnt.svg",
       cross: [],
+      category: "others",
     },
     {
       decimals: 6,
@@ -40,6 +41,7 @@ export const mantleChain: ChainConfig = {
         { target: { network: "polygon", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "gnosis", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdt",
     },
     {
       decimals: 6,
@@ -52,6 +54,7 @@ export const mantleChain: ChainConfig = {
         { target: { network: "arbitrum", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "scroll", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdc",
     },
   ],
 };

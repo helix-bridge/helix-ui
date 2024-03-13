@@ -22,6 +22,7 @@ export const arbitrumChain: ChainConfig = {
       address: "0x0000000000000000000000000000000000000000",
       logo: "eth.svg",
       cross: [{ target: { network: "linea", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } }],
+      category: "eth",
     },
     {
       decimals: 18,
@@ -35,6 +36,7 @@ export const arbitrumChain: ChainConfig = {
         { target: { network: "darwinia-dvm", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "polygon", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "ring",
     },
     {
       decimals: 6,
@@ -53,6 +55,7 @@ export const arbitrumChain: ChainConfig = {
         { target: { network: "gnosis", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdt",
     },
     {
       decimals: 6,
@@ -65,6 +68,7 @@ export const arbitrumChain: ChainConfig = {
         { target: { network: "mantle", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "scroll", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
       ],
+      category: "usdc",
     },
   ],
   messager: { msgline: "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0" },
