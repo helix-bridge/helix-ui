@@ -31,6 +31,16 @@ export const taikoChain: ChainConfig = {
   tokens: [
     {
       decimals: 18,
+      symbol: "ETH",
+      name: "ETH",
+      type: "native",
+      address: "0x0000000000000000000000000000000000000000",
+      logo: "eth.svg",
+      cross: [],
+      category: "eth",
+    },
+    {
+      decimals: 18,
       symbol: "USDT",
       name: "USDT",
       type: "erc20",

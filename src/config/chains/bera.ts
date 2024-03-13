@@ -31,6 +31,16 @@ export const beraChain: ChainConfig = {
   tokens: [
     {
       decimals: 18,
+      symbol: "BERA",
+      name: "BERA",
+      type: "native",
+      address: "0x0000000000000000000000000000000000000000",
+      logo: "bera.svg",
+      cross: [],
+      category: "eth",
+    },
+    {
+      decimals: 18,
       symbol: "USDT",
       name: "USDT",
       type: "erc20",
