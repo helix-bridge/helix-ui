@@ -8,7 +8,7 @@ const allTokenOptions: Record<Exclude<TokenCategory, "others">, TokenOption> = {
   usdc: { logo: "usdc.svg", category: "usdc", symbol: "USDC" },
   usdt: { logo: "usdt.svg", category: "usdt", symbol: "USDT" },
 };
-const sortedTokenCategories: Exclude<TokenCategory, "others">[] = ["usdt", "usdc", "eth", "ring", "crab"];
+const sortedTokenCategories: Exclude<TokenCategory, "others">[] = ["usdt", "eth", "ring", "crab"];
 const availableTokenCategories = new Set<TokenCategory>();
 const sourceChainOptions = new Map<TokenCategory, ChainConfig[]>();
 
