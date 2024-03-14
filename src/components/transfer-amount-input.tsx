@@ -1,8 +1,9 @@
-import { Token } from "@/types";
+import { ChainConfig, Token } from "@/types";
 import { formatBalance } from "@/utils";
 import Image from "next/image";
 import { ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
 import { parseUnits } from "viem";
+import Faucet from "./faucet";
 
 interface Value {
   input: string;
@@ -17,12 +18,14 @@ interface Props {
   value: Value;
   balance: bigint;
   loading?: boolean;
+  chain: ChainConfig;
   onRefresh?: () => void;
   onChange?: (value: Value) => void;
 }
 
 export default function TransferAmountInput({
   min,
+  chain,
   token,
   value,
   balance,
@@ -97,7 +100,7 @@ export default function TransferAmountInput({
         value={value.input}
         onChange={handleChange}
       />
-      <div className="flex items-center gap-small">
+      <div className="flex items-center gap-2">
         <span className="text-sm font-normal text-white/50">Balance: {formatBalance(balance, token.decimals)}</span>
         <button
           className={`rounded-full bg-white/20 p-[3px] opacity-50 transition hover:opacity-100 active:scale-95 ${
@@ -107,6 +110,7 @@ export default function TransferAmountInput({
         >
           <Image alt="Refresh balance" width={14} height={14} src="/images/refresh.svg" />
         </button>
+        {chain.testnet ? <Faucet sourceChain={chain} sourceToken={token} onSuccess={onRefresh} /> : null}
       </div>
 
       <span className="invisible fixed left-0 top-0 -z-50" ref={spanRef}>

@@ -52,6 +52,7 @@ export default function TransferInformationSection({
         dailyLimit={
           dailyLimit ? { loading: loadingDailyLimit, value: dailyLimit.limit, token: dailyLimit.token } : undefined
         }
+        hasRelayer={hasRelayer}
       />
     </TransferSection>
   );

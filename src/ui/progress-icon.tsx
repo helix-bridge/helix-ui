@@ -38,7 +38,7 @@ export default function ProgressIcon({ percent = 100 }: Props) {
   }, [percent]);
 
   return (
-    <div className="h-5 w-5 rounded-full border-2 border-primary p-[2px]">
+    <div className="h-[22px] w-[22px] rounded-full border-2 border-primary p-[2px]">
       <Ouro>
         <span className="absolute left-0 h-full w-1/2 overflow-hidden">
           <Anim

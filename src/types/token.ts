@@ -20,6 +20,7 @@ export type TokenSymbol =
   | "MNT"
   | "MATIC"
   | "BNB"
+  | "BERA"
   | "xDai";
 
 export type TokenType = "native" | "erc20" | "mapping";

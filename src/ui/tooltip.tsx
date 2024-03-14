@@ -74,7 +74,7 @@ export default function Tooltip({
             />
             <div
               style={styles}
-              className={`flex items-center rounded-large px-medium py-2 ${
+              className={`flex items-center rounded-xl px-medium py-2 ${
                 status === "warning" ? "bg-app-orange" : "bg-primary"
               } ${contentClassName}`}
             >
