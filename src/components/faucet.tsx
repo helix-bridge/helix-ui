@@ -163,7 +163,13 @@ function Item({ value, token, loading }: { value: bigint; token: Token; loading?
         <span className="text-base font-semibold">{formatBalance(value, token.decimals)}</span>
       )}
       <div className="flex items-center gap-2">
-        <Image width={24} height={24} alt="Token" className="h-6 w-6 shrink-0" src={getTokenLogoSrc(token.logo)} />
+        <Image
+          width={24}
+          height={24}
+          alt="Token"
+          className="h-6 w-6 shrink-0 rounded-full"
+          src={getTokenLogoSrc(token.logo)}
+        />
         <span className="text-base font-semibold">{token.symbol}</span>
       </div>
     </div>
