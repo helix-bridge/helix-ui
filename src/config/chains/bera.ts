@@ -54,5 +54,20 @@ export const beraChain: ChainConfig = {
       ],
       category: "usdt",
     },
+    {
+      decimals: 18,
+      symbol: "USDC",
+      name: "USDC",
+      type: "erc20",
+      address: "0x89AF830781A2C1d3580Db930bea11094F55AfEae",
+      logo: "usdc.svg",
+      cross: [
+        {
+          target: { network: "arbitrum-sepolia", symbol: "USDC" },
+          bridge: { category: "lnbridge", lnv2Type: "default" },
+        },
+      ],
+      category: "usdc",
+    },
   ],
 };

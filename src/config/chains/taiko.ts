@@ -54,5 +54,20 @@ export const taikoChain: ChainConfig = {
       ],
       category: "usdt",
     },
+    {
+      decimals: 18,
+      symbol: "USDC",
+      name: "USDC",
+      type: "erc20",
+      address: "0x3F7DF5866591e7E48D18C8EbeAE61Bc343a63283",
+      logo: "usdc.svg",
+      cross: [
+        {
+          target: { network: "arbitrum-sepolia", symbol: "USDC" },
+          bridge: { category: "lnbridge", lnv2Type: "default" },
+        },
+      ],
+      category: "usdc",
+    },
   ],
 };

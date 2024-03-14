@@ -35,11 +35,13 @@ export const arbitrumSepoliaChain: ChainConfig = {
       address: "0x8A87497488073307E1a17e8A12475a94Afcb413f",
       logo: "usdc.svg",
       cross: [
-        { target: { network: "sepolia", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "opposite" } },
+        { target: { network: "bera", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
+        { target: { network: "taiko", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         {
           target: { network: "zksync-sepolia", symbol: "USDC" },
           bridge: { category: "lnbridge", lnv2Type: "default" },
         },
+        { target: { network: "sepolia", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "opposite" } },
       ],
       category: "usdc",
     },
