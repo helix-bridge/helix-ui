@@ -1,157 +1,171 @@
-import { useTransfer } from "@/hooks/use-transfer";
-import { formatBalance, notifyError, notifyTransaction } from "@/utils";
+import { formatBalance, getTokenLogoSrc, notifyError, notifyTransaction } from "@/utils";
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useState } from "react";
+import { PropsWithChildren, useCallback, useEffect, useState } from "react";
 import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
 import { Subscription, forkJoin, from } from "rxjs";
-import { switchMap } from "rxjs/operators";
 import { parseUnits } from "viem";
-import Label from "@/ui/label";
-import { Token } from "@/types";
-import { useToggle } from "@/hooks/use-toggle";
+import { ChainConfig, Token } from "@/types";
+import abi from "@/abi/faucet";
+import Tooltip from "@/ui/tooltip";
+import Image from "next/image";
+import CountLoading from "@/ui/count-loading";
 
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
-export default function Faucet() {
-  const { sourceChain, sourceToken, bridgeInstance, updateSourceBalance } = useTransfer();
+interface Props {
+  sourceChain: ChainConfig;
+  sourceToken: Token;
+  onSuccess?: () => void;
+}
 
-  const { state: isOpen, setTrue: setIsOpenTrue, setFalse: setIsOpenFalse } = useToggle(false);
+export default function Faucet({ sourceChain, sourceToken, onSuccess = () => undefined }: Props) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [busy, setBusy] = useState(false);
   const [allow, setAllow] = useState(0n);
   const [max, setMax] = useState(0n);
 
-  const { switchNetwork } = useSwitchNetwork();
+  const publicClient = usePublicClient({ chainId: sourceChain.id });
   const { data: walletClient } = useWalletClient();
-  const publicClient = usePublicClient({ chainId: sourceChain?.id });
+  const { switchNetwork } = useSwitchNetwork();
   const { address } = useAccount();
   const { chain } = useNetwork();
 
   const handleClaim = useCallback(async () => {
-    if (chain?.id !== sourceChain?.id) {
-      switchNetwork?.(sourceChain?.id);
-    } else if (address && bridgeInstance && sourceToken && publicClient && walletClient) {
+    if (chain?.id !== sourceChain.id) {
+      switchNetwork?.(sourceChain.id);
+    } else if (address && publicClient && walletClient) {
       try {
         setBusy(true);
-
         const hash = await walletClient.writeContract({
           address: sourceToken.address,
-          abi: (await import("@/abi/faucet")).default,
+          abi,
           functionName: "faucet",
-          args: [allow > 0 ? allow - 1n : allow],
+          args: [1n <= allow ? allow - 1n : allow],
         });
         const receipt = await publicClient.waitForTransactionReceipt({ hash });
-
         notifyTransaction(receipt, sourceChain);
+        setBusy(false);
+
         if (receipt.status === "success") {
           setAllow(0n);
           setBusy(false);
-          setIsOpenFalse();
-          updateSourceBalance(address, bridgeInstance);
+          setIsOpen(false);
+          onSuccess();
         }
       } catch (err) {
         console.error(err);
         notifyError(err);
-      } finally {
         setBusy(false);
       }
     }
-  }, [
-    allow,
-    chain,
-    address,
-    bridgeInstance,
-    sourceChain,
-    sourceToken,
-    publicClient,
-    walletClient,
-    setIsOpenFalse,
-    switchNetwork,
-    updateSourceBalance,
-  ]);
+  }, [allow, chain, address, sourceChain, sourceToken, publicClient, walletClient, onSuccess, switchNetwork]);
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
 
-    if (address && sourceToken?.type === "erc20" && publicClient) {
-      sub$$ = from(import("@/abi/faucet"))
-        .pipe(
-          switchMap((abi) =>
-            forkJoin([
-              from(
-                publicClient.readContract({
-                  address: sourceToken.address,
-                  abi: abi.default,
-                  functionName: "allowFaucet",
-                  args: [address],
-                }),
-              ),
-              from(
-                publicClient.readContract({
-                  address: sourceToken.address,
-                  abi: abi.default,
-                  functionName: "maxFaucetAllowed",
-                }),
-              ),
-            ]),
-          ),
-        )
-        .subscribe({
-          next: ([a, m]) => {
-            const _max = parseUnits(m.toString(), sourceToken.decimals);
-            setAllow(_max - a);
-            setMax(_max);
-          },
-          error: (err) => {
-            console.error(err);
-            setAllow(0n);
-            setMax(0n);
-          },
-        });
+    if (address && sourceToken.type === "erc20" && publicClient) {
+      setLoading(true);
+      sub$$ = forkJoin([
+        from(
+          publicClient.readContract({
+            address: sourceToken.address,
+            abi,
+            functionName: "allowFaucet",
+            args: [address],
+          }),
+        ),
+        from(
+          publicClient.readContract({
+            address: sourceToken.address,
+            abi,
+            functionName: "maxFaucetAllowed",
+          }),
+        ),
+      ]).subscribe({
+        next: ([a, m]) => {
+          setLoading(false);
+          const _max = parseUnits(m.toString(), sourceToken.decimals);
+          setAllow(_max - a);
+          setMax(_max);
+        },
+        error: (err) => {
+          console.error(err);
+          setLoading(false);
+          setAllow(0n);
+          setMax(0n);
+        },
+      });
     } else {
       setAllow(0n);
       setMax(0n);
     }
 
-    return () => sub$$?.unsubscribe();
+    return () => {
+      sub$$?.unsubscribe();
+    };
   }, [address, sourceToken, publicClient]);
 
   return (
     <>
       <button
-        className="text-primary transition-[color,transform] hover:text-white lg:active:translate-y-1"
-        onClick={setIsOpenTrue}
+        className="rounded-lg bg-white/20 px-2 py-[2px] text-xs font-semibold text-white opacity-60 transition-opacity hover:opacity-100 active:scale-95"
+        onClick={() => setIsOpen(true)}
       >
-        <span className="text-base font-medium">Faucet</span>
+        Faucet
       </button>
 
       <Modal
-        className="w-full lg:w-[30rem]"
+        className="w-full lg:w-[24rem]"
         title="Faucet"
-        okText={chain?.id === sourceChain?.id ? "Claim" : "Switch Network"}
+        okText={chain?.id === sourceChain.id ? "Claim" : "Switch Network"}
         isOpen={isOpen}
         disabledCancel={busy}
         disabledOk={allow <= 1n}
         busy={busy}
-        onClose={setIsOpenFalse}
-        onCancel={setIsOpenFalse}
+        onClose={() => setIsOpen(false)}
+        onCancel={() => setIsOpen(false)}
         onOk={handleClaim}
       >
         <Label text="Max" tips="The maximum you can claim">
-          <Item value={max} token={sourceToken} />
+          <Item loading={loading} value={max} token={sourceToken} />
         </Label>
         <Label text="Allow" tips="Currently available for claiming">
-          <Item value={allow} token={sourceToken} />
+          <Item loading={loading} value={allow} token={sourceToken} />
         </Label>
       </Modal>
     </>
   );
 }
 
-function Item({ value, token }: { value: bigint; token?: Token }) {
+function Label({ text, tips, children }: PropsWithChildren<{ text: string; tips?: string }>) {
   return (
-    <div className="flex items-center justify-between rounded-medium bg-inner px-medium py-medium">
-      <span className="text-sm font-medium">{token && formatBalance(value, token.decimals)}</span>
-      <span className="text-sm font-medium">{token?.symbol}</span>
+    <div className="flex flex-col gap-small">
+      <div className="flex items-center gap-small">
+        <span className="text-sm font-medium text-white/80">{text}</span>
+        {tips ? (
+          <Tooltip content={tips}>
+            <Image width={16} height={16} alt="Tips" src="/images/info.svg" className="h-4 w-4 shrink-0" />
+          </Tooltip>
+        ) : null}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Item({ value, token, loading }: { value: bigint; token: Token; loading?: boolean }) {
+  return (
+    <div className="flex items-center justify-between rounded-xl bg-inner px-4 py-3">
+      {loading ? (
+        <CountLoading size="small" color="white" />
+      ) : (
+        <span className="text-base font-semibold">{formatBalance(value, token.decimals)}</span>
+      )}
+      <div className="flex items-center gap-2">
+        <Image width={24} height={24} alt="Token" className="h-6 w-6 shrink-0" src={getTokenLogoSrc(token.logo)} />
+        <span className="text-base font-semibold">{token.symbol}</span>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { Token } from "@/types";
+import { ChainConfig, Token } from "@/types";
 import TransferSection from "./transfer-section";
 import TransferAmountInput from "./transfer-amount-input";
 
@@ -15,17 +15,28 @@ interface Props {
   amount: Amount;
   balance: bigint;
   loading?: boolean;
+  chain: ChainConfig;
   onRefresh?: () => void;
   onChange?: (amount: Amount) => void;
 }
 
-export default function TransferAmountSection({ min, token, amount, balance, loading, onRefresh, onChange }: Props) {
+export default function TransferAmountSection({
+  min,
+  token,
+  chain,
+  amount,
+  balance,
+  loading,
+  onRefresh,
+  onChange,
+}: Props) {
   return (
     <TransferSection titleText="Amount" alert={amount.alert}>
       <TransferAmountInput
         min={min}
         loading={loading}
         token={token}
+        chain={chain}
         balance={balance}
         value={amount}
         onRefresh={onRefresh}
