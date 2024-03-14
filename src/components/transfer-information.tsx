@@ -9,10 +9,17 @@ interface Props {
   transferLimit?: { loading: boolean; value?: bigint; token?: Token };
   dailyLimit?: { loading: boolean; value?: bigint; token?: Token };
   estimatedTime?: { loading: boolean; value?: string };
+  hasRelayer: boolean;
 }
 
-export default function TransferInformation({ transactionFee, transferLimit, dailyLimit, estimatedTime }: Props) {
-  return (
+export default function TransferInformation({
+  transactionFee,
+  transferLimit,
+  dailyLimit,
+  estimatedTime,
+  hasRelayer,
+}: Props) {
+  return hasRelayer ? (
     <div className="flex flex-col gap-small px-medium lg:px-3">
       {estimatedTime ? (
         <Row name="Estimated Arrival Time" loading={estimatedTime.loading} value={estimatedTime.value} />
@@ -39,6 +46,11 @@ export default function TransferInformation({ transactionFee, transferLimit, dai
         <Row name="Daily Limit" loading={dailyLimit.loading} value={dailyLimit.value} token={dailyLimit.token} />
       ) : null}
     </div>
+  ) : (
+    <div className="flex items-center justify-center gap-medium py-2">
+      <Image width={18} height={18} alt="Warning" src="/images/warning.svg" />
+      <span className="text-sm font-extrabold text-white/95">No Relayer</span>
+    </div>
   );
 }
 
@@ -60,7 +72,7 @@ function Row({
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-small">
-        <span className="text-base font-extrabold text-white/95">{name}</span>
+        <Text value={name} />
         {tips ? (
           <Tooltip content={tips}>
             <Image
@@ -81,14 +93,16 @@ function Row({
           <Image width={20} height={20} alt="Warning" src="/images/warning.svg" />
         </Tooltip>
       ) : typeof value === "bigint" && token ? (
-        <span className="text-base font-extrabold text-white/95">
-          {formatBalance(value, token.decimals, { precision: 6 })} {token.symbol}
-        </span>
+        <Text value={`${formatBalance(value, token.decimals, { precision: 6 })} ${token.symbol}`} />
       ) : typeof value === "string" ? (
-        <span className="text-base font-extrabold text-white/95">{value}</span>
+        <Text value={value} />
       ) : typeof value !== "bigint" ? (
         value
       ) : null}
     </div>
   );
+}
+
+function Text({ value }: { value: string }) {
+  return <span className="text-base font-extrabold text-white/95">{value}</span>;
 }
