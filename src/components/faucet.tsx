@@ -142,7 +142,7 @@ function Label({ text, tips, children }: PropsWithChildren<{ text: string; tips?
   return (
     <div className="flex flex-col gap-small">
       <div className="flex items-center gap-small">
-        <span className="text-sm font-medium text-white/80">{text}</span>
+        <span className="text-sm font-extrabold text-white/80">{text}</span>
         {tips ? (
           <Tooltip content={tips}>
             <Image width={16} height={16} alt="Tips" src="/images/info.svg" className="h-4 w-4 shrink-0" />
@@ -160,7 +160,9 @@ function Item({ value, token, loading }: { value: bigint; token: Token; loading?
       {loading ? (
         <CountLoading size="small" color="white" />
       ) : (
-        <span className="text-base font-semibold">{formatBalance(value, token.decimals)}</span>
+        <span className="text-base font-extrabold">
+          {formatBalance(value, token.decimals, { precision: 3, keepZero: true })}
+        </span>
       )}
       <div className="flex items-center gap-2">
         <Image
@@ -170,7 +172,7 @@ function Item({ value, token, loading }: { value: bigint; token: Token; loading?
           className="h-6 w-6 shrink-0 rounded-full"
           src={getTokenLogoSrc(token.logo)}
         />
-        <span className="text-base font-semibold">{token.symbol}</span>
+        <span className="text-base font-extrabold">{token.symbol}</span>
       </div>
     </div>
   );
