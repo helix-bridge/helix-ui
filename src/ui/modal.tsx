@@ -81,7 +81,7 @@ export default function Modal({
 
           {/* header */}
           <div className="flex flex-col gap-medium lg:gap-5">
-            <h3 className="text-xl font-semibold text-white">{title}</h3>
+            <h3 className="text-xl font-bold text-white">{title}</h3>
             {subTitle ? (
               typeof subTitle === "string" ? (
                 <h5 className="text-base font-normal text-white">{subTitle}</h5>
