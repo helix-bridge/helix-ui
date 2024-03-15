@@ -7,13 +7,14 @@ import { Address, isAddress } from "viem";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 
 interface Props {
+  forceDisabled?: boolean;
   recipient: Address | undefined;
   transferable: bigint | undefined;
   transferAmount: InputValue<bigint>;
   onTransfer: () => void;
 }
 
-export default function TransferAction({ recipient, transferable, transferAmount, onTransfer }: Props) {
+export default function TransferAction({ recipient, transferable, transferAmount, forceDisabled, onTransfer }: Props) {
   const {
     sourceAllowance,
     sourceChain,
@@ -105,7 +106,7 @@ export default function TransferAction({ recipient, transferable, transferAmount
   ]);
 
   return (
-    <Button busy={busy} disabled={btnDisabled} onClick={handleClick}>
+    <Button busy={busy} disabled={btnDisabled || forceDisabled} onClick={handleClick}>
       {btnText}
     </Button>
   );

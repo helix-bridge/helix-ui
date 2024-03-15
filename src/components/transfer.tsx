@@ -65,6 +65,32 @@ export default function Transfer() {
   const [balanceLoading, setBalanceLoading] = useState(false);
   const [indexerCategory, setIndexerCategory] = useState<BridgeCategory>();
 
+  const alert = useMemo(() => {
+    if (
+      (sourceChain?.network === "darwinia-dvm" && targetChain?.network === "ethereum") ||
+      (sourceChain?.network === "ethereum" && targetChain?.network === "darwinia-dvm")
+    ) {
+      return (
+        <div className="flex flex-wrap items-center justify-center rounded-middle bg-inner p-middle text-center text-sm font-medium text-app-orange">
+          <span>
+            {`Due to the Ethereum upgrade, the Darwinia<>Ethereum bridge is temporarily unavailable. Please use the official`}
+            &nbsp;
+          </span>
+          <a
+            href="https://bridge.arbitrum.io/?destinationChain=ethereum&sourceChain=arbitrum-one"
+            rel="noopener noreferrer"
+            target="_blank"
+            className=" text-primary hover:underline"
+          >
+            Arbitrum bridge
+          </a>
+          <span>&nbsp;{`to route to Darwinia or Ethereum instead.`}</span>
+        </div>
+      );
+    }
+    return null;
+  }, [sourceChain?.network, targetChain?.network]);
+
   const bridgeOptions = useMemo(
     () => getAvailableBridges(sourceChain, targetChain, sourceToken),
     [sourceChain, targetChain, sourceToken],
@@ -349,16 +375,19 @@ export default function Transfer() {
 
         {/* Information */}
         <Label text="Information" textClassName="font-medium">
-          <TransferInfo
-            fee={bridgeFee ? { ...bridgeFee, loading: isLoadingFee || isLoadingRelayers } : undefined}
-            bridge={bridgeInstance}
-            transferLimit={relayersData?.sortedLnBridgeRelayInfos?.transferLimit}
-            isLoadingTransferLimit={isLoadingRelayers}
-          />
+          {alert ?? (
+            <TransferInfo
+              fee={bridgeFee ? { ...bridgeFee, loading: isLoadingFee || isLoadingRelayers } : undefined}
+              bridge={bridgeInstance}
+              transferLimit={relayersData?.sortedLnBridgeRelayInfos?.transferLimit}
+              isLoadingTransferLimit={isLoadingRelayers}
+            />
+          )}
         </Label>
 
         {/* Action */}
         <TransferAction
+          forceDisabled={!!alert}
           transferable={transferable}
           transferAmount={deferredTransferAmount}
           recipient={recipient || address}
