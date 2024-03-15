@@ -183,19 +183,24 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     let sub$$: Subscription | undefined;
     if (
       activeKey === "withdraw" &&
-      defaultBridge &&
+      (defaultBridge || oppositeBridge) &&
       (relayerInfo?.messageChannel === "layerzero" || relayerInfo?.messageChannel === "msgline")
     ) {
       setLoadingWithdrawFee(true);
+      const args = {
+        amount: deferredWithdrawAmount.value,
+        sender: address,
+        relayer: relayerInfo.relayer,
+        transferId: relayerInfo.lastTransferId,
+        withdrawNonce: relayerInfo.withdrawNonce,
+        messageChannel: relayerInfo.messageChannel,
+      } as const;
       sub$$ = from(
-        defaultBridge.getWithdrawFeeParams({
-          amount: deferredWithdrawAmount.value,
-          sender: address,
-          relayer: relayerInfo.relayer,
-          transferId: relayerInfo.lastTransferId,
-          withdrawNonce: relayerInfo.withdrawNonce,
-          messageChannel: relayerInfo.messageChannel,
-        }),
+        defaultBridge
+          ? defaultBridge.getWithdrawFeeParams(args)
+          : oppositeBridge
+          ? oppositeBridge.getWithdrawFeeParams(args)
+          : Promise.resolve(undefined),
       ).subscribe({
         next: setWithdrawFeeParams,
         error: (err) => {
@@ -209,7 +214,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
       setWithdrawFeeParams(undefined);
     }
     return () => sub$$?.unsubscribe();
-  }, [defaultBridge, relayerInfo, address, activeKey, deferredWithdrawAmount]);
+  }, [defaultBridge, oppositeBridge, relayerInfo, address, activeKey, deferredWithdrawAmount]);
 
   return (
     <Modal
