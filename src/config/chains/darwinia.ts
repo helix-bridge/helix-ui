@@ -49,6 +49,7 @@ export const darwiniaChain: ChainConfig = {
       address: "0x0000000000000000000000000000000000000000",
       logo: "ring.svg",
       cross: [
+        { target: { network: "ethereum", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "opposite" } },
         { target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         {
           target: { network: "crab-dvm", symbol: "xWRING" },

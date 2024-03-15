@@ -1,8 +1,8 @@
 import { BaseBridge } from "./base";
 import { Address, Hex, PublicClient, TransactionReceipt, bytesToHex, encodeFunctionData } from "viem";
-import { BridgeConstructorArgs, GetFeeArgs, TransferOptions } from "@/types/bridge";
+import { BridgeConstructorArgs, GetFeeArgs, GetWithdrawFeeArgs, TransferOptions } from "@/types/bridge";
 import { fetchMsglineFeeAndParams } from "@/utils";
-import { ChainConfig, Token } from "@/types";
+import { ChainConfig } from "@/types";
 
 export class LnBridgeBase extends BaseBridge {
   constructor(args: BridgeConstructorArgs) {
@@ -74,6 +74,67 @@ export class LnBridgeBase extends BaseBridge {
       });
 
       return fetchMsglineFeeAndParams(localChain.id, remoteChain.id, localMessager, remoteMessager, sender, payload);
+    }
+  }
+
+  private async _getLayerzeroWithdrawFee() {
+    if (this.contract && this.targetChain && this.sourceNativeToken && this.sourcePublicClient) {
+      const [sendService, _receiveService] = await this.sourcePublicClient.readContract({
+        address: this.contract.sourceAddress,
+        abi: (await import(`../abi/lnv2-default`)).default,
+        functionName: "messagers",
+        args: [BigInt(this.targetChain.id)],
+      });
+      const value = await this._getLayerzeroFee(sendService, this.targetChain, this.sourcePublicClient);
+      return typeof value === "bigint" ? { value, token: this.sourceNativeToken, params: undefined } : undefined;
+    }
+  }
+
+  private async _getMsglineWithdrawFeeAndParams(args: GetWithdrawFeeArgs) {
+    if (
+      this.sourceChain &&
+      this.targetChain &&
+      this.sourceToken &&
+      this.targetToken &&
+      this.contract &&
+      this.sourceNativeToken &&
+      args.transferId &&
+      args.withdrawNonce &&
+      args.relayer &&
+      args.sender
+    ) {
+      const message = encodeFunctionData({
+        abi: (await import(`../abi/lnv2-default`)).default,
+        functionName: "withdraw",
+        args: [
+          BigInt(this.sourceChain.id),
+          args.transferId,
+          BigInt(args.withdrawNonce),
+          args.relayer,
+          this.sourceToken.address,
+          this.targetToken.address,
+          args.amount,
+        ],
+      });
+      const feeAndParams = await this._getMsglineFeeAndParams(
+        message,
+        args.sender,
+        this.sourceChain,
+        this.targetChain,
+        this.contract.sourceAddress,
+        this.contract.targetAddress,
+      );
+      return feeAndParams
+        ? { value: feeAndParams.fee, token: this.sourceNativeToken, params: feeAndParams.extParams }
+        : undefined;
+    }
+  }
+
+  async getWithdrawFeeParams(args: GetWithdrawFeeArgs) {
+    if (args.messageChannel === "layerzero") {
+      return this._getLayerzeroWithdrawFee();
+    } else if (args.messageChannel === "msgline") {
+      return this._getMsglineWithdrawFeeAndParams(args);
     }
   }
 

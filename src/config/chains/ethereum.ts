@@ -34,6 +34,7 @@ export const ethereumChain: ChainConfig = {
       logo: "ring.svg",
       cross: [
         { target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
+        { target: { network: "darwinia-dvm", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         {
           target: { network: "darwinia-dvm", symbol: "RING" },
           bridge: { category: "lpbridge-ethereum" },
@@ -67,4 +68,5 @@ export const ethereumChain: ChainConfig = {
       category: "others",
     },
   ],
+  messager: { msgline: "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0" },
 };
