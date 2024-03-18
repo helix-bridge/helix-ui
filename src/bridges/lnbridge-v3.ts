@@ -235,7 +235,7 @@ export class LnBridgeV3 extends LnBridgeBase {
       const remoteChainId = BigInt(this.sourceChain.id);
 
       const hash = await this.walletClient.writeContract({
-        address: this.contract.sourceAddress,
+        address: this.contract.targetAddress,
         abi: (await import("@/abi/lnbridge-v3")).default,
         functionName: "requestWithdrawLiquidity",
         args: [remoteChainId, transferIds, relayer, extParams],
