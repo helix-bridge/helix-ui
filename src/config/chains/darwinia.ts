@@ -47,7 +47,7 @@ export const darwiniaChain: ChainConfig = {
       name: "RING",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
-      logo: "ring.svg",
+      logo: "ring.png",
       cross: [
         { target: { network: "ethereum", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "opposite" } },
         { target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
@@ -89,7 +89,7 @@ export const darwiniaChain: ChainConfig = {
     //   name: "WRING",
     //   type: "erc20",
     //   address: "0x",
-    //   logo: "ring.svg",
+    //   logo: "ring.png",
     //   cross: [],
     // },
     {
@@ -98,7 +98,7 @@ export const darwiniaChain: ChainConfig = {
       name: "KTON",
       type: "erc20",
       address: "0x0000000000000000000000000000000000000402",
-      logo: "kton.svg",
+      logo: "kton.png",
       cross: [
         {
           target: { network: "ethereum", symbol: "KTON" },
@@ -114,7 +114,7 @@ export const darwiniaChain: ChainConfig = {
       name: "xWCRAB",
       type: "erc20",
       address: "0x656567Eb75b765FC320783cc6EDd86bD854b2305",
-      logo: "crab.svg",
+      logo: "crab.png",
       cross: [
         {
           target: { network: "crab-dvm", symbol: "CRAB" },

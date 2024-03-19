@@ -30,7 +30,7 @@ export const sepoliaChain: ChainConfig = {
       name: "ETH",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
-      logo: "eth.svg",
+      logo: "eth.png",
       cross: [
         {
           target: { network: "arbitrum-sepolia", symbol: "ETH" },
@@ -46,7 +46,7 @@ export const sepoliaChain: ChainConfig = {
       name: "USDC",
       type: "erc20",
       address: "0x0ac58Df0cc3542beC4cDa71B16D06C3cCc39f405",
-      logo: "usdc.svg",
+      logo: "usdc.png",
       cross: [
         {
           target: { network: "arbitrum-sepolia", symbol: "USDC" },
@@ -84,7 +84,7 @@ export const sepoliaChain: ChainConfig = {
       name: "xCRAB",
       type: "erc20",
       address: "0x9Da7E18441f26515CC713290BE846E726d41781d",
-      logo: "crab.svg",
+      logo: "crab.png",
       cross: [
         // { target: { network: "crab-dvm", symbol: "CRAB" }, bridge: { category: "xtoken-sepolia" }, action: "redeem" },
       ],
@@ -96,7 +96,7 @@ export const sepoliaChain: ChainConfig = {
       name: "xPRING",
       type: "erc20",
       address: "0xBC43cb6175FcC8E577a0846256eA699b87eFcEE5",
-      logo: "ring.svg",
+      logo: "ring.png",
       cross: [
         {
           target: { network: "pangolin-dvm", symbol: "PRING" },

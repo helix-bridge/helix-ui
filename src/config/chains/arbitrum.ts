@@ -20,7 +20,7 @@ export const arbitrumChain: ChainConfig = {
       name: "ETH",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
-      logo: "eth.svg",
+      logo: "eth.png",
       cross: [
         {
           target: { network: "blast", symbol: "ETH" },
@@ -36,7 +36,7 @@ export const arbitrumChain: ChainConfig = {
       name: "RING",
       type: "erc20",
       address: "0x9e523234D36973f9e38642886197D023C88e307e",
-      logo: "ring.svg",
+      logo: "ring.png",
       cross: [
         { target: { network: "ethereum", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "opposite" } },
         { target: { network: "darwinia-dvm", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
@@ -69,7 +69,7 @@ export const arbitrumChain: ChainConfig = {
       name: "USDC",
       type: "erc20",
       address: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
-      logo: "usdc.svg",
+      logo: "usdc.png",
       cross: [
         { target: { network: "mantle", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "scroll", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },

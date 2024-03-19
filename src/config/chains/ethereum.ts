@@ -21,7 +21,7 @@ export const ethereumChain: ChainConfig = {
       name: "ETH",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
-      logo: "eth.svg",
+      logo: "eth.png",
       cross: [],
       category: "eth",
     },
@@ -31,7 +31,7 @@ export const ethereumChain: ChainConfig = {
       name: "RING",
       type: "erc20",
       address: "0x9469d013805bffb7d3debe5e7839237e535ec483",
-      logo: "ring.svg",
+      logo: "ring.png",
       cross: [
         { target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "darwinia-dvm", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
@@ -57,7 +57,7 @@ export const ethereumChain: ChainConfig = {
       name: "KTON",
       type: "erc20",
       address: "0x9f284e1337a815fe77d2ff4ae46544645b20c5ff",
-      logo: "kton.svg",
+      logo: "kton.png",
       cross: [
         {
           target: { network: "darwinia-dvm", symbol: "KTON" },

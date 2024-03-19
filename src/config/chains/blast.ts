@@ -31,7 +31,7 @@ export const blastChain: ChainConfig = {
       name: "ETH",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
-      logo: "eth.svg",
+      logo: "eth.png",
       cross: [
         {
           target: { network: "arbitrum", symbol: "ETH" },
