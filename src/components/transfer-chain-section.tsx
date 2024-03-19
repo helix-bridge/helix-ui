@@ -3,9 +3,17 @@ import TransferSection from "./transfer-section";
 import TransferChainSelect from "./transfer-chain-select";
 import TransferSwitch from "./transfer-switch";
 import ComponentLoading from "@/ui/component-loading";
+import { Address } from "viem";
+
+interface Recipient {
+  input: string;
+  value: Address | undefined;
+  alert?: string;
+}
 
 interface Props {
   loading?: boolean;
+  recipient?: Recipient;
   sourceChain: ChainConfig;
   targetChain: ChainConfig;
   sourceToken: Token;
@@ -15,16 +23,23 @@ interface Props {
   sourceTokenOptions: Token[];
   targetTokenOptions: Token[];
   disableSwitch?: boolean;
+  expandRecipient?: boolean;
+  recipientOptions?: Address[];
   onSwitch?: () => void;
+  onExpandRecipient?: () => void;
   onSourceChainChange?: (chain: ChainConfig) => void;
   onTargetChainChange?: (chain: ChainConfig) => void;
   onSourceTokenChange?: (token: Token) => void;
   onTargetTokenChange?: (token: Token) => void;
+  onRecipientChange?: (recipient: Recipient) => void;
 }
 
 export default function TransferChainSection({
   loading,
+  recipient,
   disableSwitch,
+  expandRecipient,
+  recipientOptions,
   sourceChain,
   targetChain,
   sourceToken,
@@ -34,6 +49,8 @@ export default function TransferChainSection({
   sourceTokenOptions,
   targetTokenOptions,
   onSwitch,
+  onExpandRecipient,
+  onRecipientChange,
   onSourceChainChange,
   onTargetChainChange,
   onSourceTokenChange,
@@ -53,7 +70,16 @@ export default function TransferChainSection({
         />
       </TransferSection>
       <TransferSwitch disabled={disableSwitch || loading} onSwitch={onSwitch} />
-      <TransferSection titleText="To" loading={loading}>
+      <TransferSection
+        titleText="To"
+        loading={loading}
+        recipient={recipient}
+        alert={recipient?.alert}
+        expandRecipient={expandRecipient}
+        recipientOptions={recipientOptions}
+        onExpandRecipient={onExpandRecipient}
+        onRecipientChange={onRecipientChange}
+      >
         <TransferChainSelect
           chain={targetChain}
           token={targetToken}
