@@ -8,7 +8,7 @@ interface Props {
 
 export default function TransferSectionTitle({ text, tips }: Props) {
   return (
-    <div className="inline-flex items-center gap-small px-medium">
+    <div className="inline-flex items-center gap-small">
       <span className="text-sm font-normal text-white/50">{text}</span>
       {tips ? (
         <Tooltip content={tips}>

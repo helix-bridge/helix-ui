@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useDeferredValue, useMemo, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import TransferTokenSection from "./transfer-token-section";
 import {
   bridgeFactory,
@@ -19,8 +19,14 @@ import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletCli
 import TransferProviderV2 from "@/providers/transfer-provider-v2";
 import DisclaimerModal from "./modals/disclaimer-modal";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { Hex } from "viem";
+import { Address, Hex } from "viem";
 import TransferModalV2 from "./modals/transfer-modal-v2";
+
+interface Recipient {
+  input: string;
+  value: Address | undefined;
+  alert?: string;
+}
 
 function Component() {
   const [txHash, setTxHash] = useState<Hex | null>();
@@ -53,6 +59,28 @@ function Component() {
   const { data: walletClient } = useWalletClient();
   const { switchNetwork } = useSwitchNetwork();
   const { openConnectModal } = useConnectModal();
+
+  const [recipient, setRecipient] = useState<Recipient>({
+    input: account.address ?? "",
+    value: account.address,
+    alert: undefined,
+  });
+  const [expandRecipient, setExpandRecipient] = useState(false);
+  const isCustomRecipient = useRef(false); // After input recipient manually, set to `true`
+  useEffect(() => {
+    if (!isCustomRecipient.current) {
+      if (account.address) {
+        setRecipient({ input: account.address, value: account.address, alert: undefined });
+      } else {
+        setRecipient({ input: "", value: undefined, alert: undefined });
+      }
+    }
+  }, [account.address]);
+  const handleRecipientChange = useCallback((value: Recipient) => {
+    setRecipient(value);
+    isCustomRecipient.current = true;
+  }, []);
+  const handleExpandRecipient = useCallback(() => setExpandRecipient((prev) => !prev), []);
 
   const {
     balance,
@@ -113,7 +141,13 @@ function Component() {
         disabled = false;
       } else {
         text = "Transfer";
-        disabled = loadingAllowance || fee?.value === undefined || !deferredAmount.input || !deferredAmount.valid;
+        disabled =
+          loadingAllowance ||
+          fee?.value === undefined ||
+          !deferredAmount.input ||
+          !deferredAmount.valid ||
+          !recipient.value ||
+          !!recipient.alert;
       }
     } else {
       text = "Connect Wallet";
@@ -121,7 +155,17 @@ function Component() {
     }
 
     return [text, disabled];
-  }, [allowance, loadingAllowance, chain?.id, deferredAmount, sourceChain.id, fee?.value, fee?.token.type]);
+  }, [
+    allowance,
+    loadingAllowance,
+    chain?.id,
+    deferredAmount,
+    sourceChain.id,
+    fee?.value,
+    fee?.token.type,
+    recipient.alert,
+    recipient.value,
+  ]);
 
   const handleAction = useCallback(async () => {
     if (actionText === "Connect Wallet") {
@@ -148,11 +192,11 @@ function Component() {
   ]);
 
   const handleTransfer = useCallback(async () => {
-    if (bridge && account.address) {
+    if (bridge && account.address && recipient.value) {
       const relayInfo = relayData?.sortedLnBridgeRelayInfos?.records.at(0);
       try {
         setIsTransfering(true);
-        const receipt = await bridge.transfer(account.address, account.address, deferredAmount.value, {
+        const receipt = await bridge.transfer(account.address, recipient.value, deferredAmount.value, {
           relayer: relayInfo?.relayer,
           transferId: relayInfo?.lastTransferId,
           totalFee: fee?.value,
@@ -175,6 +219,7 @@ function Component() {
   }, [
     relayData?.sortedLnBridgeRelayInfos?.records,
     account.address,
+    recipient.value,
     bridge,
     sourceChain,
     fee?.value,
@@ -188,7 +233,10 @@ function Component() {
       <div className="mx-auto flex w-full flex-col gap-medium rounded-large bg-[#1F282C] p-medium lg:mt-5 lg:w-[27.5rem] lg:gap-5 lg:rounded-[1.25rem] lg:p-5">
         <TransferTokenSection token={token} options={getTokenOptions()} onChange={handleTokenChange} />
         <TransferChainSection
+          recipient={recipient}
           loading={loadingSupportChains}
+          expandRecipient={expandRecipient}
+          recipientOptions={account.address ? [account.address] : []}
           sourceChain={sourceChain}
           targetChain={targetChain}
           sourceToken={sourceToken}
@@ -203,6 +251,8 @@ function Component() {
           onTargetChainChange={handleTargetChainChange}
           onTargetTokenChange={handleTargetTokenChange}
           onSwitch={handleSwitch}
+          onRecipientChange={handleRecipientChange}
+          onExpandRecipient={handleExpandRecipient}
         />
         <TransferAmountSection
           amount={amount}
@@ -237,7 +287,7 @@ function Component() {
 
       <TransferModalV2
         sender={account.address}
-        recipient={account.address}
+        recipient={recipient.value}
         sourceChain={sourceChain}
         sourceToken={sourceToken}
         targetChain={targetChain}
