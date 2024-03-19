@@ -41,7 +41,7 @@ export default function TransferChainSelect({
         }
         labelClassName="flex items-center justify-between gap-small w-full mx-medium transition-colors hover:bg-white/10 group py-small rounded-[0.625rem]"
         childClassName="py-medium rounded-large bg-[#00141D] border border-white/20 flex flex-col gap-2"
-        offsetSize={12}
+        offsetSize={6}
         sameWidth
       >
         {chainOptions.length ? (
