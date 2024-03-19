@@ -139,7 +139,7 @@ export abstract class BaseBridge {
   }
 
   getTxGasLimit() {
-    return this.sourceChain?.network === "arbitrum" || this.sourceChain?.network === "arbitrum-goerli"
+    return this.sourceChain?.network === "arbitrum" || this.sourceChain?.network === "arbitrum-sepolia"
       ? 3000000n
       : undefined;
   }
