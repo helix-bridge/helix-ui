@@ -38,7 +38,7 @@ export const crabChain: ChainConfig = {
   /**
    * Custom
    */
-  logo: "crab.svg",
+  logo: "crab.png",
   tokens: [
     {
       decimals: 18,
@@ -46,7 +46,7 @@ export const crabChain: ChainConfig = {
       name: "CRAB",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
-      logo: "crab.svg",
+      logo: "crab.png",
       cross: [
         {
           target: { network: "darwinia-dvm", symbol: "xWCRAB" },
@@ -68,7 +68,7 @@ export const crabChain: ChainConfig = {
       name: "xWRING",
       type: "erc20",
       address: "0x273131F7CB50ac002BDd08cA721988731F7e1092",
-      logo: "ring.svg",
+      logo: "ring.png",
       cross: [
         {
           target: { network: "darwinia-dvm", symbol: "RING" },

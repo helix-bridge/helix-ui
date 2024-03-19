@@ -41,7 +41,7 @@ export const pangolinChain: ChainConfig = {
       name: "PRING",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
-      logo: "ring.svg",
+      logo: "ring.png",
       cross: [
         {
           target: { network: "sepolia", symbol: "xPRING" },

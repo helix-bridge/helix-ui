@@ -20,7 +20,7 @@ export const scrollChain: ChainConfig = {
       name: "ETH",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
-      logo: "eth.svg",
+      logo: "eth.png",
       cross: [],
       category: "eth",
     },
@@ -49,7 +49,7 @@ export const scrollChain: ChainConfig = {
       name: "USDC",
       type: "erc20",
       address: "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4",
-      logo: "usdc.svg",
+      logo: "usdc.png",
       cross: [
         { target: { network: "mantle", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "arbitrum", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },

@@ -35,7 +35,7 @@ export const taikoChain: ChainConfig = {
       name: "ETH",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
-      logo: "eth.svg",
+      logo: "eth.png",
       cross: [],
       category: "eth",
     },
@@ -60,7 +60,7 @@ export const taikoChain: ChainConfig = {
       name: "USDC",
       type: "erc20",
       address: "0x3F7DF5866591e7E48D18C8EbeAE61Bc343a63283",
-      logo: "usdc.svg",
+      logo: "usdc.png",
       cross: [
         {
           target: { network: "arbitrum-sepolia", symbol: "USDC" },

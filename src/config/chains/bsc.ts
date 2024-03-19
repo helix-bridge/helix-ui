@@ -12,7 +12,7 @@ export const bscChain: ChainConfig = {
   /**
    * Custom
    */
-  logo: "bsc.svg",
+  logo: "bsc.png",
   tokens: [
     {
       decimals: 18,
@@ -49,7 +49,7 @@ export const bscChain: ChainConfig = {
       name: "USDC",
       type: "erc20",
       address: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
-      logo: "usdc.svg",
+      logo: "usdc.png",
       cross: [{ target: { network: "base", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } }],
       category: "usdc",
     },

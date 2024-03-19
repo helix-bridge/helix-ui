@@ -12,7 +12,7 @@ export const mantleChain: ChainConfig = {
   /**
    * Custom
    */
-  logo: "mantle.svg",
+  logo: "mantle.png",
   tokens: [
     {
       decimals: 18,
@@ -20,7 +20,7 @@ export const mantleChain: ChainConfig = {
       name: "MNT",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
-      logo: "mnt.svg",
+      logo: "mnt.png",
       cross: [],
       category: "others",
     },
@@ -49,7 +49,7 @@ export const mantleChain: ChainConfig = {
       name: "USDC",
       type: "erc20",
       address: "0x09Bc4E0D864854c6aFB6eB9A9cdF58aC190D0dF9",
-      logo: "usdc.svg",
+      logo: "usdc.png",
       cross: [
         { target: { network: "arbitrum", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "scroll", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },

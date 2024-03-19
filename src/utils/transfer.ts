@@ -2,11 +2,11 @@ import { ChainConfig, Token, TokenCategory, TokenOption } from "@/types";
 import { getChainConfig, getChainConfigs, isProduction } from ".";
 
 const allTokenOptions: Record<Exclude<TokenCategory, "others">, TokenOption> = {
-  crab: { logo: "crab.svg", category: "crab", symbol: "CRAB" },
-  eth: { logo: "eth.svg", category: "eth", symbol: "ETH" },
-  ring: { logo: "ring.svg", category: "ring", symbol: "RING" },
-  usdc: { logo: "usdc.svg", category: "usdc", symbol: "USDC" },
-  usdt: { logo: "usdt.svg", category: "usdt", symbol: "USDT" },
+  crab: { logo: "crab.png", category: "crab", symbol: "CRAB" },
+  eth: { logo: "eth.png", category: "eth", symbol: "ETH" },
+  ring: { logo: "ring.png", category: "ring", symbol: "RING" },
+  usdc: { logo: "usdc.png", category: "usdc", symbol: "USDC" },
+  usdt: { logo: "usdt.png", category: "usdt", symbol: "USDT" },
 };
 const sortedTokenCategories: Exclude<TokenCategory, "others">[] = isProduction()
   ? ["usdt", "eth", "ring", "crab"]

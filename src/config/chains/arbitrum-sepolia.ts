@@ -20,7 +20,7 @@ export const arbitrumSepoliaChain: ChainConfig = {
       name: "ETH",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
-      logo: "eth.svg",
+      logo: "eth.png",
       cross: [
         { target: { network: "sepolia", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "opposite" } },
         { target: { network: "zksync-sepolia", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
@@ -33,7 +33,7 @@ export const arbitrumSepoliaChain: ChainConfig = {
       name: "USDC",
       type: "erc20",
       address: "0x8A87497488073307E1a17e8A12475a94Afcb413f",
-      logo: "usdc.svg",
+      logo: "usdc.png",
       cross: [
         { target: { network: "bera", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "taiko", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },

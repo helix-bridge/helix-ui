@@ -30,7 +30,7 @@ export const polygonChain: ChainConfig = {
       name: "RING",
       type: "erc20",
       address: "0x9C1C23E60B72Bc88a043bf64aFdb16A02540Ae8f",
-      logo: "ring.svg",
+      logo: "ring.png",
       cross: [
         { target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         {
