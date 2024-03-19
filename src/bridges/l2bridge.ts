@@ -26,7 +26,7 @@ export class L2ArbitrumBridge extends BaseBridge {
   }
 
   private _initContract() {
-    if (this.sourceChain?.network === "goerli" && this.targetChain?.network === "arbitrum-goerli") {
+    if (this.sourceChain?.network === "sepolia" && this.targetChain?.network === "arbitrum-sepolia") {
       this.contract = {
         sourceAddress: "0x0000000000000000000000000000000000000000",
         targetAddress: "0x4c7708168395aea569453fc36862d2ffcdac588c",
