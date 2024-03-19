@@ -119,7 +119,7 @@ export default function RecipientInput({ value, options = [], onChange = () => u
 }
 
 function Option({ address, onSelect }: { address: Address; onSelect: (value: Value) => void }) {
-  const { data: name } = useEnsName({ address, chainId: 1 });
+  const { data: name } = useEnsName({ address });
   return (
     <button
       className="w-full truncate px-2 py-small text-start transition-colors hover:bg-white/10"
