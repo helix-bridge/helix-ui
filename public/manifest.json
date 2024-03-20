@@ -1,0 +1,5 @@
+{
+  "name": "Helix Bridge",
+  "description": "Helix Bridge Apps",
+  "icons": [{ "src": "icon.svg", "sizes": "any" }]
+}

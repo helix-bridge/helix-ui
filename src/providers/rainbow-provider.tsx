@@ -2,7 +2,7 @@
 
 import "@rainbow-me/rainbowkit/styles.css";
 import { RainbowKitProvider, connectorsForWallets, getDefaultWallets, darkTheme } from "@rainbow-me/rainbowkit";
-import { imTokenWallet, okxWallet, talismanWallet } from "@rainbow-me/rainbowkit/wallets";
+import { okxWallet, rabbyWallet, safeWallet, talismanWallet } from "@rainbow-me/rainbowkit/wallets";
 import { PropsWithChildren } from "react";
 import { WagmiConfig, configureChains, createConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
@@ -22,7 +22,12 @@ const connectors = connectorsForWallets([
   ...wallets,
   {
     groupName: "More",
-    wallets: [okxWallet({ projectId, chains }), imTokenWallet({ projectId, chains }), talismanWallet({ chains })],
+    wallets: [
+      okxWallet({ chains, projectId }),
+      rabbyWallet({ chains }),
+      talismanWallet({ chains }),
+      safeWallet({ chains }),
+    ],
   },
 ]);
 
