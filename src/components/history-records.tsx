@@ -33,6 +33,7 @@ export default function HistoryRecords() {
         page: currentPage,
         sender: deferredSearchValue.toLowerCase(),
         recipient: deferredSearchValue.toLowerCase(),
+        bridges: ["lnv3", "lnv2-default", "lnv2-opposite"],
       },
       notifyOnNetworkStatusChange: true,
     },
