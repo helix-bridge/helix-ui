@@ -203,20 +203,6 @@ export default function TransactionStatus({ record }: Props) {
             </Button>
           </div>
         )}
-
-        {record?.result === RecordResult.PENDING && record.bridge.startsWith("lpbridge") && (
-          <div className="flex items-center gap-small">
-            <span className="text-sm font-medium text-white/50">
-              You can request refund or speed up this transaction.
-            </span>
-            <Button className="rounded-medium px-1" kind="primary" busy={busy} onClick={handleRefund}>
-              <span className="text-sm font-medium text-white">Refund</span>
-            </Button>
-            <Button className="rounded-medium px-1" kind="primary" onClick={() => setIsOpen(true)}>
-              <span className="text-sm font-medium text-white">SpeedUp</span>
-            </Button>
-          </div>
-        )}
       </div>
 
       <Modal

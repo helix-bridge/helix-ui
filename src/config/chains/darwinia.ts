@@ -1,5 +1,4 @@
 import { ChainConfig, ChainID } from "@/types/chain";
-import { parseUnits } from "viem";
 
 export const darwiniaChain: ChainConfig = {
   /**
@@ -57,41 +56,12 @@ export const darwiniaChain: ChainConfig = {
           hidden: true,
         },
         {
-          target: { network: "crab-dvm", symbol: "xWRING" },
-          bridge: { category: "xtoken-darwinia-dvm" },
-          action: "issue",
-        },
-        {
-          target: { network: "ethereum", symbol: "RING" },
-          bridge: { category: "lpbridge-darwinia-dvm" },
-          action: "issue",
-          baseFee: parseUnits("3000", 18),
-          index: 0,
-          price: 440000n,
-          hidden: true,
-        },
-        {
-          target: { network: "ethereum", symbol: "RING" },
-          bridge: { category: "helix-sub2ethv2(lock)" },
-          action: "issue",
-          min: 1000000000000000000000000n,
-        },
-        {
           target: { network: "polygon", symbol: "RING" },
           bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
         },
       ],
       category: "ring",
     },
-    // {
-    //   decimals: 18,
-    //   symbol: "WRING",
-    //   name: "WRING",
-    //   type: "erc20",
-    //   address: "0x",
-    //   logo: "ring.png",
-    //   cross: [],
-    // },
     {
       decimals: 18,
       symbol: "KTON",
@@ -99,13 +69,7 @@ export const darwiniaChain: ChainConfig = {
       type: "erc20",
       address: "0x0000000000000000000000000000000000000402",
       logo: "kton.png",
-      cross: [
-        {
-          target: { network: "ethereum", symbol: "KTON" },
-          bridge: { category: "helix-sub2ethv2(lock)" },
-          action: "issue",
-        },
-      ],
+      cross: [],
       category: "others",
     },
     {
@@ -120,11 +84,6 @@ export const darwiniaChain: ChainConfig = {
           target: { network: "crab-dvm", symbol: "CRAB" },
           bridge: { category: "lnbridge", lnv2Type: "default" },
           hidden: true,
-        },
-        {
-          target: { network: "crab-dvm", symbol: "CRAB" },
-          bridge: { category: "xtoken-darwinia-dvm" },
-          action: "redeem",
         },
       ],
       category: "crab",

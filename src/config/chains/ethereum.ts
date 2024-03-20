@@ -1,5 +1,4 @@
 import { ChainConfig } from "@/types/chain";
-import { parseUnits } from "viem";
 import { mainnet } from "viem/chains";
 
 export const ethereumChain: ChainConfig = {
@@ -35,19 +34,6 @@ export const ethereumChain: ChainConfig = {
       cross: [
         { target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "darwinia-dvm", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        {
-          target: { network: "darwinia-dvm", symbol: "RING" },
-          bridge: { category: "lpbridge-ethereum" },
-          action: "redeem",
-          baseFee: parseUnits("3000", 18),
-          index: 0,
-          hidden: true,
-        },
-        {
-          target: { network: "darwinia-dvm", symbol: "RING" },
-          bridge: { category: "helix-sub2ethv2(unlock)" },
-          action: "redeem",
-        },
       ],
       category: "ring",
     },
@@ -58,13 +44,7 @@ export const ethereumChain: ChainConfig = {
       type: "erc20",
       address: "0x9f284e1337a815fe77d2ff4ae46544645b20c5ff",
       logo: "kton.png",
-      cross: [
-        {
-          target: { network: "darwinia-dvm", symbol: "KTON" },
-          bridge: { category: "helix-sub2ethv2(unlock)" },
-          action: "redeem",
-        },
-      ],
+      cross: [],
       category: "others",
     },
   ],

@@ -85,9 +85,7 @@ export const sepoliaChain: ChainConfig = {
       type: "erc20",
       address: "0x9Da7E18441f26515CC713290BE846E726d41781d",
       logo: "crab.png",
-      cross: [
-        // { target: { network: "crab-dvm", symbol: "CRAB" }, bridge: { category: "xtoken-sepolia" }, action: "redeem" },
-      ],
+      cross: [],
       category: "others",
     },
     {
@@ -97,13 +95,7 @@ export const sepoliaChain: ChainConfig = {
       type: "erc20",
       address: "0xBC43cb6175FcC8E577a0846256eA699b87eFcEE5",
       logo: "ring.png",
-      cross: [
-        {
-          target: { network: "pangolin-dvm", symbol: "PRING" },
-          bridge: { category: "xtoken-sepolia" },
-          action: "redeem",
-        },
-      ],
+      cross: [],
       category: "ring",
     },
   ],

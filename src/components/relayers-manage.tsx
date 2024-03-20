@@ -1,7 +1,7 @@
 import { GQL_QUERY_LNBRIDGE_RELAY_INFOS } from "@/config";
 import {
   LnBridgeRelayerOverview,
-  LnBridgeVersion,
+  BridgeVersion,
   QueryLnBridgeRelayInfosReqParams,
   QueryLnBridgeRelayInfosResData,
 } from "@/types";
@@ -14,7 +14,7 @@ import RelayersTable from "./relayers-table";
 const pageSize = 10;
 
 interface Props {
-  bridgeVersion: LnBridgeVersion;
+  bridgeVersion: BridgeVersion;
 }
 
 export default function RelayersManage({ bridgeVersion }: Props) {

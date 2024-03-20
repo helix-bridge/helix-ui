@@ -9,6 +9,7 @@ export const GQL_HISTORY_RECORDS = gql`
     $results: [Int]
     $fromChains: [String]
     $toChains: [String]
+    $bridges: [String]
   ) {
     historyRecords(
       row: $row
@@ -18,6 +19,7 @@ export const GQL_HISTORY_RECORDS = gql`
       results: $results
       fromChains: $fromChains
       toChains: $toChains
+      bridges: $bridges
     ) {
       total
       records {
@@ -28,7 +30,6 @@ export const GQL_HISTORY_RECORDS = gql`
         fee
         feeToken
         fromChain
-        guardSignatures
         id
         nonce
         messageNonce
@@ -60,7 +61,6 @@ export const GQL_HISTORY_RECORD_BY_ID = gql`
       fee
       feeToken
       fromChain
-      guardSignatures
       id
       nonce
       messageNonce
