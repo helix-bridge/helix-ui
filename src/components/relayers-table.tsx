@@ -1,4 +1,4 @@
-import { LnBridgeRelayerOverview, LnBridgeVersion, Network } from "@/types";
+import { LnBridgeRelayerOverview, BridgeVersion, Network } from "@/types";
 import Button from "@/ui/button";
 import Table, { ColumnType } from "@/ui/table";
 import Tooltip from "@/ui/tooltip";
@@ -14,7 +14,7 @@ import RelayerBalance from "./relayer-balance";
 import RelayerTotalLiquidity from "./relayer-total-liquidity";
 
 interface Props {
-  bridgeVersion: LnBridgeVersion;
+  bridgeVersion: BridgeVersion;
   total: number;
   records: LnBridgeRelayerOverview[];
   loading: boolean;
@@ -29,7 +29,7 @@ interface DataSource extends LnBridgeRelayerOverview {
   key: string;
 }
 
-function getColumns(bridgeVersion: LnBridgeVersion, isDashboard?: boolean) {
+function getColumns(bridgeVersion: BridgeVersion, isDashboard?: boolean) {
   const columns1: ColumnType<DataSource>[] = [
     // {
     //   key: "bridge type",

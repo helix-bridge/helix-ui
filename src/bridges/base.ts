@@ -62,14 +62,6 @@ export abstract class BaseBridge {
     }
   }
 
-  protected initContractByBackingIssuing(backing: Address, issuing: Address) {
-    if (this.crossInfo?.action === "issue") {
-      this.contract = { sourceAddress: backing, targetAddress: issuing };
-    } else if (this.crossInfo?.action === "redeem") {
-      this.contract = { sourceAddress: issuing, targetAddress: backing };
-    }
-  }
-
   protected async getSigner() {
     if (this.walletClient) {
       return (await this.walletClient.getAddresses()).at(0);

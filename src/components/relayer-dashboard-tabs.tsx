@@ -5,14 +5,14 @@ import { useState } from "react";
 import RelayerRegister from "./relayer-register";
 import RelayersManage from "./relayers-manage";
 import RelayerProvider from "@/providers/relayer-provider";
-import { LnBridgeVersion } from "@/types";
+import { BridgeVersion } from "@/types";
 import RelayerRegisterV3 from "./relayer-register-v3";
 import RelayerProviderV3 from "@/providers/relayer-provider-v3";
 
 type TabKey = "register" | "manage";
 
 interface Props {
-  bridgeVersion: LnBridgeVersion;
+  bridgeVersion: BridgeVersion;
 }
 
 export default function RelayerDashboardTabs({ bridgeVersion }: Props) {

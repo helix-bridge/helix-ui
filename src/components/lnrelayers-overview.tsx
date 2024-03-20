@@ -4,7 +4,7 @@ import { GQL_QUERY_LNBRIDGE_RELAY_INFOS } from "@/config";
 import {
   ChainConfig,
   LnBridgeRelayerOverview,
-  LnBridgeVersion,
+  BridgeVersion,
   QueryLnBridgeRelayInfosReqParams,
   QueryLnBridgeRelayInfosResData,
 } from "@/types";
@@ -20,7 +20,7 @@ const { defaultSourceChains, defaultTargetChains } = getLnBridgeCrossDefaultValu
 const pageSize = 12;
 
 interface Props {
-  bridgeVersion: LnBridgeVersion;
+  bridgeVersion: BridgeVersion;
 }
 
 export default function LnRelayersOverview({ bridgeVersion }: Props) {

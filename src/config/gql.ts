@@ -28,7 +28,6 @@ export const GQL_HISTORY_RECORDS = gql`
         fee
         feeToken
         fromChain
-        guardSignatures
         id
         nonce
         messageNonce
@@ -60,7 +59,6 @@ export const GQL_HISTORY_RECORD_BY_ID = gql`
       fee
       feeToken
       fromChain
-      guardSignatures
       id
       nonce
       messageNonce

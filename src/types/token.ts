@@ -23,7 +23,7 @@ export type TokenSymbol =
   | "BERA"
   | "xDai";
 
-export type TokenType = "native" | "erc20" | "mapping";
+export type TokenType = "native" | "erc20";
 
 export interface Token {
   decimals: 18 | 6;

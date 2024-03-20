@@ -1,12 +1,4 @@
-import {
-  L2BridgeCategory,
-  LnBridgeCategory,
-  HelixLpBridgeCategory,
-  HelixBridgeCategory,
-  BridgeCategory,
-  XTokenBridgeCategory,
-  LnBridgeV2Type,
-} from "./bridge";
+import { BridgeCategory, BridgeV2Type } from "./bridge";
 import { Network, ChainConfig } from "./chain";
 import { TokenSymbol, Token } from "./token";
 
@@ -15,49 +7,12 @@ interface Target {
   symbol: TokenSymbol;
 }
 
-type Action = "issue" | "redeem";
-
-export type CrossChain =
-  | {
-      target: Target;
-      bridge: { category: LnBridgeCategory; lnv2Type: LnBridgeV2Type; disableV2?: boolean };
-      index?: never;
-      price?: never;
-      baseFee?: never;
-      action?: never;
-      hidden?: boolean;
-      min?: bigint; // Minimum transfer amount
-    }
-  | {
-      target: Target;
-      bridge: { category: L2BridgeCategory; lnv2Type?: never; disableV2?: never };
-      index?: never;
-      price?: never;
-      baseFee?: never;
-      action?: never;
-      hidden?: boolean;
-      min?: bigint; // Minimum transfer amount
-    }
-  | {
-      target: Target;
-      bridge: { category: HelixBridgeCategory | XTokenBridgeCategory; lnv2Type?: never; disableV2?: never };
-      index?: never;
-      price?: never;
-      baseFee?: never;
-      action: Action;
-      hidden?: boolean;
-      min?: bigint; // Minimum transfer amount
-    }
-  | {
-      target: Target;
-      bridge: { category: HelixLpBridgeCategory; lnv2Type?: never; disableV2?: never };
-      index: number; // One of the bridge contract transfer parameters
-      price?: bigint; // When transferring native token, we need to set the price
-      baseFee: bigint;
-      action: Action;
-      hidden?: boolean;
-      min?: bigint; // Minimum transfer amount
-    };
+export type CrossChain = {
+  target: Target;
+  bridge: { category: BridgeCategory; lnv2Type: BridgeV2Type; disableV2?: boolean };
+  hidden?: boolean;
+  min?: bigint; // Minimum transfer amount
+};
 
 export type AvailableBridges = {
   [sourceChain in Network]?: {
