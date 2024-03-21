@@ -3,8 +3,8 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
 export const metadata: Metadata = {
-  title: "Helix Bridge - Cross-chain for tokens",
-  description: "Perform cross-chain transfers through Helix Bridge",
+  title: "Transfer - Helix Bridge",
+  description: "Secure, fast, and low-cost cross-chain crypto transfers.",
 };
 
 const TransferV2 = dynamic(() => import("@/components/transfer-v2"), { ssr: false });
