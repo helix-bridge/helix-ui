@@ -9,15 +9,9 @@ import RelayerProviderV3 from "@/providers/relayer-provider-v3";
 import PageWrap from "@/ui/page-wrap";
 import SegmentedTabs from "@/ui/segmented-tabs";
 import VersionSwitch from "@/ui/version-switch";
-import { Metadata } from "next";
 import { useState } from "react";
 
 type TabKey = "manage" | "register" | "overview";
-
-export const metadata: Metadata = {
-  title: "Relayer - Helix Bridge",
-  description: "Secure, fast, and low-cost cross-chain crypto transfers.",
-};
 
 export default function RelayerPage() {
   const [activeTab, setActiveTab] = useState<TabKey>("manage");
