@@ -15,7 +15,7 @@ const ibm_plex_sans = IBM_Plex_Sans({
 
 export const metadata: Metadata = {
   title: "Helix Bridge",
-  description: "Helix Bridge Apps",
+  description: "Secure, fast, and low-cost cross-chain crypto transfers.",
   manifest: "/manifest.json",
 };
 
