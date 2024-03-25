@@ -144,18 +144,6 @@ export abstract class BaseBridge {
     return undefined;
   }
 
-  async claim(_record: HistoryRecord): Promise<TransactionReceipt | undefined> {
-    return undefined;
-  }
-
-  async refund(_record: HistoryRecord): Promise<TransactionReceipt | undefined> {
-    return undefined;
-  }
-
-  async speedUp(_record: HistoryRecord, _newFee: bigint): Promise<TransactionReceipt | undefined> {
-    return undefined;
-  }
-
   async getSourceBalance(address: Address) {
     if (this.sourceToken && this.sourcePublicClient) {
       return getBalance(address, this.sourceToken, this.sourcePublicClient);
