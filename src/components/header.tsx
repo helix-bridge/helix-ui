@@ -8,7 +8,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const ChainIdentity = dynamic(() => import("@/components/chain-identity"), { ssr: false });
 const ChainSwitch = dynamic(() => import("@/components/chain-switch"), { ssr: false });
 const HistoryNav = dynamic(() => import("@/components/history-nav"), { ssr: false });
 const User = dynamic(() => import("@/components/user"), { ssr: false });
@@ -85,7 +84,6 @@ export default function Header() {
 
           {/* Right */}
           <div className="hidden items-center gap-medium lg:flex">
-            <ChainIdentity />
             <HistoryNav />
             <User placement="bottom-end" prefixLength={14} suffixLength={10} />
             <ChainSwitch />
