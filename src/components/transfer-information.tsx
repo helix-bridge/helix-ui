@@ -9,17 +9,10 @@ interface Props {
   transferLimit?: { loading: boolean; value?: bigint; token?: Token };
   dailyLimit?: { loading: boolean; value?: bigint; token?: Token };
   estimatedTime?: { loading: boolean; value?: string };
-  hasRelayer: boolean;
 }
 
-export default function TransferInformation({
-  transactionFee,
-  transferLimit,
-  dailyLimit,
-  estimatedTime,
-  hasRelayer,
-}: Props) {
-  return hasRelayer ? (
+export default function TransferInformation({ transactionFee, transferLimit, dailyLimit, estimatedTime }: Props) {
+  return (
     <div className="flex flex-col gap-small px-medium lg:px-3">
       {estimatedTime ? (
         <Row name="Estimated Arrival Time" loading={estimatedTime.loading} value={estimatedTime.value} />
@@ -45,11 +38,6 @@ export default function TransferInformation({
       {dailyLimit ? (
         <Row name="Daily Limit" loading={dailyLimit.loading} value={dailyLimit.value} token={dailyLimit.token} />
       ) : null}
-    </div>
-  ) : (
-    <div className="flex items-center justify-center gap-medium py-2">
-      <Image width={18} height={18} alt="Warning" src="/images/warning.svg" />
-      <span className="text-sm font-extrabold text-white/95">No Relayer</span>
     </div>
   );
 }

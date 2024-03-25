@@ -31,17 +31,13 @@ export default function TransferInformationSection({
   return (
     <TransferSection titleText="Information">
       <TransferInformation
-        transferLimit={
-          hasRelayer
-            ? {
-                loading: loadingRelayData,
-                value: relayData?.sortedLnBridgeRelayInfos?.transferLimit
-                  ? BigInt(relayData.sortedLnBridgeRelayInfos.transferLimit)
-                  : undefined,
-                token: sourceToken,
-              }
-            : undefined
-        }
+        transferLimit={{
+          loading: loadingRelayData,
+          value: relayData?.sortedLnBridgeRelayInfos?.transferLimit
+            ? BigInt(relayData.sortedLnBridgeRelayInfos.transferLimit)
+            : undefined,
+          token: sourceToken,
+        }}
         estimatedTime={hasRelayer ? { loading: loadingRelayData, value: bridge?.formatEstimateTime() } : undefined}
         transactionFee={{
           warning: fee ? undefined : "Liquidity is not enough",
@@ -52,7 +48,6 @@ export default function TransferInformationSection({
         dailyLimit={
           dailyLimit ? { loading: loadingDailyLimit, value: dailyLimit.limit, token: dailyLimit.token } : undefined
         }
-        hasRelayer={hasRelayer}
       />
     </TransferSection>
   );
