@@ -85,7 +85,7 @@ export default function Header() {
           {/* Right */}
           <div className="hidden items-center gap-medium lg:flex">
             <HistoryNav />
-            <User placement="bottom-end" prefixLength={14} suffixLength={10} />
+            <User prefixLength={14} suffixLength={10} />
             <ChainSwitch />
           </div>
           <Image
@@ -135,7 +135,10 @@ export default function Header() {
               )}
             </div>
 
-            <User placement="bottom" onComplete={setIsOpenFalse} />
+            <div className="flex flex-col gap-medium">
+              <ChainSwitch />
+              <User placement="bottom" onComplete={setIsOpenFalse} />
+            </div>
           </div>
         </div>
       </Drawer>

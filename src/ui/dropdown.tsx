@@ -38,7 +38,7 @@ export default function Dropdown({
     open: isOpen,
     onOpenChange: setIsOpen,
     middleware: [
-      offset(4),
+      offset(6),
       sameWidth
         ? size({
             apply({ rects, elements }) {

@@ -37,7 +37,7 @@ export default function ChainSwitch() {
   return (
     <>
       <button
-        className="flex items-center justify-between gap-small rounded-[0.625rem] bg-white/20 px-medium py-small transition-colors hover:bg-white/[0.25]"
+        className="flex w-fit items-center justify-between gap-2 rounded-[0.625rem] bg-white/20 px-medium py-2 transition-colors hover:bg-white/[0.25] lg:py-small"
         ref={refs.setReference}
         {...getReferenceProps()}
       >
@@ -56,7 +56,7 @@ export default function ChainSwitch() {
         ) : (
           <>
             <Image alt="Wrong chain" width={18} height={18} src="/images/warning.svg" />
-            <span className="text-sm font-bold text-orange-400">Wrong chain</span>
+            <span className="text-sm font-bold text-orange-400">Wrong Chain</span>
           </>
         )}
       </button>
