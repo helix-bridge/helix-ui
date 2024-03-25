@@ -261,6 +261,7 @@ function Component() {
           token={sourceToken}
           chain={sourceChain}
           min={bridge?.getCrossInfo()?.min}
+          max={relayData?.sortedLnBridgeRelayInfos?.transferLimit}
           onChange={setAmount}
           onRefresh={refreshBalance}
         />

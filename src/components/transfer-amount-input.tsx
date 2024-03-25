@@ -14,6 +14,7 @@ interface Value {
 
 interface Props {
   min?: bigint;
+  max?: bigint;
   token: Token;
   value: Value;
   balance: bigint;
@@ -25,6 +26,7 @@ interface Props {
 
 export default function TransferAmountInput({
   min,
+  max,
   chain,
   token,
   value,
@@ -53,7 +55,12 @@ export default function TransferAmountInput({
             alert = "* Insufficient";
           } else if (typeof min === "bigint" && parsed.value < min) {
             valid = false;
-            alert = `* Minimum: ${formatBalance(min, token.decimals)}`;
+            alert = `* Minimum transfer amount: ${formatBalance(min, token.decimals)}`;
+          } else if (typeof max === "bigint" && max < parsed.value) {
+            valid = false;
+            alert = `* Maximum transfer amount: ${formatBalance(max, token.decimals, {
+              precision: 6,
+            })}`;
           }
           onChange({ valid, alert, ...parsed });
         }
@@ -61,7 +68,7 @@ export default function TransferAmountInput({
         onChange({ valid, alert, ...parsed });
       }
     },
-    [min, balance, token, onChange],
+    [min, max, balance, token.decimals, onChange],
   );
 
   useEffect(() => {

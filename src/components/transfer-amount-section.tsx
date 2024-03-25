@@ -11,6 +11,7 @@ interface Amount {
 
 interface Props {
   min?: bigint;
+  max?: string;
   token: Token;
   amount: Amount;
   balance: bigint;
@@ -22,6 +23,7 @@ interface Props {
 
 export default function TransferAmountSection({
   min,
+  max,
   token,
   chain,
   amount,
@@ -34,6 +36,7 @@ export default function TransferAmountSection({
     <TransferSection titleText="Amount" alert={amount.alert}>
       <TransferAmountInput
         min={min}
+        max={max ? BigInt(max) : undefined}
         loading={loading}
         token={token}
         chain={chain}
