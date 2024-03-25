@@ -57,7 +57,7 @@ export default function Header() {
                     target="_blank"
                     href={href}
                     key={label}
-                    className={`rounded-medium px-3 py-1 text-base font-bold transition hover:bg-white/10 active:translate-y-1 ${
+                    className={`rounded-[0.625rem] px-medium py-small text-sm font-bold transition-colors hover:bg-white/[0.15] ${
                       pathname === href ? "text-primary underline" : "text-white"
                     }`}
                   >
@@ -65,14 +65,16 @@ export default function Header() {
                   </a>
                 ) : soon || disabled ? (
                   <Tooltip key={label} content={soon ? "Coming soon" : "This feature is temporarily under maintenance"}>
-                    <span className="rounded-medium px-3 py-1 text-base font-bold text-white/50">{label}</span>
+                    <span className="rounded-[0.625rem] px-medium py-small text-sm font-bold text-white/50">
+                      {label}
+                    </span>
                   </Tooltip>
                 ) : (
                   <Link
                     key={label}
                     href={href}
-                    className={`rounded-medium px-3 py-1 text-base font-bold transition-all hover:bg-white/10 active:translate-y-1 ${
-                      pathname === href ? "text-primary underline underline-offset-8" : "text-white"
+                    className={`rounded-[0.625rem] px-medium py-small text-sm font-bold transition-colors hover:bg-white/[0.15] ${
+                      pathname === href ? "text-primary underline decoration-2 underline-offset-8" : "text-white"
                     }`}
                   >
                     {label}
@@ -110,22 +112,22 @@ export default function Header() {
                     target="_blank"
                     href={href}
                     key={label}
-                    className={`text-base font-semibold ${
-                      pathname === href ? "text-primary underline underline-offset-4" : "text-white"
+                    className={`text-sm font-bold ${
+                      pathname === href ? "text-primary underline decoration-2 underline-offset-4" : "text-white"
                     }`}
                   >
                     {label}
                   </a>
                 ) : soon || disabled ? (
                   <Tooltip key={label} content={soon ? "Coming soon" : "This feature is temporarily under maintenance"}>
-                    <span className="text-base font-semibold text-white/50">{label}</span>
+                    <span className="text-sm font-bold text-white/50">{label}</span>
                   </Tooltip>
                 ) : (
                   <Link
                     key={label}
                     href={href}
-                    className={`text-base font-semibold ${
-                      pathname === href ? "text-primary underline underline-offset-4" : "text-white"
+                    className={`text-sm font-bold ${
+                      pathname === href ? "text-primary underline decoration-2 underline-offset-4" : "text-white"
                     }`}
                     onClick={setIsOpenFalse}
                   >
