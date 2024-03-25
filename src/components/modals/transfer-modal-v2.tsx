@@ -119,11 +119,11 @@ function SourceTarget({
   address?: Address | null;
 }) {
   return chain && token ? (
-    <div className="flex items-center justify-between rounded-2xl bg-inner p-3 lg:rounded-3xl lg:p-5">
+    <div className="flex items-center justify-between rounded-xl bg-inner p-3 lg:rounded-2xl lg:p-large">
       {/* Left */}
       <div className="flex items-center gap-medium">
         <Image width={36} height={36} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
-        <div className="flex flex-col items-start">
+        <div className="flex flex-col items-start gap-1">
           <span className="text-base font-extrabold text-white">{chain.name}</span>
           <span className="hidden text-sm font-bold text-white/50 lg:inline">{address}</span>
           {address ? (
@@ -146,7 +146,7 @@ function SourceTarget({
 
 function Information({ fee, bridge }: { fee?: { value: bigint; token: Token } | null; bridge?: BaseBridge | null }) {
   return (
-    <div className="flex flex-col gap-small rounded-2xl bg-inner p-3 lg:rounded-3xl lg:p-5">
+    <div className="flex flex-col gap-small rounded-xl bg-inner p-3 lg:rounded-2xl lg:p-large">
       <Item
         label="Transaction Fee"
         value={fee ? `${formatBalance(fee.value, fee.token.decimals, { precision: 6 })} ${fee.token.symbol}` : null}
