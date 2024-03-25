@@ -26,7 +26,7 @@ export default function ChainSelect({
   return (
     <Select
       labelClassName={`gap-small rounded-medium flex items-center justify-between transition active:translate-y-1 ${className}`}
-      childClassName={`bg-inner flex flex-col rounded-medium max-h-60 overflow-y-auto border border-component ${
+      childClassName={`bg-inner flex flex-col rounded-medium max-h-60 overflow-y-auto border border-component app-scrollbar ${
         compact ? "py-small" : "p-medium"
       }`}
       label={

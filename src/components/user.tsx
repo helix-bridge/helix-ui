@@ -78,7 +78,7 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8, o
 
       <div className="mx-5 h-[1px] bg-white/10" />
 
-      <div className="relative flex max-h-[40vh] flex-col overflow-y-auto px-2 lg:max-h-[72vh]">
+      <div className="app-scrollbar relative flex max-h-[40vh] flex-col overflow-y-auto px-2 lg:max-h-[72vh]">
         {balances
           .filter(({ balance }) => 0 < balance)
           .map((balance) => (

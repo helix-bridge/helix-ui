@@ -52,7 +52,7 @@ export default function RecordDetail(props: Props) {
         <h3 className="text-lg font-medium text-white">Transaction Detail</h3>
         <CountdownRefresh onClick={refetch} />
       </div>
-      <div className="mt-5 overflow-x-auto">
+      <div className="app-scrollbar mt-5 overflow-x-auto">
         <div className="relative flex min-w-max flex-col gap-medium rounded-large bg-component px-7 py-medium">
           {/* loading */}
           <ComponentLoading loading={loading} className="rounded-large bg-black/30" />
