@@ -4,6 +4,9 @@ import TransferChainSelect from "./transfer-chain-select";
 import TransferSwitch from "./transfer-switch";
 import ComponentLoading from "@/ui/component-loading";
 import { Address } from "viem";
+import Image from "next/image";
+import { getTokenLogoSrc } from "@/utils";
+import CopyIcon from "@/ui/copy-icon";
 
 interface Recipient {
   input: string;
@@ -59,7 +62,11 @@ export default function TransferChainSection({
   return (
     <div className="relative flex flex-col">
       <ComponentLoading loading={loading} color="white" />
-      <TransferSection titleText="From" loading={loading}>
+      <TransferSection
+        loading={loading}
+        titleText="From"
+        titleTips={<TokenTips token={sourceToken} chain={sourceChain} />}
+      >
         <TransferChainSelect
           chain={sourceChain}
           token={sourceToken}
@@ -71,8 +78,9 @@ export default function TransferChainSection({
       </TransferSection>
       <TransferSwitch disabled={disableSwitch || loading} onSwitch={onSwitch} />
       <TransferSection
-        titleText="To"
         loading={loading}
+        titleText="To"
+        titleTips={<TokenTips token={targetToken} chain={targetChain} />}
         recipient={recipient}
         alert={recipient?.alert}
         expandRecipient={expandRecipient}
@@ -89,6 +97,35 @@ export default function TransferChainSection({
           onTokenChange={onTargetTokenChange}
         />
       </TransferSection>
+    </div>
+  );
+}
+
+function TokenTips({ token, chain }: { token: Token; chain: ChainConfig }) {
+  const explorer = new URL(`/address/${token.address}`, chain.blockExplorers?.default.url);
+
+  return (
+    <div className="flex flex-col gap-small">
+      <div className="flex items-center gap-small">
+        <Image alt="Token" width={18} height={18} src={getTokenLogoSrc(token.logo)} />
+        <span className="text-sm font-extrabold text-white">
+          {token.symbol}
+          {token.type === "native" ? " (native token)" : null}
+        </span>
+      </div>
+      {token.type === "native" ? null : (
+        <div className="inline-flex items-center gap-1">
+          <a
+            className="text-sm font-semibold text-white hover:underline"
+            rel="noopener noreferrer"
+            target="_blank"
+            href={explorer.href}
+          >
+            {token.address}
+          </a>
+          <CopyIcon text={token.address} copiedColor="#ffffff" />
+        </div>
+      )}
     </div>
   );
 }
