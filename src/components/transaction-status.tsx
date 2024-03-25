@@ -143,7 +143,7 @@ export default function TransactionStatus({ record }: Props) {
   useEffect(() => {
     if (record?.bridge) {
       const startTime = record ? record.startTime * 1000 : Date.now();
-      const minTime = (bridgeFactory({ category: record.bridge })?.getEstimateTime().min || 3) * 60 * 1000;
+      const minTime = ((bridgeFactory({ category: record.bridge })?.getEstimateTime().min || 0) + 10) * 60 * 1000;
       const token = getChainConfig(record.fromChain)?.tokens.find((t) => t.symbol === record.sendToken);
       const value = BigInt(record.fee);
 
