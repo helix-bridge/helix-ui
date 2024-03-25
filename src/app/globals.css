@@ -26,18 +26,16 @@ body {
     rgb(var(--background-start-rgb));
 } */
 
-@layer base {
-  ::-webkit-scrollbar {
+@layer components {
+  .app-scrollbar::-webkit-scrollbar {
     width: 6px;
   }
-  ::-webkit-scrollbar-thumb {
+  .app-scrollbar::-webkit-scrollbar-thumb {
     border-radius: 10px;
     box-shadow: inset 0 0 5x rgba(0, 0, 0, 0.2);
     background: hsla(0, 0%, 100%, 0.4);
   }
-}
 
-@layer components {
   /* Layout */
   .app-header {
     @apply h-[64px];

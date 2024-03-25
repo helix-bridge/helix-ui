@@ -21,7 +21,11 @@ export default function WithdrawableLiquiditiesSelect({
   onLoadMore = () => undefined,
 }: Props) {
   return (
-    <div className={`relative max-h-60 rounded-medium bg-inner ${loading ? "overflow-y-hidden" : "overflow-y-auto"}`}>
+    <div
+      className={`relative max-h-60 rounded-medium bg-inner ${
+        loading ? "overflow-y-hidden" : "app-scrollbar overflow-y-auto"
+      }`}
+    >
       <ComponentLoading loading={loading} className="bg-black/30" />
 
       <div className="flex flex-col py-2">
