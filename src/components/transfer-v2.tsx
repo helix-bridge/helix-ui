@@ -264,6 +264,14 @@ function Component() {
           onChange={setAmount}
           onRefresh={refreshBalance}
         />
+        <TransferInformationSection
+          bridge={bridge}
+          sourceToken={sourceToken}
+          relayData={relayData}
+          loadingRelayData={loadingRelayData}
+          fee={fee}
+          loadingFee={loadingFee}
+        />
         <Button
           className="inline-flex h-12 items-center justify-center rounded-[1.25rem]"
           kind="primary"
@@ -273,16 +281,6 @@ function Component() {
         >
           <span className="text-base font-extrabold text-white">{actionText}</span>
         </Button>
-        {deferredAmount.input ? (
-          <TransferInformationSection
-            bridge={bridge}
-            sourceToken={sourceToken}
-            relayData={relayData}
-            loadingRelayData={loadingRelayData}
-            fee={fee}
-            loadingFee={loadingFee}
-          />
-        ) : null}
       </div>
 
       <TransferModalV2
