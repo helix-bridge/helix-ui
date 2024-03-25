@@ -70,7 +70,7 @@ export default function Tooltip({
               ref={arrowRef}
               style={styles}
               context={context}
-              fill={status === "warning" ? "#FAAD14" : "#00B2FF"}
+              fill={status === "warning" ? "#FAAD14" : "#0085FF"}
             />
             <div
               style={styles}
