@@ -104,5 +104,5 @@ function Row({
 }
 
 function Text({ value }: { value: string }) {
-  return <span className="text-base font-extrabold text-white/95">{value}</span>;
+  return <span className="text-base font-extrabold text-white">{value}</span>;
 }
