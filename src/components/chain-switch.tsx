@@ -64,7 +64,11 @@ export default function ChainSwitch() {
       {isMounted && (
         <FloatingPortal>
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
-            <div className="flex flex-col rounded-xl bg-inner py-small" style={styles} onClick={() => setIsOpen(false)}>
+            <div
+              style={styles}
+              className="app-scrollbar flex max-h-[18rem] flex-col overflow-y-auto rounded-xl bg-inner py-small"
+              onClick={() => setIsOpen(false)}
+            >
               {chainOptions.map((option) => (
                 <button
                   className="flex items-center gap-medium px-large py-medium transition-colors hover:bg-white/10 disabled:bg-white/10"
