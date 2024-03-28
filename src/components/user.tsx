@@ -21,7 +21,7 @@ import { Placement } from "@floating-ui/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 interface Props {
-  placement: Placement;
+  placement?: Placement;
   prefixLength?: number;
   suffixLength?: number;
   onComplete?: () => void;
@@ -42,9 +42,14 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8, o
   return address ? (
     <Dropdown
       childClassName="bg-inner py-large rounded-large border border-component flex flex-col gap-large"
-      labelClassName="user-connect-wallet"
+      labelClassName="flex items-center gap-2 rounded-[0.625rem] bg-white/20 px-medium lg:py-small py-2 transition-colors hover:bg-white/[0.25]"
       placement={placement}
-      label={<LabelSpan>{toShortAdrress(address)}</LabelSpan>}
+      label={
+        <div className="flex items-center gap-small">
+          <AddressIdenticon address={address} diameter={20} />
+          <span className="text-sm font-bold text-white">{toShortAdrress(address)}</span>
+        </div>
+      }
     >
       <div className="flex items-center gap-medium px-5">
         <AddressIdenticon address={address} diameter={32} />
@@ -136,14 +141,13 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8, o
       </div>
     </Dropdown>
   ) : (
-    <button className="user-connect-wallet" onClick={openConnectModal}>
-      <LabelSpan>Connect Wallet</LabelSpan>
+    <button
+      className="inline-flex rounded-[0.625rem] bg-primary px-medium py-2 transition-colors hover:bg-primary/90 lg:py-small"
+      onClick={openConnectModal}
+    >
+      <span className="text-sm font-bold text-white">Connect Wallet</span>
     </button>
   );
-}
-
-function LabelSpan({ children }: PropsWithChildren<unknown>) {
-  return <span className="text-base font-medium text-white">{children}</span>;
 }
 
 function ChildSpan({ children }: PropsWithChildren<unknown>) {

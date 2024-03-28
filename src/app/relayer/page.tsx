@@ -8,7 +8,7 @@ import RelayerProvider from "@/providers/relayer-provider";
 import RelayerProviderV3 from "@/providers/relayer-provider-v3";
 import PageWrap from "@/ui/page-wrap";
 import SegmentedTabs from "@/ui/segmented-tabs";
-import VersionSwitch from "@/ui/version-switch";
+import VersionSwitch from "@/components/version-switch";
 import { useState } from "react";
 
 type TabKey = "manage" | "register" | "overview";

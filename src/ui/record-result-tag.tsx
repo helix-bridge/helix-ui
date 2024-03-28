@@ -6,7 +6,7 @@ export function RecordResultTag({ result }: { result?: RecordResult | null }) {
   const { icon, text, color } = useMemo(() => {
     let icon = "unknown.svg";
     let text = "Unknown";
-    let color = "#00B2FF";
+    let color = "#0085FF";
 
     if (
       result === RecordResult.PENDING ||
@@ -15,7 +15,7 @@ export function RecordResultTag({ result }: { result?: RecordResult | null }) {
     ) {
       icon = "pending.svg";
       text = "Pending";
-      color = "#00B2FF";
+      color = "#0085FF";
     } else if (result === RecordResult.REFUNDED) {
       icon = "refunded.svg";
       text = "Refunded";
@@ -27,7 +27,7 @@ export function RecordResultTag({ result }: { result?: RecordResult | null }) {
     } else if (result === RecordResult.PENDING_TO_CONFIRM_REFUND) {
       icon = "pending.svg";
       text = "Refunding";
-      color = "#00B2FF";
+      color = "#0085FF";
     }
 
     return { icon, text, color };
