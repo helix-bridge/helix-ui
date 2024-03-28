@@ -37,7 +37,7 @@ export default function ChainSwitch() {
   return (
     <>
       <button
-        className="flex w-fit items-center justify-between gap-2 rounded-[0.625rem] bg-white/20 px-medium py-2 transition-colors hover:bg-white/[0.25] lg:py-small"
+        className="flex w-fit items-center justify-between gap-small rounded-[0.625rem] bg-white/20 px-medium py-2 transition-colors hover:bg-white/[0.25] lg:py-small"
         ref={refs.setReference}
         {...getReferenceProps()}
       >
@@ -66,7 +66,7 @@ export default function ChainSwitch() {
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
             <div
               style={styles}
-              className="app-scrollbar flex max-h-[18rem] flex-col overflow-y-auto rounded-xl bg-inner py-small"
+              className="app-scrollbar flex max-h-[18rem] flex-col overflow-y-auto rounded-xl bg-inner py-2"
               onClick={() => setIsOpen(false)}
             >
               {chainOptions.map((option) => (
