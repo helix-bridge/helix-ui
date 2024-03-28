@@ -87,6 +87,18 @@ export default function Transfer() {
           <span>&nbsp;{`to route to Darwinia or Ethereum instead.`}</span>
         </div>
       );
+    } else if (
+      (sourceChain?.network === "darwinia-dvm" && targetChain?.network === "crab-dvm") ||
+      (sourceChain?.network === "crab-dvm" && targetChain?.network === "darwinia-dvm")
+    ) {
+      return (
+        <div className="flex flex-wrap items-center justify-center rounded-middle bg-inner p-middle text-center text-sm font-medium text-app-orange">
+          <span>
+            Cross-chain transfers between Darwinia and Crab are under maintenance, and will be reopened after the
+            upgrade is completed.
+          </span>
+        </div>
+      );
     }
     return null;
   }, [sourceChain?.network, targetChain?.network]);
