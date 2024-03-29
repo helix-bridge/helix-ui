@@ -11,7 +11,7 @@ export default function HistoryNav() {
     <Link
       href={`/records?${UrlSearchParamKey.ADDRESS}=${address}`}
       onClick={() => setRecordsSearch(address)}
-      className="user-connect-wallet text-base font-medium text-white"
+      className="user-connect-wallet text-sm font-bold text-white"
     >
       History
     </Link>

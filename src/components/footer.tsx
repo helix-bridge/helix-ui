@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { PropsWithChildren, useEffect, useState } from "react";
 
 export default function Footer() {
@@ -55,16 +54,16 @@ export default function Footer() {
           <div className="hidden h-4 w-[1px] bg-white/30 lg:block" />
 
           <SocialLink href="https://github.com/helix-bridge">
-            <Image width={20} height={20} alt="Github" src="/images/social/github.svg" />
+            <Image width={18} height={18} alt="Github" src="/images/social/github.svg" />
           </SocialLink>
           <SocialLink href="https://twitter.com/helixbridges">
-            <Image width={20} height={20} alt="Twitter" src="/images/social/twitter.svg" />
+            <Image width={18} height={18} alt="Twitter" src="/images/social/twitter.svg" />
           </SocialLink>
           <SocialLink href="https://discord.gg/6XyyNGugdE">
             <Image width={22} height={22} alt="Discord" src="/images/social/discord.svg" />
           </SocialLink>
           <SocialLink href="mailto:hello@helixbridge.app">
-            <Image width={20} height={20} alt="Email" src="/images/social/email.svg" />
+            <Image width={18} height={18} alt="Email" src="/images/social/email.svg" />
           </SocialLink>
         </div>
       </div>

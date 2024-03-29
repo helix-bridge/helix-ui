@@ -22,6 +22,7 @@ export abstract class BaseBridge {
 
   protected readonly category: BridgeCategory;
   protected contract: BridgeContract | undefined;
+  protected convertor: { source?: Address; target?: Address } | undefined;
 
   protected readonly sourceChain?: ChainConfig;
   protected readonly targetChain?: ChainConfig;
@@ -90,20 +91,12 @@ export abstract class BaseBridge {
     options?: TransferOptions & { askEstimateGas?: boolean },
   ): Promise<TransactionReceipt | bigint | undefined>;
 
-  isLnBridge() {
-    return false;
-  }
-
   getLogo() {
     return this.logo;
   }
 
   getName() {
     return this.name;
-  }
-
-  getCategory() {
-    return this.category;
   }
 
   getContract() {
@@ -135,11 +128,11 @@ export abstract class BaseBridge {
   }
 
   formatEstimateTime() {
-    return `${this.estimateTime.min}~${this.estimateTime.max} minutes`;
+    return `${this.estimateTime.min}~${this.estimateTime.max} Minutes`;
   }
 
   getTxGasLimit() {
-    return this.sourceChain?.network === "arbitrum" || this.sourceChain?.network === "arbitrum-goerli"
+    return this.sourceChain?.network === "arbitrum" || this.sourceChain?.network === "arbitrum-sepolia"
       ? 3000000n
       : undefined;
   }
@@ -190,13 +183,15 @@ export abstract class BaseBridge {
 
   async getSourceAllowance(owner: Address) {
     if (this.contract && this.sourceToken && this.sourcePublicClient) {
-      return this.getAllowance(owner, this.contract.sourceAddress, this.sourceToken, this.sourcePublicClient);
+      const spender = this.convertor?.source ?? this.contract.sourceAddress;
+      return this.getAllowance(owner, spender, this.sourceToken, this.sourcePublicClient);
     }
   }
 
   async getTargetAllowance(owner: Address) {
     if (this.contract && this.targetToken && this.targetPublicClient) {
-      return this.getAllowance(owner, this.contract.targetAddress, this.targetToken, this.targetPublicClient);
+      const spender = this.convertor?.target ?? this.contract.targetAddress;
+      return this.getAllowance(owner, spender, this.targetToken, this.targetPublicClient);
     }
   }
 
@@ -217,14 +212,16 @@ export abstract class BaseBridge {
   async sourceApprove(amount: bigint, owner: Address) {
     await this.validateNetwork("source");
     if (this.sourceToken && this.contract) {
-      return this.approve(amount, owner, this.contract.sourceAddress, this.sourceToken);
+      const spender = this.convertor?.source ?? this.contract.sourceAddress;
+      return this.approve(amount, owner, spender, this.sourceToken);
     }
   }
 
   async targetApprove(amount: bigint, owner: Address) {
     await this.validateNetwork("target");
     if (this.targetToken && this.contract) {
-      return this.approve(amount, owner, this.contract.targetAddress, this.targetToken);
+      const spender = this.convertor?.target ?? this.contract.targetAddress;
+      return this.approve(amount, owner, spender, this.targetToken);
     }
   }
 

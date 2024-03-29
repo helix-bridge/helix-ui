@@ -4,7 +4,7 @@ import {
   HelixBridgeDVMEVM,
   HelixLpBridge,
   L2ArbitrumBridge,
-  XTokenV3Bridge,
+  XTokenNextBridge,
 } from "@/bridges";
 import { BridgeConstructorArgs } from "@/types";
 
@@ -25,7 +25,8 @@ export function bridgeFactory(args: BridgeConstructorArgs): BaseBridge | undefin
     case "xtoken-crab-dvm":
     case "xtoken-pangolin-dvm":
     case "xtoken-sepolia":
-      return new XTokenV3Bridge(args);
+    case "xtoken-ethereum":
+      return new XTokenNextBridge(args);
     default:
       return;
   }

@@ -146,7 +146,7 @@ export function BalanceInput({
 
   return (
     <div
-      className={`normal-input-wrap relative flex flex-col rounded-middle bg-inner px-small py-small lg:px-middle ${
+      className={`normal-input-wrap relative flex flex-col rounded-xl bg-inner px-small py-small lg:px-middle ${
         compact ? "lg:py-middle" : ""
       } ${value.valid ? "valid-input-wrap border-transparent" : "invalid-input-wrap"}`}
     >
@@ -172,7 +172,7 @@ export function BalanceInput({
             {token ? (
               <div className="flex shrink-0 items-center gap-small">
                 <Image width={32} height={32} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
-                <span className="text-base font-medium text-white">{token.symbol}</span>
+                <span className="text-sm font-extrabold text-white">{token.symbol}</span>
               </div>
             ) : null}
             {tokenOptions

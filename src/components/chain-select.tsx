@@ -25,8 +25,8 @@ export default function ChainSelect({
 }: Props) {
   return (
     <Select
-      labelClassName={`gap-small rounded-middle flex items-center justify-between transition active:translate-y-1 ${className}`}
-      childClassName={`bg-inner flex flex-col rounded-middle max-h-60 overflow-y-auto border border-component ${
+      labelClassName={`gap-small rounded-xl flex items-center justify-between transition active:translate-y-1 ${className}`}
+      childClassName={`bg-inner flex flex-col rounded-xl max-h-60 overflow-y-auto border border-component ${
         compact ? "py-small" : "p-middle"
       }`}
       label={
@@ -42,7 +42,7 @@ export default function ChainSelect({
               />
             )}
 
-            <span className="truncate text-sm font-medium text-white">{value.name}</span>
+            <span className="truncate text-sm font-extrabold text-white">{value.name}</span>
           </div>
         ) : undefined
       }
@@ -68,7 +68,7 @@ export default function ChainSelect({
                   src={getChainLogoSrc(option.logo)}
                   className="rounded-full"
                 />
-                <span className="truncate text-sm font-medium text-white">{option.name}</span>
+                <span className="truncate text-sm font-bold text-white">{option.name}</span>
               </button>
             );
           })
@@ -77,17 +77,17 @@ export default function ChainSelect({
             {options.map((option) => (
               <button
                 key={option.id}
-                className="flex w-36 shrink-0 items-center gap-small truncate rounded-middle bg-component px-2 py-1 transition-colors hover:bg-white/20"
+                className="flex w-36 shrink-0 items-center gap-small truncate rounded-middle bg-component px-2 py-2 transition-colors hover:bg-white/20"
                 onClick={() => onChange(option)}
               >
                 <Image
-                  width={18}
-                  height={18}
+                  width={20}
+                  height={20}
                   alt="Chain logo"
                   src={getChainLogoSrc(option.logo)}
                   className="rounded-full"
                 />
-                <span className="truncate text-sm font-medium text-white">{option.name}</span>
+                <span className="truncate text-sm font-bold text-white">{option.name}</span>
               </button>
             ))}
           </div>

@@ -2,15 +2,10 @@ import { Address, Hex } from "viem";
 import { PublicClient, WalletClient } from "wagmi";
 import { ChainConfig } from "./chain";
 import { Token } from "./token";
-import { MessageChannel } from "./graphql";
-
-export type LnBridgeVersion = "lnv2" | "lnv3";
-export type LnBridgeV2Type = "default" | "opposite";
 
 /**
- * `lpbridge-darwinia-dvm` etc. are named from graphql indexer, except `lnbridge`.
+ * `lpbridge-darwinia-dvm` etc. are named from graphql indexer.
  */
-export type LnBridgeCategory = "lnbridge" | "lnv2-default" | "lnv2-opposite" | "lnv3";
 export type L2BridgeCategory = "l2arbitrumbridge-ethereum";
 export type HelixLpBridgeCategory = "lpbridge-darwinia-dvm" | "lpbridge-ethereum";
 export type HelixBridgeCategory =
@@ -18,13 +13,13 @@ export type HelixBridgeCategory =
   | "helix-sub2ethv2(unlock)"
   | "helix-sub2subv21(unlock)"
   | "helix-sub2subv21(lock)";
-export type XTokenBridgeCategory = "xtoken-sepolia" | "xtoken-darwinia-dvm" | "xtoken-crab-dvm" | "xtoken-pangolin-dvm";
-export type BridgeCategory =
-  | LnBridgeCategory
-  | L2BridgeCategory
-  | HelixLpBridgeCategory
-  | HelixBridgeCategory
-  | XTokenBridgeCategory;
+export type XTokenBridgeCategory =
+  | "xtoken-sepolia"
+  | "xtoken-ethereum"
+  | "xtoken-darwinia-dvm"
+  | "xtoken-crab-dvm"
+  | "xtoken-pangolin-dvm";
+export type BridgeCategory = L2BridgeCategory | HelixLpBridgeCategory | HelixBridgeCategory | XTokenBridgeCategory;
 
 export interface BridgeContract {
   sourceAddress: Address;
@@ -50,8 +45,6 @@ export interface BridgeConstructorArgs {
 
 export interface GetFeeArgs {
   baseFee?: bigint;
-  protocolFee?: bigint;
-  liquidityFeeRate?: bigint;
   transferAmount?: bigint;
   sender?: Address;
   recipient?: Address;
@@ -62,15 +55,4 @@ export interface TransferOptions {
   relayer?: Address;
   transferId?: Hex | null;
   totalFee?: bigint;
-  withdrawNonce?: bigint;
-  depositedMargin?: bigint;
-}
-
-export interface GetWithdrawFeeArgs {
-  amount: bigint;
-  sender?: Address;
-  relayer?: Address;
-  transferId?: Hex | null;
-  withdrawNonce?: string | null;
-  messageChannel?: MessageChannel | null;
 }

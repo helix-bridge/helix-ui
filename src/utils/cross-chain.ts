@@ -28,14 +28,6 @@ let availableTargetChains: AvailableTargetChains = {};
 let availableTargetTokens: AvailableTargetTokens = {};
 let availableBridges: AvailableBridges = {};
 
-/**
- * For LnBridge relayer
- */
-let lnbridgeDefaultSourceChains: ChainConfig[] = [];
-let lnbridgeDefaultTargetChains: ChainConfig[] = [];
-let lnbridgeAvailableSourceTokens: AvailableSourceTokens = {};
-let lnbridgeAvailableTargetChains: AvailableTargetChains = {};
-
 getChainConfigs().forEach((sourceChain) => {
   let sourceTokens: Token[] = [];
 
@@ -131,8 +123,6 @@ defaultSourceChains.sort(chainCompareFn);
 defaultTargetChains.sort(chainCompareFn);
 defaultSourceTokens.sort(tokenCompareFn);
 defaultTargetTokens.sort(tokenCompareFn);
-lnbridgeDefaultSourceChains.sort(chainCompareFn);
-lnbridgeDefaultTargetChains.sort(chainCompareFn);
 
 export function getCrossDefaultValue() {
   return {
@@ -194,33 +184,4 @@ export function getAvailableTargetTokens(
     return result.length ? result : defaultTokens;
   }
   return defaultTokens;
-}
-
-export function getLnBridgeCrossDefaultValue() {
-  return { defaultSourceChains: lnbridgeDefaultSourceChains, defaultTargetChains: lnbridgeDefaultTargetChains };
-}
-
-export function getLnBridgeAvailableSourceTokens(
-  sourceChain: ChainConfig | undefined,
-  targetChain: ChainConfig | undefined,
-  defaultTokens: Token[] = [],
-) {
-  if (sourceChain && targetChain) {
-    const result = (lnbridgeAvailableSourceTokens[sourceChain.network]?.[targetChain.network] || []).sort(
-      tokenCompareFn,
-    );
-    return result.length ? result : defaultTokens;
-  }
-  return defaultTokens;
-}
-
-export function getLnBridgeAvailableTargetChains(
-  sourceChain: ChainConfig | undefined,
-  defaultChains: ChainConfig[] = [],
-) {
-  if (sourceChain) {
-    const result = (lnbridgeAvailableTargetChains[sourceChain.network] || []).sort(chainCompareFn);
-    return result.length ? result : defaultChains;
-  }
-  return defaultChains;
 }

@@ -155,7 +155,7 @@ export class XTokenV3Bridge extends BaseBridge {
       const limit = await this.targetPublicClient.readContract({
         address: this.contract.targetAddress,
         abi: (await import("@/abi/xtoken-issuing")).default,
-        functionName: "dailyLimit",
+        functionName: "calcMaxWithdraw",
         args: [this.targetToken.address],
       });
       return { limit, spent: 0n, token: this.sourceToken };

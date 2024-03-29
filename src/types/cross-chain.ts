@@ -18,7 +18,7 @@ type Action = "issue" | "redeem";
 export type CrossChain =
   | {
       target: Target;
-      bridge: { category: L2BridgeCategory; lnv2Type?: never };
+      bridge: { category: L2BridgeCategory };
       index?: never;
       price?: never;
       baseFee?: never;
@@ -28,7 +28,7 @@ export type CrossChain =
     }
   | {
       target: Target;
-      bridge: { category: HelixBridgeCategory | XTokenBridgeCategory; lnv2Type?: never };
+      bridge: { category: HelixBridgeCategory | XTokenBridgeCategory };
       index?: never;
       price?: never;
       baseFee?: never;
@@ -38,7 +38,7 @@ export type CrossChain =
     }
   | {
       target: Target;
-      bridge: { category: HelixLpBridgeCategory; lnv2Type?: never };
+      bridge: { category: HelixLpBridgeCategory };
       index: number; // One of the bridge contract transfer parameters
       price?: bigint; // When transferring native token, we need to set the price
       baseFee: bigint;

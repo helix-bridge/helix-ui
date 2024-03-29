@@ -47,7 +47,9 @@ export const darwiniaChain: ChainConfig = {
       name: "RING",
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
-      logo: "ring.svg",
+      outer: "0x0000000000000000000000000000000000000000",
+      inner: "0xE7578598Aac020abFB918f33A20faD5B71d670b4",
+      logo: "ring.png",
       cross: [
         {
           target: { network: "crab-dvm", symbol: "xWRING" },
@@ -68,29 +70,34 @@ export const darwiniaChain: ChainConfig = {
           bridge: { category: "helix-sub2ethv2(lock)" },
           action: "issue",
           min: 1000000000000000000000000n,
+          hidden: true,
+        },
+        {
+          target: { network: "ethereum", symbol: "RING" },
+          bridge: { category: "xtoken-darwinia-dvm" },
+          action: "issue",
         },
       ],
     },
-    // {
-    //   decimals: 18,
-    //   symbol: "WRING",
-    //   name: "WRING",
-    //   type: "erc20",
-    //   address: "0x",
-    //   logo: "ring.svg",
-    //   cross: [],
-    // },
     {
       decimals: 18,
       symbol: "KTON",
       name: "KTON",
       type: "erc20",
       address: "0x0000000000000000000000000000000000000402",
-      logo: "kton.svg",
+      outer: "0x0000000000000000000000000000000000000402",
+      inner: "0x0000000000000000000000000000000000000402",
+      logo: "kton.png",
       cross: [
         {
           target: { network: "ethereum", symbol: "KTON" },
           bridge: { category: "helix-sub2ethv2(lock)" },
+          action: "issue",
+          hidden: true,
+        },
+        {
+          target: { network: "ethereum", symbol: "KTON" },
+          bridge: { category: "xtoken-darwinia-dvm" },
           action: "issue",
         },
       ],
@@ -101,7 +108,9 @@ export const darwiniaChain: ChainConfig = {
       name: "xWCRAB",
       type: "erc20",
       address: "0x656567Eb75b765FC320783cc6EDd86bD854b2305",
-      logo: "crab.svg",
+      outer: "0x656567Eb75b765FC320783cc6EDd86bD854b2305",
+      inner: "0x656567Eb75b765FC320783cc6EDd86bD854b2305",
+      logo: "crab.png",
       cross: [
         {
           target: { network: "crab-dvm", symbol: "CRAB" },

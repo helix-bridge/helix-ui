@@ -46,10 +46,10 @@ body {
 
   /* User */
   .user-connect-wallet {
-    @apply flex h-9 shrink-0 items-center gap-middle rounded-middle bg-primary px-large transition lg:hover:bg-primary/80 lg:active:translate-y-1;
+    @apply flex h-8 shrink-0 items-center gap-middle rounded-xl bg-primary px-large transition lg:hover:bg-primary/80 lg:active:translate-y-1;
   }
   .user-dropdown-item {
-    @apply inline-flex items-center gap-middle rounded-middle px-middle py-small text-start transition hover:bg-white/10 lg:active:translate-y-1;
+    @apply inline-flex items-center gap-middle rounded-xl px-middle py-small text-start transition hover:bg-white/10 lg:active:translate-y-1;
   }
 
   .button {
@@ -73,7 +73,7 @@ body {
 
 /* Page header loading bar */
 .loading-bar {
-  background: linear-gradient(90deg, #ffffff 35%, #00b2ff 50%, #ffffff 65%);
+  background: linear-gradient(90deg, #ffffff 35%, #0085FF 50%, #ffffff 65%);
   background-position: 100% 50%;
   background-size: 40% 100%;
   animation: bar-loading 2.4s linear infinite;

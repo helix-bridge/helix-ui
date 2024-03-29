@@ -11,7 +11,7 @@ interface Props {
 export default function BridgeSelect({ value, options = [], onChange = () => undefined }: Props) {
   return (
     <Select
-      labelClassName="bg-inner p-middle flex items-center justify-between rounded-middle transition-transform lg:active:translate-y-1"
+      labelClassName="bg-inner p-middle flex items-center justify-between rounded-xl transition-transform lg:active:translate-y-1"
       childClassName="bg-inner p-middle flex flex-col rounded-middle gap-small border border-component"
       label={<span className="text-sm font-medium text-white">{bridgeName(value)}</span>}
       placeholder={<span className="text-sm font-medium text-slate-400">Select a bridge</span>}
@@ -45,7 +45,7 @@ export default function BridgeSelect({ value, options = [], onChange = () => und
 function bridgeName(category: BridgeCategory | null | undefined) {
   if (category) {
     const bridge = bridgeFactory({ category });
-    return bridge ? bridge.getName() : category === "lnbridge" ? "Helix LnBridge" : undefined;
+    return bridge?.getName();
   }
   return undefined;
 }

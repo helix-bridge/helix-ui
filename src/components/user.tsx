@@ -55,7 +55,7 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8, o
           suffixLength={suffixLength}
           address={address}
           copyable
-          className="text-sm font-extrabold text-white"
+          className="text-sm font-bold text-white"
         />
       </div>
 

@@ -10,24 +10,10 @@ import { Subscription, from } from "rxjs";
 interface Props {
   fee: { loading: boolean; value: bigint; token?: Token } | undefined;
   bridge: BaseBridge | undefined;
-  transferLimit: string | undefined;
-  isLoadingTransferLimit: boolean;
 }
 
-export default function TransferInfo({ fee, bridge, transferLimit: propTransferLimit, isLoadingTransferLimit }: Props) {
-  const [transferLimit, setTransferLimit] = useState<{ token: Token; value: bigint }>();
+export default function TransferInfo({ fee, bridge }: Props) {
   const [dailyLimit, setDailyLimit] = useState<{ loading: boolean; limit: bigint; spent: bigint; token: Token }>();
-
-  useEffect(() => {
-    if (!isLoadingTransferLimit) {
-      const token = bridge?.getSourceToken();
-      if (propTransferLimit && token) {
-        setTransferLimit({ token, value: BigInt(propTransferLimit) });
-      } else {
-        setTransferLimit(undefined);
-      }
-    }
-  }, [bridge, propTransferLimit, isLoadingTransferLimit]);
 
   useEffect(() => {
     let sub$$: Subscription | undefined;
@@ -49,32 +35,22 @@ export default function TransferInfo({ fee, bridge, transferLimit: propTransferL
   }, [bridge]);
 
   return (
-    <div className="flex flex-col gap-small rounded-middle bg-inner p-middle">
+    <div className="flex flex-col gap-small rounded-xl bg-inner px-3 py-middle">
       <Item label="Estimated Arrival Time" value={bridge?.formatEstimateTime()} />
-      {bridge?.getCategory().startsWith("xtoken") ? null : (
-        <Item
-          label="Transaction Fee"
-          value={
-            fee?.loading ? (
-              <CountLoading color="white" />
-            ) : fee?.token && fee.value ? (
-              `${formatBalance(fee.value, fee.token.decimals, { precision: 6 })} ${fee.token.symbol}`
-            ) : (
-              <Tooltip content="Liquidity is not enough">
-                <Image width={16} height={16} alt="Fee" src="/images/warning.svg" />
-              </Tooltip>
-            )
-          }
-        />
-      )}
-
-      {transferLimit ? (
-        <Item
-          label="Transfer Limit"
-          tips="Includes transaction fee"
-          value={`${formatBalance(transferLimit.value, transferLimit.token.decimals)} ${transferLimit.token.symbol}`}
-        />
-      ) : null}
+      <Item
+        label="Message Fee"
+        value={
+          fee?.loading ? (
+            <CountLoading color="white" />
+          ) : fee?.token && fee.value ? (
+            `${formatBalance(fee.value, fee.token.decimals, { precision: 6 })} ${fee.token.symbol}`
+          ) : (
+            <Tooltip content="Unavailable">
+              <Image width={16} height={16} alt="Fee" src="/images/warning.svg" />
+            </Tooltip>
+          )
+        }
+      />
       {dailyLimit ? (
         <Item
           label="Daily Limit"
@@ -95,14 +71,14 @@ function Item({ label, value, tips }: { label: string; value: ReactElement | str
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-small">
-        <span className="text-sm font-medium">{label}</span>
+        <span className="text-sm font-extrabold">{label}</span>
         {tips ? (
           <Tooltip content={tips}>
             <Image width={14} height={14} alt="Tips" src="/images/info.svg" />
           </Tooltip>
         ) : null}
       </div>
-      {typeof value === "string" ? <span className="text-sm font-medium">{value}</span> : value}
+      {typeof value === "string" ? <span className="text-sm font-extrabold">{value}</span> : value}
     </div>
   );
 }

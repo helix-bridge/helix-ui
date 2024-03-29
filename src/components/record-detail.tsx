@@ -2,7 +2,7 @@
 
 import { BaseBridge } from "@/bridges";
 import { GQL_HISTORY_RECORD_BY_ID } from "@/config";
-import { HistoryRecordReqParams, HistoryRecordResData } from "@/types";
+import { HistoryRecordReqParams, HistoryRecordResData, RecordResult } from "@/types";
 import ComponentLoading from "@/ui/component-loading";
 import CountdownRefresh from "@/ui/countdown-refresh";
 import { bridgeFactory, getChainConfig } from "@/utils";
@@ -66,21 +66,19 @@ export default function RecordDetail(props: Props) {
           <Item label="Status" tips="The status of the cross-chain transaction: Success, Pending, or Refunded.">
             <TransactionStatus record={record?.historyRecordById} />
           </Item>
-          <Item
-            label="Source Tx Hash"
-            tips="Unique character string (TxID) assigned to every verified transaction on the Source Chain."
-          >
+          <Item label="Request Tx Hash" tips="Unique character string (TxID) assigned to every verified transaction.">
             <TransactionHash
               chain={record?.historyRecordById?.fromChain}
               txHash={record?.historyRecordById?.requestTxHash}
             />
           </Item>
-          <Item
-            label="Target Tx Hash"
-            tips="Unique character string (TxID) assigned to every verified transaction on the Target Chain."
-          >
+          <Item label="Response Tx Hash" tips="Unique character string (TxID) assigned to every verified transaction.">
             <TransactionHash
-              chain={record?.historyRecordById?.toChain}
+              chain={
+                isRefundStatus(record?.historyRecordById?.result)
+                  ? record?.historyRecordById?.fromChain
+                  : record?.historyRecordById?.toChain
+              }
               txHash={record?.historyRecordById?.responseTxHash}
             />
           </Item>
@@ -151,4 +149,12 @@ function Item({ label, tips, children }: PropsWithChildren<{ label: string; tips
 
 function Divider() {
   return <div className="h-[1px] w-full bg-white/10" />;
+}
+
+function isRefundStatus(result: RecordResult | undefined) {
+  return (
+    result === RecordResult.PENDING_TO_CONFIRM_REFUND ||
+    result === RecordResult.PENDING_TO_REFUND ||
+    result === RecordResult.REFUNDED
+  );
 }

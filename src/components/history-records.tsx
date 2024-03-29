@@ -45,6 +45,7 @@ export default function HistoryRecords() {
           "xtoken-darwinia-dvm",
           "xtoken-pangolin-dvm",
           "xtoken-sepolia",
+          "xtoken-ethereum",
         ],
       },
       notifyOnNetworkStatusChange: true,
