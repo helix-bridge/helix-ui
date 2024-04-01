@@ -33,7 +33,7 @@ export const ethereumChain: ChainConfig = {
       type: "erc20",
       address: "0x9469d013805bffb7d3debe5e7839237e535ec483",
       outer: "0x9469d013805bffb7d3debe5e7839237e535ec483",
-      inner: "0x9469d013805bffb7d3debe5e7839237e535ec483",
+      inner: "0x81e32d4652Be82AE225DEdd1bD0bf3BCba8FEE07",
       logo: "ring.png",
       cross: [
         {
@@ -81,4 +81,5 @@ export const ethereumChain: ChainConfig = {
       ],
     },
   ],
+  messager: { msgline: "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0" },
 };

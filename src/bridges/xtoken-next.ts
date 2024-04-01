@@ -30,6 +30,12 @@ export class XTokenNextBridge extends BaseBridge {
     ) {
       backing = "0xa64D1c284280b22f921E7B2A55040C7bbfD4d9d0";
       issuing = "0xf6372ab2d35B32156A19F2d2F23FA6dDeFBE58bd";
+    } else if (
+      (this.sourceChain?.network === "darwinia-dvm" && this.targetChain?.network === "ethereum") ||
+      (this.sourceChain?.network === "ethereum" && this.targetChain?.network === "darwinia-dvm")
+    ) {
+      backing = "0x2B496f19A420C02490dB859fefeCCD71eDc2c046";
+      issuing = "0xDc0C760c0fB4672D06088515F6446a71Df0c64C1";
     }
     this.initContractByBackingIssuing(backing, issuing);
   }
@@ -54,6 +60,24 @@ export class XTokenNextBridge extends BaseBridge {
       this.convertor = {
         source: "0x4CdFe9915d2c72506f4fC2363A8EaE032E82d1aA",
         target: "0xB3A8DB63d6FBE0f50A3D4977c3e892543D772C4A",
+      };
+    } else if (
+      this.sourceChain?.network === "darwinia-dvm" &&
+      this.targetChain?.network === "ethereum" &&
+      this.sourceToken?.type === "native"
+    ) {
+      this.convertor = {
+        source: "0x092e19c46c9daab7824393f1cd9c22f5bea13560",
+        target: "0xc29dCb1F12a1618262eF9FBA673b77140adc02D6",
+      };
+    } else if (
+      this.sourceChain?.network === "ethereum" &&
+      this.targetChain?.network === "darwinia-dvm" &&
+      this.targetToken?.type === "native"
+    ) {
+      this.convertor = {
+        source: "0xc29dCb1F12a1618262eF9FBA673b77140adc02D6",
+        target: "0x092e19c46c9daab7824393f1cd9c22f5bea13560",
       };
     } else if (this.sourceChain?.network === "darwinia-dvm" && this.targetChain?.network === "crab-dvm") {
       const source = this.sourceToken?.type === "native" ? "0xA8d0E9a45249Ec839C397fa0F371f5F64eCAB7F7" : undefined;
