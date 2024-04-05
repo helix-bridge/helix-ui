@@ -1,12 +1,7 @@
-import PageWrap from "@/ui/page-wrap";
 import dynamic from "next/dynamic";
 
-const Transfer = dynamic(() => import("@/components/transfer"), { ssr: false });
+const PageSelect = dynamic(() => import("@/components/page-select"), { ssr: false });
 
-export default function HomePage() {
-  return (
-    <PageWrap>
-      <Transfer />
-    </PageWrap>
-  );
+export default function Home() {
+  return <PageSelect />;
 }

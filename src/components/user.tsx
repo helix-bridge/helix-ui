@@ -85,7 +85,7 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8, o
           .map((balance) => (
             <button
               key={`${balance.chain.network}-${balance.token.symbol}`}
-              className="flex items-center gap-large rounded-middle px-3 py-2 transition-colors hover:bg-white/10 disabled:cursor-default lg:py-middle"
+              className="flex items-center gap-large rounded-2xl px-3 py-2 transition-colors hover:bg-white/10 disabled:cursor-default lg:py-middle"
               disabled={pathname !== "/"}
               onClick={() => {
                 const _sourceChain = balance.chain;
@@ -144,7 +144,7 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8, o
 }
 
 function LabelSpan({ children }: PropsWithChildren<unknown>) {
-  return <span className="text-base font-medium text-white">{children}</span>;
+  return <span className="text-sm font-bold text-white">{children}</span>;
 }
 
 function ChildSpan({ children }: PropsWithChildren<unknown>) {

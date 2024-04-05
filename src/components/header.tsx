@@ -32,67 +32,58 @@ export default function Header() {
 
   return (
     <>
-      <div className="app-header fixed left-0 top-0 z-10 w-full border-b border-b-white/25 bg-app-bg lg:border-b-transparent">
-        <div className="mx-auto flex h-full max-w-8xl items-center justify-between px-middle">
-          {/* Left */}
-          <div className="flex items-center gap-5">
-            {/* Logo */}
-            <div className="flex items-center gap-middle">
-              <Link href="/">
-                <Image width={90} height={25} alt="Logo" src="/images/logo.svg" />
-              </Link>
-              <div className="inline-flex items-center justify-center rounded-small bg-primary px-1 py-[1px]">
-                <span className="text-xs font-bold text-black">{isProduction() ? "xToken" : "testnet"}</span>
-              </div>
-            </div>
+      <div className="app-header fixed left-0 top-0 z-10 flex w-full items-center justify-between border-b border-b-white/25 bg-app-bg px-middle lg:border-b-transparent lg:px-5">
+        {/* Left */}
+        <div className="flex items-center gap-5">
+          <Link href="/">
+            <Image width={152} height={18} alt="Logo" src="/images/projects/darwinia.png" />
+          </Link>
 
-            {/* Navigations */}
-            <div className="hidden items-center gap-middle lg:flex">
-              {navigationsConfig.map(({ href, label, external, soon, disabled }) =>
-                external ? (
-                  <a
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    href={href}
-                    key={label}
-                    className={`rounded-middle px-3 py-1 text-sm font-bold text-white transition hover:bg-white/10 active:translate-y-1`}
-                  >
-                    {label}
-                  </a>
-                ) : soon || disabled ? (
-                  <Tooltip key={label} content={soon ? "Coming soon" : "This feature is temporarily under maintenance"}>
-                    <span className="rounded-middle px-3 py-1 text-sm font-bold text-white/50">{label}</span>
-                  </Tooltip>
-                ) : (
-                  <Link
-                    key={label}
-                    href={href}
-                    className={`rounded-middle px-3 py-1 text-sm font-bold transition-all hover:bg-white/10 active:translate-y-1 ${
-                      pathname === href ? "text-primary underline decoration-2 underline-offset-8" : "text-white"
-                    }`}
-                  >
-                    {label}
-                  </Link>
-                ),
-              )}
-            </div>
-          </div>
-
-          {/* Right */}
           <div className="hidden items-center gap-middle lg:flex">
-            <ChainIdentity />
-            <HistoryNav />
-            <User placement="bottom-end" prefixLength={14} suffixLength={10} />
+            {navigationsConfig.map(({ href, label, external, soon, disabled }) =>
+              external ? (
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href={href}
+                  key={label}
+                  className={`rounded-middle px-3 py-1 text-sm font-bold text-white transition hover:bg-white/10 active:translate-y-1`}
+                >
+                  {label}
+                </a>
+              ) : soon || disabled ? (
+                <Tooltip key={label} content={soon ? "Coming soon" : "This feature is temporarily under maintenance"}>
+                  <span className="rounded-middle px-3 py-1 text-sm font-bold text-white/50">{label}</span>
+                </Tooltip>
+              ) : (
+                <Link
+                  key={label}
+                  href={href}
+                  className={`rounded-middle px-3 py-1 text-sm font-bold transition-all hover:bg-white/10 active:translate-y-1 ${
+                    pathname === href ? "text-primary underline decoration-2 underline-offset-8" : "text-white"
+                  }`}
+                >
+                  {label}
+                </Link>
+              ),
+            )}
           </div>
-          <Image
-            width={24}
-            height={24}
-            alt="Menu"
-            src="/images/menu.svg"
-            className="inline transition-transform active:translate-y-1 lg:hidden"
-            onClick={setIsOpenTrue}
-          />
         </div>
+
+        {/* Right */}
+        <div className="hidden items-center gap-middle lg:flex">
+          <ChainIdentity />
+          <HistoryNav />
+          <User placement="bottom-end" prefixLength={14} suffixLength={10} />
+        </div>
+        <Image
+          width={24}
+          height={24}
+          alt="Menu"
+          src="/images/menu.svg"
+          className="inline transition-transform active:translate-y-1 lg:hidden"
+          onClick={setIsOpenTrue}
+        />
       </div>
 
       <Drawer maskClosable isOpen={isOpen} onClose={setIsOpenFalse}>

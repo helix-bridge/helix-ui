@@ -64,7 +64,7 @@ export default function Tooltip({
       {isMounted && (
         <FloatingPortal>
           <div ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()} className="z-30">
-            <FloatingArrow ref={arrowRef} style={styles} context={context} fill="#0085FF" />
+            <FloatingArrow ref={arrowRef} style={styles} context={context} fill="#FF0083" />
             <div
               style={styles}
               className={`flex items-center rounded-middle bg-primary px-middle py-small ${contentClassName}`}
