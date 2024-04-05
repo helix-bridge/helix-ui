@@ -32,73 +32,69 @@ export default function Header() {
 
   return (
     <>
-      <div className="app-header fixed left-0 top-0 z-10 w-full border-b border-b-white/25 bg-app-bg lg:border-b-transparent">
-        <div className="mx-auto flex h-full max-w-8xl items-center justify-between px-medium">
-          {/* Left */}
-          <div className="flex items-center gap-5">
-            {/* Logo */}
-            <div className="flex items-center gap-medium">
-              <Link href="/">
-                <Image width={90} height={25} alt="Logo" src="/images/logo.svg" />
-              </Link>
-              {!isProduction() && (
-                <div className="inline-flex items-center justify-center rounded-small bg-primary px-1 py-[1px]">
-                  <span className="text-xs font-bold text-black">testnet</span>
-                </div>
-              )}
-            </div>
-
-            {/* Navigations */}
-            <div className="hidden items-center gap-medium lg:flex">
-              {navigationsConfig.map(({ href, label, external, soon, disabled }) =>
-                external ? (
-                  <a
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    href={href}
-                    key={label}
-                    className={`rounded-[0.625rem] px-medium py-small text-sm font-bold transition-colors hover:bg-white/[0.15] ${
-                      pathname === href ? "text-primary underline" : "text-white"
-                    }`}
-                  >
-                    {label}
-                  </a>
-                ) : soon || disabled ? (
-                  <Tooltip key={label} content={soon ? "Coming soon" : "This feature is temporarily under maintenance"}>
-                    <span className="rounded-[0.625rem] px-medium py-small text-sm font-bold text-white/50">
-                      {label}
-                    </span>
-                  </Tooltip>
-                ) : (
-                  <Link
-                    key={label}
-                    href={href}
-                    className={`rounded-[0.625rem] px-medium py-small text-sm font-bold transition-colors hover:bg-white/[0.15] ${
-                      pathname === href ? "text-primary underline decoration-2 underline-offset-8" : "text-white"
-                    }`}
-                  >
-                    {label}
-                  </Link>
-                ),
-              )}
-            </div>
+      <div className="app-header fixed left-0 top-0 z-10 flex w-full items-center justify-between border-b border-b-white/25 bg-app-bg px-medium lg:border-b-transparent lg:px-5">
+        {/* Left */}
+        <div className="flex items-center gap-5">
+          {/* Logo */}
+          <div className="flex items-center gap-medium">
+            <Link href="/">
+              <Image width={90} height={25} alt="Logo" src="/images/logo.svg" />
+            </Link>
+            {!isProduction() && (
+              <div className="inline-flex items-center justify-center rounded-small bg-primary px-1 py-[1px]">
+                <span className="text-xs font-bold text-black">testnet</span>
+              </div>
+            )}
           </div>
 
-          {/* Right */}
+          {/* Navigations */}
           <div className="hidden items-center gap-medium lg:flex">
-            <HistoryNav />
-            <User prefixLength={14} suffixLength={10} />
-            <ChainSwitch />
+            {navigationsConfig.map(({ href, label, external, soon, disabled }) =>
+              external ? (
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href={href}
+                  key={label}
+                  className={`rounded-[0.625rem] px-medium py-small text-sm font-bold transition-colors hover:bg-white/[0.15] ${
+                    pathname === href ? "text-primary underline" : "text-white"
+                  }`}
+                >
+                  {label}
+                </a>
+              ) : soon || disabled ? (
+                <Tooltip key={label} content={soon ? "Coming soon" : "This feature is temporarily under maintenance"}>
+                  <span className="rounded-[0.625rem] px-medium py-small text-sm font-bold text-white/50">{label}</span>
+                </Tooltip>
+              ) : (
+                <Link
+                  key={label}
+                  href={href}
+                  className={`rounded-[0.625rem] px-medium py-small text-sm font-bold transition-colors hover:bg-white/[0.15] ${
+                    pathname === href ? "text-primary underline decoration-2 underline-offset-8" : "text-white"
+                  }`}
+                >
+                  {label}
+                </Link>
+              ),
+            )}
           </div>
-          <Image
-            width={24}
-            height={24}
-            alt="Menu"
-            src="/images/menu.svg"
-            className="inline transition-transform active:translate-y-1 lg:hidden"
-            onClick={setIsOpenTrue}
-          />
         </div>
+
+        {/* Right */}
+        <div className="hidden items-center gap-medium lg:flex">
+          <HistoryNav />
+          <User prefixLength={14} suffixLength={10} />
+          <ChainSwitch />
+        </div>
+        <Image
+          width={24}
+          height={24}
+          alt="Menu"
+          src="/images/menu.svg"
+          className="inline transition-transform active:translate-y-1 lg:hidden"
+          onClick={setIsOpenTrue}
+        />
       </div>
 
       <Drawer maskClosable isOpen={isOpen} onClose={setIsOpenFalse}>
