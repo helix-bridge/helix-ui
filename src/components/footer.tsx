@@ -24,69 +24,64 @@ export default function Footer() {
   }, []);
 
   return (
-    <div className="app-footer w-full">
-      <div className="mx-auto flex h-full max-w-8xl shrink-0 items-center justify-center px-medium">
-        {/* Copyright */}
-        <span className="text-sm font-medium text-white/50">{`© ${new Date().getFullYear()} Helix Bridge`}</span>
+    <div className="app-footer flex w-full items-center justify-center px-medium lg:justify-between lg:px-5">
+      <span className="text-xs font-semibold text-white/50">{`© ${new Date().getFullYear()} Helix Bridge`}</span>
 
-        <div className="mx-3 h-4 w-[1px] bg-white/30 lg:mx-5 lg:bg-transparent" />
+      <div className="hidden items-center gap-5 lg:flex">
+        <Link
+          className="text-xs font-semibold text-white/50 transition hover:text-white active:scale-95"
+          href="/records"
+        >
+          Explorer
+        </Link>
+        <a
+          className="text-xs font-semibold text-white/50 transition hover:text-white active:scale-95"
+          href="https://xtoken.helixbridge.app/"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          xToken
+        </a>
+        <a
+          className="text-xs font-semibold text-white/50 transition hover:text-white active:scale-95"
+          href="https://docs.helixbridge.app/"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Docs
+        </a>
 
-        <div className="flex shrink-0 items-center gap-medium lg:gap-5">
-          <Link
-            className="text-sm font-medium text-white/50 transition hover:text-white active:scale-95"
-            href="/records"
-          >
-            Explorer
-          </Link>
+        {mainnetOrTestnet && (
           <a
-            className="text-sm font-medium text-white/50 transition hover:text-white active:scale-95"
-            href="https://xtoken.helixbridge.app/"
+            className="text-xs font-semibold text-white/50 transition hover:text-white active:scale-95"
+            href={mainnetOrTestnet.link}
             rel="noopener noreferrer"
             target="_blank"
           >
-            xToken
+            {mainnetOrTestnet.label}
           </a>
-          <a
-            className="text-sm font-medium text-white/50 transition hover:text-white active:scale-95"
-            href="https://docs.helixbridge.app/"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Docs
-          </a>
+        )}
 
-          {mainnetOrTestnet && (
-            <a
-              className="text-sm font-medium text-white/50 transition hover:text-white active:scale-95"
-              href={mainnetOrTestnet.link}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {mainnetOrTestnet.label}
-            </a>
-          )}
+        <div className="h-3 w-[1px] bg-white/30" />
 
-          <div className="hidden h-4 w-[1px] bg-white/30 lg:block" />
-
-          <SocialLink href="https://github.com/helix-bridge">
-            <Image width={18} height={18} alt="Github" src="/images/social/github.svg" />
-          </SocialLink>
-          <SocialLink href="https://twitter.com/helixbridges">
-            <Image width={18} height={18} alt="Twitter" src="/images/social/twitter.svg" />
-          </SocialLink>
-          <SocialLink href="https://discord.gg/6XyyNGugdE">
-            <Image width={22} height={22} alt="Discord" src="/images/social/discord.svg" />
-          </SocialLink>
-          <SocialLink href="mailto:hello@helixbridge.app">
-            <Image width={18} height={18} alt="Email" src="/images/social/email.svg" />
-          </SocialLink>
-        </div>
+        <Social href="https://github.com/helix-bridge">
+          <Image width={16} height={16} alt="Github" src="/images/social/github.svg" />
+        </Social>
+        <Social href="https://twitter.com/helixbridges">
+          <Image width={16} height={16} alt="Twitter" src="/images/social/twitter.svg" />
+        </Social>
+        <Social href="https://discord.gg/6XyyNGugdE">
+          <Image width={20} height={20} alt="Discord" src="/images/social/discord.svg" />
+        </Social>
+        <Social href="mailto:hello@helixbridge.app">
+          <Image width={16} height={16} alt="Email" src="/images/social/email.svg" />
+        </Social>
       </div>
     </div>
   );
 }
 
-function SocialLink({ children, href }: PropsWithChildren<{ href: string }>) {
+function Social({ children, href }: PropsWithChildren<{ href: string }>) {
   return (
     <a
       target="_blank"
