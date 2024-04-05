@@ -48,6 +48,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     depositPenaltyReserve,
     withdrawPenaltyReserve,
     withdrawLiquidity,
+    sourceApprove,
     targetApprove,
   } = useRelayerV3();
   const [penaltyReserveInput, setPenaltyReserveInput] = useState(bigintInputDefaultValue);
@@ -90,7 +91,10 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
       if (chain?.id !== targetChain?.id) {
         okText = "Switch Network";
       } else if (!allowanceInput.input || !allowanceInput.valid) {
+        okText = "Approve";
         okDisabled = true;
+      } else {
+        okText = "Approve";
       }
     } else if (activeKey === "withdraw liquidity") {
       if (chain?.id !== targetChain?.id) {
@@ -180,7 +184,11 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
       } else if (activeKey === "update") {
         receipt = await registerLnProvider(baseFeeInput.value, feeRateInput.value, transferLimitInput.value);
       } else if (activeKey === "deposit") {
-        receipt = await depositPenaltyReserve(penaltyReserveInput.value);
+        if (okText === "Approve") {
+          receipt = await sourceApprove(penaltyReserveInput.value);
+        } else {
+          receipt = await depositPenaltyReserve(penaltyReserveInput.value);
+        }
       } else if (activeKey === "withdraw penalty reserve") {
         receipt = await withdrawPenaltyReserve(withdrawInput.value);
       }
@@ -200,6 +208,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     sourceChain?.id,
     targetChain?.id,
     activeKey,
+    okText,
     baseFeeInput,
     feeRateInput,
     penaltyReserveInput,
