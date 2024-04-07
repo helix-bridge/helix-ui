@@ -17,9 +17,13 @@ export class LnBridgeV3 extends LnBridgeBase {
 
       if (this.sourceChain?.network === "blast") {
         sourceAddress = "0xB180D7DcB5CC161C862aD60442FA37527546cAFC";
-      }
-      if (this.targetChain?.network === "blast") {
+      } else if (this.targetChain?.network === "blast") {
         targetAddress = "0xB180D7DcB5CC161C862aD60442FA37527546cAFC";
+      }
+      if (this.sourceChain?.network === "astar-zkevm") {
+        sourceAddress = "0xD476650e03a45E70202b0bcAfa04E1513920f83a";
+      } else if (this.targetChain?.network === "astar-zkevm") {
+        targetAddress = "0xD476650e03a45E70202b0bcAfa04E1513920f83a";
       }
       this.contract = { sourceAddress, targetAddress };
     } else {

@@ -1,6 +1,7 @@
 import {
   arbitrumChain,
   arbitrumSepoliaChain,
+  astarZkEvmChain,
   baseChain,
   beraChain,
   blastChain,
@@ -89,6 +90,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.TAIKO:
     case "taiko":
       return taikoChain;
+    case ChainID.ASTAR_ZKEVM:
+    case "astar-zkevm":
+      return astarZkEvmChain;
     default:
       return;
   }
@@ -117,6 +121,7 @@ export function getChainConfigs(askAll?: boolean) {
     blastChain,
     beraChain,
     taikoChain,
+    astarZkEvmChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {
