@@ -91,7 +91,7 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case "taiko":
       return taikoChain;
     case ChainID.ASTAR_ZKEVM:
-    case "astar-zkEvm":
+    case "astar-zkevm":
       return astarZkEvmChain;
     default:
       return;

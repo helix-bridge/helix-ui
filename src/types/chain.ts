@@ -46,7 +46,7 @@ export type Network =
   | "mantle"
   | "polygon"
   | "polygon-zkEvm"
-  | "astar-zkEvm"
+  | "astar-zkevm"
   | "gnosis"
   | "scroll"
   | "base"

@@ -5,7 +5,7 @@ export const astarZkEvmChain: ChainConfig = {
    * Chain
    */
   id: ChainID.ASTAR_ZKEVM,
-  network: "astar-zkEvm",
+  network: "astar-zkevm",
   name: "Astar zkEVM",
   nativeCurrency: {
     name: "ETH",
