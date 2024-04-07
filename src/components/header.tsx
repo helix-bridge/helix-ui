@@ -85,7 +85,7 @@ export default function Header() {
         <div className="hidden items-center gap-medium lg:flex">
           <HistoryNav />
           <User prefixLength={14} suffixLength={10} />
-          <ChainSwitch />
+          <ChainSwitch placement="bottom-end" />
         </div>
         <Image
           width={24}
