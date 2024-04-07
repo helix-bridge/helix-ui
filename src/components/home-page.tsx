@@ -57,9 +57,23 @@ function Card({ icon, link, label, external }: { icon: string; link: string; lab
       href={link}
     >
       <Image alt={label} width={70} height={70} src={icon} className="shrink-0 rounded-full" />
-      <div className="text-base font-bold text-white">
-        <span>{label}</span>
-        <span className="hidden group-hover:inline">&nbsp;{`>`}</span>
+      <div className="flex items-center gap-middle">
+        <span className="text-base font-bold text-white">{label}</span>
+        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20">
+          <span className="flex h-2 w-2 items-center justify-center rounded-full bg-white transition-all group-hover:h-5 group-hover:w-5">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              aria-hidden="true"
+              className="h-0 w-0 text-primary transition-all group-hover:h-3 group-hover:w-3"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
+            </svg>
+          </span>
+        </span>
       </div>
     </a>
   );
