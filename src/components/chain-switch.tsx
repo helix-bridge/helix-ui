@@ -1,6 +1,7 @@
 import { getChainConfig, getChainConfigs, getChainLogoSrc } from "@/utils";
 import {
   FloatingPortal,
+  Placement,
   offset,
   useClick,
   useDismiss,
@@ -14,9 +15,10 @@ import { useNetwork, useSwitchNetwork } from "wagmi";
 
 const chainOptions = getChainConfigs();
 
-export default function ChainSwitch() {
+export default function ChainSwitch({ placement }: { placement?: Placement }) {
   const [isOpen, setIsOpen] = useState(false);
   const { refs, context, floatingStyles } = useFloating({
+    placement,
     open: isOpen,
     onOpenChange: setIsOpen,
     middleware: [offset(6)],
