@@ -28,6 +28,7 @@ export enum ChainID {
   BLAST = 81457,
   BERA = 80085,
   TAIKO = 167008,
+  ASTAR_ZKEVM = 3776,
 }
 
 // According to graphql indexer
@@ -45,6 +46,7 @@ export type Network =
   | "mantle"
   | "polygon"
   | "polygon-zkEvm"
+  | "astar-zkEvm"
   | "gnosis"
   | "scroll"
   | "base"

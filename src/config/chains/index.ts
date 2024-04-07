@@ -19,3 +19,4 @@ export * from "./gnosis";
 export * from "./blast";
 export * from "./bera";
 export * from "./taiko";
+export * from "./astar-zkevm";
