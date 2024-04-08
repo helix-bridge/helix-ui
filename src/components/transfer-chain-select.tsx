@@ -39,14 +39,14 @@ export default function TransferChainSelect({
             <span className="truncate text-lg font-extrabold text-white">{chain.name}</span>
           </div>
         }
-        labelClassName="flex items-center justify-between gap-small w-full mx-medium transition-colors hover:bg-white/10 group py-small rounded-[0.625rem]"
+        labelClassName="flex items-center justify-between gap-small w-full mx-medium transition-colors hover:bg-white/5 group py-small rounded-[0.625rem]"
         childClassName="py-medium rounded-large bg-[#00141D] border border-white/20 flex flex-col gap-2"
         offsetSize={6}
         sameWidth
       >
         {chainOptions.length ? (
           <>
-            <div className="mx-medium flex items-center gap-1 rounded-xl bg-[#1F282C] px-medium transition-colors focus-within:bg-white/20 focus-within:outline-none hover:bg-white/20">
+            <div className="mx-medium flex items-center gap-1 rounded-xl bg-white/5 px-medium transition-colors focus-within:bg-white/10 focus-within:outline-none hover:bg-white/10">
               <Image alt="Search" width={24} height={24} src="/images/search.svg" className="h-6 w-6 opacity-60" />
               <input
                 className="w-full bg-transparent py-2 text-base font-medium focus-visible:outline-none"
@@ -116,9 +116,7 @@ function ChainOption({
 }) {
   return (
     <button
-      className={`flex items-center gap-large px-5 py-medium transition-colors ${
-        selected.id === option.id ? "bg-white/20" : "hover:bg-[#1F282C]"
-      }`}
+      className="flex items-center gap-large px-5 py-medium transition-colors hover:bg-white/5 disabled:bg-white/10"
       disabled={selected.id === option.id}
       onClick={() => {
         onSelect(option);
@@ -147,9 +145,7 @@ function TokenOption({
 }) {
   return (
     <button
-      className={`flex items-center gap-small rounded-[0.625rem] p-small transition-colors ${
-        selected.symbol === option.symbol ? "bg-white/20" : "bg-[#1F282C] hover:cursor-pointer hover:bg-white/20"
-      }`}
+      className="flex items-center gap-small rounded-[0.625rem] p-small transition-colors hover:bg-white/5 disabled:bg-white/10"
       disabled={selected.symbol === option.symbol}
       onClick={() => {
         onSelect(option);
