@@ -225,6 +225,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     withdrawPenaltyReserve,
     withdrawLiquidity,
     refetchWithdrawableLiquidities,
+    sourceApprove,
     targetApprove,
   ]);
 
