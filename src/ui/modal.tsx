@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { PropsWithChildren, ReactElement, useRef } from "react";
+import { PropsWithChildren, ReactElement, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { CSSTransition } from "react-transition-group";
 import Button from "./button";
@@ -44,6 +44,13 @@ export default function Modal({
   onOk,
 }: PropsWithChildren<Props>) {
   const nodeRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(
+    () => () => {
+      document.body.style.overflow = "auto";
+    },
+    [],
+  );
 
   return createPortal(
     <CSSTransition
