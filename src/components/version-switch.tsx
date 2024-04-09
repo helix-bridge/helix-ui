@@ -7,9 +7,9 @@ interface Props {
 
 export default function VersionSwitch({ value, onChange }: Props) {
   return (
-    <div className="relative flex items-center rounded-3xl bg-[#343946] p-small">
+    <div className="relative flex items-center rounded-full bg-[#343946] p-1">
       <div
-        className="absolute left-small top-small inline-flex h-7 w-12 items-center justify-center rounded-3xl bg-primary transition-transform"
+        className="absolute left-1 top-1 inline-flex h-7 w-12 items-center justify-center rounded-full bg-primary transition-transform"
         style={{ transform: value === "v3" ? "translate(0, 0)" : "translate(3rem, 0)" }}
       >
         <span className="text-sm font-bold uppercase text-white/90">{value}</span>
