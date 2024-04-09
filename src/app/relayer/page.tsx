@@ -9,13 +9,15 @@ import RelayerProviderV3 from "@/providers/relayer-provider-v3";
 import PageWrap from "@/ui/page-wrap";
 import SegmentedTabs from "@/ui/segmented-tabs";
 import VersionSwitch from "@/components/version-switch";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 type TabKey = "manage" | "register" | "overview";
 
 export default function RelayerPage() {
   const [activeTab, setActiveTab] = useState<TabKey>("manage");
   const [version, setVersion] = useState<"v2" | "v3">("v3");
+
+  const handleManage = useCallback(() => setActiveTab("manage"), []);
 
   return (
     <PageWrap>
@@ -46,11 +48,11 @@ export default function RelayerPage() {
               children:
                 version === "v3" ? (
                   <RelayerProviderV3>
-                    <RelayerRegisterV3 />
+                    <RelayerRegisterV3 onManage={handleManage} />
                   </RelayerProviderV3>
                 ) : (
                   <RelayerProvider>
-                    <RelayerRegister />
+                    <RelayerRegister onManage={handleManage} />
                   </RelayerProvider>
                 ),
             },

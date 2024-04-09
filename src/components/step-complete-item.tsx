@@ -12,6 +12,7 @@ export default function StepCompleteItem({
   token,
   balance,
   percent,
+  className,
 }: {
   property: string;
   address?: Address;
@@ -20,44 +21,45 @@ export default function StepCompleteItem({
   token?: Token;
   balance?: bigint;
   percent?: number;
+  className?: string;
 }) {
   return (
-    <div className="flex flex-col items-start gap-small">
-      <span className="text-sm font-extrabold text-white/50">{property}</span>
-      {!!address && <PrettyAddress address={address} forceShort className="text-sm font-medium text-white" />}
+    <div className={`flex-col items-start gap-small ${className ?? "flex"}`}>
+      <span className="text-sm font-semibold text-white/50">{property}</span>
+      {!!address && <PrettyAddress address={address} forceShort className="text-sm font-semibold text-white" />}
       {!!bridge && (
-        <span className="text-sm font-medium text-white">
+        <span className="text-sm font-semibold text-white">
           {bridge === "lnv3" ? "LnBridgeV3" : bridge === "lnv2-opposite" ? "Opposite" : "Default"}
         </span>
       )}
       {!!chain && (
         <div className="flex items-center gap-small">
           <Image
-            width={16}
-            height={16}
+            width={18}
+            height={18}
             alt="Chain"
             src={getChainLogoSrc(chain.logo)}
             className="shrink-0 rounded-full"
           />
-          <span className="hidden truncate text-sm font-medium text-white lg:inline">{chain.name}</span>
+          <span className="truncate text-sm font-semibold text-white">{chain.name}</span>
         </div>
       )}
       {!!token && balance ? (
-        <span className="truncate text-sm font-medium text-white">{formatBalance(balance, token.decimals)}</span>
+        <span className="truncate text-sm font-semibold text-white">{formatBalance(balance, token.decimals)}</span>
       ) : null}
       {!!token && !balance && (
         <div className="flex items-center gap-small">
           <Image
-            width={16}
-            height={16}
+            width={18}
+            height={18}
             alt="Token"
             src={getTokenLogoSrc(token.logo)}
             className="shrink-0 rounded-full"
           />
-          <span className="hidden truncate text-sm font-medium text-white lg:inline">{token.symbol}</span>
+          <span className="truncate text-sm font-semibold text-white">{token.symbol}</span>
         </div>
       )}
-      {!!percent && <span className="text-sm font-medium text-white">{percent}%</span>}
+      {!!percent && <span className="text-sm font-semibold text-white">{percent}%</span>}
     </div>
   );
 }

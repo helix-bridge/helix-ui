@@ -9,27 +9,32 @@ interface Props {
   disabled?: boolean;
   value?: Token;
   placeholder?: string;
-  className?: string;
   onChange?: (value: Token | undefined) => void;
 }
 
-export default function TokenSelect({
-  options,
-  disabled,
-  value,
-  placeholder,
-  className,
-  onChange = () => undefined,
-}: Props) {
+export default function TokenSelect({ options, disabled, value, placeholder, onChange = () => undefined }: Props) {
   return (
     <Select
-      labelClassName={`gap-small flex items-center justify-between rounded-medium ${className}`}
-      childClassName="bg-inner py-medium flex flex-col rounded-medium border border-component"
-      label={value ? <span className="text-sm font-medium text-white">{value.symbol}</span> : undefined}
-      placeholder={<span className="text-sm font-medium text-slate-400">{placeholder}</span>}
-      disabled={disabled}
       clearable
       sameWidth
+      labelClassName="gap-small flex items-center justify-between rounded-xl bg-app-bg h-11 px-medium"
+      childClassName="bg-app-bg py-medium flex flex-col rounded-xl border border-white/20 max-h-52 overflow-y-auto app-scrollbar"
+      label={
+        value ? (
+          <div className="flex items-center gap-medium truncate">
+            <Image
+              alt="Chain"
+              width={22}
+              height={22}
+              src={getTokenLogoSrc(value.logo)}
+              className="hidden shrink-0 rounded-full lg:inline"
+            />
+            <span className="truncate text-sm font-semibold text-white">{value.symbol}</span>
+          </div>
+        ) : undefined
+      }
+      placeholder={<span className="text-sm font-semibold text-slate-400">{placeholder}</span>}
+      disabled={disabled}
       onClear={() => onChange(undefined)}
     >
       {options.length ? (
@@ -43,9 +48,9 @@ export default function TokenSelect({
           >
             <Image width={26} height={26} alt="Token" src={getTokenLogoSrc(option.logo)} className="rounded-full" />
             <div className="flex flex-col items-start">
-              <span className="text-sm font-medium text-white">{option.symbol}</span>
+              <span className="text-sm font-semibold text-white">{option.symbol}</span>
               {option.type === "native" ? (
-                <span className="text-xs font-medium text-white/50">Native token</span>
+                <span className="text-xs font-medium text-white/50">native token</span>
               ) : (
                 <PrettyAddress address={option.address} copyable className="text-xs font-medium text-white/50" />
               )}
@@ -53,8 +58,8 @@ export default function TokenSelect({
           </button>
         ))
       ) : (
-        <div className="px-large py-small text-center">
-          <span className="text-sm font-medium text-white/50">No data</span>
+        <div className="inline-flex justify-center p-2">
+          <span className="text-sm font-semibold text-slate-400">No data</span>
         </div>
       )}
     </Select>

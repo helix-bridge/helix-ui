@@ -314,7 +314,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
       extra={
         activeKey === "withdraw" ? (
           <div className="h-6 self-end">
-            <span className="text-sm font-extrabold text-white/50">
+            <span className="text-sm font-medium text-white/50">
               {relayerInfo?.messageChannel === "layerzero"
                 ? "Powered by LayerZero & Helix"
                 : "Powered by Msgport & Helix"}
@@ -334,17 +334,12 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             children: (
               <div className="flex flex-col gap-5" style={{ height: height }}>
                 <LabelSection label="Base Fee">
-                  <BalanceInput
-                    compact
-                    token={sourceToken}
-                    suffix="symbol"
-                    value={baseFeeInput}
-                    onChange={setBaseFeeInput}
-                  />
+                  <BalanceInput token={sourceToken} value={baseFeeInput} onChange={setBaseFeeInput} />
                 </LabelSection>
                 <LabelSection label="Liquidity Fee Rate">
                   <FeeRateInput
                     value={feeRateInput}
+                    className="h-10 rounded-xl bg-app-bg px-medium text-sm font-semibold text-white lg:h-11"
                     placeholder={feeRate === undefined ? undefined : `${formatFeeRate(feeRate)}%`}
                     onChange={setFeeRateInput}
                   />
@@ -372,8 +367,6 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                       ? sourceBalance?.token
                       : undefined
                   }
-                  compact
-                  suffix="symbol"
                   value={depositAmount}
                   onChange={setDepositAmount}
                 />
@@ -387,7 +380,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                 <span className="text-sm font-extrabold">Withdraw</span>
                 <Tooltip
                   content="A cross-chain message is required to perform a `withdraw margin` operation"
-                  contentClassName="w-60"
+                  contentClassName="w-72"
                   className="w-fit"
                 >
                   <Image width={16} height={16} alt="Info" src="/images/info.svg" />
@@ -400,15 +393,13 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                   <BalanceInput
                     balance={margin}
                     token={sourceToken}
-                    compact
-                    suffix="symbol"
                     value={withdrawAmount}
                     onChange={setWithdrawAmount}
                   />
                 </LabelSection>
                 <LabelSection label="Withdraw Fee" tips="This value is calculated and does not require input">
                   <div
-                    className={`relative flex h-10 items-center justify-between rounded-medium border bg-inner px-small lg:px-medium ${
+                    className={`relative flex h-10 items-center justify-between rounded-xl border bg-app-bg px-medium lg:h-11 ${
                       withdrawFeeParams || loadingWithdrawFee ? "border-transparent" : "border-app-red"
                     }`}
                   >
@@ -416,10 +407,10 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                       <CountLoading size="small" color="white" />
                     ) : withdrawFeeParams ? (
                       <>
-                        <span className="text-sm font-medium text-white">
+                        <span className="text-sm font-semibold text-white">
                           {formatBalance(withdrawFeeParams.value, withdrawFeeParams.token.decimals, { precision: 6 })}
                         </span>
-                        <span className="text-sm font-medium text-white">{withdrawFeeParams.token.symbol}</span>
+                        <span className="text-sm font-semibold text-white">{withdrawFeeParams.token.symbol}</span>
                       </>
                     ) : (
                       <span className="absolute -bottom-5 left-0 text-xs font-medium text-app-red">
@@ -439,8 +430,6 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
               <div className="flex flex-col gap-5">
                 <LabelSection label="Approve More" height={height}>
                   <BalanceInput
-                    compact
-                    suffix="symbol"
                     balance={targetBalance?.value}
                     token={targetBalance?.token}
                     value={allowanceInput}
@@ -468,7 +457,7 @@ function LabelSection({
   return (
     <div className="flex flex-col gap-medium" style={{ height }}>
       <div className="flex items-center gap-small">
-        <span className="text-sm font-extrabold">{label}</span>
+        <span className="text-sm font-semibold text-white/50">{label}</span>
         {tips ? (
           <Tooltip content={tips}>
             <Image width={16} height={16} alt="Info" src="/images/info.svg" />

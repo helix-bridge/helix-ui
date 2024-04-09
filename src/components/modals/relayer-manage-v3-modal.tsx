@@ -280,30 +280,19 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
             children: (
               <div className="flex flex-col gap-5">
                 <Label text="Base Fee">
-                  <BalanceInput
-                    compact
-                    token={sourceToken}
-                    suffix="symbol"
-                    value={baseFeeInput}
-                    onChange={setBaseFeeInput}
-                  />
+                  <BalanceInput token={sourceToken} value={baseFeeInput} onChange={setBaseFeeInput} />
                 </Label>
                 <Label text="Liquidity Fee Rate">
                   <FeeRateInput
                     isV3
+                    className="h-10 rounded-xl bg-app-bg px-medium text-sm font-semibold text-white lg:h-11"
                     value={feeRateInput}
                     placeholder={feeRate === undefined ? undefined : `${formatFeeRate(feeRate)}%`}
                     onChange={setFeeRateInput}
                   />
                 </Label>
                 <Label text="Trasfer Limit">
-                  <BalanceInput
-                    compact
-                    token={sourceToken}
-                    suffix="symbol"
-                    value={transferLimitInput}
-                    onChange={setTransferLimitInput}
-                  />
+                  <BalanceInput token={sourceToken} value={transferLimitInput} onChange={setTransferLimitInput} />
                 </Label>
               </div>
             ),
@@ -314,10 +303,8 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
             children: (
               <Label text="More Penalty Reserves">
                 <BalanceInput
-                  compact
                   balance={sourceBalance?.value}
                   token={sourceBalance?.token}
-                  suffix="symbol"
                   value={penaltyReserveInput}
                   onChange={setPenaltyReserveInput}
                 />
@@ -339,8 +326,6 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
                     <BalanceInput
                       balance={penaltyReserve}
                       token={sourceToken}
-                      compact
-                      suffix="symbol"
                       value={withdrawInput}
                       onChange={setWithdrawInput}
                     />
@@ -367,7 +352,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
                 {selectedLiquidities.length ? (
                   <Label text="Withdraw Fee" tips="This value is calculated and does not require input">
                     <div
-                      className={`relative flex h-10 items-center justify-between rounded-medium border bg-inner px-small lg:px-medium ${
+                      className={`relative flex h-10 items-center justify-between rounded-xl border bg-app-bg p-medium lg:h-11 ${
                         withdrawFeeAndParams || isLoadingWithdrawFee ? "border-transparent" : "border-app-red"
                       }`}
                     >
@@ -375,12 +360,12 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
                         <CountLoading size="small" color="white" />
                       ) : withdrawFeeAndParams ? (
                         <>
-                          <span className="text-sm font-medium text-white">
+                          <span className="text-sm font-semibold text-white">
                             {formatBalance(withdrawFeeAndParams.value, withdrawFeeAndParams.token.decimals, {
                               precision: 6,
                             })}
                           </span>
-                          <span className="text-sm font-medium text-white">{withdrawFeeAndParams.token.symbol}</span>
+                          <span className="text-sm font-semibold text-white">{withdrawFeeAndParams.token.symbol}</span>
                         </>
                       ) : (
                         <span className="absolute -bottom-5 left-0 text-xs font-medium text-app-red">
@@ -403,8 +388,6 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
                     balance={targetBalance?.value}
                     token={targetBalance?.token}
                     value={allowanceInput}
-                    suffix="symbol"
-                    compact
                     onChange={setAllowanceInput}
                   />
                 </Label>
@@ -424,7 +407,7 @@ function Label({ text, children, height, tips }: PropsWithChildren<{ text: strin
   return (
     <div className="flex flex-col gap-medium" style={{ height }}>
       <div className="flex items-center gap-small">
-        <span className="text-sm font-extrabold">{text}</span>
+        <span className="text-sm font-semibold text-white/50">{text}</span>
         {tips ? (
           <Tooltip content={tips}>
             <Image width={16} height={16} alt="Info" src="/images/info.svg" />
