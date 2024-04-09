@@ -75,7 +75,7 @@ export default function Modal({
       >
         {/* modal */}
         <div
-          className={`relative flex flex-col gap-5 rounded-large bg-component p-medium lg:p-5 ${className}`}
+          className={`relative flex flex-col gap-5 rounded-large bg-[#1F282C] p-medium lg:p-5 ${className}`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* close icon */}
