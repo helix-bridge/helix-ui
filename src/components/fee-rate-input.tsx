@@ -8,10 +8,11 @@ interface Props {
   isV3?: boolean;
   placeholder?: string;
   value: InputValue<number>;
+  className?: string;
   onChange?: (value: InputValue<number>) => void;
 }
 
-export default function FeeRateInput({ isV3, placeholder, value, onChange = () => undefined }: Props) {
+export default function FeeRateInput({ isV3, placeholder, value, className, onChange = () => undefined }: Props) {
   const handleChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
     (e) => {
       const input = e.target.value;
@@ -32,17 +33,17 @@ export default function FeeRateInput({ isV3, placeholder, value, onChange = () =
 
   return (
     <div
-      className={`normal-input-wrap relative flex items-center justify-between gap-small rounded-medium bg-inner p-small lg:p-medium ${
+      className={`normal-input-wrap relative flex items-center justify-between gap-small ${className} ${
         value.valid ? "valid-input-wrap border-transparent" : "invalid-input-wrap"
       }`}
     >
       <Input
-        className="w-full rounded bg-transparent text-sm font-medium text-white"
+        className="w-full rounded bg-transparent"
         placeholder={placeholder}
         onChange={handleChange}
         value={value.input}
       />
-      <span className="rounded bg-transparent text-sm font-medium text-white">%</span>
+      <span className="rounded bg-transparent">%</span>
 
       {value.valid ? null : <InputAlert text={`* Please enter 0 ~ ${isV3 ? "100" : "0.25"}`} />}
     </div>

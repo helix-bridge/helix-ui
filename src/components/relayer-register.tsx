@@ -42,17 +42,16 @@ import PrettyAddress from "./pretty-address";
 
 enum Step {
   ONE,
-  COMPLETE_ONE,
+  ONE_OVERVIEW,
   TWO,
-  COMPLETE_TWO,
+  TWO_OVERVIEW,
   THREE,
-  COMPLETE_THREE,
 }
 const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
 const { defaultSourceChains, defaultTargetChains } = getLnBridgeCrossDefaultValue(true);
 
-export default function RelayerRegister() {
+export default function RelayerRegister({ onManage = () => undefined }: { onManage?: () => void }) {
   const {
     sourceChain,
     targetChain,
@@ -140,7 +139,7 @@ export default function RelayerRegister() {
     <>
       <div className="mx-auto flex w-full flex-col gap-5 lg:w-[40rem]">
         {/* Step 1 */}
-        <div className="flex flex-col gap-5 rounded-large bg-component p-5 lg:p-[1.875rem]">
+        <div className="flex flex-col gap-5 rounded-3xl bg-[#1F282C] p-5 lg:p-8">
           <StepTitle step={1} title="Select Chain and Token" />
 
           {Step.ONE === currentStep && (
@@ -152,8 +151,7 @@ export default function RelayerRegister() {
               <div className="flex items-center gap-medium lg:gap-5">
                 <LabelItem label="From" className="flex-1">
                   <ChainSelect
-                    compact
-                    className="bg-inner px-medium py-medium"
+                    className="h-10 rounded-xl bg-app-bg px-medium lg:h-11"
                     options={defaultSourceChains}
                     placeholder="Source chain"
                     value={sourceChain}
@@ -166,8 +164,7 @@ export default function RelayerRegister() {
                 </LabelItem>
                 <LabelItem label="To" className="flex-1">
                   <ChainSelect
-                    compact
-                    className="bg-inner px-medium py-medium"
+                    className="h-10 rounded-xl bg-app-bg px-medium lg:h-11"
                     options={getLnBridgeAvailableTargetChains(sourceChain, defaultTargetChains, true)}
                     placeholder="Target chain"
                     value={targetChain}
@@ -181,10 +178,9 @@ export default function RelayerRegister() {
 
               <LabelItem label="Token">
                 <TokenSelect
-                  className="bg-inner px-medium py-medium"
                   disabled={!getLnBridgeAvailableSourceTokens(sourceChain, targetChain, [], true).length}
                   options={getLnBridgeAvailableSourceTokens(sourceChain, targetChain, [], true)}
-                  placeholder="Select token"
+                  placeholder="Select a token"
                   value={sourceToken}
                   onChange={setSourceToken}
                 />
@@ -194,27 +190,27 @@ export default function RelayerRegister() {
 
               <Button
                 onClick={() => {
-                  if (address) {
-                    setCurrentStep(Step.COMPLETE_ONE);
-                  } else {
-                    openConnectModal?.();
-                  }
+                  address ? setCurrentStep(Step.TWO) : openConnectModal?.();
                 }}
                 kind="primary"
-                className="flex h-9 items-center justify-center rounded-medium"
+                className="inline-flex h-11 items-center justify-center rounded-full"
                 disabled={!sourceToken}
               >
-                <span className="text-base font-normal text-white">{address ? "Confirm" : "Connect Wallet"}</span>
+                <span className="text-sm font-semibold text-white">{address ? "Next" : "Connect Wallet"}</span>
               </Button>
             </>
           )}
-          {Step.COMPLETE_ONE <= currentStep && (
+          {Step.ONE_OVERVIEW <= currentStep && (
             <>
               <Divider />
 
               <div className="flex items-center justify-between gap-small">
-                <StepCompleteItem property="Address" address={address} />
-                <StepCompleteItem property="Bridge Type" bridge={oppositeBridge ? "lnv2-opposite" : "lnv2-default"} />
+                <StepCompleteItem property="Address" address={address} className="hidden lg:flex" />
+                <StepCompleteItem
+                  property="Bridge Type"
+                  bridge={oppositeBridge ? "lnv2-opposite" : "lnv2-default"}
+                  className="hidden lg:flex"
+                />
                 <StepCompleteItem property="From" chain={sourceChain} />
                 <StepCompleteItem property="To" chain={targetChain} />
                 <StepCompleteItem property="Token" token={sourceToken} />
@@ -222,38 +218,28 @@ export default function RelayerRegister() {
 
               <Divider />
 
-              <div className="flex items-center gap-5">
-                <Button
-                  kind="default"
-                  onClick={() => {
-                    setSourceChain(undefined);
-                    setTargetChain(undefined);
-                    setSourceToken(undefined);
-                    setMarginInput({ input: "", valid: true, value: 0n });
-                    setBaseFeeInput({ input: "", valid: true, value: 0n });
-                    setFeeRateInput({ input: "", valid: true, value: 0 });
-                    setCurrentStep(Step.ONE);
-                    setCompleteMargin(false);
-                  }}
-                  className="flex h-9 flex-1 items-center justify-center rounded-medium"
-                >
-                  <span className="text-base font-normal">Reset</span>
-                </Button>
-                <Button
-                  kind="primary"
-                  onClick={() => setCurrentStep(Step.TWO)}
-                  className="flex h-9 flex-1 items-center justify-center rounded-medium"
-                  disabled={Step.COMPLETE_ONE !== currentStep}
-                >
-                  <span className="text-base font-normal">Next</span>
-                </Button>
-              </div>
+              <Button
+                kind="default"
+                onClick={() => {
+                  setCurrentStep(Step.ONE);
+                  setSourceChain(undefined);
+                  setTargetChain(undefined);
+                  setSourceToken(undefined);
+                  setMarginInput({ input: "", valid: true, value: 0n });
+                  setBaseFeeInput({ input: "", valid: true, value: 0n });
+                  setFeeRateInput({ input: "", valid: true, value: 0 });
+                  setCompleteMargin(false);
+                }}
+                className="inline-flex h-11 items-center justify-center rounded-full"
+              >
+                <span className="text-sm font-semibold text-white">Reset</span>
+              </Button>
             </>
           )}
         </div>
 
         {/* Step 2 */}
-        <div className="flex flex-col gap-5 rounded-large bg-component p-5 lg:p-[1.875rem]">
+        <div className="flex flex-col gap-5 rounded-3xl bg-[#1F282C] p-5 lg:p-8">
           <StepTitle step={2} title="Deposit Margin and Set Fee" />
 
           {Step.TWO === currentStep && (
@@ -264,11 +250,9 @@ export default function RelayerRegister() {
 
               <LabelItem label="Deposit Margin">
                 <BalanceInput
-                  compact
                   balance={defaultBridge ? targetBalance?.value : sourceBalance?.value}
                   token={defaultBridge ? targetBalance?.token : sourceBalance?.token}
                   value={marginInput}
-                  suffix="symbol"
                   disabled={completeMargin}
                   onChange={setMarginInput}
                 />
@@ -277,8 +261,8 @@ export default function RelayerRegister() {
               {defaultBridge ? (
                 <>
                   <Button
-                    kind="primary"
-                    className="flex h-9 items-center justify-center rounded-medium"
+                    kind={completeMargin ? "default" : "primary"}
+                    className="inline-flex h-11 items-center justify-center rounded-full"
                     disabled={completeMargin || (targetChain?.id === chain?.id && marginInput.value === 0n)}
                     busy={isSettingDefaultMargin}
                     onClick={async () => {
@@ -321,14 +305,14 @@ export default function RelayerRegister() {
                       }
                     }}
                   >
-                    <span className="text-base font-normal">
+                    <span className="text-sm font-semibold text-white">
                       {!completeMargin && targetChain?.id !== chain?.id
                         ? "Switch Network"
                         : !completeMargin &&
                           targetToken?.type !== "native" &&
                           marginInput.value > (targetAllowance?.value || 0n)
                         ? "Approve"
-                        : "Confirm"}
+                        : "Deposit"}
                     </span>
                   </Button>
                   <Divider />
@@ -336,31 +320,30 @@ export default function RelayerRegister() {
               ) : null}
 
               <LabelItem label="Base Fee" tips="The fixed fee set by the relayer and charged in a transaction">
-                <BalanceInput
-                  compact
-                  token={sourceToken}
-                  suffix="symbol"
-                  value={baseFeeInput}
-                  onChange={setBaseFeeInput}
-                />
+                <BalanceInput token={sourceToken} value={baseFeeInput} onChange={setBaseFeeInput} />
               </LabelItem>
               <LabelItem
                 label="Liquidity Fee Rate"
                 tips="The percentage deducted by the relayer from the transfer amount in a transaction"
               >
-                <FeeRateInput placeholder="Enter 0 ~ 0.25" value={feeRateInput} onChange={setFeeRateInput} />
+                <FeeRateInput
+                  placeholder="Enter 0 ~ 0.25"
+                  className="h-10 rounded-xl bg-app-bg px-medium text-sm font-semibold text-white lg:h-11"
+                  value={feeRateInput}
+                  onChange={setFeeRateInput}
+                />
               </LabelItem>
 
               <Divider />
 
               <Button
-                kind="primary"
+                kind={completeMargin ? "primary" : "default"}
                 disabled={
                   sourceChain?.id === chain?.id &&
                   !(marginInput.input && baseFeeInput.input && feeRateInput.input && isValidFeeRate(feeRateInput.value))
                 }
                 busy={busy}
-                className="flex h-9 items-center justify-center rounded-medium"
+                className="inline-flex h-11 items-center justify-center rounded-full"
                 onClick={async () => {
                   let receipt: TransactionReceipt | undefined;
                   if (address && sourceChain && targetChain && sourceToken && targetToken) {
@@ -407,29 +390,33 @@ export default function RelayerRegister() {
                     } finally {
                       setBusy(false);
                       if (receipt?.status === "success") {
-                        setCurrentStep(Step.THREE);
+                        if (targetToken.type && targetToken.type !== "native") {
+                          setCurrentStep(Step.THREE);
+                        } else {
+                          setIsOpen(true);
+                        }
                       }
                     }
                   }
                 }}
               >
-                <span className="text-base font-normal">
+                <span className="text-sm font-semibold text-white">
                   {defaultBridge
                     ? sourceChain?.id !== chain?.id
                       ? "Switch Network"
-                      : "Confirm"
+                      : "Register"
                     : oppositeBridge
                     ? sourceChain?.id !== chain?.id
                       ? "Switch Network"
                       : sourceToken?.type !== "native" && marginInput.value > (sourceAllowance?.value || 0n)
                       ? "Approve"
-                      : "Confirm"
-                    : "Confirm"}
+                      : "Register"
+                    : "Register"}
                 </span>
               </Button>
             </>
           )}
-          {Step.COMPLETE_TWO <= currentStep && (
+          {Step.TWO_OVERVIEW <= currentStep && (
             <>
               <Divider />
               <div className="flex items-center justify-between gap-small">
@@ -446,77 +433,77 @@ export default function RelayerRegister() {
         </div>
 
         {/* Step 3 */}
-        <div className="flex flex-col gap-5 rounded-large bg-component p-5 lg:p-[1.875rem]">
-          <StepTitle step={3} title="Authorize Token on Target Chain and Run Relayer" />
+        {targetToken?.type && targetToken.type !== "native" ? (
+          <div className="flex flex-col gap-5 rounded-3xl bg-[#1F282C] p-5 lg:p-8">
+            <StepTitle step={3} title="Authorize Token on Target Chain and Run Relayer" />
 
-          {Step.THREE === currentStep && (
-            <>
-              <Description content="Authorize token on target chain and run relayer to start relaying messages and earn rewards. Please note this step authorizes tokens for the relayer to send to users' target chain address based on transactions. Ensure you authorize enough tokens for multiple transactions as needed." />
+            {Step.THREE === currentStep && (
+              <>
+                <Description content="Authorize token on target chain and run relayer to start relaying messages and earn rewards. Please note this step authorizes tokens for the relayer to send to users' target chain address based on transactions. Ensure you authorize enough tokens for multiple transactions as needed." />
 
-              <Divider />
+                <Divider />
 
-              <LabelItem label="Current Allowance">
-                <BalanceInput
-                  token={targetToken}
-                  disabled
-                  value={{
-                    value: targetAllowance?.value ?? 0n,
-                    input: formatBalance(targetAllowance?.value ?? 0n, targetAllowance?.token.decimals ?? 0),
-                    valid: true,
-                  }}
-                  compact
-                  suffix="symbol"
-                  placeholder="-"
-                />
-              </LabelItem>
+                <LabelItem label="Current Allowance">
+                  <BalanceInput
+                    token={targetToken}
+                    disabled
+                    value={{
+                      value: targetAllowance?.value ?? 0n,
+                      input: formatBalance(targetAllowance?.value ?? 0n, targetAllowance?.token.decimals ?? 0),
+                      valid: true,
+                    }}
+                    placeholder="-"
+                  />
+                </LabelItem>
 
-              <div className="flex items-center gap-medium lg:gap-5">
-                <Button
-                  kind="primary"
-                  onClick={async () => {
-                    if (address && targetChain) {
-                      setBusy(true);
-                      try {
-                        if (chain?.id !== targetChain.id) {
-                          switchNetwork?.(targetChain.id);
-                        } else if (defaultBridge) {
-                          await targetApprove(address, targetBalance?.value || 0n, defaultBridge, targetChain);
-                        } else if (oppositeBridge) {
-                          await targetApprove(address, targetBalance?.value || 0n, oppositeBridge, targetChain);
+                <div className="flex items-center gap-medium lg:gap-5">
+                  <Button
+                    kind="default"
+                    onClick={() => setIsOpen(true)}
+                    className="inline-flex h-11 flex-1 items-center justify-center rounded-full"
+                  >
+                    <span className="text-sm font-semibold text-white">Skip</span>
+                  </Button>
+                  <Button
+                    kind="primary"
+                    onClick={async () => {
+                      if (address && targetChain) {
+                        setBusy(true);
+                        try {
+                          if (chain?.id !== targetChain.id) {
+                            switchNetwork?.(targetChain.id);
+                          } else if (defaultBridge) {
+                            await targetApprove(address, targetBalance?.value || 0n, defaultBridge, targetChain);
+                          } else if (oppositeBridge) {
+                            await targetApprove(address, targetBalance?.value || 0n, oppositeBridge, targetChain);
+                          }
+                        } catch (err) {
+                          console.error(err);
+                          notifyError(err);
+                        } finally {
+                          setBusy(false);
                         }
-                      } catch (err) {
-                        console.error(err);
-                        notifyError(err);
-                      } finally {
-                        setBusy(false);
                       }
-                    }
-                  }}
-                  className="flex h-9 flex-1 items-center justify-center rounded-medium"
-                  busy={busy}
-                  disabled={sourceToken?.type === "native"}
-                >
-                  <span className="text-base font-normal">
-                    {chain?.id === targetChain?.id ? "Approve More" : "Switch Network"}
-                  </span>
-                </Button>
-                <Button
-                  kind="default"
-                  onClick={() => setIsOpen(true)}
-                  className="flex h-9 flex-1 items-center justify-center rounded-medium"
-                >
-                  <span className="text-base font-normal">Next</span>
-                </Button>
-              </div>
-            </>
-          )}
-        </div>
+                    }}
+                    className="inline-flex h-11 flex-1 items-center justify-center rounded-full"
+                    busy={busy}
+                    disabled={sourceToken?.type === "native"}
+                  >
+                    <span className="text-sm font-semibold text-white">
+                      {chain?.id === targetChain?.id ? "Approve More" : "Switch Network"}
+                    </span>
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        ) : null}
       </div>
 
       <Modal
         title="One More Step!"
         subTitle={
-          <div className="flex flex-wrap items-center text-sm font-extrabold text-white">
+          <div className="flex flex-wrap items-center text-sm font-semibold text-white">
             Now&nbsp;
             <RunRelayer style="link" />
             &nbsp;to start relaying messages and earn rewards.
@@ -526,55 +513,45 @@ export default function RelayerRegister() {
         onClose={() => setIsOpen(false)}
       >
         <div
-          className="grid items-center gap-x-small gap-y-5 text-sm font-normal text-white"
+          className="grid items-center gap-x-small gap-y-5 text-sm font-semibold text-white"
           style={{ gridTemplateColumns: "130px auto" }}
         >
-          <span className="text-sm font-medium text-white">Address</span>
+          <span className="text-white/50">Address</span>
           {address ? <PrettyAddress address={address} /> : null}
 
-          <span className="text-sm font-medium text-white">Bridge Type</span>
+          <span className="text-white/50">Bridge Type</span>
           <span>{defaultBridge ? "Default" : oppositeBridge ? "Opposite" : "-"}</span>
 
-          <span className="text-sm font-medium text-white">From</span>
+          <span className="text-white/50">From</span>
           <PrettyChain chain={sourceChain} />
 
-          <span className="text-sm font-medium text-white">To</span>
+          <span className="text-white/50">To</span>
           <PrettyChain chain={targetChain} />
 
-          <span className="text-sm font-medium text-white">Token</span>
+          <span className="text-white/50">Token</span>
           <PrettyToken token={sourceToken} />
 
-          <span className="text-sm font-medium text-white">Margin</span>
+          <span className="text-white/50">Margin</span>
           <PrettyMargin margin={marginInput.value} token={defaultBridge ? targetToken : sourceToken} />
 
-          <span className="text-sm font-medium text-white">Base Fee</span>
+          <span className="text-white/50">Base Fee</span>
           <PrettyBaseFee fee={baseFeeInput.value} token={sourceToken} />
 
-          <span className="text-sm font-medium text-white">Liquidity Fee Rate</span>
+          <span className="text-white/50">Liquidity Fee Rate</span>
           <span>{formatFeeRate(feeRateInput.value)}%</span>
         </div>
 
         <Divider />
 
         <div className="flex items-center gap-medium lg:gap-5">
-          <RunRelayer style="button" />
           <Button
             kind="default"
-            onClick={() => {
-              setIsOpen(false);
-              setSourceChain(undefined);
-              setTargetChain(undefined);
-              setSourceToken(undefined);
-              setMarginInput({ input: "", valid: true, value: 0n });
-              setBaseFeeInput({ input: "", valid: true, value: 0n });
-              setFeeRateInput({ input: "", valid: true, value: 0 });
-              setCurrentStep(Step.ONE);
-              setCompleteMargin(false);
-            }}
-            className="flex h-8 flex-1 items-center justify-center rounded-medium lg:h-9"
+            onClick={onManage}
+            className="inline-flex h-10 flex-1 items-center justify-center rounded-full lg:h-11"
           >
-            <span className="text-base font-normal">Register Another</span>
+            <span className="text-sm font-semibold">Manage</span>
           </Button>
+          <RunRelayer style="button" />
         </div>
       </Modal>
     </>
@@ -587,14 +564,14 @@ function RunRelayer({ style, onClick = () => undefined }: { style: "button" | "l
       href="https://github.com/helix-bridge/relayer/tree/main"
       className={`inline-flex items-center justify-center ${
         style === "button"
-          ? `border-radius h-8 flex-1 items-center justify-center rounded-medium bg-primary text-base font-normal text-white transition hover:opacity-80 active:translate-y-1 lg:h-9`
-          : "text-sm font-extrabold text-primary hover:underline"
+          ? `border-radius h-10 flex-1 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white transition-opacity hover:opacity-80 lg:h-11`
+          : "text-sm font-semibold text-primary hover:underline"
       }`}
       rel="noopener"
       target="_blank"
       onClick={onClick}
     >
-      {style === "button" ? "Run Relayer" : "Run a Relayer"}
+      {style === "button" ? "Run relayer" : "run a relayer"}
     </a>
   );
 }
@@ -608,7 +585,7 @@ function LabelItem({
   return (
     <div className={`flex flex-col gap-medium ${className}`}>
       <div className="flex items-center gap-small">
-        <span className="text-sm font-extrabold text-white">{label}</span>
+        <span className="text-sm font-semibold text-white/50">{label}</span>
         {tips ? (
           <Tooltip content={tips} className="w-fit" contentClassName="max-w-[18rem]">
             <Image width={16} height={16} alt="Info" src="/images/info.svg" />
@@ -627,7 +604,7 @@ function Description({ content }: { content: string }) {
 function PrettyChain({ chain }: { chain?: ChainConfig }) {
   return chain ? (
     <div className="flex items-center gap-small">
-      <Image width={16} height={16} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
+      <Image width={22} height={22} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
       <span>{chain.name}</span>
     </div>
   ) : (
@@ -638,7 +615,7 @@ function PrettyChain({ chain }: { chain?: ChainConfig }) {
 function PrettyToken({ token }: { token?: Token }) {
   return token ? (
     <div className="flex items-center gap-small">
-      <Image width={16} height={16} alt="Chain" src={getTokenLogoSrc(token.logo)} className="shrink-0 rounded-full" />
+      <Image width={22} height={22} alt="Chain" src={getTokenLogoSrc(token.logo)} className="shrink-0 rounded-full" />
       <span>{token.symbol}</span>
     </div>
   ) : (
@@ -647,11 +624,11 @@ function PrettyToken({ token }: { token?: Token }) {
 }
 
 function PrettyMargin({ token, margin }: { token?: Token; margin: bigint }) {
-  return <span>{token ? formatBalance(margin, token.decimals) : ""}</span>;
+  return <span>{token ? `${formatBalance(margin, token.decimals)} ${token.symbol}` : ""}</span>;
 }
 
 function PrettyBaseFee({ fee, token }: { fee: bigint; token?: Token }) {
-  return <span>{token ? formatBalance(fee, token.decimals) : ""}</span>;
+  return <span>{token ? `${formatBalance(fee, token.decimals)} ${token.symbol}` : ""}</span>;
 }
 
 function Divider() {

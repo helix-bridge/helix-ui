@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { PropsWithChildren, ReactElement, useRef } from "react";
+import { PropsWithChildren, ReactElement, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { CSSTransition } from "react-transition-group";
 import Button from "./button";
@@ -45,6 +45,13 @@ export default function Modal({
 }: PropsWithChildren<Props>) {
   const nodeRef = useRef<HTMLDivElement | null>(null);
 
+  useEffect(
+    () => () => {
+      document.body.style.overflow = "auto";
+    },
+    [],
+  );
+
   return createPortal(
     <CSSTransition
       in={isOpen}
@@ -68,7 +75,7 @@ export default function Modal({
       >
         {/* modal */}
         <div
-          className={`relative flex flex-col gap-5 rounded-large bg-component p-medium lg:p-5 ${className}`}
+          className={`relative flex flex-col gap-5 rounded-3xl bg-[#1F282C] p-medium lg:p-5 ${className}`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* close icon */}
@@ -110,7 +117,7 @@ export default function Modal({
                     kind="default"
                     onClick={onCancel}
                     disabled={disabledCancel}
-                    className="h-10 flex-1 rounded-[1.25rem] text-base font-extrabold lg:h-11"
+                    className="h-10 flex-1 rounded-[1.25rem] text-sm font-bold lg:h-11"
                   >
                     {cancelText || "Cancel"}
                   </Button>
@@ -121,7 +128,7 @@ export default function Modal({
                     onClick={onOk}
                     disabled={disabledOk}
                     busy={busy}
-                    className="h-10 flex-1 rounded-[1.25rem] text-base font-extrabold lg:h-11"
+                    className="h-10 flex-1 rounded-[1.25rem] text-sm font-bold lg:h-11"
                   >
                     {okText || "Ok"}
                   </Button>

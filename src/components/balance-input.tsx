@@ -1,8 +1,7 @@
 import { InputValue, Token } from "@/types";
 import Input from "@/ui/input";
 import InputAlert from "@/ui/input-alert";
-import { formatBalance, getTokenLogoSrc } from "@/utils";
-import Image from "next/image";
+import { formatBalance } from "@/utils";
 import { ChangeEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { parseUnits } from "viem";
 
@@ -13,52 +12,34 @@ enum ErrorCode {
 }
 
 interface Props {
-  placeholder?: string;
-  balance?: bigint;
   max?: bigint;
   min?: bigint;
-  compact?: boolean;
-  autoFocus?: boolean;
   disabled?: boolean;
-  suffix?: "symbol";
-  enabledDynamicStyle?: boolean;
+  balance?: bigint;
+  placeholder?: string;
   value: InputValue<bigint>;
   token: Token | undefined;
-  tokenOptions?: Token[];
-  balanceLoading?: boolean;
-  onBalanceRefresh?: () => void;
   onChange?: (value: InputValue<bigint>) => void;
-  onTokenChange?: (token: Token) => void;
 }
 
 export function BalanceInput({
-  placeholder,
-  balance,
   max,
   min,
-  compact,
-  autoFocus,
+  balance,
   disabled,
-  suffix,
-  enabledDynamicStyle,
+  placeholder,
   value,
   token,
-  balanceLoading,
-  tokenOptions = [],
-  onBalanceRefresh = () => undefined,
   onChange = () => undefined,
-  onTokenChange = () => undefined,
 }: Props) {
-  const spanRef = useRef<HTMLSpanElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const balanceRef = useRef(balance);
   const tokenRef = useRef(token);
 
-  const [dynamicStyle, setDynamicStyle] = useState("text-sm font-medium");
   const [errorCode, setErrorCode] = useState<ErrorCode>();
 
   const _placeholder = useMemo(() => {
-    if (token && compact) {
+    if (token?.decimals) {
       if (max !== undefined) {
         return `Max ${formatBalance(max, token.decimals)}`;
       } else if (balance !== undefined) {
@@ -66,7 +47,7 @@ export function BalanceInput({
       }
     }
     return placeholder ?? "Enter an amount";
-  }, [balance, max, placeholder, token, compact]);
+  }, [balance, max, placeholder, token?.decimals]);
 
   const handleChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
     (e) => {
@@ -121,92 +102,24 @@ export function BalanceInput({
     }
   }, [token, onChange]);
 
-  useEffect(() => {
-    if (enabledDynamicStyle) {
-      const inputWidth = inputRef.current?.clientWidth || 1;
-      const spanWidth = spanRef.current?.clientWidth || 0;
-      const percent = (spanWidth / inputWidth) * 100;
-      if (percent < 10) {
-        setDynamicStyle("text-[3.75rem] font-extralight");
-      } else if (percent < 20) {
-        setDynamicStyle("text-[3rem] font-light");
-      } else if (percent < 30) {
-        setDynamicStyle("text-[2.25rem] font-light");
-      } else if (percent < 40) {
-        setDynamicStyle("text-[1.875rem] font-normal");
-      } else if (percent < 50) {
-        setDynamicStyle("text-[1.5rem] font-normal");
-      } else if (percent < 60) {
-        setDynamicStyle("text-[1.25rem] font-medium");
-      } else {
-        setDynamicStyle("text-[1.125rem] font-medium");
-      }
-    }
-  }, [value.input, enabledDynamicStyle]);
-
   return (
     <div
-      className={`normal-input-wrap relative flex flex-col rounded-medium bg-inner px-small py-small lg:px-medium ${
-        compact ? "lg:py-medium" : ""
-      } ${value.valid ? "valid-input-wrap border-transparent" : "invalid-input-wrap"}`}
+      className={`normal-input-wrap relative ${
+        value.valid ? "valid-input-wrap border-transparent" : "invalid-input-wrap"
+      } rounded-xl bg-app-bg px-medium`}
     >
-      <div className="flex items-center justify-between gap-small">
+      <div className="flex h-10 items-center justify-between gap-small text-sm font-semibold text-white lg:h-11">
         <Input
           placeholder={_placeholder}
-          className={`w-full rounded bg-transparent text-white transition-[font-size,font-weight,line-height] duration-300 ${
-            compact ? "" : "h-12"
-          } ${enabledDynamicStyle ? `leading-none ${dynamicStyle}` : "text-sm font-medium"}`}
+          className="w-full rounded bg-transparent"
           onChange={handleChange}
           ref={inputRef}
           disabled={disabled}
           value={value.input}
-          autoFocus={autoFocus}
         />
 
-        {compact ? (
-          suffix === "symbol" && token ? (
-            <span className="text-sm font-medium">{token.symbol}</span>
-          ) : null
-        ) : (
-          <div className="flex shrink-0 items-center gap-medium self-end">
-            {token ? (
-              <div className="flex shrink-0 items-center gap-small">
-                <Image width={32} height={32} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
-                <span className="text-base font-medium text-white">{token.symbol}</span>
-              </div>
-            ) : null}
-            {tokenOptions
-              .filter((t) => t.symbol !== token?.symbol)
-              .map((t) => (
-                <Image
-                  key={t.symbol}
-                  width={26}
-                  height={26}
-                  alt="Token"
-                  src={getTokenLogoSrc(t.logo)}
-                  className="rounded-full opacity-80 transition-transform duration-300 hover:cursor-pointer hover:opacity-100 active:-translate-x-1"
-                  onClick={() => onTokenChange(t)}
-                />
-              ))}
-          </div>
-        )}
+        {token ? <span>{token.symbol}</span> : null}
       </div>
-
-      {!compact && token ? (
-        <div className="flex items-center gap-small">
-          <span className="text-xs font-medium text-white/50">
-            Balance: {formatBalance(balance ?? 0n, token.decimals)}
-          </span>
-          <button
-            className={`rounded-full bg-white/20 p-[3px] opacity-50 transition hover:bg-white/20 hover:opacity-100 active:scale-95 ${
-              balanceLoading ? "animate-spin" : ""
-            }`}
-            onClick={onBalanceRefresh}
-          >
-            <Image alt="Refresh" width={14} height={14} src="/images/refresh.svg" />
-          </button>
-        </div>
-      ) : null}
 
       {errorCode === ErrorCode.INSUFFICIENT ? (
         <InputAlert text="* Insufficient" />
@@ -215,10 +128,6 @@ export function BalanceInput({
       ) : errorCode === ErrorCode.REQUIRE_MORE ? (
         <InputAlert text={`* Min: ${formatBalance(min ?? 0n, token?.decimals ?? 0, { precision: 6 })}`} />
       ) : null}
-
-      <span className="invisible fixed left-0 top-0 -z-50" ref={spanRef}>
-        {value.input}
-      </span>
     </div>
   );
 }

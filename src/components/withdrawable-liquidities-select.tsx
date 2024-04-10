@@ -22,7 +22,7 @@ export default function WithdrawableLiquiditiesSelect({
 }: Props) {
   return (
     <div
-      className={`relative max-h-60 rounded-medium bg-inner ${
+      className={`relative max-h-60 rounded-xl bg-app-bg ${
         loading ? "overflow-y-hidden" : "app-scrollbar overflow-y-auto"
       }`}
     >
@@ -73,14 +73,14 @@ export default function WithdrawableLiquiditiesSelect({
           ))
         ) : (
           <div className="flex items-center justify-center py-small">
-            <span className="text-sm font-medium text-white/50">No data</span>
+            <span className="text-sm font-semibold text-slate-400">No data</span>
           </div>
         )}
       </div>
       {total > options.length ? (
         <button
           onClick={onLoadMore}
-          className="w-full rounded-b-medium border-t border-t-white/10 py-2 text-sm font-medium text-white transition-[transform,color] hover:bg-primary active:translate-y-1"
+          className="w-full rounded-b-medium border-t border-t-white/10 py-2 text-sm font-semibold text-white transition-[transform,color] hover:bg-primary active:translate-y-1"
         >
           Load More
         </button>
