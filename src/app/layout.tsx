@@ -14,8 +14,8 @@ const ibm_plex_sans = IBM_Plex_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Helix Bridge",
-  description: "Secure, fast, and low-cost cross-chain crypto transfers.",
+  title: "Bridge stablecoin and native tokens on Helix Bridge",
+  description: "Secure, fast, and low-cost cross-chain crypto transfers",
   manifest: "/manifest.json",
 };
 
