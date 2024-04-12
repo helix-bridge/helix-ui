@@ -41,8 +41,8 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8, o
 
   return address ? (
     <Dropdown
-      childClassName="bg-inner py-large rounded-large border border-component flex flex-col gap-large"
-      labelClassName="flex items-center gap-2 rounded-[0.625rem] bg-white/20 px-medium lg:py-small py-2 transition-colors hover:bg-white/[0.25]"
+      childClassName="bg-background py-large rounded-large border border-white/20 flex flex-col gap-large"
+      labelClassName="flex items-center gap-2 rounded-xl bg-white/20 px-large h-8 transition-colors hover:bg-white/[0.25]"
       placement={placement}
       label={
         <div className="flex items-center gap-small">
@@ -83,13 +83,13 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8, o
 
       <div className="mx-5 h-[1px] bg-white/10" />
 
-      <div className="app-scrollbar relative flex max-h-[40vh] flex-col overflow-y-auto px-2 lg:max-h-[72vh]">
+      <div className="relative flex max-h-[40vh] flex-col overflow-y-auto px-2 lg:max-h-[72vh]">
         {balances
           .filter(({ balance }) => 0 < balance)
           .map((balance) => (
             <button
               key={`${balance.chain.network}-${balance.token.symbol}`}
-              className="flex items-center gap-large rounded-medium px-3 py-2 transition-colors hover:bg-white/10 disabled:cursor-default lg:py-medium"
+              className="flex items-center gap-large rounded-xl px-3 py-2 transition-colors hover:bg-white/10 disabled:cursor-default lg:py-medium"
               disabled={true}
               onClick={() => {
                 const _sourceChain = balance.chain;

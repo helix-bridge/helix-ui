@@ -38,7 +38,7 @@ export default function ChainSelect({
       }
       placeholder={<span className="truncate text-sm font-semibold text-slate-400">{placeholder}</span>}
       labelClassName={`gap-small flex items-center justify-between ${className}`}
-      childClassName="bg-app-bg flex flex-col rounded-xl max-h-60 overflow-y-auto border border-white/20 app-scrollbar py-small"
+      childClassName="bg-app-bg flex flex-col rounded-xl max-h-64 overflow-y-auto border border-white/20 py-small"
       onClear={() => onChange(undefined)}
     >
       {options.length ? (
@@ -51,9 +51,9 @@ export default function ChainSelect({
               className="flex items-center gap-medium px-large py-medium text-start transition-colors hover:bg-white/5 disabled:bg-white/10"
             >
               <Image
-                width={20}
-                height={20}
-                alt="Chain logo"
+                width={22}
+                height={22}
+                alt={option.name}
                 src={getChainLogoSrc(option.logo)}
                 className="rounded-full"
               />

@@ -71,7 +71,7 @@ export default function Modal({
       <div
         ref={nodeRef}
         onClick={() => maskClosable && onClose()}
-        className="fixed left-0 top-0 z-20 flex h-screen w-screen items-center justify-center bg-app-bg/80 p-medium"
+        className="fixed left-0 top-0 z-20 flex h-screen w-screen items-center justify-center bg-app-bg/80 p-medium backdrop-blur-sm"
       >
         {/* modal */}
         <div
@@ -81,7 +81,7 @@ export default function Modal({
           {/* close icon */}
           <button
             onClick={onClose}
-            className="absolute right-2 top-2 rounded-full bg-transparent p-[4px] transition hover:scale-105 hover:bg-white/10 active:scale-95"
+            className="absolute right-medium top-medium rounded-full bg-transparent p-[4px] transition hover:scale-105 hover:bg-white/10 active:scale-95"
           >
             <Image width={20} height={20} alt="Close" src="/images/close-white.svg" />
           </button>
@@ -117,7 +117,7 @@ export default function Modal({
                     kind="default"
                     onClick={onCancel}
                     disabled={disabledCancel}
-                    className="h-10 flex-1 rounded-[1.25rem] text-sm font-bold lg:h-11"
+                    className="h-10 flex-1 rounded-[1.25rem] text-sm font-bold"
                   >
                     {cancelText || "Cancel"}
                   </Button>
@@ -128,7 +128,7 @@ export default function Modal({
                     onClick={onOk}
                     disabled={disabledOk}
                     busy={busy}
-                    className="h-10 flex-1 rounded-[1.25rem] text-sm font-bold lg:h-11"
+                    className="h-10 flex-1 rounded-[1.25rem] text-sm font-bold"
                   >
                     {okText || "Ok"}
                   </Button>

@@ -29,13 +29,13 @@ export default function Footer() {
 
       <div className="hidden items-center gap-5 lg:flex">
         <Link
-          className="text-xs font-semibold text-white/50 transition hover:text-white active:scale-95"
+          className="text-xs font-semibold text-white/50 transition hover:text-white hover:underline active:scale-95"
           href="/records"
         >
-          Explorer
+          Explore
         </Link>
         <a
-          className="text-xs font-semibold text-white/50 transition hover:text-white active:scale-95"
+          className="text-xs font-semibold text-white/50 transition hover:text-white hover:underline active:scale-95"
           href="https://xtoken.helixbridge.app/"
           rel="noopener noreferrer"
           target="_blank"
@@ -43,7 +43,7 @@ export default function Footer() {
           xToken
         </a>
         <a
-          className="text-xs font-semibold text-white/50 transition hover:text-white active:scale-95"
+          className="text-xs font-semibold text-white/50 transition hover:text-white hover:underline active:scale-95"
           href="https://docs.helixbridge.app/"
           rel="noopener noreferrer"
           target="_blank"
@@ -53,7 +53,7 @@ export default function Footer() {
 
         {mainnetOrTestnet && (
           <a
-            className="text-xs font-semibold text-white/50 transition hover:text-white active:scale-95"
+            className="text-xs font-semibold text-white/50 transition hover:text-white hover:underline active:scale-95"
             href={mainnetOrTestnet.link}
             rel="noopener noreferrer"
             target="_blank"
@@ -87,7 +87,7 @@ function Social({ children, href }: PropsWithChildren<{ href: string }>) {
       target="_blank"
       rel="noopener noreferrer"
       href={href}
-      className="hidden opacity-60 transition hover:scale-105 hover:opacity-100 active:scale-95 lg:inline"
+      className="hidden opacity-60 transition hover:-translate-y-[2px] hover:opacity-100 active:translate-y-0 lg:inline"
     >
       {children}
     </a>

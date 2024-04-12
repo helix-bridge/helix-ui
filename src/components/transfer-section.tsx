@@ -40,7 +40,7 @@ export default function TransferSection({
     <div className={`flex flex-col gap-small transition-opacity ${loading ? "opacity-80" : "opacity-100"}`}>
       <div
         className={`flex flex-col gap-medium rounded-large bg-app-bg py-medium transition-[outline] duration-200 ${className} ${
-          alert ? "outline outline-1 outline-app-red" : "outline-none"
+          alert ? "outline outline-1 outline-orange-500" : "outline-none"
         }`}
       >
         {titleText ? (
@@ -61,7 +61,7 @@ export default function TransferSection({
           <RecipientInput value={recipient} options={recipientOptions} onChange={onRecipientChange} />
         )}
       </div>
-      {alert ? <span className="text-xs font-normal text-app-red">{alert}</span> : null}
+      {alert ? <span className="text-xs font-normal text-orange-500">{alert}</span> : null}
     </div>
   );
 }

@@ -11,12 +11,14 @@ import {
 } from "@floating-ui/react";
 import Image from "next/image";
 import { useMemo, useState } from "react";
-import { useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 
 const chainOptions = getChainConfigs();
 
 export default function ChainSwitch({ placement }: { placement?: Placement }) {
   const [isOpen, setIsOpen] = useState(false);
+  const account = useAccount();
+
   const { refs, context, floatingStyles } = useFloating({
     placement,
     open: isOpen,
@@ -31,15 +33,14 @@ export default function ChainSwitch({ placement }: { placement?: Placement }) {
   const click = useClick(context);
   const dismiss = useDismiss(context);
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
-
   const { switchNetwork } = useSwitchNetwork();
   const { chain } = useNetwork();
   const activeChain = useMemo(() => getChainConfig(chain?.id), [chain?.id]);
 
-  return (
+  return account.address ? (
     <>
       <button
-        className="flex w-fit items-center justify-between gap-small rounded-[0.625rem] bg-white/20 px-medium py-2 transition-colors hover:bg-white/[0.25] lg:py-small"
+        className="flex h-8 w-fit items-center justify-between gap-small rounded-xl bg-white/20 px-3 transition-colors hover:bg-white/[0.25]"
         ref={refs.setReference}
         {...getReferenceProps()}
       >
@@ -68,17 +69,17 @@ export default function ChainSwitch({ placement }: { placement?: Placement }) {
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
             <div
               style={styles}
-              className="app-scrollbar flex max-h-[18rem] flex-col overflow-y-auto rounded-xl bg-inner py-2"
+              className="flex max-h-[18rem] flex-col overflow-y-auto rounded-xl border border-white/20 bg-background py-2"
               onClick={() => setIsOpen(false)}
             >
               {chainOptions.map((option) => (
                 <button
-                  className="flex items-center gap-medium px-large py-medium transition-colors hover:bg-white/10 disabled:bg-white/10"
+                  className="flex items-center gap-medium px-large py-medium transition-colors hover:bg-white/5 disabled:bg-white/10"
                   disabled={option.id === chain?.id}
                   key={option.id}
                   onClick={() => switchNetwork?.(option.id)}
                 >
-                  <Image alt="Chain" width={20} height={20} src={getChainLogoSrc(option.logo)} />
+                  <Image alt="Chain" width={22} height={22} src={getChainLogoSrc(option.logo)} />
                   <span className="text-sm font-bold text-white">{option.name}</span>
                 </button>
               ))}
@@ -87,5 +88,5 @@ export default function ChainSwitch({ placement }: { placement?: Placement }) {
         </FloatingPortal>
       )}
     </>
-  );
+  ) : null;
 }

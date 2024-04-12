@@ -40,10 +40,10 @@ export default function Drawer({
       <div
         ref={nodeRef}
         onClick={() => maskClosable && onClose()}
-        className="fixed left-0 top-0 z-20 h-screen w-screen bg-app-bg/80"
+        className="fixed left-0 top-0 z-20 h-screen w-screen bg-app-bg/80 backdrop-blur-sm"
       >
         <div
-          className="absolute right-0 top-0 h-screen w-3/4 overflow-y-auto bg-component"
+          className="absolute right-0 top-0 h-screen w-3/4 overflow-y-auto bg-secondary"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex h-full w-full flex-col items-start">

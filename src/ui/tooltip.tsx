@@ -74,11 +74,11 @@ export default function Tooltip({
             />
             <div
               style={styles}
-              className={`flex items-center rounded-xl px-medium py-2 ${
+              className={`flex items-center rounded-xl px-medium py-small ${
                 status === "warning" ? "bg-app-orange" : "bg-primary"
               } ${contentClassName}`}
             >
-              {typeof content === "string" ? <span className="text-sm font-extrabold">{content}</span> : content}
+              {typeof content === "string" ? <span className="text-sm font-semibold">{content}</span> : content}
             </div>
           </div>
         </FloatingPortal>
