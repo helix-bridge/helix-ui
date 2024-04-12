@@ -49,11 +49,11 @@ export default function RecordDetail(props: Props) {
   return (
     <div className="container mx-auto">
       <div className="flex items-center justify-between gap-5">
-        <h3 className="text-lg font-medium text-white">Transaction Detail</h3>
+        <h3 className="text-base font-bold text-white">Transaction Detail</h3>
         <CountdownRefresh onClick={refetch} />
       </div>
       <div className="app-scrollbar mt-5 overflow-x-auto">
-        <div className="relative flex min-w-max flex-col gap-medium rounded-large bg-component px-7 py-medium">
+        <div className="relative flex min-w-max flex-col gap-medium rounded-large bg-secondary px-7 py-medium">
           {/* loading */}
           <ComponentLoading loading={loading} className="rounded-large bg-black/30" />
 

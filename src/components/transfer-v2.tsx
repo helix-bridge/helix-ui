@@ -280,7 +280,7 @@ function Component() {
           disabled={disableAction}
           onClick={handleAction}
         >
-          <span className="text-base font-extrabold text-white">{actionText}</span>
+          <span className="text-base font-bold text-white">{actionText}</span>
         </Button>
       </div>
 

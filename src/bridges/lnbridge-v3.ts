@@ -44,6 +44,11 @@ export class LnBridgeV3 extends LnBridgeBase {
       } else if (this.targetChain?.network === "taiko") {
         targetAddress = "0x00e7EFf0826dfCDf2AA5945dFF710B48f4AA7E64";
       }
+      if (this.sourceChain?.network === "morph") {
+        sourceAddress = "0xD476650e03a45E70202b0bcAfa04E1513920f83a";
+      } else if (this.targetChain?.network === "morph") {
+        targetAddress = "0xD476650e03a45E70202b0bcAfa04E1513920f83a";
+      }
       this.contract = { sourceAddress, targetAddress };
     }
   }

@@ -16,6 +16,8 @@ const config: Config = {
       },
       colors: {
         primary: "#0085FF",
+        secondary: "#1F282C",
+        background: "#00141D",
         component: "#303A44",
         inner: "#242D30",
         "app-bg": "#00141D",

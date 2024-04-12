@@ -32,7 +32,7 @@ export default function Header() {
 
   return (
     <>
-      <div className="app-header fixed left-0 top-0 z-10 flex w-full items-center justify-between border-b border-b-white/25 bg-app-bg px-medium lg:border-b-transparent lg:px-5">
+      <div className="app-header fixed left-0 top-0 z-10 flex w-full items-center justify-between border-b border-b-white/25 bg-transparent px-medium lg:border-b-transparent lg:px-5">
         {/* Left */}
         <div className="flex items-center gap-5">
           {/* Logo */}
@@ -56,7 +56,7 @@ export default function Header() {
                   target="_blank"
                   href={href}
                   key={label}
-                  className={`rounded-[0.625rem] px-medium py-small text-sm font-bold transition-colors hover:bg-white/[0.15] ${
+                  className={`rounded-full px-3 py-small text-sm font-bold transition-colors hover:bg-white/[0.15] ${
                     pathname === href ? "text-primary underline" : "text-white"
                   }`}
                 >
@@ -64,13 +64,13 @@ export default function Header() {
                 </a>
               ) : soon || disabled ? (
                 <Tooltip key={label} content={soon ? "Coming soon" : "This feature is temporarily under maintenance"}>
-                  <span className="rounded-[0.625rem] px-medium py-small text-sm font-bold text-white/50">{label}</span>
+                  <span className="rounded-full px-3 py-small text-sm font-bold text-white/50">{label}</span>
                 </Tooltip>
               ) : (
                 <Link
                   key={label}
                   href={href}
-                  className={`rounded-[0.625rem] px-medium py-small text-sm font-bold transition-colors hover:bg-white/[0.15] ${
+                  className={`rounded-full px-3 py-small text-sm font-bold transition-colors hover:bg-white/[0.15] ${
                     pathname === href ? "text-primary underline decoration-2 underline-offset-8" : "text-white"
                   }`}
                 >

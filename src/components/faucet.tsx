@@ -109,7 +109,7 @@ export default function Faucet({ sourceChain, sourceToken, onSuccess = () => und
   return (
     <>
       <button
-        className="rounded-lg bg-white/20 px-2 py-[2px] text-xs font-semibold text-white opacity-60 transition-opacity hover:opacity-100 active:scale-95"
+        className="rounded-full bg-white/20 px-2 py-[2px] text-xs font-semibold text-white opacity-60 transition-opacity hover:opacity-100 active:scale-95"
         onClick={() => setIsOpen(true)}
       >
         Faucet
@@ -142,7 +142,7 @@ function Label({ text, tips, children }: PropsWithChildren<{ text: string; tips?
   return (
     <div className="flex flex-col gap-small">
       <div className="flex items-center gap-small">
-        <span className="text-sm font-extrabold text-white/80">{text}</span>
+        <span className="text-sm font-semibold text-white/50">{text}</span>
         {tips ? (
           <Tooltip content={tips}>
             <Image width={16} height={16} alt="Tips" src="/images/info.svg" className="h-4 w-4 shrink-0" />
@@ -156,11 +156,11 @@ function Label({ text, tips, children }: PropsWithChildren<{ text: string; tips?
 
 function Item({ value, token, loading }: { value: bigint; token: Token; loading?: boolean }) {
   return (
-    <div className="flex items-center justify-between rounded-xl bg-inner px-4 py-3">
+    <div className="flex items-center justify-between rounded-xl bg-background px-4 py-3">
       {loading ? (
         <CountLoading size="small" color="white" />
       ) : (
-        <span className="text-base font-extrabold">
+        <span className="text-base font-bold">
           {formatBalance(value, token.decimals, { precision: 3, keepZero: true })}
         </span>
       )}
@@ -172,7 +172,7 @@ function Item({ value, token, loading }: { value: bigint; token: Token; loading?
           className="h-6 w-6 shrink-0 rounded-full"
           src={getTokenLogoSrc(token.logo)}
         />
-        <span className="text-base font-extrabold">{token.symbol}</span>
+        <span className="text-base font-bold">{token.symbol}</span>
       </div>
     </div>
   );
