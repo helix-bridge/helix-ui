@@ -52,7 +52,7 @@ export const morphChain: ChainConfig = {
       category: "eth",
     },
     {
-      decimals: 6,
+      decimals: 18,
       symbol: "USDT",
       name: "USDT",
       type: "erc20",
@@ -67,7 +67,7 @@ export const morphChain: ChainConfig = {
       category: "usdt",
     },
     {
-      decimals: 6,
+      decimals: 18,
       symbol: "USDC",
       name: "USDC",
       type: "erc20",
