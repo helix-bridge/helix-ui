@@ -63,7 +63,7 @@ export default function TransferModalV2({
 
   return (
     <Modal
-      title="Transfer Summary"
+      title="Transfer Review"
       isOpen={isOpen}
       className="w-full lg:w-[34rem]"
       okText="Confirm"
