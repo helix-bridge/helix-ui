@@ -24,6 +24,7 @@ import { ChainConfig, ChainID, Network } from "@/types";
 import { isProduction } from "./env";
 import { bscChain } from "@/config/chains/bsc";
 import { optimismChain } from "@/config/chains/optimism";
+import { morphChain } from "@/config/chains/morph";
 
 export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
   switch (chainIdOrNetwork) {
@@ -93,6 +94,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.ASTAR_ZKEVM:
     case "astar-zkevm":
       return astarZkEvmChain;
+    case ChainID.MORPH:
+    case "morph":
+      return morphChain;
     default:
       return;
   }
@@ -122,6 +126,7 @@ export function getChainConfigs(askAll?: boolean) {
     beraChain,
     taikoChain,
     astarZkEvmChain,
+    morphChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {

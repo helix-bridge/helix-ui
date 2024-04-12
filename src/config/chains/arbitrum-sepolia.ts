@@ -35,6 +35,10 @@ export const arbitrumSepoliaChain: ChainConfig = {
       address: "0x8A87497488073307E1a17e8A12475a94Afcb413f",
       logo: "usdc.png",
       cross: [
+        {
+          target: { network: "morph", symbol: "USDC" },
+          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
+        },
         { target: { network: "bera", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "taiko", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         {
@@ -53,6 +57,10 @@ export const arbitrumSepoliaChain: ChainConfig = {
       address: "0x3b8Bb7348D4F581e67E2498574F73e4B9Fc51855",
       logo: "usdt.png",
       cross: [
+        {
+          target: { network: "morph", symbol: "USDT" },
+          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
+        },
         { target: { network: "bera", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "taiko", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         {

@@ -29,6 +29,7 @@ export enum ChainID {
   BERA = 80085,
   TAIKO = 167008,
   ASTAR_ZKEVM = 3776,
+  MORPH = 2710,
 }
 
 // According to graphql indexer
@@ -54,6 +55,7 @@ export type Network =
   | "blast"
   | "bera"
   | "taiko"
+  | "morph"
   | "bsc";
 
 export interface ChainConfig extends Chain {
