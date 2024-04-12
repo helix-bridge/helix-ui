@@ -25,7 +25,7 @@ export const polygonZkEvmChain: ChainConfig = {
       category: "eth",
     },
     {
-      decimals: 18,
+      decimals: 6,
       symbol: "USDT",
       name: "USDT",
       type: "erc20",
