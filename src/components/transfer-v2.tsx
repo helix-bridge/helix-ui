@@ -176,7 +176,7 @@ function Component() {
       const receipt = await approve(
         fee?.token.type === "native" ? deferredAmount.value : deferredAmount.value + (fee?.value ?? 0n),
       );
-      notifyTransaction(receipt, sourceChain);
+      notifyTransaction(receipt, sourceChain, "Approval");
     } else if (actionText === "Transfer") {
       setIsOpen(true);
     }
@@ -203,7 +203,7 @@ function Component() {
           withdrawNonce: BigInt(relayInfo?.withdrawNonce ?? 0),
           depositedMargin: BigInt(relayInfo?.margin ?? 0),
         });
-        notifyTransaction(receipt, sourceChain);
+        notifyTransaction(receipt, sourceChain, "Transfer");
         setTxHash(receipt?.transactionHash);
         if (receipt?.status === "success") {
           setIsTransfering(false);

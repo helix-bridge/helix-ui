@@ -136,7 +136,7 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
     ) => {
       try {
         const receipt = await bridge.transfer(sender, recipient, amount, options);
-        notifyTransaction(receipt, chain);
+        notifyTransaction(receipt, chain, "Transfer");
 
         const a = await bridge.getSourceAllowance(sender);
         const b = await bridge.getSourceBalance(sender);
@@ -155,7 +155,7 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
   const sourceApprove = useCallback(async (owner: Address, amount: bigint, bridge: BaseBridge, chain: ChainConfig) => {
     try {
       const receipt = await bridge.sourceApprove(amount, owner);
-      notifyTransaction(receipt, chain);
+      notifyTransaction(receipt, chain, "Approval");
       setSourceAllowance(await bridge.getSourceAllowance(owner));
       return receipt;
     } catch (err) {

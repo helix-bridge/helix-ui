@@ -226,7 +226,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
   const sourceApprove = useCallback(async (owner: Address, amount: bigint, bridge: BaseBridge, chain: ChainConfig) => {
     try {
       const receipt = await bridge.sourceApprove(amount, owner);
-      notifyTransaction(receipt, chain);
+      notifyTransaction(receipt, chain, "Approval");
       setSourceAllowance(await bridge.getSourceAllowance(owner));
       return receipt;
     } catch (err) {
@@ -238,7 +238,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
   const targetApprove = useCallback(async (owner: Address, amount: bigint, bridge: BaseBridge, chain: ChainConfig) => {
     try {
       const receipt = await bridge.targetApprove(amount, owner);
-      notifyTransaction(receipt, chain);
+      notifyTransaction(receipt, chain, "Approval");
       setTargetAllowance(await bridge.getTargetAllowance(owner));
       return receipt;
     } catch (err) {
@@ -254,7 +254,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
     async (relayer: Address, margin: bigint, bridge: LnBridgeV2Default, chain: ChainConfig) => {
       try {
         const receipt = await bridge.depositMargin(margin);
-        notifyTransaction(receipt, chain);
+        notifyTransaction(receipt, chain, "Deposite");
 
         const a = await bridge.getTargetAllowance(relayer);
         const b = await bridge.getTargetBalance(relayer);
@@ -327,7 +327,7 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
     ) => {
       try {
         const receipt = await bridge.withdrawMargin(recipientOrParams, amount, fee);
-        notifyTransaction(receipt, chain);
+        notifyTransaction(receipt, chain, "Withdraw");
         return receipt;
       } catch (err) {
         console.error(err);
