@@ -105,7 +105,6 @@ export default function TransferAmountInput({
     <div className="flex flex-col gap-medium px-medium">
       <input
         className={`${dynamicFont} h-12 bg-transparent text-white transition-[font-size,font-weight,line-height] duration-300 focus-visible:outline-none`}
-        autoFocus
         ref={inputRef}
         placeholder="0"
         value={value.input}
