@@ -124,7 +124,7 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
       if (address) {
         try {
           const receipt = await bridgeInstance.sourceApprove(amount, address);
-          notifyTransaction(receipt, bridgeInstance.getSourceChain());
+          notifyTransaction(receipt, bridgeInstance.getSourceChain(), "Approval");
           setSourceAllowance(await bridgeInstance.getSourceAllowance(address));
           return receipt;
         } catch (err) {
@@ -141,7 +141,7 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
       if (address) {
         try {
           const receipt = await bridgeInstance.targetApprove(amount, address);
-          notifyTransaction(receipt, bridgeInstance.getTargetChain());
+          notifyTransaction(receipt, bridgeInstance.getTargetChain(), "Approval");
           setTargetAllowance(await bridgeInstance.getTargetAllowance(address));
           return receipt;
         } catch (err) {
@@ -169,7 +169,7 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
     async (amount: bigint) => {
       try {
         const receipt = await bridgeInstance.depositPenaltyReserve(amount);
-        notifyTransaction(receipt, bridgeInstance.getSourceChain());
+        notifyTransaction(receipt, bridgeInstance.getSourceChain(), "Deposite");
         if (receipt?.status === "success") {
           await _updatePenaltyReserves();
           if (address) {
@@ -190,7 +190,7 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
     async (baseFee: bigint, feeRate: number, transferLimit: bigint) => {
       try {
         const receipt = await bridgeInstance.registerLnProvider(baseFee, feeRate, transferLimit);
-        notifyTransaction(receipt, bridgeInstance.getSourceChain());
+        notifyTransaction(receipt, bridgeInstance.getSourceChain(), "Register");
         return receipt;
       } catch (err) {
         console.error(err);
@@ -204,7 +204,7 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
     async (amount: bigint) => {
       try {
         const receipt = await bridgeInstance.withdrawPenaltyReserve(amount);
-        notifyTransaction(receipt, bridgeInstance.getSourceChain());
+        notifyTransaction(receipt, bridgeInstance.getSourceChain(), "Withdraw");
 
         if (receipt?.status === "success") {
           await _updatePenaltyReserves();
@@ -231,7 +231,7 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
             messageFee,
             params ?? address,
           );
-          notifyTransaction(receipt, bridgeInstance.getTargetChain());
+          notifyTransaction(receipt, bridgeInstance.getTargetChain(), "Withdraw");
           return receipt;
         } catch (err) {
           console.error(err);
