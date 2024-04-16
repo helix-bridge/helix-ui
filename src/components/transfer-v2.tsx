@@ -282,7 +282,7 @@ function Component() {
           loadingFee={loadingFee}
         />
         <Button
-          className="inline-flex h-12 items-center justify-center rounded-[1.25rem]"
+          className="inline-flex h-12 items-center justify-center rounded-full"
           kind="primary"
           busy={isApproving}
           disabled={disableAction}

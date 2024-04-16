@@ -5,7 +5,7 @@ import TransferSwitch from "./transfer-switch";
 import ComponentLoading from "@/ui/component-loading";
 import { Address } from "viem";
 import Image from "next/image";
-import { getTokenLogoSrc } from "@/utils";
+import { getTokenLogoSrc, toShortAdrress } from "@/utils";
 import CopyIcon from "@/ui/copy-icon";
 
 interface Recipient {
@@ -116,12 +116,12 @@ function TokenTips({ token, chain }: { token: Token; chain: ChainConfig }) {
       {token.type === "native" ? null : (
         <div className="inline-flex items-center gap-1">
           <a
-            className="text-sm font-semibold text-white hover:underline"
+            className="text-sm font-bold text-white hover:underline"
             rel="noopener noreferrer"
             target="_blank"
             href={explorer.href}
           >
-            {token.address}
+            {toShortAdrress(token.address, 12, 10)}
           </a>
           <CopyIcon text={token.address} copiedColor="#ffffff" />
         </div>

@@ -21,7 +21,7 @@ export default function TransferTokenSelect({ value, options, onChange }: Props)
   return (
     <div className="flex items-center gap-medium px-medium">
       <TokenImage token={value} active />
-      <span className="text-lg font-bold text-white">{value.symbol}</span>
+      <span className="text-base font-bold text-white">{value.symbol}</span>
       <div className="group ml-2 flex items-center gap-medium">
         {options
           .filter((option) => option.symbol !== value.symbol)

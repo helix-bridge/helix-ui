@@ -36,7 +36,7 @@ export default function TransferChainSelect({
               src={getChainLogoSrc(chain.logo)}
               className="h-[2rem] w-[2rem] shrink-0 rounded-full"
             />
-            <span className="truncate text-lg font-extrabold text-white">{chain.name}</span>
+            <span className="truncate text-base font-bold text-white">{chain.name}</span>
           </div>
         }
         labelClassName="flex items-center justify-between gap-small w-full mx-medium transition-colors hover:bg-white/5 group py-small rounded-[0.625rem]"
@@ -129,7 +129,7 @@ function ChainOption({
         src={getChainLogoSrc(option.logo)}
         className="h-[1.875rem] w-[1.875rem] shrink-0 rounded-full"
       />
-      <span className="truncate text-base font-extrabold text-white">{option.name}</span>
+      <span className="truncate text-base font-bold text-white">{option.name}</span>
     </button>
   );
 }
