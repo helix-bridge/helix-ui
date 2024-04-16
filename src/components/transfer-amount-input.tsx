@@ -2,7 +2,7 @@ import { ChainConfig, Token } from "@/types";
 import { formatBalance } from "@/utils";
 import Image from "next/image";
 import { ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
-import { parseUnits } from "viem";
+import { formatUnits, parseUnits } from "viem";
 import Faucet from "./faucet";
 
 interface Value {
@@ -71,6 +71,10 @@ export default function TransferAmountInput({
     [min, max, balance, token.decimals, onChange],
   );
 
+  const handleMaxInput = useCallback(() => {
+    onChange({ valid: true, alert: "", value: max ?? 0n, input: formatUnits(max ?? 0n, token.decimals) });
+  }, [token.decimals, max, onChange]);
+
   useEffect(() => {
     const inputWidth = inputRef.current?.clientWidth || 1;
     const spanWidth = spanRef.current?.clientWidth || 0;
@@ -116,6 +120,12 @@ export default function TransferAmountInput({
           onClick={onRefresh}
         >
           <Image alt="Refresh balance" width={14} height={14} src="/images/refresh.svg" />
+        </button>
+        <button
+          className="rounded-full bg-white/20 px-2 py-[2px] text-xs font-semibold text-white opacity-60 transition-[transform,opacity] hover:opacity-100 active:scale-95"
+          onClick={handleMaxInput}
+        >
+          Max
         </button>
         {chain.testnet ? <Faucet sourceChain={chain} sourceToken={token} onSuccess={onRefresh} /> : null}
       </div>

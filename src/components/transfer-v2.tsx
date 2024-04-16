@@ -14,7 +14,14 @@ import TransferChainSection from "./transfer-chain-section";
 import TransferAmountSection from "./transfer-amount-section";
 import TransferInformationSection from "./transfer-information-section";
 import Button from "@/ui/button";
-import { useAllowance, useBalance, useSortedRelayData, useTransactionFee, useTransferV2 } from "@/hooks";
+import {
+  useAllowance,
+  useBalance,
+  useMaxTransfer,
+  useSortedRelayData,
+  useTransactionFee,
+  useTransferV2,
+} from "@/hooks";
 import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
 import TransferProviderV2 from "@/providers/transfer-provider-v2";
 import DisclaimerModal from "./modals/disclaimer-modal";
@@ -87,6 +94,7 @@ function Component() {
     loading: loadingBalance,
     refresh: refreshBalance,
   } = useBalance(sourceChain, sourceToken, account.address);
+  const { maxTransfer } = useMaxTransfer(sourceChain, targetChain, sourceToken, balance);
 
   const { data: relayData, loading: loadingRelayData } = useSortedRelayData(
     deferredAmount.value,
@@ -261,7 +269,7 @@ function Component() {
           token={sourceToken}
           chain={sourceChain}
           min={bridge?.getCrossInfo()?.min}
-          max={relayData?.sortedLnBridgeRelayInfos?.transferLimit}
+          max={maxTransfer}
           onChange={setAmount}
           onRefresh={refreshBalance}
         />

@@ -226,3 +226,14 @@ export interface SupportChainsReqParams {
 export interface SupportChainsResData {
   queryLnBridgeSupportChains: SupportChains[];
 }
+
+export interface MaxTransferReqParams {
+  fromChain: Network;
+  toChain: Network;
+  token: Address;
+  balance: string;
+}
+
+export type MaxTransferResData = {
+  queryMaxTransfer: string;
+};

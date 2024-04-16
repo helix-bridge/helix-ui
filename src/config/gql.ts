@@ -220,3 +220,9 @@ export const GQL_GET_SUPPORT_CHAINS = gql`
     }
   }
 `;
+
+export const GQL_GET_MAX_TRANSFER = gql`
+  query GetMaxTransfer($token: String, $balance: String, $fromChain: String, $toChain: String) {
+    queryMaxTransfer(token: $token, balance: $balance, fromChain: $fromChain, toChain: $toChain)
+  }
+`;
