@@ -36,7 +36,7 @@ export default function Footer() {
         </Link>
         <a
           className="text-xs font-semibold text-white/50 transition hover:text-white hover:underline active:scale-95"
-          href="https://xtoken.helixbridge.app/"
+          href="https://xtoken.box"
           rel="noopener noreferrer"
           target="_blank"
         >
