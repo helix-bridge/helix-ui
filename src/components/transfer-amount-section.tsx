@@ -11,7 +11,7 @@ interface Amount {
 
 interface Props {
   min?: bigint;
-  max?: string;
+  max?: bigint;
   token: Token;
   amount: Amount;
   balance: bigint;

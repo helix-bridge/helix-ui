@@ -78,7 +78,7 @@ export default function Tooltip({
                 status === "warning" ? "bg-app-orange" : "bg-primary"
               } ${contentClassName}`}
             >
-              {typeof content === "string" ? <span className="text-sm font-semibold">{content}</span> : content}
+              {typeof content === "string" ? <span className="text-sm font-bold">{content}</span> : content}
             </div>
           </div>
         </FloatingPortal>
