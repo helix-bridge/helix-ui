@@ -32,7 +32,7 @@ export default function Footer() {
           className="text-xs font-semibold text-white/50 transition hover:text-white hover:underline active:scale-95"
           href="/records"
         >
-          Explore
+          Explorer
         </Link>
         <a
           className="text-xs font-semibold text-white/50 transition hover:text-white hover:underline active:scale-95"
