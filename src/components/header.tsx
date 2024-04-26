@@ -9,9 +9,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const ChainSwitch = dynamic(() => import("@/components/chain-switch"), { ssr: false });
-const HistoryNav = dynamic(() => import("@/components/history-nav"), { ssr: false });
 const User = dynamic(() => import("@/components/user"), { ssr: false });
 const Drawer = dynamic(() => import("@/ui/drawer"), { ssr: false });
+const History = dynamic(() => import("./history"), { ssr: false });
 
 interface NavigationConfig {
   label: string;
@@ -83,7 +83,7 @@ export default function Header() {
 
         {/* Right */}
         <div className="hidden items-center gap-medium lg:flex">
-          <HistoryNav />
+          <History className="inline-flex h-8 items-center rounded-full bg-white/20 px-large text-sm font-bold text-white transition-colors hover:bg-white/[0.25]" />
           <User prefixLength={14} suffixLength={10} />
           <ChainSwitch placement="bottom-end" />
         </div>
