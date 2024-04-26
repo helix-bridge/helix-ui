@@ -15,3 +15,4 @@ export * from "./use-transaction-fee";
 export * from "./use-daily-limit";
 export * from "./use-support-chains";
 export * from "./use-max-transfer";
+export * from "./use-history";

@@ -237,3 +237,28 @@ export interface MaxTransferReqParams {
 export type MaxTransferResData = {
   queryMaxTransfer: string;
 };
+
+export interface HistoryReqParams {
+  sender: Address | undefined;
+  page: number;
+  row: number;
+}
+
+export interface HistoryResData {
+  historyRecords: {
+    total: number;
+    records: Pick<
+      HistoryRecord,
+      | "requestTxHash"
+      | "responseTxHash"
+      | "fromChain"
+      | "toChain"
+      | "startTime"
+      | "sendToken"
+      | "sendAmount"
+      | "confirmedBlocks"
+      | "result"
+      | "id"
+    >[];
+  };
+}
