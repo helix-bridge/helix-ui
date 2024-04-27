@@ -228,7 +228,7 @@ export const GQL_GET_MAX_TRANSFER = gql`
 `;
 
 export const GQL_GET_HISTORY = gql`
-  query GetHistory($bridges: String, $sender: String, $page: Int, $row: Int) {
+  query GetHistory($bridges: [String], $sender: String, $page: Int, $row: Int) {
     historyRecords(bridges: $bridges, sender: $sender, page: $page, row: $row) {
       total
       records {
