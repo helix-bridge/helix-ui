@@ -226,3 +226,23 @@ export const GQL_GET_MAX_TRANSFER = gql`
     queryMaxTransfer(token: $token, balance: $balance, fromChain: $fromChain, toChain: $toChain)
   }
 `;
+
+export const GQL_GET_HISTORY = gql`
+  query GetHistory($bridges: [String], $sender: String, $page: Int, $row: Int) {
+    historyRecords(bridges: $bridges, sender: $sender, page: $page, row: $row) {
+      total
+      records {
+        requestTxHash
+        responseTxHash
+        fromChain
+        toChain
+        startTime
+        sendToken
+        sendAmount
+        confirmedBlocks
+        result
+        id
+      }
+    }
+  }
+`;
