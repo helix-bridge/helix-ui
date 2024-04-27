@@ -11,7 +11,7 @@ export function useHistory(page: number, enabled?: boolean) {
     data: _data,
     refetch,
   } = useQuery<HistoryResData, HistoryReqParams>(GQL_GET_HISTORY, {
-    variables: { sender: account.address, row: 10, page },
+    variables: { bridges: ["lnv2-opposite", "lnv2-default", "lnv3"], sender: account.address, row: 10, page },
     fetchPolicy: "no-cache",
     skip: !enabled,
   });

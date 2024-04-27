@@ -239,6 +239,7 @@ export type MaxTransferResData = {
 };
 
 export interface HistoryReqParams {
+  bridges: BridgeCategory[];
   sender: Address | undefined;
   page: number;
   row: number;
