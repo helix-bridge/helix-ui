@@ -3,7 +3,7 @@ export * from "./use-relayer";
 export * from "./use-relayer-v3";
 export * from "./use-toggle";
 export * from "./use-transfer";
-export * from "./use-balances";
+export * from "./use-balance-all";
 export * from "./use-withdrawable-liquidities";
 export * from "./use-liquidity-withdraw-fee-params";
 export * from "./use-all-allowance";

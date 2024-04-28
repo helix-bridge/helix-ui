@@ -18,6 +18,7 @@ import AddressIdenticon from "./address-identicon";
 import { Placement } from "@floating-ui/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import History from "./history";
+import ComponentLoading from "@/ui/component-loading";
 
 interface Props {
   placement?: Placement;
@@ -29,7 +30,7 @@ interface Props {
 export default function User({ placement, prefixLength = 10, suffixLength = 8 }: Props) {
   const { setBridgeCategory, setSourceChain, setTargetChain, setSourceToken, setTargetToken, updateUrlParams } =
     useTransfer();
-  const { balances } = useApp();
+  const { balanceAll, loadingBalanceAll } = useApp();
 
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
@@ -75,61 +76,74 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8 }:
 
       <div className="mx-5 h-[1px] bg-white/10" />
 
-      <div className="relative flex max-h-[40vh] flex-col overflow-y-auto px-2 lg:max-h-[72vh]">
-        {balances
-          .filter(({ balance }) => 0 < balance)
-          .map((balance) => (
-            <button
-              key={`${balance.chain.network}-${balance.token.symbol}`}
-              className="flex items-center gap-large rounded-xl px-3 py-2 transition-colors hover:bg-white/10 disabled:cursor-default lg:py-medium"
-              disabled={true}
-              onClick={() => {
-                const _sourceChain = balance.chain;
-                const _sourceToken = balance.token;
-                const _targetChains = getAvailableTargetChains(_sourceChain);
-                const _targetChain = _targetChains.at(0);
-                const _targetTokens = getAvailableTargetTokens(_sourceChain, _targetChain, _sourceToken);
-                const _targetToken = _targetTokens.at(0);
-                const _category = getAvailableBridges(_sourceChain, _targetChain, _sourceToken).at(0);
+      <div className="relative flex max-h-[40vh] min-h-[2.5rem] flex-col overflow-y-auto px-2 lg:max-h-[72vh]">
+        <ComponentLoading
+          loading={loadingBalanceAll}
+          color="white"
+          size="small"
+          className="bg-white/5 backdrop-blur-[2px]"
+        />
 
-                setBridgeCategory(_category);
-                setSourceChain(_sourceChain);
-                setTargetChain(_targetChain);
-                setSourceToken(_sourceToken);
-                setTargetToken(_targetToken);
-                updateUrlParams(router, searchParams, {
-                  _category,
-                  _sourceChain,
-                  _targetChain,
-                  _sourceToken,
-                  _targetToken,
-                });
-              }}
-            >
-              <div className="relative">
-                <Image
-                  alt="Token"
-                  width={32}
-                  height={32}
-                  src={getTokenLogoSrc(balance.token.logo)}
-                  className="rounded-full"
-                />
-                <Image
-                  alt="Chain"
-                  width={20}
-                  height={20}
-                  src={getChainLogoSrc(balance.chain.logo)}
-                  className="absolute -bottom-1 -right-1 rounded-full"
-                />
-              </div>
-              <div className="flex flex-col items-start">
-                <span className="text-sm font-semibold text-white">
-                  {formatBalance(balance.balance, balance.token.decimals)} {balance.token.symbol}
-                </span>
-                <span className="text-xs font-medium text-white/50">{balance.chain.name}</span>
-              </div>
-            </button>
-          ))}
+        {balanceAll.filter(({ balance }) => 0 < balance).length ? (
+          balanceAll
+            .filter(({ balance }) => 0 < balance)
+            .map((balance) => (
+              <button
+                key={`${balance.chain.network}-${balance.token.symbol}`}
+                className="flex items-center gap-large rounded-xl px-3 py-2 transition-colors hover:bg-white/10 disabled:cursor-default lg:py-medium"
+                disabled={true}
+                onClick={() => {
+                  const _sourceChain = balance.chain;
+                  const _sourceToken = balance.token;
+                  const _targetChains = getAvailableTargetChains(_sourceChain);
+                  const _targetChain = _targetChains.at(0);
+                  const _targetTokens = getAvailableTargetTokens(_sourceChain, _targetChain, _sourceToken);
+                  const _targetToken = _targetTokens.at(0);
+                  const _category = getAvailableBridges(_sourceChain, _targetChain, _sourceToken).at(0);
+
+                  setBridgeCategory(_category);
+                  setSourceChain(_sourceChain);
+                  setTargetChain(_targetChain);
+                  setSourceToken(_sourceToken);
+                  setTargetToken(_targetToken);
+                  updateUrlParams(router, searchParams, {
+                    _category,
+                    _sourceChain,
+                    _targetChain,
+                    _sourceToken,
+                    _targetToken,
+                  });
+                }}
+              >
+                <div className="relative">
+                  <Image
+                    alt="Token"
+                    width={32}
+                    height={32}
+                    src={getTokenLogoSrc(balance.token.logo)}
+                    className="rounded-full"
+                  />
+                  <Image
+                    alt="Chain"
+                    width={20}
+                    height={20}
+                    src={getChainLogoSrc(balance.chain.logo)}
+                    className="absolute -bottom-1 -right-1 rounded-full"
+                  />
+                </div>
+                <div className="flex flex-col items-start">
+                  <span className="text-sm font-semibold text-white">
+                    {formatBalance(balance.balance, balance.token.decimals)} {balance.token.symbol}
+                  </span>
+                  <span className="text-xs font-medium text-white/50">{balance.chain.name}</span>
+                </div>
+              </button>
+            ))
+        ) : !loadingBalanceAll ? (
+          <div className="inline-flex h-10 items-center justify-center">
+            <span className="text-sm font-medium text-slate-400">No data</span>
+          </div>
+        ) : null}
       </div>
     </Dropdown>
   ) : (
