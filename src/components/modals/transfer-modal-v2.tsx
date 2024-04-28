@@ -59,7 +59,7 @@ export default function TransferModalV2({
       skip: !txHash,
     },
   );
-  const { updateBalances } = useApp();
+  const { updateBalanceAll } = useApp();
 
   return (
     <Modal
@@ -97,7 +97,7 @@ export default function TransferModalV2({
             confirmedBlocks={txProgressData?.historyRecordByTxHash?.confirmedBlocks}
             result={txProgressData?.historyRecordByTxHash?.result}
             id={txProgressData?.historyRecordByTxHash?.id}
-            onFinished={updateBalances}
+            onFinished={updateBalanceAll}
           />
         </div>
       ) : null}
