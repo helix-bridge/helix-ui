@@ -21,7 +21,12 @@ export const optimismChain: ChainConfig = {
       type: "native",
       address: "0x0000000000000000000000000000000000000000",
       logo: "eth.png",
-      cross: [],
+      cross: [
+        {
+          target: { network: "arbitrum", symbol: "ETH" },
+          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
+        },
+      ],
       category: "eth",
     },
     {
