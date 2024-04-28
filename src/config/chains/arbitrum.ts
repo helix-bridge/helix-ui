@@ -31,6 +31,10 @@ export const arbitrumChain: ChainConfig = {
           target: { network: "astar-zkevm", symbol: "ETH" },
           bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
         },
+        {
+          target: { network: "op", symbol: "ETH" },
+          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
+        },
       ],
       category: "eth",
     },
