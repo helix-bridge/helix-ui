@@ -1,56 +1,5 @@
 import { gql } from "@apollo/client";
 
-export const GQL_HISTORY_RECORDS = gql`
-  query historyRecords(
-    $row: Int!
-    $page: Int!
-    $sender: String
-    $recipient: String
-    $results: [Int]
-    $fromChains: [String]
-    $toChains: [String]
-    $bridges: [String]
-  ) {
-    historyRecords(
-      row: $row
-      page: $page
-      sender: $sender
-      recipient: $recipient
-      results: $results
-      fromChains: $fromChains
-      toChains: $toChains
-      bridges: $bridges
-    ) {
-      total
-      records {
-        sendAmount
-        recvAmount
-        bridge
-        endTime
-        fee
-        feeToken
-        fromChain
-        id
-        nonce
-        messageNonce
-        recipient
-        requestTxHash
-        responseTxHash
-        reason
-        result
-        sender
-        startTime
-        toChain
-        sendToken
-        recvToken
-        sendTokenAddress
-        recvTokenAddress
-        confirmedBlocks
-      }
-    }
-  }
-`;
-
 export const GQL_HISTORY_RECORD_BY_ID = gql`
   query historyRecordById($id: String!) {
     historyRecordById(id: $id) {
@@ -242,6 +191,26 @@ export const GQL_GET_HISTORY = gql`
         confirmedBlocks
         result
         id
+      }
+    }
+  }
+`;
+
+export const GQL_GET_TXS = gql`
+  query GetTXS($bridges: [String], $sender: String, $page: Int, $row: Int) {
+    historyRecords(bridges: $bridges, sender: $sender, page: $page, row: $row) {
+      total
+      records {
+        id
+        fromChain
+        toChain
+        sender
+        recipient
+        sendAmount
+        sendToken
+        startTime
+        result
+        confirmedBlocks
       }
     }
   }
