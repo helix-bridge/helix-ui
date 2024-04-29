@@ -82,21 +82,6 @@ export interface SupportChains {
  * Custom
  */
 
-export interface HistoryRecordsReqParams {
-  row: number;
-  page: number;
-  sender?: string;
-  recipient?: string;
-  results?: RecordResult[];
-  fromChains?: Network[];
-  toChains?: Network[];
-  bridges?: BridgeCategory[];
-}
-
-export interface HistoryRecordsResData {
-  historyRecords: { total: number; records: HistoryRecord[] } | null;
-}
-
 export interface HistoryRecordReqParams {
   id: string;
 }
@@ -260,6 +245,32 @@ export interface HistoryResData {
       | "confirmedBlocks"
       | "result"
       | "id"
+    >[];
+  };
+}
+
+export interface TxsReqParams {
+  bridges: BridgeCategory[];
+  sender: string;
+  page: number;
+  row: number;
+}
+
+export interface TxsResData {
+  historyRecords: {
+    total: number;
+    records: Pick<
+      HistoryRecord,
+      | "id"
+      | "fromChain"
+      | "toChain"
+      | "sender"
+      | "recipient"
+      | "sendAmount"
+      | "sendToken"
+      | "startTime"
+      | "result"
+      | "confirmedBlocks"
     >[];
   };
 }

@@ -75,18 +75,25 @@ const columns: ColumnType<TData>[] = [
 interface Props {
   onPageChange: (page: number) => void;
   onRowClick: (row: TData) => void;
-  dataSource: TData[];
+  totalRecords: number;
   currentPage: number;
-  totalPage: number;
+  dataSource: TData[];
   loading: boolean;
 }
 
-export default function HistoryTable({ onPageChange, onRowClick, dataSource, currentPage, totalPage, loading }: Props) {
+export default function HistoryTable({
+  onPageChange,
+  onRowClick,
+  dataSource,
+  currentPage,
+  totalRecords,
+  loading,
+}: Props) {
   return (
     <Table
       dataSource={dataSource.map(({ id, ...rest }) => ({ key: id, id, ...rest }))}
+      totalRecords={totalRecords}
       currentPage={currentPage}
-      totalPage={totalPage}
       pageSize={10}
       columns={columns}
       loading={loading}

@@ -60,8 +60,8 @@ export default function History({ children, className }: PropsWithChildren<{ cla
                   onPageChange={setCurrentPage}
                   onRowClick={setDetail}
                   currentPage={currentPage}
+                  totalRecords={total}
                   dataSource={data}
-                  totalPage={total}
                   loading={loading}
                 />
               )}

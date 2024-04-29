@@ -1,19 +1,18 @@
 "use client";
 
-import { GQL_HISTORY_RECORDS } from "@/config";
-import { useApp } from "@/hooks";
-import { HistoryRecordsReqParams, HistoryRecordsResData, UrlSearchParamKey } from "@/types";
-import { NetworkStatus, useQuery } from "@apollo/client";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useApp, useTxs } from "@/hooks";
 import { useDeferredValue, useEffect, useState } from "react";
-import RecordsTable from "./records-table";
+import ExplorerTable from "./explorer-table";
+import { UrlSearchParamKey } from "@/types";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Search from "@/ui/search";
-import { isAddress } from "viem";
 import CountdownRefresh from "@/ui/countdown-refresh";
+import { NetworkStatus } from "@apollo/client";
+import { isAddress } from "viem";
 
 const pageSize = 10;
 
-export default function HistoryRecords() {
+export default function Explorer() {
   const { recordsSearch, setRecordsSearch } = useApp();
   const deferredSearchValue = useDeferredValue(recordsSearch);
 
@@ -21,30 +20,9 @@ export default function HistoryRecords() {
   const pathName = usePathname();
   const router = useRouter();
 
-  const [records, setRecords] = useState<HistoryRecordsResData>();
   const [currentPage, setCurrentPage] = useState(0);
   const [isManualRefresh, setIsManualRefresh] = useState(false);
-
-  const { loading, data, networkStatus, refetch } = useQuery<HistoryRecordsResData, HistoryRecordsReqParams>(
-    GQL_HISTORY_RECORDS,
-    {
-      variables: {
-        row: pageSize,
-        page: currentPage,
-        sender: deferredSearchValue.toLowerCase(),
-        recipient: deferredSearchValue.toLowerCase(),
-        bridges: ["lnv3", "lnv2-default", "lnv2-opposite"],
-      },
-      notifyOnNetworkStatusChange: true,
-    },
-  );
-
-  useEffect(() => {
-    // Better user experience
-    if (!loading) {
-      setRecords(data);
-    }
-  }, [loading, data]);
+  const { data, total, networkStatus, refetch } = useTxs(deferredSearchValue.toLowerCase(), currentPage, pageSize);
 
   useEffect(() => {
     setRecordsSearch(new URLSearchParams(window.location.search).get(UrlSearchParamKey.ADDRESS) || "");
@@ -58,8 +36,8 @@ export default function HistoryRecords() {
   }, []);
 
   return (
-    <div className="container mx-auto">
-      <div className="mb-5 flex items-center justify-between gap-5">
+    <div className="space-y-5">
+      <div className="flex items-center justify-between gap-5">
         <Search
           placeholder="Search by address"
           className="w-full hover:border-primary lg:w-[26.5rem]"
@@ -69,6 +47,7 @@ export default function HistoryRecords() {
             setCurrentPage(0);
 
             const params = new URLSearchParams(searchParams.toString());
+            params.delete(UrlSearchParamKey.PAGE);
             if (isAddress(value)) {
               params.set(UrlSearchParamKey.ADDRESS, value);
               router.push(`?${params.toString()}`);
@@ -87,7 +66,6 @@ export default function HistoryRecords() {
             }
           }}
         />
-
         <CountdownRefresh
           onClick={() => {
             setIsManualRefresh(true);
@@ -98,27 +76,26 @@ export default function HistoryRecords() {
             setTimeout(() => refetch(), 0);
           }}
           enabled={networkStatus === NetworkStatus.ready}
-          enabledAfterClick={true}
+          enabledAfterClick
         />
       </div>
-
-      <RecordsTable
-        dataSource={(records?.historyRecords?.records || []).map((r) => ({ ...r, key: r.id }))}
+      <ExplorerTable
+        dataSource={data}
+        totalRecords={total}
+        currentPage={currentPage}
+        pageSize={pageSize}
         loading={
           networkStatus === NetworkStatus.loading ||
           networkStatus === NetworkStatus.setVariables ||
           (networkStatus === NetworkStatus.refetch && isManualRefresh)
         }
-        total={records?.historyRecords?.total}
-        pageSize={pageSize}
-        currentPage={currentPage}
         onPageChange={(page) => {
           setCurrentPage(page);
           const params = new URLSearchParams(searchParams.toString());
           params.set(UrlSearchParamKey.PAGE, (page + 1).toString());
           router.push(`?${params.toString()}`);
         }}
-        onRowClick={(_, { id }) => router.push(`${pathName}/${id}`)}
+        onRowClick={({ id }) => router.push(`${pathName}/${id}`)}
       />
     </div>
   );
