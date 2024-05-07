@@ -10,7 +10,7 @@ export type ColumnType<T> = {
 } & ({ dataIndex: keyof T; render?: never } | { dataIndex?: never; render: (row: T) => JSX.Element | string | number });
 
 interface Props<T> {
-  columns: ColumnType<Omit<T, "key">>[];
+  columns: ColumnType<T>[];
   loading?: boolean;
   dataSource?: T[];
   onRowClick?: (row: T) => void;
@@ -22,7 +22,7 @@ interface Props<T> {
   onPageChange?: (page: number) => void;
 }
 
-export default function Table<T extends { key: Key }>({
+export default function Table<T extends { id: Key }>({
   onPageChange,
   onRowClick,
   totalRecords,
@@ -79,7 +79,7 @@ export default function Table<T extends { key: Key }>({
                     } grid items-center gap-x-2 rounded-xl px-3 py-2 text-sm font-normal text-white`}
                     style={{ gridTemplateColumns: templateCols }}
                     onClick={() => onRowClick && onRowClick(row)}
-                    key={row.key}
+                    key={row.id}
                   >
                     {columns.map(({ key, dataIndex, render }) => (
                       <Fragment key={key}>{render ? render(row) : <span>{`${row[dataIndex]}`}</span>}</Fragment>
