@@ -31,9 +31,7 @@ export default function RelayerPenalty({ record }: Props) {
     const bridge = new LnBridgeV3({ category: "lnbridge", sourceChain, targetChain, sourceToken, targetToken });
 
     const sub$$ = from(bridge.getPenaltyReserves(record.relayer)).subscribe({
-      next: (res) => {
-        setPenalty(res);
-      },
+      next: setPenalty,
       error: (err) => {
         console.error(err);
         setPenalty(null);

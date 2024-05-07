@@ -215,3 +215,36 @@ export const GQL_GET_TXS = gql`
     }
   }
 `;
+
+export const GQL_GET_RELAYERS = gql`
+  query GetRelayers($fromChain: String, $toChain: String, $relayer: String, $version: String, $page: Int, $row: Int) {
+    queryLnBridgeRelayInfos(
+      fromChain: $fromChain
+      toChain: $toChain
+      relayer: $relayer
+      version: $version
+      page: $page
+      row: $row
+    ) {
+      total
+      records {
+        id
+        fromChain
+        toChain
+        bridge
+        relayer
+        sendToken
+        margin
+        baseFee
+        liquidityFeeRate
+        cost
+        profit
+        heartbeatTimestamp
+        messageChannel
+        lastTransferId
+        withdrawNonce
+        transferLimit
+      }
+    }
+  }
+`;
