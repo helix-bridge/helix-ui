@@ -32,7 +32,11 @@ export default function Header() {
 
   return (
     <>
-      <div className="app-header fixed left-0 top-0 z-10 flex w-full items-center justify-between border-b border-b-white/25 bg-transparent px-medium lg:border-b-transparent lg:px-5">
+      <div
+        className={`app-header fixed left-0 top-0 z-10 flex w-full items-center justify-between border-b border-b-white/25 px-medium lg:border-b-transparent lg:px-5 ${
+          pathname === "/" ? "bg-transparent" : "bg-background"
+        }`}
+      >
         {/* Left */}
         <div className="flex items-center gap-5">
           {/* Logo */}
@@ -56,9 +60,7 @@ export default function Header() {
                   target="_blank"
                   href={href}
                   key={label}
-                  className={`rounded-full px-3 py-small text-sm font-bold transition-colors hover:bg-white/[0.15] ${
-                    pathname === href ? "text-primary underline" : "text-white"
-                  }`}
+                  className="rounded-full px-3 py-small text-sm font-bold transition-colors hover:bg-white/[0.15]"
                 >
                   {label}
                 </a>
@@ -70,8 +72,10 @@ export default function Header() {
                 <Link
                   key={label}
                   href={href}
-                  className={`rounded-full px-3 py-small text-sm font-bold transition-colors hover:bg-white/[0.15] ${
-                    pathname === href ? "text-primary underline decoration-2 underline-offset-8" : "text-white"
+                  className={`relative rounded-full px-3 py-small text-sm font-bold transition-colors hover:bg-white/[0.15] ${
+                    pathname === href
+                      ? "text-primary after:absolute after:-bottom-[2px] after:left-1/4 after:block after:h-[3px] after:w-1/2 after:rounded-full after:bg-primary"
+                      : "text-white"
                   }`}
                 >
                   {label}
@@ -83,7 +87,7 @@ export default function Header() {
 
         {/* Right */}
         <div className="hidden items-center gap-medium lg:flex">
-          <History className="inline-flex h-8 items-center rounded-full bg-white/20 px-large text-sm font-bold text-white transition-colors hover:bg-white/[0.25]" />
+          <History className="inline-flex h-8 items-center rounded-full bg-secondary px-large text-sm font-bold text-white transition-colors hover:bg-white/20" />
           <User prefixLength={14} suffixLength={10} />
           <ChainSwitch placement="bottom-end" />
         </div>
@@ -103,15 +107,7 @@ export default function Header() {
             <div className="flex flex-col gap-large">
               {navigationsConfig.map(({ label, href, external, soon, disabled }) =>
                 external ? (
-                  <a
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    href={href}
-                    key={label}
-                    className={`text-sm font-bold ${
-                      pathname === href ? "text-primary underline decoration-2 underline-offset-4" : "text-white"
-                    }`}
-                  >
+                  <a rel="noopener noreferrer" target="_blank" href={href} key={label} className="text-sm font-bold">
                     {label}
                   </a>
                 ) : soon || disabled ? (
@@ -122,7 +118,7 @@ export default function Header() {
                   <Link
                     key={label}
                     href={href}
-                    className={`text-sm font-bold ${
+                    className={`relative text-sm font-bold ${
                       pathname === href ? "text-primary underline decoration-2 underline-offset-4" : "text-white"
                     }`}
                     onClick={setIsOpenFalse}
