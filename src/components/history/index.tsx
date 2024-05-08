@@ -48,7 +48,7 @@ export default function History({ children, className }: PropsWithChildren<{ cla
           <CSSTransition
             key={detail ? "detail" : "history"}
             classNames={detail ? "history-detail-fade" : "history-table-fade"}
-            timeout={200}
+            timeout={100}
             nodeRef={nodeRef}
             unmountOnExit
           >

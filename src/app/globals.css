@@ -158,12 +158,12 @@ body {
 /* History */
 .history-table-fade-enter {
   opacity: 0;
-  transform: translateX(-10%);
+  transform: translateX(-10px);
 }
 .history-table-fade-enter-active {
   opacity: 1;
   transform: translateX(0);
-  transition: opacity 200ms, transform 200ms;
+  transition: opacity 100ms, transform 100ms;
 }
 .history-table-fade-exit {
   opacity: 1;
@@ -171,17 +171,17 @@ body {
 }
 .history-table-fade-exit-active {
   opacity: 0;
-  transform: translateX(-10%);
-  transition: opacity 200ms, transform 200ms;
+  transform: translateX(-10px);
+  transition: opacity 100ms, transform 100ms;
 }
 .history-detail-fade-enter {
   opacity: 0;
-  transform: translateX(10%);
+  transform: translateX(10px);
 }
 .history-detail-fade-enter-active {
   opacity: 1;
   transform: translateX(0);
-  transition: opacity 200ms, transform 200ms;
+  transition: opacity 100ms, transform 100ms;
 }
 .history-detail-fade-exit {
   opacity: 1;
@@ -189,8 +189,8 @@ body {
 }
 .history-detail-fade-exit-active {
   opacity: 0;
-  transform: translateX(10%);
-  transition: opacity 200ms, transform 200ms;
+  transform: translateX(10px);
+  transition: opacity 100ms, transform 100ms;
 }
 
 /* Component loading */
