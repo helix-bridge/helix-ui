@@ -66,7 +66,7 @@ export default function Table<T extends { id: Key }>({
           <div className="relative mt-1">
             <ComponentLoading
               loading={loading}
-              className={`rounded-xl ${dataSource?.length ? "bg-black/10" : ""}`}
+              className={`rounded-xl ${dataSource?.length ? "bg-black/10 backdrop-blur-[2px]" : ""}`}
               color="white"
             />
 
