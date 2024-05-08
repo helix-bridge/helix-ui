@@ -49,7 +49,7 @@ export default function Overview({ version }: { version: BridgeVersion }) {
 
         <div className="flex items-center gap-small lg:gap-5">
           <div className="flex items-center gap-medium">
-            <span className="hidden font-medium text-white lg:inline">From</span>
+            <span className="hidden text-sm font-semibold text-white lg:inline">From</span>
             <ChainSelect
               className="h-9 w-40 rounded-medium border border-white/20 px-medium lg:w-44"
               placeholder="Source chain"
@@ -63,7 +63,7 @@ export default function Overview({ version }: { version: BridgeVersion }) {
             />
           </div>
           <div className="flex items-center gap-medium">
-            <span className="hidden font-medium text-white lg:inline">To</span>
+            <span className="hidden text-sm font-semibold text-white lg:inline">To</span>
             <ChainSelect
               className="h-9 w-40 rounded-medium border border-white/20 px-medium lg:w-44"
               placeholder="Target chain"
