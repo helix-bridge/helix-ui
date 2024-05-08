@@ -33,9 +33,7 @@ export default function RelayerAllowance({ record }: Props) {
 
     if (bridge) {
       sub$$ = from(bridge.getTargetAllowance(record.relayer)).subscribe({
-        next: (res) => {
-          setAllowance(res);
-        },
+        next: setAllowance,
         error: (err) => {
           console.error(err);
           setAllowance(null);

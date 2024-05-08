@@ -1,5 +1,5 @@
 import ComponentLoading from "@/ui/component-loading";
-import Pagination from "@/ui/pagination";
+import Pagination from "./pagination";
 import Image from "next/image";
 import { Fragment, Key, useMemo } from "react";
 
@@ -13,7 +13,7 @@ interface Props<T> {
   columns: ColumnType<T>[];
   loading?: boolean;
   dataSource?: T[];
-  onRowClick?: (row: T) => void;
+  className?: string;
 
   // Pagination
   pageSize?: number;
@@ -24,11 +24,11 @@ interface Props<T> {
 
 export default function Table<T extends { id: Key }>({
   onPageChange,
-  onRowClick,
   totalRecords,
   currentPage,
-  pageSize,
   dataSource,
+  className,
+  pageSize,
   loading,
   columns,
 }: Props<T>) {
@@ -50,11 +50,11 @@ export default function Table<T extends { id: Key }>({
   return (
     <div className="space-y-3">
       {/* Table */}
-      <div className="w-full overflow-x-auto pb-1">
-        <div className="w-[39.5rem]">
+      <div className="w-full overflow-x-auto">
+        <div className={`rounded-2xl bg-secondary p-2 lg:p-5 ${className}`}>
           {/* Header */}
           <div
-            className="grid items-center gap-x-2 rounded-xl bg-white/10 px-3 py-2 text-sm font-semibold text-white"
+            className="grid items-center gap-x-2 rounded-t-xl border-b border-b-white/10 bg-background px-3 py-large text-sm font-normal text-white/50"
             style={{ gridTemplateColumns: templateCols }}
           >
             {columns.map(({ key, title }) =>
@@ -63,22 +63,19 @@ export default function Table<T extends { id: Key }>({
           </div>
 
           {/* Body */}
-          <div className="relative mt-1">
+          <div className="relative">
             <ComponentLoading
               loading={loading}
-              className={`rounded-xl ${dataSource?.length ? "bg-black/10" : ""}`}
+              className={`rounded-b-xl ${dataSource?.length ? "bg-black/5 backdrop-blur-[2px]" : ""}`}
               color="white"
             />
 
             {dataSource?.length ? (
-              <div className="space-y-1 rounded-b-xl">
+              <div className="rounded-b-xl">
                 {dataSource.map((row) => (
                   <div
-                    className={`${
-                      onRowClick ? "transition-colors hover:cursor-pointer hover:bg-white/5" : ""
-                    } grid items-center gap-x-2 rounded-xl px-3 py-2 text-sm font-normal text-white`}
+                    className="grid items-center gap-x-2 bg-background px-3 py-2 text-sm font-normal text-white last:rounded-b-xl"
                     style={{ gridTemplateColumns: templateCols }}
-                    onClick={() => onRowClick && onRowClick(row)}
                     key={row.id}
                   >
                     {columns.map(({ key, dataIndex, render }) => (
@@ -92,7 +89,7 @@ export default function Table<T extends { id: Key }>({
                 {loading ? null : (
                   <>
                     <Image width={50} height={63} alt="No data" src="/images/no-data.svg" />
-                    <span className="text-sm font-medium text-slate-400">No data</span>
+                    <span className="text-sm font-normal text-slate-400">No data</span>
                   </>
                 )}
               </div>
@@ -104,7 +101,7 @@ export default function Table<T extends { id: Key }>({
       {/* Pagination */}
       {totalRecords !== undefined && currentPage !== undefined && (
         <div className="overflow-x-auto pb-1">
-          <Pagination total={totalRecords} pageSize={pageSize} currentPage={currentPage} onChange={onPageChange} />
+          <Pagination size={pageSize} current={currentPage} total={totalRecords} onChange={onPageChange} />
         </div>
       )}
     </div>

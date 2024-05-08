@@ -274,3 +274,39 @@ export interface TxsResData {
     >[];
   };
 }
+
+export type RelayersRecord = Pick<
+  LnBridgeRelayInfo,
+  | "id"
+  | "fromChain"
+  | "toChain"
+  | "bridge"
+  | "relayer"
+  | "sendToken"
+  | "margin"
+  | "baseFee"
+  | "liquidityFeeRate"
+  | "cost"
+  | "profit"
+  | "heartbeatTimestamp"
+  | "messageChannel"
+  | "lastTransferId"
+  | "withdrawNonce"
+  | "transferLimit"
+>;
+
+export interface RelayersReqParams {
+  fromChain?: Network;
+  toChain?: Network;
+  version: BridgeVersion;
+  relayer?: string;
+  page: number;
+  row: number;
+}
+
+export interface RelayersResData {
+  queryLnBridgeRelayInfos: {
+    total: number;
+    records: RelayersRecord[];
+  };
+}

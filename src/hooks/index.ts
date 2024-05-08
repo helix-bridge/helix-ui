@@ -18,3 +18,4 @@ export * from "./use-max-transfer";
 export * from "./use-history";
 export * from "./use-txs";
 export * from "./use-media-query";
+export * from "./use-relayers-data";

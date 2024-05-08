@@ -91,7 +91,7 @@ export default function HistoryTable({
 }: Props) {
   return (
     <Table
-      dataSource={dataSource.map(({ id, ...rest }) => ({ key: id, id, ...rest }))}
+      dataSource={dataSource}
       totalRecords={totalRecords}
       currentPage={currentPage}
       pageSize={10}

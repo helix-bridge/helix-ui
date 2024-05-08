@@ -145,14 +145,14 @@ body {
 }
 .tabs-fade-enter-active {
   opacity: 1;
-  transition: opacity 200ms;
+  transition: opacity 150ms;
 }
 .tabs-fade-exit {
   opacity: 1;
 }
 .tabs-fade-exit-active {
   opacity: 0;
-  transition: opacity 200ms;
+  transition: opacity 150ms;
 }
 
 /* History */
