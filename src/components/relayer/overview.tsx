@@ -1,6 +1,6 @@
 import { useRelayersData } from "@/hooks";
 import { BridgeVersion, ChainConfig } from "@/types";
-import { useCallback, useDeferredValue, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useState } from "react";
 import RelayersTable from "./relayers-table";
 import Search from "@/ui/search";
 import CountdownRefresh from "@/ui/countdown-refresh";
@@ -35,6 +35,8 @@ export default function Overview({ version }: { version: BridgeVersion }) {
     setSearchValue("");
     setCurrentPage(0);
   }, []);
+
+  useEffect(() => setCurrentPage(0), [version]);
 
   return (
     <div className="space-y-5">

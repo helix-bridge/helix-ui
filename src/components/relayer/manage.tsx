@@ -1,6 +1,6 @@
 import { useRelayersData } from "@/hooks";
 import { BridgeVersion } from "@/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CountdownRefresh from "@/ui/countdown-refresh";
 import RelayersTable from "./relayers-table";
 import { useAccount } from "wagmi";
@@ -11,6 +11,8 @@ export default function Manage({ version }: { version: BridgeVersion }) {
   const account = useAccount();
   const [currentPage, setCurrentPage] = useState(0);
   const { loading, data, total, refetch } = useRelayersData(version, currentPage, pageSize, account.address);
+
+  useEffect(() => setCurrentPage(0), [version]);
 
   return (
     <div className="space-y-medium">
