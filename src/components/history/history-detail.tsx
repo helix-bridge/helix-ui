@@ -1,4 +1,4 @@
-import { ChainConfig, HistoryRecord } from "@/types";
+import { ChainConfig, HistoryRecord, UrlSearchParamKey } from "@/types";
 import { formatBalance, formatTime, getChainConfig, getChainLogoSrc, toShortAdrress } from "@/utils";
 import Image from "next/image";
 import { Hex } from "viem";
@@ -53,7 +53,7 @@ export default function HistoryDetail({ data }: Props) {
           <a
             className="text-sm font-light text-white underline transition-colors hover:text-primary"
             target="_blank"
-            href={`records/${data.id}`}
+            href={`record?${UrlSearchParamKey.ID}=${data.id}`}
             rel="noopener noreferrer"
           >
             {`More`}

@@ -2,12 +2,12 @@
 
 import { BaseBridge } from "@/bridges";
 import { GQL_HISTORY_RECORD_BY_ID } from "@/config";
-import { HistoryRecordReqParams, HistoryRecordResData } from "@/types";
+import { HistoryRecordReqParams, HistoryRecordResData, UrlSearchParamKey } from "@/types";
 import ComponentLoading from "@/ui/component-loading";
 import CountdownRefresh from "@/ui/countdown-refresh";
 import { bridgeFactory, getChainConfig } from "@/utils";
 import { useQuery } from "@apollo/client";
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import TransferRoute from "./transfer-route";
 import TransactionStatus from "./transaction-status";
 import { TransactionHash } from "./transaction-hash";
@@ -19,17 +19,15 @@ import TransactionValue from "./transaction-value";
 import TransactionFee from "./transaction-fee";
 import { RecordItemTitle } from "@/ui/record-item-title";
 
-interface Props {
-  id: string;
-}
-
-export default function RecordDetail(props: Props) {
+export default function RecordDetail() {
+  const [id, setId] = useState("");
   const {
     loading,
     data: record,
     refetch,
   } = useQuery<HistoryRecordResData, HistoryRecordReqParams>(GQL_HISTORY_RECORD_BY_ID, {
-    variables: { id: props.id },
+    skip: !id.length,
+    variables: { id },
     notifyOnNetworkStatusChange: true,
   });
 
@@ -45,6 +43,11 @@ export default function RecordDetail(props: Props) {
     }
     return undefined;
   }, [record?.historyRecordById]);
+
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get(UrlSearchParamKey.ID);
+    setId((prev) => id ?? prev);
+  }, []);
 
   return (
     <div className="container mx-auto">

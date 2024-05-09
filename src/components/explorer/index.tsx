@@ -4,7 +4,7 @@ import { useApp, useTxs } from "@/hooks";
 import { useDeferredValue, useEffect, useState } from "react";
 import ExplorerTable from "./explorer-table";
 import { UrlSearchParamKey } from "@/types";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Search from "@/ui/search";
 import CountdownRefresh from "@/ui/countdown-refresh";
 import { NetworkStatus } from "@apollo/client";
@@ -17,7 +17,6 @@ export default function Explorer() {
   const deferredSearchValue = useDeferredValue(recordsSearch);
 
   const searchParams = useSearchParams();
-  const pathName = usePathname();
   const router = useRouter();
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -95,7 +94,7 @@ export default function Explorer() {
           params.set(UrlSearchParamKey.PAGE, (page + 1).toString());
           router.push(`?${params.toString()}`);
         }}
-        onRowClick={({ id }) => router.push(`${pathName}/${id}`)}
+        onRowClick={({ id }) => router.push(`record?${UrlSearchParamKey.ID}=${id}`)}
       />
     </div>
   );

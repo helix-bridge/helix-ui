@@ -8,4 +8,5 @@ export enum UrlSearchParamKey {
   SOURCE_TOKEN = "source_token",
   TARGET_TOKEN = "target_token",
   TOKEN_CATEGORY = "token_category",
+  ID = "id",
 }
