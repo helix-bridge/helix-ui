@@ -25,6 +25,7 @@ import { isProduction } from "./env";
 import { bscChain } from "@/config/chains/bsc";
 import { optimismChain } from "@/config/chains/optimism";
 import { morphChain } from "@/config/chains/morph";
+import { taikoHeklaChain } from "@/config/chains/taiko-hekla";
 
 export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
   switch (chainIdOrNetwork) {
@@ -91,6 +92,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.TAIKO:
     case "taiko":
       return taikoChain;
+    case ChainID.TAIKO_HEKLA:
+    case "taiko-hekla":
+      return taikoHeklaChain;
     case ChainID.ASTAR_ZKEVM:
     case "astar-zkevm":
       return astarZkEvmChain;
@@ -125,6 +129,7 @@ export function getChainConfigs(askAll?: boolean) {
     blastChain,
     beraChain,
     taikoChain,
+    taikoHeklaChain,
     astarZkEvmChain,
     morphChain,
   ].sort((a, b) => a.name.localeCompare(b.name));

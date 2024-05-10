@@ -40,7 +40,7 @@ export const arbitrumSepoliaChain: ChainConfig = {
           bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
         },
         { target: { network: "bera", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "taiko", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
+        { target: { network: "taiko-hekla", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         {
           target: { network: "zksync-sepolia", symbol: "USDC" },
           bridge: { category: "lnbridge", lnv2Type: "default" },
@@ -62,7 +62,7 @@ export const arbitrumSepoliaChain: ChainConfig = {
           bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
         },
         { target: { network: "bera", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "taiko", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
+        { target: { network: "taiko-hekla", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         {
           target: { network: "zksync-sepolia", symbol: "USDT" },
           bridge: { category: "lnbridge", lnv2Type: "default" },

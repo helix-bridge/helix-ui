@@ -34,21 +34,22 @@ export class LnBridgeV3 extends LnBridgeBase {
         sourceAddress = "0xDc55fF59F82AA50D8A4A61dB8CcaDffD26Fb7dD2";
       } else if (this.sourceChain?.network === "bera") {
         sourceAddress = "0x00e7EFf0826dfCDf2AA5945dFF710B48f4AA7E64";
-      } else if (this.sourceChain?.network === "taiko") {
-        sourceAddress = "0x00e7EFf0826dfCDf2AA5945dFF710B48f4AA7E64";
+      } else if (this.sourceChain?.network === "taiko-hekla") {
+        sourceAddress = "0xD476650e03a45E70202b0bcAfa04E1513920f83a";
+      } else if (this.sourceChain?.network === "morph") {
+        sourceAddress = "0xD476650e03a45E70202b0bcAfa04E1513920f83a";
       }
+
       if (this.targetChain?.network === "zksync-sepolia") {
         targetAddress = "0xDc55fF59F82AA50D8A4A61dB8CcaDffD26Fb7dD2";
       } else if (this.targetChain?.network === "bera") {
         targetAddress = "0x00e7EFf0826dfCDf2AA5945dFF710B48f4AA7E64";
-      } else if (this.targetChain?.network === "taiko") {
-        targetAddress = "0x00e7EFf0826dfCDf2AA5945dFF710B48f4AA7E64";
-      }
-      if (this.sourceChain?.network === "morph") {
-        sourceAddress = "0xD476650e03a45E70202b0bcAfa04E1513920f83a";
+      } else if (this.targetChain?.network === "taiko-hekla") {
+        targetAddress = "0xD476650e03a45E70202b0bcAfa04E1513920f83a";
       } else if (this.targetChain?.network === "morph") {
         targetAddress = "0xD476650e03a45E70202b0bcAfa04E1513920f83a";
       }
+
       this.contract = { sourceAddress, targetAddress };
     }
   }

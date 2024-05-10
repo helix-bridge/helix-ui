@@ -28,6 +28,7 @@ export enum ChainID {
   BLAST = 81457,
   BERA = 80085,
   TAIKO = 167008,
+  TAIKO_HEKLA = 167009,
   ASTAR_ZKEVM = 3776,
   MORPH = 2710,
 }
@@ -55,6 +56,7 @@ export type Network =
   | "blast"
   | "bera"
   | "taiko"
+  | "taiko-hekla"
   | "morph"
   | "bsc";
 
