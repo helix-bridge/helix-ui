@@ -5,8 +5,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "dev": "vite --mode mainnet",
+    "dev:testnet": "vite --mode testnet",
+    "build": "tsc && vite build --mode mainnet",
+    "build:testnet": "tsc && vite build --mode testnet",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "prettier 'src/**/*.{js,jsx,ts,tsx,json}' --write",
