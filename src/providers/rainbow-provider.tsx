@@ -5,7 +5,7 @@ import { PropsWithChildren } from "react";
 import { WagmiConfig, configureChains, createConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 
-const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_ID || "";
+const projectId = import.meta.env.VITE_WALLET_CONNECT_ID || "";
 const appName = "Helix Bridge";
 
 const { chains, publicClient } = configureChains([], [publicProvider()]);
