@@ -1,9 +1,9 @@
-import { BaseBridge } from "@/bridges";
-import { GQL_HISTORY_RECORD_BY_ID } from "@/config";
-import { HistoryRecordReqParams, HistoryRecordResData } from "@/types";
-import ComponentLoading from "@/ui/component-loading";
-import CountdownRefresh from "@/ui/countdown-refresh";
-import { bridgeFactory, getChainConfig } from "@/utils";
+import { BaseBridge } from "../bridges";
+import { GQL_HISTORY_RECORD_BY_ID } from "../config";
+import { HistoryRecordReqParams, HistoryRecordResData } from "../types";
+import ComponentLoading from "../ui/component-loading";
+import CountdownRefresh from "../ui/countdown-refresh";
+import { bridgeFactory, getChainConfig } from "../utils";
 import { useQuery } from "@apollo/client";
 import { PropsWithChildren, useMemo } from "react";
 import TransferRoute from "./transfer-route";
@@ -15,7 +15,7 @@ import TokenTransfer from "./token-transfer";
 import TokenToReceive from "./token-to-receive";
 import TransactionValue from "./transaction-value";
 import TransactionFee from "./transaction-fee";
-import { RecordItemTitle } from "@/ui/record-item-title";
+import { RecordItemTitle } from "../ui/record-item-title";
 
 interface Props {
   id: string;

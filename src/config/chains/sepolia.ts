@@ -1,4 +1,4 @@
-import { ChainConfig } from "@/types";
+import { ChainConfig } from "../../types";
 import { sepolia } from "viem/chains";
 
 export const sepoliaChain: ChainConfig = {

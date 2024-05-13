@@ -1,4 +1,4 @@
-import { ChainConfig } from "@/types";
+import { ChainConfig } from "../../types";
 import { polygonZkEvm } from "viem/chains";
 
 export const polygonZkEvmChain: ChainConfig = {

@@ -1,16 +1,16 @@
-import { BaseBridge } from "@/bridges";
-import { GQL_HISTORY_RECORD_BY_TX_HASH } from "@/config";
-import { useApp } from "@/hooks";
+import { BaseBridge } from "../../bridges";
+import { GQL_HISTORY_RECORD_BY_TX_HASH } from "../../config";
+import { useApp } from "../../hooks";
 import {
   ChainConfig,
   HistoryRecordByTxHashReqParams,
   HistoryRecordByTxHashResData,
   RecordResult,
   Token,
-} from "@/types";
-import Modal from "@/ui/modal";
-import ProgressIcon from "@/ui/progress-icon";
-import { formatBalance, getChainLogoSrc, toShortAdrress } from "@/utils";
+} from "../../types";
+import Modal from "../../ui/modal";
+import ProgressIcon from "../../ui/progress-icon";
+import { formatBalance, getChainLogoSrc, toShortAdrress } from "../../utils";
 import { useQuery } from "@apollo/client";
 import { Link } from "react-router-dom";
 import { Address, Hex, isHex } from "viem";

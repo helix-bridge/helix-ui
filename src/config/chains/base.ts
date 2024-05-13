@@ -1,4 +1,4 @@
-import { ChainConfig } from "@/types/chain";
+import { ChainConfig } from "../../types/chain";
 import { base } from "viem/chains";
 
 export const baseChain: ChainConfig = {

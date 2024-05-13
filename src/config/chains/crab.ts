@@ -1,4 +1,4 @@
-import { ChainConfig, ChainID } from "@/types/chain";
+import { ChainConfig, ChainID } from "../../types/chain";
 
 export const crabChain: ChainConfig = {
   /**

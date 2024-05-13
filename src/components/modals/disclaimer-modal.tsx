@@ -1,6 +1,6 @@
-import { useToggle } from "@/hooks/use-toggle";
-import Button from "@/ui/button";
-import Modal from "@/ui/modal";
+import { useToggle } from "../../hooks/use-toggle";
+import Button from "../../ui/button";
+import Modal from "../../ui/modal";
 import { useEffect } from "react";
 
 const KEY = "disclaimer";

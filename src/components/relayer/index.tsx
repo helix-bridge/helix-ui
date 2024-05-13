@@ -1,11 +1,11 @@
-import { BridgeVersion } from "@/types";
+import { BridgeVersion } from "../../types";
 import { useCallback, useState } from "react";
 import VersionSwitch from "./version-switch";
 import Tabs from "./tabs";
 import Overview from "./overview";
-import RelayerProviderV3 from "@/providers/relayer-provider-v3";
+import RelayerProviderV3 from "../../providers/relayer-provider-v3";
 import RelayerRegisterV3 from "../relayer-register-v3";
-import RelayerProvider from "@/providers/relayer-provider";
+import RelayerProvider from "../../providers/relayer-provider";
 import RelayerRegister from "../relayer-register";
 import Manage from "./manage";
 

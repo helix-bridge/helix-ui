@@ -1,4 +1,4 @@
-import { BridgeVersion } from "@/types";
+import { BridgeVersion } from "../../types";
 
 interface Props {
   value: BridgeVersion;

@@ -1,7 +1,7 @@
-import { BaseBridge } from "@/bridges/base";
-import { BridgeLogoType } from "@/types/bridge";
-import Tooltip from "@/ui/tooltip";
-import { getBridgeLogoSrc } from "@/utils/misc";
+import { BaseBridge } from "../bridges/base";
+import { BridgeLogoType } from "../types/bridge";
+import Tooltip from "../ui/tooltip";
+import { getBridgeLogoSrc } from "../utils/misc";
 
 interface Props {
   width: number;

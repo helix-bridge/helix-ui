@@ -1,6 +1,6 @@
-import { BridgeCategory, ChainConfig, Token } from "@/types";
+import { BridgeCategory, ChainConfig, Token } from "../types";
 import PrettyAddress from "./pretty-address";
-import { formatBalance, getChainLogoSrc, getTokenLogoSrc } from "@/utils";
+import { formatBalance, getChainLogoSrc, getTokenLogoSrc } from "../utils";
 import { Address } from "viem";
 
 export default function StepCompleteItem({

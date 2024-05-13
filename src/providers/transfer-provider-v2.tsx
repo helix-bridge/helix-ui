@@ -1,12 +1,12 @@
-import { useSupportChains } from "@/hooks";
-import { ChainConfig, Token, TokenOption, UrlSearchParamKey } from "@/types";
+import { useSupportChains } from "../hooks";
+import { ChainConfig, Token, TokenOption, UrlSearchParamKey } from "../types";
 import {
   getSourceChainOptions,
   getSourceTokenOptions,
   getTargetChainOptions,
   getTargetTokenOptions,
   getTokenOptions,
-} from "@/utils";
+} from "../utils";
 import {
   Dispatch,
   PropsWithChildren,

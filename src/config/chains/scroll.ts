@@ -1,4 +1,4 @@
-import { ChainConfig } from "@/types/chain";
+import { ChainConfig } from "../../types/chain";
 import { scroll } from "viem/chains";
 
 export const scrollChain: ChainConfig = {

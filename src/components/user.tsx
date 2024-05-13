@@ -1,6 +1,6 @@
-import { useApp } from "@/hooks";
-import Dropdown from "@/ui/dropdown";
-import { formatBalance, getChainLogoSrc, getTokenLogoSrc, toShortAdrress } from "@/utils";
+import { useApp } from "../hooks";
+import Dropdown from "../ui/dropdown";
+import { formatBalance, getChainLogoSrc, getTokenLogoSrc, toShortAdrress } from "../utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { PropsWithChildren } from "react";
 import { useAccount, useDisconnect } from "wagmi";
@@ -8,7 +8,7 @@ import PrettyAddress from "./pretty-address";
 import AddressIdenticon from "./address-identicon";
 import { Placement } from "@floating-ui/react";
 import History from "./history";
-import ComponentLoading from "@/ui/component-loading";
+import ComponentLoading from "../ui/component-loading";
 
 interface Props {
   placement?: Placement;

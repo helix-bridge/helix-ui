@@ -1,8 +1,8 @@
 import { BaseBridge } from "./base";
 import { Address, Hex, PublicClient, TransactionReceipt, bytesToHex, encodeFunctionData } from "viem";
-import { BridgeConstructorArgs, GetFeeArgs, GetWithdrawFeeArgs, TransferOptions } from "@/types/bridge";
-import { fetchMsglineFeeAndParams } from "@/utils";
-import { ChainConfig } from "@/types";
+import { BridgeConstructorArgs, GetFeeArgs, GetWithdrawFeeArgs, TransferOptions } from "../types/bridge";
+import { fetchMsglineFeeAndParams } from "../utils";
+import { ChainConfig } from "../types";
 
 export class LnBridgeBase extends BaseBridge {
   constructor(args: BridgeConstructorArgs) {
@@ -31,7 +31,7 @@ export class LnBridgeBase extends BaseBridge {
     ) {
       const value = await this.sourcePublicClient.readContract({
         address: this.contract.sourceAddress,
-        abi: (await import("@/abi/lnv2-default")).default,
+        abi: (await import("../abi/lnv2-default")).default,
         functionName: "totalFee",
         args: [
           BigInt(this.targetChain.id),
@@ -68,7 +68,7 @@ export class LnBridgeBase extends BaseBridge {
 
     if (sender && localMessager && remoteMessager && localContract && remoteContract) {
       const payload = encodeFunctionData({
-        abi: (await import("@/abi/msgline-messager")).default,
+        abi: (await import("../abi/msgline-messager")).default,
         functionName: "receiveMessage",
         args: [BigInt(localChain.id), localContract, remoteContract, message],
       });

@@ -1,13 +1,13 @@
-import { BridgeVersion, RelayersRecord } from "@/types";
+import { BridgeVersion, RelayersRecord } from "../../../types";
 import { ColumnType } from "../table";
-import Tooltip from "@/ui/tooltip";
-import { formatBalance, formatFeeRate, getChainConfig, getTokenLogoSrc } from "@/utils";
-import RelayerPenalty from "@/components/relayer-penalty";
-import RelayerTotalLiquidity from "@/components/relayer-total-liquidity";
-import RelayerAllowance from "@/components/relayer-allowance";
-import RelayerBalance from "@/components/relayer-balance";
-import Button from "@/ui/button";
-import PrettyAddress from "@/components/pretty-address";
+import Tooltip from "../../../ui/tooltip";
+import { formatBalance, formatFeeRate, getChainConfig, getTokenLogoSrc } from "../../../utils";
+import RelayerPenalty from "../../../components/relayer-penalty";
+import RelayerTotalLiquidity from "../../../components/relayer-total-liquidity";
+import RelayerAllowance from "../../../components/relayer-allowance";
+import RelayerBalance from "../../../components/relayer-balance";
+import Button from "../../../ui/button";
+import PrettyAddress from "../../../components/pretty-address";
 import Chain from "./chain";
 import Title from "./title";
 

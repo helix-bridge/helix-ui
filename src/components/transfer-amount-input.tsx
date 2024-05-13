@@ -1,5 +1,5 @@
-import { ChainConfig, Token } from "@/types";
-import { formatBalance } from "@/utils";
+import { ChainConfig, Token } from "../types";
+import { formatBalance } from "../utils";
 import { ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
 import { formatUnits, parseUnits } from "viem";
 import Faucet from "./faucet";

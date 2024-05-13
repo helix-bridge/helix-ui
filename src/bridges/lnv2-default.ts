@@ -1,7 +1,7 @@
 import { Address, Hex, TransactionReceipt } from "viem";
 import { LnBridgeBase } from "./lnbridge-base";
-import { isMainnet } from "@/utils/env";
-import { BridgeConstructorArgs, TransferOptions } from "@/types/bridge";
+import { isMainnet } from "../utils/env";
+import { BridgeConstructorArgs, TransferOptions } from "../types/bridge";
 
 export class LnBridgeV2Default extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {

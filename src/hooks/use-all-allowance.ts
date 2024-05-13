@@ -1,9 +1,9 @@
-import { ChainConfig, Token } from "@/types";
-import { getChainConfigs } from "@/utils";
+import { ChainConfig, Token } from "../types";
+import { getChainConfigs } from "../utils";
 import { useCallback, useEffect, useState } from "react";
 import { Address, createPublicClient, http } from "viem";
 import { forkJoin, of, map, merge, mergeAll, EMPTY } from "rxjs";
-import abi from "@/abi/erc20";
+import abi from "../abi/erc20";
 
 interface AllAllowance {
   chain: ChainConfig;

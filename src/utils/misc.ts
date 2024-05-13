@@ -1,5 +1,5 @@
-import { FEE_RATE_BASE, FEE_RATE_MAX, FEE_RATE_MAX_V3, FEE_RATE_MIN } from "@/config/constant";
-import { RecordResult } from "@/types/graphql";
+import { FEE_RATE_BASE, FEE_RATE_MAX, FEE_RATE_MAX_V3, FEE_RATE_MIN } from "../config/constant";
+import { RecordResult } from "../types/graphql";
 import { Address, Hex, isHex } from "viem";
 
 export function parseRecordResult(result: RecordResult) {

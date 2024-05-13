@@ -1,8 +1,8 @@
-import { HistoryRecord } from "@/types/graphql";
+import { HistoryRecord } from "../types/graphql";
 import PrettyAddress from "./pretty-address";
-import { getTokenLogoSrc } from "@/utils/misc";
-import { getChainConfig } from "@/utils/chain";
-import Button from "@/ui/button";
+import { getTokenLogoSrc } from "../utils/misc";
+import { getChainConfig } from "../utils/chain";
+import Button from "../ui/button";
 
 interface Props {
   record?: HistoryRecord | null;

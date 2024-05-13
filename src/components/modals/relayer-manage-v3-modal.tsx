@@ -1,16 +1,16 @@
-import { useLiquidityWithdrawFeeParams, useRelayerV3, useWithdrawableLiquidities } from "@/hooks";
-import { InputValue, LnBridgeRelayerOverview, Token } from "@/types";
-import SegmentedTabs, { SegmentedTabsProps } from "@/ui/segmented-tabs";
-import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "@/utils";
+import { useLiquidityWithdrawFeeParams, useRelayerV3, useWithdrawableLiquidities } from "../../hooks";
+import { InputValue, LnBridgeRelayerOverview, Token } from "../../types";
+import SegmentedTabs, { SegmentedTabsProps } from "../../ui/segmented-tabs";
+import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "../../utils";
 import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { useNetwork, useSwitchNetwork } from "wagmi";
 import { TransactionReceipt, formatUnits } from "viem";
 import { BalanceInput } from "../balance-input";
 import FeeRateInput from "../fee-rate-input";
-import Tooltip from "@/ui/tooltip";
-import CountLoading from "@/ui/count-loading";
+import Tooltip from "../../ui/tooltip";
+import CountLoading from "../../ui/count-loading";
 import WithdrawableLiquiditiesSelect from "../withdrawable-liquidities-select";
-import Modal from "@/ui/modal";
+import Modal from "../../ui/modal";
 
 type TabKey = "update" | "deposit" | "withdraw penalty reserve" | "withdraw liquidity" | "allowance";
 

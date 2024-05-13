@@ -1,5 +1,5 @@
-import { BaseBridge } from "@/bridges";
-import { SortedLnBridgeRelayInfosResData, Token } from "@/types";
+import { BaseBridge } from "../bridges";
+import { SortedLnBridgeRelayInfosResData, Token } from "../types";
 import { useEffect, useState } from "react";
 import { Address } from "viem";
 import { from } from "rxjs";

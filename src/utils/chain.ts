@@ -19,13 +19,13 @@ import {
   taikoChain,
   zksyncChain,
   zksyncSepoliaChain,
-} from "@/config/chains";
-import { ChainConfig, ChainID, Network } from "@/types";
+} from "../config/chains";
+import { ChainConfig, ChainID, Network } from "../types";
 import { isMainnet } from "./env";
-import { bscChain } from "@/config/chains/bsc";
-import { optimismChain } from "@/config/chains/optimism";
-import { morphChain } from "@/config/chains/morph";
-import { taikoHeklaChain } from "@/config/chains/taiko-hekla";
+import { bscChain } from "../config/chains/bsc";
+import { optimismChain } from "../config/chains/optimism";
+import { morphChain } from "../config/chains/morph";
+import { taikoHeklaChain } from "../config/chains/taiko-hekla";
 
 export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
   switch (chainIdOrNetwork) {

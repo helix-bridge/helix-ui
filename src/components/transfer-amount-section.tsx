@@ -1,4 +1,4 @@
-import { ChainConfig, Token } from "@/types";
+import { ChainConfig, Token } from "../types";
 import TransferSection from "./transfer-section";
 import TransferAmountInput from "./transfer-amount-input";
 

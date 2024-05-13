@@ -1,6 +1,6 @@
 import { Fragment, Key, ReactElement, useEffect, useMemo, useRef, useState } from "react";
 import Pagination from "./pagination";
-import ComponentLoading from "@/ui/component-loading";
+import ComponentLoading from "../ui/component-loading";
 
 export interface ColumnType<T> {
   title: ReactElement;

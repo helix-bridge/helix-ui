@@ -1,4 +1,4 @@
-import { ChainConfig } from "@/types/chain";
+import { ChainConfig } from "../../types/chain";
 import { optimism } from "viem/chains";
 
 export const optimismChain: ChainConfig = {

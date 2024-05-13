@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useRelayerV3 } from ".";
-import { MessageChannel, Token } from "@/types";
+import { MessageChannel, Token } from "../types";
 import { Address, Hex } from "viem";
 import { Subscription, from } from "rxjs";
-import { extractTransferIds } from "@/utils";
+import { extractTransferIds } from "../utils";
 
 export function useLiquidityWithdrawFeeParams(
   ids: { id: string }[],

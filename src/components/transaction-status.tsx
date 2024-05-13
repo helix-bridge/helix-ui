@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { bridgeFactory } from "@/utils/bridge";
+import { bridgeFactory } from "../utils/bridge";
 import { interval } from "rxjs";
-import { formatCountdown } from "@/utils/time";
-import { HistoryRecord, RecordResult } from "@/types";
-import { RecordResultTag } from "@/ui/record-result-tag";
+import { formatCountdown } from "../utils/time";
+import { HistoryRecord, RecordResult } from "../types";
+import { RecordResultTag } from "../ui/record-result-tag";
 
 interface Props {
   record?: HistoryRecord | null;

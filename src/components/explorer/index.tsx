@@ -1,9 +1,9 @@
-import { useApp, useTxs } from "@/hooks";
+import { useApp, useTxs } from "../../hooks";
 import { useDeferredValue, useEffect, useState } from "react";
 import ExplorerTable from "./explorer-table";
-import { UrlSearchParamKey } from "@/types";
-import Search from "@/ui/search";
-import CountdownRefresh from "@/ui/countdown-refresh";
+import { UrlSearchParamKey } from "../../types";
+import Search from "../../ui/search";
+import CountdownRefresh from "../../ui/countdown-refresh";
 import { NetworkStatus } from "@apollo/client";
 import { isAddress } from "viem";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -55,8 +55,10 @@ export default function Explorer() {
           }}
           onClear={() => {
             setRecordsSearch("");
+            setCurrentPage(0);
             setSearchParams((params) => {
               params.delete(UrlSearchParamKey.ADDRESS);
+              params.delete(UrlSearchParamKey.PAGE);
               return params;
             });
           }}

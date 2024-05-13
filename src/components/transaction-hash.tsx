@@ -1,6 +1,6 @@
-import { Network } from "@/types/chain";
-import CopyIcon from "@/ui/copy-icon";
-import { getChainConfig } from "@/utils/chain";
+import { Network } from "../types/chain";
+import CopyIcon from "../ui/copy-icon";
+import { getChainConfig } from "../utils/chain";
 
 interface Props {
   chain?: Network | null;

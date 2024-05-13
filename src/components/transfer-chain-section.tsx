@@ -1,11 +1,11 @@
-import { ChainConfig, Token } from "@/types";
+import { ChainConfig, Token } from "../types";
 import TransferSection from "./transfer-section";
 import TransferChainSelect from "./transfer-chain-select";
 import TransferSwitch from "./transfer-switch";
-import ComponentLoading from "@/ui/component-loading";
+import ComponentLoading from "../ui/component-loading";
 import { Address } from "viem";
-import { getTokenLogoSrc, toShortAdrress } from "@/utils";
-import CopyIcon from "@/ui/copy-icon";
+import { getTokenLogoSrc, toShortAdrress } from "../utils";
+import CopyIcon from "../ui/copy-icon";
 
 interface Recipient {
   input: string;

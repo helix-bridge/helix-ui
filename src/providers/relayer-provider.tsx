@@ -1,4 +1,4 @@
-import { BaseBridge, LnBridgeV2Default, LnBridgeV2Opposite } from "@/bridges";
+import { BaseBridge, LnBridgeV2Default, LnBridgeV2Opposite } from "../bridges";
 import {
   BridgeCategory,
   ChainConfig,
@@ -6,14 +6,14 @@ import {
   CheckLnBridgeExistResData,
   InputValue,
   Token,
-} from "@/types";
+} from "../types";
 import {
   getAvailableTargetTokens,
   isLnV2DefaultBridge,
   isLnV2OppositeBridge,
   notifyError,
   notifyTransaction,
-} from "@/utils";
+} from "../utils";
 import {
   Dispatch,
   PropsWithChildren,
@@ -28,7 +28,7 @@ import { Address, Hex, TransactionReceipt } from "viem";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { Subscription, forkJoin } from "rxjs";
 import { ApolloClient } from "@apollo/client";
-import { GQL_CHECK_LNBRIDGE_EXIST } from "@/config";
+import { GQL_CHECK_LNBRIDGE_EXIST } from "../config";
 
 interface RelayerCtx {
   margin: bigint | undefined;

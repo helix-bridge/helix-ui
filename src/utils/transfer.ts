@@ -1,4 +1,4 @@
-import { ChainConfig, Token, TokenCategory, TokenOption } from "@/types";
+import { ChainConfig, Token, TokenCategory, TokenOption } from "../types";
 import { getChainConfig, getChainConfigs, isMainnet } from ".";
 
 const allTokenOptions: Record<Exclude<TokenCategory, "others">, TokenOption> = {

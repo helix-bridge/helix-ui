@@ -1,6 +1,6 @@
-import { LnBridgeRelayerOverview, Token } from "@/types";
-import Tooltip from "@/ui/tooltip";
-import { bridgeFactory, formatBalance, getChainConfig } from "@/utils";
+import { LnBridgeRelayerOverview, Token } from "../types";
+import Tooltip from "../ui/tooltip";
+import { bridgeFactory, formatBalance, getChainConfig } from "../utils";
 import { useEffect, useState } from "react";
 import { from, Subscription } from "rxjs";
 

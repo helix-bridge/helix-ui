@@ -1,6 +1,6 @@
-import { LnBridgeV3 } from "@/bridges";
-import { ChainConfig, CheckLnBridgeExistReqParams, CheckLnBridgeExistResData, Token } from "@/types";
-import { extractTransferIds, getAvailableTargetTokens, notifyError, notifyTransaction } from "@/utils";
+import { LnBridgeV3 } from "../bridges";
+import { ChainConfig, CheckLnBridgeExistReqParams, CheckLnBridgeExistResData, Token } from "../types";
+import { extractTransferIds, getAvailableTargetTokens, notifyError, notifyTransaction } from "../utils";
 import {
   Dispatch,
   PropsWithChildren,
@@ -15,8 +15,8 @@ import { Hex, TransactionReceipt } from "viem";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { Subscription, forkJoin } from "rxjs";
 import { ApolloClient } from "@apollo/client";
-import { GQL_CHECK_LNBRIDGE_EXIST } from "@/config";
-import { notification } from "@/ui/notification";
+import { GQL_CHECK_LNBRIDGE_EXIST } from "../config";
+import { notification } from "../ui/notification";
 
 interface RelayerCtx {
   bridgeInstance: LnBridgeV3;

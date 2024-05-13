@@ -1,5 +1,5 @@
-import { GQL_QUERY_LNBRIDGE_RELAY_INFOS } from "@/config";
-import { useRelayer } from "@/hooks";
+import { GQL_QUERY_LNBRIDGE_RELAY_INFOS } from "../config";
+import { useRelayer } from "../hooks";
 import {
   BridgeCategory,
   ChainConfig,
@@ -7,10 +7,10 @@ import {
   QueryLnBridgeRelayInfosReqParams,
   QueryLnBridgeRelayInfosResData,
   Token,
-} from "@/types";
-import { notification } from "@/ui/notification";
-import StepTitle from "@/ui/step-title";
-import Tooltip from "@/ui/tooltip";
+} from "../types";
+import { notification } from "../ui/notification";
+import StepTitle from "../ui/step-title";
+import Tooltip from "../ui/tooltip";
 import {
   formatBalance,
   formatFeeRate,
@@ -22,20 +22,20 @@ import {
   getTokenLogoSrc,
   isValidFeeRate,
   notifyError,
-} from "@/utils";
+} from "../utils";
 import { useApolloClient } from "@apollo/client";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { PropsWithChildren, useCallback, useEffect, useState } from "react";
 import { Address, useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import ChainSelect from "./chain-select";
 import TokenSelect from "./token-select";
-import Button from "@/ui/button";
+import Button from "../ui/button";
 import StepCompleteItem from "./step-complete-item";
 import { BalanceInput } from "./balance-input";
 import FeeRateInput from "./fee-rate-input";
 import { TransactionReceipt } from "viem";
 import PrettyAddress from "./pretty-address";
-import Modal from "@/ui/modal";
+import Modal from "../ui/modal";
 
 enum Step {
   ONE,

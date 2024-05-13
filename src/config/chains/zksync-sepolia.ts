@@ -1,4 +1,4 @@
-import { ChainConfig } from "@/types/chain";
+import { ChainConfig } from "../../types/chain";
 import { zkSyncSepoliaTestnet } from "viem/chains";
 
 export const zksyncSepoliaChain: ChainConfig = {

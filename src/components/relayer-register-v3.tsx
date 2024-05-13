@@ -1,7 +1,7 @@
-import { useRelayerV3, useToggle } from "@/hooks";
-import { ChainConfig, InputValue, Token } from "@/types";
-import StepTitle from "@/ui/step-title";
-import Tooltip from "@/ui/tooltip";
+import { useRelayerV3, useToggle } from "../hooks";
+import { ChainConfig, InputValue, Token } from "../types";
+import StepTitle from "../ui/step-title";
+import Tooltip from "../ui/tooltip";
 import {
   formatBalance,
   formatFeeRate,
@@ -12,19 +12,19 @@ import {
   getTokenLogoSrc,
   isValidFeeRate,
   notifyError,
-} from "@/utils";
+} from "../utils";
 import { useApolloClient } from "@apollo/client";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { PropsWithChildren, useCallback, useState } from "react";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import ChainSelect from "./chain-select";
 import TokenSelect from "./token-select";
-import Button from "@/ui/button";
+import Button from "../ui/button";
 import StepCompleteItem from "./step-complete-item";
 import { BalanceInput } from "./balance-input";
 import FeeRateInput from "./fee-rate-input";
 import PrettyAddress from "./pretty-address";
-import Modal from "@/ui/modal";
+import Modal from "../ui/modal";
 
 enum Step {
   ONE,

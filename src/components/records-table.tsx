@@ -1,5 +1,5 @@
-import { HistoryRecord, Network, RecordResult } from "@/types";
-import Table, { ColumnType } from "@/ui/table";
+import { HistoryRecord, Network, RecordResult } from "../types";
+import Table, { ColumnType } from "../ui/table";
 import {
   formatBalance,
   formatTime,
@@ -7,7 +7,7 @@ import {
   getChainLogoSrc,
   getTokenLogoSrc,
   parseRecordResult,
-} from "@/utils";
+} from "../utils";
 import { Key, PropsWithChildren } from "react";
 import PrettyAddress from "./pretty-address";
 import { Address, isHash } from "viem";

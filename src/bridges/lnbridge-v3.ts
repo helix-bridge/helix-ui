@@ -1,5 +1,5 @@
-import { isMainnet } from "@/utils/env";
-import { BridgeConstructorArgs, GetFeeArgs, MessageChannel, Token, TransferOptions } from "@/types";
+import { isMainnet } from "../utils/env";
+import { BridgeConstructorArgs, GetFeeArgs, MessageChannel, Token, TransferOptions } from "../types";
 import { LnBridgeBase } from "./lnbridge-base";
 import { Address, Hex, TransactionReceipt, encodeFunctionData, encodePacked, keccak256 } from "viem";
 
@@ -77,7 +77,7 @@ export class LnBridgeV3 extends LnBridgeBase {
 
       const defaultParams = {
         address: this.contract.sourceAddress,
-        abi: (await import("@/abi/lnbridge-v3")).default,
+        abi: (await import("../abi/lnbridge-v3")).default,
         functionName: "lockAndRemoteRelease",
         args: [
           {
@@ -118,7 +118,7 @@ export class LnBridgeV3 extends LnBridgeBase {
       return {
         value: await this.sourcePublicClient.readContract({
           address: this.contract.sourceAddress,
-          abi: (await import("@/abi/lnbridge-v3")).default,
+          abi: (await import("../abi/lnbridge-v3")).default,
           functionName: "totalFee",
           args: [
             BigInt(this.targetChain.id),
@@ -137,7 +137,7 @@ export class LnBridgeV3 extends LnBridgeBase {
     if (relayer && this.contract && this.sourceToken && this.sourcePublicClient) {
       const value = await this.sourcePublicClient.readContract({
         address: this.contract.sourceAddress,
-        abi: (await import("@/abi/lnbridge-v3")).default,
+        abi: (await import("../abi/lnbridge-v3")).default,
         functionName: "penaltyReserves",
         args: [keccak256(encodePacked(["address", "address"], [this.sourceToken.address, relayer]))],
       });
@@ -158,7 +158,7 @@ export class LnBridgeV3 extends LnBridgeBase {
     ) {
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,
-        abi: (await import("@/abi/lnbridge-v3")).default,
+        abi: (await import("../abi/lnbridge-v3")).default,
         functionName: "registerLnProvider",
         args: [
           BigInt(this.targetChain.id),
@@ -180,7 +180,7 @@ export class LnBridgeV3 extends LnBridgeBase {
     if (this.contract && this.publicClient && this.walletClient && this.sourceToken) {
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,
-        abi: (await import("@/abi/lnbridge-v3")).default,
+        abi: (await import("../abi/lnbridge-v3")).default,
         functionName: "depositPenaltyReserve",
         args: [this.sourceToken.address, amount],
         value: this.sourceToken.type === "native" ? amount : undefined,
@@ -196,7 +196,7 @@ export class LnBridgeV3 extends LnBridgeBase {
     if (this.contract && this.sourceToken && this.publicClient && this.walletClient) {
       const hash = await this.walletClient.writeContract({
         address: this.contract.sourceAddress,
-        abi: (await import("@/abi/lnbridge-v3")).default,
+        abi: (await import("../abi/lnbridge-v3")).default,
         functionName: "withdrawPenaltyReserve",
         args: [this.sourceToken.address, amount],
       });
@@ -209,7 +209,7 @@ export class LnBridgeV3 extends LnBridgeBase {
       if (this.contract && this.sourceChain && this.targetNativeToken && this.targetPublicClient) {
         const [sendService] = await this.targetPublicClient.readContract({
           address: this.contract.targetAddress,
-          abi: (await import("@/abi/lnbridge-v3")).default,
+          abi: (await import("../abi/lnbridge-v3")).default,
           functionName: "messagers",
           args: [BigInt(this.sourceChain.id)],
         });
@@ -219,7 +219,7 @@ export class LnBridgeV3 extends LnBridgeBase {
     } else if (messageChannel === "msgline") {
       if (this.targetNativeToken && this.sourceChain && this.targetChain && this.contract) {
         const message = encodeFunctionData({
-          abi: (await import("@/abi/lnbridge-v3")).default,
+          abi: (await import("../abi/lnbridge-v3")).default,
           functionName: "withdrawLiquidity",
           args: [transferIds, BigInt(this.targetChain.id), relayer],
         });
@@ -246,7 +246,7 @@ export class LnBridgeV3 extends LnBridgeBase {
 
       const hash = await this.walletClient.writeContract({
         address: this.contract.targetAddress,
-        abi: (await import("@/abi/lnbridge-v3")).default,
+        abi: (await import("../abi/lnbridge-v3")).default,
         functionName: "requestWithdrawLiquidity",
         args: [remoteChainId, transferIds, relayer, extParams],
         value: messageFee,

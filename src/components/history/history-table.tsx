@@ -1,6 +1,6 @@
-import { HistoryRecord, RecordResult } from "@/types";
+import { HistoryRecord, RecordResult } from "../../types";
 import Table, { ColumnType } from "./table";
-import { formatBalance, formatTime, getChainConfig, getChainLogoSrc } from "@/utils";
+import { formatBalance, formatTime, getChainConfig, getChainLogoSrc } from "../../utils";
 
 type TData = Pick<
   HistoryRecord,

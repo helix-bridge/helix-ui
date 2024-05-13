@@ -1,5 +1,5 @@
-import { GQL_GET_HISTORY } from "@/config";
-import { HistoryReqParams, HistoryResData } from "@/types";
+import { GQL_GET_HISTORY } from "../config";
+import { HistoryReqParams, HistoryResData } from "../types";
 import { useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";

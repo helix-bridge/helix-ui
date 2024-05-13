@@ -1,6 +1,6 @@
-import { HistoryRecord } from "@/types/graphql";
-import { formatBalance } from "@/utils/balance";
-import { getChainConfig } from "@/utils/chain";
+import { HistoryRecord } from "../types/graphql";
+import { formatBalance } from "../utils/balance";
+import { getChainConfig } from "../utils/chain";
 
 interface Props {
   record?: HistoryRecord | null;

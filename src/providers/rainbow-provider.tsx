@@ -4,11 +4,16 @@ import { okxWallet, rabbyWallet, safeWallet, talismanWallet } from "@rainbow-me/
 import { PropsWithChildren } from "react";
 import { WagmiConfig, configureChains, createConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
+import { getChainConfigs } from "../utils";
 
 const projectId = import.meta.env.VITE_WALLET_CONNECT_ID || "";
 const appName = "Helix Bridge";
 
-const { chains, publicClient } = configureChains([], [publicProvider()]);
+const { chains, publicClient } = configureChains(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getChainConfigs().map(({ tokens, ...chain }) => chain),
+  [publicProvider()],
+);
 
 const { wallets } = getDefaultWallets({ appName, projectId, chains });
 

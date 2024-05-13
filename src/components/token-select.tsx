@@ -1,6 +1,6 @@
-import { Token } from "@/types/token";
-import Select from "@/ui/select";
-import { getTokenLogoSrc } from "@/utils";
+import { Token } from "../types/token";
+import Select from "../ui/select";
+import { getTokenLogoSrc } from "../utils";
 import PrettyAddress from "./pretty-address";
 
 interface Props {

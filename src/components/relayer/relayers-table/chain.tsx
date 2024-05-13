@@ -1,6 +1,6 @@
-import { Network } from "@/types";
-import Tooltip from "@/ui/tooltip";
-import { getChainConfig, getChainLogoSrc } from "@/utils";
+import { Network } from "../../../types";
+import Tooltip from "../../../ui/tooltip";
+import { getChainConfig, getChainLogoSrc } from "../../../utils";
 
 export default function Chain({ network }: { network: Network }) {
   const config = getChainConfig(network);

@@ -1,13 +1,13 @@
-import { formatBalance, getTokenLogoSrc, notifyError, notifyTransaction } from "@/utils";
+import { formatBalance, getTokenLogoSrc, notifyError, notifyTransaction } from "../utils";
 import { PropsWithChildren, useCallback, useEffect, useState } from "react";
 import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
 import { Subscription, forkJoin, from } from "rxjs";
 import { parseUnits } from "viem";
-import { ChainConfig, Token } from "@/types";
-import abi from "@/abi/faucet";
-import Tooltip from "@/ui/tooltip";
-import CountLoading from "@/ui/count-loading";
-import Modal from "@/ui/modal";
+import { ChainConfig, Token } from "../types";
+import abi from "../abi/faucet";
+import Tooltip from "../ui/tooltip";
+import CountLoading from "../ui/count-loading";
+import Modal from "../ui/modal";
 
 interface Props {
   sourceChain: ChainConfig;

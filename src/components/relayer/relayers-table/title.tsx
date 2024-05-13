@@ -1,4 +1,4 @@
-import Tooltip from "@/ui/tooltip";
+import Tooltip from "../../../ui/tooltip";
 
 export default function Title({ title, tips, className }: { title: string; tips?: string; className?: string }) {
   return (

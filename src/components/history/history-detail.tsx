@@ -1,5 +1,5 @@
-import { ChainConfig, HistoryRecord } from "@/types";
-import { formatBalance, formatTime, getChainConfig, getChainLogoSrc, toShortAdrress } from "@/utils";
+import { ChainConfig, HistoryRecord } from "../../types";
+import { formatBalance, formatTime, getChainConfig, getChainLogoSrc, toShortAdrress } from "../../utils";
 import { Hex } from "viem";
 
 type TData = Pick<

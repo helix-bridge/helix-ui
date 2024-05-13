@@ -1,5 +1,5 @@
-import { GQL_GET_RELAYERS } from "@/config";
-import { BridgeVersion, ChainConfig, RelayersReqParams, RelayersResData } from "@/types";
+import { GQL_GET_RELAYERS } from "../config";
+import { BridgeVersion, ChainConfig, RelayersReqParams, RelayersResData } from "../types";
 import { useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
 

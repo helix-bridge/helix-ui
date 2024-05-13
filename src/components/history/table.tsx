@@ -1,5 +1,5 @@
-import ComponentLoading from "@/ui/component-loading";
-import Pagination from "@/ui/pagination";
+import ComponentLoading from "../../ui/component-loading";
+import Pagination from "../../ui/pagination";
 import { Fragment, Key, useMemo } from "react";
 
 export type ColumnType<T> = {

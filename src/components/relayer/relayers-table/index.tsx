@@ -1,4 +1,4 @@
-import { BridgeVersion, RelayersRecord } from "@/types";
+import { BridgeVersion, RelayersRecord } from "../../../types";
 import { useCallback, useMemo, useState } from "react";
 import Table, { ColumnType } from "../table";
 import {
@@ -19,8 +19,8 @@ import {
   getColumnToken,
   getColumnTransferLimit,
 } from "./columns";
-import RelayerManageV3Modal from "@/components/modals/relayer-manage-v3-modal";
-import RelayerManageModal from "@/components/modals/relayer-manage-modal";
+import RelayerManageV3Modal from "../../../components/modals/relayer-manage-v3-modal";
+import RelayerManageModal from "../../../components/modals/relayer-manage-modal";
 
 type DataSource = RelayersRecord;
 

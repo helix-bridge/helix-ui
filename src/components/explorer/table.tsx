@@ -1,4 +1,4 @@
-import ComponentLoading from "@/ui/component-loading";
+import ComponentLoading from "../../ui/component-loading";
 import Pagination from "./pagination";
 import { Fragment, Key, useMemo } from "react";
 

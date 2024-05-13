@@ -1,5 +1,5 @@
-import { GQL_GET_SUPPORT_CHAINS } from "@/config";
-import { SupportChainsReqParams, SupportChainsResData, TokenCategory } from "@/types";
+import { GQL_GET_SUPPORT_CHAINS } from "../config";
+import { SupportChainsReqParams, SupportChainsResData, TokenCategory } from "../types";
 import { useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
 

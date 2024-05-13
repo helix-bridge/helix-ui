@@ -1,6 +1,6 @@
-import { ChainConfig } from "@/types/chain";
-import { notification } from "@/ui/notification";
-import NotifyLink from "@/ui/notify-link";
+import { ChainConfig } from "../types/chain";
+import { notification } from "../ui/notification";
+import NotifyLink from "../ui/notify-link";
 import { TransactionReceipt } from "viem";
 
 export function notifyTransaction(receipt?: TransactionReceipt, chain?: ChainConfig, title?: string) {

@@ -1,5 +1,5 @@
-import { TokenCategory, TokenSymbol } from "@/types";
-import { getTokenLogoSrc } from "@/utils";
+import { TokenCategory, TokenSymbol } from "../types";
+import { getTokenLogoSrc } from "../utils";
 import { useState } from "react";
 
 interface Value {

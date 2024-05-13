@@ -1,6 +1,6 @@
-import { BridgeCategory } from "@/types/bridge";
-import Select from "@/ui/select";
-import { bridgeFactory } from "@/utils/bridge";
+import { BridgeCategory } from "../types/bridge";
+import Select from "../ui/select";
+import { bridgeFactory } from "../utils/bridge";
 
 interface Props {
   options?: BridgeCategory[];

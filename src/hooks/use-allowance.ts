@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { Address, createPublicClient, http } from "viem";
 import { from } from "rxjs";
-import abi from "@/abi/erc20";
-import { ChainConfig, Token } from "@/types";
+import abi from "../abi/erc20";
+import { ChainConfig, Token } from "../types";
 import { usePublicClient, useWalletClient } from "wagmi";
-import { notifyError } from "@/utils";
+import { notifyError } from "../utils";
 
 export function useAllowance(
   chain: ChainConfig,

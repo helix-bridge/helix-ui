@@ -1,9 +1,9 @@
-import Tooltip from "@/ui/tooltip";
-import { getChainConfig } from "@/utils/chain";
-import { getChainLogoSrc } from "@/utils/misc";
+import Tooltip from "../ui/tooltip";
+import { getChainConfig } from "../utils/chain";
+import { getChainLogoSrc } from "../utils/misc";
 import BridgeLogo from "./bridge-identicon";
-import { HistoryRecord } from "@/types/graphql";
-import { bridgeFactory } from "@/utils/bridge";
+import { HistoryRecord } from "../types/graphql";
+import { bridgeFactory } from "../utils/bridge";
 
 interface Props {
   record?: HistoryRecord | null;

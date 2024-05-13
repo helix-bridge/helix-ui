@@ -1,8 +1,8 @@
-import { useRelayer } from "@/hooks";
-import { ChainID, InputValue, LnBridgeRelayerOverview, Token } from "@/types";
-import { notification } from "@/ui/notification";
-import SegmentedTabs, { SegmentedTabsProps } from "@/ui/segmented-tabs";
-import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "@/utils";
+import { useRelayer } from "../../hooks";
+import { ChainID, InputValue, LnBridgeRelayerOverview, Token } from "../../types";
+import { notification } from "../../ui/notification";
+import SegmentedTabs, { SegmentedTabsProps } from "../../ui/segmented-tabs";
+import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "../../utils";
 import { useApolloClient } from "@apollo/client";
 import { PropsWithChildren, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
@@ -10,9 +10,9 @@ import { Subscription, from } from "rxjs";
 import { Hex, TransactionReceipt } from "viem";
 import { BalanceInput } from "../balance-input";
 import FeeRateInput from "../fee-rate-input";
-import Tooltip from "@/ui/tooltip";
-import CountLoading from "@/ui/count-loading";
-import Modal from "@/ui/modal";
+import Tooltip from "../../ui/tooltip";
+import CountLoading from "../../ui/count-loading";
+import Modal from "../../ui/modal";
 
 type TabKey = "update" | "deposit" | "withdraw" | "allowance";
 

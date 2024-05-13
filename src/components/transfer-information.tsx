@@ -1,7 +1,7 @@
-import { Token } from "@/types";
-import CountLoading from "@/ui/count-loading";
-import Tooltip from "@/ui/tooltip";
-import { formatBalance } from "@/utils";
+import { Token } from "../types";
+import CountLoading from "../ui/count-loading";
+import Tooltip from "../ui/tooltip";
+import { formatBalance } from "../utils";
 
 interface Props {
   transactionFee: { loading: boolean; value?: bigint; token?: Token; warning?: string };

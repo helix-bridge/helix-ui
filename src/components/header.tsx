@@ -1,11 +1,11 @@
-import { useToggle } from "@/hooks";
-import Tooltip from "@/ui/tooltip";
-import { isTestnet } from "@/utils";
+import { useToggle } from "../hooks";
+import Tooltip from "../ui/tooltip";
+import { isTestnet } from "../utils";
 import { Link, useLocation } from "react-router-dom";
 import History from "./history";
 import User from "./user";
 import ChainSwitch from "./chain-switch";
-import Drawer from "@/ui/drawer";
+import Drawer from "../ui/drawer";
 
 interface NavigationConfig {
   label: string;

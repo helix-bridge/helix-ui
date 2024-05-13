@@ -1,4 +1,4 @@
-import { getChainConfig, getChainConfigs, getChainLogoSrc } from "@/utils";
+import { getChainConfig, getChainConfigs, getChainLogoSrc } from "../utils";
 import {
   FloatingPortal,
   Placement,

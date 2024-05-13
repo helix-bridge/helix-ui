@@ -1,4 +1,4 @@
-import { HistoryRecord, RecordResult } from "@/types";
+import { HistoryRecord, RecordResult } from "../../types";
 import Table, { ColumnType } from "./table";
 import {
   formatBalance,
@@ -7,10 +7,10 @@ import {
   getChainLogoSrc,
   getTokenLogoSrc,
   parseRecordResult,
-} from "@/utils";
+} from "../../utils";
 import PrettyAddress from "../pretty-address";
 import { isHash } from "viem";
-import { useMediaQuery } from "@/hooks";
+import { useMediaQuery } from "../../hooks";
 
 type TData = Pick<
   HistoryRecord,

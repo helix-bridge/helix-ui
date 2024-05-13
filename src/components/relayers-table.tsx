@@ -1,8 +1,8 @@
-import { LnBridgeRelayerOverview, BridgeVersion, Network } from "@/types";
-import Button from "@/ui/button";
-import Table, { ColumnType } from "@/ui/table";
-import Tooltip from "@/ui/tooltip";
-import { formatBalance, formatFeeRate, getChainConfig, getChainLogoSrc, getTokenLogoSrc } from "@/utils";
+import { LnBridgeRelayerOverview, BridgeVersion, Network } from "../types";
+import Button from "../ui/button";
+import Table, { ColumnType } from "../ui/table";
+import Tooltip from "../ui/tooltip";
+import { formatBalance, formatFeeRate, getChainConfig, getChainLogoSrc, getTokenLogoSrc } from "../utils";
 import { useState } from "react";
 import PrettyAddress from "./pretty-address";
 import RelayerManageModal from "./modals/relayer-manage-modal";

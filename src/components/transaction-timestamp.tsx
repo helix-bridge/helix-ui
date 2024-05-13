@@ -1,5 +1,5 @@
-import { HistoryRecord } from "@/types/graphql";
-import { formatTime, toTimeAgo } from "@/utils/time";
+import { HistoryRecord } from "../types/graphql";
+import { formatTime, toTimeAgo } from "../utils/time";
 import { formatDistanceStrict } from "date-fns";
 
 interface Props {

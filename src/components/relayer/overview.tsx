@@ -1,11 +1,11 @@
-import { useRelayersData } from "@/hooks";
-import { BridgeVersion, ChainConfig } from "@/types";
+import { useRelayersData } from "../../hooks";
+import { BridgeVersion, ChainConfig } from "../../types";
 import { useCallback, useDeferredValue, useEffect, useState } from "react";
 import RelayersTable from "./relayers-table";
-import Search from "@/ui/search";
-import CountdownRefresh from "@/ui/countdown-refresh";
+import Search from "../../ui/search";
+import CountdownRefresh from "../../ui/countdown-refresh";
 import ChainSelect from "../chain-select";
-import { getLnBridgeAvailableTargetChains, getLnBridgeCrossDefaultValue } from "@/utils";
+import { getLnBridgeAvailableTargetChains, getLnBridgeCrossDefaultValue } from "../../utils";
 
 const pageSize = 10;
 const { defaultSourceChains, defaultTargetChains } = getLnBridgeCrossDefaultValue();

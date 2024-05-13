@@ -1,4 +1,4 @@
-import Tooltip from "@/ui/tooltip";
+import Tooltip from "../ui/tooltip";
 
 interface Props {
   text: string;

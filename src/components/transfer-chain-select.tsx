@@ -1,7 +1,7 @@
-import { useApp } from "@/hooks";
-import { ChainConfig, Token } from "@/types";
-import Select from "@/ui/select";
-import { formatBalance, getChainLogoSrc, getTokenLogoSrc } from "@/utils";
+import { useApp } from "../hooks";
+import { ChainConfig, Token } from "../types";
+import Select from "../ui/select";
+import { formatBalance, getChainLogoSrc, getTokenLogoSrc } from "../utils";
 import { useState } from "react";
 
 interface Props {

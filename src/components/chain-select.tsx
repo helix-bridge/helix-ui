@@ -1,6 +1,6 @@
-import { ChainConfig } from "@/types";
-import Select from "@/ui/select";
-import { getChainLogoSrc } from "@/utils";
+import { ChainConfig } from "../types";
+import Select from "../ui/select";
+import { getChainLogoSrc } from "../utils";
 
 interface Props {
   options?: ChainConfig[];

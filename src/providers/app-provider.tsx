@@ -1,5 +1,5 @@
-import { useBalanceAll } from "@/hooks";
-import { ChainConfig, Token } from "@/types";
+import { useBalanceAll } from "../hooks";
+import { ChainConfig, Token } from "../types";
 import { Dispatch, PropsWithChildren, SetStateAction, createContext, useState } from "react";
 
 interface AppCtx {

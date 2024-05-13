@@ -1,4 +1,4 @@
-import { useHistory } from "@/hooks";
+import { useHistory } from "../../hooks";
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
 import HistoryDetail from "./history-detail";

@@ -1,4 +1,4 @@
-import Checked from "@/components/icons/checked";
+import Checked from "../components/icons/checked";
 import { MouseEventHandler, useCallback, useEffect, useState } from "react";
 import { timer, Subscription } from "rxjs";
 

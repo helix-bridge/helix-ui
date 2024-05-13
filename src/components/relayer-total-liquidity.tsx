@@ -1,7 +1,7 @@
-import { useWithdrawableLiquidities } from "@/hooks";
-import { LnBridgeRelayerOverview, Token } from "@/types";
-import Tooltip from "@/ui/tooltip";
-import { formatBalance, getChainConfig } from "@/utils";
+import { useWithdrawableLiquidities } from "../hooks";
+import { LnBridgeRelayerOverview, Token } from "../types";
+import Tooltip from "../ui/tooltip";
+import { formatBalance, getChainConfig } from "../utils";
 import { useMemo } from "react";
 
 interface Props {

@@ -1,7 +1,7 @@
-import { LnBridgeV3 } from "@/bridges";
-import { LnBridgeRelayerOverview, Token } from "@/types";
-import Tooltip from "@/ui/tooltip";
-import { formatBalance, getChainConfig } from "@/utils";
+import { LnBridgeV3 } from "../bridges";
+import { LnBridgeRelayerOverview, Token } from "../types";
+import Tooltip from "../ui/tooltip";
+import { formatBalance, getChainConfig } from "../utils";
 import { useEffect, useState } from "react";
 import { from } from "rxjs";
 

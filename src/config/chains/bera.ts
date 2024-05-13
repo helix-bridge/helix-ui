@@ -1,4 +1,4 @@
-import { ChainConfig, ChainID } from "@/types";
+import { ChainConfig, ChainID } from "../../types";
 
 export const beraChain: ChainConfig = {
   id: ChainID.BERA,

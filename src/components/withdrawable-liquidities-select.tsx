@@ -1,6 +1,6 @@
-import ComponentLoading from "@/ui/component-loading";
-import Tooltip from "@/ui/tooltip";
-import { formatTime } from "@/utils";
+import ComponentLoading from "../ui/component-loading";
+import Tooltip from "../ui/tooltip";
+import { formatTime } from "../utils";
 
 interface Props {
   loading: boolean;

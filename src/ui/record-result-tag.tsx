@@ -1,4 +1,4 @@
-import { RecordResult } from "@/types";
+import { RecordResult } from "../types";
 import { useMemo } from "react";
 
 export function RecordResultTag({ result }: { result?: RecordResult | null }) {
