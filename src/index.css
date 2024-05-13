@@ -1,3 +1,234 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .app-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .app-scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 5x rgba(0, 0, 0, 0.2);
+    background: hsla(0, 0%, 100%, 0.4);
+  }
+
+  /* Layout */
+  .app-header {
+    @apply h-[64px];
+  }
+  .app-footer {
+    @apply h-[48px];
+  }
+  .app-main {
+    min-height: calc(100vh - 64px - 48px);
+    @apply mt-[64px];
+  }
+
+  /* Page */
+  .page-container {
+    @apply max-w-8xl px-medium mx-auto w-full py-5;
+  }
+
+  /* User */
+  .user-connect-wallet {
+    @apply gap-medium rounded-medium bg-primary px-large lg:hover:bg-primary/80 flex h-9 shrink-0 items-center transition lg:active:translate-y-1;
+  }
+  .user-dropdown-item {
+    @apply gap-medium px-medium py-small inline-flex items-center rounded-xl text-start transition hover:bg-white/10 lg:active:translate-y-1;
+  }
+
+  .button {
+    @apply flex h-8 items-center justify-center lg:h-9;
+  }
+
+  /* Input */
+  .normal-input-wrap {
+    @apply border transition-colors duration-300;
+  }
+  .valid-input-wrap {
+  }
+  .invalid-input-wrap {
+    @apply border-app-red focus-within:border-app-red hover:border-app-red;
+  }
+
+  .select {
+    @apply focus-within:border-primary hover:border-primary border transition duration-300 disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1 lg:disabled:translate-y-0;
+  }
+}
+
+/* Page header loading bar */
+.loading-bar {
+  background: linear-gradient(90deg, #ffffff 35%, #0085ff 50%, #ffffff 65%);
+  background-position: 100% 50%;
+  background-size: 40% 100%;
+  animation: bar-loading 2.4s linear infinite;
+}
+@keyframes bar-loading {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.refresh-countdown {
+  animation: countdown-dash 9.3s linear infinite;
+  animation-delay: 0.7s;
+}
+@keyframes countdown-dash {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -30;
+  }
+}
+
+/* Drawer */
+.drawer-fade-enter {
+  opacity: 0;
+}
+.drawer-fade-enter > div {
+  transform: translateX(100%);
+}
+.drawer-fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+.drawer-fade-enter-active > div {
+  transform: translateX(0);
+  transition: transform 300ms;
+}
+.drawer-fade-exit {
+  opacity: 1;
+}
+.drawer-fade-exit > div {
+  transform: translateX(0);
+}
+.drawer-fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+.drawer-fade-exit-active > div {
+  transform: translateX(100%);
+  transition: transform 300ms;
+}
+
+/* Tabs */
+.tabs-fade-enter {
+  opacity: 0;
+}
+.tabs-fade-enter-active {
+  opacity: 1;
+  transition: opacity 150ms;
+}
+.tabs-fade-exit {
+  opacity: 1;
+}
+.tabs-fade-exit-active {
+  opacity: 0;
+  transition: opacity 150ms;
+}
+
+/* History */
+.history-table-fade-enter {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+.history-table-fade-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 100ms,
+    transform 100ms;
+}
+.history-table-fade-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+.history-table-fade-exit-active {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition:
+    opacity 100ms,
+    transform 100ms;
+}
+.history-detail-fade-enter {
+  opacity: 0;
+  transform: translateX(10px);
+}
+.history-detail-fade-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 100ms,
+    transform 100ms;
+}
+.history-detail-fade-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+.history-detail-fade-exit-active {
+  opacity: 0;
+  transform: translateX(10px);
+  transition:
+    opacity 100ms,
+    transform 100ms;
+}
+
+/* Component loading */
+.component-loading-appear,
+.component-loading-enter {
+  background-color: transparent;
+}
+.component-loading-appear-active,
+.component-loading-enter-active {
+  background-color: rgba(0, 0, 0, 0.35);
+  transition: background-color 300ms;
+}
+.component-loading-appear-done,
+.component-loading-enter-done {
+  background-color: rgba(0, 0, 0, 0.35);
+}
+.component-loading-exit {
+  background-color: rgba(0, 0, 0, 0.35);
+}
+.component-loading-exit-active {
+  background-color: transparent;
+  transition: background-color 300ms;
+}
+
+/* Modal */
+.modal-fade-appear,
+.modal-fade-enter {
+  opacity: 0;
+}
+.modal-fade-appear > div,
+.modal-fade-enter > div {
+  transform: scale(0.5);
+}
+.modal-fade-appear-active,
+.modal-fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+.modal-fade-appear-active > div,
+.modal-fade-enter-active > div {
+  transform: scale(1);
+  transition: transform 300ms;
+}
+.modal-fade-exit {
+  opacity: 1;
+}
+.modal-fade-exit > div {
+  transform: scale(1);
+}
+.modal-fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+.modal-fade-exit-active > div {
+  transform: scale(0.5);
+  transition: transform 300ms;
+}
