@@ -10,6 +10,7 @@
     "build": "tsc && vite build --mode mainnet",
     "build:testnet": "tsc && vite build --mode testnet",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "test": "echo test",
     "preview": "vite preview",
     "format": "prettier 'src/**/*.{js,jsx,ts,tsx,json}' --write",
     "prepare": "husky"
