@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { ChainConfig, HistoryRecord } from "../../types";
 import { formatBalance, formatTime, getChainConfig, getChainLogoSrc, toShortAdrress } from "../../utils";
 import { Hex } from "viem";
@@ -49,14 +50,14 @@ export default function HistoryDetail({ data }: Props) {
         </div>
 
         <div className="mt-2 inline-flex w-full justify-end pr-2">
-          <a
+          <Link
             className="text-sm font-light text-white underline transition-colors hover:text-primary"
             target="_blank"
-            href={`records/${data.id}`}
+            to={`/tx/${data.id}`}
             rel="noopener noreferrer"
           >
             {`More`}
-          </a>
+          </Link>
         </div>
       </div>
     </div>

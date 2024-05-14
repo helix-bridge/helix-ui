@@ -27,7 +27,7 @@ export default function Footer() {
       <div className="hidden items-center gap-5 lg:flex">
         <Link
           className="text-xs font-semibold text-white/50 transition hover:text-white hover:underline active:scale-95"
-          to="/records"
+          to="/explorer"
         >
           Explorer
         </Link>

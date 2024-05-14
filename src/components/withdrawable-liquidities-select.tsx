@@ -46,7 +46,7 @@ export default function WithdrawableLiquiditiesSelect({
                 />
                 <a
                   target="_blank"
-                  href={`/records/${option.id}`}
+                  href={`/tx/${option.id}`}
                   className="truncate text-base font-medium text-primary hover:underline"
                 >
                   {toShortId(option.id)}

@@ -184,7 +184,7 @@ function Progress({
         <div className="flex w-full items-center justify-between">
           <div className="inline-flex">
             <span className="text-sm font-bold">LnProvider relay finished. Go to&nbsp;</span>
-            <Link to={`/records/${id}`} className="text-sm font-bold text-primary hover:underline">
+            <Link to={`/tx/${id}`} className="text-sm font-bold text-primary hover:underline">
               Detail
             </Link>
           </div>
