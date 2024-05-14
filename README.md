@@ -9,13 +9,13 @@
 
 ### Staging
 
-- mainnet: https://helix-stg.vercel.app/
-- testnet: https://helix-stg-test.vercel.app/
+- mainnet: https://helix-stg-mainnet.vercel.app/
+- testnet: https://helix-stg-testnet.vercel.app/
 
 ### Development
 
-- mainnet: https://helix-dev-main.vercel.app/
-- testnet: https://helix-dev-test.vercel.app/
+- mainnet: https://helix-dev-mainnet.vercel.app/
+- testnet: https://helix-dev-testnet.vercel.app/
 
 ### Local development
 
