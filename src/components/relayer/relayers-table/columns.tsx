@@ -105,20 +105,6 @@ export const getColumnProfit = (_: Args): ColumnType<DataSource> => ({
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getColumnCost = (_: Args): ColumnType<DataSource> => ({
-  key: "cost",
-  title: <Title title="Cost" />,
-  render: ({ cost }) => {
-    // Native token, so the precision is 18
-    return cost ? (
-      <span className="truncate">{formatBalance(BigInt(cost), 18, { precision: 6 })}</span>
-    ) : (
-      <span>-</span>
-    );
-  },
-});
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getColumnMargin = (_: Args): ColumnType<DataSource> => ({
   key: "margin",
   title: <Title title="Margin" />,

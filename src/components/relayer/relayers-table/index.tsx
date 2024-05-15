@@ -6,7 +6,6 @@ import {
   getColumnAllowance,
   getColumnBalance,
   getColumnBaseFee,
-  getColumnCost,
   getColumnFeeRate,
   getColumnFrom,
   getColumnLiquidity,
@@ -60,7 +59,6 @@ export default function RelayersTable({
           getColumnBaseFee({ version, isDashboard }),
           getColumnFeeRate({ version, isDashboard }),
           getColumnProfit({ version, isDashboard }),
-          getColumnCost({ version, isDashboard }),
           getColumnTransferLimit({ version, isDashboard }),
           getColumnPenalty({ version, isDashboard }),
           getColumnLiquidity({ version, isDashboard }),
@@ -77,7 +75,6 @@ export default function RelayersTable({
           getColumnBaseFee({ version, isDashboard }),
           getColumnFeeRate({ version, isDashboard }),
           getColumnProfit({ version, isDashboard }),
-          getColumnCost({ version, isDashboard }),
           getColumnMargin({ version, isDashboard }),
           getColumnAllowance({ version, isDashboard }),
           getColumnBalance({ version, isDashboard }),
@@ -95,7 +92,6 @@ export default function RelayersTable({
           getColumnBaseFee({ version, isDashboard }),
           getColumnFeeRate({ version, isDashboard }),
           getColumnProfit({ version, isDashboard }),
-          getColumnCost({ version, isDashboard }),
           getColumnTransferLimit({ version, isDashboard }),
           getColumnPenalty({ version, isDashboard }),
         ];
@@ -109,7 +105,6 @@ export default function RelayersTable({
           getColumnBaseFee({ version, isDashboard }),
           getColumnFeeRate({ version, isDashboard }),
           getColumnProfit({ version, isDashboard }),
-          getColumnCost({ version, isDashboard }),
           getColumnMargin({ version, isDashboard }),
         ];
       }
