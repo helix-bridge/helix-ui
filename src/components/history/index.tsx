@@ -5,6 +5,7 @@ import HistoryDetail from "./history-detail";
 import HistoryTable from "./history-table";
 import { useAccount } from "wagmi";
 import Modal from "./modal";
+import { timer, Subscription } from "rxjs";
 
 export default function History({ children, className }: PropsWithChildren<{ className: string }>) {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,12 +14,19 @@ export default function History({ children, className }: PropsWithChildren<{ cla
   const [detail, setDetail] = useState<(typeof data)[0] | null>();
 
   useEffect(() => {
+    let sub$$: Subscription | undefined;
+
     if (isOpen) {
-      refetch();
+      sub$$ = timer(0, 3000).subscribe(() => refetch());
     } else {
+      sub$$?.unsubscribe();
       setCurrentPage(0);
       setDetail(null);
     }
+
+    return () => {
+      sub$$?.unsubscribe();
+    };
   }, [isOpen, refetch]);
 
   const historyRef = useRef<HTMLDivElement | null>(null);
