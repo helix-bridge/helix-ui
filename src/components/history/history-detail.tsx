@@ -1,6 +1,13 @@
 import { Link } from "react-router-dom";
-import { ChainConfig, HistoryRecord } from "../../types";
-import { formatBalance, formatTime, getChainConfig, getChainLogoSrc, toShortAdrress } from "../../utils";
+import { ChainConfig, HistoryRecord, RecordResult } from "../../types";
+import {
+  formatBalance,
+  formatTime,
+  getChainConfig,
+  getChainLogoSrc,
+  parseConfirmedBlocks,
+  toShortAdrress,
+} from "../../utils";
 import { Hex } from "viem";
 import Completed from "../icons/completed";
 import Pending from "../icons/pending";
@@ -47,7 +54,7 @@ export default function HistoryDetail({ data }: Props) {
 
         <div className="mt-8 flex justify-between rounded-3xl bg-white/5 px-14 py-10">
           <Column chain={sourceChain} tx={data.requestTxHash} />
-          <Bridge />
+          <Bridge data={data} />
           <Column chain={targetChain} tx={data.responseTxHash} />
         </div>
 
@@ -101,24 +108,35 @@ function Column({ chain, tx }: { chain?: ChainConfig; tx?: Hex | null }) {
   );
 }
 
-function Bridge() {
+function Bridge({ data }: { data: TData }) {
+  const { total = 0, completed = 0 } = parseConfirmedBlocks(data.confirmedBlocks);
+
   return (
-    <div className="flex items-center justify-center">
-      <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72" fill="none">
-        <path
-          opacity="0.5"
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M35.5 17V36L2 55V36L35.5 17ZM69 17V36L35.5 55V36L69 17Z"
-          fill="#FFFFFF"
-        />
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M2 17L35.5 36V55L2 36V17ZM35.5 17L69 36V55L35.5 36V17Z"
-          fill="#FFFFFF"
-        />
-      </svg>
+    <div className="flex flex-col items-center justify-center gap-2">
+      {data.result === RecordResult.SUCCESS ? (
+        <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72" fill="none">
+          <path
+            opacity="0.5"
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M35.5 17V36L2 55V36L35.5 17ZM69 17V36L35.5 55V36L69 17Z"
+            fill="#FFFFFF"
+          />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M2 17L35.5 36V55L2 36V17ZM35.5 17L69 36V55L35.5 36V17Z"
+            fill="#FFFFFF"
+          />
+        </svg>
+      ) : (
+        <>
+          <div className="scale-[0.7]">
+            <span className="tx-in-progress" />
+          </div>
+          <span className="text-sm font-normal text-white">{total + completed ? `${completed} / ${total}` : ""}</span>
+        </>
+      )}
     </div>
   );
 }
