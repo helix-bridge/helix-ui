@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { ChainConfig, HistoryRecord } from "../../types";
 import { formatBalance, formatTime, getChainConfig, getChainLogoSrc, toShortAdrress } from "../../utils";
 import { Hex } from "viem";
+import Completed from "../icons/completed";
+import Pending from "../icons/pending";
 
 type TData = Pick<
   HistoryRecord,
@@ -80,18 +82,21 @@ function Column({ chain, tx }: { chain?: ChainConfig; tx?: Hex | null }) {
       <div className="flex h-28 w-28 items-center justify-center rounded-full border border-white/5">
         {chain ? <img alt={chain.name} width={64} height={64} src={getChainLogoSrc(chain.logo)} /> : "-"}
       </div>
-      {chain && tx ? (
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href={new URL(`tx/${tx}`, chain.blockExplorers?.default.url).href}
-          className="text-sm font-normal text-white underline transition-colors hover:text-primary"
-        >
-          Tx: {toShortAdrress(tx)}
-        </a>
-      ) : (
-        <span>-</span>
-      )}
+      <div className="inline-flex items-center gap-1">
+        {tx ? <Completed width={18} height={18} /> : <Pending width={25} height={25} />}
+        {chain && tx ? (
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={new URL(`tx/${tx}`, chain.blockExplorers?.default.url).href}
+            className="text-sm font-normal text-white underline transition-colors hover:text-primary"
+          >
+            Tx: {toShortAdrress(tx)}
+          </a>
+        ) : (
+          <span className="ellipsis ml-2">.</span>
+        )}
+      </div>
     </div>
   );
 }

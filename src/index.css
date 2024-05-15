@@ -26,15 +26,15 @@
 
   /* Page */
   .page-container {
-    @apply max-w-8xl px-medium mx-auto w-full py-5;
+    @apply mx-auto w-full max-w-8xl px-medium py-5;
   }
 
   /* User */
   .user-connect-wallet {
-    @apply gap-medium rounded-medium bg-primary px-large lg:hover:bg-primary/80 flex h-9 shrink-0 items-center transition lg:active:translate-y-1;
+    @apply flex h-9 shrink-0 items-center gap-medium rounded-medium bg-primary px-large transition lg:hover:bg-primary/80 lg:active:translate-y-1;
   }
   .user-dropdown-item {
-    @apply gap-medium px-medium py-small inline-flex items-center rounded-xl text-start transition hover:bg-white/10 lg:active:translate-y-1;
+    @apply inline-flex items-center gap-medium rounded-xl px-medium py-small text-start transition hover:bg-white/10 lg:active:translate-y-1;
   }
 
   .button {
@@ -52,7 +52,7 @@
   }
 
   .select {
-    @apply focus-within:border-primary hover:border-primary border transition duration-300 disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1 lg:disabled:translate-y-0;
+    @apply border transition duration-300 focus-within:border-primary hover:border-primary disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1 lg:disabled:translate-y-0;
   }
 }
 
@@ -82,6 +82,41 @@
   }
   to {
     stroke-dashoffset: -30;
+  }
+}
+
+/* Ellipsis */
+.ellipsis,
+.ellipsis::before,
+.ellipsis::after {
+  animation: ellipsis-frames 1.4s linear infinite;
+  line-height: 0.875rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.ellipsis {
+  position: relative;
+}
+.ellipsis::before,
+.ellipsis::after {
+  top: 0;
+  content: ".";
+  position: absolute;
+}
+.ellipsis::before {
+  left: -8px;
+  animation-delay: -0.16s;
+}
+.ellipsis::after {
+  left: 8px;
+  animation-delay: 0.16s;
+}
+@keyframes ellipsis-frames {
+  from {
+    color: #ffffff;
+  }
+  to {
+    color: transparent;
   }
 }
 
