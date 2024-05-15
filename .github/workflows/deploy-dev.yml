@@ -1,7 +1,7 @@
 name: Deploy Development
 
 on:
-  # pull_request:
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -16,31 +16,33 @@ jobs:
           repository: darwinia-network/devops
           path: .github
 
-      - uses: ./.github/actions/smart-vercel
-        name: Deploy Helix (mainnet)
-        with:
-          vercel_token: ${{ secrets.VERCEL_TOKEN }}
-          vercel_group: itering
-          preview_output: true
-          alias_domain: "helix-dev-mainnet"
-          project_name: "helix-apps"
-          script_run: false
-          dist_path: .
-          enable_notify_comment: true
-          enable_notify_slack: true
-          slack_channel: helix-ui
-          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+      # - uses: ./.github/actions/smart-vercel
+      #   name: Deploy Helix (mainnet)
+      #   with:
+      #     vercel_token: ${{ secrets.VERCEL_TOKEN }}
+      #     vercel_group: itering
+      #     preview_output: true
+      #     alias_domain: "helix-dev-mainnet"
+      #     project_name: "helix-apps"
+      #     script_run: false
+      #     dist_path: .
+      #     enable_notify_comment: true
+      #     enable_notify_slack: true
+      #     slack_channel: helix-ui
+      #     slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
       - uses: ./.github/actions/smart-vercel
         name: Deploy Helix (testnet)
         with:
+          node_verson: 20
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
           alias_domain: "helix-dev-testnet"
           project_name: "helix-apps-test"
-          script_run: false
-          dist_path: .
+          script_install: npm i
+          script_build: npm run build:testnet
+          dist_path: dist
           enable_notify_comment: true
           enable_notify_slack: true
           slack_channel: helix-ui
