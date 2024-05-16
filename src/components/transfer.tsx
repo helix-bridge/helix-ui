@@ -12,12 +12,20 @@ import TransferChainSection from "./transfer-chain-section";
 import TransferAmountSection from "./transfer-amount-section";
 import TransferInformationSection from "./transfer-information-section";
 import Button from "../ui/button";
-import { useAllowance, useBalance, useMaxTransfer, useSortedRelayData, useTransactionFee, useTransfer } from "../hooks";
+import {
+  useAllowance,
+  useApp,
+  useBalance,
+  useMaxTransfer,
+  useSortedRelayData,
+  useTransactionFee,
+  useTransfer,
+} from "../hooks";
 import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
 import TransferProvider from "../providers/transfer-provider";
 import DisclaimerModal from "./modals/disclaimer-modal";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { Address, Hex } from "viem";
+import { Address } from "viem";
 import TransferModal from "./modals/transfer-modal";
 
 interface Recipient {
@@ -27,7 +35,7 @@ interface Recipient {
 }
 
 function Component() {
-  const [txHash, setTxHash] = useState<Hex | null>();
+  const { updateBalanceAll, setIsHistoryOpen, setHistoryDetailsTxHash } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const [isTransfering, setIsTransfering] = useState(false);
   const {
@@ -203,11 +211,15 @@ function Component() {
           depositedMargin: BigInt(relayInfo?.margin ?? 0),
         });
         notifyTransaction(receipt, sourceChain, "Transfer");
-        setTxHash(receipt?.transactionHash);
+        setIsTransfering(false);
         if (receipt?.status === "success") {
-          setIsTransfering(false);
+          setAmount({ input: "", valid: true, value: 0n, alert: "" });
+          setHistoryDetailsTxHash(receipt.transactionHash);
+          setIsOpen(false);
+          setIsHistoryOpen(true);
           refreshBalance();
           refreshAllowance();
+          updateBalanceAll();
         }
       } catch (err) {
         console.error(err);
@@ -223,8 +235,12 @@ function Component() {
     sourceChain,
     fee?.value,
     deferredAmount.value,
+    setAmount,
     refreshBalance,
     refreshAllowance,
+    updateBalanceAll,
+    setIsHistoryOpen,
+    setHistoryDetailsTxHash,
   ]);
 
   return (
@@ -295,13 +311,7 @@ function Component() {
         amount={deferredAmount.value}
         busy={isTransfering}
         isOpen={isOpen}
-        onClose={() => {
-          setIsOpen(false);
-          if (txHash) {
-            setAmount({ input: "", valid: true, value: 0n, alert: "" });
-          }
-          setTxHash(null);
-        }}
+        onClose={() => setIsOpen(false)}
         onConfirm={handleTransfer}
       />
 
