@@ -19,7 +19,7 @@ jobs:
       - uses: ./.github/actions/smart-vercel
         name: Deploy Helix (mainnet)
         with:
-          node_verson: 20
+          node_version: 20
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
@@ -36,7 +36,7 @@ jobs:
       - uses: ./.github/actions/smart-vercel
         name: Deploy Helix (testnet)
         with:
-          node_verson: 20
+          node_version: 20
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
