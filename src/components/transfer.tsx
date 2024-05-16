@@ -12,20 +12,13 @@ import TransferChainSection from "./transfer-chain-section";
 import TransferAmountSection from "./transfer-amount-section";
 import TransferInformationSection from "./transfer-information-section";
 import Button from "../ui/button";
-import {
-  useAllowance,
-  useBalance,
-  useMaxTransfer,
-  useSortedRelayData,
-  useTransactionFee,
-  useTransferV2,
-} from "../hooks";
+import { useAllowance, useBalance, useMaxTransfer, useSortedRelayData, useTransactionFee, useTransfer } from "../hooks";
 import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
-import TransferProviderV2 from "../providers/transfer-provider-v2";
+import TransferProvider from "../providers/transfer-provider";
 import DisclaimerModal from "./modals/disclaimer-modal";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { Address, Hex } from "viem";
-import TransferModalV2 from "./modals/transfer-modal-v2";
+import TransferModal from "./modals/transfer-modal";
 
 interface Recipient {
   input: string;
@@ -55,7 +48,7 @@ function Component() {
     handleTargetChainChange,
     handleTargetTokenChange,
     handleSwitch,
-  } = useTransferV2();
+  } = useTransfer();
   const deferredAmount = useDeferredValue(amount);
 
   const account = useAccount();
@@ -290,7 +283,7 @@ function Component() {
         </Button>
       </div>
 
-      <TransferModalV2
+      <TransferModal
         sender={account.address}
         recipient={recipient.value}
         sourceChain={sourceChain}
@@ -317,10 +310,10 @@ function Component() {
   );
 }
 
-export default function TransferV2() {
+export default function Transfer() {
   return (
-    <TransferProviderV2>
+    <TransferProvider>
       <Component />
-    </TransferProviderV2>
+    </TransferProvider>
   );
 }

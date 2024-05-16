@@ -1,64 +1,15 @@
-import { LnBridgeV3 } from "../bridges";
-import { ChainConfig, CheckLnBridgeExistReqParams, CheckLnBridgeExistResData, Token } from "../types";
-import { extractTransferIds, getAvailableTargetTokens, notifyError, notifyTransaction } from "../utils";
-import {
-  Dispatch,
-  PropsWithChildren,
-  SetStateAction,
-  createContext,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { Hex, TransactionReceipt } from "viem";
+import { LnBridgeV3 } from "../../bridges";
+import { CheckLnBridgeExistReqParams, CheckLnBridgeExistResData } from "../../types";
+import { extractTransferIds, getAvailableTargetTokens, notifyError, notifyTransaction } from "../../utils";
+import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
+import { Hex } from "viem";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { Subscription, forkJoin } from "rxjs";
 import { ApolloClient } from "@apollo/client";
-import { GQL_CHECK_LNBRIDGE_EXIST } from "../config";
-import { notification } from "../ui/notification";
-
-interface RelayerCtx {
-  bridgeInstance: LnBridgeV3;
-  sourceChain: ChainConfig | undefined;
-  targetChain: ChainConfig | undefined;
-  sourceToken: Token | undefined;
-  targetToken: Token | undefined;
-  penaltyReserve: bigint | undefined;
-  sourceAllowance: { value: bigint; token: Token } | undefined;
-  targetAllowance: { value: bigint; token: Token } | undefined;
-  sourceBalance: { value: bigint; token: Token } | undefined;
-  targetBalance: { value: bigint; token: Token } | undefined;
-  isGettingPenaltyReserves: boolean;
-
-  setSourceChain: Dispatch<SetStateAction<ChainConfig | undefined>>;
-  setTargetChain: Dispatch<SetStateAction<ChainConfig | undefined>>;
-  setSourceToken: Dispatch<SetStateAction<Token | undefined>>;
-  // setBaseFee: Dispatch<SetStateAction<bigint | undefined>>;
-  // setFeeRate: Dispatch<SetStateAction<number | undefined>>;
-  // setPenaltyReserve: Dispatch<SetStateAction<bigint | undefined>>;
-  // setSourceAllowance: Dispatch<SetStateAction<{ value: bigint; token: Token } | undefined>>;
-  // setSourceBalance: Dispatch<SetStateAction<{ value: bigint; token: Token } | undefined>>;
-  // setTargetBalance: Dispatch<SetStateAction<{ value: bigint; token: Token } | undefined>>;
-
-  sourceApprove: (amount: bigint) => Promise<TransactionReceipt | undefined>;
-  targetApprove: (amount: bigint) => Promise<TransactionReceipt | undefined>;
-  depositPenaltyReserve: (amount: bigint) => Promise<TransactionReceipt | undefined>;
-  registerLnProvider: (
-    baseFee: bigint,
-    feeRate: number,
-    transferLimit: bigint,
-  ) => Promise<TransactionReceipt | undefined>;
-  isLnBridgeExist: (apolloClient: ApolloClient<object>) => Promise<boolean>;
-  withdrawPenaltyReserve: (amount: bigint) => Promise<TransactionReceipt | undefined>;
-  withdrawLiquidity: (
-    ids: { id: string }[],
-    messageFee: bigint,
-    params: Hex | undefined,
-  ) => Promise<TransactionReceipt | undefined>;
-}
-
-export const RelayerContext = createContext({} as RelayerCtx);
+import { GQL_CHECK_LNBRIDGE_EXIST } from "../../config";
+import { notification } from "../../ui/notification";
+import { RelayerContext } from "./context";
+import { RelayerCtx } from "./types";
 
 export default function RelayerProviderV3({ children }: PropsWithChildren<unknown>) {
   const [sourceChain, setSourceChain] = useState<RelayerCtx["sourceChain"]>(undefined);

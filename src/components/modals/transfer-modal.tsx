@@ -20,7 +20,7 @@ interface Props {
   onConfirm: () => void;
 }
 
-export default function TransferModalV2({
+export default function TransferModal({
   sender,
   recipient,
   busy,
