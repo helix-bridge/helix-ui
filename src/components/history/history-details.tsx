@@ -88,7 +88,7 @@ function Column({ chain, tx }: { chain?: ChainConfig; tx?: Hex | null }) {
         )}
         {chain ? <img alt={chain.name} width={64} height={64} src={getChainLogoSrc(chain.logo)} /> : "-"}
       </div>
-      <div className="inline-flex items-center gap-1">
+      <div className="inline-flex min-h-7 min-w-32 items-center justify-center gap-1">
         {tx ? <Completed width={18} height={18} /> : <Pending width={25} height={25} />}
         {chain && tx ? (
           <a
