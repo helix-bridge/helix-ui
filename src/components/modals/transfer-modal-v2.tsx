@@ -1,28 +1,16 @@
 import { BaseBridge } from "../../bridges";
-import { GQL_HISTORY_RECORD_BY_TX_HASH } from "../../config";
-import { useApp } from "../../hooks";
-import {
-  ChainConfig,
-  HistoryRecordByTxHashReqParams,
-  HistoryRecordByTxHashResData,
-  RecordResult,
-  Token,
-} from "../../types";
+import { ChainConfig, Token } from "../../types";
 import Modal from "../../ui/modal";
-import ProgressIcon from "../../ui/progress-icon";
 import { formatBalance, getChainLogoSrc, toShortAdrress } from "../../utils";
-import { useQuery } from "@apollo/client";
-import { Link } from "react-router-dom";
-import { Address, Hex, isHex } from "viem";
+import { Address } from "viem";
 
 interface Props {
-  sender?: `0x${string}` | null;
-  recipient?: `0x${string}` | null;
+  sender?: Address | null;
+  recipient?: Address | null;
   sourceChain: ChainConfig;
   sourceToken: Token;
   targetChain: ChainConfig;
   targetToken: Token;
-  txHash: Hex | null | undefined;
   fee: { token: Token; value: bigint } | null | undefined;
   bridge: BaseBridge | undefined;
   amount: bigint;
@@ -42,22 +30,11 @@ export default function TransferModalV2({
   sourceToken,
   targetChain,
   targetToken,
-  txHash,
   amount,
   isOpen,
   onClose,
   onConfirm,
 }: Props) {
-  const { data: txProgressData } = useQuery<HistoryRecordByTxHashResData, HistoryRecordByTxHashReqParams>(
-    GQL_HISTORY_RECORD_BY_TX_HASH,
-    {
-      variables: { txHash: txHash ?? "0x" },
-      pollInterval: txHash ? 300 : 0,
-      skip: !txHash,
-    },
-  );
-  const { updateBalanceAll } = useApp();
-
   return (
     <Modal
       title="Transfer Review"
@@ -66,12 +43,10 @@ export default function TransferModalV2({
       okText="Confirm"
       disabledCancel={busy}
       busy={busy}
-      forceFooterHidden={!!txHash}
       onClose={onClose}
       onCancel={onClose}
       onOk={onConfirm}
     >
-      {/* From-To */}
       <div className="flex flex-col gap-small">
         <SourceTarget type="source" address={sender} chain={sourceChain} token={sourceToken} amount={amount} />
         <div className="relative">
@@ -82,22 +57,10 @@ export default function TransferModalV2({
         <SourceTarget type="target" address={recipient} chain={targetChain} token={targetToken} amount={amount} />
       </div>
 
-      {/* information */}
       <div className="flex flex-col gap-medium">
         <span className="text-sm font-bold text-white/50">Information</span>
         <Information fee={fee} bridge={bridge} />
       </div>
-
-      {txHash ? (
-        <div className="flex h-12 items-center rounded-xl bg-inner p-3 lg:rounded-large lg:px-5">
-          <Progress
-            confirmedBlocks={txProgressData?.historyRecordByTxHash?.confirmedBlocks}
-            result={txProgressData?.historyRecordByTxHash?.result}
-            id={txProgressData?.historyRecordByTxHash?.id}
-            onFinished={updateBalanceAll}
-          />
-        </div>
-      ) : null}
     </Modal>
   );
 }
@@ -158,51 +121,4 @@ function Item({ label, value }: { label: string; value?: string | null }) {
       <span className="truncate">{value}</span>
     </div>
   );
-}
-
-function Progress({
-  confirmedBlocks,
-  result,
-  id,
-  onFinished = () => undefined,
-}: {
-  confirmedBlocks: string | null | undefined;
-  result: RecordResult | null | undefined;
-  id: string | null | undefined;
-  onFinished?: () => void;
-}) {
-  const splited = isHex(confirmedBlocks) ? [1, 1] : confirmedBlocks?.split("/");
-  if (splited?.length === 2) {
-    const finished = Number(splited[0]);
-    const total = Number(splited[1]);
-
-    if (finished === total || result === RecordResult.SUCCESS) {
-      onFinished();
-      return (
-        <div className="flex w-full items-center justify-between">
-          <div className="inline-flex">
-            <span className="text-sm font-bold">LnProvider relay finished. Go to&nbsp;</span>
-            <Link to={`/tx/${id}`} className="text-sm font-bold text-primary hover:underline">
-              Detail
-            </Link>
-          </div>
-          <img width={22} height={22} alt="Finished" src="images/finished.svg" />
-        </div>
-      );
-    } else {
-      return (
-        <div className="flex w-full items-center justify-between">
-          <span className="text-sm font-bold">{`Waiting for LnProvider relay message(${confirmedBlocks})`}</span>
-          <ProgressIcon percent={(finished * 100) / total} />
-        </div>
-      );
-    }
-  } else {
-    return (
-      <div className="flex w-full items-center justify-between">
-        <span className="text-sm font-bold">Waiting for indexing...</span>
-        <ProgressIcon percent={10} />
-      </div>
-    );
-  }
 }

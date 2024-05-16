@@ -153,14 +153,6 @@ export interface QueryLnBridgeRelayInfosResData {
   } | null;
 }
 
-export interface HistoryRecordByTxHashReqParams {
-  txHash: Hash;
-}
-
-export interface HistoryRecordByTxHashResData {
-  historyRecordByTxHash: Pick<HistoryRecord, "confirmedBlocks" | "result" | "id"> | null;
-}
-
 export interface CheckLnBridgeExistReqParams {
   fromChainId: ChainID | undefined;
   toChainId: ChainID | undefined;

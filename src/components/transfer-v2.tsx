@@ -297,7 +297,6 @@ function Component() {
         sourceToken={sourceToken}
         targetChain={targetChain}
         targetToken={targetToken}
-        txHash={txHash}
         fee={fee}
         bridge={bridge}
         amount={deferredAmount.value}
