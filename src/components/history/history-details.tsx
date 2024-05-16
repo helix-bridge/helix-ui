@@ -79,7 +79,7 @@ function Column({ chain, tx }: { chain?: ChainConfig; tx?: Hex | null }) {
   return (
     <div className="flex flex-col items-center gap-6">
       <span className="text-sm font-bold text-white">{chain?.name ?? "-"}</span>
-      <div className="relative flex h-28 w-28 items-center justify-center rounded-full border border-white/5">
+      <div className="relative flex h-28 w-28 items-center justify-center rounded-full border border-primary/25">
         {tx ? null : (
           <div
             className="absolute bottom-0 left-0 right-0 top-0 z-10 animate-spin rounded-full border-y border-white"
