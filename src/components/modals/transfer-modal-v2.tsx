@@ -62,7 +62,7 @@ export default function TransferModalV2({
     <Modal
       title="Transfer Review"
       isOpen={isOpen}
-      className="w-full lg:w-[34rem]"
+      className="w-full lg:w-[26rem]"
       okText="Confirm"
       disabledCancel={busy}
       busy={busy}
@@ -116,26 +116,24 @@ function SourceTarget({
   address?: Address | null;
 }) {
   return chain && token ? (
-    <div className="flex items-center justify-between rounded-xl bg-background p-3 lg:rounded-2xl lg:p-large">
-      {/* Left */}
-      <div className="flex items-center gap-medium">
-        <img width={36} height={36} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
-        <div className="flex flex-col items-start gap-1">
-          <span className="text-base font-semibold text-white">{chain.name}</span>
-          <span className="hidden text-sm font-semibold text-white/50 lg:inline">{address}</span>
-          {address ? (
-            <span className="text-sm font-semibold text-white/50 lg:hidden">{toShortAdrress(address, 8, 6)}</span>
-          ) : null}
-        </div>
-      </div>
+    <div className="flex items-start justify-between gap-2 rounded-xl bg-background p-3 lg:rounded-2xl lg:p-large">
+      <img width={36} height={36} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
 
-      {/* Right */}
-      <div className="flex flex-col items-end">
-        <span className={`text-sm font-extrabold ${type === "source" ? "text-app-red" : "text-app-green"}`}>
-          {type === "source" ? "-" : "+"}
-          {formatBalance(amount, token.decimals)}
-        </span>
-        <span className="text-sm font-extrabold text-white">{token.symbol}</span>
+      <div className="flex w-full flex-col gap-1 truncate">
+        <div className="flex items-center justify-between gap-1">
+          <span className="max-w-[46%] truncate text-base font-semibold text-white">{chain.name}</span>
+          <span
+            className={`max-w-[46%] truncate text-sm font-extrabold ${type === "source" ? "text-app-red" : "text-app-green"}`}
+          >
+            {type === "source" ? "-" : "+"}
+            {formatBalance(amount, token.decimals)}
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between gap-1">
+          <span className="text-sm font-semibold text-white/50">{address ? toShortAdrress(address, 8, 6) : ""}</span>
+          <span className="text-sm font-extrabold text-white">{token.symbol}</span>
+        </div>
       </div>
     </div>
   ) : null;
@@ -144,11 +142,11 @@ function SourceTarget({
 function Information({ fee, bridge }: { fee?: { value: bigint; token: Token } | null; bridge?: BaseBridge | null }) {
   return (
     <div className="flex flex-col gap-small rounded-xl bg-background p-3 lg:rounded-2xl lg:p-large">
+      <Item label="Estimated Arrival Time" value={bridge?.formatEstimateTime()} />
       <Item
         label="Transaction Fee"
         value={fee ? `${formatBalance(fee.value, fee.token.decimals, { precision: 6 })} ${fee.token.symbol}` : null}
       />
-      <Item label="Estimated Arrival Time" value={bridge?.formatEstimateTime()} />
     </div>
   );
 }
