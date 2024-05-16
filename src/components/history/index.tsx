@@ -1,11 +1,10 @@
 import { useHistory } from "../../hooks";
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
-import HistoryDetail from "./history-detail";
+import HistoryDetails from "./history-details";
 import HistoryTable from "./history-table";
 import { useAccount } from "wagmi";
 import Modal from "./modal";
-import { timer, Subscription } from "rxjs";
 
 export default function History({ children, className }: PropsWithChildren<{ className: string }>) {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,19 +13,12 @@ export default function History({ children, className }: PropsWithChildren<{ cla
   const [detail, setDetail] = useState<(typeof data)[0] | null>();
 
   useEffect(() => {
-    let sub$$: Subscription | undefined;
-
     if (isOpen) {
-      sub$$ = timer(0, 3000).subscribe(() => refetch());
+      refetch();
     } else {
-      sub$$?.unsubscribe();
       setCurrentPage(0);
       setDetail(null);
     }
-
-    return () => {
-      sub$$?.unsubscribe();
-    };
   }, [isOpen, refetch]);
 
   const historyRef = useRef<HTMLDivElement | null>(null);
@@ -58,7 +50,7 @@ export default function History({ children, className }: PropsWithChildren<{ cla
           >
             <div ref={nodeRef}>
               {detail ? (
-                <HistoryDetail data={detail} />
+                <HistoryDetails requestTxHash={detail.requestTxHash} />
               ) : (
                 <HistoryTable
                   onPageChange={setCurrentPage}

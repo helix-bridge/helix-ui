@@ -15,6 +15,7 @@ export * from "./use-daily-limit";
 export * from "./use-support-chains";
 export * from "./use-max-transfer";
 export * from "./use-history";
+export * from "./use-history-details";
 export * from "./use-txs";
 export * from "./use-media-query";
 export * from "./use-relayers-data";

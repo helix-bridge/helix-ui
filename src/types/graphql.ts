@@ -1,7 +1,7 @@
 import { TokenCategory, TokenSymbol } from "./token";
 import { BridgeCategory, BridgeVersion } from "./bridge";
 import { Network, ChainID } from "./chain";
-import { Address, Hex } from "viem";
+import { Address, Hash } from "viem";
 
 /**
  * From indexer
@@ -26,8 +26,8 @@ export interface HistoryRecord {
   bridge: BridgeCategory;
   reason: string | null;
   nonce: string;
-  requestTxHash: Hex;
-  responseTxHash: Hex | null;
+  requestTxHash: Hash;
+  responseTxHash: Hash | null;
   sender: Address;
   recipient: Address;
   sendToken: TokenSymbol;
@@ -43,7 +43,7 @@ export interface HistoryRecord {
   sendTokenAddress: Address;
   recvTokenAddress: Address | null;
   relayer: Address | null;
-  endTxHash: Hex | null;
+  endTxHash: Hash | null;
   confirmedBlocks: string | null;
 }
 
@@ -57,7 +57,7 @@ export interface LnBridgeRelayInfo {
   bridge: BridgeCategory;
   relayer: Address;
   sendToken: Address | null;
-  transaction_hash: Hex;
+  transaction_hash: Hash;
   timestamp: number;
   margin: string | null;
   protocolFee: string | null;
@@ -65,7 +65,7 @@ export interface LnBridgeRelayInfo {
   liquidityFeeRate: number | null;
   slashCount: number | null;
   withdrawNonce: string | null;
-  lastTransferId: Hex | null;
+  lastTransferId: Hash | null;
   cost: string | null;
   profit: string | null;
   heartbeatTimestamp: number | null;
@@ -154,7 +154,7 @@ export interface QueryLnBridgeRelayInfosResData {
 }
 
 export interface HistoryRecordByTxHashReqParams {
-  txHash: Hex;
+  txHash: Hash;
 }
 
 export interface HistoryRecordByTxHashResData {
@@ -247,6 +247,26 @@ export interface HistoryResData {
       | "id"
     >[];
   };
+}
+
+export interface HistoryDetailsReqParams {
+  txHash: Hash;
+}
+
+export interface HistoryDetailsResData {
+  historyRecordByTxHash: Pick<
+    HistoryRecord,
+    | "requestTxHash"
+    | "responseTxHash"
+    | "fromChain"
+    | "toChain"
+    | "startTime"
+    | "sendToken"
+    | "sendAmount"
+    | "confirmedBlocks"
+    | "result"
+    | "id"
+  > | null;
 }
 
 export interface TxsReqParams {

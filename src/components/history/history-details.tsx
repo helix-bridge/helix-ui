@@ -8,42 +8,33 @@ import {
   parseConfirmedBlocks,
   toShortAdrress,
 } from "../../utils";
-import { Hex } from "viem";
+import { Hash, Hex } from "viem";
 import Completed from "../icons/completed";
 import Pending from "../icons/pending";
-
-type TData = Pick<
-  HistoryRecord,
-  | "requestTxHash"
-  | "responseTxHash"
-  | "fromChain"
-  | "toChain"
-  | "startTime"
-  | "sendToken"
-  | "sendAmount"
-  | "confirmedBlocks"
-  | "result"
-  | "id"
->;
+import { useHistoryDtails } from "../../hooks";
+import ComponentLoading from "../../ui/component-loading";
 
 interface Props {
-  data: TData;
+  requestTxHash: Hash;
 }
 
-export default function HistoryDetail({ data }: Props) {
-  const sourceChain = getChainConfig(data.fromChain);
-  const targetChain = getChainConfig(data.toChain);
-  const sourceToken = sourceChain?.tokens.find(({ symbol }) => symbol === data.sendToken);
+export default function HistoryDetails({ requestTxHash }: Props) {
+  const { data, loading } = useHistoryDtails(requestTxHash);
+  const sourceChain = getChainConfig(data?.fromChain);
+  const targetChain = getChainConfig(data?.toChain);
+  const sourceToken = sourceChain?.tokens.find(({ symbol }) => symbol === data?.sendToken);
 
   return (
-    <div className="overflow-x-auto pb-2">
+    <div className="relative overflow-x-auto pb-2">
+      <ComponentLoading loading={loading} color="white" className="backdrop-blur-[2px]" />
+
       <div className="w-[39.5rem] px-5">
         <div className="flex flex-col gap-3 text-sm font-normal">
-          <Row label="Timestamp" value={formatTime(data.startTime * 1000)} />
+          <Row label="Timestamp" value={data ? formatTime(data.startTime * 1000) : undefined} />
           <Row
             label="Value"
             value={
-              sourceToken
+              data && sourceToken
                 ? `${formatBalance(BigInt(data.sendAmount), sourceToken.decimals, { precision: 8 })} ${
                     sourceToken.symbol
                   }`
@@ -53,21 +44,23 @@ export default function HistoryDetail({ data }: Props) {
         </div>
 
         <div className="mt-8 flex justify-between rounded-3xl bg-white/5 px-14 py-10">
-          <Column chain={sourceChain} tx={data.requestTxHash} />
+          <Column chain={sourceChain} tx={data?.requestTxHash} />
           <Bridge data={data} />
-          <Column chain={targetChain} tx={data.responseTxHash} />
+          <Column chain={targetChain} tx={data?.responseTxHash} />
         </div>
 
-        <div className="mt-2 inline-flex w-full justify-end pr-2">
-          <Link
-            className="text-sm font-light text-white underline transition-colors hover:text-primary"
-            target="_blank"
-            to={`/tx/${data.id}`}
-            rel="noopener noreferrer"
-          >
-            {`More`}
-          </Link>
-        </div>
+        {data && (
+          <div className="mt-2 inline-flex w-full justify-end pr-2">
+            <Link
+              className="text-sm font-light text-white underline transition-colors hover:text-primary"
+              target="_blank"
+              to={`/tx/${data.id}`}
+              rel="noopener noreferrer"
+            >
+              {`More`}
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -108,12 +101,12 @@ function Column({ chain, tx }: { chain?: ChainConfig; tx?: Hex | null }) {
   );
 }
 
-function Bridge({ data }: { data: TData }) {
-  const { total = 0, completed = 0 } = parseConfirmedBlocks(data.confirmedBlocks);
+function Bridge({ data }: { data?: Pick<HistoryRecord, "confirmedBlocks" | "result"> | null }) {
+  const { total = 0, completed = 0 } = parseConfirmedBlocks(data?.confirmedBlocks);
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">
-      {data.result === RecordResult.SUCCESS ? (
+      {data?.result === RecordResult.SUCCESS ? (
         <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72" fill="none">
           <path
             opacity="0.5"

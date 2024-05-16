@@ -196,6 +196,23 @@ export const GQL_GET_HISTORY = gql`
   }
 `;
 
+export const GQL_GET_HISTORY_DETAILS = gql`
+  query GetHistoryDetails($txHash: String) {
+    historyRecordByTxHash(txHash: $txHash) {
+      requestTxHash
+      responseTxHash
+      fromChain
+      toChain
+      startTime
+      sendToken
+      sendAmount
+      confirmedBlocks
+      result
+      id
+    }
+  }
+`;
+
 export const GQL_GET_TXS = gql`
   query GetTXS($bridges: [String], $sender: String, $page: Int, $row: Int) {
     historyRecords(bridges: $bridges, sender: $sender, page: $page, row: $row) {
