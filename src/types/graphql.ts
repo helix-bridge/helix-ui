@@ -235,16 +235,7 @@ export interface HistoryResData {
     total: number;
     records: Pick<
       HistoryRecord,
-      | "requestTxHash"
-      | "responseTxHash"
-      | "fromChain"
-      | "toChain"
-      | "startTime"
-      | "sendToken"
-      | "sendAmount"
-      | "confirmedBlocks"
-      | "result"
-      | "id"
+      "requestTxHash" | "fromChain" | "toChain" | "startTime" | "sendToken" | "sendAmount" | "result" | "id"
     >[];
   };
 }
