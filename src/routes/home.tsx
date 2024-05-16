@@ -1,4 +1,4 @@
-import TransferV2 from "../components/transfer-v2";
+import Transfer from "../components/transfer";
 
 export default function Home() {
   return (
@@ -8,7 +8,7 @@ export default function Home() {
       </div>
       <div className="absolute bottom-0 left-0 right-0 top-0 z-[2] overflow-y-auto">
         <div className="page-container flex min-h-full items-start justify-center lg:items-center lg:!pb-10">
-          <TransferV2 />
+          <Transfer />
         </div>
       </div>
     </main>

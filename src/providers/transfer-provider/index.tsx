@@ -1,49 +1,19 @@
-import { useSupportChains } from "../hooks";
-import { ChainConfig, Token, TokenOption, UrlSearchParamKey } from "../types";
+import { useSupportChains } from "../../hooks";
+import { ChainConfig, UrlSearchParamKey } from "../../types";
 import {
   getSourceChainOptions,
   getSourceTokenOptions,
   getTargetChainOptions,
   getTargetTokenOptions,
   getTokenOptions,
-} from "../utils";
-import {
-  Dispatch,
-  PropsWithChildren,
-  SetStateAction,
-  createContext,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+} from "../../utils";
+import { PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-
-interface TransferCtx {
-  token: TokenOption;
-  amount: { input: string; value: bigint; valid: boolean; alert: string };
-  sourceChainOptions: ChainConfig[];
-  targetChainOptions: ChainConfig[];
-  sourceChain: ChainConfig;
-  targetChain: ChainConfig;
-  sourceToken: Token;
-  targetToken: Token;
-  loadingSupportChains: boolean;
-  isSwitchAvailable: (sourceChain: ChainConfig, targetChain: ChainConfig) => boolean;
-  setAmount: Dispatch<SetStateAction<{ input: string; value: bigint; valid: boolean; alert: string }>>;
-  handleTokenChange: (value: TokenOption) => void;
-  handleSourceChainChange: (value: ChainConfig) => void;
-  handleTargetChainChange: (value: ChainConfig) => void;
-  handleSourceTokenChange: (value: Token) => void;
-  handleTargetTokenChange: (value: Token) => void;
-  handleSwitch: () => void;
-}
-
-export const TransferContext = createContext({} as TransferCtx);
+import { TransferContext } from "./context";
 
 const tokenOptions = getTokenOptions();
 
-export default function TransferProviderV2({ children }: PropsWithChildren<unknown>) {
+export default function TransferProvider({ children }: PropsWithChildren<unknown>) {
   const [token, _setToken] = useState(tokenOptions[0]);
   const [amount, setAmount] = useState({ input: "", value: 0n, valid: true, alert: "" });
   const [sourceChainOptions, setSourceChainOptions] = useState(getSourceChainOptions(token.category));

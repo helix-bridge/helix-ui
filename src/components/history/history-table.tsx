@@ -4,16 +4,7 @@ import { formatBalance, formatTime, getChainConfig, getChainLogoSrc } from "../.
 
 type TData = Pick<
   HistoryRecord,
-  | "requestTxHash"
-  | "responseTxHash"
-  | "fromChain"
-  | "toChain"
-  | "startTime"
-  | "sendToken"
-  | "sendAmount"
-  | "confirmedBlocks"
-  | "result"
-  | "id"
+  "requestTxHash" | "fromChain" | "toChain" | "startTime" | "sendToken" | "sendAmount" | "result" | "id"
 >;
 
 const columns: ColumnType<TData>[] = [
