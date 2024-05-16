@@ -1,5 +1,5 @@
-import { useHistory } from "../../hooks";
-import { PropsWithChildren, useEffect, useRef, useState } from "react";
+import { useApp, useHistory } from "../../hooks";
+import { PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
 import HistoryDetails from "./history-details";
 import HistoryTable from "./history-table";
@@ -7,25 +7,29 @@ import { useAccount } from "wagmi";
 import Modal from "./modal";
 
 export default function History({ children, className }: PropsWithChildren<{ className: string }>) {
-  const [isOpen, setIsOpen] = useState(false);
+  const { isHistoryOpen, historyDetailsTxHash, setIsHistoryOpen, setHistoryDetailsTxHash } = useApp();
   const [currentPage, setCurrentPage] = useState(0);
-  const { loading, data, total, refetch } = useHistory(currentPage, isOpen);
-  const [detail, setDetail] = useState<(typeof data)[0] | null>();
+  const { loading, data, total, refetch } = useHistory(currentPage, isHistoryOpen);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isHistoryOpen) {
       refetch();
     } else {
       setCurrentPage(0);
-      setDetail(null);
+      setHistoryDetailsTxHash(null);
     }
-  }, [isOpen, refetch]);
+  }, [isHistoryOpen, refetch, setHistoryDetailsTxHash]);
 
   const historyRef = useRef<HTMLDivElement | null>(null);
   const detailRef = useRef<HTMLDivElement | null>(null);
-  const nodeRef = detail ? detailRef : historyRef;
+  const nodeRef = historyDetailsTxHash ? detailRef : historyRef;
 
   const account = useAccount();
+
+  const handleRowClick = useCallback(
+    (r: (typeof data)[0]) => setHistoryDetailsTxHash(r.requestTxHash),
+    [setHistoryDetailsTxHash],
+  );
 
   return account.address ? (
     <>
@@ -33,28 +37,33 @@ export default function History({ children, className }: PropsWithChildren<{ cla
         className={className}
         onClick={(e) => {
           e.stopPropagation();
-          setIsOpen(true);
+          setIsHistoryOpen(true);
         }}
       >
         {children ?? <span>History</span>}
       </button>
 
-      <Modal isOpen={isOpen} isDetail={!!detail} onClose={() => setIsOpen(false)} onBack={() => setDetail(null)}>
+      <Modal
+        isOpen={isHistoryOpen}
+        isDetail={!!historyDetailsTxHash}
+        onClose={() => setIsHistoryOpen(false)}
+        onBack={() => setHistoryDetailsTxHash(null)}
+      >
         <SwitchTransition>
           <CSSTransition
-            key={detail ? "detail" : "history"}
-            classNames={detail ? "history-detail-fade" : "history-table-fade"}
+            key={historyDetailsTxHash ? "detail" : "history"}
+            classNames={historyDetailsTxHash ? "history-detail-fade" : "history-table-fade"}
             timeout={100}
             nodeRef={nodeRef}
             unmountOnExit
           >
             <div ref={nodeRef}>
-              {detail ? (
-                <HistoryDetails requestTxHash={detail.requestTxHash} />
+              {historyDetailsTxHash ? (
+                <HistoryDetails requestTxHash={historyDetailsTxHash} />
               ) : (
                 <HistoryTable
                   onPageChange={setCurrentPage}
-                  onRowClick={setDetail}
+                  onRowClick={handleRowClick}
                   currentPage={currentPage}
                   totalRecords={total}
                   dataSource={data}
