@@ -144,7 +144,8 @@ function ChainOption({
       </div>
 
       {balanceAll
-        .filter((b) => b.chain.id === option.id && b.token.symbol === token.symbol)
+        .filter((b) => b.chain.id === option.id && b.token.category === token.category)
+        .slice(0, 1)
         .map((b) => (
           <span
             className="truncate text-xs font-medium text-white/50"
