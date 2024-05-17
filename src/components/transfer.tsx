@@ -292,7 +292,7 @@ function Component() {
           className="inline-flex h-12 items-center justify-center rounded-full"
           kind="primary"
           busy={isApproving}
-          disabled={disableAction}
+          disabled={disableAction || !sourceChainOptions.length}
           onClick={handleAction}
         >
           <span className="text-base font-bold text-white">{actionText}</span>
