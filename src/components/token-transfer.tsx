@@ -1,13 +1,12 @@
-import { HistoryRecord } from "@/types/graphql";
-import Tooltip from "@/ui/tooltip";
-import Image from "next/image";
+import { HistoryRecord } from "../types/graphql";
+import Tooltip from "../ui/tooltip";
 import PrettyAddress from "./pretty-address";
-import { BaseBridge } from "@/bridges/base";
-import { Network } from "@/types/chain";
-import { TokenSymbol } from "@/types/token";
-import { getChainConfig } from "@/utils/chain";
-import { getChainLogoSrc, getTokenLogoSrc } from "@/utils/misc";
-import { formatBalance } from "@/utils/balance";
+import { BaseBridge } from "../bridges/base";
+import { Network } from "../types/chain";
+import { TokenSymbol } from "../types/token";
+import { getChainConfig } from "../utils/chain";
+import { getChainLogoSrc, getTokenLogoSrc } from "../utils/misc";
+import { formatBalance } from "../utils/balance";
 import { Address } from "viem";
 
 interface Props {
@@ -57,7 +56,7 @@ function Item({
   return token && chainConfig ? (
     <div className="flex items-center gap-medium">
       <Tooltip content={chainConfig.name} className="shrink-0">
-        <Image
+        <img
           width={16}
           height={16}
           alt="Chain logo"
@@ -66,11 +65,11 @@ function Item({
         />
       </Tooltip>
       <Label text="From" />
-      <Address address={from} />
+      <DisplayAddress address={from} />
       <Label text="To" />
-      <Address address={to} />
+      <DisplayAddress address={to} />
       <Label text="For" />
-      <Image width={16} height={16} alt="Token icon" src={getTokenLogoSrc(token.logo)} className="shrink-0" />
+      <img width={16} height={16} alt="Token icon" src={getTokenLogoSrc(token.logo)} className="shrink-0" />
       <span className="text-sm font-medium text-white">
         {formatBalance(amount, token.decimals, { keepZero: false, precision: 4 })} {symbol}
       </span>
@@ -78,7 +77,7 @@ function Item({
   ) : null;
 }
 
-function Address({ address }: { address: Address }) {
+function DisplayAddress({ address }: { address: Address }) {
   return (
     <div className="inline-block w-24 truncate">
       <PrettyAddress address={address} forceShort className="text-sm font-medium text-primary" />

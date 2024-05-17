@@ -1,5 +1,4 @@
-import Tooltip from "@/ui/tooltip";
-import Image from "next/image";
+import Tooltip from "../ui/tooltip";
 
 interface Props {
   text: string;
@@ -12,7 +11,7 @@ export default function TransferSectionTitle({ text, tips }: Props) {
       <span className="text-sm font-normal text-white/50">{text}</span>
       {tips ? (
         <Tooltip content={tips} enabledSafePolygon>
-          <Image width={14} height={14} alt="Info" src="/images/info.svg" />
+          <img width={14} height={14} alt="Info" src="images/info.svg" />
         </Tooltip>
       ) : null}
     </div>

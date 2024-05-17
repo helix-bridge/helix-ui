@@ -1,4 +1,4 @@
-import { useToggle } from "@/hooks/use-toggle";
+import { useToggle } from "../hooks/use-toggle";
 import {
   FloatingPortal,
   Placement,
@@ -11,7 +11,6 @@ import {
   useInteractions,
   useTransitionStyles,
 } from "@floating-ui/react";
-import Image from "next/image";
 import { PropsWithChildren, ReactElement } from "react";
 
 interface Props {
@@ -65,10 +64,10 @@ export default function Dropdown({
     <>
       <button className={`${labelClassName}`} ref={refs.setReference} {...getReferenceProps()}>
         {label}
-        <Image
+        <img
           style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
           className="shrink-0 transition-transform"
-          src="/images/caret-down.svg"
+          src="images/caret-down.svg"
           alt="Caret down"
           width={16}
           height={16}

@@ -1,4 +1,4 @@
-name: Deploy development
+name: Deploy Development
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy-package:
-    name: Deploy package
+    name: Deploy Package
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -17,30 +17,34 @@ jobs:
           path: .github
 
       - uses: ./.github/actions/smart-vercel
-        name: Deploy helix
+        name: Deploy Helix (mainnet)
         with:
+          node_version: 20
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
-          alias_domain: "helix-dev-main"
+          alias_domain: "helix-dev-mainnet"
           project_name: "helix-apps"
-          script_run: false
-          dist_path: .
+          script_install: npm i
+          script_build: npm run build:mainnet
+          dist_path: dist
           enable_notify_comment: true
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
       - uses: ./.github/actions/smart-vercel
-        name: Deploy helix (test)
+        name: Deploy Helix (testnet)
         with:
+          node_version: 20
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
-          alias_domain: "helix-dev-test"
+          alias_domain: "helix-dev-testnet"
           project_name: "helix-apps-test"
-          script_run: false
-          dist_path: .
+          script_install: npm i
+          script_build: npm run build:testnet
+          dist_path: dist
           enable_notify_comment: true
           enable_notify_slack: true
           slack_channel: helix-ui

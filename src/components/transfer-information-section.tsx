@@ -1,9 +1,9 @@
-import { SortedLnBridgeRelayInfosResData, Token } from "@/types";
+import { SortedLnBridgeRelayInfosResData, Token } from "../types";
 import TransferInformation from "./transfer-information";
 import TransferSection from "./transfer-section";
-import { BaseBridge } from "@/bridges";
+import { BaseBridge } from "../bridges";
 import { useMemo } from "react";
-import { useDailyLimit } from "@/hooks";
+import { useDailyLimit } from "../hooks";
 
 interface Props {
   sourceToken: Token;

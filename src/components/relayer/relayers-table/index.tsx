@@ -1,4 +1,4 @@
-import { BridgeVersion, RelayersRecord } from "@/types";
+import { BridgeVersion, RelayersRecord } from "../../../types";
 import { useCallback, useMemo, useState } from "react";
 import Table, { ColumnType } from "../table";
 import {
@@ -6,7 +6,6 @@ import {
   getColumnAllowance,
   getColumnBalance,
   getColumnBaseFee,
-  getColumnCost,
   getColumnFeeRate,
   getColumnFrom,
   getColumnLiquidity,
@@ -19,8 +18,8 @@ import {
   getColumnToken,
   getColumnTransferLimit,
 } from "./columns";
-import RelayerManageV3Modal from "@/components/modals/relayer-manage-v3-modal";
-import RelayerManageModal from "@/components/modals/relayer-manage-modal";
+import RelayerManageV3Modal from "../../../components/modals/relayer-manage-v3-modal";
+import RelayerManageModal from "../../../components/modals/relayer-manage-modal";
 
 type DataSource = RelayersRecord;
 
@@ -60,7 +59,6 @@ export default function RelayersTable({
           getColumnBaseFee({ version, isDashboard }),
           getColumnFeeRate({ version, isDashboard }),
           getColumnProfit({ version, isDashboard }),
-          getColumnCost({ version, isDashboard }),
           getColumnTransferLimit({ version, isDashboard }),
           getColumnPenalty({ version, isDashboard }),
           getColumnLiquidity({ version, isDashboard }),
@@ -77,7 +75,6 @@ export default function RelayersTable({
           getColumnBaseFee({ version, isDashboard }),
           getColumnFeeRate({ version, isDashboard }),
           getColumnProfit({ version, isDashboard }),
-          getColumnCost({ version, isDashboard }),
           getColumnMargin({ version, isDashboard }),
           getColumnAllowance({ version, isDashboard }),
           getColumnBalance({ version, isDashboard }),
@@ -95,7 +92,6 @@ export default function RelayersTable({
           getColumnBaseFee({ version, isDashboard }),
           getColumnFeeRate({ version, isDashboard }),
           getColumnProfit({ version, isDashboard }),
-          getColumnCost({ version, isDashboard }),
           getColumnTransferLimit({ version, isDashboard }),
           getColumnPenalty({ version, isDashboard }),
         ];
@@ -109,7 +105,6 @@ export default function RelayersTable({
           getColumnBaseFee({ version, isDashboard }),
           getColumnFeeRate({ version, isDashboard }),
           getColumnProfit({ version, isDashboard }),
-          getColumnCost({ version, isDashboard }),
           getColumnMargin({ version, isDashboard }),
         ];
       }

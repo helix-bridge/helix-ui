@@ -1,4 +1,4 @@
-import { ChainConfig } from "@/types/chain";
+import { ChainConfig } from "../../types/chain";
 import { arbitrumSepolia } from "viem/chains";
 
 export const arbitrumSepoliaChain: ChainConfig = {

@@ -1,6 +1,5 @@
-import { TokenCategory, TokenSymbol } from "@/types";
-import { getTokenLogoSrc } from "@/utils";
-import Image from "next/image";
+import { TokenCategory, TokenSymbol } from "../types";
+import { getTokenLogoSrc } from "../utils";
 import { useState } from "react";
 
 interface Value {
@@ -56,7 +55,7 @@ function TokenImage({
   onHoverChange?: (index: number) => void;
 }) {
   return (
-    <Image
+    <img
       width={active ? 32 : 36}
       height={active ? 32 : 36}
       alt="Token image"

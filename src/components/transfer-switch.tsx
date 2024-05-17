@@ -1,5 +1,4 @@
-import Tooltip from "@/ui/tooltip";
-import Image from "next/image";
+import Tooltip from "../ui/tooltip";
 import { useState } from "react";
 
 interface Props {
@@ -29,11 +28,11 @@ export default function TransferSwitch({ disabled, onSwitch = () => undefined }:
             }
           }}
         >
-          <Image
+          <img
             width={28}
             height={28}
             alt="Switch"
-            src="/images/switch.svg"
+            src="images/switch.svg"
             className={`h-[1.75rem] w-[1.75rem] shrink-0 rounded-full transition-opacity ${
               disabled ? "opacity-60" : "opacity-80 hover:opacity-100"
             }`}

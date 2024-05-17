@@ -1,5 +1,4 @@
 import Tooltip from "./tooltip";
-import Image from "next/image";
 import { ButtonHTMLAttributes } from "react";
 
 export default function SwitchCrossIcon({ disabled, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>) {
@@ -10,7 +9,7 @@ export default function SwitchCrossIcon({ disabled, ...rest }: ButtonHTMLAttribu
         disabled={disabled}
         {...rest}
       >
-        <Image width={36} height={36} alt="Switch" src="/images/switch.svg" />
+        <img width={36} height={36} alt="Switch" src="images/switch.svg" />
       </button>
     </Tooltip>
   );

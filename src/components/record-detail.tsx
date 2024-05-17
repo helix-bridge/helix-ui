@@ -1,11 +1,9 @@
-"use client";
-
-import { BaseBridge } from "@/bridges";
-import { GQL_HISTORY_RECORD_BY_ID } from "@/config";
-import { HistoryRecordReqParams, HistoryRecordResData } from "@/types";
-import ComponentLoading from "@/ui/component-loading";
-import CountdownRefresh from "@/ui/countdown-refresh";
-import { bridgeFactory, getChainConfig } from "@/utils";
+import { BaseBridge } from "../bridges";
+import { GQL_HISTORY_RECORD_BY_ID } from "../config";
+import { HistoryRecordReqParams, HistoryRecordResData } from "../types";
+import ComponentLoading from "../ui/component-loading";
+import CountdownRefresh from "../ui/countdown-refresh";
+import { bridgeFactory, getChainConfig } from "../utils";
 import { useQuery } from "@apollo/client";
 import { PropsWithChildren, useMemo } from "react";
 import TransferRoute from "./transfer-route";
@@ -17,7 +15,7 @@ import TokenTransfer from "./token-transfer";
 import TokenToReceive from "./token-to-receive";
 import TransactionValue from "./transaction-value";
 import TransactionFee from "./transaction-fee";
-import { RecordItemTitle } from "@/ui/record-item-title";
+import { RecordItemTitle } from "../ui/record-item-title";
 
 interface Props {
   id: string;
@@ -49,7 +47,7 @@ export default function RecordDetail(props: Props) {
   return (
     <div className="container mx-auto">
       <div className="flex items-center justify-between gap-5">
-        <h3 className="text-base font-bold text-white">Transaction Detail</h3>
+        <h3 className="text-base font-bold text-white">Transaction Details</h3>
         <CountdownRefresh onClick={refetch} />
       </div>
       <div className="app-scrollbar mt-5 overflow-x-auto">

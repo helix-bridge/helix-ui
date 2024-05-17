@@ -1,7 +1,6 @@
-import { ChainConfig } from "@/types";
-import Select from "@/ui/select";
-import { getChainLogoSrc } from "@/utils";
-import Image from "next/image";
+import { ChainConfig } from "../types";
+import Select from "../ui/select";
+import { getChainLogoSrc } from "../utils";
 
 interface Props {
   options?: ChainConfig[];
@@ -25,7 +24,7 @@ export default function ChainSelect({
       label={
         value ? (
           <div className="flex items-center gap-medium truncate">
-            <Image
+            <img
               alt="Chain"
               width={22}
               height={22}
@@ -50,7 +49,7 @@ export default function ChainSelect({
               onClick={() => onChange(option)}
               className="flex items-center gap-medium px-large py-medium text-start transition-colors hover:bg-white/5 disabled:bg-white/10"
             >
-              <Image
+              <img
                 width={22}
                 height={22}
                 alt={option.name}

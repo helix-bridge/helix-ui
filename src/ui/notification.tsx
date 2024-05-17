@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ReactElement } from "react";
 import { createRoot } from "react-dom/client";
 
@@ -27,18 +26,18 @@ const createItem = (config: Config, status: Status, onClose: () => void) => {
   const root = createRoot(domNode);
   root.render(
     <>
-      <Image
+      <img
         alt={status}
         width={20}
         height={20}
-        src={`/images/notification/${status}.svg`}
+        src={`images/notification/${status}.svg`}
         className="shrink-0 self-start lg:hidden"
       />
-      <Image
+      <img
         alt={status}
         width={24}
         height={24}
-        src={`/images/notification/${status}.svg`}
+        src={`images/notification/${status}.svg`}
         className="hidden shrink-0 self-start lg:inline"
       />
       <div className="flex flex-col gap-small">
@@ -50,7 +49,7 @@ const createItem = (config: Config, status: Status, onClose: () => void) => {
           onClick={onClose}
           className="absolute right-1 top-1 rounded-full bg-transparent p-[2px] transition-transform hover:scale-105 hover:bg-white/10 active:scale-95 lg:right-2 lg:top-2"
         >
-          <Image alt="Close" width={16} height={16} src="/images/close-white.svg" />
+          <img alt="Close" width={16} height={16} src="images/close-white.svg" />
         </button>
       )}
     </>,

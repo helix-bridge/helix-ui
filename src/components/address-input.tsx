@@ -1,6 +1,6 @@
-import { InputValue } from "@/types";
-import Input from "@/ui/input";
-import InputAlert from "@/ui/input-alert";
+import { InputValue } from "../types";
+import Input from "../ui/input";
+import InputAlert from "../ui/input-alert";
 import { ChangeEventHandler, useCallback } from "react";
 import { isAddress } from "viem";
 

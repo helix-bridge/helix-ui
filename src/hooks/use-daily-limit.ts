@@ -1,5 +1,5 @@
-import { BaseBridge } from "@/bridges";
-import { Token } from "@/types";
+import { BaseBridge } from "../bridges";
+import { Token } from "../types";
 import { useEffect, useState } from "react";
 import { from } from "rxjs";
 

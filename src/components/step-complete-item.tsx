@@ -1,7 +1,6 @@
-import { BridgeCategory, ChainConfig, Token } from "@/types";
+import { BridgeCategory, ChainConfig, Token } from "../types";
 import PrettyAddress from "./pretty-address";
-import Image from "next/image";
-import { formatBalance, getChainLogoSrc, getTokenLogoSrc } from "@/utils";
+import { formatBalance, getChainLogoSrc, getTokenLogoSrc } from "../utils";
 import { Address } from "viem";
 
 export default function StepCompleteItem({
@@ -34,13 +33,7 @@ export default function StepCompleteItem({
       )}
       {!!chain && (
         <div className="flex items-center gap-small">
-          <Image
-            width={18}
-            height={18}
-            alt="Chain"
-            src={getChainLogoSrc(chain.logo)}
-            className="shrink-0 rounded-full"
-          />
+          <img width={18} height={18} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
           <span className="truncate text-sm font-semibold text-white">{chain.name}</span>
         </div>
       )}
@@ -49,13 +42,7 @@ export default function StepCompleteItem({
       ) : null}
       {!!token && !balance && (
         <div className="flex items-center gap-small">
-          <Image
-            width={18}
-            height={18}
-            alt="Token"
-            src={getTokenLogoSrc(token.logo)}
-            className="shrink-0 rounded-full"
-          />
+          <img width={18} height={18} alt="Token" src={getTokenLogoSrc(token.logo)} className="shrink-0 rounded-full" />
           <span className="truncate text-sm font-semibold text-white">{token.symbol}</span>
         </div>
       )}

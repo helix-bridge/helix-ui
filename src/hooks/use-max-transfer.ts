@@ -1,5 +1,5 @@
-import { GQL_GET_MAX_TRANSFER } from "@/config";
-import { ChainConfig, MaxTransferReqParams, MaxTransferResData, Token } from "@/types";
+import { GQL_GET_MAX_TRANSFER } from "../config";
+import { ChainConfig, MaxTransferReqParams, MaxTransferResData, Token } from "../types";
 import { useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
 

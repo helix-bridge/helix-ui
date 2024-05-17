@@ -1,6 +1,5 @@
-import { ChainConfig, Token } from "@/types";
-import { formatBalance } from "@/utils";
-import Image from "next/image";
+import { ChainConfig, Token } from "../types";
+import { formatBalance } from "../utils";
 import { ChangeEventHandler, useCallback, useEffect, useRef, useState } from "react";
 import { formatUnits, parseUnits } from "viem";
 import Faucet from "./faucet";
@@ -118,7 +117,7 @@ export default function TransferAmountInput({
           }`}
           onClick={onRefresh}
         >
-          <Image alt="Refresh balance" width={14} height={14} src="/images/refresh.svg" />
+          <img alt="Refresh balance" width={14} height={14} src="images/refresh.svg" />
         </button>
         <button
           className="rounded-full bg-white/20 px-2 py-[2px] text-xs font-semibold text-white opacity-60 transition-[transform,opacity] hover:opacity-100 active:scale-95"

@@ -1,7 +1,6 @@
-import ComponentLoading from "@/ui/component-loading";
-import Tooltip from "@/ui/tooltip";
-import { formatTime } from "@/utils";
-import Image from "next/image";
+import ComponentLoading from "../ui/component-loading";
+import Tooltip from "../ui/tooltip";
+import { formatTime } from "../utils";
 
 interface Props {
   loading: boolean;
@@ -47,7 +46,7 @@ export default function WithdrawableLiquiditiesSelect({
                 />
                 <a
                   target="_blank"
-                  href={`/records/${option.id}`}
+                  href={`/tx/${option.id}`}
                   className="truncate text-base font-medium text-primary hover:underline"
                 >
                   {toShortId(option.id)}
@@ -59,11 +58,11 @@ export default function WithdrawableLiquiditiesSelect({
                     compact: true,
                   })}`}
                 >
-                  <Image
+                  <img
                     alt="In progress"
                     width={24}
                     height={24}
-                    src="/images/notification/progress.svg"
+                    src="images/notification/progress.svg"
                     className="animate-spin rounded-full"
                     style={{ animationDuration: "3s" }}
                   />

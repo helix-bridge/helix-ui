@@ -1,6 +1,5 @@
-import ComponentLoading from "@/ui/component-loading";
+import ComponentLoading from "../../ui/component-loading";
 import Pagination from "./pagination";
-import Image from "next/image";
 import { Fragment, Key, useMemo } from "react";
 
 export type ColumnType<T> = {
@@ -91,7 +90,7 @@ export default function Table<T extends { key: Key }>({
               <div className="flex h-48 flex-col items-center justify-center gap-4">
                 {loading ? null : (
                   <>
-                    <Image width={50} height={63} alt="No data" src="/images/no-data.svg" />
+                    <img width={50} height={63} alt="No data" src="images/no-data.svg" />
                     <span className="text-sm font-normal text-slate-400">No data</span>
                   </>
                 )}

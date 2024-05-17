@@ -1,5 +1,5 @@
-import { GQL_GET_TXS } from "@/config";
-import { TxsReqParams, TxsResData } from "@/types";
+import { GQL_GET_TXS } from "../config";
+import { TxsReqParams, TxsResData } from "../types";
 import { useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
 

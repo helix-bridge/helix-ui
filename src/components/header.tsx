@@ -1,17 +1,11 @@
-"use client";
-
-import { useToggle } from "@/hooks";
-import Tooltip from "@/ui/tooltip";
-import { isProduction } from "@/utils";
-import dynamic from "next/dynamic";
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-const ChainSwitch = dynamic(() => import("@/components/chain-switch"), { ssr: false });
-const User = dynamic(() => import("@/components/user"), { ssr: false });
-const Drawer = dynamic(() => import("@/ui/drawer"), { ssr: false });
-const History = dynamic(() => import("./history"), { ssr: false });
+import { useToggle } from "../hooks";
+import Tooltip from "../ui/tooltip";
+import { isTestnet } from "../utils";
+import { Link, useLocation } from "react-router-dom";
+import History from "./history";
+import User from "./user";
+import ChainSwitch from "./chain-switch";
+import Drawer from "../ui/drawer";
 
 interface NavigationConfig {
   label: string;
@@ -28,7 +22,7 @@ const navigationsConfig: NavigationConfig[] = [
 
 export default function Header() {
   const { state: isOpen, setTrue: setIsOpenTrue, setFalse: setIsOpenFalse } = useToggle(false);
-  const pathname = usePathname();
+  const { pathname } = useLocation();
 
   return (
     <>
@@ -41,10 +35,10 @@ export default function Header() {
         <div className="flex items-center gap-5">
           {/* Logo */}
           <div className="flex items-center gap-medium">
-            <Link href="/">
-              <Image width={90} height={25} alt="Logo" src="/images/logo.svg" />
+            <Link to="/">
+              <img width={90} height={25} alt="Logo" src="images/logo.svg" />
             </Link>
-            {!isProduction() && (
+            {isTestnet() && (
               <div className="inline-flex items-center justify-center rounded-small bg-primary px-1 py-[1px]">
                 <span className="text-xs font-bold text-black">testnet</span>
               </div>
@@ -71,7 +65,7 @@ export default function Header() {
               ) : (
                 <Link
                   key={label}
-                  href={href}
+                  to={href}
                   className={`relative rounded-full px-3 py-small text-sm font-bold transition-colors hover:bg-white/[0.15] ${
                     pathname === href
                       ? "text-primary after:absolute after:-bottom-[2px] after:left-1/4 after:block after:h-[3px] after:w-1/2 after:rounded-full after:bg-primary"
@@ -91,11 +85,11 @@ export default function Header() {
           <User prefixLength={14} suffixLength={10} />
           <ChainSwitch placement="bottom-end" />
         </div>
-        <Image
+        <img
           width={24}
           height={24}
           alt="Menu"
-          src="/images/menu.svg"
+          src="images/menu.svg"
           className="inline transition-transform active:translate-y-1 lg:hidden"
           onClick={setIsOpenTrue}
         />
@@ -117,7 +111,7 @@ export default function Header() {
                 ) : (
                   <Link
                     key={label}
-                    href={href}
+                    to={href}
                     className={`relative text-sm font-bold ${
                       pathname === href ? "text-primary underline decoration-2 underline-offset-4" : "text-white"
                     }`}

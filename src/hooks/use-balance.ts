@@ -1,8 +1,8 @@
-import { ChainConfig, Token } from "@/types";
+import { ChainConfig, Token } from "../types";
 import { Address, createPublicClient, http } from "viem";
 import { from } from "rxjs";
 import { useCallback, useEffect, useState } from "react";
-import abi from "@/abi/erc20";
+import abi from "../abi/erc20";
 
 export function useBalance(chain: ChainConfig, token: Token, address?: Address | null) {
   const [loading, setLoading] = useState(false);

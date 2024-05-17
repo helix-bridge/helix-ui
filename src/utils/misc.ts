@@ -1,6 +1,6 @@
-import { FEE_RATE_BASE, FEE_RATE_MAX, FEE_RATE_MAX_V3, FEE_RATE_MIN } from "@/config/constant";
-import { RecordResult } from "@/types/graphql";
-import { Address, Hex, isHex } from "viem";
+import { FEE_RATE_BASE, FEE_RATE_MAX, FEE_RATE_MAX_V3, FEE_RATE_MIN } from "../config/constant";
+import { RecordResult } from "../types/graphql";
+import { Address, Hash, Hex, isHash, isHex } from "viem";
 
 export function parseRecordResult(result: RecordResult) {
   switch (result) {
@@ -22,15 +22,15 @@ export function parseRecordResult(result: RecordResult) {
 }
 
 export function getTokenLogoSrc(fileName: string | null | undefined) {
-  return `/images/token/${fileName || "unknown.svg"}`;
+  return `images/token/${fileName || "unknown.svg"}`;
 }
 
 export function getChainLogoSrc(fileName: string | null | undefined) {
-  return `/images/network/${fileName || "unknown.png"}`;
+  return `images/network/${fileName || "unknown.png"}`;
 }
 
 export function getBridgeLogoSrc(fileName: string) {
-  return `/images/bridge/${fileName}`;
+  return `images/bridge/${fileName}`;
 }
 
 export function parseFeeRate(rate: string) {
@@ -79,4 +79,23 @@ export function extractTransferIds(ids: string[]): Hex[] {
     }
     return transferId;
   });
+}
+
+export function parseConfirmedBlocks(confirmedBlocks: string | null | undefined) {
+  let hash: Hash | undefined;
+  let total: number | undefined;
+  let completed: number | undefined;
+
+  if (confirmedBlocks) {
+    const splited = confirmedBlocks.split("/");
+
+    if (isHash(confirmedBlocks)) {
+      hash = confirmedBlocks;
+    } else if (splited.length === 2) {
+      completed = Number(splited[0]);
+      total = Number(splited[1]);
+    }
+  }
+
+  return { hash, total, completed };
 }

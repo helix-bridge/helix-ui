@@ -1,4 +1,4 @@
-import { getChainConfig, getChainConfigs, getChainLogoSrc } from "@/utils";
+import { getChainConfig, getChainConfigs, getChainLogoSrc } from "../utils";
 import {
   FloatingPortal,
   Placement,
@@ -9,7 +9,6 @@ import {
   useInteractions,
   useTransitionStyles,
 } from "@floating-ui/react";
-import Image from "next/image";
 import { useMemo, useState } from "react";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 
@@ -46,11 +45,11 @@ export default function ChainSwitch({ placement }: { placement?: Placement }) {
       >
         {activeChain ? (
           <>
-            <Image alt="Active chain" width={20} height={20} src={getChainLogoSrc(activeChain.logo)} />
-            <Image
+            <img alt="Active chain" width={20} height={20} src={getChainLogoSrc(activeChain.logo)} />
+            <img
               style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
               className="shrink-0 transition-transform"
-              src="/images/caret-down.svg"
+              src="images/caret-down.svg"
               alt="Caret down"
               width={16}
               height={16}
@@ -58,7 +57,7 @@ export default function ChainSwitch({ placement }: { placement?: Placement }) {
           </>
         ) : (
           <>
-            <Image alt="Wrong chain" width={18} height={18} src="/images/warning.svg" />
+            <img alt="Wrong chain" width={18} height={18} src="images/warning.svg" />
             <span className="text-sm font-bold text-orange-400">Wrong Chain</span>
           </>
         )}
@@ -79,7 +78,7 @@ export default function ChainSwitch({ placement }: { placement?: Placement }) {
                   key={option.id}
                   onClick={() => switchNetwork?.(option.id)}
                 >
-                  <Image alt="Chain" width={22} height={22} src={getChainLogoSrc(option.logo)} />
+                  <img alt="Chain" width={22} height={22} src={getChainLogoSrc(option.logo)} />
                   <span className="text-sm font-bold text-white">{option.name}</span>
                 </button>
               ))}

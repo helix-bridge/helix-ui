@@ -1,4 +1,4 @@
-import { ChainConfig, ChainID } from "@/types";
+import { ChainConfig, ChainID } from "../../types";
 
 export const blastChain: ChainConfig = {
   id: ChainID.BLAST,

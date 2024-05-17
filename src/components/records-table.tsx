@@ -1,5 +1,5 @@
-import { HistoryRecord, Network, RecordResult } from "@/types";
-import Table, { ColumnType } from "@/ui/table";
+import { HistoryRecord, Network, RecordResult } from "../types";
+import Table, { ColumnType } from "../ui/table";
 import {
   formatBalance,
   formatTime,
@@ -7,8 +7,7 @@ import {
   getChainLogoSrc,
   getTokenLogoSrc,
   parseRecordResult,
-} from "@/utils";
-import Image from "next/image";
+} from "../utils";
 import { Key, PropsWithChildren } from "react";
 import PrettyAddress from "./pretty-address";
 import { Address, isHash } from "viem";
@@ -66,7 +65,7 @@ export default function RecordsTable({
         const token = getChainConfig(fromChain)?.tokens.find((t) => t.symbol === sendToken);
         return token ? (
           <div className="flex items-center justify-start gap-medium">
-            <Image width={32} height={32} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
+            <img width={32} height={32} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
             <span className="truncate">
               {formatBalance(BigInt(sendAmount), token.decimals, { precision: 4 })} {token.symbol}
             </span>
@@ -88,10 +87,10 @@ export default function RecordsTable({
               result === RecordResult.SUCCESS
                 ? "text-app-green"
                 : result === RecordResult.REFUNDED
-                ? "text-app-orange"
-                : result === RecordResult.PENDING
-                ? "text-primary"
-                : "text-white/50"
+                  ? "text-app-orange"
+                  : result === RecordResult.PENDING
+                    ? "text-primary"
+                    : "text-white/50"
             }`}
           >
             {result === RecordResult.PENDING
@@ -135,7 +134,7 @@ function FromTo({ network }: { network: Network }) {
 
   return chain ? (
     <div className="flex items-center gap-medium">
-      <Image width={32} height={32} alt="Logo" src={getChainLogoSrc(chain.logo)} className="rounded-full" />
+      <img width={32} height={32} alt="Logo" src={getChainLogoSrc(chain.logo)} className="rounded-full" />
       <span className="truncate">{chain.name}</span>
     </div>
   ) : (

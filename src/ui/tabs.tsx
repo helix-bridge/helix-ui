@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Key, ReactElement, useEffect, useRef, useState } from "react";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
 
@@ -81,7 +80,7 @@ export default function Tabs<K extends Key = string>({
               activeItem.children
             ) : (
               <div className="options-center flex flex-col gap-large pt-10">
-                <Image width={50} height={63} alt="No data" src="/images/no-data.svg" />
+                <img width={50} height={63} alt="No data" src="images/no-data.svg" />
                 <span className="text-sm font-medium text-white/50">No data</span>
               </div>
             )}

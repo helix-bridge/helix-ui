@@ -1,6 +1,5 @@
 import { PropsWithChildren, ReactElement } from "react";
 import Tooltip from "./tooltip";
-import Image from "next/image";
 
 interface Props {
   text: string;
@@ -27,7 +26,7 @@ export default function Label({
           <span className={`text-white/50 ${textClassName}`}>{text}</span>
           {tips ? (
             <Tooltip content={tips} className="w-fit">
-              <Image width={16} height={16} alt="Info" src="/images/info.svg" />
+              <img width={16} height={16} alt="Info" src="images/info.svg" />
             </Tooltip>
           ) : null}
         </div>

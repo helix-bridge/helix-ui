@@ -1,4 +1,4 @@
-import { ChainConfig } from "@/types/chain";
+import { ChainConfig } from "../../types/chain";
 import { mantle } from "viem/chains";
 
 export const mantleChain: ChainConfig = {

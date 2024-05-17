@@ -1,5 +1,5 @@
-import { BaseBridge, LnBridgeV2Default, LnBridgeV2Opposite, LnBridgeV3 } from "@/bridges";
-import { BridgeConstructorArgs, ChainConfig, Token } from "@/types";
+import { BaseBridge, LnBridgeV2Default, LnBridgeV2Opposite, LnBridgeV3 } from "../bridges";
+import { BridgeConstructorArgs, ChainConfig, Token } from "../types";
 
 export function bridgeFactory(args: BridgeConstructorArgs): BaseBridge | undefined {
   switch (args.category) {

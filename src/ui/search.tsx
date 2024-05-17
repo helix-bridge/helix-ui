@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Input from "./input";
 
 interface Props {
@@ -26,10 +25,10 @@ export default function Search({ placeholder, className, value, onClear, onChang
           className="relative h-[20px] w-[20px] shrink-0 rounded-full bg-transparent p-[2px] transition hover:scale-105 hover:bg-white/20 active:scale-95"
           onClick={onClear}
         >
-          <Image alt="Close" fill src="/images/close.svg" />
+          <img alt="Close" src="images/close.svg" className="h-full w-full" />
         </button>
       ) : (
-        <Image width={20} height={20} alt="Search" src="/images/search.svg" className="shrink-0" />
+        <img width={20} height={20} alt="Search" src="images/search.svg" className="shrink-0" />
       )}
     </div>
   );

@@ -1,7 +1,7 @@
-import { InputValue, Token } from "@/types";
-import Input from "@/ui/input";
-import InputAlert from "@/ui/input-alert";
-import { formatBalance } from "@/utils";
+import { InputValue, Token } from "../types";
+import Input from "../ui/input";
+import InputAlert from "../ui/input-alert";
+import { formatBalance } from "../utils";
 import { ChangeEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { parseUnits } from "viem";
 

@@ -1,7 +1,7 @@
-import { InputValue } from "@/types";
-import Input from "@/ui/input";
-import InputAlert from "@/ui/input-alert";
-import { isValidFeeRate, parseFeeRate } from "@/utils";
+import { InputValue } from "../types";
+import Input from "../ui/input";
+import InputAlert from "../ui/input-alert";
+import { isValidFeeRate, parseFeeRate } from "../utils";
 import { ChangeEventHandler, useCallback } from "react";
 
 interface Props {

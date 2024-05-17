@@ -1,4 +1,4 @@
-import { BridgeCategory } from "@/types/bridge";
+import { BridgeCategory } from "../types/bridge";
 import {
   AvailableBridges,
   AvailableSourceTokens,
@@ -6,7 +6,7 @@ import {
   AvailableTargetTokens,
   ChainConfig,
   Token,
-} from "@/types";
+} from "../types";
 import { getChainConfig, getChainConfigs } from "./chain";
 
 let defaultBridgeCategory: BridgeCategory | undefined;

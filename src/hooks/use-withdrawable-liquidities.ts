@@ -1,5 +1,5 @@
-import { GQL_GET_WITHDRAWABLE_LIQUIDITIES } from "@/config";
-import { Network, WithdrawableLiquiditiesReqParams, WithdrawableLiquiditiesResData } from "@/types";
+import { GQL_GET_WITHDRAWABLE_LIQUIDITIES } from "../config";
+import { Network, WithdrawableLiquiditiesReqParams, WithdrawableLiquiditiesResData } from "../types";
 import { useQuery } from "@apollo/client";
 import { useCallback } from "react";
 import { Address } from "viem";

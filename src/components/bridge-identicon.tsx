@@ -1,8 +1,7 @@
-import { BaseBridge } from "@/bridges/base";
-import { BridgeLogoType } from "@/types/bridge";
-import Tooltip from "@/ui/tooltip";
-import { getBridgeLogoSrc } from "@/utils/misc";
-import Image from "next/image";
+import { BaseBridge } from "../bridges/base";
+import { BridgeLogoType } from "../types/bridge";
+import Tooltip from "../ui/tooltip";
+import { getBridgeLogoSrc } from "../utils/misc";
 
 interface Props {
   width: number;
@@ -14,7 +13,7 @@ interface Props {
 export default function BridgeIdenticon({ width, height, type, bridge }: Props) {
   return bridge ? (
     <Tooltip content={bridge.getName()} className="w-fit">
-      <Image
+      <img
         width={width}
         height={height}
         alt="Bridge"

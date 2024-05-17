@@ -11,7 +11,6 @@ import {
   useInteractions,
   useTransitionStyles,
 } from "@floating-ui/react";
-import Image from "next/image";
 import { useEnsName } from "wagmi";
 
 interface Value {
@@ -85,10 +84,10 @@ export default function RecipientInput({ value, options = [], onChange = () => u
             onChange={handleChange}
           />
         </div>
-        <Image
+        <img
           style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
           className="shrink-0 opacity-50 transition-[transform,opacity] group-focus-within:opacity-100 group-hover:opacity-100"
-          src="/images/caret-down.svg"
+          src="images/caret-down.svg"
           alt="Caret down"
           width={16}
           height={16}

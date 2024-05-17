@@ -1,6 +1,5 @@
-import { HistoryRecord, RecordResult } from "@/types";
+import { HistoryRecord, RecordResult } from "../../types";
 import Table, { ColumnType } from "./table";
-import Image from "next/image";
 import {
   formatBalance,
   formatTime,
@@ -8,10 +7,10 @@ import {
   getChainLogoSrc,
   getTokenLogoSrc,
   parseRecordResult,
-} from "@/utils";
+} from "../../utils";
 import PrettyAddress from "../pretty-address";
 import { isHash } from "viem";
-import { useMediaQuery } from "@/hooks";
+import { useMediaQuery } from "../../hooks";
 
 type TData = Pick<
   HistoryRecord,
@@ -47,7 +46,7 @@ function getColumns(isLg = false): ColumnType<TData>[] {
         const chain = getChainConfig(row.fromChain);
         return chain ? (
           <div className="flex items-center gap-medium">
-            <Image alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} />
+            <img alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} />
             <span className="hidden truncate lg:inline">{chain.name}</span>
           </div>
         ) : (
@@ -63,7 +62,7 @@ function getColumns(isLg = false): ColumnType<TData>[] {
         const chain = getChainConfig(row.toChain);
         return chain ? (
           <div className="flex items-center gap-medium">
-            <Image alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} />
+            <img alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} />
             <span className="hidden truncate lg:inline">{chain.name}</span>
           </div>
         ) : (
@@ -88,7 +87,7 @@ function getColumns(isLg = false): ColumnType<TData>[] {
         const token = getChainConfig(row.fromChain)?.tokens.find(({ symbol }) => symbol === row.sendToken);
         return token ? (
           <div className="flex items-center gap-medium">
-            <Image
+            <img
               width={32}
               height={32}
               alt={token.symbol}
@@ -116,10 +115,10 @@ function getColumns(isLg = false): ColumnType<TData>[] {
               result === RecordResult.SUCCESS
                 ? "text-app-green"
                 : result === RecordResult.REFUNDED
-                ? "text-app-orange"
-                : result === RecordResult.PENDING
-                ? "text-primary"
-                : "text-white/50"
+                  ? "text-app-orange"
+                  : result === RecordResult.PENDING
+                    ? "text-primary"
+                    : "text-white/50"
             }`}
           >
             {result === RecordResult.PENDING

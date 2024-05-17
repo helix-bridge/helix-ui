@@ -1,11 +1,7 @@
-export function isProduction() {
-  return process.env.NEXT_PUBLIC_APP_ENV === "production";
+export function isMainnet() {
+  return import.meta.env.VITE_NETWORK_TYPE === "mainnet";
 }
 
-export function isDevelopment() {
-  return process.env.NEXT_PUBLIC_APP_ENV === "development";
-}
-
-export function isTest() {
-  return process.env.NEXT_PUBLIC_APP_ENV === "test";
+export function isTestnet() {
+  return import.meta.env.VITE_NETWORK_TYPE === "testnet";
 }

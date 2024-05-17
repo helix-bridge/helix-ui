@@ -6,12 +6,11 @@ import {
   ChainConfig,
   CrossChain,
   GetFeeArgs,
-  HistoryRecord,
   Location,
   Token,
   TransferOptions,
-} from "@/types";
-import { getBalance } from "@/utils";
+} from "../types";
+import { getBalance } from "../utils";
 import { Address, PublicClient as ViemPublicClient, TransactionReceipt, createPublicClient, http } from "viem";
 import { PublicClient as WagmiPublicClient, WalletClient } from "wagmi";
 
@@ -137,6 +136,7 @@ export abstract class BaseBridge {
   }
 
   async getFee(_?: GetFeeArgs): Promise<{ value: bigint; token: Token } | undefined> {
+    void _;
     return undefined;
   }
 
@@ -160,7 +160,7 @@ export abstract class BaseBridge {
     if (token.type === "erc20") {
       const value = await publicClient.readContract({
         address: token.address,
-        abi: (await import("@/abi/erc20")).default,
+        abi: (await import("../abi/erc20")).default,
         functionName: "allowance",
         args: [owner, spender],
       });
@@ -184,7 +184,7 @@ export abstract class BaseBridge {
     if (this.publicClient && this.walletClient) {
       const { request } = await this.publicClient.simulateContract({
         address: token.address,
-        abi: (await import("@/abi/erc20")).default,
+        abi: (await import("../abi/erc20")).default,
         functionName: "approve",
         args: [spender, amount],
         account: owner,

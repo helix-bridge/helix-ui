@@ -1,4 +1,3 @@
-"use client";
 import { Subscription, interval } from "rxjs";
 import { CSSProperties, PropsWithChildren, forwardRef, useEffect, useRef } from "react";
 

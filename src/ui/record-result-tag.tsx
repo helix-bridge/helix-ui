@@ -1,5 +1,4 @@
-import { RecordResult } from "@/types";
-import Image from "next/image";
+import { RecordResult } from "../types";
 import { useMemo } from "react";
 
 export function RecordResultTag({ result }: { result?: RecordResult | null }) {
@@ -38,11 +37,11 @@ export function RecordResultTag({ result }: { result?: RecordResult | null }) {
       className="flex items-center gap-small rounded-3xl py-[3px] pl-small pr-medium"
       style={{ backgroundColor: color }}
     >
-      <Image
+      <img
         width={icon === "unknown.svg" ? 16 : 20}
         height={icon === "unknown.svg" ? 16 : 20}
         alt="Result"
-        src={`/images/status/${icon}`}
+        src={`images/status/${icon}`}
       />
       <span className="text-sm font-medium">{text}</span>
     </div>

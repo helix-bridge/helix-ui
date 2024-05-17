@@ -1,8 +1,5 @@
-"use client";
-
-import Image from "next/image";
-import Link from "next/link";
 import { PropsWithChildren, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   const [mainnetOrTestnet, setMainnetOrTestnet] = useState<{ label: "Mainnet" | "Testnet"; link: string }>();
@@ -30,7 +27,7 @@ export default function Footer() {
       <div className="hidden items-center gap-5 lg:flex">
         <Link
           className="text-xs font-semibold text-white/50 transition hover:text-white hover:underline active:scale-95"
-          href="/records"
+          to="/explorer"
         >
           Explorer
         </Link>
@@ -65,16 +62,16 @@ export default function Footer() {
         <div className="h-3 w-[1px] bg-white/30" />
 
         <Social href="https://github.com/helix-bridge">
-          <Image width={16} height={16} alt="Github" src="/images/social/github.svg" />
+          <img width={16} height={16} alt="Github" src="images/social/github.svg" />
         </Social>
         <Social href="https://twitter.com/helixbridges">
-          <Image width={16} height={16} alt="Twitter" src="/images/social/twitter.svg" />
+          <img width={16} height={16} alt="Twitter" src="images/social/twitter.svg" />
         </Social>
         <Social href="https://discord.gg/6XyyNGugdE">
-          <Image width={20} height={20} alt="Discord" src="/images/social/discord.svg" />
+          <img width={20} height={20} alt="Discord" src="images/social/discord.svg" />
         </Social>
         <Social href="mailto:hello@helixbridge.app">
-          <Image width={16} height={16} alt="Email" src="/images/social/email.svg" />
+          <img width={16} height={16} alt="Email" src="images/social/email.svg" />
         </Social>
       </div>
     </div>

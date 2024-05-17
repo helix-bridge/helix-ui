@@ -1,9 +1,8 @@
-import { HistoryRecord } from "@/types/graphql";
+import { HistoryRecord } from "../types/graphql";
 import PrettyAddress from "./pretty-address";
-import Image from "next/image";
-import { getTokenLogoSrc } from "@/utils/misc";
-import { getChainConfig } from "@/utils/chain";
-import Button from "@/ui/button";
+import { getTokenLogoSrc } from "../utils/misc";
+import { getChainConfig } from "../utils/chain";
+import Button from "../ui/button";
 
 interface Props {
   record?: HistoryRecord | null;
@@ -21,7 +20,7 @@ export default function TokenToReceive({ record }: Props) {
       {token.type !== "native" && (
         <PrettyAddress address={token.address} copyable className="text-sm font-medium text-primary" />
       )}
-      <Image width={20} height={20} alt="Token" src={getTokenLogoSrc(token.logo)} className="shrink-0 rounded-full" />
+      <img width={20} height={20} alt="Token" src={getTokenLogoSrc(token.logo)} className="shrink-0 rounded-full" />
       <span className="text-sm font-medium text-white">{token.symbol}</span>
 
       {/* add to metamask */}

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useMemo } from "react";
 
 interface Props {
@@ -56,9 +55,9 @@ function Button({
       {label === "more" ? (
         <span>...</span>
       ) : label === "previous" ? (
-        <Image alt="Previous page" width={16} height={16} src="/images/pagination/previous-page.svg" />
+        <img alt="Previous page" width={16} height={16} src="images/pagination/previous-page.svg" />
       ) : label === "next" ? (
-        <Image alt="Next page" width={16} height={16} src="/images/pagination/next-page.svg" />
+        <img alt="Next page" width={16} height={16} src="images/pagination/next-page.svg" />
       ) : (
         <span>{label + 1}</span>
       )}

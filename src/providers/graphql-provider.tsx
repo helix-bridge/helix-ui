@@ -1,9 +1,7 @@
-"use client";
-
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { PropsWithChildren } from "react";
 
-const uri = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || "";
+const uri = import.meta.env.VITE_GRAPHQL_ENDPOINT || "";
 
 export default function GraphqlProvider({ children }: PropsWithChildren<unknown>) {
   const client = new ApolloClient({

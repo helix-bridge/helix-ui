@@ -1,7 +1,6 @@
-import { Token } from "@/types/token";
-import Select from "@/ui/select";
-import { getTokenLogoSrc } from "@/utils";
-import Image from "next/image";
+import { Token } from "../types/token";
+import Select from "../ui/select";
+import { getTokenLogoSrc } from "../utils";
 import PrettyAddress from "./pretty-address";
 
 interface Props {
@@ -22,7 +21,7 @@ export default function TokenSelect({ options, disabled, value, placeholder, onC
       label={
         value ? (
           <div className="flex items-center gap-medium truncate">
-            <Image
+            <img
               alt="Chain"
               width={22}
               height={22}
@@ -46,7 +45,7 @@ export default function TokenSelect({ options, disabled, value, placeholder, onC
             }}
             className="flex items-center gap-medium px-large py-small transition hover:bg-white/5"
           >
-            <Image width={26} height={26} alt="Token" src={getTokenLogoSrc(option.logo)} className="rounded-full" />
+            <img width={26} height={26} alt="Token" src={getTokenLogoSrc(option.logo)} className="rounded-full" />
             <div className="flex flex-col items-start">
               <span className="text-sm font-semibold text-white">{option.symbol}</span>
               {option.type === "native" ? (

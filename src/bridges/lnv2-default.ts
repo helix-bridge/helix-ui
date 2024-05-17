@@ -1,7 +1,7 @@
 import { Address, Hex, TransactionReceipt } from "viem";
 import { LnBridgeBase } from "./lnbridge-base";
-import { isProduction } from "@/utils/env";
-import { BridgeConstructorArgs, TransferOptions } from "@/types/bridge";
+import { isMainnet } from "../utils/env";
+import { BridgeConstructorArgs, TransferOptions } from "../types/bridge";
 
 export class LnBridgeV2Default extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {
@@ -30,7 +30,7 @@ export class LnBridgeV2Default extends LnBridgeBase {
         sourceAddress: "0x94C614DAeFDbf151E1BB53d6A201ae5fF56A9337",
         targetAddress: "0x767Bc046c989f5e63683fB530f939DD34b91ceAC",
       };
-    } else if (isProduction()) {
+    } else if (isMainnet()) {
       this.contract = {
         sourceAddress: "0x94C614DAeFDbf151E1BB53d6A201ae5fF56A9337",
         targetAddress: "0x94C614DAeFDbf151E1BB53d6A201ae5fF56A9337",

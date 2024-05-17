@@ -1,11 +1,9 @@
-"use client";
-
-import { getChainConfigs } from "@/utils";
+import { getChainConfigs } from "../utils";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPublicClient, getContract, http } from "viem";
 import { forkJoin, map, of, merge, mergeAll } from "rxjs";
-import abi from "@/abi/erc20";
-import { ChainConfig, Token } from "@/types";
+import abi from "../abi/erc20";
+import { ChainConfig, Token } from "../types";
 import { useAccount } from "wagmi";
 
 const chains = getChainConfigs();

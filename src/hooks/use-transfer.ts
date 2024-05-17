@@ -1,4 +1,6 @@
-import { TransferContext } from "@/providers/transfer-provider";
 import { useContext } from "react";
+import { TransferContext } from "../providers/transfer-provider/context";
 
-export const useTransfer = () => useContext(TransferContext);
+export function useTransfer() {
+  return useContext(TransferContext);
+}

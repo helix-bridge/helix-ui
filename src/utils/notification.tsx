@@ -1,15 +1,7 @@
-import { ChainConfig } from "@/types/chain";
-import { notification } from "@/ui/notification";
-import { PropsWithChildren } from "react";
+import { ChainConfig } from "../types/chain";
+import { notification } from "../ui/notification";
+import NotifyLink from "../ui/notify-link";
 import { TransactionReceipt } from "viem";
-
-function Link({ href, children }: PropsWithChildren<{ href: string }>) {
-  return (
-    <a target="_blank" rel="noopener" className="break-all text-primary hover:underline" href={href}>
-      {children}
-    </a>
-  );
-}
 
 export function notifyTransaction(receipt?: TransactionReceipt, chain?: ChainConfig, title?: string) {
   const explorer = chain?.blockExplorers?.default.url;
@@ -19,12 +11,12 @@ export function notifyTransaction(receipt?: TransactionReceipt, chain?: ChainCon
   if (receipt?.status === "success" && txHash) {
     notification.success({
       title: `${title ?? "Transaction"} successful`,
-      description: <Link href={href}>{txHash}</Link>,
+      description: <NotifyLink href={href}>{txHash}</NotifyLink>,
     });
   } else if (receipt?.status === "reverted" && explorer) {
     notification.error({
       title: `${title ?? "Transaction"} failed`,
-      description: <Link href={href}>{txHash}</Link>,
+      description: <NotifyLink href={href}>{txHash}</NotifyLink>,
     });
   }
 }

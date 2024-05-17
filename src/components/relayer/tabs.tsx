@@ -1,4 +1,4 @@
-import Tooltip from "@/ui/tooltip";
+import Tooltip from "../../ui/tooltip";
 import { Key, useRef } from "react";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
 

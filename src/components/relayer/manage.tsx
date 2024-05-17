@@ -1,7 +1,7 @@
-import { useRelayersData } from "@/hooks";
-import { BridgeVersion } from "@/types";
+import { useRelayersData } from "../../hooks";
+import { BridgeVersion } from "../../types";
 import { useEffect, useState } from "react";
-import CountdownRefresh from "@/ui/countdown-refresh";
+import CountdownRefresh from "../../ui/countdown-refresh";
 import RelayersTable from "./relayers-table";
 import { useAccount } from "wagmi";
 

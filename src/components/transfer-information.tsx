@@ -1,8 +1,7 @@
-import { Token } from "@/types";
-import CountLoading from "@/ui/count-loading";
-import Tooltip from "@/ui/tooltip";
-import { formatBalance } from "@/utils";
-import Image from "next/image";
+import { Token } from "../types";
+import CountLoading from "../ui/count-loading";
+import Tooltip from "../ui/tooltip";
+import { formatBalance } from "../utils";
 
 interface Props {
   transactionFee: { loading: boolean; value?: bigint; token?: Token; warning?: string };
@@ -63,11 +62,11 @@ function Row({
         <Text value={name} />
         {tips ? (
           <Tooltip content={tips}>
-            <Image
+            <img
               width={14}
               height={14}
               alt="Info"
-              src="/images/info.svg"
+              src="images/info.svg"
               className="h-[0.875rem] w-[0.875rem] shrink-0"
             />
           </Tooltip>
@@ -78,7 +77,7 @@ function Row({
         <CountLoading color="white" />
       ) : warning ? (
         <Tooltip content={warning} status="warning">
-          <Image width={20} height={20} alt="Warning" src="/images/warning.svg" />
+          <img width={20} height={20} alt="Warning" src="images/warning.svg" />
         </Tooltip>
       ) : typeof value === "bigint" && token ? (
         <Text value={`${formatBalance(value, token.decimals, { precision: 6 })} ${token.symbol}`} />

@@ -1,22 +1,20 @@
-import { useRelayer } from "@/hooks";
-import { ChainID, InputValue, LnBridgeRelayerOverview, Token } from "@/types";
-import { notification } from "@/ui/notification";
-import SegmentedTabs, { SegmentedTabsProps } from "@/ui/segmented-tabs";
-import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "@/utils";
+import { useRelayer } from "../../hooks";
+import { ChainID, InputValue, LnBridgeRelayerOverview, Token } from "../../types";
+import { notification } from "../../ui/notification";
+import SegmentedTabs, { SegmentedTabsProps } from "../../ui/segmented-tabs";
+import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "../../utils";
 import { useApolloClient } from "@apollo/client";
-import dynamic from "next/dynamic";
 import { PropsWithChildren, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import { Subscription, from } from "rxjs";
 import { Hex, TransactionReceipt } from "viem";
 import { BalanceInput } from "../balance-input";
 import FeeRateInput from "../fee-rate-input";
-import Tooltip from "@/ui/tooltip";
-import Image from "next/image";
-import CountLoading from "@/ui/count-loading";
+import Tooltip from "../../ui/tooltip";
+import CountLoading from "../../ui/count-loading";
+import Modal from "../../ui/modal";
 
 type TabKey = "update" | "deposit" | "withdraw" | "allowance";
-const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
 interface Props {
   relayerInfo?: LnBridgeRelayerOverview;
@@ -199,8 +197,8 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
         defaultBridge
           ? defaultBridge.getWithdrawFeeParams(args)
           : oppositeBridge
-          ? oppositeBridge.getWithdrawFeeParams(args)
-          : Promise.resolve(undefined),
+            ? oppositeBridge.getWithdrawFeeParams(args)
+            : Promise.resolve(undefined),
       ).subscribe({
         next: setWithdrawFeeParams,
         error: (err) => {
@@ -357,15 +355,15 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                     bridgeCategory === "lnv2-default"
                       ? targetBalance?.value
                       : bridgeCategory === "lnv2-opposite"
-                      ? sourceBalance?.value
-                      : undefined
+                        ? sourceBalance?.value
+                        : undefined
                   }
                   token={
                     bridgeCategory === "lnv2-default"
                       ? targetBalance?.token
                       : bridgeCategory === "lnv2-opposite"
-                      ? sourceBalance?.token
-                      : undefined
+                        ? sourceBalance?.token
+                        : undefined
                   }
                   value={depositAmount}
                   onChange={setDepositAmount}
@@ -383,7 +381,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
                   contentClassName="w-72"
                   className="w-fit"
                 >
-                  <Image width={16} height={16} alt="Info" src="/images/info.svg" />
+                  <img width={16} height={16} alt="Info" src="images/info.svg" />
                 </Tooltip>
               </div>
             ),
@@ -460,7 +458,7 @@ function LabelSection({
         <span className="text-sm font-semibold text-white/50">{label}</span>
         {tips ? (
           <Tooltip content={tips}>
-            <Image width={16} height={16} alt="Info" src="/images/info.svg" />
+            <img width={16} height={16} alt="Info" src="images/info.svg" />
           </Tooltip>
         ) : null}
       </div>

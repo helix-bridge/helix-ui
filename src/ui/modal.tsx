@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { PropsWithChildren, ReactElement, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { CSSTransition } from "react-transition-group";
@@ -83,7 +82,7 @@ export default function Modal({
             onClick={onClose}
             className="absolute right-medium top-medium rounded-full bg-transparent p-[4px] transition hover:scale-105 hover:bg-white/10 active:scale-95"
           >
-            <Image width={20} height={20} alt="Close" src="/images/close-white.svg" />
+            <img width={20} height={20} alt="Close" src="images/close-white.svg" />
           </button>
 
           {/* header */}

@@ -1,24 +1,14 @@
-import { useApp, useTransfer } from "@/hooks";
-import Dropdown from "@/ui/dropdown";
-import {
-  formatBalance,
-  getAvailableBridges,
-  getAvailableTargetChains,
-  getAvailableTargetTokens,
-  getChainLogoSrc,
-  getTokenLogoSrc,
-  toShortAdrress,
-} from "@/utils";
+import { useApp } from "../hooks";
+import Dropdown from "../ui/dropdown";
+import { formatBalance, getChainLogoSrc, getTokenLogoSrc, toShortAdrress } from "../utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import Image from "next/image";
 import { PropsWithChildren } from "react";
 import { useAccount, useDisconnect } from "wagmi";
 import PrettyAddress from "./pretty-address";
 import AddressIdenticon from "./address-identicon";
 import { Placement } from "@floating-ui/react";
-import { useRouter, useSearchParams } from "next/navigation";
 import History from "./history";
-import ComponentLoading from "@/ui/component-loading";
+import ComponentLoading from "../ui/component-loading";
 
 interface Props {
   placement?: Placement;
@@ -28,16 +18,11 @@ interface Props {
 }
 
 export default function User({ placement, prefixLength = 10, suffixLength = 8 }: Props) {
-  const { setBridgeCategory, setSourceChain, setTargetChain, setSourceToken, setTargetToken, updateUrlParams } =
-    useTransfer();
   const { balanceAll, loadingBalanceAll } = useApp();
 
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
   const { openConnectModal } = useConnectModal();
-
-  const searchParams = useSearchParams();
-  const router = useRouter();
 
   return address ? (
     <Dropdown
@@ -65,11 +50,11 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8 }:
 
       <div className="flex items-center gap-small px-5">
         <History className="user-dropdown-item">
-          <Image width={18} height={18} alt="History" src="/images/history.svg" className="shrink-0" />
+          <img width={18} height={18} alt="History" src="images/history.svg" className="shrink-0" />
           <ChildSpan>History</ChildSpan>
         </History>
         <button onClick={() => disconnect()} className="user-dropdown-item">
-          <Image width={18} height={18} alt="Disconnect" src="/images/disconnect.svg" className="shrink-0" />
+          <img width={18} height={18} alt="Disconnect" src="images/disconnect.svg" className="shrink-0" />
           <ChildSpan>Disconnect</ChildSpan>
         </button>
       </div>
@@ -92,38 +77,16 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8 }:
                 key={`${balance.chain.network}-${balance.token.symbol}`}
                 className="flex items-center gap-large rounded-xl px-3 py-2 transition-colors hover:bg-white/10 disabled:cursor-default lg:py-medium"
                 disabled={true}
-                onClick={() => {
-                  const _sourceChain = balance.chain;
-                  const _sourceToken = balance.token;
-                  const _targetChains = getAvailableTargetChains(_sourceChain);
-                  const _targetChain = _targetChains.at(0);
-                  const _targetTokens = getAvailableTargetTokens(_sourceChain, _targetChain, _sourceToken);
-                  const _targetToken = _targetTokens.at(0);
-                  const _category = getAvailableBridges(_sourceChain, _targetChain, _sourceToken).at(0);
-
-                  setBridgeCategory(_category);
-                  setSourceChain(_sourceChain);
-                  setTargetChain(_targetChain);
-                  setSourceToken(_sourceToken);
-                  setTargetToken(_targetToken);
-                  updateUrlParams(router, searchParams, {
-                    _category,
-                    _sourceChain,
-                    _targetChain,
-                    _sourceToken,
-                    _targetToken,
-                  });
-                }}
               >
                 <div className="relative">
-                  <Image
+                  <img
                     alt="Token"
                     width={32}
                     height={32}
                     src={getTokenLogoSrc(balance.token.logo)}
                     className="rounded-full"
                   />
-                  <Image
+                  <img
                     alt="Chain"
                     width={20}
                     height={20}

@@ -1,6 +1,6 @@
 # Helix Bridge UI
 
-❤️ Perform cross-chain transfers through Helix Bridge.
+❤️ Secure, fast, and low-cost cross-chain crypto transfers.
 
 ### Production
 
@@ -9,24 +9,17 @@
 
 ### Staging
 
-- mainnet: https://helix-stg.vercel.app/
-- testnet: https://helix-stg-test.vercel.app/
+- mainnet: https://helix-stg-mainnet.vercel.app/
+- testnet: https://helix-stg-testnet.vercel.app/
 
 ### Development
 
-- mainnet: https://helix-dev-main.vercel.app/
-- testnet: https://helix-dev-test.vercel.app/
+- mainnet: https://helix-dev-mainnet.vercel.app/
+- testnet: https://helix-dev-testnet.vercel.app/
 
 ### Local development
 
 ```shell
 $ npm install
-$ npm run dev:apps
+$ npm run dev
 ```
-
-### How to add a new chain
-
-1. Define `ChainID` and `Network` in `packages/apps/src/types/chain.ts`
-2. Configure the chain file in the `packages/apps/src/config/chains` directory
-3. Export the configuration file in the `packages/apps/src/config/chains/index.ts`
-4. Add new chain to `packages/apps/src/utils/chain.ts`

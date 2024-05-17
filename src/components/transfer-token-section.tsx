@@ -1,4 +1,4 @@
-import { TokenCategory, TokenSymbol } from "@/types";
+import { TokenCategory, TokenSymbol } from "../types";
 import TransferSection from "./transfer-section";
 import TransferTokenSelect from "./transfer-token-select";
 

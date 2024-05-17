@@ -1,4 +1,4 @@
-import CountLoading from "@/ui/count-loading";
+import CountLoading from "../ui/count-loading";
 
 interface Props {
   loading?: boolean;

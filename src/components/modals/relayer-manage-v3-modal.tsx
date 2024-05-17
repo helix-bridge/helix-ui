@@ -1,20 +1,18 @@
-import { useLiquidityWithdrawFeeParams, useRelayerV3, useWithdrawableLiquidities } from "@/hooks";
-import { InputValue, LnBridgeRelayerOverview, Token } from "@/types";
-import SegmentedTabs, { SegmentedTabsProps } from "@/ui/segmented-tabs";
-import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "@/utils";
-import dynamic from "next/dynamic";
+import { useLiquidityWithdrawFeeParams, useRelayerV3, useWithdrawableLiquidities } from "../../hooks";
+import { InputValue, LnBridgeRelayerOverview, Token } from "../../types";
+import SegmentedTabs, { SegmentedTabsProps } from "../../ui/segmented-tabs";
+import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "../../utils";
 import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { useNetwork, useSwitchNetwork } from "wagmi";
 import { TransactionReceipt, formatUnits } from "viem";
 import { BalanceInput } from "../balance-input";
 import FeeRateInput from "../fee-rate-input";
-import Tooltip from "@/ui/tooltip";
-import Image from "next/image";
-import CountLoading from "@/ui/count-loading";
+import Tooltip from "../../ui/tooltip";
+import CountLoading from "../../ui/count-loading";
 import WithdrawableLiquiditiesSelect from "../withdrawable-liquidities-select";
+import Modal from "../../ui/modal";
 
 type TabKey = "update" | "deposit" | "withdraw penalty reserve" | "withdraw liquidity" | "allowance";
-const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
 const bigintInputDefaultValue: InputValue<bigint> = { input: "", valid: true, value: 0n };
 const numberInputDefaultValue: InputValue<number> = { input: "", valid: true, value: 0 };
@@ -411,7 +409,7 @@ function Label({ text, children, height, tips }: PropsWithChildren<{ text: strin
         <span className="text-sm font-semibold text-white/50">{text}</span>
         {tips ? (
           <Tooltip content={tips}>
-            <Image width={16} height={16} alt="Info" src="/images/info.svg" />
+            <img width={16} height={16} alt="Info" src="images/info.svg" />
           </Tooltip>
         ) : null}
       </div>

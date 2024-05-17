@@ -1,9 +1,8 @@
-import { LnBridgeRelayerOverview, BridgeVersion, Network } from "@/types";
-import Button from "@/ui/button";
-import Table, { ColumnType } from "@/ui/table";
-import Tooltip from "@/ui/tooltip";
-import { formatBalance, formatFeeRate, getChainConfig, getChainLogoSrc, getTokenLogoSrc } from "@/utils";
-import Image from "next/image";
+import { LnBridgeRelayerOverview, BridgeVersion, Network } from "../types";
+import Button from "../ui/button";
+import Table, { ColumnType } from "../ui/table";
+import Tooltip from "../ui/tooltip";
+import { formatBalance, formatFeeRate, getChainConfig, getChainLogoSrc, getTokenLogoSrc } from "../utils";
 import { useState } from "react";
 import PrettyAddress from "./pretty-address";
 import RelayerManageModal from "./modals/relayer-manage-modal";
@@ -63,7 +62,7 @@ function getColumns(bridgeVersion: BridgeVersion, isDashboard?: boolean) {
 
         return token ? (
           <Tooltip content={token.symbol} className="w-fit">
-            <Image width={24} height={24} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
+            <img width={24} height={24} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />
           </Tooltip>
         ) : (
           <span>-</span>
@@ -289,8 +288,8 @@ export default function RelayersTable({
               ? "min-w-[86rem]"
               : "min-w-[76rem]"
             : bridgeVersion === "lnv3"
-            ? "min-w-[72rem]"
-            : "min-w-[68rem]"
+              ? "min-w-[72rem]"
+              : "min-w-[68rem]"
         }
         columns={columns}
         dataSource={records.map((item) => ({ ...item, key: item.id }))}
@@ -327,7 +326,7 @@ function Title({ title, tips, className }: { title: string; tips?: string; class
       <span className="truncate">{title}</span>
       {tips ? (
         <Tooltip content={tips} className="shrink-0" contentClassName="max-w-[18rem]">
-          <Image width={16} height={16} alt="Info" src="/images/info.svg" />
+          <img width={16} height={16} alt="Info" src="images/info.svg" />
         </Tooltip>
       ) : null}
     </div>
@@ -339,7 +338,7 @@ function FromTo({ network }: { network: Network }) {
 
   return config ? (
     <Tooltip content={config.name} className="w-fit">
-      <Image width={24} height={24} alt="Chain" src={getChainLogoSrc(config.logo)} className="my-1 rounded-full" />
+      <img width={24} height={24} alt="Chain" src={getChainLogoSrc(config.logo)} className="my-1 rounded-full" />
     </Tooltip>
   ) : (
     "-"

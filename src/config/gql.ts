@@ -102,16 +102,6 @@ export const GQL_QUERY_LNBRIDGE_RELAY_INFOS = gql`
   }
 `;
 
-export const GQL_HISTORY_RECORD_BY_TX_HASH = gql`
-  query historyRecordByTxHash($txHash: String) {
-    historyRecordByTxHash(txHash: $txHash) {
-      confirmedBlocks
-      result
-      id
-    }
-  }
-`;
-
 export const GQL_CHECK_LNBRIDGE_EXIST = gql`
   query checkLnBridgeExist($fromChainId: Int, $toChainId: Int, $fromToken: String, $toToken: String, $version: String) {
     checkLnBridgeExist(
@@ -192,6 +182,23 @@ export const GQL_GET_HISTORY = gql`
         result
         id
       }
+    }
+  }
+`;
+
+export const GQL_GET_HISTORY_DETAILS = gql`
+  query GetHistoryDetails($txHash: String) {
+    historyRecordByTxHash(txHash: $txHash) {
+      requestTxHash
+      responseTxHash
+      fromChain
+      toChain
+      startTime
+      sendToken
+      sendAmount
+      confirmedBlocks
+      result
+      id
     }
   }
 `;

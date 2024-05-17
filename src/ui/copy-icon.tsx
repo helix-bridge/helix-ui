@@ -1,5 +1,4 @@
-import Checked from "@/components/icons/checked";
-import Image from "next/image";
+import Checked from "../components/icons/checked";
 import { MouseEventHandler, useCallback, useEffect, useState } from "react";
 import { timer, Subscription } from "rxjs";
 
@@ -35,11 +34,11 @@ export default function CopyIcon({ text, copiedColor }: Props) {
   return copied ? (
     <Checked width={16} height={16} fill={copiedColor} />
   ) : (
-    <Image
+    <img
       width={16}
       height={16}
       alt="Copy"
-      src="/images/copy.svg"
+      src="images/copy.svg"
       className="shrink-0 transition hover:scale-105 hover:cursor-pointer hover:opacity-80 active:scale-105"
       onClick={handleCopy}
     />

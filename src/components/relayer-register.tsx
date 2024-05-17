@@ -1,7 +1,5 @@
-"use client";
-
-import { GQL_QUERY_LNBRIDGE_RELAY_INFOS } from "@/config";
-import { useRelayer } from "@/hooks";
+import { GQL_QUERY_LNBRIDGE_RELAY_INFOS } from "../config";
+import { useRelayer } from "../hooks";
 import {
   BridgeCategory,
   ChainConfig,
@@ -9,10 +7,10 @@ import {
   QueryLnBridgeRelayInfosReqParams,
   QueryLnBridgeRelayInfosResData,
   Token,
-} from "@/types";
-import { notification } from "@/ui/notification";
-import StepTitle from "@/ui/step-title";
-import Tooltip from "@/ui/tooltip";
+} from "../types";
+import { notification } from "../ui/notification";
+import StepTitle from "../ui/step-title";
+import Tooltip from "../ui/tooltip";
 import {
   formatBalance,
   formatFeeRate,
@@ -24,21 +22,20 @@ import {
   getTokenLogoSrc,
   isValidFeeRate,
   notifyError,
-} from "@/utils";
+} from "../utils";
 import { useApolloClient } from "@apollo/client";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import dynamic from "next/dynamic";
-import Image from "next/image";
 import { PropsWithChildren, useCallback, useEffect, useState } from "react";
 import { Address, useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import ChainSelect from "./chain-select";
 import TokenSelect from "./token-select";
-import Button from "@/ui/button";
+import Button from "../ui/button";
 import StepCompleteItem from "./step-complete-item";
 import { BalanceInput } from "./balance-input";
 import FeeRateInput from "./fee-rate-input";
 import { TransactionReceipt } from "viem";
 import PrettyAddress from "./pretty-address";
+import Modal from "../ui/modal";
 
 enum Step {
   ONE,
@@ -47,7 +44,6 @@ enum Step {
   TWO_OVERVIEW,
   THREE,
 }
-const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
 
 const { defaultSourceChains, defaultTargetChains } = getLnBridgeCrossDefaultValue(true);
 
@@ -309,10 +305,10 @@ export default function RelayerRegister({ onManage = () => undefined }: { onMana
                       {!completeMargin && targetChain?.id !== chain?.id
                         ? "Switch Network"
                         : !completeMargin &&
-                          targetToken?.type !== "native" &&
-                          marginInput.value > (targetAllowance?.value || 0n)
-                        ? "Approve"
-                        : "Deposit"}
+                            targetToken?.type !== "native" &&
+                            marginInput.value > (targetAllowance?.value || 0n)
+                          ? "Approve"
+                          : "Deposit"}
                     </span>
                   </Button>
                   <Divider />
@@ -406,12 +402,12 @@ export default function RelayerRegister({ onManage = () => undefined }: { onMana
                       ? "Switch Network"
                       : "Register"
                     : oppositeBridge
-                    ? sourceChain?.id !== chain?.id
-                      ? "Switch Network"
-                      : sourceToken?.type !== "native" && marginInput.value > (sourceAllowance?.value || 0n)
-                      ? "Approve"
-                      : "Register"
-                    : "Register"}
+                      ? sourceChain?.id !== chain?.id
+                        ? "Switch Network"
+                        : sourceToken?.type !== "native" && marginInput.value > (sourceAllowance?.value || 0n)
+                          ? "Approve"
+                          : "Register"
+                      : "Register"}
                 </span>
               </Button>
             </>
@@ -588,7 +584,7 @@ function LabelItem({
         <span className="text-sm font-semibold text-white/50">{label}</span>
         {tips ? (
           <Tooltip content={tips} className="w-fit" contentClassName="max-w-[18rem]">
-            <Image width={16} height={16} alt="Info" src="/images/info.svg" />
+            <img width={16} height={16} alt="Info" src="images/info.svg" />
           </Tooltip>
         ) : null}
       </div>
@@ -604,7 +600,7 @@ function Description({ content }: { content: string }) {
 function PrettyChain({ chain }: { chain?: ChainConfig }) {
   return chain ? (
     <div className="flex items-center gap-small">
-      <Image width={22} height={22} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
+      <img width={22} height={22} alt="Chain" src={getChainLogoSrc(chain.logo)} className="shrink-0 rounded-full" />
       <span>{chain.name}</span>
     </div>
   ) : (
@@ -615,7 +611,7 @@ function PrettyChain({ chain }: { chain?: ChainConfig }) {
 function PrettyToken({ token }: { token?: Token }) {
   return token ? (
     <div className="flex items-center gap-small">
-      <Image width={22} height={22} alt="Chain" src={getTokenLogoSrc(token.logo)} className="shrink-0 rounded-full" />
+      <img width={22} height={22} alt="Chain" src={getTokenLogoSrc(token.logo)} className="shrink-0 rounded-full" />
       <span>{token.symbol}</span>
     </div>
   ) : (

@@ -1,41 +1,18 @@
-import { BridgeVersion, Network, RelayersRecord } from "@/types";
+import { BridgeVersion, RelayersRecord } from "../../../types";
 import { ColumnType } from "../table";
-import Tooltip from "@/ui/tooltip";
-import Image from "next/image";
-import { formatBalance, formatFeeRate, getChainConfig, getChainLogoSrc, getTokenLogoSrc } from "@/utils";
-import RelayerPenalty from "@/components/relayer-penalty";
-import RelayerTotalLiquidity from "@/components/relayer-total-liquidity";
-import RelayerAllowance from "@/components/relayer-allowance";
-import RelayerBalance from "@/components/relayer-balance";
-import Button from "@/ui/button";
-import PrettyAddress from "@/components/pretty-address";
+import Tooltip from "../../../ui/tooltip";
+import { formatBalance, formatFeeRate, getChainConfig, getTokenLogoSrc } from "../../../utils";
+import RelayerPenalty from "../../../components/relayer-penalty";
+import RelayerTotalLiquidity from "../../../components/relayer-total-liquidity";
+import RelayerAllowance from "../../../components/relayer-allowance";
+import RelayerBalance from "../../../components/relayer-balance";
+import Button from "../../../ui/button";
+import PrettyAddress from "../../../components/pretty-address";
+import Chain from "./chain";
+import Title from "./title";
 
 type DataSource = RelayersRecord;
 type Args = { isDashboard?: boolean; version?: BridgeVersion; onClick?: (row: DataSource) => void };
-
-function Title({ title, tips, className }: { title: string; tips?: string; className?: string }) {
-  return (
-    <div className={`flex items-center gap-small ${className}`}>
-      <span className="truncate">{title}</span>
-      {tips ? (
-        <Tooltip content={tips} className="shrink-0" contentClassName="max-w-[18rem]">
-          <Image width={16} height={16} alt="Info" src="/images/info.svg" />
-        </Tooltip>
-      ) : null}
-    </div>
-  );
-}
-
-function Chain({ network }: { network: Network }) {
-  const config = getChainConfig(network);
-  return config ? (
-    <Tooltip content={config.name} className="mx-auto w-fit">
-      <Image width={24} height={24} alt={config.name} src={getChainLogoSrc(config.logo)} className="rounded-full" />
-    </Tooltip>
-  ) : (
-    <span>-</span>
-  );
-}
 
 export const getColumnStatus = ({ version, isDashboard }: Args): ColumnType<DataSource> => ({
   key: "status",
@@ -72,7 +49,7 @@ export const getColumnToken = ({ isDashboard }: Args): ColumnType<DataSource> =>
     const token = getChainConfig(fromChain)?.tokens.find((t) => t.address.toLowerCase() === sendToken?.toLowerCase());
     return token ? (
       <Tooltip content={token.symbol} className="mx-auto w-fit">
-        <Image width={24} height={24} alt={token.symbol} src={getTokenLogoSrc(token.logo)} className="rounded-full" />
+        <img width={24} height={24} alt={token.symbol} src={getTokenLogoSrc(token.logo)} className="rounded-full" />
       </Tooltip>
     ) : (
       <span>-</span>
@@ -81,6 +58,7 @@ export const getColumnToken = ({ isDashboard }: Args): ColumnType<DataSource> =>
   width: isDashboard ? 72 : undefined,
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getColumnBaseFee = (_: Args): ColumnType<DataSource> => ({
   key: "base fee",
   title: <Title title="Base Fee" tips="The fixed fee set by the relayer and charged in a transaction" />,
@@ -94,6 +72,7 @@ export const getColumnBaseFee = (_: Args): ColumnType<DataSource> => ({
   },
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getColumnFeeRate = (_: Args): ColumnType<DataSource> => ({
   key: "liquidity fee rate",
   title: (
@@ -111,6 +90,7 @@ export const getColumnFeeRate = (_: Args): ColumnType<DataSource> => ({
   width: 118,
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getColumnProfit = (_: Args): ColumnType<DataSource> => ({
   key: "profit",
   title: <Title title="Profit" />,
@@ -124,19 +104,7 @@ export const getColumnProfit = (_: Args): ColumnType<DataSource> => ({
   },
 });
 
-export const getColumnCost = (_: Args): ColumnType<DataSource> => ({
-  key: "cost",
-  title: <Title title="Cost" />,
-  render: ({ cost }) => {
-    // Native token, so the precision is 18
-    return cost ? (
-      <span className="truncate">{formatBalance(BigInt(cost), 18, { precision: 6 })}</span>
-    ) : (
-      <span>-</span>
-    );
-  },
-});
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getColumnMargin = (_: Args): ColumnType<DataSource> => ({
   key: "margin",
   title: <Title title="Margin" />,
@@ -150,6 +118,7 @@ export const getColumnMargin = (_: Args): ColumnType<DataSource> => ({
   },
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getColumnTransferLimit = (_: Args): ColumnType<DataSource> => ({
   key: "Transfer limit",
   title: <Title title="Transfer Limit" />,
@@ -163,24 +132,28 @@ export const getColumnTransferLimit = (_: Args): ColumnType<DataSource> => ({
   },
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getColumnPenalty = (_: Args): ColumnType<DataSource> => ({
   key: "penalty",
   title: <Title title="Penalty" />,
   render: (row) => <RelayerPenalty record={row} />,
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getColumnLiquidity = (_: Args): ColumnType<DataSource> => ({
   key: "liquidity",
   title: <Title title="Liquidity" tips="Total withdrawable liquidity" />,
   render: (row) => <RelayerTotalLiquidity record={row} />,
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getColumnAllowance = (_: Args): ColumnType<DataSource> => ({
   key: "allowance",
   title: <Title title="Allowance" tips="Allowance on target chain" />,
   render: (row) => <RelayerAllowance record={row} />,
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getColumnBalance = (_: Args): ColumnType<DataSource> => ({
   key: "balance",
   title: <Title title="Balance" tips="Balance on target chain" />,
@@ -199,6 +172,7 @@ export const getColumnAction = ({ onClick = () => undefined }: Args): ColumnType
   ),
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getColumnRelayer = (_: Args): ColumnType<DataSource> => ({
   key: "relayer",
   title: <Title title="Relayer" />,

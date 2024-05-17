@@ -1,7 +1,7 @@
 import { Address, TransactionReceipt } from "viem";
 import { LnBridgeBase } from "./lnbridge-base";
-import { BridgeConstructorArgs, TransferOptions } from "@/types/bridge";
-import { isProduction } from "@/utils";
+import { BridgeConstructorArgs, TransferOptions } from "../types/bridge";
+import { isMainnet } from "../utils";
 
 export class LnBridgeV2Opposite extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {
@@ -10,7 +10,7 @@ export class LnBridgeV2Opposite extends LnBridgeBase {
   }
 
   private _initContract() {
-    if (isProduction()) {
+    if (isMainnet()) {
       this.contract = {
         sourceAddress: "0x48d769d5C7ff75703cDd1543A1a2ed9bC9044A23",
         targetAddress: "0x48d769d5C7ff75703cDd1543A1a2ed9bC9044A23",

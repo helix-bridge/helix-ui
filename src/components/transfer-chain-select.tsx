@@ -1,8 +1,7 @@
-import { useApp } from "@/hooks";
-import { ChainConfig, Token } from "@/types";
-import Select from "@/ui/select";
-import { formatBalance, getChainLogoSrc, getTokenLogoSrc } from "@/utils";
-import Image from "next/image";
+import { useApp } from "../hooks";
+import { ChainConfig, Token } from "../types";
+import Select from "../ui/select";
+import { formatBalance, getChainLogoSrc, getTokenLogoSrc } from "../utils";
 import { useState } from "react";
 
 interface Props {
@@ -30,7 +29,7 @@ export default function TransferChainSelect({
         placeholder={<span className="text-base font-bold text-slate-400">Select a chain</span>}
         label={
           <div className="flex items-center gap-medium transition-transform group-hover:translate-x-2">
-            <Image
+            <img
               width={32}
               height={32}
               alt="Chain"
@@ -48,7 +47,7 @@ export default function TransferChainSelect({
         {chainOptions.length ? (
           <>
             <div className="mx-medium flex items-center gap-1 rounded-xl bg-white/5 px-medium transition-colors focus-within:bg-white/10 focus-within:outline-none hover:bg-white/10">
-              <Image alt="Search" width={24} height={24} src="/images/search.svg" className="h-6 w-6 opacity-60" />
+              <img alt="Search" width={24} height={24} src="images/search.svg" className="h-6 w-6 opacity-60" />
               <input
                 className="w-full bg-transparent py-2 text-base font-medium focus-visible:outline-none"
                 placeholder="Search ..."
@@ -88,7 +87,7 @@ export default function TransferChainSelect({
           placeholder={<span className="text-sm font-bold text-slate-400">Select a token</span>}
           label={
             <div className="flex items-center gap-small">
-              <Image
+              <img
                 width={26}
                 height={26}
                 alt="Token"
@@ -134,7 +133,7 @@ function ChainOption({
       }}
     >
       <div className="flex items-center gap-large">
-        <Image
+        <img
           width={30}
           height={30}
           alt="Chain"
@@ -173,7 +172,7 @@ function TokenOption({
         onSelect(option);
       }}
     >
-      <Image
+      <img
         width={24}
         height={24}
         alt="Chain"

@@ -1,16 +1,13 @@
-import { formatBalance, getTokenLogoSrc, notifyError, notifyTransaction } from "@/utils";
-import dynamic from "next/dynamic";
+import { formatBalance, getTokenLogoSrc, notifyError, notifyTransaction } from "../utils";
 import { PropsWithChildren, useCallback, useEffect, useState } from "react";
 import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
 import { Subscription, forkJoin, from } from "rxjs";
 import { parseUnits } from "viem";
-import { ChainConfig, Token } from "@/types";
-import abi from "@/abi/faucet";
-import Tooltip from "@/ui/tooltip";
-import Image from "next/image";
-import CountLoading from "@/ui/count-loading";
-
-const Modal = dynamic(() => import("@/ui/modal"), { ssr: false });
+import { ChainConfig, Token } from "../types";
+import abi from "../abi/faucet";
+import Tooltip from "../ui/tooltip";
+import CountLoading from "../ui/count-loading";
+import Modal from "../ui/modal";
 
 interface Props {
   sourceChain: ChainConfig;
@@ -145,7 +142,7 @@ function Label({ text, tips, children }: PropsWithChildren<{ text: string; tips?
         <span className="text-sm font-semibold text-white/50">{text}</span>
         {tips ? (
           <Tooltip content={tips}>
-            <Image width={16} height={16} alt="Tips" src="/images/info.svg" className="h-4 w-4 shrink-0" />
+            <img width={16} height={16} alt="Tips" src="images/info.svg" className="h-4 w-4 shrink-0" />
           </Tooltip>
         ) : null}
       </div>
@@ -165,7 +162,7 @@ function Item({ value, token, loading }: { value: bigint; token: Token; loading?
         </span>
       )}
       <div className="flex items-center gap-2">
-        <Image
+        <img
           width={24}
           height={24}
           alt="Token"

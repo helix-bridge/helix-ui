@@ -1,5 +1,5 @@
-import { GQL_SORTED_LNBRIDGE_RELAY_INFOS } from "@/config";
-import { ChainConfig, SortedLnBridgeRelayInfosReqParams, SortedLnBridgeRelayInfosResData, Token } from "@/types";
+import { GQL_SORTED_LNBRIDGE_RELAY_INFOS } from "../config";
+import { ChainConfig, SortedLnBridgeRelayInfosReqParams, SortedLnBridgeRelayInfosResData, Token } from "../types";
 import { useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
 

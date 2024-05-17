@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 interface Props {
   className?: string;
   total: number;
@@ -50,9 +48,9 @@ function PageButton({
       {page === "more" ? (
         <span>...</span>
       ) : page === "previous" ? (
-        <Image alt="Previous" width={16} height={16} src="/images/pagination/previous-page.svg" />
+        <img alt="Previous" width={16} height={16} src="images/pagination/previous-page.svg" />
       ) : page === "next" ? (
-        <Image alt="Next" width={16} height={16} src="/images/pagination/next-page.svg" />
+        <img alt="Next" width={16} height={16} src="images/pagination/next-page.svg" />
       ) : (
         <span>{page + 1}</span>
       )}

@@ -1,4 +1,4 @@
-import { ChainConfig } from "@/types/chain";
+import { ChainConfig } from "../../types/chain";
 import { zkSync } from "viem/chains";
 
 export const zksyncChain: ChainConfig = {
