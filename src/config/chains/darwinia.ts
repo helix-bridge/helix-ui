@@ -88,6 +88,36 @@ export const darwiniaChain: ChainConfig = {
       ],
       category: "crab",
     },
+    {
+      decimals: 18,
+      symbol: "USDT",
+      name: "USDT",
+      type: "erc20",
+      address: "0x0000000000000000000000000000000000000403",
+      logo: "usdt.png",
+      cross: [
+        {
+          target: { network: "moonbeam", symbol: "USDT" },
+          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
+        },
+      ],
+      category: "usdt",
+    },
+    {
+      decimals: 18,
+      symbol: "PINK",
+      name: "PINK",
+      type: "erc20",
+      address: "0x0000000000000000000000000000000000000404",
+      logo: "pink.jpg",
+      cross: [
+        {
+          target: { network: "moonbeam", symbol: "PINK" },
+          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
+        },
+      ],
+      category: "pink",
+    },
   ],
   messager: { msgline: "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0" },
 };

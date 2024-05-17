@@ -11,6 +11,7 @@ import {
   gnosisChain,
   lineaChain,
   mantleChain,
+  moonbeamChain,
   pangolinChain,
   polygonChain,
   polygonZkEvmChain,
@@ -101,6 +102,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.MORPH:
     case "morph":
       return morphChain;
+    case ChainID.MOONBEAM:
+    case "moonbeam":
+      return moonbeamChain;
     default:
       return;
   }
@@ -132,6 +136,7 @@ export function getChainConfigs(askAll?: boolean) {
     taikoHeklaChain,
     astarZkEvmChain,
     morphChain,
+    moonbeamChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {

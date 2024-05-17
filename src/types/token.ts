@@ -1,7 +1,7 @@
 import { Address } from "viem";
 import { CrossChain } from "./cross-chain";
 
-export type TokenCategory = "ring" | "crab" | "eth" | "usdt" | "usdc" | "others";
+export type TokenCategory = "ring" | "crab" | "eth" | "usdt" | "usdc" | "pink" | "others";
 
 export type TokenSymbol =
   | "ETH"
@@ -21,6 +21,7 @@ export type TokenSymbol =
   | "MATIC"
   | "BNB"
   | "BERA"
+  | "PINK"
   | "xDai";
 
 export type TokenType = "native" | "erc20";
