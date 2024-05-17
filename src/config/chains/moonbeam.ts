@@ -49,7 +49,7 @@ export const moonbeamChain: ChainConfig = {
       category: "eth",
     },
     {
-      decimals: 18,
+      decimals: 6,
       symbol: "USDT",
       name: "USDT",
       type: "erc20",
@@ -64,7 +64,7 @@ export const moonbeamChain: ChainConfig = {
       category: "usdt",
     },
     {
-      decimals: 18,
+      decimals: 10,
       symbol: "PINK",
       name: "PINK",
       type: "erc20",

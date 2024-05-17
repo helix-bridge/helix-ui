@@ -27,7 +27,7 @@ export type TokenSymbol =
 export type TokenType = "native" | "erc20";
 
 export interface Token {
-  decimals: 18 | 6;
+  decimals: 18 | 10 | 6;
   symbol: TokenSymbol; // Also used as id
   name: string;
   type: TokenType;
