@@ -8,6 +8,8 @@ export type TokenSymbol =
   | "RING"
   | "USDC"
   | "USDT"
+  | "xcUSDT"
+  | "ahUSDT"
   | "PRING"
   | "ORING"
   | "CRAB"
@@ -22,6 +24,8 @@ export type TokenSymbol =
   | "BNB"
   | "BERA"
   | "PINK"
+  | "xcPINK"
+  | "ahPINK"
   | "xDai";
 
 export type TokenType = "native" | "erc20";

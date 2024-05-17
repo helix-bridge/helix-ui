@@ -50,14 +50,14 @@ export const moonbeamChain: ChainConfig = {
     },
     {
       decimals: 6,
-      symbol: "USDT",
-      name: "USDT",
+      symbol: "xcUSDT",
+      name: "xcUSDT",
       type: "erc20",
       address: "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d",
       logo: "usdt.png",
       cross: [
         {
-          target: { network: "darwinia-dvm", symbol: "USDT" },
+          target: { network: "darwinia-dvm", symbol: "ahUSDT" },
           bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
         },
       ],
@@ -65,14 +65,14 @@ export const moonbeamChain: ChainConfig = {
     },
     {
       decimals: 10,
-      symbol: "PINK",
-      name: "PINK",
+      symbol: "xcPINK",
+      name: "xcPINK",
       type: "erc20",
       address: "0xffffffff30478fafbe935e466da114e14fb3563d",
       logo: "pink.png",
       cross: [
         {
-          target: { network: "darwinia-dvm", symbol: "PINK" },
+          target: { network: "darwinia-dvm", symbol: "ahPINK" },
           bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
         },
       ],

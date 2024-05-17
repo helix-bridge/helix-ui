@@ -90,14 +90,14 @@ export const darwiniaChain: ChainConfig = {
     },
     {
       decimals: 6,
-      symbol: "USDT",
-      name: "USDT",
+      symbol: "ahUSDT",
+      name: "ahUSDT",
       type: "erc20",
       address: "0x0000000000000000000000000000000000000403",
       logo: "usdt.png",
       cross: [
         {
-          target: { network: "moonbeam", symbol: "USDT" },
+          target: { network: "moonbeam", symbol: "xcUSDT" },
           bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
         },
       ],
@@ -105,14 +105,14 @@ export const darwiniaChain: ChainConfig = {
     },
     {
       decimals: 10,
-      symbol: "PINK",
-      name: "PINK",
+      symbol: "ahPINK",
+      name: "ahPINK",
       type: "erc20",
       address: "0x0000000000000000000000000000000000000404",
       logo: "pink.png",
       cross: [
         {
-          target: { network: "moonbeam", symbol: "PINK" },
+          target: { network: "moonbeam", symbol: "xcPINK" },
           bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
         },
       ],
