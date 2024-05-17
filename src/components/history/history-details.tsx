@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ChainConfig, HistoryRecord, RecordResult } from "../../types";
+import { ChainConfig, HistoryDetailsResData, HistoryRecord, RecordResult } from "../../types";
 import {
   formatBalance,
   formatTime,
@@ -13,13 +13,17 @@ import Completed from "../icons/completed";
 import Pending from "../icons/pending";
 import { useHistoryDtails } from "../../hooks";
 import ComponentLoading from "../../ui/component-loading";
+import { useMemo } from "react";
 
 interface Props {
-  requestTxHash: Hash;
+  requestTxHash?: Hash | null;
+  defaultData?: HistoryDetailsResData["historyRecordByTxHash"];
 }
 
-export default function HistoryDetails({ requestTxHash }: Props) {
-  const { data, loading } = useHistoryDtails(requestTxHash);
+export default function HistoryDetails({ defaultData, requestTxHash }: Props) {
+  const { data: _data, loading } = useHistoryDtails(requestTxHash);
+  const data = useMemo(() => _data ?? defaultData, [_data, defaultData]);
+
   const sourceChain = getChainConfig(data?.fromChain);
   const targetChain = getChainConfig(data?.toChain);
   const sourceToken = sourceChain?.tokens.find(({ symbol }) => symbol === data?.sendToken);

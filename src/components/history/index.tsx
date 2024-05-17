@@ -5,10 +5,11 @@ import HistoryDetails from "./history-details";
 import HistoryTable from "./history-table";
 import { useAccount } from "wagmi";
 import Modal from "./modal";
+import { RecordResult } from "../../types";
 
 export default function History({ children, className }: PropsWithChildren<{ className: string }>) {
-  const { isHistoryOpen, historyDetailsTxHash, setIsHistoryOpen, setHistoryDetailsTxHash } = useApp();
   const [currentPage, setCurrentPage] = useState(0);
+  const { isHistoryOpen, historyDetails, setIsHistoryOpen, setHistoryDetails } = useApp();
   const { loading, data, total, refetch } = useHistory(currentPage, isHistoryOpen);
 
   useEffect(() => {
@@ -16,19 +17,20 @@ export default function History({ children, className }: PropsWithChildren<{ cla
       refetch();
     } else {
       setCurrentPage(0);
-      setHistoryDetailsTxHash(null);
+      setHistoryDetails(null);
     }
-  }, [isHistoryOpen, refetch, setHistoryDetailsTxHash]);
+  }, [isHistoryOpen, refetch, setHistoryDetails]);
 
   const historyRef = useRef<HTMLDivElement | null>(null);
-  const detailRef = useRef<HTMLDivElement | null>(null);
-  const nodeRef = historyDetailsTxHash ? detailRef : historyRef;
+  const detailsRef = useRef<HTMLDivElement | null>(null);
+  const nodeRef = historyDetails ? detailsRef : historyRef;
 
   const account = useAccount();
 
   const handleRowClick = useCallback(
-    (r: (typeof data)[0]) => setHistoryDetailsTxHash(r.requestTxHash),
-    [setHistoryDetailsTxHash],
+    (r: (typeof data)[0]) =>
+      setHistoryDetails(r.result === RecordResult.SUCCESS ? { data: r } : { hash: r.requestTxHash }),
+    [setHistoryDetails],
   );
 
   return account.address ? (
@@ -45,21 +47,21 @@ export default function History({ children, className }: PropsWithChildren<{ cla
 
       <Modal
         isOpen={isHistoryOpen}
-        isDetail={!!historyDetailsTxHash}
+        isDetail={!!historyDetails}
         onClose={() => setIsHistoryOpen(false)}
-        onBack={() => setHistoryDetailsTxHash(null)}
+        onBack={() => setHistoryDetails(null)}
       >
         <SwitchTransition>
           <CSSTransition
-            key={historyDetailsTxHash ? "detail" : "history"}
-            classNames={historyDetailsTxHash ? "history-detail-fade" : "history-table-fade"}
+            key={historyDetails ? "detail" : "history"}
+            classNames={historyDetails ? "history-detail-fade" : "history-table-fade"}
             timeout={100}
             nodeRef={nodeRef}
             unmountOnExit
           >
             <div ref={nodeRef}>
-              {historyDetailsTxHash ? (
-                <HistoryDetails requestTxHash={historyDetailsTxHash} />
+              {historyDetails ? (
+                <HistoryDetails requestTxHash={historyDetails.hash} defaultData={historyDetails.data} />
               ) : (
                 <HistoryTable
                   onPageChange={setCurrentPage}

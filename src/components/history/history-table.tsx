@@ -1,11 +1,8 @@
-import { HistoryRecord, RecordResult } from "../../types";
+import { HistoryResData, RecordResult } from "../../types";
 import Table, { ColumnType } from "./table";
 import { formatBalance, formatTime, getChainConfig, getChainLogoSrc } from "../../utils";
 
-type TData = Pick<
-  HistoryRecord,
-  "requestTxHash" | "fromChain" | "toChain" | "startTime" | "sendToken" | "sendAmount" | "result" | "id"
->;
+type TData = HistoryResData["historyRecords"]["records"][0];
 
 const columns: ColumnType<TData>[] = [
   {

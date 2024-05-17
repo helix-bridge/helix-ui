@@ -227,13 +227,22 @@ export interface HistoryResData {
     total: number;
     records: Pick<
       HistoryRecord,
-      "requestTxHash" | "fromChain" | "toChain" | "startTime" | "sendToken" | "sendAmount" | "result" | "id"
+      | "requestTxHash"
+      | "responseTxHash"
+      | "fromChain"
+      | "toChain"
+      | "startTime"
+      | "sendToken"
+      | "sendAmount"
+      | "confirmedBlocks"
+      | "result"
+      | "id"
     >[];
   };
 }
 
 export interface HistoryDetailsReqParams {
-  txHash: Hash;
+  txHash: string;
 }
 
 export interface HistoryDetailsResData {

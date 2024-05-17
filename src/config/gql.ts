@@ -172,11 +172,13 @@ export const GQL_GET_HISTORY = gql`
       total
       records {
         requestTxHash
+        responseTxHash
         fromChain
         toChain
         startTime
         sendToken
         sendAmount
+        confirmedBlocks
         result
         id
       }

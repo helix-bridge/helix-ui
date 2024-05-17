@@ -35,7 +35,7 @@ interface Recipient {
 }
 
 function Component() {
-  const { updateBalanceAll, setIsHistoryOpen, setHistoryDetailsTxHash } = useApp();
+  const { updateBalanceAll, setIsHistoryOpen, setHistoryDetails } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const [isTransfering, setIsTransfering] = useState(false);
   const {
@@ -214,7 +214,7 @@ function Component() {
         setIsTransfering(false);
         if (receipt?.status === "success") {
           setAmount({ input: "", valid: true, value: 0n, alert: "" });
-          setHistoryDetailsTxHash(receipt.transactionHash);
+          setHistoryDetails({ hash: receipt.transactionHash });
           setIsOpen(false);
           setIsHistoryOpen(true);
           refreshBalance();
@@ -240,7 +240,7 @@ function Component() {
     refreshAllowance,
     updateBalanceAll,
     setIsHistoryOpen,
-    setHistoryDetailsTxHash,
+    setHistoryDetails,
   ]);
 
   return (

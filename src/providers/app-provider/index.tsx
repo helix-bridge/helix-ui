@@ -1,10 +1,10 @@
 import { useBalanceAll } from "../../hooks";
 import { PropsWithChildren, useState } from "react";
 import { AppContext } from "./context";
-import { Hash } from "viem";
+import { HistoryDetails } from "./types";
 
 export default function AppProvider({ children }: PropsWithChildren<unknown>) {
-  const [historyDetailsTxHash, setHistoryDetailsTxHash] = useState<Hash | null>();
+  const [historyDetails, setHistoryDetails] = useState<HistoryDetails | null>();
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [recordsSearch, setRecordsSearch] = useState("");
 
@@ -16,13 +16,13 @@ export default function AppProvider({ children }: PropsWithChildren<unknown>) {
         balanceAll,
         recordsSearch,
         isHistoryOpen,
+        historyDetails,
         loadingBalanceAll,
-        historyDetailsTxHash,
 
         updateBalanceAll,
         setRecordsSearch,
         setIsHistoryOpen,
-        setHistoryDetailsTxHash,
+        setHistoryDetails,
       }}
     >
       {children}
