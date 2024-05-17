@@ -7,7 +7,7 @@ const allTokenOptions: Record<Exclude<TokenCategory, "others">, TokenOption> = {
   ring: { logo: "ring.png", category: "ring", symbol: "RING" },
   usdc: { logo: "usdc.png", category: "usdc", symbol: "USDC" },
   usdt: { logo: "usdt.png", category: "usdt", symbol: "USDT" },
-  pink: { logo: "pink.jpg", category: "pink", symbol: "PINK" },
+  pink: { logo: "pink.png", category: "pink", symbol: "PINK" },
 };
 const sortedTokenCategories: Exclude<TokenCategory, "others">[] = isMainnet()
   ? ["usdt", "eth", "ring", "crab", "pink"]

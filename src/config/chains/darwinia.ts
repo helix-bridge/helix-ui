@@ -109,7 +109,7 @@ export const darwiniaChain: ChainConfig = {
       name: "PINK",
       type: "erc20",
       address: "0x0000000000000000000000000000000000000404",
-      logo: "pink.jpg",
+      logo: "pink.png",
       cross: [
         {
           target: { network: "moonbeam", symbol: "PINK" },
