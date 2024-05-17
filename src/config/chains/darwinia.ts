@@ -24,8 +24,8 @@ export const darwiniaChain: ChainConfig = {
   },
   blockExplorers: {
     default: {
-      name: "Subscan",
-      url: "https://darwinia.subscan.io/",
+      name: "Blockscout",
+      url: "https://explorer.darwinia.network/",
     },
   },
   contracts: {
@@ -87,6 +87,36 @@ export const darwiniaChain: ChainConfig = {
         },
       ],
       category: "crab",
+    },
+    {
+      decimals: 6,
+      symbol: "ahUSDT",
+      name: "ahUSDT",
+      type: "erc20",
+      address: "0x0000000000000000000000000000000000000403",
+      logo: "usdt.png",
+      cross: [
+        {
+          target: { network: "moonbeam", symbol: "xcUSDT" },
+          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
+        },
+      ],
+      category: "usdt",
+    },
+    {
+      decimals: 10,
+      symbol: "ahPINK",
+      name: "ahPINK",
+      type: "erc20",
+      address: "0x0000000000000000000000000000000000000404",
+      logo: "pink.png",
+      cross: [
+        {
+          target: { network: "moonbeam", symbol: "xcPINK" },
+          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
+        },
+      ],
+      category: "pink",
     },
   ],
   messager: { msgline: "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0" },

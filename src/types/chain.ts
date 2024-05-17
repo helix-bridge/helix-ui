@@ -31,6 +31,7 @@ export enum ChainID {
   TAIKO_HEKLA = 167009,
   ASTAR_ZKEVM = 3776,
   MORPH = 2710,
+  MOONBEAM = 1284,
 }
 
 // According to graphql indexer
@@ -58,6 +59,7 @@ export type Network =
   | "taiko"
   | "taiko-hekla"
   | "morph"
+  | "moonbeam"
   | "bsc";
 
 export interface ChainConfig extends Chain {

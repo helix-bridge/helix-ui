@@ -39,7 +39,11 @@ const columns: ColumnType<TData>[] = [
       const chain = getChainConfig(row.fromChain);
       return (
         <div className="flex justify-center">
-          {chain ? <img alt={chain.name} width={20} height={20} src={getChainLogoSrc(chain.logo)} /> : <span>-</span>}
+          {chain ? (
+            <img alt={chain.name} width={20} height={20} src={getChainLogoSrc(chain.logo)} className="rounded-full" />
+          ) : (
+            <span>-</span>
+          )}
         </div>
       );
     },
@@ -52,7 +56,11 @@ const columns: ColumnType<TData>[] = [
       const chain = getChainConfig(row.toChain);
       return (
         <div className="flex justify-center">
-          {chain ? <img alt={chain.name} width={20} height={20} src={getChainLogoSrc(chain.logo)} /> : <span>-</span>}
+          {chain ? (
+            <img alt={chain.name} width={20} height={20} src={getChainLogoSrc(chain.logo)} className="rounded-full" />
+          ) : (
+            <span>-</span>
+          )}
         </div>
       );
     },
