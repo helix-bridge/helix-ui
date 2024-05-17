@@ -8,7 +8,7 @@ import {
   parseConfirmedBlocks,
   toShortAdrress,
 } from "../../utils";
-import { Hash, Hex } from "viem";
+import { Hash, Hex, isHash } from "viem";
 import Completed from "../icons/completed";
 import Pending from "../icons/pending";
 import { useHistoryDtails } from "../../hooks";
@@ -50,7 +50,10 @@ export default function HistoryDetails({ defaultData, requestTxHash }: Props) {
         <div className="mt-8 flex justify-between rounded-3xl bg-white/5 px-14 py-10">
           <Column chain={sourceChain} tx={data?.requestTxHash} />
           <Bridge data={data} />
-          <Column chain={targetChain} tx={data?.responseTxHash} />
+          <Column
+            chain={targetChain}
+            tx={isHash(data?.confirmedBlocks ?? "") ? (data?.confirmedBlocks as Hash) : data?.responseTxHash}
+          />
         </div>
 
         {data && (
