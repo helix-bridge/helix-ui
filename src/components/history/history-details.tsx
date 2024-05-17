@@ -48,10 +48,11 @@ export default function HistoryDetails({ defaultData, requestTxHash }: Props) {
         </div>
 
         <div className="mt-8 flex justify-between rounded-3xl bg-white/5 px-14 py-10">
-          <Column chain={sourceChain} tx={data?.requestTxHash} />
+          <Column chain={sourceChain} tx={data?.requestTxHash} completed={!!data?.requestTxHash} />
           <Bridge data={data} />
           <Column
             chain={targetChain}
+            completed={data?.result === RecordResult.SUCCESS}
             tx={isHash(data?.confirmedBlocks ?? "") ? (data?.confirmedBlocks as Hash) : data?.responseTxHash}
           />
         </div>
@@ -82,12 +83,12 @@ function Row({ label, value }: { label: string; value?: string }) {
   );
 }
 
-function Column({ chain, tx }: { chain?: ChainConfig; tx?: Hex | null }) {
+function Column({ completed, chain, tx }: { completed: boolean; chain?: ChainConfig; tx?: Hex | null }) {
   return (
     <div className="flex flex-col items-center gap-6">
       <span className="text-sm font-bold text-white">{chain?.name ?? "-"}</span>
       <div className="relative flex h-28 w-28 items-center justify-center rounded-full border border-primary/25">
-        {tx ? null : (
+        {completed ? null : (
           <div
             className="absolute bottom-0 left-0 right-0 top-0 z-10 animate-spin rounded-full border-y border-white"
             style={{ animationDuration: "2s" }}
@@ -100,7 +101,7 @@ function Column({ chain, tx }: { chain?: ChainConfig; tx?: Hex | null }) {
         )}
       </div>
       <div className="inline-flex min-h-7 min-w-36 items-center justify-center gap-1">
-        {tx ? <Completed width={18} height={18} /> : <Pending width={25} height={25} />}
+        {completed ? <Completed width={18} height={18} /> : <Pending width={25} height={25} />}
         {chain && tx ? (
           <a
             target="_blank"
