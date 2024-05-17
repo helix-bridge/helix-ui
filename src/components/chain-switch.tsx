@@ -45,7 +45,13 @@ export default function ChainSwitch({ placement }: { placement?: Placement }) {
       >
         {activeChain ? (
           <>
-            <img alt="Active chain" width={20} height={20} src={getChainLogoSrc(activeChain.logo)} />
+            <img
+              alt="Active chain"
+              width={20}
+              height={20}
+              src={getChainLogoSrc(activeChain.logo)}
+              className="rounded-full"
+            />
             <img
               style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
               className="shrink-0 transition-transform"
@@ -78,7 +84,7 @@ export default function ChainSwitch({ placement }: { placement?: Placement }) {
                   key={option.id}
                   onClick={() => switchNetwork?.(option.id)}
                 >
-                  <img alt="Chain" width={22} height={22} src={getChainLogoSrc(option.logo)} />
+                  <img alt="Chain" width={22} height={22} src={getChainLogoSrc(option.logo)} className="rounded-full" />
                   <span className="text-sm font-bold text-white">{option.name}</span>
                 </button>
               ))}
