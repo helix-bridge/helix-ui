@@ -90,7 +90,11 @@ function Column({ chain, tx }: { chain?: ChainConfig; tx?: Hex | null }) {
             style={{ animationDuration: "2s" }}
           />
         )}
-        {chain ? <img alt={chain.name} width={64} height={64} src={getChainLogoSrc(chain.logo)} /> : "-"}
+        {chain ? (
+          <img alt={chain.name} width={64} height={64} src={getChainLogoSrc(chain.logo)} className="rounded-full" />
+        ) : (
+          "-"
+        )}
       </div>
       <div className="inline-flex min-h-7 min-w-36 items-center justify-center gap-1">
         {tx ? <Completed width={18} height={18} /> : <Pending width={25} height={25} />}
