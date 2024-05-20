@@ -16,7 +16,7 @@ export function useSupportChains(token: TokenCategory) {
       setData(_data?.queryLnBridgeSupportChains || []);
       if (!(_data?.queryLnBridgeSupportChains || []).length) {
         notification.warn({
-          title: "No support chains",
+          title: "No supported chains",
           description: "Cross-chain transfer of this token is temporarily not supported.",
         });
       }
