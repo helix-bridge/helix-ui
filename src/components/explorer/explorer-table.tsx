@@ -92,7 +92,7 @@ function getColumns(isLg = false): ColumnType<TData>[] {
               height={32}
               alt={token.symbol}
               src={getTokenLogoSrc(token.logo)}
-              className="hidden lg:block"
+              className="hidden rounded-full lg:block"
             />
             <span className="truncate">{`${formatBalance(BigInt(row.sendAmount), token.decimals)} ${
               token.symbol

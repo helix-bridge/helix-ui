@@ -106,7 +106,7 @@ function TokenTips({ token, chain }: { token: Token; chain: ChainConfig }) {
   return (
     <div className="flex flex-col gap-small">
       <div className="flex items-center gap-small">
-        <img alt="Token" width={18} height={18} src={getTokenLogoSrc(token.logo)} />
+        <img alt="Token" width={18} height={18} src={getTokenLogoSrc(token.logo)} className="rounded-full" />
         <span className="text-sm font-extrabold text-white">
           {token.symbol}
           {token.type === "native" ? " (native token)" : null}
