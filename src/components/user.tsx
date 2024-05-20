@@ -111,7 +111,7 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8 }:
     </Dropdown>
   ) : (
     <button
-      className="inline-flex rounded-[0.625rem] bg-primary px-medium py-2 transition-colors hover:bg-primary/90 lg:py-small"
+      className="inline-flex rounded-xl bg-primary px-large py-2 transition-colors hover:bg-primary/90 lg:py-small"
       onClick={openConnectModal}
     >
       <span className="text-sm font-bold text-white">Connect Wallet</span>
