@@ -9,14 +9,14 @@ export default function Footer() {
       setMainnetOrTestnet({ label: "Testnet", link: "https://testnet.helixbridge.app" });
     } else if (window.location.hostname === "testnet.helixbridge.app") {
       setMainnetOrTestnet({ label: "Mainnet", link: "https://helixbridge.app" });
-    } else if (window.location.hostname === "helix-stg.vercel.app") {
-      setMainnetOrTestnet({ label: "Testnet", link: "https://helix-stg-test.vercel.app" });
-    } else if (window.location.hostname === "helix-stg-test.vercel.app") {
-      setMainnetOrTestnet({ label: "Mainnet", link: "https://helix-stg.vercel.app" });
-    } else if (window.location.hostname === "helix-dev-main.vercel.app") {
-      setMainnetOrTestnet({ label: "Testnet", link: "https://helix-dev-test.vercel.app" });
-    } else if (window.location.hostname === "helix-dev-test.vercel.app") {
-      setMainnetOrTestnet({ label: "Mainnet", link: "https://helix-dev-main.vercel.app" });
+    } else if (window.location.hostname === "helix-stg-mainnet.vercel.app") {
+      setMainnetOrTestnet({ label: "Testnet", link: "https://helix-stg-testnet.vercel.app" });
+    } else if (window.location.hostname === "helix-stg-testnet.vercel.app") {
+      setMainnetOrTestnet({ label: "Mainnet", link: "https://helix-stg-mainnet.vercel.app" });
+    } else if (window.location.hostname === "helix-dev-mainnet.vercel.app") {
+      setMainnetOrTestnet({ label: "Testnet", link: "https://helix-dev-testnet.vercel.app" });
+    } else if (window.location.hostname === "helix-dev-testnet.vercel.app") {
+      setMainnetOrTestnet({ label: "Mainnet", link: "https://helix-dev-mainnet.vercel.app" });
     }
   }, []);
 
