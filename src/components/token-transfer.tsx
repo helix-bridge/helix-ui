@@ -69,7 +69,13 @@ function Item({
       <Label text="To" />
       <DisplayAddress address={to} />
       <Label text="For" />
-      <img width={16} height={16} alt="Token icon" src={getTokenLogoSrc(token.logo)} className="shrink-0" />
+      <img
+        width={16}
+        height={16}
+        alt="Token icon"
+        src={getTokenLogoSrc(token.logo)}
+        className="shrink-0 rounded-full"
+      />
       <span className="text-sm font-medium text-white">
         {formatBalance(amount, token.decimals, { keepZero: false, precision: 4 })} {symbol}
       </span>
