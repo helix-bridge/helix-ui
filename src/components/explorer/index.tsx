@@ -93,7 +93,7 @@ export default function Explorer() {
             return params;
           });
         }}
-        onRowClick={({ id }) => navigate(`/tx/${id}`)}
+        onRowClick={({ id }) => navigate(`/tx/${id}`, { state: { source: "explorer" } })}
       />
     </div>
   );
