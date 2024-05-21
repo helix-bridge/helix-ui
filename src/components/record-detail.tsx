@@ -16,9 +16,12 @@ import TokenToReceive from "./token-to-receive";
 import TransactionValue from "./transaction-value";
 import TransactionFee from "./transaction-fee";
 import { RecordItemTitle } from "../ui/record-item-title";
+import { useNavigate } from "react-router-dom";
+import Back from "./icons/back";
 
 interface Props {
   id: string;
+  source: "explorer" | undefined;
 }
 
 export default function RecordDetail(props: Props) {
@@ -30,6 +33,7 @@ export default function RecordDetail(props: Props) {
     variables: { id: props.id },
     notifyOnNetworkStatusChange: true,
   });
+  const navigate = useNavigate();
 
   const bridgeInstance = useMemo<BaseBridge | undefined>(() => {
     const category = record?.historyRecordById?.bridge;
@@ -47,7 +51,15 @@ export default function RecordDetail(props: Props) {
   return (
     <div className="container mx-auto">
       <div className="flex items-center justify-between gap-5">
-        <h3 className="text-base font-bold text-white">Transaction Details</h3>
+        <div className="flex items-center gap-2 lg:gap-3">
+          {props.source === "explorer" && (
+            <Back
+              className="opacity-100 transition-[transform,opacity] hover:scale-105 hover:cursor-pointer hover:opacity-100 lg:opacity-50"
+              onClick={() => navigate(-1)}
+            />
+          )}
+          <h3 className="text-base font-bold text-white">Transaction Details</h3>
+        </div>
         <CountdownRefresh onClick={refetch} />
       </div>
       <div className="app-scrollbar mt-5 overflow-x-auto">
