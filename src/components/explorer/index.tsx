@@ -22,11 +22,11 @@ export default function Explorer() {
   const { data, total, networkStatus, refetch } = useTxs(deferredSearchValue.toLowerCase(), currentPage, pageSize);
 
   useEffect(() => {
-    setRecordsSearch(new URLSearchParams(window.location.search).get(UrlSearchParamKey.ADDRESS) || "");
+    setRecordsSearch(new URLSearchParams(window.location.hash.split("?")[1]).get(UrlSearchParamKey.ADDRESS) || "");
   }, [setRecordsSearch]);
 
   useEffect(() => {
-    const page = Number(new URLSearchParams(window.location.search).get(UrlSearchParamKey.PAGE));
+    const page = Number(new URLSearchParams(window.location.hash.split("?")[1]).get(UrlSearchParamKey.PAGE));
     if (!Number.isNaN(page) && page > 0) {
       setCurrentPage(page - 1);
     }

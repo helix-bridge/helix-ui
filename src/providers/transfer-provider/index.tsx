@@ -51,7 +51,7 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
   }, []);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(window.location.hash.split("?")[1]);
 
     const pT = params.get(UrlSearchParamKey.TOKEN_CATEGORY);
     const _token = tokenOptions.find(({ category }) => category === pT) || tokenOptions[0];
