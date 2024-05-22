@@ -1,7 +1,7 @@
 import { useRelayer } from "../../hooks";
 import { ChainID, InputValue, LnBridgeRelayerOverview, Token } from "../../types";
 import { notification } from "../../ui/notification";
-import SegmentedTabs, { SegmentedTabsProps } from "../../ui/segmented-tabs";
+import SegmentedTabs from "../../ui/segmented-tabs";
 import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "../../utils";
 import { useApolloClient } from "@apollo/client";
 import { PropsWithChildren, useDeferredValue, useEffect, useMemo, useState } from "react";
@@ -56,7 +56,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
     targetApprove,
     isLnBridgeExist,
   } = useRelayer();
-  const [activeKey, setActiveKey] = useState<SegmentedTabsProps<TabKey>["activeKey"]>("update");
+  const [activeKey, setActiveKey] = useState<TabKey>("update");
   const [height, setHeight] = useState<number>();
   const [busy, setBusy] = useState(false);
   const [loadingWithdrawFee, setLoadingWithdrawFee] = useState(false);
@@ -328,7 +328,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
         options={[
           {
             key: "update",
-            label: <span className="text-sm font-extrabold">Update</span>,
+            label: <span className="text-sm font-bold">Update</span>,
             children: (
               <div className="flex flex-col gap-5" style={{ height: height }}>
                 <LabelSection label="Base Fee">
@@ -347,7 +347,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
           },
           {
             key: "deposit",
-            label: <span className="text-sm font-extrabold">Deposit</span>,
+            label: <span className="text-sm font-bold">Deposit</span>,
             children: (
               <LabelSection label="More Margin" height={height}>
                 <BalanceInput
@@ -375,7 +375,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
             key: "withdraw",
             label: (
               <div className="flex items-center justify-center gap-small">
-                <span className="text-sm font-extrabold">Withdraw</span>
+                <span className="text-sm font-bold">Withdraw</span>
                 <Tooltip
                   content="A cross-chain message is required to perform a `withdraw margin` operation"
                   contentClassName="w-72"
@@ -423,7 +423,7 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
           },
           {
             key: "allowance",
-            label: <span className="text-sm font-extrabold">Allowance</span>,
+            label: <span className="text-sm font-bold">Allowance</span>,
             children: (
               <div className="flex flex-col gap-5">
                 <LabelSection label="Approve More" height={height}>

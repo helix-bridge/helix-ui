@@ -1,6 +1,6 @@
 import { useLiquidityWithdrawFeeParams, useRelayerV3, useWithdrawableLiquidities } from "../../hooks";
 import { InputValue, LnBridgeRelayerOverview, Token } from "../../types";
-import SegmentedTabs, { SegmentedTabsProps } from "../../ui/segmented-tabs";
+import SegmentedTabs from "../../ui/segmented-tabs";
 import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "../../utils";
 import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { useNetwork, useSwitchNetwork } from "wagmi";
@@ -56,7 +56,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
   const [allowanceInput, setAllowanceInput] = useState(bigintInputDefaultValue);
   const [feeRateInput, setFeeRateInput] = useState(numberInputDefaultValue);
 
-  const [activeKey, setActiveKey] = useState<SegmentedTabsProps<TabKey>["activeKey"]>("update");
+  const [activeKey, setActiveKey] = useState<TabKey>("update");
   const [busy, setBusy] = useState(false);
 
   const { switchNetwork } = useSwitchNetwork();
@@ -275,7 +275,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
         options={[
           {
             key: "update",
-            label: <span className="text-sm font-extrabold">Update</span>,
+            label: <span className="text-sm font-bold">Update</span>,
             children: (
               <div className="flex flex-col gap-5">
                 <Label text="Base Fee">
@@ -298,7 +298,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
           },
           {
             key: "deposit",
-            label: <span className="text-sm font-extrabold">Deposit</span>,
+            label: <span className="text-sm font-bold">Deposit</span>,
             children: (
               <Label text="More Penalty Reserves">
                 <BalanceInput
@@ -312,7 +312,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
           },
           {
             key: "withdraw penalty reserve",
-            label: <span className="text-sm font-extrabold">Penalty</span>,
+            label: <span className="text-sm font-bold">Penalty</span>,
             children: (
               <div className="flex flex-col gap-5">
                 <Label text="Withdraw Penalty Reserves">
@@ -335,7 +335,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
           },
           {
             key: "withdraw liquidity",
-            label: <span className="text-sm font-extrabold">Liquidity</span>,
+            label: <span className="text-sm font-bold">Liquidity</span>,
             children: (
               <div className="flex flex-col gap-5">
                 <Label text="Withdrawable Liquidity">
@@ -379,7 +379,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
           },
           {
             key: "allowance",
-            label: <span className="text-sm font-extrabold">Allowance</span>,
+            label: <span className="text-sm font-bold">Allowance</span>,
             children: (
               <div className="flex flex-col gap-5">
                 <Label text="Approve Amount">
