@@ -11,7 +11,7 @@ import {
 import { Hash, Hex, isHash } from "viem";
 import Completed from "../icons/completed";
 import Pending from "../icons/pending";
-import { useHistoryDtails } from "../../hooks";
+import { useHistoryDetails } from "../../hooks";
 import ComponentLoading from "../../ui/component-loading";
 import { useMemo } from "react";
 
@@ -21,7 +21,7 @@ interface Props {
 }
 
 export default function HistoryDetails({ defaultData, requestTxHash }: Props) {
-  const { data: _data, loading } = useHistoryDtails(requestTxHash);
+  const { data: _data, loading } = useHistoryDetails(requestTxHash);
   const data = useMemo(() => _data ?? defaultData, [_data, defaultData]);
 
   const sourceChain = getChainConfig(data?.fromChain);
