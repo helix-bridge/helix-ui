@@ -68,6 +68,10 @@ export const arbitrumChain: ChainConfig = {
         { target: { network: "op", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "gnosis", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
         { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
+        {
+          target: { network: "moonbeam", symbol: "xcUSDT" },
+          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
+        },
       ],
       category: "usdt",
     },

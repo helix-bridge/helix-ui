@@ -60,6 +60,10 @@ export const moonbeamChain: ChainConfig = {
           target: { network: "darwinia-dvm", symbol: "ahUSDT" },
           bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
         },
+        {
+          target: { network: "arbitrum", symbol: "USDT" },
+          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
+        },
       ],
       category: "usdt",
     },
