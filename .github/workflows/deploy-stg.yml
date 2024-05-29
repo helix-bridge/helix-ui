@@ -48,5 +48,3 @@ jobs:
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
-
-    
