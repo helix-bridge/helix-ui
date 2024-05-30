@@ -37,7 +37,7 @@ export default function Footer() {
           rel="noopener noreferrer"
           target="_blank"
         >
-          xToken
+          XToken
         </a>
         <a
           className="text-xs font-semibold text-white/50 transition hover:text-white hover:underline active:scale-95"
