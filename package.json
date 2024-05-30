@@ -5,7 +5,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --mode mainnet",
+    "dev": "npm run dev:mainnet",
+    "dev:mainnet": "vite --mode mainnet",
     "dev:testnet": "vite --mode testnet",
     "build": "npm run build:mainnet",
     "build:mainnet": "tsc && vite build --mode mainnet",
