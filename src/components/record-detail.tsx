@@ -65,7 +65,7 @@ export default function RecordDetail(props: Props) {
       <div className="app-scrollbar mt-5 overflow-x-auto">
         <div className="relative flex min-w-max flex-col gap-medium rounded-large bg-secondary px-7 py-medium">
           {/* loading */}
-          <ComponentLoading loading={loading} className="rounded-large bg-black/30" />
+          <ComponentLoading loading={loading} className="rounded-large backdrop-blur-[2px]" />
 
           <Item label="Transfer Route">
             <TransferRoute record={record?.historyRecordById} />
