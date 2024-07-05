@@ -27,6 +27,10 @@ export const sepoliaChain: ChainConfig = {
           bridge: { category: "lnbridge", lnv2Type: "default" },
         },
         { target: { network: "zksync-sepolia", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
+        {
+          target: { network: "base-sepolia", symbol: "ETH" },
+          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
+        },
       ],
       category: "eth",
     },
@@ -64,6 +68,10 @@ export const sepoliaChain: ChainConfig = {
         {
           target: { network: "zksync-sepolia", symbol: "USDT" },
           bridge: { category: "lnbridge", lnv2Type: "default" },
+        },
+        {
+          target: { network: "base-sepolia", symbol: "USDT" },
+          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
         },
       ],
       category: "usdt",

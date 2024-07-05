@@ -21,3 +21,4 @@ export * from "./bera";
 export * from "./taiko";
 export * from "./astar-zkevm";
 export * from "./moonbeam";
+export * from "./base-sepolia";
