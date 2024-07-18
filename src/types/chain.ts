@@ -21,6 +21,7 @@ export enum ChainID {
   LINEA = 59144,
   MANTLE = 5000,
   BASE = 8453,
+  BASE_SEPOLIA = 84532,
   SCROLL = 534352,
   BSC = 56,
   OPTIMISM = 10,
@@ -53,6 +54,7 @@ export type Network =
   | "gnosis"
   | "scroll"
   | "base"
+  | "base-sepolia"
   | "op"
   | "blast"
   | "bera"

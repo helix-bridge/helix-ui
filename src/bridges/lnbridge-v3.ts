@@ -50,6 +50,12 @@ export class LnBridgeV3 extends LnBridgeBase {
         targetAddress = "0xD476650e03a45E70202b0bcAfa04E1513920f83a";
       }
 
+      if (this.sourceChain?.network === "base-sepolia") {
+        sourceAddress = "0x29D148A9e87C763292a33A55B9dBcAf44A194102";
+      } else if (this.targetChain?.network === "base-sepolia") {
+        targetAddress = "0x29D148A9e87C763292a33A55B9dBcAf44A194102";
+      }
+
       this.contract = { sourceAddress, targetAddress };
     }
   }
