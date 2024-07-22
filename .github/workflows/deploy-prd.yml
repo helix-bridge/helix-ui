@@ -12,12 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/checkout@v3
-        with:
-          repository: darwinia-network/devops
-          path: .github
-
-      - uses: ./.github/actions/smart-vercel
+      - uses: darwinia-network/devops/actions/smart-vercel@main
         name: Deploy Helix (mainnet)
         with:
           node_version: 20
@@ -33,7 +28,7 @@ jobs:
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
-      - uses: ./.github/actions/smart-vercel
+      - uses: darwinia-network/devops/actions/smart-vercel@main
         name: Deploy Helix (testnet)
         with:
           node_version: 20
