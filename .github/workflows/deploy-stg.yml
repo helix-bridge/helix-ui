@@ -21,8 +21,8 @@ jobs:
           preview_output: true
           alias_domain: "helix-stg-mainnet"
           project_name: "helix-apps"
-          script_install: npm i
-          script_build: npm run build:mainnet
+          script_install: pnpm i
+          script_build: pnpm run build:mainnet
           dist_path: dist
           enable_notify_slack: true
           slack_channel: helix-ui
@@ -37,8 +37,8 @@ jobs:
           preview_output: true
           alias_domain: "helix-stg-testnet"
           project_name: "helix-apps-test"
-          script_install: npm i
-          script_build: npm run build:testnet
+          script_install: pnpm i
+          script_build: pnpm run build:testnet
           dist_path: dist
           enable_notify_slack: true
           slack_channel: helix-ui
