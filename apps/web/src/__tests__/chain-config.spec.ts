@@ -26,7 +26,7 @@ describe.each(getChainConfigs(true).filter((c) => !!c.tokens.length))("$name", (
       expect(getChainConfig(cross.target.network)?.tokens.find((t) => t.symbol === cross.target.symbol)).toBeDefined();
     });
 
-    it.skipIf(chain.network === "bera" || chain.network === "taiko")(
+    it.skipIf(chain.network === "bera" || chain.network === "taiko").skip(
       `Should configure the correct decimals: '${token.decimals}'`,
       async () => {
         if (token.type === "native") {
