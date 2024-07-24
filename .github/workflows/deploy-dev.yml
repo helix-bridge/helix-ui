@@ -1,4 +1,4 @@
-name: Deploy Development
+name: Deploy development
 
 on:
   pull_request:
@@ -6,13 +6,16 @@ on:
 
 jobs:
   deploy-package:
-    name: Deploy Package
+    name: Deploy package
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
       - uses: darwinia-network/devops/actions/smart-vercel@main
-        name: Deploy Helix (mainnet)
+        name: Deploy web (mainnet)
         with:
           node_version: 20
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
@@ -20,16 +23,16 @@ jobs:
           preview_output: true
           alias_domain: "helix-dev-mainnet"
           project_name: "helix-apps"
-          script_install: npm i
-          script_build: npm run build:mainnet
-          dist_path: dist
+          script_install: pnpm install
+          script_build: pnpm web build:mainnet
+          dist_path: apps/web/dist
           enable_notify_comment: true
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
       - uses: darwinia-network/devops/actions/smart-vercel@main
-        name: Deploy Helix (testnet)
+        name: Deploy web (testnet)
         with:
           node_version: 20
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
@@ -37,9 +40,9 @@ jobs:
           preview_output: true
           alias_domain: "helix-dev-testnet"
           project_name: "helix-apps-test"
-          script_install: npm i
-          script_build: npm run build:testnet
-          dist_path: dist
+          script_install: pnpm install
+          script_build: pnpm web build:testnet
+          dist_path: apps/web/dist
           enable_notify_comment: true
           enable_notify_slack: true
           slack_channel: helix-ui

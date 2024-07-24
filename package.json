@@ -1,20 +1,15 @@
 {
   "name": "helix-ui",
-  "description": "Helix Bridge UI",
+  "description": "HelixBridge Interfaces",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
   "scripts": {
-    "dev": "npm run dev:mainnet",
-    "dev:mainnet": "vite --mode mainnet",
-    "dev:testnet": "vite --mode testnet",
-    "build": "npm run build:mainnet",
-    "build:mainnet": "tsc && vite build --mode mainnet",
-    "build:testnet": "tsc && vite build --mode testnet",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "test": "vitest --run --silent",
-    "preview": "vite preview",
-    "format": "prettier 'src/**/*.{js,jsx,ts,tsx,json}' --write",
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "clean": "turbo run clean && rm -rf .turbo node_modules",
+    "web": "pnpm --filter @helixbridge/web",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,yaml}\"",
     "prepare": "husky"
   },
   "repository": {
@@ -26,50 +21,19 @@
     "helix-ui",
     "helixbridge"
   ],
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/helix-bridge/helix-ui/issues"
   },
   "homepage": "https://github.com/helix-bridge/helix-ui#readme",
-  "dependencies": {
-    "@apollo/client": "^3.10.3",
-    "@floating-ui/react": "^0.26.14",
-    "@rainbow-me/rainbowkit": "^1.3.7",
-    "date-fns": "^3.6.0",
-    "date-fns-tz": "^3.1.3",
-    "graphql": "^16.8.1",
-    "localforage": "^1.10.0",
-    "match-sorter": "^6.3.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-jazzicon": "^1.0.4",
-    "react-router-dom": "^6.23.1",
-    "react-transition-group": "^4.4.5",
-    "rxjs": "^7.8.1",
-    "sort-by": "^0.0.2",
-    "viem": "^1.21.4",
-    "wagmi": "^1.4.13"
-  },
   "devDependencies": {
-    "@types/react": "^18.2.66",
-    "@types/react-dom": "^18.2.22",
-    "@types/react-transition-group": "^4.4.10",
-    "@typescript-eslint/eslint-plugin": "^7.2.0",
-    "@typescript-eslint/parser": "^7.2.0",
-    "@vitejs/plugin-react-swc": "^3.5.0",
-    "autoprefixer": "^10.4.19",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.6",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.2",
-    "postcss": "^8.4.38",
     "prettier": "3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.14",
-    "tailwindcss": "^3.4.3",
-    "typescript": "^5.2.2",
-    "vite": "^5.2.0",
-    "vitest": "^1.6.0"
+    "turbo": "^2.0.9"
+  },
+  "packageManager": "pnpm@9.4.0",
+  "engines": {
+    "node": ">=18"
   }
 }

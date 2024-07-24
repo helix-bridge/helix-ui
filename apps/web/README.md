@@ -1,8 +1,6 @@
-# HelixBridge Interfaces
+# HelixBridge Web Interface
 
 ❤️ Secure, fast, and low-cost cross-chain crypto transfers.
-
-## Web Interface
 
 ### Production
 
@@ -18,3 +16,10 @@
 
 - mainnet: https://helix-dev-mainnet.vercel.app/
 - testnet: https://helix-dev-testnet.vercel.app/
+
+### Local development
+
+```shell
+$ pnpm install
+$ pnpm run dev
+```

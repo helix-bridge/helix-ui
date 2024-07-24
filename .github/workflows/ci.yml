@@ -11,14 +11,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Install
-        run: npm install
+        run: pnpm install
 
       - name: Lint and Test
         run: |
-          npm run lint
-          npm run test
+          pnpm run lint
+          pnpm run test
 
       - name: Build
         run: |
-          npm run build
+          pnpm run build
