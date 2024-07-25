@@ -7,9 +7,12 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "clean": "turbo run clean && rm -rf .turbo node_modules",
+    "clean": "turbo run clean && pnpm store prune && rm -rf .turbo node_modules",
     "web": "pnpm --filter @helixbridge/web",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,yaml}\"",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "turbo build --filter=web^... && changeset publish",
     "prepare": "husky"
   },
   "repository": {
@@ -26,6 +29,7 @@
   },
   "homepage": "https://github.com/helix-bridge/helix-ui#readme",
   "devDependencies": {
+    "@changesets/cli": "^2.27.7",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.2",
     "prettier": "3.2.5",

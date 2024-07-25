@@ -1,8 +1,11 @@
 {
-  "name": "@helixbridge/config-eslint",
+  "name": "@helixbridge/eslint-config",
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
+  "scripts": {
+    "clean": "rm -rf node_modules .turbo dist"
+  },
   "devDependencies": {
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-turbo": "^2.0.0",

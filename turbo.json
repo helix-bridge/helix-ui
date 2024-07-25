@@ -16,6 +16,9 @@
     },
     "clean": {
       "cache": false
+    },
+    "typecheck": {
+      "dependsOn": ["^build"]
     }
   }
 }

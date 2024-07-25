@@ -1,3 +1,3 @@
-# `@helixbridge/config-eslint`
+# `@helixbridge/eslint-config`
 
 Collection of internal eslint configurations.
