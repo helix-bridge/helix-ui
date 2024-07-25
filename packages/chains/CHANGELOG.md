@@ -1,5 +1,11 @@
 # @helixbridge/chains
 
+## 0.2.5
+
+### Patch Changes
+
+- 93074cb: Fix publish
+
 ## 0.2.4
 
 ### Patch Changes
