@@ -1,5 +1,6 @@
 import type { Chain as ViemChain } from "viem";
 
+/* eslint-disable no-unused-vars */
 export enum ChainID {
   DARWINIA = 46,
   CRAB = 44,
@@ -33,6 +34,7 @@ export enum ChainID {
   MORPH = 2710,
   MOONBEAM = 1284,
 }
+/* eslint-enable no-unused-vars */
 
 // According to graphql indexer
 export type Network =
