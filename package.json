@@ -12,7 +12,7 @@
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,yaml}\"",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "turbo build --filter=./apps/* && changeset publish",
+    "release": "turbo build --filter=./packages/* && changeset publish",
     "prepare": "husky"
   },
   "repository": {
