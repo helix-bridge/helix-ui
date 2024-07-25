@@ -32,7 +32,7 @@ jobs:
         with:
           publish: pnpm release
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Send a Slack notification if a publish happens
@@ -42,7 +42,7 @@ jobs:
           SLACK_CHANNEL: helix-ui
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://avatars.githubusercontent.com/u/51163350?s=48&v=4
-          SLACK_MESSAGE: 'Published ${{ steps.changesets.outputs.publishedPackages }}'
+          SLACK_MESSAGE: ${{ steps.changesets.outputs.publishedPackages }}
           SLACK_TITLE: Publish
           SLACK_USERNAME: Changesets
           SLACK_WEBHOOK: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
