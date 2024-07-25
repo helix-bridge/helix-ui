@@ -146,10 +146,10 @@ importers:
         specifier: 2.18.0
         version: 2.18.0(typescript@5.5.4)
     devDependencies:
-      "@helixbridge/config-eslint":
+      "@helixbridge/eslint-config":
         specifier: workspace:*
         version: link:../config-eslint
-      "@helixbridge/config-typescript":
+      "@helixbridge/tsconfig":
         specifier: workspace:*
         version: link:../config-typescript
       "@types/node":

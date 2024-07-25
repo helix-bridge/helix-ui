@@ -16,8 +16,8 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@helixbridge/config-eslint": "workspace:*",
-    "@helixbridge/config-typescript": "workspace:*",
+    "@helixbridge/eslint-config": "workspace:*",
+    "@helixbridge/tsconfig": "workspace:*",
     "@types/node": "^20",
     "@typescript-eslint/parser": "^7.2.0",
     "eslint": "^8.57.0",

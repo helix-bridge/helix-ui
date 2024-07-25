@@ -1,5 +1,5 @@
 {
-  "extends": "@helixbridge/config-typescript/base.json",
+  "extends": "@helixbridge/tsconfig/base.json",
   "compilerOptions": {
     "lib": ["ES2020"],
     "outDir": "./dist",
