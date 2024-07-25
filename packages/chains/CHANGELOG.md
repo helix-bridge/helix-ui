@@ -1,5 +1,11 @@
 # @helixbridge/chains
 
+## 0.2.2
+
+### Patch Changes
+
+- a16e5e7: Fix publish key
+
 ## 0.2.1
 
 ### Patch Changes
