@@ -1,9 +1,38 @@
 {
   "name": "@helixbridge/chains",
   "version": "0.2.5",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "exports": {
+    "./chains": {
+      "import": {
+        "types": "./dist/chains/index.d.mts",
+        "default": "./dist/chains/index.mjs"
+      },
+      "require": {
+        "types": "./dist/chains/index.d.ts",
+        "default": "./dist/chains/index.js"
+      }
+    },
+    "./types": {
+      "import": {
+        "types": "./dist/types/index.d.mts",
+        "default": "./dist/types/index.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/types/index.js"
+      }
+    },
+    "./utils": {
+      "import": {
+        "types": "./dist/utils/index.d.mts",
+        "default": "./dist/utils/index.mjs"
+      },
+      "require": {
+        "types": "./dist/utils/index.d.ts",
+        "default": "./dist/utils/index.js"
+      }
+    }
+  },
   "files": [
     "dist/**"
   ],

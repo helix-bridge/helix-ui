@@ -1,7 +1,7 @@
 import { defineConfig, type Options } from "tsup";
 
 export default defineConfig((options: Options) => ({
-  entryPoints: ["src/index.ts"],
+  entry: ["src/chains/index.ts", "src/types/index.ts", "src/utils/index.ts"],
   clean: true,
   dts: true,
   format: ["cjs", "esm"],
