@@ -1,5 +1,11 @@
 # @helixbridge/chains
 
+## 0.3.0
+
+### Minor Changes
+
+- ba8a170: Add more chains
+
 ## 0.2.7
 
 ### Patch Changes
