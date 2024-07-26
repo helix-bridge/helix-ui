@@ -43,6 +43,6 @@ jobs:
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://avatars.githubusercontent.com/u/51163350?s=48&v=4
           SLACK_MESSAGE: ${{ steps.changesets.outputs.publishedPackages }}
-          SLACK_TITLE: Publish
+          SLACK_TITLE: Published
           SLACK_USERNAME: Changesets
           SLACK_WEBHOOK: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
