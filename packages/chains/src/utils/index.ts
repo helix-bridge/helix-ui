@@ -1,18 +1,124 @@
-import { arbitrumSepolia } from "../chains";
-import { darwinia } from "../chains/darwinia";
-import { ChainID, Network } from "../types";
+import {
+  arbitrum,
+  arbitrumSepolia,
+  astarZkEVM,
+  base,
+  baseSepolia,
+  berachainTestnet,
+  blast,
+  bsc,
+  crab,
+  darwinia,
+  ethereum,
+  gnosis,
+  linea,
+  mantle,
+  moonbeam,
+  morphSepolia,
+  optimism,
+  pangolin,
+  polygon,
+  polygonZkEvm,
+  scroll,
+  sepolia,
+  taikoHekla,
+  taikoKatla,
+  zkSync,
+  zksyncSepolia,
+} from "../chains";
+import { type Chain, ChainID, type Network } from "../types";
 
 export function getChains() {
-  return [darwinia, arbitrumSepolia];
+  return [
+    arbitrumSepolia,
+    arbitrum,
+    astarZkEVM,
+    baseSepolia,
+    base,
+    berachainTestnet,
+    blast,
+    bsc,
+    crab,
+    darwinia,
+    ethereum,
+    gnosis,
+    linea,
+    mantle,
+    moonbeam,
+    morphSepolia,
+    optimism,
+    pangolin,
+    polygonZkEvm,
+    polygon,
+    scroll,
+    sepolia,
+    taikoHekla,
+    taikoKatla,
+    zksyncSepolia,
+    zkSync,
+  ];
 }
 
+const CHAIN_ID_2_CHAIN: Record<ChainID, Chain> = {
+  [ChainID.ARBITRUM_SEPOLIA]: arbitrumSepolia,
+  [ChainID.ARBITRUM]: arbitrum,
+  [ChainID.ASTAR_ZKEVM]: astarZkEVM,
+  [ChainID.BASE_SEPOLIA]: baseSepolia,
+  [ChainID.BASE]: base,
+  [ChainID.BERA]: berachainTestnet,
+  [ChainID.BLAST]: blast,
+  [ChainID.BSC]: bsc,
+  [ChainID.CRAB]: crab,
+  [ChainID.DARWINIA]: darwinia,
+  [ChainID.ETHEREUM]: ethereum,
+  [ChainID.GNOSIS]: gnosis,
+  [ChainID.LINEA]: linea,
+  [ChainID.MANTLE]: mantle,
+  [ChainID.MOONBEAM]: moonbeam,
+  [ChainID.MORPH]: morphSepolia,
+  [ChainID.OPTIMISM]: optimism,
+  [ChainID.PANGOLIN]: pangolin,
+  [ChainID.POLYGON_ZKEVM]: polygonZkEvm,
+  [ChainID.POLYGON]: polygon,
+  [ChainID.SCROLL]: scroll,
+  [ChainID.SEPOLIA]: sepolia,
+  [ChainID.TAIKO_HEKLA]: taikoHekla,
+  [ChainID.TAIKO]: taikoKatla,
+  [ChainID.ZKSYNC_SEPOLIA]: zksyncSepolia,
+  [ChainID.ZKSYNC]: zkSync,
+};
+
+const NETWORK_2_CHAIN: Record<Network, Chain> = {
+  "arbitrum-sepolia": arbitrumSepolia,
+  arbitrum: arbitrum,
+  "astar-zkevm": astarZkEVM,
+  "base-sepolia": baseSepolia,
+  base: base,
+  bera: berachainTestnet,
+  blast: blast,
+  bsc: bsc,
+  "crab-dvm": crab,
+  "darwinia-dvm": darwinia,
+  ethereum: ethereum,
+  gnosis: gnosis,
+  linea: linea,
+  mantle: mantle,
+  moonbeam: moonbeam,
+  morph: morphSepolia,
+  op: optimism,
+  "pangolin-dvm": pangolin,
+  "polygon-zkEvm": polygonZkEvm,
+  polygon: polygon,
+  scroll: scroll,
+  sepolia: sepolia,
+  "taiko-hekla": taikoHekla,
+  taiko: taikoKatla,
+  "zksync-sepolia": zksyncSepolia,
+  zksync: zkSync,
+};
+
 export function getChainByIdOrNetwork(chainIdOrNetwork: ChainID | Network | null | undefined) {
-  switch (chainIdOrNetwork) {
-    case ChainID.DARWINIA:
-    case "darwinia-dvm":
-      return darwinia;
-    case ChainID.ARBITRUM_SEPOLIA:
-    case "arbitrum-sepolia":
-      return arbitrumSepolia;
-  }
+  return chainIdOrNetwork
+    ? CHAIN_ID_2_CHAIN[chainIdOrNetwork as ChainID] ?? NETWORK_2_CHAIN[chainIdOrNetwork as Network]
+    : undefined;
 }
