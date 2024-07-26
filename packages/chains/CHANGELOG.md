@@ -1,5 +1,17 @@
 # @helixbridge/chains
 
+## 0.2.7
+
+### Patch Changes
+
+- Update export
+
+## 0.2.6
+
+### Patch Changes
+
+- Refactor exports
+
 ## 0.2.5
 
 ### Patch Changes
