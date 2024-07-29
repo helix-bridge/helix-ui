@@ -44,6 +44,7 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8 }:
           suffixLength={suffixLength}
           address={address}
           copyable
+          disableTooltip
           className="text-sm font-extrabold text-white"
         />
       </div>
