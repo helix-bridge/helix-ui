@@ -39,12 +39,13 @@ jobs:
         env:
           FLEEK_TOKEN: ${{ secrets.FLEEK_TOKEN }}
         run: |
-          pnpm install @fleek-platform/cli --global
-          fleek projects switch --id=clwordxrq0003igm26h2r52n1
           pnpm install
           pnpm web build:mainnet
           mv apps/web/fleek.config.json apps/web/dist
           cd apps/web/dist
+
+          npm i -g @fleek-platform/cli
+          fleek projects switch --id=clwordxrq0003igm26h2r52n1
           fleek sites deploy
           
 
