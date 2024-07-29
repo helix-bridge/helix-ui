@@ -199,6 +199,9 @@ function Component() {
   ]);
 
   const handleTransfer = useCallback(async () => {
+    const sourceChain = bridge?.getSourceChain();
+    const targetChain = bridge?.getTargetChain();
+
     if (bridge && account.address && recipient.value) {
       const relayInfo = relayData?.sortedLnBridgeRelayInfos?.records.at(0);
       try {
@@ -214,7 +217,13 @@ function Component() {
         setIsTransfering(false);
         if (receipt?.status === "success") {
           setAmount({ input: "", valid: true, value: 0n, alert: "" });
-          setHistoryDetails({ hash: receipt.transactionHash });
+          setHistoryDetails({
+            requestTxHash: receipt.transactionHash,
+            fromChain: sourceChain?.network,
+            toChain: targetChain?.network,
+            sendToken: bridge.getSourceToken()?.symbol,
+            sendAmount: deferredAmount.value.toString(),
+          });
           setIsOpen(false);
           setIsHistoryOpen(true);
           refreshBalance();
@@ -232,7 +241,6 @@ function Component() {
     account.address,
     recipient.value,
     bridge,
-    sourceChain,
     fee?.value,
     deferredAmount.value,
     setAmount,

@@ -16,13 +16,12 @@ import ComponentLoading from "../../ui/component-loading";
 import { useMemo } from "react";
 
 interface Props {
-  requestTxHash?: Hash | null;
-  defaultData?: HistoryDetailsResData["historyRecordByTxHash"];
+  data: Partial<HistoryDetailsResData["historyRecordByTxHash"]>;
 }
 
-export default function HistoryDetails({ defaultData, requestTxHash }: Props) {
-  const { data: _data, loading } = useHistoryDetails(requestTxHash);
-  const data = useMemo(() => _data ?? defaultData, [_data, defaultData]);
+export default function HistoryDetails({ data: propsData }: Props) {
+  const { data: _data, loading } = useHistoryDetails(propsData?.id ? null : propsData?.requestTxHash);
+  const data = useMemo(() => _data ?? propsData, [_data, propsData]);
 
   const sourceChain = getChainConfig(data?.fromChain);
   const targetChain = getChainConfig(data?.toChain);
@@ -34,11 +33,11 @@ export default function HistoryDetails({ defaultData, requestTxHash }: Props) {
 
       <div className="w-[39.5rem] px-5">
         <div className="flex flex-col gap-3 text-sm font-normal">
-          <Row label="Timestamp" value={data ? formatTime(data.startTime * 1000) : undefined} />
+          <Row label="Timestamp" value={data?.startTime ? formatTime(data.startTime * 1000) : undefined} />
           <Row
             label="Value"
             value={
-              data && sourceToken
+              data?.sendAmount && sourceToken
                 ? `${formatBalance(BigInt(data.sendAmount), sourceToken.decimals, { precision: 8 })} ${
                     sourceToken.symbol
                   }`
@@ -87,13 +86,7 @@ function Column({ completed, chain, tx }: { completed: boolean; chain?: ChainCon
   return (
     <div className="flex flex-col items-center gap-6">
       <span className="text-sm font-bold text-white">{chain?.name ?? "-"}</span>
-      <div className="border-primary/25 relative flex h-28 w-28 items-center justify-center rounded-full border">
-        {completed ? null : (
-          <div
-            className="absolute bottom-0 left-0 right-0 top-0 z-10 animate-spin rounded-full border-y border-white"
-            style={{ animationDuration: "2s" }}
-          />
-        )}
+      <div className="border-primary/25 flex h-28 w-28 items-center justify-center rounded-full border">
         {chain ? (
           <img alt={chain.name} width={64} height={64} src={getChainLogoSrc(chain.logo)} className="rounded-full" />
         ) : (
@@ -119,7 +112,7 @@ function Column({ completed, chain, tx }: { completed: boolean; chain?: ChainCon
   );
 }
 
-function Bridge({ data }: { data?: Pick<HistoryRecord, "confirmedBlocks" | "result"> | null }) {
+function Bridge({ data }: { data?: Partial<Pick<HistoryRecord, "confirmedBlocks" | "result">> | null }) {
   const { hash, total = 0, completed = 0 } = parseConfirmedBlocks(data?.confirmedBlocks);
 
   return (
