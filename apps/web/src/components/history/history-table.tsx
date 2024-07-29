@@ -23,7 +23,9 @@ const columns: ColumnType<TData>[] = [
     title: "Value",
     key: "value",
     render: (row) => {
-      const token = getChainConfig(row.fromChain)?.tokens.find(({ symbol }) => symbol === row.sendToken);
+      const token = getChainConfig(row.fromChain)?.tokens.find(
+        ({ symbol }) => symbol.toUpperCase() === row.sendToken.toUpperCase(),
+      );
       return (
         <span className="truncate">
           {token ? `${formatBalance(BigInt(row.sendAmount), token.decimals)} ${token.symbol}` : "-"}

@@ -51,7 +51,7 @@ function Item({
   amount: bigint;
 }) {
   const chainConfig = getChainConfig(chain);
-  const token = chainConfig?.tokens.find((t) => t.symbol === symbol);
+  const token = chainConfig?.tokens.find((t) => t.symbol.toUpperCase() === symbol.toUpperCase());
 
   return token && chainConfig ? (
     <div className="gap-medium flex items-center">

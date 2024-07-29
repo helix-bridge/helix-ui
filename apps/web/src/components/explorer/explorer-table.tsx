@@ -84,7 +84,9 @@ function getColumns(isLg = false): ColumnType<TData>[] {
       title: "Amount",
       key: "amount",
       render: (row) => {
-        const token = getChainConfig(row.fromChain)?.tokens.find(({ symbol }) => symbol === row.sendToken);
+        const token = getChainConfig(row.fromChain)?.tokens.find(
+          ({ symbol }) => symbol.toUpperCase() === row.sendToken.toUpperCase(),
+        );
         return token ? (
           <div className="gap-medium flex items-center">
             <img
