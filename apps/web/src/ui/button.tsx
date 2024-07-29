@@ -24,7 +24,7 @@ export default forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElem
           <div className="h-5 w-5 animate-spin rounded-full border-[3px] border-b-white/50 border-l-white/50 border-r-white border-t-white" />
         </div>
       )}
-      {children}
+      <div className={`${busy ? "invisible" : "visible"}`}>{children}</div>
     </button>
   );
 });
