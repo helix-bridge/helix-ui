@@ -4,18 +4,18 @@
 
 ### Production
 
-- mainnet: https://helixbridge.app/
-- testnet: https://testnet.helixbridge.app/
+- mainnet: https://helixbridge.app (ipfs version: https://helixbridge.eth.limo)
+- testnet: https://testnet.helixbridge.app
 
 ### Staging
 
-- mainnet: https://helix-stg-mainnet.vercel.app/
-- testnet: https://helix-stg-testnet.vercel.app/
+- mainnet: https://helix-stg-mainnet.vercel.app
+- testnet: https://helix-stg-testnet.vercel.app
 
 ### Development
 
-- mainnet: https://helix-dev-mainnet.vercel.app/
-- testnet: https://helix-dev-testnet.vercel.app/
+- mainnet: https://helix-dev-mainnet.vercel.app
+- testnet: https://helix-dev-testnet.vercel.app
 
 ### Local development
 
