@@ -5,7 +5,6 @@ import HistoryDetails from "./history-details";
 import HistoryTable from "./history-table";
 import { useAccount } from "wagmi";
 import Modal from "./modal";
-import { RecordResult } from "../../types";
 
 export default function History({ children, className }: PropsWithChildren<{ className: string }>) {
   const [currentPage, setCurrentPage] = useState(0);
@@ -27,11 +26,7 @@ export default function History({ children, className }: PropsWithChildren<{ cla
 
   const account = useAccount();
 
-  const handleRowClick = useCallback(
-    (r: (typeof data)[0]) =>
-      setHistoryDetails(r.result === RecordResult.SUCCESS ? { data: r } : { hash: r.requestTxHash }),
-    [setHistoryDetails],
-  );
+  const handleRowClick = useCallback((r: (typeof data)[0]) => setHistoryDetails(r), [setHistoryDetails]);
 
   return account.address ? (
     <>
@@ -61,7 +56,7 @@ export default function History({ children, className }: PropsWithChildren<{ cla
           >
             <div ref={nodeRef}>
               {historyDetails ? (
-                <HistoryDetails requestTxHash={historyDetails.hash} defaultData={historyDetails.data} />
+                <HistoryDetails data={historyDetails} />
               ) : (
                 <HistoryTable
                   onPageChange={setCurrentPage}

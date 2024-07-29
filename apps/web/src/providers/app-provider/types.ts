@@ -1,11 +1,7 @@
-import { Hash } from "viem";
 import { ChainConfig, HistoryDetailsResData, Token } from "../../types";
 import { Dispatch, SetStateAction } from "react";
 
-export interface HistoryDetails {
-  data?: HistoryDetailsResData["historyRecordByTxHash"];
-  hash?: Hash;
-}
+export type HistoryDetails = Partial<HistoryDetailsResData["historyRecordByTxHash"]>;
 
 export interface AppCtx {
   recordsSearch: string;

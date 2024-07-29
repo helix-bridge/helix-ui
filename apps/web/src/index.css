@@ -138,7 +138,7 @@
     center 2px;
   background-repeat: no-repeat;
   box-sizing: border-box;
-  animation: animloader-back 1s linear infinite alternate;
+  animation: animloader-back 4s linear infinite alternate;
 }
 .tx-in-progress::before {
   content: "";
@@ -172,17 +172,17 @@
   background-size: 100px 100px;
   box-shadow: 4px 4px 12px 0px rgba(0, 133, 255, 0.5);
   box-sizing: border-box;
-  animation: animloader 1s linear infinite alternate;
+  animation: animloader 4s linear infinite alternate;
 }
 @keyframes animloader-back {
   0%,
-  30%,
-  70% {
+  7.5%,
+  17.5% {
     transform: translateY(0px);
   }
-  20%,
-  40%,
-  100% {
+  5%,
+  10%,
+  25% {
     transform: translateY(-5px);
   }
 }
@@ -194,7 +194,7 @@
     background-position: -44px -44px;
     background-size: 100px 100px;
   }
-  100% {
+  25% {
     box-shadow: 2px 2px 8px 0px rgba(255, 255, 255, 0.5);
     width: 30px;
     height: 28px;
