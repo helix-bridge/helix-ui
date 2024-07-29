@@ -13,12 +13,10 @@ import {
   lineaChain,
   mantleChain,
   moonbeamChain,
-  pangolinChain,
   polygonChain,
   polygonZkEvmChain,
   scrollChain,
   sepoliaChain,
-  taikoChain,
   zksyncChain,
   zksyncSepoliaChain,
 } from "../config/chains";
@@ -37,9 +35,6 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.CRAB:
     case "crab-dvm":
       return crabChain;
-    case ChainID.PANGOLIN:
-    case "pangolin-dvm":
-      return pangolinChain;
     case ChainID.ETHEREUM:
     case "ethereum":
       return ethereumChain;
@@ -91,9 +86,6 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.BERA:
     case "bera":
       return beraChain;
-    case ChainID.TAIKO:
-    case "taiko":
-      return taikoChain;
     case ChainID.TAIKO_HEKLA:
     case "taiko-hekla":
       return taikoHeklaChain;
@@ -124,7 +116,6 @@ export function getChainConfigs(askAll?: boolean) {
     sepoliaChain,
     lineaChain,
     mantleChain,
-    pangolinChain,
     zksyncChain,
     zksyncSepoliaChain,
     polygonChain,
@@ -136,7 +127,6 @@ export function getChainConfigs(askAll?: boolean) {
     gnosisChain,
     blastChain,
     beraChain,
-    taikoChain,
     taikoHeklaChain,
     astarZkEvmChain,
     morphChain,

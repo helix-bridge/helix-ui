@@ -26,16 +26,13 @@ describe.each(getChainConfigs(true).filter((c) => !!c.tokens.length))("$name", (
       expect(getChainConfig(cross.target.network)?.tokens.find((t) => t.symbol === cross.target.symbol)).toBeDefined();
     });
 
-    it.skipIf(chain.network === "bera" || chain.network === "taiko").skip(
-      `Should configure the correct decimals: '${token.decimals}'`,
-      async () => {
-        if (token.type === "native") {
-          expect(token.decimals).toEqual(18);
-        } else {
-          const decimals = await publicClient.readContract({ address: token.address, abi, functionName: "decimals" });
-          expect(token.decimals).toEqual(decimals);
-        }
-      },
-    );
+    it.skipIf(chain.network === "bera").skip(`Should configure the correct decimals: '${token.decimals}'`, async () => {
+      if (token.type === "native") {
+        expect(token.decimals).toEqual(18);
+      } else {
+        const decimals = await publicClient.readContract({ address: token.address, abi, functionName: "decimals" });
+        expect(token.decimals).toEqual(decimals);
+      }
+    });
   });
 });
