@@ -10,16 +10,9 @@ test(`The number of chains should be equal to ${numberOfChains}`, () => {
 });
 
 describe.each(getChains())("$name", ({ id, network }) => {
-  if (network === "taiko" || network === "pangolin-dvm") {
-    /**
-     * @helixbridge/helixconf does not support these chains.
-     * Maybe we should remove these chains from @helixbridge/chains too.
-     */
-  } else {
-    test(`The 'network' should be configured correctly`, () => {
-      expect(network).toBe(HelixChain.get(id)?.code);
-    });
-  }
+  test(`The 'network' should be configured correctly`, () => {
+    expect(network).toBe(HelixChain.get(id)?.code);
+  });
 
   test(`getChainByIdOrNetwork(${id}) should return the correct chain`, () => {
     expect(getChainByIdOrNetwork(id)?.network).toBe(network);

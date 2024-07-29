@@ -4,7 +4,6 @@ import type { Chain as ViemChain } from "viem";
 export enum ChainID {
   DARWINIA = 46,
   CRAB = 44,
-  PANGOLIN = 43,
 
   ETHEREUM = 1,
   SEPOLIA = 11155111,
@@ -28,7 +27,6 @@ export enum ChainID {
   GNOSIS = 100,
   BLAST = 81457,
   BERA = 80085,
-  TAIKO = 167008,
   TAIKO_HEKLA = 167009,
   ASTAR_ZKEVM = 3776,
   MORPH = 2710,
@@ -40,7 +38,6 @@ export enum ChainID {
 export type Network =
   | "darwinia-dvm"
   | "crab-dvm"
-  | "pangolin-dvm"
   | "ethereum"
   | "sepolia"
   | "arbitrum"
@@ -59,7 +56,6 @@ export type Network =
   | "op"
   | "blast"
   | "bera"
-  | "taiko"
   | "taiko-hekla"
   | "morph"
   | "moonbeam"
