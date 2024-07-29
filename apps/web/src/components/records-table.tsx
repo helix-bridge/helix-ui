@@ -62,7 +62,7 @@ export default function RecordsTable({
       key: "amount",
       title: <Title>Amount</Title>,
       render: ({ fromChain, sendAmount, sendToken }) => {
-        const token = getChainConfig(fromChain)?.tokens.find((t) => t.symbol === sendToken);
+        const token = getChainConfig(fromChain)?.tokens.find((t) => t.symbol.toUpperCase() === sendToken.toUpperCase());
         return token ? (
           <div className="gap-medium flex items-center justify-start">
             <img width={32} height={32} alt="Token" src={getTokenLogoSrc(token.logo)} className="rounded-full" />

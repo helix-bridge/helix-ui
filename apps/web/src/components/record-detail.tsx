@@ -39,8 +39,12 @@ export default function RecordDetail(props: Props) {
     const category = record?.historyRecordById?.bridge;
     const sourceChain = getChainConfig(record?.historyRecordById?.fromChain);
     const targetChain = getChainConfig(record?.historyRecordById?.toChain);
-    const sourceToken = sourceChain?.tokens.find((t) => t.symbol === record?.historyRecordById?.sendToken);
-    const targetToken = targetChain?.tokens.find((t) => t.symbol === record?.historyRecordById?.recvToken);
+    const sourceToken = sourceChain?.tokens.find(
+      (t) => t.symbol.toUpperCase() === record?.historyRecordById?.sendToken.toUpperCase(),
+    );
+    const targetToken = targetChain?.tokens.find(
+      (t) => t.symbol.toUpperCase() === record?.historyRecordById?.recvToken.toUpperCase(),
+    );
 
     if (category) {
       return bridgeFactory({ category, sourceChain, targetChain, sourceToken, targetToken });

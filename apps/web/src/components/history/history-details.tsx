@@ -25,7 +25,7 @@ export default function HistoryDetails({ data: propsData }: Props) {
 
   const sourceChain = getChainConfig(data?.fromChain);
   const targetChain = getChainConfig(data?.toChain);
-  const sourceToken = sourceChain?.tokens.find(({ symbol }) => symbol === data?.sendToken);
+  const sourceToken = sourceChain?.tokens.find(({ symbol }) => symbol.toUpperCase() === data?.sendToken?.toUpperCase());
 
   return (
     <div className="relative overflow-x-auto pb-2">

@@ -7,7 +7,9 @@ interface Props {
 }
 
 export default function TransactionValue({ record }: Props) {
-  const token = getChainConfig(record?.fromChain)?.tokens.find(({ symbol }) => symbol === record?.sendToken);
+  const token = getChainConfig(record?.fromChain)?.tokens.find(
+    ({ symbol }) => symbol.toUpperCase() === record?.sendToken.toUpperCase(),
+  );
 
   return (
     <span className="text-sm font-medium text-white">
