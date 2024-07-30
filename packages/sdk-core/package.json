@@ -1,0 +1,41 @@
+{
+  "name": "@helixbridge/sdk-core",
+  "version": "0.0.0",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "clean": "rm -rf node_modules .turbo dist",
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "jest": {
+    "preset": "@helixbridge/jest-presets/node"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@helixbridge/eslint-config": "workspace:*",
+    "@helixbridge/jest-presets": "workspace:*",
+    "@helixbridge/tsconfig": "workspace:*",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20",
+    "@typescript-eslint/parser": "^7.2.0",
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0",
+    "tsup": "^8.2.3",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@helixbridge/contracts": "^0.1.0",
+    "viem": "^1.21.4"
+  }
+}
