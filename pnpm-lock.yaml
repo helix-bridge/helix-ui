@@ -194,6 +194,31 @@ importers:
 
   packages/config-typescript: {}
 
+  packages/contracts:
+    dependencies:
+      viem:
+        specifier: ^1.21.4
+        version: 1.21.4(typescript@5.5.4)
+    devDependencies:
+      "@helixbridge/eslint-config":
+        specifier: workspace:*
+        version: link:../config-eslint
+      "@helixbridge/tsconfig":
+        specifier: workspace:*
+        version: link:../config-typescript
+      "@types/node":
+        specifier: ^20
+        version: 20.14.12
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      tsup:
+        specifier: ^8.2.3
+        version: 8.2.3(@swc/core@1.7.1)(jiti@1.21.6)(postcss@8.4.39)(typescript@5.5.4)(yaml@2.4.5)
+      typescript:
+        specifier: ^5.2.2
+        version: 5.5.4
+
   packages/jest-presets:
     dependencies:
       ts-jest:
