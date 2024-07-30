@@ -31,6 +31,7 @@ export enum ChainID {
   ASTAR_ZKEVM = 3776,
   MORPH = 2710,
   MOONBEAM = 1284,
+  AVALANCHE = 43_114,
 }
 /* eslint-enable no-unused-vars */
 
@@ -59,6 +60,7 @@ export type Network =
   | "taiko-hekla"
   | "morph"
   | "moonbeam"
+  | "avalanche"
   | "bsc";
 
 export interface Chain extends ViemChain {
