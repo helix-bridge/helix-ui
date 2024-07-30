@@ -1,6 +1,7 @@
 export * from "./arbitrum";
 export * from "./arbitrum-sepolia";
 export * from "./astar-zkevm";
+export * from "./avalanche";
 export * from "./base";
 export * from "./base-sepolia";
 export * from "./berachain-testnet";
