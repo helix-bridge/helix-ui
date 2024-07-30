@@ -1,5 +1,11 @@
 # @helixbridge/chains
 
+## 0.4.0
+
+### Minor Changes
+
+- 20a1b79: Add AVAX C-Chain
+
 ## 0.3.0
 
 ### Minor Changes
