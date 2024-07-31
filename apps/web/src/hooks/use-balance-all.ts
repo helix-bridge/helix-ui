@@ -3,10 +3,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPublicClient, getContract, http } from "viem";
 import { forkJoin, map, of, merge, mergeAll } from "rxjs";
 import abi from "../abi/erc20";
-import { ChainConfig, Token } from "../types";
+import { ChainConfig, ChainID, Token } from "../types";
 import { useAccount } from "wagmi";
 
-const chains = getChainConfigs();
+const chains = getChainConfigs().filter((c) => c.id !== ChainID.BERA);
 
 interface BalanceAll {
   chain: ChainConfig;
