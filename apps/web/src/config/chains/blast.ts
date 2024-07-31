@@ -30,7 +30,7 @@ const tokens = chain.tokens.map((token) => {
       },
     };
   });
-  return { ...token, address: token.address as Address, category, cross };
+  return { ...token, name: token.symbol, address: token.address as Address, category, cross };
 });
 
 export const blastChain: ChainConfig = {
