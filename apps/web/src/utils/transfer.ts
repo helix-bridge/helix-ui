@@ -1,17 +1,18 @@
 import { ChainConfig, Token, TokenCategory, TokenOption } from "../types";
 import { getChainConfig, getChainConfigs, isMainnet } from ".";
 
+// ['ETH', 'RING', 'USDT', 'USDC', 'CRAB', 'PINK']
 const allTokenOptions: Record<Exclude<TokenCategory, "others">, TokenOption> = {
-  crab: { logo: "crab.png", category: "crab", symbol: "CRAB" },
-  eth: { logo: "eth.png", category: "eth", symbol: "ETH" },
-  ring: { logo: "ring.png", category: "ring", symbol: "RING" },
-  usdc: { logo: "usdc.png", category: "usdc", symbol: "USDC" },
-  usdt: { logo: "usdt.png", category: "usdt", symbol: "USDT" },
-  pink: { logo: "pink.png", category: "pink", symbol: "PINK" },
+  CRAB: { logo: "crab.png", category: "CRAB", symbol: "CRAB" },
+  ETH: { logo: "eth.png", category: "ETH", symbol: "ETH" },
+  RING: { logo: "ring.png", category: "RING", symbol: "RING" },
+  USDC: { logo: "usdc.png", category: "USDC", symbol: "USDC" },
+  USDT: { logo: "usdt.png", category: "USDT", symbol: "USDT" },
+  PINK: { logo: "pink.png", category: "PINK", symbol: "PINK" },
 };
 const sortedTokenCategories: Exclude<TokenCategory, "others">[] = isMainnet()
-  ? ["usdt", "eth", "ring", "crab", "pink"]
-  : ["usdt", "usdc", "eth", "ring", "crab"];
+  ? ["USDC", "USDT", "ETH", "RING", "CRAB", "PINK"]
+  : ["USDT", "USDC", "ETH", "RING", "CRAB"];
 const availableTokenCategories = new Set<TokenCategory>();
 const sourceChainOptions = new Map<TokenCategory, ChainConfig[]>();
 

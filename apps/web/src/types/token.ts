@@ -1,7 +1,7 @@
 import { Address } from "viem";
 import { CrossChain } from "./cross-chain";
 
-export type TokenCategory = string | "Others";
+export type TokenCategory = string | "others";
 
 export type TokenSymbol = string;
 
