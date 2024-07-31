@@ -2,6 +2,7 @@ import {
   arbitrumChain,
   arbitrumSepoliaChain,
   astarZkEvmChain,
+  avalancheChain,
   baseChain,
   baseSepoliaChain,
   beraChain,
@@ -101,6 +102,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.BASE_SEPOLIA:
     case "base-sepolia":
       return baseSepoliaChain;
+    case ChainID.AVALANCHE:
+    case "avalanche":
+      return avalancheChain;
     default:
       return;
   }
@@ -132,6 +136,7 @@ export function getChainConfigs(askAll?: boolean) {
     morphChain,
     moonbeamChain,
     baseSepoliaChain,
+    avalancheChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {

@@ -1,10 +1,9 @@
+import { avalanche } from "viem/chains";
+import { BridgeV2Type, ChainConfig, Network } from "../../types";
 import { HelixChain } from "@helixbridge/helixconf";
-import { ChainConfig, Network } from "../../types/chain";
-import { mainnet } from "viem/chains";
-import { BridgeV2Type } from "../../types";
 import { Address } from "viem";
 
-const chain = HelixChain.ethereum;
+const chain = HelixChain.avalanche;
 const tokens = chain.tokens.map((token) => {
   const couples = chain.filterCouples({ symbolFrom: token.symbol });
   const category = couples.at(0)?.category ?? "Others";
@@ -35,17 +34,16 @@ const tokens = chain.tokens.map((token) => {
   return { ...token, address: token.address as Address, category, cross };
 });
 
-export const ethereumChain: ChainConfig = {
+export const avalancheChain: ChainConfig = {
   /**
    * Chain
    */
-  ...mainnet,
-  network: "ethereum",
-  name: "Ethereum",
+  ...avalanche,
+  network: "avalanche",
 
   /**
    * Custom
    */
-  logo: "ethereum.png",
+  logo: "https://raw.githubusercontent.com/helix-bridge/helix-ui/main/packages/assets/images/chains/avax.png",
   tokens,
 };

@@ -1,4 +1,38 @@
-import { ChainConfig, ChainID } from "../../types";
+import { HelixChain } from "@helixbridge/helixconf";
+import { ChainConfig, ChainID, Network } from "../../types/chain";
+import { BridgeV2Type } from "../../types";
+import { Address } from "viem";
+
+const chain = HelixChain.taikoHekla;
+const tokens = chain.tokens.map((token) => {
+  const couples = chain.filterCouples({ symbolFrom: token.symbol });
+  const category = couples.at(0)?.category ?? "Others";
+
+  const routes = new Set<string>();
+  for (const couple of couples) {
+    routes.add(`${couple.chain.code}:${couple.symbol.from}:${couple.symbol.to}`);
+  }
+
+  const cross = [...routes].map((route) => {
+    const [toChain, fromToken, toToken] = route.split(":");
+    const lnv2 = couples.find(
+      (c) =>
+        c.chain.code === toChain &&
+        c.symbol.from === fromToken &&
+        c.symbol.to === toToken &&
+        (c.protocol.name === "lnv2-default" || c.protocol.name === "lnv2-opposite"),
+    );
+    return {
+      target: { network: toChain as Network, symbol: toToken },
+      bridge: {
+        category: "lnbridge" as const,
+        lnv2Type: (lnv2?.protocol.name === "lnv2-opposite" ? "opposite" : "default") as BridgeV2Type,
+        disableV2: !lnv2,
+      },
+    };
+  });
+  return { ...token, address: token.address as Address, category, cross };
+});
 
 export const taikoHeklaChain: ChainConfig = {
   id: ChainID.TAIKO_HEKLA,
@@ -29,46 +63,5 @@ export const taikoHeklaChain: ChainConfig = {
   testnet: true,
 
   logo: "taiko.png",
-  tokens: [
-    {
-      decimals: 18,
-      symbol: "ETH",
-      name: "ETH",
-      type: "native",
-      address: "0x0000000000000000000000000000000000000000",
-      logo: "eth.png",
-      cross: [],
-      category: "eth",
-    },
-    {
-      decimals: 18,
-      symbol: "USDT",
-      name: "USDT",
-      type: "erc20",
-      address: "0x463D1730a8527CA58d48EF70C7460B9920346567",
-      logo: "usdt.png",
-      cross: [
-        {
-          target: { network: "arbitrum-sepolia", symbol: "USDT" },
-          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
-        },
-      ],
-      category: "usdt",
-    },
-    {
-      decimals: 18,
-      symbol: "USDC",
-      name: "USDC",
-      type: "erc20",
-      address: "0x89AF830781A2C1d3580Db930bea11094F55AfEae",
-      logo: "usdc.png",
-      cross: [
-        {
-          target: { network: "arbitrum-sepolia", symbol: "USDC" },
-          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
-        },
-      ],
-      category: "usdc",
-    },
-  ],
+  tokens,
 };

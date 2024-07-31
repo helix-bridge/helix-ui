@@ -1,5 +1,39 @@
-import { ChainConfig } from "../../types/chain";
+import { HelixChain } from "@helixbridge/helixconf";
+import { ChainConfig, Network } from "../../types/chain";
 import { optimism } from "viem/chains";
+import { BridgeV2Type } from "../../types";
+import { Address } from "viem";
+
+const chain = HelixChain.op;
+const tokens = chain.tokens.map((token) => {
+  const couples = chain.filterCouples({ symbolFrom: token.symbol });
+  const category = couples.at(0)?.category ?? "Others";
+
+  const routes = new Set<string>();
+  for (const couple of couples) {
+    routes.add(`${couple.chain.code}:${couple.symbol.from}:${couple.symbol.to}`);
+  }
+
+  const cross = [...routes].map((route) => {
+    const [toChain, fromToken, toToken] = route.split(":");
+    const lnv2 = couples.find(
+      (c) =>
+        c.chain.code === toChain &&
+        c.symbol.from === fromToken &&
+        c.symbol.to === toToken &&
+        (c.protocol.name === "lnv2-default" || c.protocol.name === "lnv2-opposite"),
+    );
+    return {
+      target: { network: toChain as Network, symbol: toToken },
+      bridge: {
+        category: "lnbridge" as const,
+        lnv2Type: (lnv2?.protocol.name === "lnv2-opposite" ? "opposite" : "default") as BridgeV2Type,
+        disableV2: !lnv2,
+      },
+    };
+  });
+  return { ...token, address: token.address as Address, category, cross };
+});
 
 export const optimismChain: ChainConfig = {
   /**
@@ -13,39 +47,5 @@ export const optimismChain: ChainConfig = {
    * Custom
    */
   logo: "optimism.png",
-  tokens: [
-    {
-      decimals: 18,
-      symbol: "ETH",
-      name: "ETH",
-      type: "native",
-      address: "0x0000000000000000000000000000000000000000",
-      logo: "eth.png",
-      cross: [
-        {
-          target: { network: "arbitrum", symbol: "ETH" },
-          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
-        },
-      ],
-      category: "eth",
-    },
-    {
-      decimals: 6,
-      symbol: "USDT",
-      name: "USDT",
-      type: "erc20",
-      address: "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",
-      logo: "usdt.png",
-      cross: [
-        { target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "polygon", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "linea", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "mantle", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "gnosis", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-      ],
-      category: "usdt",
-    },
-  ],
+  tokens,
 };

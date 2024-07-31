@@ -283,7 +283,6 @@ function Component() {
           balance={balance}
           token={sourceToken}
           chain={sourceChain}
-          min={bridge?.getCrossInfo()?.min}
           max={maxTransfer}
           onChange={setAmount}
           onRefresh={refreshBalance}

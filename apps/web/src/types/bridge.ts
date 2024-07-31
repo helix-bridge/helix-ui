@@ -3,14 +3,12 @@ import { PublicClient, WalletClient } from "wagmi";
 import { ChainConfig } from "./chain";
 import { Token } from "./token";
 import { MessageChannel } from "./graphql";
+import { HelixProtocolName } from "@helixbridge/helixconf";
 
 export type BridgeVersion = "lnv2" | "lnv3";
 export type BridgeV2Type = "default" | "opposite";
 
-/**
- * `lnv3` etc. are named from graphql indexer, except `lnbridge`.
- */
-export type BridgeCategory = "lnbridge" | "lnv2-default" | "lnv2-opposite" | "lnv3";
+export type BridgeCategory = "lnbridge" | HelixProtocolName;
 
 export interface BridgeContract {
   sourceAddress: Address;
@@ -32,6 +30,8 @@ export interface BridgeConstructorArgs {
   targetChain?: ChainConfig;
   sourceToken?: Token;
   targetToken?: Token;
+
+  protocol: BridgeCategory;
 }
 
 export interface GetFeeArgs {

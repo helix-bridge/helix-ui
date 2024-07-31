@@ -1,4 +1,3 @@
-import { isMainnet } from "../utils/env";
 import { BridgeConstructorArgs, GetFeeArgs, MessageChannel, Token, TransferOptions } from "../types";
 import { LnBridgeBase } from "./lnbridge-base";
 import { Address, Hex, TransactionReceipt, encodeFunctionData, encodePacked, keccak256 } from "viem";
@@ -7,57 +6,6 @@ export class LnBridgeV3 extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {
     super(args);
     this.name = "Helix LnBridge(v3)";
-    this._initContract();
-  }
-
-  private _initContract() {
-    if (isMainnet()) {
-      let sourceAddress: Address = "0xbA5D580B18b6436411562981e02c8A9aA1776D10";
-      let targetAddress: Address = "0xbA5D580B18b6436411562981e02c8A9aA1776D10";
-
-      if (this.sourceChain?.network === "blast") {
-        sourceAddress = "0xB180D7DcB5CC161C862aD60442FA37527546cAFC";
-      } else if (this.targetChain?.network === "blast") {
-        targetAddress = "0xB180D7DcB5CC161C862aD60442FA37527546cAFC";
-      }
-      if (this.sourceChain?.network === "astar-zkevm") {
-        sourceAddress = "0xD476650e03a45E70202b0bcAfa04E1513920f83a";
-      } else if (this.targetChain?.network === "astar-zkevm") {
-        targetAddress = "0xD476650e03a45E70202b0bcAfa04E1513920f83a";
-      }
-      this.contract = { sourceAddress, targetAddress };
-    } else {
-      let sourceAddress: Address = "0x38627Cb033De66a1E07e73f5D0a7a7adFB6741fa";
-      let targetAddress: Address = "0x38627Cb033De66a1E07e73f5D0a7a7adFB6741fa";
-
-      if (this.sourceChain?.network === "zksync-sepolia") {
-        sourceAddress = "0xDc55fF59F82AA50D8A4A61dB8CcaDffD26Fb7dD2";
-      } else if (this.sourceChain?.network === "bera") {
-        sourceAddress = "0x00e7EFf0826dfCDf2AA5945dFF710B48f4AA7E64";
-      } else if (this.sourceChain?.network === "taiko-hekla") {
-        sourceAddress = "0xD476650e03a45E70202b0bcAfa04E1513920f83a";
-      } else if (this.sourceChain?.network === "morph") {
-        sourceAddress = "0xD476650e03a45E70202b0bcAfa04E1513920f83a";
-      }
-
-      if (this.targetChain?.network === "zksync-sepolia") {
-        targetAddress = "0xDc55fF59F82AA50D8A4A61dB8CcaDffD26Fb7dD2";
-      } else if (this.targetChain?.network === "bera") {
-        targetAddress = "0x00e7EFf0826dfCDf2AA5945dFF710B48f4AA7E64";
-      } else if (this.targetChain?.network === "taiko-hekla") {
-        targetAddress = "0xD476650e03a45E70202b0bcAfa04E1513920f83a";
-      } else if (this.targetChain?.network === "morph") {
-        targetAddress = "0xD476650e03a45E70202b0bcAfa04E1513920f83a";
-      }
-
-      if (this.sourceChain?.network === "base-sepolia") {
-        sourceAddress = "0x29D148A9e87C763292a33A55B9dBcAf44A194102";
-      } else if (this.targetChain?.network === "base-sepolia") {
-        targetAddress = "0x29D148A9e87C763292a33A55B9dBcAf44A194102";
-      }
-
-      this.contract = { sourceAddress, targetAddress };
-    }
   }
 
   protected async _transfer(
@@ -236,6 +184,8 @@ export class LnBridgeV3 extends LnBridgeBase {
           this.sourceChain,
           this.contract.targetAddress,
           this.contract.sourceAddress,
+          this.targetToken,
+          this.sourceToken,
         );
         return feeAndParams
           ? { value: feeAndParams.fee, token: this.targetNativeToken, params: feeAndParams.extParams }

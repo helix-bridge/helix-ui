@@ -1,14 +1,14 @@
 import { BaseBridge, LnBridgeV2Default, LnBridgeV2Opposite, LnBridgeV3 } from "../bridges";
 import { BridgeConstructorArgs, ChainConfig, Token } from "../types";
 
-export function bridgeFactory(args: BridgeConstructorArgs): BaseBridge | undefined {
+export function bridgeFactory(args: Omit<BridgeConstructorArgs, "protocol">): BaseBridge | undefined {
   switch (args.category) {
     case "lnv3":
-      return new LnBridgeV3({ ...args, category: "lnbridge" });
+      return new LnBridgeV3({ ...args, category: "lnbridge", protocol: "lnv3" });
     case "lnv2-default":
-      return new LnBridgeV2Default({ ...args, category: "lnbridge" });
+      return new LnBridgeV2Default({ ...args, category: "lnbridge", protocol: "lnv2-default" });
     case "lnv2-opposite":
-      return new LnBridgeV2Opposite({ ...args, category: "lnbridge" });
+      return new LnBridgeV2Opposite({ ...args, category: "lnbridge", protocol: "lnv2-opposite" });
     default:
       return;
   }

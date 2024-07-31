@@ -1,3 +1,4 @@
+import { HelixChain } from "@helixbridge/helixconf";
 import {
   BridgeCategory,
   BridgeConstructorArgs,
@@ -20,6 +21,7 @@ export abstract class BaseBridge {
   protected estimateTime = { min: 5, max: 20 }; // In minute
 
   protected readonly category: BridgeCategory;
+  protected readonly protocol: BridgeCategory;
   protected contract: BridgeContract | undefined;
 
   protected readonly sourceChain?: ChainConfig;
@@ -36,6 +38,7 @@ export abstract class BaseBridge {
   protected readonly walletClient?: WalletClient | null;
 
   constructor(args: BridgeConstructorArgs) {
+    this.protocol = args.protocol;
     this.category = args.category;
     this.crossInfo = args.sourceChain?.tokens
       .find((t) => t.symbol === args.sourceToken?.symbol)
@@ -58,6 +61,23 @@ export abstract class BaseBridge {
     if (args.sourceChain && args.targetChain) {
       this.sourcePublicClient = createPublicClient({ chain: args.sourceChain, transport: http() });
       this.targetPublicClient = createPublicClient({ chain: args.targetChain, transport: http() });
+    }
+
+    const fromChain = HelixChain.chains().find((c) => c.code === args.sourceChain?.network);
+    const couple = fromChain?.couples.find(
+      (c) =>
+        c.chain.code === args.targetChain?.network &&
+        c.symbol.from === args.sourceToken?.symbol &&
+        c.symbol.to === args.targetToken?.symbol &&
+        c.protocol.name === args.protocol,
+    );
+    const sourceAddress =
+      fromChain?.protocol && couple?.protocol
+        ? (fromChain.protocol[couple.protocol.name] as Address | undefined)
+        : undefined;
+    const targetAddress = couple?.protocol.address as Address | undefined;
+    if (sourceAddress && targetAddress) {
+      this.contract = { sourceAddress, targetAddress };
     }
   }
 

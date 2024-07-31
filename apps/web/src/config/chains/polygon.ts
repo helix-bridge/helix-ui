@@ -1,5 +1,39 @@
-import { ChainConfig } from "../../types/chain";
+import { HelixChain } from "@helixbridge/helixconf";
+import { ChainConfig, Network } from "../../types/chain";
 import { polygon } from "viem/chains";
+import { BridgeV2Type } from "../../types";
+import { Address } from "viem";
+
+const chain = HelixChain.polygon;
+const tokens = chain.tokens.map((token) => {
+  const couples = chain.filterCouples({ symbolFrom: token.symbol });
+  const category = couples.at(0)?.category ?? "Others";
+
+  const routes = new Set<string>();
+  for (const couple of couples) {
+    routes.add(`${couple.chain.code}:${couple.symbol.from}:${couple.symbol.to}`);
+  }
+
+  const cross = [...routes].map((route) => {
+    const [toChain, fromToken, toToken] = route.split(":");
+    const lnv2 = couples.find(
+      (c) =>
+        c.chain.code === toChain &&
+        c.symbol.from === fromToken &&
+        c.symbol.to === toToken &&
+        (c.protocol.name === "lnv2-default" || c.protocol.name === "lnv2-opposite"),
+    );
+    return {
+      target: { network: toChain as Network, symbol: toToken },
+      bridge: {
+        category: "lnbridge" as const,
+        lnv2Type: (lnv2?.protocol.name === "lnv2-opposite" ? "opposite" : "default") as BridgeV2Type,
+        disableV2: !lnv2,
+      },
+    };
+  });
+  return { ...token, address: token.address as Address, category, cross };
+});
 
 export const polygonChain: ChainConfig = {
   /**
@@ -13,52 +47,5 @@ export const polygonChain: ChainConfig = {
    * Custom
    */
   logo: "polygon.png",
-  tokens: [
-    {
-      decimals: 18,
-      symbol: "MATIC",
-      name: "MATIC",
-      type: "native",
-      address: "0x0000000000000000000000000000000000000000",
-      logo: "matic.svg",
-      cross: [],
-      category: "others",
-    },
-    {
-      decimals: 18,
-      symbol: "RING",
-      name: "RING",
-      type: "erc20",
-      address: "0x9C1C23E60B72Bc88a043bf64aFdb16A02540Ae8f",
-      logo: "ring.png",
-      cross: [
-        { target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        {
-          target: { network: "darwinia-dvm", symbol: "RING" },
-          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
-        },
-      ],
-      category: "ring",
-    },
-    {
-      decimals: 6,
-      symbol: "USDT",
-      name: "USDT",
-      type: "erc20",
-      address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
-      logo: "usdt.png",
-      cross: [
-        { target: { network: "polygon-zkEvm", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "bsc", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "linea", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "op", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "mantle", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "gnosis", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-      ],
-      category: "usdt",
-    },
-  ],
-  messager: { msgline: "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0" },
+  tokens,
 };

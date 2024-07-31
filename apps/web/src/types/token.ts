@@ -1,37 +1,14 @@
 import { Address } from "viem";
 import { CrossChain } from "./cross-chain";
 
-export type TokenCategory = "ring" | "crab" | "eth" | "usdt" | "usdc" | "pink" | "others";
+export type TokenCategory = string | "Others";
 
-export type TokenSymbol =
-  | "ETH"
-  | "RING"
-  | "USDC"
-  | "USDT"
-  | "xcUSDT"
-  | "ahUSDT"
-  | "PRING"
-  | "ORING"
-  | "CRAB"
-  | "KTON"
-  | "WRING"
-  | "xCRAB"
-  | "xWRING"
-  | "xWCRAB"
-  | "xPRING"
-  | "MNT"
-  | "MATIC"
-  | "BNB"
-  | "BERA"
-  | "PINK"
-  | "xcPINK"
-  | "ahPINK"
-  | "xDai";
+export type TokenSymbol = string;
 
 export type TokenType = "native" | "erc20";
 
 export interface Token {
-  decimals: 18 | 10 | 6;
+  decimals: number;
   symbol: TokenSymbol; // Also used as id
   name: string;
   type: TokenType;

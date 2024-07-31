@@ -1,4 +1,38 @@
-import { ChainConfig, ChainID } from "../../types/chain";
+import { HelixChain } from "@helixbridge/helixconf";
+import { ChainConfig, ChainID, Network } from "../../types/chain";
+import { BridgeV2Type } from "../../types";
+import { Address } from "viem";
+
+const chain = HelixChain.crabDvm;
+const tokens = chain.tokens.map((token) => {
+  const couples = chain.filterCouples({ symbolFrom: token.symbol });
+  const category = couples.at(0)?.category ?? "Others";
+
+  const routes = new Set<string>();
+  for (const couple of couples) {
+    routes.add(`${couple.chain.code}:${couple.symbol.from}:${couple.symbol.to}`);
+  }
+
+  const cross = [...routes].map((route) => {
+    const [toChain, fromToken, toToken] = route.split(":");
+    const lnv2 = couples.find(
+      (c) =>
+        c.chain.code === toChain &&
+        c.symbol.from === fromToken &&
+        c.symbol.to === toToken &&
+        (c.protocol.name === "lnv2-default" || c.protocol.name === "lnv2-opposite"),
+    );
+    return {
+      target: { network: toChain as Network, symbol: toToken },
+      bridge: {
+        category: "lnbridge" as const,
+        lnv2Type: (lnv2?.protocol.name === "lnv2-opposite" ? "opposite" : "default") as BridgeV2Type,
+        disableV2: !lnv2,
+      },
+    };
+  });
+  return { ...token, address: token.address as Address, category, cross };
+});
 
 export const crabChain: ChainConfig = {
   /**
@@ -39,41 +73,5 @@ export const crabChain: ChainConfig = {
    * Custom
    */
   logo: "crab.png",
-  tokens: [
-    {
-      decimals: 18,
-      symbol: "CRAB",
-      name: "CRAB",
-      type: "native",
-      address: "0x0000000000000000000000000000000000000000",
-      logo: "crab.png",
-      cross: [
-        {
-          target: { network: "darwinia-dvm", symbol: "xWCRAB" },
-          bridge: { category: "lnbridge", lnv2Type: "default" },
-          hidden: true,
-        },
-      ],
-      category: "crab",
-    },
-    {
-      decimals: 18,
-      symbol: "xWRING",
-      name: "xWRING",
-      type: "erc20",
-      address: "0x273131F7CB50ac002BDd08cA721988731F7e1092",
-      logo: "ring.png",
-      cross: [
-        {
-          target: { network: "darwinia-dvm", symbol: "RING" },
-          bridge: { category: "lnbridge", lnv2Type: "default" },
-          hidden: true,
-        },
-      ],
-      category: "ring",
-    },
-  ],
-  messager: {
-    msgline: "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0",
-  },
+  tokens,
 };

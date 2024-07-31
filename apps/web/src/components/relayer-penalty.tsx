@@ -28,7 +28,14 @@ export default function RelayerPenalty({ record }: Props) {
             c.target.network === record.toChain,
         )?.target.symbol,
     );
-    const bridge = new LnBridgeV3({ category: "lnbridge", sourceChain, targetChain, sourceToken, targetToken });
+    const bridge = new LnBridgeV3({
+      category: "lnbridge",
+      sourceChain,
+      targetChain,
+      sourceToken,
+      targetToken,
+      protocol: "lnv3",
+    });
 
     const sub$$ = from(bridge.getPenaltyReserves(record.relayer)).subscribe({
       next: setPenalty,

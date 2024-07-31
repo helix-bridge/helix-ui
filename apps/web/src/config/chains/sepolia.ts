@@ -1,5 +1,39 @@
-import { ChainConfig } from "../../types";
+import { HelixChain } from "@helixbridge/helixconf";
+import { ChainConfig, Network } from "../../types/chain";
 import { sepolia } from "viem/chains";
+import { BridgeV2Type } from "../../types";
+import { Address } from "viem";
+
+const chain = HelixChain.sepolia;
+const tokens = chain.tokens.map((token) => {
+  const couples = chain.filterCouples({ symbolFrom: token.symbol });
+  const category = couples.at(0)?.category ?? "Others";
+
+  const routes = new Set<string>();
+  for (const couple of couples) {
+    routes.add(`${couple.chain.code}:${couple.symbol.from}:${couple.symbol.to}`);
+  }
+
+  const cross = [...routes].map((route) => {
+    const [toChain, fromToken, toToken] = route.split(":");
+    const lnv2 = couples.find(
+      (c) =>
+        c.chain.code === toChain &&
+        c.symbol.from === fromToken &&
+        c.symbol.to === toToken &&
+        (c.protocol.name === "lnv2-default" || c.protocol.name === "lnv2-opposite"),
+    );
+    return {
+      target: { network: toChain as Network, symbol: toToken },
+      bridge: {
+        category: "lnbridge" as const,
+        lnv2Type: (lnv2?.protocol.name === "lnv2-opposite" ? "opposite" : "default") as BridgeV2Type,
+        disableV2: !lnv2,
+      },
+    };
+  });
+  return { ...token, address: token.address as Address, category, cross };
+});
 
 export const sepoliaChain: ChainConfig = {
   /**
@@ -13,91 +47,5 @@ export const sepoliaChain: ChainConfig = {
    * Custom
    */
   logo: "sepolia.png",
-  tokens: [
-    {
-      decimals: 18,
-      symbol: "ETH",
-      name: "ETH",
-      type: "native",
-      address: "0x0000000000000000000000000000000000000000",
-      logo: "eth.png",
-      cross: [
-        {
-          target: { network: "arbitrum-sepolia", symbol: "ETH" },
-          bridge: { category: "lnbridge", lnv2Type: "default" },
-        },
-        { target: { network: "zksync-sepolia", symbol: "ETH" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        {
-          target: { network: "base-sepolia", symbol: "ETH" },
-          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
-        },
-      ],
-      category: "eth",
-    },
-    {
-      decimals: 18,
-      symbol: "USDC",
-      name: "USDC",
-      type: "erc20",
-      address: "0x0ac58Df0cc3542beC4cDa71B16D06C3cCc39f405",
-      logo: "usdc.png",
-      cross: [
-        {
-          target: { network: "arbitrum-sepolia", symbol: "USDC" },
-          bridge: { category: "lnbridge", lnv2Type: "default" },
-        },
-        {
-          target: { network: "zksync-sepolia", symbol: "USDC" },
-          bridge: { category: "lnbridge", lnv2Type: "default" },
-        },
-      ],
-      category: "usdc",
-    },
-    {
-      decimals: 18,
-      symbol: "USDT",
-      name: "USDT",
-      type: "erc20",
-      address: "0x876A4f6eCF13EEb101F9E75FCeF58f19Ff383eEB",
-      logo: "usdt.png",
-      cross: [
-        {
-          target: { network: "arbitrum-sepolia", symbol: "USDT" },
-          bridge: { category: "lnbridge", lnv2Type: "default" },
-        },
-        {
-          target: { network: "zksync-sepolia", symbol: "USDT" },
-          bridge: { category: "lnbridge", lnv2Type: "default" },
-        },
-        {
-          target: { network: "base-sepolia", symbol: "USDT" },
-          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
-        },
-      ],
-      category: "usdt",
-    },
-    {
-      decimals: 18,
-      symbol: "xCRAB",
-      name: "xCRAB",
-      type: "erc20",
-      address: "0x9Da7E18441f26515CC713290BE846E726d41781d",
-      logo: "crab.png",
-      cross: [],
-      category: "others",
-    },
-    {
-      decimals: 18,
-      symbol: "xPRING",
-      name: "xPRING",
-      type: "erc20",
-      address: "0xBC43cb6175FcC8E577a0846256eA699b87eFcEE5",
-      logo: "ring.png",
-      cross: [],
-      category: "ring",
-    },
-  ],
-  messager: {
-    msgline: "0xf7F461728DC89de5EF6615715678b5f5b12bb98A",
-  },
+  tokens,
 };
