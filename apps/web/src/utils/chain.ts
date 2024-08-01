@@ -20,6 +20,7 @@ import {
   sepoliaChain,
   taikoChain,
   taikoHeklaChain,
+  zircuitChain,
   zksyncChain,
   zksyncSepoliaChain,
 } from "../config/chains";
@@ -109,6 +110,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.AVALANCHE:
     case "avalanche":
       return avalancheChain;
+    case ChainID.ZIRCUIT:
+    case "zircuit":
+      return zircuitChain;
     default:
       return;
   }
@@ -142,6 +146,7 @@ export function getChainConfigs(askAll?: boolean) {
     moonbeamChain,
     baseSepoliaChain,
     avalancheChain,
+    zircuitChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {

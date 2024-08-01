@@ -35,8 +35,8 @@ importers:
         specifier: ^0.26.14
         version: 0.26.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       "@helixbridge/helixconf":
-        specifier: 1.1.2
-        version: 1.1.2
+        specifier: 1.1.4
+        version: 1.1.4
       "@rainbow-me/rainbowkit":
         specifier: ^1.3.7
         version: 1.3.7(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@1.21.4(typescript@5.5.4))(wagmi@1.4.13(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.4)(viem@1.21.4(typescript@5.5.4)))
@@ -1003,9 +1003,9 @@ packages:
     resolution:
       { integrity: sha512-KJ1rA4/43Jl7oQ6LBeTPeP9rfm1kaY5SNF8zFnECTVSY+GBMY0SuJddumw0a0fdwHxV1FhSnEE82ObVpbv4QqQ== }
 
-  "@helixbridge/helixconf@1.1.2":
+  "@helixbridge/helixconf@1.1.4":
     resolution:
-      { integrity: sha512-MGc1NxBj1mNTZYmDskjuBZ0LTtrDQD8Uh65VPtBlYBX6SQLBqKm8D4VYTexexfu8B+7DakCDq8X4jfO06Gsi1w== }
+      { integrity: sha512-lBiiTosVLkF/MJ8FexOQvHNikxrwB+VlBRYxDqYTqrmjsS2LOxt9W/33AjrRCohIupel8DCyf6OR+sx78t9ATw== }
 
   "@humanwhocodes/config-array@0.11.14":
     resolution:
@@ -6222,7 +6222,7 @@ snapshots:
 
   "@helixbridge/helixconf@1.1.1": {}
 
-  "@helixbridge/helixconf@1.1.2": {}
+  "@helixbridge/helixconf@1.1.4": {}
 
   "@humanwhocodes/config-array@0.11.14":
     dependencies:

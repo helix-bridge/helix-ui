@@ -23,3 +23,4 @@ export * from "./base-sepolia";
 export * from "./avalanche";
 export * from "./taiko";
 export * from "./taiko-hekla";
+export * from "./zircuit";
