@@ -6,7 +6,7 @@ import abi from "../abi/erc20";
 import { ChainConfig, ChainID, Token } from "../types";
 import { useAccount } from "wagmi";
 
-const chains = getChainConfigs().filter((c) => c.id !== ChainID.BERA);
+const chains = getChainConfigs().filter((c) => c.id !== ChainID.BERA && c.id !== ChainID.TAIKO);
 
 interface BalanceAll {
   chain: ChainConfig;

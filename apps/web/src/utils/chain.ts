@@ -18,6 +18,8 @@ import {
   polygonZkEvmChain,
   scrollChain,
   sepoliaChain,
+  taikoChain,
+  taikoHeklaChain,
   zksyncChain,
   zksyncSepoliaChain,
 } from "../config/chains";
@@ -26,7 +28,6 @@ import { isMainnet } from "./env";
 import { bscChain } from "../config/chains/bsc";
 import { optimismChain } from "../config/chains/optimism";
 import { morphChain } from "../config/chains/morph";
-import { taikoHeklaChain } from "../config/chains/taiko-hekla";
 
 export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
   switch (chainIdOrNetwork) {
@@ -90,6 +91,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.TAIKO_HEKLA:
     case "taiko-hekla":
       return taikoHeklaChain;
+    case ChainID.TAIKO:
+    case "taiko":
+      return taikoChain;
     case ChainID.ASTAR_ZKEVM:
     case "astar-zkevm":
       return astarZkEvmChain;
@@ -132,6 +136,7 @@ export function getChainConfigs(askAll?: boolean) {
     blastChain,
     beraChain,
     taikoHeklaChain,
+    taikoChain,
     astarZkEvmChain,
     morphChain,
     moonbeamChain,
