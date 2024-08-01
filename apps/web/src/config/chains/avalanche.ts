@@ -34,6 +34,18 @@ const tokens = chain.tokens.map((token) => {
   return { ...token, name: token.symbol, address: token.address as Address, category, cross };
 });
 
+if (chain.couples.length && !chain.tokens.some((t) => t.type === "native")) {
+  tokens.push({
+    ...avalanche.nativeCurrency,
+    logo: "https://raw.githubusercontent.com/helix-bridge/helix-ui/main/packages/assets/images/tokens/eth.png",
+    address: "0x0000000000000000000000000000000000000000",
+    category: "ETH",
+    type: "native",
+    cross: [],
+    alias: [],
+  });
+}
+
 export const avalancheChain: ChainConfig = {
   /**
    * Chain
