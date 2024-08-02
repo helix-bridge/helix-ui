@@ -3,6 +3,7 @@ import { ChainConfig, Token, TokenOption } from "../../types";
 
 interface TransferCtx {
   token: TokenOption;
+  availableTokenOptions: TokenOption[];
   amount: { input: string; value: bigint; valid: boolean; alert: string };
   sourceChainOptions: ChainConfig[];
   targetChainOptions: ChainConfig[];
@@ -10,7 +11,8 @@ interface TransferCtx {
   targetChain: ChainConfig;
   sourceToken: Token;
   targetToken: Token;
-  loadingSupportChains: boolean;
+  loadingSupportedChains: boolean;
+  loadingAvailableTokenOptions: boolean;
   isSwitchAvailable: (sourceChain: ChainConfig, targetChain: ChainConfig) => boolean;
   setAmount: Dispatch<SetStateAction<{ input: string; value: bigint; valid: boolean; alert: string }>>;
   handleTokenChange: (value: TokenOption) => void;

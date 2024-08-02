@@ -1,4 +1,5 @@
 import { TokenCategory, TokenSymbol } from "../types";
+import ComponentLoading from "../ui/component-loading";
 import TransferSection from "./transfer-section";
 import TransferTokenSelect from "./transfer-token-select";
 
@@ -9,15 +10,19 @@ interface TokenOption {
 }
 
 interface Props {
+  loading?: boolean;
   token: TokenOption;
   options: TokenOption[];
   onChange?: (token: TokenOption) => void;
 }
 
-export default function TransferTokenSection({ token, options, onChange }: Props) {
+export default function TransferTokenSection({ token, options, loading, onChange }: Props) {
   return (
-    <TransferSection titleText="Token">
-      <TransferTokenSelect value={token} options={options} onChange={onChange} />
-    </TransferSection>
+    <div className="relative">
+      <ComponentLoading loading={loading} color="white" size="small" />
+      <TransferSection titleText="Token" loading={loading}>
+        <TransferTokenSelect value={token} options={options} onChange={onChange} />
+      </TransferSection>
+    </div>
   );
 }

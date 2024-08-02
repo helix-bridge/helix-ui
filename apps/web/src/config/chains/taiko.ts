@@ -1,10 +1,9 @@
 import { HelixChain } from "@helixbridge/helixconf";
-import { ChainConfig, Network } from "../../types/chain";
-import { zkSync } from "viem/chains";
+import { ChainConfig, ChainID, Network } from "../../types/chain";
 import { BridgeV2Type } from "../../types";
 import { Address } from "viem";
 
-const chain = HelixChain.zksync;
+const chain = HelixChain.taiko;
 const tokens = chain.tokens.map((token) => {
   const couples = chain.filterCouples({ symbolFrom: token.symbol });
   const category = couples.at(0)?.category ?? "Others";
@@ -37,7 +36,9 @@ const tokens = chain.tokens.map((token) => {
 
 if (chain.couples.length && !chain.tokens.some((t) => t.type === "native")) {
   tokens.push({
-    ...zkSync.nativeCurrency,
+    name: "Ether",
+    symbol: "ETH",
+    decimals: 18,
     logo: "https://raw.githubusercontent.com/helix-bridge/helix-ui/main/packages/assets/images/tokens/eth.png",
     address: "0x0000000000000000000000000000000000000000",
     category: "ETH",
@@ -47,17 +48,32 @@ if (chain.couples.length && !chain.tokens.some((t) => t.type === "native")) {
   });
 }
 
-export const zksyncChain: ChainConfig = {
-  /**
-   * Chain
-   */
-  ...zkSync,
-  network: "zksync",
-  name: "zkSync era",
+export const taikoChain: ChainConfig = {
+  id: ChainID.TAIKO,
+  network: "taiko",
+  name: "Taiko Mainnet",
+  nativeCurrency: {
+    name: "Ether",
+    symbol: "ETH",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://rpc.taiko.xyz"],
+    },
+    public: {
+      http: ["https://rpc.taiko.xyz"],
+    },
+  },
+  blockExplorers: {
+    default: { name: "Taikoscan", url: "https://taikoscan.network" },
+  },
+  contracts: {
+    multicall3: {
+      address: "0xcb2436774C3e191c85056d248EF4260ce5f27A9D",
+    },
+  },
 
-  /**
-   * Custom
-   */
-  logo: "zksync.png",
+  logo: "taiko.png",
   tokens,
 };

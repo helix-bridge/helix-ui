@@ -1,5 +1,51 @@
-import { ChainConfig } from "../../types/chain";
+import { HelixChain } from "@helixbridge/helixconf";
+import { ChainConfig, Network } from "../../types/chain";
 import { bsc } from "viem/chains";
+import { BridgeV2Type } from "../../types";
+import { Address } from "viem";
+
+const chain = HelixChain.bsc;
+const tokens = chain.tokens.map((token) => {
+  const couples = chain.filterCouples({ symbolFrom: token.symbol });
+  const category = couples.at(0)?.category ?? "Others";
+
+  const routes = new Set<string>();
+  for (const couple of couples) {
+    routes.add(`${couple.chain.code}:${couple.symbol.from}:${couple.symbol.to}`);
+  }
+
+  const cross = [...routes].map((route) => {
+    const [toChain, fromToken, toToken] = route.split(":");
+    const lnv2 = couples.find(
+      (c) =>
+        c.chain.code === toChain &&
+        c.symbol.from === fromToken &&
+        c.symbol.to === toToken &&
+        (c.protocol.name === "lnv2-default" || c.protocol.name === "lnv2-opposite"),
+    );
+    return {
+      target: { network: toChain as Network, symbol: toToken },
+      bridge: {
+        category: "lnbridge" as const,
+        lnv2Type: (lnv2?.protocol.name === "lnv2-opposite" ? "opposite" : "default") as BridgeV2Type,
+        disableV2: !lnv2,
+      },
+    };
+  });
+  return { ...token, name: token.symbol, address: token.address as Address, category, cross };
+});
+
+if (chain.couples.length && !chain.tokens.some((t) => t.type === "native")) {
+  tokens.push({
+    ...bsc.nativeCurrency,
+    logo: "https://raw.githubusercontent.com/helix-bridge/helix-ui/main/packages/assets/images/tokens/eth.png",
+    address: "0x0000000000000000000000000000000000000000",
+    category: "ETH",
+    type: "native",
+    cross: [],
+    alias: [],
+  });
+}
 
 export const bscChain: ChainConfig = {
   /**
@@ -13,45 +59,5 @@ export const bscChain: ChainConfig = {
    * Custom
    */
   logo: "bsc.png",
-  tokens: [
-    {
-      decimals: 18,
-      symbol: "BNB",
-      name: "BNB",
-      type: "native",
-      address: "0x0000000000000000000000000000000000000000",
-      logo: "bnb.svg",
-      cross: [],
-      category: "others",
-    },
-    {
-      decimals: 18,
-      symbol: "USDT",
-      name: "USDT",
-      type: "erc20",
-      address: "0x55d398326f99059fF775485246999027B3197955",
-      logo: "usdt.png",
-      cross: [
-        { target: { network: "arbitrum", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "op", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "linea", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "polygon", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "polygon-zkEvm", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "mantle", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "scroll", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        { target: { network: "gnosis", symbol: "USDT" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-      ],
-      category: "usdt",
-    },
-    {
-      decimals: 18,
-      symbol: "USDC",
-      name: "USDC",
-      type: "erc20",
-      address: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
-      logo: "usdc.png",
-      cross: [{ target: { network: "base", symbol: "USDC" }, bridge: { category: "lnbridge", lnv2Type: "default" } }],
-      category: "usdc",
-    },
-  ],
+  tokens,
 };

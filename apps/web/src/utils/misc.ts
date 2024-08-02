@@ -22,15 +22,15 @@ export function parseRecordResult(result: RecordResult) {
 }
 
 export function getTokenLogoSrc(fileName: string | null | undefined) {
-  return `images/token/${fileName || "unknown.svg"}`;
+  return fileName?.startsWith?.("http") ? fileName : `images/token/${fileName || "unknown.svg"}`;
 }
 
 export function getChainLogoSrc(fileName: string | null | undefined) {
-  return `images/network/${fileName || "unknown.png"}`;
+  return fileName?.startsWith?.("http") ? fileName : `images/network/${fileName || "unknown.png"}`;
 }
 
 export function getBridgeLogoSrc(fileName: string) {
-  return `images/bridge/${fileName}`;
+  return fileName?.startsWith?.("http") ? fileName : `images/bridge/${fileName}`;
 }
 
 export function parseFeeRate(rate: string) {

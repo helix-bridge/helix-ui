@@ -1,4 +1,4 @@
-import type { Address, Chain } from "wagmi";
+import type { Chain } from "wagmi";
 import { Token } from "./token";
 
 export enum ChainID {
@@ -28,10 +28,13 @@ export enum ChainID {
   GNOSIS = 100,
   BLAST = 81457,
   BERA = 80085,
+  TAIKO = 167000,
   TAIKO_HEKLA = 167009,
   ASTAR_ZKEVM = 3776,
   MORPH = 2710,
   MOONBEAM = 1284,
+  AVALANCHE = 43_114,
+  ZIRCUIT = 48899,
 }
 
 // According to graphql indexer
@@ -56,9 +59,12 @@ export type Network =
   | "op"
   | "blast"
   | "bera"
+  | "taiko"
   | "taiko-hekla"
   | "morph"
   | "moonbeam"
+  | "avalanche"
+  | "zircuit"
   | "bsc";
 
 export interface ChainConfig extends Chain {
@@ -73,6 +79,5 @@ export interface ChainConfig extends Chain {
    */
   logo: string; // File name
   tokens: Token[];
-  messager?: { msgline?: Address };
   hidden?: boolean;
 }

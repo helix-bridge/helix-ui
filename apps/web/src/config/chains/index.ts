@@ -20,3 +20,7 @@ export * from "./bera";
 export * from "./astar-zkevm";
 export * from "./moonbeam";
 export * from "./base-sepolia";
+export * from "./avalanche";
+export * from "./taiko";
+export * from "./taiko-hekla";
+export * from "./zircuit";

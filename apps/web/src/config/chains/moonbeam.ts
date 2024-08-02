@@ -1,4 +1,52 @@
-import { ChainConfig, ChainID } from "../../types";
+import { HelixChain } from "@helixbridge/helixconf";
+import { ChainConfig, ChainID, Network } from "../../types/chain";
+import { BridgeV2Type } from "../../types";
+import { Address } from "viem";
+
+const chain = HelixChain.moonbeam;
+const tokens = chain.tokens.map((token) => {
+  const couples = chain.filterCouples({ symbolFrom: token.symbol });
+  const category = couples.at(0)?.category ?? "Others";
+
+  const routes = new Set<string>();
+  for (const couple of couples) {
+    routes.add(`${couple.chain.code}:${couple.symbol.from}:${couple.symbol.to}`);
+  }
+
+  const cross = [...routes].map((route) => {
+    const [toChain, fromToken, toToken] = route.split(":");
+    const lnv2 = couples.find(
+      (c) =>
+        c.chain.code === toChain &&
+        c.symbol.from === fromToken &&
+        c.symbol.to === toToken &&
+        (c.protocol.name === "lnv2-default" || c.protocol.name === "lnv2-opposite"),
+    );
+    return {
+      target: { network: toChain as Network, symbol: toToken },
+      bridge: {
+        category: "lnbridge" as const,
+        lnv2Type: (lnv2?.protocol.name === "lnv2-opposite" ? "opposite" : "default") as BridgeV2Type,
+        disableV2: !lnv2,
+      },
+    };
+  });
+  return { ...token, name: token.symbol, address: token.address as Address, category, cross };
+});
+
+if (chain.couples.length && !chain.tokens.some((t) => t.type === "native")) {
+  tokens.push({
+    name: "GLMR",
+    symbol: "GLMR",
+    decimals: 18,
+    logo: "https://raw.githubusercontent.com/helix-bridge/helix-ui/main/packages/assets/images/tokens/eth.png",
+    address: "0x0000000000000000000000000000000000000000",
+    category: "ETH",
+    type: "native",
+    cross: [],
+    alias: [],
+  });
+}
 
 export const moonbeamChain: ChainConfig = {
   /**
@@ -37,50 +85,5 @@ export const moonbeamChain: ChainConfig = {
    * Custom
    */
   logo: "moonbeam.png",
-  tokens: [
-    {
-      decimals: 18,
-      symbol: "ETH",
-      name: "ETH",
-      type: "native",
-      address: "0x0000000000000000000000000000000000000000",
-      logo: "eth.png",
-      cross: [],
-      category: "eth",
-    },
-    {
-      decimals: 6,
-      symbol: "xcUSDT",
-      name: "xcUSDT",
-      type: "erc20",
-      address: "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d",
-      logo: "usdt.png",
-      cross: [
-        {
-          target: { network: "darwinia-dvm", symbol: "ahUSDT" },
-          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
-        },
-        {
-          target: { network: "arbitrum", symbol: "USDT" },
-          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
-        },
-      ],
-      category: "usdt",
-    },
-    {
-      decimals: 10,
-      symbol: "xcPINK",
-      name: "xcPINK",
-      type: "erc20",
-      address: "0xffffffff30478fafbe935e466da114e14fb3563d",
-      logo: "pink.png",
-      cross: [
-        {
-          target: { network: "darwinia-dvm", symbol: "ahPINK" },
-          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
-        },
-      ],
-      category: "pink",
-    },
-  ],
+  tokens,
 };

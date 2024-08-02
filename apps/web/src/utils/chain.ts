@@ -2,6 +2,7 @@ import {
   arbitrumChain,
   arbitrumSepoliaChain,
   astarZkEvmChain,
+  avalancheChain,
   baseChain,
   baseSepoliaChain,
   beraChain,
@@ -17,6 +18,9 @@ import {
   polygonZkEvmChain,
   scrollChain,
   sepoliaChain,
+  taikoChain,
+  taikoHeklaChain,
+  zircuitChain,
   zksyncChain,
   zksyncSepoliaChain,
 } from "../config/chains";
@@ -25,7 +29,6 @@ import { isMainnet } from "./env";
 import { bscChain } from "../config/chains/bsc";
 import { optimismChain } from "../config/chains/optimism";
 import { morphChain } from "../config/chains/morph";
-import { taikoHeklaChain } from "../config/chains/taiko-hekla";
 
 export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
   switch (chainIdOrNetwork) {
@@ -89,6 +92,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.TAIKO_HEKLA:
     case "taiko-hekla":
       return taikoHeklaChain;
+    case ChainID.TAIKO:
+    case "taiko":
+      return taikoChain;
     case ChainID.ASTAR_ZKEVM:
     case "astar-zkevm":
       return astarZkEvmChain;
@@ -101,6 +107,12 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.BASE_SEPOLIA:
     case "base-sepolia":
       return baseSepoliaChain;
+    case ChainID.AVALANCHE:
+    case "avalanche":
+      return avalancheChain;
+    case ChainID.ZIRCUIT:
+    case "zircuit":
+      return zircuitChain;
     default:
       return;
   }
@@ -128,10 +140,13 @@ export function getChainConfigs(askAll?: boolean) {
     blastChain,
     beraChain,
     taikoHeklaChain,
+    taikoChain,
     astarZkEvmChain,
     morphChain,
     moonbeamChain,
     baseSepoliaChain,
+    avalancheChain,
+    zircuitChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {

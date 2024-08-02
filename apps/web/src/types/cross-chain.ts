@@ -11,7 +11,6 @@ export type CrossChain = {
   target: Target;
   bridge: { category: BridgeCategory; lnv2Type: BridgeV2Type; disableV2?: boolean };
   hidden?: boolean;
-  min?: bigint; // Minimum transfer amount
 };
 
 export type AvailableBridges = {

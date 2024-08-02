@@ -1,4 +1,52 @@
-import { ChainConfig, ChainID } from "../../types/chain";
+import { HelixChain } from "@helixbridge/helixconf";
+import { ChainConfig, ChainID, Network } from "../../types/chain";
+import { BridgeV2Type } from "../../types";
+import { Address } from "viem";
+
+const chain = HelixChain.darwiniaDvm;
+const tokens = chain.tokens.map((token) => {
+  const couples = chain.filterCouples({ symbolFrom: token.symbol });
+  const category = couples.at(0)?.category ?? "Others";
+
+  const routes = new Set<string>();
+  for (const couple of couples) {
+    routes.add(`${couple.chain.code}:${couple.symbol.from}:${couple.symbol.to}`);
+  }
+
+  const cross = [...routes].map((route) => {
+    const [toChain, fromToken, toToken] = route.split(":");
+    const lnv2 = couples.find(
+      (c) =>
+        c.chain.code === toChain &&
+        c.symbol.from === fromToken &&
+        c.symbol.to === toToken &&
+        (c.protocol.name === "lnv2-default" || c.protocol.name === "lnv2-opposite"),
+    );
+    return {
+      target: { network: toChain as Network, symbol: toToken },
+      bridge: {
+        category: "lnbridge" as const,
+        lnv2Type: (lnv2?.protocol.name === "lnv2-opposite" ? "opposite" : "default") as BridgeV2Type,
+        disableV2: !lnv2,
+      },
+    };
+  });
+  return { ...token, name: token.symbol, address: token.address as Address, category, cross };
+});
+
+if (chain.couples.length && !chain.tokens.some((t) => t.type === "native")) {
+  tokens.push({
+    name: "RING",
+    symbol: "RING",
+    decimals: 18,
+    logo: "https://raw.githubusercontent.com/helix-bridge/helix-ui/main/packages/assets/images/tokens/eth.png",
+    address: "0x0000000000000000000000000000000000000000",
+    category: "ETH",
+    type: "native",
+    cross: [],
+    alias: [],
+  });
+}
 
 export const darwiniaChain: ChainConfig = {
   /**
@@ -39,85 +87,5 @@ export const darwiniaChain: ChainConfig = {
    * Custom
    */
   logo: "darwinia.png",
-  tokens: [
-    {
-      decimals: 18,
-      symbol: "RING",
-      name: "RING",
-      type: "native",
-      address: "0x0000000000000000000000000000000000000000",
-      logo: "ring.png",
-      cross: [
-        { target: { network: "ethereum", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "opposite" } },
-        { target: { network: "arbitrum", symbol: "RING" }, bridge: { category: "lnbridge", lnv2Type: "default" } },
-        {
-          target: { network: "crab-dvm", symbol: "xWRING" },
-          bridge: { category: "lnbridge", lnv2Type: "default" },
-          hidden: true,
-        },
-        {
-          target: { network: "polygon", symbol: "RING" },
-          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
-        },
-      ],
-      category: "ring",
-    },
-    {
-      decimals: 18,
-      symbol: "KTON",
-      name: "KTON",
-      type: "erc20",
-      address: "0x0000000000000000000000000000000000000402",
-      logo: "kton.png",
-      cross: [],
-      category: "others",
-    },
-    {
-      decimals: 18,
-      symbol: "xWCRAB",
-      name: "xWCRAB",
-      type: "erc20",
-      address: "0x656567Eb75b765FC320783cc6EDd86bD854b2305",
-      logo: "crab.png",
-      cross: [
-        {
-          target: { network: "crab-dvm", symbol: "CRAB" },
-          bridge: { category: "lnbridge", lnv2Type: "default" },
-          hidden: true,
-        },
-      ],
-      category: "crab",
-    },
-    {
-      decimals: 6,
-      symbol: "ahUSDT",
-      name: "ahUSDT",
-      type: "erc20",
-      address: "0x0000000000000000000000000000000000000403",
-      logo: "usdt.png",
-      cross: [
-        {
-          target: { network: "moonbeam", symbol: "xcUSDT" },
-          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
-        },
-      ],
-      category: "usdt",
-    },
-    {
-      decimals: 10,
-      symbol: "ahPINK",
-      name: "ahPINK",
-      type: "erc20",
-      address: "0x0000000000000000000000000000000000000404",
-      logo: "pink.png",
-      cross: [
-        {
-          target: { network: "moonbeam", symbol: "xcPINK" },
-          bridge: { category: "lnbridge", lnv2Type: "default", disableV2: true },
-        },
-      ],
-      category: "pink",
-    },
-  ],
-  messager: { msgline: "0x65Be094765731F394bc6d9DF53bDF3376F1Fc8B0" },
+  tokens,
 };

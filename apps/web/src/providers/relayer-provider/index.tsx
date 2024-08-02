@@ -56,9 +56,9 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
     };
 
     if (isLnV2DefaultBridge(sourceToken, targetChain)) {
-      defaultBridge = new LnBridgeV2Default({ category: "lnv2-default", ...args });
+      defaultBridge = new LnBridgeV2Default({ category: "lnv2-default", ...args, protocol: "lnv2-default" });
     } else if (isLnV2OppositeBridge(sourceToken, targetChain)) {
-      oppositeBridge = new LnBridgeV2Opposite({ category: "lnv2-opposite", ...args });
+      oppositeBridge = new LnBridgeV2Opposite({ category: "lnv2-opposite", ...args, protocol: "lnv2-opposite" });
     }
     return { defaultBridge, oppositeBridge, bridgeInstance: defaultBridge ?? oppositeBridge };
   }, [sourceChain, targetChain, sourceToken, targetToken, walletClient, publicClient]);

@@ -1,10 +1,9 @@
 import { HelixChain } from "@helixbridge/helixconf";
-import { ChainConfig, Network } from "../../types/chain";
-import { zkSync } from "viem/chains";
+import { ChainConfig, ChainID, Network } from "../../types/chain";
 import { BridgeV2Type } from "../../types";
 import { Address } from "viem";
 
-const chain = HelixChain.zksync;
+const chain = HelixChain.zircuit;
 const tokens = chain.tokens.map((token) => {
   const couples = chain.filterCouples({ symbolFrom: token.symbol });
   const category = couples.at(0)?.category ?? "Others";
@@ -37,7 +36,9 @@ const tokens = chain.tokens.map((token) => {
 
 if (chain.couples.length && !chain.tokens.some((t) => t.type === "native")) {
   tokens.push({
-    ...zkSync.nativeCurrency,
+    name: "ETH",
+    symbol: "ETH",
+    decimals: 18,
     logo: "https://raw.githubusercontent.com/helix-bridge/helix-ui/main/packages/assets/images/tokens/eth.png",
     address: "0x0000000000000000000000000000000000000000",
     category: "ETH",
@@ -47,17 +48,39 @@ if (chain.couples.length && !chain.tokens.some((t) => t.type === "native")) {
   });
 }
 
-export const zksyncChain: ChainConfig = {
+export const zircuitChain: ChainConfig = {
   /**
    * Chain
    */
-  ...zkSync,
-  network: "zksync",
-  name: "zkSync era",
+  id: ChainID.ZIRCUIT,
+  network: "zircuit",
+  name: "Zircuit Testnet",
+  nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ["https://zircuit1.p2pify.com"],
+    },
+    public: {
+      http: ["https://zircuit1.p2pify.com"],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Zircuit Explorer",
+      url: "https://explorer.zircuit.com",
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: "0xcA11bde05977b3631167028862bE2a173976CA11",
+      blockCreated: 6040287,
+    },
+  },
+  testnet: true,
 
   /**
    * Custom
    */
-  logo: "zksync.png",
+  logo: "zircuit.png",
   tokens,
 };

@@ -1,46 +1,10 @@
 import { Address, Hex, TransactionReceipt } from "viem";
 import { LnBridgeBase } from "./lnbridge-base";
-import { isMainnet } from "../utils/env";
 import { BridgeConstructorArgs, TransferOptions } from "../types/bridge";
 
 export class LnBridgeV2Default extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {
     super(args);
-    this._initContract();
-  }
-
-  private _initContract() {
-    if (this.sourceChain?.network === "zksync-sepolia") {
-      this.contract = {
-        sourceAddress: "0xBe23e871318E49C747CB909AC65aCCFAEAac3a37",
-        targetAddress: "0x8429D7Dfd91D6F970ba89fFC005e67D15f1E4739",
-      };
-    } else if (this.targetChain?.network === "zksync-sepolia") {
-      this.contract = {
-        sourceAddress: "0x8429D7Dfd91D6F970ba89fFC005e67D15f1E4739",
-        targetAddress: "0xBe23e871318E49C747CB909AC65aCCFAEAac3a37",
-      };
-    } else if (this.sourceChain?.network === "zksync") {
-      this.contract = {
-        sourceAddress: "0x767Bc046c989f5e63683fB530f939DD34b91ceAC",
-        targetAddress: "0x94C614DAeFDbf151E1BB53d6A201ae5fF56A9337",
-      };
-    } else if (this.targetChain?.network === "zksync") {
-      this.contract = {
-        sourceAddress: "0x94C614DAeFDbf151E1BB53d6A201ae5fF56A9337",
-        targetAddress: "0x767Bc046c989f5e63683fB530f939DD34b91ceAC",
-      };
-    } else if (isMainnet()) {
-      this.contract = {
-        sourceAddress: "0x94C614DAeFDbf151E1BB53d6A201ae5fF56A9337",
-        targetAddress: "0x94C614DAeFDbf151E1BB53d6A201ae5fF56A9337",
-      };
-    } else {
-      this.contract = {
-        sourceAddress: "0x8429D7Dfd91D6F970ba89fFC005e67D15f1E4739",
-        targetAddress: "0x8429D7Dfd91D6F970ba89fFC005e67D15f1E4739",
-      };
-    }
   }
 
   protected async _transfer(

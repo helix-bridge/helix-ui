@@ -1,13 +1,6 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import TransferTokenSection from "./transfer-token-section";
-import {
-  bridgeFactory,
-  getSourceTokenOptions,
-  getTargetTokenOptions,
-  getTokenOptions,
-  notifyError,
-  notifyTransaction,
-} from "../utils";
+import { bridgeFactory, getSourceTokenOptions, getTargetTokenOptions, notifyError, notifyTransaction } from "../utils";
 import TransferChainSection from "./transfer-chain-section";
 import TransferAmountSection from "./transfer-amount-section";
 import TransferInformationSection from "./transfer-information-section";
@@ -47,7 +40,9 @@ function Component() {
     targetToken,
     sourceChainOptions,
     targetChainOptions,
-    loadingSupportChains,
+    availableTokenOptions,
+    loadingSupportedChains,
+    loadingAvailableTokenOptions,
     setAmount,
     isSwitchAvailable,
     handleTokenChange,
@@ -254,10 +249,15 @@ function Component() {
   return (
     <>
       <div className="gap-medium p-medium flex w-full flex-col rounded-2xl bg-[#1F282C] lg:w-[27.5rem] lg:gap-5 lg:rounded-[2rem] lg:p-5">
-        <TransferTokenSection token={token} options={getTokenOptions()} onChange={handleTokenChange} />
+        <TransferTokenSection
+          token={token}
+          options={availableTokenOptions}
+          loading={loadingAvailableTokenOptions}
+          onChange={handleTokenChange}
+        />
         <TransferChainSection
           recipient={recipient}
-          loading={loadingSupportChains}
+          loading={loadingSupportedChains}
           expandRecipient={expandRecipient}
           recipientOptions={account.address ? [account.address] : []}
           sourceChain={sourceChain}
@@ -283,7 +283,6 @@ function Component() {
           balance={balance}
           token={sourceToken}
           chain={sourceChain}
-          min={bridge?.getCrossInfo()?.min}
           max={maxTransfer}
           onChange={setAmount}
           onRefresh={refreshBalance}

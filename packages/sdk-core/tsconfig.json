@@ -1,0 +1,10 @@
+{
+  "extends": "@helixbridge/tsconfig/base.json",
+  "compilerOptions": {
+    "lib": ["ES2020"],
+    "outDir": "./dist",
+    "types": ["jest", "node"]
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
+}

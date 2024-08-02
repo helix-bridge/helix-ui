@@ -2,7 +2,8 @@ import { BaseBridge } from "./base";
 import { Address, Hex, PublicClient, TransactionReceipt, bytesToHex, encodeFunctionData } from "viem";
 import { BridgeConstructorArgs, GetFeeArgs, GetWithdrawFeeArgs, TransferOptions } from "../types/bridge";
 import { fetchMsglineFeeAndParams } from "../utils";
-import { ChainConfig } from "../types";
+import { ChainConfig, Token } from "../types";
+import { HelixChain } from "@helixbridge/helixconf";
 
 export class LnBridgeBase extends BaseBridge {
   constructor(args: BridgeConstructorArgs) {
@@ -62,9 +63,25 @@ export class LnBridgeBase extends BaseBridge {
     remoteChain: ChainConfig,
     localContract: Address,
     remoteContract: Address,
+    localToken: Token | undefined,
+    remoteToken: Token | undefined,
   ) {
-    const localMessager = localChain?.messager?.msgline;
-    const remoteMessager = remoteChain?.messager?.msgline;
+    // const localMessager = localChain?.messager?.msgline;
+    // const remoteMessager = remoteChain?.messager?.msgline;
+
+    const localMessager = HelixChain.chains()
+      .find((c) => c.id.toString() === localChain.id.toString())
+      ?.messager("msgline")?.address as Address | undefined;
+    const rm = HelixChain.chains()
+      .find((c) => c.id.toString() === localChain.id.toString())
+      ?.couples.find(
+        (c) =>
+          c.chain.code === remoteChain.network &&
+          c.symbol.from === localToken?.symbol &&
+          c.symbol.to === remoteToken?.symbol &&
+          c.protocol.name === this.protocol,
+      )?.messager;
+    const remoteMessager = rm?.name === "msgline" ? (rm.address as Address | undefined) : undefined;
 
     if (sender && localMessager && remoteMessager && localContract && remoteContract) {
       const payload = encodeFunctionData({
@@ -123,6 +140,8 @@ export class LnBridgeBase extends BaseBridge {
         this.targetChain,
         this.contract.sourceAddress,
         this.contract.targetAddress,
+        this.sourceToken,
+        this.targetToken,
       );
       return feeAndParams
         ? { value: feeAndParams.fee, token: this.sourceNativeToken, params: feeAndParams.extParams }

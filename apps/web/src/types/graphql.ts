@@ -196,12 +196,17 @@ export interface WithdrawableLiquiditiesResData {
   };
 }
 
-export interface SupportChainsReqParams {
-  token: Uppercase<TokenCategory>;
+export interface SupportedChainsReqParams {
+  tokenKey: Uppercase<TokenCategory>;
 }
 
-export interface SupportChainsResData {
-  queryLnBridgeSupportChains: SupportChains[];
+interface TokenInfo {
+  tokenKey: Uppercase<string>;
+  chains: SupportChains[];
+}
+
+export interface SupportedChainsResData {
+  queryLnBridgeSupportedChains: TokenInfo[];
 }
 
 export interface MaxTransferReqParams {

@@ -41,6 +41,7 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
         targetToken,
         publicClient,
         walletClient,
+        protocol: "lnv3",
       }),
     [sourceChain, targetChain, sourceToken, targetToken, walletClient, publicClient],
   );

@@ -12,7 +12,7 @@ export * from "./use-sorted-relay-data";
 export * from "./use-transfer";
 export * from "./use-transaction-fee";
 export * from "./use-daily-limit";
-export * from "./use-support-chains";
+export * from "./use-supported-chains";
 export * from "./use-max-transfer";
 export * from "./use-history";
 export * from "./use-history-details";
