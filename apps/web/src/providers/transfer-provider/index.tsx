@@ -14,7 +14,7 @@ import { TransferContext } from "./context";
 const tokenOptions = getTokenOptions();
 
 export default function TransferProvider({ children }: PropsWithChildren<unknown>) {
-  const [token, _setToken] = useState(tokenOptions[1]);
+  const [token, _setToken] = useState(tokenOptions[0]);
   const [amount, setAmount] = useState({ input: "", value: 0n, valid: true, alert: "" });
   const [sourceChainOptions, setSourceChainOptions] = useState(getSourceChainOptions(token.category));
   const [sourceChain, _setSourceChain] = useState(sourceChainOptions[0]);
