@@ -12,7 +12,7 @@ const allTokenOptions: Record<Exclude<TokenCategory, "others">, TokenOption> = {
 };
 const sortedTokenCategories: Exclude<TokenCategory, "others">[] = isMainnet()
   ? ["USDC", "USDT", "ETH", "RING", "CRAB", "PINK"]
-  : ["USDT", "USDC", "ETH", "RING", "CRAB"];
+  : ["USDC", "USDT", "ETH", "RING", "CRAB"];
 const availableTokenCategories = new Set<TokenCategory>();
 const sourceChainOptions = new Map<TokenCategory, ChainConfig[]>();
 
@@ -42,7 +42,7 @@ getChainConfigs()
   });
 
 export function getTokenOptions() {
-  return sortedTokenCategories.filter((c) => availableTokenCategories.has(c)).map((c) => allTokenOptions[c]);
+  return sortedTokenCategories.filter((c) => availableTokenCategories.has(c) || true).map((c) => allTokenOptions[c]);
 }
 
 export function getSourceChainOptions(category: TokenCategory) {

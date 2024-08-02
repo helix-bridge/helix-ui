@@ -151,11 +151,14 @@ export const GQL_GET_WITHDRAWABLE_LIQUIDITIES = gql`
   }
 `;
 
-export const GQL_GET_SUPPORT_CHAINS = gql`
-  query GetSupportChains($token: String!) {
-    queryLnBridgeSupportChains(tokenKey: $token) {
-      fromChain
-      toChains
+export const GQL_GET_SUPPORTED_CHAINS = gql`
+  query GetSupportedChains($tokenKey: String!) {
+    queryLnBridgeSupportedChains(tokenKey: $tokenKey) {
+      tokenKey
+      chains {
+        fromChain
+        toChains
+      }
     }
   }
 `;
