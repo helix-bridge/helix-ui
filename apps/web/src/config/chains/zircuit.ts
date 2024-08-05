@@ -67,7 +67,7 @@ export const zircuitChain: ChainConfig = {
   blockExplorers: {
     default: {
       name: "Zircuit Explorer",
-      url: "https://explorer.zircuit.com",
+      url: "https://explorer.testnet.zircuit.com",
     },
   },
   contracts: {
