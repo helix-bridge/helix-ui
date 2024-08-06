@@ -12,7 +12,9 @@ export default function GraphqlProvider({ children }: PropsWithChildren<unknown>
           fields: {
             historyRecords: {
               keyArgs: (args) =>
-                args?.needWithdrawLiquidity ? ["relayer", "recvTokenAddress", "fromChains", "toChains"] : undefined,
+                args?.needWithdrawLiquidity
+                  ? ["relayer", "recvTokenAddress", "fromChains", "toChains", "row"]
+                  : undefined,
               merge: (existing, incoming, { args }) => {
                 if (args?.needWithdrawLiquidity) {
                   const offset = (args?.page ?? 0) * (args.row ?? 0);

@@ -178,6 +178,7 @@ export interface LnV3MessageChannelResData {
 }
 
 export interface WithdrawableLiquiditiesReqParams {
+  row: number;
   page: number;
   relayer: Address | null | undefined;
   recvTokenAddress: Address | null | undefined;

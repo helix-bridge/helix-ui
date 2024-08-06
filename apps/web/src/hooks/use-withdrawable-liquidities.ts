@@ -9,6 +9,7 @@ export function useWithdrawableLiquidities(
   recvTokenAddress: Address | null | undefined,
   fromChain: Network | null | undefined,
   toChain: Network | null | undefined,
+  initRow = 10,
 ) {
   const pageRef = useRef(0);
   useEffect(() => {
@@ -19,7 +20,7 @@ export function useWithdrawableLiquidities(
     WithdrawableLiquiditiesResData,
     WithdrawableLiquiditiesReqParams
   >(GQL_GET_WITHDRAWABLE_LIQUIDITIES, {
-    variables: { page: 0, relayer, recvTokenAddress, fromChain, toChain },
+    variables: { page: 0, row: initRow, relayer, recvTokenAddress, fromChain, toChain },
     skip: !relayer || !recvTokenAddress || !fromChain || !toChain,
     // fetchPolicy: "no-cache",  // Should use cache to adapt fetchMore
   });
