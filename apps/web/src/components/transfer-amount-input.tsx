@@ -114,13 +114,13 @@ export default function TransferAmountInput({
         <button
           className={`rounded-full bg-white/20 p-[3px] opacity-50 transition hover:opacity-100 active:scale-95 ${
             loading ? "animate-spin" : ""
-          }`}
+          } plausible-event-name=Balance+Refresh`}
           onClick={onRefresh}
         >
           <img alt="Refresh balance" width={14} height={14} src="images/refresh.svg" />
         </button>
         <button
-          className="rounded-full bg-white/20 px-2 py-[2px] text-xs font-semibold text-white opacity-60 transition-[transform,opacity] hover:opacity-100 active:scale-95"
+          className="plausible-event-name=Input+Max rounded-full bg-white/20 px-2 py-[2px] text-xs font-semibold text-white opacity-60 transition-[transform,opacity] hover:opacity-100 active:scale-95"
           onClick={handleMaxInput}
         >
           Max
