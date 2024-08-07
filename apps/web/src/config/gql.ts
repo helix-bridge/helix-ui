@@ -126,6 +126,7 @@ export const GQL_GET_LN_BRIDGE_MESSAGE_CHANNEL = gql`
 
 export const GQL_GET_WITHDRAWABLE_LIQUIDITIES = gql`
   query GetWithdrawableLiquidities(
+    $row: Int!
     $page: Int!
     $relayer: String = ""
     $recvTokenAddress: String = ""
@@ -133,7 +134,7 @@ export const GQL_GET_WITHDRAWABLE_LIQUIDITIES = gql`
     $toChain: String = ""
   ) {
     historyRecords(
-      row: 10
+      row: $row
       page: $page
       relayer: $relayer
       recvTokenAddress: $recvTokenAddress

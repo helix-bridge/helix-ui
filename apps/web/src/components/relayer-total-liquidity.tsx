@@ -33,6 +33,7 @@ export default function RelayerTotalLiquidity({ record }: Props) {
     targetToken?.address,
     sourceChain?.network,
     targetChain?.network,
+    240,
   );
 
   return sourceToken ? <DisplayLiquidity data={data} token={sourceToken} /> : <span>-</span>;

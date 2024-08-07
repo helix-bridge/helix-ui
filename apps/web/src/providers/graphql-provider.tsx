@@ -11,15 +11,18 @@ export default function GraphqlProvider({ children }: PropsWithChildren<unknown>
         Query: {
           fields: {
             historyRecords: {
-              keyArgs: (args) => (args?.needWithdrawLiquidity ? false : undefined),
+              keyArgs: (args) =>
+                args?.needWithdrawLiquidity
+                  ? ["relayer", "recvTokenAddress", "fromChains", "toChains", "row"]
+                  : undefined,
               merge: (existing, incoming, { args }) => {
                 if (args?.needWithdrawLiquidity) {
-                  const offset = args?.offset ?? 0;
-                  const merged = existing ? existing.slice(0) : [];
-                  for (let i = 0; i < incoming.length; ++i) {
-                    merged[offset + i] = incoming[i];
+                  const offset = (args?.page ?? 0) * (args.row ?? 0);
+                  const records = existing ? existing.records.slice(0) : [];
+                  for (let i = 0; i < incoming.records.length; ++i) {
+                    records[offset + i] = incoming.records[i];
                   }
-                  return merged;
+                  return { total: incoming.total, records };
                 }
                 return incoming;
               },
