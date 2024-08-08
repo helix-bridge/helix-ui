@@ -16,7 +16,6 @@ export enum ChainID {
   ZKSYNC_SEPOLIA = 300,
 
   POLYGON = 137,
-  POLYGON_ZKEVM = 1101,
 
   LINEA = 59144,
   MANTLE = 5000,
@@ -28,7 +27,6 @@ export enum ChainID {
   GNOSIS = 100,
   BLAST = 81457,
   BERA = 80085,
-  TAIKO = 167000,
   TAIKO_HEKLA = 167009,
   ASTAR_ZKEVM = 3776,
   MORPH = 2710,
@@ -50,7 +48,6 @@ export type Network =
   | "linea"
   | "mantle"
   | "polygon"
-  | "polygon-zkEvm"
   | "astar-zkevm"
   | "gnosis"
   | "scroll"
@@ -59,7 +56,6 @@ export type Network =
   | "op"
   | "blast"
   | "bera"
-  | "taiko"
   | "taiko-hekla"
   | "morph"
   | "moonbeam"

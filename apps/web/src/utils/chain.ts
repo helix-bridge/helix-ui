@@ -15,10 +15,8 @@ import {
   mantleChain,
   moonbeamChain,
   polygonChain,
-  polygonZkEvmChain,
   scrollChain,
   sepoliaChain,
-  taikoChain,
   taikoHeklaChain,
   zircuitChain,
   zksyncChain,
@@ -62,9 +60,6 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.POLYGON:
     case "polygon":
       return polygonChain;
-    case ChainID.POLYGON_ZKEVM:
-    case "polygon-zkEvm":
-      return polygonZkEvmChain;
     case ChainID.SCROLL:
     case "scroll":
       return scrollChain;
@@ -92,9 +87,6 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.TAIKO_HEKLA:
     case "taiko-hekla":
       return taikoHeklaChain;
-    case ChainID.TAIKO:
-    case "taiko":
-      return taikoChain;
     case ChainID.ASTAR_ZKEVM:
     case "astar-zkevm":
       return astarZkEvmChain;
@@ -131,7 +123,6 @@ export function getChainConfigs(askAll?: boolean) {
     zksyncChain,
     zksyncSepoliaChain,
     polygonChain,
-    polygonZkEvmChain,
     scrollChain,
     baseChain,
     bscChain,
@@ -140,7 +131,6 @@ export function getChainConfigs(askAll?: boolean) {
     blastChain,
     beraChain,
     taikoHeklaChain,
-    taikoChain,
     astarZkEvmChain,
     morphChain,
     moonbeamChain,
