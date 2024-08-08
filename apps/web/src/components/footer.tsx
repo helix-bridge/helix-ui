@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Tooltip from "../ui/tooltip";
 
 export default function Footer() {
   return (
@@ -74,6 +75,22 @@ function Links() {
             </Link>
           ),
         )}
+
+      {window.location.hostname === "helixbridge.app" && (
+        <Tooltip
+          contentClassName="w-72"
+          content="For a fully decentralized experience, you can use the IPFS deployed version."
+        >
+          <a
+            href="https://helixbridge.eth.limo"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden text-xs font-semibold text-white/50 transition hover:text-white hover:underline active:scale-95 lg:inline"
+          >
+            IPFS mirror
+          </a>
+        </Tooltip>
+      )}
     </div>
   );
 }
