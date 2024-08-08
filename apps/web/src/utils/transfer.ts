@@ -11,7 +11,7 @@ const allTokenOptions: Record<Exclude<TokenCategory, "others">, TokenOption> = {
   PINK: { logo: "pink.png", category: "PINK", symbol: "PINK" },
 };
 const sortedTokenCategories: Exclude<TokenCategory, "others">[] = isMainnet()
-  ? ["USDT", "USDC", "ETH", "RING", "CRAB", "PINK"]
+  ? ["USDC", "USDT", "ETH", "RING", "CRAB", "PINK"]
   : ["USDC", "USDT", "ETH", "RING", "CRAB"];
 const availableTokenCategories = new Set<TokenCategory>();
 const sourceChainOptions = new Map<TokenCategory, ChainConfig[]>();
