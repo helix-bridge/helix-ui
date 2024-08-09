@@ -32,7 +32,8 @@ export enum ChainID {
   MORPH = 2710,
   MOONBEAM = 1284,
   AVALANCHE = 43_114,
-  ZIRCUIT = 48899,
+  ZIRCUIT = 48900,
+  ZIRCUIT_SEPOLIA = 48899,
 }
 
 // According to graphql indexer
@@ -61,6 +62,7 @@ export type Network =
   | "moonbeam"
   | "avalanche"
   | "zircuit"
+  | "zircuit-sepolia"
   | "bsc";
 
 export interface ChainConfig extends Chain {
