@@ -12,7 +12,7 @@ export function useTxs(sender: string, page: number, row = 10) {
   } = useQuery<TxsResData, TxsReqParams>(GQL_GET_TXS, {
     variables: { sender, bridges: ["lnv3", "lnv2-default", "lnv2-opposite"], page, row },
     notifyOnNetworkStatusChange: true,
-    fetchPolicy: "no-cache",
+    fetchPolicy: "cache-and-network",
   });
 
   const [data, setData] = useState(_data?.historyRecords.records ?? []);

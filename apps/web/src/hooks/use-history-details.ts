@@ -6,7 +6,7 @@ import { useQuery } from "@apollo/client";
 export function useHistoryDetails(txHash: Hash | null | undefined) {
   const { loading, data } = useQuery<HistoryDetailsResData, HistoryDetailsReqParams>(GQL_GET_HISTORY_DETAILS, {
     variables: { txHash: txHash ?? "" },
-    fetchPolicy: "no-cache",
+    fetchPolicy: "cache-and-network",
     pollInterval: txHash ? 4500 : 0,
     skip: !txHash,
   });
