@@ -11,6 +11,7 @@ export function useMaxTransfer(sourceChain: ChainConfig, targetChain: ChainConfi
       token: token.address,
       balance: balance.toString(),
     },
+    fetchPolicy: "no-cache",
   });
   const [maxTransfer, setMaxTransfer] = useState(BigInt(Number.MAX_SAFE_INTEGER) ** BigInt(token.decimals));
 

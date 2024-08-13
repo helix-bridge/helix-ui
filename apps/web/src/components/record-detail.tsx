@@ -32,6 +32,7 @@ export default function RecordDetail(props: Props) {
   } = useQuery<HistoryRecordResData, HistoryRecordReqParams>(GQL_HISTORY_RECORD_BY_ID, {
     variables: { id: props.id },
     notifyOnNetworkStatusChange: true,
+    fetchPolicy: "cache-and-network",
   });
   const navigate = useNavigate();
 

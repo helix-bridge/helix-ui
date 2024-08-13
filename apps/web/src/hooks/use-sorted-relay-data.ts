@@ -16,6 +16,7 @@ export function useSortedRelayData(amount: bigint, token: Token, sourceChain: Ch
       fromChain: sourceChain.network,
       toChain: targetChain.network,
     },
+    fetchPolicy: "network-only",
   });
   const [data, setData] = useState(_data);
 

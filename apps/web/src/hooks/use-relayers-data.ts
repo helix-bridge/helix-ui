@@ -25,7 +25,7 @@ export function useRelayersData(
       row,
     },
     notifyOnNetworkStatusChange: true,
-    fetchPolicy: "no-cache",
+    fetchPolicy: "cache-and-network",
   });
 
   const [data, setData] = useState(_data?.queryLnBridgeRelayInfos.records ?? []);
