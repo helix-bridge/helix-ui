@@ -106,17 +106,16 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
   const [availableTokenOptions, setAvailableTokenOptions] = useState(tokenOptions);
   const { loading: loadingAvailableTokenOptions, data: allSupportedChains } = useSupportedChains("");
   useEffect(() => {
-    if (!loadingAvailableTokenOptions && allSupportedChains.length) {
-      const allTokenKeys = allSupportedChains.map(({ tokenKey }) => tokenKey);
-      const _availableTokenOptions = tokenOptions.filter((tokenOpt) =>
-        allTokenKeys.includes(tokenOpt.category.toUpperCase() as Uppercase<string>),
-      );
-
-      if (!_availableTokenOptions.some(({ category }) => category === tokenRef.current.category)) {
-        setToken(_availableTokenOptions[0]);
-      }
-      setAvailableTokenOptions(_availableTokenOptions);
-    }
+    // if (!loadingAvailableTokenOptions && allSupportedChains.length) {
+    //   const allTokenKeys = allSupportedChains.map(({ tokenKey }) => tokenKey);
+    //   const _availableTokenOptions = tokenOptions.filter((tokenOpt) =>
+    //     allTokenKeys.includes(tokenOpt.category.toUpperCase() as Uppercase<string>),
+    //   );
+    //   if (!_availableTokenOptions.some(({ category }) => category === tokenRef.current.category)) {
+    //     setToken(_availableTokenOptions[0]);
+    //   }
+    //   setAvailableTokenOptions(_availableTokenOptions);
+    // }
   }, [setToken, loadingAvailableTokenOptions, allSupportedChains]);
 
   const { loading: loadingSupportedChains, data: supportedChains } = useSupportedChains(token.category);

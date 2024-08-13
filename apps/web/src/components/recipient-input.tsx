@@ -98,7 +98,7 @@ export default function RecipientInput({ value, options = [], onChange = () => u
         <FloatingPortal>
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
             <div
-              className="rounded-xl border border-white/20 bg-[#00141D] py-2"
+              className="rounded-xl border border-white/20 bg-[#747474] py-2"
               style={styles}
               onClick={() => setIsOpen(false)}
             >
