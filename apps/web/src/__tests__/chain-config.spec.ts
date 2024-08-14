@@ -17,3 +17,14 @@ describe.each(HelixChain.chains())("$name", ({ id, code }) => {
     expect(getChainConfig(Number(id))?.network).toBe(code);
   });
 });
+
+const tokenLogos = new Set<string>();
+HelixChain.chains().forEach((chain) => {
+  chain.tokens.forEach((token) => tokenLogos.add(token.logo));
+});
+describe.each([...tokenLogos])("%s", (url) => {
+  it("Should be available", async () => {
+    const res = await fetch(url);
+    expect(res.status).not.toBe(404);
+  });
+});
