@@ -10,7 +10,7 @@ const allTokenOptions: Record<Exclude<TokenCategory, "others">, TokenOption> = {
   USDT: { logo: "usdt.png", category: "USDT", symbol: "USDT" },
   PINK: { logo: "pink.png", category: "PINK", symbol: "PINK" },
   LINK: { logo: "link.png", category: "LINK", symbol: "LINK" },
-  DAI: { logo: "xdai.png", category: "DAI", symbol: "DAI" },
+  DAI: { logo: "dai.png", category: "DAI", symbol: "DAI" },
   BTC: { logo: "btc.png", category: "BTC", symbol: "BTC" },
 };
 const sortedTokenCategories: Exclude<TokenCategory, "others">[] = isMainnet()
