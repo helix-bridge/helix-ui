@@ -111,7 +111,6 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
       const _availableTokenOptions = tokenOptions.filter((tokenOpt) =>
         allTokenKeys.includes(tokenOpt.category.toUpperCase() as Uppercase<string>),
       );
-
       if (!_availableTokenOptions.some(({ category }) => category === tokenRef.current.category)) {
         setToken(_availableTokenOptions[0]);
       }
