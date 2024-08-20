@@ -2,7 +2,6 @@ import { GQL_GET_SUPPORTED_CHAINS } from "../config";
 import { SupportedChainsReqParams, SupportedChainsResData, TokenCategory } from "../types";
 import { useQuery } from "@apollo/client";
 import { useEffect, useMemo, useState } from "react";
-import { notification } from "../ui/notification";
 
 export function useSupportedChains(token: TokenCategory) {
   const { loading, data: _data } = useQuery<SupportedChainsResData, SupportedChainsReqParams>(
@@ -17,12 +16,6 @@ export function useSupportedChains(token: TokenCategory) {
   useEffect(() => {
     if (!loading) {
       setData(_data?.queryLnBridgeSupportedChains || []);
-      if (!(_data?.queryLnBridgeSupportedChains || []).length) {
-        notification.warn({
-          title: "No supported chains",
-          description: "Cross-chain transfer of this token is temporarily not supported.",
-        });
-      }
     }
   }, [loading, _data?.queryLnBridgeSupportedChains]);
 
