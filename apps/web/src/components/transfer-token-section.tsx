@@ -19,8 +19,8 @@ interface Props {
 export default function TransferTokenSection({ token, options, loading, onChange }: Props) {
   return (
     <div className="relative">
-      <ComponentLoading loading={loading} color="white" size="small" />
-      <TransferSection titleText="Token" loading={loading}>
+      <ComponentLoading loading={loading} className="rounded-large backdrop-blur-[2px]" icon={false} />
+      <TransferSection titleText="Token">
         <TransferTokenSelect value={token} options={options} onChange={onChange} />
       </TransferSection>
     </div>

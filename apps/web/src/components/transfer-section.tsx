@@ -14,7 +14,6 @@ interface Props {
   className?: string;
   titleText?: string;
   titleTips?: string | JSX.Element;
-  loading?: boolean;
   alert?: string;
   recipient?: Recipient;
   expandRecipient?: boolean;
@@ -25,7 +24,6 @@ interface Props {
 
 export default function TransferSection({
   alert,
-  loading,
   children,
   titleText,
   titleTips,
@@ -37,7 +35,7 @@ export default function TransferSection({
   onRecipientChange = () => undefined,
 }: PropsWithChildren<Props>) {
   return (
-    <div className={`gap-small flex flex-col transition-opacity ${loading ? "opacity-80" : "opacity-100"}`}>
+    <div className={`gap-small flex flex-col transition-opacity`}>
       <div
         className={`gap-medium rounded-large bg-app-bg py-medium flex flex-col transition-[outline] duration-200 ${className} ${
           alert ? "outline outline-1 outline-orange-500" : "outline-none"
