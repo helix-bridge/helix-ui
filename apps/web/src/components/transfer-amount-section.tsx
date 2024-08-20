@@ -12,7 +12,8 @@ interface Amount {
 interface Props {
   min?: bigint;
   max?: bigint;
-  token: Token;
+  sourceToken: Token;
+  targetToken: Token;
   amount: Amount;
   balance: bigint;
   loading?: boolean;
@@ -24,7 +25,8 @@ interface Props {
 export default function TransferAmountSection({
   min,
   max,
-  token,
+  sourceToken,
+  targetToken,
   chain,
   amount,
   balance,
@@ -38,7 +40,8 @@ export default function TransferAmountSection({
         min={min}
         max={max ? BigInt(max) : undefined}
         loading={loading}
-        token={token}
+        sourceToken={sourceToken}
+        targetToken={targetToken}
         chain={chain}
         balance={balance}
         value={amount}

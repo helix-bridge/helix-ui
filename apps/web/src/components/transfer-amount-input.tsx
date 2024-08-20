@@ -5,8 +5,8 @@ import { formatUnits, parseUnits } from "viem";
 import Faucet from "./faucet";
 
 interface Value {
-  input: string;
-  value: bigint;
+  input: string; // In units of ETH
+  value: bigint; // In units of wei
   valid: boolean;
   alert: string;
 }
@@ -14,7 +14,8 @@ interface Value {
 interface Props {
   min?: bigint;
   max?: bigint;
-  token: Token;
+  sourceToken: Token;
+  targetToken: Token;
   value: Value;
   balance: bigint;
   loading?: boolean;
@@ -27,7 +28,8 @@ export default function TransferAmountInput({
   min,
   max,
   chain,
-  token,
+  sourceToken,
+  targetToken,
   value,
   balance,
   loading,
@@ -37,7 +39,27 @@ export default function TransferAmountInput({
   const [dynamicFont, setDynamicFont] = useState("text-[3rem] font-light");
   const inputRef = useRef<HTMLInputElement>(null);
   const spanRef = useRef<HTMLSpanElement>(null);
-  const tokenRef = useRef(token);
+  const sourceTokenRef = useRef(sourceToken);
+
+  useEffect(() => {
+    if (
+      sourceToken.decimals !== sourceTokenRef.current.decimals ||
+      sourceToken.symbol !== sourceTokenRef.current.symbol
+    ) {
+      // Reset
+      sourceTokenRef.current = sourceToken;
+      onChange({ input: "", value: 0n, valid: true, alert: "" });
+    }
+  }, [sourceToken, onChange]);
+
+  const handleMaxInput = useCallback(() => {
+    const { value, input } = parseAmount(
+      formatUnits(max ?? 0n, sourceToken.decimals),
+      sourceToken.decimals,
+      minimumPrecision(sourceToken, targetToken),
+    );
+    onChange({ valid: true, alert: "", value, input });
+  }, [sourceToken, targetToken, max, onChange]);
 
   const handleChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
     (e) => {
@@ -48,16 +70,16 @@ export default function TransferAmountInput({
 
       if (input) {
         if (!Number.isNaN(Number(input))) {
-          parsed = parseAmount(input, token.decimals);
+          parsed = parseAmount(input, sourceToken.decimals, minimumPrecision(sourceToken, targetToken));
           if (balance < parsed.value) {
             valid = false;
             alert = "* Insufficient";
           } else if (typeof min === "bigint" && parsed.value < min) {
             valid = false;
-            alert = `* Minimum transfer amount: ${formatBalance(min, token.decimals)}`;
+            alert = `* Minimum transfer amount: ${formatBalance(min, sourceToken.decimals)}`;
           } else if (typeof max === "bigint" && max < parsed.value) {
             valid = false;
-            alert = `* Maximum transfer amount: ${formatBalance(max, token.decimals, {
+            alert = `* Maximum transfer amount: ${formatBalance(max, sourceToken.decimals, {
               precision: 6,
             })}`;
           }
@@ -67,12 +89,8 @@ export default function TransferAmountInput({
         onChange({ valid, alert, ...parsed });
       }
     },
-    [min, max, balance, token.decimals, onChange],
+    [min, max, balance, sourceToken, targetToken, onChange],
   );
-
-  const handleMaxInput = useCallback(() => {
-    onChange({ valid: true, alert: "", value: max ?? 0n, input: formatUnits(max ?? 0n, token.decimals) });
-  }, [token.decimals, max, onChange]);
 
   useEffect(() => {
     const inputWidth = inputRef.current?.clientWidth || 1;
@@ -93,13 +111,6 @@ export default function TransferAmountInput({
     }
   }, [value.input]);
 
-  useEffect(() => {
-    if (token.decimals !== tokenRef.current.decimals || token.symbol !== tokenRef.current.symbol) {
-      tokenRef.current = token;
-      onChange({ input: "", value: 0n, valid: true, alert: "" });
-    }
-  }, [token, onChange]);
-
   return (
     <div className="gap-medium px-medium flex flex-col">
       <input
@@ -110,7 +121,9 @@ export default function TransferAmountInput({
         onChange={handleChange}
       />
       <div className="flex items-center gap-2">
-        <span className="text-sm font-normal text-white/50">Balance: {formatBalance(balance, token.decimals)}</span>
+        <span className="text-sm font-normal text-white/50">
+          Balance: {formatBalance(balance, sourceToken.decimals)}
+        </span>
         <button
           className={`rounded-full bg-white/20 p-[3px] opacity-50 transition hover:opacity-100 active:scale-95 ${
             loading ? "animate-spin" : ""
@@ -125,7 +138,7 @@ export default function TransferAmountInput({
         >
           Max
         </button>
-        {chain.testnet ? <Faucet sourceChain={chain} sourceToken={token} onSuccess={onRefresh} /> : null}
+        {chain.testnet ? <Faucet sourceChain={chain} sourceToken={sourceToken} onSuccess={onRefresh} /> : null}
       </div>
 
       <span className="invisible fixed left-0 top-0 -z-50" ref={spanRef}>
@@ -135,13 +148,24 @@ export default function TransferAmountInput({
   );
 }
 
-function parseAmount(source: string, decimals: number) {
+/**
+ * Parse amount
+ * @param source For example, the input value
+ * @param decimals The decimals value of token
+ * @param precision The precision you want to preserve
+ * @returns { value: bigint; input: string }
+ */
+function parseAmount(source: string, decimals: number, precision: number) {
   let input = "";
   let value = 0n;
   const [i, d] = source.replace(/,/g, "").split(".").concat("-1"); // The commas must be removed or parseUnits will error
   if (i) {
-    input = d === "-1" ? i : d ? `${i}.${d.slice(0, decimals)}` : `${i}.`;
+    input = d === "-1" ? i : d ? `${i}.${d.slice(0, precision)}` : `${i}.`;
     value = parseUnits(input, decimals);
   }
   return { value, input };
+}
+
+function minimumPrecision(token0: Token, token1: Token) {
+  return token0.decimals < token1.decimals ? token0.decimals : token1.decimals;
 }
