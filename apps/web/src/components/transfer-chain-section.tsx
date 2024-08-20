@@ -60,12 +60,8 @@ export default function TransferChainSection({
 }: Props) {
   return (
     <div className="relative flex flex-col">
-      <ComponentLoading loading={loading} color="white" />
-      <TransferSection
-        loading={loading}
-        titleText="From"
-        titleTips={<TokenTips token={sourceToken} chain={sourceChain} />}
-      >
+      <ComponentLoading loading={loading} className="rounded-large backdrop-blur-[2px]" icon={false} />
+      <TransferSection titleText="From" titleTips={<TokenTips token={sourceToken} chain={sourceChain} />}>
         <TransferChainSelect
           chain={sourceChain}
           token={sourceToken}
@@ -77,7 +73,6 @@ export default function TransferChainSection({
       </TransferSection>
       <TransferSwitch disabled={disableSwitch || loading} onSwitch={onSwitch} />
       <TransferSection
-        loading={loading}
         titleText="To"
         titleTips={<TokenTips token={targetToken} chain={targetChain} />}
         recipient={recipient}
