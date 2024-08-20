@@ -284,7 +284,8 @@ function Component() {
           amount={amount}
           loading={loadingBalance}
           balance={balance}
-          token={sourceToken}
+          sourceToken={sourceToken}
+          targetToken={targetToken}
           chain={sourceChain}
           max={maxTransfer}
           onChange={setAmount}
@@ -318,7 +319,7 @@ function Component() {
         targetToken={targetToken}
         fee={fee}
         bridge={bridge}
-        amount={deferredAmount.value}
+        amount={deferredAmount}
         busy={isTransfering}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}

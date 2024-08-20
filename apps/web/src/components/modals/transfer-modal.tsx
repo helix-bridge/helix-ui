@@ -1,7 +1,7 @@
 import { BaseBridge } from "../../bridges";
 import { ChainConfig, Token } from "../../types";
 import Modal from "../../ui/modal";
-import { formatBalance, getChainLogoSrc, toShortAdrress } from "../../utils";
+import { formatBalance, getChainLogoSrc, prettyNumber, toShortAdrress } from "../../utils";
 import { Address } from "viem";
 
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
   targetToken: Token;
   fee: { token: Token; value: bigint } | null | undefined;
   bridge: BaseBridge | undefined;
-  amount: bigint;
+  amount: { value: bigint; input: string };
   busy: boolean;
   isOpen: boolean;
   onClose: () => void;
@@ -73,7 +73,7 @@ function SourceTarget({
   amount,
 }: {
   type: "source" | "target";
-  amount: bigint;
+  amount: { value: bigint; input: string };
   chain?: ChainConfig;
   token?: Token;
   address?: Address | null;
@@ -89,7 +89,7 @@ function SourceTarget({
             className={`max-w-[46%] truncate text-sm font-extrabold ${type === "source" ? "text-app-red" : "text-app-green"}`}
           >
             {type === "source" ? "-" : "+"}
-            {formatBalance(amount, token.decimals)}
+            {prettyNumber(amount.input)}
           </span>
         </div>
 

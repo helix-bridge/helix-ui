@@ -17,6 +17,12 @@ export function formatBalance(value: bigint, decimals = 18, options?: { precisio
   return `${_integers}${_decimals.slice(1)}`;
 }
 
+export function prettyNumber(value: string | number) {
+  const [i, d] = value.toString().split(".");
+  const integers = i.replace(/(?=(?!^)(\d{3})+$)/g, ",");
+  return d ? `${integers}.${d}` : integers;
+}
+
 export async function getBalance(address: Address, token: Token, publicClient: PublicClient) {
   let value = 0n;
   if (token.type === "native") {
