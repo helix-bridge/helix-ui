@@ -54,6 +54,12 @@ export const gnosisChain: ChainConfig = {
   ...gnosis,
   network: "gnosis",
   name: "Gnosis Chain",
+  blockExplorers: {
+    default: {
+      name: "Gnosisscan",
+      url: "https://gnosisscan.io",
+    },
+  },
 
   /**
    * Custom
