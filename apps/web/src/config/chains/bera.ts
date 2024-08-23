@@ -50,7 +50,7 @@ if (chain.couples.length && !chain.tokens.some((t) => t.type === "native")) {
 export const beraChain: ChainConfig = {
   id: ChainID.BERA,
   network: "bera",
-  name: "Berachain Artio",
+  name: "Berachain Bartio",
   nativeCurrency: {
     name: "BERA",
     symbol: "BERA",
@@ -58,19 +58,14 @@ export const beraChain: ChainConfig = {
   },
   rpcUrls: {
     default: {
-      http: ["https://artio.rpc.berachain.com/"],
+      http: ["https://bartio.rpc.berachain.com/"],
     },
     public: {
-      http: ["https://artio.rpc.berachain.com/"],
+      http: ["https://bartio.rpc.berachain.com/"],
     },
   },
   blockExplorers: {
-    default: { name: "Artio", url: "https://artio.beratrail.io" },
-  },
-  contracts: {
-    multicall3: {
-      address: "0x9d1dB8253105b007DDDE65Ce262f701814B91125",
-    },
+    default: { name: "Bartio", url: "https://bartio.beratrail.io" },
   },
   testnet: true,
 

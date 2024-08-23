@@ -26,7 +26,7 @@ export enum ChainID {
   OPTIMISM = 10,
   GNOSIS = 100,
   BLAST = 81457,
-  BERA = 80085,
+  BERA = 80084,
   TAIKO_HEKLA = 167009,
   ASTAR_ZKEVM = 3776,
   MORPH = 2710,
