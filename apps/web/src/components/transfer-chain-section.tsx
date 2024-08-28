@@ -1,6 +1,6 @@
 import { ChainConfig, Token } from "../types";
 import TransferSection from "./transfer-section";
-import TransferChainSelect from "./transfer-chain-select";
+import TransferChainSelector from "./transfer-chain-selector";
 import TransferSwitch from "./transfer-switch";
 import ComponentLoading from "../ui/component-loading";
 import { Address } from "viem";
@@ -62,7 +62,7 @@ export default function TransferChainSection({
     <div className="relative flex flex-col">
       <ComponentLoading loading={loading} className="rounded-large backdrop-blur-[2px]" icon={false} />
       <TransferSection titleText="From" titleTips={<TokenTips token={sourceToken} chain={sourceChain} />}>
-        <TransferChainSelect
+        <TransferChainSelector
           chain={sourceChain}
           token={sourceToken}
           chainOptions={sourceChainOptions}
@@ -82,7 +82,7 @@ export default function TransferChainSection({
         onExpandRecipient={onExpandRecipient}
         onRecipientChange={onRecipientChange}
       >
-        <TransferChainSelect
+        <TransferChainSelector
           chain={targetChain}
           token={targetToken}
           chainOptions={targetChainOptions}
