@@ -1,7 +1,6 @@
 import { GQL_GET_RELAYERS } from "../config";
 import { BridgeVersion, ChainConfig, RelayersReqParams, RelayersResData } from "../types";
 import { useQuery } from "@apollo/client";
-import { useEffect, useState } from "react";
 
 export function useRelayersData(
   version: BridgeVersion,
@@ -28,14 +27,10 @@ export function useRelayersData(
     fetchPolicy: "cache-and-network",
   });
 
-  const [data, setData] = useState(_data?.queryLnBridgeRelayInfos.records ?? []);
-  const [total, setTotal] = useState(_data?.queryLnBridgeRelayInfos.total ?? 0);
-  useEffect(() => {
-    if (!loading) {
-      setData(_data?.queryLnBridgeRelayInfos.records ?? []);
-      setTotal(_data?.queryLnBridgeRelayInfos.total ?? 0);
-    }
-  }, [loading, _data?.queryLnBridgeRelayInfos]);
-
-  return { loading, data, total, refetch };
+  return {
+    loading,
+    data: _data?.queryLnBridgeRelayInfos.records ?? [],
+    total: _data?.queryLnBridgeRelayInfos.total ?? 0,
+    refetch,
+  };
 }
