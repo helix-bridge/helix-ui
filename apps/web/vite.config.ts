@@ -22,6 +22,7 @@ export default defineConfig({
         short_name: "HelixBridge",
         description: "Secure, fast, and low-cost cross-chain crypto transfers",
         theme_color: "#00141D",
+        background_color: "#00141D",
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,ico}"],
