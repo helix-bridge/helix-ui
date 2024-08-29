@@ -10,26 +10,29 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: "prompt",
+      injectRegister: false,
       manifestFilename: "manifest.json",
-      includeAssets: ["favicon.ico", "apple-touch-icon.png"],
+      pwaAssets: {
+        disabled: false,
+        config: true,
+      },
       manifest: {
-        name: "Bridge Stablecoins and Native Tokens on HelixBridge",
-        short_name: "HelixBridge Interface",
+        name: "Helix Bridge",
+        short_name: "HelixBridge",
         description: "Secure, fast, and low-cost cross-chain crypto transfers",
         theme_color: "#00141D",
-        icons: [
-          {
-            src: "pwa-192x192.png",
-            sizes: "192x192",
-            type: "image/png",
-          },
-          {
-            src: "pwa-512x512.png",
-            sizes: "512x512",
-            type: "image/png",
-          },
-        ],
+      },
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,svg,png,ico}"],
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+      },
+      devOptions: {
+        enabled: false,
+        navigateFallback: "index.html",
+        suppressWarnings: true,
+        type: "module",
       },
     }),
   ],
