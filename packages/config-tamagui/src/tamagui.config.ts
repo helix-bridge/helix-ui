@@ -4,7 +4,7 @@ import { shorthands } from "@tamagui/shorthands";
 import { tokens, themes } from "@tamagui/config/v3";
 import { createMedia } from "@tamagui/react-native-media-driver";
 
-// import { animations } from '@my/ui/src/animations'
+import { animations } from "./animations";
 
 const headingFont = createInterFont({
   size: {
@@ -52,7 +52,7 @@ const bodyFont = createInterFont(
 
 export const config = createTamagui({
   defaultFont: "body",
-  // animations,
+  animations,
   shouldAddPrefersColorThemes: true,
   themeClassNameOnRoot: true,
 
