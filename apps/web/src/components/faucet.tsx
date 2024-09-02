@@ -106,7 +106,7 @@ export default function Faucet({ sourceChain, sourceToken, onSuccess = () => und
   return (
     <>
       <button
-        className="plausible-event-name=Faucet+Click rounded-full bg-white/20 px-2 py-[2px] text-xs font-semibold text-white opacity-60 transition-opacity hover:opacity-100 active:scale-95"
+        className="rounded-full bg-white/20 px-2 py-[2px] text-xs font-semibold text-white opacity-60 transition-opacity hover:opacity-100 active:scale-95"
         onClick={() => setIsOpen(true)}
       >
         Faucet

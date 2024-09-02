@@ -31,7 +31,7 @@ export default function History({ children, className }: PropsWithChildren<{ cla
   return account.address ? (
     <>
       <button
-        className={`${className} plausible-event-name=History+Click`}
+        className={`${className}`}
         onClick={(e) => {
           e.stopPropagation();
           setIsHistoryOpen(true);

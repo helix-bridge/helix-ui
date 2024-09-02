@@ -12,7 +12,6 @@ export default function NotFound() {
           </Link>
         </div>
       </main>
-      <script>{`document.addEventListener('DOMContentLoaded', function () { plausible('404', { props: { path: document.location.pathname } }); });`}</script>
     </>
   );
 }

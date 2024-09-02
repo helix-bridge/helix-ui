@@ -39,7 +39,7 @@ export default function ChainSwitch({ placement }: { placement?: Placement }) {
   return account.address ? (
     <>
       <button
-        className={`gap-small lg:bg-secondary plausible-event-name=Chain+Dropdown flex h-8 w-fit items-center justify-between rounded-xl bg-white/20 px-3 transition-colors hover:bg-white/20`}
+        className={`gap-small lg:bg-secondary flex h-8 w-fit items-center justify-between rounded-xl bg-white/20 px-3 transition-colors hover:bg-white/20`}
         ref={refs.setReference}
         {...getReferenceProps()}
       >
@@ -79,7 +79,7 @@ export default function ChainSwitch({ placement }: { placement?: Placement }) {
             >
               {chainOptions.map((option) => (
                 <button
-                  className={`gap-medium px-large py-medium plausible-event-name=Chain+Switch flex items-center transition-colors hover:bg-white/5 disabled:bg-white/10 plausible-event-network=${option.network}`}
+                  className={`gap-medium px-large py-medium flex items-center transition-colors hover:bg-white/5 disabled:bg-white/10`}
                   disabled={option.id === chain?.id}
                   key={option.id}
                   onClick={() => switchNetwork?.(option.id)}

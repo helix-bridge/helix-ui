@@ -13,7 +13,7 @@ import Completed from "../icons/completed";
 import Pending from "../icons/pending";
 import { useHistoryDetails } from "../../hooks";
 import ComponentLoading from "../../ui/component-loading";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
 interface Props {
   data: Partial<HistoryDetailsResData["historyRecordByTxHash"]>;
@@ -26,10 +26,6 @@ export default function HistoryDetails({ data: propsData }: Props) {
   const sourceChain = getChainConfig(data?.fromChain);
   const targetChain = getChainConfig(data?.toChain);
   const sourceToken = sourceChain?.tokens.find(({ symbol }) => symbol.toUpperCase() === data?.sendToken?.toUpperCase());
-
-  useEffect(() => {
-    window.plausible("History Details", { props: { status: propsData?.result } });
-  }, [propsData?.result]);
 
   return (
     <div className="relative overflow-x-auto pb-2">
