@@ -194,7 +194,6 @@ function Component() {
   ]);
 
   const handleTransfer = useCallback(async () => {
-    window.plausible("Transfer", { props: { status: 1000 } });
     const sourceChain = bridge?.getSourceChain();
     const targetChain = bridge?.getTargetChain();
 
@@ -212,7 +211,6 @@ function Component() {
         notifyTransaction(receipt, sourceChain, "Transfer");
         setIsTransfering(false);
         if (receipt?.status === "success") {
-          window.plausible("Transfer", { props: { status: 1001 } });
           setAmount({ input: "", valid: true, value: 0n, alert: "" });
           setHistoryDetails({
             requestTxHash: receipt.transactionHash,
@@ -229,7 +227,6 @@ function Component() {
         }
       } catch (err) {
         console.error(err);
-        window.plausible("Transfer", { props: { status: 1002 } });
         notifyError(err);
         setIsTransfering(false);
       }
@@ -300,7 +297,7 @@ function Component() {
           loadingFee={loadingFee}
         />
         <Button
-          className={`plausible-event-name=Action+Click inline-flex h-12 items-center justify-center rounded-full plausible-event-action=${actionText.replace(/\s+/g, "")}`}
+          className={`inline-flex h-12 items-center justify-center rounded-full`}
           kind="primary"
           busy={isApproving}
           disabled={disableAction || !sourceChainOptions.length}

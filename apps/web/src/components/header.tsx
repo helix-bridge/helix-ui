@@ -13,12 +13,11 @@ interface NavigationConfig {
   external?: boolean;
   soon?: boolean;
   disabled?: boolean;
-  plausibleEvent: string;
 }
 
 const navigationsConfig: NavigationConfig[] = [
-  { href: "/", label: "Transfer", plausibleEvent: "Navigation+Transfer" },
-  { href: "/relayer", label: "Relayer", plausibleEvent: "Navigation+Relayer" },
+  { href: "/", label: "Transfer" },
+  { href: "/relayer", label: "Relayer" },
 ];
 
 export default function Header() {
@@ -48,14 +47,14 @@ export default function Header() {
 
           {/* Navigations */}
           <div className="gap-medium hidden items-center lg:flex">
-            {navigationsConfig.map(({ href, label, external, soon, disabled, plausibleEvent }) =>
+            {navigationsConfig.map(({ href, label, external, soon, disabled }) =>
               external ? (
                 <a
                   rel="noopener noreferrer"
                   target="_blank"
                   href={href}
                   key={label}
-                  className={`plausible-event-name=${plausibleEvent} py-small rounded-full px-3 text-sm font-bold transition-colors hover:bg-white/[0.15]`}
+                  className={`py-small rounded-full px-3 text-sm font-bold transition-colors hover:bg-white/[0.15]`}
                 >
                   {label}
                 </a>
@@ -71,7 +70,7 @@ export default function Header() {
                     pathname === href
                       ? "text-primary after:bg-primary after:absolute after:-bottom-[2px] after:left-1/4 after:block after:h-[3px] after:w-1/2 after:rounded-full"
                       : "text-white"
-                  } plausible-event-name=${plausibleEvent}`}
+                  }`}
                 >
                   {label}
                 </Link>

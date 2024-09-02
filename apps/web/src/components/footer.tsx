@@ -69,7 +69,7 @@ function Links() {
             <Link
               key={item.label}
               to={item.path}
-              className={`text-xs font-semibold text-white/50 transition hover:text-white hover:underline active:scale-95 ${item.pc ? "hidden lg:inline" : ""} plausible-event-name=Explorer+Click`}
+              className={`text-xs font-semibold text-white/50 transition hover:text-white hover:underline active:scale-95 ${item.pc ? "hidden lg:inline" : ""}`}
             >
               {item.label}
             </Link>

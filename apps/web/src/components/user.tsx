@@ -27,7 +27,7 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8 }:
   return address ? (
     <Dropdown
       childClassName="bg-background py-large rounded-large border border-white/20 flex flex-col gap-large"
-      labelClassName={`flex items-center gap-2 rounded-xl bg-white/20 lg:bg-secondary px-large h-8 transition-colors hover:bg-white/20 plausible-event-name=User+Dropdown`}
+      labelClassName={`flex items-center gap-2 rounded-xl bg-white/20 lg:bg-secondary px-large h-8 transition-colors hover:bg-white/20`}
       placement={placement}
       label={
         <div className="gap-small flex items-center">
