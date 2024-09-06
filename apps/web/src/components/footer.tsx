@@ -102,8 +102,8 @@ function Social() {
       icon: <img width={16} height={16} alt="Github" src="images/social/github.svg" />,
     },
     {
-      link: "https://twitter.com/helixbridges",
-      icon: <img width={16} height={16} alt="Twitter" src="images/social/twitter.svg" />,
+      link: "https://x.com/helixofficialx",
+      icon: <img width={16} height={16} alt="X" src="images/social/x.svg" />,
     },
     {
       link: "https://discord.gg/6XyyNGugdE",
