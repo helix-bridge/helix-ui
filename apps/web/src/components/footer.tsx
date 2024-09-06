@@ -103,7 +103,7 @@ function Social() {
     },
     {
       link: "https://x.com/helixofficialx",
-      icon: <img width={16} height={16} alt="Twitter" src="images/social/twitter.svg" />,
+      icon: <img width={16} height={16} alt="X" src="images/social/x.svg" />,
     },
     {
       link: "https://discord.gg/6XyyNGugdE",
