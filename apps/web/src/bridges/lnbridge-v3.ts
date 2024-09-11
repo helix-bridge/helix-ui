@@ -1,3 +1,4 @@
+import { CONFIRMATION_BLOCKS } from "../config";
 import { BridgeConstructorArgs, GetFeeArgs, MessageChannel, Token, TransferOptions } from "../types";
 import { LnBridgeBase } from "./lnbridge-base";
 import { Address, Hex, TransactionReceipt, encodeFunctionData, encodePacked, keccak256 } from "viem";
@@ -54,7 +55,7 @@ export class LnBridgeV3 extends LnBridgeBase {
         return this.sourcePublicClient.estimateContractGas(defaultParams);
       } else if (this.walletClient) {
         const hash = await this.walletClient.writeContract(defaultParams);
-        return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+        return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
       }
     }
   }
@@ -124,7 +125,7 @@ export class LnBridgeV3 extends LnBridgeBase {
         ],
         gas: this.getTxGasLimit(),
       });
-      return this.publicClient.waitForTransactionReceipt({ hash });
+      return this.publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
     }
   }
 
@@ -140,7 +141,7 @@ export class LnBridgeV3 extends LnBridgeBase {
         value: this.sourceToken.type === "native" ? amount : undefined,
         gas: this.getTxGasLimit(),
       });
-      return this.publicClient.waitForTransactionReceipt({ hash });
+      return this.publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
     }
   }
 
@@ -154,7 +155,7 @@ export class LnBridgeV3 extends LnBridgeBase {
         functionName: "withdrawPenaltyReserve",
         args: [this.sourceToken.address, amount],
       });
-      return this.publicClient.waitForTransactionReceipt({ hash });
+      return this.publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
     }
   }
 
@@ -208,7 +209,7 @@ export class LnBridgeV3 extends LnBridgeBase {
         value: messageFee,
         gas: this.getTxGasLimit(),
       });
-      return this.publicClient.waitForTransactionReceipt({ hash });
+      return this.publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
     }
   }
 }

@@ -75,7 +75,7 @@ export abstract class IBridge {
         publicClient,
         walletClient: this.walletClient,
       }).write.approve([spender, amount], { account: owner, chain });
-      return publicClient.waitForTransactionReceipt({ hash });
+      return publicClient.waitForTransactionReceipt({ hash, confirmations: 2 });
     }
   }
 

@@ -8,6 +8,7 @@ import abi from "../abi/faucet";
 import Tooltip from "../ui/tooltip";
 import CountLoading from "../ui/count-loading";
 import Modal from "../ui/modal";
+import { CONFIRMATION_BLOCKS } from "../config";
 
 interface Props {
   sourceChain: ChainConfig;
@@ -40,7 +41,7 @@ export default function Faucet({ sourceChain, sourceToken, onSuccess = () => und
           functionName: "faucet",
           args: [1n <= allow ? allow - 1n : allow],
         });
-        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+        const receipt = await publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
         notifyTransaction(receipt, sourceChain);
         setBusy(false);
 
