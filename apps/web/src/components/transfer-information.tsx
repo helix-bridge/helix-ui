@@ -13,9 +13,11 @@ interface Props {
 export default function TransferInformation({ transactionFee, transferLimit, dailyLimit, estimatedTime }: Props) {
   return (
     <div className="gap-small px-medium flex flex-col lg:px-3">
-      {estimatedTime ? (
-        <Row name="Estimated Arrival Time" loading={estimatedTime.loading} value={estimatedTime.value} />
-      ) : null}
+      <Row
+        name="Estimated Arrival Time"
+        loading={!estimatedTime || estimatedTime.loading}
+        value={estimatedTime?.value}
+      />
       {transactionFee ? (
         <Row
           name="Transaction Fee"
