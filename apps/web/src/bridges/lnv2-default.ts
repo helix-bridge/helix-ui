@@ -1,6 +1,7 @@
 import { Address, Hex, TransactionReceipt } from "viem";
 import { LnBridgeBase } from "./lnbridge-base";
 import { BridgeConstructorArgs, TransferOptions } from "../types/bridge";
+import { CONFIRMATION_BLOCKS } from "../config";
 
 export class LnBridgeV2Default extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {
@@ -53,7 +54,7 @@ export class LnBridgeV2Default extends LnBridgeBase {
         return this.sourcePublicClient.estimateContractGas(defaultParams);
       } else if (this.walletClient) {
         const hash = await this.walletClient.writeContract(defaultParams);
-        return this.sourcePublicClient.waitForTransactionReceipt({ hash });
+        return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
       }
     }
   }
@@ -77,7 +78,7 @@ export class LnBridgeV2Default extends LnBridgeBase {
         value: this.targetToken.type === "native" ? margin : undefined,
         gas: this.getTxGasLimit(),
       });
-      return this.publicClient.waitForTransactionReceipt({ hash });
+      return this.publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
     }
   }
 
@@ -99,7 +100,7 @@ export class LnBridgeV2Default extends LnBridgeBase {
         args: [BigInt(this.targetChain.id), this.sourceToken.address, this.targetToken.address, baseFee, feeRate],
         gas: this.getTxGasLimit(),
       });
-      return this.publicClient.waitForTransactionReceipt({ hash });
+      return this.publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
     }
   }
 
@@ -124,7 +125,7 @@ export class LnBridgeV2Default extends LnBridgeBase {
         gas: this.getTxGasLimit(),
         value: fee,
       });
-      return this.publicClient.waitForTransactionReceipt({ hash });
+      return this.publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
     }
   }
 }

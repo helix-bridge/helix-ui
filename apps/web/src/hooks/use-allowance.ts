@@ -5,6 +5,7 @@ import abi from "../abi/erc20";
 import { ChainConfig, Token } from "../types";
 import { usePublicClient, useWalletClient } from "wagmi";
 import { notifyError } from "../utils";
+import { CONFIRMATION_BLOCKS } from "../config";
 
 export function useAllowance(
   chain: ChainConfig,
@@ -56,7 +57,7 @@ export function useAllowance(
             functionName: "approve",
             args: [spender, amount],
           });
-          const receipt = await publicClient.waitForTransactionReceipt({ hash });
+          const receipt = await publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
 
           if (receipt.status === "success") {
             setAllowance(

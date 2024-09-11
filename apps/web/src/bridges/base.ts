@@ -14,6 +14,7 @@ import {
 import { getBalance } from "../utils";
 import { Address, PublicClient as ViemPublicClient, TransactionReceipt, createPublicClient, http } from "viem";
 import { PublicClient as WagmiPublicClient, WalletClient } from "wagmi";
+import { CONFIRMATION_BLOCKS } from "../config";
 
 export abstract class BaseBridge {
   protected logo: BridgeLogo = { symbol: "", horizontal: "" };
@@ -210,7 +211,7 @@ export abstract class BaseBridge {
         account: owner,
       });
       const hash = await this.walletClient.writeContract(request);
-      return this.publicClient.waitForTransactionReceipt({ hash });
+      return this.publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
     }
   }
 
