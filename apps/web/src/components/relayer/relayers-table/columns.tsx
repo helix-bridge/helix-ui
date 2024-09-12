@@ -10,6 +10,7 @@ import Button from "../../../ui/button";
 import PrettyAddress from "../../../components/pretty-address";
 import Chain from "./chain";
 import Title from "./title";
+import Status from "./status";
 
 type DataSource = RelayersRecord;
 type Args = { isDashboard?: boolean; version?: BridgeVersion; onClick?: (row: DataSource) => void };
@@ -18,14 +19,7 @@ export const getColumnStatus = ({ version, isDashboard }: Args): ColumnType<Data
   key: "status",
   title: "",
   width: isDashboard ? (version === "lnv3" ? 32 : 54) : 54,
-  render: ({ heartbeatTimestamp }) => {
-    const isOnline = Date.now() - (heartbeatTimestamp ?? 0) * 1000 < 5 * 60 * 1000; // 5 Minutes
-    return (
-      <Tooltip content={isOnline ? "Online" : "Offline"} className="mx-auto w-fit">
-        <div className={`h-[6px] w-[6px] rounded-full ${isOnline ? "bg-app-green" : "bg-white/50"}`} />
-      </Tooltip>
-    );
-  },
+  render: ({ heartbeatTimestamp, signers }) => <Status heartbeatTimestamp={heartbeatTimestamp} signers={signers} />,
 });
 
 export const getColumnFrom = ({ isDashboard }: Args): ColumnType<DataSource> => ({
