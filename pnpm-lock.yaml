@@ -40,6 +40,9 @@ importers:
       "@rainbow-me/rainbowkit":
         specifier: ^1.3.7
         version: 1.3.7(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(viem@1.21.4(typescript@5.5.4))(wagmi@1.4.13(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react-native@0.75.2(@babel/core@7.25.2)(@types/react@18.3.3)(react@18.3.1)(typescript@5.5.4))(react@18.3.1)(typescript@5.5.4)(viem@1.21.4(typescript@5.5.4)))
+      "@sentry/react":
+        specifier: ^8.30.0
+        version: 8.30.0(react@18.3.1)
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
@@ -2520,6 +2523,53 @@ packages:
   "@scure/bip39@1.3.0":
     resolution:
       { integrity: sha512-disdg7gHuTDZtY+ZdkmLpPCk7fxZSu3gBiEGuoC1XYxv9cGx3Z6cpTggCgW6odSOOIXCiDjuGejW+aJKCY/pIQ== }
+
+  "@sentry-internal/browser-utils@8.30.0":
+    resolution:
+      { integrity: sha512-pwX+awNWaxSOAsBLVLqc1+Hw+Fm1Nci9mbKFA6Ed5YzCG049PnBVQwugpmx2dcyyCqJpORhcIqb9jHdCkYmCiA== }
+    engines: { node: ">=14.18" }
+
+  "@sentry-internal/feedback@8.30.0":
+    resolution:
+      { integrity: sha512-ParFRxQY6helxkwUDmro77Wc5uSIC6rZos88jYMrYwFmoTJaNWf4lDzPyECfdSiSYyzSMZk4dorSUN85Ul7DCg== }
+    engines: { node: ">=14.18" }
+
+  "@sentry-internal/replay-canvas@8.30.0":
+    resolution:
+      { integrity: sha512-y/QqcvchhtMlVA6eOZicIfTxtZarazQZJuFW0018ynPxBTiuuWSxMCLqduulXUYsFejfD8/eKHb3BpCIFdDYjg== }
+    engines: { node: ">=14.18" }
+
+  "@sentry-internal/replay@8.30.0":
+    resolution:
+      { integrity: sha512-/KFre+BrovPCiovgAu5N1ErJtkDVzkJA5hV3Jw011AlxRWxrmPwu6+9sV9/rn3tqYAGyq6IggYqeIOHhLh1Ihg== }
+    engines: { node: ">=14.18" }
+
+  "@sentry/browser@8.30.0":
+    resolution:
+      { integrity: sha512-M+tKqawH9S3CqlAIcqdZcHbcsNQkEa9MrPqPCYvXco3C4LRpNizJP2XwBiGQY2yK+fOSvbaWpPtlI938/wuRZQ== }
+    engines: { node: ">=14.18" }
+
+  "@sentry/core@8.30.0":
+    resolution:
+      { integrity: sha512-CJ/FuWLw0QEKGKXGL/nm9eaOdajEcmPekLuHAuOCxID7N07R9l9laz3vFbAkUZ97GGDv3sYrJZgywfY3Moropg== }
+    engines: { node: ">=14.18" }
+
+  "@sentry/react@8.30.0":
+    resolution:
+      { integrity: sha512-ktQjXs87jdsxW0YrHci3sb6zcSzhMECWnrTVU/KGZF8UoDsk4P4xRCknijd2SSmDIjSkwzUAANR43UkCi4BTQg== }
+    engines: { node: ">=14.18" }
+    peerDependencies:
+      react: ^16.14.0 || 17.x || 18.x || 19.x
+
+  "@sentry/types@8.30.0":
+    resolution:
+      { integrity: sha512-kgWW2BCjBmVlSQRG32GonHEVyeDbys74xf9mLPvynwHTgw3+NUlNAlEdu05xnb2ow4bCTHfbkS5G1zRgyv5k4Q== }
+    engines: { node: ">=14.18" }
+
+  "@sentry/utils@8.30.0":
+    resolution:
+      { integrity: sha512-wZxU2HWlzsnu8214Xy7S7cRIuD6h8Z5DnnkojJfX0i0NLooepZQk2824el1Q13AakLb7/S8CHSHXOMnCtoSduw== }
+    engines: { node: ">=14.18" }
 
   "@sideway/address@4.1.5":
     resolution:
@@ -11577,6 +11627,62 @@ snapshots:
     dependencies:
       "@noble/hashes": 1.4.0
       "@scure/base": 1.1.7
+
+  "@sentry-internal/browser-utils@8.30.0":
+    dependencies:
+      "@sentry/core": 8.30.0
+      "@sentry/types": 8.30.0
+      "@sentry/utils": 8.30.0
+
+  "@sentry-internal/feedback@8.30.0":
+    dependencies:
+      "@sentry/core": 8.30.0
+      "@sentry/types": 8.30.0
+      "@sentry/utils": 8.30.0
+
+  "@sentry-internal/replay-canvas@8.30.0":
+    dependencies:
+      "@sentry-internal/replay": 8.30.0
+      "@sentry/core": 8.30.0
+      "@sentry/types": 8.30.0
+      "@sentry/utils": 8.30.0
+
+  "@sentry-internal/replay@8.30.0":
+    dependencies:
+      "@sentry-internal/browser-utils": 8.30.0
+      "@sentry/core": 8.30.0
+      "@sentry/types": 8.30.0
+      "@sentry/utils": 8.30.0
+
+  "@sentry/browser@8.30.0":
+    dependencies:
+      "@sentry-internal/browser-utils": 8.30.0
+      "@sentry-internal/feedback": 8.30.0
+      "@sentry-internal/replay": 8.30.0
+      "@sentry-internal/replay-canvas": 8.30.0
+      "@sentry/core": 8.30.0
+      "@sentry/types": 8.30.0
+      "@sentry/utils": 8.30.0
+
+  "@sentry/core@8.30.0":
+    dependencies:
+      "@sentry/types": 8.30.0
+      "@sentry/utils": 8.30.0
+
+  "@sentry/react@8.30.0(react@18.3.1)":
+    dependencies:
+      "@sentry/browser": 8.30.0
+      "@sentry/core": 8.30.0
+      "@sentry/types": 8.30.0
+      "@sentry/utils": 8.30.0
+      hoist-non-react-statics: 3.3.2
+      react: 18.3.1
+
+  "@sentry/types@8.30.0": {}
+
+  "@sentry/utils@8.30.0":
+    dependencies:
+      "@sentry/types": 8.30.0
 
   "@sideway/address@4.1.5":
     dependencies:
