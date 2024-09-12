@@ -30,6 +30,8 @@ jobs:
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - uses: darwinia-network/devops/actions/smart-vercel@main
         name: Deploy web (testnet)
@@ -63,6 +65,7 @@ jobs:
       - name: Publish ipfs
         env:
           FLEEK_TOKEN: ${{ secrets.FLEEK_TOKEN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
           pnpm install
           pnpm web build:mainnet

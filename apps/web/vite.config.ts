@@ -1,3 +1,4 @@
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 /// <reference types="vitest" />
 
 import { defineConfig } from "vite";
@@ -7,6 +8,7 @@ import { VitePWA } from "vite-plugin-pwa";
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "",
+
   plugins: [
     react(),
     VitePWA({
@@ -36,5 +38,13 @@ export default defineConfig({
         type: "module",
       },
     }),
+    sentryVitePlugin({
+      org: "helix-ck",
+      project: "javascript-react",
+    }),
   ],
+
+  build: {
+    sourcemap: true,
+  },
 });
