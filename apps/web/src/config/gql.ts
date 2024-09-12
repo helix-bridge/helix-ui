@@ -255,6 +255,7 @@ export const GQL_GET_RELAYERS = gql`
         lastTransferId
         withdrawNonce
         transferLimit
+        signers
       }
     }
   }

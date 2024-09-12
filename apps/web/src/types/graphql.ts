@@ -71,6 +71,7 @@ export interface LnBridgeRelayInfo {
   heartbeatTimestamp: number | null;
   messageChannel: MessageChannel | null;
   transferLimit: string | null;
+  signers: string | null;
 }
 
 export interface SupportChains {
@@ -311,6 +312,7 @@ export type RelayersRecord = Pick<
   | "lastTransferId"
   | "withdrawNonce"
   | "transferLimit"
+  | "signers"
 >;
 
 export interface RelayersReqParams {
