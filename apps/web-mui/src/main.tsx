@@ -11,11 +11,6 @@ import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 
 const theme = createTheme({
   colorSchemes: { dark: true },
-  palette: {
-    primary: {
-      main: "#0085FF",
-    },
-  },
 });
 
 createRoot(document.getElementById("root")!).render(
