@@ -19,7 +19,7 @@ Sentry.init({
   replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
 });
 
-console.log("Hello");
+console.log("Hello 1");
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
