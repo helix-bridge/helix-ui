@@ -2,7 +2,7 @@ import { useRegisterSW } from "virtual:pwa-register/react";
 import Button from "../ui/button";
 
 const isPWA = window.matchMedia("(display-mode: standalone)").matches;
-const enableReload = false;
+const enableReload = true;
 
 export default function PWABadge() {
   // Periodic sync is disabled, change the value to enable it, the period is in milliseconds
