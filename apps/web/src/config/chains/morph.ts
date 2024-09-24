@@ -62,24 +62,18 @@ export const morphChain: ChainConfig = {
   },
   rpcUrls: {
     default: {
-      http: ["https://rpc-testnet.morphl2.io"],
+      http: ["https://rpc-holesky.morphl2.io"],
       webSocket: [],
     },
     public: {
-      http: ["https://rpc-testnet.morphl2.io"],
+      http: ["https://rpc-holesky.morphl2.io"],
       webSocket: [],
     },
   },
   blockExplorers: {
     default: {
       name: "Morph",
-      url: "https://explorer-testnet.morphl2.io/",
-    },
-  },
-  contracts: {
-    multicall3: {
-      address: "0xcA11bde05977b3631167028862bE2a173976CA11",
-      blockCreated: 969768,
+      url: "https://explorer-holesky.morphl2.io/",
     },
   },
   testnet: true,
