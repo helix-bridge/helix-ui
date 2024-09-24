@@ -62,11 +62,11 @@ export const astarZkEvmChain: ChainConfig = {
   },
   rpcUrls: {
     default: {
-      http: ["https://rpc.astar-zkevm.gelato.digital"],
+      http: ["https://rpc.startale.com/astar-zkevm"],
       webSocket: [],
     },
     public: {
-      http: ["https://rpc.astar-zkevm.gelato.digital"],
+      http: ["https://rpc.startale.com/astar-zkevm"],
       webSocket: [],
     },
   },
