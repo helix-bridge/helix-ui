@@ -32,7 +32,7 @@ export default function PWABadge() {
       {needRefresh && (
         <div className="bg-background fixed bottom-0 right-0 z-10 m-4 flex flex-col gap-y-3 rounded-xl border border-white/20 p-3 text-left">
           <span id="toast-message" className="text-sm font-bold text-white">
-            New content available, click on reload button to update.
+            New content available, click on Reload button to update.
           </span>
           <div className="flex items-center justify-end gap-x-3">
             <Button className="rounded-lg px-3 py-[0.125rem] text-sm font-bold" onClick={() => close()}>
