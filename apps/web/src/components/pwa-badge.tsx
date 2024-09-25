@@ -1,9 +1,6 @@
 import { useRegisterSW } from "virtual:pwa-register/react";
 import Button from "../ui/button";
 
-const isPWA = window.matchMedia("(display-mode: standalone)").matches;
-const enableReload = false;
-
 export default function PWABadge() {
   // Periodic sync is disabled, change the value to enable it, the period is in milliseconds
   // You can remove onRegisteredSW callback and registerPeriodicSync function
@@ -32,7 +29,7 @@ export default function PWABadge() {
 
   return (
     <div role="alert" aria-labelledby="toast-message">
-      {needRefresh && isPWA && enableReload && (
+      {needRefresh && (
         <div className="bg-background fixed bottom-0 right-0 z-10 m-4 flex flex-col gap-y-3 rounded-xl border border-white/20 p-3 text-left">
           <span id="toast-message" className="text-sm font-bold text-white">
             New content available, click on reload button to update.
