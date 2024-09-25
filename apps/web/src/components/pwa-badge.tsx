@@ -7,7 +7,7 @@ import Button from "../ui/button";
 export default function PWABadge() {
   // Periodic sync is disabled, change the value to enable it, the period is in milliseconds
   // You can remove onRegisteredSW callback and registerPeriodicSync function
-  const period = 5 * 60 * 1000;
+  const period = 4 * 60 * 1000;
 
   const {
     needRefresh: [needRefresh, setNeedRefresh],
