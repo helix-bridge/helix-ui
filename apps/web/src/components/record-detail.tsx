@@ -149,6 +149,15 @@ export default function RecordDetail(props: Props) {
               <span className="text-sm font-medium text-white">{record.historyRecordById.nonce}</span>
             ) : null}
           </Item>
+          <Item label="Solver">
+            {record?.historyRecordById?.relayer ? (
+              <PrettyAddress
+                address={record.historyRecordById.relayer}
+                className="text-primary text-sm font-medium"
+                copyable
+              />
+            ) : null}
+          </Item>
         </div>
       </div>
     </div>
