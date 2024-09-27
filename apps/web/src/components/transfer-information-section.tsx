@@ -48,6 +48,7 @@ export default function TransferInformationSection({
         dailyLimit={
           dailyLimit ? { loading: loadingDailyLimit, value: dailyLimit.limit, token: dailyLimit.token } : undefined
         }
+        solver={{ loading: loadingRelayData, address: relayData?.sortedLnBridgeRelayInfos?.records.at(0)?.relayer }}
       />
     </TransferSection>
   );

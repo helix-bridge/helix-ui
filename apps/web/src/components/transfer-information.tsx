@@ -1,16 +1,24 @@
+import { Address } from "viem";
 import { Token } from "../types";
 import CountLoading from "../ui/count-loading";
 import Tooltip from "../ui/tooltip";
-import { formatBalance } from "../utils";
+import { formatBalance, toShortAdrress } from "../utils";
 
 interface Props {
   transactionFee: { loading: boolean; value?: bigint; token?: Token; warning?: string };
   transferLimit?: { loading: boolean; value?: bigint; token?: Token };
   dailyLimit?: { loading: boolean; value?: bigint; token?: Token };
   estimatedTime?: { loading: boolean; value?: string };
+  solver: { loading?: boolean; address?: Address };
 }
 
-export default function TransferInformation({ transactionFee, transferLimit, dailyLimit, estimatedTime }: Props) {
+export default function TransferInformation({
+  transactionFee,
+  transferLimit,
+  dailyLimit,
+  estimatedTime,
+  solver,
+}: Props) {
   return (
     <div className="gap-small px-medium flex flex-col lg:px-3">
       <Row
@@ -39,6 +47,7 @@ export default function TransferInformation({ transactionFee, transferLimit, dai
       {dailyLimit ? (
         <Row name="Daily Limit" loading={dailyLimit.loading} value={dailyLimit.value} token={dailyLimit.token} />
       ) : null}
+      <Row name="Solver" loading={solver.loading} address={solver.address} />
     </div>
   );
 }
@@ -50,6 +59,7 @@ function Row({
   token,
   tips,
   warning,
+  address,
 }: {
   name: string;
   loading?: boolean;
@@ -57,6 +67,7 @@ function Row({
   token?: Token;
   tips?: JSX.Element | string;
   warning?: string;
+  address?: Address;
 }) {
   return (
     <div className="flex items-center justify-between">
@@ -77,6 +88,10 @@ function Row({
 
       {loading ? (
         <CountLoading color="white" />
+      ) : address ? (
+        <Tooltip content={address} enabledSafePolygon>
+          <Text value={toShortAdrress(address, 7, 5)} />
+        </Tooltip>
       ) : warning ? (
         <Tooltip content={warning} status="warning">
           <img width={20} height={20} alt="Warning" src="images/warning.svg" />
