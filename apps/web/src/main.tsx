@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router.tsx";
-// import PWABadge from "./components/pwa-badge.tsx";
+import PWABadge from "./components/pwa-badge.tsx";
 
 import * as Sentry from "@sentry/react";
 
@@ -22,6 +22,6 @@ Sentry.init({
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <RouterProvider router={router} />
-    {/* <PWABadge /> */}
+    <PWABadge />
   </React.StrictMode>,
 );
