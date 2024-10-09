@@ -53,7 +53,8 @@ export class LnBridgeV2Default extends LnBridgeBase {
       if (askEstimateGas) {
         return this.sourcePublicClient.estimateContractGas(defaultParams);
       } else if (this.walletClient) {
-        const hash = await this.walletClient.writeContract(defaultParams);
+        const { request } = await this.sourcePublicClient.simulateContract(defaultParams);
+        const hash = await this.walletClient.writeContract(request);
         return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
       }
     }
@@ -61,8 +62,10 @@ export class LnBridgeV2Default extends LnBridgeBase {
 
   async depositMargin(margin: bigint) {
     await this.validateNetwork("target");
+    const account = await this.getSigner();
 
     if (
+      account &&
       this.contract &&
       this.sourceChain &&
       this.sourceToken &&
@@ -70,22 +73,26 @@ export class LnBridgeV2Default extends LnBridgeBase {
       this.publicClient &&
       this.walletClient
     ) {
-      const hash = await this.walletClient.writeContract({
+      const { request } = await this.publicClient.simulateContract({
         address: this.contract.targetAddress,
         abi: (await import(`../abi/lnv2-default`)).default,
         functionName: "depositProviderMargin",
         args: [BigInt(this.sourceChain.id), this.sourceToken.address, this.targetToken.address, margin],
         value: this.targetToken.type === "native" ? margin : undefined,
         gas: this.getTxGasLimit(),
+        account,
       });
+      const hash = await this.walletClient.writeContract(request);
       return this.publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
     }
   }
 
   async setFeeAndRate(baseFee: bigint, feeRate: number) {
     await this.validateNetwork("source");
+    const account = await this.getSigner();
 
     if (
+      account &&
       this.contract &&
       this.targetChain &&
       this.sourceToken &&
@@ -93,21 +100,25 @@ export class LnBridgeV2Default extends LnBridgeBase {
       this.publicClient &&
       this.walletClient
     ) {
-      const hash = await this.walletClient.writeContract({
+      const { request } = await this.publicClient.simulateContract({
         address: this.contract.sourceAddress,
         abi: (await import(`../abi/lnv2-default`)).default,
         functionName: "setProviderFee",
         args: [BigInt(this.targetChain.id), this.sourceToken.address, this.targetToken.address, baseFee, feeRate],
         gas: this.getTxGasLimit(),
+        account,
       });
+      const hash = await this.walletClient.writeContract(request);
       return this.publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
     }
   }
 
   async withdrawMargin(recipientOrParams: Address | Hex, amount: bigint, fee: bigint) {
     await this.validateNetwork("source");
+    const account = await this.getSigner();
 
     if (
+      account &&
       this.contract &&
       this.sourceToken &&
       this.targetToken &&
@@ -117,14 +128,16 @@ export class LnBridgeV2Default extends LnBridgeBase {
     ) {
       const remoteChainId = BigInt(this.targetChain.id);
 
-      const hash = await this.walletClient.writeContract({
+      const { request } = await this.publicClient.simulateContract({
         address: this.contract.sourceAddress,
         abi: (await import(`../abi/lnv2-default`)).default,
         functionName: "requestWithdrawMargin",
         args: [remoteChainId, this.sourceToken.address, this.targetToken.address, amount, recipientOrParams],
         gas: this.getTxGasLimit(),
         value: fee,
+        account,
       });
+      const hash = await this.walletClient.writeContract(request);
       return this.publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
     }
   }

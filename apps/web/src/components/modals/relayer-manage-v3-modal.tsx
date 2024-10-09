@@ -3,7 +3,7 @@ import { InputValue, LnBridgeRelayerOverview, Token } from "../../types";
 import SegmentedTabs from "../../ui/segmented-tabs";
 import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "../../utils";
 import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
-import { useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import { TransactionReceipt, formatUnits } from "viem";
 import { BalanceInput } from "../balance-input";
 import FeeRateInput from "../fee-rate-input";
@@ -59,8 +59,8 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
   const [activeKey, setActiveKey] = useState<TabKey>("update");
   const [busy, setBusy] = useState(false);
 
-  const { switchNetwork } = useSwitchNetwork();
-  const { chain } = useNetwork();
+  const { switchChain } = useSwitchChain();
+  const { chain } = useAccount();
 
   const {
     loading: isLoadingWithdrawableLiquidities,
@@ -159,14 +159,14 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
 
     try {
       if (activeKey === "allowance") {
-        if (chain?.id !== targetChain?.id) {
-          switchNetwork?.(targetChain?.id);
+        if (targetChain?.id && chain?.id !== targetChain?.id) {
+          switchChain({ chainId: targetChain?.id });
         } else {
           receipt = await targetApprove(allowanceInput.value);
         }
       } else if (activeKey === "withdraw liquidity") {
-        if (chain?.id !== targetChain?.id) {
-          switchNetwork?.(targetChain?.id);
+        if (targetChain?.id && chain?.id !== targetChain?.id) {
+          switchChain({ chainId: targetChain?.id });
         } else {
           receipt = await withdrawLiquidity(
             selectedLiquidities,
@@ -177,8 +177,8 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
             refetchWithdrawableLiquidities();
           }
         }
-      } else if (chain?.id !== sourceChain?.id) {
-        switchNetwork?.(sourceChain?.id);
+      } else if (sourceChain?.id && chain?.id !== sourceChain?.id) {
+        switchChain({ chainId: sourceChain?.id });
       } else if (activeKey === "update") {
         receipt = await registerLnProvider(baseFeeInput.value, feeRateInput.value, transferLimitInput.value);
       } else if (activeKey === "deposit") {
@@ -219,7 +219,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
     onClose,
     onSuccess,
     registerLnProvider,
-    switchNetwork,
+    switchChain,
     withdrawPenaltyReserve,
     withdrawLiquidity,
     refetchWithdrawableLiquidities,

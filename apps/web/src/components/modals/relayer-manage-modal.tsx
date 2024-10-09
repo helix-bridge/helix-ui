@@ -5,7 +5,7 @@ import SegmentedTabs from "../../ui/segmented-tabs";
 import { formatBalance, formatFeeRate, getChainConfig, notifyError } from "../../utils";
 import { useApolloClient } from "@apollo/client";
 import { PropsWithChildren, useDeferredValue, useEffect, useMemo, useState } from "react";
-import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import { Subscription, from } from "rxjs";
 import { Hex, TransactionReceipt } from "viem";
 import { BalanceInput } from "../balance-input";
@@ -71,9 +71,8 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
   const [feeRateInput, setFeeRateInput] = useState<InputValue<number>>({ input: "", valid: true, value: 0 });
   const deferredWithdrawAmount = useDeferredValue(withdrawAmount);
 
-  const { switchNetwork } = useSwitchNetwork();
-  const { chain } = useNetwork();
-  const { address } = useAccount();
+  const { switchChain } = useSwitchChain();
+  const { address, chain } = useAccount();
   const apolloClient = useApolloClient();
 
   const { okText, disableOk, switchChainId } = useMemo(() => {
@@ -228,7 +227,9 @@ export default function RelayerManageModal({ relayerInfo, isOpen, onClose, onSuc
 
           try {
             if (okText === "Switch Network") {
-              switchNetwork?.(switchChainId);
+              if (switchChainId) {
+                switchChain({ chainId: switchChainId });
+              }
             } else if (activeKey === "allowance") {
               if (bridgeCategory === "lnv2-default" && defaultBridge) {
                 receipt = await targetApprove(address, allowanceInput.value, defaultBridge, targetChain);

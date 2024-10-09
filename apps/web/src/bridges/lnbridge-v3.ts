@@ -54,7 +54,8 @@ export class LnBridgeV3 extends LnBridgeBase {
       if (askEstimateGas) {
         return this.sourcePublicClient.estimateContractGas(defaultParams);
       } else if (this.walletClient) {
-        const hash = await this.walletClient.writeContract(defaultParams);
+        const { request } = await this.sourcePublicClient.simulateContract(defaultParams);
+        const hash = await this.walletClient.writeContract(request);
         return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
       }
     }
@@ -102,8 +103,10 @@ export class LnBridgeV3 extends LnBridgeBase {
 
   async registerLnProvider(baseFee: bigint, feeRate: number, transferLimit: bigint) {
     await this.validateNetwork("source");
+    const account = await this.getSigner();
 
     if (
+      account &&
       this.contract &&
       this.publicClient &&
       this.walletClient &&
@@ -111,7 +114,7 @@ export class LnBridgeV3 extends LnBridgeBase {
       this.sourceToken &&
       this.targetToken
     ) {
-      const hash = await this.walletClient.writeContract({
+      const { request } = await this.publicClient.simulateContract({
         address: this.contract.sourceAddress,
         abi: (await import("../abi/lnbridge-v3")).default,
         functionName: "registerLnProvider",
@@ -124,37 +127,46 @@ export class LnBridgeV3 extends LnBridgeBase {
           transferLimit,
         ],
         gas: this.getTxGasLimit(),
+        account,
       });
+      const hash = await this.walletClient.writeContract(request);
       return this.publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
     }
   }
 
   async depositPenaltyReserve(amount: bigint) {
     await this.validateNetwork("source");
+    const account = await this.getSigner();
 
-    if (this.contract && this.publicClient && this.walletClient && this.sourceToken) {
-      const hash = await this.walletClient.writeContract({
+    if (account && this.contract && this.publicClient && this.walletClient && this.sourceToken) {
+      const { request } = await this.publicClient.simulateContract({
         address: this.contract.sourceAddress,
         abi: (await import("../abi/lnbridge-v3")).default,
         functionName: "depositPenaltyReserve",
         args: [this.sourceToken.address, amount],
         value: this.sourceToken.type === "native" ? amount : undefined,
         gas: this.getTxGasLimit(),
+        account,
       });
+      const hash = await this.walletClient.writeContract(request);
       return this.publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
     }
   }
 
   async withdrawPenaltyReserve(amount: bigint) {
     await this.validateNetwork("source");
+    const account = await this.getSigner();
 
-    if (this.contract && this.sourceToken && this.publicClient && this.walletClient) {
-      const hash = await this.walletClient.writeContract({
+    if (account && this.contract && this.sourceToken && this.publicClient && this.walletClient) {
+      const { request } = await this.publicClient.simulateContract({
         address: this.contract.sourceAddress,
         abi: (await import("../abi/lnbridge-v3")).default,
         functionName: "withdrawPenaltyReserve",
         args: [this.sourceToken.address, amount],
+        gas: this.getTxGasLimit(),
+        account,
       });
+      const hash = await this.walletClient.writeContract(request);
       return this.publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
     }
   }
@@ -197,18 +209,21 @@ export class LnBridgeV3 extends LnBridgeBase {
 
   async requestWithdrawLiquidity(relayer: Address, transferIds: Hex[], messageFee: bigint, extParams: Hex) {
     await this.validateNetwork("target");
+    const account = await this.getSigner();
 
-    if (this.contract && this.sourceChain && this.publicClient && this.walletClient) {
+    if (account && this.contract && this.sourceChain && this.publicClient && this.walletClient) {
       const remoteChainId = BigInt(this.sourceChain.id);
 
-      const hash = await this.walletClient.writeContract({
+      const { request } = await this.publicClient.simulateContract({
         address: this.contract.targetAddress,
         abi: (await import("../abi/lnbridge-v3")).default,
         functionName: "requestWithdrawLiquidity",
         args: [remoteChainId, transferIds, relayer, extParams],
         value: messageFee,
         gas: this.getTxGasLimit(),
+        account,
       });
+      const hash = await this.walletClient.writeContract(request);
       return this.publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
     }
   }

@@ -1,6 +1,6 @@
 import { formatBalance, getTokenLogoSrc, notifyError, notifyTransaction } from "../utils";
 import { PropsWithChildren, useCallback, useEffect, useState } from "react";
-import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient, useSwitchChain, useWalletClient } from "wagmi";
 import { Subscription, forkJoin, from } from "rxjs";
 import { parseUnits } from "viem";
 import { ChainConfig, Token } from "../types";
@@ -25,22 +25,23 @@ export default function Faucet({ sourceChain, sourceToken, onSuccess = () => und
 
   const publicClient = usePublicClient({ chainId: sourceChain.id });
   const { data: walletClient } = useWalletClient();
-  const { switchNetwork } = useSwitchNetwork();
-  const { address } = useAccount();
-  const { chain } = useNetwork();
+  const { switchChain } = useSwitchChain();
+  const { address, chain } = useAccount();
 
   const handleClaim = useCallback(async () => {
     if (chain?.id !== sourceChain.id) {
-      switchNetwork?.(sourceChain.id);
+      switchChain({ chainId: sourceChain.id });
     } else if (address && publicClient && walletClient) {
       try {
         setBusy(true);
-        const hash = await walletClient.writeContract({
+        const { request } = await publicClient.simulateContract({
           address: sourceToken.address,
           abi,
           functionName: "faucet",
           args: [1n <= allow ? allow - 1n : allow],
+          account: address,
         });
+        const hash = await walletClient.writeContract(request);
         const receipt = await publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
         notifyTransaction(receipt, sourceChain);
         setBusy(false);
@@ -57,7 +58,7 @@ export default function Faucet({ sourceChain, sourceToken, onSuccess = () => und
         setBusy(false);
       }
     }
-  }, [allow, chain, address, sourceChain, sourceToken, publicClient, walletClient, onSuccess, switchNetwork]);
+  }, [allow, chain, address, sourceChain, sourceToken, publicClient, walletClient, onSuccess, switchChain]);
 
   useEffect(() => {
     let sub$$: Subscription | undefined;

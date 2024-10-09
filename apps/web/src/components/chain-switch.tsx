@@ -10,7 +10,7 @@ import {
   useTransitionStyles,
 } from "@floating-ui/react";
 import { useMemo, useState } from "react";
-import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 
 const chainOptions = getChainConfigs();
 
@@ -32,9 +32,8 @@ export default function ChainSwitch({ placement }: { placement?: Placement }) {
   const click = useClick(context);
   const dismiss = useDismiss(context);
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
-  const { switchNetwork } = useSwitchNetwork();
-  const { chain } = useNetwork();
-  const activeChain = useMemo(() => getChainConfig(chain?.id), [chain?.id]);
+  const { switchChain } = useSwitchChain();
+  const activeChain = useMemo(() => getChainConfig(account.chainId), [account.chainId]);
 
   return account.address ? (
     <>
@@ -80,9 +79,9 @@ export default function ChainSwitch({ placement }: { placement?: Placement }) {
               {chainOptions.map((option) => (
                 <button
                   className={`gap-medium px-large py-medium flex items-center transition-colors hover:bg-white/5 disabled:bg-white/10`}
-                  disabled={option.id === chain?.id}
+                  disabled={option.id === account.chainId}
                   key={option.id}
-                  onClick={() => switchNetwork?.(option.id)}
+                  onClick={() => switchChain({ chainId: option.id })}
                 >
                   <img alt="Chain" width={22} height={22} src={getChainLogoSrc(option.logo)} className="rounded-full" />
                   <span className="text-sm font-bold text-white">{option.name}</span>

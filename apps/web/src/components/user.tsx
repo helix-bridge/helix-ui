@@ -1,7 +1,6 @@
 import { useApp } from "../hooks";
 import Dropdown from "../ui/dropdown";
 import { formatBalance, getChainLogoSrc, getTokenLogoSrc, toShortAdrress } from "../utils";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { PropsWithChildren } from "react";
 import { useAccount, useDisconnect } from "wagmi";
 import PrettyAddress from "./pretty-address";
@@ -9,6 +8,7 @@ import AddressIdenticon from "./address-identicon";
 import { Placement } from "@floating-ui/react";
 import History from "./history";
 import ComponentLoading from "../ui/component-loading";
+import { useAppKit } from "@reown/appkit/react";
 
 interface Props {
   placement?: Placement;
@@ -22,7 +22,7 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8 }:
 
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
-  const { openConnectModal } = useConnectModal();
+  const { open } = useAppKit();
 
   return address ? (
     <Dropdown
@@ -113,7 +113,7 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8 }:
   ) : (
     <button
       className="bg-primary px-large hover:bg-primary/90 lg:py-small inline-flex rounded-xl py-2 transition-colors"
-      onClick={openConnectModal}
+      onClick={() => open()}
     >
       <span className="text-sm font-bold text-white">Connect Wallet</span>
     </button>

@@ -12,8 +12,15 @@ import {
   TransferOptions,
 } from "../types";
 import { getBalance } from "../utils";
-import { Address, PublicClient as ViemPublicClient, TransactionReceipt, createPublicClient, http } from "viem";
-import { PublicClient as WagmiPublicClient, WalletClient } from "wagmi";
+import {
+  Address,
+  PublicClient as ViemPublicClient,
+  TransactionReceipt,
+  createPublicClient,
+  http,
+  PublicClient,
+  WalletClient,
+} from "viem";
 import { CONFIRMATION_BLOCKS } from "../config";
 
 export abstract class BaseBridge {
@@ -35,7 +42,7 @@ export abstract class BaseBridge {
 
   protected readonly sourcePublicClient: ViemPublicClient | undefined;
   protected readonly targetPublicClient: ViemPublicClient | undefined;
-  protected readonly publicClient?: WagmiPublicClient; // The public client to which the wallet is connected
+  protected readonly publicClient?: PublicClient; // The public client to which the wallet is connected
   protected readonly walletClient?: WalletClient | null;
 
   constructor(args: BridgeConstructorArgs) {

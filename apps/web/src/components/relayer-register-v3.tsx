@@ -14,9 +14,8 @@ import {
   notifyError,
 } from "../utils";
 import { useApolloClient } from "@apollo/client";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { PropsWithChildren, useCallback, useState } from "react";
-import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import ChainSelect from "./chain-select";
 import TokenSelect from "./token-select";
 import Button from "../ui/button";
@@ -25,6 +24,7 @@ import { BalanceInput } from "./balance-input";
 import FeeRateInput from "./fee-rate-input";
 import PrettyAddress from "./pretty-address";
 import Modal from "../ui/modal";
+import { useAppKit } from "@reown/appkit/react";
 
 enum Step {
   ONE,
@@ -69,16 +69,15 @@ export default function RelayerRegisterV3({ onManage = () => undefined }: { onMa
   const { state: isOpen, setTrue: setIsOpenTrue, setFalse: setIsOpenFalse } = useToggle(false);
 
   const apolloClient = useApolloClient();
-  const { address } = useAccount();
-  const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
-  const { openConnectModal } = useConnectModal();
+  const { address, chain } = useAccount();
+  const { switchChain } = useSwitchChain();
+  const { open } = useAppKit();
 
   const handleRegister = useCallback(async () => {
     try {
       setIsRegistering(true);
-      if (sourceChain?.id !== chain?.id) {
-        switchNetwork?.(sourceChain?.id);
+      if (sourceChain?.id && sourceChain?.id !== chain?.id) {
+        switchChain({ chainId: sourceChain?.id });
       } else if (await isLnBridgeExist(apolloClient)) {
         const receipt = await registerLnProvider(baseFeeInput.value, feeRateInput.value, transferLimitInput.value);
         setIsRegistered(receipt?.status === "success");
@@ -98,14 +97,14 @@ export default function RelayerRegisterV3({ onManage = () => undefined }: { onMa
     transferLimitInput,
     isLnBridgeExist,
     registerLnProvider,
-    switchNetwork,
+    switchChain,
   ]);
 
   const handleDeposit = useCallback(async () => {
     try {
       setIsDepositing(true);
-      if (sourceChain?.id !== chain?.id) {
-        switchNetwork?.(sourceChain?.id);
+      if (sourceChain?.id && sourceChain?.id !== chain?.id) {
+        switchChain({ chainId: sourceChain?.id });
       } else if (await isLnBridgeExist(apolloClient)) {
         if (sourceToken?.type !== "native" && penaltyReserveInput.value > (sourceAllowance?.value || 0n)) {
           await sourceApprove(penaltyReserveInput.value);
@@ -137,15 +136,15 @@ export default function RelayerRegisterV3({ onManage = () => undefined }: { onMa
     depositPenaltyReserve,
     sourceApprove,
     isLnBridgeExist,
-    switchNetwork,
+    switchChain,
     setIsOpenTrue,
   ]);
 
   const handleApproveMore = useCallback(async () => {
     try {
       setIsApproving(true);
-      if (chain?.id !== targetChain?.id) {
-        switchNetwork?.(targetChain?.id);
+      if (targetChain?.id && chain?.id !== targetChain?.id) {
+        switchChain({ chainId: targetChain?.id });
       } else {
         await targetApprove(targetBalance?.value || 0n);
       }
@@ -155,7 +154,7 @@ export default function RelayerRegisterV3({ onManage = () => undefined }: { onMa
     } finally {
       setIsApproving(false);
     }
-  }, [chain, targetChain, targetBalance, targetApprove, switchNetwork]);
+  }, [chain, targetChain, targetBalance, targetApprove, switchChain]);
 
   return (
     <>
@@ -205,7 +204,7 @@ export default function RelayerRegisterV3({ onManage = () => undefined }: { onMa
               <Divider />
               <Button
                 onClick={() => {
-                  address ? setCurrentStep(Step.TWO) : openConnectModal?.();
+                  address ? setCurrentStep(Step.TWO) : open();
                 }}
                 kind="primary"
                 className="inline-flex h-11 items-center justify-center rounded-full"
