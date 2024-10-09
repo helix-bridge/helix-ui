@@ -14,12 +14,12 @@ import {
   useTransactionFee,
   useTransfer,
 } from "../hooks";
-import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient, useSwitchChain, useWalletClient } from "wagmi";
 import TransferProvider from "../providers/transfer-provider";
 import DisclaimerModal from "./modals/disclaimer-modal";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { Address } from "viem";
 import TransferModal from "./modals/transfer-modal";
+import { useAppKit } from "@reown/appkit/react";
 
 interface Recipient {
   input: string;
@@ -55,11 +55,10 @@ function Component() {
   const deferredAmount = useDeferredValue(amount);
 
   const account = useAccount();
-  const { chain } = useNetwork();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
-  const { switchNetwork } = useSwitchNetwork();
-  const { openConnectModal } = useConnectModal();
+  const { switchChain } = useSwitchChain();
+  const { open } = useAppKit();
 
   const [recipient, setRecipient] = useState<Recipient>({
     input: account.address ?? "",
@@ -132,8 +131,8 @@ function Component() {
     let text: "Connect Wallet" | "Switch Chain" | "Approve" | "Transfer" = "Transfer";
     let disabled = false;
 
-    if (chain?.id) {
-      if (chain.id !== sourceChain.id) {
+    if (account.chainId) {
+      if (account.chainId !== sourceChain.id) {
         text = "Switch Chain";
         disabled = false;
       } else if (
@@ -160,7 +159,7 @@ function Component() {
   }, [
     allowance,
     loadingAllowance,
-    chain?.id,
+    account.chainId,
     deferredAmount,
     sourceChain.id,
     fee?.value,
@@ -171,9 +170,9 @@ function Component() {
 
   const handleAction = useCallback(async () => {
     if (actionText === "Connect Wallet") {
-      openConnectModal?.();
+      open();
     } else if (actionText === "Switch Chain") {
-      switchNetwork?.(sourceChain.id);
+      switchChain({ chainId: sourceChain.id });
     } else if (actionText === "Approve") {
       const receipt = await approve(
         fee?.token.type === "native" ? deferredAmount.value : deferredAmount.value + (fee?.value ?? 0n),
@@ -182,16 +181,7 @@ function Component() {
     } else if (actionText === "Transfer") {
       setIsOpen(true);
     }
-  }, [
-    actionText,
-    sourceChain,
-    deferredAmount.value,
-    fee?.value,
-    fee?.token.type,
-    approve,
-    openConnectModal,
-    switchNetwork,
-  ]);
+  }, [actionText, sourceChain, deferredAmount.value, fee?.value, fee?.token.type, approve, open, switchChain]);
 
   const handleTransfer = useCallback(async () => {
     const sourceChain = bridge?.getSourceChain();

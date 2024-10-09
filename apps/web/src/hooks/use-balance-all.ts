@@ -1,6 +1,6 @@
 import { getChainConfigs } from "../utils";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createPublicClient, getContract, http } from "viem";
+import { createPublicClient, http } from "viem";
 import { forkJoin, map, of, merge, mergeAll } from "rxjs";
 import abi from "../abi/erc20";
 import { ChainConfig, ChainID, Token } from "../types";
@@ -30,8 +30,12 @@ export function useBalanceAll() {
           if (token.type === "native") {
             return publicClient.getBalance({ address });
           } else {
-            const contract = getContract({ address: token.address, abi, publicClient });
-            return contract.read.balanceOf([address]);
+            return publicClient.readContract({
+              address: token.address,
+              abi,
+              functionName: "balanceOf",
+              args: [address],
+            });
           }
         });
         return tokensObs.length

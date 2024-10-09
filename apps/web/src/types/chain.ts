@@ -1,5 +1,5 @@
-import type { Chain } from "wagmi";
-import { Token } from "./token";
+import type { Chain } from "viem";
+import type { Token } from "./token";
 
 export enum ChainID {
   DARWINIA = 46,

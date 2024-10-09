@@ -1,5 +1,5 @@
 import { Address, Hex } from "viem";
-import { PublicClient, WalletClient } from "wagmi";
+import { PublicClient, WalletClient } from "viem";
 import { ChainConfig } from "./chain";
 import { Token } from "./token";
 import { MessageChannel } from "./graphql";

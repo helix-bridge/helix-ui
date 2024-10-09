@@ -48,15 +48,17 @@ export function useAllowance(
 
   const approve = useCallback(
     async (amount: bigint) => {
-      if (owner && spender && walletClient) {
+      if (owner && spender && walletClient && publicClient) {
         setBusy(true);
         try {
-          const hash = await walletClient.writeContract({
+          const { request } = await publicClient.simulateContract({
             address: token.address,
             abi,
             functionName: "approve",
             args: [spender, amount],
+            account: owner,
           });
+          const hash = await walletClient.writeContract(request);
           const receipt = await publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
 
           if (receipt.status === "success") {

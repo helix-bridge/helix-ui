@@ -24,18 +24,18 @@ import {
   notifyError,
 } from "../utils";
 import { useApolloClient } from "@apollo/client";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { PropsWithChildren, useCallback, useEffect, useState } from "react";
-import { Address, useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import ChainSelect from "./chain-select";
 import TokenSelect from "./token-select";
 import Button from "../ui/button";
 import StepCompleteItem from "./step-complete-item";
 import { BalanceInput } from "./balance-input";
 import FeeRateInput from "./fee-rate-input";
-import { TransactionReceipt } from "viem";
+import { Address, TransactionReceipt } from "viem";
 import PrettyAddress from "./pretty-address";
 import Modal from "../ui/modal";
+import { useAppKit } from "@reown/appkit/react";
 
 enum Step {
   ONE,
@@ -81,10 +81,9 @@ export default function RelayerRegister({ onManage = () => undefined }: { onMana
   const [feeRateInput, setFeeRateInput] = useState<InputValue<number>>({ input: "", valid: true, value: 0 });
 
   const apolloClient = useApolloClient();
-  const { address } = useAccount();
-  const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
-  const { openConnectModal } = useConnectModal();
+  const { address, chain } = useAccount();
+  const { switchChain } = useSwitchChain();
+  const { open } = useAppKit();
 
   const isRegistered = useCallback(
     async (
@@ -186,7 +185,7 @@ export default function RelayerRegister({ onManage = () => undefined }: { onMana
 
               <Button
                 onClick={() => {
-                  address ? setCurrentStep(Step.TWO) : openConnectModal?.();
+                  address ? setCurrentStep(Step.TWO) : open();
                 }}
                 kind="primary"
                 className="inline-flex h-11 items-center justify-center rounded-full"
@@ -265,8 +264,8 @@ export default function RelayerRegister({ onManage = () => undefined }: { onMana
                       if (address && defaultBridge && sourceChain && targetChain && sourceToken && targetToken) {
                         setIsSettingDefaultMargin(true);
                         try {
-                          if (targetChain.id !== chain?.id) {
-                            switchNetwork?.(targetChain.id);
+                          if (targetChain.id && targetChain.id !== chain?.id) {
+                            switchChain({ chainId: targetChain.id });
                           } else if (
                             targetToken?.type !== "native" &&
                             marginInput.value > (targetAllowance?.value || 0n)
@@ -345,8 +344,8 @@ export default function RelayerRegister({ onManage = () => undefined }: { onMana
                   if (address && sourceChain && targetChain && sourceToken && targetToken) {
                     setBusy(true);
                     try {
-                      if (sourceChain.id !== chain?.id) {
-                        switchNetwork?.(sourceChain.id);
+                      if (sourceChain.id && sourceChain.id !== chain?.id) {
+                        switchChain({ chainId: sourceChain.id });
                       } else if (
                         oppositeBridge &&
                         sourceToken?.type !== "native" &&
@@ -466,8 +465,8 @@ export default function RelayerRegister({ onManage = () => undefined }: { onMana
                       if (address && targetChain) {
                         setBusy(true);
                         try {
-                          if (chain?.id !== targetChain.id) {
-                            switchNetwork?.(targetChain.id);
+                          if (targetChain.id && chain?.id !== targetChain.id) {
+                            switchChain({ chainId: targetChain.id });
                           } else if (defaultBridge) {
                             await targetApprove(address, targetBalance?.value || 0n, defaultBridge, targetChain);
                           } else if (oppositeBridge) {
