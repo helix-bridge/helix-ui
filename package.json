@@ -15,7 +15,8 @@
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "turbo build --filter=./packages/* && changeset publish",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "pnpm run codegen:graphql --filter @helixbridge/web"
   },
   "repository": {
     "type": "git",
