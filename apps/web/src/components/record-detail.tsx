@@ -1,10 +1,8 @@
 import { BaseBridge } from "../bridges";
-import { GQL_HISTORY_RECORD_BY_ID } from "../config";
-import { HistoryRecordReqParams, HistoryRecordResData } from "../types";
+import { BridgeCategory, Network } from "../types";
 import ComponentLoading from "../ui/component-loading";
 import CountdownRefresh from "../ui/countdown-refresh";
 import { bridgeFactory, getChainConfig } from "../utils";
-import { useQuery } from "@apollo/client";
 import { PropsWithChildren, useMemo } from "react";
 import TransferRoute from "./transfer-route";
 import TransactionStatus from "./transaction-status";
@@ -18,6 +16,8 @@ import TransactionFee from "./transaction-fee";
 import { RecordItemTitle } from "../ui/record-item-title";
 import { useNavigate } from "react-router-dom";
 import Back from "./icons/back";
+import { useExplorerTx } from "../hooks/use-explorer-tx";
+import { Address } from "viem";
 
 interface Props {
   id: string;
@@ -25,21 +25,13 @@ interface Props {
 }
 
 export default function RecordDetail(props: Props) {
-  const {
-    loading,
-    data: record,
-    refetch,
-  } = useQuery<HistoryRecordResData, HistoryRecordReqParams>(GQL_HISTORY_RECORD_BY_ID, {
-    variables: { id: props.id },
-    notifyOnNetworkStatusChange: true,
-    fetchPolicy: "cache-and-network",
-  });
+  const { data: record, loading, refetch } = useExplorerTx(props.id);
   const navigate = useNavigate();
 
   const bridgeInstance = useMemo<BaseBridge | undefined>(() => {
-    const category = record?.historyRecordById?.bridge;
-    const sourceChain = getChainConfig(record?.historyRecordById?.fromChain);
-    const targetChain = getChainConfig(record?.historyRecordById?.toChain);
+    const category = record?.historyRecordById?.bridge as BridgeCategory | undefined;
+    const sourceChain = getChainConfig(record?.historyRecordById?.fromChain as Network | undefined);
+    const targetChain = getChainConfig(record?.historyRecordById?.toChain as Network | undefined);
     const sourceToken = sourceChain?.tokens.find(
       (t) => t.symbol.toUpperCase() === record?.historyRecordById?.sendToken.toUpperCase(),
     );
@@ -86,7 +78,7 @@ export default function RecordDetail(props: Props) {
             tips="Unique character string (TxID) assigned to every verified transaction on the Source Chain."
           >
             <TransactionHash
-              chain={record?.historyRecordById?.fromChain}
+              chain={record?.historyRecordById?.fromChain as Network | undefined}
               txHash={record?.historyRecordById?.requestTxHash}
             />
           </Item>
@@ -95,7 +87,7 @@ export default function RecordDetail(props: Props) {
             tips="Unique character string (TxID) assigned to every verified transaction on the Target Chain."
           >
             <TransactionHash
-              chain={record?.historyRecordById?.toChain}
+              chain={record?.historyRecordById?.toChain as Network | undefined}
               txHash={record?.historyRecordById?.responseTxHash}
             />
           </Item>
@@ -111,7 +103,7 @@ export default function RecordDetail(props: Props) {
           <Item label="Sender" tips="Address (external or contract) sending the transaction.">
             {record?.historyRecordById?.sender ? (
               <PrettyAddress
-                address={record.historyRecordById.sender}
+                address={record.historyRecordById.sender as Address}
                 className="text-primary text-sm font-medium"
                 copyable
               />
@@ -120,7 +112,7 @@ export default function RecordDetail(props: Props) {
           <Item label="Receiver" tips="Address (external or contract) receiving the transaction.">
             {record?.historyRecordById?.recipient ? (
               <PrettyAddress
-                address={record.historyRecordById.recipient}
+                address={record.historyRecordById.recipient as Address}
                 className="text-primary text-sm font-medium"
                 copyable
               />
@@ -152,7 +144,7 @@ export default function RecordDetail(props: Props) {
           <Item label="Solver">
             {record?.historyRecordById?.relayer ? (
               <PrettyAddress
-                address={record.historyRecordById.relayer}
+                address={record.historyRecordById.relayer as Address}
                 className="text-primary text-sm font-medium"
                 copyable
               />

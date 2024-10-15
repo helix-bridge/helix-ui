@@ -83,14 +83,6 @@ export interface SupportChains {
  * Custom
  */
 
-export interface HistoryRecordReqParams {
-  id: string;
-}
-
-export interface HistoryRecordResData {
-  historyRecordById: HistoryRecord | null;
-}
-
 export interface SortedLnBridgeRelayInfosReqParams {
   amount: string;
   decimals?: number;
