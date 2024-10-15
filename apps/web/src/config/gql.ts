@@ -1,35 +1,5 @@
 import { gql } from "@apollo/client";
 
-export const GQL_HISTORY_RECORD_BY_ID = gql`
-  query historyRecordById($id: String!) {
-    historyRecordById(id: $id) {
-      sendAmount
-      recvAmount
-      bridge
-      endTime
-      fee
-      feeToken
-      fromChain
-      id
-      nonce
-      messageNonce
-      recipient
-      requestTxHash
-      responseTxHash
-      reason
-      result
-      sender
-      startTime
-      toChain
-      sendToken
-      recvToken
-      sendTokenAddress
-      recvTokenAddress
-      relayer
-    }
-  }
-`;
-
 export const GQL_SORTED_LNBRIDGE_RELAY_INFOS = gql`
   query sortedLnBridgeRelayInfos(
     $amount: String

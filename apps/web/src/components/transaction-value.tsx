@@ -1,13 +1,14 @@
-import { HistoryRecord } from "../types/graphql";
+import { ExplorerTxByIdQuery } from "../_generated_/gql/graphql";
+import { Network } from "../types";
 import { formatBalance } from "../utils/balance";
 import { getChainConfig } from "../utils/chain";
 
 interface Props {
-  record?: HistoryRecord | null;
+  record: ExplorerTxByIdQuery["historyRecordById"];
 }
 
 export default function TransactionValue({ record }: Props) {
-  const token = getChainConfig(record?.fromChain)?.tokens.find(
+  const token = getChainConfig(record?.fromChain as Network | undefined)?.tokens.find(
     ({ symbol }) => symbol.toUpperCase() === record?.sendToken.toUpperCase(),
   );
 

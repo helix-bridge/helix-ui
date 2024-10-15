@@ -1,15 +1,16 @@
-import { HistoryRecord } from "../types/graphql";
+import { ExplorerTxByIdQuery } from "../_generated_/gql/graphql";
 import PrettyAddress from "./pretty-address";
 import { getTokenLogoSrc } from "../utils/misc";
 import { getChainConfig } from "../utils/chain";
 import Button from "../ui/button";
+import { Network } from "../types";
 
 interface Props {
-  record?: HistoryRecord | null;
+  record: ExplorerTxByIdQuery["historyRecordById"];
 }
 
 export default function TokenToReceive({ record }: Props) {
-  const token = getChainConfig(record?.toChain)?.tokens.find(
+  const token = getChainConfig(record?.toChain as Network | undefined)?.tokens.find(
     ({ symbol, address }) =>
       symbol === record?.recvToken ||
       (record?.recvTokenAddress && address.toLowerCase() === record.recvTokenAddress?.toLowerCase()),

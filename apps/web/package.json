@@ -12,8 +12,9 @@
     "build:testnet": "tsc && vite build --mode testnet && node scripts/generate-sitemap.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest --run --silent",
-    "clean": "rm -rf node_modules .turbo dist",
-    "preview": "vite preview"
+    "clean": "rm -rf node_modules .turbo dist src/_generated_",
+    "preview": "vite preview",
+    "codegen:graphql": "graphql-codegen --config codegen.ts"
   },
   "license": "MIT",
   "dependencies": {
@@ -39,6 +40,9 @@
     "wagmi": "^1.4.13"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "5.0.3",
+    "@graphql-codegen/client-preset": "4.4.0",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@types/react-transition-group": "^4.4.10",
