@@ -6,7 +6,10 @@ export type ColumnType<T> = {
   title: JSX.Element | string;
   width?: string | number;
   key: Key;
-} & ({ dataIndex: keyof T; render?: never } | { dataIndex?: never; render: (row: T) => JSX.Element | string | number });
+} & (
+  | { dataIndex: keyof T; render?: never }
+  | { dataIndex?: never; render: (row: T) => JSX.Element | string | number | null }
+);
 
 interface Props<T> {
   columns: ColumnType<T>[];

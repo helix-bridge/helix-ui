@@ -20,8 +20,11 @@ import {
 } from "./columns";
 import RelayerManageV3Modal from "../../../components/modals/relayer-manage-v3-modal";
 import RelayerManageModal from "../../../components/modals/relayer-manage-modal";
+import { QueryRelayersDataQuery } from "../../../_generated_/gql/graphql";
 
-type DataSource = RelayersRecord;
+type DataSource = NonNullable<
+  NonNullable<NonNullable<QueryRelayersDataQuery["queryLnBridgeRelayInfos"]>["records"]>[number]
+>;
 
 interface Props {
   onPageChange: (page: number) => void;

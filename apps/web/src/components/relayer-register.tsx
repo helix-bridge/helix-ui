@@ -1,13 +1,5 @@
-import { GQL_QUERY_LNBRIDGE_RELAY_INFOS } from "../config";
 import { useRelayer } from "../hooks";
-import {
-  BridgeCategory,
-  ChainConfig,
-  InputValue,
-  QueryLnBridgeRelayInfosReqParams,
-  QueryLnBridgeRelayInfosResData,
-  Token,
-} from "../types";
+import { BridgeCategory, ChainConfig, InputValue, Token } from "../types";
 import { notification } from "../ui/notification";
 import StepTitle from "../ui/step-title";
 import Tooltip from "../ui/tooltip";
@@ -36,6 +28,7 @@ import FeeRateInput from "./fee-rate-input";
 import { TransactionReceipt } from "viem";
 import PrettyAddress from "./pretty-address";
 import Modal from "../ui/modal";
+import { graphql } from "../_generated_/gql";
 
 enum Step {
   ONE,
@@ -46,6 +39,30 @@ enum Step {
 }
 
 const { defaultSourceChains, defaultTargetChains } = getLnBridgeCrossDefaultValue(true);
+
+const relayersSendTokenQueryDocument = graphql(`
+  query QueryRelayersSendToken(
+    $fromChain: String
+    $toChain: String
+    $relayer: String
+    $row: Int
+    $page: Int
+    $version: String
+  ) {
+    queryLnBridgeRelayInfos(
+      fromChain: $fromChain
+      toChain: $toChain
+      relayer: $relayer
+      row: $row
+      page: $page
+      version: $version
+    ) {
+      records {
+        sendToken
+      }
+    }
+  }
+`);
 
 export default function RelayerRegister({ onManage = () => undefined }: { onManage?: () => void }) {
   const {
@@ -94,15 +111,12 @@ export default function RelayerRegister({ onManage = () => undefined }: { onMana
       _sourceToken: Token,
       _category: BridgeCategory,
     ) => {
-      const { data: relayerData } = await apolloClient.query<
-        QueryLnBridgeRelayInfosResData,
-        QueryLnBridgeRelayInfosReqParams
-      >({
-        query: GQL_QUERY_LNBRIDGE_RELAY_INFOS,
+      void _category;
+      const { data: relayersSendToken } = await apolloClient.query({
+        query: relayersSendTokenQueryDocument,
         variables: {
           fromChain: _sourceChain.network,
           toChain: _targetChain.network,
-          bridge: _category,
           relayer: relayer.toLowerCase(),
           page: 0,
           row: 2,
@@ -111,8 +125,8 @@ export default function RelayerRegister({ onManage = () => undefined }: { onMana
       });
 
       if (
-        relayerData.queryLnBridgeRelayInfos?.records.some(
-          ({ sendToken }) => sendToken?.toLowerCase() === _sourceToken.address.toLowerCase(),
+        relayersSendToken?.queryLnBridgeRelayInfos?.records?.some(
+          (r) => r?.sendToken?.toLowerCase() === _sourceToken.address.toLowerCase(),
         )
       ) {
         notification.warn({

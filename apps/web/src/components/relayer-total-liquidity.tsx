@@ -36,11 +36,11 @@ export default function RelayerTotalLiquidity({ record }: Props) {
     240,
   );
 
-  return sourceToken ? <DisplayLiquidity data={data} token={sourceToken} /> : <span>-</span>;
+  return sourceToken ? <DisplayLiquidity data={data?.records ?? []} token={sourceToken} /> : <span>-</span>;
 }
 
-function DisplayLiquidity({ data, token }: { data: { sendAmount: string }[]; token: Token }) {
-  const total = data.reduce((acc, cur) => acc + BigInt(cur.sendAmount), 0n);
+function DisplayLiquidity({ data, token }: { data: ({ sendAmount: string } | null)[]; token: Token }) {
+  const total = data.reduce((acc, cur) => acc + BigInt(cur?.sendAmount ?? 0), 0n);
   return (
     <Tooltip content={formatBalance(total, token.decimals)} className="w-fit max-w-full truncate">
       {formatBalance(total, token.decimals)}

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ChainConfig, HistoryDetailsResData, HistoryRecord, RecordResult } from "../../types";
+import { ChainConfig, HistoryRecord, RecordResult, Network } from "../../types";
 import {
   formatBalance,
   formatTime,
@@ -8,23 +8,26 @@ import {
   parseConfirmedBlocks,
   toShortAdrress,
 } from "../../utils";
-import { Hash, Hex, isHash } from "viem";
+import { Hash, isHash } from "viem";
 import Completed from "../icons/completed";
 import Pending from "../icons/pending";
 import { useHistoryDetails } from "../../hooks";
 import ComponentLoading from "../../ui/component-loading";
 import { useMemo } from "react";
+import { TData } from "./history-table";
 
 interface Props {
-  data: Partial<HistoryDetailsResData["historyRecordByTxHash"]>;
+  data: TData;
 }
 
 export default function HistoryDetails({ data: propsData }: Props) {
-  const { data: _data, loading } = useHistoryDetails(propsData?.id ? null : propsData?.requestTxHash);
+  const { data: _data, loading } = useHistoryDetails(
+    propsData?.id ? null : (propsData?.requestTxHash as Hash | undefined),
+  );
   const data = useMemo(() => _data ?? propsData, [_data, propsData]);
 
-  const sourceChain = getChainConfig(data?.fromChain);
-  const targetChain = getChainConfig(data?.toChain);
+  const sourceChain = getChainConfig(data?.fromChain as Network | undefined);
+  const targetChain = getChainConfig(data?.toChain as Network | undefined);
   const sourceToken = sourceChain?.tokens.find(({ symbol }) => symbol.toUpperCase() === data?.sendToken?.toUpperCase());
 
   return (
@@ -47,12 +50,16 @@ export default function HistoryDetails({ data: propsData }: Props) {
         </div>
 
         <div className="mt-8 flex justify-between rounded-3xl bg-white/5 px-14 py-10">
-          <Column chain={sourceChain} tx={data?.requestTxHash} completed={!!data?.requestTxHash} />
+          <Column chain={sourceChain} tx={data?.requestTxHash as Hash | undefined} completed={!!data?.requestTxHash} />
           <Bridge data={data} />
           <Column
             chain={targetChain}
             completed={data?.result === RecordResult.SUCCESS}
-            tx={isHash(data?.confirmedBlocks ?? "") ? (data?.confirmedBlocks as Hash) : data?.responseTxHash}
+            tx={
+              isHash(data?.confirmedBlocks ?? "")
+                ? (data?.confirmedBlocks as Hash)
+                : (data?.responseTxHash as Hash | undefined)
+            }
           />
         </div>
 
@@ -82,7 +89,7 @@ function Row({ label, value }: { label: string; value?: string }) {
   );
 }
 
-function Column({ completed, chain, tx }: { completed: boolean; chain?: ChainConfig; tx?: Hex | null }) {
+function Column({ completed, chain, tx }: { completed: boolean; chain?: ChainConfig; tx?: Hash | null }) {
   return (
     <div className="flex flex-col items-center gap-6">
       <span className="text-sm font-bold text-white">{chain?.name ?? "-"}</span>

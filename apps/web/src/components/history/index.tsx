@@ -1,15 +1,15 @@
-import { useApp, useHistory } from "../../hooks";
+import { useApp, useHistories } from "../../hooks";
 import { PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
 import HistoryDetails from "./history-details";
-import HistoryTable from "./history-table";
+import HistoryTable, { TData } from "./history-table";
 import { useAccount } from "wagmi";
 import Modal from "./modal";
 
 export default function History({ children, className }: PropsWithChildren<{ className: string }>) {
   const [currentPage, setCurrentPage] = useState(0);
   const { isHistoryOpen, historyDetails, setIsHistoryOpen, setHistoryDetails } = useApp();
-  const { loading, data, total, refetch } = useHistory(currentPage, isHistoryOpen);
+  const { loading, data, refetch } = useHistories(currentPage, isHistoryOpen);
 
   useEffect(() => {
     if (isHistoryOpen) {
@@ -26,7 +26,7 @@ export default function History({ children, className }: PropsWithChildren<{ cla
 
   const account = useAccount();
 
-  const handleRowClick = useCallback((r: (typeof data)[0]) => setHistoryDetails(r), [setHistoryDetails]);
+  const handleRowClick = useCallback((r: TData) => setHistoryDetails(r), [setHistoryDetails]);
 
   return account.address ? (
     <>
@@ -62,8 +62,8 @@ export default function History({ children, className }: PropsWithChildren<{ cla
                   onPageChange={setCurrentPage}
                   onRowClick={handleRowClick}
                   currentPage={currentPage}
-                  totalRecords={total}
-                  dataSource={data}
+                  totalRecords={data?.total ?? 0}
+                  dataSource={data?.records?.filter((r) => !!r) ?? []}
                   loading={loading}
                 />
               )}

@@ -10,7 +10,7 @@ const pageSize = 10;
 export default function Manage({ version }: { version: BridgeVersion }) {
   const account = useAccount();
   const [currentPage, setCurrentPage] = useState(0);
-  const { loading, data, total, refetch } = useRelayersData(version, currentPage, pageSize, account.address);
+  const { loading, data, refetch } = useRelayersData(version, currentPage, pageSize, account.address);
 
   useEffect(() => setCurrentPage(0), [version]);
 
@@ -24,9 +24,9 @@ export default function Manage({ version }: { version: BridgeVersion }) {
         onPageChange={setCurrentPage}
         onRefetch={refetch}
         currentPage={currentPage}
-        totalRecords={total}
+        totalRecords={data?.total ?? 0}
         pageSize={pageSize}
-        dataSource={data}
+        dataSource={data?.records ?? []}
         version={version}
         loading={loading}
         isDashboard

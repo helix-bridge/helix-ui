@@ -1,5 +1,5 @@
 import { BaseBridge, LnBridgeV2Default, LnBridgeV2Opposite } from "../../bridges";
-import { ChainConfig, CheckLnBridgeExistReqParams, CheckLnBridgeExistResData, Token } from "../../types";
+import { ChainConfig, Token } from "../../types";
 import {
   getAvailableTargetTokens,
   isLnV2DefaultBridge,
@@ -12,9 +12,21 @@ import { Address, Hex } from "viem";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { Subscription, forkJoin } from "rxjs";
 import { ApolloClient } from "@apollo/client";
-import { GQL_CHECK_LNBRIDGE_EXIST } from "../../config";
 import { RelayerCtx } from "./types";
 import { RelayerContext } from "./context";
+import { graphql } from "../../_generated_/gql";
+
+const checkLnBridgeExistQueryDocument = graphql(`
+  query checkLnBridgeExist($fromChainId: Int, $toChainId: Int, $fromToken: String, $toToken: String, $version: String) {
+    checkLnBridgeExist(
+      fromChainId: $fromChainId
+      toChainId: $toChainId
+      fromToken: $fromToken
+      toToken: $toToken
+      version: $version
+    )
+  }
+`);
 
 export default function RelayerProvider({ children }: PropsWithChildren<unknown>) {
   const [margin, setMargin] = useState<RelayerCtx["margin"]>();
@@ -71,8 +83,8 @@ export default function RelayerProvider({ children }: PropsWithChildren<unknown>
       _sourceToken: Token,
       _targetToken: Token,
     ) => {
-      const { data: lnbridgeData } = await apolloClient.query<CheckLnBridgeExistResData, CheckLnBridgeExistReqParams>({
-        query: GQL_CHECK_LNBRIDGE_EXIST,
+      const { data: lnbridgeData } = await apolloClient.query({
+        query: checkLnBridgeExistQueryDocument,
         variables: {
           fromChainId: _sourceChain.id,
           toChainId: _targetChain.id,

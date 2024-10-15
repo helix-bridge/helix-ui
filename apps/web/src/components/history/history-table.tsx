@@ -1,8 +1,9 @@
-import { HistoryResData, RecordResult } from "../../types";
+import { Network, RecordResult } from "../../types";
 import Table, { ColumnType } from "./table";
 import { formatBalance, formatTime, getChainConfig, getChainLogoSrc } from "../../utils";
+import { QueryHistoriesQuery } from "../../_generated_/gql/graphql";
 
-type TData = HistoryResData["historyRecords"]["records"][0];
+export type TData = NonNullable<NonNullable<NonNullable<QueryHistoriesQuery["historyRecords"]>["records"]>[0]>;
 
 const columns: ColumnType<TData>[] = [
   {
@@ -23,7 +24,7 @@ const columns: ColumnType<TData>[] = [
     title: "Value",
     key: "value",
     render: (row) => {
-      const token = getChainConfig(row.fromChain)?.tokens.find(
+      const token = getChainConfig(row.fromChain as Network)?.tokens.find(
         ({ symbol }) => symbol.toUpperCase() === row.sendToken.toUpperCase(),
       );
       return (
@@ -38,7 +39,7 @@ const columns: ColumnType<TData>[] = [
     key: "from",
     width: "15%",
     render: (row) => {
-      const chain = getChainConfig(row.fromChain);
+      const chain = getChainConfig(row.fromChain as Network);
       return (
         <div className="flex justify-center">
           {chain ? (
@@ -55,7 +56,7 @@ const columns: ColumnType<TData>[] = [
     key: "to",
     width: "15%",
     render: (row) => {
-      const chain = getChainConfig(row.toChain);
+      const chain = getChainConfig(row.toChain as Network);
       return (
         <div className="flex justify-center">
           {chain ? (

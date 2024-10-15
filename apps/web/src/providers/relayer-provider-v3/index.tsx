@@ -1,15 +1,26 @@
 import { LnBridgeV3 } from "../../bridges";
-import { CheckLnBridgeExistReqParams, CheckLnBridgeExistResData } from "../../types";
 import { extractTransferIds, getAvailableTargetTokens, notifyError, notifyTransaction } from "../../utils";
 import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { Hex } from "viem";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { Subscription, forkJoin } from "rxjs";
 import { ApolloClient } from "@apollo/client";
-import { GQL_CHECK_LNBRIDGE_EXIST } from "../../config";
 import { notification } from "../../ui/notification";
 import { RelayerContext } from "./context";
 import { RelayerCtx } from "./types";
+import { graphql } from "../../_generated_/gql";
+
+const checkLnBridgeExistQueryDocument = graphql(`
+  query checkLnBridgeExist($fromChainId: Int, $toChainId: Int, $fromToken: String, $toToken: String, $version: String) {
+    checkLnBridgeExist(
+      fromChainId: $fromChainId
+      toChainId: $toChainId
+      fromToken: $fromToken
+      toToken: $toToken
+      version: $version
+    )
+  }
+`);
 
 export default function RelayerProviderV3({ children }: PropsWithChildren<unknown>) {
   const [sourceChain, setSourceChain] = useState<RelayerCtx["sourceChain"]>(undefined);
@@ -48,8 +59,8 @@ export default function RelayerProviderV3({ children }: PropsWithChildren<unknow
 
   const isLnBridgeExist = useCallback(
     async (apolloClient: ApolloClient<object>) => {
-      const { data: lnbridgeData } = await apolloClient.query<CheckLnBridgeExistResData, CheckLnBridgeExistReqParams>({
-        query: GQL_CHECK_LNBRIDGE_EXIST,
+      const { data: lnbridgeData } = await apolloClient.query({
+        query: checkLnBridgeExistQueryDocument,
         variables: {
           fromChainId: sourceChain?.id,
           toChainId: targetChain?.id,

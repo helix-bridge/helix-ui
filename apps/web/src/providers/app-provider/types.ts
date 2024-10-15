@@ -1,7 +1,8 @@
-import { ChainConfig, HistoryDetailsResData, Token } from "../../types";
+import { TData } from "../../components/history/history-table";
+import { ChainConfig, Token } from "../../types";
 import { Dispatch, SetStateAction } from "react";
 
-export type HistoryDetails = Partial<HistoryDetailsResData["historyRecordByTxHash"]>;
+export type HistoryDetails = TData;
 
 export interface AppCtx {
   recordsSearch: string;

@@ -1,6 +1,47 @@
-import { GQL_GET_RELAYERS } from "../config";
-import { BridgeVersion, ChainConfig, RelayersReqParams, RelayersResData } from "../types";
+import { graphql } from "../_generated_/gql";
+import { BridgeVersion, ChainConfig } from "../types";
 import { useQuery } from "@apollo/client";
+
+const document = graphql(`
+  query QueryRelayersData(
+    $fromChain: String
+    $toChain: String
+    $relayer: String
+    $version: String
+    $page: Int
+    $row: Int
+  ) {
+    queryLnBridgeRelayInfos(
+      fromChain: $fromChain
+      toChain: $toChain
+      relayer: $relayer
+      version: $version
+      page: $page
+      row: $row
+    ) {
+      total
+      records {
+        id
+        fromChain
+        toChain
+        bridge
+        relayer
+        sendToken
+        margin
+        baseFee
+        liquidityFeeRate
+        cost
+        profit
+        heartbeatTimestamp
+        messageChannel
+        lastTransferId
+        withdrawNonce
+        transferLimit
+        signers
+      }
+    }
+  }
+`);
 
 export function useRelayersData(
   version: BridgeVersion,
@@ -14,7 +55,7 @@ export function useRelayersData(
     loading,
     data: _data,
     refetch,
-  } = useQuery<RelayersResData, RelayersReqParams>(GQL_GET_RELAYERS, {
+  } = useQuery(document, {
     variables: {
       relayer: typeof relayer === "string" ? relayer.toLowerCase() || undefined : "",
       fromChain: sourceChain?.network,
@@ -29,8 +70,7 @@ export function useRelayersData(
 
   return {
     loading,
-    data: _data?.queryLnBridgeRelayInfos.records ?? [],
-    total: _data?.queryLnBridgeRelayInfos.total ?? 0,
+    data: _data?.queryLnBridgeRelayInfos,
     refetch,
   };
 }

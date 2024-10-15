@@ -1,4 +1,4 @@
-import { useApp, useTxs } from "../../hooks";
+import { useApp, useExplorerTxs } from "../../hooks";
 import { useDeferredValue, useEffect, useState } from "react";
 import ExplorerTable from "./explorer-table";
 import { UrlSearchParamKey } from "../../types";
@@ -19,7 +19,7 @@ export default function Explorer() {
 
   const [currentPage, setCurrentPage] = useState(0);
   const [isManualRefresh, setIsManualRefresh] = useState(false);
-  const { data, total, networkStatus, refetch } = useTxs(deferredSearchValue.toLowerCase(), currentPage, pageSize);
+  const { data, networkStatus, refetch } = useExplorerTxs(deferredSearchValue.toLowerCase(), currentPage, pageSize);
 
   useEffect(() => {
     setRecordsSearch(new URLSearchParams(window.location.hash.split("?")[1]).get(UrlSearchParamKey.ADDRESS) || "");
@@ -77,8 +77,8 @@ export default function Explorer() {
         />
       </div>
       <ExplorerTable
-        dataSource={data}
-        totalRecords={total}
+        dataSource={data?.records?.filter((r) => !!r) ?? []}
+        totalRecords={data?.total ?? 0}
         currentPage={currentPage}
         pageSize={pageSize}
         loading={

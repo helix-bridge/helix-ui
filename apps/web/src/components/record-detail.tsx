@@ -1,10 +1,8 @@
 import { BaseBridge } from "../bridges";
-import { GQL_HISTORY_RECORD_BY_ID } from "../config";
-import { HistoryRecordReqParams, HistoryRecordResData } from "../types";
+import { BridgeCategory, Network } from "../types";
 import ComponentLoading from "../ui/component-loading";
 import CountdownRefresh from "../ui/countdown-refresh";
 import { bridgeFactory, getChainConfig } from "../utils";
-import { useQuery } from "@apollo/client";
 import { PropsWithChildren, useMemo } from "react";
 import TransferRoute from "./transfer-route";
 import TransactionStatus from "./transaction-status";
@@ -18,6 +16,7 @@ import TransactionFee from "./transaction-fee";
 import { RecordItemTitle } from "../ui/record-item-title";
 import { useNavigate } from "react-router-dom";
 import Back from "./icons/back";
+import { useExplorerTx } from "../hooks/use-explorer-tx";
 
 interface Props {
   id: string;
@@ -25,21 +24,13 @@ interface Props {
 }
 
 export default function RecordDetail(props: Props) {
-  const {
-    loading,
-    data: record,
-    refetch,
-  } = useQuery<HistoryRecordResData, HistoryRecordReqParams>(GQL_HISTORY_RECORD_BY_ID, {
-    variables: { id: props.id },
-    notifyOnNetworkStatusChange: true,
-    fetchPolicy: "cache-and-network",
-  });
+  const { data: record, loading, refetch } = useExplorerTx(props.id);
   const navigate = useNavigate();
 
   const bridgeInstance = useMemo<BaseBridge | undefined>(() => {
-    const category = record?.historyRecordById?.bridge;
-    const sourceChain = getChainConfig(record?.historyRecordById?.fromChain);
-    const targetChain = getChainConfig(record?.historyRecordById?.toChain);
+    const category = record?.historyRecordById?.bridge as BridgeCategory | undefined;
+    const sourceChain = getChainConfig(record?.historyRecordById?.fromChain as Network | undefined);
+    const targetChain = getChainConfig(record?.historyRecordById?.toChain as Network | undefined);
     const sourceToken = sourceChain?.tokens.find(
       (t) => t.symbol.toUpperCase() === record?.historyRecordById?.sendToken.toUpperCase(),
     );
