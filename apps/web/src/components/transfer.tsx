@@ -10,16 +10,17 @@ import {
   useApp,
   useBalance,
   useMaxTransfer,
-  useSortedRelayData,
-  useTransactionFee,
+  useSortedRelayers,
+  useTransferFee,
   useTransfer,
 } from "../hooks";
 import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from "wagmi";
 import TransferProvider from "../providers/transfer-provider";
 import DisclaimerModal from "./modals/disclaimer-modal";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { Address } from "viem";
+import { Address, Hash } from "viem";
 import TransferModal from "./modals/transfer-modal";
+import { BridgeCategory } from "../types";
 
 interface Recipient {
   input: string;
@@ -41,8 +42,8 @@ function Component() {
     sourceChainOptions,
     targetChainOptions,
     availableTokenOptions,
-    loadingSupportedChains,
-    loadingAvailableTokenOptions,
+    loadingAvailableTransfers,
+    loadingAvailableTokens,
     setAmount,
     isSwitchAvailable,
     handleTokenChange,
@@ -90,7 +91,7 @@ function Component() {
   } = useBalance(sourceChain, sourceToken, account.address);
   const { maxTransfer } = useMaxTransfer(sourceChain, targetChain, sourceToken, balance);
 
-  const { data: relayData, loading: loadingRelayData } = useSortedRelayData(
+  const { data: sortedRelayers, loading: loadingSortedRelayers } = useSortedRelayers(
     deferredAmount.value,
     sourceToken,
     sourceChain,
@@ -98,12 +99,12 @@ function Component() {
   );
 
   const bridge = useMemo(() => {
-    const category = relayData?.sortedLnBridgeRelayInfos?.records.at(0)?.bridge;
+    const category = sortedRelayers?.sortedLnBridgeRelayInfos?.records?.at(0)?.bridge as BridgeCategory | undefined;
     return category
       ? bridgeFactory({ category, walletClient, publicClient, sourceChain, sourceToken, targetChain, targetToken })
       : undefined;
   }, [
-    relayData?.sortedLnBridgeRelayInfos?.records,
+    sortedRelayers?.sortedLnBridgeRelayInfos?.records,
     walletClient,
     publicClient,
     sourceChain,
@@ -112,12 +113,12 @@ function Component() {
     targetToken,
   ]);
 
-  const { loading: loadingFee, fee } = useTransactionFee(
+  const { loading: loadingFee, fee } = useTransferFee(
     bridge,
     account.address,
     account.address,
     deferredAmount.value,
-    relayData,
+    sortedRelayers?.sortedLnBridgeRelayInfos,
   );
 
   const {
@@ -198,15 +199,15 @@ function Component() {
     const targetChain = bridge?.getTargetChain();
 
     if (bridge && account.address && recipient.value) {
-      const relayInfo = relayData?.sortedLnBridgeRelayInfos?.records.at(0);
+      const sortedRelayer = sortedRelayers?.sortedLnBridgeRelayInfos?.records?.at(0);
       try {
         setIsTransfering(true);
         const receipt = await bridge.transfer(account.address, recipient.value, deferredAmount.value, {
-          relayer: relayInfo?.relayer,
-          transferId: relayInfo?.lastTransferId,
+          relayer: sortedRelayer?.relayer as Address | undefined,
+          transferId: sortedRelayer?.lastTransferId as Hash | undefined,
           totalFee: fee?.value,
-          withdrawNonce: BigInt(relayInfo?.withdrawNonce ?? 0),
-          depositedMargin: BigInt(relayInfo?.margin ?? 0),
+          withdrawNonce: BigInt(sortedRelayer?.withdrawNonce ?? 0),
+          depositedMargin: BigInt(sortedRelayer?.margin ?? 0),
         });
         notifyTransaction(receipt, sourceChain, "Transfer");
         setIsTransfering(false);
@@ -232,7 +233,7 @@ function Component() {
       }
     }
   }, [
-    relayData?.sortedLnBridgeRelayInfos?.records,
+    sortedRelayers?.sortedLnBridgeRelayInfos?.records,
     account.address,
     recipient.value,
     bridge,
@@ -252,12 +253,12 @@ function Component() {
         <TransferTokenSection
           token={token}
           options={availableTokenOptions}
-          loading={loadingAvailableTokenOptions}
+          loading={loadingAvailableTokens}
           onChange={handleTokenChange}
         />
         <TransferChainSection
           recipient={recipient}
-          loading={loadingSupportedChains}
+          loading={loadingAvailableTransfers}
           expandRecipient={expandRecipient}
           recipientOptions={account.address ? [account.address] : []}
           sourceChain={sourceChain}
@@ -291,8 +292,8 @@ function Component() {
         <TransferInformationSection
           bridge={bridge}
           sourceToken={sourceToken}
-          relayData={relayData}
-          loadingRelayData={loadingRelayData}
+          sortedRelayers={sortedRelayers?.sortedLnBridgeRelayInfos}
+          loadingSortedRelayers={loadingSortedRelayers}
           fee={fee}
           loadingFee={loadingFee}
         />

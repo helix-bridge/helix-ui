@@ -1,4 +1,4 @@
-import { useSupportedChains } from "../../hooks";
+import { useAvailableTransfers } from "../../hooks";
 import { ChainConfig, UrlSearchParamKey } from "../../types";
 import {
   getSourceChainOptions,
@@ -104,10 +104,10 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
   );
 
   const [availableTokenOptions, setAvailableTokenOptions] = useState(tokenOptions);
-  const { loading: loadingAvailableTokenOptions, data: allSupportedChains } = useSupportedChains("");
+  const { loading: loadingAvailableTokens, data: availableTokens } = useAvailableTransfers("");
   useEffect(() => {
-    if (!loadingAvailableTokenOptions && allSupportedChains.length) {
-      const allTokenKeys = allSupportedChains.map(({ tokenKey }) => tokenKey);
+    if (!loadingAvailableTokens && availableTokens?.length) {
+      const allTokenKeys = availableTokens.filter((v) => !!v).map(({ tokenKey }) => tokenKey);
       const _availableTokenOptions = tokenOptions.filter((tokenOpt) =>
         allTokenKeys.includes(tokenOpt.category.toUpperCase() as Uppercase<string>),
       );
@@ -116,17 +116,20 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
       }
       setAvailableTokenOptions(_availableTokenOptions);
     }
-  }, [setToken, loadingAvailableTokenOptions, allSupportedChains]);
+  }, [setToken, loadingAvailableTokens, availableTokens]);
 
-  const { loading: loadingSupportedChains, data: supportedChains } = useSupportedChains(token.category);
-  const supportedChainsRef = useRef(supportedChains);
+  const { loading: loadingAvailableTransfers, data: availableTransfers } = useAvailableTransfers(token.category);
+  const availableTransfersRef = useRef(availableTransfers);
 
   useEffect(() => {
-    supportedChainsRef.current = supportedChains;
+    availableTransfersRef.current = availableTransfers;
     const _token = tokenRef.current;
 
     const _sourceChainOptions = getSourceChainOptions(_token.category).filter((option) =>
-      supportedChains.at(0)?.chains.some(({ fromChain }) => option.network === fromChain),
+      availableTransfers
+        ?.filter((v) => !!v)
+        ?.at(0)
+        ?.chains?.some((v) => option.network === v?.fromChain),
     );
     const _sourceChain =
       _sourceChainOptions.find(({ id }) => id === sourceChainRef.current.id) ||
@@ -140,10 +143,11 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
       sourceTokenRef.current;
 
     const _targetChainOptions = getTargetChainOptions(_sourceToken).filter((option) =>
-      supportedChains
-        .at(0)
-        ?.chains.find(({ fromChain }) => _sourceChain.network === fromChain)
-        ?.toChains.includes(option.network),
+      availableTransfers
+        ?.filter((v) => !!v)
+        ?.at(0)
+        ?.chains?.find((v) => _sourceChain.network === v?.fromChain)
+        ?.toChains?.includes(option.network),
     );
     const _targetChain =
       _targetChainOptions.find(({ id }) => id === targetChainRef.current.id) ||
@@ -163,7 +167,7 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
     setTargetChain(_targetChain);
     setTargetToken(_targetToken);
     changeUrl();
-  }, [supportedChains, changeUrl, setSourceChain, setSourceToken, setTargetChain, setTargetToken]);
+  }, [availableTransfers, changeUrl, setSourceChain, setSourceToken, setTargetChain, setTargetToken]);
 
   const handleTokenChange = useCallback(
     (_token: typeof token) => {
@@ -180,10 +184,11 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
         _sourceTokenOptions.find(({ symbol }) => symbol === sourceTokenRef.current.symbol) || _sourceTokenOptions[0];
 
       const _targetChainOptions = getTargetChainOptions(_sourceToken).filter((option) =>
-        supportedChainsRef.current
-          .at(0)
-          ?.chains.find(({ fromChain }) => _sourceChain.network === fromChain)
-          ?.toChains.includes(option.network),
+        availableTransfersRef.current
+          ?.filter((v) => !!v)
+          ?.at(0)
+          ?.chains?.find((v) => _sourceChain.network === v?.fromChain)
+          ?.toChains?.includes(option.network),
       );
       const _targetChain =
         _targetChainOptions.find(({ id }) => id === targetChainRef.current.id) || _targetChainOptions[0];
@@ -205,10 +210,11 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
   const handleSourceTokenChange = useCallback(
     (_sourceToken: typeof sourceToken) => {
       const _targetChainOptions = getTargetChainOptions(_sourceToken).filter((option) =>
-        supportedChainsRef.current
-          .at(0)
-          ?.chains.find(({ fromChain }) => sourceChainRef.current.network === fromChain)
-          ?.toChains.includes(option.network),
+        availableTransfersRef.current
+          ?.filter((v) => !!v)
+          ?.at(0)
+          ?.chains?.find((v) => sourceChainRef.current.network === v?.fromChain)
+          ?.toChains?.includes(option.network),
       );
       const _targetChain =
         _targetChainOptions.find(({ id }) => id === targetChainRef.current.id) || _targetChainOptions[0];
@@ -268,10 +274,11 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
 
   const isSwitchAvailable = useCallback(
     (sourceChain: ChainConfig, targetChain: ChainConfig) =>
-      supportedChainsRef.current
-        .at(0)
-        ?.chains.find(({ fromChain }) => targetChain.network === fromChain)
-        ?.toChains.includes(sourceChain.network)
+      availableTransfersRef.current
+        ?.filter((v) => !!v)
+        ?.at(0)
+        ?.chains?.find((v) => targetChain.network === v?.fromChain)
+        ?.toChains?.includes(sourceChain.network)
         ? true
         : false,
     [],
@@ -289,8 +296,8 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
         sourceChainOptions,
         targetChainOptions,
         availableTokenOptions,
-        loadingSupportedChains,
-        loadingAvailableTokenOptions,
+        loadingAvailableTransfers,
+        loadingAvailableTokens,
         setAmount,
         isSwitchAvailable,
         handleTokenChange,

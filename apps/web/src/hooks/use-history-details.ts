@@ -1,10 +1,26 @@
 import { Hash } from "viem";
-import { GQL_GET_HISTORY_DETAILS } from "../config";
-import { HistoryDetailsReqParams, HistoryDetailsResData } from "../types";
 import { useQuery } from "@apollo/client";
+import { graphql } from "../_generated_/gql";
+
+const document = graphql(`
+  query QueryHistoryDetails($txHash: String) {
+    historyRecordByTxHash(txHash: $txHash) {
+      requestTxHash
+      responseTxHash
+      fromChain
+      toChain
+      startTime
+      sendToken
+      sendAmount
+      confirmedBlocks
+      result
+      id
+    }
+  }
+`);
 
 export function useHistoryDetails(txHash: Hash | null | undefined) {
-  const { loading, data } = useQuery<HistoryDetailsResData, HistoryDetailsReqParams>(GQL_GET_HISTORY_DETAILS, {
+  const { loading, data } = useQuery(document, {
     variables: { txHash: txHash ?? "" },
     fetchPolicy: "cache-and-network",
     pollInterval: txHash ? 4500 : 0,

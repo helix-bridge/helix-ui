@@ -1,4 +1,4 @@
-import { HistoryRecord, RecordResult } from "../../types";
+import { Network, RecordResult } from "../../types";
 import Table, { ColumnType } from "./table";
 import {
   formatBalance,
@@ -9,22 +9,11 @@ import {
   parseRecordResult,
 } from "../../utils";
 import PrettyAddress from "../pretty-address";
-import { isHash } from "viem";
+import { Address, isHash } from "viem";
 import { useMediaQuery } from "../../hooks";
+import { QueryExplorerTxsQuery } from "../../_generated_/gql/graphql";
 
-type TData = Pick<
-  HistoryRecord,
-  | "sender"
-  | "id"
-  | "fromChain"
-  | "toChain"
-  | "recipient"
-  | "sendAmount"
-  | "sendToken"
-  | "startTime"
-  | "result"
-  | "confirmedBlocks"
->;
+type TData = NonNullable<NonNullable<NonNullable<QueryExplorerTxsQuery["historyRecords"]>["records"]>[number]>;
 
 interface Props {
   onPageChange: (page: number) => void;
@@ -43,7 +32,7 @@ function getColumns(isLg = false): ColumnType<TData>[] {
       key: "from",
       width: isLg ? undefined : "10%",
       render: (row) => {
-        const chain = getChainConfig(row.fromChain);
+        const chain = getChainConfig(row.fromChain as Network | undefined);
         return chain ? (
           <div className="gap-medium flex items-center">
             <img alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} className="rounded-full" />
@@ -59,7 +48,7 @@ function getColumns(isLg = false): ColumnType<TData>[] {
       key: "to",
       width: isLg ? undefined : "10%",
       render: (row) => {
-        const chain = getChainConfig(row.toChain);
+        const chain = getChainConfig(row.toChain as Network | undefined);
         return chain ? (
           <div className="gap-medium flex items-center">
             <img alt={chain.name} width={32} height={32} src={getChainLogoSrc(chain.logo)} className="rounded-full" />
@@ -73,18 +62,20 @@ function getColumns(isLg = false): ColumnType<TData>[] {
     {
       title: "Sender",
       key: "sender",
-      render: (row) => (row.sender ? <PrettyAddress address={row.sender} copyable forceShort /> : <span>-</span>),
+      render: (row) =>
+        row.sender ? <PrettyAddress address={row.sender as Address} copyable forceShort /> : <span>-</span>,
     },
     {
       title: "Recipient",
       key: "recipient",
-      render: (row) => (row.recipient ? <PrettyAddress address={row.recipient} copyable forceShort /> : <span>-</span>),
+      render: (row) =>
+        row.recipient ? <PrettyAddress address={row.recipient as Address} copyable forceShort /> : <span>-</span>,
     },
     {
       title: "Amount",
       key: "amount",
       render: (row) => {
-        const token = getChainConfig(row.fromChain)?.tokens.find(
+        const token = getChainConfig(row.fromChain as Network | undefined)?.tokens.find(
           ({ symbol }) => symbol.toUpperCase() === row.sendToken.toUpperCase(),
         );
         return token ? (

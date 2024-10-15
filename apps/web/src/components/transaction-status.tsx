@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { bridgeFactory } from "../utils/bridge";
 import { interval } from "rxjs";
 import { formatCountdown } from "../utils/time";
-import { HistoryRecord, RecordResult } from "../types";
+import { BridgeCategory, RecordResult } from "../types";
 import { RecordResultTag } from "../ui/record-result-tag";
+import { QueryExplorerTxByIdQuery } from "../_generated_/gql/graphql";
 
 interface Props {
-  record?: HistoryRecord | null;
+  record: QueryExplorerTxByIdQuery["historyRecordById"];
 }
 
 export default function TransactionStatus({ record }: Props) {
@@ -21,7 +22,8 @@ export default function TransactionStatus({ record }: Props) {
   useEffect(() => {
     if (record?.bridge) {
       const startTime = record ? record.startTime * 1000 : Date.now();
-      const minTime = ((bridgeFactory({ category: record.bridge })?.getEstimateTime().min || 0) + 10) * 60 * 1000;
+      const minTime =
+        ((bridgeFactory({ category: record.bridge as BridgeCategory })?.getEstimateTime().min || 0) + 10) * 60 * 1000;
       setCountdown(minTime);
       setIsTimeout(Date.now() - startTime > minTime);
     } else {

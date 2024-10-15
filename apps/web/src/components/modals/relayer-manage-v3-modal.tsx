@@ -64,7 +64,6 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
 
   const {
     loading: isLoadingWithdrawableLiquidities,
-    total: totalWithdrawableLiquidities,
     data: withdrawableLiquidities,
     refetch: refetchWithdrawableLiquidities,
     fetchMore: fetchMoreWithdrawableLiquidities,
@@ -341,9 +340,12 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
                 <Label text="Withdrawable Liquidity">
                   <WithdrawableLiquiditiesSelect
                     loading={isLoadingWithdrawableLiquidities}
-                    total={totalWithdrawableLiquidities}
+                    total={withdrawableLiquidities?.total ?? 0}
                     value={selectedLiquidities}
-                    options={withdrawableLiquidities}
+                    options={(withdrawableLiquidities?.records?.filter((r) => r !== null) ?? []).map((r) => ({
+                      id: r?.id,
+                      lastRequestWithdraw: r?.lastRequestWithdraw,
+                    }))}
                     onChange={setSelectedLiquidities}
                     onLoadMore={fetchMoreWithdrawableLiquidities}
                   />

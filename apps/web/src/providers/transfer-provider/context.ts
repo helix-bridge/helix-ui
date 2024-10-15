@@ -11,8 +11,8 @@ interface TransferCtx {
   targetChain: ChainConfig;
   sourceToken: Token;
   targetToken: Token;
-  loadingSupportedChains: boolean;
-  loadingAvailableTokenOptions: boolean;
+  loadingAvailableTransfers: boolean;
+  loadingAvailableTokens: boolean;
   isSwitchAvailable: (sourceChain: ChainConfig, targetChain: ChainConfig) => boolean;
   setAmount: Dispatch<SetStateAction<{ input: string; value: bigint; valid: boolean; alert: string }>>;
   handleTokenChange: (value: TokenOption) => void;
