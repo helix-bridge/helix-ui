@@ -5,11 +5,11 @@ import Tooltip from "../ui/tooltip";
 import { formatBalance, toShortAdrress } from "../utils";
 
 interface Props {
-  transactionFee: { loading: boolean; value?: bigint; token?: Token; warning?: string };
+  transactionFee: { loading: boolean; value?: bigint; token?: Token };
   transferLimit?: { loading: boolean; value?: bigint; token?: Token };
   dailyLimit?: { loading: boolean; value?: bigint; token?: Token };
   estimatedTime?: { loading: boolean; value?: string };
-  solver: { loading?: boolean; address?: Address };
+  solver: { loading?: boolean; address?: Address; warning?: string };
 }
 
 export default function TransferInformation({
@@ -23,8 +23,8 @@ export default function TransferInformation({
     <div className="gap-small px-medium flex flex-col lg:px-3">
       <Row
         name="Estimated Arrival Time"
-        loading={!estimatedTime || estimatedTime.loading}
-        value={estimatedTime?.value}
+        loading={estimatedTime?.loading}
+        value={estimatedTime?.value || "1~2 Minutes"}
       />
       {transactionFee ? (
         <Row
@@ -32,7 +32,6 @@ export default function TransferInformation({
           loading={transactionFee.loading}
           value={transactionFee.value}
           token={transactionFee.token}
-          warning={transactionFee.warning}
         />
       ) : null}
       {transferLimit ? (
@@ -47,7 +46,7 @@ export default function TransferInformation({
       {dailyLimit ? (
         <Row name="Daily Limit" loading={dailyLimit.loading} value={dailyLimit.value} token={dailyLimit.token} />
       ) : null}
-      <Row name="Solver" loading={solver.loading} address={solver.address} />
+      <Row name="Solver" loading={solver.loading} address={solver.address} warning={solver.warning} />
     </div>
   );
 }
@@ -70,7 +69,7 @@ function Row({
   address?: Address;
 }) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex h-5 items-center justify-between">
       <div className="gap-small flex items-center">
         <Text value={name} />
         {tips ? (

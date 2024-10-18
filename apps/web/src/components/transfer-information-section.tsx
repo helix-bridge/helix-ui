@@ -37,10 +37,9 @@ export default function TransferInformationSection({
         }}
         estimatedTime={hasRelayer ? { loading: loadingSortedRelayers, value: bridge?.formatEstimateTime() } : undefined}
         transactionFee={{
-          warning: fee ? undefined : "Liquidity is not enough",
           loading: loadingFee,
-          value: fee?.value,
-          token: fee?.token,
+          value: fee?.value ?? 0n,
+          token: fee?.token ?? sourceToken,
         }}
         dailyLimit={
           dailyLimit ? { loading: loadingDailyLimit, value: dailyLimit.limit, token: dailyLimit.token } : undefined
@@ -48,6 +47,7 @@ export default function TransferInformationSection({
         solver={{
           loading: loadingSortedRelayers,
           address: sortedRelayers?.records?.at(0)?.relayer as Address | undefined,
+          warning: hasRelayer ? undefined : "Liquidity is not enough",
         }}
       />
     </TransferSection>

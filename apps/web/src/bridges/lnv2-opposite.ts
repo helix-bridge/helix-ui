@@ -53,7 +53,8 @@ export class LnBridgeV2Opposite extends LnBridgeBase {
       if (askEstimateGas) {
         return this.sourcePublicClient.estimateContractGas(defaultParams);
       } else if (this.walletClient) {
-        const hash = await this.walletClient.writeContract(defaultParams);
+        const { request } = await this.sourcePublicClient.simulateContract(defaultParams);
+        const hash = await this.walletClient.writeContract(request);
         return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
       }
     }
@@ -61,8 +62,10 @@ export class LnBridgeV2Opposite extends LnBridgeBase {
 
   async updateFeeAndMargin(margin: bigint, baseFee: bigint, feeRate: number) {
     await this.validateNetwork("source");
+    const account = await this.getSigner();
 
     if (
+      account &&
       this.contract &&
       this.targetChain &&
       this.sourceToken &&
@@ -70,7 +73,7 @@ export class LnBridgeV2Opposite extends LnBridgeBase {
       this.publicClient &&
       this.walletClient
     ) {
-      const hash = await this.walletClient.writeContract({
+      const { request } = await this.publicClient.simulateContract({
         address: this.contract.sourceAddress,
         abi: (await import(`../abi/lnv2-opposite`)).default,
         functionName: "updateProviderFeeAndMargin",
@@ -84,7 +87,9 @@ export class LnBridgeV2Opposite extends LnBridgeBase {
         ],
         value: this.sourceToken.type === "native" ? margin : undefined,
         gas: this.getTxGasLimit(),
+        account,
       });
+      const hash = await this.walletClient.writeContract(request);
       return this.publicClient.waitForTransactionReceipt({ hash, confirmations: CONFIRMATION_BLOCKS });
     }
   }
