@@ -5,11 +5,11 @@ import Tooltip from "../ui/tooltip";
 import { formatBalance, toShortAdrress } from "../utils";
 
 interface Props {
-  transactionFee: { loading: boolean; value?: bigint; token?: Token; warning?: string };
+  transactionFee: { loading: boolean; value?: bigint; token?: Token };
   transferLimit?: { loading: boolean; value?: bigint; token?: Token };
   dailyLimit?: { loading: boolean; value?: bigint; token?: Token };
   estimatedTime?: { loading: boolean; value?: string };
-  solver: { loading?: boolean; address?: Address };
+  solver: { loading?: boolean; address?: Address; warning?: string };
 }
 
 export default function TransferInformation({
@@ -32,7 +32,6 @@ export default function TransferInformation({
           loading={transactionFee.loading}
           value={transactionFee.value}
           token={transactionFee.token}
-          warning={transactionFee.warning}
         />
       ) : null}
       {transferLimit ? (
@@ -47,7 +46,7 @@ export default function TransferInformation({
       {dailyLimit ? (
         <Row name="Daily Limit" loading={dailyLimit.loading} value={dailyLimit.value} token={dailyLimit.token} />
       ) : null}
-      <Row name="Solver" loading={solver.loading} address={solver.address} />
+      <Row name="Solver" loading={solver.loading} address={solver.address} warning={solver.warning} />
     </div>
   );
 }
