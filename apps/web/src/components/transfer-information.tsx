@@ -23,8 +23,8 @@ export default function TransferInformation({
     <div className="gap-small px-medium flex flex-col lg:px-3">
       <Row
         name="Estimated Arrival Time"
-        loading={!estimatedTime || estimatedTime.loading}
-        value={estimatedTime?.value}
+        loading={estimatedTime?.loading}
+        value={estimatedTime?.value || "1~2 Minutes"}
       />
       {transactionFee ? (
         <Row
