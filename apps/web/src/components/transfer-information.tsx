@@ -69,7 +69,7 @@ function Row({
   address?: Address;
 }) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex h-5 items-center justify-between">
       <div className="gap-small flex items-center">
         <Text value={name} />
         {tips ? (
