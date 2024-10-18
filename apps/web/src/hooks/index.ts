@@ -8,7 +8,7 @@ export * from "./use-liquidity-withdraw-fee-params";
 export * from "./use-all-allowance";
 export * from "./use-allowance";
 export * from "./use-balance";
-export * from "./use-sorted-relay-data";
+export * from "./use-sorted-relayers";
 export * from "./use-transfer";
 export * from "./use-transaction-fee";
 export * from "./use-daily-limit";

@@ -2,17 +2,19 @@ import Tooltip from "../ui/tooltip";
 import { getChainConfig } from "../utils/chain";
 import { getChainLogoSrc } from "../utils/misc";
 import BridgeLogo from "./bridge-identicon";
-import { HistoryRecord } from "../types/graphql";
 import { bridgeFactory } from "../utils/bridge";
+import { ExplorerTxByIdQuery } from "../_generated_/gql/graphql";
+import { BridgeCategory } from "../types";
+import { Network } from "../types";
 
 interface Props {
-  record?: HistoryRecord | null;
+  record: ExplorerTxByIdQuery["historyRecordById"];
 }
 
 export default function TransferRoute({ record }: Props) {
-  const sourceChain = getChainConfig(record?.fromChain);
-  const targetChain = getChainConfig(record?.toChain);
-  const bridge = record ? bridgeFactory({ category: record.bridge }) : undefined;
+  const sourceChain = getChainConfig(record?.fromChain as Network | undefined);
+  const targetChain = getChainConfig(record?.toChain as Network | undefined);
+  const bridge = record ? bridgeFactory({ category: record.bridge as BridgeCategory }) : undefined;
 
   return (
     <div className="gap-large flex items-center">

@@ -1,9 +1,9 @@
-import { HistoryRecord } from "../types/graphql";
+import { ExplorerTxByIdQuery } from "../_generated_/gql/graphql";
 import { formatTime, toTimeAgo } from "../utils/time";
 import { formatDistanceStrict } from "date-fns";
 
 interface Props {
-  record?: HistoryRecord | null;
+  record: ExplorerTxByIdQuery["historyRecordById"];
 }
 
 export default function TransactionTimestamp({ record }: Props) {

@@ -1,4 +1,3 @@
-import { HistoryRecord } from "../types/graphql";
 import Tooltip from "../ui/tooltip";
 import PrettyAddress from "./pretty-address";
 import { BaseBridge } from "../bridges/base";
@@ -8,9 +7,10 @@ import { getChainConfig } from "../utils/chain";
 import { getChainLogoSrc, getTokenLogoSrc } from "../utils/misc";
 import { formatBalance } from "../utils/balance";
 import { Address } from "viem";
+import { ExplorerTxByIdQuery } from "../_generated_/gql/graphql";
 
 interface Props {
-  record?: HistoryRecord | null;
+  record: ExplorerTxByIdQuery["historyRecordById"];
   bridge?: BaseBridge | null;
 }
 
@@ -20,16 +20,16 @@ export default function TokenTransfer({ record, bridge }: Props) {
   return record && contract ? (
     <div className="flex flex-col items-start justify-between">
       <Item
-        chain={record.fromChain}
-        from={record.sender}
+        chain={record.fromChain as Network}
+        from={record.sender as Address}
         to={contract.sourceAddress}
         symbol={record.sendToken}
         amount={BigInt(record.sendAmount || 0)}
       />
       <Item
-        chain={record.toChain}
+        chain={record.toChain as Network}
         from={contract.targetAddress}
-        to={record.recipient}
+        to={record.recipient as Address}
         symbol={record.recvToken}
         amount={BigInt(record.recvAmount || 0)}
       />
