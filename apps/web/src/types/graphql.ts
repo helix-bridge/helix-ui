@@ -129,23 +129,6 @@ export type LnBridgeRelayerOverview = Pick<
   | "transferLimit"
 >;
 
-export interface QueryLnBridgeRelayInfosReqParams {
-  fromChain?: Network;
-  toChain?: Network;
-  relayer?: string;
-  bridge?: BridgeCategory;
-  version?: BridgeVersion;
-  row: number;
-  page: number;
-}
-
-export interface QueryLnBridgeRelayInfosResData {
-  queryLnBridgeRelayInfos: {
-    total: number;
-    records: LnBridgeRelayerOverview[];
-  } | null;
-}
-
 export interface CheckLnBridgeExistReqParams {
   fromChainId: ChainID | undefined;
   toChainId: ChainID | undefined;
