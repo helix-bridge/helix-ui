@@ -1,45 +1,5 @@
 import { gql } from "@apollo/client";
 
-export const GQL_QUERY_LNBRIDGE_RELAY_INFOS = gql`
-  query queryLnBridgeRelayInfos(
-    $fromChain: String
-    $toChain: String
-    $relayer: String
-    $row: Int
-    $page: Int
-    $version: String
-  ) {
-    queryLnBridgeRelayInfos(
-      fromChain: $fromChain
-      toChain: $toChain
-      relayer: $relayer
-      row: $row
-      page: $page
-      version: $version
-    ) {
-      total
-      records {
-        id
-        fromChain
-        toChain
-        bridge
-        relayer
-        sendToken
-        margin
-        baseFee
-        liquidityFeeRate
-        cost
-        profit
-        heartbeatTimestamp
-        messageChannel
-        lastTransferId
-        withdrawNonce
-        transferLimit
-      }
-    }
-  }
-`;
-
 export const GQL_CHECK_LNBRIDGE_EXIST = gql`
   query checkLnBridgeExist($fromChainId: Int, $toChainId: Int, $fromToken: String, $toToken: String, $version: String) {
     checkLnBridgeExist(
