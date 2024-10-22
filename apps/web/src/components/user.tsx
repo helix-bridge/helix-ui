@@ -27,7 +27,7 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8 }:
   return address ? (
     <Dropdown
       childClassName="bg-background py-large rounded-large border border-white/20 flex flex-col gap-large"
-      labelClassName={`flex items-center gap-2 rounded-xl bg-white/20 lg:bg-secondary px-large h-8 transition-colors hover:bg-white/20`}
+      labelClassName={`flex items-center gap-2 rounded-xl bg-white/20 lg:bg-secondary px-large h-[2.125rem] transition-colors hover:bg-white/20`}
       placement={placement}
       label={
         <div className="gap-small flex items-center">
@@ -112,7 +112,7 @@ export default function User({ placement, prefixLength = 10, suffixLength = 8 }:
     </Dropdown>
   ) : (
     <button
-      className="bg-primary px-large hover:bg-primary/90 lg:py-small inline-flex rounded-xl py-2 transition-colors"
+      className="bg-primary px-large hover:bg-primary/90 inline-flex rounded-xl py-2 transition-colors lg:py-[0.4375rem]"
       onClick={() => open()}
     >
       <span className="text-sm font-bold text-white">Connect Wallet</span>

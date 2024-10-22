@@ -38,7 +38,7 @@ export default function ChainSwitch({ placement }: { placement?: Placement }) {
   return account.address ? (
     <>
       <button
-        className={`gap-small lg:bg-secondary flex h-8 w-fit items-center justify-between rounded-xl bg-white/20 px-3 transition-colors hover:bg-white/20`}
+        className={`gap-small lg:bg-secondary flex h-[2.125rem] w-fit items-center justify-between rounded-xl bg-white/20 px-3 transition-colors hover:bg-white/20`}
         ref={refs.setReference}
         {...getReferenceProps()}
       >
