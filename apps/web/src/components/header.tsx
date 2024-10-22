@@ -81,7 +81,7 @@ export default function Header() {
 
         {/* Right */}
         <div className="gap-medium hidden items-center lg:flex">
-          <History className="bg-secondary px-large inline-flex h-8 items-center rounded-full text-sm font-bold text-white transition-colors hover:bg-white/20" />
+          <History className="bg-secondary px-large inline-flex h-[2.125rem] items-center rounded-full text-sm font-bold text-white transition-colors hover:bg-white/20" />
           <User prefixLength={14} suffixLength={10} />
           <ChainSwitch placement="bottom-end" />
         </div>
