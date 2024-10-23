@@ -30,6 +30,7 @@ export enum ChainID {
   TAIKO_HEKLA = 167009,
   ASTAR_ZKEVM = 3776,
   MORPH = 2810,
+  MORPH_MAINNET = 2818,
   MOONBEAM = 1284,
   AVALANCHE = 43_114,
   ZIRCUIT = 48900,
@@ -59,6 +60,7 @@ export type Network =
   | "bera"
   | "taiko-hekla"
   | "morph"
+  | "morph-mainnet"
   | "moonbeam"
   | "avalanche"
   | "zircuit"

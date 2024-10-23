@@ -14,6 +14,7 @@ import {
   lineaChain,
   mantleChain,
   moonbeamChain,
+  morphMainnetChain,
   polygonChain,
   scrollChain,
   sepoliaChain,
@@ -109,6 +110,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.ZIRCUIT_SEPOLIA:
     case "zircuit-sepolia":
       return zircuitSepoliaChain;
+    case ChainID.MORPH_MAINNET:
+    case "morph-mainnet":
+      return morphMainnetChain;
     default:
       return;
   }
@@ -142,6 +146,7 @@ export function getChainConfigs(askAll?: boolean) {
     avalancheChain,
     zircuitChain,
     zircuitSepoliaChain,
+    morphMainnetChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {

@@ -23,3 +23,4 @@ export * from "./avalanche";
 export * from "./taiko-hekla";
 export * from "./zircuit";
 export * from "./zircuit-sepolia";
+export * from "./morph-mainnet";
