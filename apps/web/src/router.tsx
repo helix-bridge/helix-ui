@@ -1,6 +1,6 @@
 import { createHashRouter } from "react-router-dom";
 import Root from "./routes/root";
-import Home from "./routes/home";
+import Transfer from "./routes/transfer";
 import Relayer from "./routes/relayer";
 import NotFound from "./routes/not-found";
 import Error from "./routes/error";
@@ -11,7 +11,7 @@ export const router = createHashRouter([
   {
     element: <Root />,
     children: [
-      { path: "/", element: <Home /> },
+      { path: "/transfer", element: <Transfer /> },
       { path: "/relayer", element: <Relayer /> },
       { path: "/explorer", element: <Explorer /> },
       { path: "/tx/:id", element: <TxDetails /> },

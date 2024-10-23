@@ -1,6 +1,6 @@
-import Transfer from "../components/transfer";
+import TransferComp from "../components/transfer";
 
-export default function Home() {
+export default function Transfer() {
   return (
     <main className="app-main relative overflow-hidden">
       <div className="fixed bottom-0 left-0 right-0 top-0 z-[-1] flex items-center justify-center">
@@ -8,7 +8,7 @@ export default function Home() {
       </div>
       <div className="absolute bottom-0 left-0 right-0 top-0 z-[2] overflow-y-auto">
         <div className="page-container flex min-h-full items-start justify-center lg:items-center lg:!pb-10">
-          <Transfer />
+          <TransferComp />
         </div>
       </div>
     </main>
