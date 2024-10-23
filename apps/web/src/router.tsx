@@ -6,11 +6,13 @@ import NotFound from "./routes/not-found";
 import Error from "./routes/error";
 import Explorer from "./routes/explorer";
 import TxDetails from "./routes/tx-details";
+import Home from "./routes/home";
 
 export const router = createHashRouter([
   {
     element: <Root />,
     children: [
+      { path: "/", element: <Home /> },
       { path: "/transfer", element: <Transfer /> },
       { path: "/relayer", element: <Relayer /> },
       { path: "/explorer", element: <Explorer /> },
