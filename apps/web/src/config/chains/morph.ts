@@ -54,7 +54,7 @@ export const morphChain: ChainConfig = {
    */
   id: ChainID.MORPH,
   network: "morph",
-  name: "Morph Testnet",
+  name: "Morph",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -62,21 +62,20 @@ export const morphChain: ChainConfig = {
   },
   rpcUrls: {
     default: {
-      http: ["https://rpc-holesky.morphl2.io"],
+      http: ["https://rpc.morphl2.io"],
       webSocket: [],
     },
     public: {
-      http: ["https://rpc-holesky.morphl2.io"],
+      http: ["https://rpc.morphl2.io"],
       webSocket: [],
     },
   },
   blockExplorers: {
     default: {
       name: "Morph",
-      url: "https://explorer-holesky.morphl2.io/",
+      url: "https://explorer.morphl2.io/",
     },
   },
-  testnet: true,
 
   /**
    * Custom

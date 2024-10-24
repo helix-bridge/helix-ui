@@ -3,7 +3,7 @@ import { ChainConfig, ChainID, Network } from "../../types/chain";
 import { BridgeV2Type } from "../../types";
 import { Address } from "viem";
 
-const chain = HelixChain.morph;
+const chain = HelixChain.morphTestnet;
 const tokens = chain.tokens.map((token) => {
   const couples = chain.filterCouples({ symbolFrom: token.symbol });
   const category = couples.at(0)?.category ?? "Others";
@@ -48,13 +48,13 @@ if (chain.couples.length && !chain.tokens.some((t) => t.type === "native")) {
   });
 }
 
-export const morphMainnetChain: ChainConfig = {
+export const morphTestnetChain: ChainConfig = {
   /**
    * Chain
    */
-  id: ChainID.MORPH_MAINNET,
-  network: "morph-mainnet",
-  name: "Morph Mainnet",
+  id: ChainID.MORPH_TESTNET,
+  network: "morph-testnet",
+  name: "Morph Testnet",
   nativeCurrency: {
     name: "ETH",
     symbol: "ETH",
@@ -62,20 +62,21 @@ export const morphMainnetChain: ChainConfig = {
   },
   rpcUrls: {
     default: {
-      http: ["https://rpc.morphl2.io"],
+      http: ["https://rpc-holesky.morphl2.io"],
       webSocket: [],
     },
     public: {
-      http: ["https://rpc.morphl2.io"],
+      http: ["https://rpc-holesky.morphl2.io"],
       webSocket: [],
     },
   },
   blockExplorers: {
     default: {
       name: "Morph",
-      url: "https://explorer.morphl2.io/",
+      url: "https://explorer-holesky.morphl2.io/",
     },
   },
+  testnet: true,
 
   /**
    * Custom
