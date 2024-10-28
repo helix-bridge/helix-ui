@@ -2,6 +2,99 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 100;
+    src: url(/fonts/IBMPlexSans-Thin.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 100;
+    src: url(/fonts/IBMPlexSans-ThinItalic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 200;
+    src: url(/fonts/IBMPlexSans-ExtraLight.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 200;
+    src: url(/fonts/IBMPlexSans-ExtraLightItalic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 300;
+    src: url(/fonts/IBMPlexSans-Light.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 300;
+    src: url(/fonts/IBMPlexSans-LightItalic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 400;
+    src: url(/fonts/IBMPlexSans-Regular.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 400;
+    src: url(/fonts/IBMPlexSans-Italic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 500;
+    src: url(/fonts/IBMPlexSans-Medium.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 500;
+    src: url(/fonts/IBMPlexSans-MediumItalic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 600;
+    src: url(/fonts/IBMPlexSans-SemiBold.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 600;
+    src: url(/fonts/IBMPlexSans-SemiBoldItalic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 700 800;
+    src: url(/fonts/IBMPlexSans-Bold.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 700 800;
+    src: url(/fonts/IBMPlexSans-BoldItalic.ttf);
+  }
+  @font-face {
+    font-family: "KronaOne";
+    font-style: normal;
+    font-weight: 400;
+    src: url(/fonts/KronaOne-Regular.ttf);
+  }
+}
+
 @layer components {
   .app-scrollbar::-webkit-scrollbar {
     width: 6px;
@@ -26,15 +119,15 @@
 
   /* Page */
   .page-container {
-    @apply mx-auto w-full max-w-8xl px-medium py-5;
+    @apply max-w-8xl px-medium mx-auto w-full py-5;
   }
 
   /* User */
   .user-connect-wallet {
-    @apply flex h-9 shrink-0 items-center gap-medium rounded-medium bg-primary px-large transition lg:hover:bg-primary/80 lg:active:translate-y-1;
+    @apply gap-medium rounded-medium bg-primary px-large lg:hover:bg-primary/80 flex h-9 shrink-0 items-center transition lg:active:translate-y-1;
   }
   .user-dropdown-item {
-    @apply inline-flex items-center gap-medium rounded-xl px-medium py-small text-start transition hover:bg-white/10 lg:active:translate-y-1;
+    @apply gap-medium px-medium py-small inline-flex items-center rounded-xl text-start transition hover:bg-white/10 lg:active:translate-y-1;
   }
 
   .button {
@@ -52,7 +145,7 @@
   }
 
   .select {
-    @apply border transition duration-300 focus-within:border-primary hover:border-primary disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1 lg:disabled:translate-y-0;
+    @apply focus-within:border-primary hover:border-primary border transition duration-300 disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1 lg:disabled:translate-y-0;
   }
 }
 
@@ -349,4 +442,15 @@
 .modal-fade-exit-active > div {
   transform: scale(0.5);
   transition: transform 300ms;
+}
+
+/* For Webkit-based browsers (Chrome, Safari and Opera) */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE, Edge and Firefox */
+.scrollbar-hidden {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }

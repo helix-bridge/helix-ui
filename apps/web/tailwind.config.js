@@ -1,3 +1,5 @@
+import defaultTheme from "tailwindcss/defaultTheme";
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{jsx,tsx}"],
@@ -85,6 +87,9 @@ export default {
         "progress-anim-left": "spinner-rotate-left 9000ms linear 4500ms 1 paused forwards", // Duration: 9s, delay: 4.5s
         "progress-anim-right": "spinner-rotate-right 9000ms linear 0ms 1 paused forwards",
       },
+    },
+    fontFamily: {
+      sans: ["IBMPlexSans", ...defaultTheme.fontFamily.sans],
     },
   },
   plugins: [],
