@@ -97,7 +97,7 @@
 
 @layer components {
   .app-scrollbar::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
   }
   .app-scrollbar::-webkit-scrollbar-thumb {
     border-radius: 10px;

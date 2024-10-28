@@ -26,7 +26,7 @@ export default function HomepageMobileMenu({ data }: Props) {
             Home
           </Link>
           {data.map((item) => (
-            <HomepageHeaderNav key={item.label} {...item} />
+            <HomepageHeaderNav key={item.label} {...item} onClick={() => setIsOpen(false)} />
           ))}
           <HomepageSocialMedia className="gap-10 self-start" />
         </div>

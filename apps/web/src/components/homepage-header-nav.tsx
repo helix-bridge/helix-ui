@@ -18,15 +18,17 @@ type Props =
       items: { label: string; link: string }[];
       link?: never;
       pcStyle?: boolean;
+      onClick?: () => void;
     }
   | {
       label: string;
       link: string;
       items?: never;
       pcStyle?: boolean;
+      onClick?: () => void;
     };
 
-export default function HomepageHeaderNav({ label, items, link, pcStyle }: Props) {
+export default function HomepageHeaderNav({ label, items, link, pcStyle, onClick }: Props) {
   return link !== undefined ? (
     link.startsWith("http") ? (
       <a
@@ -41,6 +43,7 @@ export default function HomepageHeaderNav({ label, items, link, pcStyle }: Props
       <Link
         to={link}
         className="w-fit text-xl font-bold text-white lg:text-lg lg:font-normal lg:leading-[23.4px] lg:tracking-[1px]"
+        onClick={onClick}
       >
         {label}
       </Link>
@@ -48,11 +51,19 @@ export default function HomepageHeaderNav({ label, items, link, pcStyle }: Props
   ) : pcStyle ? (
     <PcDropdown label={label} items={items} />
   ) : (
-    <MobileDropdown label={label} items={items} />
+    <MobileDropdown label={label} items={items} onClick={onClick} />
   );
 }
 
-function MobileDropdown({ label, items }: { label: string; items: { label: string; link: string }[] }) {
+function MobileDropdown({
+  label,
+  items,
+  onClick,
+}: {
+  label: string;
+  items: { label: string; link: string }[];
+  onClick?: () => void;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -84,7 +95,7 @@ function MobileDropdown({ label, items }: { label: string; items: { label: strin
                 {item.label}
               </a>
             ) : (
-              <Link key={item.label} to={item.link} className="w-fit text-xl font-bold text-white">
+              <Link key={item.label} to={item.link} className="w-fit text-xl font-bold text-white" onClick={onClick}>
                 {item.label}
               </Link>
             ),

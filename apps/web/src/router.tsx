@@ -7,6 +7,7 @@ import Explorer from "./routes/explorer";
 import TxDetails from "./routes/tx-details";
 import Home from "./routes/home";
 import Layout from "./layout";
+import Solver from "./routes/solver";
 
 export const router = createHashRouter([
   {
@@ -14,6 +15,7 @@ export const router = createHashRouter([
     element: <Layout />,
     children: [
       { index: true, element: <Home /> },
+      { path: "liquidity-solver", element: <Solver /> },
       { path: "transfer", element: <Transfer /> },
       { path: "relayer", element: <Relayer /> },
       { path: "explorer", element: <Explorer /> },

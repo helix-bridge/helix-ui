@@ -11,7 +11,7 @@ const navigations: (
     items: [
       { label: "Helixbox Bridge", link: "/transfer" },
       { label: "XToken BaaS", link: "https://xtoken.box/" },
-      { label: "Helixbox Liquidity Solver", link: "/todo" },
+      { label: "Helixbox Liquidity Solver", link: "/liquidity-solver" },
     ],
   },
   { label: "Docs", link: "https://docs.helixbridge.app/" },

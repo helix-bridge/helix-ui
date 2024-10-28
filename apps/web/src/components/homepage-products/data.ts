@@ -17,7 +17,7 @@ export const products: { title: string; description: string; link: string; video
     title: "Liquidity Solver",
     description:
       "Solver services for order flow platforms like CowSwap and UniswapX. Offering low-slippage, high-quality liquidity and migration solutions via on-chain and off-chain strategies like liquidity aggregation and hedging, while also balancing liquidity and prices across multi-chain markets to generate profits through these services.",
-    link: "/todo",
+    link: "/liquidity-solver",
     video: "videos/liquidity.mp4",
   },
 ];
