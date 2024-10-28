@@ -31,7 +31,7 @@ export default function HomepageFooter() {
           title="Resources"
           items={[
             { label: "Docs", link: "https://docs.helixbridge.app/" },
-            { label: "Careers", link: "/todo" },
+            { label: "Careers", link: "https://apply.workable.com/itering/" },
           ]}
           className="flex-shrink-[0.6] flex-grow-[0.6] basis-0"
         />
