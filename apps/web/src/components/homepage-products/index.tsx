@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Mobile from "./mobile";
 import PC from "./pc";
 import { products } from "./data";
+import { CSSTransition, SwitchTransition } from "react-transition-group";
 
 const defaultVideo = "videos/logo.mp4";
 
@@ -16,7 +17,8 @@ export default function HomepageProducts() {
         ))}
       </div>
       <div className="relative hidden items-center justify-center lg:flex">
-        <video src={video} autoPlay muted loop playsInline width={720} height={720} className="h-[720px] w-[720px]" />
+        <AnimatedVideo video={video} />
+
         <div className="absolute -top-[94px] left-[50%] -translate-x-[50%]">
           <PC
             {...products[0]}
@@ -46,5 +48,35 @@ export default function HomepageProducts() {
         </div>
       </div>
     </>
+  );
+}
+
+function AnimatedVideo({ video }: { video: string }) {
+  const previousRef = useRef<HTMLVideoElement>(null);
+  const currentRef = useRef<HTMLVideoElement>(null);
+  const activeRef = useRef(video);
+
+  const nodeRef = useMemo(() => {
+    const next = activeRef.current === video ? currentRef : previousRef;
+    activeRef.current = video;
+    return next;
+  }, [video]);
+
+  return (
+    <SwitchTransition>
+      <CSSTransition timeout={200} key={video} nodeRef={nodeRef} classNames="video-fade" unmountOnExit>
+        <video
+          ref={nodeRef}
+          src={video}
+          autoPlay
+          muted
+          loop
+          playsInline
+          width={720}
+          height={720}
+          className="h-[720px] w-[720px]"
+        />
+      </CSSTransition>
+    </SwitchTransition>
   );
 }

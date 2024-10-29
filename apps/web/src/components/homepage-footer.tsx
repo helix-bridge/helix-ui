@@ -24,7 +24,10 @@ export default function HomepageFooter() {
         </div>
         <Column
           title="Products"
-          items={products.map((product) => ({ label: product.title, link: product.link }))}
+          items={products.map((product) => ({
+            label: product.title === "Liquidity Solver" ? "Helixbox Liquidity Solver" : product.title,
+            link: product.link,
+          }))}
           className="flex-1"
         />
         <Column
@@ -74,12 +77,16 @@ function Column({
             rel="noopener noreferrer"
             target="_blank"
             href={item.link}
-            className="text-base font-normal leading-[20.8px] text-[#F6F6F7]"
+            className="w-fit text-base font-normal leading-[20.8px] text-[#F6F6F7] underline-offset-4 hover:underline"
           >
             {item.label}
           </a>
         ) : (
-          <Link key={item.label} to={item.link} className="text-base font-normal leading-[20.8px] text-[#F6F6F7]">
+          <Link
+            key={item.label}
+            to={item.link}
+            className="w-fit text-base font-normal leading-[20.8px] text-[#F6F6F7] underline-offset-4 hover:underline"
+          >
             {item.label}
           </Link>
         ),

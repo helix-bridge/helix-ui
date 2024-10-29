@@ -57,9 +57,13 @@ export default function PC({ title, description, link, video, defaultVideo, plac
 
   return (
     <>
-      <div ref={refs.setReference} {...getReferenceProps()} className={`flex flex-col ${className}`}>
+      <div ref={refs.setReference} {...getReferenceProps()} className={`group flex flex-col ${className}`}>
         {title.split(" ").map((t) => (
-          <span key={t} className="font-[KronaOne] text-[60px] font-normal leading-[75px] text-white">
+          <span
+            key={t}
+            className="font-[KronaOne] text-[60px] font-normal leading-[75px] text-white/50 transition-colors group-hover:text-white"
+            style={isOpen ? { color: "white" } : undefined}
+          >
             {t}
           </span>
         ))}
@@ -75,14 +79,14 @@ export default function PC({ title, description, link, video, defaultVideo, plac
               {link.startsWith("http") ? (
                 <a
                   href={link}
-                  className="text-primary w-fit rounded-[10px] bg-white p-[10px] text-center text-sm font-bold leading-[18.2px]"
+                  className="text-primary hover:bg-primary w-fit rounded-[10px] border border-white bg-white p-[10px] text-center text-sm font-bold leading-[18.2px] transition-colors hover:text-white"
                 >
                   Explore Now
                 </a>
               ) : (
                 <Link
                   to={link}
-                  className="text-primary w-fit rounded-[10px] bg-white p-[10px] text-center text-sm font-bold leading-[18.2px]"
+                  className="text-primary hover:bg-primary w-fit rounded-[10px] border border-white bg-white p-[10px] text-center text-sm font-bold leading-[18.2px] transition-colors hover:text-white"
                 >
                   Explore Now
                 </Link>

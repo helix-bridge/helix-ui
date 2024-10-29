@@ -35,14 +35,14 @@ export default function HomepageHeaderNav({ label, items, link, pcStyle, onClick
         rel="noopener noreferrer"
         target="_blank"
         href={link}
-        className="w-fit text-xl font-bold text-white lg:text-lg lg:font-normal lg:leading-[23.4px] lg:tracking-[1px]"
+        className="w-fit text-xl font-bold text-white underline-offset-4 transition-colors hover:text-white hover:underline lg:text-lg lg:font-normal lg:leading-[23.4px] lg:tracking-[1px] lg:text-white/50"
       >
         {label}
       </a>
     ) : (
       <Link
         to={link}
-        className="w-fit text-xl font-bold text-white lg:text-lg lg:font-normal lg:leading-[23.4px] lg:tracking-[1px]"
+        className="w-fit text-xl font-bold text-white underline-offset-4 transition-colors hover:text-white hover:underline lg:text-lg lg:font-normal lg:leading-[23.4px] lg:tracking-[1px] lg:text-white/50"
         onClick={onClick}
       >
         {label}
@@ -90,12 +90,17 @@ function MobileDropdown({
                 rel="noopener noreferrer"
                 target="_blank"
                 href={item.link}
-                className="w-fit text-xl font-bold text-white"
+                className="w-fit text-xl font-bold text-white underline-offset-4 hover:underline"
               >
                 {item.label}
               </a>
             ) : (
-              <Link key={item.label} to={item.link} className="w-fit text-xl font-bold text-white" onClick={onClick}>
+              <Link
+                key={item.label}
+                to={item.link}
+                className="w-fit text-xl font-bold text-white underline-offset-4 hover:underline"
+                onClick={onClick}
+              >
                 {item.label}
               </Link>
             ),
@@ -112,7 +117,7 @@ function PcDropdown({ label, items }: { label: string; items: { label: string; l
   const { refs, context, floatingStyles } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
-    middleware: [offset(6)],
+    middleware: [offset(10)],
     placement: "bottom",
   });
 
@@ -129,11 +134,20 @@ function PcDropdown({ label, items }: { label: string; items: { label: string; l
 
   return (
     <>
-      <button className="gap-medium inline-flex w-fit items-center" ref={refs.setReference} {...getReferenceProps()}>
-        <span className="text-lg font-normal leading-[23.4px] tracking-[1px]">{label}</span>
+      <button
+        className="gap-medium group inline-flex w-fit items-center"
+        ref={refs.setReference}
+        {...getReferenceProps()}
+      >
         <span
-          className="border-x-[4px] border-t-[5px] border-x-transparent border-t-white transition-transform"
-          style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
+          className="text-lg font-normal leading-[23.4px] tracking-[1px] text-white transition-colors group-hover:text-white lg:text-white/50"
+          style={isOpen ? { color: "white" } : undefined}
+        >
+          {label}
+        </span>
+        <span
+          className="border-x-[4px] border-t-[5px] border-x-transparent border-t-white transition-[transform,color] group-hover:border-t-white lg:border-t-white/50"
+          style={isOpen ? { transform: "rotateX(180deg)", borderTopColor: "white" } : { transform: "rotateX(0)" }}
         />
       </button>
 
@@ -155,7 +169,7 @@ function PcDropdown({ label, items }: { label: string; items: { label: string; l
                     rel="noopener noreferrer"
                     target="_blank"
                     href={item.link}
-                    className="text-lg font-normal leading-[23.4px] tracking-[1px] text-white"
+                    className="text-lg font-normal leading-[23.4px] tracking-[1px] text-white underline-offset-4 transition-colors hover:text-white hover:underline lg:text-white/50"
                   >
                     {item.label}
                   </a>
@@ -163,7 +177,7 @@ function PcDropdown({ label, items }: { label: string; items: { label: string; l
                   <Link
                     key={item.label}
                     to={item.link}
-                    className="text-lg font-normal leading-[23.4px] tracking-[1px] text-white"
+                    className="text-lg font-normal leading-[23.4px] tracking-[1px] text-white underline-offset-4 transition-colors hover:text-white hover:underline lg:text-white/50"
                   >
                     {item.label}
                   </Link>

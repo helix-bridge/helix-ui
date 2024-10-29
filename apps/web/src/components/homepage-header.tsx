@@ -21,7 +21,7 @@ const navigations: (
 export default function HomepageHeader() {
   return (
     <div className="fixed left-0 top-0 z-40 flex h-[50px] w-full items-center justify-between px-[20px] backdrop-blur-lg lg:h-[64px] lg:px-[60px]">
-      <Link to="/">
+      <Link to="/" className="transition-transform hover:scale-105">
         <img
           alt="Helixbox logo"
           src="images/helixbox-logo.svg"
@@ -37,7 +37,7 @@ export default function HomepageHeader() {
         ))}
         <Link
           to="/transfer"
-          className="p-medium text-primary rounded-[10px] bg-white text-sm font-bold leading-[18.2px]"
+          className="p-medium text-primary hover:bg-primary rounded-[10px] border border-white bg-white text-sm font-bold leading-[18.2px] transition-colors hover:text-white"
         >
           Helixbox Bridge
         </Link>

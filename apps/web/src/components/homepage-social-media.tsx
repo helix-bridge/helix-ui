@@ -15,7 +15,13 @@ export default function HomepageSocialMedia({ className }: { className?: string 
   return (
     <div className={`flex items-center ${className}`}>
       {data.map((item) => (
-        <a key={item.label} href={item.link} target="_blank" rel="noopener noreferrer">
+        <a
+          key={item.label}
+          href={item.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="transition-transform hover:-translate-y-1"
+        >
           <img width={item.width} height={item.height} alt={item.label} src={item.icon} />
         </a>
       ))}
