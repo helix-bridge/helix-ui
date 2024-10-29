@@ -43,12 +43,20 @@
   <body style="color: white; line-height: 1.5rem; font-size: 1rem; font-weight: 400;" class="app-scrollbar">
     <div id="root"></div>
     <script>
-      const path = window.location.hash.split('?')[0];
-      if (path === "" || path === '#/' || path === "#/liquidity-solver") {
-        document.body.style.background = "#000a67";
-      } else {
-        document.body.style.background = "#00141d";
+      function setBodyBackground() {
+        const path = window.location.hash.split('?')[0];
+        if (path === "" || path === '#/' || path === "#/liquidity-solver") {
+          document.body.style.background = "#000a67";
+        } else {
+          document.body.style.background = "#00141d";
+        }
       }
+      document.addEventListener('DOMContentLoaded', () => {
+        const observer = new MutationObserver(setBodyBackground);
+        observer.observe(document.getElementById("root"), { childList: true });
+        window.addEventListener("beforeunload", () => observer.disconnect());
+      });
+      setBodyBackground();
     </script>
     <script type="module" src="src/main.tsx"></script>
   </body>
