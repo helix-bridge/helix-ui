@@ -77,6 +77,11 @@ export default {
           "50%": { transform: "rotate(180deg)" },
           "100%": { transform: "rotate(180deg)" },
         },
+        "scroll-to-bottom": {
+          "0%": { top: "1lh" },
+          "20%, 55%": { top: "0lh" },
+          "60%, 100%": { top: "-1lh" },
+        },
       },
       animation: {
         "notification-enter": "right-enter 400ms ease-out",
@@ -86,6 +91,7 @@ export default {
         "count-loading-large": "count-loading-large 1200ms cubic-bezier(0, 0.5, 0.5, 1) infinite",
         "progress-anim-left": "spinner-rotate-left 9000ms linear 4500ms 1 paused forwards", // Duration: 9s, delay: 4.5s
         "progress-anim-right": "spinner-rotate-right 9000ms linear 0ms 1 paused forwards",
+        "scroll-to-bottom": "scroll-to-bottom 7000ms cubic-bezier(0.62, 0, 0.38, 1.0) infinite",
       },
     },
     fontFamily: {
