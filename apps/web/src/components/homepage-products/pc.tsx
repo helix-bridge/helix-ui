@@ -57,17 +57,27 @@ export default function PC({ title, description, link, video, defaultVideo, plac
 
   return (
     <>
-      <div ref={refs.setReference} {...getReferenceProps()} className={`group flex flex-col ${className}`}>
-        {title.split(" ").map((t) => (
-          <span
-            key={t}
-            className="font-[KronaOne] text-[60px] font-normal leading-[75px] text-white/50 transition-colors group-hover:text-white"
-            style={isOpen ? { color: "white" } : undefined}
-          >
-            {t}
-          </span>
-        ))}
-      </div>
+      {link.startsWith("http") ? (
+        <a
+          rel="noopener noreferrer"
+          target="_blank"
+          href={link}
+          ref={refs.setReference}
+          {...getReferenceProps()}
+          className={`group flex flex-col ${className}`}
+        >
+          {title.split(" ").map((t) => (
+            <Span key={t} text={t} isOpen={isOpen} />
+          ))}
+        </a>
+      ) : (
+        <Link to={link} ref={refs.setReference} {...getReferenceProps()} className={`group flex flex-col ${className}`}>
+          {title.split(" ").map((t) => (
+            <Span key={t} text={t} isOpen={isOpen} />
+          ))}
+        </Link>
+      )}
+
       {isMounted && (
         <FloatingPortal>
           <div ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()} className="z-30">
@@ -79,6 +89,8 @@ export default function PC({ title, description, link, video, defaultVideo, plac
               {link.startsWith("http") ? (
                 <a
                   href={link}
+                  rel="noopener noreferrer"
+                  target="_blank"
                   className="text-primary hover:bg-primary w-fit rounded-[10px] border border-white bg-white p-[10px] text-center text-sm font-bold leading-[18.2px] transition-colors hover:text-white"
                 >
                   Explore Now
@@ -96,5 +108,17 @@ export default function PC({ title, description, link, video, defaultVideo, plac
         </FloatingPortal>
       )}
     </>
+  );
+}
+
+function Span({ text, isOpen }: { text: string; isOpen: boolean }) {
+  return (
+    <span
+      key={text}
+      className="font-[KronaOne] text-[60px] font-normal leading-[75px] text-white/50 transition-colors group-hover:text-white"
+      style={isOpen ? { color: "white" } : undefined}
+    >
+      {text}
+    </span>
   );
 }
