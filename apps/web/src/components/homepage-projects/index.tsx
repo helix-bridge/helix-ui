@@ -78,11 +78,11 @@ const Card = ({
   useEffect(() => {
     if (isLoaded.current && ref.current) {
       if (halfSize) {
+        ref.current.width = ref.current.naturalWidth / 4;
+        ref.current.height = ref.current.naturalHeight / 4;
+      } else {
         ref.current.width = ref.current.naturalWidth / 2;
         ref.current.height = ref.current.naturalHeight / 2;
-      } else {
-        ref.current.width = ref.current.naturalWidth;
-        ref.current.height = ref.current.naturalHeight;
       }
     }
   }, [halfSize]);
@@ -94,9 +94,14 @@ const Card = ({
       onLoad={(e) => {
         onLoad?.(e);
         isLoaded.current = true;
-        if (halfSize && ref.current) {
-          ref.current.width = ref.current.naturalWidth / 2;
-          ref.current.height = ref.current.naturalHeight / 2;
+        if (ref.current) {
+          if (halfSize) {
+            ref.current.width = ref.current.naturalWidth / 4;
+            ref.current.height = ref.current.naturalHeight / 4;
+          } else {
+            ref.current.width = ref.current.naturalWidth / 2;
+            ref.current.height = ref.current.naturalHeight / 2;
+          }
         }
       }}
     />
