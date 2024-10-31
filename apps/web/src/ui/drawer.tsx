@@ -46,7 +46,7 @@ export default function Drawer({
           <div className="flex h-full w-full flex-col items-start">
             <div className="p-medium flex w-full items-center justify-between">
               <Link to="/" onClick={onClose}>
-                <img width={90} height={25} alt="Logo" src="images/logo.svg" />
+                <img width={106.64} height={20} alt="Logo" src="images/logo.svg" />
               </Link>
               <img
                 width={24}

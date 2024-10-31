@@ -36,7 +36,7 @@ export default function Header() {
           {/* Logo */}
           <div className="gap-medium flex items-center">
             <Link to="/">
-              <img width={90} height={25} alt="Logo" src="images/logo.svg" />
+              <img width={106.64} height={20} alt="Logo" src="images/logo.svg" />
             </Link>
             {isTestnet() && (
               <div className="rounded-small bg-primary inline-flex items-center justify-center px-1 py-[1px]">
