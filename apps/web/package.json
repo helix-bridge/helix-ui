@@ -20,7 +20,7 @@
   "dependencies": {
     "@apollo/client": "^3.10.3",
     "@floating-ui/react": "^0.26.14",
-    "@helixbridge/helixconf": "1.1.15",
+    "@helixbridge/helixconf": "1.1.18",
     "@reown/appkit": "^1.0.7",
     "@reown/appkit-adapter-wagmi": "^1.0.7",
     "@sentry/react": "^8.30.0",
