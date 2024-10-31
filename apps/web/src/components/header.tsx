@@ -16,7 +16,7 @@ interface NavigationConfig {
 }
 
 const navigationsConfig: NavigationConfig[] = [
-  { href: "/transfer", label: "Transfer" },
+  { href: "/transfer", label: "Bridge" },
   { href: "/relayer", label: "Relayer" },
 ];
 
