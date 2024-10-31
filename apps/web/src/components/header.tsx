@@ -28,7 +28,7 @@ export default function Header() {
     <>
       <div
         className={`app-header px-medium fixed left-0 top-0 z-10 flex w-full items-center justify-between border-b border-b-white/25 lg:border-b-transparent lg:px-5 ${
-          pathname === "/" ? "backdrop-blur lg:bg-transparent lg:backdrop-blur-none" : "bg-background"
+          pathname === "/transfer" ? "backdrop-blur lg:bg-transparent lg:backdrop-blur-none" : "bg-background"
         }`}
       >
         {/* Left */}
