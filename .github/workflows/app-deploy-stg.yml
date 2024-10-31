@@ -27,7 +27,7 @@ jobs:
           project_name: "helix-apps"
           script_install: pnpm install
           script_build: pnpm app build:mainnet
-          dist_path: apps/app/dist
+          dist_path: apps/helixbox-app/dist
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
@@ -43,7 +43,7 @@ jobs:
           project_name: "helix-apps-test"
           script_install: pnpm install
           script_build: pnpm app build:testnet
-          dist_path: apps/app/dist
+          dist_path: apps/helixbox-app/dist
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}

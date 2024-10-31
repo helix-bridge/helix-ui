@@ -26,7 +26,7 @@ jobs:
           project_name: "helix-apps"
           script_install: pnpm install
           script_build: pnpm app build:mainnet
-          dist_path: apps/app/dist
+          dist_path: apps/helixbox-app/dist
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
@@ -44,7 +44,7 @@ jobs:
           project_name: "helix-apps-test"
           script_install: pnpm install
           script_build: pnpm app build:testnet
-          dist_path: apps/app/dist
+          dist_path: apps/helixbox-app/dist
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
@@ -69,8 +69,8 @@ jobs:
         run: |
           pnpm install
           pnpm app build:mainnet
-          mv apps/app/fleek.config.json apps/app/dist
-          cd apps/app/dist
+          mv apps/helixbox-app/fleek.config.json apps/helixbox-app/dist
+          cd apps/helixbox-app/dist
 
           npm i -g @fleek-platform/cli
           fleek projects switch --id=clwordxrq0003igm26h2r52n1
