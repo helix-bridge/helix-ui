@@ -1,0 +1,475 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 100;
+    src: url(/fonts/IBMPlexSans-Thin.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 100;
+    src: url(/fonts/IBMPlexSans-ThinItalic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 200;
+    src: url(/fonts/IBMPlexSans-ExtraLight.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 200;
+    src: url(/fonts/IBMPlexSans-ExtraLightItalic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 300;
+    src: url(/fonts/IBMPlexSans-Light.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 300;
+    src: url(/fonts/IBMPlexSans-LightItalic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 400;
+    src: url(/fonts/IBMPlexSans-Regular.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 400;
+    src: url(/fonts/IBMPlexSans-Italic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 500;
+    src: url(/fonts/IBMPlexSans-Medium.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 500;
+    src: url(/fonts/IBMPlexSans-MediumItalic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 600;
+    src: url(/fonts/IBMPlexSans-SemiBold.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 600;
+    src: url(/fonts/IBMPlexSans-SemiBoldItalic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 700 800;
+    src: url(/fonts/IBMPlexSans-Bold.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 700 800;
+    src: url(/fonts/IBMPlexSans-BoldItalic.ttf);
+  }
+  @font-face {
+    font-family: "KronaOne";
+    font-style: normal;
+    font-weight: 400;
+    src: url(/fonts/KronaOne-Regular.ttf);
+  }
+}
+
+@layer components {
+  .app-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .app-scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 5x rgba(0, 0, 0, 0.2);
+    background: hsla(0, 0%, 100%, 0.4);
+  }
+
+  /* Layout */
+  .app-header {
+    @apply h-[64px];
+  }
+  .app-footer {
+    @apply h-[48px];
+  }
+  .app-main {
+    min-height: calc(100vh - 64px - 48px);
+    @apply mt-[64px];
+  }
+
+  /* Page */
+  .page-container {
+    @apply max-w-8xl px-medium mx-auto w-full py-5;
+  }
+
+  /* User */
+  .user-connect-wallet {
+    @apply gap-medium rounded-medium bg-primary px-large lg:hover:bg-primary/80 flex h-9 shrink-0 items-center transition lg:active:translate-y-1;
+  }
+  .user-dropdown-item {
+    @apply gap-medium px-medium py-small inline-flex items-center rounded-xl text-start transition hover:bg-white/10 lg:active:translate-y-1;
+  }
+
+  .button {
+    @apply flex h-8 items-center justify-center lg:h-9;
+  }
+
+  /* Input */
+  .normal-input-wrap {
+    @apply border transition-colors duration-300;
+  }
+  .valid-input-wrap {
+  }
+  .invalid-input-wrap {
+    @apply border-app-red focus-within:border-app-red hover:border-app-red;
+  }
+
+  .select {
+    @apply focus-within:border-primary hover:border-primary border transition duration-300 disabled:cursor-not-allowed disabled:opacity-60 lg:active:translate-y-1 lg:disabled:translate-y-0;
+  }
+}
+
+/* Page header loading bar */
+.loading-bar {
+  background: linear-gradient(90deg, #ffffff 35%, #0085ff 50%, #ffffff 65%);
+  background-position: 100% 50%;
+  background-size: 40% 100%;
+  animation: bar-loading 2.4s linear infinite;
+}
+@keyframes bar-loading {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.refresh-countdown {
+  animation: countdown-dash 9.3s linear infinite;
+  animation-delay: 0.7s;
+}
+@keyframes countdown-dash {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -30;
+  }
+}
+
+/* Ellipsis */
+.ellipsis,
+.ellipsis::before,
+.ellipsis::after {
+  animation: ellipsis-frames 1.4s linear infinite;
+  line-height: 0.875rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.ellipsis {
+  position: relative;
+}
+.ellipsis::before,
+.ellipsis::after {
+  top: 0;
+  content: ".";
+  position: absolute;
+}
+.ellipsis::before {
+  left: -8px;
+  animation-delay: -0.16s;
+}
+.ellipsis::after {
+  left: 8px;
+  animation-delay: 0.16s;
+}
+@keyframes ellipsis-frames {
+  from {
+    color: #ffffff;
+  }
+  to {
+    color: transparent;
+  }
+}
+
+/* Tx in progress */
+.tx-in-progress {
+  width: 32px;
+  height: 90px;
+  display: block;
+  margin: 20px auto;
+  position: relative;
+  border-radius: 50% 50% 0 0;
+  border-bottom: 10px solid #0085ff;
+  background-color: #fff;
+  background-image: radial-gradient(ellipse at center, #fff 34%, #0085ff 35%, #0085ff 54%, #fff 55%),
+    linear-gradient(#0085ff 10px, transparent 0);
+  background-size: 28px 28px;
+  background-position:
+    center 20px,
+    center 2px;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+  animation: animloader-back 4s linear infinite alternate;
+}
+.tx-in-progress::before {
+  content: "";
+  box-sizing: border-box;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 44px;
+  border-radius: 50%;
+  box-shadow: 0px 15px #0085ff inset;
+  top: 67px;
+}
+.tx-in-progress::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 34px;
+  height: 34px;
+  top: 112%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.5) 8%,
+    rgba(0, 133, 255, 0.6) 24%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  border-radius: 50% 50% 0;
+  background-repeat: no-repeat;
+  background-position: -44px -44px;
+  background-size: 100px 100px;
+  box-shadow: 4px 4px 12px 0px rgba(0, 133, 255, 0.5);
+  box-sizing: border-box;
+  animation: animloader 4s linear infinite alternate;
+}
+@keyframes animloader-back {
+  0%,
+  7.5%,
+  17.5% {
+    transform: translateY(0px);
+  }
+  5%,
+  10%,
+  25% {
+    transform: translateY(-5px);
+  }
+}
+@keyframes animloader {
+  0% {
+    box-shadow: 4px 4px 12px 2px rgba(255, 255, 255, 0.75);
+    width: 34px;
+    height: 34px;
+    background-position: -44px -44px;
+    background-size: 100px 100px;
+  }
+  25% {
+    box-shadow: 2px 2px 8px 0px rgba(255, 255, 255, 0.5);
+    width: 30px;
+    height: 28px;
+    background-position: -36px -36px;
+    background-size: 80px 80px;
+  }
+}
+
+/* Drawer */
+.drawer-fade-enter {
+  opacity: 0;
+}
+.drawer-fade-enter > div {
+  transform: translateX(100%);
+}
+.drawer-fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+.drawer-fade-enter-active > div {
+  transform: translateX(0);
+  transition: transform 300ms;
+}
+.drawer-fade-exit {
+  opacity: 1;
+}
+.drawer-fade-exit > div {
+  transform: translateX(0);
+}
+.drawer-fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+.drawer-fade-exit-active > div {
+  transform: translateX(100%);
+  transition: transform 300ms;
+}
+
+/* Tabs */
+.tabs-fade-enter {
+  opacity: 0;
+}
+.tabs-fade-enter-active {
+  opacity: 1;
+  transition: opacity 150ms;
+}
+.tabs-fade-exit {
+  opacity: 1;
+}
+.tabs-fade-exit-active {
+  opacity: 0;
+  transition: opacity 150ms;
+}
+
+.video-fade-enter {
+  opacity: 0;
+  transform: scale(0.9);
+}
+.video-fade-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 200ms, transform 200ms;
+}
+.video-fade-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+.video-fade-exit-active {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 200ms, transform 200ms;
+}
+
+/* History */
+.history-table-fade-enter {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+.history-table-fade-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 100ms,
+    transform 100ms;
+}
+.history-table-fade-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+.history-table-fade-exit-active {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition:
+    opacity 100ms,
+    transform 100ms;
+}
+.history-detail-fade-enter {
+  opacity: 0;
+  transform: translateX(10px);
+}
+.history-detail-fade-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 100ms,
+    transform 100ms;
+}
+.history-detail-fade-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+.history-detail-fade-exit-active {
+  opacity: 0;
+  transform: translateX(10px);
+  transition:
+    opacity 100ms,
+    transform 100ms;
+}
+
+/* Component loading */
+.component-loading-appear,
+.component-loading-enter {
+  background-color: transparent;
+}
+.component-loading-appear-active,
+.component-loading-enter-active {
+  background-color: rgba(0, 0, 0, 0.35);
+  transition: background-color 300ms;
+}
+.component-loading-appear-done,
+.component-loading-enter-done {
+  background-color: rgba(0, 0, 0, 0.35);
+}
+.component-loading-exit {
+  background-color: rgba(0, 0, 0, 0.35);
+}
+.component-loading-exit-active {
+  background-color: transparent;
+  transition: background-color 300ms;
+}
+
+/* Modal */
+.modal-fade-appear,
+.modal-fade-enter {
+  opacity: 0;
+}
+.modal-fade-appear > div,
+.modal-fade-enter > div {
+  transform: scale(0.5);
+}
+.modal-fade-appear-active,
+.modal-fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+.modal-fade-appear-active > div,
+.modal-fade-enter-active > div {
+  transform: scale(1);
+  transition: transform 300ms;
+}
+.modal-fade-exit {
+  opacity: 1;
+}
+.modal-fade-exit > div {
+  transform: scale(1);
+}
+.modal-fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+.modal-fade-exit-active > div {
+  transform: scale(0.5);
+  transition: transform 300ms;
+}
+
+/* For Webkit-based browsers (Chrome, Safari and Opera) */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE, Edge and Firefox */
+.scrollbar-hidden {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
