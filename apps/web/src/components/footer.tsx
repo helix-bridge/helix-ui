@@ -5,7 +5,7 @@ import Tooltip from "../ui/tooltip";
 export default function Footer() {
   return (
     <div className="app-footer gap-medium px-medium flex w-full items-center justify-center lg:justify-between lg:px-5">
-      <span className="text-xs font-semibold text-white/50">{`© ${new Date().getFullYear()} Helix Bridge`}</span>
+      <span className="text-xs font-semibold text-white/50">{`© ${new Date().getFullYear()} Helixbox Team`}</span>
       <div className="h-3 w-[1px] bg-white/30 lg:hidden" />
       <div className="flex items-center gap-5">
         <Links />
