@@ -10,7 +10,7 @@ export const products: { title: string; description: string; link: string; video
     title: "XToken BaaS",
     description:
       "XToken BaaS (Bridge as a Service) offers professional cross-chain token mapping bridge services tailored for cryptocurrency token issuance projects or custodial applications. Clients maintain full control over contracts and asset permissions.",
-    link: "https://xtoken.box/",
+    link: "https://xtoken.helix.box/",
     video: "videos/xtoken.mp4",
   },
   {

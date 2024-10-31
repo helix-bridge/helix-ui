@@ -10,11 +10,11 @@ const navigations: (
     label: "Products",
     items: [
       { label: "Helixbox Bridge", link: "/transfer" },
-      { label: "XToken BaaS", link: "https://xtoken.box/" },
+      { label: "XToken BaaS", link: "https://xtoken.helix.box/" },
       { label: "Helixbox Liquidity Solver", link: "/liquidity-solver" },
     ],
   },
-  { label: "Docs", link: "https://docs.helixbridge.app/" },
+  { label: "Docs", link: "https://docs.helix.box/" },
   { label: "Careers", link: "https://apply.workable.com/itering/" },
 ];
 
