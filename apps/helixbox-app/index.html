@@ -23,41 +23,25 @@
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bridge Stablecoins and Native Tokens on HelixBridge</title>
+    <title>Bridge Stablecoins and Native Tokens on Helixbox Bridge</title>
     <meta name="description" content="Secure, fast, and low-cost cross-chain crypto transfers" />
 
     <meta name="format-detection" content="telephone=no">
-    <link rel="canonical" href="https://helixbridge.app">
+    <link rel="canonical" href="https://app.helix.box">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="HelixBridge Interface">
-    <meta property="og:url" content="https://helixbridge.app/">
-    <meta property="og:image" content="https://helixbridge.app/preview.png">
-    <meta property="og:image:alt" content="HelixBridge Interface">
+    <meta property="og:title" content="Helixbox App">
+    <meta property="og:url" content="https://app.helix.box/">
+    <meta property="og:image" content="https://app.helix.box/preview.png">
+    <meta property="og:image:alt" content="Helixbox App">
     <meta property="og:description" content="Secure, fast, and low-cost cross-chain crypto transfers.">
 
-    <meta property="twitter:title" content="HelixBridge Interface">
-    <meta property="twitter:image" content="https://helixbridge.app/preview.png">
-    <meta property="twitter:image:alt" content="HelixBridge Interface">
+    <meta property="twitter:title" content="Helixbox App">
+    <meta property="twitter:image" content="https://app.helix.box/preview.png">
+    <meta property="twitter:image:alt" content="Helixbox App">
   </head>
-  <body style="color: white; line-height: 1.5rem; font-size: 1rem; font-weight: 400;" class="app-scrollbar">
+  <body style="background-color: #00141d; color: white; line-height: 1.5rem; font-size: 1rem; font-weight: 400;" class="app-scrollbar">
     <div id="root"></div>
-    <script>
-      function setBodyBackground() {
-        const path = window.location.hash.split('?')[0];
-        if (path === "" || path === '#/' || path === "#/liquidity-solver") {
-          document.body.style.background = "#000a67";
-        } else {
-          document.body.style.background = "#00141d";
-        }
-      }
-      document.addEventListener('DOMContentLoaded', () => {
-        const observer = new MutationObserver(setBodyBackground);
-        observer.observe(document.getElementById("root"), { childList: true });
-        window.addEventListener("beforeunload", () => observer.disconnect());
-      });
-      setBodyBackground();
-    </script>
     <script type="module" src="src/main.tsx"></script>
   </body>
 </html>

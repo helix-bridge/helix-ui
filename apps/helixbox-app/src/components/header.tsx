@@ -16,7 +16,7 @@ interface NavigationConfig {
 }
 
 const navigationsConfig: NavigationConfig[] = [
-  { href: "/transfer", label: "Bridge" },
+  { href: "/", label: "Bridge" },
   { href: "/relayer", label: "Relayer" },
 ];
 
@@ -28,16 +28,16 @@ export default function Header() {
     <>
       <div
         className={`app-header px-medium fixed left-0 top-0 z-10 flex w-full items-center justify-between border-b border-b-white/25 lg:border-b-transparent lg:px-5 ${
-          pathname === "/transfer" ? "backdrop-blur lg:bg-transparent lg:backdrop-blur-none" : "bg-background"
+          pathname === "/" ? "backdrop-blur lg:bg-transparent lg:backdrop-blur-none" : "bg-background"
         }`}
       >
         {/* Left */}
         <div className="flex items-center gap-5">
           {/* Logo */}
           <div className="gap-medium flex items-center">
-            <Link to="/">
+            <a href="https://helix.box" rel="noopener noreferrer" target="_blank">
               <img width={106.64} height={20} alt="Logo" src="images/logo.svg" />
-            </Link>
+            </a>
             {isTestnet() && (
               <div className="rounded-small bg-primary inline-flex items-center justify-center px-1 py-[1px] lg:hidden">
                 <span className="text-xs font-bold text-black">testnet</span>
