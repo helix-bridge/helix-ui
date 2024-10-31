@@ -1,11 +1,9 @@
-# HelixBridge Web Interface
-
-❤️ Secure, fast, and low-cost cross-chain crypto transfers.
+## Helixbox App Interface
 
 ### Production
 
-- mainnet: https://helixbridge.app (ipfs version: https://helixbridge.eth.limo)
-- testnet: https://testnet.helixbridge.app
+- mainnet: https://app.helix.box (ipfs version: https://helixbridge.eth.limo)
+- testnet: https://testnet.app.helix.box
 
 ### Staging
 

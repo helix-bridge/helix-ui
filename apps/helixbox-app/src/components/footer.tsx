@@ -32,10 +32,10 @@ function Links() {
   const [network, setNetwork] = useState<TData>({ label: "Saa", path: "ss", pc: true, external: true });
 
   useEffect(() => {
-    if (window.location.hostname === "helixbridge.app") {
-      setNetwork((prev) => ({ ...prev, label: "Testnet", path: "https://testnet.helixbridge.app" }));
-    } else if (window.location.hostname === "testnet.helixbridge.app") {
-      setNetwork((prev) => ({ ...prev, label: "Mainnet", path: "https://helixbridge.app" }));
+    if (window.location.hostname === "app.helix.box") {
+      setNetwork((prev) => ({ ...prev, label: "Testnet", path: "https://testnet.app.helix.box" }));
+    } else if (window.location.hostname === "testnet.app.helix.box") {
+      setNetwork((prev) => ({ ...prev, label: "Mainnet", path: "https://app.helix.box" }));
     } else if (window.location.hostname === "helix-stg-mainnet.vercel.app") {
       setNetwork((prev) => ({ ...prev, label: "Testnet", path: "https://helix-stg-testnet.vercel.app" }));
     } else if (window.location.hostname === "helix-stg-testnet.vercel.app") {
@@ -76,7 +76,7 @@ function Links() {
           ),
         )}
 
-      {window.location.hostname === "helixbridge.app" && (
+      {window.location.hostname === "app.helix.box" && (
         <Tooltip
           contentClassName="w-72"
           content="For a fully decentralized experience, you can use the IPFS deployed version."
