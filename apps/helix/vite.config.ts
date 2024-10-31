@@ -1,4 +1,3 @@
-import { sentryVitePlugin } from "@sentry/vite-plugin";
 /// <reference types="vitest" />
 
 import { defineConfig } from "vite";
@@ -39,10 +38,6 @@ export default defineConfig({
         type: "module",
       },
       selfDestroying: true,
-    }),
-    sentryVitePlugin({
-      org: "helix-ck",
-      project: "javascript-react",
     }),
   ],
 

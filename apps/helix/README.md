@@ -1,25 +1,4 @@
 # HelixBridge Web Interface
 
-❤️ Secure, fast, and low-cost cross-chain crypto transfers.
+> Helix Bridge is excited to announce its rebranding as Helixbox Bridge, following the upgrade of the Helix brand to Helixbox. For all your cross-chain asset needs, visit our new platform at app.helix.box.
 
-### Production
-
-- mainnet: https://helixbridge.app (ipfs version: https://helixbridge.eth.limo)
-- testnet: https://testnet.helixbridge.app
-
-### Staging
-
-- mainnet: https://helix-stg-mainnet.vercel.app
-- testnet: https://helix-stg-testnet.vercel.app
-
-### Development
-
-- mainnet: https://helix-dev-mainnet.vercel.app
-- testnet: https://helix-dev-testnet.vercel.app
-
-### Local development
-
-```shell
-$ pnpm install
-$ pnpm run dev
-```
