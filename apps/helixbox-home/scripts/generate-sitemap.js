@@ -3,10 +3,8 @@ import path, { dirname } from "node:path";
 import { fileURLToPath, URL } from "node:url";
 
 const pagesMeta = [
-  { url: "https://helixbridge.app", priority: 1.0 },
-  { url: "https://helixbridge.app/#/relayer", priority: 0.8 },
-  { url: "https://helixbridge.app/#/explorer", priority: 0.8 },
-  { url: "https://testnet.helixbridge.app", priority: 0.8 },
+  { url: "https://helix.box", priority: 1.0 },
+  { url: "https://helix.box/#/liquidity-solver", priority: 0.8 },
 ];
 
 const urls = pagesMeta

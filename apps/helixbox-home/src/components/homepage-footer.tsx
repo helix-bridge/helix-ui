@@ -14,7 +14,7 @@ export default function HomepageFooter() {
       <div className="hidden justify-between p-[60px] lg:flex">
         <div className="flex flex-shrink-[1.4] flex-grow-[1.4] basis-0 flex-col justify-between">
           <div className="flex flex-col gap-5">
-            <img src="/images/helixbox-logo.svg" alt="Helixbox logo" width={207.26} height={39} />
+            <img src="/images/logo.svg" alt="Helixbox logo" width={207.26} height={39} />
             <About />
           </div>
           <div className="flex flex-col gap-5">

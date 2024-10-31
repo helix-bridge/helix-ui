@@ -18,7 +18,7 @@ export default function HomepageMobileMenu({ data }: Props) {
   return (
     <>
       <button className="flex h-[34px] w-[34px] items-center justify-center lg:hidden" onClick={() => setIsOpen(true)}>
-        <img alt="Menu icon" width={20} height={20} src="images/homepage-mobile-menu.svg" />
+        <img alt="Menu icon" width={20} height={20} src="images/mobile-header-menu.svg" />
       </button>
       <Drawer isOpen={isOpen} onClose={setIsOpen}>
         <div className="flex w-64 flex-col gap-20">

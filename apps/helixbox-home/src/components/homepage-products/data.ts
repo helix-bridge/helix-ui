@@ -3,7 +3,7 @@ export const products: { title: string; description: string; link: string; video
     title: "Helixbox Bridge",
     description:
       "Helixbox Bridge provides a secure and efficient cross-chain bridge for seamless asset transfers between different blockchains. It serves as an entry point for multi-chain asset movement, enabling users to transfer assets quickly and with confidence.",
-    link: "/transfer",
+    link: "https://app.helix.box",
     video: "videos/bridge.mp4",
   },
   {

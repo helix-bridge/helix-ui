@@ -1,4 +1,4 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Allow: /
-Sitemap: https://helixbridge.app/sitemap.xml
+Sitemap: https://helix.box/sitemap.xml

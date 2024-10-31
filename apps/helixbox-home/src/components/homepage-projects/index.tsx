@@ -22,7 +22,7 @@ import p17 from "./17.png";
 import p18 from "./18.png";
 import p19 from "./19.png";
 import p20 from "./20.png";
-import { useMediaQuery } from "../../hooks";
+import { useMediaQuery } from "../../hooks/use-media-query";
 
 interface Project {
   img: string;
