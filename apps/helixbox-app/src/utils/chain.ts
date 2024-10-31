@@ -14,6 +14,8 @@ import {
   lineaChain,
   mantleChain,
   moonbeamChain,
+  morphTestnetChain,
+  morphChain,
   polygonChain,
   scrollChain,
   sepoliaChain,
@@ -27,7 +29,6 @@ import { ChainConfig, ChainID, Network } from "../types";
 import { isMainnet } from "./env";
 import { bscChain } from "../config/chains/bsc";
 import { optimismChain } from "../config/chains/optimism";
-import { morphChain } from "../config/chains/morph";
 
 export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): ChainConfig | undefined {
   switch (chainIdOrNetwork) {
@@ -91,6 +92,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.ASTAR_ZKEVM:
     case "astar-zkevm":
       return astarZkEvmChain;
+    case ChainID.MORPH_TESTNET:
+    case "morph-testnet":
+      return morphTestnetChain;
     case ChainID.MORPH:
     case "morph":
       return morphChain;
@@ -136,6 +140,7 @@ export function getChainConfigs(askAll?: boolean) {
     beraChain,
     taikoHeklaChain,
     astarZkEvmChain,
+    morphTestnetChain,
     morphChain,
     moonbeamChain,
     baseSepoliaChain,
