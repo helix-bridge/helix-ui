@@ -39,7 +39,7 @@ export default function Header() {
               <img width={106.64} height={20} alt="Logo" src="images/logo.svg" />
             </Link>
             {isTestnet() && (
-              <div className="rounded-small bg-primary inline-flex items-center justify-center px-1 py-[1px]">
+              <div className="rounded-small bg-primary inline-flex items-center justify-center px-1 py-[1px] lg:hidden">
                 <span className="text-xs font-bold text-black">testnet</span>
               </div>
             )}
