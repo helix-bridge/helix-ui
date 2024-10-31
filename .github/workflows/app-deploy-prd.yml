@@ -3,7 +3,7 @@ name: Deploy production
 on:
   push:
     tags:
-      - "v*"
+      - "app-v*"
 
 jobs:
   deploy-package:
@@ -16,7 +16,7 @@ jobs:
         uses: pnpm/action-setup@v4
 
       - uses: darwinia-network/devops/actions/smart-vercel@main
-        name: Deploy web (mainnet)
+        name: Deploy app (mainnet)
         with:
           node_version: 20
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
@@ -25,8 +25,8 @@ jobs:
           prod_mode: true
           project_name: "helix-apps"
           script_install: pnpm install
-          script_build: pnpm web build:mainnet
-          dist_path: apps/web/dist
+          script_build: pnpm app build:mainnet
+          dist_path: apps/app/dist
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
@@ -34,17 +34,17 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - uses: darwinia-network/devops/actions/smart-vercel@main
-        name: Deploy web (testnet)
+        name: Deploy app (testnet)
         with:
           node_version: 20
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
           preview_output: true
-          alias_domain: "testnet.helixbridge.app"
+          alias_domain: "testnet.app.helix.box"
           project_name: "helix-apps-test"
           script_install: pnpm install
-          script_build: pnpm web build:testnet
-          dist_path: apps/web/dist
+          script_build: pnpm app build:testnet
+          dist_path: apps/app/dist
           enable_notify_slack: true
           slack_channel: helix-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
@@ -68,9 +68,9 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
           pnpm install
-          pnpm web build:mainnet
-          mv apps/web/fleek.config.json apps/web/dist
-          cd apps/web/dist
+          pnpm app build:mainnet
+          mv apps/app/fleek.config.json apps/app/dist
+          cd apps/app/dist
 
           npm i -g @fleek-platform/cli
           fleek projects switch --id=clwordxrq0003igm26h2r52n1

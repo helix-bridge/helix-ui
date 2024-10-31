@@ -1,0 +1,34 @@
+name: Deploy development
+
+on:
+  pull_request:
+    paths:
+      - "apps/helixbox-helix/**"
+  workflow_dispatch:
+
+jobs:
+  deploy-package:
+    name: Deploy package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - uses: darwinia-network/devops/actions/smart-vercel@main
+        name: Deploy helix
+        with:
+          node_version: 20
+          vercel_token: ${{ secrets.VERCEL_TOKEN }}
+          vercel_group: itering
+          preview_output: true
+          alias_domain: "helix"
+          project_name: "helix-apps"
+          script_install: pnpm install
+          script_build: pnpm helix build
+          dist_path: apps/helix/dist
+          enable_notify_comment: true
+          enable_notify_slack: true
+          slack_channel: helix-ui
+          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
