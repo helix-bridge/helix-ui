@@ -1,6 +1,6 @@
 {
-  "name": "@helixbridge/web",
-  "description": "HelixBridge Web Interface",
+  "name": "helixbox-home",
+  "description": "Helixbox Home Interface",
   "private": true,
   "type": "module",
   "scripts": {
