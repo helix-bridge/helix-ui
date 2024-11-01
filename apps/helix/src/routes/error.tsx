@@ -5,7 +5,7 @@ export default function Error() {
   // console.error(error);
 
   return (
-    <main className="app-main flex flex-col items-center justify-center  gap-5">
+    <main className="flex h-screen flex-col items-center justify-center gap-5">
       <h1 className="font-bold">Oops!</h1>
       <p>Sorry, an unexpected error has occurred.</p>
       <p>
