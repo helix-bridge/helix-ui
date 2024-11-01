@@ -3,7 +3,7 @@ name: Deploy development
 on:
   pull_request:
     paths:
-      - "apps/helixbox-helix/**"
+      - "apps/helix/**"
   workflow_dispatch:
 
 jobs:
