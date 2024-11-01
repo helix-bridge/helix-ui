@@ -30,7 +30,7 @@ jobs:
           script_build: pnpm app build:mainnet
           dist_path: apps/helixbox-app/dist
           enable_notify_comment: true
-          enable_notify_slack: true
+          enable_notify_slack: false
           slack_channel: helixbox-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
@@ -48,6 +48,6 @@ jobs:
           script_build: pnpm app build:testnet
           dist_path: apps/helixbox-app/dist
           enable_notify_comment: true
-          enable_notify_slack: true
+          enable_notify_slack: false
           slack_channel: helixbox-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
