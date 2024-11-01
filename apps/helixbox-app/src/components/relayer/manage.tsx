@@ -17,7 +17,7 @@ export default function Manage({ version }: { version: BridgeVersion }) {
   return (
     <div className="space-y-medium">
       <div className="flex items-center justify-between">
-        <span className="text-base font-semibold text-white">Relayers</span>
+        <span className="text-base font-semibold text-white">Solvers</span>
         <CountdownRefresh onClick={refetch} />
       </div>
       <RelayersTable

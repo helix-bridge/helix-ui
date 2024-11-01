@@ -17,7 +17,7 @@ interface NavigationConfig {
 
 const navigationsConfig: NavigationConfig[] = [
   { href: "/", label: "Bridge" },
-  { href: "/relayer", label: "Relayer" },
+  { href: "/solver", label: "Solver" },
 ];
 
 export default function Header() {

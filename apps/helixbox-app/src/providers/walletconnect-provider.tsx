@@ -13,7 +13,7 @@ const projectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID || "";
 
 // 2. Create a metadata object - optional
 const metadata = {
-  name: "Helix Bridge",
+  name: "Helixbox",
   description: "Secure, fast, and low-cost cross-chain crypto transfers",
   url: "https://app.helix.box", // origin must match your domain & subdomain
   icons: ["https://app.helix.box/pwa-512x512.png"],

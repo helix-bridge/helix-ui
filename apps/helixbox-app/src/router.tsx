@@ -14,6 +14,7 @@ export const router = createHashRouter([
     children: [
       { index: true, element: <Transfer /> },
       { path: "relayer", element: <Relayer /> },
+      { path: "solver", element: <Relayer /> },
       { path: "explorer", element: <Explorer /> },
       { path: "tx/:id", element: <TxDetails /> },
     ],

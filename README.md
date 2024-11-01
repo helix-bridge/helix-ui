@@ -1,6 +1,6 @@
 # Helixbox Interfaces
 
-❤️ Secure, fast, and low-cost cross-chain crypto transfers.
+❤️ Helixbox is focusing on becoming an efficient multi-chain liquidity provider, offering users a superior experience in multi-chain asset transfer and exchange.
 
 ## App Interface
 
