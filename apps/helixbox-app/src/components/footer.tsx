@@ -33,17 +33,17 @@ function Links() {
 
   useEffect(() => {
     if (window.location.hostname === "app.helix.box") {
-      setNetwork((prev) => ({ ...prev, label: "Testnet", path: "https://testnet.app.helix.box" }));
-    } else if (window.location.hostname === "testnet.app.helix.box") {
+      setNetwork((prev) => ({ ...prev, label: "Testnet", path: "https://testnet-app.helix.box" }));
+    } else if (window.location.hostname === "testnet-app.helix.box") {
       setNetwork((prev) => ({ ...prev, label: "Mainnet", path: "https://app.helix.box" }));
-    } else if (window.location.hostname === "helix-stg-mainnet.vercel.app") {
-      setNetwork((prev) => ({ ...prev, label: "Testnet", path: "https://helix-stg-testnet.vercel.app" }));
-    } else if (window.location.hostname === "helix-stg-testnet.vercel.app") {
-      setNetwork((prev) => ({ ...prev, label: "Mainnet", path: "https://helix-stg-mainnet.vercel.app" }));
-    } else if (window.location.hostname === "helix-dev-mainnet.vercel.app") {
-      setNetwork((prev) => ({ ...prev, label: "Testnet", path: "https://helix-dev-testnet.vercel.app" }));
-    } else if (window.location.hostname === "helix-dev-testnet.vercel.app") {
-      setNetwork((prev) => ({ ...prev, label: "Mainnet", path: "https://helix-dev-mainnet.vercel.app" }));
+    } else if (window.location.hostname === "helixbox-stg-mainnet.vercel.app") {
+      setNetwork((prev) => ({ ...prev, label: "Testnet", path: "https://helixbox-stg-testnet.vercel.app" }));
+    } else if (window.location.hostname === "helixbox-stg-testnet.vercel.app") {
+      setNetwork((prev) => ({ ...prev, label: "Mainnet", path: "https://helixbox-stg-mainnet.vercel.app" }));
+    } else if (window.location.hostname === "helixbox-dev-mainnet.vercel.app") {
+      setNetwork((prev) => ({ ...prev, label: "Testnet", path: "https://helixbox-dev-testnet.vercel.app" }));
+    } else if (window.location.hostname === "helixbox-dev-testnet.vercel.app") {
+      setNetwork((prev) => ({ ...prev, label: "Mainnet", path: "https://helixbox-dev-mainnet.vercel.app" }));
     } else {
       setNetwork((prev) => ({ ...prev, label: "", path: "" }));
     }
