@@ -20,8 +20,8 @@ export default defineConfig({
         config: true,
       },
       manifest: {
-        name: "Helix Bridge",
-        short_name: "HelixBridge",
+        name: "Helixbox",
+        short_name: "Helixbox",
         description: "Secure, fast, and low-cost cross-chain crypto transfers",
         theme_color: "#00141D",
         background_color: "#00141D",
