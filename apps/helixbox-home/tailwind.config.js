@@ -22,10 +22,10 @@ export default {
       maxWidth: {
         "8xl": "90rem",
       },
-      screens: {
-        xl: "1200px",
-        "2xl": "1200px",
-      },
+      // screens: {
+      //   xl: "1200px",
+      //   "2xl": "1200px",
+      // },
       keyframes: {
         "scroll-to-bottom": {
           "0%": { top: "1lh" },

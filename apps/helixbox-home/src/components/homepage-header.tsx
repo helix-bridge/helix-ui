@@ -21,7 +21,7 @@ const navigations: (
 export default function HomepageHeader() {
   return (
     <div className="fixed left-0 top-0 z-40 flex h-[50px] w-full items-center justify-between px-[20px] backdrop-blur-lg lg:h-[64px] lg:px-[60px]">
-      <Link to="/" className="transition-transform hover:scale-105">
+      <Link to="/">
         <img alt="Helixbox logo" src="images/logo.svg" className="h-[20px] w-[106.64px] lg:h-[26px] lg:w-[138.84px]" />
       </Link>
 
