@@ -55,7 +55,7 @@ export const getColumnToken = ({ isDashboard }: Args): ColumnType<DataSource> =>
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getColumnBaseFee = (_: Args): ColumnType<DataSource> => ({
   key: "base fee",
-  title: <Title title="Base Fee" tips="The fixed fee set by the relayer and charged in a transaction" />,
+  title: <Title title="Base Fee" tips="The fixed fee set by the solver and charged in a transaction" />,
   render: ({ fromChain, sendToken, baseFee }) => {
     const token = getChainConfig(fromChain)?.tokens.find((t) => t.address.toLowerCase() === sendToken?.toLowerCase());
     return token && baseFee ? (
@@ -72,7 +72,7 @@ export const getColumnFeeRate = (_: Args): ColumnType<DataSource> => ({
   title: (
     <Title
       title="Liquidity Fee Rate"
-      tips="Liquidity Fee Rate: the percentage deducted by the relayer from the transfer amount in a transaction"
+      tips="Liquidity Fee Rate: the percentage deducted by the solver from the transfer amount in a transaction"
     />
   ),
   render: ({ liquidityFeeRate }) =>
@@ -168,8 +168,8 @@ export const getColumnAction = ({ onClick = () => undefined }: Args): ColumnType
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getColumnRelayer = (_: Args): ColumnType<DataSource> => ({
-  key: "relayer",
-  title: <Title title="Relayer" />,
+  key: "solver",
+  title: <Title title="Solver" />,
   render: ({ relayer }) => (
     <div className="truncate">
       <PrettyAddress address={relayer} forceShort copyable />

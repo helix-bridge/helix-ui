@@ -260,7 +260,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
 
   return (
     <Modal
-      title="Manage Relayer"
+      title="Manage Solver"
       className="w-full lg:w-[32rem]"
       okText={okText}
       isOpen={isOpen}

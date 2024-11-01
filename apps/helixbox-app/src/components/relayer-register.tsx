@@ -131,7 +131,7 @@ export default function RelayerRegister({ onManage = () => undefined }: { onMana
       ) {
         notification.warn({
           title: "Transaction failed",
-          description: `You have registered a relayer that supports this cross-chain.`,
+          description: `You have registered a solver that supports this cross-chain.`,
         });
         return true;
       } else {
@@ -154,7 +154,7 @@ export default function RelayerRegister({ onManage = () => undefined }: { onMana
 
           {Step.ONE === currentStep && (
             <>
-              <Description content="Different source chains and target chains correspond to different bridge types. In different bridge types, the relayer is required to set margin on different chains. When the bridge type is 'default', the relayer needs to set margin on the target chain. If the bridge type is 'opposite', the relayer must set margin on the source chain." />
+              <Description content="Different source chains and target chains correspond to different bridge types. In different bridge types, the solver is required to set margin on different chains. When the bridge type is 'default', the solver needs to set margin on the target chain. If the bridge type is 'opposite', the solver must set margin on the source chain." />
 
               <Divider />
 
@@ -254,7 +254,7 @@ export default function RelayerRegister({ onManage = () => undefined }: { onMana
 
           {Step.TWO === currentStep && (
             <>
-              <Description content="When a relayer engages in misconduct, their margin will be used for compensation. The fee charged by the relayer in the source chain from user transactions is baseFee + transferAmount * liquidityFeeRate." />
+              <Description content="When a solver engages in misconduct, their margin will be used for compensation. The fee charged by the solver in the source chain from user transactions is baseFee + transferAmount * liquidityFeeRate." />
 
               <Divider />
 
@@ -329,12 +329,12 @@ export default function RelayerRegister({ onManage = () => undefined }: { onMana
                 </>
               ) : null}
 
-              <LabelItem label="Base Fee" tips="The fixed fee set by the relayer and charged in a transaction">
+              <LabelItem label="Base Fee" tips="The fixed fee set by the solver and charged in a transaction">
                 <BalanceInput token={sourceToken} value={baseFeeInput} onChange={setBaseFeeInput} />
               </LabelItem>
               <LabelItem
                 label="Liquidity Fee Rate"
-                tips="The percentage deducted by the relayer from the transfer amount in a transaction"
+                tips="The percentage deducted by the solver from the transfer amount in a transaction"
               >
                 <FeeRateInput
                   placeholder="Enter 0 ~ 0.25"
@@ -445,11 +445,11 @@ export default function RelayerRegister({ onManage = () => undefined }: { onMana
         {/* Step 3 */}
         {targetToken?.type && targetToken.type !== "native" ? (
           <div className="flex flex-col gap-5 rounded-3xl bg-[#1F282C] p-5 lg:p-8">
-            <StepTitle step={3} title="Authorize Token on Target Chain and Run Relayer" />
+            <StepTitle step={3} title="Authorize Token on Target Chain and Run Solver" />
 
             {Step.THREE === currentStep && (
               <>
-                <Description content="Authorize token on target chain and run relayer to start relaying messages and earn rewards. Please note this step authorizes tokens for the relayer to send to users' target chain address based on transactions. Ensure you authorize enough tokens for multiple transactions as needed." />
+                <Description content="Authorize token on target chain and run solver to start relaying messages and earn rewards. Please note this step authorizes tokens for the solver to send to users' target chain address based on transactions. Ensure you authorize enough tokens for multiple transactions as needed." />
 
                 <Divider />
 
@@ -581,7 +581,7 @@ function RunRelayer({ style, onClick = () => undefined }: { style: "button" | "l
       target="_blank"
       onClick={onClick}
     >
-      {style === "button" ? "Run relayer" : "run a relayer"}
+      {style === "button" ? "Run solver" : "run a Solver"}
     </a>
   );
 }

@@ -251,12 +251,12 @@ export default function RelayerRegisterV3({ onManage = () => undefined }: { onMa
           {Step.TWO === currentStep && (
             <>
               <Divider />
-              <Label text="Base Fee" tips="The fixed fee set by the relayer and charged in a transaction">
+              <Label text="Base Fee" tips="The fixed fee set by the solver and charged in a transaction">
                 <BalanceInput token={sourceToken} value={baseFeeInput} onChange={setBaseFeeInput} />
               </Label>
               <Label
                 text="Liquidity Fee Rate"
-                tips="The percentage deducted by the relayer from the transfer amount in a transaction"
+                tips="The percentage deducted by the solver from the transfer amount in a transaction"
               >
                 <FeeRateInput
                   isV3
@@ -338,10 +338,10 @@ export default function RelayerRegisterV3({ onManage = () => undefined }: { onMa
         {/* Step 3 */}
         {targetToken?.type && targetToken.type !== "native" ? (
           <div className="flex flex-col gap-5 rounded-3xl bg-[#1F282C] p-5 lg:p-8">
-            <StepTitle step={3} title="Authorize Token on Target Chain and Run Relayer" />
+            <StepTitle step={3} title="Authorize Token on Target Chain and Run Solver" />
             {Step.THREE === currentStep && (
               <>
-                <Description content="Authorize token on target chain and run relayer to start relaying messages and earn rewards. Please note this step authorizes tokens for the relayer to send to users' target chain address based on transactions. Ensure you authorize enough tokens for multiple transactions as needed." />
+                <Description content="Authorize token on target chain and run solver to start relaying messages and earn rewards. Please note this step authorizes tokens for the solver to send to users' target chain address based on transactions. Ensure you authorize enough tokens for multiple transactions as needed." />
                 <Divider />
                 <Label text="Current Allowance">
                   <BalanceInput
@@ -453,7 +453,7 @@ function RunRelayer({ style, onClick = () => undefined }: { style: "button" | "l
       target="_blank"
       onClick={onClick}
     >
-      {style === "button" ? "Run relayer" : "run a relayer"}
+      {style === "button" ? "Run solver" : "run a solver"}
     </a>
   );
 }
