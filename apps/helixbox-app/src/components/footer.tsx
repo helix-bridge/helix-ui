@@ -76,9 +76,10 @@ function Links() {
           ),
         )}
 
-      {window.location.hostname === "app.helix.box" && (
+      {window.location.hostname !== "app.helix.box" && (
         <Tooltip
           contentClassName="w-72"
+          className="inline-flex items-center"
           content="For a fully decentralized experience, you can use the IPFS deployed version."
         >
           <a
