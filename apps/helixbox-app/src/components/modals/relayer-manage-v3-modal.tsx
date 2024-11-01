@@ -290,7 +290,7 @@ export default function RelayerManageV3Modal({ relayerInfo, isOpen, onClose, onS
                     onChange={setFeeRateInput}
                   />
                 </Label>
-                <Label text="Trasfer Limit">
+                <Label text="Transfer Limit">
                   <BalanceInput token={sourceToken} value={transferLimitInput} onChange={setTransferLimitInput} />
                 </Label>
               </div>
