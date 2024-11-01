@@ -1,4 +1,4 @@
-name: Deploy development
+name: Deploy development (helix)
 
 on:
   pull_request:

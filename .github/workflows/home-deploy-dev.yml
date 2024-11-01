@@ -1,4 +1,4 @@
-name: Deploy development
+name: Deploy development (home)
 
 on:
   pull_request:
