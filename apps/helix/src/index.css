@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 100;
+    src: url(/fonts/IBMPlexSans-Thin.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 100;
+    src: url(/fonts/IBMPlexSans-ThinItalic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 200;
+    src: url(/fonts/IBMPlexSans-ExtraLight.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 200;
+    src: url(/fonts/IBMPlexSans-ExtraLightItalic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 300;
+    src: url(/fonts/IBMPlexSans-Light.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 300;
+    src: url(/fonts/IBMPlexSans-LightItalic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 400;
+    src: url(/fonts/IBMPlexSans-Regular.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 400;
+    src: url(/fonts/IBMPlexSans-Italic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 500;
+    src: url(/fonts/IBMPlexSans-Medium.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 500;
+    src: url(/fonts/IBMPlexSans-MediumItalic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 600;
+    src: url(/fonts/IBMPlexSans-SemiBold.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 600;
+    src: url(/fonts/IBMPlexSans-SemiBoldItalic.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: normal;
+    font-weight: 700 800;
+    src: url(/fonts/IBMPlexSans-Bold.ttf);
+  }
+  @font-face {
+    font-family: "IBMPlexSans";
+    font-style: italic;
+    font-weight: 700 800;
+    src: url(/fonts/IBMPlexSans-BoldItalic.ttf);
+  }
+}

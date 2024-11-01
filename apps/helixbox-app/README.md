@@ -1,8 +1,4 @@
-# Helixbox Interfaces
-
-❤️ Secure, fast, and low-cost cross-chain crypto transfers.
-
-## App Interface
+## Helixbox App Interface
 
 ### Production
 
@@ -18,3 +14,10 @@
 
 - mainnet: https://helix-dev-mainnet.vercel.app
 - testnet: https://helix-dev-testnet.vercel.app
+
+### Local development
+
+```shell
+$ pnpm install
+$ pnpm run dev
+```
