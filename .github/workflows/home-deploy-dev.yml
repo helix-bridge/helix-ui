@@ -26,7 +26,7 @@ jobs:
           preview_output: true
           project_name: "helix-home"
           script_install: pnpm install
-          script_build: pnpm home build
+          script_build: pnpm run home build
           dist_path: apps/helixbox-home/dist
           enable_notify_comment: true
           enable_notify_slack: true
