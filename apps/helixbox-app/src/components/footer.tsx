@@ -76,7 +76,7 @@ function Links() {
           ),
         )}
 
-      {window.location.hostname !== "app.helix.box" && (
+      {window.location.hostname === "app.helix.box" && (
         <Tooltip
           contentClassName="w-72"
           className="inline-flex items-center"
