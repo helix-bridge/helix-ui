@@ -29,7 +29,7 @@ jobs:
           script_build: pnpm helix build
           dist_path: apps/helix/dist
           enable_notify_slack: true
-          slack_channel: helix-ui
+          slack_channel: helixbox-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}

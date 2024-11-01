@@ -31,7 +31,7 @@ jobs:
           dist_path: apps/helixbox-app/dist
           enable_notify_comment: true
           enable_notify_slack: true
-          slack_channel: helix-ui
+          slack_channel: helixbox-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
 
       - uses: darwinia-network/devops/actions/smart-vercel@main
@@ -49,5 +49,5 @@ jobs:
           dist_path: apps/helixbox-app/dist
           enable_notify_comment: true
           enable_notify_slack: true
-          slack_channel: helix-ui
+          slack_channel: helixbox-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
