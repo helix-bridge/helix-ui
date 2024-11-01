@@ -21,9 +21,10 @@ jobs:
           node_version: 20
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
+          preview_section: helix-redirect
           preview_output: true
           prod_mode: true
-          project_name: "helix-apps"
+          project_name: "helix-redirect-page"
           script_install: pnpm install
           script_build: pnpm helix build
           dist_path: apps/helix/dist

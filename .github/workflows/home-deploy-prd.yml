@@ -21,9 +21,10 @@ jobs:
           node_version: 20
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
+          preview_section: helix-home
           preview_output: true
           prod_mode: true
-          project_name: "helix-apps"
+          project_name: "helix-home"
           script_install: pnpm install
           script_build: pnpm home build
           dist_path: apps/helixbox-home/dist

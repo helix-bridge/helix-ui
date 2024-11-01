@@ -22,6 +22,7 @@ jobs:
           node_version: 20
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
+          preview_section: helix-app-mainnet
           preview_output: true
           alias_domain: "helixbox-dev-mainnet"
           project_name: "helix-apps"
@@ -39,6 +40,7 @@ jobs:
           node_version: 20
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_group: itering
+          preview_section: helix-app-testnet
           preview_output: true
           alias_domain: "helixbox-dev-testnet"
           project_name: "helix-apps-test"
