@@ -2,8 +2,8 @@ name: Deploy development (home)
 
 on:
   pull_request:
-    paths:
-      - "apps/helixbox-home/**"
+    # paths:
+    #   - "apps/helixbox-home/**"
   workflow_dispatch:
 
 jobs:
