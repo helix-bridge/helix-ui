@@ -11,6 +11,7 @@
     "clean": "rm -rf node_modules .turbo dist src/_generated_",
     "preview": "vite preview"
   },
+  
   "license": "MIT",
   "dependencies": {
     "@floating-ui/react": "^0.26.14",
