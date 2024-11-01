@@ -29,6 +29,6 @@ jobs:
           script_build: pnpm run home build
           dist_path: apps/helixbox-home/dist
           enable_notify_comment: true
-          enable_notify_slack: true
-          slack_channel: helix-ui
+          enable_notify_slack: false
+          slack_channel: helixbox-ui
           slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
