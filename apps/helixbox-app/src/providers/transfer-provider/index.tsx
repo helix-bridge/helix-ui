@@ -50,27 +50,44 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
     targetTokenRef.current = value;
   }, []);
 
+  const isOpenedWithoutUrlParams = useRef(true);
+  const hasUserManuallyChangedTokenParams = useRef(false);
+  const hasUserManuallyChangedOtherParams = useRef(false);
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.hash.split("?")[1]);
 
     const pT = params.get(UrlSearchParamKey.TOKEN_CATEGORY);
-    const _token = tokenOptions.find(({ category }) => category === pT) || tokenOptions[0];
+    const _tokenOption = tokenOptions.find(({ category }) => category === pT);
+    const _token = _tokenOption || tokenOptions[0];
 
     const pSC = params.get(UrlSearchParamKey.SOURCE_CHAIN);
     const _sourceChainOptions = getSourceChainOptions(_token.category);
-    const _sourceChain = _sourceChainOptions.find(({ network }) => network === pSC) || _sourceChainOptions[0];
+    const _sourceChainOption = _sourceChainOptions.find(({ network }) => network === pSC);
+    const _sourceChain = _sourceChainOption || _sourceChainOptions[0];
 
     const pST = params.get(UrlSearchParamKey.SOURCE_TOKEN);
     const _sourceTokenOptions = getSourceTokenOptions(_sourceChain, _token.category);
-    const _sourceToken = _sourceTokenOptions.find(({ symbol }) => symbol === pST) || _sourceTokenOptions[0];
+    const _sourceTokenOption = _sourceTokenOptions.find(({ symbol }) => symbol === pST);
+    const _sourceToken = _sourceTokenOption || _sourceTokenOptions[0];
 
     const pTC = params.get(UrlSearchParamKey.TARGET_CHAIN);
     const _targetChainOptions = getTargetChainOptions(_sourceToken);
-    const _targetChain = _targetChainOptions.find(({ network }) => network === pTC) || _targetChainOptions[0];
+    const _targetChainOption = _targetChainOptions.find(({ network }) => network === pTC);
+    const _targetChain = _targetChainOption || _targetChainOptions[0];
 
     const pTT = params.get(UrlSearchParamKey.TARGET_CHAIN);
     const _targetTokenOptions = getTargetTokenOptions(_sourceToken, _targetChain);
-    const _targetToken = _targetTokenOptions.find(({ symbol }) => symbol === pTT) || _targetTokenOptions[0];
+    const _targetTokenOption = _targetTokenOptions.find(({ symbol }) => symbol === pTT);
+    const _targetToken = _targetTokenOption || _targetTokenOptions[0];
+
+    isOpenedWithoutUrlParams.current = !(
+      _tokenOption ||
+      _sourceChainOption ||
+      _sourceTokenOption ||
+      _targetChainOption ||
+      _targetTokenOption
+    );
 
     sourceChainRef.current = _sourceChain;
     sourceTokenRef.current = _sourceToken;
@@ -86,22 +103,27 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
   }, [searchParams]);
 
   const navigate = useNavigate();
-  const changeUrl = useCallback(
-    (onlyTokenCategory = false) => {
-      const params = onlyTokenCategory
-        ? new URLSearchParams()
-        : new URLSearchParams(searchParamsRef.current.toString());
-      params.set(UrlSearchParamKey.TOKEN_CATEGORY, tokenRef.current.category);
-      if (!onlyTokenCategory) {
-        params.set(UrlSearchParamKey.SOURCE_CHAIN, sourceChainRef.current.network);
-        params.set(UrlSearchParamKey.SOURCE_TOKEN, sourceTokenRef.current.symbol);
-        params.set(UrlSearchParamKey.TARGET_CHAIN, targetChainRef.current.network);
-        params.set(UrlSearchParamKey.TARGET_TOKEN, targetTokenRef.current.symbol);
-      }
-      navigate(`?${params.toString()}`);
-    },
-    [navigate],
-  );
+  const changeUrl = useCallback(() => {
+    if (
+      isOpenedWithoutUrlParams.current &&
+      !hasUserManuallyChangedTokenParams.current &&
+      !hasUserManuallyChangedOtherParams.current
+    ) {
+      return;
+    }
+    const justTokenCategoryChanged = isOpenedWithoutUrlParams.current && !hasUserManuallyChangedOtherParams.current;
+    const params = justTokenCategoryChanged
+      ? new URLSearchParams()
+      : new URLSearchParams(searchParamsRef.current.toString());
+    params.set(UrlSearchParamKey.TOKEN_CATEGORY, tokenRef.current.category);
+    if (!justTokenCategoryChanged) {
+      params.set(UrlSearchParamKey.SOURCE_CHAIN, sourceChainRef.current.network);
+      params.set(UrlSearchParamKey.SOURCE_TOKEN, sourceTokenRef.current.symbol);
+      params.set(UrlSearchParamKey.TARGET_CHAIN, targetChainRef.current.network);
+      params.set(UrlSearchParamKey.TARGET_TOKEN, targetTokenRef.current.symbol);
+    }
+    navigate(`?${params.toString()}`);
+  }, [navigate]);
 
   const [availableTokenOptions, setAvailableTokenOptions] = useState(tokenOptions);
   const { loading: loadingAvailableTokenOptions, data: allSupportedChains } = useSupportedChains("");
@@ -167,14 +189,16 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
 
   const handleTokenChange = useCallback(
     (_token: typeof token) => {
+      hasUserManuallyChangedTokenParams.current = true;
       setToken(_token);
-      changeUrl(true);
+      changeUrl();
     },
     [changeUrl, setToken],
   );
 
   const handleSourceChainChange = useCallback(
     (_sourceChain: typeof sourceChain) => {
+      hasUserManuallyChangedOtherParams.current = true;
       const _sourceTokenOptions = getSourceTokenOptions(_sourceChain, tokenRef.current.category);
       const _sourceToken =
         _sourceTokenOptions.find(({ symbol }) => symbol === sourceTokenRef.current.symbol) || _sourceTokenOptions[0];
@@ -204,6 +228,7 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
 
   const handleSourceTokenChange = useCallback(
     (_sourceToken: typeof sourceToken) => {
+      hasUserManuallyChangedOtherParams.current = true;
       const _targetChainOptions = getTargetChainOptions(_sourceToken).filter((option) =>
         supportedChainsRef.current
           .at(0)
@@ -228,6 +253,7 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
 
   const handleTargetChainChange = useCallback(
     (_targetChain: typeof targetChain) => {
+      hasUserManuallyChangedOtherParams.current = true;
       const _targetTokenOptions = getTargetTokenOptions(sourceTokenRef.current, _targetChain);
       const _targetToken =
         _targetTokenOptions.find(({ symbol }) => symbol === targetTokenRef.current.symbol) || _targetTokenOptions[0];
@@ -241,6 +267,7 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
 
   const handleTargetTokenChange = useCallback(
     (_targetToken: typeof targetToken) => {
+      hasUserManuallyChangedOtherParams.current = true;
       setTargetToken(_targetToken);
       changeUrl();
     },
@@ -248,6 +275,7 @@ export default function TransferProvider({ children }: PropsWithChildren<unknown
   );
 
   const handleSwitch = useCallback(() => {
+    hasUserManuallyChangedOtherParams.current = true;
     const _sourceChain = targetChainRef.current;
     const _targetChain = sourceChainRef.current;
 
