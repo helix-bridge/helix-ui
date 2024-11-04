@@ -111,7 +111,7 @@ function Social() {
       icon: <img width={20} height={20} alt="Discord" src="images/social/discord.svg" />,
     },
     {
-      link: "mailto:hello@helixbridge.app",
+      link: "mailto:hello@helix.box",
       icon: <img width={16} height={16} alt="Email" src="images/social/email.svg" />,
     },
   ];
