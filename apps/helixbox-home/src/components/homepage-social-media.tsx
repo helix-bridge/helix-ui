@@ -8,7 +8,7 @@ const data: { label: string; link: string; icon: string; width: number; height: 
     width: 21.79,
     height: 16,
   },
-  { label: "Email", link: "mailto:hello@helixbridge.app", icon: "images/social/email.svg", width: 19, height: 14 },
+  { label: "Email", link: "mailto:hello@helix.box", icon: "images/social/email.svg", width: 19, height: 14 },
 ];
 
 export default function HomepageSocialMedia({ className }: { className?: string }) {
