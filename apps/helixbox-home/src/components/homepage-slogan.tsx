@@ -1,6 +1,6 @@
 export default function HomepageSlogan() {
   return (
-    <div className="flex w-full flex-col items-center font-[KronaOne] uppercase">
+    <div className="flex w-full flex-col items-center font-[KronaOne] uppercase" data-aos="fade">
       <div className="relative h-[1lh] w-full overflow-hidden text-[32px] font-normal leading-[52.5px] tracking-[2px] text-white transition-[top] lg:text-[130px] lg:leading-[162.5px] lg:tracking-[3px]">
         <AnimText>Liquidity</AnimText>
         <AnimText style={{ animationDelay: "-3500ms" }}>Cross-Chain</AnimText>

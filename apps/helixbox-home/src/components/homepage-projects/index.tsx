@@ -57,7 +57,7 @@ const pData2: Project[] = [
 
 export default function HomepageProjects() {
   return (
-    <div className="mt-[90px] flex w-full flex-col gap-5 lg:gap-10 lg:py-[100px]">
+    <div className="mt-[90px] flex w-full flex-col gap-5 lg:gap-10 lg:py-[100px]" data-aos="fade-up">
       <AutoInfiniteScroll items={pData1} />
       <AutoInfiniteScroll initOffset={96} items={pData2} />
     </div>

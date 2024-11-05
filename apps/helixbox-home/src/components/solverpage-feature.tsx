@@ -2,13 +2,17 @@ interface Props {
   content: string;
   img: string;
   color: string;
+  dataAos?: string;
+  dataAosDelay?: number;
 }
 
-export default function SolverpageFeature({ content, img, color }: Props) {
+export default function SolverpageFeature({ content, img, color, dataAos, dataAosDelay }: Props) {
   return (
     <div
       className="relative w-full overflow-hidden rounded-[40px] bg-[#010744] p-10 pb-[260px] lg:w-[374px]"
       style={{ boxShadow: "0px 4px 44px 0px #00000040" }}
+      data-aos={dataAos}
+      data-aos-delay={dataAosDelay}
     >
       <p className="text-[30px] font-semibold leading-[39px] text-white">{content}</p>
 

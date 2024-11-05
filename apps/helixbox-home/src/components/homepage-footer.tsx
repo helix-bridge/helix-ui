@@ -5,14 +5,17 @@ import { products } from "./homepage-products/data";
 export default function HomepageFooter() {
   return (
     <>
-      <div className="mt-[90px] flex flex-col items-center gap-5 p-5 lg:hidden">
+      <div className="mt-[90px] flex flex-col items-center gap-5 p-5 lg:hidden" data-aos="fade-up">
         <HomepageSocialMedia className="gap-medium" />
         <About />
         <Copyright />
       </div>
 
       <div className="hidden justify-between p-[60px] lg:flex">
-        <div className="flex flex-shrink-[1.4] flex-grow-[1.4] basis-0 flex-col justify-between">
+        <div
+          className="flex flex-shrink-[1.4] flex-grow-[1.4] basis-0 flex-col justify-between"
+          data-aos="fade-up-right"
+        >
           <div className="flex flex-col gap-5">
             <img src="/images/logo.svg" alt="Helixbox logo" width={207.26} height={39} />
             <About />
@@ -29,6 +32,7 @@ export default function HomepageFooter() {
             link: product.link,
           }))}
           className="flex-1"
+          dataAos="fade-up"
         />
         <Column
           title="Resources"
@@ -37,6 +41,7 @@ export default function HomepageFooter() {
             { label: "Careers", link: "https://itering-io.breezy.hr/" },
           ]}
           className="flex-shrink-[0.6] flex-grow-[0.6] basis-0"
+          dataAos="fade-up-left"
         />
       </div>
     </>
@@ -62,13 +67,15 @@ function Column({
   title,
   items,
   className,
+  dataAos,
 }: {
   title: string;
   items: { label: string; link: string }[];
   className?: string;
+  dataAos?: string;
 }) {
   return (
-    <div className={`flex flex-col gap-[60px] ${className}`}>
+    <div className={`flex flex-col gap-[60px] ${className}`} data-aos={dataAos}>
       <h5 className="text-[30px] font-semibold leading-[39px] text-[#F6F6F7]">{title}</h5>
       {items.map((item) =>
         item.link.startsWith("http") ? (

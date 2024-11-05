@@ -25,7 +25,7 @@ export default function SolverpageFeatures() {
   return (
     <div className="flex flex-col items-center gap-[90px] px-5 lg:my-[100px] lg:flex-row lg:items-stretch lg:justify-center lg:gap-[40px] lg:px-[60px]">
       {features.map((feature, index) => (
-        <SolverpageFeature key={index} {...feature} />
+        <SolverpageFeature key={index} {...feature} dataAos="fade-up" dataAosDelay={index * 100} />
       ))}
     </div>
   );

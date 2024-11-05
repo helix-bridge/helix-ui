@@ -17,6 +17,8 @@ type Props =
       label: string;
       items: { label: string; link: string }[];
       link?: never;
+      dataAos?: string;
+      dataAosDelay?: number;
       pcStyle?: boolean;
       onClick?: () => void;
     }
@@ -24,17 +26,21 @@ type Props =
       label: string;
       link: string;
       items?: never;
+      dataAos?: string;
+      dataAosDelay?: number;
       pcStyle?: boolean;
       onClick?: () => void;
     };
 
-export default function HomepageHeaderNav({ label, items, link, pcStyle, onClick }: Props) {
+export default function HomepageHeaderNav({ label, items, link, pcStyle, dataAos, dataAosDelay, onClick }: Props) {
   return link !== undefined ? (
     link.startsWith("http") ? (
       <a
         rel="noopener noreferrer"
         target="_blank"
         href={link}
+        data-aos={dataAos}
+        data-aos-delay={dataAosDelay}
         className="w-fit text-xl font-bold text-white underline-offset-4 transition-colors hover:text-white hover:underline lg:text-lg lg:font-normal lg:leading-[23.4px] lg:tracking-[1px] lg:text-white/50"
       >
         {label}
@@ -42,6 +48,8 @@ export default function HomepageHeaderNav({ label, items, link, pcStyle, onClick
     ) : (
       <Link
         to={link}
+        data-aos={dataAos}
+        data-aos-delay={dataAosDelay}
         className="w-fit text-xl font-bold text-white underline-offset-4 transition-colors hover:text-white hover:underline lg:text-lg lg:font-normal lg:leading-[23.4px] lg:tracking-[1px] lg:text-white/50"
         onClick={onClick}
       >
@@ -51,7 +59,7 @@ export default function HomepageHeaderNav({ label, items, link, pcStyle, onClick
   ) : pcStyle ? (
     <PcDropdown label={label} items={items} />
   ) : (
-    <MobileDropdown label={label} items={items} onClick={onClick} />
+    <MobileDropdown label={label} items={items} onClick={onClick} dataAos={dataAos} dataAosDelay={dataAosDelay} />
   );
 }
 
@@ -59,17 +67,26 @@ function MobileDropdown({
   label,
   items,
   onClick,
+  dataAos,
+  dataAosDelay,
 }: {
   label: string;
   items: { label: string; link: string }[];
   onClick?: () => void;
+  dataAos?: string;
+  dataAosDelay?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div>
-      <button onClick={() => setIsOpen((prev) => !prev)} className="inline-flex w-fit items-center gap-2">
+      <button
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="inline-flex w-fit items-center gap-2"
+        data-aos={dataAos}
+        data-aos-delay={dataAosDelay}
+      >
         <span className={`text-white transition-all ${isOpen ? "text-sm font-normal" : "text-xl font-bold"}`}>
           {label}
         </span>

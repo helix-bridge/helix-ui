@@ -22,13 +22,28 @@ export default function HomepageMobileMenu({ data }: Props) {
       </button>
       <Drawer isOpen={isOpen} onClose={setIsOpen}>
         <div className="flex w-64 flex-col gap-20">
-          <Link to="/" className="w-fit text-xl font-bold text-white" onClick={() => setIsOpen(false)}>
+          <Link
+            to="/"
+            className="w-fit text-xl font-bold text-white"
+            onClick={() => setIsOpen(false)}
+            data-aos="fade-right"
+          >
             Home
           </Link>
-          {data.map((item) => (
-            <HomepageHeaderNav key={item.label} {...item} onClick={() => setIsOpen(false)} />
+          {data.map((item, index) => (
+            <HomepageHeaderNav
+              key={item.label}
+              dataAos="fade-right"
+              dataAosDelay={index * 100 + 100}
+              {...item}
+              onClick={() => setIsOpen(false)}
+            />
           ))}
-          <HomepageSocialMedia className="gap-10 self-start" />
+          <HomepageSocialMedia
+            className="gap-10 self-start"
+            dataAos="fade-right"
+            dataAosDelay={data.length * 100 + 100}
+          />
         </div>
       </Drawer>
     </>
