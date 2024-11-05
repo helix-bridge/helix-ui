@@ -26,12 +26,15 @@ export enum ChainID {
   OPTIMISM = 10,
   GNOSIS = 100,
   BLAST = 81457,
-  BERA = 80085,
+  BERA = 80084,
   TAIKO_HEKLA = 167009,
   ASTAR_ZKEVM = 3776,
-  MORPH = 2710,
+  MORPH = 2818,
+  MORPH_TESTNET = 2810,
   MOONBEAM = 1284,
   AVALANCHE = 43_114,
+  ZIRCUIT_SEPOLIA = 48899,
+  ZIRCUIT = 48900,
 }
 /* eslint-enable no-unused-vars */
 
@@ -59,9 +62,12 @@ export type Network =
   | "bera"
   | "taiko-hekla"
   | "morph"
+  | "morph-testnet"
   | "moonbeam"
   | "avalanche"
-  | "bsc";
+  | "bsc"
+  | "zircuit"
+  | "zircuit-sepolia";
 
 export interface Chain extends ViemChain {
   id: ChainID;

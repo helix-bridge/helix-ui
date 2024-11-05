@@ -5,7 +5,7 @@ import {
   avalanche,
   base,
   baseSepolia,
-  berachainTestnet,
+  bera,
   blast,
   bsc,
   crab,
@@ -15,17 +15,20 @@ import {
   linea,
   mantle,
   moonbeam,
-  morphSepolia,
+  morph,
+  morphTestnet,
   optimism,
   polygon,
   polygonZkEvm,
   scroll,
   sepolia,
   taikoHekla,
+  zircuit,
+  zircuitSepolia,
   zkSync,
   zksyncSepolia,
 } from "../chains";
-import { type Chain, ChainID, type Network } from "../types";
+import { ChainID, type Network } from "../types";
 
 export function getChains() {
   return [
@@ -35,7 +38,7 @@ export function getChains() {
     avalanche,
     baseSepolia,
     base,
-    berachainTestnet,
+    bera,
     blast,
     bsc,
     crab,
@@ -45,7 +48,7 @@ export function getChains() {
     linea,
     mantle,
     moonbeam,
-    morphSepolia,
+    morphTestnet,
     optimism,
     polygonZkEvm,
     polygon,
@@ -54,67 +57,95 @@ export function getChains() {
     taikoHekla,
     zksyncSepolia,
     zkSync,
+    zircuit,
+    zircuitSepolia,
   ];
 }
 
-const CHAIN_ID_2_CHAIN: Record<ChainID, Chain> = {
-  [ChainID.ARBITRUM_SEPOLIA]: arbitrumSepolia,
-  [ChainID.ARBITRUM]: arbitrum,
-  [ChainID.ASTAR_ZKEVM]: astarZkEVM,
-  [ChainID.AVALANCHE]: avalanche,
-  [ChainID.BASE_SEPOLIA]: baseSepolia,
-  [ChainID.BASE]: base,
-  [ChainID.BERA]: berachainTestnet,
-  [ChainID.BLAST]: blast,
-  [ChainID.BSC]: bsc,
-  [ChainID.CRAB]: crab,
-  [ChainID.DARWINIA]: darwinia,
-  [ChainID.ETHEREUM]: ethereum,
-  [ChainID.GNOSIS]: gnosis,
-  [ChainID.LINEA]: linea,
-  [ChainID.MANTLE]: mantle,
-  [ChainID.MOONBEAM]: moonbeam,
-  [ChainID.MORPH]: morphSepolia,
-  [ChainID.OPTIMISM]: optimism,
-  [ChainID.POLYGON_ZKEVM]: polygonZkEvm,
-  [ChainID.POLYGON]: polygon,
-  [ChainID.SCROLL]: scroll,
-  [ChainID.SEPOLIA]: sepolia,
-  [ChainID.TAIKO_HEKLA]: taikoHekla,
-  [ChainID.ZKSYNC_SEPOLIA]: zksyncSepolia,
-  [ChainID.ZKSYNC]: zkSync,
-};
-
-const NETWORK_2_CHAIN: Record<Network, Chain> = {
-  "arbitrum-sepolia": arbitrumSepolia,
-  arbitrum: arbitrum,
-  "astar-zkevm": astarZkEVM,
-  avalanche: avalanche,
-  "base-sepolia": baseSepolia,
-  base: base,
-  bera: berachainTestnet,
-  blast: blast,
-  bsc: bsc,
-  "crab-dvm": crab,
-  "darwinia-dvm": darwinia,
-  ethereum: ethereum,
-  gnosis: gnosis,
-  linea: linea,
-  mantle: mantle,
-  moonbeam: moonbeam,
-  morph: morphSepolia,
-  op: optimism,
-  "polygon-zkEvm": polygonZkEvm,
-  polygon: polygon,
-  scroll: scroll,
-  sepolia: sepolia,
-  "taiko-hekla": taikoHekla,
-  "zksync-sepolia": zksyncSepolia,
-  zksync: zkSync,
-};
-
 export function getChainByIdOrNetwork(chainIdOrNetwork: ChainID | Network | null | undefined) {
-  return chainIdOrNetwork
-    ? CHAIN_ID_2_CHAIN[chainIdOrNetwork as ChainID] ?? NETWORK_2_CHAIN[chainIdOrNetwork as Network]
-    : undefined;
+  switch (chainIdOrNetwork) {
+    case ChainID.ARBITRUM:
+    case "arbitrum":
+      return arbitrum;
+    case ChainID.ARBITRUM_SEPOLIA:
+    case "arbitrum-sepolia":
+      return arbitrumSepolia;
+    case ChainID.ASTAR_ZKEVM:
+    case "astar-zkevm":
+      return astarZkEVM;
+    case ChainID.AVALANCHE:
+    case "avalanche":
+      return avalanche;
+    case ChainID.BASE:
+    case "base":
+      return base;
+    case ChainID.BASE_SEPOLIA:
+    case "base-sepolia":
+      return baseSepolia;
+    case ChainID.BERA:
+    case "bera":
+      return bera;
+    case ChainID.BLAST:
+    case "blast":
+      return blast;
+    case ChainID.BSC:
+    case "bsc":
+      return bsc;
+    case ChainID.CRAB:
+    case "crab-dvm":
+      return crab;
+    case ChainID.DARWINIA:
+    case "darwinia-dvm":
+      return darwinia;
+    case ChainID.ETHEREUM:
+    case "ethereum":
+      return ethereum;
+    case ChainID.GNOSIS:
+    case "gnosis":
+      return gnosis;
+    case ChainID.LINEA:
+    case "linea":
+      return linea;
+    case ChainID.MANTLE:
+    case "mantle":
+      return mantle;
+    case ChainID.MOONBEAM:
+    case "moonbeam":
+      return moonbeam;
+    case ChainID.MORPH:
+    case "morph":
+      return morph;
+    case ChainID.MORPH_TESTNET:
+    case "morph-testnet":
+      return morphTestnet;
+    case ChainID.OPTIMISM:
+    case "op":
+      return optimism;
+    case ChainID.POLYGON:
+    case "polygon":
+      return polygon;
+    case ChainID.SCROLL:
+    case "scroll":
+      return scroll;
+    case ChainID.SEPOLIA:
+    case "sepolia":
+      return sepolia;
+    case ChainID.TAIKO_HEKLA:
+    case "taiko-hekla":
+      return taikoHekla;
+    case ChainID.ZKSYNC:
+    case "zksync":
+      return zkSync;
+    case ChainID.ZKSYNC_SEPOLIA:
+    case "zksync-sepolia":
+      return zksyncSepolia;
+    case ChainID.ZIRCUIT:
+    case "zircuit":
+      return zircuit;
+    case ChainID.ZIRCUIT_SEPOLIA:
+    case "zircuit-sepolia":
+      return zircuitSepolia;
+    default:
+      return;
+  }
 }
