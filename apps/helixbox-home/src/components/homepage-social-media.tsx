@@ -11,9 +11,17 @@ const data: { label: string; link: string; icon: string; width: number; height: 
   { label: "Email", link: "mailto:hello@helix.box", icon: "images/social/email.svg", width: 19, height: 14 },
 ];
 
-export default function HomepageSocialMedia({ className }: { className?: string }) {
+export default function HomepageSocialMedia({
+  className,
+  dataAos,
+  dataAosDelay,
+}: {
+  className?: string;
+  dataAos?: string;
+  dataAosDelay?: number;
+}) {
   return (
-    <div className={`flex items-center ${className}`}>
+    <div className={`flex items-center ${className}`} data-aos={dataAos} data-aos-delay={dataAosDelay}>
       {data.map((item) => (
         <a
           key={item.label}
