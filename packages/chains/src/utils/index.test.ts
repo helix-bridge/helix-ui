@@ -1,23 +1,24 @@
 import { HelixChain } from "@helixbridge/helixconf";
 import { getChainByIdOrNetwork, getChains } from ".";
-import { ChainID } from "../types";
+import { Network } from "../types";
 
-const numberOfChains = Object.keys(ChainID).length / 2;
-const chains = getChains();
-
-test(`The number of chains should be equal to ${numberOfChains}`, () => {
-  expect(chains.length).toBe(numberOfChains);
+test("An equal number of chains should be configured", () => {
+  expect(getChains().length).toBe(HelixChain.chains().length);
 });
 
-describe.each(getChains())("$name", ({ id, network }) => {
-  test(`The 'network' should be configured correctly`, () => {
-    expect(network).toBe(HelixChain.get(id)?.code);
+describe.each(HelixChain.chains().map(({ id, code, name }) => ({ id, code, name })))("$name", ({ id, code }) => {
+  test(`getChainByIdOrNetwork(${id}) should return the correct chain`, () => {
+    expect(getChainByIdOrNetwork(Number(id))?.network).toBe(code);
+  });
+  test(`getChainByIdOrNetwork('${code}') should return the correct chain`, () => {
+    expect(getChainByIdOrNetwork(code as Network)?.id).toBe(Number(id));
   });
 
-  test(`getChainByIdOrNetwork(${id}) should return the correct chain`, () => {
-    expect(getChainByIdOrNetwork(id)?.network).toBe(network);
-  });
-  test(`getChainByIdOrNetwork('${network}') should return the correct chain`, () => {
-    expect(getChainByIdOrNetwork(network)?.id).toBe(id);
-  });
+  const logo = getChainByIdOrNetwork(Number(id))?.logo;
+  if (logo) {
+    test(`${logo} should be available`, async () => {
+      const res = await fetch(logo);
+      expect(res.status).not.toBe(404);
+    });
+  }
 });
