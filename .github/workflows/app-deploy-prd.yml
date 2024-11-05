@@ -42,6 +42,7 @@ jobs:
           vercel_group: itering
           preview_section: helix-app-testnet
           preview_output: true
+          prod_mode: true
           project_name: "helix-apps-test"
           script_install: pnpm install
           script_build: pnpm app build:testnet
