@@ -24,6 +24,7 @@ import {
   zircuitSepoliaChain,
   zksyncChain,
   zksyncSepoliaChain,
+  celoTestChain,
 } from "../config/chains";
 import { ChainConfig, ChainID, Network } from "../types";
 import { isMainnet } from "./env";
@@ -113,6 +114,9 @@ export function getChainConfig(chainIdOrNetwork?: ChainID | Network | null): Cha
     case ChainID.ZIRCUIT_SEPOLIA:
     case "zircuit-sepolia":
       return zircuitSepoliaChain;
+    case ChainID.CELO_TESTNET:
+    case "celo-testnet":
+      return celoTestChain;
     default:
       return;
   }
@@ -147,6 +151,7 @@ export function getChainConfigs(askAll?: boolean) {
     avalancheChain,
     zircuitChain,
     zircuitSepoliaChain,
+    celoTestChain,
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   if (askAll) {

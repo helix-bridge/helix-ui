@@ -35,6 +35,7 @@ export enum ChainID {
   AVALANCHE = 43_114,
   ZIRCUIT = 48900,
   ZIRCUIT_SEPOLIA = 48899,
+  CELO_TESTNET = 44787,
 }
 
 // According to graphql indexer
@@ -65,7 +66,8 @@ export type Network =
   | "avalanche"
   | "zircuit"
   | "zircuit-sepolia"
-  | "bsc";
+  | "bsc"
+  | "celo-testnet";
 
 export interface ChainConfig extends Chain {
   /**
