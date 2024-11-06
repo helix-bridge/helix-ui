@@ -52,7 +52,7 @@ export const celoTestChain: ChainConfig = {
    */
   ...celoAlfajores,
   network: "celo-testnet",
-  name: "Celo Testnet",
+  name: "Celo Alfajores",
 
   /**
    * Custom
