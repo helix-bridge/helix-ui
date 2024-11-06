@@ -25,3 +25,4 @@ export * from "./zircuit";
 export * from "./zircuit-sepolia";
 export * from "./morph-testnet";
 export * from "./morph";
+export * from "./celo-testnet";
