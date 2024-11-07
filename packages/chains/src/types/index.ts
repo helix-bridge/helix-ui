@@ -35,6 +35,7 @@ export enum ChainID {
   AVALANCHE = 43_114,
   ZIRCUIT_SEPOLIA = 48899,
   ZIRCUIT = 48900,
+  CELO_TESTNET = 44787,
 }
 /* eslint-enable no-unused-vars */
 
@@ -67,7 +68,8 @@ export type Network =
   | "avalanche"
   | "bsc"
   | "zircuit"
-  | "zircuit-sepolia";
+  | "zircuit-sepolia"
+  | "celo-testnet";
 
 export interface Chain extends ViemChain {
   id: ChainID;

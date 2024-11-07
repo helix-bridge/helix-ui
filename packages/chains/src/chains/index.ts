@@ -26,3 +26,4 @@ export * from "./zksync";
 export * from "./zksync-sepolia";
 export * from "./zircuit";
 export * from "./zircuit-sepolia";
+export * from "./celo-testnet";
