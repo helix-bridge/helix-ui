@@ -27,6 +27,7 @@ import {
   zircuitSepolia,
   zkSync,
   zksyncSepolia,
+  celoTestnet,
 } from "../chains";
 import { ChainID, type Network } from "../types";
 
@@ -59,6 +60,7 @@ export function getChains() {
     zkSync,
     zircuit,
     zircuitSepolia,
+    celoTestnet,
   ];
 }
 
@@ -145,6 +147,9 @@ export function getChainByIdOrNetwork(chainIdOrNetwork: ChainID | Network | null
     case ChainID.ZIRCUIT_SEPOLIA:
     case "zircuit-sepolia":
       return zircuitSepolia;
+    case ChainID.CELO_TESTNET:
+    case "celo-testnet":
+      return celoTestnet;
     default:
       return;
   }

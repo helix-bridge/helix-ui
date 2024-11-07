@@ -35,7 +35,7 @@
     "preset": "@helixbridge/jest-presets/node"
   },
   "dependencies": {
-    "@helixbridge/helixconf": "1.1.18",
+    "@helixbridge/helixconf": "v1.2.0-beta",
     "viem": "^2.21.19"
   }
 }
