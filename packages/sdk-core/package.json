@@ -36,7 +36,6 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@helixbridge/contracts": "^0.1.0",
-    "viem": "^1.21.4"
+    "viem": "^2.21.19"
   }
 }

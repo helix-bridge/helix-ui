@@ -1,6 +1,6 @@
 {
   "name": "helix-ui",
-  "description": "HelixBridge Interfaces",
+  "description": "Helixbox Interfaces",
   "private": true,
   "scripts": {
     "build": "turbo run build",
@@ -8,21 +8,28 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "clean": "turbo run clean && pnpm store prune && rm -rf .turbo node_modules",
-    "web": "pnpm --filter @helixbridge/web",
+    "helix": "pnpm --filter helix",
+    "home": "pnpm --filter helixbox-home",
+    "app": "pnpm --filter helixbox-app",
+    "build:helix": "pnpm --filter helix run build",
+    "build:home": "pnpm --filter helixbox-home run build",
+    "build:app": "pnpm --filter helixbox-app run build",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,yaml}\"",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "turbo build --filter=./packages/* && changeset publish",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "pnpm --filter helixbox-app run codegen:graphql"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/helix-bridge/helix-ui.git"
   },
   "keywords": [
+    "helixbox",
     "helix",
     "helix-ui",
-    "helixbridge"
+    "helixbox bridge"
   ],
   "bugs": {
     "url": "https://github.com/helix-bridge/helix-ui/issues"

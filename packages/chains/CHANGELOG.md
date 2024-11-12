@@ -1,5 +1,17 @@
 # @helixbridge/chains
 
+## 0.5.1
+
+### Patch Changes
+
+- ab5a9ed: Synchronize helixconf
+
+## 0.5.0
+
+### Minor Changes
+
+- 91dd052: Synchronize helixconf updates
+
 ## 0.4.0
 
 ### Minor Changes

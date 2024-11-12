@@ -1,13 +1,13 @@
-# HelixBridge Interfaces
+# Helixbox Interfaces
 
-❤️ Secure, fast, and low-cost cross-chain crypto transfers.
+❤️ Helixbox is focusing on becoming an efficient multi-chain liquidity provider, offering users a superior experience in multi-chain asset transfer and exchange.
 
-## Web Interface
+## App Interface
 
 ### Production
 
-- mainnet: https://helixbridge.app (ipfs version: https://helixbridge.eth.limo)
-- testnet: https://testnet.helixbridge.app
+- mainnet: https://app.helix.box (ipfs version: https://helixbridge.eth.limo)
+- testnet: https://testnet.app.helix.box
 
 ### Staging
 

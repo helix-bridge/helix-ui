@@ -1,0 +1,34 @@
+name: Deploy development (helix)
+
+on:
+  pull_request:
+    paths:
+      - "apps/helix/**"
+  workflow_dispatch:
+
+jobs:
+  deploy-package:
+    name: Deploy package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - uses: darwinia-network/devops/actions/smart-vercel@main
+        name: Deploy helix
+        with:
+          node_version: 20
+          vercel_token: ${{ secrets.VERCEL_TOKEN }}
+          vercel_group: itering
+          preview_section: helix-redirect
+          preview_output: true
+          project_name: "helix-redirect-page"
+          script_install: pnpm install
+          script_build: pnpm helix build
+          dist_path: apps/helix/dist
+          enable_notify_comment: true
+          enable_notify_slack: false
+          slack_channel: helixbox-ui
+          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}

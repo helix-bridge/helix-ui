@@ -1,0 +1,51 @@
+name: Deploy staging (app)
+
+on:
+  push:
+    branches: [main]
+    paths: ["apps/helixbox-app/**"]
+  workflow_dispatch:
+
+jobs:
+  deploy-package:
+    name: Deploy package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - uses: darwinia-network/devops/actions/smart-vercel@main
+        name: Deploy app (mainnet)
+        with:
+          node_version: 20
+          vercel_token: ${{ secrets.VERCEL_TOKEN }}
+          vercel_group: itering
+          preview_section: helix-app-mainnet
+          preview_output: true
+          alias_domain: "helixbox-stg-mainnet"
+          project_name: "helix-apps"
+          script_install: pnpm install
+          script_build: pnpm app build:mainnet
+          dist_path: apps/helixbox-app/dist
+          enable_notify_slack: false
+          slack_channel: helixbox-ui
+          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
+
+      - uses: darwinia-network/devops/actions/smart-vercel@main
+        name: Deploy app (testnet)
+        with:
+          node_version: 20
+          vercel_token: ${{ secrets.VERCEL_TOKEN }}
+          vercel_group: itering
+          preview_section: helix-app-testnet
+          preview_output: true
+          alias_domain: "helixbox-stg-testnet"
+          project_name: "helix-apps-test"
+          script_install: pnpm install
+          script_build: pnpm app build:testnet
+          dist_path: apps/helixbox-app/dist
+          enable_notify_slack: false
+          slack_channel: helixbox-ui
+          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
