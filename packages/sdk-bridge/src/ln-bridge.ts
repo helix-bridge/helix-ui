@@ -265,7 +265,6 @@ export abstract class LnBridge {
   abstract transfer(
     amount: bigint,
     recipient: Address,
-    relayer: Address,
     totalFee: bigint,
     relayInfo: RelayInfo,
   ): Promise<TransactionReceipt>;

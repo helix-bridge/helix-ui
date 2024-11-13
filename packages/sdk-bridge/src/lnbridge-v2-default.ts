@@ -16,13 +16,13 @@ export class LnBridgeV2Default extends LnBridge {
     super(fromChain, toChain, fromToken, toToken, protocol, options);
   }
 
-  async transfer(amount: bigint, recipient: Address, relayer: Address, totalFee: bigint, relayInfo: RelayInfo) {
+  async transfer(amount: bigint, recipient: Address, totalFee: bigint, relayInfo: RelayInfo) {
     assert(this.walletClient, "Wallet client not found");
     assert(relayInfo.lastTransferId, "Transfer ID not found");
 
     const snapshot = {
       remoteChainId: BigInt(this.targetChain.id),
-      provider: relayer,
+      provider: relayInfo.relayer as Address,
       sourceToken: this.sourceToken.address,
       targetToken: this.targetToken.address,
       transferId: relayInfo.lastTransferId as Hash,
