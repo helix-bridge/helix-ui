@@ -438,28 +438,13 @@ importers:
       "@helixbridge/sdk-core":
         specifier: workspace:*
         version: link:../sdk-core
-      graphql:
-        specifier: ^16.8.1
-        version: 16.9.0
+      "@helixbridge/sdk-indexer":
+        specifier: workspace:*
+        version: link:../sdk-indexer
       viem:
         specifier: ^2.21.19
         version: 2.21.44(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4)
     devDependencies:
-      "@0no-co/graphqlsp":
-        specifier: ^1.12.16
-        version: 1.12.16(graphql@16.9.0)(typescript@5.5.4)
-      "@graphql-codegen/cli":
-        specifier: 5.0.3
-        version: 5.0.3(@parcel/watcher@2.4.1)(@types/node@20.14.12)(bufferutil@4.0.8)(enquirer@2.4.1)(graphql@16.9.0)(typescript@5.5.4)(utf-8-validate@5.0.10)
-      "@graphql-codegen/client-preset":
-        specifier: 4.4.0
-        version: 4.4.0(graphql@16.9.0)
-      "@graphql-codegen/schema-ast":
-        specifier: ^4.1.0
-        version: 4.1.0(graphql@16.9.0)
-      "@graphql-typed-document-node/core":
-        specifier: ^3.2.0
-        version: 3.2.0(graphql@16.9.0)
       "@helixbridge/eslint-config":
         specifier: workspace:*
         version: link:../config-eslint
@@ -497,6 +482,67 @@ importers:
         specifier: ^2.21.19
         version: 2.21.44(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4)
     devDependencies:
+      "@helixbridge/eslint-config":
+        specifier: workspace:*
+        version: link:../config-eslint
+      "@helixbridge/jest-presets":
+        specifier: workspace:*
+        version: link:../jest-presets
+      "@helixbridge/tsconfig":
+        specifier: workspace:*
+        version: link:../config-typescript
+      "@types/jest":
+        specifier: ^29.5.12
+        version: 29.5.12
+      "@types/node":
+        specifier: ^20
+        version: 20.14.12
+      "@typescript-eslint/parser":
+        specifier: ^7.2.0
+        version: 7.17.0(eslint@8.57.0)(typescript@5.5.4)
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@20.14.12)
+      tsup:
+        specifier: ^8.2.3
+        version: 8.2.3(@swc/core@1.7.1)(jiti@2.4.0)(postcss@8.4.39)(typescript@5.5.4)(yaml@2.4.5)
+      typescript:
+        specifier: ^5.2.2
+        version: 5.5.4
+
+  packages/sdk-indexer:
+    dependencies:
+      "@helixbridge/chains":
+        specifier: workspace:*
+        version: link:../chains
+      "@helixbridge/helixconf":
+        specifier: v1.2.0-beta
+        version: 1.2.0-beta
+      graphql:
+        specifier: ^16.8.1
+        version: 16.9.0
+      viem:
+        specifier: ^2.21.19
+        version: 2.21.44(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4)
+    devDependencies:
+      "@0no-co/graphqlsp":
+        specifier: ^1.12.16
+        version: 1.12.16(graphql@16.9.0)(typescript@5.5.4)
+      "@graphql-codegen/cli":
+        specifier: 5.0.3
+        version: 5.0.3(@parcel/watcher@2.4.1)(@types/node@20.14.12)(bufferutil@4.0.8)(enquirer@2.4.1)(graphql@16.9.0)(typescript@5.5.4)(utf-8-validate@5.0.10)
+      "@graphql-codegen/client-preset":
+        specifier: 4.4.0
+        version: 4.4.0(graphql@16.9.0)
+      "@graphql-codegen/schema-ast":
+        specifier: ^4.1.0
+        version: 4.1.0(graphql@16.9.0)
+      "@graphql-typed-document-node/core":
+        specifier: ^3.2.0
+        version: 3.2.0(graphql@16.9.0)
       "@helixbridge/eslint-config":
         specifier: workspace:*
         version: link:../config-eslint

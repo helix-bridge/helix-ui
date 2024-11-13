@@ -1,5 +1,5 @@
 {
-  "name": "@helixbridge/sdk-bridge",
+  "name": "@helixbridge/sdk-indexer",
   "version": "0.0.0",
   "private": true,
   "main": "./dist/index.js",
@@ -14,7 +14,8 @@
     "dev": "tsup --watch",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "codegen:graphql": "graphql-codegen --config codegen.ts"
   },
   "publishConfig": {
     "access": "public"
@@ -24,6 +25,11 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@0no-co/graphqlsp": "^1.12.16",
+    "@graphql-codegen/cli": "5.0.3",
+    "@graphql-codegen/client-preset": "4.4.0",
+    "@graphql-codegen/schema-ast": "^4.1.0",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@helixbridge/eslint-config": "workspace:*",
     "@helixbridge/jest-presets": "workspace:*",
     "@helixbridge/tsconfig": "workspace:*",
@@ -38,8 +44,7 @@
   "dependencies": {
     "@helixbridge/chains": "workspace:*",
     "@helixbridge/helixconf": "v1.2.0-beta",
-    "@helixbridge/sdk-core": "workspace:*",
-    "@helixbridge/sdk-indexer": "workspace:*",
+    "graphql": "^16.8.1",
     "viem": "^2.21.19"
   }
 }

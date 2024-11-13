@@ -1,0 +1,16 @@
+{
+  "extends": "@helixbridge/tsconfig/base.json",
+  "compilerOptions": {
+    "lib": ["ES2020"],
+    "outDir": "./dist",
+    "types": ["jest", "node"],
+    "plugins": [
+      {
+        "name": "@0no-co/graphqlsp",
+        "schema": "./schema.graphql"
+      }
+    ]
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
+}

@@ -7,6 +7,7 @@ import {
   Hash,
   http,
   PublicClient,
+  TransactionReceipt,
   WalletClient,
 } from "viem";
 import { HelixChain, HelixProtocolName } from "@helixbridge/helixconf";
@@ -14,22 +15,24 @@ import assert from "assert";
 import { getChainByIdOrNetwork, Chain as HChain } from "@helixbridge/chains";
 import { OnChainToken, Token } from "@helixbridge/sdk-core";
 import { fetchMsgportFeeAndParams } from "./utils";
+import { SortedRelayersQuery } from "@helixbridge/sdk-indexer";
 
-interface Options {
+export interface ConstructorOptions {
   walletClient?: WalletClient;
 }
+export type RelayInfo = NonNullable<NonNullable<NonNullable<SortedRelayersQuery>["records"]>[number]>;
 
 export abstract class LnBridge {
-  readonly protocol: HelixProtocolName;
-  private readonly sourceToken: Token;
-  private readonly targetToken: Token;
-  private readonly sourceChain: HChain;
-  private readonly targetChain: HChain;
-  private readonly walletClient?: WalletClient;
-  private readonly publicClientSource: PublicClient;
-  private readonly publicClientTarget: PublicClient;
-  private readonly sourceBridgeContract: Address;
-  private readonly targetBridgeContract: Address;
+  private readonly protocol: HelixProtocolName;
+  protected readonly sourceToken: Token;
+  protected readonly targetToken: Token;
+  protected readonly sourceChain: HChain;
+  protected readonly targetChain: HChain;
+  protected readonly walletClient?: WalletClient;
+  protected readonly publicClientSource: PublicClient;
+  protected readonly publicClientTarget: PublicClient;
+  protected readonly sourceBridgeContract: Address;
+  protected readonly targetBridgeContract: Address;
 
   constructor(
     fromChain: Chain,
@@ -37,7 +40,7 @@ export abstract class LnBridge {
     fromToken: Address,
     toToken: Address,
     protocol: HelixProtocolName,
-    options?: Options,
+    options?: ConstructorOptions,
   ) {
     const sourceChain = getChainByIdOrNetwork(fromChain.id);
     assert(sourceChain, "Source chain not found");
@@ -252,6 +255,19 @@ export abstract class LnBridge {
     );
   }
 
-  // eslint-disable-next-line no-unused-vars
-  abstract transfer(amount: bigint, recipient: Address): Promise<string>;
+  protected getGasLimit() {
+    return this.sourceChain?.network === "arbitrum" || this.sourceChain?.network === "arbitrum-sepolia"
+      ? 3000000n
+      : undefined;
+  }
+
+  /* eslint-disable no-unused-vars */
+  abstract transfer(
+    amount: bigint,
+    recipient: Address,
+    relayer: Address,
+    totalFee: bigint,
+    relayInfo: RelayInfo,
+  ): Promise<TransactionReceipt>;
+  /* eslint-enable no-unused-vars */
 }

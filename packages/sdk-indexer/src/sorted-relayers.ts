@@ -1,11 +1,11 @@
-import { graphql } from "../../generated";
-import { execute } from "./execute";
-import { getIndexerUrl } from "../misc";
+import { graphql } from "./generated";
+import { execute } from "./helper";
+import { getIndexerUrl } from "./utils";
 import { Address, Chain } from "viem";
 import { getChainByIdOrNetwork } from "@helixbridge/chains";
 import assert from "assert";
 import { HelixChain } from "@helixbridge/helixconf";
-import type { SortedRelayersQuery as SortedRelayersQueryType } from "../../generated/graphql";
+import type { SortedRelayersQuery as SortedRelayersQueryType } from "./generated/graphql";
 
 const document = graphql(`
   query SortedRelayers($amount: String, $decimals: Int, $token: String, $fromChain: String, $toChain: String) {

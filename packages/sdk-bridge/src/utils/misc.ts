@@ -1,10 +1,4 @@
-import { Address, Chain, Hash } from "viem";
-import { MAINNET_INDEXER_ENDPOINT } from "../config";
-import { TESTNET_INDEXER_ENDPOINT } from "../config";
-
-export function getIndexerUrl(chain: Chain) {
-  return chain.testnet ? TESTNET_INDEXER_ENDPOINT : MAINNET_INDEXER_ENDPOINT;
-}
+import { Address, Hash } from "viem";
 
 export async function fetchMsgportFeeAndParams(
   fromChainId: number,
