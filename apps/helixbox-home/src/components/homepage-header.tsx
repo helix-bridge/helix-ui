@@ -15,7 +15,7 @@ const navigations: (
     ],
   },
   { label: "Docs", link: "https://docs.helix.box/" },
-  { label: "Careers", link: "https://itering-io.breezy.hr/" },
+  { label: "Careers", link: "https://hirevise.com/itering" },
 ];
 
 export default function HomepageHeader() {
