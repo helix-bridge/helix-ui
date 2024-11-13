@@ -38,7 +38,7 @@ export default function HomepageFooter() {
           title="Resources"
           items={[
             { label: "Docs", link: "https://docs.helix.box/" },
-            { label: "Careers", link: "https://itering-io.breezy.hr/" },
+            { label: "Careers", link: "https://hirevise.com/itering" },
           ]}
           className="flex-shrink-[0.6] flex-grow-[0.6] basis-0"
           dataAos="fade-up-left"
