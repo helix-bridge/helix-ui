@@ -1,14 +1,26 @@
-import { Address, Chain, createPublicClient, http, PublicClient, WalletClient } from "viem";
+import {
+  Address,
+  bytesToHex,
+  Chain,
+  createPublicClient,
+  encodeFunctionData,
+  Hash,
+  http,
+  PublicClient,
+  WalletClient,
+} from "viem";
 import { HelixChain, HelixProtocolName } from "@helixbridge/helixconf";
 import assert from "assert";
 import { getChainByIdOrNetwork, Chain as HChain } from "@helixbridge/chains";
 import { OnChainToken, Token } from "@helixbridge/sdk-core";
+import { fetchMsgportFeeAndParams } from "./utils";
 
 interface Options {
   walletClient?: WalletClient;
 }
 
 export abstract class LnBridge {
+  readonly protocol: HelixProtocolName;
   private readonly sourceToken: Token;
   private readonly targetToken: Token;
   private readonly sourceChain: HChain;
@@ -56,6 +68,7 @@ export abstract class LnBridge {
     this.sourceBridgeContract = bridgeContractSource;
     this.targetBridgeContract = couple.protocol.address as Address;
 
+    this.protocol = protocol;
     this.sourceToken = new Token(
       sourceChain.id,
       sourceTokenConf.address as Address,
@@ -125,6 +138,117 @@ export abstract class LnBridge {
       this.targetToken,
       this.publicClientTarget,
       this.walletClient,
+    );
+  }
+
+  /**
+   * @param relayer - The relayer to get the fee for
+   * @param amount - The amount to transfer
+   * @returns The total fee for the transfer in the source token
+   */
+  async getTotalFee(relayer: Address, amount: bigint) {
+    return this.publicClientSource.readContract({
+      address: this.sourceBridgeContract,
+      abi: (await import(`./abi/lnv2-default`)).default,
+      functionName: "totalFee",
+      args: [BigInt(this.targetChain.id), relayer, this.sourceToken.address, this.targetToken.address, amount],
+    });
+  }
+
+  protected async getLayerzeroFee(sendService: Address, remoteChain: Chain, localPublicClient: PublicClient) {
+    const [nativeFee] = await localPublicClient.readContract({
+      address: sendService,
+      abi: (await import(`./abi/lnaccess-controller`)).default,
+      functionName: "fee",
+      args: [BigInt(remoteChain.id), bytesToHex(Uint8Array.from([123]), { size: 750 })],
+    });
+    return [nativeFee];
+  }
+
+  protected async getMsgportFeeAndParams(
+    message: Hash,
+    refundAddress: Address,
+    localChain: Chain,
+    remoteChain: Chain,
+    localContract: Address,
+    remoteContract: Address,
+    localToken: Token,
+    remoteToken: Token,
+  ) {
+    const localMessager = HelixChain.get(localChain.id)?.messager("msgline")?.address as Address | undefined;
+    const rm = HelixChain.get(localChain.id)?.couples.find(
+      (c) =>
+        c.chain.id === BigInt(remoteChain.id) &&
+        c.symbol.from === localToken.symbol &&
+        c.symbol.to === remoteToken.symbol &&
+        c.protocol.name === this.protocol,
+    )?.messager;
+    const remoteMessager = rm?.name === "msgline" ? (rm.address as Address | undefined) : undefined;
+
+    if (localMessager && remoteMessager) {
+      const payload = encodeFunctionData({
+        abi: (await import("./abi/msgline-messager")).default,
+        functionName: "receiveMessage",
+        args: [BigInt(localChain.id), localContract, remoteContract, message],
+      });
+
+      return fetchMsgportFeeAndParams(
+        localChain.id,
+        remoteChain.id,
+        localMessager,
+        remoteMessager,
+        refundAddress,
+        payload,
+      );
+    }
+  }
+
+  /**
+   * @returns The total fee for the withdraw in the source native token
+   */
+  async getLayerzeroWithdrawFee() {
+    const [sendService] = await this.publicClientSource.readContract({
+      address: this.sourceBridgeContract,
+      abi: (await import(`./abi/lnv2-default`)).default,
+      functionName: "messagers",
+      args: [BigInt(this.targetChain.id)],
+    });
+    const [nativeFee] = await this.getLayerzeroFee(sendService, this.targetChain, this.publicClientSource);
+    return nativeFee;
+  }
+
+  /**
+   * @returns The total fee for the withdraw in the source native token
+   */
+  async getMsgportWithdrawFeeAndParams(args: {
+    transferId: Hash;
+    withdrawNonce: string;
+    relayer: Address;
+    refundAddress: Address;
+    amount: bigint;
+  }) {
+    const message = encodeFunctionData({
+      abi: (await import(`./abi/lnv2-default`)).default,
+      functionName: "withdraw",
+      args: [
+        BigInt(this.sourceChain.id),
+        args.transferId,
+        BigInt(args.withdrawNonce),
+        args.relayer,
+        this.sourceToken.address,
+        this.targetToken.address,
+        args.amount,
+      ],
+    });
+    return this.getMsgportFeeAndParams(
+      message,
+      args.refundAddress,
+      this.sourceChain,
+      this.targetChain,
+      this.sourceBridgeContract,
+      this.targetBridgeContract,
+      this.sourceToken,
+      this.targetToken,
     );
   }
 
