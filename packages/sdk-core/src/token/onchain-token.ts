@@ -2,13 +2,16 @@ import { Abi, Address, PublicClient, WalletClient } from "viem";
 import { Token } from "./token";
 
 const abi = [
+  // erc20
   {
     inputs: [
-      { internalType: "string", name: "_name", type: "string" },
-      { internalType: "string", name: "_symbol", type: "string" },
-      { internalType: "uint8", name: "_decimals", type: "uint8" },
+      { internalType: "string", name: "name_", type: "string" },
+      { internalType: "string", name: "symbol_", type: "string" },
+      { internalType: "uint8", name: "decimals_", type: "uint8" },
+      { internalType: "uint256", name: "initialBalance_", type: "uint256" },
+      { internalType: "address payable", name: "feeReceiver_", type: "address" },
     ],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "constructor",
   },
   {
@@ -24,28 +27,12 @@ const abi = [
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: "address", name: "previousOwner", type: "address" },
-      { indexed: true, internalType: "address", name: "newOwner", type: "address" },
-    ],
-    name: "OwnershipTransferred",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
       { indexed: true, internalType: "address", name: "from", type: "address" },
       { indexed: true, internalType: "address", name: "to", type: "address" },
       { indexed: false, internalType: "uint256", name: "value", type: "uint256" },
     ],
     name: "Transfer",
     type: "event",
-  },
-  {
-    inputs: [{ internalType: "address", name: "", type: "address" }],
-    name: "allowFaucet",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
   },
   {
     inputs: [
@@ -75,16 +62,6 @@ const abi = [
     type: "function",
   },
   {
-    inputs: [
-      { internalType: "address", name: "account", type: "address" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
-    ],
-    name: "burn",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "decimals",
     outputs: [{ internalType: "uint8", name: "", type: "uint8" }],
@@ -102,13 +79,6 @@ const abi = [
     type: "function",
   },
   {
-    inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }],
-    name: "faucet",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [
       { internalType: "address", name: "spender", type: "address" },
       { internalType: "uint256", name: "addedValue", type: "uint256" },
@@ -120,41 +90,9 @@ const abi = [
   },
   {
     inputs: [],
-    name: "maxFaucetAllowed",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "account", type: "address" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
-    ],
-    name: "mint",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "name",
     outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "owner",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  { inputs: [], name: "renounceOwnership", outputs: [], stateMutability: "nonpayable", type: "function" },
-  {
-    inputs: [{ internalType: "uint256", name: "allowed", type: "uint256" }],
-    name: "setMaxFaucetAllowed",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -192,9 +130,25 @@ const abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
+
+  // faucet
   {
-    inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
-    name: "transferOwnership",
+    inputs: [{ internalType: "address", name: "", type: "address" }],
+    name: "allowFaucet",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "maxFaucetAllowed",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }],
+    name: "faucet",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -207,16 +161,19 @@ interface Options {
   walletClient?: WalletClient;
 }
 
-export class FaucetToken extends Token {
+export class OnChainToken extends Token {
   private readonly publicClient?: PublicClient;
   private readonly walletClient?: WalletClient;
 
   constructor(chainId: number, address: Address, decimals: number, symbol: string, name: string, options?: Options) {
     super(chainId, address, decimals, symbol, name, options?.logo);
-    this.publicClient = options?.publicClient;
-    this.walletClient = options?.walletClient;
   }
 
+  /**
+   * Faucet allow
+   * @param address Address
+   * @returns Amount of tokens allowed to be sent from the faucet
+   */
   getAllowFaucet(address: Address) {
     return this.publicClient?.readContract({
       abi,
@@ -226,6 +183,10 @@ export class FaucetToken extends Token {
     });
   }
 
+  /**
+   * Faucet max allowed
+   * @returns Maximum amount of tokens allowed to be sent from the faucet
+   */
   getMaxFaucetAllowed() {
     return this.publicClient?.readContract({
       abi,
@@ -234,6 +195,10 @@ export class FaucetToken extends Token {
     });
   }
 
+  /**
+   * Faucet
+   * @param amount Amount of tokens to send from the faucet
+   */
   async faucet(amount: bigint) {
     if (this.publicClient && this.walletClient) {
       const { request } = await this.publicClient.simulateContract({
@@ -247,5 +212,58 @@ export class FaucetToken extends Token {
       return this.publicClient.waitForTransactionReceipt({ hash, confirmations: 2 });
     }
     throw new Error("Faucet token is not connected to a public or wallet client");
+  }
+
+  /**
+   * Balance
+   * @param address Address
+   * @returns Amount of tokens in the address
+   */
+  getBalance(address: Address) {
+    return this.isNative
+      ? this.publicClient?.getBalance({ address })
+      : this.publicClient?.readContract({
+          abi,
+          address: this.address,
+          functionName: "balanceOf",
+          args: [address],
+        });
+  }
+
+  /**
+   * Allowance
+   * @param owner Owner address
+   * @param spender Spender address
+   * @returns Amount of tokens allowed to be spent
+   */
+  getAllowance(owner: Address, spender: Address) {
+    return this.isNative
+      ? Promise.resolve(this.parseEther(Number.MAX_SAFE_INTEGER.toString()))
+      : this.publicClient?.readContract({
+          abi,
+          address: this.address,
+          functionName: "allowance",
+          args: [owner, spender],
+        }) || Promise.resolve(0n);
+  }
+
+  /**
+   * Approve
+   * @param spender Spender address
+   * @param amount Amount of tokens to approve
+   */
+  async approve(spender: Address, amount: bigint) {
+    if (this.publicClient && this.walletClient) {
+      const { request } = await this.publicClient.simulateContract({
+        abi,
+        account: this.walletClient?.account,
+        address: this.address,
+        functionName: "approve",
+        args: [spender, amount],
+      });
+      const hash = await this.walletClient.writeContract(request);
+      return this.publicClient.waitForTransactionReceipt({ hash, confirmations: 2 });
+    }
+    throw new Error("Token is not connected to a public or wallet client");
   }
 }

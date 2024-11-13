@@ -1,0 +1,128 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+"""
+The `BigInt` scalar type represents non-fractional signed whole numeric values.BigInt can represent values between -(2^63) + 1 and 2^63 - 1.
+"""
+scalar BigInt
+
+type HealthInfo {
+  callTimes: Int
+  name: String
+}
+
+type HistoryRecord {
+  bridge: String!
+  confirmedBlocks: String
+  endTime: Int
+  endTxHash: String
+  extData: String
+  fee: String!
+  feeToken: String!
+  fromChain: String!
+  guardSignatures: String
+  id: String!
+  lastRequestWithdraw: BigInt
+  messageNonce: String
+  needWithdrawLiquidity: Boolean
+  nonce: BigInt!
+  reason: String
+  recipient: String!
+  recvAmount: String
+  recvOuterTokenAddress: String
+  recvToken: String!
+  recvTokenAddress: String
+  relayer: String
+  requestTxHash: String!
+  responseTxHash: String
+  result: Int!
+  sendAmount: String!
+  sendOuterTokenAddress: String
+  sendToken: String!
+  sendTokenAddress: String
+  sender: String!
+  startTime: Int!
+  toChain: String!
+}
+
+type HistoryRecords {
+  records: [HistoryRecord]
+  total: Int!
+}
+
+type LnBridgeRelayInfo {
+  baseFee: String
+  bridge: String!
+  cost: String
+  dynamicFee: String
+  dynamicFeeExpire: String
+  dynamicFeeSignature: String
+  fromChain: String!
+  heartbeatTimestamp: Int
+  id: String!
+  lastTransferId: String
+  liquidityFeeRate: Int
+  margin: String
+  messageChannel: String
+  nonce: BigInt!
+  paused: Boolean
+  profit: String
+  protocolFee: String
+  relayer: String!
+  sendToken: String
+  signers: String
+  slashCount: Int
+  softTransferLimit: String
+  targetNonce: BigInt
+  timestamp: Int!
+  toChain: String!
+  tokenKey: String
+  transactionHash: String!
+  transferLimit: String
+  version: String!
+  withdrawNonce: BigInt
+}
+
+type LnBridgeRelayInfos {
+  records: [LnBridgeRelayInfo]
+  total: Int!
+}
+
+type Mutation {
+  signConfirmedBlock(block: String, id: String, relayer: String, signature: String, timestamp: Int): String
+  signDynamicFee(dynamicFee: String, dynamicFeeExpire: String, dynamicFeeSignature: String, fromChainId: String, relayer: String, signature: String, timestamp: Int, toChainId: String, tokenAddress: String, version: String): String
+  signHeartBeat(fromChainId: String, relayer: String, signature: String, softTransferLimit: String, timestamp: Int, toChainId: String, tokenAddress: String, version: String): String
+}
+
+type Query {
+  checkLnBridgeExist(fromChainId: Int, fromToken: String, toChainId: Int, toToken: String, version: String): Boolean
+  firstHistoryRecord(bridge: String, fromChain: String, notsubmited: Boolean, order: String, relayer: String, results: [Int], toChain: String, token: String): HistoryRecord
+  historyRecordById(id: String): HistoryRecord
+  historyRecordByTxHash(txHash: String): HistoryRecord
+  historyRecords(bridges: [String], fromChains: [String], needWithdrawLiquidity: Boolean, order: String, page: Int, recipient: String, recvTokenAddress: String, relayer: String, results: [Int], row: Int, sender: String, toChains: [String]): HistoryRecords
+  previousHistoryRecord(bridge: String, fromChain: String, nonce: Int, relayer: String, toChain: String, token: String): HistoryRecord
+  queryLnBridgeRelayInfos(bridge: String, fromChain: String, page: Int, relayer: String, row: Int, toChain: String, version: String): LnBridgeRelayInfos
+  queryLnBridgeSupportChains(tokenKey: String): [SupportChains]
+  queryLnBridgeSupportedChains(tokenKey: String): [TokenInfo]
+  queryMaxTransfer(balance: String, bridge: String, fromChain: String, toChain: String, token: String): BigInt
+  queryRelayRecords(bridge: String, fromChain: String, relayer: String, row: Int, toChain: String): HistoryRecords
+  sortedLnBridgeRelayInfos(amount: String, bridge: String, decimals: Int, fromChain: String, row: Int, toChain: String, token: String, version: String): SortedLnBridgeRelayInfos
+  tasksHealthCheck(name: String): [HealthInfo]
+}
+
+type SortedLnBridgeRelayInfos {
+  records: [LnBridgeRelayInfo]
+  transferLimit: BigInt!
+}
+
+type SupportChains {
+  fromChain: String!
+  toChains: [String]
+}
+
+type TokenInfo {
+  chains: [SupportChains]
+  tokenKey: String!
+}

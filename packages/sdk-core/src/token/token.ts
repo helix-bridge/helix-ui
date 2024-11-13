@@ -10,6 +10,7 @@ export class Token {
   readonly symbol: string;
   readonly name: string;
   readonly logo: string;
+
   constructor(chainId: number, address: Address, decimals: number, symbol: string, name: string, logo?: string) {
     this.chainId = chainId;
     this.address = address;
