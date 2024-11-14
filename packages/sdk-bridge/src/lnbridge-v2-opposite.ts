@@ -1,11 +1,12 @@
 import { Address, Hash } from "viem";
 import { Chain } from "viem";
-import { ConstructorOptions, LnBridge, RelayInfo } from "./ln-bridge";
+import { ConstructorOptions, RelayInfo } from "./lnbridge";
 import { HelixProtocolName } from "@helixbridge/helixconf";
 import assert from "assert";
 import { DEFAULT_CONFIRMATIONS } from "./config";
+import { LnBridgeV2 } from "./lnbridge-v2";
 
-export class LnBridgeV2Opposite extends LnBridge {
+export class LnBridgeV2Opposite extends LnBridgeV2 {
   constructor(
     fromChain: Chain,
     toChain: Chain,

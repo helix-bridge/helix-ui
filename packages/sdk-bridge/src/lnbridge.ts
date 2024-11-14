@@ -9,6 +9,7 @@ import {
   PublicClient,
   TransactionReceipt,
   WalletClient,
+  zeroAddress,
 } from "viem";
 import { HelixChain, HelixProtocolName } from "@helixbridge/helixconf";
 import assert from "assert";
@@ -26,6 +27,8 @@ export abstract class LnBridge {
   private readonly protocol: HelixProtocolName;
   protected readonly sourceToken: Token;
   protected readonly targetToken: Token;
+  protected readonly sourceNativeToken: Token;
+  protected readonly targetNativeToken: Token;
   protected readonly sourceChain: HChain;
   protected readonly targetChain: HChain;
   protected readonly walletClient?: WalletClient;
@@ -71,6 +74,41 @@ export abstract class LnBridge {
     this.sourceBridgeContract = sourceBridgeContract;
     this.targetBridgeContract = couple.protocol.address as Address;
 
+    const sourceNativeTokenConf = sourceChainConf.tokens.find((t) => t.type === "native");
+    const targetNativeTokenConf = targetChainConf.tokens.find((t) => t.type === "native");
+    this.sourceNativeToken = sourceNativeTokenConf
+      ? new Token(
+          sourceChain.id,
+          sourceNativeTokenConf.address as Address,
+          sourceNativeTokenConf.decimals,
+          sourceNativeTokenConf.symbol,
+          sourceNativeTokenConf.name,
+          sourceNativeTokenConf.logo,
+        )
+      : new Token(
+          sourceChain.id,
+          zeroAddress,
+          sourceChain.nativeCurrency.decimals,
+          sourceChain.nativeCurrency.symbol,
+          sourceChain.nativeCurrency.name,
+        );
+    this.targetNativeToken = targetNativeTokenConf
+      ? new Token(
+          targetChain.id,
+          targetNativeTokenConf.address as Address,
+          targetNativeTokenConf.decimals,
+          targetNativeTokenConf.symbol,
+          targetNativeTokenConf.name,
+          targetNativeTokenConf.logo,
+        )
+      : new Token(
+          targetChain.id,
+          zeroAddress,
+          targetChain.nativeCurrency.decimals,
+          targetChain.nativeCurrency.symbol,
+          targetChain.nativeCurrency.name,
+        );
+
     this.protocol = protocol;
     this.sourceToken = new Token(
       sourceChain.id,
@@ -103,11 +141,23 @@ export abstract class LnBridge {
   }
 
   async getSourceTokenAllowance(owner: Address) {
-    return this.getTokenAllowance(owner, this.sourceBridgeContract, this.sourceToken, this.sourcePublicClient);
+    const value = await this.getTokenAllowance(
+      owner,
+      this.sourceBridgeContract,
+      this.sourceToken,
+      this.sourcePublicClient,
+    );
+    return { value, token: this.sourceToken };
   }
 
   async getTargetTokenAllowance(owner: Address) {
-    return this.getTokenAllowance(owner, this.targetBridgeContract, this.targetToken, this.targetPublicClient);
+    const value = await this.getTokenAllowance(
+      owner,
+      this.targetBridgeContract,
+      this.targetToken,
+      this.targetPublicClient,
+    );
+    return { value, token: this.targetToken };
   }
 
   private async approveToken(
@@ -144,28 +194,24 @@ export abstract class LnBridge {
     );
   }
 
-  /**
-   * @param relayer - The relayer to get the fee for
-   * @param amount - The amount to transfer
-   * @returns The total fee for the transfer in the source token
-   */
   async getTotalFee(relayer: Address, amount: bigint) {
-    return this.sourcePublicClient.readContract({
+    const value = await this.sourcePublicClient.readContract({
       address: this.sourceBridgeContract,
       abi: (await import(`./abi/lnv2-default`)).default,
       functionName: "totalFee",
       args: [BigInt(this.targetChain.id), relayer, this.sourceToken.address, this.targetToken.address, amount],
     });
+    return { value, token: this.sourceToken };
   }
 
-  protected async getLayerzeroFee(sendService: Address, remoteChain: Chain, localPublicClient: PublicClient) {
-    const [nativeFee] = await localPublicClient.readContract({
+  protected async getLayerZeroFee(sendService: Address, remoteChain: Chain, localPublicClient: PublicClient) {
+    const [nativeFee, zroFee] = await localPublicClient.readContract({
       address: sendService,
       abi: (await import(`./abi/lnaccess-controller`)).default,
       functionName: "fee",
       args: [BigInt(remoteChain.id), bytesToHex(Uint8Array.from([123]), { size: 750 })],
     });
-    return [nativeFee];
+    return [nativeFee, zroFee];
   }
 
   protected async getMsgportFeeAndParams(
@@ -204,55 +250,6 @@ export abstract class LnBridge {
         payload,
       );
     }
-  }
-
-  /**
-   * @returns The total fee for the withdraw in the source native token
-   */
-  async getLayerzeroWithdrawFee() {
-    const [sendService] = await this.sourcePublicClient.readContract({
-      address: this.sourceBridgeContract,
-      abi: (await import(`./abi/lnv2-default`)).default,
-      functionName: "messagers",
-      args: [BigInt(this.targetChain.id)],
-    });
-    const [nativeFee] = await this.getLayerzeroFee(sendService, this.targetChain, this.sourcePublicClient);
-    return nativeFee;
-  }
-
-  /**
-   * @returns The total fee for the withdraw in the source native token
-   */
-  async getMsgportWithdrawFeeAndParams(args: {
-    transferId: Hash;
-    withdrawNonce: string;
-    relayer: Address;
-    refundAddress: Address;
-    amount: bigint;
-  }) {
-    const message = encodeFunctionData({
-      abi: (await import(`./abi/lnv2-default`)).default,
-      functionName: "withdraw",
-      args: [
-        BigInt(this.sourceChain.id),
-        args.transferId,
-        BigInt(args.withdrawNonce),
-        args.relayer,
-        this.sourceToken.address,
-        this.targetToken.address,
-        args.amount,
-      ],
-    });
-    return this.getMsgportFeeAndParams(
-      message,
-      args.refundAddress,
-      this.sourceChain,
-      this.targetChain,
-      this.sourceBridgeContract,
-      this.targetBridgeContract,
-      this.sourceToken,
-      this.targetToken,
-    );
   }
 
   protected getGasLimit() {

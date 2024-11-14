@@ -1,1 +1,1 @@
-export { LnBridge } from "./ln-bridge";
+export { LnBridge } from "./lnbridge";
