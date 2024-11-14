@@ -2,6 +2,7 @@ import { Address, Chain } from "viem";
 import { ConstructorOptions, LnBridge, RelayInfo } from "./ln-bridge";
 import { HelixProtocolName } from "@helixbridge/helixconf";
 import assert from "assert";
+import { DEFAULT_CONFIRMATIONS } from "./config";
 
 export class LnBridgeV3 extends LnBridge {
   constructor(
@@ -19,7 +20,7 @@ export class LnBridgeV3 extends LnBridge {
     assert(this.walletClient, "Wallet client not found");
 
     const signer = (await this.walletClient.getAddresses())[0];
-    const { request } = await this.publicClientSource.simulateContract({
+    const { request } = await this.sourcePublicClient.simulateContract({
       address: this.sourceBridgeContract,
       abi: (await import("./abi/lnbridge-v3")).default,
       functionName: "lockAndRemoteRelease",
@@ -40,6 +41,6 @@ export class LnBridgeV3 extends LnBridge {
       account: signer,
     });
     const hash = await this.walletClient.writeContract(request);
-    return this.publicClientSource.waitForTransactionReceipt({ hash, confirmations: 2 });
+    return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: DEFAULT_CONFIRMATIONS });
   }
 }

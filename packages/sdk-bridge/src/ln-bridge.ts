@@ -29,8 +29,8 @@ export abstract class LnBridge {
   protected readonly sourceChain: HChain;
   protected readonly targetChain: HChain;
   protected readonly walletClient?: WalletClient;
-  protected readonly publicClientSource: PublicClient;
-  protected readonly publicClientTarget: PublicClient;
+  protected readonly sourcePublicClient: PublicClient;
+  protected readonly targetPublicClient: PublicClient;
   protected readonly sourceBridgeContract: Address;
   protected readonly targetBridgeContract: Address;
 
@@ -66,9 +66,9 @@ export abstract class LnBridge {
     );
     assert(couple, "Couple not found");
 
-    const bridgeContractSource = sourceChainConf.protocol[couple.protocol.name] as Address | undefined;
-    assert(bridgeContractSource, "Source bridge contract not found");
-    this.sourceBridgeContract = bridgeContractSource;
+    const sourceBridgeContract = sourceChainConf.protocol[couple.protocol.name] as Address | undefined;
+    assert(sourceBridgeContract, "Source bridge contract not found");
+    this.sourceBridgeContract = sourceBridgeContract;
     this.targetBridgeContract = couple.protocol.address as Address;
 
     this.protocol = protocol;
@@ -91,8 +91,8 @@ export abstract class LnBridge {
     this.sourceChain = sourceChain;
     this.targetChain = targetChain;
     this.walletClient = options?.walletClient;
-    this.publicClientSource = createPublicClient({ chain: sourceChain, transport: http() });
-    this.publicClientTarget = createPublicClient({ chain: targetChain, transport: http() });
+    this.sourcePublicClient = createPublicClient({ chain: sourceChain, transport: http() });
+    this.targetPublicClient = createPublicClient({ chain: targetChain, transport: http() });
   }
 
   private async getTokenAllowance(owner: Address, spender: Address, token: Token, publicClient: PublicClient) {
@@ -103,11 +103,11 @@ export abstract class LnBridge {
   }
 
   async getSourceTokenAllowance(owner: Address) {
-    return this.getTokenAllowance(owner, this.sourceBridgeContract, this.sourceToken, this.publicClientSource);
+    return this.getTokenAllowance(owner, this.sourceBridgeContract, this.sourceToken, this.sourcePublicClient);
   }
 
   async getTargetTokenAllowance(owner: Address) {
-    return this.getTokenAllowance(owner, this.targetBridgeContract, this.targetToken, this.publicClientTarget);
+    return this.getTokenAllowance(owner, this.targetBridgeContract, this.targetToken, this.targetPublicClient);
   }
 
   private async approveToken(
@@ -129,7 +129,7 @@ export abstract class LnBridge {
       this.sourceBridgeContract,
       amount,
       this.sourceToken,
-      this.publicClientSource,
+      this.sourcePublicClient,
       this.walletClient,
     );
   }
@@ -139,7 +139,7 @@ export abstract class LnBridge {
       this.targetBridgeContract,
       amount,
       this.targetToken,
-      this.publicClientTarget,
+      this.targetPublicClient,
       this.walletClient,
     );
   }
@@ -150,7 +150,7 @@ export abstract class LnBridge {
    * @returns The total fee for the transfer in the source token
    */
   async getTotalFee(relayer: Address, amount: bigint) {
-    return this.publicClientSource.readContract({
+    return this.sourcePublicClient.readContract({
       address: this.sourceBridgeContract,
       abi: (await import(`./abi/lnv2-default`)).default,
       functionName: "totalFee",
@@ -210,13 +210,13 @@ export abstract class LnBridge {
    * @returns The total fee for the withdraw in the source native token
    */
   async getLayerzeroWithdrawFee() {
-    const [sendService] = await this.publicClientSource.readContract({
+    const [sendService] = await this.sourcePublicClient.readContract({
       address: this.sourceBridgeContract,
       abi: (await import(`./abi/lnv2-default`)).default,
       functionName: "messagers",
       args: [BigInt(this.targetChain.id)],
     });
-    const [nativeFee] = await this.getLayerzeroFee(sendService, this.targetChain, this.publicClientSource);
+    const [nativeFee] = await this.getLayerzeroFee(sendService, this.targetChain, this.sourcePublicClient);
     return nativeFee;
   }
 

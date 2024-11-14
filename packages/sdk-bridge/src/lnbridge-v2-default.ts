@@ -3,6 +3,7 @@ import { Chain } from "viem";
 import { ConstructorOptions, LnBridge, RelayInfo } from "./ln-bridge";
 import { HelixProtocolName } from "@helixbridge/helixconf";
 import assert from "assert";
+import { DEFAULT_CONFIRMATIONS } from "./config";
 
 export class LnBridgeV2Default extends LnBridge {
   constructor(
@@ -31,7 +32,7 @@ export class LnBridgeV2Default extends LnBridge {
     } as const;
 
     const signer = (await this.walletClient.getAddresses())[0];
-    const { request } = await this.publicClientSource.simulateContract({
+    const { request } = await this.sourcePublicClient.simulateContract({
       address: this.sourceBridgeContract,
       abi: (await import(`./abi/lnv2-default`)).default,
       functionName: "transferAndLockMargin",
@@ -41,6 +42,59 @@ export class LnBridgeV2Default extends LnBridge {
       account: signer,
     });
     const hash = await this.walletClient.writeContract(request);
-    return this.publicClientSource.waitForTransactionReceipt({ hash, confirmations: 2 });
+    return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: DEFAULT_CONFIRMATIONS });
+  }
+
+  async depositMargin(margin: bigint) {
+    assert(this.walletClient, "Wallet client not found");
+    const signer = (await this.walletClient.getAddresses())[0];
+    const { request } = await this.targetPublicClient.simulateContract({
+      address: this.targetBridgeContract,
+      abi: (await import(`./abi/lnv2-default`)).default,
+      functionName: "depositProviderMargin",
+      args: [BigInt(this.sourceChain.id), this.sourceToken.address, this.targetToken.address, margin],
+      value: this.targetToken.isNative ? margin : undefined,
+      gas: this.getGasLimit(),
+      account: signer,
+    });
+    const hash = await this.walletClient.writeContract(request);
+    return this.targetPublicClient.waitForTransactionReceipt({ hash, confirmations: DEFAULT_CONFIRMATIONS });
+  }
+
+  async updateFeeAndRate(baseFee: bigint, feeRate: number) {
+    assert(this.walletClient, "Wallet client not found");
+    const signer = (await this.walletClient.getAddresses())[0];
+    const { request } = await this.sourcePublicClient.simulateContract({
+      address: this.sourceBridgeContract,
+      abi: (await import(`./abi/lnv2-default`)).default,
+      functionName: "setProviderFee",
+      args: [BigInt(this.targetChain.id), this.sourceToken.address, this.targetToken.address, baseFee, feeRate],
+      gas: this.getGasLimit(),
+      account: signer,
+    });
+    const hash = await this.walletClient.writeContract(request);
+    return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: DEFAULT_CONFIRMATIONS });
+  }
+
+  async withdrawMargin(recipientOrParams: Address | Hash, amount: bigint, fee: bigint) {
+    assert(this.walletClient, "Wallet client not found");
+    const signer = (await this.walletClient.getAddresses())[0];
+    const { request } = await this.sourcePublicClient.simulateContract({
+      address: this.sourceBridgeContract,
+      abi: (await import(`./abi/lnv2-default`)).default,
+      functionName: "requestWithdrawMargin",
+      args: [
+        BigInt(this.targetChain.id),
+        this.sourceToken.address,
+        this.targetToken.address,
+        amount,
+        recipientOrParams,
+      ],
+      gas: this.getGasLimit(),
+      value: fee,
+      account: signer,
+    });
+    const hash = await this.walletClient.writeContract(request);
+    return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: DEFAULT_CONFIRMATIONS });
   }
 }

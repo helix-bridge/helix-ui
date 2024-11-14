@@ -3,6 +3,7 @@ import { Chain } from "viem";
 import { ConstructorOptions, LnBridge, RelayInfo } from "./ln-bridge";
 import { HelixProtocolName } from "@helixbridge/helixconf";
 import assert from "assert";
+import { DEFAULT_CONFIRMATIONS } from "./config";
 
 export class LnBridgeV2Opposite extends LnBridge {
   constructor(
@@ -31,7 +32,7 @@ export class LnBridgeV2Opposite extends LnBridge {
     } as const;
 
     const signer = (await this.walletClient.getAddresses())[0];
-    const { request } = await this.publicClientSource.simulateContract({
+    const { request } = await this.sourcePublicClient.simulateContract({
       address: this.sourceBridgeContract,
       abi: (await import(`./abi/lnv2-opposite`)).default,
       functionName: "transferAndLockMargin",
@@ -41,6 +42,6 @@ export class LnBridgeV2Opposite extends LnBridge {
       account: signer,
     });
     const hash = await this.walletClient.writeContract(request);
-    return this.publicClientSource.waitForTransactionReceipt({ hash, confirmations: 2 });
+    return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: DEFAULT_CONFIRMATIONS });
   }
 }
