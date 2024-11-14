@@ -44,4 +44,20 @@ export class LnBridgeV2Opposite extends LnBridge {
     const hash = await this.walletClient.writeContract(request);
     return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: DEFAULT_CONFIRMATIONS });
   }
+
+  async updateFeeRateMargin(baseFee: bigint, feeRate: number, margin: bigint) {
+    assert(this.walletClient, "Wallet client not found");
+    const signer = (await this.walletClient.getAddresses())[0];
+    const { request } = await this.sourcePublicClient.simulateContract({
+      address: this.sourceBridgeContract,
+      abi: (await import(`./abi/lnv2-opposite`)).default,
+      functionName: "updateProviderFeeAndMargin",
+      args: [BigInt(this.targetChain.id), this.sourceToken.address, this.targetToken.address, margin, baseFee, feeRate],
+      value: this.sourceToken.isNative ? margin : undefined,
+      gas: this.getGasLimit(),
+      account: signer,
+    });
+    const hash = await this.walletClient.writeContract(request);
+    return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: DEFAULT_CONFIRMATIONS });
+  }
 }
