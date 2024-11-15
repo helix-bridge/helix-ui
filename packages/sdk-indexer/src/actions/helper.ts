@@ -1,4 +1,4 @@
-import type { TypedDocumentString } from "./generated/graphql";
+import type { TypedDocumentString } from "../generated/graphql";
 
 export async function execute<TResult, TVariables>(
   endpoint: string,
@@ -20,5 +20,11 @@ export async function execute<TResult, TVariables>(
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
-  return response.json() as TResult;
+  return (await response.json()) as { data: TResult };
+}
+
+export function assert(condition: unknown, message?: string): asserts condition {
+  if (!condition) {
+    throw new Error(message ?? "Assertion failed");
+  }
 }

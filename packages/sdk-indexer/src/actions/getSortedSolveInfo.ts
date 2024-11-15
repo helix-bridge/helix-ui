@@ -1,14 +1,14 @@
-import { graphql } from "./generated";
+import { graphql } from "../generated";
 import { execute } from "./helper";
-import { getIndexerUrl } from "./utils";
+import { getEndpoint } from "../utils";
 import { Address, Chain } from "viem";
 import { getChainByIdOrNetwork } from "@helixbridge/chains";
-import assert from "assert";
+import { assert } from "./helper";
 import { HelixChain } from "@helixbridge/helixconf";
-import type { SortedRelayersQuery as SortedRelayersQueryType } from "./generated/graphql";
+import type { SortedSolveInfoQuery } from "../generated/graphql";
 
 const document = graphql(`
-  query SortedRelayers($amount: String, $decimals: Int, $token: String, $fromChain: String, $toChain: String) {
+  query SortedSolveInfo($amount: String, $decimals: Int, $token: String, $fromChain: String, $toChain: String) {
     sortedLnBridgeRelayInfos(
       amount: $amount
       decimals: $decimals
@@ -32,28 +32,30 @@ const document = graphql(`
   }
 `);
 
-export type SortedRelayersQuery = SortedRelayersQueryType["sortedLnBridgeRelayInfos"];
+export type SortedSolveInfo = SortedSolveInfoQuery["sortedLnBridgeRelayInfos"];
 
-export async function getSortedRelayers(
+export async function getSortedSolveInfo(
   fromChain: Chain,
   toChain: Chain,
-  token: Address,
-  amount: bigint,
-): Promise<SortedRelayersQuery> {
+  transferToken: Address,
+  transferAmount: bigint,
+): Promise<SortedSolveInfo> {
   const sourceChain = getChainByIdOrNetwork(fromChain.id);
   assert(sourceChain, "Source chain not found");
   const targetChain = getChainByIdOrNetwork(toChain.id);
   assert(targetChain, "Target chain not found");
 
-  const tokenConf = HelixChain.get(fromChain.id)?.tokens.find((t) => t.address.toLowerCase() === token.toUpperCase());
+  const tokenConf = HelixChain.get(fromChain.id)?.tokens.find(
+    (t) => t.address.toLowerCase() === transferToken.toLowerCase(),
+  );
   assert(tokenConf, "Token conf not found");
 
-  const data = await execute(getIndexerUrl(sourceChain), document, {
+  const { data } = await execute(getEndpoint(sourceChain.testnet), document, {
     fromChain: sourceChain.network,
     toChain: targetChain.network,
     token: tokenConf.address,
     decimals: tokenConf.decimals,
-    amount: amount.toString(),
+    amount: transferAmount.toString(),
   });
   return data.sortedLnBridgeRelayInfos;
 }

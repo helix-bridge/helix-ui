@@ -1,10 +1,10 @@
 import { Address, Hash } from "viem";
 import { Chain } from "viem";
-import { ConstructorOptions, RelayInfo } from "./lnbridge";
+import { ConstructorOptions, SolveInfo } from "./lnbridge";
 import { HelixProtocolName } from "@helixbridge/helixconf";
-import assert from "assert";
 import { DEFAULT_CONFIRMATIONS } from "./config";
 import { LnBridgeV2 } from "./lnbridge-v2";
+import { assert } from "./utils";
 
 export class LnBridgeV2Opposite extends LnBridgeV2 {
   constructor(
@@ -18,18 +18,18 @@ export class LnBridgeV2Opposite extends LnBridgeV2 {
     super(fromChain, toChain, fromToken, toToken, protocol, options);
   }
 
-  async transfer(amount: bigint, recipient: Address, totalFee: bigint, relayInfo: RelayInfo) {
-    assert(this.walletClient, "Wallet client not found");
-    assert(relayInfo.margin, "Deposited margin not found");
+  async transfer(amount: bigint, recipient: Address, totalFee: bigint, solveInfo: SolveInfo) {
+    assert(this.walletClient, "Wallet client is required");
+    assert(solveInfo.margin, "Deposited margin not found");
 
     const snapshot = {
       remoteChainId: BigInt(this.targetChain.id),
-      provider: relayInfo.relayer as Address,
+      provider: solveInfo.relayer as Address,
       sourceToken: this.sourceToken.address,
       targetToken: this.targetToken.address,
-      transferId: relayInfo.lastTransferId as Hash,
+      transferId: solveInfo.lastTransferId as Hash,
       totalFee,
-      depositedMargin: BigInt(relayInfo.margin),
+      depositedMargin: BigInt(solveInfo.margin),
     } as const;
 
     const signer = (await this.walletClient.getAddresses())[0];
@@ -47,7 +47,7 @@ export class LnBridgeV2Opposite extends LnBridgeV2 {
   }
 
   async updateFeeRateMargin(baseFee: bigint, feeRate: number, margin: bigint) {
-    assert(this.walletClient, "Wallet client not found");
+    assert(this.walletClient, "Wallet client is required");
     const signer = (await this.walletClient.getAddresses())[0];
     const { request } = await this.sourcePublicClient.simulateContract({
       address: this.sourceBridgeContract,

@@ -1,7 +1,7 @@
 import { Address, Chain, encodeFunctionData, encodePacked, Hash, keccak256 } from "viem";
-import { ConstructorOptions, LnBridge, RelayInfo } from "./lnbridge";
+import { ConstructorOptions, LnBridge, SolveInfo } from "./lnbridge";
 import { HelixProtocolName } from "@helixbridge/helixconf";
-import assert from "assert";
+import { assert } from "./utils";
 import { DEFAULT_CONFIRMATIONS } from "./config";
 
 export class LnBridgeV3 extends LnBridge {
@@ -16,8 +16,8 @@ export class LnBridgeV3 extends LnBridge {
     super(fromChain, toChain, fromToken, toToken, protocol, options);
   }
 
-  async transfer(amount: bigint, recipient: Address, totalFee: bigint, relayInfo: RelayInfo) {
-    assert(this.walletClient, "Wallet client not found");
+  async transfer(amount: bigint, recipient: Address, totalFee: bigint, solveInfo: SolveInfo) {
+    assert(this.walletClient, "Wallet client is required");
 
     const signer = (await this.walletClient.getAddresses())[0];
     const { request } = await this.sourcePublicClient.simulateContract({
@@ -27,7 +27,7 @@ export class LnBridgeV3 extends LnBridge {
       args: [
         {
           remoteChainId: BigInt(this.targetChain.id),
-          provider: relayInfo.relayer as Address,
+          provider: solveInfo.relayer as Address,
           sourceToken: this.sourceToken.address,
           targetToken: this.targetToken.address,
           totalFee,
@@ -55,7 +55,7 @@ export class LnBridgeV3 extends LnBridge {
   }
 
   async register(baseFee: bigint, feeRate: number, transferLimit: bigint) {
-    assert(this.walletClient, "Wallet client not found");
+    assert(this.walletClient, "Wallet client is required");
     const signer = (await this.walletClient.getAddresses())[0];
     const { request } = await this.sourcePublicClient.simulateContract({
       address: this.sourceBridgeContract,
@@ -77,7 +77,7 @@ export class LnBridgeV3 extends LnBridge {
   }
 
   async depositPenaltyReserve(amount: bigint) {
-    assert(this.walletClient, "Wallet client not found");
+    assert(this.walletClient, "Wallet client is required");
     const signer = (await this.walletClient.getAddresses())[0];
     const { request } = await this.sourcePublicClient.simulateContract({
       address: this.sourceBridgeContract,
@@ -93,7 +93,7 @@ export class LnBridgeV3 extends LnBridge {
   }
 
   async withdrawPenaltyReserve(amount: bigint) {
-    assert(this.walletClient, "Wallet client not found");
+    assert(this.walletClient, "Wallet client is required");
     const signer = (await this.walletClient.getAddresses())[0];
     const { request } = await this.sourcePublicClient.simulateContract({
       address: this.sourceBridgeContract,
@@ -148,7 +148,7 @@ export class LnBridgeV3 extends LnBridge {
   }
 
   async requestLiquidityWithdraw(relayer: Address, transferIds: Hash[], fee: bigint, params: Hash) {
-    assert(this.walletClient, "Wallet client not found");
+    assert(this.walletClient, "Wallet client is required");
     const signer = (await this.walletClient.getAddresses())[0];
     const { request } = await this.targetPublicClient.simulateContract({
       address: this.targetBridgeContract,

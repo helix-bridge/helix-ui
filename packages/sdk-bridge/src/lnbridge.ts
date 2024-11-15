@@ -12,16 +12,15 @@ import {
   zeroAddress,
 } from "viem";
 import { HelixChain, HelixProtocolName } from "@helixbridge/helixconf";
-import assert from "assert";
 import { getChainByIdOrNetwork, Chain as HChain } from "@helixbridge/chains";
 import { OnChainToken, Token } from "@helixbridge/sdk-core";
-import { fetchMsgportFeeAndParams } from "./utils";
-import { SortedRelayersQuery } from "@helixbridge/sdk-indexer";
+import { fetchMsgportFeeAndParams, assert } from "./utils";
+import { SortedSolveInfo } from "@helixbridge/sdk-indexer";
 
 export interface ConstructorOptions {
   walletClient?: WalletClient;
 }
-export type RelayInfo = NonNullable<NonNullable<NonNullable<SortedRelayersQuery>["records"]>[number]>;
+export type SolveInfo = NonNullable<NonNullable<NonNullable<SortedSolveInfo>["records"]>[number]>;
 
 export abstract class LnBridge {
   private readonly protocol: HelixProtocolName;
@@ -62,7 +61,7 @@ export abstract class LnBridge {
 
     const couple = sourceChainConf.couples.find(
       (c) =>
-        c.chain.id === targetChainConf.id &&
+        Number(c.chain.id) === Number(targetChainConf.id) &&
         c.symbol.from === sourceTokenConf.symbol &&
         c.symbol.to === targetTokenConf.symbol &&
         c.protocol.name === protocol,
@@ -131,6 +130,36 @@ export abstract class LnBridge {
     this.walletClient = options?.walletClient;
     this.sourcePublicClient = createPublicClient({ chain: sourceChain, transport: http() });
     this.targetPublicClient = createPublicClient({ chain: targetChain, transport: http() });
+  }
+
+  async getSourceTokenBalance(address: Address) {
+    const onChainToken = new OnChainToken(
+      this.sourceChain.id,
+      this.sourceToken.address,
+      this.sourceToken.decimals,
+      this.sourceToken.symbol,
+      this.sourceToken.name,
+      {
+        publicClient: this.sourcePublicClient,
+      },
+    );
+    const value = await onChainToken.getBalance(address);
+    return { value, token: this.sourceToken };
+  }
+
+  async getTargetTokenBalance(address: Address) {
+    const onChainToken = new OnChainToken(
+      this.targetChain.id,
+      this.targetToken.address,
+      this.targetToken.decimals,
+      this.targetToken.symbol,
+      this.targetToken.name,
+      {
+        publicClient: this.targetPublicClient,
+      },
+    );
+    const value = await onChainToken.getBalance(address);
+    return { value, token: this.targetToken };
   }
 
   private async getTokenAllowance(owner: Address, spender: Address, token: Token, publicClient: PublicClient) {
@@ -263,7 +292,7 @@ export abstract class LnBridge {
     amount: bigint,
     recipient: Address,
     totalFee: bigint,
-    relayInfo: RelayInfo,
+    solveInfo: SolveInfo,
   ): Promise<TransactionReceipt>;
   /* eslint-enable no-unused-vars */
 }

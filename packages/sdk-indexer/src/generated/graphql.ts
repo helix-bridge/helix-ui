@@ -18,7 +18,45 @@ export type Scalars = {
   BigInt: { input: any; output: any };
 };
 
-export type SortedRelayersQueryVariables = Exact<{
+export type AvailableCrossChainQueryVariables = Exact<{
+  tokenKey: Scalars["String"]["input"];
+}>;
+
+export type AvailableCrossChainQuery = {
+  __typename?: "Query";
+  queryLnBridgeSupportedChains?: Array<{
+    __typename?: "TokenInfo";
+    tokenKey: string;
+    chains?: Array<{
+      __typename?: "SupportChains";
+      fromChain: string;
+      toChains?: Array<string | null> | null;
+    } | null> | null;
+  } | null> | null;
+};
+
+export type HistoryByTxHashQueryVariables = Exact<{
+  txHash?: InputMaybe<Scalars["String"]["input"]>;
+}>;
+
+export type HistoryByTxHashQuery = {
+  __typename?: "Query";
+  historyRecordByTxHash?: {
+    __typename?: "HistoryRecord";
+    requestTxHash: string;
+    responseTxHash?: string | null;
+    fromChain: string;
+    toChain: string;
+    startTime: number;
+    sendToken: string;
+    sendAmount: string;
+    confirmedBlocks?: string | null;
+    result: number;
+    id: string;
+  } | null;
+};
+
+export type SortedSolveInfoQueryVariables = Exact<{
   amount?: InputMaybe<Scalars["String"]["input"]>;
   decimals?: InputMaybe<Scalars["Int"]["input"]>;
   token?: InputMaybe<Scalars["String"]["input"]>;
@@ -26,7 +64,7 @@ export type SortedRelayersQueryVariables = Exact<{
   toChain?: InputMaybe<Scalars["String"]["input"]>;
 }>;
 
-export type SortedRelayersQuery = {
+export type SortedSolveInfoQuery = {
   __typename?: "Query";
   sortedLnBridgeRelayInfos?: {
     __typename?: "SortedLnBridgeRelayInfos";
@@ -64,8 +102,35 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
-export const SortedRelayersDocument = new TypedDocumentString(`
-    query SortedRelayers($amount: String, $decimals: Int, $token: String, $fromChain: String, $toChain: String) {
+export const AvailableCrossChainDocument = new TypedDocumentString(`
+    query AvailableCrossChain($tokenKey: String!) {
+  queryLnBridgeSupportedChains(tokenKey: $tokenKey) {
+    tokenKey
+    chains {
+      fromChain
+      toChains
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<AvailableCrossChainQuery, AvailableCrossChainQueryVariables>;
+export const HistoryByTxHashDocument = new TypedDocumentString(`
+    query HistoryByTxHash($txHash: String) {
+  historyRecordByTxHash(txHash: $txHash) {
+    requestTxHash
+    responseTxHash
+    fromChain
+    toChain
+    startTime
+    sendToken
+    sendAmount
+    confirmedBlocks
+    result
+    id
+  }
+}
+    `) as unknown as TypedDocumentString<HistoryByTxHashQuery, HistoryByTxHashQueryVariables>;
+export const SortedSolveInfoDocument = new TypedDocumentString(`
+    query SortedSolveInfo($amount: String, $decimals: Int, $token: String, $fromChain: String, $toChain: String) {
   sortedLnBridgeRelayInfos(
     amount: $amount
     decimals: $decimals
@@ -87,4 +152,4 @@ export const SortedRelayersDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<SortedRelayersQuery, SortedRelayersQueryVariables>;
+    `) as unknown as TypedDocumentString<SortedSolveInfoQuery, SortedSolveInfoQueryVariables>;

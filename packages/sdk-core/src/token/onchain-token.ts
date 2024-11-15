@@ -1,5 +1,6 @@
 import { Abi, Address, PublicClient, WalletClient } from "viem";
 import { Token } from "./token";
+import { assert } from "../utils";
 
 const abi = [
   // erc20
@@ -157,16 +158,18 @@ const abi = [
 
 interface Options {
   logo?: string;
-  publicClient?: PublicClient;
+  publicClient: PublicClient;
   walletClient?: WalletClient;
 }
 
 export class OnChainToken extends Token {
-  private readonly publicClient?: PublicClient;
+  private readonly publicClient: PublicClient;
   private readonly walletClient?: WalletClient;
 
-  constructor(chainId: number, address: Address, decimals: number, symbol: string, name: string, options?: Options) {
+  constructor(chainId: number, address: Address, decimals: number, symbol: string, name: string, options: Options) {
     super(chainId, address, decimals, symbol, name, options?.logo);
+    this.publicClient = options.publicClient;
+    this.walletClient = options.walletClient;
   }
 
   /**
@@ -175,7 +178,7 @@ export class OnChainToken extends Token {
    * @returns Amount of tokens allowed to be sent from the faucet
    */
   getAllowFaucet(address: Address) {
-    return this.publicClient?.readContract({
+    return this.publicClient.readContract({
       abi,
       address: this.address,
       functionName: "allowFaucet",
@@ -188,7 +191,7 @@ export class OnChainToken extends Token {
    * @returns Maximum amount of tokens allowed to be sent from the faucet
    */
   getMaxFaucetAllowed() {
-    return this.publicClient?.readContract({
+    return this.publicClient.readContract({
       abi,
       address: this.address,
       functionName: "maxFaucetAllowed",
@@ -200,18 +203,16 @@ export class OnChainToken extends Token {
    * @param amount Amount of tokens to send from the faucet
    */
   async faucet(amount: bigint) {
-    if (this.publicClient && this.walletClient) {
-      const { request } = await this.publicClient.simulateContract({
-        abi,
-        address: this.address,
-        functionName: "faucet",
-        args: [amount],
-        account: this.walletClient.account,
-      });
-      const hash = await this.walletClient.writeContract(request);
-      return this.publicClient.waitForTransactionReceipt({ hash, confirmations: 2 });
-    }
-    throw new Error("Faucet token is not connected to a public or wallet client");
+    assert(this.walletClient, "Wallet client is required");
+    const { request } = await this.publicClient.simulateContract({
+      abi,
+      address: this.address,
+      functionName: "faucet",
+      args: [amount],
+      account: this.walletClient.account,
+    });
+    const hash = await this.walletClient.writeContract(request);
+    return this.publicClient.waitForTransactionReceipt({ hash, confirmations: 2 });
   }
 
   /**
@@ -221,8 +222,8 @@ export class OnChainToken extends Token {
    */
   getBalance(address: Address) {
     return this.isNative
-      ? this.publicClient?.getBalance({ address })
-      : this.publicClient?.readContract({
+      ? this.publicClient.getBalance({ address })
+      : this.publicClient.readContract({
           abi,
           address: this.address,
           functionName: "balanceOf",
@@ -239,7 +240,7 @@ export class OnChainToken extends Token {
   getAllowance(owner: Address, spender: Address) {
     return this.isNative
       ? Promise.resolve(this.parseEther(Number.MAX_SAFE_INTEGER.toString()))
-      : this.publicClient?.readContract({
+      : this.publicClient.readContract({
           abi,
           address: this.address,
           functionName: "allowance",
@@ -253,17 +254,15 @@ export class OnChainToken extends Token {
    * @param amount Amount of tokens to approve
    */
   async approve(spender: Address, amount: bigint) {
-    if (this.publicClient && this.walletClient) {
-      const { request } = await this.publicClient.simulateContract({
-        abi,
-        account: this.walletClient?.account,
-        address: this.address,
-        functionName: "approve",
-        args: [spender, amount],
-      });
-      const hash = await this.walletClient.writeContract(request);
-      return this.publicClient.waitForTransactionReceipt({ hash, confirmations: 2 });
-    }
-    throw new Error("Token is not connected to a public or wallet client");
+    assert(this.walletClient, "Wallet client is required");
+    const { request } = await this.publicClient.simulateContract({
+      abi,
+      account: this.walletClient.account,
+      address: this.address,
+      functionName: "approve",
+      args: [spender, amount],
+    });
+    const hash = await this.walletClient.writeContract(request);
+    return this.publicClient.waitForTransactionReceipt({ hash, confirmations: 2 });
   }
 }
