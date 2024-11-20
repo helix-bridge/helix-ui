@@ -1,8 +1,9 @@
-import { Address, Chain, encodeFunctionData, encodePacked, Hash, keccak256 } from "viem";
-import { ConstructorOptions, LnBridge, SolveInfo } from "./lnbridge";
+import { Address, encodeFunctionData, encodePacked, Hash, keccak256 } from "viem";
+import { ConstructorOptions, LnBridge, RelayInfo } from "./lnbridge";
 import { HelixProtocolName } from "@helixbridge/helixconf";
 import { assert } from "./utils";
 import { DEFAULT_CONFIRMATIONS } from "./config";
+import { Chain } from "@helixbridge/chains";
 
 export class LnBridgeV3 extends LnBridge {
   constructor(
@@ -16,7 +17,7 @@ export class LnBridgeV3 extends LnBridge {
     super(fromChain, toChain, fromToken, toToken, protocol, options);
   }
 
-  async transfer(amount: bigint, recipient: Address, totalFee: bigint, solveInfo: SolveInfo) {
+  async transfer(amount: bigint, recipient: Address, totalFee: bigint, relayInfo: RelayInfo) {
     assert(this.walletClient, "Wallet client is required");
 
     const signer = (await this.walletClient.getAddresses())[0];
@@ -27,7 +28,7 @@ export class LnBridgeV3 extends LnBridge {
       args: [
         {
           remoteChainId: BigInt(this.targetChain.id),
-          provider: solveInfo.relayer as Address,
+          provider: relayInfo.relayer as Address,
           sourceToken: this.sourceToken.address,
           targetToken: this.targetToken.address,
           totalFee,

@@ -1,10 +1,10 @@
 import { Address, Hash } from "viem";
-import { Chain } from "viem";
-import { ConstructorOptions, SolveInfo } from "./lnbridge";
+import { ConstructorOptions, RelayInfo } from "./lnbridge";
 import { HelixProtocolName } from "@helixbridge/helixconf";
 import { DEFAULT_CONFIRMATIONS } from "./config";
 import { LnBridgeV2 } from "./lnbridge-v2";
 import { assert } from "./utils";
+import { Chain } from "@helixbridge/chains";
 
 export class LnBridgeV2Opposite extends LnBridgeV2 {
   constructor(
@@ -18,18 +18,18 @@ export class LnBridgeV2Opposite extends LnBridgeV2 {
     super(fromChain, toChain, fromToken, toToken, protocol, options);
   }
 
-  async transfer(amount: bigint, recipient: Address, totalFee: bigint, solveInfo: SolveInfo) {
+  async transfer(amount: bigint, recipient: Address, totalFee: bigint, relayInfo: RelayInfo) {
     assert(this.walletClient, "Wallet client is required");
-    assert(solveInfo.margin, "Deposited margin not found");
+    assert(relayInfo.margin, "Deposited margin not found");
 
     const snapshot = {
       remoteChainId: BigInt(this.targetChain.id),
-      provider: solveInfo.relayer as Address,
+      provider: relayInfo.relayer as Address,
       sourceToken: this.sourceToken.address,
       targetToken: this.targetToken.address,
-      transferId: solveInfo.lastTransferId as Hash,
+      transferId: relayInfo.lastTransferId as Hash,
       totalFee,
-      depositedMargin: BigInt(solveInfo.margin),
+      depositedMargin: BigInt(relayInfo.margin),
     } as const;
 
     const signer = (await this.walletClient.getAddresses())[0];

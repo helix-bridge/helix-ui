@@ -1,7 +1,6 @@
 import {
   Address,
   bytesToHex,
-  Chain,
   createPublicClient,
   encodeFunctionData,
   Hash,
@@ -12,24 +11,24 @@ import {
   zeroAddress,
 } from "viem";
 import { HelixChain, HelixProtocolName } from "@helixbridge/helixconf";
-import { getChainByIdOrNetwork, Chain as HChain } from "@helixbridge/chains";
+import { Chain } from "@helixbridge/chains";
 import { OnChainToken, Token } from "@helixbridge/sdk-core";
 import { fetchMsgportFeeAndParams, assert } from "./utils";
-import { SortedSolveInfo } from "@helixbridge/sdk-indexer";
+import { SortedRelayInfo } from "@helixbridge/sdk-indexer";
 
 export interface ConstructorOptions {
   walletClient?: WalletClient;
 }
-export type SolveInfo = NonNullable<NonNullable<NonNullable<SortedSolveInfo>["records"]>[number]>;
+export type RelayInfo = NonNullable<NonNullable<NonNullable<SortedRelayInfo>["records"]>[number]>;
 
 export abstract class LnBridge {
   private readonly protocol: HelixProtocolName;
+  protected readonly sourceChain: Chain;
+  protected readonly targetChain: Chain;
   protected readonly sourceToken: Token;
   protected readonly targetToken: Token;
   protected readonly sourceNativeToken: Token;
   protected readonly targetNativeToken: Token;
-  protected readonly sourceChain: HChain;
-  protected readonly targetChain: HChain;
   protected readonly walletClient?: WalletClient;
   protected readonly sourcePublicClient: PublicClient;
   protected readonly targetPublicClient: PublicClient;
@@ -44,10 +43,9 @@ export abstract class LnBridge {
     protocol: HelixProtocolName,
     options?: ConstructorOptions,
   ) {
-    const sourceChain = getChainByIdOrNetwork(fromChain.id);
-    assert(sourceChain, "Source chain not found");
-    const targetChain = getChainByIdOrNetwork(toChain.id);
-    assert(targetChain, "Target chain not found");
+    this.sourceChain = fromChain;
+    this.targetChain = toChain;
+    this.protocol = protocol;
 
     const sourceChainConf = HelixChain.get(fromChain.id);
     assert(sourceChainConf, "Source chain conf not found");
@@ -75,42 +73,25 @@ export abstract class LnBridge {
 
     const sourceNativeTokenConf = sourceChainConf.tokens.find((t) => t.type === "native");
     const targetNativeTokenConf = targetChainConf.tokens.find((t) => t.type === "native");
-    this.sourceNativeToken = sourceNativeTokenConf
-      ? new Token(
-          sourceChain.id,
-          sourceNativeTokenConf.address as Address,
-          sourceNativeTokenConf.decimals,
-          sourceNativeTokenConf.symbol,
-          sourceNativeTokenConf.name,
-          sourceNativeTokenConf.logo,
-        )
-      : new Token(
-          sourceChain.id,
-          zeroAddress,
-          sourceChain.nativeCurrency.decimals,
-          sourceChain.nativeCurrency.symbol,
-          sourceChain.nativeCurrency.name,
-        );
-    this.targetNativeToken = targetNativeTokenConf
-      ? new Token(
-          targetChain.id,
-          targetNativeTokenConf.address as Address,
-          targetNativeTokenConf.decimals,
-          targetNativeTokenConf.symbol,
-          targetNativeTokenConf.name,
-          targetNativeTokenConf.logo,
-        )
-      : new Token(
-          targetChain.id,
-          zeroAddress,
-          targetChain.nativeCurrency.decimals,
-          targetChain.nativeCurrency.symbol,
-          targetChain.nativeCurrency.name,
-        );
+    this.sourceNativeToken = new Token(
+      fromChain.id,
+      zeroAddress,
+      fromChain.nativeCurrency.decimals,
+      fromChain.nativeCurrency.symbol,
+      fromChain.nativeCurrency.name,
+      sourceNativeTokenConf?.logo,
+    );
+    this.targetNativeToken = new Token(
+      toChain.id,
+      zeroAddress,
+      toChain.nativeCurrency.decimals,
+      toChain.nativeCurrency.symbol,
+      toChain.nativeCurrency.name,
+      targetNativeTokenConf?.logo,
+    );
 
-    this.protocol = protocol;
     this.sourceToken = new Token(
-      sourceChain.id,
+      fromChain.id,
       sourceTokenConf.address as Address,
       sourceTokenConf.decimals,
       sourceTokenConf.symbol,
@@ -118,18 +99,16 @@ export abstract class LnBridge {
       sourceTokenConf.logo,
     );
     this.targetToken = new Token(
-      targetChain.id,
+      toChain.id,
       targetTokenConf.address as Address,
       targetTokenConf.decimals,
       targetTokenConf.symbol,
       targetTokenConf.name,
       targetTokenConf.logo,
     );
-    this.sourceChain = sourceChain;
-    this.targetChain = targetChain;
     this.walletClient = options?.walletClient;
-    this.sourcePublicClient = createPublicClient({ chain: sourceChain, transport: http() });
-    this.targetPublicClient = createPublicClient({ chain: targetChain, transport: http() });
+    this.sourcePublicClient = createPublicClient({ chain: fromChain, transport: http() });
+    this.targetPublicClient = createPublicClient({ chain: toChain, transport: http() });
   }
 
   async getSourceTokenBalance(address: Address) {
@@ -292,7 +271,7 @@ export abstract class LnBridge {
     amount: bigint,
     recipient: Address,
     totalFee: bigint,
-    solveInfo: SolveInfo,
+    relayInfo: RelayInfo,
   ): Promise<TransactionReceipt>;
   /* eslint-enable no-unused-vars */
 }

@@ -18,11 +18,11 @@ export type Scalars = {
   BigInt: { input: any; output: any };
 };
 
-export type AvailableCrossChainQueryVariables = Exact<{
+export type CurrentlyAvailableCrossChainQueryVariables = Exact<{
   tokenKey: Scalars["String"]["input"];
 }>;
 
-export type AvailableCrossChainQuery = {
+export type CurrentlyAvailableCrossChainQuery = {
   __typename?: "Query";
   queryLnBridgeSupportedChains?: Array<{
     __typename?: "TokenInfo";
@@ -35,28 +35,100 @@ export type AvailableCrossChainQuery = {
   } | null> | null;
 };
 
-export type HistoryByTxHashQueryVariables = Exact<{
+export type HistoryTxByHashQueryVariables = Exact<{
   txHash?: InputMaybe<Scalars["String"]["input"]>;
 }>;
 
-export type HistoryByTxHashQuery = {
+export type HistoryTxByHashQuery = {
   __typename?: "Query";
   historyRecordByTxHash?: {
     __typename?: "HistoryRecord";
-    requestTxHash: string;
-    responseTxHash?: string | null;
+    id: string;
     fromChain: string;
     toChain: string;
-    startTime: number;
+    bridge: string;
+    reason?: string | null;
+    nonce: any;
+    requestTxHash: string;
+    responseTxHash?: string | null;
+    sender: string;
+    recipient: string;
     sendToken: string;
+    recvToken: string;
     sendAmount: string;
-    confirmedBlocks?: string | null;
+    recvAmount?: string | null;
+    startTime: number;
+    endTime?: number | null;
     result: number;
-    id: string;
+    fee: string;
+    feeToken: string;
+    messageNonce?: string | null;
+    sendTokenAddress?: string | null;
+    recvTokenAddress?: string | null;
+    sendOuterTokenAddress?: string | null;
+    recvOuterTokenAddress?: string | null;
+    guardSignatures?: string | null;
+    relayer?: string | null;
+    endTxHash?: string | null;
+    confirmedBlocks?: string | null;
+    needWithdrawLiquidity?: boolean | null;
+    lastRequestWithdraw?: any | null;
+    extData?: string | null;
   } | null;
 };
 
-export type SortedSolveInfoQueryVariables = Exact<{
+export type HistoryTxByIdQueryVariables = Exact<{
+  id?: InputMaybe<Scalars["String"]["input"]>;
+}>;
+
+export type HistoryTxByIdQuery = {
+  __typename?: "Query";
+  historyRecordById?: {
+    __typename?: "HistoryRecord";
+    id: string;
+    fromChain: string;
+    toChain: string;
+    bridge: string;
+    reason?: string | null;
+    nonce: any;
+    requestTxHash: string;
+    responseTxHash?: string | null;
+    sender: string;
+    recipient: string;
+    sendToken: string;
+    recvToken: string;
+    sendAmount: string;
+    recvAmount?: string | null;
+    startTime: number;
+    endTime?: number | null;
+    result: number;
+    fee: string;
+    feeToken: string;
+    messageNonce?: string | null;
+    sendTokenAddress?: string | null;
+    recvTokenAddress?: string | null;
+    sendOuterTokenAddress?: string | null;
+    recvOuterTokenAddress?: string | null;
+    guardSignatures?: string | null;
+    relayer?: string | null;
+    endTxHash?: string | null;
+    confirmedBlocks?: string | null;
+    needWithdrawLiquidity?: boolean | null;
+    lastRequestWithdraw?: any | null;
+    extData?: string | null;
+  } | null;
+};
+
+export type MaxTransferQueryVariables = Exact<{
+  token?: InputMaybe<Scalars["String"]["input"]>;
+  balance?: InputMaybe<Scalars["String"]["input"]>;
+  fromChain?: InputMaybe<Scalars["String"]["input"]>;
+  toChain?: InputMaybe<Scalars["String"]["input"]>;
+}>;
+
+export type MaxTransferQuery = { __typename?: "Query"; queryMaxTransfer?: any | null };
+
+export type SortedRelayInfoQueryVariables = Exact<{
   amount?: InputMaybe<Scalars["String"]["input"]>;
   decimals?: InputMaybe<Scalars["Int"]["input"]>;
   token?: InputMaybe<Scalars["String"]["input"]>;
@@ -64,25 +136,107 @@ export type SortedSolveInfoQueryVariables = Exact<{
   toChain?: InputMaybe<Scalars["String"]["input"]>;
 }>;
 
-export type SortedSolveInfoQuery = {
+export type SortedRelayInfoQuery = {
   __typename?: "Query";
   sortedLnBridgeRelayInfos?: {
     __typename?: "SortedLnBridgeRelayInfos";
     transferLimit: any;
     records?: Array<{
       __typename?: "LnBridgeRelayInfo";
-      sendToken?: string | null;
-      relayer: string;
-      margin?: string | null;
-      baseFee?: string | null;
-      protocolFee?: string | null;
-      liquidityFeeRate?: number | null;
-      lastTransferId?: string | null;
-      withdrawNonce?: any | null;
+      id: string;
+      version: string;
+      nonce: any;
+      targetNonce?: any | null;
+      fromChain: string;
+      toChain: string;
       bridge: string;
+      relayer: string;
+      sendToken?: string | null;
+      tokenKey?: string | null;
+      transactionHash: string;
+      timestamp: number;
+      margin?: string | null;
+      protocolFee?: string | null;
+      baseFee?: string | null;
+      liquidityFeeRate?: number | null;
+      slashCount?: number | null;
+      withdrawNonce?: any | null;
+      lastTransferId?: string | null;
+      cost?: string | null;
+      profit?: string | null;
+      heartbeatTimestamp?: number | null;
+      messageChannel?: string | null;
+      transferLimit?: string | null;
+      softTransferLimit?: string | null;
+      paused?: boolean | null;
+      dynamicFee?: string | null;
+      dynamicFeeExpire?: string | null;
+      dynamicFeeSignature?: string | null;
+      signers?: string | null;
     } | null> | null;
   } | null;
 };
+
+export type WithdrawableTXsQueryVariables = Exact<{
+  row: Scalars["Int"]["input"];
+  page: Scalars["Int"]["input"];
+  relayer?: InputMaybe<Scalars["String"]["input"]>;
+  toToken?: InputMaybe<Scalars["String"]["input"]>;
+  fromChain?: InputMaybe<Scalars["String"]["input"]>;
+  toChain?: InputMaybe<Scalars["String"]["input"]>;
+}>;
+
+export type WithdrawableTXsQuery = {
+  __typename?: "Query";
+  historyRecords?: {
+    __typename?: "HistoryRecords";
+    total: number;
+    records?: Array<{
+      __typename?: "HistoryRecord";
+      id: string;
+      fromChain: string;
+      toChain: string;
+      bridge: string;
+      reason?: string | null;
+      nonce: any;
+      requestTxHash: string;
+      responseTxHash?: string | null;
+      sender: string;
+      recipient: string;
+      sendToken: string;
+      recvToken: string;
+      sendAmount: string;
+      recvAmount?: string | null;
+      startTime: number;
+      endTime?: number | null;
+      result: number;
+      fee: string;
+      feeToken: string;
+      messageNonce?: string | null;
+      sendTokenAddress?: string | null;
+      recvTokenAddress?: string | null;
+      sendOuterTokenAddress?: string | null;
+      recvOuterTokenAddress?: string | null;
+      guardSignatures?: string | null;
+      relayer?: string | null;
+      endTxHash?: string | null;
+      confirmedBlocks?: string | null;
+      needWithdrawLiquidity?: boolean | null;
+      lastRequestWithdraw?: any | null;
+      extData?: string | null;
+    } | null> | null;
+  } | null;
+};
+
+export type LnBridgeExistQueryVariables = Exact<{
+  fromChainId?: InputMaybe<Scalars["Int"]["input"]>;
+  toChainId?: InputMaybe<Scalars["Int"]["input"]>;
+  fromToken?: InputMaybe<Scalars["String"]["input"]>;
+  toToken?: InputMaybe<Scalars["String"]["input"]>;
+  version?: InputMaybe<Scalars["String"]["input"]>;
+}>;
+
+export type LnBridgeExistQuery = { __typename?: "Query"; checkLnBridgeExist?: boolean | null };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -102,8 +256,8 @@ export class TypedDocumentString<TResult, TVariables>
   }
 }
 
-export const AvailableCrossChainDocument = new TypedDocumentString(`
-    query AvailableCrossChain($tokenKey: String!) {
+export const CurrentlyAvailableCrossChainDocument = new TypedDocumentString(`
+    query CurrentlyAvailableCrossChain($tokenKey: String!) {
   queryLnBridgeSupportedChains(tokenKey: $tokenKey) {
     tokenKey
     chains {
@@ -112,25 +266,93 @@ export const AvailableCrossChainDocument = new TypedDocumentString(`
     }
   }
 }
-    `) as unknown as TypedDocumentString<AvailableCrossChainQuery, AvailableCrossChainQueryVariables>;
-export const HistoryByTxHashDocument = new TypedDocumentString(`
-    query HistoryByTxHash($txHash: String) {
+    `) as unknown as TypedDocumentString<CurrentlyAvailableCrossChainQuery, CurrentlyAvailableCrossChainQueryVariables>;
+export const HistoryTxByHashDocument = new TypedDocumentString(`
+    query HistoryTxByHash($txHash: String) {
   historyRecordByTxHash(txHash: $txHash) {
-    requestTxHash
-    responseTxHash
+    id
     fromChain
     toChain
-    startTime
+    bridge
+    reason
+    nonce
+    requestTxHash
+    responseTxHash
+    sender
+    recipient
     sendToken
+    recvToken
     sendAmount
-    confirmedBlocks
+    recvAmount
+    startTime
+    endTime
     result
-    id
+    fee
+    feeToken
+    messageNonce
+    sendTokenAddress
+    recvTokenAddress
+    sendOuterTokenAddress
+    recvOuterTokenAddress
+    guardSignatures
+    relayer
+    endTxHash
+    confirmedBlocks
+    needWithdrawLiquidity
+    lastRequestWithdraw
+    extData
   }
 }
-    `) as unknown as TypedDocumentString<HistoryByTxHashQuery, HistoryByTxHashQueryVariables>;
-export const SortedSolveInfoDocument = new TypedDocumentString(`
-    query SortedSolveInfo($amount: String, $decimals: Int, $token: String, $fromChain: String, $toChain: String) {
+    `) as unknown as TypedDocumentString<HistoryTxByHashQuery, HistoryTxByHashQueryVariables>;
+export const HistoryTxByIdDocument = new TypedDocumentString(`
+    query HistoryTxById($id: String) {
+  historyRecordById(id: $id) {
+    id
+    fromChain
+    toChain
+    bridge
+    reason
+    nonce
+    requestTxHash
+    responseTxHash
+    sender
+    recipient
+    sendToken
+    recvToken
+    sendAmount
+    recvAmount
+    startTime
+    endTime
+    result
+    fee
+    feeToken
+    messageNonce
+    sendTokenAddress
+    recvTokenAddress
+    sendOuterTokenAddress
+    recvOuterTokenAddress
+    guardSignatures
+    relayer
+    endTxHash
+    confirmedBlocks
+    needWithdrawLiquidity
+    lastRequestWithdraw
+    extData
+  }
+}
+    `) as unknown as TypedDocumentString<HistoryTxByIdQuery, HistoryTxByIdQueryVariables>;
+export const MaxTransferDocument = new TypedDocumentString(`
+    query MaxTransfer($token: String, $balance: String, $fromChain: String, $toChain: String) {
+  queryMaxTransfer(
+    token: $token
+    balance: $balance
+    fromChain: $fromChain
+    toChain: $toChain
+  )
+}
+    `) as unknown as TypedDocumentString<MaxTransferQuery, MaxTransferQueryVariables>;
+export const SortedRelayInfoDocument = new TypedDocumentString(`
+    query SortedRelayInfo($amount: String, $decimals: Int, $token: String, $fromChain: String, $toChain: String) {
   sortedLnBridgeRelayInfos(
     amount: $amount
     decimals: $decimals
@@ -140,16 +362,96 @@ export const SortedSolveInfoDocument = new TypedDocumentString(`
   ) {
     transferLimit
     records {
-      sendToken
-      relayer
-      margin
-      baseFee
-      protocolFee
-      liquidityFeeRate
-      lastTransferId
-      withdrawNonce
+      id
+      version
+      nonce
+      targetNonce
+      fromChain
+      toChain
       bridge
+      relayer
+      sendToken
+      tokenKey
+      transactionHash
+      timestamp
+      margin
+      protocolFee
+      baseFee
+      liquidityFeeRate
+      slashCount
+      withdrawNonce
+      lastTransferId
+      cost
+      profit
+      heartbeatTimestamp
+      messageChannel
+      transferLimit
+      softTransferLimit
+      paused
+      dynamicFee
+      dynamicFeeExpire
+      dynamicFeeSignature
+      signers
     }
   }
 }
-    `) as unknown as TypedDocumentString<SortedSolveInfoQuery, SortedSolveInfoQueryVariables>;
+    `) as unknown as TypedDocumentString<SortedRelayInfoQuery, SortedRelayInfoQueryVariables>;
+export const WithdrawableTXsDocument = new TypedDocumentString(`
+    query WithdrawableTXs($row: Int!, $page: Int!, $relayer: String = "", $toToken: String = "", $fromChain: String = "", $toChain: String = "") {
+  historyRecords(
+    row: $row
+    page: $page
+    relayer: $relayer
+    recvTokenAddress: $toToken
+    fromChains: [$fromChain]
+    toChains: [$toChain]
+    needWithdrawLiquidity: true
+  ) {
+    total
+    records {
+      id
+      fromChain
+      toChain
+      bridge
+      reason
+      nonce
+      requestTxHash
+      responseTxHash
+      sender
+      recipient
+      sendToken
+      recvToken
+      sendAmount
+      recvAmount
+      startTime
+      endTime
+      result
+      fee
+      feeToken
+      messageNonce
+      sendTokenAddress
+      recvTokenAddress
+      sendOuterTokenAddress
+      recvOuterTokenAddress
+      guardSignatures
+      relayer
+      endTxHash
+      confirmedBlocks
+      needWithdrawLiquidity
+      lastRequestWithdraw
+      extData
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<WithdrawableTXsQuery, WithdrawableTXsQueryVariables>;
+export const LnBridgeExistDocument = new TypedDocumentString(`
+    query LnBridgeExist($fromChainId: Int, $toChainId: Int, $fromToken: String, $toToken: String, $version: String) {
+  checkLnBridgeExist(
+    fromChainId: $fromChainId
+    toChainId: $toChainId
+    fromToken: $fromToken
+    toToken: $toToken
+    version: $version
+  )
+}
+    `) as unknown as TypedDocumentString<LnBridgeExistQuery, LnBridgeExistQueryVariables>;

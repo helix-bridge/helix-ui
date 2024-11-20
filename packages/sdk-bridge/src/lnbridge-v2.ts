@@ -1,7 +1,7 @@
 import { Address, Hash, encodeFunctionData, TransactionReceipt } from "viem";
-import { Chain } from "viem";
-import { ConstructorOptions, LnBridge, SolveInfo } from "./lnbridge";
+import { ConstructorOptions, LnBridge, RelayInfo } from "./lnbridge";
 import { HelixProtocolName } from "@helixbridge/helixconf";
+import { Chain } from "@helixbridge/chains";
 
 export class LnBridgeV2 extends LnBridge {
   constructor(
@@ -16,7 +16,7 @@ export class LnBridgeV2 extends LnBridge {
   }
 
   // eslint-disable-next-line no-unused-vars
-  transfer(amount: bigint, recipient: Address, totalFee: bigint, solveInfo: SolveInfo): Promise<TransactionReceipt> {
+  transfer(amount: bigint, recipient: Address, totalFee: bigint, relayInfo: RelayInfo): Promise<TransactionReceipt> {
     throw new Error("Method not implemented.");
   }
 
