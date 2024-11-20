@@ -2,17 +2,19 @@ import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
-import { getAvailableCrossChain, getHistoryByTxHash, getSortedSolveInfo } from "@helixbridge/sdk-indexer";
 import { getChainByIdOrNetwork } from "@helixbridge/chains";
 import { LnBridgeV3 } from "@helixbridge/sdk-bridge";
 import { Address, createWalletClient, custom } from "viem";
+import { IndexerClient } from "@helixbridge/sdk-indexer";
+
+const indexerClient = new IndexerClient({ testnet: true });
 
 function App() {
   const [count, setCount] = useState(0);
 
   const handleTransfer = async () => {
-    const availableCrossChain = await getAvailableCrossChain(true);
-    // availableCrossChain: [
+    const currentlyAvailableCrossChain = await indexerClient.getCurrentlyAvailableCrossChain();
+    // currentlyAvailableCrossChain: [
     //   {
     //     tokenKey: "USDT",
     //     chains: [
@@ -105,7 +107,7 @@ function App() {
     //     ],
     //   },
     // ];
-    console.log("availableCrossChain", availableCrossChain);
+    console.log("currentlyAvailableCrossChain", currentlyAvailableCrossChain);
 
     const sourceChain = getChainByIdOrNetwork("arbitrum-sepolia");
     const targetChain = getChainByIdOrNetwork("morph-testnet");
@@ -114,8 +116,13 @@ function App() {
     const transferAmount = 14000000000000000000n;
 
     if (sourceChain && targetChain) {
-      const sortedSolveInfo = await getSortedSolveInfo(sourceChain, targetChain, sourceToken, transferAmount);
-      // sortedSolveInfo: {
+      const sortedRelayInfo = await indexerClient.getSortedRelayInfo(
+        sourceChain,
+        targetChain,
+        sourceToken,
+        transferAmount,
+      );
+      // sortedRelayInfo: {
       //   transferLimit: "100000000000000000000000",
       //   records: [
       //     {
@@ -131,8 +138,8 @@ function App() {
       //     },
       //   ],
       // };
-      console.log("sortedSolveInfo", sortedSolveInfo);
-      if (BigInt(sortedSolveInfo?.transferLimit || 0) < transferAmount) {
+      console.log("sortedRelayInfo", sortedRelayInfo);
+      if (BigInt(sortedRelayInfo?.transferLimit || 0) < transferAmount) {
         throw new Error("transferAmount is greater than transferLimit");
       }
 
@@ -146,7 +153,7 @@ function App() {
 
       const bridge = new LnBridgeV3(sourceChain, targetChain, sourceToken, targetToken, "lnv3", { walletClient });
 
-      const info = sortedSolveInfo?.records?.[0];
+      const info = sortedRelayInfo?.records?.[0];
       if (info) {
         const totalFee = await bridge.getTotalFee(info.relayer as Address, transferAmount);
         console.log("totalFee", totalFee);
@@ -168,7 +175,7 @@ function App() {
 
             if (receipt.status === "success") {
               await new Promise((resolve) => setTimeout(resolve, 10000));
-              const history = await getHistoryByTxHash(!!sourceChain.testnet, receipt.transactionHash);
+              const history = await indexerClient.getHistoryTxByHash(receipt.transactionHash);
               console.log("history", history);
             }
           }

@@ -8,9 +8,19 @@ import { getMaxTransfer, type MaxTransfer } from "./getMaxTransfer";
 import { getWithdrawableTXs, type WithdrawableTXs } from "./getWithdrawableTXs";
 import { Chain } from "@helixbridge/chains";
 
-class IndexerClient {
+export type {
+  CurrentlyAvailableCrossChain,
+  HistoryTxByHash,
+  HistoryTxById,
+  SortedRelayInfo,
+  LnBridgeExist,
+  MaxTransfer,
+  WithdrawableTXs,
+};
+
+export class IndexerClient {
   private readonly endpoint: string;
-  constructor(readonly testnet: boolean) {
+  constructor({ testnet }: { testnet: boolean }) {
     this.endpoint = testnet ? "https://apollo-test.helix.box/graphql" : "https://apollo.helix.box/graphql";
   }
 
@@ -60,14 +70,3 @@ class IndexerClient {
     return getWithdrawableTXs(this.endpoint, row, page, relayer, toToken, fromChain, toChain);
   }
 }
-
-export default IndexerClient;
-export type {
-  CurrentlyAvailableCrossChain,
-  HistoryTxByHash,
-  HistoryTxById,
-  SortedRelayInfo,
-  LnBridgeExist,
-  MaxTransfer,
-  WithdrawableTXs,
-};
