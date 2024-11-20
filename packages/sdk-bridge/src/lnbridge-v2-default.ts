@@ -46,6 +46,11 @@ export class LnBridgeV2Default extends LnBridgeV2 {
     return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: DEFAULT_CONFIRMATIONS });
   }
 
+  /**
+   * Deposit margin
+   * @param margin - Amount in target token
+   * @returns TransactionReceipt
+   */
   async depositMargin(margin: bigint) {
     assert(this.walletClient, "Wallet client is required");
     const signer = (await this.walletClient.getAddresses())[0];
@@ -62,6 +67,12 @@ export class LnBridgeV2Default extends LnBridgeV2 {
     return this.targetPublicClient.waitForTransactionReceipt({ hash, confirmations: DEFAULT_CONFIRMATIONS });
   }
 
+  /**
+   * Update fee and rate
+   * @param baseFee - Base fee in source token
+   * @param feeRate - Fee rate in percentage (0-100)
+   * @returns TransactionReceipt
+   */
   async updateFeeAndRate(baseFee: bigint, feeRate: number) {
     assert(this.walletClient, "Wallet client is required");
     const signer = (await this.walletClient.getAddresses())[0];
@@ -77,6 +88,13 @@ export class LnBridgeV2Default extends LnBridgeV2 {
     return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: DEFAULT_CONFIRMATIONS });
   }
 
+  /**
+   * Withdraw margin
+   * @param recipientOrParams - Recipient address or params
+   * @param amount - Amount in source token
+   * @param fee - Fee in source native token
+   * @returns TransactionReceipt
+   */
   async withdrawMargin(recipientOrParams: Address | Hash, amount: bigint, fee: bigint) {
     assert(this.walletClient, "Wallet client is required");
     const signer = (await this.walletClient.getAddresses())[0];

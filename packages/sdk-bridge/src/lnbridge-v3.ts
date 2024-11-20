@@ -55,6 +55,13 @@ export class LnBridgeV3 extends LnBridge {
     return { value, token: this.sourceToken };
   }
 
+  /**
+   * Register LnProvider
+   * @param baseFee - Base fee in source token
+   * @param feeRate - Fee rate in percentage (0-100)
+   * @param transferLimit - Transfer limit in source token
+   * @returns TransactionReceipt
+   */
   async register(baseFee: bigint, feeRate: number, transferLimit: bigint) {
     assert(this.walletClient, "Wallet client is required");
     const signer = (await this.walletClient.getAddresses())[0];
@@ -77,6 +84,11 @@ export class LnBridgeV3 extends LnBridge {
     return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: DEFAULT_CONFIRMATIONS });
   }
 
+  /**
+   * Deposit penalty reserve
+   * @param amount - Amount in source token
+   * @returns TransactionReceipt
+   */
   async depositPenaltyReserve(amount: bigint) {
     assert(this.walletClient, "Wallet client is required");
     const signer = (await this.walletClient.getAddresses())[0];
@@ -93,6 +105,11 @@ export class LnBridgeV3 extends LnBridge {
     return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: DEFAULT_CONFIRMATIONS });
   }
 
+  /**
+   * Withdraw penalty reserve
+   * @param amount - Amount in source token
+   * @returns TransactionReceipt
+   */
   async withdrawPenaltyReserve(amount: bigint) {
     assert(this.walletClient, "Wallet client is required");
     const signer = (await this.walletClient.getAddresses())[0];

@@ -184,6 +184,8 @@ function App() {
     }
   };
 
+  const handleLnV3Register = async () => {};
+
   return (
     <>
       <div>
@@ -204,6 +206,7 @@ function App() {
       <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
 
       <button onClick={handleTransfer}>Transfer</button>
+      <button onClick={handleLnV3Register}>LnV3 Register</button>
     </>
   );
 }

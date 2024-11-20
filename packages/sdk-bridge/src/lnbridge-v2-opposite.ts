@@ -46,6 +46,13 @@ export class LnBridgeV2Opposite extends LnBridgeV2 {
     return this.sourcePublicClient.waitForTransactionReceipt({ hash, confirmations: DEFAULT_CONFIRMATIONS });
   }
 
+  /**
+   * Update fee rate and margin
+   * @param baseFee - Base fee in source token
+   * @param feeRate - Fee rate in percentage (0-100)
+   * @param margin - Margin in source token
+   * @returns TransactionReceipt
+   */
   async updateFeeRateMargin(baseFee: bigint, feeRate: number, margin: bigint) {
     assert(this.walletClient, "Wallet client is required");
     const signer = (await this.walletClient.getAddresses())[0];
