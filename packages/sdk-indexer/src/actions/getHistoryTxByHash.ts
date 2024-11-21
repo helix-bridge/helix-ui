@@ -1,7 +1,7 @@
 import { Hash } from "viem";
-import { graphql } from "../generated";
-import { HistoryTxByHashQuery } from "../generated/graphql";
-import { execute } from "./helper";
+import { graphql } from "../generated/action";
+import { HistoryTxByHashQuery } from "../generated/action/graphql";
+import { execute } from "./helpers";
 
 // enum Result {
 //   PENDING,

@@ -1,4 +1,4 @@
-import type { TypedDocumentString } from "../generated/graphql";
+import type { TypedDocumentString } from "../generated/action/graphql";
 
 export async function execute<TResult, TVariables>(
   endpoint: string,

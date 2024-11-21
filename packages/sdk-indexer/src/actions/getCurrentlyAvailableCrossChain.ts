@@ -1,6 +1,6 @@
-import { graphql } from "../generated";
-import { CurrentlyAvailableCrossChainQuery } from "../generated/graphql";
-import { execute } from "./helper";
+import { graphql } from "../generated/action";
+import { CurrentlyAvailableCrossChainQuery } from "../generated/action/graphql";
+import { execute } from "./helpers";
 
 const document = graphql(`
   query CurrentlyAvailableCrossChain($tokenKey: String!) {
@@ -14,9 +14,14 @@ const document = graphql(`
   }
 `);
 
-export type CurrentlyAvailableCrossChain = CurrentlyAvailableCrossChainQuery["queryLnBridgeSupportedChains"];
+export type CurrentlyAvailableCrossChain = NonNullable<
+  CurrentlyAvailableCrossChainQuery["queryLnBridgeSupportedChains"]
+>;
 
-export async function getCurrentlyAvailableCrossChain(endpoint: string, tokenKey = "") {
+export async function getCurrentlyAvailableCrossChain(
+  endpoint: string,
+  tokenKey = "",
+): Promise<CurrentlyAvailableCrossChain> {
   const { data } = await execute(endpoint, document, { tokenKey });
-  return data.queryLnBridgeSupportedChains;
+  return data.queryLnBridgeSupportedChains || [];
 }

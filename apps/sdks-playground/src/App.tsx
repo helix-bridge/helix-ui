@@ -5,9 +5,9 @@ import "./App.css";
 import { getChainByIdOrNetwork } from "@helixbridge/chains";
 import { LnBridgeV3 } from "@helixbridge/sdk-bridge";
 import { Address, createWalletClient, custom } from "viem";
-import { IndexerClient } from "@helixbridge/sdk-indexer";
+import { IndexerClient, IndexerProvider, useCurrentlyAvailableCrossChain } from "@helixbridge/sdk-indexer";
 
-const indexerClient = new IndexerClient({ testnet: true });
+const indexerClient = new IndexerClient({ testnet: false });
 
 function App() {
   const [count, setCount] = useState(0);
@@ -186,6 +186,11 @@ function App() {
 
   const handleLnV3Register = async () => {};
 
+  const handleClick = async () => {
+    const data = await indexerClient.getCurrentlyAvailableCrossChain();
+    console.log("data", data);
+  };
+
   return (
     <>
       <div>
@@ -207,7 +212,24 @@ function App() {
 
       <button onClick={handleTransfer}>Transfer</button>
       <button onClick={handleLnV3Register}>LnV3 Register</button>
+      <button onClick={handleClick}>Click</button>
+      <WrapHook />
     </>
+  );
+}
+
+function Hook() {
+  const { data, loading } = useCurrentlyAvailableCrossChain();
+  console.log("data", data);
+  console.log("loading", loading);
+  return null;
+}
+
+function WrapHook() {
+  return (
+    <IndexerProvider testnet={false}>
+      <Hook />
+    </IndexerProvider>
   );
 }
 

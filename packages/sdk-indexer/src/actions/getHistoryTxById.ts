@@ -1,6 +1,6 @@
-import { graphql } from "../generated";
-import { HistoryTxByIdQuery } from "../generated/graphql";
-import { execute } from "./helper";
+import { graphql } from "../generated/action";
+import { HistoryTxByIdQuery } from "../generated/action/graphql";
+import { execute } from "./helpers";
 
 // enum Result {
 //   PENDING,

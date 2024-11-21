@@ -1,8 +1,8 @@
 import { Address } from "viem";
-import { graphql } from "../generated";
-import { execute } from "./helper";
+import { graphql } from "../generated/action";
+import { execute } from "./helpers";
 import { Chain } from "@helixbridge/chains";
-import { WithdrawableTXsQuery } from "../generated/graphql";
+import { WithdrawableTXsQuery } from "../generated/action/graphql";
 
 const document = graphql(`
   query WithdrawableTXs(
@@ -67,9 +67,9 @@ export async function getWithdrawableTXs(
   row: number,
   page: number,
   relayer: Address,
-  toToken: Address,
   fromChain: Chain,
   toChain: Chain,
+  toToken: Address,
 ) {
   const { data } = await execute(endpoint, document, {
     row,

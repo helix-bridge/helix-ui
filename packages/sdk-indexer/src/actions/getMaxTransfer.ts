@@ -1,7 +1,7 @@
-import { graphql } from "../generated";
+import { graphql } from "../generated/action";
 import { Address } from "viem";
 import { Chain } from "@helixbridge/chains";
-import { execute } from "./helper";
+import { execute } from "./helpers";
 
 const document = graphql(`
   query MaxTransfer($token: String, $balance: String, $fromChain: String, $toChain: String) {
@@ -13,14 +13,14 @@ export type MaxTransfer = BigInt;
 
 export async function getMaxTransfer(
   endpoint: string,
-  token: Address,
-  balance: bigint,
   fromChain: Chain,
   toChain: Chain,
+  fromToken: Address,
+  senderBalance: bigint,
 ) {
   const { data } = await execute(endpoint, document, {
-    token,
-    balance: balance.toString(),
+    token: fromToken,
+    balance: senderBalance.toString(),
     fromChain: fromChain.network,
     toChain: toChain.network,
   });

@@ -143,36 +143,15 @@ export type SortedRelayInfoQuery = {
     transferLimit: any;
     records?: Array<{
       __typename?: "LnBridgeRelayInfo";
-      id: string;
-      version: string;
-      nonce: any;
-      targetNonce?: any | null;
-      fromChain: string;
-      toChain: string;
-      bridge: string;
-      relayer: string;
       sendToken?: string | null;
-      tokenKey?: string | null;
-      transactionHash: string;
-      timestamp: number;
+      relayer: string;
       margin?: string | null;
-      protocolFee?: string | null;
       baseFee?: string | null;
+      protocolFee?: string | null;
       liquidityFeeRate?: number | null;
-      slashCount?: number | null;
-      withdrawNonce?: any | null;
       lastTransferId?: string | null;
-      cost?: string | null;
-      profit?: string | null;
-      heartbeatTimestamp?: number | null;
-      messageChannel?: string | null;
-      transferLimit?: string | null;
-      softTransferLimit?: string | null;
-      paused?: boolean | null;
-      dynamicFee?: string | null;
-      dynamicFeeExpire?: string | null;
-      dynamicFeeSignature?: string | null;
-      signers?: string | null;
+      withdrawNonce?: any | null;
+      bridge: string;
     } | null> | null;
   } | null;
 };
@@ -362,36 +341,15 @@ export const SortedRelayInfoDocument = new TypedDocumentString(`
   ) {
     transferLimit
     records {
-      id
-      version
-      nonce
-      targetNonce
-      fromChain
-      toChain
-      bridge
-      relayer
       sendToken
-      tokenKey
-      transactionHash
-      timestamp
+      relayer
       margin
-      protocolFee
       baseFee
+      protocolFee
       liquidityFeeRate
-      slashCount
-      withdrawNonce
       lastTransferId
-      cost
-      profit
-      heartbeatTimestamp
-      messageChannel
-      transferLimit
-      softTransferLimit
-      paused
-      dynamicFee
-      dynamicFeeExpire
-      dynamicFeeSignature
-      signers
+      withdrawNonce
+      bridge
     }
   }
 }
