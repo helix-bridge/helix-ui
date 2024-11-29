@@ -1,5 +1,4 @@
 import { Chain } from "../types";
-
 import { zircuit as zircuitViem } from "viem/chains";
 
 export const zircuit: Chain = {

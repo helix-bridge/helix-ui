@@ -2,8 +2,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PropsWithChildren } from "react";
 import { getChainConfigs } from "../utils";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
-import { CaipNetwork, createAppKit } from "@reown/appkit/react";
+import { createAppKit } from "@reown/appkit/react";
 import { WagmiProvider } from "wagmi";
+import { AppKitNetwork } from "@reown/appkit/networks";
 
 // 0. Setup queryClient
 const queryClient = new QueryClient();
@@ -21,20 +22,21 @@ const metadata = {
 
 // 3. Set the networks
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const networks: CaipNetwork[] = getChainConfigs().map(({ tokens, ...chain }) => ({
+const networks = getChainConfigs().map(({ tokens, ...chain }) => ({
   id: `eip155:${chain.id}`,
+  caipNetworkId: `eip155:${chain.id}`,
   chainId: chain.id,
   chainNamespace: "eip155",
   name: chain.name,
-  currency: chain.nativeCurrency.symbol,
+  nativeCurrency: chain.nativeCurrency,
   explorerUrl: chain.blockExplorers?.default?.url || "",
-  rpcUrl: chain.rpcUrls.default.http[0],
+  rpcUrls: chain.rpcUrls,
   imageUrl: chain.logo,
 }));
 
 // 4. Create Wagmi Adapter
 const wagmiAdapter = new WagmiAdapter({
-  networks,
+  networks: networks as AppKitNetwork[],
   projectId,
   ssr: false,
 });
@@ -42,7 +44,7 @@ const wagmiAdapter = new WagmiAdapter({
 // 5. Create modal
 createAppKit({
   adapters: [wagmiAdapter],
-  networks,
+  networks: networks as unknown as [AppKitNetwork, ...AppKitNetwork[]],
   projectId,
   metadata,
   features: {

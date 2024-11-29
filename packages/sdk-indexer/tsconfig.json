@@ -1,0 +1,15 @@
+{
+  "extends": "@helixbridge/tsconfig/react-library.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "types": ["jest", "node"],
+    "plugins": [
+      {
+        "name": "@0no-co/graphqlsp",
+        "schema": "./schema.graphql"
+      }
+    ]
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
+}

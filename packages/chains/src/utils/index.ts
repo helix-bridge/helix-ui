@@ -5,18 +5,18 @@ import {
   avalanche,
   base,
   baseSepolia,
-  bera,
+  berachainTestnetbArtio,
   blast,
   bsc,
   crab,
   darwinia,
-  ethereum,
+  mainnet,
   gnosis,
   linea,
   mantle,
   moonbeam,
   morph,
-  morphTestnet,
+  morphHolesky,
   optimism,
   polygon,
   polygonZkEvm,
@@ -24,10 +24,10 @@ import {
   sepolia,
   taikoHekla,
   zircuit,
-  zircuitSepolia,
+  zircuitTestnet,
   zkSync,
   zksyncSepolia,
-  celoTestnet,
+  celoAlfajores,
 } from "../chains";
 import { ChainID, type Network } from "../types";
 
@@ -39,17 +39,17 @@ export function getChains() {
     avalanche,
     baseSepolia,
     base,
-    bera,
+    berachainTestnetbArtio,
     blast,
     bsc,
     crab,
     darwinia,
-    ethereum,
+    mainnet,
     gnosis,
     linea,
     mantle,
     moonbeam,
-    morphTestnet,
+    morphHolesky,
     optimism,
     polygonZkEvm,
     polygon,
@@ -59,8 +59,8 @@ export function getChains() {
     zksyncSepolia,
     zkSync,
     zircuit,
-    zircuitSepolia,
-    celoTestnet,
+    zircuitTestnet,
+    celoAlfajores,
   ];
 }
 
@@ -86,7 +86,7 @@ export function getChainByIdOrNetwork(chainIdOrNetwork: ChainID | Network | null
       return baseSepolia;
     case ChainID.BERA:
     case "bera":
-      return bera;
+      return berachainTestnetbArtio;
     case ChainID.BLAST:
     case "blast":
       return blast;
@@ -101,7 +101,7 @@ export function getChainByIdOrNetwork(chainIdOrNetwork: ChainID | Network | null
       return darwinia;
     case ChainID.ETHEREUM:
     case "ethereum":
-      return ethereum;
+      return mainnet;
     case ChainID.GNOSIS:
     case "gnosis":
       return gnosis;
@@ -119,7 +119,7 @@ export function getChainByIdOrNetwork(chainIdOrNetwork: ChainID | Network | null
       return morph;
     case ChainID.MORPH_TESTNET:
     case "morph-testnet":
-      return morphTestnet;
+      return morphHolesky;
     case ChainID.OPTIMISM:
     case "op":
       return optimism;
@@ -146,10 +146,10 @@ export function getChainByIdOrNetwork(chainIdOrNetwork: ChainID | Network | null
       return zircuit;
     case ChainID.ZIRCUIT_SEPOLIA:
     case "zircuit-sepolia":
-      return zircuitSepolia;
+      return zircuitTestnet;
     case ChainID.CELO_TESTNET:
     case "celo-testnet":
-      return celoTestnet;
+      return celoAlfajores;
     default:
       return;
   }
