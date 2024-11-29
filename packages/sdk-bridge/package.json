@@ -36,10 +36,10 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@helixbridge/chains": "workspace:*",
+    "@helixbridge/chains": "0.5.1",
     "@helixbridge/helixconf": "v1.2.0-beta",
-    "@helixbridge/sdk-core": "workspace:*",
-    "@helixbridge/sdk-indexer": "workspace:*",
+    "@helixbridge/sdk-core": "0.1.0",
+    "@helixbridge/sdk-indexer": "0.1.0",
     "viem": "^2.21.19"
   }
 }
