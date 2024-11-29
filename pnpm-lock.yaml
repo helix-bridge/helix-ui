@@ -575,8 +575,8 @@ importers:
         specifier: ^3.10.3
         version: 3.11.1(@types/react@18.3.12)(graphql-ws@5.16.0(graphql@16.9.0))(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       "@helixbridge/chains":
-        specifier: workspace:*
-        version: link:../chains
+        specifier: 0.5.1
+        version: 0.5.1(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4)
       "@helixbridge/helixconf":
         specifier: v1.2.0-beta
         version: 1.2.0-beta
@@ -2450,6 +2450,10 @@ packages:
       { integrity: sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ== }
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+
+  "@helixbridge/chains@0.5.1":
+    resolution:
+      { integrity: sha512-3dPzCW9amPXlig5gRi1MrrMu40eUeUNv1yWn/oWGCDbsABoOzDeZ7BmAF105kVbzM44uM7v4nRxLAmKEX83PQA== }
 
   "@helixbridge/helixconf@1.2.0-beta":
     resolution:
@@ -13272,6 +13276,16 @@ snapshots:
   "@graphql-typed-document-node/core@3.2.0(graphql@16.9.0)":
     dependencies:
       graphql: 16.9.0
+
+  "@helixbridge/chains@0.5.1(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4)":
+    dependencies:
+      "@helixbridge/helixconf": 1.2.0-beta
+      viem: 2.21.44(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4)
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
 
   "@helixbridge/helixconf@1.2.0-beta": {}
 
