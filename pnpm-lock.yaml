@@ -486,17 +486,17 @@ importers:
   packages/sdk-bridge:
     dependencies:
       "@helixbridge/chains":
-        specifier: workspace:*
-        version: link:../chains
+        specifier: 0.5.1
+        version: 0.5.1(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4)
       "@helixbridge/helixconf":
         specifier: v1.2.0-beta
         version: 1.2.0-beta
       "@helixbridge/sdk-core":
-        specifier: workspace:*
-        version: link:../sdk-core
+        specifier: 0.1.0
+        version: 0.1.0(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4)
       "@helixbridge/sdk-indexer":
-        specifier: workspace:*
-        version: link:../sdk-indexer
+        specifier: 0.1.0
+        version: 0.1.0(@types/react@18.3.12)(bufferutil@4.0.8)(graphql-ws@5.16.0(graphql@16.9.0))(react-dom@18.3.1(react@18.3.1))(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4)
       viem:
         specifier: ^2.21.19
         version: 2.21.44(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4)
@@ -2458,6 +2458,14 @@ packages:
   "@helixbridge/helixconf@1.2.0-beta":
     resolution:
       { integrity: sha512-YuFOhX33quFUwOvduSzo01ul7SWus2OicDTulJLbPdg000Qs37s0WJ80n1fK8FSDgvBMToC8oaxnimwTl6fT9Q== }
+
+  "@helixbridge/sdk-core@0.1.0":
+    resolution:
+      { integrity: sha512-vn0J9sLoGBwFZeVTvU/vqjDYYVnJVyfqWvY/jW8J88uNbV0t0u3YTMSTYt6PXJAKDimslQBWhp97rCUrqHQ0uw== }
+
+  "@helixbridge/sdk-indexer@0.1.0":
+    resolution:
+      { integrity: sha512-NeBxUfogCGYJbhI1NqbQaZXqWa3c8Y0A8IPp/wcaBAPjrt8QNKeZNk2U4q0C90gXg3qUrU7HnbEtbEcMx6RsTA== }
 
   "@humanfs/core@0.19.1":
     resolution:
@@ -13288,6 +13296,33 @@ snapshots:
       - zod
 
   "@helixbridge/helixconf@1.2.0-beta": {}
+
+  "@helixbridge/sdk-core@0.1.0(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4)":
+    dependencies:
+      viem: 2.21.44(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4)
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+
+  "@helixbridge/sdk-indexer@0.1.0(@types/react@18.3.12)(bufferutil@4.0.8)(graphql-ws@5.16.0(graphql@16.9.0))(react-dom@18.3.1(react@18.3.1))(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4)":
+    dependencies:
+      "@apollo/client": 3.11.1(@types/react@18.3.12)(graphql-ws@5.16.0(graphql@16.9.0))(graphql@16.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      "@helixbridge/chains": 0.5.1(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4)
+      "@helixbridge/helixconf": 1.2.0-beta
+      graphql: 16.9.0
+      react: 18.3.1
+      viem: 2.21.44(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.22.4)
+    transitivePeerDependencies:
+      - "@types/react"
+      - bufferutil
+      - graphql-ws
+      - react-dom
+      - subscriptions-transport-ws
+      - typescript
+      - utf-8-validate
+      - zod
 
   "@humanfs/core@0.19.1": {}
 

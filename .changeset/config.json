@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["helix", "helixbox-home", "helixbox-app"]
+  "ignore": ["helix", "helixbox-home", "helixbox-app", "sdks-playground"]
 }
