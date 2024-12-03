@@ -10,6 +10,8 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 
+import "./i18n";
+
 const theme = createTheme({
   colorSchemes: { dark: true },
 });
