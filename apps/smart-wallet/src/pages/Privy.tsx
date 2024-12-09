@@ -33,10 +33,10 @@ export default function Privy() {
       {authenticated && (
         <Button
           onClick={() =>
-            fundWallet(user?.wallet?.address ?? "0xf422673cb7a673f595852f7b00906408a0b073db", {
+            fundWallet(user?.wallet?.address ?? "0x0555fd1450fa95a95EE4F5C5f83fcff5b98BDfaA", {
               defaultFundingMethod: "manual",
               // chain: base,
-              // amount: "123",
+              // amount: "",
               // asset: { erc20: "0x0Db510e79909666d6dEc7f5e49370838c16D950f" },
             })
           }
