@@ -1,4 +1,4 @@
-name: Deploy stg (smart wallet)
+name: Deploy dev (smart wallet)
 
 on:
   push:
