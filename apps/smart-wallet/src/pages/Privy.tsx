@@ -1,6 +1,6 @@
 import { Box, Button } from "@mui/material";
 import { useFundWallet, usePrivy } from "@privy-io/react-auth";
-import { base } from "viem/chains";
+// import { base } from "viem/chains";
 
 export default function Privy() {
   const { ready, user, authenticated, login, logout } = usePrivy();
