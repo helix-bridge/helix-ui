@@ -1,0 +1,32 @@
+name: Deploy stg (smart wallet)
+
+on:
+  push:
+    branches: [main]
+    paths: ["apps/smart-wallet/**"]
+  workflow_dispatch:
+
+jobs:
+  deploy-package:
+    name: Deploy package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - uses: darwinia-network/devops/actions/smart-vercel@main
+        name: Deploy app
+        with:
+          node_version: 20
+          vercel_token: ${{ secrets.VERCEL_TOKEN }}
+          vercel_group: itering
+          preview_section: helix-app-testnet
+          preview_output: true
+          alias_domain: "smart-wallet-dev"
+          project_name: "helix-apps-test"
+          script_install: pnpm install
+          script_build: pnpm --filter smart-wallet run build
+          dist_path: apps/smart-wallet/dist
+          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
