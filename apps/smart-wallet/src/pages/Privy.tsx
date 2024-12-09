@@ -43,7 +43,7 @@ export default function Privy() {
           disabled={!ready}
           variant="contained"
         >
-          Fund
+          Deposit
         </Button>
       )}
 
