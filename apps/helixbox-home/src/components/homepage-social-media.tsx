@@ -1,6 +1,6 @@
 const data: { label: string; link: string; icon: string; width: number; height: number }[] = [
   { label: "Github", link: "https://github.com/helix-bridge", icon: "images/social/github.svg", width: 18, height: 18 },
-  { label: "X", link: "https://x.com/helixofficialx", icon: "images/social/x.svg", width: 16, height: 16 },
+  { label: "X", link: "https://x.com/HelixboxLabs", icon: "images/social/x.svg", width: 16, height: 16 },
   {
     label: "Discord",
     link: "https://discord.gg/6XyyNGugdE",
