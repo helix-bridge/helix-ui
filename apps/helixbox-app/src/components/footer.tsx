@@ -103,7 +103,7 @@ function Social() {
       icon: <img width={16} height={16} alt="Github" src="images/social/github.svg" />,
     },
     {
-      link: "https://x.com/helixofficialx",
+      link: "https://x.com/HelixboxLabs",
       icon: <img width={16} height={16} alt="X" src="images/social/x.svg" />,
     },
     {
