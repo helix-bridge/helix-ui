@@ -23,15 +23,7 @@ const metadata = {
 // 3. Set the networks
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const networks = getChainConfigs().map(({ tokens, ...chain }) => ({
-  id: `eip155:${chain.id}`,
-  caipNetworkId: `eip155:${chain.id}`,
-  chainId: chain.id,
-  chainNamespace: "eip155",
-  name: chain.name,
-  nativeCurrency: chain.nativeCurrency,
-  explorerUrl: chain.blockExplorers?.default?.url || "",
-  rpcUrls: chain.rpcUrls,
-  imageUrl: chain.logo,
+  ...chain,
 }));
 
 // 4. Create Wagmi Adapter
