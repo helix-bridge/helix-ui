@@ -56,7 +56,7 @@ export const ethereumChain: ChainConfig = {
   name: "Ethereum",
   rpcUrls: {
     default: {
-      http: ["https://1rpc.io/eth"],
+      http: ["https://eth.merkle.io"],
     },
   },
 
