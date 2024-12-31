@@ -54,6 +54,11 @@ export const ethereumChain: ChainConfig = {
   ...mainnet,
   network: "ethereum",
   name: "Ethereum",
+  rpcUrls: {
+    default: {
+      http: ["https://1rpc.io/eth"],
+    },
+  },
 
   /**
    * Custom
