@@ -129,7 +129,7 @@ function Component() {
   } = useAllowance(sourceChain, sourceToken, account.address, bridge?.getContract()?.sourceAddress);
 
   const [actionText, disableAction] = useMemo(() => {
-    let text: "Connect Wallet" | "Switch Chain" | "Approve" | "Transfer" = "Transfer";
+    let text: "Connect Wallet" | "Switch Chain" | "Approve" | "Transfer" | string = "Transfer";
     let disabled = false;
 
     if (account.chainId) {
@@ -141,15 +141,24 @@ function Component() {
       ) {
         text = "Approve";
         disabled = false;
+      } else if (loadingAllowance) {
+        text = "Getting allowance...";
+        disabled = true;
+      } else if (fee?.value === undefined) {
+        text = "Failed to get fee";
+        disabled = true;
+      } else if (!deferredAmount.input) {
+        text = "Enter amount";
+        disabled = true;
+      } else if (!deferredAmount.valid) {
+        text = "Invalid amount";
+        disabled = true;
+      } else if (!recipient.input) {
+        text = "Enter recipient";
+        disabled = true;
       } else {
         text = "Transfer";
-        disabled =
-          loadingAllowance ||
-          fee?.value === undefined ||
-          !deferredAmount.input ||
-          !deferredAmount.valid ||
-          !recipient.value ||
-          !!recipient.alert;
+        disabled = !!recipient.alert;
       }
     } else {
       text = "Connect Wallet";
@@ -166,7 +175,7 @@ function Component() {
     fee?.value,
     fee?.token.type,
     recipient.alert,
-    recipient.value,
+    recipient.input,
   ]);
 
   const handleAction = useCallback(async () => {
