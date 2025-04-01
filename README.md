@@ -6,8 +6,8 @@
 
 ### Production
 
-- mainnet: https://app.helix.box (ipfs version: https://helixbridge.eth.limo)
-- testnet: https://testnet.app.helix.box
+- mainnet: https://app.helixbox.ai (ipfs version: https://helixbridge.eth.limo)
+- testnet: https://testnet.app.helixbox.ai
 
 ### Staging
 

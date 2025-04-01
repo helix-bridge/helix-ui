@@ -26,16 +26,16 @@ function Links() {
 
   const data: TData[] = [
     { label: "Explorer", path: "/explorer" },
-    { label: "XToken", path: "https://xtoken.helix.box", external: true },
-    { label: "Docs", path: "https://docs.helix.box", external: true },
+    { label: "XToken", path: "https://xtoken.helixbox.ai", external: true },
+    { label: "Docs", path: "https://docs.helixbox.ai", external: true },
   ];
   const [network, setNetwork] = useState<TData>({ label: "Saa", path: "ss", pc: true, external: true });
 
   useEffect(() => {
-    if (window.location.hostname === "app.helix.box") {
-      setNetwork((prev) => ({ ...prev, label: "Testnet", path: "https://testnet-app.helix.box" }));
-    } else if (window.location.hostname === "testnet-app.helix.box") {
-      setNetwork((prev) => ({ ...prev, label: "Mainnet", path: "https://app.helix.box" }));
+    if (window.location.hostname === "app.helixbox.ai") {
+      setNetwork((prev) => ({ ...prev, label: "Testnet", path: "https://testnet-app.helixbox.ai" }));
+    } else if (window.location.hostname === "testnet-app.helixbox.ai") {
+      setNetwork((prev) => ({ ...prev, label: "Mainnet", path: "https://app.helixbox.ai" }));
     } else if (window.location.hostname === "helixbox-stg-mainnet.vercel.app") {
       setNetwork((prev) => ({ ...prev, label: "Testnet", path: "https://helixbox-stg-testnet.vercel.app" }));
     } else if (window.location.hostname === "helixbox-stg-testnet.vercel.app") {
@@ -76,7 +76,7 @@ function Links() {
           ),
         )}
 
-      {window.location.hostname === "app.helix.box" && (
+      {window.location.hostname === "app.helixbox.ai" && (
         <Tooltip
           contentClassName="w-72"
           className="inline-flex items-center"
@@ -111,7 +111,7 @@ function Social() {
       icon: <img width={20} height={20} alt="Discord" src="images/social/discord.svg" />,
     },
     {
-      link: "mailto:hello@helix.box",
+      link: "mailto:hello@helixbox.ai",
       icon: <img width={16} height={16} alt="Email" src="images/social/email.svg" />,
     },
   ];

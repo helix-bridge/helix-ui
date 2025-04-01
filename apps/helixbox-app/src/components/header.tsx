@@ -35,7 +35,7 @@ export default function Header() {
         <div className="flex items-center gap-5">
           {/* Logo */}
           <div className="gap-medium flex items-center">
-            <a href="https://helix.box" rel="noopener noreferrer" target="_blank">
+            <a href="https://helixbox.ai" rel="noopener noreferrer" target="_blank">
               <img width={106.64} height={20} alt="Logo" src="images/logo.svg" />
             </a>
             {isTestnet() && (

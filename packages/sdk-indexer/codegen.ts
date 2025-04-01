@@ -1,7 +1,7 @@
 import type { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
-  schema: "https://apollo.helix.box/graphql",
+  schema: "https://apollo.helixbox.ai/graphql",
   documents: ["src/actions/**/*.ts"],
   ignoreNoDocuments: true,
   generates: {
