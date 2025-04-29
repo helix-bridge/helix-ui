@@ -42,7 +42,7 @@ export default function TransactionStatus({ record }: Props) {
             <span>
               It seems to be taking longer than usual.{" "}
               <a
-                href={`mailto:hello@helix.box?subject=${encodeURIComponent(
+                href={`mailto:hello@helixbox.ai?subject=${encodeURIComponent(
                   "Transfer time out",
                 )}&body=${encodeURIComponent(location.href)}`}
                 rel="noreferrer"
