@@ -32,11 +32,7 @@ function Links() {
   const [network, setNetwork] = useState<TData>({ label: "Saa", path: "ss", pc: true, external: true });
 
   useEffect(() => {
-    if (window.location.hostname === "app.helixbox.ai") {
-      setNetwork((prev) => ({ ...prev, label: "Testnet", path: "https://testnet-app.helixbox.ai" }));
-    } else if (window.location.hostname === "testnet-app.helixbox.ai") {
-      setNetwork((prev) => ({ ...prev, label: "Mainnet", path: "https://app.helixbox.ai" }));
-    } else if (window.location.hostname === "helixbox-stg-mainnet.vercel.app") {
+    if (window.location.hostname === "helixbox-stg-mainnet.vercel.app") {
       setNetwork((prev) => ({ ...prev, label: "Testnet", path: "https://helixbox-stg-testnet.vercel.app" }));
     } else if (window.location.hostname === "helixbox-stg-testnet.vercel.app") {
       setNetwork((prev) => ({ ...prev, label: "Mainnet", path: "https://helixbox-stg-mainnet.vercel.app" }));

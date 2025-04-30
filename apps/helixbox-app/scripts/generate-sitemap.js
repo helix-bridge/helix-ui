@@ -6,7 +6,6 @@ const pagesMeta = [
   { url: "https://app.helixbox.ai", priority: 1.0 },
   { url: "https://app.helixbox.ai/#/relayer", priority: 0.8 },
   { url: "https://app.helixbox.ai/#/explorer", priority: 0.8 },
-  { url: "https://testnet.app.helixbox.ai", priority: 0.8 },
 ];
 
 const urls = pagesMeta
