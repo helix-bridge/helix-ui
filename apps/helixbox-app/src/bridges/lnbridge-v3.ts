@@ -1,7 +1,7 @@
 import { CONFIRMATION_BLOCKS } from "../config";
 import { BridgeConstructorArgs, GetFeeArgs, MessageChannel, Token, TransferOptions } from "../types";
 import { LnBridgeBase } from "./lnbridge-base";
-import { Address, Hex, TransactionReceipt, encodeFunctionData, encodePacked, keccak256 } from "viem";
+import { Address, Hex, TransactionReceipt, encodeFunctionData, encodePacked, hexToBytes, keccak256 } from "viem";
 
 export class LnBridgeV3 extends LnBridgeBase {
   constructor(args: BridgeConstructorArgs) {
@@ -180,7 +180,18 @@ export class LnBridgeV3 extends LnBridgeBase {
           functionName: "messagers",
           args: [BigInt(this.sourceChain.id)],
         });
-        const value = await this._getLayerzeroFee(sendService, this.sourceChain, this.targetPublicClient);
+        const message = await this.targetPublicClient.readContract({
+          address: this.contract.targetAddress,
+          abi: (await import("../abi/lnbridge-v3")).default,
+          functionName: "encodeWithdrawLiquidityRequest",
+          args: [transferIds, relayer],
+        });
+        const value = await this._getLayerzeroFee(
+          sendService,
+          this.sourceChain,
+          this.targetPublicClient,
+          hexToBytes(message).length,
+        );
         return typeof value === "bigint" ? { value, token: this.targetNativeToken, params: undefined } : undefined;
       }
     } else if (messageChannel === "msgline") {

@@ -19,6 +19,15 @@ const abi = [
     anonymous: false,
     inputs: [
       { indexed: false, internalType: "bytes32[]", name: "transferIds", type: "bytes32[]" },
+      { indexed: false, internalType: "uint256", name: "remoteChainId", type: "uint256" },
+    ],
+    name: "LiquidityWithdrawRequested",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: "bytes32[]", name: "transferIds", type: "bytes32[]" },
       { indexed: false, internalType: "address", name: "provider", type: "address" },
       { indexed: false, internalType: "uint256", name: "amount", type: "uint256" },
     ],
@@ -53,6 +62,15 @@ const abi = [
   },
   {
     anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "address", name: "previousOwner", type: "address" },
+      { indexed: true, internalType: "address", name: "newOwner", type: "address" },
+    ],
+    name: "OwnershipTransferred",
+    type: "event",
+  },
+  {
+    anonymous: false,
     inputs: [{ indexed: false, internalType: "address", name: "account", type: "address" }],
     name: "Paused",
     type: "event",
@@ -62,7 +80,7 @@ const abi = [
     inputs: [
       { indexed: false, internalType: "address", name: "provider", type: "address" },
       { indexed: false, internalType: "address", name: "sourceToken", type: "address" },
-      { indexed: false, internalType: "uint256", name: "updatedPanaltyReserve", type: "uint256" },
+      { indexed: false, internalType: "uint256", name: "updatedPenaltyReserve", type: "uint256" },
     ],
     name: "PenaltyReserveUpdated",
     type: "event",
@@ -86,8 +104,8 @@ const abi = [
       { indexed: false, internalType: "bytes32", name: "tokenInfoKey", type: "bytes32" },
       { indexed: false, internalType: "uint112", name: "protocolFee", type: "uint112" },
       { indexed: false, internalType: "uint112", name: "penalty", type: "uint112" },
-      { indexed: false, internalType: "uint112", name: "sourceDecimals", type: "uint112" },
-      { indexed: false, internalType: "uint112", name: "targetDecimals", type: "uint112" },
+      { indexed: false, internalType: "uint8", name: "sourceDecimals", type: "uint8" },
+      { indexed: false, internalType: "uint8", name: "targetDecimals", type: "uint8" },
     ],
     name: "TokenInfoUpdated",
     type: "event",
@@ -145,6 +163,30 @@ const abi = [
     anonymous: false,
     inputs: [
       { indexed: false, internalType: "bytes32", name: "transferId", type: "bytes32" },
+      {
+        components: [
+          { internalType: "uint256", name: "remoteChainId", type: "uint256" },
+          { internalType: "address", name: "provider", type: "address" },
+          { internalType: "address", name: "sourceToken", type: "address" },
+          { internalType: "address", name: "targetToken", type: "address" },
+          { internalType: "uint112", name: "sourceAmount", type: "uint112" },
+          { internalType: "uint112", name: "targetAmount", type: "uint112" },
+          { internalType: "address", name: "receiver", type: "address" },
+          { internalType: "uint256", name: "timestamp", type: "uint256" },
+        ],
+        indexed: false,
+        internalType: "struct LnBridgeTargetV3.RelayParams",
+        name: "params",
+        type: "tuple",
+      },
+    ],
+    name: "TransferFilledExt",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: "bytes32", name: "transferId", type: "bytes32" },
       { indexed: false, internalType: "address", name: "provider", type: "address" },
       { indexed: false, internalType: "address", name: "slasher", type: "address" },
       { indexed: false, internalType: "uint112", name: "slashAmount", type: "uint112" },
@@ -156,6 +198,16 @@ const abi = [
     anonymous: false,
     inputs: [{ indexed: false, internalType: "address", name: "account", type: "address" }],
     name: "Unpaused",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: "bytes32", name: "transferId", type: "bytes32" },
+      { indexed: false, internalType: "address", name: "receiver", type: "address" },
+      { indexed: false, internalType: "uint256", name: "amount", type: "uint256" },
+    ],
+    name: "UnreachableNativeTokenReceived",
     type: "event",
   },
   {
@@ -227,13 +279,6 @@ const abi = [
     type: "function",
   },
   {
-    inputs: [{ internalType: "bytes32", name: "key", type: "bytes32" }],
-    name: "deleteTokenInfo",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [
       { internalType: "address", name: "_sourceToken", type: "address" },
       { internalType: "uint256", name: "_amount", type: "uint256" },
@@ -241,6 +286,27 @@ const abi = [
     name: "depositPenaltyReserve",
     outputs: [],
     stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "bytes32", name: "_transferId", type: "bytes32" },
+      { internalType: "address", name: "_provider", type: "address" },
+      { internalType: "address", name: "_slasher", type: "address" },
+    ],
+    name: "encodeSlashRequest",
+    outputs: [{ internalType: "bytes", name: "message", type: "bytes" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "bytes32[]", name: "_transferIds", type: "bytes32[]" },
+      { internalType: "address", name: "_provider", type: "address" },
+    ],
+    name: "encodeWithdrawLiquidityRequest",
+    outputs: [{ internalType: "bytes", name: "message", type: "bytes" }],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -311,7 +377,10 @@ const abi = [
     type: "function",
   },
   {
-    inputs: [{ internalType: "address", name: "dao", type: "address" }],
+    inputs: [
+      { internalType: "address", name: "_dao", type: "address" },
+      { internalType: "bytes", name: "", type: "bytes" },
+    ],
     name: "initialize",
     outputs: [],
     stateMutability: "nonpayable",
@@ -665,7 +734,6 @@ const abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-  { stateMutability: "payable", type: "receive" },
 ] as const;
 
 export default abi;

@@ -46,12 +46,17 @@ export class LnBridgeBase extends BaseBridge {
     }
   }
 
-  protected async _getLayerzeroFee(sendService: Address, remoteChain: ChainConfig, localPublicClient: PublicClient) {
+  protected async _getLayerzeroFee(
+    sendService: Address,
+    remoteChain: ChainConfig,
+    localPublicClient: PublicClient,
+    messageSizeInByte = 750,
+  ) {
     const [nativeFee] = await localPublicClient.readContract({
       address: sendService,
       abi: (await import(`../abi/lnaccess-controller`)).default,
       functionName: "fee",
-      args: [BigInt(remoteChain.id), bytesToHex(Uint8Array.from([123]), { size: 750 })],
+      args: [BigInt(remoteChain.id), bytesToHex(Uint8Array.from([123]), { size: Math.ceil(messageSizeInByte * 1.01) })], // To leave some margin, we added a 1% redundancy.
     });
     return nativeFee;
   }
