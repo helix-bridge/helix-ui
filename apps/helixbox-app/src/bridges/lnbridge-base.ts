@@ -56,7 +56,7 @@ export class LnBridgeBase extends BaseBridge {
       address: sendService,
       abi: (await import(`../abi/lnaccess-controller`)).default,
       functionName: "fee",
-      args: [BigInt(remoteChain.id), bytesToHex(Uint8Array.from([123]), { size: messageSizeInByte * 1.1 })], // To leave some margin, we added a 1% redundancy.
+      args: [BigInt(remoteChain.id), bytesToHex(Uint8Array.from([123]), { size: messageSizeInByte * 1.01 })], // To leave some margin, we added a 1% redundancy.
     });
     return nativeFee;
   }
