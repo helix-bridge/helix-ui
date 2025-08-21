@@ -8,7 +8,7 @@ export async function fetchMsgportFeeAndParams(
   refundAddress: Address,
   payload: Hash,
 ) {
-  const endpoint = "https://api.msgport.xyz";
+  const endpoint = "https://msgport-api.ringdao.com";
 
   const feeRes = await fetch(
     `${endpoint}/ormp/fee?from_chain_id=${fromChainId}&to_chain_id=${toChainId}&payload=${payload}&from_address=${fromAddress}&to_address=${toAddress}&refund_address=${refundAddress}`,
