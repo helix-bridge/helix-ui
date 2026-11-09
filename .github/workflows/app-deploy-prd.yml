@@ -34,23 +34,6 @@ jobs:
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
-      - uses: darwinia-network/devops/actions/smart-vercel@main
-        name: Deploy app (testnet)
-        with:
-          node_version: 20
-          vercel_token: ${{ secrets.VERCEL_TOKEN }}
-          vercel_group: itering
-          preview_section: helix-app-testnet
-          preview_output: true
-          prod_mode: true
-          project_name: "helix-apps-test"
-          script_install: pnpm install
-          script_build: pnpm app build:testnet
-          dist_path: apps/helixbox-app/dist
-          enable_notify_slack: true
-          slack_channel: helixbox-ui
-          slack_webhook: ${{ secrets.SLACK_INCOMING_WEBHOOK_URL }}
-
   publish-ipfs:
     name: Publish ipfs
     runs-on: ubuntu-latest
